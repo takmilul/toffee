@@ -1,0 +1,38 @@
+package com.banglalink.toffee.data.network.retrofit
+
+import com.banglalink.toffee.BuildConfig
+import com.banglalink.toffee.data.network.interceptor.AuthInterceptor
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+
+object RetrofitApiClient {
+
+    private val retrofit: Retrofit
+    init {
+        val clientBuilder = OkHttpClient.Builder()
+        if (BuildConfig.DEBUG) {
+            val interceptor = HttpLoggingInterceptor()
+            interceptor.level = HttpLoggingInterceptor.Level.BODY
+            clientBuilder.addInterceptor(interceptor)
+        }
+        clientBuilder.addInterceptor(AuthInterceptor())
+
+        val client = clientBuilder.build()
+
+        retrofit = Retrofit.Builder()
+            .client(client)
+            .baseUrl("https://mapi.toffeelive.com/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    val authApi: AuthApi by lazy {
+        retrofit.create(AuthApi::class.java)
+    }
+
+    val toffeeApi: ToffeeApi by lazy {
+        retrofit.create(ToffeeApi::class.java)
+    }
+}

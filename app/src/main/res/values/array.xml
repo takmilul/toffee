@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="payment_method">
+        <item>By MT Charge</item>
+        <item>Bank Card</item>
+        <item>BKash</item>
+        <item>Scratch/Voucher</item>
+    </string-array>
+
+</resources>

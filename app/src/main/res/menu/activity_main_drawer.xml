@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/all_channel"
+            android:icon="@mipmap/live_tv"
+            android:title="All Channels" />
+        <item
+            android:id="@+id/channel_category"
+            android:icon="@mipmap/breaking_news"
+            android:title="Channel Category" />
+
+        <item
+            android:id="@+id/free_channel"
+            android:icon="@mipmap/radio"
+            android:title="Free Channel" />
+        <item
+            android:id="@+id/free_category"
+            android:icon="@mipmap/live_broadcast"
+            android:title="Free Category" />
+
+        <item
+            android:id="@+id/catch_up_all"
+            android:icon="@mipmap/catchup_tv"
+            android:title="Catch Up All" />
+
+        <item
+            android:id="@+id/vod"
+            android:icon="@mipmap/recording"
+            android:title="Video on demand" />
+
+        <item
+            android:id="@+id/profile"
+            android:icon="@mipmap/profile"
+            android:title="Profile" />
+
+        <item
+            android:id="@+id/About"
+            android:icon="@mipmap/reminder"
+            android:title="About" />
+    </group>
+
+    <!--<item android:title="Communicate">-->
+        <!--<menu>-->
+            <!--<item-->
+                <!--android:id="@+id/nav_share"-->
+                <!--android:icon="@drawable/ic_menu_share"-->
+                <!--android:title="Share" />-->
+            <!--<item-->
+                <!--android:id="@+id/nav_send"-->
+                <!--android:icon="@drawable/ic_menu_send"-->
+                <!--android:title="Send" />-->
+        <!--</menu>-->
+    <!--</item>-->
+
+</menu>

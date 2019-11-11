@@ -1,0 +1,221 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.TV.NoActionBar" parent="@style/Theme.Leanback">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="ToolBarStyle" parent="Theme.AppCompat">
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="colorControlActivated">@color/colorAccent</item>
+    </style>
+
+    <style name="CustomToolBarStyle" parent="Widget.AppCompat.Toolbar">
+        <item name="titleTextColor">@color/main_text_color</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:theme">@style/ThemeOverlay.AppCompat.Light</item>
+        <item name="contentInsetStart">0dp</item>
+        <item name="contentInsetStartWithNavigation">0dp</item>
+        <item name="android:contentInsetLeft">0dp</item>
+        <item name="android:background">@color/tool_bar_color</item>
+        <item name="android:popupTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+    </style>
+
+
+    <style name="DemoButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minWidth">40dp</item>
+    </style>
+
+    <style name="velBoxButton" parent="@android:style/Widget.Button">
+        <item name="android:background">@drawable/button_selector</item>
+        <item name="android:textColor">@color/button_text_color</item>
+    </style>
+
+    <style name="toffeeButton" parent="@android:style/Widget.Button">
+        <item name="android:background">@drawable/button_selector</item>
+        <item name="android:textColor">@drawable/button1_text_selector</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+
+    <style name="Button1Style">
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:background">@drawable/button_selector</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingLeft">25dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingRight">25dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:minWidth">110dp</item>
+        <item name="android:fontFamily">@font/roboto_bold</item>
+        <item name="android:textColor">@drawable/button1_text_selector</item>
+    </style>
+
+    <style name="Button2Style">
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:background">@drawable/button2_selector</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingLeft">30dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingRight">30dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:minWidth">110dp</item>
+
+        <item name="android:fontFamily">@font/roboto_bold</item>
+
+        <item name="android:textColor">@drawable/button2_text_selector</item>
+    </style>
+
+
+    <style name="PlayerTheme" parent="@style/AppTheme">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/black</item>
+    </style>
+
+    <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <!-- Customize your theme here. -->
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
+
+    <style name="TransparentProgressDialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowTitleStyle">@null</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+
+    <style name="CategoryTextView" parent="@android:style/Widget.TextView">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textColor">@color/main_text_color</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+
+    <style name="textInputEditText" parent="@android:style/Widget.EditText">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textColor">@color/main_text_color</item>
+        <item name="android:textColorHint">@color/second_text_color</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:fontFamily">@font/roboto_italic</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="textInputEditText2" parent="@android:style/Widget.EditText">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textColor">@color/main_text_color</item>
+        <item name="android:textColorHint">@color/second_text_color</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="editTextOval" parent="@android:style/Widget.EditText">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textColor">@color/edit_view_text_color</item>
+        <item name="android:textColorHint">@color/second_text_color</item>
+        <item name="android:background">@drawable/editfield_oval_bg_white</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingRight">20dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+
+    <style name="programNameTextView" parent="@android:style/Widget.TextView">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textColor">@color/main_text_color</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textAppearance">@android:style/TextAppearance.Small</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+
+    </style>
+
+    <style name="AppTheme.SearchView" parent="Widget.AppCompat.SearchView">
+       <item name="layout">@layout/custom_searchview_layout</item>
+    </style>
+
+    <style name="subscription_pack_header_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">end</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="android:textColor">@color/main_text_color</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="subscripton_pack_channel_text">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:paddingBottom">2dp</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="purchase_text_style">
+        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="android:textColor">@color/main_text_color</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="SubscribePackButtonStyle" parent="Button1Style">
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingRight">20dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+
+</resources>

@@ -1,0 +1,227 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">Toffee2</string>
+
+    <string name="facebook_app_id">1116781388516653</string>
+
+    <string name="activity_login">Login</string>
+    <string name="activity_confirmation">Confirmation</string>
+    <string name="activity_new_account">New Account</string>
+    <string name="activity_already_subscribed">Login</string>
+    <string name="activity_confirm">Confirm</string>
+    <string name="activity_subscribe_package_list">Subscriptions</string>
+    <string name="activity_package_list">PACKAGE LIST</string>
+    <string name="activity_scratch_cart_purchase">SCRATCH CARD PURCHASE</string>
+    <string name="activity_purchase_by_bkash">PURCHASE BY BKASH</string>
+    <string name="enable_background_audio">Play in background</string>
+
+    <string name="video">Video</string>
+
+    <string name="audio">Audio</string>
+
+    <string name="text">Text</string>
+
+    <string name="logging">Logging</string>
+
+    <string name="logging_normal">Normal</string>
+
+    <string name="logging_verbose">Verbose</string>
+
+    <string name="retry">Retry</string>
+
+    <string name="off">[off]</string>
+
+    <string name="error_drm_not_supported">Protected content not supported on API levels below 18</string>
+
+    <string name="error_drm_unsupported_scheme">This device does not support the required DRM scheme</string>
+
+    <string name="error_drm_unknown">An unknown DRM error occurred</string>
+
+    <string name="error_no_decoder">This device does not provide a decoder for <xliff:g id="mime_type">%1$s</xliff:g></string>
+
+    <string name="error_no_secure_decoder">This device does not provide a secure decoder for <xliff:g id="mime_type">%1$s</xliff:g></string>
+
+    <string name="error_querying_decoders">Unable to query device decoders</string>
+
+    <string name="error_instantiating_decoder">Unable to instantiate decoder <xliff:g id="decoder_name">%1$s</xliff:g></string>
+
+    <string name="storage_permission_denied">Permission to access storage was denied</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="prompt_repassword">Repeat password</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+    <string name="action_sign_in">Sign In</string>
+    <string name="action_sign_up">Login</string>
+    <string name="action_subscribe">SUBSCRIBE</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="action_reset_password">RESET MY PASSWORD</string>
+    <string name="action_change">CHANGE CHANGES</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="sign_in_text"><u>Sign In</u></string>
+    <string name="sign_out_text"><u>Register</u></string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="sign_up"><u>No account? Sign up</u></string>
+    <string name="activity_movielist">Movie List</string>
+    <string name="activity_catchup">IPTV - CATCHUP</string>
+
+    <string name="menu_reload">Refresh</string>
+    <string name="menu_fav">Favourite</string>
+    <string name="title_activity_main">MainActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="signup_intro">Have a subscriber account already?</string>
+    <string name="tap_here_signin_text">Tap here to <font color="#FF3988"><b><u>Login</u></b></font></string>
+    <string name="signin_intro">Don’t have a subscriber account yet?</string>
+    <string name="tap_here_signup_text">Tap here to <font color="#FF3988"><b><u>SignUp</u></b></font></string>
+    <string name="resend_code_text">Resend Code </string>
+    <string name="resend_code_screen_text">A sms/email will sent to you shortly. Please paste it to confirm your identity" </string>
+    <string name="default_settings">Default Data and Quality Settings</string>
+    <string name="data_usage_message">Higher quality video uses more data. Data usage may vary based on network conditions.</string>
+    <string name="profile_1920x1080">Need 2Mbps+ bandwidth</string>
+    <string name="profile_1280x720">Need 1Mbps+ bandwidth</string>
+    <string name="profile_720x576">Need 512kbps+ bandwidth</string>
+    <string name="profile_480x320">Need 384kbps+ bandwidth</string>
+    <string name="profile_320x240">Need 256kbps+ bandwidth</string>
+    <string name="profile_240x160">Need 128kbps+ bandwidth</string>
+
+
+    <string name="already_subscribed"><u>Already subscribed?</u></string>
+
+    <string name="new_user"><u>New User?</u></string>
+    <string name="menu_similar">Similar Contents</string>
+
+    <string name="menu_add_to_fav">Add to Favorites</string>
+    <string name="menu_remove_from_fav">Remove</string>
+    <string name="menu_share">Share ...</string>
+    <string name="menu_not_interested">Not Interested</string>
+    <string name="crash_arca_text">An unexpected error occurred Please click OK to send it to developer to fix this problem.</string>
+
+
+    <string name="crash_arca_dialog_title">Toffee Crashed</string>
+    <string name="crash_arca_dialog_ok_toast">Thank you for helping us.</string>
+    <string name="app_id">F78B8DE7</string>
+    <!--<string name="app_id">08D0944E</string>-->
+    <string name="full_name_required_title">Full Name Required!</string>
+
+
+    <!--validation message-->
+    <string name="full_name_required_msg">You left the full name text field blank.</string>
+    <string name="phone_no_required_title">Phone Number Required!</string>
+    <string name="phone_no_required_msg">You left the pass text field blank.</string>
+    <string name="email_required_title">Valid Email Required!</string>
+    <string name="email_required_msg">Please provide valid email address.</string>
+    <string name="address_required_title">Address Required!</string>
+    <string name="address_required_msg">Please provide your address.</string>
+    <string name="password_required_title">Password Required!</string>
+
+    <string name="password_required_msg">You left the password field blank.</string>
+    <string name="new_password_required_title">New Password Required!</string>
+    <string name="new_password_required_msg">You left the new password field blank.</string>
+    <string name="confirm_password_required_title">Confirm Password Required!</string>
+    <string name="confirm_password_required_msg">You left the confirm password field blank.</string>
+    <string name="password_mismatch_title">Password Mismatch!</string>
+    <string name="password_mismatch_msg">Please check confirm password. It is not match your new password.</string>
+    <string name="enter_code_title">Enter Code</string>
+    <string name="enter_code_msg">You can not leave the field blank. Please enter the confirmation code to verify your identity.</string>
+    <string name="subscribed_screen_text">See all your Subscribed Packages below. To Subscribe a plan go to Packages.</string>
+
+    <string name="forgot_password_text">Forgot Password?</string>
+    <string name="signin_by_phone_text">Sign in by phone number</string>
+    <string name="signin_by_phone_screen_text">Please enter the phone number that you used to Sign in</string>
+    <string name="signin_using_password_text">Sign in using Password</string>
+    <string name="forgot_password_screen_text">You will receive an SMS with recovery code</string>
+    <string name="reset_password_screen_text">Please enter your new password</string>
+    <string name="packages_screen_text">Select Subscription from below to Enjoy Unlimited Content</string>
+    <string name="profile_updated_title">Profile Updated</string>
+
+    <!--success messages-->
+    <string name="password_changed_title">Password Updated</string>
+    <string name="check_icon">&#xf00c;</string>
+
+    <string name="view_all">View All</string>
+    <string name="edit_profile_button">EDIT</string>
+    <string name="newly_uploaded">LATEST VIDEOS</string>
+
+    //Landing Screen Category Titles
+    <string name="most_viewed">MOST VIEWED CHANNEL</string>
+    <string name="channel">Popular TV Channels</string>
+    <string name="vod">Videos</string>
+    <string name="catchup">CATCHUP</string>
+    <string name="terms_and_conditions">Terms &amp; Conditions</string>
+    <string name="terms_and_conditions_text">I agree to the Terms and Conditions</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="new_version_available">New Version Available!</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="password">Password</string>
+    <string name="still_having_problem">Still having problem?</string>
+    <string name="add_your_address">Add Your Address</string>
+    <string name="add_your_email">Add Your Email</string>
+    <string name="add_your_name">Add Your Name</string>
+    <string name="change_password_button">Change Password</string>
+    <string name="profile">Profile</string>
+    <string name="profile_edit">Profile - Edit</string>
+    <string name="change_password">Change Password</string>
+    <string name="cancel">Cancel</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="update">Check Update</string>
+    <string name="packages">Packages</string>
+    <string name="auto_renew">Auto Renew</string>
+    <string name="all_channels">All Channels</string>
+    <string name="free_trial_text">You are enjoying free trial</string>
+    <string name="free_trial">Free Trial</string>
+    <string name="subscriptions">Subscriptions</string>
+    <string name="enter_code">Enter Code</string>
+    <string name="camera_permission_required">Please grant camer permission</string>
+    <string name="photo_update_success">Photo updated successfully</string>
+    <string name="photo_update_error">Failed to update photo</string>
+    <string name="tag_line_txt">Watch TV &amp; Video Seamlessly!</string>
+    <string name="powered_by_txt">Streaming and Content copyright for TV managed by <b>Nexdecade Technology (Pvt.) Ltd.</b> For any query please contact at <b>content@nexdecade.com</b></string>
+    <string name="update_app">Update App</string>
+    <string name="next">Next</string>
+    <string name="enjoy_free_text">Enjoy %1$d days of TV</string>
+    <string name="days_left">%1$d days left</string>
+    <string name="weekly_trial">Weekly Pack</string>
+    <string name="strike_text"><strike>৳120</strike></string>
+    <string name="subscribed_pack">Subscribed</string>
+    <string name="daily_pack">Daily Pack</string>
+    <string name="subscription_to">Subscription to</string>
+    <string name="subscription_amount">Subscription Amount</string>
+    <string name="validity">Validity</string>
+    <string name="confirm_purchase_text"><b>৳120</b> will be deducted\nfrom your Banglalink balance after\nyou tap \'Confirm Purchase\'</string>
+    <string name="confirm_purchase_formatted_text">৳%1$d will be deducted\nfrom your Banglalink balance after\nyou tap \'Confirm Purchase\'</string>
+    <string name="confirm_purchase">Confirm Purchase</string>
+    <string name="auto_renew_formatted_text">Auto Renew in %1$d %2$s</string>
+    <string name="success_text">You have successfully subscribed to</string>
+    <string name="subscribe_foramtted_text">Subscribe ৳%1$d</string>
+    <string name="subscribe_text">Subscribe ৳30</string>
+    <string name="discount_foramtted_text"><strike>৳%1$d</strike></string>
+    <string name="amount_formatted_text">৳%1$d</string>
+    <string name="day_formatted_text">৳%1$d days</string>
+    <string name="week_formatted_text">৳%1$d week</string>
+    <string name="month_formatted_text">৳%1$d month</string>
+    <string name="year_formatted_text">৳%1$d year</string>
+    <string name="formatted_channel_number_text">%1$d Channels</string>
+    <string name="package_price_formatted_text">%1$d TK/%2$s</string>
+    <string name="back_to_home">Back To Home</string>
+    <string name="menu_create_text">Submit Your Video</string>
+    <string name="menu_channel_text">TV Channels</string>
+    <string name="strike_through_color_code">#FFCCE1</string>
+    <string name="menu_faqs_text">FAQs</string>
+    <string name="views">views</string>
+    <string-array name="user_types">
+        <item>TELCO</item>
+        <item>ISP</item>
+    </string-array>
+
+</resources>

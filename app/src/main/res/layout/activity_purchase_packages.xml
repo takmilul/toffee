@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_color"
+    android:fitsSystemWindows="true"
+    tools:context="com.lineagelab.nexsmarttv.PackageListActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/tool_bar_color"
+            android:theme="@style/ToolBarStyle"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/packages_screen_text"
+                android:textSize="16sp"
+                android:gravity="left"
+                android:textStyle="bold"
+                android:textColor="@color/main_text_color"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                >
+            </TextView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Credit: 10"
+                android:id="@+id/credit_amount_tv"
+                android:textSize="16sp"
+                android:gravity="right"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                >
+            </TextView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:id="@+id/mt_charge_layout"
+                android:gravity="center_vertical"
+                android:background="@drawable/input_field_selector">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:src="@mipmap/ic_bkash"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:gravity="center"
+                    android:textSize="18sp"
+                    android:textColor="@color/ash_text_color"
+                    android:layout_centerInParent="true"
+                    android:text="MT Charge"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginTop="20dp"
+                android:id="@+id/bank_card_layout"
+                android:gravity="center_vertical"
+                android:background="@drawable/input_field_selector">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:visibility="invisible"
+                    android:src="@mipmap/ic_bkash"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="@color/ash_text_color"
+                    android:gravity="center"
+                    android:textSize="18sp"
+                    android:layout_centerInParent="true"
+                    android:text="Bank Card"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginTop="20dp"
+                android:id="@+id/bkash_layout"
+                android:gravity="center_vertical"
+                android:background="@drawable/input_field_selector">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:visibility="visible"
+                    android:src="@mipmap/ic_bkash"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="@color/ash_text_color"
+                    android:gravity="center"
+                    android:textSize="18sp"
+                    android:layout_centerInParent="true"
+                    android:text="Bkash"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginTop="20dp"
+                android:id="@+id/scratch_card_layout"
+                android:gravity="center_vertical"
+                android:background="@drawable/input_field_selector">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:visibility="invisible"
+                    android:src="@mipmap/ic_bkash"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="@color/ash_text_color"
+                    android:gravity="center"
+                    android:textSize="18sp"
+                    android:layout_centerInParent="true"
+                    android:text="Scratch Card/Voucher"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginTop="20dp"
+                android:id="@+id/wallet_layout"
+                android:gravity="center_vertical"
+                android:background="@drawable/input_field_selector">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:visibility="invisible"
+                    android:src="@mipmap/ic_bkash"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="@color/ash_text_color"
+                    android:gravity="center"
+                    android:textSize="18sp"
+                    android:layout_centerInParent="true"
+                    android:text="Wallet"/>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

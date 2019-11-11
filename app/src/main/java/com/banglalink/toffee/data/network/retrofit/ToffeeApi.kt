@@ -1,0 +1,40 @@
+package com.banglalink.toffee.data.network.retrofit
+
+import com.banglalink.toffee.data.network.request.*
+import com.banglalink.toffee.data.network.response.*
+import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.POST
+
+interface ToffeeApi {
+
+
+    @POST("re-registration")
+    suspend fun signinByPhone(@Body signinByPhoneRequest: SigninByPhoneRequest): Response<SigninByPhoneResponse>
+    @POST("confirm-code")
+    suspend fun verifyCode(@Body verifyCodeRequest: VerifyCodeRequest):Response<VerifyCodeResponse>
+    @POST("subscriber-profile")
+    suspend fun getCustomerProfile(@Body profileRequest: ProfileRequest):Response<ProfileResponse>
+    @POST("categories")
+    suspend fun getCategory(@Body navCategoryRequest: NavCategoryRequest):Response<NavCategoryResponse>
+    @POST("contents-v2")
+    suspend fun getContents(@Body contentRequest: ContentRequest):Response<ContentResponse>
+    @POST("feature-contents")
+    suspend fun getFeatureContents(@Body featureContentRequest: FeatureContentRequest):Response<FeatureContentResponse>
+    @POST("history-contents")
+    suspend fun getHistoryContents(@Body historyContentRequest: HistoryContentRequest):Response<HistoryContentResponse>
+    @POST("favorite-contents")
+    suspend fun getFavoriteContents(@Body favoriteContentRequest: FavoriteContentRequest):Response<FavoriteContentResponse>
+    @POST("app-home-page-content-tofee")
+    suspend fun getChannels(@Body allChannelRequest: AllChannelRequest):Response<AllChannelResponse>
+    @POST("relative-contents-ext")
+    suspend fun getRelativeContents(@Body relativeContentRequest: RelativeContentRequest):Response<RelativeContentResponse>
+    @POST("viewing-content")
+    suspend fun getViewingContent(@Body viewingContentRequest: GetViewingContentRequest):Response<GetViewingContentResponse>
+    @POST("set-favorites")
+    suspend fun updateFavorite(@Body favoriteRequest: FavoriteRequest):Response<FavoriteResponse>
+    @POST("subscriber-profile-update")
+    suspend fun updateProfile(@Body updateProfileRequest: UpdateProfileRequest):Response<UpdateProfileResponse>
+    @POST("subscriber-profile-photo")
+    suspend fun uploadPhoto(@Body photoRequest: PhotoRequest):Response<PhotoResponse>
+}

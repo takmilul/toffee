@@ -1,0 +1,2 @@
+include ':app', ':slider', ':stickyheadergrid'
+rootProject.name='ToffeeKotlin'

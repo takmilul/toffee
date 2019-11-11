@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:openDrawer="start">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/screen_bg"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <include android:id="@+id/tbar"
+                    layout="@layout/layout_appbar" />
+                <FrameLayout
+                    android:id="@+id/content_viewer"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    />
+
+            </LinearLayout>
+
+
+            <com.banglalink.toffee.ui.widget.DraggerLayout
+                xmlns:dragger_layout="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/draggable_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                dragger_layout:top_view_id="@+id/player_view"
+                dragger_layout:bottom_view_id="@+id/details_viewer"
+                >
+
+
+
+                <FrameLayout
+                    android:id="@+id/details_viewer"
+                    android:layout_below="@+id/player_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clickable="true"
+                    />
+
+                <fragment
+                    android:background="@android:color/black"
+                    android:layout_alignParentRight="true"
+                    android:id="@+id/player_view"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:name="com.banglalink.toffee.ui.player.PlayerFragment2"/>
+
+            </com.banglalink.toffee.ui.widget.DraggerLayout>
+
+        </RelativeLayout>
+
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/nav_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            app:headerLayout="@layout/nav_header_main">
+
+            <ExpandableListView
+                android:layout_marginTop="@dimen/nav_header_height"
+                android:id="@+id/nav_menu_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="@null"
+                android:groupIndicator="@null">
+
+            </ExpandableListView>
+
+        </com.google.android.material.navigation.NavigationView>
+
+    </androidx.drawerlayout.widget.DrawerLayout>
+
+</layout>

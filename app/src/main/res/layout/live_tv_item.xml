@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <data>
+        <variable
+            name="data"
+            type="com.banglalink.toffee.ui.player.ChannelInfo" />
+        <variable
+            name="position"
+            type="Integer" />
+
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        xmlns:tools="http://schemas.android.com/tools">
+
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/icon"
+            android:layout_width="@dimen/channel_width"
+            android:layout_height="@dimen/channel_height"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            imageFromUrl="@{data.channel_logo}"
+            tools:src="@mipmap/ic_menu_channel"
+            app:civ_border_color="#bed6f3"
+            app:civ_border_width="0dp"
+            app:civ_circle_background_color="@android:color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:id="@+id/text"
+            android:layout_width="0dp"
+            android:gravity="center|top"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="8dp"
+            android:lines="2"
+            android:visibility="gone"
+            android:ellipsize="end"
+            tools:text="Channel"
+            android:textColor="@color/main_text_color"
+            android:textSize="14sp"
+            android:textStyle="normal"
+            android:fontFamily="@font/roboto_medium"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/icon"
+            app:layout_constraintStart_toStartOf="@+id/icon"
+            app:layout_constraintTop_toBottomOf="@+id/icon"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

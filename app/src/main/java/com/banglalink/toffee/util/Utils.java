@@ -1,0 +1,273 @@
+package com.banglalink.toffee.util;
+
+import android.app.Activity;
+import android.content.Context;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
+import android.os.Build;
+import android.text.TextUtils;
+import android.util.DisplayMetrics;
+import android.view.View;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+
+/**
+ * Created by shantanu on 9/25/16.
+ */
+
+public class Utils {
+
+    private Utils() {
+    }
+
+    public static String getDateTimeText(String dateTime) {
+
+        if (TextUtils.isEmpty(dateTime)) {
+            return "";
+        }
+        String dateTimeNew = "";
+        SimpleDateFormat currentFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //2016-10-20 06:45:29
+        Date dateObj;
+        try {
+            dateObj = currentFormatter.parse(dateTime);
+            SimpleDateFormat postFormatter = new SimpleDateFormat("MMM dd, yyyy hh:mm aaa");
+            String newDateStr = postFormatter.format(dateObj);
+            dateTimeNew = newDateStr;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            dateTimeNew = dateTime;
+        }
+        return dateTimeNew;
+    }
+
+    public static Date getDate(String dateTime) {
+
+        SimpleDateFormat currentFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //2016-10-20 06:45:29
+        Date dateObj = null;
+        try {
+            dateObj = currentFormatter.parse(dateTime);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dateObj;
+    }
+
+    public static int getCountOfDays(Date now, Date expireDate) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
+        Date todayWithZeroTime = null;
+        try {
+            Date today = new Date();
+
+            todayWithZeroTime = dateFormat.parse(dateFormat.format(today));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        int cYear = 0, cMonth = 0, cDay = 0;
+
+        if (now.after(todayWithZeroTime)) {
+            Calendar cCal = Calendar.getInstance();
+            cCal.setTime(now);
+            cYear = cCal.get(Calendar.YEAR);
+            cMonth = cCal.get(Calendar.MONTH);
+            cDay = cCal.get(Calendar.DAY_OF_MONTH);
+
+        } else {
+            Calendar cCal = Calendar.getInstance();
+            cCal.setTime(todayWithZeroTime);
+            cYear = cCal.get(Calendar.YEAR);
+            cMonth = cCal.get(Calendar.MONTH);
+            cDay = cCal.get(Calendar.DAY_OF_MONTH);
+        }
+
+
+        Calendar eCal = Calendar.getInstance();
+        eCal.setTime(expireDate);
+
+        int eYear = eCal.get(Calendar.YEAR);
+        int eMonth = eCal.get(Calendar.MONTH);
+        int eDay = eCal.get(Calendar.DAY_OF_MONTH);
+
+        Calendar date1 = Calendar.getInstance();
+        Calendar date2 = Calendar.getInstance();
+
+        date1.clear();
+        date1.set(cYear, cMonth, cDay);
+        date2.clear();
+        date2.set(eYear, eMonth, eDay);
+
+        long diff = date2.getTimeInMillis() - date1.getTimeInMillis();
+
+        float dayCount = (float) diff / (24 * 60 * 60 * 1000);
+
+        return  (int) dayCount;
+    }
+
+    String getRemainingTimeText(Date expiryDate){
+        long different = expiryDate.getTime() - System.currentTimeMillis();
+
+        long secondsInMilli = 1000;
+        long minutesInMilli = secondsInMilli * 60;
+        long hoursInMilli = minutesInMilli * 60;
+        long daysInMilli = hoursInMilli * 24;
+
+        long elapsedDays = different / daysInMilli;
+        different = different % daysInMilli;
+
+        long elapsedHours = different / hoursInMilli;
+        different = different % hoursInMilli;
+
+        long elapsedMinutes = different / minutesInMilli;
+
+        return String.format(Locale.US,"%dd:%02dh:%02dm Remaining",
+                elapsedDays,
+                elapsedHours, elapsedMinutes);
+    }
+
+    public static String getFormattedViewsText(String viewCount) {
+
+        if (TextUtils.isEmpty(viewCount) || !TextUtils.isDigitsOnly(viewCount)) return viewCount;
+
+        long count = Long.parseLong(viewCount);
+        if (count < 1000) return viewCount;
+        else
+            return viewCountFormat(count, 0);
+    }
+
+    public static boolean checkWifiOnAndConnected(Context context) {
+        WifiManager wifiMgr = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+
+        if (wifiMgr != null && wifiMgr.isWifiEnabled()) { // Wi-Fi adapter is ON
+
+            WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
+
+            if (wifiInfo.getNetworkId() == -1) {
+                return false; // Not connected to an access point
+            }
+            return true; // Connected to an access point
+        } else {
+            return false; // Wi-Fi adapter is OFF
+        }
+    }
+
+    public static String getGmtOffsetString() {
+        int offsetMillis = TimeZone.getDefault().getRawOffset();
+        int offsetMinutes = offsetMillis / 60000;
+        char sign = '+';
+        if (offsetMinutes < 0) {
+            sign = '-';
+            offsetMinutes = -offsetMinutes;
+        }
+        return String.format("%c%02d:%02d", sign, offsetMinutes / 60, offsetMinutes % 60);
+    }
+
+    public static String getTime(String dateTime) {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-d HH:mm:ss");
+        DateFormat formater = new SimpleDateFormat("hh:mm aa");
+        Date date = null;// converting String to date
+        try {
+            date = df.parse(dateTime);
+            return formater.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public static String getDay(String dateTime) {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-d HH:mm:ss");
+        DateFormat formater = new SimpleDateFormat("EEEE");
+        Date date = null;// converting String to date
+        try {
+            date = df.parse(dateTime);
+            return formater.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public static void setFullScreen(Activity activity, boolean visible) {
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+
+        if (!visible) {
+            activity.getWindow().getDecorView().setSystemUiVisibility(0);
+        } else {
+            activity.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+        }
+    }
+
+    public static boolean isFullScreen(Activity activity) {
+        int uiOptions = activity.getWindow().getDecorView().getSystemUiVisibility();
+        if (Build.VERSION.SDK_INT >= 14) {
+            return ((uiOptions | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) == uiOptions);
+        }
+        // Status bar hiding: Backwards compatible to Jellybean
+        if (Build.VERSION.SDK_INT >= 16) {
+            return ((uiOptions | View.SYSTEM_UI_FLAG_FULLSCREEN) == uiOptions);
+        }
+
+        // Immersive mode: Backward compatible to KitKat.
+        // Note that this flag doesn't do anything by itself, it only augments the behavior
+        // of HIDE_NAVIGATION and FLAG_FULLSCREEN.  For the purposes of this sample
+        // all three flags are being toggled together.
+        // Note that there are two immersive mode UI flags, one of which is referred to as "sticky".
+        // Sticky immersive mode differs in that it makes the navigation and status bars
+        // semi-transparent, and the UI flag does not get cleared when the user interacts with
+        // the screen.
+        if (Build.VERSION.SDK_INT >= 18) {
+            return ((uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY) == uiOptions);
+        }
+        return false;
+    }
+
+
+    public static String discardZeroFromDuration(String duration) {
+        String retValue;
+        if (TextUtils.isEmpty(duration)) {
+            retValue = "00:00";
+            return retValue;
+        }
+
+        if (duration.startsWith("00:")) {
+            retValue = duration.substring(3);
+        } else {
+            retValue = duration;
+        }
+
+        return retValue;
+    }
+
+    private static char[] c = new char[]{'K', 'M', 'B', 'T'};
+
+    /**
+     * Recursive implementation, invokes itself for each factor of a thousand, increasing the class on each invokation.
+     *
+     * @param n         the number to format
+     * @param iteration in fact this is the class from the array c
+     * @return a String representing the number n formatted in a cool looking way.
+     */
+    private static String viewCountFormat(double n, int iteration) {
+        double d = ((long) n / 100) / 10.0;
+        boolean isRound = (d * 10) % 10 == 0;//true if the decimal part is equal to 0 (then it's trimmed anyway)
+        return (d < 1000 ? //this determines the class, i.e. 'k', 'm' etc
+                ((d > 99.9 || isRound || (!isRound && d > 9.99) ? //this decides whether to trim the decimals
+                        (int) d * 10 / 10 : d + "" // (int) d * 10 / 10 drops the decimal
+                ) + "" + c[iteration])
+                : viewCountFormat(d, iteration + 1));
+
+    }
+
+    public static float convertDpToPixel(float dp, Context context){
+        return dp * ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+    }
+
+}

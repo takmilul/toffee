@@ -1,0 +1,23 @@
+package com.banglalink.toffee.ui.home
+
+import com.banglalink.toffee.R
+import com.banglalink.toffee.ui.player.ChannelInfo
+import com.foxrentacar.foxpress.ui.common.MyBaseAdapter
+import com.foxrentacar.foxpress.ui.common.MyViewHolder
+
+class PopularVideoListAdapter(private val optionCallBack: OptionCallBack, channelCallback:(ChannelInfo)->Unit={}): MyBaseAdapter<ChannelInfo>(channelCallback) {
+
+    override fun getLayoutIdForPosition(position: Int): Int {
+        if(position == 0){
+            return R.layout.item_list_header_popular_video
+        }
+        return R.layout.list_item_popular_videos
+    }
+
+    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+        super.onBindViewHolder(holder, position)
+        holder.bindCallBack(optionCallBack)
+
+
+    }
+}

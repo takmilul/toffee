@@ -1,0 +1,23 @@
+package com.banglalink.toffee.ui.recent
+
+import com.banglalink.toffee.R
+import com.banglalink.toffee.ui.home.OptionCallBack
+import com.banglalink.toffee.ui.player.ChannelInfo
+import com.foxrentacar.foxpress.ui.common.MyBaseAdapter
+import com.foxrentacar.foxpress.ui.common.MyViewHolder
+
+class RecentAdapter(private val optionCallBack: OptionCallBack, channelCallback:(ChannelInfo)->Unit={}) : MyBaseAdapter<ChannelInfo>(channelCallback) {
+    override fun getLayoutIdForPosition(position: Int): Int {
+        if (getItem(position)!!.isLive) {
+            return R.layout.list_item_live
+        }
+        return R.layout.list_item_catchup
+    }
+
+    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+        super.onBindViewHolder(holder, position)
+        holder.bindCallBack(optionCallBack)
+
+
+    }
+}
