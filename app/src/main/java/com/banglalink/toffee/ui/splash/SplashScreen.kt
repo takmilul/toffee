@@ -13,6 +13,8 @@ import com.banglalink.toffee.exception.CustomerNotFoundException
 import com.banglalink.toffee.exception.UpdateRequiredException
 import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.login.SigninByPhoneActivity
@@ -42,10 +44,18 @@ class SplashScreen : BaseAppCompatActivity() {
         }
 
         observe(viewModel.splashLiveData) {
-            handler.postDelayed({
-                launchActivity<HomeActivity>()
-                finish()
-            },2000)
+            when(it){
+                is Resource.Success->{
+                    handler.postDelayed({
+                        launchActivity<HomeActivity>()
+                        finish()
+                    },2000)
+                }
+                is Resource.Failure->{
+                    showToast(it.error.msg)
+                }
+            }
+
         }
     }
 
@@ -58,7 +68,7 @@ class SplashScreen : BaseAppCompatActivity() {
 
         builder.setPositiveButton(
             "Update"
-        ) { dialogInterface, i ->
+        ) { _, i ->
             try {
                 startActivity(
                     Intent(
@@ -79,12 +89,11 @@ class SplashScreen : BaseAppCompatActivity() {
         }
 
         if (!forceUpdate) {
-            builder.setNegativeButton("OK", object : DialogInterface.OnClickListener {
-                override fun onClick(dialogInterface: DialogInterface, i: Int) {
-                    dialogInterface.dismiss()
-                    viewModel.init(true)
-                }
-            })
+            builder.setNegativeButton("OK"
+            ) { dialogInterface, _ ->
+                dialogInterface.dismiss()
+                viewModel.init(true)
+            }
         }
 
         val alertDialog = builder.create()

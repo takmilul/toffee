@@ -13,8 +13,7 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.channels.adapter.ChannelStickyListAdapter
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.player.ChannelInfo
-import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
-import com.codewaves.stickyheadergrid.StickyHeaderGridLayoutManager
+import com.banglalink.toffee.ui.widget.StickyHeaderGridLayoutManager
 
 class ChannelFragment: HomeBaseFragment(),ChannelStickyListAdapter.OnItemClickListener {
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {

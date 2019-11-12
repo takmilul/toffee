@@ -1,22 +1,23 @@
-package com.codewaves.stickyheadergrid;
+package com.banglalink.toffee.ui.widget;
 
 import android.content.Context;
 import android.graphics.PointF;
 import android.os.Parcel;
 import android.os.Parcelable;
-import androidx.recyclerview.widget.LinearSmoothScroller;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.recyclerview.widget.LinearSmoothScroller;
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import static androidx.recyclerview.widget.RecyclerView.NO_POSITION;
-import static com.codewaves.stickyheadergrid.StickyHeaderGridAdapter.TYPE_HEADER;
-import static com.codewaves.stickyheadergrid.StickyHeaderGridAdapter.TYPE_ITEM;
+import static com.banglalink.toffee.ui.widget.StickyHeaderGridAdapter.TYPE_HEADER;
+import static com.banglalink.toffee.ui.widget.StickyHeaderGridAdapter.TYPE_ITEM;
 
 /**
  * Created by Sergej Kravcenko on 4/24/2017.
@@ -47,7 +48,7 @@ public class StickyHeaderGridLayoutManager extends RecyclerView.LayoutManager im
    private View mStickyHeaderView;
    private HeaderState mStickyHeadeState;
 
-   private View mFillViewSet[];
+   private View[] mFillViewSet;
 
    private SavedState mPendingSavedState;
    private int mPendingScrollPosition = NO_POSITION;
@@ -1305,7 +1306,7 @@ public class StickyHeaderGridLayoutManager extends RecyclerView.LayoutManager im
          dest.writeInt(mAnchorOffset);
       }
 
-      public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {
+      public static final Creator<SavedState> CREATOR = new Creator<SavedState>() {
          @Override
          public SavedState createFromParcel(Parcel in) {
             return new SavedState(in);

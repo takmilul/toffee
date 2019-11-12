@@ -1,8 +1,11 @@
 package com.banglalink.toffee.util
 
 import android.text.TextUtils
+import android.util.Log
 import com.banglalink.toffee.exception.ApiException
 import com.banglalink.toffee.exception.Error
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
 import java.lang.Exception
@@ -33,20 +36,19 @@ fun getError(e: Exception): Error {
     }
 }
 
-fun discardZeroFromDuration(duration: String): String {
-    val retValue: String
-    if (TextUtils.isEmpty(duration)) {
-        retValue = "00:00"
-        return retValue
-    }
+suspend fun discardZeroFromDuration(duration: String): String {
+    return withContext(Dispatchers.Default){
+        Log.e("DURRATION THREAD",Thread.currentThread().name)
+        if (TextUtils.isEmpty(duration)) {
+           return@withContext "00:00"
+        }
 
-    if (duration.startsWith("00:")) {
-        retValue = duration.substring(3)
-    } else {
-        retValue = duration
+        if (duration.startsWith("00:")) {
+            duration.substring(3)
+        } else {
+            duration
+        }
     }
-
-    return retValue
 }
 
 private val c = charArrayOf('K', 'M', 'B', 'T')
@@ -59,6 +61,7 @@ private val c = charArrayOf('K', 'M', 'B', 'T')
  * @return a String representing the number n formatted in a cool looking way.
  */
 private fun viewCountFormat(n: Double, iteration: Int): String {
+    Log.e("VIEW COUNT THREAD",Thread.currentThread().name)
     val d = n.toLong() / 100 / 10.0
     val isRound =
         d * 10 % 10 == 0.0//true if the decimal part is equal to 0 (then it's trimmed anyway)
@@ -75,13 +78,17 @@ private fun viewCountFormat(n: Double, iteration: Int): String {
 
 }
 
-fun getFormattedViewsText(viewCount: String): String {
+suspend fun getFormattedViewsText(viewCount: String): String {
 
-    if (TextUtils.isEmpty(viewCount) || !TextUtils.isDigitsOnly(viewCount)) return viewCount
+    return withContext(Dispatchers.Default){
+        if (TextUtils.isEmpty(viewCount) || !TextUtils.isDigitsOnly(viewCount))
+            return@withContext viewCount
 
-    val count = java.lang.Long.parseLong(viewCount)
-    return if (count < 1000)
-        viewCount
-    else
-        viewCountFormat(count.toDouble(), 0)
+        val count = java.lang.Long.parseLong(viewCount)
+        if (count < 1000)
+            viewCount
+        else
+            viewCountFormat(count.toDouble(), 0)
+    }
+
 }

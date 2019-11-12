@@ -5,8 +5,10 @@ import android.app.AlertDialog
 import android.app.SearchManager
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -41,6 +43,7 @@ import com.banglalink.toffee.ui.player.PlayerActivity
 import com.banglalink.toffee.ui.player.PlayerFragment2
 import com.banglalink.toffee.ui.profile.ViewProfileActivity
 import com.banglalink.toffee.ui.recent.RecentFragment
+import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.settings.SettingsActivity
 import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.util.Utils
@@ -160,6 +163,27 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
 
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        if (Intent.ACTION_SEARCH == intent.action) {
+            val query = intent.getStringExtra(SearchManager.QUERY)
+            if (!TextUtils.isEmpty(query)) {
+                val fragment = supportFragmentManager.findFragmentById(R.id.content_viewer)
+                if (fragment != null && fragment is SearchFragment) {
+                    (fragment as SearchFragment).search(query)
+                } else
+                    loadFragmentById(
+                        R.id.content_viewer, SearchFragment.createInstance(query),
+                        SearchFragment::class.java!!.getName()
+                    )
+            }
+            if (searchView != null) {
+                searchView!!.setQuery(query.toLowerCase(), false)
+                searchView!!.clearFocus()
+            }
+        }
+//        handleSharedUrl(intent)
+    }
     private fun loadChannel(channelInfo: ChannelInfo) {
         if (mediaPlayer != null) {
             mediaPlayer.load(channelInfo)

@@ -1,2 +1,2 @@
-include ':app', ':slider', ':stickyheadergrid'
+include ':app', ':slider'
 rootProject.name='ToffeeKotlin'

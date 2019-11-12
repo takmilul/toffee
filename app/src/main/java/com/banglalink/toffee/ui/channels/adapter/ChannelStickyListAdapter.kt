@@ -7,12 +7,11 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import coil.api.load
-import coil.request.CachePolicy
 import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
 import com.banglalink.toffee.ui.channels.StickyHeaderInfo
 import com.banglalink.toffee.ui.player.ChannelInfo
-import com.codewaves.stickyheadergrid.StickyHeaderGridAdapter
+import com.banglalink.toffee.ui.widget.StickyHeaderGridAdapter
 
 class ChannelStickyListAdapter(
     private val context: Context,
@@ -20,10 +19,6 @@ class ChannelStickyListAdapter(
     private val onItemClickListener: OnItemClickListener?
 ) :
     StickyHeaderGridAdapter() {
-
-    fun addAll(stickyHeaderInfoList: List<StickyHeaderInfo>) {
-        values.addAll(stickyHeaderInfoList)
-    }
 
     override fun getSectionCount(): Int {
         return values.size
@@ -49,7 +44,7 @@ class ChannelStickyListAdapter(
     override fun onCreateItemViewHolder(
         parent: ViewGroup,
         itemType: Int
-    ): StickyHeaderGridAdapter.ItemViewHolder {
+    ): ItemViewHolder {
         return LiveTvViewHolder(
             LayoutInflater.from(parent.context).inflate(
                 R.layout.live_tv_grid_item,
@@ -81,8 +76,9 @@ class ChannelStickyListAdapter(
         liveTvViewHolder.name.text = item.program_name
         liveTvViewHolder.icon.load(item.channel_logo){
             transformations(CircleCropTransformation())
-            memoryCachePolicy(CachePolicy.DISABLED)
-            diskCachePolicy(CachePolicy.ENABLED)
+            crossfade(true)
+//            memoryCachePolicy(CachePolicy.DISABLED)
+//            diskCachePolicy(CachePolicy.ENABLED)
         }
 
     }
@@ -90,22 +86,15 @@ class ChannelStickyListAdapter(
 
     internal class HeaderViewHolder(itemView: View) :
         StickyHeaderGridAdapter.HeaderViewHolder(itemView) {
-        var text: TextView
+        var text: TextView = itemView.findViewById(R.id.text)
 
-        init {
-            text = itemView.findViewById(R.id.text)
-        }
     }
 
     internal class LiveTvViewHolder(itemView: View) :
-        StickyHeaderGridAdapter.ItemViewHolder(itemView) {
-        var name: TextView
-        var icon: ImageView
+        ItemViewHolder(itemView) {
+        var name: TextView = itemView.findViewById(R.id.text)
+        var icon: ImageView = itemView.findViewById(R.id.icon)
 
-        init {
-            name = itemView.findViewById(R.id.text)
-            icon = itemView.findViewById(R.id.icon)
-        }
     }
 
     interface OnItemClickListener {

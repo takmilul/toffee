@@ -64,7 +64,6 @@ class CatchupViewModel(application: Application):BaseViewModel(application) {
         this.subCategory = subCategory
         this.category = category
         this.categoryId = categoryId
-        this.title = title
         this.type = type
         getContent(0)
     }

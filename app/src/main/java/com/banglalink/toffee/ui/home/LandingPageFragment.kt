@@ -3,25 +3,19 @@ package com.banglalink.toffee.ui.home
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
-import android.widget.TextView
-import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.ViewPager
 import com.banglalink.toffee.R
-import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.player.ChannelInfo
-import com.daimajia.slider.library.SliderLayout
-import com.daimajia.slider.library.SliderTypes.BaseSliderView
-import com.daimajia.slider.library.SliderTypes.DefaultSliderView
 
 class LandingPageFragment :HomeBaseFragment(){
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
@@ -30,9 +24,8 @@ class LandingPageFragment :HomeBaseFragment(){
 
     lateinit var channelAdapter: ChannelAdapter
     lateinit var popularVideoListAdapter: PopularVideoListAdapter
-    var imageSliderList: MutableList<DefaultSliderView> = mutableListOf()
-    lateinit var imageSlider: SliderLayout
-    lateinit var catchupListView: RecyclerView
+    lateinit var imageSlider: ViewPager
+    private lateinit var catchupListView: RecyclerView
     lateinit var bottomProgress: ProgressBar
 
     val viewModel by lazy {
@@ -91,6 +84,7 @@ class LandingPageFragment :HomeBaseFragment(){
             }
         })
 
+
         bottomProgress = view.findViewById(R.id.progress_bar)
         bottomProgress.visibility = View.VISIBLE
 
@@ -121,21 +115,7 @@ class LandingPageFragment :HomeBaseFragment(){
         viewModel.featureContentLiveData.observe(viewLifecycleOwner, Observer {
             when(it){
                 is Resource.Success ->{
-                    for(channelInfo in it.data){
-                        val textSliderView = DefaultSliderView(activity, channelInfo)
-                        textSliderView
-                            .description(channelInfo.program_name)
-                            .image(channelInfo.feature_image).scaleType = BaseSliderView.ScaleType.Fit
-
-                        //add your extra information
-                        textSliderView.bundle(Bundle())
-                        textSliderView.bundle
-                            .putString("extra", channelInfo.program_name)
-
-//                        imageSlider.addSlider(textSliderView);
-                        imageSliderList.add(textSliderView)
-                    }
-                    loadSlider()
+                  imageSlider.adapter=SliderAdapter(context!!,it.data)
                 }
                 is Resource.Failure->{
                     Log.e("LOG",it.error.msg)
@@ -160,16 +140,6 @@ class LandingPageFragment :HomeBaseFragment(){
                 }
             }
         })
-    }
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        loadSlider()
-    }
-
-    private fun loadSlider() {
-        for (defaultSliderView in imageSliderList) {
-            imageSlider.addSlider(defaultSliderView)
-        }
     }
 
     fun onBackPressed(): Boolean {

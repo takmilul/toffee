@@ -5,6 +5,8 @@ import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.ui.player.ChannelInfo
+import com.banglalink.toffee.util.discardZeroFromDuration
+import com.banglalink.toffee.util.getFormattedViewsText
 
 class GetRelativeContents(private val preference: Preference, private val toffeeApi: ToffeeApi){
 
@@ -27,9 +29,13 @@ class GetRelativeContents(private val preference: Preference, private val toffee
             return response.response.channels.filter {
                 val status = it.program_name.equals(channelInfo.program_name,true)
                 !status
+            }.map {
+                it.formatted_view_count = getFormattedViewsText(it.view_count)
+                it.formattedDuration = discardZeroFromDuration(it.duration)
+                it
             }
         }
-        return response.response.channels?:listOf()
+        return listOf()
 
     }
 }

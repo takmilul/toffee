@@ -1,9 +1,10 @@
-package com.codewaves.stickyheadergrid;
+package com.banglalink.toffee.ui.widget;
+
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.View;
-import android.view.ViewGroup;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -104,11 +105,11 @@ public abstract class StickyHeaderGridAdapter extends RecyclerView.Adapter<Stick
       return position == 0 ? TYPE_HEADER : TYPE_ITEM;
    }
 
-   static private int internalViewType(int type) {
+   private static int internalViewType(int type) {
       return type & 0xFF;
    }
 
-   static private int externalViewType(int type) {
+   private static int externalViewType(int type) {
       return type >> 8;
    }
 

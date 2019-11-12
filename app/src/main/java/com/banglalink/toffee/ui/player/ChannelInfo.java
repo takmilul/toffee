@@ -20,10 +20,12 @@ public class ChannelInfo implements Parcelable {
     public String water_mark_url;
     public String type;
     public String view_count;
+    public String formatted_view_count;
     public String lcn;
     public String individual_price;
     public String video_tags;
     public String duration;
+    public String formattedDuration;
     public String age_restriction;
     public String service_operator_id;
     public String logo_mobile_url;
@@ -92,10 +94,12 @@ public class ChannelInfo implements Parcelable {
         water_mark_url = in.readString();
         type = in.readString();
         view_count = in.readString();
+        formatted_view_count = in.readString();
         lcn = in.readString();
         individual_price = in.readString();
         video_tags = in.readString();
         duration = in.readString();
+        formattedDuration = in.readString();
         age_restriction = in.readString();
         service_operator_id = in.readString();
         logo_mobile_url = in.readString();
@@ -173,10 +177,12 @@ public class ChannelInfo implements Parcelable {
         dest.writeString(water_mark_url);
         dest.writeString(type);
         dest.writeString(view_count);
+        dest.writeString(formatted_view_count);
         dest.writeString(lcn);
         dest.writeString(individual_price);
         dest.writeString(video_tags);
         dest.writeString(duration);
+        dest.writeString(formattedDuration);
         dest.writeString(age_restriction);
         dest.writeString(service_operator_id);
         dest.writeString(logo_mobile_url);

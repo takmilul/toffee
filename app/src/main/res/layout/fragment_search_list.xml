@@ -7,11 +7,25 @@
     android:background="@color/screen_bg"
     android:orientation="vertical">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginTop="10dp"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/list"/>
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/list"/>
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:padding="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|bottom"
+            android:visibility="gone"
+            />
+
+    </FrameLayout>
 
     <TextView
         android:visibility="visible"
