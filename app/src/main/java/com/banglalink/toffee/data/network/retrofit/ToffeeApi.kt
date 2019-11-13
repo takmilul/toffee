@@ -30,7 +30,7 @@ interface ToffeeApi {
     @POST("relative-contents-ext")
     suspend fun getRelativeContents(@Body relativeContentRequest: RelativeContentRequest):Response<RelativeContentResponse>
     @POST("viewing-content")
-    suspend fun getViewingContent(@Body viewingContentRequest: GetViewingContentRequest):Response<GetViewingContentResponse>
+    suspend fun sendViewingContent(@Body viewingContentRequest: ViewingContentRequest):Response<ViewingContentResponse>
     @POST("set-favorites")
     suspend fun updateFavorite(@Body favoriteRequest: FavoriteRequest):Response<FavoriteResponse>
     @POST("subscriber-profile-update")

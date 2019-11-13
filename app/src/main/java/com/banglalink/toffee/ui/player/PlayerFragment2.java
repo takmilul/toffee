@@ -20,6 +20,7 @@ import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.banglalink.toffee.R;
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener;
@@ -76,11 +77,14 @@ public class PlayerFragment2 extends Fragment implements TextureView.SurfaceText
     private Bitmap previewImage;
     private RotationHelper rotationHelper;
 
+    private PlayerFragmentViewModel viewModel;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         handler = new Handler();
         rotationHelper = new RotationHelper(getActivity());
+        viewModel = ViewModelProviders.of(this).get(PlayerFragmentViewModel.class);
     }
 
     @Nullable
@@ -136,11 +140,9 @@ public class PlayerFragment2 extends Fragment implements TextureView.SurfaceText
         else {
             preparePlayer(true);
         }
-//        GetViewingContentRequest request = new GetViewingContentRequest();
-//        request.type = channelInfo.type.toUpperCase();
-//        request.contentId = Integer.parseInt(channelInfo.id);
-//        new RequestHandler<>(getLifecycle(), getActivity(),null, GetViewingContentResponse.class)
-//                .execute(RequestIDS.VIEWING_CONTENT,request.toJson());
+
+        viewModel.sendViewContentEvent(channelInfo);
+
     }
 
     private void preparePlayer(boolean playWhenReady){
