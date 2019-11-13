@@ -1,5 +1,7 @@
 package com.banglalink.toffee.ui.profile
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
@@ -27,6 +29,7 @@ class ViewProfileActivity : BaseAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this,R.layout.activity_profile)
+        binding.data = EditProfileForm()//initializing with empty profile form
         if (binding.toolbar != null) {
             setSupportActionBar(binding.toolbar)
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -53,10 +56,21 @@ class ViewProfileActivity : BaseAppCompatActivity() {
     }
 
     fun onClickEditProfile(view: View){
-        launchActivity<EditProfileActivity>()
+        launchActivity<EditProfileActivity>(requestCode = 1000){
+            putExtra(EditProfileActivity.PROFILE_INFO,binding.data)
+        }
     }
 
     fun onClickChangePassword(view:View){
 
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if(requestCode == 1000 && resultCode == Activity.RESULT_OK){
+            if(data!=null){
+                binding.data = data.getSerializableExtra(EditProfileActivity.PROFILE_INFO) as EditProfileForm
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
     }
 }

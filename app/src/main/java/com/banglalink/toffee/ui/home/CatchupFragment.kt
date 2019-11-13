@@ -52,6 +52,8 @@ class CatchupFragment:HomeBaseFragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        title = arguments?.getString("title")
+        activity?.title = title
         val progressDialog = VelBoxProgressDialog(context!!)
         mAdapter= CommonChannelAdapter(this) {
             homeViewModel.fragmentDetailsMutableLiveData.postValue(it)
@@ -120,8 +122,12 @@ class CatchupFragment:HomeBaseFragment(){
         title: String,
         type: String
     ) {
+        activity?.title = title
         binding.progressBar.visibility = View.VISIBLE
         loading = true
+        mAdapter.removeAll()
+        mAdapter.clearOffset()
+        mAdapter.notifyDataSetChanged()
         viewModel.updateInfo(category,categoryId,subCategory,subCategoryID,type)
     }
 

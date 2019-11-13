@@ -14,21 +14,22 @@ import com.banglalink.toffee.ui.player.ChannelInfo
 import com.banglalink.toffee.usecase.GetContents
 import com.banglalink.toffee.usecase.GetFeatureContents
 import com.banglalink.toffee.usecase.UpdateFavorite
+import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.getError
 import kotlinx.coroutines.launch
 
 class LandingPageViewModel(application: Application):BaseViewModel(application) {
 
     //LiveData for fetching channel list
-    private val channelMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
+    private val channelMutableLiveData = SingleLiveEvent<Resource<List<ChannelInfo>>>()
     val channelLiveData = channelMutableLiveData.toLiveData()
 
     //LiveData for fetching popular list
-    private val popularVideoMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
+    private val popularVideoMutableLiveData = SingleLiveEvent<Resource<List<ChannelInfo>>>()
     val popularVideoLiveData = popularVideoMutableLiveData.toLiveData()
 
     //LiveData for featureContent List
-    private val featureContentMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
+    private val featureContentMutableLiveData = SingleLiveEvent<Resource<List<ChannelInfo>>>()
     val featureContentLiveData = featureContentMutableLiveData.toLiveData()
 
     private val getChannels by lazy {

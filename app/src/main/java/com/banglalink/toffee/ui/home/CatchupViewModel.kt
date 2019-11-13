@@ -28,7 +28,6 @@ class CatchupViewModel(application: Application):BaseViewModel(application) {
     private var subCategory: String? = null
     private var subCategoryID: Int = 0
     private var type: String? = null
-    private var title: String? = null
 
     private val getContent by lazy {
         GetContents(RetrofitApiClient.toffeeApi)
@@ -39,7 +38,6 @@ class CatchupViewModel(application: Application):BaseViewModel(application) {
         this.categoryId = arguments.getInt("category-id")
         this.subCategory = arguments.getString("sub-category")
         this.subCategoryID = arguments.getInt("sub-category-id")
-        this.title = arguments.getString("title")
         this.type = arguments.getString("type")
     }
     fun getContent(offset: Int){

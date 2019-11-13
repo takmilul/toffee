@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.common
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -57,7 +58,13 @@ abstract class HomeBaseFragment:Fragment(), OptionCallBack {
         popupMenu.setOnMenuItemClickListener{
             when(it?.itemId){
                 R.id.menu_share->{
-                    activity?.showToast("Share clicked ${channelInfo.program_name} ")
+                    val sharingIntent = Intent(Intent.ACTION_SEND)
+                    sharingIntent.type = "text/plain"
+                    sharingIntent.putExtra(
+                        Intent.EXTRA_TEXT,
+                        channelInfo.video_share_url
+                    )
+                    activity?.startActivity(Intent.createChooser(sharingIntent, "Share via"))
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_fav->{

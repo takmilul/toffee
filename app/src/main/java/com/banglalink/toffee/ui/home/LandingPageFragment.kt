@@ -22,7 +22,7 @@ class LandingPageFragment :HomeBaseFragment(){
         popularVideoListAdapter.remove(channelInfo)
     }
 
-    lateinit var channelAdapter: ChannelAdapter
+    private lateinit var channelAdapter: ChannelAdapter
     lateinit var popularVideoListAdapter: PopularVideoListAdapter
     lateinit var imageSlider: ViewPager
     private lateinit var catchupListView: RecyclerView
@@ -55,13 +55,14 @@ class LandingPageFragment :HomeBaseFragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.title = "Home"
+        imageSlider = view.findViewById(R.id.slider)
         val listLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
         val channelListView = view.findViewById<RecyclerView>(R.id.channel_list).apply {
-            setHasFixedSize(true)
             layoutManager = listLayoutManager
-            imageSlider = view.findViewById(R.id.slider)
             adapter = channelAdapter
         }
+
+        Log.e("Adapter size:","${channelAdapter.itemCount}")
 
         channelListView.addOnScrollListener(object :
             EndlessRecyclerViewScrollListener(listLayoutManager) {

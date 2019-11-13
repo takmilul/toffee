@@ -37,7 +37,7 @@ class SearchFragment:HomeBaseFragment() {
     lateinit var adapter: CommonChannelAdapter
 
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
-       //not needed
+        adapter?.remove(channelInfo)
     }
 
 

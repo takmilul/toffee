@@ -8,7 +8,7 @@
         <import type="android.text.TextUtils"/>
         <variable
             name="data"
-            type="com.banglalink.toffee.model.Profile" />
+            type="com.banglalink.toffee.ui.profile.EditProfileForm" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -73,8 +73,8 @@
                         android:fontFamily="@font/roboto_regular"
                         android:gravity="center_vertical"
                         android:padding="10dp"
-                        android:text="@{data.name}"
-                        android:textColor="@{TextUtils.isEmpty(data.name)?@color/second_text_color:@color/main_text_color}"
+                        android:text="@{data.fullName}"
+                        android:textColor="@{TextUtils.isEmpty(data.fullName)?@color/second_text_color:@color/main_text_color}"
                         android:textSize="18sp"
                         android:textStyle="normal"
 
@@ -92,8 +92,8 @@
                         android:fontFamily="@font/roboto_regular"
                         android:gravity="center_vertical"
                         android:padding="10dp"
-                        android:text="@{data.contact}"
-                        android:textColor="@{TextUtils.isEmpty(data.contact)?@color/second_text_color:@color/main_text_color}"
+                        android:text="@{data.phoneNo}"
+                        android:textColor="@{TextUtils.isEmpty(data.phoneNo)?@color/second_text_color:@color/main_text_color}"
                         android:textSize="18sp"
                         android:textStyle="normal"
                         tools:text="+8801776198791"/>

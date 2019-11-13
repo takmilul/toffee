@@ -20,6 +20,9 @@ class EditProfileActivity : AppCompatActivity() {
     private lateinit var progressDialog: VelBoxProgressDialog
     lateinit var binding:ActivityEditProfileBinding
 
+    companion object{
+        const val PROFILE_INFO = "Profile"
+    }
     private val viewModel by lazy {
         ViewModelProviders.of(this).get(EditProfileViewModel::class.java)
     }
@@ -27,13 +30,12 @@ class EditProfileActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this,R.layout.activity_edit_profile)
+        binding.profileForm = intent.getSerializableExtra(PROFILE_INFO) as EditProfileForm
 
         progressDialog = VelBoxProgressDialog(this)
-        progressDialog.show()
-
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        binding.toolbar.setNavigationOnClickListener { finishActivity() }
+        binding.toolbar.setNavigationOnClickListener { finish() }
 
         binding.nameEt.onFocusChangeListener = VelBoxFieldTextWatcher(
             binding.nameEt,
@@ -53,23 +55,14 @@ class EditProfileActivity : AppCompatActivity() {
             handleSaveButton()
         }
 
-        observe(viewModel.profileLiveData){
-            progressDialog.dismiss()
-            when(it){
-                is Resource.Success->{
-                    binding.profileForm = it.data
-                }
-                is Resource.Failure->{
-                    showToast(it.error.msg)
-                }
-            }
-        }
-
         observe(viewModel.updateProfileLiveData){
             progressDialog.dismiss()
             when(it){
                 is Resource.Success->{
-                    finishActivity()
+                    val intent = intent
+                    intent.putExtra(PROFILE_INFO,binding.profileForm)
+                    setResult(RESULT_OK, intent)
+                    finish()
                 }
                 is Resource.Failure->{
                     showToast(it.error.msg)
@@ -108,11 +101,5 @@ class EditProfileActivity : AppCompatActivity() {
 
         progressDialog.show()
         viewModel.updateProfile(binding.profileForm!!)
-    }
-
-    private fun finishActivity() {
-        val intent = intent
-        setResult(RESULT_OK, intent)
-        finish()
     }
 }

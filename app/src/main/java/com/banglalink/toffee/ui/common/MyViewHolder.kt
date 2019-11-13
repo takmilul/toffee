@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.BR
 
 
-class MyViewHolder(private val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root) {
+class MyViewHolder(val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(obj: Any) {
         binding.setVariable(BR.data, obj)

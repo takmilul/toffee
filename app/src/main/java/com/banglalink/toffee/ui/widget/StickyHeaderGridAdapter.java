@@ -67,10 +67,9 @@ public abstract class StickyHeaderGridAdapter extends RecyclerView.Adapter<Stick
    }
 
    private void calculateSections() {
-      mSections = new ArrayList<>();
-
-      int total = 0;
       int sectionCount = getSectionCount();
+      int total = 0;
+      mSections = new ArrayList<>(sectionCount);
       for (int s = 0; s < sectionCount; s++) {
          final Section section = new Section();
          section.position = total;

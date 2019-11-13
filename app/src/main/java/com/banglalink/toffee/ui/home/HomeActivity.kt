@@ -588,8 +588,39 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun onCategoryClick(category: NavCategory?, parent: NavigationMenu?) {
+    override fun onCategoryClick(category: NavCategory, parent: NavigationMenu?) {
 
+        if (parent?.id == ID_VIDEO) run {
+            val currentFragment = getCurrentContentFragment()
+            if (CatchupFragment::class.java.name != currentFragment!!.tag) {
+                supportFragmentManager.popBackStack(LandingPageFragment::class.java.name, 0)
+                supportFragmentManager.beginTransaction().replace(
+                    R.id.content_viewer,
+                    CatchupFragment.createInstance(
+                        category.id,
+                        0,
+                        "",
+                        parent.name,
+                        category.categoryName,
+                        "VOD"
+                    ), CatchupFragment::class.java.name
+                ).addToBackStack(CatchupFragment::class.java.name)
+                    .commit()
+            } else {
+                val catchupFragment = currentFragment as CatchupFragment
+                catchupFragment.updateInfo(
+                    category.id,
+                    0,
+                    "",
+                    parent.name,
+                    category.categoryName,
+                    "VOD"
+                )
+            }
+
+            binding.drawerLayout.closeDrawers()
+            minimizePlayer()
+        }
     }
 
     override fun onSubCategoryClick(
@@ -626,25 +657,25 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         menuInflater.inflate(R.menu.main, menu)
         val searchMenuItem = menu.findItem(R.id.action_search)
         searchView = searchMenuItem.actionView as SearchView
-        searchView!!.setMaxWidth(Integer.MAX_VALUE)
+        searchView?.maxWidth = Integer.MAX_VALUE
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        searchView!!.setSearchableInfo(searchManager.getSearchableInfo(componentName))
-        searchView!!.setIconifiedByDefault(true)
-//        searchView.setOnCloseListener {
-//            if (supportFragmentManager.backStackEntryCount > 1) {
-//                supportFragmentManager.popBackStack(
-//                    SearchListFragment::class.java!!.getName(),
-//                    FragmentManager.POP_BACK_STACK_INCLUSIVE
-//                )
-//            }
-//            false
-//        }
+        searchView?.setSearchableInfo(searchManager.getSearchableInfo(componentName))
+        searchView?.setIconifiedByDefault(true)
+        searchView?.setOnCloseListener {
+            if (supportFragmentManager.backStackEntryCount > 1) {
+                supportFragmentManager.popBackStack(
+                    SearchFragment::class.java.name,
+                    FragmentManager.POP_BACK_STACK_INCLUSIVE
+                )
+            }
+            false
+        }
 
         val searchBar = searchView!!.findViewById(R.id.search_bar) as LinearLayout
         searchBar.layoutTransition = LayoutTransition()
         //
         val searchAutoComplete =
-            searchView!!.findViewById(androidx.appcompat.R.id.search_src_text) as AutoCompleteTextView
+            searchView?.findViewById(androidx.appcompat.R.id.search_src_text) as AutoCompleteTextView
         val mic = searchView!!.findViewById(androidx.appcompat.R.id.search_voice_btn) as ImageView
         mic.setImageResource(R.drawable.microphone)
         val close = searchView!!.findViewById(androidx.appcompat.R.id.search_close_btn) as ImageView
@@ -653,7 +684,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         searchIv.setImageResource(R.drawable.menu_search)
 
         val searchBadgetTv =
-            searchView!!.findViewById(androidx.appcompat.R.id.search_badge) as TextView
+            searchView?.findViewById(androidx.appcompat.R.id.search_badge) as TextView
         searchBadgetTv.background = resources.getDrawable(R.drawable.menu_search)
 
         searchAutoComplete.textSize = 18f

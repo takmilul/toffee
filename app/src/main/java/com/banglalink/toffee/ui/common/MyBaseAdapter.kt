@@ -88,4 +88,8 @@ abstract class MyBaseAdapter<T: Any>(val callback:(T)->Unit={}) : RecyclerView.A
     fun removeAll()  {
         values.clear()
     }
+
+    fun clearOffset(){
+        removedItemCount = 0
+    }
 }

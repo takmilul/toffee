@@ -34,8 +34,12 @@ class GetContents(private val toffeeApi: ToffeeApi) {
                 )
             )
         }
+
         if (response.response.channels != null) {
             return response.response.channels.map {
+                it.category = category
+                it.subCategoryId = subcategoryId
+                it.subCategory = subcategory
                 it.formatted_view_count = getFormattedViewsText(it.view_count)
                 it.formattedDuration = discardZeroFromDuration(it.duration)
                 it

@@ -16,7 +16,7 @@ import com.banglalink.toffee.util.getError
 import kotlinx.coroutines.launch
 
 class ViewProfileViewModel(application: Application) :BaseViewModel(application){
-    private val profileMutableLiveData = MutableLiveData<Resource<Profile>>()
+    private val profileMutableLiveData = MutableLiveData<Resource<EditProfileForm>>()
     val profileLiveData = profileMutableLiveData.toLiveData()
 
     private val getProfile by lazy { 
@@ -26,11 +26,12 @@ class ViewProfileViewModel(application: Application) :BaseViewModel(application)
     init{
         loadCustomerProfile()
     }
+
     private fun loadCustomerProfile(){
         viewModelScope.launch {
             try{
                 val response = getProfile.execute();
-                profileMutableLiveData.setSuccess(response.profile)
+                profileMutableLiveData.setSuccess(response.profile.toProfileForm())
             }catch (e:Exception){
                 profileMutableLiveData.setError(getError(e))
             }
