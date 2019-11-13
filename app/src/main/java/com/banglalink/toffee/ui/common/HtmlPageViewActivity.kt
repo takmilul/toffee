@@ -2,22 +2,22 @@ package com.banglalink.toffee.ui.common
 
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.Log
 import android.view.View
+import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.ProgressBar
 import androidx.appcompat.widget.Toolbar
 import com.banglalink.toffee.R
-import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.extension.showToast
 
-class HtmlPageViewActivity :BaseAppCompatActivity(){
+class HtmlPageViewActivity : BaseAppCompatActivity() {
 
-    companion object{
-        val CONTENT_KEY = "content_key"
-        val TITLE_KEY = "title_key"
+    companion object {
+        const val CONTENT_KEY = "content_key"
+        const val TITLE_KEY = "title_key"
     }
 
-    private var isLoading = false
     internal var htmlUrl: String? = ""
     internal var title: String? = ""
 
@@ -26,8 +26,9 @@ class HtmlPageViewActivity :BaseAppCompatActivity(){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_html_page_view)
 
-        val webview = findViewById<WebView>(R.id.webview);
+        val webView = findViewById<WebView>(R.id.webview);
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        val progressBar = findViewById<ProgressBar>(R.id.progress_bar)
 
         val extras = intent.extras
         if (extras != null) {
@@ -38,48 +39,31 @@ class HtmlPageViewActivity :BaseAppCompatActivity(){
             setSupportActionBar(toolbar)
             supportActionBar!!.setDisplayHomeAsUpEnabled(true)
             supportActionBar!!.setTitle(title)
+            toolbar.setNavigationOnClickListener { onBackPressed() }
         }
-        toolbar.setNavigationOnClickListener { onBackPressed() }
 
-        webview.setHorizontalScrollBarEnabled(true)
-        webview.setVerticalScrollbarOverlay(true)
-        webview.getSettings().setLoadWithOverviewMode(true)
-        webview.getSettings().setUseWideViewPort(true)
-        webview.getSettings().setBuiltInZoomControls(true)
-        webview.getSettings().setDisplayZoomControls(false)
-        webview.getSettings().setJavaScriptEnabled(true)
-        webview.getSettings().setDomStorageEnabled(true)
 
-        webview.setLayerType(View.LAYER_TYPE_HARDWARE, null)
-
-        webview.setWebViewClient(object : WebViewClient() {
-
-            var progressDialog: VelBoxProgressDialog? = null
-
-            //Show loader on url load
-            override fun onLoadResource(view: WebView, url: String) {
-                if (progressDialog == null && !isLoading) {
-                    // in standard case YourActivity.this
-                    progressDialog = VelBoxProgressDialog(this@HtmlPageViewActivity)
-                    progressDialog!!.show()
-                    isLoading = true
-                }
+        webView.webViewClient = object : WebViewClient() {
+            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                progressBar.visibility = View.VISIBLE
             }
 
             override fun onPageFinished(view: WebView, url: String) {
-                try {
-                    if (progressDialog != null && progressDialog!!.isShowing()) {
-                        progressDialog!!.dismiss()
-                        progressDialog = null
-                    }
-                } catch (exception: Exception) {
-                    exception.printStackTrace()
-                }
+                showToast("Page Loaded")
 
             }
+        }
 
-        })
+        webView.webChromeClient = object : WebChromeClient() {
+            override fun onProgressChanged(view: WebView?, newProgress: Int) {
+                progressBar.progress = newProgress
+                if (newProgress == 100) {
+                    progressBar.visibility = View.GONE
+                }
+            }
+        }
 
-        webview.loadUrl(htmlUrl)
+        webView.settings.javaScriptEnabled = true
+        webView.loadUrl(htmlUrl)
     }
 }
