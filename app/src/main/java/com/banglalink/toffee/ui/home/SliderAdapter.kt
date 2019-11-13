@@ -8,7 +8,7 @@ import android.widget.ImageView
 import androidx.viewpager.widget.PagerAdapter
 import coil.api.load
 import com.banglalink.toffee.R
-import com.banglalink.toffee.ui.player.ChannelInfo
+import com.banglalink.toffee.model.ChannelInfo
 
 class SliderAdapter(val context: Context, private val channelList: List<ChannelInfo>):PagerAdapter() {
 

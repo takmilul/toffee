@@ -39,7 +39,7 @@ import com.banglalink.toffee.ui.channels.ChannelFragment
 import com.banglalink.toffee.ui.common.HtmlPageViewActivity
 import com.banglalink.toffee.ui.common.ParentLevelAdapter
 import com.banglalink.toffee.ui.favorite.FavoriteFragment
-import com.banglalink.toffee.ui.player.ChannelInfo
+import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.player.PlayerActivity
 import com.banglalink.toffee.ui.player.PlayerFragment2
 import com.banglalink.toffee.ui.profile.ViewProfileActivity

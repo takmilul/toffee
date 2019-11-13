@@ -10,9 +10,8 @@ import com.banglalink.toffee.extension.setSuccess
 import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseViewModel
-import com.banglalink.toffee.ui.player.ChannelInfo
+import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.usecase.GetHistory
-import com.banglalink.toffee.usecase.UpdateFavorite
 import com.banglalink.toffee.util.getError
 import kotlinx.coroutines.launch
 

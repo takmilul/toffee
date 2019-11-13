@@ -1,10 +1,11 @@
-package com.banglalink.toffee.ui.player;
+package com.banglalink.toffee.model;
 
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
 import com.banglalink.toffee.data.storage.Preference;
+import com.banglalink.toffee.ui.player.Samples;
 import com.banglalink.toffee.util.Utils;
 import com.google.android.exoplayer.util.Util;
 
@@ -12,7 +13,7 @@ import com.google.android.exoplayer.util.Util;
  * Created by shantanu on 8/31/16.
  */
 
-public class Channel extends Samples.Sample{
+public class Channel extends Samples.Sample {
 
     public Channel(String name, String uri, int type, String imageUrl) {
         super(name, uri, type);

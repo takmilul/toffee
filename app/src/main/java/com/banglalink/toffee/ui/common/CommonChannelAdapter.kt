@@ -2,7 +2,7 @@ package com.banglalink.toffee.ui.common
 
 import com.banglalink.toffee.R
 import com.banglalink.toffee.ui.home.OptionCallBack
-import com.banglalink.toffee.ui.player.ChannelInfo
+import com.banglalink.toffee.model.ChannelInfo
 import com.foxrentacar.foxpress.ui.common.MyBaseAdapter
 import com.foxrentacar.foxpress.ui.common.MyViewHolder
 

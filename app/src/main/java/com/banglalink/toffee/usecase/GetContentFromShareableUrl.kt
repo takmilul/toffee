@@ -4,11 +4,11 @@ import com.banglalink.toffee.data.network.request.ContentShareableRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.ui.player.ChannelInfo
+import com.banglalink.toffee.model.ChannelInfo
 
 class GetContentFromShareableUrl (private val preference: Preference,private val toffeeApi: ToffeeApi){
 
-    suspend fun execute(videoUrl:String):ChannelInfo?{
+    suspend fun execute(videoUrl:String): ChannelInfo?{
         val response = tryIO {
             toffeeApi.getContentFromShareableUrl(ContentShareableRequest(videoUrl,preference.customerId,preference.password))
         }

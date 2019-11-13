@@ -8,7 +8,7 @@
     <data>
         <variable
             name="data"
-            type="com.banglalink.toffee.ui.player.ChannelInfo" />
+            type="com.banglalink.toffee.model.ChannelInfo" />
         <variable
             name="callback"
             type="com.banglalink.toffee.ui.home.OptionCallBack" />

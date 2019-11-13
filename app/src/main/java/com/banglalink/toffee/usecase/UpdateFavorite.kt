@@ -4,7 +4,7 @@ import com.banglalink.toffee.data.network.request.FavoriteRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.ui.player.ChannelInfo
+import com.banglalink.toffee.model.ChannelInfo
 
 class UpdateFavorite(private val preference: Preference, private val toffeeApi: ToffeeApi) {
     private val FAVORITE = 1

@@ -15,7 +15,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.HomeBaseFragment
-import com.banglalink.toffee.ui.player.ChannelInfo
+import com.banglalink.toffee.model.ChannelInfo
 
 class LandingPageFragment : HomeBaseFragment() {
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {

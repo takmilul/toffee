@@ -10,7 +10,7 @@ import com.banglalink.toffee.extension.setSuccess
 import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseViewModel
-import com.banglalink.toffee.ui.player.ChannelInfo
+import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.usecase.GetRelativeContents
 import com.banglalink.toffee.util.getError
 import kotlinx.coroutines.launch
@@ -24,7 +24,7 @@ class CatchupDetailsViewModel(application: Application):BaseViewModel(applicatio
         GetRelativeContents(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
 
-    fun getContents(channelInfo: ChannelInfo,offset:Int){
+    fun getContents(channelInfo: ChannelInfo, offset:Int){
         viewModelScope.launch {
             try{
                 val response = getRelativeContents.execute(channelInfo,offset)

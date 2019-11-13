@@ -12,7 +12,7 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.MyPopupWindow
 import com.banglalink.toffee.ui.home.OptionCallBack
-import com.banglalink.toffee.ui.player.ChannelInfo
+import com.banglalink.toffee.model.ChannelInfo
 
 abstract class HomeBaseFragment:Fragment(), OptionCallBack {
     val homeViewModel by lazy {

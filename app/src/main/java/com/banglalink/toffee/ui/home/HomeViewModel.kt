@@ -12,11 +12,10 @@ import com.banglalink.toffee.model.NavCategoryGroup
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.channels.StickyHeaderInfo
 import com.banglalink.toffee.ui.common.BaseViewModel
-import com.banglalink.toffee.ui.player.ChannelInfo
+import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.usecase.GetCategory
 import com.banglalink.toffee.usecase.GetChannelWithCategory
 import com.banglalink.toffee.usecase.GetContentFromShareableUrl
-import com.banglalink.toffee.usecase.UpdateFavorite
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.getError
 import kotlinx.coroutines.launch

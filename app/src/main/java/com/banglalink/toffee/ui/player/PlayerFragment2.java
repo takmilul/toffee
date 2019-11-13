@@ -24,6 +24,8 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.banglalink.toffee.R;
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener;
+import com.banglalink.toffee.model.Channel;
+import com.banglalink.toffee.model.ChannelInfo;
 import com.banglalink.toffee.ui.widget.ExpoMediaController2;
 import com.banglalink.toffee.util.Utils;
 import com.google.android.exoplayer.ExoPlayer;

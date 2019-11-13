@@ -1,6 +1,6 @@
 package com.banglalink.toffee.ui.channels;
 
-import com.banglalink.toffee.ui.player.ChannelInfo;
+import com.banglalink.toffee.model.ChannelInfo;
 
 import java.util.List;
 

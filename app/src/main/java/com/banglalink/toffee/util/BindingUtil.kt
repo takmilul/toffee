@@ -3,13 +3,10 @@ package com.banglalink.toffee.util
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import coil.Coil
-import coil.api.get
 import coil.api.load
 import coil.request.CachePolicy
-import coil.transform.BlurTransformation
 import coil.transform.CircleCropTransformation
-import com.banglalink.toffee.ui.player.ChannelInfo
+import com.banglalink.toffee.model.ChannelInfo
 
 @BindingAdapter("imageFromUrl")
 fun bindImageFromUrl(view: ImageView, imageUrl: String?) {

@@ -16,7 +16,7 @@ import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.CommonChannelAdapter
 import com.banglalink.toffee.ui.common.HomeBaseFragment
-import com.banglalink.toffee.ui.player.ChannelInfo
+import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 
 class CatchupFragment:HomeBaseFragment(){

@@ -1,7 +1,9 @@
-package com.banglalink.toffee.ui.player;
+package com.banglalink.toffee.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.banglalink.toffee.ui.player.HlsLinks;
 
 import java.util.ArrayList;
 import java.util.List;
