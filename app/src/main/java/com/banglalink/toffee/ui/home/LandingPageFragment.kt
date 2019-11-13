@@ -67,7 +67,8 @@ class LandingPageFragment :HomeBaseFragment(){
         channelListView.addOnScrollListener(object :
             EndlessRecyclerViewScrollListener(listLayoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
-                viewModel.loadChannels(channelAdapter.itemCount)
+                if(view.scrollState != RecyclerView.SCROLL_STATE_IDLE)
+                    viewModel.loadChannels(channelAdapter.itemCount)
             }
         })
 
@@ -81,13 +82,13 @@ class LandingPageFragment :HomeBaseFragment(){
             EndlessRecyclerViewScrollListener(linearLayoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
                 bottomProgress.visibility = View.VISIBLE
-                viewModel.loadPopularVideos(popularVideoListAdapter.getOffset())
+                if(view.scrollState != RecyclerView.SCROLL_STATE_IDLE)
+                    viewModel.loadPopularVideos(popularVideoListAdapter.getOffset())
             }
         })
 
 
         bottomProgress = view.findViewById(R.id.progress_bar)
-        bottomProgress.visibility = View.VISIBLE
 
         observeFeatureContentList()
         observeChannelList()
