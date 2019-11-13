@@ -15,7 +15,9 @@ import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.ui.player.ChannelInfo
 import com.banglalink.toffee.usecase.GetCategory
 import com.banglalink.toffee.usecase.GetChannelWithCategory
+import com.banglalink.toffee.usecase.GetContentFromShareableUrl
 import com.banglalink.toffee.usecase.UpdateFavorite
+import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.getError
 import kotlinx.coroutines.launch
 import java.lang.Exception
@@ -27,10 +29,15 @@ class HomeViewModel(application: Application):BaseViewModel(application) {
     private val channelMutableLiveData = MutableLiveData<Resource<List<StickyHeaderInfo>>>()
     val channelLiveData = channelMutableLiveData.toLiveData()
 
+    private val shareableContentMutableLiveData = SingleLiveEvent<Resource<ChannelInfo>>()
+    val shareableLiveData = shareableContentMutableLiveData.toLiveData()
+
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val fragmentDetailsMutableLiveData = MutableLiveData<ChannelInfo>()
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val viewAllChannelLiveData = MutableLiveData<Boolean>()
+    //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
+    val viewAllVideoLiveData = MutableLiveData<Boolean>()
 
     private val getCategory by lazy {
         GetCategory(RetrofitApiClient.toffeeApi)
@@ -38,6 +45,10 @@ class HomeViewModel(application: Application):BaseViewModel(application) {
 
     private val getChannelWithCategory by lazy {
         GetChannelWithCategory(Preference.getInstance(),RetrofitApiClient.toffeeApi)
+    }
+
+    private val getContentFromShareableUrl by lazy{
+        GetContentFromShareableUrl(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
 
     init {
@@ -65,6 +76,20 @@ class HomeViewModel(application: Application):BaseViewModel(application) {
 
             }catch (e:Exception){
                 channelMutableLiveData.setError(getError(e))
+            }
+        }
+    }
+
+    fun getShareableContent(shareUrl :String){
+        viewModelScope.launch {
+            try{
+                val response = getContentFromShareableUrl.execute(shareUrl)
+                response?.let {
+                    shareableContentMutableLiveData.setSuccess(response)
+                }
+
+            }catch (e:Exception){
+                val error = getError(e)
             }
         }
     }

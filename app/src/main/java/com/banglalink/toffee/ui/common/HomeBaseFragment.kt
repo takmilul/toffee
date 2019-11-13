@@ -83,5 +83,9 @@ abstract class HomeBaseFragment:Fragment(), OptionCallBack {
         popupMenu.show()
     }
 
+    override fun viewAllVideoClick() {
+        homeViewModel.viewAllVideoLiveData.postValue(true)
+    }
+
     abstract fun removeItemNotInterestedItem(channelInfo: ChannelInfo)
 }

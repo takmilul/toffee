@@ -5,4 +5,5 @@ import com.banglalink.toffee.ui.player.ChannelInfo
 
 interface OptionCallBack {
     fun onOptionClicked(anchor: View, channelInfo: ChannelInfo)
+    fun viewAllVideoClick()
 }

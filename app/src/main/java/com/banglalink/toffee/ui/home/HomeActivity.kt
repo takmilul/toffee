@@ -4,11 +4,11 @@ import android.animation.LayoutTransition
 import android.app.AlertDialog
 import android.app.SearchManager
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -26,6 +26,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProviders
 import coil.api.load
 import coil.request.CachePolicy
+import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
@@ -45,10 +46,10 @@ import com.banglalink.toffee.ui.profile.ViewProfileActivity
 import com.banglalink.toffee.ui.recent.RecentFragment
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.settings.SettingsActivity
+import com.banglalink.toffee.ui.subscription.MySubscriptionActivity
 import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.util.Utils
 import com.google.android.material.navigation.NavigationView
-import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.layout_appbar.view.*
 import java.util.ArrayList
 
@@ -63,7 +64,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     private val ID_CHANNEL = 12
     private val ID_RECENT = 13
     private val ID_FAV = 14
-    private val ID_SUB = 15
+    private val ID_SUBSCIPTIONS = 15
     private val ID_SUB_VIDEO = 16
     private val ID_SETTINGS = 17
     private val ID_ABOUT = 18
@@ -106,7 +107,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             }
         }
 
-//        handleSharedUrl(intent)
+        handleSharedUrl(intent)
         observe(viewModel.categoryLiveData) {
             when (it) {
                 is Resource.Success -> {
@@ -143,26 +144,32 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             onDetailsFragmentLoad(it)
         }
         observe(viewModel.viewAllChannelLiveData){
-            supportFragmentManager.popBackStack(
-                LandingPageFragment::class.java.getName(),
-                0
-            )
-            supportFragmentManager.beginTransaction().replace(
-                R.id.content_viewer,
-                ChannelFragment.createInstance(
-                    0,
-                    "",
-                    getString(R.string.menu_channel_text)
-                )
-            )
-                .addToBackStack(ChannelFragment::class.java.getName())
-                .commit()
-            binding.drawerLayout.closeDrawers()
-            minimizePlayer()
+            onMenuClick(NavigationMenu(ID_CHANNEL,"All Videos",0, listOf(),false))
+        }
+
+        observe(viewModel.viewAllVideoLiveData){
+            onMenuClick(NavigationMenu(ID_VIDEO,"All Videos",0, listOf(),false))
+        }
+
+        observe(viewModel.shareableLiveData){
+            when(it){
+                is Resource.Success->{
+                    onDetailsFragmentLoad(it.data)
+                }
+            }
         }
 
     }
 
+    private fun handleSharedUrl(intent: Intent){
+        val uri = intent.data
+        if (uri != null) {
+            val strUri = uri.toString()
+            val hash = strUri.substring(strUri.lastIndexOf("/") + 1)
+            Log.e("url", "$strUri hash $hash")
+            viewModel.getShareableContent(hash)
+        }
+    }
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         if (Intent.ACTION_SEARCH == intent.action) {
@@ -182,7 +189,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                 searchView!!.clearFocus()
             }
         }
-//        handleSharedUrl(intent)
+        handleSharedUrl(intent)
     }
     private fun loadChannel(channelInfo: ChannelInfo) {
         if (mediaPlayer != null) {
@@ -279,6 +286,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
 
         if(!Preference.getInstance().userImageUrl.isNullOrBlank()){
             profilePicture.load(Preference.getInstance().userImageUrl){
+                transformations(CircleCropTransformation())
                 memoryCachePolicy(CachePolicy.DISABLED)
                 diskCachePolicy(CachePolicy.ENABLED)
             }
@@ -330,7 +338,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         )
         navigationMenuList.add(
             NavigationMenu(
-                ID_SUB,
+                ID_SUBSCIPTIONS,
                 "Subscriptions",
                 R.mipmap.ic_menu_subscriptions,
                 ArrayList(),
@@ -456,6 +464,9 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                     putExtra(HtmlPageViewActivity.CONTENT_KEY, MICRO_SITE_URL)
                 }
                 binding.drawerLayout.closeDrawers()
+            }
+            ID_SUBSCIPTIONS->{
+                launchActivity<MySubscriptionActivity>()
             }
             ID_SETTINGS -> {
                 launchActivity<SettingsActivity>()
@@ -635,6 +646,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         val imageUrl = Preference.getInstance().userImageUrl
         if(!imageUrl.isNullOrBlank()){
             menu?.findItem(R.id.action_avatar)?.actionView?.findViewById<ImageView>(R.id.view_avatar)?.load(imageUrl) {
+                transformations(CircleCropTransformation())
                 memoryCachePolicy(CachePolicy.DISABLED)
                 diskCachePolicy(CachePolicy.ENABLED)
             }
@@ -656,11 +668,13 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
         val searchMenuItem = menu.findItem(R.id.action_search)
-        searchView = searchMenuItem.actionView as SearchView
-        searchView?.maxWidth = Integer.MAX_VALUE
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        searchView?.setSearchableInfo(searchManager.getSearchableInfo(componentName))
-        searchView?.setIconifiedByDefault(true)
+        searchView = searchMenuItem.actionView as SearchView
+        searchView?.apply {
+            maxWidth = Integer.MAX_VALUE
+            setSearchableInfo(searchManager.getSearchableInfo(componentName))
+            setIconifiedByDefault(true)
+        }
         searchView?.setOnCloseListener {
             if (supportFragmentManager.backStackEntryCount > 1) {
                 supportFragmentManager.popBackStack(
@@ -671,30 +685,37 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             false
         }
 
-        val searchBar = searchView!!.findViewById(R.id.search_bar) as LinearLayout
+        val searchBar:LinearLayout = searchView!!.findViewById(R.id.search_bar)
         searchBar.layoutTransition = LayoutTransition()
         //
-        val searchAutoComplete =
-            searchView?.findViewById(androidx.appcompat.R.id.search_src_text) as AutoCompleteTextView
+
         val mic = searchView!!.findViewById(androidx.appcompat.R.id.search_voice_btn) as ImageView
         mic.setImageResource(R.drawable.microphone)
+
         val close = searchView!!.findViewById(androidx.appcompat.R.id.search_close_btn) as ImageView
         close.setImageResource(R.drawable.close)
+
         val searchIv = searchView!!.findViewById(androidx.appcompat.R.id.search_button) as ImageView
         searchIv.setImageResource(R.drawable.menu_search)
 
-        val searchBadgetTv =
-            searchView?.findViewById(androidx.appcompat.R.id.search_badge) as TextView
-        searchBadgetTv.background = resources.getDrawable(R.drawable.menu_search)
 
-        searchAutoComplete.textSize = 18f
-        searchAutoComplete.setTextColor(
-            ContextCompat.getColor(
-                this,
-                R.color.searchview_input_text_color
+        val searchBadgeTv =
+            searchView?.findViewById(androidx.appcompat.R.id.search_badge) as TextView
+        searchBadgeTv.background = resources.getDrawable(R.drawable.menu_search)
+
+        val searchAutoComplete:AutoCompleteTextView =
+            searchView!!.findViewById(androidx.appcompat.R.id.search_src_text)
+        searchAutoComplete.apply {
+            textSize = 18f
+            setTextColor(
+                ContextCompat.getColor(
+                    this@HomeActivity,
+                    R.color.searchview_input_text_color
+                )
             )
-        )
-        searchAutoComplete.background = resources.getDrawable(R.drawable.searchview_input_bg)
+            background = resources.getDrawable(R.drawable.searchview_input_bg)
+        }
+
 
         val awesomeMenuItem = menu.findItem(R.id.action_avatar)
         val awesomeActionView = awesomeMenuItem.actionView
