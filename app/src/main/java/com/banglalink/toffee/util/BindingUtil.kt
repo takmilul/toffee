@@ -15,8 +15,20 @@ import com.banglalink.toffee.ui.player.ChannelInfo
 fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
     if (!imageUrl.isNullOrEmpty()) {
         view.load(imageUrl) {
-//            memoryCachePolicy(CachePolicy.DISABLED)
-//            diskCachePolicy(CachePolicy.ENABLED)
+            memoryCachePolicy(CachePolicy.DISABLED)
+            diskCachePolicy(CachePolicy.ENABLED)
+            crossfade(true)
+        }
+    }
+}
+
+@BindingAdapter("imageFromUrlRounded")
+fun bindRoundImage(view: ImageView, imageUrl: String?) {
+    if (!imageUrl.isNullOrEmpty()) {
+        view.load(imageUrl) {
+            memoryCachePolicy(CachePolicy.DISABLED)
+            diskCachePolicy(CachePolicy.ENABLED)
+            transformations(CircleCropTransformation())
             crossfade(true)
         }
     }
@@ -28,13 +40,13 @@ fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
         view.load(channelInfo.channel_logo) {
             transformations(CircleCropTransformation())
             crossfade(true)
-//            memoryCachePolicy(CachePolicy.DISABLED)
-//            diskCachePolicy(CachePolicy.ENABLED)
+            memoryCachePolicy(CachePolicy.DISABLED)
+            diskCachePolicy(CachePolicy.ENABLED)
         }
     } else {
         view.load(channelInfo.landscape_ratio_1280_720) {
-//            memoryCachePolicy(CachePolicy.DISABLED)
-//            diskCachePolicy(CachePolicy.ENABLED)
+            memoryCachePolicy(CachePolicy.DISABLED)
+            diskCachePolicy(CachePolicy.ENABLED)
             crossfade(true)
             size(720, 405)
         }
