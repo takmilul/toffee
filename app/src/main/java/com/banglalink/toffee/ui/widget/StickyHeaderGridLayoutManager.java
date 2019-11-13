@@ -48,7 +48,7 @@ public class StickyHeaderGridLayoutManager extends RecyclerView.LayoutManager im
    private View mStickyHeaderView;
    private HeaderState mStickyHeadeState;
 
-   private View[] mFillViewSet;
+   private View mFillViewSet[];
 
    private SavedState mPendingSavedState;
    private int mPendingScrollPosition = NO_POSITION;
@@ -616,41 +616,58 @@ public class StickyHeaderGridLayoutManager extends RecyclerView.LayoutManager im
          return;
       }
 
-      final int recyclerTop = getPaddingTop();
-      final int recyclerBottom = getHeight() - getPaddingBottom();
+      try {
+         final int recyclerTop = getPaddingTop();
+         final int recyclerBottom = getHeight() - getPaddingBottom();
 
-      if (top) {
-         LayoutRow row = getTopRow();
-         while (row.bottom < recyclerTop - getExtraLayoutSpace(state) || row.top > recyclerBottom) {
-            if (row.header) {
-               removeAndRecycleViewAt(mHeadersStartPosition + (mFloatingHeaderView != null ? 1 : 0), recycler);
-            }
-            else {
-               for (int i = 0; i < row.length; ++i) {
-                  removeAndRecycleViewAt(0, recycler);
-                  mHeadersStartPosition--;
+         if (top) {
+            LayoutRow row = getTopRow();
+            while (row.bottom < recyclerTop - getExtraLayoutSpace(state) || row.top > recyclerBottom) {
+               if (row.header) {
+                  removeAndRecycleViewAt(mHeadersStartPosition + (mFloatingHeaderView != null ? 1 : 0), recycler);
                }
-            }
-            mLayoutRows.remove(0);
-            row = getTopRow();
-         }
-      }
-      else {
-         LayoutRow row = getBottomRow();
-         while (row != null && (row.bottom < recyclerTop || row.top > recyclerBottom + getExtraLayoutSpace(state))) {
-            if (row.header) {
-               removeAndRecycleViewAt(getChildCount() - 1, recycler);
-            }
-            else {
-               for (int i = 0; i < row.length; ++i) {
-                  removeAndRecycleViewAt(mHeadersStartPosition - 1, recycler);
-                  mHeadersStartPosition--;
+               else {
+                  for (int i = 0; i < row.length; ++i) {
+                     if (recycler == null)
+                        return;
+                     removeAndRecycleViewAt(0, recycler);
+                     mHeadersStartPosition--;
+                  }
                }
+
+               if (mLayoutRows.isEmpty())
+                  return;
+               mLayoutRows.remove(0);
+
+               if (!mLayoutRows.isEmpty())
+                  row = getTopRow();
             }
-            mLayoutRows.remove(mLayoutRows.size() - 1);
-            row = getBottomRow();
          }
+         else {
+            LayoutRow row = getBottomRow();
+            while (row != null && (row.bottom < recyclerTop || row.top > recyclerBottom + getExtraLayoutSpace(state))) {
+               if (row.header) {
+                  removeAndRecycleViewAt(getChildCount() - 1, recycler);
+               }
+               else {
+                  for (int i = 0; i < row.length; ++i) {
+                     if (recycler == null)
+                        return;
+                     removeAndRecycleViewAt(mHeadersStartPosition - 1, recycler);
+                     mHeadersStartPosition--;
+                  }
+               }
+               mLayoutRows.remove(mLayoutRows.size() - 1);
+               row = getBottomRow();
+            }
+         }
+      } catch (NullPointerException ne) {
+         Log.e(TAG, "clearHiddenRows: " + ne.getMessage(), ne);
+
+      } catch (IndexOutOfBoundsException ibe) {
+         Log.e(TAG, "clearHiddenRows: " + ibe.getMessage(), ibe);
       }
+
    }
 
    private void clearViewsAndStickHeaders(RecyclerView.Recycler recycler, RecyclerView.State state, boolean top) {
@@ -760,53 +777,58 @@ public class StickyHeaderGridLayoutManager extends RecyclerView.LayoutManager im
       final int recyclerTop = getPaddingTop();
       final int recyclerBottom = getHeight() - getPaddingBottom();
 
-      // If we have simple header stick, offset it back
-      final int firstHeader = getFirstVisibleSectionHeader();
-      if (firstHeader != NO_POSITION) {
-         mLayoutRows.get(firstHeader).headerView.offsetTopAndBottom(-mStickOffset);
-      }
-
-      if (dy >= 0) {
-         // Up
-         while (scrolled < dy) {
-            final LayoutRow bottomRow = getBottomRow();
-            final int scrollChunk = -Math.min(Math.max(bottomRow.bottom - recyclerBottom, 0), dy - scrolled);
-
-            offsetRowsVertical(scrollChunk);
-            scrolled -= scrollChunk;
-
-            final int adapterPosition = bottomRow.adapterPosition + bottomRow.length;
-            if (scrolled >= dy || adapterPosition >= state.getItemCount()) {
-               break;
-            }
-
-            addRow(recycler, state, false, adapterPosition, bottomRow.bottom);
+      try {
+         // If we have simple header stick, offset it back
+         final int firstHeader = getFirstVisibleSectionHeader();
+         if (firstHeader != NO_POSITION) {
+            mLayoutRows.get(firstHeader).headerView.offsetTopAndBottom(-mStickOffset);
          }
-      }
-      else {
-         // Down
-         while (scrolled > dy) {
-            final LayoutRow topRow = getTopRow();
-            final int scrollChunk = Math.min(Math.max(-topRow.top + recyclerTop, 0), scrolled - dy);
 
-            offsetRowsVertical(scrollChunk);
-            scrolled -= scrollChunk;
+         if (dy >= 0) {
+            // Up
+            while (scrolled < dy) {
+               final LayoutRow bottomRow = getBottomRow();
+               final int scrollChunk = -Math.min(Math.max(bottomRow.bottom - recyclerBottom, 0), dy - scrolled);
 
-            final int adapterPosition = topRow.adapterPosition - 1;
-            if (scrolled <= dy || adapterPosition >= state.getItemCount() || adapterPosition < 0) {
-               break;
+               offsetRowsVertical(scrollChunk);
+               scrolled -= scrollChunk;
+
+               final int adapterPosition = bottomRow.adapterPosition + bottomRow.length;
+               if (scrolled >= dy || adapterPosition >= state.getItemCount()) {
+                  break;
+               }
+
+               addRow(recycler, state, false, adapterPosition, bottomRow.bottom);
             }
-
-            addRow(recycler, state, true, adapterPosition, topRow.top);
          }
-      }
+         else {
+            // Down
+            while (scrolled > dy) {
+               final LayoutRow topRow = getTopRow();
+               final int scrollChunk = Math.min(Math.max(-topRow.top + recyclerTop, 0), scrolled - dy);
 
-      // Fill extra offscreen rows for smooth scroll
-      if (scrolled == dy) {
-         addOffScreenRows(recycler, state, recyclerTop, recyclerBottom, dy >= 0);
-      }
+               offsetRowsVertical(scrollChunk);
+               scrolled -= scrollChunk;
 
-      clearViewsAndStickHeaders(recycler, state, dy >= 0);
+               final int adapterPosition = topRow.adapterPosition - 1;
+               if (scrolled <= dy || adapterPosition >= state.getItemCount() || adapterPosition < 0) {
+                  break;
+               }
+
+               addRow(recycler, state, true, adapterPosition, topRow.top);
+            }
+         }
+
+         // Fill extra offscreen rows for smooth scroll
+         if (scrolled == dy) {
+            addOffScreenRows(recycler, state, recyclerTop, recyclerBottom, dy >= 0);
+         }
+
+         clearViewsAndStickHeaders(recycler, state, dy >= 0);
+
+      } catch (NullPointerException | IndexOutOfBoundsException e) {
+         Log.e(TAG, "scrollVerticallyBy: " + e.getMessage(), e);
+      }
       return  scrolled;
    }
 
@@ -1306,7 +1328,7 @@ public class StickyHeaderGridLayoutManager extends RecyclerView.LayoutManager im
          dest.writeInt(mAnchorOffset);
       }
 
-      public static final Creator<SavedState> CREATOR = new Creator<SavedState>() {
+      public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {
          @Override
          public SavedState createFromParcel(Parcel in) {
             return new SavedState(in);

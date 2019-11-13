@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.verify
 
 import android.graphics.Paint
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
@@ -22,10 +21,15 @@ class VerifyCodeActivity : BaseAppCompatActivity() {
 
     companion object{
         const val PHONE_NUMBER = "PHONE"
+        const val REFERRAL_CODE = "REFERRAL_CODE"
     }
 
     private val phoneNumber by lazy {
         intent.getStringExtra(PHONE_NUMBER)
+    }
+
+    private val referralCode by lazy {
+        intent.getStringExtra(REFERRAL_CODE)
     }
     private val countdownTV by lazy {
         findViewById<TextView>(R.id.countdown_tv)
@@ -87,7 +91,7 @@ class VerifyCodeActivity : BaseAppCompatActivity() {
         startCountDown(if (resendBtnPressCount <= 1) 1 else 30)
 
         progressDialog.show()
-        viewModel.resendCode(phoneNumber)
+        viewModel.resendCode(phoneNumber, referralCode)
     }
     private fun startCountDown(countDownTimeInMinute: Int) {
         countdownTV.visibility = View.VISIBLE

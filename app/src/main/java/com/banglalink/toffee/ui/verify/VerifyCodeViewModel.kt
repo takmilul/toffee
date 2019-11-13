@@ -16,41 +16,41 @@ import com.banglalink.toffee.usecase.VerifyCode
 import com.banglalink.toffee.util.getError
 import kotlinx.coroutines.launch
 
-class VerifyCodeViewModel(application: Application) :BaseViewModel(application) {
+class VerifyCodeViewModel(application: Application) : BaseViewModel(application) {
 
     private val verifyCodeMutableLiveData = MutableLiveData<Resource<Boolean>>()
     val verifyCodeLiveData = verifyCodeMutableLiveData.toLiveData()
 
-    private val getProfile:GetProfile by lazy {
-        GetProfile(Preference.getInstance(),RetrofitApiClient.toffeeApi)
+    private val getProfile: GetProfile by lazy {
+        GetProfile(Preference.getInstance(), RetrofitApiClient.toffeeApi)
     }
 
     private val verifyCode by lazy {
-        VerifyCode(Preference.getInstance(),RetrofitApiClient.toffeeApi)
+        VerifyCode(Preference.getInstance(), RetrofitApiClient.toffeeApi)
     }
 
     private val signinByPhone by lazy {
-        SigninByPhone(Preference.getInstance(),RetrofitApiClient.toffeeApi)
+        SigninByPhone(Preference.getInstance(), RetrofitApiClient.toffeeApi)
     }
 
-    fun verifyCode(code:String){
+    fun verifyCode(code: String) {
         viewModelScope.launch {
             try {
                 verifyCode.execute(code)
                 getProfile.execute()
                 verifyCodeMutableLiveData.setSuccess(true)
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 verifyCodeMutableLiveData.setError(getError(e))
             }
 
         }
     }
 
-    fun resendCode(phoneNumber:String){
+    fun resendCode(phoneNumber: String, referralCode: String) {
         viewModelScope.launch {
-            try{
-                signinByPhone.execute(phoneNumber)
-            }catch (e:Exception){
+            try {
+                signinByPhone.execute(phoneNumber, referralCode)
+            } catch (e: Exception) {
                 verifyCodeMutableLiveData.setError(getError(e))
             }
         }

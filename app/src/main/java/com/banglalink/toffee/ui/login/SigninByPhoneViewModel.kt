@@ -14,22 +14,21 @@ import com.banglalink.toffee.usecase.SigninByPhone
 import com.banglalink.toffee.util.getError
 import kotlinx.coroutines.launch
 
-class SigninByPhoneViewModel(application: Application):BaseViewModel(application) {
+class SigninByPhoneViewModel(application: Application) : BaseViewModel(application) {
 
     private val signinMutableLiveData = MutableLiveData<Resource<Boolean>>()
     val signinLiveData = signinMutableLiveData.toLiveData()
 
     private val signinByPhone by lazy {
-        SigninByPhone(Preference.getInstance(),RetrofitApiClient.toffeeApi)
+        SigninByPhone(Preference.getInstance(), RetrofitApiClient.toffeeApi)
     }
 
-    fun siginIn(phoneNumber:String){
+    fun siginIn(phoneNumber: String, referralCode: String) {
         viewModelScope.launch {
-            try{
-                signinByPhone.execute(phoneNumber)
+            try {
+                signinByPhone.execute(phoneNumber, referralCode)
                 signinMutableLiveData.setSuccess(true)
-            }
-            catch (e:Exception){
+            } catch (e: Exception) {
                 e.printStackTrace()
                 signinMutableLiveData.setError(getError(e))
             }
