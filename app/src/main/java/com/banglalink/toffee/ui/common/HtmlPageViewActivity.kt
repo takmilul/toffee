@@ -9,7 +9,6 @@ import android.webkit.WebViewClient
 import android.widget.ProgressBar
 import androidx.appcompat.widget.Toolbar
 import com.banglalink.toffee.R
-import com.banglalink.toffee.extension.showToast
 
 class HtmlPageViewActivity : BaseAppCompatActivity() {
 
@@ -18,8 +17,8 @@ class HtmlPageViewActivity : BaseAppCompatActivity() {
         const val TITLE_KEY = "title_key"
     }
 
-    internal var htmlUrl: String? = ""
-    internal var title: String? = ""
+    private var htmlUrl: String? = ""
+    private var title: String? = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,11 +45,6 @@ class HtmlPageViewActivity : BaseAppCompatActivity() {
         webView.webViewClient = object : WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 progressBar.visibility = View.VISIBLE
-            }
-
-            override fun onPageFinished(view: WebView, url: String) {
-                showToast("Page Loaded")
-
             }
         }
 
