@@ -7,18 +7,19 @@ import com.banglalink.toffee.data.storage.Preference
 
 class SigninByPhone(private val preference: Preference, private val toffeeApi: ToffeeApi) {
 
-    suspend fun execute(phoneNumber: String) {
+    suspend fun execute(phoneNumber: String, referralCode: String) {
         val response = tryIO {
             toffeeApi.signinByPhone(
                 SigninByPhoneRequest(
                     phoneNumber,
                     preference.latitude,
-                    preference.longitude
+                    preference.longitude,
+                    referralCode = referralCode
                 )
             )
 
         }
-        if(response.response.authorize){
+        if (response.response.authorize) {
             preference.phoneNumber = phoneNumber
         }
     }

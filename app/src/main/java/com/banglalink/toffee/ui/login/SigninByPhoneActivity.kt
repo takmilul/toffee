@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.login
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
@@ -14,6 +13,7 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
+import androidx.constraintlayout.widget.Group
 import androidx.lifecycle.ViewModelProviders
 import com.banglalink.toffee.R
 import com.banglalink.toffee.extension.launchActivity
@@ -39,10 +39,14 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
     private val progressDialog by lazy {
         VelBoxProgressDialog(this)
     }
+
+    private lateinit var referralCodeEt: EditText
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signin_by_phone)
 
+        referralCodeEt = findViewById(R.id.ref_code_et)
         setSpannableTermsAndConditions()
 
         val loginBtn = findViewById<Button>(R.id.login_btn)
@@ -60,6 +64,7 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
                 is Resource.Success -> {
                     launchActivity<VerifyCodeActivity> {
                         putExtra(VerifyCodeActivity.PHONE_NUMBER, phoneNumber.text.toString())
+                        putExtra(VerifyCodeActivity.REFERRAL_CODE, referralCodeEt.text.toString())
                     }
                     finish()
                 }
@@ -89,9 +94,12 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
 
         progressDialog.show()
         this.phoneNumber.setText(phoneNo)
-        viewModel.siginIn(phoneNo)
+        viewModel.siginIn(phoneNo, referralCodeEt.text.toString())
+    }
 
-
+    fun handleHaveReferralOption(view: View) {
+        findViewById<Group>(R.id.group).visibility = View.VISIBLE
+        findViewById<Group>(R.id.group_have_ref).visibility = View.GONE
     }
 
     private fun setSpannableTermsAndConditions() {

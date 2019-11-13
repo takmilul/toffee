@@ -224,4 +224,7 @@
         <item>ISP</item>
     </string-array>
 
+    <string name="referral_code">Referral Code</string>
+    <string name="have_referral_code">Have Referral Code?</string>
+
 </resources>
