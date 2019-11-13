@@ -59,6 +59,8 @@ dependencies {
 
     //GIF imageview
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.17'
+    // Crop Image
+    implementation 'com.github.yalantis:ucrop:2.2.4'
 
     implementation 'com.xfinity:dahdit:0.9.3'
 
