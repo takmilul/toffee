@@ -70,7 +70,7 @@ class ChannelStickyListAdapter(
         offset: Int
     ) {
         if (onItemClickListener != null) {
-            viewHolder.itemView.setOnClickListener { v -> onItemClickListener.onItemClicked(values[section].channelInfoList[offset]) }
+            viewHolder.itemView.setOnClickListener { onItemClickListener.onItemClicked(values[section].channelInfoList[offset]) }
         }
         val item = values[section].channelInfoList[offset]
         val liveTvViewHolder = viewHolder as LiveTvViewHolder
