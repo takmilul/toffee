@@ -39,4 +39,6 @@ interface ToffeeApi {
     suspend fun uploadPhoto(@Body photoRequest: PhotoRequest):Response<PhotoResponse>
     @POST("search-contents")
     suspend fun searchContent(@Body searchContentRequest: SearchContentRequest):Response<SearchContentResponse>
+    @POST("contents-shareable")
+    suspend fun getContentFromShareableUrl(@Body shareableRequest: ContentShareableRequest):Response<ContentShareableResponse>
 }

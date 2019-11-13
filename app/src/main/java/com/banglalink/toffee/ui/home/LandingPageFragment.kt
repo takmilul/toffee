@@ -17,7 +17,7 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.player.ChannelInfo
 
-class LandingPageFragment :HomeBaseFragment(){
+class LandingPageFragment : HomeBaseFragment() {
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
         popularVideoListAdapter.remove(channelInfo)
     }
@@ -31,12 +31,13 @@ class LandingPageFragment :HomeBaseFragment(){
     val viewModel by lazy {
         ViewModelProviders.of(this).get(LandingPageViewModel::class.java)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        channelAdapter = ChannelAdapter{
+        channelAdapter = ChannelAdapter {
             homeViewModel.fragmentDetailsMutableLiveData.postValue(it)
         }
-        popularVideoListAdapter = PopularVideoListAdapter(this){
+        popularVideoListAdapter = PopularVideoListAdapter(this) {
             homeViewModel.fragmentDetailsMutableLiveData.postValue(it)
         }
         viewModel.loadPopularVideos(popularVideoListAdapter.itemCount)
@@ -62,13 +63,11 @@ class LandingPageFragment :HomeBaseFragment(){
             adapter = channelAdapter
         }
 
-        Log.e("Adapter size:","${channelAdapter.itemCount}")
-
         channelListView.addOnScrollListener(object :
             EndlessRecyclerViewScrollListener(listLayoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
-                if(view.scrollState != RecyclerView.SCROLL_STATE_IDLE)
-                    viewModel.loadChannels(channelAdapter.itemCount)
+//                if(view.scrollState != RecyclerView.SCROLL_STATE_IDLE)
+                viewModel.loadChannels(channelAdapter.itemCount)
             }
         })
 
@@ -82,68 +81,68 @@ class LandingPageFragment :HomeBaseFragment(){
             EndlessRecyclerViewScrollListener(linearLayoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
                 bottomProgress.visibility = View.VISIBLE
-                if(view.scrollState != RecyclerView.SCROLL_STATE_IDLE)
-                    viewModel.loadPopularVideos(popularVideoListAdapter.getOffset())
+                viewModel.loadPopularVideos(popularVideoListAdapter.getOffset())
             }
         })
 
 
         bottomProgress = view.findViewById(R.id.progress_bar)
-        if(popularVideoListAdapter.itemCount == 0)
+        if (popularVideoListAdapter.itemCount == 0)
             bottomProgress.visibility = View.VISIBLE
 
         observeFeatureContentList()
         observeChannelList()
         observePopularVideoList()
 
-        view.findViewById<View>(R.id.channel_view_all).setOnClickListener{
+        view.findViewById<View>(R.id.channel_view_all).setOnClickListener {
             homeViewModel.viewAllChannelLiveData.postValue(true)
         }
 
     }
 
-    private fun observeChannelList(){
+    private fun observeChannelList() {
         viewModel.channelLiveData.observe(viewLifecycleOwner, Observer {
-            when(it){
-                is Resource.Success ->{
+            when (it) {
+                is Resource.Success -> {
                     channelAdapter.addAll(it.data)
                 }
-                is Resource.Failure->{
-                    Log.e("LOG",it.error.msg)
+                is Resource.Failure -> {
+                    Log.e("LOG", it.error.msg)
                 }
             }
         })
     }
 
-    private fun observeFeatureContentList(){
+    private fun observeFeatureContentList() {
         viewModel.featureContentLiveData.observe(viewLifecycleOwner, Observer {
-            when(it){
-                is Resource.Success ->{
-                  imageSlider.adapter=SliderAdapter(context!!,it.data)
+            when (it) {
+                is Resource.Success -> {
+                    imageSlider.adapter = SliderAdapter(context!!, it.data)
                 }
-                is Resource.Failure->{
-                    Log.e("LOG",it.error.msg)
+                is Resource.Failure -> {
+                    Log.e("LOG", it.error.msg)
                 }
             }
         })
     }
 
-    private fun observePopularVideoList(){
+    private fun observePopularVideoList() {
         viewModel.popularVideoLiveData.observe(viewLifecycleOwner, Observer {
-            when(it){
-                is Resource.Success ->{
+            when (it) {
+                is Resource.Success -> {
                     bottomProgress.visibility = View.GONE
-                    if(popularVideoListAdapter.itemCount == 0){
-                        val fakeChannelInfo = ChannelInfo()//we are adding fake channelinfo because of header in adapter....
+                    if (popularVideoListAdapter.itemCount == 0) {
+                        val fakeChannelInfo =
+                            ChannelInfo()//we are adding fake channelinfo because of header in adapter....
                         popularVideoListAdapter.add(fakeChannelInfo)
                     }
-                    if(it.data.isNotEmpty()){
+                    if (it.data.isNotEmpty()) {
                         popularVideoListAdapter.addAll(it.data)
                     }
 
                 }
-                is Resource.Failure->{
-                    Log.e("LOG",it.error.msg)
+                is Resource.Failure -> {
+                    Log.e("LOG", it.error.msg)
                 }
             }
         })
