@@ -16,7 +16,7 @@
         android:padding="20dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <ImageView
             android:clickable="true"
             android:focusable="true"
             android:id="@+id/profile_picture"

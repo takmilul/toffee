@@ -45,17 +45,14 @@
                     android:orientation="vertical"
                     android:padding="20dp">
 
-                    <de.hdodenhof.circleimageview.CircleImageView
+                    <ImageView
                         android:id="@+id/profile_iv"
                         android:layout_width="120dp"
                         android:layout_height="120dp"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginStart="8dp"
                         android:layout_marginEnd="8dp"
-                        app:civ_border_color="@android:color/white"
-                        app:civ_border_width="2dp"
-                        imageFromUrl="@{data.photoUrl}"
-                        app:civ_circle_background_color="@android:color/white"
+                        imageFromUrlRounded="@{data.photoUrl}"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"

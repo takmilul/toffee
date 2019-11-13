@@ -30,15 +30,13 @@
             app:layout_constraintTop_toTopOf="parent">
 
 
-            <de.hdodenhof.circleimageview.CircleImageView
+            <ImageView
                 android:id="@+id/channel"
                 android:layout_width="@dimen/channel_width"
                 android:layout_height="@dimen/channel_height"
                 android:layout_gravity="center"
                 loadChannelImage="@{data}"
-                app:civ_border_color="@android:color/darker_gray"
-                app:civ_border_width="1dp"
-                app:civ_circle_background_color="@android:color/white"
+                android:background="@drawable/circular_white_bg"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
