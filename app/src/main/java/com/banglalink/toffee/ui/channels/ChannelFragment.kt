@@ -84,6 +84,7 @@ class ChannelFragment: HomeBaseFragment(),ChannelStickyListAdapter.OnItemClickLi
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity?.title = this.category
         var channelAdapter: ChannelStickyListAdapter? = null
         val gridView: RecyclerView  = view.findViewById(R.id.gridView)
         gridView.setHasFixedSize(true)
