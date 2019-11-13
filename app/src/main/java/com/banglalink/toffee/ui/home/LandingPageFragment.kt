@@ -134,7 +134,10 @@ class LandingPageFragment :HomeBaseFragment(){
                         val fakeChannelInfo = ChannelInfo()//we are adding fake channelinfo because of header in adapter....
                         popularVideoListAdapter.add(fakeChannelInfo)
                     }
-                    popularVideoListAdapter.addAll(it.data)
+                    if(it.data.isNotEmpty()){
+                        popularVideoListAdapter.addAll(it.data)
+                    }
+
                 }
                 is Resource.Failure->{
                     Log.e("LOG",it.error.msg)
