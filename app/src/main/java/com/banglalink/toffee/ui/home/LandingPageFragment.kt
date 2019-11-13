@@ -89,6 +89,8 @@ class LandingPageFragment :HomeBaseFragment(){
 
 
         bottomProgress = view.findViewById(R.id.progress_bar)
+        if(popularVideoListAdapter.itemCount == 0)
+            bottomProgress.visibility = View.VISIBLE
 
         observeFeatureContentList()
         observeChannelList()
