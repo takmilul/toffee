@@ -29,7 +29,7 @@ class LandingPageViewModel(application: Application):BaseViewModel(application) 
     val popularVideoLiveData = popularVideoMutableLiveData.toLiveData()
 
     //LiveData for featureContent List
-    private val featureContentMutableLiveData = SingleLiveEvent<Resource<List<ChannelInfo>>>()
+    private val featureContentMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
     val featureContentLiveData = featureContentMutableLiveData.toLiveData()
 
     private val getChannels by lazy {
