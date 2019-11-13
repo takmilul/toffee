@@ -41,16 +41,16 @@ public class AboutActivity extends BaseAppCompatActivity {
 
     public void onClickTermsAndConditions(View view) {
         Intent intent = new Intent(AboutActivity.this, HtmlPageViewActivity.class);
-        intent.putExtra(HtmlPageViewActivity.Companion.getCONTENT_KEY(), TERMS_AND_CONDITION_URL);
-        intent.putExtra(HtmlPageViewActivity.Companion.getTITLE_KEY(), "Terms and Conditions");
+        intent.putExtra(HtmlPageViewActivity.CONTENT_KEY, TERMS_AND_CONDITION_URL);
+        intent.putExtra(HtmlPageViewActivity.TITLE_KEY, "Terms and Conditions");
         startActivity(intent);
 
     }
 
     public void onClickPrivacyPolicy(View view) {
         Intent intent = new Intent(AboutActivity.this, HtmlPageViewActivity.class);
-        intent.putExtra(HtmlPageViewActivity.Companion.getCONTENT_KEY(), PRIVACY_POLICY_URL);
-        intent.putExtra(HtmlPageViewActivity.Companion.getTITLE_KEY(), "Privacy Policy");
+        intent.putExtra(HtmlPageViewActivity.CONTENT_KEY, PRIVACY_POLICY_URL);
+        intent.putExtra(HtmlPageViewActivity.TITLE_KEY, "Privacy Policy");
         startActivity(intent);
     }
 
