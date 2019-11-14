@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.profile
 
 import android.app.Application
+import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
@@ -13,6 +14,7 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.usecase.GetProfile
 import com.banglalink.toffee.usecase.UpdateProfile
+import com.banglalink.toffee.usecase.UploadProfileImage
 import com.banglalink.toffee.util.getError
 import kotlinx.coroutines.launch
 
@@ -20,9 +22,18 @@ class EditProfileViewModel(application: Application) : BaseViewModel(application
     private val updateProfileMutableLiveData = MutableLiveData<Resource<Boolean>>()
     val updateProfileLiveData = updateProfileMutableLiveData.toLiveData()
 
+    private val uploadPhotoMutableLiveData = MutableLiveData<Resource<Boolean>>()
+    val uploadPhotoLiveData = uploadPhotoMutableLiveData.toLiveData()
+
+
     private val updateProfile by lazy {
         UpdateProfile(Preference.getInstance(), RetrofitApiClient.toffeeApi)
     }
+
+    private val uploadProfileImage by lazy {
+        UploadProfileImage(Preference.getInstance(), RetrofitApiClient.toffeeApi)
+    }
+
 
     fun updateProfile(editProfileForm: EditProfileForm) {
         viewModelScope.launch {
@@ -36,6 +47,19 @@ class EditProfileViewModel(application: Application) : BaseViewModel(application
                 updateProfileMutableLiveData.setSuccess(true)
             } catch (e: Exception) {
                 updateProfileMutableLiveData.setError(getError(e))
+            }
+        }
+    }
+
+    fun uploadProfileImage(photoData: String) {
+        viewModelScope.launch {
+            try {
+                uploadProfileImage.execute(
+                    photoData
+                )
+                uploadPhotoMutableLiveData.setSuccess(true)
+            } catch (e: Exception) {
+                uploadPhotoMutableLiveData.setError(getError(e))
             }
         }
     }

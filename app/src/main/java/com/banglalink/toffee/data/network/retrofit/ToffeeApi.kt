@@ -36,7 +36,7 @@ interface ToffeeApi {
     @POST("subscriber-profile-update")
     suspend fun updateProfile(@Body updateProfileRequest: UpdateProfileRequest):Response<UpdateProfileResponse>
     @POST("subscriber-profile-photo")
-    suspend fun uploadPhoto(@Body photoRequest: PhotoRequest):Response<PhotoResponse>
+    suspend fun uploadPhoto(@Body updateProfilePhotoRequest: UploadProfileImageRequest):Response<UploadProfileImageResponse>
     @POST("search-contents")
     suspend fun searchContent(@Body searchContentRequest: SearchContentRequest):Response<SearchContentResponse>
     @POST("contents-shareable")
