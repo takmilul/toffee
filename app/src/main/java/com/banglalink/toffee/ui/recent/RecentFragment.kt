@@ -16,7 +16,7 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.common.CommonChannelAdapter
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.facebook.shimmer.ShimmerFrameLayout
 
 class RecentFragment:HomeBaseFragment() {
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
@@ -28,7 +28,7 @@ class RecentFragment:HomeBaseFragment() {
 
     lateinit var linearLayoutManager: LinearLayoutManager
     lateinit var loadMoreProgress: ProgressBar
-
+    lateinit var shimmerViewContainer: ShimmerFrameLayout
     private val viewModel by lazy{
         ViewModelProviders.of(this).get(RecentViewModel::class.java)
     }
@@ -48,7 +48,8 @@ class RecentFragment:HomeBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val progressDialog = VelBoxProgressDialog(context!!)
+        shimmerViewContainer = view.findViewById(R.id.shimmer_view_container)
+//        val progressDialog = VelBoxProgressDialog(context!!)
         adapter = CommonChannelAdapter(this) {
             homeViewModel.fragmentDetailsMutableLiveData.postValue(it)
         }
@@ -64,12 +65,15 @@ class RecentFragment:HomeBaseFragment() {
             }
         })
         activity!!.title = "Recent"
-        progressDialog.show()
+//        progressDialog.show()
+        shimmerViewContainer.startShimmer();
         loadRecentItems()
         viewModel.recentLiveData.observe(viewLifecycleOwner, Observer {
-            if(progressDialog.isShowing){
-                progressDialog.dismiss()
-            }
+//            if(progressDialog.isShowing){
+//                progressDialog.dismiss()
+//            }
+            shimmerViewContainer.stopShimmer()
+            shimmerViewContainer.visibility = View.GONE
             loadMoreProgress.visibility = View.GONE
             when(it){
                 is Resource.Success->{

@@ -64,5 +64,7 @@
     <color name="tool_bar_color">@android:color/white</color>
     <color name="channel_header">#3e5979</color>
 
+    <color name="background">#dddddd</color>
+
 
 </resources>
