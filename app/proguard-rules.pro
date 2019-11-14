@@ -36,6 +36,7 @@
 -keep class com.banglalink.toffee.data.network.request.** { <fields>; }
 -keep class com.banglalink.toffee.data.network.response.** { <fields>; }
 -keep class com.banglalink.toffee.model.** { <fields>; }
+-keep class com.banglalink.toffee.ui.player.** { <fields>; }
 
 # Prevent proguard from stripping interface information from TypeAdapter, TypeAdapterFactory,
 # JsonSerializer, JsonDeserializer instances (so they can be used in @JsonAdapter)
