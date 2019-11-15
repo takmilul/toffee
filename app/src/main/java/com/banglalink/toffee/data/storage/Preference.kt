@@ -3,10 +3,18 @@ package com.banglalink.toffee.data.storage
 import android.content.Context
 import android.content.SharedPreferences
 import android.text.TextUtils
+import androidx.lifecycle.MutableLiveData
 import com.banglalink.toffee.model.DBVersion
 
 class Preference private constructor(context: Context) {
     private val pref: SharedPreferences = context.getSharedPreferences("IP_TV", Context.MODE_PRIVATE)
+
+    private val balanceLiveData = MutableLiveData<Int>()
+    private val sessionTokenLiveData = MutableLiveData<Int>()
+    private val channelDbVersionLiveData = MutableLiveData<Int>()
+    private val catchupDbVersionLiveData = MutableLiveData<Int>()
+    private val vodDbVersionLiveData = MutableLiveData<Int>()
+    private val categoryDbVersionLiveData = MutableLiveData<Int>()
 
     var phoneNumber: String
         get() = pref.getString("p_number", "")?:""
