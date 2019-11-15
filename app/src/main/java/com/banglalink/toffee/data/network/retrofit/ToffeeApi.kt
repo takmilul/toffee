@@ -41,4 +41,6 @@ interface ToffeeApi {
     suspend fun searchContent(@Body searchContentRequest: SearchContentRequest):Response<SearchContentResponse>
     @POST("contents-shareable")
     suspend fun getContentFromShareableUrl(@Body shareableRequest: ContentShareableRequest):Response<ContentShareableResponse>
+    @POST("heart-beat")
+    suspend fun sendHeartBeat(@Body heartBeatRequest: HeartBeatRequest):Response<HeartBeatResponse>
 }
