@@ -62,13 +62,14 @@ abstract class CommonSingleListFragment:Fragment(), OptionCallBack {
         binding.listview.adapter = mAdapter
         scrollListener = object : EndlessRecyclerViewScrollListener(linearLayoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
-                binding.progressBar.visibility =View.GONE
+                binding.progressBar.visibility =View.VISIBLE
                 loadItems(mAdapter.getOffset())
             }
         }
         // Adds the scroll listener to RecyclerView
         binding.listview.addOnScrollListener(scrollListener)
         binding.progress.visibility = View.VISIBLE
+        binding.progressBar.visibility = View.VISIBLE
     }
 
     abstract fun loadItems(offset:Int)
