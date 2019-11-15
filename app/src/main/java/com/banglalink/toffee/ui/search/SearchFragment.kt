@@ -59,7 +59,6 @@ class SearchFragment:CommonSingleListFragment() {
     }
 
     fun search(query:String,offset: Int=0){
-        mAdapter?.removeAll()
         searchKey = query
         viewModel.searchContent(query,offset)
     }
