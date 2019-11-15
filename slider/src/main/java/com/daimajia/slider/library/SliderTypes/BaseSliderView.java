@@ -4,13 +4,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.daimajia.slider.library.GlideApp;
 import com.daimajia.slider.library.R;
 
@@ -212,87 +213,33 @@ public abstract class BaseSliderView {
             mLoadListener.onStart(me);
         }
 
-//        Picasso p = (mPicasso != null) ? mPicasso : Picasso.with(mContext);
-//        RequestCreator rq = null;
-//        if(mUrl!=null){
-//            rq = p.load(mUrl);
-//        }else if(mFile != null){
-//            rq = p.load(mFile);
-//        }else if(mRes != 0){
-//            rq = p.load(mRes);
-//        }else{
-//            return;
-//        }
-//
-//        if(rq == null){
-//            return;
-//        }
-//
-//        if(getEmpty() != 0){
-//            rq.placeholder(getEmpty());
-//        }
-//
-//        if(getError() != 0){
-//            rq.error(getError());
-//        }
-//        switch (mScaleType){
-//            case Fit:
-//                rq.fit();
-//                break;
-//            case CenterCrop:
-//                rq.fit().centerCrop();
-//                break;
-//            case CenterInside:
-//                rq.fit().centerInside();
-//                break;
-//        }
-
-//        rq.into(targetImageView,new Callback() {
-//            @Override
-//            public void onSuccess() {
-//                if(v.findViewById(R.id.loading_bar) != null){
-//                    v.findViewById(R.id.loading_bar).setVisibility(View.INVISIBLE);
-//                }
-//            }
-//
-//            @Override
-//            public void onError() {
-//                if(mLoadListener != null){
-//                    mLoadListener.onEnd(false,me);
-//                }
-//                if(v.findViewById(R.id.loading_bar) != null){
-//                    v.findViewById(R.id.loading_bar).setVisibility(View.INVISIBLE);
-//                }
-//            }
-//        });
 
         GlideApp.with(mContext)
                 .load(mUrl)
                 .transition(withCrossFade())
                 .error(getEmpty())
-                .into(new SimpleTarget<Drawable>() {
+                .override(720,405)
+                .listener(new RequestListener<Drawable>() {
                     @Override
-                    public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                        if(v.findViewById(R.id.loading_bar) != null){
-                            v.findViewById(R.id.loading_bar).setVisibility(View.INVISIBLE);
-                        }
-//                        targetImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                        targetImageView.setImageDrawable(resource.getCurrent());
-                    }
-
-                    @Override
-                    public void onLoadFailed(@Nullable Drawable errorDrawable) {
-                        super.onLoadFailed(errorDrawable);
-
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                         if(mLoadListener != null){
                             mLoadListener.onEnd(false,me);
                         }
                         if(v.findViewById(R.id.loading_bar) != null){
                             v.findViewById(R.id.loading_bar).setVisibility(View.INVISIBLE);
                         }
-                        targetImageView.setImageDrawable(errorDrawable);
+                        return false;
                     }
-                });
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        if(v.findViewById(R.id.loading_bar) != null){
+                            v.findViewById(R.id.loading_bar).setVisibility(View.INVISIBLE);
+                        }
+                        return false;
+                    }
+                })
+                .into(targetImageView);
    }
 
 
