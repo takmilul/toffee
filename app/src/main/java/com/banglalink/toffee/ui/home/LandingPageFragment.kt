@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.home
 
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,12 +11,14 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager.widget.ViewPager
 import com.banglalink.toffee.R
 import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.model.ChannelInfo
+import com.daimajia.slider.library.SliderLayout
+import com.daimajia.slider.library.SliderTypes.BaseSliderView
+import com.daimajia.slider.library.SliderTypes.DefaultSliderView
 
 class LandingPageFragment : HomeBaseFragment() {
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
@@ -24,9 +27,9 @@ class LandingPageFragment : HomeBaseFragment() {
 
     private lateinit var channelAdapter: ChannelAdapter
     lateinit var popularVideoListAdapter: PopularVideoListAdapter
-    lateinit var imageSlider: ViewPager
-    private lateinit var catchupListView: RecyclerView
-    lateinit var bottomProgress: ProgressBar
+    private var imageSlider: SliderLayout?=null
+    private var catchupListView: RecyclerView? = null
+    private var bottomProgress: ProgressBar? = null
 
     val viewModel by lazy {
         ViewModelProviders.of(this).get(LandingPageViewModel::class.java)
@@ -57,7 +60,9 @@ class LandingPageFragment : HomeBaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         activity?.title = "Home"
         imageSlider = view.findViewById(R.id.slider)
-        val listLayoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
+
+
+        val listLayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         val channelListView = view.findViewById<RecyclerView>(R.id.channel_list).apply {
             layoutManager = listLayoutManager
             adapter = channelAdapter
@@ -66,21 +71,20 @@ class LandingPageFragment : HomeBaseFragment() {
         channelListView.addOnScrollListener(object :
             EndlessRecyclerViewScrollListener(listLayoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
-//                if(view.scrollState != RecyclerView.SCROLL_STATE_IDLE)
                 viewModel.loadChannels(channelAdapter.itemCount)
             }
         })
 
-        val linearLayoutManager = LinearLayoutManager(activity)
+        val linearLayoutManager = LinearLayoutManager(context)
         catchupListView = view.findViewById<RecyclerView>(R.id.listview).apply {
             layoutManager = linearLayoutManager
             adapter = popularVideoListAdapter
         }
 
-        catchupListView.addOnScrollListener(object :
+        catchupListView?.addOnScrollListener(object :
             EndlessRecyclerViewScrollListener(linearLayoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
-                bottomProgress.visibility = View.VISIBLE
+                bottomProgress?.visibility = View.VISIBLE
                 viewModel.loadPopularVideos(popularVideoListAdapter.getOffset())
             }
         })
@@ -88,7 +92,7 @@ class LandingPageFragment : HomeBaseFragment() {
 
         bottomProgress = view.findViewById(R.id.progress_bar)
         if (popularVideoListAdapter.itemCount == 0)
-            bottomProgress.visibility = View.VISIBLE
+            bottomProgress?.visibility = View.VISIBLE
 
         observeFeatureContentList()
         observeChannelList()
@@ -117,7 +121,19 @@ class LandingPageFragment : HomeBaseFragment() {
         viewModel.featureContentLiveData.observe(viewLifecycleOwner, Observer {
             when (it) {
                 is Resource.Success -> {
-                    imageSlider.adapter = SliderAdapter(context!!, it.data)
+                  for(channelInfo in it.data){
+                      val textSliderView = DefaultSliderView(activity, channelInfo)
+                      textSliderView
+                          .description(channelInfo.program_name)
+                          .image(channelInfo.feature_image).scaleType = BaseSliderView.ScaleType.Fit
+
+                      //add your extra information
+                      textSliderView.bundle(Bundle())
+                      textSliderView.bundle
+                          .putString("extra", channelInfo.program_name)
+
+                      imageSlider?.addSlider<DefaultSliderView>(textSliderView)
+                  }
                 }
                 is Resource.Failure -> {
                     Log.e("LOG", it.error.msg)
@@ -130,7 +146,7 @@ class LandingPageFragment : HomeBaseFragment() {
         viewModel.popularVideoLiveData.observe(viewLifecycleOwner, Observer {
             when (it) {
                 is Resource.Success -> {
-                    bottomProgress.visibility = View.GONE
+                    bottomProgress?.visibility = View.GONE
                     if (popularVideoListAdapter.itemCount == 0) {
                         val fakeChannelInfo =
                             ChannelInfo()//we are adding fake channelinfo because of header in adapter....
@@ -149,10 +165,18 @@ class LandingPageFragment : HomeBaseFragment() {
     }
 
     fun onBackPressed(): Boolean {
-        if (catchupListView.computeVerticalScrollOffset() > 0) {
-            catchupListView.smoothScrollToPosition(0)
+        if(catchupListView!=null && catchupListView!!.computeVerticalScrollOffset() > 0){
+            catchupListView?.smoothScrollToPosition(0)
             return true
         }
         return false
+    }
+
+    override fun onDestroyView() {
+        catchupListView = null
+        imageSlider = null
+        bottomProgress = null
+        super.onDestroyView()
+
     }
 }
