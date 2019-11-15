@@ -45,7 +45,6 @@ class CatchupFragment : CommonSingleListFragment() {
     }
 
     override fun loadItems(offset: Int) {
-        binding.progressBar.visibility = View.VISIBLE
         viewModel.getContent(offset)
     }
 
