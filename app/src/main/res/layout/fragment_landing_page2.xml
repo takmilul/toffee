@@ -13,7 +13,7 @@
             android:layout_height="wrap_content"
             android:minHeight="150dp"
             android:orientation="vertical">
-            <androidx.viewpager.widget.ViewPager
+            <com.daimajia.slider.library.SliderLayout
                 android:id="@+id/slider"
                 android:layout_width="match_parent"
                 app:indicator_visibility="invisible"
