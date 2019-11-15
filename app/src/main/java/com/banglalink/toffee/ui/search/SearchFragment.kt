@@ -14,6 +14,10 @@ class SearchFragment:CommonSingleListFragment() {
        //not handled
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        searchKey = arguments?.getString(SEARCH, "")!!
+        super.onCreate(savedInstanceState)
+    }
     override fun loadItems(offset: Int) {
         search(searchKey,offset)
     }
@@ -36,7 +40,6 @@ class SearchFragment:CommonSingleListFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        searchKey = arguments?.getString(SEARCH, "")!!
         super.onViewCreated(view, savedInstanceState)
 
         activity?.title = "Search"
@@ -44,7 +47,7 @@ class SearchFragment:CommonSingleListFragment() {
             hideProgress()
             when(it){
                 is Resource.Success->{
-                    mAdapter.addAll(it.data)
+                    mAdapter?.addAll(it.data)
                 }
                 is Resource.Failure->{
                     context?.showToast(it.error.msg)
@@ -56,7 +59,8 @@ class SearchFragment:CommonSingleListFragment() {
     }
 
     fun search(query:String,offset: Int=0){
-        mAdapter.removeAll()
+        mAdapter?.removeAll()
+        searchKey = query
         viewModel.searchContent(query,offset)
     }
 

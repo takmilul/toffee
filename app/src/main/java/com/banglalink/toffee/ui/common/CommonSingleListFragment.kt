@@ -30,7 +30,7 @@ abstract class CommonSingleListFragment:Fragment(), OptionCallBack {
         ViewModelProviders.of(this).get(BaseViewModel::class.java)
     }
 
-    lateinit var mAdapter: CommonChannelAdapter
+    var mAdapter: CommonChannelAdapter?=null
     lateinit var scrollListener: EndlessRecyclerViewScrollListener
     private var title: String? = null
 
@@ -63,7 +63,7 @@ abstract class CommonSingleListFragment:Fragment(), OptionCallBack {
         scrollListener = object : EndlessRecyclerViewScrollListener(linearLayoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
                 binding.progressBar.visibility =View.VISIBLE
-                loadItems(mAdapter.getOffset())
+                loadItems(mAdapter?.getOffset()?:0)
             }
         }
         // Adds the scroll listener to RecyclerView

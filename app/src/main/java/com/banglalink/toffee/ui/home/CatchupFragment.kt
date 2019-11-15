@@ -34,7 +34,7 @@ class CatchupFragment : CommonSingleListFragment() {
             when (it) {
                 is Resource.Success -> {
                     hideProgress()
-                    mAdapter.addAll(it.data)
+                    mAdapter?.addAll(it.data)
                 }
                 is Resource.Failure -> {
                     hideProgress()
@@ -80,9 +80,9 @@ class CatchupFragment : CommonSingleListFragment() {
     ) {
         activity?.title = title
         binding.progressBar.visibility = View.VISIBLE
-        mAdapter.removeAll()
-        mAdapter.clearOffset()
-        mAdapter.notifyDataSetChanged()
+        mAdapter?.removeAll()
+        mAdapter?.clearOffset()
+        mAdapter?.notifyDataSetChanged()
         viewModel.updateInfo(category, categoryId, subCategory, subCategoryID, type)
     }
 
