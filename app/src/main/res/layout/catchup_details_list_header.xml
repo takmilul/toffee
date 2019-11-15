@@ -1,120 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:paddingTop="@dimen/activity_horizontal_margin"
-    android:background="@color/screen_bg_white">
+    >
 
+    <data>
+        <variable
+            name="data"
+            type="com.banglalink.toffee.model.ChannelInfo" />
+        <variable
+            name="callback"
+            type="com.banglalink.toffee.ui.home.OptionCallBack" />
+    </data>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="16dp"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="@dimen/activity_horizontal_margin"
+        android:background="@color/screen_bg_white">
+
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/program_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:maxLines="2"
-                tools:text="@string/action_subscribe"
-                android:textSize="18sp"
-                android:fontFamily="@font/roboto_medium"
-                android:textColor="@color/main_text_color"
-                />
-
-            <TextView
-                android:id="@+id/provider_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:fontFamily="@font/roboto_regular"
-                android:maxLines="1"
-                android:textColor="@color/second_text_color"
-                android:textSize="14sp"
-                tools:text="Content Provider" />
-
-            <TextView
-                android:visibility="gone"
-                android:layout_marginTop="5dp"
-                android:id="@+id/views"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="400 views"
-                android:textSize="12sp"
-                android:textColor="@color/semi_dark_gray"
-                />
-
-            <RelativeLayout
-                android:visibility="gone"
-                android:paddingTop="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/category"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/darker_gray"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="Entertainment"/>
-            </RelativeLayout>
-
+            android:paddingBottom="16dp"
+            android:orientation="horizontal">
             <LinearLayout
-                android:id="@+id/des_layout"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
+                android:layout_weight="1"
                 android:orientation="vertical">
                 <TextView
-                    android:layout_marginTop="10dp"
-                    android:id="@+id/description"
+                    android:id="@+id/program_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="2"
+                    android:text="@{data.program_name}"
+                    tools:text="@string/action_subscribe"
+                    android:textSize="18sp"
+                    android:fontFamily="@font/roboto_medium"
+                    android:textColor="@color/main_text_color"
+                    />
+
+                <TextView
+                    android:id="@+id/provider_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/darker_gray"
-                    android:textAppearance="?android:attr/textAppearanceSmall"/>
+                    android:ellipsize="end"
+                    android:fontFamily="@font/roboto_regular"
+                    android:maxLines="1"
+                    android:textColor="@color/second_text_color"
+                    android:textSize="14sp"
+                    android:text="@{data.content_provider_name}"
+                    tools:text="Content Provider" />
 
 
             </LinearLayout>
-
-            <!--<TextView-->
-                <!--android:id="@+id/see_more"-->
-                <!--android:layout_marginTop="5dp"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:textAppearance="?android:attr/textAppearanceSmall"-->
-                <!--android:text="See more"-->
-                <!--android:visibility="gone"-->
-                <!--android:clickable="true"-->
-                <!--android:textColor="@android:color/black"/>-->
-
-
+            <ImageView
+                android:layout_marginTop="5dp"
+                android:layout_gravity="right|top"
+                android:clickable="true"
+                android:onClick="@{(v)->callback.onOptionClicked(v,data)}"
+                android:id="@+id/options"
+                android:layout_width="wrap_content"
+                android:src="@mipmap/ic_overlay_dark"
+                android:layout_height="wrap_content"
+                />
         </LinearLayout>
-        <ImageButton
-            android:background="@android:color/transparent"
-            android:id="@+id/expand_description"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@mipmap/ic_action_expand"/>
-        <ImageView
-            android:layout_marginTop="5dp"
-            android:layout_gravity="right|top"
-            android:clickable="true"
-            android:id="@+id/options"
-            android:layout_width="wrap_content"
-            android:src="@mipmap/ic_overlay_dark"
-            android:layout_height="wrap_content"
-            />
+
     </LinearLayout>
 
-</LinearLayout>
+</layout>
