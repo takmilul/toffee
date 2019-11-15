@@ -1,27 +1,28 @@
 package com.banglalink.toffee.ui.search
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.ProgressBar
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.banglalink.toffee.R
 import com.banglalink.toffee.extension.showToast
-import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.common.CommonChannelAdapter
-import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.ui.common.CommonSingleListFragment
 
-class SearchFragment:HomeBaseFragment() {
+class SearchFragment:CommonSingleListFragment() {
+    override fun onFavoriteItemRemoved(channelInfo: ChannelInfo) {
+       //not handled
+    }
+
+    override fun loadItems(offset: Int) {
+        search(searchKey,offset)
+    }
 
     private val viewModel by lazy {
         ViewModelProviders.of(this).get(SearchViewModel::class.java)
     }
+
+    lateinit var searchKey: String
 
     companion object{
         const val SEARCH = "_search_"
@@ -34,49 +35,16 @@ class SearchFragment:HomeBaseFragment() {
         }
     }
 
-    lateinit var adapter: CommonChannelAdapter
-
-    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
-        adapter?.remove(channelInfo)
-    }
-
-
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_search_list, container, false)
-
-    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        searchKey = arguments?.getString(SEARCH, "")!!
         super.onViewCreated(view, savedInstanceState)
 
         activity?.title = "Search"
-        val list = view.findViewById<View>(R.id.list) as RecyclerView
-        val linearLayoutManager = LinearLayoutManager(activity)
-        list.layoutManager = linearLayoutManager
-        adapter = CommonChannelAdapter(this){
-            homeViewModel.fragmentDetailsMutableLiveData.postValue(it)
-        }
-        list.adapter = adapter
-        val  loadMoreProgress = view.findViewById(R.id.progress_bar) as ProgressBar
-        loadMoreProgress.visibility = View.VISIBLE
-        val keyWord = arguments?.getString(SEARCH, "")!!
-        search(keyWord)
-        list.addOnScrollListener(object : EndlessRecyclerViewScrollListener(linearLayoutManager) {
-           override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
-               loadMoreProgress.visibility = View.VISIBLE
-                search(keyWord)
-            }
-        })
-
         viewModel.searchResultLiveData.observe(viewLifecycleOwner, Observer {
-            loadMoreProgress.visibility = View.GONE
+            hideProgress()
             when(it){
                 is Resource.Success->{
-                    adapter.addAll(it.data)
+                    mAdapter.addAll(it.data)
                 }
                 is Resource.Failure->{
                     context?.showToast(it.error.msg)
@@ -87,8 +55,9 @@ class SearchFragment:HomeBaseFragment() {
 
     }
 
-    fun search(searchKey:String){
-        viewModel.searchContent(searchKey,adapter.getOffset())
+    fun search(query:String,offset: Int=0){
+        mAdapter.removeAll()
+        viewModel.searchContent(query,offset)
     }
 
 
