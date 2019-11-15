@@ -16,12 +16,18 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.usecase.GetCategory
 import com.banglalink.toffee.usecase.GetChannelWithCategory
 import com.banglalink.toffee.usecase.GetContentFromShareableUrl
+import com.banglalink.toffee.usecase.SendHeartBeat
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.getError
 import kotlinx.coroutines.launch
 import java.lang.Exception
+import java.util.*
 
 class HomeViewModel(application: Application):BaseViewModel(application) {
+    private var timer: Timer? = null
+    private val TIMER_DELAY = 0
+    private val TIMER_PERIOD = 30000
+
     private val categoryMutableLiveData = MutableLiveData<Resource<NavCategoryGroup>>()
     val categoryLiveData = categoryMutableLiveData.toLiveData()
 
@@ -50,9 +56,13 @@ class HomeViewModel(application: Application):BaseViewModel(application) {
         GetContentFromShareableUrl(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
 
+    private val sendHeartBeat by lazy {
+        SendHeartBeat(Preference.getInstance(),RetrofitApiClient.toffeeApi)
+    }
     init {
         getCategory()
         getChannelByCategory(0)
+        starTimer()
     }
 
     private fun getCategory(){
@@ -91,5 +101,31 @@ class HomeViewModel(application: Application):BaseViewModel(application) {
                 val error = getError(e)
             }
         }
+    }
+
+
+    private fun stopTimer() {
+        if (timer != null) {
+            timer?.cancel()
+            timer?.purge()
+            timer = null
+        }
+    }
+
+    private fun starTimer() {
+        stopTimer()
+        timer = Timer()
+        timer?.scheduleAtFixedRate(object : TimerTask() {
+            override fun run() {
+                viewModelScope.launch {
+                    sendHeartBeat.execute()
+                }
+            }
+        }, TIMER_DELAY.toLong(), TIMER_PERIOD.toLong())
+    }
+
+    override fun onCleared() {
+        stopTimer()
+        super.onCleared()
     }
 }
