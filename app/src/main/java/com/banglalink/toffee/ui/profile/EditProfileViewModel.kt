@@ -34,6 +34,10 @@ class EditProfileViewModel(application: Application) : BaseViewModel(application
         UploadProfileImage(Preference.getInstance(), RetrofitApiClient.toffeeApi)
     }
 
+    private val getProfile by lazy {
+        GetProfile(Preference.getInstance(),RetrofitApiClient.toffeeApi)
+    }
+
 
     fun updateProfile(editProfileForm: EditProfileForm) {
         viewModelScope.launch {
@@ -51,12 +55,11 @@ class EditProfileViewModel(application: Application) : BaseViewModel(application
         }
     }
 
-    fun uploadProfileImage(photoData: String) {
+    fun uploadProfileImage(photoData: Uri) {
         viewModelScope.launch {
             try {
-                uploadProfileImage.execute(
-                    photoData
-                )
+                uploadProfileImage.execute(photoData,getApplication())
+                getProfile.execute()//we are calling get profile to update the url in preference
                 uploadPhotoMutableLiveData.setSuccess(true)
             } catch (e: Exception) {
                 uploadPhotoMutableLiveData.setError(getError(e))
