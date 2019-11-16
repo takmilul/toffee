@@ -24,13 +24,11 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProviders
-import coil.api.load
-import coil.request.CachePolicy
-import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
 import com.banglalink.toffee.extension.launchActivity
+import com.banglalink.toffee.extension.loadProfileImage
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.*
@@ -178,7 +176,8 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                 val fragment = supportFragmentManager.findFragmentById(R.id.content_viewer)
                 if (fragment != null && fragment is SearchFragment) {
                     (fragment as SearchFragment).search(query)
-                } else
+                }
+                else
                     loadFragmentById(
                         R.id.content_viewer, SearchFragment.createInstance(query),
                         SearchFragment::class.java!!.getName()
@@ -284,12 +283,8 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         }
         val profilePicture = header.findViewById(R.id.profile_picture) as ImageView
 
-        if(!Preference.getInstance().userImageUrl.isNullOrBlank()){
-            profilePicture.load(Preference.getInstance().userImageUrl){
-                transformations(CircleCropTransformation())
-                memoryCachePolicy(CachePolicy.DISABLED)
-                diskCachePolicy(CachePolicy.ENABLED)
-            }
+        observe(Preference.getInstance().profileImageUrlLiveData){
+            profilePicture.loadProfileImage(it)
         }
 
         profilePicture.setOnClickListener{
@@ -645,11 +640,10 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         val imageUrl = Preference.getInstance().userImageUrl
         if(!imageUrl.isNullOrBlank()){
-            menu?.findItem(R.id.action_avatar)?.actionView?.findViewById<ImageView>(R.id.view_avatar)?.load(imageUrl) {
-                transformations(CircleCropTransformation())
-                memoryCachePolicy(CachePolicy.DISABLED)
-                diskCachePolicy(CachePolicy.ENABLED)
+            observe(Preference.getInstance().profileImageUrlLiveData){
+                menu?.findItem(R.id.action_avatar)?.actionView?.findViewById<ImageView>(R.id.view_avatar)?.loadProfileImage(it)
             }
+
         }
         return super.onPrepareOptionsMenu(menu)
     }
