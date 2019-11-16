@@ -7,8 +7,10 @@ import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import com.banglalink.toffee.R
+import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.ActivityProfileBinding
 import com.banglalink.toffee.extension.launchActivity
+import com.banglalink.toffee.extension.loadProfileImage
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
@@ -37,6 +39,9 @@ class ViewProfileActivity : BaseAppCompatActivity() {
         }
 
         loadProfile()
+        observe(Preference.getInstance().profileImageUrlLiveData){
+            binding.profileIv.loadProfileImage(it)
+        }
 
     }
 
