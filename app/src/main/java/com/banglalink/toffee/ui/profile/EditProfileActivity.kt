@@ -160,15 +160,11 @@ class EditProfileActivity : AppCompatActivity() {
                 photoUri = UCrop.getOutput(data!!)
                 binding.profileEditLayout.profileIv.load(photoUri){
                     transformations(CircleCropTransformation())
+                    placeholder(R.drawable.ic_profile_default)
                 }
 
                 try {
-                    val imageBitmap = decodeSampledBitmap(this, photoUri!!)
-                    val bao = ByteArrayOutputStream()
-                    imageBitmap?.compress(Bitmap.CompressFormat.JPEG, 50, bao)
-                    val imageData = bao.toByteArray()
-                    val imageString = Base64.encodeToString(imageData, Base64.DEFAULT)
-                    viewModel.uploadProfileImage(imageString)
+                    viewModel.uploadProfileImage(photoUri!!)
 
                 } catch (e: Exception) {
                     Log.e(TAG, e.message, e)
