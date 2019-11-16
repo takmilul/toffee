@@ -61,6 +61,7 @@
                 android:layout_marginTop="5dp"
                 android:layout_gravity="right|top"
                 android:clickable="true"
+                android:padding="5dp"
                 android:onClick="@{(v)->callback.onOptionClicked(v,data)}"
                 android:id="@+id/options"
                 android:layout_width="wrap_content"
