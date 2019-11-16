@@ -21,6 +21,9 @@ import com.banglalink.toffee.ui.login.SigninByPhoneActivity
 
 class SplashScreen : BaseAppCompatActivity() {
 
+    companion object {
+        const val MULTI_DEVICE_LOGIN_ERROR_CODE = 109
+    }
     private val viewModel by lazy {
         ViewModelProviders.of(this).get(SplashViewModel::class.java)
     }
@@ -52,6 +55,10 @@ class SplashScreen : BaseAppCompatActivity() {
                     },2000)
                 }
                 is Resource.Failure->{
+                    if(it.error.code == MULTI_DEVICE_LOGIN_ERROR_CODE){
+                        launchActivity<SigninByPhoneActivity>()
+                        finish()
+                    }
                     showToast(it.error.msg)
                 }
             }
