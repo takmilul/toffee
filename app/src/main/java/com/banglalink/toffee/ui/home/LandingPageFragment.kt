@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.home
 
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -20,7 +19,11 @@ import com.daimajia.slider.library.SliderLayout
 import com.daimajia.slider.library.SliderTypes.BaseSliderView
 import com.daimajia.slider.library.SliderTypes.DefaultSliderView
 
-class LandingPageFragment : HomeBaseFragment() {
+class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListener {
+    override fun onSliderClick(slider: BaseSliderView?) {
+        homeViewModel.fragmentDetailsMutableLiveData.postValue((slider as DefaultSliderView).data as ChannelInfo)
+    }
+
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
         popularVideoListAdapter.remove(channelInfo)
     }
@@ -132,6 +135,7 @@ class LandingPageFragment : HomeBaseFragment() {
                       textSliderView.bundle
                           .putString("extra", channelInfo.program_name)
 
+                      textSliderView.setOnSliderClickListener(this)
                       imageSlider?.addSlider<DefaultSliderView>(textSliderView)
                   }
                 }
@@ -174,6 +178,12 @@ class LandingPageFragment : HomeBaseFragment() {
 
     override fun onDestroyView() {
         catchupListView = null
+        imageSlider?.stopAutoCycle()
+//        val childCount = imageSlider?.childCount?:0
+//        for(i in 0 until childCount){
+//            val view:DefaultSliderView = imageSlider?.getChildAt(i) as DefaultSliderView
+//            view.setOnSliderClickListener(null)
+//        }
         imageSlider = null
         bottomProgress = null
         super.onDestroyView()
