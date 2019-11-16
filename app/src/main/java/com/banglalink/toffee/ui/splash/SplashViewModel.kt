@@ -15,6 +15,7 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.usecase.ApiLogin
 import com.banglalink.toffee.usecase.CheckUpdate
+import com.banglalink.toffee.usecase.GetProfile
 import com.banglalink.toffee.util.getError
 import kotlinx.coroutines.launch
 
@@ -30,6 +31,10 @@ class SplashViewModel(application: Application) : BaseViewModel(application) {
         ApiLogin(Preference.getInstance(), RetrofitApiClient.authApi)
     }
 
+    private val getProfile by lazy {
+        GetProfile(Preference.getInstance(),RetrofitApiClient.toffeeApi)
+    }
+
     fun init(skipUpdate:Boolean = false){
         if(Preference.getInstance().customerId == 0){
             throw CustomerNotFoundException("Customer not found")
@@ -40,7 +45,8 @@ class SplashViewModel(application: Application) : BaseViewModel(application) {
                 if(!skipUpdate){
                     checkUpdate.execute(BuildConfig.VERSION_CODE.toString())
                 }
-                apiLogin.execute()
+                apiLogin.execute()//auto login
+                getProfile.execute()//fetch profile
                 splashMutableLiveData.setSuccess(true)
             }
             catch (e:Exception){
