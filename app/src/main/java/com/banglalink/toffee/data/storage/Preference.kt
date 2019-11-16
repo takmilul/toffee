@@ -15,6 +15,7 @@ class Preference private constructor(context: Context) {
     private val catchupDbVersionLiveData = MutableLiveData<Int>()
     private val vodDbVersionLiveData = MutableLiveData<Int>()
     private val categoryDbVersionLiveData = MutableLiveData<Int>()
+    val profileImageUrlLiveData = MutableLiveData<String>()
 
     var phoneNumber: String
         get() = pref.getString("p_number", "")?:""
@@ -120,7 +121,11 @@ class Preference private constructor(context: Context) {
 
     var userImageUrl: String?
         get() = pref.getString("image_url", null)
-        set(userPhoto) = pref.edit().putString("image_url", userPhoto).apply()
+        set(userPhoto) {
+            pref.edit().putString("image_url", userPhoto).apply()
+            if(!TextUtils.isEmpty(userPhoto))
+                profileImageUrlLiveData.postValue(userPhoto)
+        }
 
     val savedChannelInfoListResponse: String?
         get() {
