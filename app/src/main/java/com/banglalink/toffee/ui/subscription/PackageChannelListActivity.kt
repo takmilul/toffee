@@ -7,6 +7,7 @@ import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.text.style.StrikethroughSpan
+import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
@@ -20,6 +21,7 @@ import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Package
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.widget.GridSpacingItemDecoration
+import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 
 class PackageChannelListActivity : AppCompatActivity() {
 
@@ -31,6 +33,10 @@ class PackageChannelListActivity : AppCompatActivity() {
 
     private val viewModel by lazy {
         ViewModelProviders.of(this).get(PackageChannelListViewModel::class.java)
+    }
+
+    private val progressDialog by lazy {
+        VelBoxProgressDialog(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,9 +67,11 @@ class PackageChannelListActivity : AppCompatActivity() {
 
         binding.packageChannelsTv.text= getString(R.string.formatted_channel_number_text,mPackage.programs)
 
+        progressDialog.show()
         viewModel.getPackageChannels(mPackage.packageId)
 
         observe(viewModel.channelListLiveData){
+            progressDialog.dismiss()
             when(it){
                 is Resource.Success ->{
                     mAdapter.addAll(it.data)
@@ -79,6 +87,10 @@ class PackageChannelListActivity : AppCompatActivity() {
             launchActivity<SubscribePackageActivity> {
                 putExtra(SubscribePackageActivity.PACKAGE,mPackage)
             }
+        }
+
+        if(mPackage.price==0){
+            binding.subscribe.visibility= View.GONE
         }
     }
 
