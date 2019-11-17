@@ -43,4 +43,8 @@ interface ToffeeApi {
     suspend fun getContentFromShareableUrl(@Body shareableRequest: ContentShareableRequest):Response<ContentShareableResponse>
     @POST("heart-beat")
     suspend fun sendHeartBeat(@Body heartBeatRequest: HeartBeatRequest):Response<HeartBeatResponse>
+    @POST("subscribed-packages-v2")
+    suspend fun getPackageList(@Body packageListRequest: PackageListRequest):Response<PackageListResponse>
+    @POST("package-details-v2")
+    suspend fun getPackageChannelList(@Body packageChannelListRequest: PackageChannelListRequest):Response<PackageChannelListResponse>
 }

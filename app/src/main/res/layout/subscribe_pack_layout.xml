@@ -1,91 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    android:layout_height="200dp"
-    android:layout_width="match_parent"
-    app:cardCornerRadius="@dimen/pack_corner_radious"
-    android:elevation="5dp"
-    android:layout_margin="5dp"
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     >
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-
+    <data>
+        <variable
+            name="data"
+            type="com.banglalink.toffee.model.Package" />
+        <variable
+            name="callback"
+            type="com.banglalink.toffee.ui.subscription.PackageCallBack" />
+    </data>
+    <androidx.cardview.widget.CardView
+        android:layout_height="200dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="1dp">
+        app:cardCornerRadius="@dimen/pack_corner_radious"
+        android:elevation="5dp"
+        android:layout_margin="5dp"
 
-        <ImageView
-            android:id="@+id/package_badge_icon"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="32dp"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_weekly_package" />
+        >
 
-        <TextView
-            android:id="@+id/package_name_tv"
-            style="@style/subscription_pack_header_style"
-            android:layout_width="0dp"
-            android:layout_marginEnd="8dp"
-            android:text="@string/weekly_trial"
-            app:layout_constraintEnd_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toTopOf="@+id/package_badge_icon" />
+        <androidx.constraintlayout.widget.ConstraintLayout
 
-        <TextView
-            android:id="@+id/channel_list_tv"
-            style="@style/subscripton_pack_channel_text"
-            android:layout_marginTop="8dp"
-            android:text="Channels"
-            app:layout_constraintEnd_toStartOf="@+id/imageView4"
-            app:layout_constraintTop_toBottomOf="@+id/package_name_tv" />
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout_editor_absoluteX="1dp">
 
-        <TextView
-            android:id="@+id/subscribe"
-            style="@style/SubscribePackButtonStyle"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toEndOf="@+id/package_badge_icon"
-            app:layout_constraintStart_toStartOf="@+id/package_badge_icon"
-            app:layout_constraintTop_toBottomOf="@+id/package_badge_icon"
-            android:text="@string/subscribe_text" />
+            <ImageView
+                android:id="@+id/package_badge_icon"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"
+                imageFromUrl="@{data.posterMobile}"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_weekly_package" />
 
-         <TextView
-            android:id="@+id/discount_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:fontFamily="@font/roboto_bold"
-            android:text="@string/strike_text"
-            android:textColor="@color/main_text_color"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="@id/subscribe"
-            app:layout_constraintEnd_toStartOf="@id/subscribe"
-            app:layout_constraintTop_toTopOf="@id/subscribe" />
+            <TextView
+                android:id="@+id/package_name_tv"
+                style="@style/subscription_pack_header_style"
+                android:layout_width="0dp"
+                android:layout_marginEnd="8dp"
+                tools:text="@string/weekly_trial"
+                android:text="@{data.packageName}"
+                app:layout_constraintEnd_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toTopOf="@+id/package_badge_icon" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintGuide_percent="@dimen/guide_line_width_percent"
-            android:orientation="vertical"
-            app:layout_constraintGuide_begin="213dp" />
+            <TextView
+                android:id="@+id/channel_list_tv"
+                style="@style/subscripton_pack_channel_text"
+                android:layout_marginTop="8dp"
+                android:text="Channels"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="@{()->callback.onShowChannelClick(data)}"
+                app:layout_constraintEnd_toStartOf="@+id/imageView4"
+                app:layout_constraintTop_toBottomOf="@+id/package_name_tv" />
 
-        <ImageView
-            android:id="@+id/imageView4"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginEnd="8dp"
-            android:baselineAlignBottom="true"
-            android:tint="@color/colorAccent"
-            app:layout_constraintBottom_toBottomOf="@+id/channel_list_tv"
-            app:layout_constraintEnd_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toTopOf="@+id/channel_list_tv"
-            app:srcCompat="@drawable/ic_right_arrow_accent" />
+            <TextView
+                android:id="@+id/subscribe"
+                style="@style/SubscribePackButtonStyle"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="@+id/package_badge_icon"
+                app:layout_constraintStart_toStartOf="@+id/package_badge_icon"
+                app:layout_constraintTop_toBottomOf="@+id/package_badge_icon"
+                android:text='@{"Subscribe ৳"+data.price}'
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="@{()->callback.onSubscribeClick(data)}"
+                tools:text="@string/subscribe_text" />
+
+            <TextView
+                android:id="@+id/discount_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:fontFamily="@font/roboto_bold"
+                tools:text="@string/strike_text"
+                discountText="@{data}"
+                android:textColor="@color/main_text_color"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@id/subscribe"
+                app:layout_constraintEnd_toStartOf="@id/subscribe"
+                app:layout_constraintTop_toTopOf="@id/subscribe" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintGuide_percent="@dimen/guide_line_width_percent"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="213dp" />
+
+            <ImageView
+                android:id="@+id/imageView4"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginEnd="8dp"
+                android:baselineAlignBottom="true"
+                android:tint="@color/colorAccent"
+                app:layout_constraintBottom_toBottomOf="@+id/channel_list_tv"
+                app:layout_constraintEnd_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toTopOf="@+id/channel_list_tv"
+                app:srcCompat="@drawable/ic_right_arrow_accent" />
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.cardview.widget.CardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</layout>
+

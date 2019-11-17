@@ -23,7 +23,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            loadChannelImage="@{data}"
+            imageFromUrlRounded="@{data.channel_logo}"
             android:background="@drawable/circular_white_bg"
             android:src="@mipmap/ic_menu_channel"
             app:layout_constraintEnd_toEndOf="parent"

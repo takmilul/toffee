@@ -137,6 +137,10 @@ class Preference private constructor(context: Context) {
         pref.edit().putString("systemTime", systemTime).apply()
     }
 
+    fun getSystemTime():String?{
+        return pref.getString("systemTime","")
+    }
+
     fun setDBVersion(dbVersion: DBVersion) {
         pref.edit().putInt("channelDbVersion", dbVersion.chanelDbVersion).apply()
         pref.edit().putInt("vodDbVersion", dbVersion.vodDbVersion).apply()
@@ -169,6 +173,7 @@ class Preference private constructor(context: Context) {
     fun saveChannelInfoListResponse(response: String) {
         pref.edit().putString("channel_info_list", response).apply()
     }
+
 
     companion object {
         private var instance: Preference? = null

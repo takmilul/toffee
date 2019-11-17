@@ -21,11 +21,27 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.subscription.MySubscriptionActivity"
-            android:label="@string/subscriptions"
+        <activity android:name=".ui.subscription.PackageChannelListActivity"
             android:screenOrientation="portrait"
+            android:label="@string/all_channels"
             android:theme="@style/AppTheme.NoActionBar"
             />
+        <activity
+            android:name=".ui.subscription.SubscribePackageActivity"
+            android:label="@string/confirm_purchase"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.subscription.PackageListActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="@string/subscriptions"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.subscription.MySubscriptionActivity"
+            android:label="@string/subscriptions"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.profile.EditProfileActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -120,7 +136,6 @@
             android:label="About"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
@@ -130,7 +145,7 @@
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
             android:exported="false"
-            android:grantUriPermissions="true" >
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />

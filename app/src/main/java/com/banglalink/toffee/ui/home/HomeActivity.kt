@@ -45,6 +45,7 @@ import com.banglalink.toffee.ui.recent.RecentFragment
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.settings.SettingsActivity
 import com.banglalink.toffee.ui.subscription.MySubscriptionActivity
+import com.banglalink.toffee.ui.subscription.PackageListActivity
 import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.util.Utils
 import com.google.android.material.navigation.NavigationView
@@ -461,7 +462,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                 binding.drawerLayout.closeDrawers()
             }
             ID_SUBSCIPTIONS->{
-                launchActivity<MySubscriptionActivity>()
+                launchActivity<PackageListActivity>()
             }
             ID_SETTINGS -> {
                 launchActivity<SettingsActivity>()

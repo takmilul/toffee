@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.R
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.HomeBaseFragment
@@ -162,7 +163,7 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
 
                 }
                 is Resource.Failure -> {
-                    Log.e("LOG", it.error.msg)
+                   context?.showToast(it.error.msg)
                 }
             }
         })
@@ -179,11 +180,6 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
     override fun onDestroyView() {
         catchupListView = null
         imageSlider?.stopAutoCycle()
-//        val childCount = imageSlider?.childCount?:0
-//        for(i in 0 until childCount){
-//            val view:DefaultSliderView = imageSlider?.getChildAt(i) as DefaultSliderView
-//            view.setOnSliderClickListener(null)
-//        }
         imageSlider = null
         bottomProgress = null
         super.onDestroyView()
