@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1010029804888",
+    "firebase_url": "https://toffee2.firebaseio.com",
+    "project_id": "toffee2",
+    "storage_bucket": "toffee2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1010029804888:android:e6aaa2c595218af068b92d",
+        "android_client_info": {
+          "package_name": "com.banglalink.toffee2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1010029804888-aq1jierv8t1ibhbmo2njt7qger9ugf1m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATWpu-_Zz_h-ihA6X_sQ8u6Prdk5geYH8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1010029804888-aq1jierv8t1ibhbmo2njt7qger9ugf1m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
