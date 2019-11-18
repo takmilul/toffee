@@ -29,16 +29,14 @@
             app:layout_constraintTop_toTopOf="parent"/>
 
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <ImageView
             android:id="@+id/edit_iv"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="center_horizontal"
             android:padding="5dp"
+            android:background="@drawable/round_accent_bg"
             android:src="@mipmap/ic_edit"
-            app:civ_border_color="@color/colorAccent"
-            app:civ_border_width="5dp"
-            app:civ_circle_background_color="@color/colorAccent"
             app:layout_constraintBottom_toBottomOf="@+id/profile_iv"
             app:layout_constraintEnd_toEndOf="@+id/profile_iv"
             app:layout_constraintStart_toStartOf="@+id/profile_iv"

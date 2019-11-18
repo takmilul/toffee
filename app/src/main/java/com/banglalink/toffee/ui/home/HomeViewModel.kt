@@ -13,17 +13,20 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.channels.StickyHeaderInfo
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.usecase.GetCategory
-import com.banglalink.toffee.usecase.GetChannelWithCategory
-import com.banglalink.toffee.usecase.GetContentFromShareableUrl
-import com.banglalink.toffee.usecase.SendHeartBeat
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.getError
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
+import com.google.firebase.iid.InstanceIdResult
 import kotlinx.coroutines.launch
 import java.lang.Exception
 import java.util.*
+import com.banglalink.toffee.usecase.*
+import com.google.firebase.iid.FirebaseInstanceId
 
-class HomeViewModel(application: Application):BaseViewModel(application) {
+
+class HomeViewModel(application: Application):BaseViewModel(application),OnCompleteListener<InstanceIdResult> {
+
     private var timer: Timer? = null
     private val TIMER_DELAY = 0
     private val TIMER_PERIOD = 30000
@@ -57,14 +60,40 @@ class HomeViewModel(application: Application):BaseViewModel(application) {
     }
 
     private val sendHeartBeat by lazy {
-        SendHeartBeat(Preference.getInstance(),RetrofitApiClient.toffeeApi)
-    }
-    init {
-        getCategory()
-        getChannelByCategory(0)
-        starTimer()
+        SendHeartBeat(viewModelScope,Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
 
+    private val setFcmToken by lazy {
+        SetFcmToken(Preference.getInstance(),RetrofitApiClient.toffeeApi)
+    }
+
+    init {
+        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener(this)
+        getCategory()
+        getChannelByCategory(0)
+        startHeartBeatTimer()
+    }
+
+    override fun onComplete(task: Task<InstanceIdResult>) {
+        if (task.isSuccessful) {
+            val token = task.result?.token
+            if(token!=null){
+                setFcmToken(token)
+            }
+        }
+
+    }
+
+    private fun setFcmToken(token:String){
+        viewModelScope.launch {
+            try{
+                setFcmToken.execute(token)
+            }
+            catch (e:Exception){
+                getError(e)
+            }
+        }
+    }
     private fun getCategory(){
         viewModelScope.launch {
             try{
@@ -98,7 +127,7 @@ class HomeViewModel(application: Application):BaseViewModel(application) {
                 }
 
             }catch (e:Exception){
-                val error = getError(e)
+                 getError(e)
             }
         }
     }
@@ -112,16 +141,10 @@ class HomeViewModel(application: Application):BaseViewModel(application) {
         }
     }
 
-    private fun starTimer() {
+    private fun startHeartBeatTimer() {
         stopTimer()
         timer = Timer()
-        timer?.scheduleAtFixedRate(object : TimerTask() {
-            override fun run() {
-                viewModelScope.launch {
-                    sendHeartBeat.execute()
-                }
-            }
-        }, TIMER_DELAY.toLong(), TIMER_PERIOD.toLong())
+        timer?.scheduleAtFixedRate(sendHeartBeat, TIMER_DELAY.toLong(), TIMER_PERIOD.toLong())
     }
 
     override fun onCleared() {

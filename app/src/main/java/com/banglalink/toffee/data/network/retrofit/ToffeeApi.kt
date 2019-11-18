@@ -47,4 +47,6 @@ interface ToffeeApi {
     suspend fun getPackageList(@Body packageListRequest: PackageListRequest):Response<PackageListResponse>
     @POST("package-details-v2")
     suspend fun getPackageChannelList(@Body packageChannelListRequest: PackageChannelListRequest):Response<PackageChannelListResponse>
+    @POST("set-fcm-token")
+    suspend fun setFcmToken(@Body fcmTokenRequest: FcmTokenRequest):Response<FcmTokenResponse>
 }
