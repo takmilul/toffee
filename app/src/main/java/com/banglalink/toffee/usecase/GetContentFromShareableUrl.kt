@@ -13,7 +13,6 @@ class GetContentFromShareableUrl (private val preference: Preference,private val
             toffeeApi.getContentFromShareableUrl(ContentShareableRequest(videoUrl,preference.customerId,preference.password))
         }
 
-        val channel = if(response.response.channels==null) null else response.response.channels[0]
-        return channel
+        return if(response.response.channels==null) null else response.response.channels[0]
     }
 }
