@@ -1,4 +1,4 @@
-package com.banglalink.toffee.ui.channels.adapter
+package com.banglalink.toffee.ui.channels
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -10,7 +10,6 @@ import coil.api.load
 import coil.request.CachePolicy
 import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
-import com.banglalink.toffee.ui.channels.StickyHeaderInfo
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.widget.StickyHeaderGridAdapter
 
