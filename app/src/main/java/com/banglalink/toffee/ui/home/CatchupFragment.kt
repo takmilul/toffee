@@ -31,13 +31,12 @@ class CatchupFragment : CommonSingleListFragment() {
         activity?.title = title
 
         viewModel.contentLiveData.observe(viewLifecycleOwner, Observer {
+            hideProgress()
             when (it) {
                 is Resource.Success -> {
-                    hideProgress()
                     mAdapter?.addAll(it.data)
                 }
                 is Resource.Failure -> {
-                    hideProgress()
                     Log.e("TAG", "Failure")
                 }
             }
