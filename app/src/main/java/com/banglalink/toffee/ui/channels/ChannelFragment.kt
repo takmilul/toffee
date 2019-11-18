@@ -9,12 +9,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.R
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.channels.adapter.ChannelStickyListAdapter
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.widget.StickyHeaderGridLayoutManager
 
-class ChannelFragment: HomeBaseFragment(),ChannelStickyListAdapter.OnItemClickListener {
+class ChannelFragment: HomeBaseFragment(),
+    ChannelStickyListAdapter.OnItemClickListener {
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
         //not needed
     }
@@ -95,7 +95,11 @@ class ChannelFragment: HomeBaseFragment(),ChannelStickyListAdapter.OnItemClickLi
         homeViewModel.channelLiveData.observe(viewLifecycleOwner, Observer {
           when(it){
               is Resource.Success->{
-                  channelAdapter = ChannelStickyListAdapter(context!!, it.data.toMutableList(), this)
+                  channelAdapter = ChannelStickyListAdapter(
+                      context!!,
+                      it.data.toMutableList(),
+                      this
+                  )
                   gridView.adapter = channelAdapter
               }
               is Resource.Failure->{
