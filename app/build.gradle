@@ -52,15 +52,16 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
+    //Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.6.2'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.2.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.1'
+    //LifeCycle Extensions
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.1.0"
     implementation "android.arch.lifecycle:extensions:2.1.0"
 
     implementation 'androidx.leanback:leanback:1.0.0'
     implementation 'com.google.android.material:material:1.0.0'
-    implementation 'de.hdodenhof:circleimageview:3.0.0'
     //Switch Lib
     implementation 'com.github.zcweng:switch-button:0.0.3@aar'
 
@@ -71,8 +72,11 @@ dependencies {
 
     implementation 'com.xfinity:dahdit:0.9.3'
 
-    //Coil
+    //Coil image Lib
     implementation 'io.coil-kt:coil:0.8.0'
+
+    //Firebase Push Notification
+    implementation 'com.google.firebase:firebase-messaging:20.0.1'
 
     implementation project(':slider')
 
@@ -87,7 +91,7 @@ dependencies {
     //Permission extension
     implementation 'com.github.florent37:runtime-permission-kotlin:1.1.1'
 
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0-rc01"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0-rc02"
 
     //Shimmer
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
@@ -96,3 +100,4 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 }
+apply plugin: 'com.google.gms.google-services'
