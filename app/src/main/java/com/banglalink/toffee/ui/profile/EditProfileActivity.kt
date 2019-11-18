@@ -27,6 +27,8 @@ import com.banglalink.toffee.ui.widget.showAlertDialog
 import androidx.lifecycle.lifecycleScope
 import coil.api.load
 import coil.transform.CircleCropTransformation
+import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.extension.loadProfileImage
 import com.banglalink.toffee.util.decodeSampledBitmap
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
@@ -112,6 +114,10 @@ class EditProfileActivity : AppCompatActivity() {
                     showToast(it.error.msg)
                 }
             }
+        }
+
+        observe(Preference.getInstance().profileImageUrlLiveData){
+            binding.profileEditLayout.profileIv.loadProfileImage(it)
         }
     }
 

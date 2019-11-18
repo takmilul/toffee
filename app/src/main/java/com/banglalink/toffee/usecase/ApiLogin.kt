@@ -14,9 +14,10 @@ class ApiLogin(private val pref: Preference, private val authApi: AuthApi) {
         response.customerInfoSignIn?.let {
             pref.balance = (it.balance)
             pref.customerId = (it.customerId)
-            pref.customerName = (it.customerName!!)
-            pref.setDBVersion(it.dbVersion!!)
-            pref.sessionToken = (it.sessionToken!!)
+            pref.customerName = (it.customerName?:"")
+            if(it.dbVersion!=null)
+                pref.setDBVersion(it.dbVersion!!)
+            pref.sessionToken = (it.sessionToken?:"")
         }
         return response.customerInfoSignIn!!
     }

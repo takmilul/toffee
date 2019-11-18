@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.Handler
 import androidx.lifecycle.ViewModelProviders
 import com.banglalink.toffee.R
+import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.exception.CustomerNotFoundException
 import com.banglalink.toffee.exception.UpdateRequiredException
 import com.banglalink.toffee.extension.launchActivity
@@ -56,6 +57,7 @@ class SplashScreen : BaseAppCompatActivity() {
                 }
                 is Resource.Failure->{
                     if(it.error.code == MULTI_DEVICE_LOGIN_ERROR_CODE){
+                        Preference.getInstance().clear()
                         launchActivity<SigninByPhoneActivity>()
                         finish()
                     }

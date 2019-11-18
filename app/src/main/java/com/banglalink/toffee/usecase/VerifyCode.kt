@@ -10,11 +10,14 @@ class VerifyCode(private val preference: Preference,private val toffeeApi: Toffe
     suspend fun execute(code:String):Boolean{
         val response = tryIO { toffeeApi.verifyCode(getRequest(code)) }
         preference.customerId = response.response.customerId
-        preference.customerName = response.response.customerName!!
-        preference.sessionToken = response.response.sessionToken!!
-        preference.password = response.response.password!!
+        preference.customerName = response.response.customerName?:""
+        preference.sessionToken = response.response.sessionToken?:""
+        preference.password = response.response.password?:""
         preference.balance = response.response.balance
-        preference.setDBVersion(response.response.dbVersion!!)
+        if(response.response.dbVersion!=null){
+            preference.setDBVersion(response.response.dbVersion!!)
+        }
+       
 
         return true
     }
