@@ -18,12 +18,14 @@ suspend fun <T : BaseResponse> tryIO(block: suspend () -> Response<T>): T {
                baseResponse.errorMsg!!
            )
         }
+        return response.body()!!
     }
-    return response.body()!!
+    throw ApiException(response.code(),response.message())
+
 }
 
 
-private val KEY = "1234567891234567"
+private const val KEY = "1234567891234567"
 private val secretKeySpec by lazy {
     SecretKeySpec(KEY.toByteArray(), "AES")
 }
@@ -43,7 +45,6 @@ fun decryptResponse(response: String): String {
 
 private fun decrypt(data: ByteArray): ByteArray {
     cipherInstance.init(Cipher.DECRYPT_MODE, secretKeySpec)
-    Log.e("cipher length: ", "" + data.size)
     return cipherInstance.doFinal(data)
 }
 
