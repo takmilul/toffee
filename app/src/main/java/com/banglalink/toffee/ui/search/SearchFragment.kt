@@ -19,7 +19,7 @@ class SearchFragment:CommonSingleListFragment() {
         super.onCreate(savedInstanceState)
     }
     override fun loadItems(offset: Int) {
-        search(searchKey,offset)
+        viewModel.searchContent(searchKey,offset)
     }
 
     private val viewModel by lazy {
@@ -57,11 +57,4 @@ class SearchFragment:CommonSingleListFragment() {
         })
 
     }
-
-    fun search(query:String,offset: Int=0){
-        searchKey = query
-        viewModel.searchContent(query,offset)
-    }
-
-
 }
