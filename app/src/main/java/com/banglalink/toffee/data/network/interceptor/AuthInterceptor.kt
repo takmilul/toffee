@@ -3,6 +3,7 @@ package com.banglalink.toffee.data.network.interceptor
 import com.banglalink.toffee.data.network.util.decryptResponse
 import com.banglalink.toffee.data.network.util.encryptRequest
 import okhttp3.*
+import okhttp3.ResponseBody.Companion.toResponseBody
 import okio.Buffer
 import java.io.IOException
 import java.security.InvalidKeyException
@@ -25,10 +26,13 @@ class AuthInterceptor : Interceptor {
             .method(request.method, builder.build())
             .build()
         val response = chain.proceed(newRequest)
+        if(!response.isSuccessful){
+            return response
+        }
         try {
             val jsonString =  decryptResponse(response.body!!.string())
             val contentType = response.body!!.contentType()
-            val body = ResponseBody.create(contentType, jsonString)
+            val body = jsonString.toResponseBody(contentType)
             return response.newBuilder().body(body).build()
 
         } catch (e: IllegalBlockSizeException) {
