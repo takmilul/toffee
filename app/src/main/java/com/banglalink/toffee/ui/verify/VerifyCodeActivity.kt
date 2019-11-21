@@ -49,6 +49,8 @@ class VerifyCodeActivity : BaseAppCompatActivity() {
         ViewModelProviders.of(this).get(VerifyCodeViewModel::class.java)
     }
 
+    private var resendCodeTimer:ResendCodeTimer? = null
+
     private var resendBtnPressCount: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,14 +92,14 @@ class VerifyCodeActivity : BaseAppCompatActivity() {
         resendButton.visibility = View.INVISIBLE
         startCountDown(if (resendBtnPressCount <= 1) 1 else 30)
 
-        progressDialog.show()
         viewModel.resendCode(phoneNumber, referralCode)
     }
     private fun startCountDown(countDownTimeInMinute: Int) {
         countdownTV.visibility = View.VISIBLE
-        object : CountDownTimer((countDownTimeInMinute * 60000).toLong(), 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-                val remainingSecs = millisUntilFinished / 1000
+        resendCodeTimer?.cancel()
+        resendCodeTimer = ResendCodeTimer(this,countDownTimeInMinute).also { timer ->
+            observe(timer.tickLiveData){
+                val remainingSecs = it / 1000
                 val minutes = (remainingSecs / 60).toInt()
                 val seconds = (remainingSecs % 60).toInt()
                 val timeText = (String.format("%02d", minutes)
@@ -105,12 +107,22 @@ class VerifyCodeActivity : BaseAppCompatActivity() {
                 countdownTV.text = "Resend option will be activated after $timeText"
             }
 
-            override fun onFinish() {
+            observe(timer.finishLiveData){
                 resendButton.isEnabled = true
                 resendButton.visibility = View.VISIBLE
                 countdownTV.visibility = View.INVISIBLE
                 countdownTV.text = ""
+
+                timer.finishLiveData.removeObservers(this)
+                timer.tickLiveData.removeObservers(this)
             }
-        }.start()
+        }
+        resendCodeTimer?.start()
+    }
+
+    override fun onDestroy() {
+        resendCodeTimer?.cancelTimer()
+        resendCodeTimer = null
+        super.onDestroy()
     }
 }
