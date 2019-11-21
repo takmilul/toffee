@@ -174,15 +174,10 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         if (Intent.ACTION_SEARCH == intent.action) {
             val query = intent.getStringExtra(SearchManager.QUERY)
             if (!TextUtils.isEmpty(query)) {
-                val fragment = supportFragmentManager.findFragmentById(R.id.content_viewer)
-                if (fragment != null && fragment is SearchFragment) {
-                    (fragment as SearchFragment).search(query)
-                }
-                else
-                    loadFragmentById(
-                        R.id.content_viewer, SearchFragment.createInstance(query),
-                        SearchFragment::class.java!!.getName()
-                    )
+                loadFragmentById(
+                    R.id.content_viewer, SearchFragment.createInstance(query),
+                    SearchFragment::class.java.getName()
+                )
             }
             if (searchView != null) {
                 searchView!!.setQuery(query.toLowerCase(), false)
@@ -381,17 +376,10 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             ID_VIDEO -> {
                 val currentFragment = getCurrentContentFragment()
                 if (CatchupFragment::class.java.name != currentFragment!!.tag) {
-
-                    supportFragmentManager.popBackStack(
-                        LandingPageFragment::class.java.getName(),
-                        0
+                    loadFragmentById( R.id.content_viewer,
+                        CatchupFragment.createInstance(0, 0, "", "All Videos", menu.name, "VOD")
+                    ,CatchupFragment::class.java.name
                     )
-                    supportFragmentManager.beginTransaction().replace(
-                        R.id.content_viewer,
-                        CatchupFragment.createInstance(0, 0, "", "All Videos", menu.name, "VOD"),
-                        CatchupFragment::class.java.name
-                    ).addToBackStack(CatchupFragment::class.java.name)
-                        .commit()
                 } else {
                     val catchupFragment = currentFragment as CatchupFragment
                     catchupFragment.updateInfo(0, 0, "", "All Videos", menu.name, "VOD")
@@ -403,10 +391,6 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             ID_RECENT -> {
                 val currentFragment = getCurrentContentFragment()
                 if (currentFragment !is RecentFragment) {
-                    supportFragmentManager.popBackStack(
-                        LandingPageFragment::class.java.name,
-                        0
-                    )
                     loadFragmentById(
                         R.id.content_viewer, RecentFragment(),
                         RecentFragment::class.java.name
@@ -418,20 +402,11 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             ID_CHANNEL -> {
                 val currentFragment = getCurrentContentFragment()
                 if (currentFragment !is ChannelFragment) {
-                    supportFragmentManager.popBackStack(
-                        LandingPageFragment::class.java.getName(),
-                        0
-                    )
-                    supportFragmentManager.beginTransaction().replace(
-                        R.id.content_viewer,
-                        ChannelFragment.createInstance(
-                            0,
-                            "",
-                            getString(R.string.menu_channel_text)
-                        )
-                    )
-                        .addToBackStack(ChannelFragment::class.java.getName())
-                        .commit()
+                    loadFragmentById( R.id.content_viewer,ChannelFragment.createInstance(
+                        0,
+                        "",
+                        getString(R.string.menu_channel_text)
+                    ),ChannelFragment::class.java.getName())
                 }
                 binding.drawerLayout.closeDrawers()
                 minimizePlayer()
@@ -439,10 +414,6 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             ID_FAV -> {
                 val currentFragment = getCurrentContentFragment()
                 if (currentFragment !is FavoriteFragment) {
-                    supportFragmentManager.popBackStack(
-                        LandingPageFragment::class.java.getName(),
-                        0
-                    )
                     loadFragmentById(
                         R.id.content_viewer, FavoriteFragment(),
                         FavoriteFragment::class.java.getName()
@@ -499,6 +470,10 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     }
 
     protected fun loadFragmentById(id: Int, fragment: Fragment, tag: String) {
+        supportFragmentManager.popBackStack(
+            LandingPageFragment::class.java.getName(),
+            0
+        )
         supportFragmentManager.beginTransaction()
             .replace(id, fragment).addToBackStack(tag).commit()
     }
@@ -600,19 +575,14 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         if (parent?.id == ID_VIDEO) run {
             val currentFragment = getCurrentContentFragment()
             if (CatchupFragment::class.java.name != currentFragment!!.tag) {
-                supportFragmentManager.popBackStack(LandingPageFragment::class.java.name, 0)
-                supportFragmentManager.beginTransaction().replace(
-                    R.id.content_viewer,
-                    CatchupFragment.createInstance(
-                        category.id,
-                        0,
-                        "",
-                        parent.name,
-                        category.categoryName,
-                        "VOD"
-                    ), CatchupFragment::class.java.name
-                ).addToBackStack(CatchupFragment::class.java.name)
-                    .commit()
+                loadFragmentById(R.id.content_viewer,CatchupFragment.createInstance(
+                    category.id,
+                    0,
+                    "",
+                    parent.name,
+                    category.categoryName,
+                    "VOD"
+                ), CatchupFragment::class.java.name)
             } else {
                 val catchupFragment = currentFragment as CatchupFragment
                 catchupFragment.updateInfo(
