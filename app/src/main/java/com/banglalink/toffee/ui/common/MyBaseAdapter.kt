@@ -11,9 +11,6 @@ abstract class MyBaseAdapter<T: Any>(val callback:(T)->Unit={}) : RecyclerView.A
 
     protected val values: MutableList<T> = mutableListOf()
 
-
-    var removedItemCount = 0
-
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -51,10 +48,6 @@ abstract class MyBaseAdapter<T: Any>(val callback:(T)->Unit={}) : RecyclerView.A
         return values.size
     }
 
-//    fun getOffset():Int{
-//        return values.size+removedItemCount
-//    }
-
     fun add(item: T) = values.add(item)
 
     fun add(position: Int, item: T) = values.add(position, item)
@@ -66,14 +59,12 @@ abstract class MyBaseAdapter<T: Any>(val callback:(T)->Unit={}) : RecyclerView.A
     }
 
     fun remove(item: T){
-        removedItemCount++
         val index = values.indexOf(item)
         values.removeAt(index)
         notifyItemRemoved(index)
     }
 
     fun remove(position: Int) {
-        removedItemCount++
         values.removeAt(position)
         notifyItemRemoved(position)
     }
@@ -86,11 +77,6 @@ abstract class MyBaseAdapter<T: Any>(val callback:(T)->Unit={}) : RecyclerView.A
     fun getItems(): List<T> = values
 
     fun removeAll()  {
-        clearOffset()
         values.clear()
-    }
-
-    fun clearOffset(){
-        removedItemCount = 0
     }
 }
