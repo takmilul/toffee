@@ -9,18 +9,21 @@ import com.banglalink.toffee.util.discardZeroFromDuration
 import com.banglalink.toffee.util.getFormattedViewsText
 
 class GetFavoriteContents(private val preference: Preference, private val toffeeApi: ToffeeApi) {
+    private var mOffset:Int=0
+    private val limit = 30
 
-    suspend fun execute(offset: Int): List<ChannelInfo> {
+    suspend fun execute(): List<ChannelInfo> {
         val response = tryIO {
             toffeeApi.getFavoriteContents(
                 FavoriteContentRequest(
                     preference.customerId,
                     preference.password,
-                    offset,
-                    30
+                    mOffset,
+                    limit
                 )
             )
         }
+        mOffset += response.response.count
 
         if (response.response.channels != null) {
             return response.response.channels.map {

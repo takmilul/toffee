@@ -23,10 +23,10 @@ class SearchViewModel(application: Application):BaseViewModel(application) {
         SearchContent(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
 
-    fun searchContent(searchKey:String,offset:Int){
+    fun searchContent(searchKey:String){
         viewModelScope.launch {
             try{
-                val response = searchContent.execute(searchKey,offset)
+                val response = searchContent.execute(searchKey)
                 searchResultMutableLiveData.setSuccess(response)
 
             }catch (e:Exception){

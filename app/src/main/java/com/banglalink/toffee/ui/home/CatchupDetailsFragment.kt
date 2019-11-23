@@ -44,7 +44,7 @@ class CatchupDetailsFragment:HomeBaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         currentItem = arguments?.getParcelable(CHANNEL_INFO)
-        getContents(0)
+        getContents()
     }
 
     override fun onCreateView(
@@ -71,7 +71,7 @@ class CatchupDetailsFragment:HomeBaseFragment() {
             EndlessRecyclerViewScrollListener(linearLayoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
                 progressBar.visibility = View.VISIBLE
-                getContents(mAdapter.getOffset())
+                getContents()
             }
         })
 
@@ -91,8 +91,8 @@ class CatchupDetailsFragment:HomeBaseFragment() {
         progressBar.visibility = View.VISIBLE
     }
 
-    private fun getContents(offset:Int){
-        viewModel.getContents(currentItem!!,offset)
+    private fun getContents(){
+        viewModel.getContents(currentItem!!)
 
     }
 //overriding parent's option click because we want to hide last option menu from the options

@@ -9,22 +9,24 @@ import com.banglalink.toffee.util.discardZeroFromDuration
 import com.banglalink.toffee.util.getFormattedViewsText
 
 class GetHistory(private val preference: Preference, private val toffeeApi: ToffeeApi) {
+    private var mOffset:Int=0
+    private val limit = 10
 
-    suspend fun execute(offset: Int): List<ChannelInfo> {
+    suspend fun execute(): List<ChannelInfo> {
         val response = tryIO {
             toffeeApi.getHistoryContents(
                 HistoryContentRequest(
                     preference.customerId,
                     preference.password,
-                    offset,
-                    30
+                    mOffset,
+                    limit
                 )
             )
         }
 
 
         preference.balance = response.response.balance
-
+        mOffset += response.response.count
         if (response.response.channels != null) {
             return response.response.channels.map {
                 it.formatted_view_count = getFormattedViewsText(it.view_count)

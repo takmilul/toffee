@@ -38,7 +38,7 @@ abstract class CommonSingleListFragment:Fragment(), OptionCallBack {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        loadItems(0)
+        loadItems()
     }
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -63,7 +63,7 @@ abstract class CommonSingleListFragment:Fragment(), OptionCallBack {
         scrollListener = object : EndlessRecyclerViewScrollListener(linearLayoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
                 binding.progressBar.visibility =View.VISIBLE
-                loadItems(mAdapter?.getOffset()?:0)
+                loadItems()
             }
         }
         // Adds the scroll listener to RecyclerView
@@ -72,7 +72,7 @@ abstract class CommonSingleListFragment:Fragment(), OptionCallBack {
         binding.progressBar.visibility = View.VISIBLE
     }
 
-    abstract fun loadItems(offset:Int)
+    abstract fun loadItems()
 
     protected open fun observeFavoriteLiveData(){
         baseViewModel.favoriteLiveData.observe(viewLifecycleOwner, Observer {

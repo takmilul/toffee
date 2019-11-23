@@ -9,20 +9,22 @@ import com.banglalink.toffee.util.discardZeroFromDuration
 import com.banglalink.toffee.util.getFormattedViewsText
 
 class SearchContent(private val preference: Preference, private val toffeeApi: ToffeeApi) {
+    private var mOffset:Int=0
+    private val limit = 30
 
-    suspend fun execute(keyword: String = "", offset: Int):List<ChannelInfo> {
+    suspend fun execute(keyword: String = ""):List<ChannelInfo> {
         val response = tryIO {
             toffeeApi.searchContent(
                 SearchContentRequest(
                     keyword,
                     preference.customerId,
                     preference.password,
-                    offset,
-                    30
+                    mOffset,
+                    limit
                 )
             )
         }
-
+        mOffset += response.response.count
         if (response.response.channels != null) {
             return response.response.channels.map {
                 it.formatted_view_count = getFormattedViewsText(it.view_count)

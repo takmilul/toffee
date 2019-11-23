@@ -13,8 +13,10 @@ import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.usecase.GetContents
 import com.banglalink.toffee.util.getError
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import java.lang.Exception
+import java.util.concurrent.CancellationException
 
 class CatchupViewModel(application: Application):BaseViewModel(application) {
 
@@ -38,10 +40,10 @@ class CatchupViewModel(application: Application):BaseViewModel(application) {
         this.subCategoryID = arguments.getInt("sub-category-id")
         this.type = arguments.getString("type")
     }
-    fun getContent(offset: Int){
+    fun getContent(){
         viewModelScope.launch {
             try{
-                contentMutableLiveData.setSuccess(getContent.execute(category!!,categoryId,subCategory!!,subCategoryID,type!!,offset))
+                contentMutableLiveData.setSuccess(getContent.execute(category!!,categoryId,subCategory!!,subCategoryID,type!!))
             }catch (e:Exception){
                 contentMutableLiveData.setError(getError(e))
             }
@@ -56,11 +58,12 @@ class CatchupViewModel(application: Application):BaseViewModel(application) {
         type: String
 
     ) {
+        viewModelScope.coroutineContext.cancelChildren(CancellationException("Cancelling ongoing requests"))
         this.subCategoryID = subCategoryID
         this.subCategory = subCategory
         this.category = category
         this.categoryId = categoryId
         this.type = type
-        getContent(0)
+        getContent()
     }
 }

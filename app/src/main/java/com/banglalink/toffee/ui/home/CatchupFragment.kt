@@ -43,8 +43,8 @@ class CatchupFragment : CommonSingleListFragment() {
         })
     }
 
-    override fun loadItems(offset: Int) {
-        viewModel.getContent(offset)
+    override fun loadItems() {
+        viewModel.getContent()
     }
 
     companion object {

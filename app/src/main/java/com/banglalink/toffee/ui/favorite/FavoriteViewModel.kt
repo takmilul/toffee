@@ -23,10 +23,10 @@ class FavoriteViewModel(application: Application):BaseViewModel(application) {
         GetFavoriteContents(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
 
-    fun loadFavoriteContents(offset:Int){
+    fun loadFavoriteContents(){
         viewModelScope.launch {
            try{
-                favoriteMutableLiveData.setSuccess(getFavoriteContents.execute(offset))
+                favoriteMutableLiveData.setSuccess(getFavoriteContents.execute())
            }catch (e:Exception){
                favoriteMutableLiveData.setError(getError(e))
            }

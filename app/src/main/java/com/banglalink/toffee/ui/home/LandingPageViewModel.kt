@@ -42,10 +42,10 @@ class LandingPageViewModel(application: Application):BaseViewModel(application) 
         GetFeatureContents(RetrofitApiClient.toffeeApi)
     }
 
-    fun loadChannels(offset:Int){
+    fun loadChannels(){
         viewModelScope.launch {
             try{
-                val response = getChannels.execute("",0,"",0,"LIVE",offset)
+                val response = getChannels.execute("",0,"",0,"LIVE")
                 channelMutableLiveData.setSuccess(response)
             }catch (e:Exception){
                 channelMutableLiveData.setError(getError(e))
@@ -53,10 +53,10 @@ class LandingPageViewModel(application: Application):BaseViewModel(application) 
         }
     }
 
-    fun loadPopularVideos(offset:Int){
+    fun loadPopularVideos(){
         viewModelScope.launch {
             try{
-                val response = getPopularVideo.execute("",0,"",0,"VOD",offset)
+                val response = getPopularVideo.execute("",0,"",0,"VOD")
                 popularVideoMutableLiveData.setSuccess(response)
             }catch (e:Exception){
                 popularVideoMutableLiveData.setError(getError(e))
@@ -64,10 +64,10 @@ class LandingPageViewModel(application: Application):BaseViewModel(application) 
         }
     }
 
-    fun loadFeatureContents(offset:Int){
+    fun loadFeatureContents(){
         viewModelScope.launch {
             try{
-                val response = getFeatureContents.execute("",0,"",0,"VOD",offset)
+                val response = getFeatureContents.execute("",0,"",0,"VOD")
                 featureContentMutableLiveData.setSuccess(response)
             }catch (e:Exception){
                 featureContentMutableLiveData.setError(getError(e))

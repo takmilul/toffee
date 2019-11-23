@@ -23,10 +23,10 @@ class RecentViewModel(application: Application):BaseViewModel(application) {
         GetHistory(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
 
-    fun loadRecentItems(offset:Int){
+    fun loadRecentItems(){
         viewModelScope.launch {
             try{
-                val response = getHistory.execute(offset)
+                val response = getHistory.execute()
                 recentMutableLiveData.setSuccess(response)
             }catch (e:Exception){
                 recentMutableLiveData.setError(getError(e))

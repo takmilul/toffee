@@ -14,8 +14,8 @@ class FavoriteFragment : CommonSingleListFragment() {
         mAdapter?.remove(channelInfo)
     }
 
-    override fun loadItems(offset: Int) {
-        viewModel.loadFavoriteContents(offset)
+    override fun loadItems() {
+        viewModel.loadFavoriteContents()
     }
 
     private val viewModel by lazy {

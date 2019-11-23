@@ -33,6 +33,7 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
     lateinit var popularVideoListAdapter: PopularVideoListAdapter
     private var imageSlider: SliderLayout?=null
     private var catchupListView: RecyclerView? = null
+    private var channelListView: RecyclerView? = null
     private var bottomProgress: ProgressBar? = null
 
     val viewModel by lazy {
@@ -47,9 +48,9 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
         popularVideoListAdapter = PopularVideoListAdapter(this) {
             homeViewModel.fragmentDetailsMutableLiveData.postValue(it)
         }
-        viewModel.loadPopularVideos(popularVideoListAdapter.itemCount)
-        viewModel.loadChannels(channelAdapter.itemCount)
-        viewModel.loadFeatureContents(0)
+        viewModel.loadPopularVideos()
+        viewModel.loadChannels()
+        viewModel.loadFeatureContents()
     }
 
     override fun onCreateView(
@@ -67,15 +68,15 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
 
 
         val listLayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        val channelListView = view.findViewById<RecyclerView>(R.id.channel_list).apply {
+        channelListView = view.findViewById<RecyclerView>(R.id.channel_list).apply {
             layoutManager = listLayoutManager
             adapter = channelAdapter
         }
 
-        channelListView.addOnScrollListener(object :
+        channelListView?.addOnScrollListener(object :
             EndlessRecyclerViewScrollListener(listLayoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
-                viewModel.loadChannels(channelAdapter.itemCount)
+                viewModel.loadChannels()
             }
         })
 
@@ -89,7 +90,7 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
             EndlessRecyclerViewScrollListener(linearLayoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
                 bottomProgress?.visibility = View.VISIBLE
-                viewModel.loadPopularVideos(popularVideoListAdapter.getOffset())
+                viewModel.loadPopularVideos()
             }
         })
 
@@ -178,6 +179,9 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
     }
 
     override fun onDestroyView() {
+        catchupListView?.adapter = null
+        channelListView?.adapter = null
+        channelListView = null
         catchupListView = null
         imageSlider?.stopAutoCycle()
         imageSlider = null

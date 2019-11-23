@@ -24,10 +24,10 @@ class CatchupDetailsViewModel(application: Application):BaseViewModel(applicatio
         GetRelativeContents(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
 
-    fun getContents(channelInfo: ChannelInfo, offset:Int){
+    fun getContents(channelInfo: ChannelInfo){
         viewModelScope.launch {
             try{
-                val response = getRelativeContents.execute(channelInfo,offset)
+                val response = getRelativeContents.execute(channelInfo)
                 relativeContentMutableLiveData.setSuccess(response)
             }catch (e:Exception){
                 relativeContentMutableLiveData.setError(getError(e))

@@ -87,6 +87,6 @@ class RecentFragment:HomeBaseFragment() {
     }
 
     private fun loadRecentItems(){
-        viewModel.loadRecentItems(adapter.getOffset())
+        viewModel.loadRecentItems()
     }
 }

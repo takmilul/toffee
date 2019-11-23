@@ -51,9 +51,9 @@ abstract class MyBaseAdapter<T: Any>(val callback:(T)->Unit={}) : RecyclerView.A
         return values.size
     }
 
-    fun getOffset():Int{
-        return values.size+removedItemCount
-    }
+//    fun getOffset():Int{
+//        return values.size+removedItemCount
+//    }
 
     fun add(item: T) = values.add(item)
 

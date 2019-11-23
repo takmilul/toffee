@@ -8,14 +8,15 @@ import com.banglalink.toffee.model.ChannelInfo
 
 class GetFeatureContents(private val toffeeApi: ToffeeApi) {
 
+    private var mOffset:Int=0
+    private val limit = 10
+
     suspend fun execute(
         category: String,
         categoryId: Int,
         subcategory: String,
         subcategoryId: Int,
-        type: String,
-        offset: Int,
-        limit: Int = 10
+        type: String
     ): List<ChannelInfo> {
 
 
@@ -27,11 +28,13 @@ class GetFeatureContents(private val toffeeApi: ToffeeApi) {
                     type,
                     Preference.getInstance().customerId,
                     Preference.getInstance().password,
-                    offset = offset,
+                    offset = mOffset,
                     limit = limit
                 )
             )
         }
+
+        mOffset += response.response.count
         if (response.response.channels != null) {
             return response.response.channels.map {
                 it.category = category
