@@ -142,11 +142,11 @@ class Preference private constructor(context: Context) {
     }
 
     fun setDBVersion(dbVersion: DBVersion) {
-        pref.edit().putInt("channelDbVersion", dbVersion.chanelDbVersion).apply()
-        pref.edit().putInt("vodDbVersion", dbVersion.vodDbVersion).apply()
-        pref.edit().putInt("notificationDbVersion", dbVersion.notificationDbVersion).apply()
-        pref.edit().putInt("catchupDbVersion", dbVersion.catchupDbVersion).apply()
-        pref.edit().putInt("packageDbVersion", dbVersion.packageDbVersion).apply()
+        pref.edit().putInt("channel_db_version", dbVersion.chanelDbVersion).apply()
+        pref.edit().putInt("vod_db_version", dbVersion.vodDbVersion).apply()
+        pref.edit().putInt("notification_db_version", dbVersion.notificationDbVersion).apply()
+        pref.edit().putInt("catchup_db_version", dbVersion.catchupDbVersion).apply()
+        pref.edit().putInt("package_db_version", dbVersion.packageDbVersion).apply()
     }
 
     fun clear() {
