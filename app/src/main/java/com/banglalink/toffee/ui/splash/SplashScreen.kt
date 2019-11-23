@@ -60,8 +60,10 @@ class SplashScreen : BaseAppCompatActivity() {
                         Preference.getInstance().clear()
                         launchActivity<SigninByPhoneActivity>()
                         finish()
+                    }else{
+                        showToast(it.error.msg)
                     }
-                    showToast(it.error.msg)
+
                 }
             }
 
