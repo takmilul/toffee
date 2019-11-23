@@ -1,8 +1,6 @@
 package com.banglalink.toffee
 
 import android.app.Application
-import android.content.ComponentCallbacks2
-import android.util.Log
 import coil.Coil
 import coil.ImageLoader
 import coil.util.CoilUtils
@@ -27,8 +25,6 @@ class ToffeeApplication : Application() {
         }
 
         Coil.setDefaultImageLoader(imageLoader)
-
-
 
     }
 
