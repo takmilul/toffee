@@ -44,7 +44,6 @@ import com.banglalink.toffee.ui.profile.ViewProfileActivity
 import com.banglalink.toffee.ui.recent.RecentFragment
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.settings.SettingsActivity
-import com.banglalink.toffee.ui.subscription.MySubscriptionActivity
 import com.banglalink.toffee.ui.subscription.PackageListActivity
 import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.util.Utils
@@ -158,6 +157,16 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             }
         }
 
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.stopHeartBeatTimer()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.startHeartBeatTimer()
     }
 
     private fun handleSharedUrl(intent: Intent){

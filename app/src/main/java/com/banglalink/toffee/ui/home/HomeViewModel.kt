@@ -59,10 +59,6 @@ class HomeViewModel(application: Application):BaseViewModel(application),OnCompl
         GetContentFromShareableUrl(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
 
-    private val sendHeartBeat by lazy {
-        SendHeartBeat(viewModelScope,Preference.getInstance(),RetrofitApiClient.toffeeApi)
-    }
-
     private val setFcmToken by lazy {
         SetFcmToken(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
@@ -71,7 +67,6 @@ class HomeViewModel(application: Application):BaseViewModel(application),OnCompl
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener(this)
         getCategory()
         getChannelByCategory(0)
-        startHeartBeatTimer()
     }
 
     override fun onComplete(task: Task<InstanceIdResult>) {
@@ -133,22 +128,14 @@ class HomeViewModel(application: Application):BaseViewModel(application),OnCompl
     }
 
 
-    private fun stopTimer() {
-        if (timer != null) {
-            timer?.cancel()
-            timer?.purge()
-            timer = null
-        }
+    fun stopHeartBeatTimer() {
+        timer?.cancel()
+        timer?.purge()
+        timer = null
     }
 
-    private fun startHeartBeatTimer() {
-        stopTimer()
+    fun startHeartBeatTimer() {
         timer = Timer()
-        timer?.scheduleAtFixedRate(sendHeartBeat, TIMER_DELAY.toLong(), TIMER_PERIOD.toLong())
-    }
-
-    override fun onCleared() {
-        stopTimer()
-        super.onCleared()
+        timer?.scheduleAtFixedRate(SendHeartBeat(viewModelScope,Preference.getInstance(),RetrofitApiClient.toffeeApi), TIMER_DELAY.toLong(), TIMER_PERIOD.toLong())
     }
 }
