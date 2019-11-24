@@ -219,6 +219,11 @@
     <string name="strike_through_color_code">#FFCCE1</string>
     <string name="menu_faqs_text">FAQs</string>
     <string name="views">views</string>
+    <string name="refer_a_friend_txt">Refer a Friend</string>
+    <string name="invite_friends_txt">Invite Friends</string>
+    <string name="share_button">Share</string>
+    <string name="copy_button">Copy</string>
+    <string name="copy_to_clipboard">Copy to clipboard successfully</string>
     <string-array name="user_types">
         <item>TELCO</item>
         <item>ISP</item>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="referCode"
+            type="com.banglalink.toffee.ui.refer.ReferCode" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/screen_bg_white"
+        android:paddingBottom="8dp">
+
+        <Button
+            android:id="@+id/shareBtn"
+            android:enabled="@{referCode.empty}"
+            style="@style/toffeeButton"
+            android:layout_width="@dimen/button_accent_width"
+            android:layout_height="@dimen/button_accent_height"
+            android:layout_gravity="center"
+            android:layout_marginTop="32dp"
+            android:text="@string/share_button"
+            android:textAllCaps="true"
+            app:layout_constraintEnd_toEndOf="@+id/referralCode"
+            app:layout_constraintStart_toStartOf="@+id/referralCode"
+            app:layout_constraintTop_toBottomOf="@+id/referralCode" />
+
+
+        <Button
+            android:id="@+id/copyBtn"
+            style="@style/Button2Style"
+            android:enabled="@{referCode.empty}"
+            android:layout_width="@dimen/button_accent_width"
+            android:layout_height="@dimen/button_accent_height"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:text="@string/copy_button"
+            android:textAllCaps="true"
+            app:layout_constraintEnd_toEndOf="@+id/shareBtn"
+            app:layout_constraintStart_toStartOf="@+id/shareBtn"
+            app:layout_constraintTop_toBottomOf="@+id/shareBtn" />
+
+        <TextView
+            android:id="@+id/referralCode"
+            style="@style/editTextOval"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="64dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="64dp"
+            android:gravity="center"
+            android:text="@{referCode.referalCode}"
+            android:textColor="@color/second_text_color"
+            app:layout_constraintEnd_toEndOf="@+id/enter_code_tv"
+            app:layout_constraintStart_toStartOf="@+id/enter_code_tv"
+            app:layout_constraintTop_toBottomOf="@+id/title_tv" />
+
+
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="172dp"
+            android:layout_height="140dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="64dp"
+            android:layout_marginEnd="8dp"
+            android:adjustViewBounds="true"
+            android:src="@drawable/refer_friend_icon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appBarLayout2" />
+
+
+        <TextView
+            android:id="@+id/title_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="32dp"
+            android:fontFamily="@font/roboto_medium"
+            android:gravity="center"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:text="@string/refer_a_friend_txt"
+            android:textColor="@color/main_text_color"
+            android:textSize="26sp"
+            app:layout_constraintEnd_toEndOf="@+id/logo"
+            app:layout_constraintStart_toStartOf="@+id/logo"
+            app:layout_constraintTop_toBottomOf="@+id/logo" />
+
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                style="@style/CustomToolBarStyle" />
+        </com.google.android.material.appbar.AppBarLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

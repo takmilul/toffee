@@ -42,6 +42,7 @@ import com.banglalink.toffee.ui.player.PlayerActivity
 import com.banglalink.toffee.ui.player.PlayerFragment2
 import com.banglalink.toffee.ui.profile.ViewProfileActivity
 import com.banglalink.toffee.ui.recent.RecentFragment
+import com.banglalink.toffee.ui.refer.ReferAFriendActivity
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.settings.SettingsActivity
 import com.banglalink.toffee.ui.subscription.PackageListActivity
@@ -51,26 +52,27 @@ import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.layout_appbar.view.*
 import java.util.ArrayList
 
+const val ID_CHANNEL = 12
+const val ID_RECENT = 13
+const val ID_FAV = 14
+const val ID_SUBSCIPTIONS = 15
+const val ID_SUB_VIDEO = 16
+const val ID_SETTINGS = 17
+const val ID_ABOUT = 18
+const val ID_LOGOUT = 19
+const val ID_VIDEO = 20
+const val ID_VOD = 21
+const val ID_FAQ = 22
+const val ID_INVITE_FRIEND = 23
+const val DELAY_MILLIS = 10
+const val ID_PROFILE = 10
+const val ID_HOME = 11
+
 class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListener,
     NavigationView.OnNavigationItemSelectedListener, View.OnClickListener,
     ParentLevelAdapter.OnNavigationItemClickListener, DraggerLayout.OnPositionChangedListener {
 
     private var searchView: SearchView? = null
-    private val DELAY_MILLIS = 10
-    private val ID_PROFILE = 10
-    private val ID_HOME = 11
-    private val ID_CHANNEL = 12
-    private val ID_RECENT = 13
-    private val ID_FAV = 14
-    private val ID_SUBSCIPTIONS = 15
-    private val ID_SUB_VIDEO = 16
-    private val ID_SETTINGS = 17
-    private val ID_ABOUT = 18
-    private val ID_LOGOUT = 19
-    val ID_VIDEO = 20
-    private val ID_VOD = 21
-    private val ID_FAQ = 22
-
     private lateinit var toggle: ActionBarDrawerToggle
     lateinit var binding: ActivityMainMenuBinding
 
@@ -347,6 +349,14 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         )
         navigationMenuList.add(
             NavigationMenu(
+                ID_INVITE_FRIEND,
+                getString(R.string.invite_friends_txt),
+                R.mipmap.ic_menu_invite,
+                ArrayList()
+            )
+        )
+        navigationMenuList.add(
+            NavigationMenu(
                 ID_SETTINGS,
                 "Settings",
                 R.mipmap.ic_menu_settings,
@@ -377,6 +387,8 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                 ArrayList()
             )
         )
+
+
         return navigationMenuList
     }
 
@@ -465,6 +477,9 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             }
             ID_LOGOUT->{
                 handleExitApp()
+            }
+            ID_INVITE_FRIEND->{
+                launchActivity<ReferAFriendActivity>()
             }
         }
     }
