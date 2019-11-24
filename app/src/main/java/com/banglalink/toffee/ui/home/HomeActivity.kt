@@ -530,6 +530,11 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         return super.onDrawerButtonPressed()
     }
 
+    override fun onMinimizeButtonPressed(): Boolean {
+        minimizePlayer()
+        return true
+    }
+
     override fun onBackStackChanged() {
         if (supportFragmentManager.backStackEntryCount == 0) {
             supportActionBar!!.setDisplayHomeAsUpEnabled(false)
