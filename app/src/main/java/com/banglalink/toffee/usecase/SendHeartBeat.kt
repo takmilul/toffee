@@ -25,5 +25,6 @@ class SendHeartBeat(private val coroutineScope: CoroutineScope,private val prefe
         val response = tryIO {
             toffeeApi.sendHeartBeat(HeartBeatRequest(preference.customerId,preference.password,preference.latitude,preference.longitude))
         }
+        preference.sessionToken=response.response.sessionToken?:""
     }
 }
