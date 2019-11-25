@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.player;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Point;
@@ -85,7 +86,7 @@ public class PlayerFragment2 extends Fragment implements TextureView.SurfaceText
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         handler = new Handler();
-        rotationHelper = new RotationHelper(getActivity());
+        rotationHelper = new RotationHelper(getActivity(), getActivity().getLifecycle());
         viewModel = ViewModelProviders.of(this).get(PlayerFragmentViewModel.class);
     }
 
@@ -175,7 +176,6 @@ public class PlayerFragment2 extends Fragment implements TextureView.SurfaceText
     @Override
     public void onResume() {
         super.onResume();
-        rotationHelper.registerObserver(getActivity().getLifecycle());
         resizeView();
         if(mCastSession == null || !mCastSession.isConnected()){
             if(player != null) {
@@ -188,7 +188,6 @@ public class PlayerFragment2 extends Fragment implements TextureView.SurfaceText
     @Override
     public void onPause() {
         super.onPause();
-        rotationHelper.unregisterObserver(getActivity().getLifecycle());
         if(player != null){
             player.getPlayerControl().pause();
         }
@@ -227,6 +226,7 @@ public class PlayerFragment2 extends Fragment implements TextureView.SurfaceText
         mediaController.isMinimize = true;
         textureView.setOnClickListener(null);
         mediaController.hideControls(0);
+        rotationHelper.setResetOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
     public void onMaximizePlayer(){
@@ -238,6 +238,7 @@ public class PlayerFragment2 extends Fragment implements TextureView.SurfaceText
         else {
             mediaController.showControls();
         }
+        rotationHelper.setResetOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
     }
 
     public void onShare() {

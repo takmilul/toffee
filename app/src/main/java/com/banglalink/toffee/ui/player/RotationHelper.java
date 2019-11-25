@@ -12,9 +12,10 @@ import androidx.lifecycle.OnLifecycleEvent;
 public class RotationHelper implements LifecycleObserver {
     private final Activity activity;
     private final OrientationEventListener orientationEventListener;
+    private int resetOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR;
     private boolean landscape;
 
-    public RotationHelper(Activity activity){
+    public RotationHelper(Activity activity, Lifecycle lifecycle){
         this.activity = activity;
         orientationEventListener = new  OrientationEventListener(activity){
 
@@ -27,7 +28,7 @@ public class RotationHelper implements LifecycleObserver {
 
                 }
                 else{
-                    if((orientation < 45 && orientation > 0) || (orientation > 320 && orientation < 365 )){
+                    if((orientation < 45 && orientation >= 0) || (orientation > 320 && orientation < 365 )){
                         resetRotation();
                     }
                 }
@@ -37,11 +38,17 @@ public class RotationHelper implements LifecycleObserver {
                 Log.e("rotation","" + orientation);
             }
         };
+//        lifecycle.addObserver(this);
+    }
+
+    public void setResetOrientation(int orientation){
+        this.resetOrientation = orientation;
+        resetRotation();
     }
 
     private void resetRotation(){
         orientationEventListener.disable();
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
+        activity.setRequestedOrientation(resetOrientation);
     }
 
     public void lockOrientation(boolean landscape){
@@ -54,16 +61,9 @@ public class RotationHelper implements LifecycleObserver {
         if(orientationEventListener.canDetectOrientation()) orientationEventListener.enable();
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    void onPause() {
-        resetRotation();
-    }
-
-    public void registerObserver(Lifecycle lifecycle){
-        lifecycle.addObserver(this);
-    }
-
-    public void unregisterObserver(Lifecycle lifecycle){
-        lifecycle.removeObserver(this);
-    }
+//    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+//    void onPause() {
+//        Log.e("pause","pause player");
+////        resetRotation();
+//    }
 }
