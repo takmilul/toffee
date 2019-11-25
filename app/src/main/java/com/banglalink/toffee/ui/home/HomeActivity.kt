@@ -14,7 +14,10 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
-import android.widget.*
+import android.widget.AutoCompleteTextView
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
@@ -37,7 +40,6 @@ import com.banglalink.toffee.ui.channels.ChannelFragment
 import com.banglalink.toffee.ui.common.HtmlPageViewActivity
 import com.banglalink.toffee.ui.common.ParentLevelAdapter
 import com.banglalink.toffee.ui.favorite.FavoriteFragment
-import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.player.PlayerActivity
 import com.banglalink.toffee.ui.player.PlayerFragment2
 import com.banglalink.toffee.ui.profile.ViewProfileActivity
@@ -50,7 +52,7 @@ import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.util.Utils
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.layout_appbar.view.*
-import java.util.ArrayList
+import java.util.*
 
 const val ID_CHANNEL = 12
 const val ID_RECENT = 13
@@ -156,6 +158,13 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                 is Resource.Success->{
                     onDetailsFragmentLoad(it.data)
                 }
+            }
+        }
+
+        //Observing any changes in session token....
+        observe(Preference.getInstance().sessionTokenLiveData){
+            if (mediaPlayer != null && mediaPlayer.isVisible && mediaPlayer.channelInfo != null) {
+                mediaPlayer.load(mediaPlayer.channelInfo)
             }
         }
 
