@@ -6,10 +6,10 @@ import android.os.Handler;
 import android.view.KeyEvent;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.banglalink.toffee.data.storage.Preference;
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener;
+import com.banglalink.toffee.ui.common.BaseAppCompatActivity;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.SessionManagerListener;
@@ -21,7 +21,7 @@ import org.json.JSONObject;
  * Created by shantanu on 5/5/17.
  */
 
-public class PlayerActivity extends AppCompatActivity implements OnPlayerControllerChangedListener {
+public class PlayerActivity extends BaseAppCompatActivity implements OnPlayerControllerChangedListener {
     protected PlayerFragment2 mediaPlayer;
     protected Handler handler;
     private CastContext mCastContext;
