@@ -77,6 +77,10 @@ dependencies {
 
     //Firebase Push Notification
     implementation 'com.google.firebase:firebase-messaging:20.0.1'
+     //Firebase in app messaging
+    implementation 'com.google.firebase:firebase-inappmessaging-display:19.0.2'
+    //Firebase core
+    implementation 'com.google.firebase:firebase-core:17.2.1'
 
     implementation project(':slider')
 
