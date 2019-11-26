@@ -40,6 +40,7 @@ import com.banglalink.toffee.ui.channels.ChannelFragment
 import com.banglalink.toffee.ui.common.HtmlPageViewActivity
 import com.banglalink.toffee.ui.common.ParentLevelAdapter
 import com.banglalink.toffee.ui.favorite.FavoriteFragment
+import com.banglalink.toffee.ui.login.SigninByPhoneActivity
 import com.banglalink.toffee.ui.player.PlayerActivity
 import com.banglalink.toffee.ui.player.PlayerFragment2
 import com.banglalink.toffee.ui.profile.ViewProfileActivity
@@ -531,8 +532,8 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             .setCancelable(false)
             .setPositiveButton("Yes") { dialog, id ->
                 Preference.getInstance().clear()
+                launchActivity<SigninByPhoneActivity>()
                 finish()
-                this@HomeActivity.finish()
             }
             .setNegativeButton("No"
             ) { dialog, id -> dialog.cancel() }
