@@ -7,8 +7,9 @@ import androidx.lifecycle.ViewModelProviders
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.ActivityReferAFriendLayoutBinding
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 
-class ReferAFriendActivity : AppCompatActivity() {
+class ReferAFriendActivity : BaseAppCompatActivity() {
 
     private lateinit var binding: ActivityReferAFriendLayoutBinding
     private val referViewModel by lazy {
@@ -20,7 +21,6 @@ class ReferAFriendActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_refer_a_friend_layout)
         binding.referCode = referCode
-        binding.executePendingBindings()
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding.toolbar.setNavigationOnClickListener { onBackPressed() }
@@ -29,7 +29,6 @@ class ReferAFriendActivity : AppCompatActivity() {
 //            shareBtn.isEnabled = !TextUtils.isEmpty(s)
 //            copyBtn.isEnabled = !TextUtils.isEmpty(s)
             referCode.referalCode = it
-            binding.executePendingBindings()
         }
 
 //        shareBtn!!.setOnClickListener {
