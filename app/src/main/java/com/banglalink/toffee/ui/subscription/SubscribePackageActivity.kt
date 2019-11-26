@@ -9,8 +9,9 @@ import androidx.databinding.DataBindingUtil
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.ActivityConfirmPurchaseBinding
 import com.banglalink.toffee.model.Package
+import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 
-class SubscribePackageActivity : AppCompatActivity() {
+class SubscribePackageActivity : BaseAppCompatActivity() {
 
     companion object{
         const val PACKAGE = "PACAKGE"
