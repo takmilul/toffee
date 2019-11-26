@@ -1,7 +1,7 @@
 package com.banglalink.toffee.ui.home
 
 import com.banglalink.toffee.R
-import com.banglalink.toffee.ui.home.OptionCallBack
+import com.banglalink.toffee.databinding.ListItemCatchupBinding
 import com.banglalink.toffee.model.ChannelInfo
 import com.foxrentacar.foxpress.ui.common.MyBaseAdapter
 import com.foxrentacar.foxpress.ui.common.MyViewHolder
@@ -11,7 +11,7 @@ class CatchUpDetailsAdapter(private val optionCallBack: OptionCallBack, channelC
         if(position == 0)
             return R.layout.catchup_details_list_header
 
-        if(getItem(position)!!.isLive){
+        if(values[position].isLive){
             return R.layout.list_item_live
         }
         return R.layout.list_item_catchup
@@ -19,8 +19,16 @@ class CatchUpDetailsAdapter(private val optionCallBack: OptionCallBack, channelC
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         super.onBindViewHolder(holder, position)
+        if(position==0){//setting null for headerview
+            holder.itemView.setOnClickListener(null)
+        }
         holder.bindCallBack(optionCallBack)
+    }
 
-
+    override fun onViewRecycled(holder: MyViewHolder) {
+        if(holder.binding is ListItemCatchupBinding){
+            holder.binding.poster.setImageDrawable(null)
+        }
+        super.onViewRecycled(holder)
     }
 }

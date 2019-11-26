@@ -5,7 +5,10 @@ import coil.Coil
 import coil.ImageLoader
 import coil.util.CoilUtils
 import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.util.Utils
 import okhttp3.OkHttpClient
+
+
 
 class ToffeeApplication : Application() {
 
@@ -25,6 +28,7 @@ class ToffeeApplication : Application() {
         }
 
         Coil.setDefaultImageLoader(imageLoader)
+        Utils.disableSSLCertificateVerify()
 
     }
 
@@ -33,3 +37,4 @@ class ToffeeApplication : Application() {
         Coil.loader().clearMemory()
     }
 }
+

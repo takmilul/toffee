@@ -90,11 +90,12 @@ dependencies {
 
     //Permission extension
     implementation 'com.github.florent37:runtime-permission-kotlin:1.1.1'
+    //Facebook SDK
+    implementation 'com.facebook.android:facebook-android-sdk:5.11.2'
+    //Leak canary
+//    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-4'
 
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0-rc02"
-
-    //Shimmer
-    implementation 'com.facebook.shimmer:shimmer:0.5.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'

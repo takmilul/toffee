@@ -14,12 +14,12 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.common.CommonChannelAdapter
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.widget.MyPopupWindow
 
 class CatchupDetailsFragment:HomeBaseFragment() {
+    var listView:RecyclerView?=null
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
         mAdapter.remove(channelInfo)
     }
@@ -60,14 +60,14 @@ class CatchupDetailsFragment:HomeBaseFragment() {
         mAdapter = CatchUpDetailsAdapter(this) {
             homeViewModel.fragmentDetailsMutableLiveData.postValue(it)
         }
-        val listView:RecyclerView = view.findViewById(R.id.listview)
+        listView = view.findViewById(R.id.listview)
         val progressBar = view.findViewById(R.id.progress_bar) as ProgressBar
         val linearLayoutManager = LinearLayoutManager(activity)
-        listView.layoutManager = linearLayoutManager
-        listView.adapter = mAdapter
+        listView?.layoutManager = linearLayoutManager
+        listView?.adapter = mAdapter
 
         // Adds the scroll listener to RecyclerView
-        listView.addOnScrollListener(object :
+        listView?.addOnScrollListener(object :
             EndlessRecyclerViewScrollListener(linearLayoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
                 progressBar.visibility = View.VISIBLE
@@ -132,5 +132,11 @@ class CatchupDetailsFragment:HomeBaseFragment() {
             }
         }
         popupMenu.show()
+    }
+
+    override fun onDestroyView() {
+        listView?.adapter = null
+        listView = null
+        super.onDestroyView()
     }
 }

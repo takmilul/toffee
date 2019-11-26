@@ -142,4 +142,9 @@ abstract class CommonSingleListFragment:Fragment(), OptionCallBack {
         binding.progressBar.visibility = View.GONE
         binding.progress.visibility = View.GONE
     }
+
+    override fun onDestroyView() {
+        binding.listview?.adapter = null
+        super.onDestroyView()
+    }
 }

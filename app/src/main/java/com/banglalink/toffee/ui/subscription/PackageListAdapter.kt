@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.subscription
 
 import com.banglalink.toffee.R
-import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Package
 import com.foxrentacar.foxpress.ui.common.MyBaseAdapter
 import com.foxrentacar.foxpress.ui.common.MyViewHolder

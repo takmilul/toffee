@@ -47,7 +47,15 @@ class SearchFragment:CommonSingleListFragment() {
             hideProgress()
             when(it){
                 is Resource.Success->{
-                    mAdapter?.addAll(it.data)
+                    val itemCount = mAdapter?.itemCount?:0
+                    if(it.data.isEmpty() && itemCount == 0){
+                        binding.emptyView.visibility = View.VISIBLE
+                    }
+                    else{
+                        mAdapter?.addAll(it.data)
+                        binding.emptyView.visibility = View.GONE
+                    }
+
                 }
                 is Resource.Failure->{
                     context?.showToast(it.error.msg)

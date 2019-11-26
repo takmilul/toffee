@@ -9,12 +9,8 @@ import com.banglalink.toffee.model.DBVersion
 class Preference private constructor(context: Context) {
     private val pref: SharedPreferences = context.getSharedPreferences("IP_TV", Context.MODE_PRIVATE)
 
-    private val balanceLiveData = MutableLiveData<Int>()
-    private val sessionTokenLiveData = MutableLiveData<Int>()
-    private val channelDbVersionLiveData = MutableLiveData<Int>()
-    private val catchupDbVersionLiveData = MutableLiveData<Int>()
-    private val vodDbVersionLiveData = MutableLiveData<Int>()
-    private val categoryDbVersionLiveData = MutableLiveData<Int>()
+    val balanceLiveData = MutableLiveData<Int>()
+    val sessionTokenLiveData = MutableLiveData<String>()
     val profileImageUrlLiveData = MutableLiveData<String>()
 
     var phoneNumber: String
@@ -44,6 +40,10 @@ class Preference private constructor(context: Context) {
     var sessionToken: String
         get() = pref.getString("sessionToken", "")?:""
         set(sessionToken) {
+            val storedToken = pref.getString("sessionToken", "")?:""
+            if(!sessionToken.equals(storedToken,true)){
+                sessionTokenLiveData.postValue(sessionToken)
+            }
             pref.edit().putString("sessionToken", sessionToken).apply()
         }
 

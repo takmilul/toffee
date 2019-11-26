@@ -9,6 +9,10 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.View;
 
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -16,6 +20,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 /**
  * Created by shantanu on 9/25/16.
@@ -269,5 +280,40 @@ public class Utils {
     public static float convertDpToPixel(float dp, Context context){
         return dp * ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
     }
+
+    public static void disableSSLCertificateVerify() {
+        TrustManager[] trustAllCerts = new TrustManager[] {
+                new X509TrustManager() {
+                    public X509Certificate[] getAcceptedIssuers() {
+                        X509Certificate[] myTrustedAnchors = new X509Certificate[0];
+                        return myTrustedAnchors;
+                    }
+
+                    @Override
+                    public void checkClientTrusted(X509Certificate[] certs, String authType) {}
+
+                    @Override
+                    public void checkServerTrusted(X509Certificate[] certs, String authType) {}
+                }
+        };
+
+        try {
+            SSLContext sc = SSLContext.getInstance("SSL");
+
+            sc.init(null, trustAllCerts, new SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+            HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            });
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }
