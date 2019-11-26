@@ -2,14 +2,12 @@ package com.banglalink.toffee.ui.splash
 
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
-import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
-import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.exception.CustomerNotFoundException
 import com.banglalink.toffee.exception.UpdateRequiredException
 import com.banglalink.toffee.extension.launchActivity
@@ -19,16 +17,14 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.login.SigninByPhoneActivity
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class SplashScreen : BaseAppCompatActivity() {
 
-    companion object {
-        const val MULTI_DEVICE_LOGIN_ERROR_CODE = 109
-    }
     private val viewModel by lazy {
         ViewModelProviders.of(this).get(SplashViewModel::class.java)
     }
-    private val handler = Handler()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,10 +34,11 @@ class SplashScreen : BaseAppCompatActivity() {
             viewModel.init(true)
         } catch (ce: CustomerNotFoundException) {
             ce.printStackTrace()
-            handler.postDelayed({
+            lifecycleScope.launch {
+                delay(2000)
                 launchActivity<SigninByPhoneActivity>()
                 finish()
-            }, 2000)
+            }
         } catch (e: UpdateRequiredException) {
             e.printStackTrace()
             showUpdateDialog(e.title, e.updateMsg, e.forceUpdate)
@@ -50,19 +47,14 @@ class SplashScreen : BaseAppCompatActivity() {
         observe(viewModel.splashLiveData) {
             when(it){
                 is Resource.Success->{
-                    handler.postDelayed({
+                    lifecycleScope.launch {
+                        delay(2000)
                         launchActivity<HomeActivity>()
                         finish()
-                    },2000)
+                    }
                 }
                 is Resource.Failure->{
-                    if(it.error.code == MULTI_DEVICE_LOGIN_ERROR_CODE){
-                        Preference.getInstance().clear()
-                        launchActivity<SigninByPhoneActivity>()
-                        finish()
-                    }else{
-                        showToast(it.error.msg)
-                    }
+                    showToast(it.error.msg)
 
                 }
             }
