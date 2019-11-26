@@ -68,8 +68,6 @@ public class PlayerFragment2 extends Fragment implements TextureView.SurfaceText
 
     private DemoPlayer player;
     private EventLogger eventLogger;
-    private int playerWidth;
-    private int playerHeight;
     private ExpoMediaController2 mediaController;
     private Handler handler;
     private ChannelInfo channelInfo;
@@ -79,8 +77,10 @@ public class PlayerFragment2 extends Fragment implements TextureView.SurfaceText
     private ImageView preview;
     private Bitmap previewImage;
     private RotationHelper rotationHelper;
-
+    private int videoWidth = 1920;
+    private int videoHeight = 1080;
     private PlayerFragmentViewModel viewModel;
+    private FrameLayout playerContainer;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -99,8 +99,9 @@ public class PlayerFragment2 extends Fragment implements TextureView.SurfaceText
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        rootView = (FrameLayout) view.findViewById(R.id.root);
+        rootView = view.findViewById(R.id.root);
         preview = (ImageView) view.findViewById(R.id.preview);
+        playerContainer = view.findViewById(R.id.playerContainer);
         textureView = (TextureView) view.findViewById(R.id.texture_view);
         textureView.setSurfaceTextureListener(this);
         CookieHandler currentHandler = CookieHandler.getDefault();
@@ -250,27 +251,46 @@ public class PlayerFragment2 extends Fragment implements TextureView.SurfaceText
         }
     }
 
-    public void resizeView(){
-        calculateScreenWidth();
-        ViewGroup.LayoutParams params = getView().getLayoutParams();
+    private void resizeView(){
+        Point size = calculateScreenWidth();
+        int playerWidth;
+        int playerHeight;
+        int controlerWidth;
+        int controlerHeight;
+        if(size.x > size.y){ //landscape
+            playerHeight = size.y;
+            playerWidth = (playerHeight * videoWidth) / videoHeight;
+            controlerWidth = size.x;
+            controlerHeight = size.y;
+        }
+        else{
+            playerWidth = size.x;
+            playerHeight = (playerWidth * videoHeight) / videoWidth;
+            controlerWidth = playerWidth;
+            controlerHeight = playerHeight;
+        }
+        Log.e("player","width: " + playerWidth);
+        Log.e("player", "height: " + playerHeight);
+
+
+        ViewGroup.LayoutParams params;
+        params = rootView.getLayoutParams();
+        params.width = controlerWidth;
+        params.height = controlerHeight;
+        rootView.setLayoutParams(params);
+
+        params = playerContainer.getLayoutParams();
         params.width = playerWidth;
         params.height = playerHeight;
-        getView().setLayoutParams(params);
+        playerContainer.setLayoutParams(params);
+
     }
 
-    private void calculateScreenWidth(){
+    private Point calculateScreenWidth(){
         Display display = getActivity().getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getRealSize(size);
-        playerWidth = size.x;
-        if(size.x > size.y){ //landscape
-            playerHeight = size.y;
-        }
-        else{
-            Log.e("width: ","" + playerWidth);
-            playerHeight = (playerWidth * 9) / 16;
-            Log.e("height: ", "" + playerHeight);
-        }
+        return size;
     }
 
     //surface changed listener
@@ -378,7 +398,10 @@ public class PlayerFragment2 extends Fragment implements TextureView.SurfaceText
 
     @Override
     public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
-
+        Log.e("video-size","" + width + "x" + height + " ratio " + pixelWidthHeightRatio);
+        this.videoWidth = width;
+        this.videoHeight = height;
+        handler.post(() -> resizeView());
     }
 
     @Override
