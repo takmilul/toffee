@@ -3,14 +3,11 @@ package com.banglalink.toffee.ui.profile
 import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.text.TextUtils
-import android.util.Base64
 import android.util.Log
 import android.widget.Toast
 import androidx.core.content.FileProvider
@@ -29,18 +26,17 @@ import coil.api.load
 import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.loadProfileImage
-import com.banglalink.toffee.util.decodeSampledBitmap
+import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
 import com.yalantis.ucrop.UCrop
 import kotlinx.coroutines.launch
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class EditProfileActivity : AppCompatActivity() {
+class EditProfileActivity : BaseAppCompatActivity() {
 
     var photoUri: Uri? = null
     private lateinit var progressDialog: VelBoxProgressDialog
