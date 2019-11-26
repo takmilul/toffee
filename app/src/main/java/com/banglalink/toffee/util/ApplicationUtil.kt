@@ -3,17 +3,15 @@ package com.banglalink.toffee.util
 import android.text.TextUtils
 import android.util.Log
 import com.banglalink.toffee.exception.ApiException
+import com.banglalink.toffee.exception.CustomerNotFoundException
 import com.banglalink.toffee.exception.Error
+import com.banglalink.toffee.model.MULTI_DEVICE_LOGIN_ERROR_CODE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
 import java.lang.Exception
 import java.net.SocketTimeoutException
-
-inline fun <T : Any, R> modelMapper(input: T, block: (T) -> R): R {
-    return block(input)
-}
 
 fun getError(e: Exception): Error {
     e.printStackTrace()
@@ -28,6 +26,9 @@ fun getError(e: Exception): Error {
             return Error(-1, "Connection time out")
         }
         is ApiException -> {
+            if(e.errorCode == MULTI_DEVICE_LOGIN_ERROR_CODE){//we are throwing this error which will be caught by Unhandled Exception Handler in BaseAppCompatActivity
+                throw CustomerNotFoundException("Customer not found")
+            }
             return Error(e.errorCode, e.errorMessage)
         }
         else -> {
