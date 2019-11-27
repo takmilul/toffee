@@ -110,7 +110,7 @@
             android:fontFamily="@font/roboto_regular"
             android:textColor="@color/second_text_color"
             android:textSize="16sp"
-            android:text="@{data.view_count}"
+            bindViewCount="@{data}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/eyeIV"
             app:layout_constraintHorizontal_chainStyle="packed"
