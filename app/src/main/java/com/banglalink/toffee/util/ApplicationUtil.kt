@@ -13,6 +13,13 @@ import java.io.IOException
 import java.lang.Exception
 import java.net.SocketTimeoutException
 
+//this will use non synchronized lazy method
+fun <T>unsafeLazy(initializer: () -> T): Lazy<T>{
+    return lazy(LazyThreadSafetyMode.NONE){
+        initializer()
+    }
+}
+
 fun getError(e: Exception): Error {
     e.printStackTrace()
     when (e) {
