@@ -40,7 +40,6 @@ class ReferAFriendActivity : BaseAppCompatActivity() {
                     binding.copyBtn.isEnabled = true
                 }
                 is Resource.Failure->{
-                    showToast(it.error.msg)
                     binding.root.snack(it.error.msg){
                         action("Retry") {
                             progressDialog.show()
