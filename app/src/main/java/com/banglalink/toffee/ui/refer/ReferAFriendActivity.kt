@@ -52,14 +52,14 @@ class ReferAFriendActivity : BaseAppCompatActivity() {
 
         binding.shareBtn.setOnClickListener {
             viewModel.share(
-                this@ReferAFriendActivity,
+                this,
                 binding.referralCode.text.toString(),
                 "Share with"
             )
         }
 
         binding.copyBtn.setOnClickListener {
-            viewModel.copy(this@ReferAFriendActivity,  binding.referralCode.text.toString())
+            viewModel.copy(this,  binding.referralCode.text.toString())
             showToast(getString( R.string.copy_to_clipboard))
         }
     }
