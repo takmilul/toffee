@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.CommonSingleListFragment
+import com.banglalink.toffee.util.unsafeLazy
 
 class CatchupFragment : CommonSingleListFragment() {
     override fun onFavoriteItemRemoved(channelInfo: ChannelInfo) {
@@ -15,7 +16,7 @@ class CatchupFragment : CommonSingleListFragment() {
     }
 
 
-    private val viewModel by lazy {
+    private val viewModel by unsafeLazy {
         ViewModelProviders.of(this).get(CatchupViewModel::class.java)
     }
 

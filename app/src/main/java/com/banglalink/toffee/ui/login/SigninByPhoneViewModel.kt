@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.login
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
@@ -12,6 +13,7 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.usecase.SigninByPhone
 import com.banglalink.toffee.util.getError
+import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.coroutines.launch
 
 class SigninByPhoneViewModel(application: Application) : BaseViewModel(application) {
@@ -19,7 +21,7 @@ class SigninByPhoneViewModel(application: Application) : BaseViewModel(applicati
     private val signinMutableLiveData = MutableLiveData<Resource<Boolean>>()
     val signinLiveData = signinMutableLiveData.toLiveData()
 
-    private val signinByPhone by lazy {
+    private val signinByPhone by unsafeLazy {
         SigninByPhone(Preference.getInstance(), RetrofitApiClient.toffeeApi)
     }
 

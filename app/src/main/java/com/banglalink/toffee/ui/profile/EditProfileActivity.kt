@@ -27,6 +27,7 @@ import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.loadProfileImage
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
+import com.banglalink.toffee.util.unsafeLazy
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
 import com.yalantis.ucrop.UCrop
@@ -48,7 +49,7 @@ class EditProfileActivity : BaseAppCompatActivity() {
     companion object{
         const val PROFILE_INFO = "Profile"
     }
-    private val viewModel by lazy {
+    private val viewModel by unsafeLazy {
         ViewModelProviders.of(this).get(EditProfileViewModel::class.java)
     }
 

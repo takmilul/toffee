@@ -52,6 +52,7 @@ import com.banglalink.toffee.ui.settings.SettingsActivity
 import com.banglalink.toffee.ui.subscription.PackageListActivity
 import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.util.Utils
+import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.layout_appbar.view.*
 import java.util.*
@@ -80,7 +81,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     private lateinit var toggle: ActionBarDrawerToggle
     lateinit var binding: ActivityMainMenuBinding
 
-    private val viewModel by lazy {
+    private val viewModel by unsafeLazy {
         ViewModelProviders.of(this).get(HomeViewModel::class.java)
     }
 

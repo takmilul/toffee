@@ -13,13 +13,14 @@ import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.usecase.GetFavoriteContents
 import com.banglalink.toffee.util.getError
+import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.coroutines.launch
 
 class FavoriteViewModel(application: Application):BaseViewModel(application) {
     private val favoriteMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
     val favoriteListLiveData = favoriteMutableLiveData.toLiveData()
 
-    private val getFavoriteContents by lazy {
+    private val getFavoriteContents by unsafeLazy {
         GetFavoriteContents(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
 

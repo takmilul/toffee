@@ -17,6 +17,9 @@ class PopularVideoListAdapter(private val optionCallBack: OptionCallBack, channe
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         super.onBindViewHolder(holder, position)
+        if(position == 0){//disabling click on header view
+            holder.itemView.setOnClickListener(null)
+        }
         holder.bindCallBack(optionCallBack)
     }
 

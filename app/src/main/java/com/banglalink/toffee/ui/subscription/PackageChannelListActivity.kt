@@ -22,6 +22,7 @@ import com.banglalink.toffee.model.Package
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.widget.GridSpacingItemDecoration
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.util.unsafeLazy
 
 class PackageChannelListActivity : AppCompatActivity() {
 
@@ -31,11 +32,11 @@ class PackageChannelListActivity : AppCompatActivity() {
     lateinit var binding:ActivityPackageChannelListLayoutBinding
     lateinit var mPackage:Package
 
-    private val viewModel by lazy {
+    private val viewModel by unsafeLazy {
         ViewModelProviders.of(this).get(PackageChannelListViewModel::class.java)
     }
 
-    private val progressDialog by lazy {
+    private val progressDialog by unsafeLazy {
         VelBoxProgressDialog(this)
     }
 

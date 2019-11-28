@@ -8,6 +8,7 @@ import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.CommonSingleListFragment
+import com.banglalink.toffee.util.unsafeLazy
 
 class SearchFragment:CommonSingleListFragment() {
     override fun onFavoriteItemRemoved(channelInfo: ChannelInfo) {
@@ -22,7 +23,7 @@ class SearchFragment:CommonSingleListFragment() {
         viewModel.searchContent(searchKey)
     }
 
-    private val viewModel by lazy {
+    private val viewModel by unsafeLazy {
         ViewModelProviders.of(this).get(SearchViewModel::class.java)
     }
 

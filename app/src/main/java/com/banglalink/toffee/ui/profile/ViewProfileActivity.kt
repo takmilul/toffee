@@ -16,15 +16,16 @@ import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.util.unsafeLazy
 
 class ViewProfileActivity : BaseAppCompatActivity() {
 
     lateinit var binding:ActivityProfileBinding
 
-    private val viewModel by lazy {
+    private val viewModel by unsafeLazy {
         ViewModelProviders.of(this).get(ViewProfileViewModel::class.java)
     }
-    private val progressDialog by lazy {
+    private val progressDialog by unsafeLazy {
         VelBoxProgressDialog(this)
     }
 

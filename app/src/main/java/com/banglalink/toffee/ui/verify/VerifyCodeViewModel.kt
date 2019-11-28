@@ -14,6 +14,7 @@ import com.banglalink.toffee.usecase.GetProfile
 import com.banglalink.toffee.usecase.SigninByPhone
 import com.banglalink.toffee.usecase.VerifyCode
 import com.banglalink.toffee.util.getError
+import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.coroutines.launch
 
 class VerifyCodeViewModel(application: Application) : BaseViewModel(application) {
@@ -21,15 +22,15 @@ class VerifyCodeViewModel(application: Application) : BaseViewModel(application)
     private val verifyCodeMutableLiveData = MutableLiveData<Resource<Boolean>>()
     val verifyCodeLiveData = verifyCodeMutableLiveData.toLiveData()
 
-    private val getProfile: GetProfile by lazy {
+    private val getProfile: GetProfile by unsafeLazy {
         GetProfile(Preference.getInstance(), RetrofitApiClient.toffeeApi)
     }
 
-    private val verifyCode by lazy {
+    private val verifyCode by unsafeLazy {
         VerifyCode(Preference.getInstance(), RetrofitApiClient.toffeeApi)
     }
 
-    private val signinByPhone by lazy {
+    private val signinByPhone by unsafeLazy {
         SigninByPhone(Preference.getInstance(), RetrofitApiClient.toffeeApi)
     }
 

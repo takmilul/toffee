@@ -13,6 +13,7 @@ import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.usecase.GetContents
 import com.banglalink.toffee.util.getError
+import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import java.lang.Exception
@@ -29,7 +30,7 @@ class CatchupViewModel(application: Application):BaseViewModel(application) {
     private var subCategoryID: Int = 0
     private var type: String? = null
 
-    private val getContent by lazy {
+    private val getContent by unsafeLazy {
         GetContents(RetrofitApiClient.toffeeApi)
     }
 

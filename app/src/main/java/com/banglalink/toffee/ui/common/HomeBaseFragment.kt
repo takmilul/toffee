@@ -13,13 +13,14 @@ import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.MyPopupWindow
 import com.banglalink.toffee.ui.home.OptionCallBack
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.util.unsafeLazy
 
 abstract class HomeBaseFragment:Fragment(), OptionCallBack {
-    val homeViewModel by lazy {
+    val homeViewModel by unsafeLazy {
         ViewModelProviders.of(activity!!).get(HomeViewModel::class.java)
     }
 
-    protected val baseViewModel by lazy {
+    protected val baseViewModel by unsafeLazy {
         ViewModelProviders.of(this).get(BaseViewModel::class.java)
     }
 

@@ -14,18 +14,19 @@ import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Package
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.util.unsafeLazy
 
 class PackageListActivity : AppCompatActivity(),PackageCallBack {
 
-    private val toolbar by lazy {
+    private val toolbar by unsafeLazy {
         findViewById<Toolbar>(R.id.toolbar)
     }
 
-    private val viewModel by lazy {
+    private val viewModel by unsafeLazy {
         ViewModelProviders.of(this).get(PackageListViewModel::class.java)
     }
 
-    private val mAdapter:PackageListAdapter by lazy {
+    private val mAdapter:PackageListAdapter by unsafeLazy {
         PackageListAdapter(this){
             launchActivity<PackageChannelListActivity> {
                 putExtra(PackageChannelListActivity.PACKAGE,it)
@@ -33,7 +34,7 @@ class PackageListActivity : AppCompatActivity(),PackageCallBack {
         }
     }
 
-    private val progressDialog by lazy {
+    private val progressDialog by unsafeLazy {
         VelBoxProgressDialog(this)
     }
     

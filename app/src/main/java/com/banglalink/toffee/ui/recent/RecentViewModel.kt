@@ -13,13 +13,14 @@ import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.usecase.GetHistory
 import com.banglalink.toffee.util.getError
+import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.coroutines.launch
 
 class RecentViewModel(application: Application):BaseViewModel(application) {
     private val recentMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
     val recentLiveData = recentMutableLiveData.toLiveData()
 
-    private val getHistory by lazy {
+    private val getHistory by unsafeLazy {
         GetHistory(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
 

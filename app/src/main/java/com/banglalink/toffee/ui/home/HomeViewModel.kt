@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
 import java.lang.Exception
 import java.util.*
 import com.banglalink.toffee.usecase.*
+import com.banglalink.toffee.util.unsafeLazy
 import com.google.firebase.iid.FirebaseInstanceId
 
 
@@ -51,15 +52,15 @@ class HomeViewModel(application: Application):BaseViewModel(application),OnCompl
         GetCategory(RetrofitApiClient.toffeeApi)
     }
 
-    private val getChannelWithCategory by lazy {
+    private val getChannelWithCategory by unsafeLazy {
         GetChannelWithCategory(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
 
-    private val getContentFromShareableUrl by lazy{
+    private val getContentFromShareableUrl by unsafeLazy{
         GetContentFromShareableUrl(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
 
-    private val setFcmToken by lazy {
+    private val setFcmToken by unsafeLazy {
         SetFcmToken(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
 

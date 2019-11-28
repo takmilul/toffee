@@ -14,6 +14,7 @@ import com.banglalink.toffee.usecase.GetContents
 import com.banglalink.toffee.usecase.GetFeatureContents
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.getError
+import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.coroutines.launch
 
 class LandingPageViewModel(application: Application):BaseViewModel(application) {
@@ -30,15 +31,15 @@ class LandingPageViewModel(application: Application):BaseViewModel(application) 
     private val featureContentMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
     val featureContentLiveData = featureContentMutableLiveData.toLiveData()
 
-    private val getChannels by lazy {
+    private val getChannels by unsafeLazy {
         GetContents(RetrofitApiClient.toffeeApi)
     }
 
-    private val getPopularVideo by lazy {
+    private val getPopularVideo by unsafeLazy {
         GetContents(RetrofitApiClient.toffeeApi)
     }
 
-    private val getFeatureContents by lazy {
+    private val getFeatureContents by unsafeLazy {
         GetFeatureContents(RetrofitApiClient.toffeeApi)
     }
 

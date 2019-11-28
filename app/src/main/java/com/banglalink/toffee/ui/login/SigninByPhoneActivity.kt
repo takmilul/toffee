@@ -26,17 +26,18 @@ import com.banglalink.toffee.ui.common.HtmlPageViewActivity
 import com.banglalink.toffee.ui.verify.VerifyCodeActivity
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.ui.widget.showAlertDialog
+import com.banglalink.toffee.util.unsafeLazy
 
 class SigninByPhoneActivity : BaseAppCompatActivity() {
 
-    private val viewModel by lazy {
+    private val viewModel by unsafeLazy {
         ViewModelProviders.of(this).get(SigninByPhoneViewModel::class.java)
     }
-    private val phoneNumber by lazy {
+    private val phoneNumber by unsafeLazy {
         findViewById<EditText>(R.id.phone_number_et)
     }
 
-    private val progressDialog by lazy {
+    private val progressDialog by unsafeLazy {
         VelBoxProgressDialog(this)
     }
 

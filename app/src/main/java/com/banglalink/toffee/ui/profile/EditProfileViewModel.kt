@@ -16,6 +16,7 @@ import com.banglalink.toffee.usecase.GetProfile
 import com.banglalink.toffee.usecase.UpdateProfile
 import com.banglalink.toffee.usecase.UploadProfileImage
 import com.banglalink.toffee.util.getError
+import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.coroutines.launch
 
 class EditProfileViewModel(application: Application) : BaseViewModel(application) {
@@ -26,15 +27,15 @@ class EditProfileViewModel(application: Application) : BaseViewModel(application
     val uploadPhotoLiveData = uploadPhotoMutableLiveData.toLiveData()
 
 
-    private val updateProfile by lazy {
+    private val updateProfile by unsafeLazy {
         UpdateProfile(Preference.getInstance(), RetrofitApiClient.toffeeApi)
     }
 
-    private val uploadProfileImage by lazy {
+    private val uploadProfileImage by unsafeLazy {
         UploadProfileImage(Preference.getInstance(), RetrofitApiClient.toffeeApi)
     }
 
-    private val getProfile by lazy {
+    private val getProfile by unsafeLazy {
         GetProfile(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
 

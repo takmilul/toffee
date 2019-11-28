@@ -17,12 +17,13 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.login.SigninByPhoneActivity
+import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SplashScreen : BaseAppCompatActivity() {
 
-    private val viewModel by lazy {
+    private val viewModel by unsafeLazy {
         ViewModelProviders.of(this).get(SplashViewModel::class.java)
     }
 

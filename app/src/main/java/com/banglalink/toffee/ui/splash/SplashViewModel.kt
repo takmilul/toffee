@@ -17,6 +17,7 @@ import com.banglalink.toffee.usecase.ApiLogin
 import com.banglalink.toffee.usecase.CheckUpdate
 import com.banglalink.toffee.usecase.GetProfile
 import com.banglalink.toffee.util.getError
+import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.coroutines.launch
 
 class SplashViewModel(application: Application) : BaseViewModel(application) {
@@ -24,14 +25,14 @@ class SplashViewModel(application: Application) : BaseViewModel(application) {
     private val splashMutableLiveData = MutableLiveData<Resource<Boolean>>()
     val splashLiveData = splashMutableLiveData.toLiveData()
 
-    private val checkUpdate by lazy {
+    private val checkUpdate by unsafeLazy {
         CheckUpdate(RetrofitApiClient.authApi)
     }
-    private val apiLogin by lazy {
+    private val apiLogin by unsafeLazy {
         ApiLogin(Preference.getInstance(), RetrofitApiClient.authApi)
     }
 
-    private val getProfile by lazy {
+    private val getProfile by unsafeLazy {
         GetProfile(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
 

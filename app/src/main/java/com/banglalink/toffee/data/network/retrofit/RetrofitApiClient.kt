@@ -2,6 +2,7 @@ package com.banglalink.toffee.data.network.retrofit
 
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.data.network.interceptor.AuthInterceptor
+import com.banglalink.toffee.util.unsafeLazy
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -28,11 +29,11 @@ object RetrofitApiClient {
             .build()
     }
 
-    val authApi: AuthApi by lazy {
+    val authApi: AuthApi by unsafeLazy {
         retrofit.create(AuthApi::class.java)
     }
 
-    val toffeeApi: ToffeeApi by lazy {
+    val toffeeApi: ToffeeApi by unsafeLazy {
         retrofit.create(ToffeeApi::class.java)
     }
 }

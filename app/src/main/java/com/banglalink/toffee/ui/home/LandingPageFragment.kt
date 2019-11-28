@@ -16,6 +16,7 @@ import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.util.unsafeLazy
 import com.daimajia.slider.library.SliderLayout
 import com.daimajia.slider.library.SliderTypes.BaseSliderView
 import com.daimajia.slider.library.SliderTypes.DefaultSliderView
@@ -36,7 +37,7 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
     private var channelListView: RecyclerView? = null
     private var bottomProgress: ProgressBar? = null
 
-    val viewModel by lazy {
+    val viewModel by unsafeLazy {
         ViewModelProviders.of(this).get(LandingPageViewModel::class.java)
     }
 
@@ -181,6 +182,8 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
     override fun onDestroyView() {
         catchupListView?.adapter = null
         channelListView?.adapter = null
+        catchupListView?.clearOnScrollListeners()
+        channelListView?.clearOnScrollListeners()
         channelListView = null
         catchupListView = null
         imageSlider?.stopAutoCycle()

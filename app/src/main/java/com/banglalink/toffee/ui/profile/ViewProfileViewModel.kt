@@ -13,13 +13,14 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.usecase.GetProfile
 import com.banglalink.toffee.util.getError
+import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.coroutines.launch
 
 class ViewProfileViewModel(application: Application) :BaseViewModel(application){
     private val profileMutableLiveData = MutableLiveData<Resource<EditProfileForm>>()
     val profileLiveData = profileMutableLiveData.toLiveData()
 
-    private val getProfile by lazy { 
+    private val getProfile by unsafeLazy {
         GetProfile(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
 

@@ -13,6 +13,7 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.usecase.UpdateFavorite
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.getError
+import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.coroutines.launch
 
 open class BaseViewModel(application: Application):AndroidViewModel(application) {
@@ -21,7 +22,7 @@ open class BaseViewModel(application: Application):AndroidViewModel(application)
     private val favoriteMutableLiveData = SingleLiveEvent<Resource<ChannelInfo>>()
     val favoriteLiveData = favoriteMutableLiveData.toLiveData()
 
-    private val updateFavorite by lazy {
+    private val updateFavorite by unsafeLazy {
         UpdateFavorite(Preference.getInstance(), RetrofitApiClient.toffeeApi)
     }
 

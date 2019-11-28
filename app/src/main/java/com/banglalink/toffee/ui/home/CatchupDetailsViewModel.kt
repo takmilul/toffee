@@ -13,6 +13,7 @@ import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.usecase.GetRelativeContents
 import com.banglalink.toffee.util.getError
+import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.coroutines.launch
 
 class CatchupDetailsViewModel(application: Application):BaseViewModel(application) {
@@ -20,7 +21,7 @@ class CatchupDetailsViewModel(application: Application):BaseViewModel(applicatio
     private val relativeContentMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
     val relativeContentLiveData = relativeContentMutableLiveData.toLiveData()
 
-    private val getRelativeContents by lazy {
+    private val getRelativeContents by unsafeLazy {
         GetRelativeContents(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
 

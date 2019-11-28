@@ -13,13 +13,14 @@ import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.usecase.SearchContent
 import com.banglalink.toffee.util.getError
+import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.coroutines.launch
 
 class SearchViewModel(application: Application):BaseViewModel(application) {
     private val searchResultMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
     val searchResultLiveData= searchResultMutableLiveData.toLiveData()
 
-    private val searchContent by lazy {
+    private val searchContent by unsafeLazy {
         SearchContent(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
 

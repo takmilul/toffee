@@ -17,6 +17,7 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.widget.MyPopupWindow
+import com.banglalink.toffee.util.unsafeLazy
 
 class CatchupDetailsFragment:HomeBaseFragment() {
     var listView:RecyclerView?=null
@@ -37,7 +38,7 @@ class CatchupDetailsFragment:HomeBaseFragment() {
     lateinit var mAdapter: CatchUpDetailsAdapter
     private var currentItem: ChannelInfo? = null
 
-    private val viewModel by lazy {
+    private val viewModel by unsafeLazy {
         ViewModelProviders.of(this).get(CatchupDetailsViewModel::class.java)
     }
 

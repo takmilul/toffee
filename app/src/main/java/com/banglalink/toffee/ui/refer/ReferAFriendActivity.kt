@@ -8,11 +8,12 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.ActivityReferAFriendLayoutBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
+import com.banglalink.toffee.util.unsafeLazy
 
 class ReferAFriendActivity : BaseAppCompatActivity() {
 
     private lateinit var binding: ActivityReferAFriendLayoutBinding
-    private val referViewModel by lazy {
+    private val referViewModel by unsafeLazy {
         ViewModelProviders.of(this).get(ReferAFriendViewModel::class.java)
     }
     private val referCode = ReferCode()

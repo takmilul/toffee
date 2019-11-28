@@ -13,13 +13,14 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.usecase.GetPackageList
 import com.banglalink.toffee.util.getError
+import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.coroutines.launch
 
 class PackageListViewModel(application: Application):BaseViewModel(application) {
     private val packageListMutableLiveData = MutableLiveData<Resource<List<Package>>>()
     val packageLiveData = packageListMutableLiveData.toLiveData()
 
-    private val getPackageList by lazy {
+    private val getPackageList by unsafeLazy {
         GetPackageList(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
 
