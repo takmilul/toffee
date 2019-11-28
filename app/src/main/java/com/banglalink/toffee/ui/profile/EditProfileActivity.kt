@@ -84,6 +84,10 @@ class EditProfileActivity : BaseAppCompatActivity() {
             handleSaveButton()
         }
 
+        binding.cancelBtn.setOnClickListener{
+            finish()
+        }
+
         observe(viewModel.updateProfileLiveData){
             progressDialog.dismiss()
             when(it){
