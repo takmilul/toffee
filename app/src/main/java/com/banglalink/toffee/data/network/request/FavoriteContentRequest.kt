@@ -4,6 +4,5 @@ data class FavoriteContentRequest(
     val customerId:Int,
     val password:String,
     val offset:Int,
-    val limit:Int=10,
-    val deviceType: Int = 1
+    val limit:Int=10
 ) : BaseRequest("getFavoriteContents")

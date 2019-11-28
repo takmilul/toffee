@@ -13,13 +13,14 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.usecase.GetPackageChannels
 import com.banglalink.toffee.util.getError
+import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.coroutines.launch
 
 class PackageChannelListViewModel(application: Application):BaseViewModel(application){
     private val channelListMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
     val channelListLiveData = channelListMutableLiveData.toLiveData()
 
-    private val getPackageChannelList by lazy {
+    private val getPackageChannelList by unsafeLazy {
         GetPackageChannels(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
 

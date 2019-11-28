@@ -5,4 +5,5 @@ open class BaseRequest(val apiName: String) {
     val version : Double = 1.01
     val appId: String = "NexViewersentTV"
     val appSecurityCode : String = "eee80f834a6e15b47db06fb70e75bada"
+    val deviceType :Int = 1
 }

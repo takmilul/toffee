@@ -6,6 +6,5 @@ data class ApiLoginRequest(
     val password: String,
     val lat: String,
     val lon: String,
-    val deviceType: Int =1,
     val fcmToken: String
 ) : BaseRequest("apiLogin")
