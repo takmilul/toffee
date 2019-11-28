@@ -152,6 +152,7 @@
                         android:layout_gravity="center"
                         android:onClick="onClickChangePassword"
                         android:textAllCaps="true"
+                        android:visibility="gone"
                         android:text="@string/change_password_button"
                         android:textSize="16sp">
                     </TextView>
