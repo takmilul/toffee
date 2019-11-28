@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <data>
-        <variable
-            name="referCode"
-            type="com.banglalink.toffee.ui.refer.ReferCode" />
-    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -15,7 +10,7 @@
 
         <Button
             android:id="@+id/shareBtn"
-            android:enabled="@{referCode.empty}"
+            android:enabled="false"
             style="@style/toffeeButton"
             android:layout_width="@dimen/button_accent_width"
             android:layout_height="@dimen/button_accent_height"
@@ -31,7 +26,7 @@
         <Button
             android:id="@+id/copyBtn"
             style="@style/Button2Style"
-            android:enabled="@{referCode.empty}"
+            android:enabled="false"
             android:layout_width="@dimen/button_accent_width"
             android:layout_height="@dimen/button_accent_height"
             android:layout_gravity="center"
@@ -51,7 +46,6 @@
             android:layout_marginTop="32dp"
             android:layout_marginEnd="64dp"
             android:gravity="center"
-            android:text="@{referCode.referalCode}"
             android:textColor="@color/second_text_color"
             app:layout_constraintEnd_toEndOf="@+id/enter_code_tv"
             app:layout_constraintStart_toStartOf="@+id/enter_code_tv"
