@@ -49,4 +49,6 @@ interface ToffeeApi {
     suspend fun getPackageChannelList(@Body packageChannelListRequest: PackageChannelListRequest):Response<PackageChannelListResponse>
     @POST("set-fcm-token")
     suspend fun setFcmToken(@Body fcmTokenRequest: FcmTokenRequest):Response<FcmTokenResponse>
+    @POST("get-my-referral-code")
+    suspend fun getMyReferralCode(@Body referralCodeRequest: ReferralCodeRequest):Response<ReferralCodeResponse>
 }
