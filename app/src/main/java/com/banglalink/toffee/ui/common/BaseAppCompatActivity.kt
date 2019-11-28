@@ -30,4 +30,9 @@ abstract class BaseAppCompatActivity : AppCompatActivity(), Thread.UncaughtExcep
            exitProcess(1)
         }
     }
+
+    override fun onDestroy() {
+        Thread.setDefaultUncaughtExceptionHandler(null)
+        super.onDestroy()
+    }
 }
