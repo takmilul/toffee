@@ -46,8 +46,8 @@ class SplashScreen : BaseAppCompatActivity() {
         }
 
         observe(viewModel.splashLiveData) {
-            when(it){
-                is Resource.Success->{
+            when (it) {
+                is Resource.Success -> {
                     lifecycleScope.launch {
                         delay(2000)
                         launchActivity<HomeActivity>()
@@ -63,7 +63,7 @@ class SplashScreen : BaseAppCompatActivity() {
         }
     }
 
-    internal fun showUpdateDialog(title: String, message: String, forceUpdate: Boolean) {
+    fun showUpdateDialog(title: String, message: String, forceUpdate: Boolean) {
 
         val builder = AlertDialog.Builder(this)
         builder.setTitle(title)
@@ -93,7 +93,8 @@ class SplashScreen : BaseAppCompatActivity() {
         }
 
         if (!forceUpdate) {
-            builder.setNegativeButton("OK"
+            builder.setNegativeButton(
+                "OK"
             ) { dialogInterface, _ ->
                 dialogInterface.dismiss()
                 viewModel.init(true)
