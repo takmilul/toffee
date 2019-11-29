@@ -1,11 +1,8 @@
 package com.banglalink.toffee.util
 
 import android.text.TextUtils
-import android.util.Log
 import com.banglalink.toffee.exception.ApiException
-import com.banglalink.toffee.exception.CustomerNotFoundException
 import com.banglalink.toffee.exception.Error
-import com.banglalink.toffee.model.MULTI_DEVICE_LOGIN_ERROR_CODE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
@@ -33,9 +30,6 @@ fun getError(e: Exception): Error {
             return Error(-1, "Connection time out")
         }
         is ApiException -> {
-            if(e.errorCode == MULTI_DEVICE_LOGIN_ERROR_CODE){//we are throwing this error which will be caught by Unhandled Exception Handler in BaseAppCompatActivity
-                throw CustomerNotFoundException("Customer not found")
-            }
             return Error(e.errorCode, e.errorMessage)
         }
         else -> {
@@ -46,7 +40,6 @@ fun getError(e: Exception): Error {
 
 suspend fun discardZeroFromDuration(duration: String): String {
     return withContext(Dispatchers.Default){
-        Log.e("DURRATION THREAD",Thread.currentThread().name)
         if (TextUtils.isEmpty(duration)) {
            return@withContext "00:00"
         }
@@ -69,7 +62,6 @@ private val c = charArrayOf('K', 'M', 'B', 'T')
  * @return a String representing the number n formatted in a cool looking way.
  */
 private fun viewCountFormat(n: Double, iteration: Int): String {
-    Log.e("VIEW COUNT THREAD",Thread.currentThread().name)
     val d = n.toLong() / 100 / 10.0
     val isRound =
         d * 10 % 10 == 0.0//true if the decimal part is equal to 0 (then it's trimmed anyway)
