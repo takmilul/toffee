@@ -6,15 +6,10 @@ import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModelProviders
-import com.banglalink.toffee.ui.common.BaseViewModel
 
 fun Context.showToast(message: String, length: Int = Toast.LENGTH_LONG) {
-    Toast.makeText(this, message, length).show()
-}
-
-inline fun <reified T: BaseViewModel> FragmentActivity.getViewModel():T{
-    return ViewModelProviders.of(this).get(T::class.java)
+    if(message.isNotBlank())
+        Toast.makeText(this, message, length).show()
 }
 
 inline fun <reified T : Any> FragmentActivity.launchActivity(
@@ -39,19 +34,6 @@ inline fun <reified T : Any> FragmentActivity.launchActivity(
                 startActivityForResult(intent, requestCode)
             }
         }
-    }
-}
-
-inline fun <reified T : Any> Context.launchActivity(
-    options: Bundle? = null,
-    noinline init: Intent.() -> Unit = {}
-) {
-    val intent = newIntent<T>(this)
-    intent.init()
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-        startActivity(intent, options)
-    } else {
-        startActivity(intent)
     }
 }
 
