@@ -1,9 +1,11 @@
 package com.banglalink.toffee.data.network.util
 
 import android.util.Base64
-import android.util.Log
 import com.banglalink.toffee.exception.ApiException
 import com.banglalink.toffee.data.network.response.BaseResponse
+import com.banglalink.toffee.exception.CustomerNotFoundException
+import com.banglalink.toffee.model.MULTI_DEVICE_LOGIN_ERROR_CODE
+import com.banglalink.toffee.util.EventProvider
 import retrofit2.Response
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
@@ -11,14 +13,26 @@ import javax.crypto.spec.SecretKeySpec
 suspend fun <T : BaseResponse> tryIO(block: suspend () -> Response<T>): T {
     val response: Response<T> = block()
     if (response.isSuccessful) {
-        val baseResponse = response.body()
-        if (baseResponse?.errorCode != 0) {
-           throw ApiException(
-               baseResponse!!.errorCode,
-               baseResponse.errorMsg!!
-           )
+        response.body()?.let {
+           return when{
+                it.errorCode == MULTI_DEVICE_LOGIN_ERROR_CODE->{
+                    EventProvider.post(CustomerNotFoundException("Customer multiple login occurred"))
+                    throw ApiException(
+                        it.errorCode,
+                        ""//we do not want to show error message for this error code
+                    )
+                }
+                it.errorCode!=0->{//hmmm....error occurred ....throw it
+                    throw ApiException(
+                        it.errorCode,
+                        it.errorMsg!!
+                    )
+                }
+                else->{
+                    it//seems like all fine ...return the body
+                }
+            }
         }
-        return response.body()!!
     }
     throw ApiException(response.code(),response.message())
 
