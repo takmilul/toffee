@@ -234,11 +234,11 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                             URL_ALL_CHANNEL_LIST,
                             getString(R.string.menu_channel_text)
                         )
+                        loadFragmentById(R.id.details_viewer, channelListFragment!!)
                     } else {
                         channelListFragment = fragment
                         channelListFragment.updateUrl(URL_ALL_CHANNEL_LIST)
                     }
-                    loadFragmentById(R.id.details_viewer, channelListFragment!!)
                 } else if (channelInfo.isCatchup() || channelInfo.isVOD()) {
                     loadFragmentById(
                         R.id.details_viewer,
@@ -246,8 +246,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                     )
                 }
             } else {
-//                startActivity(Intent(this@MainMenuActivity, ContentPurchaseActivity::class.java))
-                showToast("Purchase channel")
+                launchActivity<ContentPurchaseActivity>()
             }
         }
     }
