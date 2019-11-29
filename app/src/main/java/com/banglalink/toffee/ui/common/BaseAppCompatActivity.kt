@@ -6,33 +6,25 @@ import androidx.appcompat.app.AppCompatActivity
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.exception.CustomerNotFoundException
 import com.banglalink.toffee.extension.launchActivity
+import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.ui.login.SigninByPhoneActivity
-import kotlin.system.exitProcess
+import com.banglalink.toffee.util.EventProvider
 
 
-abstract class BaseAppCompatActivity : AppCompatActivity(), Thread.UncaughtExceptionHandler {
+abstract class BaseAppCompatActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Thread.setDefaultUncaughtExceptionHandler(this)
-    }
-
-    //we are catching the CustomerNotFoundException across the app so that we can goto login screen
-    override fun uncaughtException(p0: Thread?, p1: Throwable?) {
-        if (p1 is CustomerNotFoundException) {
-            Preference.getInstance().clear()
-            launchActivity<SigninByPhoneActivity>{
-                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        observe(EventProvider.getEventLiveData()){
+            when(it.getValue()){
+                is CustomerNotFoundException->{
+                    Preference.getInstance().clear()
+                    launchActivity<SigninByPhoneActivity>{
+                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                    finish()
+                }
             }
-            finish()
-        } else {
-            p1?.printStackTrace()
-           exitProcess(1)
         }
-    }
-
-    override fun onDestroy() {
-        Thread.setDefaultUncaughtExceptionHandler(null)
-        super.onDestroy()
     }
 }
