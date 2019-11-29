@@ -7,12 +7,16 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 object RetrofitApiClient {
 
     private val retrofit: Retrofit
     init {
         val clientBuilder = OkHttpClient.Builder()
+        clientBuilder.connectTimeout(15, TimeUnit.SECONDS)
+        clientBuilder.readTimeout(15, TimeUnit.SECONDS)
+        clientBuilder.retryOnConnectionFailure(false)
         if (BuildConfig.DEBUG) {
             val interceptor = HttpLoggingInterceptor()
             interceptor.level = HttpLoggingInterceptor.Level.BODY
