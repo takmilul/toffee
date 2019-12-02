@@ -8,8 +8,6 @@ import android.os.Bundle
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
-import com.banglalink.toffee.exception.CustomerNotFoundException
-import com.banglalink.toffee.exception.UpdateRequiredException
 import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
@@ -31,35 +29,33 @@ class SplashScreen : BaseAppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
 
-        try {
-            viewModel.init(true)
-        } catch (ce: CustomerNotFoundException) {
-            ce.printStackTrace()
-            lifecycleScope.launch {
-                delay(2000)
-                launchActivity<SigninByPhoneActivity>()
-                finish()
-            }
-        } catch (e: UpdateRequiredException) {
-            e.printStackTrace()
-            showUpdateDialog(e.title, e.updateMsg, e.forceUpdate)
-        }
-
-        observe(viewModel.splashLiveData) {
+        observe(viewModel.customerLoginLiveData) {
             when (it) {
                 is Resource.Success -> {
-                    lifecycleScope.launch {
-                        delay(2000)
-                        launchActivity<HomeActivity>()
-                        finish()
+                    when(it.data){
+                        true->{//User is logged in...so go to home
+                            launchActivity<HomeActivity>()
+                            finish()
+                        }
+                        false->{//user not logged in ....goto login screen
+                            lifecycleScope.launch {
+                                delay(2000)
+                                launchActivity<SigninByPhoneActivity>()
+                                finish()
+                            }
+                        }
                     }
+
                 }
                 is Resource.Failure->{
                     showToast(it.error.msg)
 
                 }
             }
+        }
 
+        observe(viewModel.updateRequiredLiveData){
+            showUpdateDialog(it.title,it.updateMsg,it.forceUpdate)
         }
     }
 
@@ -72,7 +68,7 @@ class SplashScreen : BaseAppCompatActivity() {
 
         builder.setPositiveButton(
             "Update"
-        ) { _, i ->
+        ) { _, _ ->
             try {
                 startActivity(
                     Intent(
@@ -94,7 +90,7 @@ class SplashScreen : BaseAppCompatActivity() {
 
         if (!forceUpdate) {
             builder.setNegativeButton(
-                "OK"
+                "SKIP"
             ) { dialogInterface, _ ->
                 dialogInterface.dismiss()
                 viewModel.init(true)
