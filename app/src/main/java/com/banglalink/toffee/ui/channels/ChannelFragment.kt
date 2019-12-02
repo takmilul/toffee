@@ -23,15 +23,12 @@ class ChannelFragment: HomeBaseFragment(),
         homeViewModel.fragmentDetailsMutableLiveData.postValue(channelInfo)
     }
 
-    private var webUrl: String? = null
     private var category: String? = null
     private var subCategory: String? = null
     private var subCategoryID: Int = 0
-//    lateinit var progressDialog: VelBoxProgressDialog
 
 
     companion object{
-        const val WEB_URL = "data-url"
         fun createInstance(
             subCategoryID: Int,
             subCategory: String,
@@ -46,9 +43,8 @@ class ChannelFragment: HomeBaseFragment(),
             return channelListFragment
         }
 
-        fun createInstance(url: String, category: String): ChannelFragment {
+        fun createInstance(category: String): ChannelFragment {
             val bundle = Bundle()
-            bundle.putString(WEB_URL, url)
             val instance = ChannelFragment()
             bundle.putString("category", category)
             instance.arguments = bundle
@@ -56,17 +52,8 @@ class ChannelFragment: HomeBaseFragment(),
         }
     }
 
-    fun updateUrl(urlAllChannelList: String) {
-        if (webUrl != urlAllChannelList) {
-            webUrl = urlAllChannelList
-           homeViewModel.getChannelByCategory(subCategoryID)
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val bundle = arguments
-        webUrl = bundle!!.getString(WEB_URL)
 
         this.category = arguments!!.getString("category")
         this.subCategory = arguments!!.getString("sub-category")
