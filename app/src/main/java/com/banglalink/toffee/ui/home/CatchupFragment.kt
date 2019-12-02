@@ -1,10 +1,11 @@
 package com.banglalink.toffee.ui.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.banglalink.toffee.extension.action
+import com.banglalink.toffee.extension.snack
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.CommonSingleListFragment
@@ -38,7 +39,12 @@ class CatchupFragment : CommonSingleListFragment() {
                     mAdapter?.addAll(it.data)
                 }
                 is Resource.Failure -> {
-                    Log.e("TAG", "Failure")
+                    binding.root.snack(it.error.msg){
+                        action("Retry") {
+                            binding.progressBar.visibility =View.VISIBLE
+                            loadItems()
+                        }
+                    }
                 }
             }
         })
