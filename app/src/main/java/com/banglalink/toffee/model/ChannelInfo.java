@@ -204,4 +204,13 @@ public class ChannelInfo implements Parcelable {
         dest.writeString(content_provider_name);
         dest.writeString(content_provider_id);
     }
+
+    public boolean isPurchased() {
+        return Integer.parseInt(individual_price) > 0 && individual_purchase;
+    }
+
+    public boolean isFree(){
+        return Integer.parseInt(individual_price
+        ) == 0 && subscription;
+    }
 }
