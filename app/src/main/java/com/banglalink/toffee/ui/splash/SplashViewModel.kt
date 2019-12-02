@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
 import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.exception.CustomerNotFoundException
 import com.banglalink.toffee.exception.UpdateRequiredException
 import com.banglalink.toffee.extension.setError
 import com.banglalink.toffee.extension.setSuccess
@@ -22,8 +21,11 @@ import kotlinx.coroutines.launch
 
 class SplashViewModel(application: Application) : BaseViewModel(application) {
 
-    private val splashMutableLiveData = MutableLiveData<Resource<Boolean>>()
-    val splashLiveData = splashMutableLiveData.toLiveData()
+    private val customerLoginMutableLiveData = MutableLiveData<Resource<Boolean>>()
+    val customerLoginLiveData = customerLoginMutableLiveData.toLiveData()
+
+    private val updateRequiredMutableLiveData = MutableLiveData<UpdateRequiredException>()
+    val updateRequiredLiveData = updateRequiredMutableLiveData.toLiveData()
 
     private val checkUpdate by unsafeLazy {
         CheckUpdate(RetrofitApiClient.authApi)
@@ -36,27 +38,36 @@ class SplashViewModel(application: Application) : BaseViewModel(application) {
         GetProfile(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
 
+    init {
+        init(false)
+    }
+
     fun init(skipUpdate:Boolean = false){
-        if(Preference.getInstance().customerId == 0){
-            throw CustomerNotFoundException("Customer not found")
-        }
 
         viewModelScope.launch {
             try{
                 if(!skipUpdate){
                     checkUpdate.execute(BuildConfig.VERSION_CODE.toString())
                 }
-                apiLogin.execute()//auto login
-                getProfile.execute()//fetch profile
-                splashMutableLiveData.setSuccess(true)
+                if(isCustomerLoggedIn()){
+                    apiLogin.execute()//auto login
+                    getProfile.execute()//fetch profile
+                    customerLoginMutableLiveData.setSuccess(true)
+                }else{
+                    customerLoginMutableLiveData.setSuccess(false)
+                }
             }
             catch (e:Exception){
                 when (e) {
-                    is UpdateRequiredException -> throw e
-                    else -> splashMutableLiveData.setError(getError(e))
+                    is UpdateRequiredException -> {
+                        updateRequiredMutableLiveData.postValue(e)
+                    }
+                    else -> customerLoginMutableLiveData.setError(getError(e))
                 }
             }
 
         }
     }
+
+    private fun isCustomerLoggedIn()=Preference.getInstance().customerId != 0
 }
