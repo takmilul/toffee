@@ -23,6 +23,7 @@ class AuthInterceptor : Interceptor {
 
         val newRequest = request.newBuilder()
             .headers(request.headers)
+            .addHeader("Connection", "close")
             .method(request.method, builder.build())
             .build()
         val response = chain.proceed(newRequest)
