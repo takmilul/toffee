@@ -11,7 +11,7 @@ import retrofit2.http.POST
 interface AuthApi{
 
     @POST("check-for-update")
-    suspend fun checkForUpdate(checkUpdateRequest: CheckUpdateRequest): Response<CheckUpdateResponse>
+    suspend fun checkForUpdate(@Body checkUpdateRequest: CheckUpdateRequest): Response<CheckUpdateResponse>
 
     @POST("api-login")
     suspend fun apiLogin(@Body apiLoginRequest: ApiLoginRequest): Response<ApiLoginResponse>
