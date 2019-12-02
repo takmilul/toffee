@@ -36,26 +36,15 @@ import com.banglalink.toffee.extension.loadProfileImage
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.*
-import com.banglalink.toffee.ui.about.AboutActivity
 import com.banglalink.toffee.ui.channels.ChannelFragment
-import com.banglalink.toffee.ui.common.HtmlPageViewActivity
-import com.banglalink.toffee.ui.common.ParentLevelAdapter
-import com.banglalink.toffee.ui.favorite.FavoriteFragment
 import com.banglalink.toffee.ui.login.SigninByPhoneActivity
 import com.banglalink.toffee.ui.player.PlayerActivity
 import com.banglalink.toffee.ui.player.PlayerFragment2
-import com.banglalink.toffee.ui.profile.ViewProfileActivity
-import com.banglalink.toffee.ui.recent.RecentFragment
-import com.banglalink.toffee.ui.refer.ReferAFriendActivity
 import com.banglalink.toffee.ui.search.SearchFragment
-import com.banglalink.toffee.ui.settings.SettingsActivity
-import com.banglalink.toffee.ui.subscription.PackageListActivity
 import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
-import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.layout_appbar.view.*
-import java.util.*
 
 const val ID_CHANNEL = 12
 const val ID_RECENT = 13
@@ -69,17 +58,12 @@ const val ID_VIDEO = 20
 const val ID_VOD = 21
 const val ID_FAQ = 22
 const val ID_INVITE_FRIEND = 23
-const val DELAY_MILLIS = 10
-const val ID_PROFILE = 10
-const val ID_HOME = 11
 
-class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListener,
-    NavigationView.OnNavigationItemSelectedListener, View.OnClickListener,
-    ParentLevelAdapter.OnNavigationItemClickListener, DraggerLayout.OnPositionChangedListener {
+class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListener, DraggerLayout.OnPositionChangedListener {
 
     private var searchView: SearchView? = null
-    private lateinit var toggle: ActionBarDrawerToggle
     lateinit var binding: ActivityMainMenuBinding
+    lateinit var drawerHelper: DrawerHelper
 
     private val viewModel by unsafeLazy {
         ViewModelProviders.of(this).get(HomeViewModel::class.java)
@@ -103,9 +87,8 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         binding.draggableView.setOnPositionChangedListener(this)
         initializeDraggableView()
         supportFragmentManager.addOnBackStackChangedListener(this)
-        initDrawer()
-
-//        EventBus.getDefault().register(this)
+        drawerHelper = DrawerHelper(this,binding)
+        drawerHelper.initDrawer()
 
         supportFragmentManager.addOnBackStackChangedListener {
             if (supportFragmentManager.backStackEntryCount == 1) { //home
@@ -119,28 +102,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         observe(viewModel.categoryLiveData) {
             when (it) {
                 is Resource.Success -> {
-                    val parentAdapter = ParentLevelAdapter(
-                        this,
-                        generateNavMenu(),
-                        this,
-                        binding.navMenuList
-                    )
-                    binding.navMenuList.setAdapter(parentAdapter)
-                    var menu: NavigationMenu
-                    try {
-                        menu = NavigationMenu(
-                            ID_VIDEO,
-                            "All Videos",
-                            R.mipmap.ic_menu_vod,
-                            it.data.vod
-                        )
-                        parentAdapter.insert(menu, 1)
-                        binding.navMenuList.expandGroup(1)
-                    } catch (e: Exception) {
-                        menu = NavigationMenu(ID_VOD, "VoD", R.mipmap.ic_menu_vod, ArrayList())
-                        parentAdapter.insert(menu, 3)
-                    }
-
+                   drawerHelper.updateAdapter(it.data.vod)
                 }
                 is Resource.Failure -> {
                     showToast(it.error.msg)
@@ -152,11 +114,11 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             onDetailsFragmentLoad(it)
         }
         observe(viewModel.viewAllChannelLiveData){
-            onMenuClick(NavigationMenu(ID_CHANNEL,"All Videos",0, listOf(),false))
+            drawerHelper.onMenuClick(NavigationMenu(ID_CHANNEL,"All Videos",0, listOf(),false))
         }
 
         observe(viewModel.viewAllVideoLiveData){
-            onMenuClick(NavigationMenu(ID_VIDEO,"All Videos",0, listOf(),false))
+            drawerHelper.onMenuClick(NavigationMenu(ID_VIDEO,"All Videos",0, listOf(),false))
         }
 
         observe(viewModel.shareableLiveData){
@@ -220,26 +182,17 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
 
     fun onDetailsFragmentLoad(channelInfo: ChannelInfo?) {
         if (channelInfo != null) {
-            if (Integer.parseInt(channelInfo.individual_price) > 0 && channelInfo.individual_purchase || Integer.parseInt(
-                    channelInfo.individual_price
-                ) == 0 && channelInfo.subscription
-            ) {
+            if (channelInfo.isPurchased || channelInfo.isFree) {
                 maximizePlayer()
                 loadChannel(channelInfo)
                 if (channelInfo.isLive) {
                     val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
-                    var channelListFragment: ChannelFragment? = null
                     if (fragment !is ChannelFragment) {
-                        channelListFragment = ChannelFragment.createInstance(
-                            URL_ALL_CHANNEL_LIST,
-                            getString(R.string.menu_channel_text)
-                        )
-                        loadFragmentById(R.id.details_viewer, channelListFragment!!)
-                    } else {
-                        channelListFragment = fragment
-                        channelListFragment.updateUrl(URL_ALL_CHANNEL_LIST)
+                       loadFragmentById(R.id.details_viewer, ChannelFragment.createInstance(
+                           getString(R.string.menu_channel_text)
+                       ))
                     }
-                } else if (channelInfo.isCatchup() || channelInfo.isVOD()) {
+                } else {
                     loadFragmentById(
                         R.id.details_viewer,
                         CatchupDetailsFragment.createInstance(channelInfo)
@@ -251,269 +204,23 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         }
     }
 
-    private fun initializeDraggableView() {
-        binding.draggableView.visibility = View.GONE
-        binding.draggableView.isClickable = true
-    }
-
-    private fun initDrawer() {
-        toggle = ActionBarDrawerToggle(
-            this,
-            binding.drawerLayout,
-            binding.tbar.toolbar,
-            R.string.navigation_drawer_open,
-            R.string.navigation_drawer_close
-        )
-        //After instantiating your ActionBarDrawerToggle
-        toggle.isDrawerIndicatorEnabled = false
-        toggle.setHomeAsUpIndicator(R.drawable.ic_home)
-        val parentAdapter =
-            ParentLevelAdapter(this, generateNavMenu(), this, binding.navMenuList)
-        binding.navMenuList.setAdapter(parentAdapter)
-        binding.drawerLayout.setDrawerListener(toggle)
-        toggle.syncState()
-        binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-        toggle.toolbarNavigationClickListener = View.OnClickListener {
-            if (supportFragmentManager.backStackEntryCount > 1) {
-                supportFragmentManager.popBackStack(LandingPageFragment::class.java.name, 0)
-            }
-        }
-
-        setNameAndCredit()
-        setProfileInfo()
-    }
-
-    private fun setNameAndCredit() {
-        val header = binding.navView.getHeaderView(0)
-        (header.findViewById<View>(R.id.credit_tv) as TextView).text =
-            "Credit: " + Preference.getInstance().balance
-        (header.findViewById<View>(R.id.customer_name_tv) as TextView).text =
-            Preference.getInstance().customerName
-        header.findViewById<View>(R.id.nav_bar_close).setOnClickListener {
-            if (binding.drawerLayout != null) {
-                binding.drawerLayout.closeDrawer(GravityCompat.END)
-            }
-        }
-    }
-
-    private fun setProfileInfo() {
-        val header = binding.navView.getHeaderView(0)
-        val profileName = header.findViewById(R.id.profile_name) as TextView
-        if(!Preference.getInstance().customerName.isBlank()){
-            profileName.text=Preference.getInstance().customerName
-        }
-        val profilePicture = header.findViewById(R.id.profile_picture) as ImageView
-
-        observe(Preference.getInstance().profileImageUrlLiveData){
-            profilePicture.loadProfileImage(it)
-        }
-
-        profilePicture.setOnClickListener{
-            launchActivity<ViewProfileActivity>()
-        }
-        profileName.setOnClickListener{
-            launchActivity<ViewProfileActivity>()
-        }
-    }
-
-    private fun generateNavMenu(): List<NavigationMenu> {
-        val navigationMenuList = ArrayList<NavigationMenu>()
-        navigationMenuList.add(
-            NavigationMenu(
-                ID_CHANNEL,
-                "TV Channels",
-                R.mipmap.ic_menu_channels,
-                ArrayList(),
-                true
-            )
-        )
-        navigationMenuList.add(
-            NavigationMenu(
-                ID_RECENT,
-                "Recent",
-                R.mipmap.ic_menu_recent,
-                ArrayList()
-            )
-        )
-        navigationMenuList.add(
-            NavigationMenu(
-                ID_FAV,
-                "Favorites",
-                R.mipmap.ic_menu_favorites,
-                ArrayList()
-            )
-        )
-        navigationMenuList.add(
-            NavigationMenu(
-                ID_SUB_VIDEO,
-                getString(R.string.menu_create_text),
-                R.mipmap.ic_menu_create,
-                ArrayList(),
-                true
-            )
-        )
-        navigationMenuList.add(
-            NavigationMenu(
-                ID_SUBSCIPTIONS,
-                "Subscriptions",
-                R.mipmap.ic_menu_subscriptions,
-                ArrayList(),
-                true
-            )
-        )
-        navigationMenuList.add(
-            NavigationMenu(
-                ID_INVITE_FRIEND,
-                getString(R.string.invite_friends_txt),
-                R.mipmap.ic_menu_invite,
-                ArrayList()
-            )
-        )
-        navigationMenuList.add(
-            NavigationMenu(
-                ID_SETTINGS,
-                "Settings",
-                R.mipmap.ic_menu_settings,
-                ArrayList()
-            )
-        )
-        navigationMenuList.add(
-            NavigationMenu(
-                ID_ABOUT,
-                "About",
-                R.mipmap.ic_menu_about,
-                ArrayList()
-            )
-        )
-        navigationMenuList.add(
-            NavigationMenu(
-                ID_FAQ,
-                getString(R.string.menu_faqs_text),
-                R.drawable.ic_menu_faq,
-                ArrayList()
-            )
-        )
-        navigationMenuList.add(
-            NavigationMenu(
-                ID_LOGOUT,
-                "Logout",
-                R.mipmap.ic_menu_exit,
-                ArrayList()
-            )
-        )
-
-
-        return navigationMenuList
-    }
-
-    override fun onMenuClick(menu: NavigationMenu?) {
-        when (menu?.id) {
-            ID_VIDEO -> {
-                val currentFragment = getCurrentContentFragment()
-                if (CatchupFragment::class.java.name != currentFragment!!.tag) {
-                    loadFragmentById( R.id.content_viewer,
-                        CatchupFragment.createInstance(0, 0, "", "All Videos", menu.name, "VOD")
-                    ,CatchupFragment::class.java.name
-                    )
-                } else {
-                    val catchupFragment = currentFragment as CatchupFragment
-                    catchupFragment.updateInfo(0, 0, "", "All Videos", menu.name, "VOD")
-                }
-
-                binding.drawerLayout.closeDrawers()
-                minimizePlayer()
-            }
-            ID_RECENT -> {
-                val currentFragment = getCurrentContentFragment()
-                if (currentFragment !is RecentFragment) {
-                    loadFragmentById(
-                        R.id.content_viewer, RecentFragment(),
-                        RecentFragment::class.java.name
-                    )
-                }
-                binding.drawerLayout.closeDrawers()
-                minimizePlayer()
-            }
-            ID_CHANNEL -> {
-                val currentFragment = getCurrentContentFragment()
-                if (currentFragment !is ChannelFragment) {
-                    loadFragmentById( R.id.content_viewer,ChannelFragment.createInstance(
-                        0,
-                        "",
-                        getString(R.string.menu_channel_text)
-                    ),ChannelFragment::class.java.getName())
-                }
-                binding.drawerLayout.closeDrawers()
-                minimizePlayer()
-            }
-            ID_FAV -> {
-                val currentFragment = getCurrentContentFragment()
-                if (currentFragment !is FavoriteFragment) {
-                    loadFragmentById(
-                        R.id.content_viewer, FavoriteFragment(),
-                        FavoriteFragment::class.java.getName()
-                    )
-                }
-                binding.drawerLayout.closeDrawers()
-                minimizePlayer()
-            }
-            ID_SUB_VIDEO -> {
-                launchActivity<HtmlPageViewActivity> {
-                    putExtra(
-                        HtmlPageViewActivity.TITLE_KEY,
-                        getString(R.string.menu_create_text)
-                    )
-                    putExtra(HtmlPageViewActivity.CONTENT_KEY, MICRO_SITE_URL)
-                }
-                binding.drawerLayout.closeDrawers()
-            }
-            ID_SUBSCIPTIONS->{
-                launchActivity<PackageListActivity>()
-            }
-            ID_SETTINGS -> {
-                launchActivity<SettingsActivity>()
-                binding.drawerLayout.closeDrawers()
-
-            }
-            ID_ABOUT -> {
-                launchActivity<AboutActivity>()
-                binding.drawerLayout.closeDrawers()
-                binding.drawerLayout.closeDrawers()
-
-            }
-            ID_FAQ -> {
-                launchActivity<HtmlPageViewActivity> {
-                    putExtra(HtmlPageViewActivity.CONTENT_KEY, FAQ_URL)
-                    putExtra(HtmlPageViewActivity.TITLE_KEY, getString(R.string.menu_faqs_text))
-                }
-                binding.drawerLayout.closeDrawers()
-
-            }
-            ID_LOGOUT->{
-                handleExitApp()
-            }
-            ID_INVITE_FRIEND->{
-                launchActivity<ReferAFriendActivity>()
-            }
-        }
-    }
-
-    private fun getCurrentContentFragment(): Fragment? {
-        return supportFragmentManager.findFragmentById(R.id.content_viewer)
-    }
-
-    protected fun loadFragmentById(id: Int, fragment: Fragment) {
-        supportFragmentManager.beginTransaction()
-            .replace(id, fragment).commit()
-    }
-
-    protected fun loadFragmentById(id: Int, fragment: Fragment, tag: String) {
+    fun loadFragmentById(id: Int, fragment: Fragment, tag: String) {
         supportFragmentManager.popBackStack(
             LandingPageFragment::class.java.getName(),
             0
         )
         supportFragmentManager.beginTransaction()
             .replace(id, fragment).addToBackStack(tag).commit()
+    }
+
+    fun loadFragmentById(id: Int, fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(id, fragment).commit()
+    }
+
+    private fun initializeDraggableView() {
+        binding.draggableView.visibility = View.GONE
+        binding.draggableView.isClickable = true
     }
 
     override fun onViewMinimize() {
@@ -530,7 +237,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         }
     }
 
-    private fun handleExitApp() {
+    fun handleExitApp() {
         AlertDialog.Builder(this)
             .setMessage(String.format(EXIT_FROM_APP_MSG, getString(R.string.app_name)))
             .setCancelable(false)
@@ -567,7 +274,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     override fun onBackStackChanged() {
         if (supportFragmentManager.backStackEntryCount == 0) {
             supportActionBar!!.setDisplayHomeAsUpEnabled(false)
-            toggle.isDrawerIndicatorEnabled = true
+            drawerHelper.toggle.isDrawerIndicatorEnabled = true
         }
     }
 
@@ -588,7 +295,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         }
     }
 
-    private fun minimizePlayer() {
+    fun minimizePlayer() {
         if (binding.draggableView != null) {
             binding.draggableView.minimize()
             mediaPlayer.onMinimizePlayer()
@@ -603,52 +310,6 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             mediaPlayer.onMaximizePlayer()
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
         }
-    }
-
-    override fun onNavigationItemSelected(p0: MenuItem): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun onClick(p0: View?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun onCategoryClick(category: NavCategory, parent: NavigationMenu?) {
-
-        if (parent?.id == ID_VIDEO) run {
-            val currentFragment = getCurrentContentFragment()
-            if (CatchupFragment::class.java.name != currentFragment!!.tag) {
-                loadFragmentById(R.id.content_viewer,CatchupFragment.createInstance(
-                    category.id,
-                    0,
-                    "",
-                    parent.name,
-                    category.categoryName,
-                    "VOD"
-                ), CatchupFragment::class.java.name)
-            } else {
-                val catchupFragment = currentFragment as CatchupFragment
-                catchupFragment.updateInfo(
-                    category.id,
-                    0,
-                    "",
-                    parent.name,
-                    category.categoryName,
-                    "VOD"
-                )
-            }
-
-            binding.drawerLayout.closeDrawers()
-            minimizePlayer()
-        }
-    }
-
-    override fun onSubCategoryClick(
-        subcategory: NavSubcategory?,
-        category: NavCategory?,
-        parent: NavigationMenu?
-    ) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
