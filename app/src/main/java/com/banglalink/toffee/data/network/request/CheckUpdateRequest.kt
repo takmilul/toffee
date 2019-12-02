@@ -4,5 +4,4 @@ data class CheckUpdateRequest(
     val versionCode: String = "versionCode",
     val os: String = "Android"
 ) :
-    BaseRequest("checkForUpdate") {
-}
+    BaseRequest("checkForUpdate")
