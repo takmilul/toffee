@@ -2,7 +2,9 @@ package com.banglalink.toffee.util
 
 import android.text.TextUtils
 import com.banglalink.toffee.exception.ApiException
+import com.banglalink.toffee.exception.AppDeprecatedError
 import com.banglalink.toffee.exception.Error
+import com.banglalink.toffee.exception.UpdateRequiredException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
@@ -31,6 +33,9 @@ fun getError(e: Exception): Error {
         }
         is ApiException -> {
             return Error(e.errorCode, e.errorMessage)
+        }
+        is UpdateRequiredException->{
+            return AppDeprecatedError(-1,"",e.title,e.updateMsg,e.forceUpdate)
         }
         else -> {
             return Error(-1, "Unknown error occurred")
