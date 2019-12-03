@@ -1,11 +1,16 @@
 package com.banglalink.toffee.data.network.util
 
 import android.util.Base64
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.liveData
 import com.banglalink.toffee.exception.ApiException
 import com.banglalink.toffee.data.network.response.BaseResponse
 import com.banglalink.toffee.exception.CustomerNotFoundException
 import com.banglalink.toffee.model.MULTI_DEVICE_LOGIN_ERROR_CODE
+import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.util.EventProvider
+import com.banglalink.toffee.util.getError
+import kotlinx.coroutines.Dispatchers
 import retrofit2.Response
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
@@ -37,6 +42,19 @@ suspend fun <T : BaseResponse> tryIO(block: suspend () -> Response<T>): T {
     throw ApiException(response.code(),response.message())
 
 }
+
+fun <T> resultLiveData(networkCall: suspend () -> T): LiveData<Resource<T>> =
+    liveData(Dispatchers.IO) {
+        try {
+            val response = networkCall.invoke()
+            emit(Resource.Success(response))
+
+        }catch (e:Exception){
+            emit(Resource.Failure(getError(e)))
+        }
+
+
+    }
 
 
 private const val KEY = "1234567891234567"
