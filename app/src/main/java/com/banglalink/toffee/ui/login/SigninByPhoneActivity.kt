@@ -59,21 +59,6 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
             loginBtn.isEnabled = termsAndConditionCheckBox.isChecked
         }
 
-        observe(viewModel.signinLiveData) {
-            progressDialog.dismiss()
-            when (it) {
-                is Resource.Success -> {
-                    launchActivity<VerifyCodeActivity> {
-                        putExtra(VerifyCodeActivity.PHONE_NUMBER, phoneNumber.text.toString())
-                        putExtra(VerifyCodeActivity.REFERRAL_CODE, referralCodeEt.text.toString())
-                    }
-                    finish()
-                }
-                is Resource.Failure -> {
-                    showToast(it.error.msg)
-                }
-            }
-        }
     }
 
     private fun handleLogin() {
@@ -95,7 +80,22 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
 
         progressDialog.show()
         this.phoneNumber.setText(phoneNo)
-        viewModel.siginIn(phoneNo, referralCodeEt.text.toString())
+
+        observe(viewModel.siginIn(phoneNo, referralCodeEt.text.toString())) {
+            progressDialog.dismiss()
+            when (it) {
+                is Resource.Success -> {
+                    launchActivity<VerifyCodeActivity> {
+                        putExtra(VerifyCodeActivity.PHONE_NUMBER, phoneNumber.text.toString())
+                        putExtra(VerifyCodeActivity.REFERRAL_CODE, referralCodeEt.text.toString())
+                    }
+                    finish()
+                }
+                is Resource.Failure -> {
+                    showToast(it.error.msg)
+                }
+            }
+        }
     }
 
     fun handleHaveReferralOption(view: View) {
