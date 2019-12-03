@@ -1,6 +1,11 @@
 package com.banglalink.toffee.ui.refer
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import androidx.core.app.ShareCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import com.banglalink.toffee.R
@@ -30,14 +35,20 @@ class ReferAFriendActivity : BaseAppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding.toolbar.setNavigationOnClickListener { onBackPressed() }
 
+        getMyReferralCode()
+    }
 
-        observe(viewModel.referralCode) {
+    private fun getMyReferralCode(){
+        observe(viewModel.getMyReferralCode()) {
             progressDialog.dismiss()
             when(it){
                 is Resource.Success->{
-                    binding.referralCode.text = it.data
+                    binding.referralCode.text = it.data.referralCode
                     binding.shareBtn.isEnabled = true
                     binding.copyBtn.isEnabled = true
+
+                    setCopyBtnClick(it.data.referralCode)
+                    setShareBtnClick(it.data.sharableText)
                 }
                 is Resource.Failure->{
                     binding.root.snack(it.error.msg){
@@ -49,18 +60,30 @@ class ReferAFriendActivity : BaseAppCompatActivity() {
                 }
             }
         }
+    }
 
+    private fun setShareBtnClick(shareableText:String){
         binding.shareBtn.setOnClickListener {
-            viewModel.share(
-                this,
-                binding.referralCode.text.toString(),
-                "Share with"
-            )
+            val shareIntent: Intent = ShareCompat.IntentBuilder.from(this)
+                .setType("text/plan")
+                .setText(shareableText)
+                .intent
+            if (shareIntent.resolveActivity(getPackageManager()) != null) {
+                startActivity(shareIntent)
+            }
         }
+    }
 
+    private fun setCopyBtnClick(referralCode:String){
         binding.copyBtn.setOnClickListener {
-            viewModel.copy(this,  binding.referralCode.text.toString())
-            showToast(getString( R.string.copy_to_clipboard))
+            try {
+                val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText(referralCode, referralCode)
+                clipboard.setPrimaryClip(clip)
+                showToast(getString( R.string.copy_to_clipboard))
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
         }
     }
 
