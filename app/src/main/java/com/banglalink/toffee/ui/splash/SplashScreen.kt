@@ -8,9 +8,8 @@ import android.os.Bundle
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
-import com.banglalink.toffee.extension.launchActivity
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.exception.AppDeprecatedError
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.home.HomeActivity
@@ -22,44 +21,47 @@ import kotlinx.coroutines.launch
 class SplashScreen : BaseAppCompatActivity() {
 
     private val viewModel by unsafeLazy {
-        ViewModelProviders.of(this).get(SplashViewModel::class.java)
+        getViewModel<SplashViewModel>()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
 
-        observe(viewModel.customerLoginLiveData) {
-            when (it) {
-                is Resource.Success -> {
-                    when(it.data){
-                        true->{//User is logged in...so go to home
-                            launchActivity<HomeActivity>()
-                            finish()
-                        }
-                        false->{//user not logged in ....goto login screen
-                            lifecycleScope.launch {
-                                delay(2000)
-                                launchActivity<SigninByPhoneActivity>()
-                                finish()
-                            }
-                        }
-                    }
-
-                }
-                is Resource.Failure->{
-                    showToast(it.error.msg)
-
-                }
+        if(viewModel.isCustomerLoggedIn())
+            initApp()
+        else{
+            lifecycleScope.launch {
+                delay(2000)
+                launchActivity<SigninByPhoneActivity>()
+                finish()
             }
         }
 
-        observe(viewModel.updateRequiredLiveData){
-            showUpdateDialog(it.title,it.updateMsg,it.forceUpdate)
+    }
+
+    private fun initApp(skipUpdate:Boolean = false){
+        observe(viewModel.init(skipUpdate)){
+            when(it){
+                is Resource.Success ->{
+                    launchActivity<HomeActivity>()
+                    finish()
+                }
+                is Resource.Failure->{
+                    when(it.error){
+                        is AppDeprecatedError->{
+                            showUpdateDialog(it.error.title,it.error.updateMsg,it.error.forceUpdate)
+                        }
+                        else->{
+                            showToast(it.error.msg)
+                        }
+                    }
+                }
+            }
         }
     }
 
-    fun showUpdateDialog(title: String, message: String, forceUpdate: Boolean) {
+    private fun showUpdateDialog(title: String, message: String, forceUpdate: Boolean) {
 
         val builder = AlertDialog.Builder(this)
         builder.setTitle(title)
@@ -93,7 +95,7 @@ class SplashScreen : BaseAppCompatActivity() {
                 "SKIP"
             ) { dialogInterface, _ ->
                 dialogInterface.dismiss()
-                viewModel.init(true)
+                initApp(true)
             }
         }
 
