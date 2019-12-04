@@ -174,6 +174,7 @@ class EditProfileActivity : BaseAppCompatActivity() {
         progressDialog.show()
         viewModel.updateProfile(binding.profileForm!!)
         observe(viewModel.updateProfile(binding.profileForm!!)){
+            progressDialog.dismiss()
             when(it){
                 is Resource.Success->{
                     val intent = intent
