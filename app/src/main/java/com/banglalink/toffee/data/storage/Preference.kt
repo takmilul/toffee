@@ -12,6 +12,7 @@ class Preference private constructor(context: Context) {
     val balanceLiveData = MutableLiveData<Int>()
     val sessionTokenLiveData = MutableLiveData<String>()
     val profileImageUrlLiveData = MutableLiveData<String>()
+    val customerNameLiveData = MutableLiveData<String>()
 
     var phoneNumber: String
         get() = pref.getString("p_number", "")?:""
@@ -22,6 +23,7 @@ class Preference private constructor(context: Context) {
     var customerName: String
         get() = pref.getString("customer_name", "")?:""
         set(customerName) {
+            customerNameLiveData.postValue(customerName)
             pref.edit().putString("customer_name", customerName).apply()
         }
 
