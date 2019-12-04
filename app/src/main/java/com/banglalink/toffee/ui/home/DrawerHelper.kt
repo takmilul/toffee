@@ -62,11 +62,19 @@ class DrawerHelper(val activity: HomeActivity,val binding:ActivityMainMenuBindin
         val header = binding.navView.getHeaderView(0)
         (header.findViewById<View>(R.id.credit_tv) as TextView).text =
             "Credit: " + Preference.getInstance().balance
-        (header.findViewById<View>(R.id.customer_name_tv) as TextView).text =
-            Preference.getInstance().customerName
+        val customerNameTv = (header.findViewById<View>(R.id.customer_name_tv) as TextView)
         header.findViewById<View>(R.id.nav_bar_close).setOnClickListener {
             if (binding.drawerLayout != null) {
                 binding.drawerLayout.closeDrawer(GravityCompat.END)
+            }
+        }
+        activity.observe(Preference.getInstance().customerNameLiveData){
+            when{
+                it.isBlank()->customerNameTv.text =
+                    activity.getString(R.string.profile)
+                else->{
+                    customerNameTv.text=it
+                }
             }
         }
     }
