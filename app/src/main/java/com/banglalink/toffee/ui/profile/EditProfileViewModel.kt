@@ -2,30 +2,19 @@ package com.banglalink.toffee.ui.profile
 
 import android.app.Application
 import android.net.Uri
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.LiveData
 import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
+import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.extension.setError
-import com.banglalink.toffee.extension.setSuccess
-import com.banglalink.toffee.extension.toLiveData
-import com.banglalink.toffee.model.Profile
+import com.banglalink.toffee.model.Customer
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.usecase.GetProfile
 import com.banglalink.toffee.usecase.UpdateProfile
 import com.banglalink.toffee.usecase.UploadProfileImage
-import com.banglalink.toffee.util.getError
 import com.banglalink.toffee.util.unsafeLazy
-import kotlinx.coroutines.launch
 
 class EditProfileViewModel(application: Application) : BaseViewModel(application) {
-    private val updateProfileMutableLiveData = MutableLiveData<Resource<Boolean>>()
-    val updateProfileLiveData = updateProfileMutableLiveData.toLiveData()
-
-    private val uploadPhotoMutableLiveData = MutableLiveData<Resource<Boolean>>()
-    val uploadPhotoLiveData = uploadPhotoMutableLiveData.toLiveData()
-
 
     private val updateProfile by unsafeLazy {
         UpdateProfile(Preference.getInstance(), RetrofitApiClient.toffeeApi)
@@ -40,31 +29,20 @@ class EditProfileViewModel(application: Application) : BaseViewModel(application
     }
 
 
-    fun updateProfile(editProfileForm: EditProfileForm) {
-        viewModelScope.launch {
-            try {
-                updateProfile.execute(
-                    editProfileForm.fullName,
-                    editProfileForm.email,
-                    editProfileForm.address,
-                    editProfileForm.phoneNo
-                )
-                updateProfileMutableLiveData.setSuccess(true)
-            } catch (e: Exception) {
-                updateProfileMutableLiveData.setError(getError(e))
-            }
-        }
+    fun updateProfile(editProfileForm: EditProfileForm):LiveData<Resource<Boolean>> {
+
+        return resultLiveData{updateProfile.execute(
+            editProfileForm.fullName,
+            editProfileForm.email,
+            editProfileForm.address,
+            editProfileForm.phoneNo
+        )}
     }
 
-    fun uploadProfileImage(photoData: Uri) {
-        viewModelScope.launch {
-            try {
-                uploadProfileImage.execute(photoData,getApplication())
-                getProfile.execute()//we are calling get profile to update the url in preference
-                uploadPhotoMutableLiveData.setSuccess(true)
-            } catch (e: Exception) {
-                uploadPhotoMutableLiveData.setError(getError(e))
-            }
+    fun uploadProfileImage(photoData: Uri):LiveData<Resource<Customer>> {
+        return resultLiveData{
+            uploadProfileImage.execute(photoData,getApplication())
+            getProfile.execute()
         }
     }
 
