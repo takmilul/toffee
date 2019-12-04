@@ -20,7 +20,6 @@ import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.widget.VelBoxFieldTextWatcher
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
-import com.banglalink.toffee.ui.widget.showAlertDialog
 import androidx.lifecycle.lifecycleScope
 import coil.api.load
 import coil.transform.CircleCropTransformation
@@ -88,35 +87,6 @@ class EditProfileActivity : BaseAppCompatActivity() {
             finish()
         }
 
-        observe(viewModel.updateProfileLiveData){
-            progressDialog.dismiss()
-            when(it){
-                is Resource.Success->{
-                    val intent = intent
-                    intent.putExtra(PROFILE_INFO,binding.profileForm)
-                    setResult(RESULT_OK, intent)
-                    finish()
-                }
-                is Resource.Failure->{
-                    showToast(it.error.msg)
-                }
-            }
-        }
-
-        observe(viewModel.uploadPhotoLiveData) {
-            progressDialog.dismiss()
-            when (it) {
-                is Resource.Success -> {
-                    showToast(
-                        getString(R.string.photo_update_success)
-                    )
-                }
-                is Resource.Failure -> {
-                    showToast(it.error.msg)
-                }
-            }
-        }
-
         observe(Preference.getInstance().profileImageUrlLiveData){
             binding.profileEditLayout.profileIv.loadProfileImage(it)
         }
@@ -169,13 +139,11 @@ class EditProfileActivity : BaseAppCompatActivity() {
                     transformations(CircleCropTransformation())
                     placeholder(R.drawable.ic_profile_default)
                 }
-
-                try {
-                    viewModel.uploadProfileImage(photoUri!!)
-
-                } catch (e: Exception) {
-                    Log.e(TAG, e.message, e)
+                photoUri?.let {
+                    handleUploadImage(it)
                 }
+
+
             }
         } else if (requestCode == GALLERY_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
             startCrop(data.data!!)
@@ -203,35 +171,41 @@ class EditProfileActivity : BaseAppCompatActivity() {
     }
 
     private fun handleSaveButton(){
-        if (TextUtils.isEmpty(binding.profileForm!!.fullName)) {
-            showAlertDialog(
-                this,
-                getString(R.string.full_name_required_title),
-                getString(R.string.full_name_required_msg)
-            )
-            return
-        }
-
-        if (TextUtils.isEmpty(binding.profileForm!!.email)) {
-            showAlertDialog(
-                this,
-                getString(R.string.email_required_title),
-                getString(R.string.email_required_msg)
-            )
-            return
-        }
-
-        if (TextUtils.isEmpty(binding.profileForm!!.address)) {
-            showAlertDialog(
-                this,
-                getString(R.string.address_required_title),
-                getString(R.string.address_required_msg)
-            )
-            return
-        }
-
         progressDialog.show()
         viewModel.updateProfile(binding.profileForm!!)
+        observe(viewModel.updateProfile(binding.profileForm!!)){
+            when(it){
+                is Resource.Success->{
+                    val intent = intent
+                    intent.putExtra(PROFILE_INFO,binding.profileForm)
+                    setResult(RESULT_OK, intent)
+                    finish()
+                }
+                is Resource.Failure->{
+                    showToast(it.error.msg)
+                }
+            }
+        }
+    }
+
+    private fun handleUploadImage(photoUri:Uri){
+        try {
+            observe( viewModel.uploadProfileImage(photoUri)){
+                when (it) {
+                    is Resource.Success -> {
+                        showToast(
+                            getString(R.string.photo_update_success)
+                        )
+                    }
+                    is Resource.Failure -> {
+                        showToast(it.error.msg)
+                    }
+                }
+            }
+
+        } catch (e: Exception) {
+            Log.e(TAG, e.message, e)
+        }
     }
 
     @Throws(IOException::class)
