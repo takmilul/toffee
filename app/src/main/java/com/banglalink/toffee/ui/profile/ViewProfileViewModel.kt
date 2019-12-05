@@ -1,41 +1,24 @@
 package com.banglalink.toffee.ui.profile
 
 import android.app.Application
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.LiveData
 import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
+import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.extension.setError
-import com.banglalink.toffee.extension.setSuccess
-import com.banglalink.toffee.extension.toLiveData
-import com.banglalink.toffee.model.Profile
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.usecase.GetProfile
-import com.banglalink.toffee.util.getError
 import com.banglalink.toffee.util.unsafeLazy
-import kotlinx.coroutines.launch
 
 class ViewProfileViewModel(application: Application) :BaseViewModel(application){
-    private val profileMutableLiveData = MutableLiveData<Resource<EditProfileForm>>()
-    val profileLiveData = profileMutableLiveData.toLiveData()
 
     private val getProfile by unsafeLazy {
         GetProfile(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
 
-    init{
-        loadCustomerProfile()
-    }
-
-    private fun loadCustomerProfile(){
-        viewModelScope.launch {
-            try{
-                val response = getProfile.execute();
-                profileMutableLiveData.setSuccess(response.profile.toProfileForm())
-            }catch (e:Exception){
-                profileMutableLiveData.setError(getError(e))
-            }
+    fun loadCustomerProfile():LiveData<Resource<EditProfileForm>>{
+        return resultLiveData {
+            getProfile.execute().profile.toProfileForm()
         }
     }
 
