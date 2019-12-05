@@ -24,7 +24,7 @@ class FavoriteFragment : CommonSingleListFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity!!.title = "Favorites"
+        activity?.title = "Favorites"
 
         viewModel.favoriteListLiveData.observe(viewLifecycleOwner, Observer {
             hideProgress()
