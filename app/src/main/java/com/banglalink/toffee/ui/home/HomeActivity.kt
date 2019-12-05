@@ -121,14 +121,6 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             drawerHelper.onMenuClick(NavigationMenu(ID_VIDEO,"All Videos",0, listOf(),false))
         }
 
-        observe(viewModel.shareableLiveData){
-            when(it){
-                is Resource.Success->{
-                    onDetailsFragmentLoad(it.data)
-                }
-            }
-        }
-
         //Observing any changes in session token....
         observe(Preference.getInstance().sessionTokenLiveData){
             if (mediaPlayer != null && mediaPlayer.isVisible && mediaPlayer.channelInfo != null) {
@@ -153,8 +145,15 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         if (uri != null) {
             val strUri = uri.toString()
             val hash = strUri.substring(strUri.lastIndexOf("/") + 1)
-            Log.e("url", "$strUri hash $hash")
-            viewModel.getShareableContent(hash)
+            observe(viewModel.getShareableContent(hash)){ channelResource ->
+                when(channelResource){
+                    is Resource.Success->{
+                        channelResource.data?.let {
+                            onDetailsFragmentLoad(it)
+                        }
+                    }
+                }
+            }
         }
     }
     override fun onNewIntent(intent: Intent) {
@@ -241,7 +240,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         AlertDialog.Builder(this)
             .setMessage(String.format(EXIT_FROM_APP_MSG, getString(R.string.app_name)))
             .setCancelable(false)
-            .setPositiveButton("Yes") { dialog, id ->
+            .setPositiveButton("Yes") { _, _ ->
                 Preference.getInstance().clear()
                 launchActivity<SigninByPhoneActivity>()
                 finish()
@@ -283,7 +282,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             binding.drawerLayout.closeDrawer(GravityCompat.END)
         } else if (Utils.isFullScreen(this)) {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        } else if (binding.draggableView.isMaximized && binding.draggableView.getVisibility() == View.VISIBLE) {
+        } else if (binding.draggableView.isMaximized && binding.draggableView.visibility == View.VISIBLE) {
             minimizePlayer()
         } else if (supportFragmentManager.findFragmentById(R.id.content_viewer) is LandingPageFragment) {
             val landingPageFragment =
@@ -370,7 +369,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
 
         val searchBadgeTv =
             searchView?.findViewById(androidx.appcompat.R.id.search_badge) as TextView
-        searchBadgeTv.background = resources.getDrawable(R.drawable.menu_search)
+        searchBadgeTv.background = ContextCompat.getDrawable(this@HomeActivity,R.drawable.menu_search)
 
         val searchAutoComplete:AutoCompleteTextView =
             searchView!!.findViewById(androidx.appcompat.R.id.search_src_text)
@@ -382,7 +381,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                     R.color.searchview_input_text_color
                 )
             )
-            background = resources.getDrawable(R.drawable.searchview_input_bg)
+            background = ContextCompat.getDrawable(this@HomeActivity,R.drawable.searchview_input_bg)
         }
 
 
