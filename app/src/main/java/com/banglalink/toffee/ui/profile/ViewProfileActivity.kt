@@ -48,7 +48,7 @@ class ViewProfileActivity : BaseAppCompatActivity() {
 
     private fun loadProfile(){
         progressDialog.show()
-        observe(viewModel.profileLiveData){
+        observe(viewModel.loadCustomerProfile()){
             progressDialog.dismiss()
             when(it){
                 is Resource.Success->{
@@ -65,10 +65,6 @@ class ViewProfileActivity : BaseAppCompatActivity() {
         launchActivity<EditProfileActivity>(requestCode = 1000){
             putExtra(EditProfileActivity.PROFILE_INFO,binding.data)
         }
-    }
-
-    fun onClickChangePassword(view:View){
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
