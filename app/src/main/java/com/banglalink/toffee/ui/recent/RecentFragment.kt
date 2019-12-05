@@ -19,8 +19,7 @@ class RecentFragment:CommonSingleListFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        activity!!.title = "Recent"
-        loadRecentItems()
+        activity?.title = "Recent"
         viewModel.recentLiveData.observe(viewLifecycleOwner, Observer {
             hideProgress()
             when(it){
@@ -28,21 +27,17 @@ class RecentFragment:CommonSingleListFragment() {
                     mAdapter?.addAll(it.data)
                 }
                 is Resource.Failure->{
-                    context!!.showToast(it.error.msg)
+                    context?.showToast(it.error.msg)
                 }
             }
         })
     }
 
     override fun loadItems() {
-        loadRecentItems()
+        viewModel.loadRecentItems()
     }
 
     override fun onFavoriteItemRemoved(channelInfo: ChannelInfo) {
        mAdapter?.remove(channelInfo)
-    }
-
-    private fun loadRecentItems(){
-        viewModel.loadRecentItems()
     }
 }
