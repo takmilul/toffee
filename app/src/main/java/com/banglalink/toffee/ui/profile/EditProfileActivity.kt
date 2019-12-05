@@ -7,9 +7,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.text.TextUtils
 import android.util.Log
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
@@ -161,7 +161,7 @@ class EditProfileActivity : BaseAppCompatActivity() {
         val options = UCrop.Options().apply {
             setHideBottomControls(true)
             setFreeStyleCropEnabled(true)
-            setActiveWidgetColor(resources.getColor(R.color.colorAccent))
+            setActiveWidgetColor(ContextCompat.getColor(this@EditProfileActivity,R.color.colorAccent))
         }
 
         uCrop = uCrop.withOptions(options)
@@ -172,7 +172,6 @@ class EditProfileActivity : BaseAppCompatActivity() {
 
     private fun handleSaveButton(){
         progressDialog.show()
-        viewModel.updateProfile(binding.profileForm!!)
         observe(viewModel.updateProfile(binding.profileForm!!)){
             progressDialog.dismiss()
             when(it){
