@@ -4,7 +4,6 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.banglalink.toffee.R
@@ -54,36 +53,20 @@ class DrawerHelper(val activity: HomeActivity,val binding:ActivityMainMenuBindin
             }
         }
 
-        setNameAndCredit()
         setProfileInfo()
-    }
-
-    private fun setNameAndCredit() {
-        val header = binding.navView.getHeaderView(0)
-        (header.findViewById<View>(R.id.credit_tv) as TextView).text =
-            "Credit: " + Preference.getInstance().balance
-        val customerNameTv = (header.findViewById<View>(R.id.customer_name_tv) as TextView)
-        header.findViewById<View>(R.id.nav_bar_close).setOnClickListener {
-            if (binding.drawerLayout != null) {
-                binding.drawerLayout.closeDrawer(GravityCompat.END)
-            }
-        }
-        activity.observe(Preference.getInstance().customerNameLiveData){
-            when{
-                it.isBlank()->customerNameTv.text =
-                    activity.getString(R.string.profile)
-                else->{
-                    customerNameTv.text=it
-                }
-            }
-        }
     }
 
     private fun setProfileInfo() {
         val header = binding.navView.getHeaderView(0)
         val profileName = header.findViewById(R.id.profile_name) as TextView
-        if(!Preference.getInstance().customerName.isBlank()){
-            profileName.text= Preference.getInstance().customerName
+        activity.observe(Preference.getInstance().customerNameLiveData){
+            when{
+                it.isBlank()->profileName.text =
+                    activity.getString(R.string.profile)
+                else->{
+                    profileName.text=Preference.getInstance().customerName
+                }
+            }
         }
         val profilePicture = header.findViewById(R.id.profile_picture) as ImageView
 
