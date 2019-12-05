@@ -25,6 +25,7 @@ class UpdateProfile(private val preference: Preference, private val toffeeApi: T
                 )
             )
         }
+        Preference.getInstance().customerName=fullName
         return true
     }
 }
