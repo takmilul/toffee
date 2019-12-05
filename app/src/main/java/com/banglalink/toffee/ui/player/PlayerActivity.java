@@ -21,7 +21,7 @@ import org.json.JSONObject;
  * Created by shantanu on 5/5/17.
  */
 
-public class PlayerActivity extends BaseAppCompatActivity implements OnPlayerControllerChangedListener {
+public abstract class PlayerActivity extends BaseAppCompatActivity implements OnPlayerControllerChangedListener {
     protected PlayerFragment2 mediaPlayer;
     protected Handler handler;
     private CastContext mCastContext;
@@ -31,22 +31,10 @@ public class PlayerActivity extends BaseAppCompatActivity implements OnPlayerCon
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_tmp);
-//        mediaPlayer = (PlayerFragment2) getSupportFragmentManager().findFragmentById(R.id.media_player);
         mCastContext = CastContext.getSharedInstance(this);
-//        mCastContext.registerLifecycleCallbacksBeforeIceCreamSandwich(this, savedInstanceState);
         mCastSession = mCastContext.getSessionManager().getCurrentCastSession();
         handler = new Handler();
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-
-        //test
-//        handler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                Channel channel = new Channel("TEST", "https://streamer-4.nexhls.com/vod/mobile/9153/5/e012ea2c86255050cbded8ded6dfccf0/auto");
-//                mediaPlayer.loadChannel(channel);
-//            }
-//        },2000);
     }
 
     @Override
