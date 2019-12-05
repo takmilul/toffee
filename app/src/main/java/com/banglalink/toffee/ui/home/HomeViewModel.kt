@@ -1,9 +1,11 @@
 package com.banglalink.toffee.ui.home
 
 import android.app.Application
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
+import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.setError
 import com.banglalink.toffee.extension.setSuccess
@@ -37,9 +39,6 @@ class HomeViewModel(application: Application):BaseViewModel(application),OnCompl
 
     private val channelMutableLiveData = MutableLiveData<Resource<List<StickyHeaderInfo>>>()
     val channelLiveData = channelMutableLiveData.toLiveData()
-
-    private val shareableContentMutableLiveData = SingleLiveEvent<Resource<ChannelInfo>>()
-    val shareableLiveData = shareableContentMutableLiveData.toLiveData()
 
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val fragmentDetailsMutableLiveData = MutableLiveData<ChannelInfo>()
@@ -114,18 +113,10 @@ class HomeViewModel(application: Application):BaseViewModel(application),OnCompl
         }
     }
 
-    fun getShareableContent(shareUrl :String){
-        viewModelScope.launch {
-            try{
-                val response = getContentFromShareableUrl.execute(shareUrl)
-                response?.let {
-                    shareableContentMutableLiveData.setSuccess(response)
-                }
-
-            }catch (e:Exception){
-                 getError(e)
-            }
-        }
+    fun getShareableContent(shareUrl :String):LiveData<Resource<ChannelInfo?>>{
+       return resultLiveData{
+           getContentFromShareableUrl.execute(shareUrl)
+       }
     }
 
 
