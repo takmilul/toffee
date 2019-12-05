@@ -60,12 +60,15 @@ class VerifyCodeActivity : BaseAppCompatActivity() {
         }
 
         startCountDown(if (resendBtnPressCount <= 1) 1 else 30)
+    }
 
-        observe(viewModel.verifyCodeLiveData){
+    private fun verifyCode(code:String){
+        progressDialog.show()
+        observe(viewModel.verifyCode(code)){
             progressDialog.dismiss()
             when(it){
                 is Resource.Success ->{
-                   launchActivity<HomeActivity>()
+                    launchActivity<HomeActivity>()
                     finish()
                 }
                 is Resource.Failure->{
@@ -75,17 +78,21 @@ class VerifyCodeActivity : BaseAppCompatActivity() {
         }
     }
 
-    private fun verifyCode(code:String){
-        progressDialog.show()
-        viewModel.verifyCode(code)
-    }
-
     private fun handleResendButton(){
-        resendBtnPressCount++
-        binding.resend.visibility = View.INVISIBLE
-        startCountDown(if (resendBtnPressCount <= 1) 1 else 30)
-
-        viewModel.resendCode(phoneNumber, referralCode)
+        progressDialog.show()
+        observe(viewModel.resendCode(phoneNumber, referralCode)){
+            progressDialog.dismiss()
+            when(it){
+                is Resource.Success->{
+                    resendBtnPressCount++
+                    binding.resend.visibility = View.INVISIBLE
+                    startCountDown(if (resendBtnPressCount <= 1) 1 else 30)
+                }
+                is Resource.Failure->{
+                    showToast(it.error.msg)
+                }
+            }
+        }
     }
     private fun startCountDown(countDownTimeInMinute: Int) {
         binding.countdownTv.visibility = View.VISIBLE
