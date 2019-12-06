@@ -4,13 +4,12 @@ import com.banglalink.toffee.data.network.request.CheckUpdateRequest
 import com.banglalink.toffee.data.network.retrofit.AuthApi
 import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.exception.UpdateRequiredException
-import com.banglalink.toffee.model.CheckUpdateBean
 
 class CheckUpdate(private val authApi: AuthApi) {
 
     suspend fun execute(appVersionCode: String) {
         val response = tryIO { authApi.checkForUpdate(CheckUpdateRequest(appVersionCode)) }
-        val checkUpdateBean = response.response;
+        val checkUpdateBean = response.response
         if (checkUpdateBean.updateAvailable != 0) {
             throw UpdateRequiredException(
                 checkUpdateBean.messageTitle,
