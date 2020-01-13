@@ -6,9 +6,10 @@ import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
 
-class GetFeatureContents(private val toffeeApi: ToffeeApi) {
+class GetFeatureContents(private val preference: Preference,private val toffeeApi: ToffeeApi) {
 
-    private var mOffset:Int=0
+    var mOffset: Int = 0
+        private set
     private val limit = 10
 
     suspend fun execute(
@@ -26,8 +27,8 @@ class GetFeatureContents(private val toffeeApi: ToffeeApi) {
                     categoryId,
                     subcategoryId,
                     type,
-                    Preference.getInstance().customerId,
-                    Preference.getInstance().password,
+                    preference.customerId,
+                    preference.password,
                     offset = mOffset,
                     limit = limit
                 )

@@ -1,6 +1,5 @@
 package com.banglalink.toffee.util
 
-import android.text.TextUtils
 import com.banglalink.toffee.exception.ApiException
 import com.banglalink.toffee.exception.AppDeprecatedError
 import com.banglalink.toffee.exception.Error
@@ -45,7 +44,7 @@ fun getError(e: Exception): Error {
 
 suspend fun discardZeroFromDuration(duration: String): String {
     return withContext(Dispatchers.Default){
-        if (TextUtils.isEmpty(duration)) {
+        if (duration.isBlank()) {
            return@withContext "00:00"
         }
 
@@ -86,7 +85,7 @@ private fun viewCountFormat(n: Double, iteration: Int): String {
 suspend fun getFormattedViewsText(viewCount: String): String {
 
     return withContext(Dispatchers.Default){
-        if (TextUtils.isEmpty(viewCount) || !TextUtils.isDigitsOnly(viewCount))
+        if (viewCount.isBlank())
             return@withContext viewCount
 
         val count = java.lang.Long.parseLong(viewCount)

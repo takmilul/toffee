@@ -2,6 +2,7 @@ package com.banglalink.toffee.model
 
 
 const val MULTI_DEVICE_LOGIN_ERROR_CODE = 109
+const val INVALID_REFERRAL_ERROR_CODE = -100
 
 val PRIVACY_POLICY_URL =
     "https://www.banglalink.net/en/personal/digital-services/toffee-privacy-policy"

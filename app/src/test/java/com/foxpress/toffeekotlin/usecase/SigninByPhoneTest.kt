@@ -16,9 +16,6 @@ import retrofit2.Response
 
 class SigninByPhoneTest :BaseUseCaseTest(){
 
-    @Mock
-    val mockToffeeApi: ToffeeApi = mock()
-
     @Test
     fun signin_by_phone_success(){
 
@@ -28,7 +25,8 @@ class SigninByPhoneTest :BaseUseCaseTest(){
             val signinByPhone = SigninByPhone(Preference.getInstance(), mockToffeeApi)
             Mockito.`when`(mockToffeeApi.signinByPhone(any<SigninByPhoneRequest>())).thenReturn(
                 Response.success(SigninByPhoneResponse(
-                    SigninByPhoneBean(true)
+                    SigninByPhoneBean(true,
+                        "LGQRT==")
                 )))
             //test method
             signinByPhone.execute("880123456789","")

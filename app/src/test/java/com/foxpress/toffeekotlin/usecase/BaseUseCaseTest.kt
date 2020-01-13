@@ -28,6 +28,9 @@ open class BaseUseCaseTest {
     @Mock
     var mockContext: Context = mock()
 
+    @Mock
+    val mockToffeeApi: ToffeeApi = mock()
+
 
     fun setupPref(){
         Mockito.`when`(

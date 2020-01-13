@@ -9,10 +9,11 @@ import com.banglalink.toffee.util.discardZeroFromDuration
 import com.banglalink.toffee.util.getFormattedViewsText
 
 class SearchContent(private val preference: Preference, private val toffeeApi: ToffeeApi) {
-    private var mOffset:Int=0
+    var mOffset: Int = 0
+        private set
     private val limit = 30
 
-    suspend fun execute(keyword: String = ""):List<ChannelInfo> {
+    suspend fun execute(keyword: String = ""): List<ChannelInfo> {
         val response = tryIO {
             toffeeApi.searchContent(
                 SearchContentRequest(

@@ -1,6 +1,8 @@
 package com.banglalink.toffee.ui.login
 
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
@@ -8,6 +10,7 @@ import android.text.TextPaint
 import android.text.TextUtils
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
@@ -19,6 +22,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.model.INVALID_REFERRAL_ERROR_CODE
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.TERMS_AND_CONDITION_URL
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
@@ -27,6 +31,7 @@ import com.banglalink.toffee.ui.verify.VerifyCodeActivity
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.ui.widget.showAlertDialog
 import com.banglalink.toffee.util.unsafeLazy
+import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class SigninByPhoneActivity : BaseAppCompatActivity() {
 
@@ -81,21 +86,51 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
         progressDialog.show()
         this.phoneNumber.setText(phoneNo)
 
-        observe(viewModel.siginIn(phoneNo, referralCodeEt.text.toString())) {
+        observe(viewModel.signIn(phoneNo, referralCodeEt.text.toString())) {
             progressDialog.dismiss()
             when (it) {
                 is Resource.Success -> {
                     launchActivity<VerifyCodeActivity> {
                         putExtra(VerifyCodeActivity.PHONE_NUMBER, phoneNumber.text.toString())
                         putExtra(VerifyCodeActivity.REFERRAL_CODE, referralCodeEt.text.toString())
+                        putExtra(VerifyCodeActivity.REG_SESSION_TOKEN, it.data)
                     }
                     finish()
                 }
                 is Resource.Failure -> {
-                    showToast(it.error.msg)
+                    when (it.error.code) {
+                        INVALID_REFERRAL_ERROR_CODE -> {
+                            showInvalidReferralCodeDialog(it.error.msg)
+                        }
+                        else -> {
+                            showToast(it.error.msg)
+                        }
+                    }
+
                 }
             }
         }
+    }
+
+    private fun showInvalidReferralCodeDialog(
+        referralStatusMessage: String
+    ) {
+        val alertView = LayoutInflater.from(this)
+            .inflate(R.layout.dialog_invalid_referral_code_layout, null)
+        val bottomSheetDialog = BottomSheetDialog(this)
+        bottomSheetDialog.setContentView(alertView)
+        bottomSheetDialog.setCancelable(false)
+        bottomSheetDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        (alertView.findViewById<View>(R.id.title) as TextView).text = referralStatusMessage
+        alertView.findViewById<View>(R.id.continue_btn)
+            .setOnClickListener {
+                referralCodeEt.setText("")
+                handleLogin()
+                bottomSheetDialog.dismiss()
+            }
+        alertView.findViewById<View>(R.id.retry_btn)
+            .setOnClickListener { bottomSheetDialog.dismiss() }
+        bottomSheetDialog.show()
     }
 
     fun handleHaveReferralOption(view: View) {

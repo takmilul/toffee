@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
+import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.setError
 import com.banglalink.toffee.extension.setSuccess
 import com.banglalink.toffee.extension.toLiveData
@@ -40,7 +41,7 @@ class LandingPageViewModel(application: Application):BaseViewModel(application) 
     }
 
     private val getFeatureContents by unsafeLazy {
-        GetFeatureContents(RetrofitApiClient.toffeeApi)
+        GetFeatureContents(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
 
     fun loadChannels(){

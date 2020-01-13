@@ -131,6 +131,11 @@ public class PlayerFragment2 extends Fragment implements TextureView.SurfaceText
         releaseScreen();
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
     public void load(ChannelInfo channelInfo){
         previewImage = null;
         preview.setImageResource(android.R.color.black);
@@ -189,6 +194,10 @@ public class PlayerFragment2 extends Fragment implements TextureView.SurfaceText
     @Override
     public void onPause() {
         super.onPause();
+        pausePlayer();
+    }
+
+    public void pausePlayer(){
         if(player != null){
             player.getPlayerControl().pause();
         }

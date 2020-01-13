@@ -11,7 +11,8 @@ import kotlinx.coroutines.coroutineScope
 
 class GetContents(private val toffeeApi: ToffeeApi) {
 
-    private var mOffset:Int=0
+    var mOffset: Int = 0
+        private set
     private val limit = 10
 
     suspend fun execute(

@@ -16,12 +16,6 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="AppTheme.TV.NoActionBar" parent="@style/Theme.Leanback">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>
-
     <style name="ToolBarStyle" parent="Theme.AppCompat">
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="colorControlActivated">@color/colorAccent</item>
@@ -40,17 +34,6 @@
         <item name="android:popupTheme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
     </style>
 
-
-    <style name="DemoButton">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:minWidth">40dp</item>
-    </style>
-
-    <style name="velBoxButton" parent="@android:style/Widget.Button">
-        <item name="android:background">@drawable/button_selector</item>
-        <item name="android:textColor">@color/button_text_color</item>
-    </style>
 
     <style name="toffeeButton" parent="@android:style/Widget.Button">
         <item name="android:background">@drawable/button_selector</item>
@@ -88,20 +71,11 @@
     </style>
 
 
-    <style name="PlayerTheme" parent="@style/AppTheme">
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowBackground">@android:color/black</item>
-    </style>
-
     <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog">
         <!-- Customize your theme here. -->
         <item name="android:windowBackground">@android:color/white</item>
         <item name="android:windowNoTitle">true</item>
     </style>
-
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
-
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
 
     <style name="TransparentProgressDialog" parent="@android:style/Theme.Dialog">
@@ -127,18 +101,6 @@
         <item name="android:fontFamily">sans-serif-medium</item>
     </style>
 
-
-    <style name="textInputEditText" parent="@android:style/Widget.EditText">
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:textColor">@color/main_text_color</item>
-        <item name="android:textColorHint">@color/second_text_color</item>
-        <item name="android:background">@android:color/transparent</item>
-        <item name="android:fontFamily">@font/roboto_italic</item>
-        <item name="android:padding">10dp</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:textStyle">normal</item>
-    </style>
 
     <style name="textInputEditText2" parent="@android:style/Widget.EditText">
         <item name="android:layout_height">wrap_content</item>
@@ -175,10 +137,6 @@
         <item name="android:textSize">14sp</item>
         <item name="android:fontFamily">@font/roboto_medium</item>
 
-    </style>
-
-    <style name="AppTheme.SearchView" parent="Widget.AppCompat.SearchView">
-       <item name="layout">@layout/custom_searchview_layout</item>
     </style>
 
     <style name="subscription_pack_header_style">

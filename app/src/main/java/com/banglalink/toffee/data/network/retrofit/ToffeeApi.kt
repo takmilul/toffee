@@ -51,4 +51,6 @@ interface ToffeeApi {
     suspend fun setFcmToken(@Body fcmTokenRequest: FcmTokenRequest):Response<FcmTokenResponse>
     @POST("my-referral-code")
     suspend fun getMyReferralCode(@Body referralCodeRequest: ReferralCodeRequest):Response<ReferralCodeResponse>
+    @POST("referral-code-status")
+    suspend fun checkReferralCode(@Body referralCodeStatusRequest: ReferralCodeStatusRequest):Response<ReferralCodeStatusResponse>
 }

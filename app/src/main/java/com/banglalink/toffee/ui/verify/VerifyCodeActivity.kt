@@ -22,6 +22,7 @@ class VerifyCodeActivity : BaseAppCompatActivity() {
     companion object{
         const val PHONE_NUMBER = "PHONE"
         const val REFERRAL_CODE = "REFERRAL_CODE"
+        const val REG_SESSION_TOKEN = "REG_SESSION_TOKEN"
     }
 
     private val phoneNumber by unsafeLazy {
@@ -31,6 +32,8 @@ class VerifyCodeActivity : BaseAppCompatActivity() {
     private val referralCode by unsafeLazy {
         intent.getStringExtra(REFERRAL_CODE)
     }
+
+    private lateinit var regSessionToken:String
 
     private val progressDialog by unsafeLazy {
         VelBoxProgressDialog(this)
@@ -59,16 +62,21 @@ class VerifyCodeActivity : BaseAppCompatActivity() {
             verifyCode(codeEditText.text.toString())
         }
 
+        regSessionToken = intent.getStringExtra(REG_SESSION_TOKEN)?:""
         startCountDown(if (resendBtnPressCount <= 1) 1 else 30)
     }
 
     private fun verifyCode(code:String){
         progressDialog.show()
-        observe(viewModel.verifyCode(code)){
+        observe(viewModel.verifyCode(code,regSessionToken,referralCode)){
             progressDialog.dismiss()
             when(it){
                 is Resource.Success ->{
-                    launchActivity<HomeActivity>()
+                    launchActivity<HomeActivity>(){
+                        if(it.data.referralStatus == "Valid"){
+                            putExtra(HomeActivity.INTENT_REFERRAL_REDEEM_MSG,it.data.referralStatusMessage)
+                        }
+                    }
                     finish()
                 }
                 is Resource.Failure->{
@@ -84,6 +92,7 @@ class VerifyCodeActivity : BaseAppCompatActivity() {
             progressDialog.dismiss()
             when(it){
                 is Resource.Success->{
+                    regSessionToken = it.data//update reg session token
                     resendBtnPressCount++
                     binding.resend.visibility = View.INVISIBLE
                     startCountDown(if (resendBtnPressCount <= 1) 1 else 30)

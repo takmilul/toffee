@@ -21,4 +21,8 @@ class CustomerInfoSignIn:BodyResponse() {
     var dbVersion: DBVersion? = null
     @SerializedName("customerName")
     var customerName: String? = null
+    @SerializedName("referralStatusMessage")
+    var referralStatusMessage: String? = null
+    @SerializedName("referralStatus")
+    var referralStatus: String? = null
 }

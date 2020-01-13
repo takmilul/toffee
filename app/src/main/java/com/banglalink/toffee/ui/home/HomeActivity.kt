@@ -42,6 +42,8 @@ import com.banglalink.toffee.ui.player.PlayerActivity
 import com.banglalink.toffee.ui.player.PlayerFragment2
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.widget.DraggerLayout
+import com.banglalink.toffee.ui.widget.showAlertDialog
+import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.android.synthetic.main.layout_appbar.view.*
@@ -64,6 +66,10 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     private var searchView: SearchView? = null
     lateinit var binding: ActivityMainMenuBinding
     lateinit var drawerHelper: DrawerHelper
+
+    companion object{
+        const val INTENT_REFERRAL_REDEEM_MSG = "REFERRAL_REDEEM_MSG"
+    }
 
     private val viewModel by unsafeLazy {
         ViewModelProviders.of(this).get(HomeViewModel::class.java)
@@ -128,6 +134,12 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             }
         }
 
+
+        //show referral redeem msg if possible
+        val msg = intent.getStringExtra(INTENT_REFERRAL_REDEEM_MSG)
+        msg?.let {
+            showDisplayMessageDialog(this,it)
+        }
     }
 
     override fun onPause() {
@@ -250,7 +262,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             .show()
     }
     override fun onViewDestroy() {
-        mediaPlayer.onPause()
+        mediaPlayer.pausePlayer()
         binding.draggableView.animation = AnimationUtils.loadAnimation(
             this,
             android.R.anim.fade_out

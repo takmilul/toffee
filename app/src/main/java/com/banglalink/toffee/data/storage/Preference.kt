@@ -129,12 +129,6 @@ class Preference private constructor(context: Context) {
                 profileImageUrlLiveData.postValue(userPhoto)
         }
 
-    val savedChannelInfoListResponse: String?
-        get() {
-            val response = pref.getString("channel_info_list", null)
-            return if (TextUtils.isEmpty(response)) null else response
-        }
-
     fun setSystemTime(systemTime: String) {
         pref.edit().putString("systemTime", systemTime).apply()
     }

@@ -76,7 +76,7 @@ dependencies {
     implementation 'io.coil-kt:coil:0.8.0'
 
     //Firebase Push Notification
-    implementation 'com.google.firebase:firebase-messaging:20.0.1'
+    implementation 'com.google.firebase:firebase-messaging:20.1.0'
      //Firebase in app messaging
     implementation 'com.google.firebase:firebase-inappmessaging-display:19.0.2'
     //Firebase core
@@ -95,12 +95,12 @@ dependencies {
     //Permission extension
     implementation 'com.github.florent37:runtime-permission-kotlin:1.1.1'
     //Facebook SDK
-    implementation 'com.facebook.android:facebook-android-sdk:5.12.0'
+    implementation 'com.facebook.android:facebook-android-sdk:5.13.0'
     //Leak canary
 //    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-4'
 
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0-rc02"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0-rc02"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0-rc03"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0-rc03"
 
     testImplementation 'junit:junit:4.12'
     testImplementation "android.arch.core:core-testing:1.1.1"
