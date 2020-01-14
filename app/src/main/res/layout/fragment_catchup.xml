@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:visibility="gone"
-                android:text="Data is not available" />
+                android:text="No items available" />
 
             <ProgressBar
                 android:id="@+id/progress_bar"
