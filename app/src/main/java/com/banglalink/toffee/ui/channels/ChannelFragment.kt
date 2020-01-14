@@ -4,19 +4,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.R
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.StickyHeaderGridLayoutManager
+import com.banglalink.toffee.util.unsafeLazy
 
-class ChannelFragment: HomeBaseFragment(),
-    ChannelStickyListAdapter.OnItemClickListener {
-    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
-        //not needed
+class ChannelFragment:Fragment(), ChannelStickyListAdapter.OnItemClickListener {
+
+    val homeViewModel by unsafeLazy {
+        ViewModelProviders.of(activity!!).get(HomeViewModel::class.java)
     }
 
     override fun onItemClicked(channelInfo: ChannelInfo) {

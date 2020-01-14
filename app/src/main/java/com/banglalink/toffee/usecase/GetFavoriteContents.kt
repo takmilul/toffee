@@ -11,7 +11,7 @@ import com.banglalink.toffee.util.getFormattedViewsText
 class GetFavoriteContents(private val preference: Preference, private val toffeeApi: ToffeeApi) {
     var mOffset: Int = 0
         private set
-    private val limit = 30
+    private val limit = 10
 
     suspend fun execute(): List<ChannelInfo> {
         val response = tryIO {

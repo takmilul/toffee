@@ -2,6 +2,7 @@ package com.banglalink.toffee.ui.recent
 
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.banglalink.toffee.extension.showToast
@@ -20,24 +21,9 @@ class RecentFragment:CommonSingleListFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         activity?.title = "Recent"
-        viewModel.recentLiveData.observe(viewLifecycleOwner, Observer {
-            hideProgress()
-            when(it){
-                is Resource.Success->{
-                    mAdapter?.addAll(it.data)
-                }
-                is Resource.Failure->{
-                    context?.showToast(it.error.msg)
-                }
-            }
-        })
     }
 
-    override fun loadItems() {
-        viewModel.loadRecentItems()
-    }
-
-    override fun onFavoriteItemRemoved(channelInfo: ChannelInfo) {
-       mAdapter?.remove(channelInfo)
+    override fun loadItems(): LiveData<Resource<List<ChannelInfo>>> {
+        return viewModel.loadRecentItems()
     }
 }

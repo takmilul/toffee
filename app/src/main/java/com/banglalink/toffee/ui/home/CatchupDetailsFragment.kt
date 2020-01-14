@@ -120,7 +120,9 @@ class CatchupDetailsFragment:HomeBaseFragment() {
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_fav->{
-                    baseViewModel.updateFavorite(channelInfo)
+                    homeViewModel.updateFavorite(channelInfo).observe(viewLifecycleOwner, Observer {
+                        handleFavoriteResponse(it)
+                    })
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_not_interested->{

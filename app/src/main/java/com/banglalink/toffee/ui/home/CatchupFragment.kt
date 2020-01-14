@@ -2,21 +2,14 @@ package com.banglalink.toffee.ui.home
 
 import android.os.Bundle
 import android.view.View
-import androidx.lifecycle.Observer
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProviders
-import com.banglalink.toffee.extension.action
-import com.banglalink.toffee.extension.snack
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.CommonSingleListFragment
 import com.banglalink.toffee.util.unsafeLazy
 
 class CatchupFragment : CommonSingleListFragment() {
-    override fun onFavoriteItemRemoved(channelInfo: ChannelInfo) {
-        //do nothing
-    }
-
-
     private val viewModel by unsafeLazy {
         ViewModelProviders.of(this).get(CatchupViewModel::class.java)
     }
@@ -31,27 +24,10 @@ class CatchupFragment : CommonSingleListFragment() {
         super.onViewCreated(view, savedInstanceState)
         val title = arguments?.getString("title")
         activity?.title = title
-
-        viewModel.contentLiveData.observe(viewLifecycleOwner, Observer {
-            hideProgress()
-            when (it) {
-                is Resource.Success -> {
-                    mAdapter?.addAll(it.data)
-                }
-                is Resource.Failure -> {
-                    binding.root.snack(it.error.msg){
-                        action("Retry") {
-                            binding.progressBar.visibility =View.VISIBLE
-                            loadItems()
-                        }
-                    }
-                }
-            }
-        })
     }
 
-    override fun loadItems() {
-        viewModel.getContent()
+    override fun loadItems():LiveData<Resource<List<ChannelInfo>>> {
+        return viewModel.getContent()
     }
 
     companion object {

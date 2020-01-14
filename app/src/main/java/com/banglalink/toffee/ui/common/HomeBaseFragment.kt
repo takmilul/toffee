@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.common
 
 import android.content.Intent
-import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -18,33 +17,6 @@ import com.banglalink.toffee.util.unsafeLazy
 abstract class HomeBaseFragment:Fragment(), OptionCallBack {
     val homeViewModel by unsafeLazy {
         ViewModelProviders.of(activity!!).get(HomeViewModel::class.java)
-    }
-
-    protected val baseViewModel by unsafeLazy {
-        ViewModelProviders.of(this).get(BaseViewModel::class.java)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        observeFavoriteLiveData()
-
-    }
-
-    protected open fun observeFavoriteLiveData(){
-        baseViewModel.favoriteLiveData.observe(viewLifecycleOwner, Observer {
-            when(it){
-                is Resource.Success->{
-                    val channelInfo = it.data
-                    when(channelInfo.favorite){
-                        "0"->context?.showToast("Content successfully removed from favorite list")
-                        "1"->context?.showToast("Content successfully added to favorite list")
-                    }
-                }
-                is Resource.Failure->{
-                    context?.showToast(it.error.msg)
-                }
-            }
-        })
     }
 
     override fun onOptionClicked(anchor: View, channelInfo: ChannelInfo) {
@@ -69,7 +41,9 @@ abstract class HomeBaseFragment:Fragment(), OptionCallBack {
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_fav->{
-                    baseViewModel.updateFavorite(channelInfo)
+                    homeViewModel.updateFavorite(channelInfo).observe(viewLifecycleOwner, Observer {
+                        handleFavoriteResponse(it)
+                    })
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_not_interested->{
@@ -82,6 +56,35 @@ abstract class HomeBaseFragment:Fragment(), OptionCallBack {
             }
         }
         popupMenu.show()
+    }
+
+    fun handleFavoriteResponse(it:Resource<ChannelInfo>){
+        when(it){
+            is Resource.Success->{
+                val channelInfo = it.data
+                when(channelInfo.favorite){
+                    "0"->{
+                        context?.showToast("Content successfully removed from favorite list")
+                        handleFavoriteRemovedSuccessFully(channelInfo)
+                    }
+                    "1"->{
+                        handleFavoriteAddedSuccessfully(channelInfo)
+                        context?.showToast("Content successfully added to favorite list")
+                    }
+                }
+            }
+            is Resource.Failure->{
+                context?.showToast(it.error.msg)
+            }
+        }
+    }
+
+    open fun handleFavoriteAddedSuccessfully(channelInfo: ChannelInfo){
+        //subclass can hook here
+    }
+
+    open fun handleFavoriteRemovedSuccessFully(channelInfo: ChannelInfo){
+        //subclass can hook here
     }
 
     override fun viewAllVideoClick() {

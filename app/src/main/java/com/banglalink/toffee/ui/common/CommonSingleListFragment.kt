@@ -1,14 +1,12 @@
 package com.banglalink.toffee.ui.common
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.R
@@ -16,20 +14,9 @@ import com.banglalink.toffee.databinding.FragmentCatchupBinding
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.home.HomeViewModel
-import com.banglalink.toffee.ui.widget.MyPopupWindow
-import com.banglalink.toffee.ui.home.OptionCallBack
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.util.unsafeLazy
 
-abstract class CommonSingleListFragment:Fragment(), OptionCallBack {
-    val homeViewModel by unsafeLazy {
-        ViewModelProviders.of(activity!!).get(HomeViewModel::class.java)
-    }
-
-    protected val baseViewModel by unsafeLazy {
-        ViewModelProviders.of(this).get(BaseViewModel::class.java)
-    }
+abstract class CommonSingleListFragment:HomeBaseFragment(){
 
     var mAdapter: CommonChannelAdapter?=null
     lateinit var scrollListener: EndlessRecyclerViewScrollListener
@@ -37,10 +24,6 @@ abstract class CommonSingleListFragment:Fragment(), OptionCallBack {
 
     lateinit var binding: FragmentCatchupBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        loadItems()
-    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -51,7 +34,6 @@ abstract class CommonSingleListFragment:Fragment(), OptionCallBack {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        observeFavoriteLiveData()
 
         title = arguments?.getString("title")
         activity?.title = title
@@ -63,85 +45,74 @@ abstract class CommonSingleListFragment:Fragment(), OptionCallBack {
         binding.listview.adapter = mAdapter
         scrollListener = object : EndlessRecyclerViewScrollListener(linearLayoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
-                binding.progressBar.visibility =View.VISIBLE
-                loadItems()
+                loadChannelList()
             }
         }
         // Adds the scroll listener to RecyclerView
         binding.listview.addOnScrollListener(scrollListener)
-        binding.progress.visibility = View.VISIBLE
-        binding.progressBar.visibility = View.VISIBLE
+
+        loadChannelList()
     }
 
-    abstract fun loadItems()
-
-    protected open fun observeFavoriteLiveData(){
-        baseViewModel.favoriteLiveData.observe(viewLifecycleOwner, Observer {
+    fun loadChannelList(){
+        showProgress()
+        loadItems().observe(viewLifecycleOwner, Observer {
+            hideProgress()
             when(it){
-                is Resource.Success->{
-                    val channelInfo = it.data
-                    when(channelInfo.favorite){
-                        "0"->{
-                            context?.showToast("Content successfully removed from favorite list")
-                            onFavoriteItemRemoved(channelInfo)
-                        }
-                        "1"->context?.showToast("Content successfully added to favorite list")
+                is Resource.Success ->{
+                    mAdapter?.addAll(it.data)
+                    val itemCount = mAdapter?.itemCount?:0
+                    if(it.data.isEmpty() && itemCount == 0){
+                        binding.emptyView.visibility = View.VISIBLE
+                    }
+                    else{
+                        binding.emptyView.visibility = View.GONE
                     }
                 }
                 is Resource.Failure->{
-                    context?.showToast(it.error.msg)
+                    scrollListener.resetState()
+                    activity?.showToast(it.error.msg)
                 }
             }
         })
     }
 
+    private fun showProgress(){
+        binding.progress.visibility = View.VISIBLE
+        binding.progressBar.visibility = View.VISIBLE
+    }
 
-    override fun onOptionClicked(anchor: View, channelInfo: ChannelInfo) {
-        val popupMenu = MyPopupWindow(context!!, anchor)
-        popupMenu.inflate(R.menu.menu_catchup_item)
+    abstract fun loadItems():LiveData<Resource<List<ChannelInfo>>>
 
-        if (channelInfo.favorite == null || channelInfo.favorite == "0") {
-            popupMenu.menu.getItem(0).title = "Add to Favorites"
-        } else {
-            popupMenu.menu.getItem(0).title = "Remove from Favorites"
+    private fun hideProgress(){
+        binding.progressBar.visibility = View.GONE
+        binding.progress.visibility = View.GONE
+    }
+
+
+    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
+        mAdapter?.remove(channelInfo)
+        if(mAdapter?.itemCount==0){
+            binding.emptyView.visibility = View.VISIBLE
         }
-        popupMenu.setOnMenuItemClickListener{
-            when(it?.itemId){
-                R.id.menu_share->{
-                    val sharingIntent = Intent(Intent.ACTION_SEND)
-                    sharingIntent.type = "text/plain"
-                    sharingIntent.putExtra(
-                        Intent.EXTRA_TEXT,
-                        channelInfo.video_share_url
-                    )
-                    activity?.startActivity(Intent.createChooser(sharingIntent, "Share via"))
-                    return@setOnMenuItemClickListener true
-                }
-                R.id.menu_fav->{
-                    baseViewModel.updateFavorite(channelInfo)
-                    return@setOnMenuItemClickListener true
-                }
-                R.id.menu_not_interested->{
-                    mAdapter?.remove(channelInfo)
-                    return@setOnMenuItemClickListener true
-                }
-                else->{
-                    return@setOnMenuItemClickListener false
-                }
+    }
+
+    override fun handleFavoriteRemovedSuccessFully(channelInfo: ChannelInfo) {
+        if(removeUnFavoriteItemFromList()){
+            mAdapter?.remove(channelInfo)
+            if(mAdapter?.itemCount==0){
+                binding.emptyView.visibility = View.VISIBLE
             }
         }
-        popupMenu.show()
+    }
+
+    //hook for removing item when set to unfavorite. Subclass can override it to change the behavior
+    open fun removeUnFavoriteItemFromList():Boolean{
+        return false
     }
 
     override fun viewAllVideoClick() {
         homeViewModel.viewAllVideoLiveData.postValue(true)
-    }
-
-    abstract fun onFavoriteItemRemoved(channelInfo: ChannelInfo)
-
-    fun hideProgress(){
-        binding.progressBar.visibility = View.GONE
-        binding.progress.visibility = View.GONE
     }
 
     override fun onDestroyView() {

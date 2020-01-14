@@ -44,9 +44,11 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         channelAdapter = ChannelAdapter {
+            //handle channel click in adapter. Basically notify livedata to homeactivity to load channel
             homeViewModel.fragmentDetailsMutableLiveData.postValue(it)
         }
         popularVideoListAdapter = PopularVideoListAdapter(this) {
+            //handle video click in adapter. Basically notify livedata to homeactivity to load channel
             homeViewModel.fragmentDetailsMutableLiveData.postValue(it)
         }
         viewModel.loadPopularVideos()
