@@ -28,6 +28,9 @@ abstract class HomeBaseFragment:Fragment(), OptionCallBack {
         } else {
             popupMenu.menu.getItem(0).title = "Remove from Favorites"
         }
+        if(hideNotInterestedMenuItem(channelInfo)){//we are checking if that could be shown or not
+            popupMenu.menu.getItem(2).isVisible = false
+        }
         popupMenu.setOnMenuItemClickListener{
             when(it?.itemId){
                 R.id.menu_share->{
@@ -56,6 +59,12 @@ abstract class HomeBaseFragment:Fragment(), OptionCallBack {
             }
         }
         popupMenu.show()
+    }
+
+    //hook for subclass for to hide Not Interested Menu Item.
+    //In catchup details fragment we need to hide this menu from popup menu for first item
+    open fun hideNotInterestedMenuItem(channelInfo: ChannelInfo):Boolean{
+        return false
     }
 
     fun handleFavoriteResponse(it:Resource<ChannelInfo>){

@@ -15,7 +15,6 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.channels.StickyHeaderInfo
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.getError
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
@@ -69,6 +68,7 @@ class HomeViewModel(application: Application):BaseViewModel(application),OnCompl
         getChannelByCategory(0)
     }
 
+    //overridden function for firebase token
     override fun onComplete(task: Task<InstanceIdResult>) {
         if (task.isSuccessful) {
             val token = task.result?.token

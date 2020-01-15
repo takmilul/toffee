@@ -15,10 +15,11 @@ import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.ChannelInfo
+import com.foxrentacar.foxpress.ui.common.MyBaseAdapter
 
-abstract class CommonSingleListFragment:HomeBaseFragment(){
+abstract class CommonSingleListFragment : HomeBaseFragment() {
 
-    var mAdapter: CommonChannelAdapter?=null
+    lateinit var mAdapter: MyBaseAdapter<ChannelInfo>
     lateinit var scrollListener: EndlessRecyclerViewScrollListener
     private var title: String? = null
 
@@ -29,15 +30,16 @@ abstract class CommonSingleListFragment:HomeBaseFragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_catchup,container,false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_catchup, container, false)
         return binding.root
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         title = arguments?.getString("title")
         activity?.title = title
-        mAdapter= CommonChannelAdapter(this) {
+        mAdapter = CommonChannelAdapter(this) {
             homeViewModel.fragmentDetailsMutableLiveData.postValue(it)
         }
         val linearLayoutManager = LinearLayoutManager(context)
@@ -54,22 +56,21 @@ abstract class CommonSingleListFragment:HomeBaseFragment(){
         loadChannelList()
     }
 
-    fun loadChannelList(){
+    fun loadChannelList() {
         showProgress()
         loadItems().observe(viewLifecycleOwner, Observer {
             hideProgress()
-            when(it){
-                is Resource.Success ->{
-                    mAdapter?.addAll(it.data)
-                    val itemCount = mAdapter?.itemCount?:0
-                    if(it.data.isEmpty() && itemCount == 0){
+            when (it) {
+                is Resource.Success -> {
+                    mAdapter.addAll(it.data)
+                    val itemCount = mAdapter.itemCount
+                    if (it.data.isEmpty() && itemCount == 0) {
                         binding.emptyView.visibility = View.VISIBLE
-                    }
-                    else{
+                    } else {
                         binding.emptyView.visibility = View.GONE
                     }
                 }
-                is Resource.Failure->{
+                is Resource.Failure -> {
                     scrollListener.resetState()
                     activity?.showToast(it.error.msg)
                 }
@@ -77,37 +78,37 @@ abstract class CommonSingleListFragment:HomeBaseFragment(){
         })
     }
 
-    private fun showProgress(){
+    private fun showProgress() {
         binding.progress.visibility = View.VISIBLE
         binding.progressBar.visibility = View.VISIBLE
     }
 
-    abstract fun loadItems():LiveData<Resource<List<ChannelInfo>>>
+    abstract fun loadItems(): LiveData<Resource<List<ChannelInfo>>>
 
-    private fun hideProgress(){
+    private fun hideProgress() {
         binding.progressBar.visibility = View.GONE
         binding.progress.visibility = View.GONE
     }
 
 
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
-        mAdapter?.remove(channelInfo)
-        if(mAdapter?.itemCount==0){
+        mAdapter.remove(channelInfo)
+        if (mAdapter.itemCount == 0) {
             binding.emptyView.visibility = View.VISIBLE
         }
     }
 
     override fun handleFavoriteRemovedSuccessFully(channelInfo: ChannelInfo) {
-        if(removeUnFavoriteItemFromList()){
-            mAdapter?.remove(channelInfo)
-            if(mAdapter?.itemCount==0){
+        if (removeUnFavoriteItemFromList()) {
+            mAdapter.remove(channelInfo)
+            if (mAdapter.itemCount == 0) {
                 binding.emptyView.visibility = View.VISIBLE
             }
         }
     }
 
     //hook for removing item when set to unfavorite. Subclass can override it to change the behavior
-    open fun removeUnFavoriteItemFromList():Boolean{
+    open fun removeUnFavoriteItemFromList(): Boolean {
         return false
     }
 
