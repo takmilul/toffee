@@ -90,7 +90,9 @@
     <string name="menu_faqs_text">FAQs</string>
     <string name="views">views</string>
     <string name="refer_a_friend_txt">Refer a Friend</string>
+    <string name="redeem_code_txt">Redeem Code</string>
     <string name="invite_friends_txt">Invite Friends</string>
+    <string name="redeem_button">Redeem</string>
     <string name="share_button">Share</string>
     <string name="copy_button">Copy</string>
     <string name="copy_to_clipboard">Copy to clipboard successfully</string>

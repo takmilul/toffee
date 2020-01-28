@@ -20,6 +20,7 @@ import com.banglalink.toffee.ui.common.ParentLevelAdapter
 import com.banglalink.toffee.ui.favorite.FavoriteFragment
 import com.banglalink.toffee.ui.profile.ViewProfileActivity
 import com.banglalink.toffee.ui.recent.RecentFragment
+import com.banglalink.toffee.ui.redeem.RedeemCodeActivity
 import com.banglalink.toffee.ui.refer.ReferAFriendActivity
 import com.banglalink.toffee.ui.settings.SettingsActivity
 import com.banglalink.toffee.ui.subscription.PackageListActivity
@@ -120,7 +121,7 @@ class DrawerHelper(val activity: HomeActivity,val binding:ActivityMainMenuBindin
         )
         navigationMenuList.add(
             NavigationMenu(
-                ID_SUBSCIPTIONS,
+                ID_SUBSCRIPTIONS,
                 "Subscriptions",
                 R.mipmap.ic_menu_subscriptions,
                 ArrayList(),
@@ -135,6 +136,16 @@ class DrawerHelper(val activity: HomeActivity,val binding:ActivityMainMenuBindin
                 ArrayList()
             )
         )
+
+        navigationMenuList.add(
+            NavigationMenu(
+                ID_REDEEM_CODE,
+                activity.getString(R.string.redeem_code_txt),
+                R.mipmap.ic_menu_redeem,
+                ArrayList()
+            )
+        )
+
         navigationMenuList.add(
             NavigationMenu(
                 ID_SETTINGS,
@@ -233,7 +244,7 @@ class DrawerHelper(val activity: HomeActivity,val binding:ActivityMainMenuBindin
                 }
                 binding.drawerLayout.closeDrawers()
             }
-            ID_SUBSCIPTIONS->{
+            ID_SUBSCRIPTIONS->{
                 activity.launchActivity<PackageListActivity>()
             }
             ID_SETTINGS -> {
@@ -259,6 +270,10 @@ class DrawerHelper(val activity: HomeActivity,val binding:ActivityMainMenuBindin
             }
             ID_INVITE_FRIEND->{
                 activity.launchActivity<ReferAFriendActivity>()
+                binding.drawerLayout.closeDrawers()
+            }
+            ID_REDEEM_CODE->{
+                activity.launchActivity<RedeemCodeActivity> ()
                 binding.drawerLayout.closeDrawers()
             }
         }

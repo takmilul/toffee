@@ -51,7 +51,7 @@ import kotlinx.android.synthetic.main.layout_appbar.view.*
 const val ID_CHANNEL = 12
 const val ID_RECENT = 13
 const val ID_FAV = 14
-const val ID_SUBSCIPTIONS = 15
+const val ID_SUBSCRIPTIONS = 15
 const val ID_SUB_VIDEO = 16
 const val ID_SETTINGS = 17
 const val ID_ABOUT = 18
@@ -60,6 +60,7 @@ const val ID_VIDEO = 20
 const val ID_VOD = 21
 const val ID_FAQ = 22
 const val ID_INVITE_FRIEND = 23
+const val ID_REDEEM_CODE = 24
 
 class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListener, DraggerLayout.OnPositionChangedListener {
 
