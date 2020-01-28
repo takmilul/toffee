@@ -34,6 +34,7 @@
             android:gravity="center"
             android:inputType="number"
             android:ems="10"
+            android:hint="@string/redeem_code_txt"
             android:textColor="@color/main_text_color"
             app:layout_constraintEnd_toEndOf="@+id/enter_code_tv"
             app:layout_constraintStart_toStartOf="@+id/enter_code_tv"

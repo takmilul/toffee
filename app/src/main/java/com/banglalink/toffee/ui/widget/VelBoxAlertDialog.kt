@@ -59,7 +59,8 @@ fun showAlertDialog(
 
 fun showDisplayMessageDialog(
     context: Context?,
-    message: String?
+    message: String?,
+    callbacks: () -> Unit = {}
 ) {
     val factory = LayoutInflater.from(context)
     val alertView: View =
@@ -70,6 +71,9 @@ fun showDisplayMessageDialog(
     alertDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     (alertView.findViewById<View>(R.id.message_tv) as TextView).text = message
     alertView.findViewById<View>(R.id.ok_button)
-        .setOnClickListener { alertDialog.dismiss() }
+        .setOnClickListener { alertDialog.dismiss()
+        callbacks.invoke()}
+
+
     alertDialog.show()
 }

@@ -1,3 +1,5 @@
 package com.banglalink.toffee.data.network.response
 
-class RedeemReferralCodeResponse : BaseResponse()
+import com.banglalink.toffee.model.RedeemReferralCodeBean
+
+class RedeemReferralCodeResponse(val response: RedeemReferralCodeBean) : BaseResponse()

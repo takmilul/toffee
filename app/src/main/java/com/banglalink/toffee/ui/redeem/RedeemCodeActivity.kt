@@ -8,11 +8,11 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.ActivityRedeemCodeLayoutBinding
 import com.banglalink.toffee.extension.action
 import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.extension.snack
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.util.unsafeLazy
 
 class RedeemCodeActivity : BaseAppCompatActivity() {
@@ -37,7 +37,7 @@ class RedeemCodeActivity : BaseAppCompatActivity() {
 
     private fun handleRedeemCodeButton() {
         if (TextUtils.isEmpty(binding.referralCode.text.toString())) {
-            showToast("Please enter valid referral code.")
+            showDisplayMessageDialog(this, "Please enter valid referral code.")
             return
         }
 
@@ -49,12 +49,17 @@ class RedeemCodeActivity : BaseAppCompatActivity() {
             progressDialog.dismiss()
             when (it) {
                 is Resource.Success -> {
-                    showToast("Your code has been successfully redeemed.")
-
+                    showDisplayMessageDialog(this@RedeemCodeActivity, it.data.referralStatusMessage) {
+                        finish()
+                    }
                 }
                 is Resource.Failure -> {
-                    binding.root.snack(it.error.msg) {
-                        action("Retry") {
+                    if (it.error.code == 100) {
+                        showDisplayMessageDialog(this@RedeemCodeActivity, it.error.msg)
+                    } else {
+                        binding.root.snack(it.error.msg) {
+                            action("Ok") {
+                            }
                         }
                     }
                 }

@@ -1,19 +1,18 @@
 package com.banglalink.toffee.usecase
 
 import com.banglalink.toffee.data.network.request.RedeemReferralCodeRequest
-import com.banglalink.toffee.data.network.response.RedeemReferralCodeResponse
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.model.RedeemReferralCodeBean
 
 class RedeemReferralCode(private val preference: Preference, private val toffeeApi: ToffeeApi) {
 
-    suspend fun execute(referralCode: String) : RedeemReferralCodeResponse{
+    suspend fun execute(referralCode: String) : RedeemReferralCodeBean{
         val response = tryIO{
             toffeeApi.redeemReferralCode( RedeemReferralCodeRequest(referralCode, preference.customerId, preference.password))
         }
-
-        return response;
+        return response.response
     }
 
 }
