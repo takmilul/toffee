@@ -98,9 +98,10 @@
     <string name="copy_to_clipboard">Copy to clipboard successfully</string>
 
     <string name="invalid_referral_code_txt">Your referral code is invalid</string>
-    <string name="do_you_continue_txt">Do you continue signing in?</string>
+    <string name="do_you_continue_txt">Continue without code</string>
 
     <string name="referral_code">Referral Code</string>
     <string name="have_referral_code">Have Referral Code?</string>
+    <string name="reenter_button">RE-ENTER &amp; RETRY</string>
 
 </resources>

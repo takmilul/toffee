@@ -10,7 +10,7 @@ class CheckReferralCodeStatus(val toffeeApi: ToffeeApi) {
 
     suspend fun execute(phoneNumber:String,referralCode:String){
         val response = tryIO { toffeeApi.checkReferralCode(ReferralCodeStatusRequest(phoneNumber,referralCode)) }
-        if(response.response.referralStatus == "Invalid"){
+        if(response.response.referralStatus != "VALID"){
             throw ApiException(INVALID_REFERRAL_ERROR_CODE,response.response.referralStatusMessage)
         }
     }

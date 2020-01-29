@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.login
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -31,7 +32,6 @@ import com.banglalink.toffee.ui.verify.VerifyCodeActivity
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.ui.widget.showAlertDialog
 import com.banglalink.toffee.util.unsafeLazy
-import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class SigninByPhoneActivity : BaseAppCompatActivity() {
 
@@ -117,20 +117,24 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
     ) {
         val alertView = LayoutInflater.from(this)
             .inflate(R.layout.dialog_invalid_referral_code_layout, null)
-        val bottomSheetDialog = BottomSheetDialog(this)
-        bottomSheetDialog.setContentView(alertView)
-        bottomSheetDialog.setCancelable(false)
-        bottomSheetDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        val alertDialog = AlertDialog.Builder(this).create()
+        alertDialog.setView(alertView)
+        alertDialog.setCancelable(false)
+        alertDialog.window
+            ?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        alertDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         (alertView.findViewById<View>(R.id.title) as TextView).text = referralStatusMessage
         alertView.findViewById<View>(R.id.continue_btn)
             .setOnClickListener {
                 referralCodeEt.setText("")
                 handleLogin()
-                bottomSheetDialog.dismiss()
+                alertDialog.dismiss()
             }
         alertView.findViewById<View>(R.id.retry_btn)
-            .setOnClickListener { bottomSheetDialog.dismiss() }
-        bottomSheetDialog.show()
+            .setOnClickListener { alertDialog.dismiss() }
+        alertDialog.show()
     }
 
     fun handleHaveReferralOption(view: View) {
