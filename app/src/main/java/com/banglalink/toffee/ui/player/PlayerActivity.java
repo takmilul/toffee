@@ -8,6 +8,7 @@ import android.os.Handler;
 
 import androidx.annotation.Nullable;
 
+import com.banglalink.toffee.BuildConfig;
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener;
 import com.banglalink.toffee.model.Channel;
 import com.banglalink.toffee.model.ChannelInfo;
@@ -21,6 +22,7 @@ import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.util.Util;
 
 import java.net.CookieHandler;
@@ -74,6 +76,9 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
                 .setBandwidthMeter(defaultBandwidthMeter)
                 .setTrackSelector(defaultTrackSelector)
                 .build();
+        if(BuildConfig.DEBUG){
+            player.addAnalyticsListener(new EventLogger(defaultTrackSelector));
+        }
 //        player.addListener(this);
     }
 
