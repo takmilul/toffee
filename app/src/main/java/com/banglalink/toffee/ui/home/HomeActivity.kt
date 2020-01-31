@@ -162,8 +162,12 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         binding.playerView.onFullScreen(state)
     }
 
+    override fun onTrackerDialogDismissed() {
+        updateFullScreenState()
+    }
+
     private fun calculateScreenWidth(): Point? {
-        val display: Display = windowManager.getDefaultDisplay()
+        val display: Display = windowManager.defaultDisplay
         val size = Point()
         display.getRealSize(size)
         return size
