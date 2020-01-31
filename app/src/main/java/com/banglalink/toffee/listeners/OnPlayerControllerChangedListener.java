@@ -6,9 +6,10 @@ package com.banglalink.toffee.listeners;
 
 public interface OnPlayerControllerChangedListener {
     boolean onPlayButtonPressed(int currentState);
-    boolean onFullScreenButtonPressed(boolean currentState);
+    boolean onFullScreenButtonPressed();
     boolean onDrawerButtonPressed();
     boolean onMinimizeButtonPressed();
     boolean onOptionMenuPressed();
+    boolean onShareButtonPressed();
     boolean onSeekPosition(int position);
 }

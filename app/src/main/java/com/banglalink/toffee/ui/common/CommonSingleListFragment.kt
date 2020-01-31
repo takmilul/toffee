@@ -21,7 +21,6 @@ abstract class CommonSingleListFragment : HomeBaseFragment() {
 
     lateinit var mAdapter: MyBaseAdapter<ChannelInfo>
     lateinit var scrollListener: EndlessRecyclerViewScrollListener
-    private var title: String? = null
 
     lateinit var binding: FragmentCatchupBinding
 
@@ -37,8 +36,9 @@ abstract class CommonSingleListFragment : HomeBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        title = arguments?.getString("title")
-        activity?.title = title
+        arguments?.getString("title")?.let {
+            activity?.title = it
+        }
         mAdapter = CommonChannelAdapter(this) {
             homeViewModel.fragmentDetailsMutableLiveData.postValue(it)
         }
@@ -52,7 +52,8 @@ abstract class CommonSingleListFragment : HomeBaseFragment() {
         }
         // Adds the scroll listener to RecyclerView
         binding.listview.addOnScrollListener(scrollListener)
-
+        binding.listview.setHasFixedSize(true)
+        binding.listview.setItemViewCacheSize(10)
         loadChannelList()
     }
 
@@ -119,6 +120,7 @@ abstract class CommonSingleListFragment : HomeBaseFragment() {
     override fun onDestroyView() {
         binding.listview?.adapter = null
         binding.listview?.clearOnScrollListeners()
+        binding.unbind()
         super.onDestroyView()
     }
 }

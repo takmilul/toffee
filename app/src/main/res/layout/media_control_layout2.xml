@@ -1,172 +1,192 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:background="#44000000"
-    android:layout_height="match_parent"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
-    android:focusableInTouchMode="false"
-    >
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <RelativeLayout
-        android:id="@+id/root"
+    <FrameLayout
+        android:background="#44000000"
+        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:id="@+id/root"
+        android:focusableInTouchMode="false"
+        >
 
-        <ImageView
-            android:visibility="gone"
-            android:id="@+id/audio_option"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:padding="15dp"
-            android:clickable="true"
-            android:src="@mipmap/ic_menu_overflow"/>
+        <FrameLayout
+            android:id="@+id/playerContainer"
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <View
-            android:id="@+id/popup_view"
-            android:layout_width="1dp"
-            android:layout_height="1dp"
-            android:layout_alignParentTop="true"
-            android:clickable="false"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="50dp"
-            />
+            <TextureView
+                android:id="@+id/texture_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
-        <ImageView
-            android:id="@+id/play"
-            android:layout_width="64dp"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:padding="2dp"
-            android:layout_centerInParent="true"
-            android:src="@mipmap/ic_media_play"/>
+            <ImageView
+                android:id="@+id/preview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@null"/>
 
-        <ProgressBar
-            android:visibility="gone"
-            android:id="@+id/buffering"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"/>
+        </FrameLayout>
+        <RelativeLayout
+            android:padding="10dp"
+            android:id="@+id/controller"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/fullscreen"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:adjustViewBounds="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:padding="2dp"
-            android:src="@mipmap/ic_media_fullscreen"/>
+            <ImageView
+                android:visibility="gone"
+                android:id="@+id/audio_option"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:padding="15dp"
+                android:clickable="true"
+                android:src="@mipmap/ic_menu_overflow"/>
 
+            <View
+                android:id="@+id/popup_view"
+                android:layout_width="1dp"
+                android:layout_height="1dp"
+                android:layout_alignParentTop="true"
+                android:clickable="false"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="50dp"
+                />
 
-        <ImageView
-            android:visibility="invisible"
-            android:id="@+id/volume"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_alignParentLeft="true"
-            android:src="@mipmap/ic_volume"
-            android:padding="2dp"
-            android:layout_alignBottom="@id/fullscreen"/>
+            <ImageView
+                android:id="@+id/play"
+                android:layout_width="64dp"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:padding="2dp"
+                android:layout_centerInParent="true"
+                android:src="@mipmap/ic_media_play"/>
 
-        <Chronometer
-            android:id="@+id/current_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:layout_alignBottom="@id/fullscreen"
-            android:layout_toRightOf="@id/volume"
-            android:textColor="@android:color/white"
-            android:text="00:00"/>
+            <ProgressBar
+                android:visibility="gone"
+                android:id="@+id/buffering"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"/>
 
-        <Chronometer
-            android:id="@+id/duration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:layout_toStartOf="@id/fullscreen"
-            android:layout_alignParentBottom="true"
-            android:textColor="@android:color/white"
-            android:text="02:00"/>
-
-        <SeekBar
-            android:id="@+id/progress"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/current_time"
-            android:layout_toStartOf="@id/duration"
-            android:layout_alignTop="@id/current_time"
-            android:layout_alignBottom="@id/current_time"
-            android:layout_alignParentBottom="true"/>
-
-        <ImageView
-            android:id="@+id/video_option"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:clickable="true"
-            android:src="@mipmap/ic_menu_overflow"
-            android:layout_alignParentEnd="true" />
-
-        <androidx.mediarouter.app.MediaRouteButton
-            android:visibility="gone"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp"
-            android:id="@+id/cast"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@mipmap/ic_cast"
-            android:layout_alignBottom="@id/video_option"
-            android:layout_toLeftOf="@id/video_option"
-            />
-
-        <ImageView
-            android:layout_marginEnd="10dp"
-            android:id="@+id/share"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@mipmap/ic_share"
-            android:layout_alignTop="@id/video_option"
-            android:layout_toStartOf="@id/video_option"
-            />
-
-        <ImageView
-            android:id="@+id/drawer"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@mipmap/ic_drawer_player"
-            android:layout_alignTop="@id/video_option"
-            android:layout_alignParentLeft="true"
-            />
+            <ImageView
+                android:id="@+id/fullscreen"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:adjustViewBounds="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:padding="2dp"
+                android:src="@mipmap/ic_media_fullscreen"/>
 
 
-        <ImageView
-            android:id="@+id/minimize"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@mipmap/ic_minimize"
-            android:layout_alignTop="@id/video_option"
+            <ImageView
+                android:visibility="invisible"
+                android:id="@+id/volume"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_alignParentLeft="true"
+                android:src="@mipmap/ic_volume"
+                android:padding="2dp"
+                android:layout_alignBottom="@id/fullscreen"/>
 
-            android:layout_centerInParent="true"
-            />
+            <Chronometer
+                android:id="@+id/current_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:layout_alignBottom="@id/fullscreen"
+                android:layout_toRightOf="@id/volume"
+                android:textColor="@android:color/white"
+                android:text="00:00"/>
 
-        <com.banglalink.toffee.ui.widget.VerticalSeekBar
-            android:visibility="invisible"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:id="@+id/bar"
-            android:progressDrawable="@drawable/seekbar_drawable"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:layout_above="@id/volume"
-            android:layout_below="@id/minimize"
-            android:layout_width="wrap_content"
-            android:minWidth="30dp"
-            android:layout_height="match_parent" />
-    </RelativeLayout>
+            <Chronometer
+                android:id="@+id/duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:layout_toStartOf="@id/fullscreen"
+                android:layout_alignParentBottom="true"
+                android:textColor="@android:color/white"
+                android:text="02:00"/>
+
+            <SeekBar
+                android:id="@+id/progress"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/current_time"
+                android:layout_toStartOf="@id/duration"
+                android:layout_alignTop="@id/current_time"
+                android:layout_alignBottom="@id/current_time"
+                android:layout_alignParentBottom="true"/>
+
+            <ImageView
+                android:id="@+id/video_option"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:clickable="true"
+                android:src="@mipmap/ic_menu_overflow"
+                android:layout_alignParentEnd="true" />
+
+            <androidx.mediarouter.app.MediaRouteButton
+                android:visibility="gone"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                android:id="@+id/cast"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@mipmap/ic_cast"
+                android:layout_alignBottom="@id/video_option"
+                android:layout_toLeftOf="@id/video_option"
+                />
+
+            <ImageView
+                android:layout_marginEnd="10dp"
+                android:id="@+id/share"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@mipmap/ic_share"
+                android:layout_alignTop="@id/video_option"
+                android:layout_toStartOf="@id/video_option"
+                />
+
+            <ImageView
+                android:id="@+id/drawer"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@mipmap/ic_drawer_player"
+                android:layout_alignTop="@id/video_option"
+                android:layout_alignParentLeft="true"
+                />
 
 
-</RelativeLayout>
+            <ImageView
+                android:id="@+id/minimize"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@mipmap/ic_minimize"
+                android:layout_alignTop="@id/video_option"
+
+                android:layout_centerInParent="true"
+                />
+
+            <com.banglalink.toffee.ui.widget.VerticalSeekBar
+                android:visibility="invisible"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:id="@+id/bar"
+                android:progressDrawable="@drawable/seekbar_drawable"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:layout_above="@id/volume"
+                android:layout_below="@id/minimize"
+                android:layout_width="wrap_content"
+                android:minWidth="30dp"
+                android:layout_height="match_parent" />
+        </RelativeLayout>
+
+
+    </FrameLayout>
+</layout>

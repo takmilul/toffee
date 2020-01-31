@@ -7,7 +7,8 @@ import android.os.Bundle;
 import com.banglalink.toffee.data.storage.Preference;
 import com.banglalink.toffee.ui.player.Samples;
 import com.banglalink.toffee.util.Utils;
-import com.google.android.exoplayer.util.Util;
+
+import static com.google.android.exoplayer2.C.TYPE_HLS;
 
 /**
  * Created by shantanu on 8/31/16.
@@ -21,7 +22,7 @@ public class Channel extends Samples.Sample {
     }
 
     public Channel(String name, String uri) {
-        super(name, uri, Util.TYPE_HLS);
+        super(name, uri, TYPE_HLS);
         this.imageUrl = "";
     }
 

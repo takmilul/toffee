@@ -9,11 +9,11 @@ class MyViewHolder(val binding: ViewDataBinding) : RecyclerView.ViewHolder(bindi
 
     fun bind(obj: Any) {
         binding.setVariable(BR.data, obj)
-        binding.executePendingBindings()
+//        binding.executePendingBindings()
     }
 
     fun bindCallBack(obj:Any){
         binding.setVariable(BR.callback, obj)
-        binding.executePendingBindings()
+//        binding.executePendingBindings()
     }
 }

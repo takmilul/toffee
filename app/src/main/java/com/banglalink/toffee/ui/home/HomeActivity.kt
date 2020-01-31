@@ -6,29 +6,27 @@ import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.content.res.Configuration
+import android.graphics.Point
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.view.WindowManager
+import android.view.*
 import android.view.animation.AnimationUtils
 import android.widget.AutoCompleteTextView
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProviders
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
 import com.banglalink.toffee.extension.launchActivity
@@ -39,14 +37,13 @@ import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.channels.ChannelFragment
 import com.banglalink.toffee.ui.login.SigninByPhoneActivity
 import com.banglalink.toffee.ui.player.PlayerActivity
-import com.banglalink.toffee.ui.player.PlayerFragment2
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.widget.DraggerLayout
-import com.banglalink.toffee.ui.widget.showAlertDialog
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.android.synthetic.main.layout_appbar.view.*
+import javax.annotation.Nonnull
 
 const val ID_CHANNEL = 12
 const val ID_RECENT = 13
@@ -62,13 +59,14 @@ const val ID_FAQ = 22
 const val ID_INVITE_FRIEND = 23
 const val ID_REDEEM_CODE = 24
 
-class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListener, DraggerLayout.OnPositionChangedListener {
+class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListener,
+    DraggerLayout.OnPositionChangedListener ,SearchView.OnQueryTextListener{
 
     private var searchView: SearchView? = null
     lateinit var binding: ActivityMainMenuBinding
     lateinit var drawerHelper: DrawerHelper
 
-    companion object{
+    companion object {
         const val INTENT_REFERRAL_REDEEM_MSG = "REFERRAL_REDEEM_MSG"
     }
 
@@ -79,7 +77,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //disable screen capture
-        if(!BuildConfig.DEBUG) {
+        if (!BuildConfig.DEBUG) {
             window.setFlags(
                 WindowManager.LayoutParams.FLAG_SECURE,
                 WindowManager.LayoutParams.FLAG_SECURE
@@ -87,29 +85,18 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         }
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main_menu)
         setSupportActionBar(binding.tbar.toolbar)
-        mediaPlayer = supportFragmentManager.findFragmentById(R.id.player_view) as PlayerFragment2
-        val landingPageFragment = LandingPageFragment()
-        supportFragmentManager.beginTransaction().replace(R.id.content_viewer, landingPageFragment)
-            .addToBackStack(LandingPageFragment::class.java.getName()).commit()
-        binding.draggableView.setOnPositionChangedListener(this)
-        initializeDraggableView()
-        supportFragmentManager.addOnBackStackChangedListener(this)
-        drawerHelper = DrawerHelper(this,binding)
-        drawerHelper.initDrawer()
 
-        supportFragmentManager.addOnBackStackChangedListener {
-            if (supportFragmentManager.backStackEntryCount == 1) { //home
-                if (searchView != null && !searchView?.isIconified!!) {
-                    searchView?.onActionViewCollapsed()
-                }
-            }
-        }
+        initializeDraggableView()
+        initDrawer()
+        initLandingPageFragmentAndListenBackStack()
+        showRedeemMessageIfPossible()
 
         handleSharedUrl(intent)
-        observe(viewModel.categoryLiveData) {
+
+        observe(viewModel.getCategory()) {
             when (it) {
                 is Resource.Success -> {
-                   drawerHelper.updateAdapter(it.data.vod)
+                    drawerHelper.updateAdapter(it.data.vod)
                 }
                 is Resource.Failure -> {
                     showToast(it.error.msg)
@@ -120,40 +107,70 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         observe(viewModel.fragmentDetailsMutableLiveData) {
             onDetailsFragmentLoad(it)
         }
-        observe(viewModel.viewAllChannelLiveData){
-            drawerHelper.onMenuClick(NavigationMenu(ID_CHANNEL,"All Videos",0, listOf(),false))
+        observe(viewModel.viewAllChannelLiveData) {
+            drawerHelper.onMenuClick(NavigationMenu(ID_CHANNEL, "All Videos", 0, listOf(), false))
         }
 
-        observe(viewModel.viewAllVideoLiveData){
-            drawerHelper.onMenuClick(NavigationMenu(ID_VIDEO,"All Videos",0, listOf(),false))
+        observe(viewModel.viewAllVideoLiveData) {
+            drawerHelper.onMenuClick(NavigationMenu(ID_VIDEO, "All Videos", 0, listOf(), false))
         }
 
         //Observing any changes in session token....
         observe(Preference.getInstance().sessionTokenLiveData){
-            if (mediaPlayer != null && mediaPlayer.isVisible && mediaPlayer.channelInfo != null) {
-                mediaPlayer.load(mediaPlayer.channelInfo)
-            }
+           if(binding.playerView.isVisible){
+               reloadChannel()
+           }
         }
 
+        binding.playerView.setSimpleExoPlayer(player)
+        binding.playerView.addPlayerControllerChangeListener(this)
 
-        //show referral redeem msg if possible
-        val msg = intent.getStringExtra(INTENT_REFERRAL_REDEEM_MSG)
-        msg?.let {
-            showDisplayMessageDialog(this,it)
-        }
-    }
+        lifecycle.addObserver(HeartBeatManager)
 
-    override fun onPause() {
-        super.onPause()
-        viewModel.stopHeartBeatTimer()
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.startHeartBeatTimer()
+        binding.playerView.resizeView(calculateScreenWidth())
     }
 
-    private fun handleSharedUrl(intent: Intent){
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        /*
+        viewDragHelper send onViewMinimize/Maximize event when start the transition
+        it's not possible to get transition(animation) end listener
+        If phone is already in landscape mode, it starts to move to full screen while drag transition is on going
+        so player can't reset scale completely. Manually resetting player scale value
+         */
+        /*
+        viewDragHelper send onViewMinimize/Maximize event when start the transition
+        it's not possible to get transition(animation) end listener
+        If phone is already in landscape mode, it starts to move to full screen while drag transition is on going
+        so player can't reset scale completely. Manually resetting player scale value
+         */if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            binding.playerView.scaleX = 1f
+            binding.playerView.scaleY = 1f
+        }
+        updateFullScreenState()
+    }
+
+    private fun updateFullScreenState() {
+        val state =
+            resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+        Utils.setFullScreen(this, state)
+        binding.playerView.resizeView(calculateScreenWidth())
+        binding.playerView.onFullScreen(state)
+    }
+
+    private fun calculateScreenWidth(): Point? {
+        val display: Display = windowManager.getDefaultDisplay()
+        val size = Point()
+        display.getRealSize(size)
+        return size
+    }
+
+
+    private fun handleSharedUrl(intent: Intent) {
         val uri = intent.data
         if (uri != null) {
             val strUri = uri.toString()
@@ -169,26 +186,19 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             }
         }
     }
+
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        if (Intent.ACTION_SEARCH == intent.action) {
-            val query = intent.getStringExtra(SearchManager.QUERY)
-            if (!TextUtils.isEmpty(query)) {
-                loadFragmentById(
-                    R.id.content_viewer, SearchFragment.createInstance(query),
-                    SearchFragment::class.java.getName()
-                )
-            }
-            if (searchView != null) {
-                searchView!!.setQuery(query.toLowerCase(), false)
-                searchView!!.clearFocus()
-            }
-        }
         handleSharedUrl(intent)
     }
-    private fun loadChannel(channelInfo: ChannelInfo) {
-        if (mediaPlayer != null) {
-            mediaPlayer.load(channelInfo)
+
+    private fun loadChannel(@Nonnull channelInfo: ChannelInfo) {
+        val uri = Channel.createChannel(channelInfo).getContentUri(this)
+        if (uri == null) {
+            binding.playerView.showWifiOnlyMessage()
+        } else {
+            playChannel(channelInfo)
+            HeartBeatManager.triggerEventViewingContentStart(channelInfo.id.toInt(),channelInfo.type)
         }
     }
 
@@ -200,9 +210,11 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                 if (channelInfo.isLive) {
                     val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
                     if (fragment !is ChannelFragment) {
-                       loadFragmentById(R.id.details_viewer, ChannelFragment.createInstance(
-                           getString(R.string.menu_channel_text)
-                       ))
+                        loadFragmentById(
+                            R.id.details_viewer, ChannelFragment.createInstance(
+                                getString(R.string.menu_channel_text)
+                            )
+                        )
                     }
                 } else {
                     loadFragmentById(
@@ -231,22 +243,49 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     }
 
     private fun initializeDraggableView() {
+        binding.draggableView.addOnPositionChangedListener(this)
+        binding.draggableView.addOnPositionChangedListener(binding.playerView)
+
         binding.draggableView.visibility = View.GONE
         binding.draggableView.isClickable = true
     }
 
-    override fun onViewMinimize() {
-        if (mediaPlayer != null) {
-            mediaPlayer.onMinimizePlayer()
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+    private fun initDrawer(){
+        drawerHelper = DrawerHelper(this, binding)
+        drawerHelper.initDrawer()
+    }
+
+    private fun initLandingPageFragmentAndListenBackStack(){
+        supportFragmentManager.beginTransaction().replace(R.id.content_viewer, LandingPageFragment())
+            .addToBackStack(LandingPageFragment::class.java.name).commit()
+        supportFragmentManager.addOnBackStackChangedListener(this)
+    }
+
+    private fun showRedeemMessageIfPossible(){
+        //show referral redeem msg if possible
+        val msg = intent.getStringExtra(INTENT_REFERRAL_REDEEM_MSG)
+        msg?.let {
+            showDisplayMessageDialog(this, it)
         }
     }
 
+    override fun onViewMinimize() {
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+    }
+
     override fun onViewMaximize() {
-        if (mediaPlayer != null) {
-            mediaPlayer.onMaximizePlayer()
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
-        }
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+    }
+
+    override fun onViewDestroy() {
+        HeartBeatManager.triggerEventViewingContentStop()
+        binding.draggableView.animation = AnimationUtils.loadAnimation(
+            this,
+            android.R.anim.fade_out
+        )
+        binding.draggableView.visibility = View.GONE
+        binding.draggableView.resetImmediately()
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
 
     fun handleExitApp() {
@@ -258,19 +297,10 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                 launchActivity<SigninByPhoneActivity>()
                 finish()
             }
-            .setNegativeButton("No"
+            .setNegativeButton(
+                "No"
             ) { dialog, id -> dialog.cancel() }
             .show()
-    }
-    override fun onViewDestroy() {
-        mediaPlayer.pausePlayer()
-        binding.draggableView.animation = AnimationUtils.loadAnimation(
-            this,
-            android.R.anim.fade_out
-        )
-        binding.draggableView.visibility = View.GONE
-        binding.draggableView.resetImmediately()
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
 
     override fun onDrawerButtonPressed(): Boolean {
@@ -279,7 +309,10 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     }
 
     override fun onMinimizeButtonPressed(): Boolean {
-        minimizePlayer()
+        if (binding.draggableView != null) {
+            binding.draggableView.minimize()
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        }
         return true
     }
 
@@ -288,12 +321,17 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             supportActionBar!!.setDisplayHomeAsUpEnabled(false)
             drawerHelper.toggle.isDrawerIndicatorEnabled = true
         }
+        else if (supportFragmentManager.backStackEntryCount == 1) { //home
+            if (searchView != null && !searchView?.isIconified!!) {
+                searchView?.onActionViewCollapsed()
+            }
+        }
     }
 
     override fun onBackPressed() {
         if (binding.drawerLayout != null && binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
             binding.drawerLayout.closeDrawer(GravityCompat.END)
-        } else if (Utils.isFullScreen(this)) {
+        } else if (resources.configuration.orientation != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         } else if (binding.draggableView.isMaximized && binding.draggableView.visibility == View.VISIBLE) {
             minimizePlayer()
@@ -310,7 +348,6 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     fun minimizePlayer() {
         if (binding.draggableView != null) {
             binding.draggableView.minimize()
-            mediaPlayer.onMinimizePlayer()
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
     }
@@ -319,16 +356,16 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         if (binding.draggableView != null) {
             binding.draggableView.maximize()
             binding.draggableView.visibility = View.VISIBLE
-            mediaPlayer.onMaximizePlayer()
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
         }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         val imageUrl = Preference.getInstance().userImageUrl
-        if(!imageUrl.isNullOrBlank()){
-            observe(Preference.getInstance().profileImageUrlLiveData){
-                menu?.findItem(R.id.action_avatar)?.actionView?.findViewById<ImageView>(R.id.view_avatar)?.loadProfileImage(it)
+        if (!imageUrl.isNullOrBlank()) {
+            observe(Preference.getInstance().profileImageUrlLiveData) {
+                menu?.findItem(R.id.action_avatar)
+                    ?.actionView?.findViewById<ImageView>(R.id.view_avatar)?.loadProfileImage(it)
             }
 
         }
@@ -339,8 +376,10 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
 
         if (item.itemId == android.R.id.home) {
             supportFragmentManager.popBackStack()
+            return true
         } else if (item.itemId == R.id.action_avatar) {
             binding.drawerLayout.openDrawer(GravityCompat.END, true)
+            return true
         }
 
         return super.onOptionsItemSelected(item)
@@ -362,11 +401,13 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                     SearchFragment::class.java.name,
                     FragmentManager.POP_BACK_STACK_INCLUSIVE
                 )
+                return@setOnCloseListener true
             }
             false
         }
 
-        val searchBar:LinearLayout = searchView!!.findViewById(R.id.search_bar)
+
+        val searchBar: LinearLayout = searchView!!.findViewById(R.id.search_bar)
         searchBar.layoutTransition = LayoutTransition()
         //
 
@@ -382,9 +423,10 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
 
         val searchBadgeTv =
             searchView?.findViewById(androidx.appcompat.R.id.search_badge) as TextView
-        searchBadgeTv.background = ContextCompat.getDrawable(this@HomeActivity,R.drawable.menu_search)
+        searchBadgeTv.background =
+            ContextCompat.getDrawable(this@HomeActivity, R.drawable.menu_search)
 
-        val searchAutoComplete:AutoCompleteTextView =
+        val searchAutoComplete: AutoCompleteTextView =
             searchView!!.findViewById(androidx.appcompat.R.id.search_src_text)
         searchAutoComplete.apply {
             textSize = 18f
@@ -394,14 +436,31 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                     R.color.searchview_input_text_color
                 )
             )
-            background = ContextCompat.getDrawable(this@HomeActivity,R.drawable.searchview_input_bg)
+            background =
+                ContextCompat.getDrawable(this@HomeActivity, R.drawable.searchview_input_bg)
         }
 
+        searchView!!.setOnQueryTextListener(this)
 
         val awesomeMenuItem = menu.findItem(R.id.action_avatar)
         val awesomeActionView = awesomeMenuItem.actionView
-        awesomeActionView.setOnClickListener { onOptionsItemSelected(awesomeMenuItem) }
+        awesomeActionView.setOnClickListener {  binding.drawerLayout.openDrawer(GravityCompat.END, true) }
 
-        return super.onCreateOptionsMenu(menu)
+        return true
+    }
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        if (!TextUtils.isEmpty(query)) {
+            loadFragmentById(
+                R.id.content_viewer, SearchFragment.createInstance(query!!),
+                SearchFragment::class.java.name
+            )
+            return true
+        }
+        return false;
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        return false
     }
 }

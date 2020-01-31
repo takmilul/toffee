@@ -51,13 +51,18 @@
                     android:clickable="true"
                     />
 
-                <fragment
+<!--                <fragment-->
+<!--                    android:background="@android:color/black"-->
+<!--                    android:layout_alignParentRight="true"-->
+<!--                    android:id="@+id/player_view"-->
+<!--                    android:layout_width="fill_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:name="com.banglalink.toffee.ui.player.PlayerFragment2"/>-->
+                <com.banglalink.toffee.ui.widget.ExpoMediaController2
                     android:background="@android:color/black"
-                    android:layout_alignParentRight="true"
                     android:id="@+id/player_view"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:name="com.banglalink.toffee.ui.player.PlayerFragment2"/>
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
             </com.banglalink.toffee.ui.widget.DraggerLayout>
 
@@ -68,6 +73,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="end"
+            app:insetForeground="@null"
             app:headerLayout="@layout/nav_header_main">
 
             <ExpandableListView

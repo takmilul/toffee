@@ -29,4 +29,8 @@ class PopularVideoListAdapter(private val optionCallBack: OptionCallBack, channe
         }
         super.onViewRecycled(holder)
     }
+
+    override fun getItemId(position: Int): Long {
+        return values[position].id.hashCode().toLong()
+    }
 }

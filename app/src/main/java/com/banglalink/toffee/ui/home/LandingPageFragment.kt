@@ -33,9 +33,14 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
     private lateinit var channelAdapter: ChannelAdapter
     lateinit var popularVideoListAdapter: PopularVideoListAdapter
     private var imageSlider: SliderLayout?=null
-    private var catchupListView: RecyclerView? = null
+    private var popularVideoListView: RecyclerView? = null
     private var channelListView: RecyclerView? = null
     private var bottomProgress: ProgressBar? = null
+
+    private lateinit var channelScrollListener : EndlessRecyclerViewScrollListener
+
+    private lateinit var popularVideoScrollListener : EndlessRecyclerViewScrollListener
+
 
     val viewModel by unsafeLazy {
         ViewModelProviders.of(this).get(LandingPageViewModel::class.java)
@@ -44,13 +49,14 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         channelAdapter = ChannelAdapter {
-            //handle channel click in adapter. Basically notify livedata to homeactivity to load channel
+            //handle channel click in adapter. Basically notify livedata to homeactivity to playChannel channel
             homeViewModel.fragmentDetailsMutableLiveData.postValue(it)
         }
         popularVideoListAdapter = PopularVideoListAdapter(this) {
-            //handle video click in adapter. Basically notify livedata to homeactivity to load channel
+            //handle video click in adapter. Basically notify livedata to homeactivity to playChannel channel
             homeViewModel.fragmentDetailsMutableLiveData.postValue(it)
         }
+        popularVideoListAdapter.setHasStableIds(true)
         viewModel.loadPopularVideos()
         viewModel.loadChannels()
         viewModel.loadFeatureContents()
@@ -76,26 +82,28 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
             adapter = channelAdapter
         }
 
-        channelListView?.addOnScrollListener(object :
-            EndlessRecyclerViewScrollListener(listLayoutManager) {
-            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
+        channelScrollListener =  object:EndlessRecyclerViewScrollListener(listLayoutManager){
+            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
                 viewModel.loadChannels()
             }
-        })
+        }
+        channelListView?.addOnScrollListener(channelScrollListener)
 
         val linearLayoutManager = LinearLayoutManager(context)
-        catchupListView = view.findViewById<RecyclerView>(R.id.listview).apply {
+        popularVideoListView = view.findViewById<RecyclerView>(R.id.listview).apply {
             layoutManager = linearLayoutManager
             adapter = popularVideoListAdapter
         }
+        popularVideoListView?.setItemViewCacheSize(10)//We are defining offscreen cache size
+        popularVideoListView?.setHasFixedSize(true)
 
-        catchupListView?.addOnScrollListener(object :
-            EndlessRecyclerViewScrollListener(linearLayoutManager) {
-            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
+        popularVideoScrollListener =  object:EndlessRecyclerViewScrollListener(linearLayoutManager){
+            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
                 bottomProgress?.visibility = View.VISIBLE
                 viewModel.loadPopularVideos()
             }
-        })
+        }
+        popularVideoListView?.addOnScrollListener(popularVideoScrollListener)
 
 
         bottomProgress = view.findViewById(R.id.progress_bar)
@@ -119,6 +127,7 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
                     channelAdapter.addAll(it.data)
                 }
                 is Resource.Failure -> {
+                    channelScrollListener.resetState()
                     Log.e("LOG", it.error.msg)
                 }
             }
@@ -159,6 +168,7 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
                     if (popularVideoListAdapter.itemCount == 0) {
                         val fakeChannelInfo =
                             ChannelInfo()//we are adding fake channelinfo because of header in adapter....
+                        fakeChannelInfo.id = System.currentTimeMillis().toString()
                         popularVideoListAdapter.add(fakeChannelInfo)
                     }
                     if (it.data.isNotEmpty()) {
@@ -167,6 +177,7 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
 
                 }
                 is Resource.Failure -> {
+                    popularVideoScrollListener.resetState()
                    context?.showToast(it.error.msg)
                 }
             }
@@ -174,21 +185,22 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
     }
 
     fun onBackPressed(): Boolean {
-        if(catchupListView!=null && catchupListView!!.computeVerticalScrollOffset() > 0){
-            catchupListView?.smoothScrollToPosition(0)
+        if(popularVideoListView!=null && popularVideoListView!!.computeVerticalScrollOffset() > 0){
+            popularVideoListView?.smoothScrollToPosition(0)
             return true
         }
         return false
     }
 
     override fun onDestroyView() {
-        catchupListView?.adapter = null
+        popularVideoListView?.adapter = null
         channelListView?.adapter = null
-        catchupListView?.clearOnScrollListeners()
+        popularVideoListView?.clearOnScrollListeners()
         channelListView?.clearOnScrollListeners()
+        popularVideoListView = null
         channelListView = null
-        catchupListView = null
         imageSlider?.stopAutoCycle()
+        imageSlider?.removeAllSliders()
         imageSlider = null
         bottomProgress = null
         super.onDestroyView()

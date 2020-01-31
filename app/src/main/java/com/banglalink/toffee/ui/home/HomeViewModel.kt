@@ -15,6 +15,7 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.channels.StickyHeaderInfo
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.NavCategory
 import com.banglalink.toffee.util.getError
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
@@ -28,13 +29,6 @@ import com.google.firebase.iid.FirebaseInstanceId
 
 
 class HomeViewModel(application: Application):BaseViewModel(application),OnCompleteListener<InstanceIdResult> {
-
-    private var timer: Timer? = null
-    private val TIMER_DELAY = 0
-    private val TIMER_PERIOD = 30000
-
-    private val categoryMutableLiveData = MutableLiveData<Resource<NavCategoryGroup>>()
-    val categoryLiveData = categoryMutableLiveData.toLiveData()
 
     private val channelMutableLiveData = MutableLiveData<Resource<List<StickyHeaderInfo>>>()
     val channelLiveData = channelMutableLiveData.toLiveData()
@@ -89,14 +83,9 @@ class HomeViewModel(application: Application):BaseViewModel(application),OnCompl
             }
         }
     }
-    private fun getCategory(){
-        viewModelScope.launch {
-            try{
-                categoryMutableLiveData.setSuccess(getCategory.execute())
-            }catch (e:Exception){
-                categoryMutableLiveData.setError(getError(e))
-            }
-        }
+
+    fun getCategory():LiveData<Resource<NavCategoryGroup>>{
+        return resultLiveData { getCategory.execute() }
     }
 
     fun getChannelByCategory(subcategoryId:Int){
@@ -117,17 +106,5 @@ class HomeViewModel(application: Application):BaseViewModel(application),OnCompl
        return resultLiveData{
            getContentFromShareableUrl.execute(shareUrl)
        }
-    }
-
-
-    fun stopHeartBeatTimer() {
-        timer?.cancel()
-        timer?.purge()
-        timer = null
-    }
-
-    fun startHeartBeatTimer() {
-        timer = Timer()
-        timer?.scheduleAtFixedRate(SendHeartBeat(viewModelScope,Preference.getInstance(),RetrofitApiClient.toffeeApi), TIMER_DELAY.toLong(), TIMER_PERIOD.toLong())
     }
 }
