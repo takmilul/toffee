@@ -19,10 +19,10 @@ import androidx.databinding.DataBindingUtil;
 
 import com.banglalink.toffee.R;
 import com.banglalink.toffee.databinding.MediaControlLayout2Binding;
-import com.banglalink.toffee.listeners.MediaPlayerListener;
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.ui.DebugTextViewHelper;
 
 import java.util.ArrayList;
 import java.util.Formatter;
@@ -99,6 +99,7 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
     public void setSimpleExoPlayer(SimpleExoPlayer simpleExoPlayer){
         this.simpleExoPlayer = simpleExoPlayer;
         this.simpleExoPlayer.addListener(this);
+        new DebugTextViewHelper(this.simpleExoPlayer,binding.debugTv).start();
     }
 
 
@@ -409,14 +410,17 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
         int playerHeight;
         int controlerWidth;
         int controlerHeight;
-        if (size.x > size.y) { //landscape
+
+        playerWidth = size.x;
+        if(size.x > size.y){ //landscape
             playerHeight = size.y;
-            playerWidth = (playerHeight * videoWidth) / videoHeight;
             controlerWidth = size.x;
             controlerHeight = size.y;
-        } else {
-            playerWidth = size.x;
-            playerHeight = (playerWidth * videoHeight) / videoWidth;
+        }
+        else{
+            Log.e("width: ","" + playerWidth);
+            playerHeight = (playerWidth * 9) / 16;
+            Log.e("height: ", "" + playerHeight);
             controlerWidth = playerWidth;
             controlerHeight = playerHeight;
         }
@@ -434,5 +438,4 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
         binding.playerContainer.setLayoutParams(params);
 
     }
-
 }
