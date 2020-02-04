@@ -73,7 +73,7 @@ dependencies {
     implementation 'com.xfinity:dahdit:0.9.3'
 
     //Coil image Lib
-    implementation 'io.coil-kt:coil:0.9.2'
+    implementation 'io.coil-kt:coil:0.9.3'
 
     //Firebase Push Notification
     implementation 'com.google.firebase:firebase-messaging:20.1.0'
@@ -98,7 +98,7 @@ dependencies {
     //Permission extension
     implementation 'com.github.florent37:runtime-permission-kotlin:1.1.1'
     //Facebook SDK
-    implementation 'com.facebook.android:facebook-android-sdk:5.15.0'
+    implementation 'com.facebook.android:facebook-android-sdk:5.15.3'
     //Leak canary
 //    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-4'
 
