@@ -303,7 +303,6 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
                 Toast.makeText(PlayerActivity.this,"Behind live window exception",Toast.LENGTH_LONG).show();
             }
             else{
-                reloadChannel();
                 Toast.makeText(PlayerActivity.this,e.getSourceException().getMessage(),Toast.LENGTH_LONG).show();
             }
         }

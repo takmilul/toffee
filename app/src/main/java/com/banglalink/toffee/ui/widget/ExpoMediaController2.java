@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.widget;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.SurfaceTexture;
 import android.os.Handler;
@@ -8,7 +9,6 @@ import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,13 +21,13 @@ import com.banglalink.toffee.R;
 import com.banglalink.toffee.databinding.MediaControlLayout2Binding;
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.ui.DebugTextViewHelper;
 
 import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Locale;
+
+import javax.annotation.Nullable;
 
 import static com.google.android.exoplayer2.Player.STATE_BUFFERING;
 import static com.google.android.exoplayer2.Player.STATE_ENDED;
@@ -42,12 +42,13 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
     private LayoutInflater inflater;
     private MessageHandler handler;
     private List<OnPlayerControllerChangedListener> onPlayerControllerChangedListeners = new ArrayList<>();
-    private SimpleExoPlayer simpleExoPlayer;
+    private @Nullable
+    Player simpleExoPlayer;
     private StringBuilder mFormatBuilder;
     private Formatter mFormatter;
-    private boolean isEnd = false;
     private boolean isMinimize;
     private long lastPlayerPosition = 0;
+
 
     private int videoWidth = 1920;
     private int videoHeight = 1080;
@@ -62,28 +63,27 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
     }
 
 
-    public ExpoMediaController2(Context context){
+    public ExpoMediaController2(Context context) {
         super(context);
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         handler = new MessageHandler();
         initView();
     }
 
-    public void addPlayerControllerChangeListener(OnPlayerControllerChangedListener onPlayerControllerChangedListener){
+    public void addPlayerControllerChangeListener(OnPlayerControllerChangedListener onPlayerControllerChangedListener) {
         onPlayerControllerChangedListeners.add(onPlayerControllerChangedListener);
     }
 
-    public void clearListeners(){
+    public void clearListeners() {
         onPlayerControllerChangedListeners.clear();
     }
 
-    private void initView(){
-        binding = DataBindingUtil.inflate(inflater,R.layout.media_control_layout2,this,true);
+    private void initView() {
+        binding = DataBindingUtil.inflate(inflater, R.layout.media_control_layout2, this, true);
         binding.minimize.setOnClickListener(this);
         binding.play.setOnClickListener(this);
         binding.drawer.setOnClickListener(this);
 
-        binding.textureView.setSurfaceTextureListener(this);
 
         binding.progress.setMax(1000);
         binding.progress.setOnSeekBarChangeListener(this);
@@ -96,24 +96,40 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
     }
 
 
-    public void setSimpleExoPlayer(SimpleExoPlayer simpleExoPlayer){
+    //Use this method to set and unset the player
+    public void setPlayer(@Nullable Player simpleExoPlayer) {
+        if (this.simpleExoPlayer == simpleExoPlayer) {
+            return;
+        }
+        binding.textureView.setSurfaceTextureListener(this);
+        if(binding.textureView.isAvailable()){
+            binding.preview.setImageBitmap(binding.textureView.getBitmap());
+        }
+        Player oldPlayer = this.simpleExoPlayer;//get reference of old player which attached previously
+        if (oldPlayer != null) {//if old player not null then clear it
+            oldPlayer.removeListener(this);
+            if (oldPlayer.getVideoComponent() != null) {
+                oldPlayer.getVideoComponent().clearVideoTextureView(binding.textureView);
+            }
+        }
         this.simpleExoPlayer = simpleExoPlayer;
-        this.simpleExoPlayer.addListener(this);
-        new DebugTextViewHelper(this.simpleExoPlayer,binding.debugTv).start();
+        if (simpleExoPlayer != null) {
+            this.simpleExoPlayer.addListener(this);
+        }
     }
 
 
-    public void showWifiOnlyMessage(){
+    public void showWifiOnlyMessage() {
         binding.preview.setImageResource(R.mipmap.watch_wifi_only_msg);
         hideControls(0);
         binding.preview.setOnClickListener(null);
     }
-    public boolean showControls(){
+
+    public boolean showControls() {
         boolean status = false;
         handler.removeCallbacks(hideRunnable);
-        Log.e("controls","visibility " + getVisibility() + " minimize " + isMinimize);
-        if(binding.controller.getVisibility() != VISIBLE && !isMinimize) {
-            updateControllerState();
+        Log.e("controls", "visibility " + getVisibility() + " minimize " + isMinimize);
+        if (binding.controller.getVisibility() != VISIBLE && !isMinimize) {
             binding.controller.setVisibility(VISIBLE);
             status = true;
         }
@@ -121,35 +137,27 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
         return status;
     }
 
-    private void updateControllerState() {
-        if(simpleExoPlayer == null) return;
-        if(simpleExoPlayer.isPlaying()){
-            binding.play.setImageResource(R.mipmap.ic_media_pause);
-        }
-        else {
-            binding.play.setImageResource(R.mipmap.ic_media_play);
-        }
-    }
 
-    Runnable hideRunnable = new Runnable(){
-        public void run(){
-            if(binding.controller.getVisibility() != INVISIBLE) {
+    Runnable hideRunnable = new Runnable() {
+        public void run() {
+            if (binding.controller.getVisibility() != INVISIBLE) {
                 binding.controller.setVisibility(INVISIBLE);
             }
         }
     };
-    public long getLastPlayerPosition(){
+
+    public long getLastPlayerPosition() {
         return lastPlayerPosition;
     }
 
-    private void updateSeekBar(){
-        Log.e("controls","updating seekbar ");
-        if(simpleExoPlayer == null){
+    private void updateSeekBar() {
+        Log.e("controls", "updating seekbar ");
+        if (simpleExoPlayer == null) {
             return;
         }
         lastPlayerPosition = simpleExoPlayer.getCurrentPosition();
         long duration = simpleExoPlayer.getDuration();
-        if (duration > 0 && !simpleExoPlayer.isCurrentWindowLive()) {
+        if (duration> 0 && !simpleExoPlayer.isCurrentWindowLive()) {
             // use long to avoid overflow
             long pos = 1000L * lastPlayerPosition / duration;
             binding.progress.setEnabled(true);
@@ -164,10 +172,8 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
         }
         int percent = simpleExoPlayer.getBufferedPercentage();
         binding.progress.setSecondaryProgress(percent * 10);
-        if (binding.duration != null)
-            binding.duration.setText(stringForTime(duration));
-        if (binding.currentTime != null)
-            binding.currentTime.setText(stringForTime(lastPlayerPosition));
+        binding.duration.setText(stringForTime(duration));
+        binding.currentTime.setText(stringForTime(lastPlayerPosition));
         Log.e("lastPlayerPosition: ", "" + lastPlayerPosition);
         Log.e("duration: ", "" + duration);
         Log.e("percent: ", "" + percent);
@@ -184,7 +190,7 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
 
         int seconds = (int) (totalSeconds % 60);
         int minutes = (int) ((totalSeconds / 60) % 60);
-        int hours   = (int) (totalSeconds / 3600);
+        int hours = (int) (totalSeconds / 3600);
 
         mFormatBuilder.setLength(0);
         if (hours > 0) {
@@ -194,9 +200,9 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
         }
     }
 
-    public void hideControls(long delay){
+    public void hideControls(long delay) {
         handler.removeCallbacks(hideRunnable);
-        handler.postDelayed(hideRunnable,delay);
+        handler.postDelayed(hideRunnable, delay);
     }
 
     @Override
@@ -204,14 +210,13 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
         if (!fromUser && seekBar == this.binding.progress) {
             return;
         }
-        if(seekBar == this.binding.progress) {
+        if (seekBar == this.binding.progress && simpleExoPlayer != null) {
             long duration = simpleExoPlayer.getDuration();
             long newPosition = (duration * progress) / 1000L;
             simpleExoPlayer.seekTo((int) newPosition);
             if (binding.currentTime != null) {
                 binding.currentTime.setText(stringForTime((int) newPosition));
             }
-            isEnd = false;
         }
     }
 
@@ -238,8 +243,8 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
         binding.root.setKeepScreenOn(true);
         isMinimize = false;
         binding.textureView.setOnClickListener(this);
-        if (simpleExoPlayer.isPlaying()) {
-           hideControls(2000);
+        if (simpleExoPlayer != null && simpleExoPlayer.isPlaying()) {
+            hideControls(2000);
         } else {
             showControls();
         }
@@ -248,12 +253,17 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
     @Override
     public void onViewDestroy() {
         binding.root.setKeepScreenOn(false);
-        simpleExoPlayer.setPlayWhenReady(false);//pause player
+        if (simpleExoPlayer != null) {
+            simpleExoPlayer.stop();
+        }
     }
 
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i1) {
-        simpleExoPlayer.setVideoSurface(new Surface(surfaceTexture));
+        if (simpleExoPlayer != null && simpleExoPlayer.getVideoComponent() != null) {
+            simpleExoPlayer.getVideoComponent().setVideoTextureView(binding.textureView);
+        }
+
     }
 
     @Override
@@ -275,9 +285,9 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
     private class MessageHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case UPDATE_PROGRESS:
-                    Log.e("update seek","from timer");
+                    Log.e("update seek", "from timer");
                     updateSeekBar();
                     break;
                 default:
@@ -287,12 +297,11 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
     }
 
     public void onFullScreen(boolean state) {
-        if(state){ //fullscreen
+        if (state) { //fullscreen
             binding.minimize.setVisibility(INVISIBLE);
             binding.drawer.setVisibility(INVISIBLE);
             binding.fullscreen.setImageResource(R.mipmap.ic_fullscreen_exit);
-        }
-        else{
+        } else {
             binding.minimize.setVisibility(VISIBLE);
             binding.drawer.setVisibility(VISIBLE);
             binding.fullscreen.setImageResource(R.mipmap.ic_media_fullscreen);
@@ -302,55 +311,41 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        if(v == binding.play && simpleExoPlayer != null){
-            if(simpleExoPlayer.isPlaying()){
+        if (v == binding.play && simpleExoPlayer != null) {
+            if (simpleExoPlayer.isPlaying()) {
                 simpleExoPlayer.setPlayWhenReady(false);
-                if(binding.play != null) {
-                    binding.play.setImageResource(R.mipmap.ic_media_play);
-                }
                 showControls();
-            }
-            else{
-                if(isEnd){
+            } else {
+                if (simpleExoPlayer.getPlaybackState() == STATE_ENDED) {
                     simpleExoPlayer.seekTo(0);
-                    isEnd = false;
                 }
                 simpleExoPlayer.setPlayWhenReady(true);
-                if(binding.play != null) {
-                    binding.play.setImageResource(R.mipmap.ic_media_pause);
-                }
                 hideControls(3000);
             }
             updateSeekBar();
-        }
-        else if(v == binding.videoOption && binding.videoOption.isEnabled()){
-            for(OnPlayerControllerChangedListener OnPlayerControllerChangedListener  :onPlayerControllerChangedListeners){
+        } else if (v == binding.videoOption && binding.videoOption.isEnabled()) {
+            for (OnPlayerControllerChangedListener OnPlayerControllerChangedListener : onPlayerControllerChangedListeners) {
                 OnPlayerControllerChangedListener.onOptionMenuPressed();
             }
-        }
-        else if(v == binding.fullscreen){
-            for(OnPlayerControllerChangedListener onPlayerControllerChangedListener : onPlayerControllerChangedListeners){
+        } else if (v == binding.fullscreen) {
+            for (OnPlayerControllerChangedListener onPlayerControllerChangedListener : onPlayerControllerChangedListeners) {
                 onPlayerControllerChangedListener.onFullScreenButtonPressed();
             }
-        }
-        else if(v == binding.share){
-            for(OnPlayerControllerChangedListener onPlayerControllerChangedListener : onPlayerControllerChangedListeners){
+        } else if (v == binding.share) {
+            for (OnPlayerControllerChangedListener onPlayerControllerChangedListener : onPlayerControllerChangedListeners) {
                 onPlayerControllerChangedListener.onShareButtonPressed();
             }
-        }
-        else if( v == binding.minimize){
-            for(OnPlayerControllerChangedListener onPlayerControllerChangedListener : onPlayerControllerChangedListeners){
+        } else if (v == binding.minimize) {
+            for (OnPlayerControllerChangedListener onPlayerControllerChangedListener : onPlayerControllerChangedListeners) {
                 onPlayerControllerChangedListener.onMinimizeButtonPressed();
             }
 
-        }
-        else if (v == binding.drawer) {
-            for(OnPlayerControllerChangedListener onPlayerControllerChangedListener : onPlayerControllerChangedListeners){
+        } else if (v == binding.drawer) {
+            for (OnPlayerControllerChangedListener onPlayerControllerChangedListener : onPlayerControllerChangedListeners) {
                 onPlayerControllerChangedListener.onDrawerButtonPressed();
             }
 
-        }
-        else if(v == binding.preview){
+        } else if (v == binding.preview) {
             if (showControls()) {
                 if (simpleExoPlayer != null && simpleExoPlayer.isPlaying()) {
                     hideControls(3000);
@@ -372,20 +367,15 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
                 showControls();
                 break;
             case STATE_ENDED:
-                binding.play.setImageResource(R.mipmap.ic_media_play);
-                binding.buffering.setVisibility(GONE);
-                binding.play.setVisibility(VISIBLE);
-                showControls();
-                isEnd = true;
-                break;
             case STATE_IDLE:
+                binding.preview.setImageResource(android.R.color.black);
                 binding.play.setImageResource(R.mipmap.ic_media_play);
                 binding.buffering.setVisibility(GONE);
                 binding.play.setVisibility(VISIBLE);
                 showControls();
                 break;
             case STATE_READY:
-                if (simpleExoPlayer.isPlaying()) {
+                if (playWhenReady) {
                     binding.preview.setImageResource(0);
                     binding.play.setImageResource(R.mipmap.ic_media_pause);
                     binding.buffering.setVisibility(GONE);
@@ -412,13 +402,12 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
         int controlerHeight;
 
         playerWidth = size.x;
-        if(size.x > size.y){ //landscape
+        if (size.x > size.y) { //landscape
             playerHeight = size.y;
             controlerWidth = size.x;
             controlerHeight = size.y;
-        }
-        else{
-            Log.e("width: ","" + playerWidth);
+        } else {
+            Log.e("width: ", "" + playerWidth);
             playerHeight = (playerWidth * 9) / 16;
             Log.e("height: ", "" + playerHeight);
             controlerWidth = playerWidth;
