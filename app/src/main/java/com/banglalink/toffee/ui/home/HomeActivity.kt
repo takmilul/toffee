@@ -42,6 +42,7 @@ import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
+import com.google.android.exoplayer2.util.Util
 import kotlinx.android.synthetic.main.layout_appbar.view.*
 import javax.annotation.Nonnull
 
@@ -122,7 +123,6 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
            }
         }
 
-        binding.playerView.setSimpleExoPlayer(player)
         binding.playerView.addPlayerControllerChangeListener(this)
 
         lifecycle.addObserver(HeartBeatManager)
@@ -131,7 +131,22 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
 
     override fun onResume() {
         super.onResume()
+        binding.playerView.setPlayer(player)
         binding.playerView.resizeView(calculateScreenWidth())
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (Util.SDK_INT <= 23) {
+            binding.playerView.setPlayer(null)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (Util.SDK_INT > 23) {
+            binding.playerView.setPlayer(null)
+        }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -234,14 +249,14 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
 
     fun loadFragmentById(id: Int, fragment: Fragment, tag: String) {
         supportFragmentManager.popBackStack(
-            LandingPageFragment::class.java.getName(),
+            LandingPageFragment::class.java.name,
             0
         )
         supportFragmentManager.beginTransaction()
             .replace(id, fragment).addToBackStack(tag).commit()
     }
 
-    fun loadFragmentById(id: Int, fragment: Fragment) {
+    private fun loadFragmentById(id: Int, fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(id, fragment).commit()
     }
@@ -313,10 +328,8 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     }
 
     override fun onMinimizeButtonPressed(): Boolean {
-        if (binding.draggableView != null) {
-            binding.draggableView.minimize()
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        }
+        binding.draggableView.minimize()
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         return true
     }
 
@@ -333,7 +346,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     }
 
     override fun onBackPressed() {
-        if (binding.drawerLayout != null && binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
+        if (binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
             binding.drawerLayout.closeDrawer(GravityCompat.END)
         } else if (resources.configuration.orientation != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -350,18 +363,14 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     }
 
     fun minimizePlayer() {
-        if (binding.draggableView != null) {
-            binding.draggableView.minimize()
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        }
+        binding.draggableView.minimize()
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
 
     private fun maximizePlayer() {
-        if (binding.draggableView != null) {
-            binding.draggableView.maximize()
-            binding.draggableView.visibility = View.VISIBLE
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
-        }
+        binding.draggableView.maximize()
+        binding.draggableView.visibility = View.VISIBLE
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
