@@ -15,7 +15,6 @@ import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener;
 import com.banglalink.toffee.model.Channel;
 import com.banglalink.toffee.model.ChannelInfo;
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity;
-import com.banglalink.toffee.util.Utils;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Player;
@@ -238,8 +237,8 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
 
     @Override
     public boolean onFullScreenButtonPressed() {
-        boolean landscape = Utils.isFullScreen(this);
-        if(!landscape)
+        boolean isPortrait = getResources().getConfiguration().orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        if(isPortrait)
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         else
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -248,15 +247,6 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
         return true;
     }
 
-    @Override
-    public boolean onDrawerButtonPressed() {
-        return false;
-    }
-
-    @Override
-    public boolean onMinimizeButtonPressed() {
-        return false;
-    }
 
     @Override
     public boolean onOptionMenuPressed() {

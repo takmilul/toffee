@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.widget;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.SurfaceTexture;
 import android.os.Handler;
@@ -113,8 +112,11 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
             }
         }
         this.simpleExoPlayer = simpleExoPlayer;
-        if (simpleExoPlayer != null) {
+        if (this.simpleExoPlayer != null) {
             this.simpleExoPlayer.addListener(this);
+            if(binding.textureView.isAvailable() && this.simpleExoPlayer.getVideoComponent() != null){
+                this.simpleExoPlayer.getVideoComponent().setVideoTextureView(binding.textureView);
+            }
         }
     }
 
@@ -375,8 +377,8 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
                 showControls();
                 break;
             case STATE_READY:
+                binding.preview.setImageResource(0);
                 if (playWhenReady) {
-                    binding.preview.setImageResource(0);
                     binding.play.setImageResource(R.mipmap.ic_media_pause);
                     binding.buffering.setVisibility(GONE);
                     binding.play.setVisibility(VISIBLE);

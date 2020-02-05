@@ -324,7 +324,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
 
     override fun onDrawerButtonPressed(): Boolean {
         binding.drawerLayout.openDrawer(GravityCompat.END, true)
-        return super.onDrawerButtonPressed()
+        return true
     }
 
     override fun onMinimizeButtonPressed(): Boolean {
