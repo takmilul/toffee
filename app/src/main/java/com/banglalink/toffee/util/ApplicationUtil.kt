@@ -1,9 +1,6 @@
 package com.banglalink.toffee.util
 
-import com.banglalink.toffee.exception.ApiException
-import com.banglalink.toffee.exception.AppDeprecatedError
-import com.banglalink.toffee.exception.Error
-import com.banglalink.toffee.exception.UpdateRequiredException
+import com.banglalink.toffee.exception.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
@@ -32,6 +29,9 @@ fun getError(e: Exception): Error {
         }
         is ApiException -> {
             return Error(e.errorCode, e.errorMessage)
+        }
+        is ReferralException -> {
+            return Error(e.errorCode, e.referralStatusMessage, e.referralStatus)
         }
         is UpdateRequiredException->{
             return AppDeprecatedError(-1,"",e.title,e.updateMsg,e.forceUpdate)
