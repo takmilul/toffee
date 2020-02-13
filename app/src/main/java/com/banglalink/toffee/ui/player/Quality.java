@@ -5,8 +5,8 @@ package com.banglalink.toffee.ui.player;
  */
 
 public class Quality {
-    public static final int TYPE_VIDEO = DemoPlayer.TYPE_VIDEO;
-    public static final int TYPE_AUDIO = DemoPlayer.TYPE_AUDIO;
+    public static final int TYPE_VIDEO = 0;
+    public static final int TYPE_AUDIO = 1;
 
     public int type;
     public int index;

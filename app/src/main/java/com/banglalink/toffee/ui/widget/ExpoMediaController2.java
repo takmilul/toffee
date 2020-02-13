@@ -1,213 +1,185 @@
 package com.banglalink.toffee.ui.widget;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
+import android.graphics.Point;
+import android.graphics.SurfaceTexture;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.TextureView;
 import android.view.View;
-import android.widget.Chronometer;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.SeekBar;
 
-import androidx.mediarouter.app.MediaRouteButton;
+import androidx.databinding.DataBindingUtil;
 
 import com.banglalink.toffee.R;
-import com.banglalink.toffee.listeners.MediaPlayerListener;
+import com.banglalink.toffee.databinding.MediaControlLayout2Binding;
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener;
-import com.banglalink.toffee.ui.player.DemoPlayer;
-import com.banglalink.toffee.ui.player.PlayerFragment2;
-import com.banglalink.toffee.ui.player.Quality;
-import com.banglalink.toffee.ui.player.QualityListAdapter;
-import com.banglalink.toffee.util.Utils;
-import com.google.android.exoplayer.MediaFormat;
+import com.google.android.exoplayer2.Player;
 
 import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Locale;
 
+import javax.annotation.Nullable;
+
+import static com.google.android.exoplayer2.Player.STATE_BUFFERING;
+import static com.google.android.exoplayer2.Player.STATE_ENDED;
+import static com.google.android.exoplayer2.Player.STATE_IDLE;
+import static com.google.android.exoplayer2.Player.STATE_READY;
+
 /**
  * Created by shantanu on 5/4/16.
  */
-public class ExpoMediaController2 extends FrameLayout implements  View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+public class ExpoMediaController2 extends FrameLayout implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, Player.EventListener, DraggerLayout.OnPositionChangedListener, TextureView.SurfaceTextureListener {
     private static final int UPDATE_PROGRESS = 21;
-    private final Context mContext;
     private LayoutInflater inflater;
-    private ImageView playButton;
-    private ProgressBar buffering;
-    private ImageView audioButton;
-    private ImageView videoButton;
-    private ImageView fullScreenButton;
     private MessageHandler handler;
-    private OnPlayerControllerChangedListener onPlayerControllerChangedListener;
-    private SeekBar seekBar;
-    private MediaPlayerListener mPlayer;
-    private Chronometer mCurrentTime,mEndTime;
+    private List<OnPlayerControllerChangedListener> onPlayerControllerChangedListeners = new ArrayList<>();
+    private @Nullable
+    Player simpleExoPlayer;
     private StringBuilder mFormatBuilder;
     private Formatter mFormatter;
-    private ImageView shareButton;
-    private VerticalSeekBar vbSeekBar;
-    private ImageView volumeButton;
-    private ImageView minimizeButton;
-    public boolean isEnd = false;
-    private ImageView drawerButton;
-    public MediaRouteButton castButton;
-    private Activity activity;
-    public boolean isMinimize;
-    private PlayerFragment2 fragment;
+    private boolean isMinimize;
     private long lastPlayerPosition = 0;
+
+
+    private int videoWidth = 1920;
+    private int videoHeight = 1080;
+
+    private MediaControlLayout2Binding binding;
 
     public ExpoMediaController2(Context context, AttributeSet attrs) {
         super(context, attrs);
-        this.mContext = context;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         handler = new MessageHandler();
         initView();
     }
 
 
-    public ExpoMediaController2(Context context){
+    public ExpoMediaController2(Context context) {
         super(context);
-        this.mContext = context;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         handler = new MessageHandler();
         initView();
     }
 
-    public void setOnPlayerControllerChangedListener(OnPlayerControllerChangedListener onPlayerControllerChangedListener){
-        this.onPlayerControllerChangedListener = onPlayerControllerChangedListener;
+    public void addPlayerControllerChangeListener(OnPlayerControllerChangedListener onPlayerControllerChangedListener) {
+        onPlayerControllerChangedListeners.add(onPlayerControllerChangedListener);
     }
 
-    private void initView(){
-        View v = inflater.inflate(R.layout.media_control_layout2, this);
-        shareButton = (ImageView) v.findViewById(R.id.share);
-        volumeButton = (ImageView) v.findViewById(R.id.volume);
-        volumeButton.setOnClickListener(this);
-        minimizeButton = (ImageView)v.findViewById(R.id.minimize);
-        minimizeButton.setOnClickListener(this);
-        playButton = (ImageView) v.findViewById(R.id.play);
-        playButton.setOnClickListener(this);
-        buffering = (ProgressBar) v.findViewById(R.id.buffering);
-        audioButton = (ImageView) v.findViewById(R.id.audio_option);
-        videoButton = (ImageView) v.findViewById(R.id.video_option);
-        fullScreenButton = (ImageView) v.findViewById(R.id.fullscreen);
-        mCurrentTime = (Chronometer) v.findViewById(R.id.current_time);
-        castButton = (MediaRouteButton) v.findViewById(R.id.cast);
-        drawerButton = (ImageView)v.findViewById(R.id.drawer);
-        drawerButton.setOnClickListener(this);
+    public void clearListeners() {
+        onPlayerControllerChangedListeners.clear();
+    }
 
-        mEndTime = (Chronometer) v.findViewById(R.id.duration);
-        seekBar = (SeekBar) v.findViewById(R.id.progress);
-        seekBar.setMax(1000);
-        seekBar.setOnSeekBarChangeListener(this);
-        vbSeekBar = (VerticalSeekBar) v.findViewById(R.id.bar);
-        vbSeekBar.setOnSeekBarChangeListener(this);
-        vbSeekBar.setMax(100);
-        audioButton.setOnClickListener(this);
-        videoButton.setOnClickListener(this);
-        fullScreenButton.setOnClickListener(this);
-        shareButton.setOnClickListener(this);
+    private void initView() {
+        binding = DataBindingUtil.inflate(inflater, R.layout.media_control_layout2, this, true);
+        binding.minimize.setOnClickListener(this);
+        binding.play.setOnClickListener(this);
+        binding.drawer.setOnClickListener(this);
+
+
+        binding.progress.setMax(1000);
+        binding.progress.setOnSeekBarChangeListener(this);
+        binding.videoOption.setOnClickListener(this);
+        binding.fullscreen.setOnClickListener(this);
+        binding.preview.setOnClickListener(this);
+        binding.share.setOnClickListener(this);
         mFormatBuilder = new StringBuilder();
         mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
     }
 
-    public void setPlayer(MediaPlayerListener mediaPlayer){
-        this.mPlayer = mediaPlayer;
+
+    //Use this method to set and unset the player
+    public void setPlayer(@Nullable Player simpleExoPlayer) {
+        if (this.simpleExoPlayer == simpleExoPlayer) {
+            return;
+        }
+        binding.textureView.setSurfaceTextureListener(this);
+        if(binding.textureView.isAvailable()){
+            binding.preview.setImageBitmap(binding.textureView.getBitmap());
+        }
+        Player oldPlayer = this.simpleExoPlayer;//get reference of old player which attached previously
+        if (oldPlayer != null) {//if old player not null then clear it
+            oldPlayer.removeListener(this);
+            if (oldPlayer.getVideoComponent() != null) {
+                oldPlayer.getVideoComponent().clearVideoTextureView(binding.textureView);
+            }
+        }
+        this.simpleExoPlayer = simpleExoPlayer;
+        if (this.simpleExoPlayer != null) {
+            this.simpleExoPlayer.addListener(this);
+            if(binding.textureView.isAvailable() && this.simpleExoPlayer.getVideoComponent() != null){
+                this.simpleExoPlayer.getVideoComponent().setVideoTextureView(binding.textureView);
+            }
+        }
     }
 
-    public MediaPlayerListener getPlayer(){
-        return this.mPlayer;
+
+    public void showWifiOnlyMessage() {
+        binding.preview.setImageResource(R.mipmap.watch_wifi_only_msg);
+        hideControls(0);
+        binding.preview.setOnClickListener(null);
     }
 
-    public boolean showControls(){
+    public boolean showControls() {
         boolean status = false;
         handler.removeCallbacks(hideRunnable);
-        Log.e("controls","visibility " + getVisibility() + " minimize " + isMinimize);
-        if(getVisibility() != VISIBLE && !isMinimize) {
-            updateControllerState();
-            setVisibility(VISIBLE);
+        Log.e("controls", "visibility " + getVisibility() + " minimize " + isMinimize);
+        if (binding.controller.getVisibility() != VISIBLE && !isMinimize) {
+            binding.controller.setVisibility(VISIBLE);
             status = true;
         }
         updateSeekBar();
         return status;
     }
 
-    private void updateControllerState() {
-        if(mPlayer == null) return;
-        if(mPlayer.isPlaying()){
-            playButton.setImageResource(R.mipmap.ic_media_pause);
-        }
-        else {
-            playButton.setImageResource(R.mipmap.ic_media_play);
-        }
-    }
 
-    public static final int STATE_BUFFERING = 0;
-    public static final int STATE_PLAYING = 1;
-    public static final int STATE_PAUSE = 2;
-
-    public void setPlayState(int state){
-        if(state == STATE_BUFFERING){//buffering
-            playButton.setVisibility(GONE);
-            buffering.setVisibility(VISIBLE);
-        }
-        else if(state == STATE_PLAYING) { //playing
-            playButton.setImageResource(R.mipmap.ic_media_pause);
-            buffering.setVisibility(GONE);
-            playButton.setVisibility(VISIBLE);
-        }
-        else if(state == STATE_PAUSE){ //pause or end
-            playButton.setImageResource(R.mipmap.ic_media_play);
-            buffering.setVisibility(GONE);
-            playButton.setVisibility(VISIBLE);
-        }
-    }
-
-    Runnable hideRunnable = new Runnable(){
-        public void run(){
-            if(getVisibility() != INVISIBLE) {
-                setVisibility(INVISIBLE);
+    Runnable hideRunnable = new Runnable() {
+        public void run() {
+            if (binding.controller.getVisibility() != INVISIBLE) {
+                binding.controller.setVisibility(INVISIBLE);
             }
         }
     };
-    public long getLastPlayerPosition(){
+
+    public long getLastPlayerPosition() {
         return lastPlayerPosition;
     }
 
-    private void updateSeekBar(){
-        Log.e("controls","updating seekbar ");
-        if(mPlayer == null){
+    private void updateSeekBar() {
+        Log.e("controls", "updating seekbar ");
+        if (simpleExoPlayer == null) {
             return;
         }
-        lastPlayerPosition = mPlayer.getCurrentPosition();
-        long duration = mPlayer.getDuration();
-        if (duration > 0) {
+        lastPlayerPosition = simpleExoPlayer.getCurrentPosition();
+        long duration = simpleExoPlayer.getDuration();
+        if (duration> 0 && !simpleExoPlayer.isCurrentWindowLive()) {
             // use long to avoid overflow
             long pos = 1000L * lastPlayerPosition / duration;
-            seekBar.setEnabled(true);
-            seekBar.setProgress((int) pos);
-            mEndTime.setVisibility(VISIBLE);
+            binding.progress.setEnabled(true);
+            binding.progress.setProgress((int) pos);
+            binding.duration.setVisibility(VISIBLE);
+            binding.currentTime.setVisibility(VISIBLE);
         } else {
-            seekBar.setEnabled(false);
-            mEndTime.setVisibility(INVISIBLE);
+            binding.progress.setEnabled(false);
+            binding.duration.setVisibility(INVISIBLE);
+            binding.currentTime.setVisibility(INVISIBLE);
             Log.e("seek bar: ", "seek bar is disable");
         }
-        int percent = mPlayer.getBufferPercentage();
-        seekBar.setSecondaryProgress(percent * 10);
-        if (mEndTime != null)
-            mEndTime.setText(stringForTime(duration));
-        if (mCurrentTime != null)
-            mCurrentTime.setText(stringForTime(lastPlayerPosition));
+        int percent = simpleExoPlayer.getBufferedPercentage();
+        binding.progress.setSecondaryProgress(percent * 10);
+        binding.duration.setText(stringForTime(duration));
+        binding.currentTime.setText(stringForTime(lastPlayerPosition));
         Log.e("lastPlayerPosition: ", "" + lastPlayerPosition);
         Log.e("duration: ", "" + duration);
         Log.e("percent: ", "" + percent);
-        if (getVisibility() == VISIBLE && mPlayer.isPlaying()) {
+        if (getVisibility() == VISIBLE && simpleExoPlayer.isPlaying()) {
             Message msg = new Message();
             msg.what = UPDATE_PROGRESS;
             handler.sendMessageDelayed(msg, 1000);
@@ -220,7 +192,7 @@ public class ExpoMediaController2 extends FrameLayout implements  View.OnClickLi
 
         int seconds = (int) (totalSeconds % 60);
         int minutes = (int) ((totalSeconds / 60) % 60);
-        int hours   = (int) (totalSeconds / 3600);
+        int hours = (int) (totalSeconds / 3600);
 
         mFormatBuilder.setLength(0);
         if (hours > 0) {
@@ -230,24 +202,23 @@ public class ExpoMediaController2 extends FrameLayout implements  View.OnClickLi
         }
     }
 
-    public void hideControls(long delay){
+    public void hideControls(long delay) {
         handler.removeCallbacks(hideRunnable);
-        handler.postDelayed(hideRunnable,delay);
+        handler.postDelayed(hideRunnable, delay);
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if (!fromUser && seekBar == this.seekBar) {
+        if (!fromUser && seekBar == this.binding.progress) {
             return;
         }
-        if(seekBar == this.seekBar) {
-            long duration = mPlayer.getDuration();
+        if (seekBar == this.binding.progress && simpleExoPlayer != null) {
+            long duration = simpleExoPlayer.getDuration();
             long newPosition = (duration * progress) / 1000L;
-            mPlayer.seekTo((int) newPosition);
-            if (mCurrentTime != null) {
-                mCurrentTime.setText(stringForTime((int) newPosition));
+            simpleExoPlayer.seekTo((int) newPosition);
+            if (binding.currentTime != null) {
+                binding.currentTime.setText(stringForTime((int) newPosition));
             }
-            isEnd = false;
         }
     }
 
@@ -261,18 +232,64 @@ public class ExpoMediaController2 extends FrameLayout implements  View.OnClickLi
         updateSeekBar();
     }
 
-    public void setActivity(PlayerFragment2 fragment) {
-        this.activity = fragment.getActivity();
-        this.fragment = fragment;
+    @Override
+    public void onViewMinimize() {
+        binding.root.setKeepScreenOn(true);
+        isMinimize = true;
+        binding.textureView.setOnClickListener(null);
+        hideControls(0);
+    }
+
+    @Override
+    public void onViewMaximize() {
+        binding.root.setKeepScreenOn(true);
+        isMinimize = false;
+        binding.textureView.setOnClickListener(this);
+        if (simpleExoPlayer != null && simpleExoPlayer.isPlaying()) {
+            hideControls(2000);
+        } else {
+            showControls();
+        }
+    }
+
+    @Override
+    public void onViewDestroy() {
+        binding.root.setKeepScreenOn(false);
+        if (simpleExoPlayer != null) {
+            simpleExoPlayer.stop();
+        }
+    }
+
+    @Override
+    public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i1) {
+        if (simpleExoPlayer != null && simpleExoPlayer.getVideoComponent() != null) {
+            simpleExoPlayer.getVideoComponent().setVideoTextureView(binding.textureView);
+        }
+
+    }
+
+    @Override
+    public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int i, int i1) {
+
+    }
+
+    @Override
+    public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
+        return false;
+    }
+
+    @Override
+    public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {
+
     }
 
 
     private class MessageHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case UPDATE_PROGRESS:
-                    Log.e("update seek","from timer");
+                    Log.e("update seek", "from timer");
                     updateSeekBar();
                     break;
                 default:
@@ -282,114 +299,134 @@ public class ExpoMediaController2 extends FrameLayout implements  View.OnClickLi
     }
 
     public void onFullScreen(boolean state) {
-        if(state){ //fullscreen
-            minimizeButton.setVisibility(INVISIBLE);
-            drawerButton.setVisibility(INVISIBLE);
-            fullScreenButton.setImageResource(R.mipmap.ic_fullscreen_exit);
-        }
-        else{
-            minimizeButton.setVisibility(VISIBLE);
-            drawerButton.setVisibility(VISIBLE);
-            fullScreenButton.setImageResource(R.mipmap.ic_media_fullscreen);
+        if (state) { //fullscreen
+            binding.minimize.setVisibility(INVISIBLE);
+            binding.drawer.setVisibility(INVISIBLE);
+            binding.fullscreen.setImageResource(R.mipmap.ic_fullscreen_exit);
+        } else {
+            binding.minimize.setVisibility(VISIBLE);
+            binding.drawer.setVisibility(VISIBLE);
+            binding.fullscreen.setImageResource(R.mipmap.ic_media_fullscreen);
         }
     }
 
 
     @Override
     public void onClick(View v) {
-        if(v == playButton && mPlayer != null){
-            if(onPlayerControllerChangedListener != null){
-                if(onPlayerControllerChangedListener.onPlayButtonPressed(mPlayer.isPlaying()? STATE_PLAYING:STATE_PAUSE)){
-                    return;
-                }
-            }
-            if(mPlayer.isPlaying()){
-                mPlayer.pause();
-                if(playButton != null) {
-                    playButton.setImageResource(R.mipmap.ic_media_play);
-                }
+        if (v == binding.play && simpleExoPlayer != null) {
+            if (simpleExoPlayer.isPlaying()) {
+                simpleExoPlayer.setPlayWhenReady(false);
                 showControls();
-            }
-            else{
-                if(isEnd){
-                    mPlayer.seekTo(0);
-                    isEnd = false;
+            } else {
+                if (simpleExoPlayer.getPlaybackState() == STATE_ENDED) {
+                    simpleExoPlayer.seekTo(0);
                 }
-                mPlayer.start();
-                if(playButton != null) {
-                    playButton.setImageResource(R.mipmap.ic_media_pause);
-                }
+                simpleExoPlayer.setPlayWhenReady(true);
                 hideControls(3000);
             }
             updateSeekBar();
-        }
-//        else if(v == audioButton && onControlButtonPressListener != null){
-//            onControlButtonPressListener.onAudioOptionPress(popupView);
-//        }
-        else if(v == videoButton && videoButton.isEnabled()){
-            if(onPlayerControllerChangedListener != null){
-                if(onPlayerControllerChangedListener.onOptionMenuPressed()) return;
+        } else if (v == binding.videoOption && binding.videoOption.isEnabled()) {
+            for (OnPlayerControllerChangedListener OnPlayerControllerChangedListener : onPlayerControllerChangedListeners) {
+                OnPlayerControllerChangedListener.onOptionMenuPressed();
             }
-            final QualityListAdapter mAdapter = new QualityListAdapter(getContext(),R.layout.list_item_quality);
-            mAdapter.addAll(getVideoQualityList());
-            ActionMenuList actionMenuList = new ActionMenuList(getContext(), mAdapter, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                    Quality quality = mAdapter.getItem(which);
-                    if(mPlayer != null){
-                        mPlayer.setSelectedTrack(quality.type,quality.index);
-                    }
-                }
-            });
-            actionMenuList.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    dialog.dismiss();
-                    fragment.updateFullScreenState();
-                }
-            });
-            if(mAdapter.getCount() > 0){
-                actionMenuList.show();
+        } else if (v == binding.fullscreen) {
+            for (OnPlayerControllerChangedListener onPlayerControllerChangedListener : onPlayerControllerChangedListeners) {
+                onPlayerControllerChangedListener.onFullScreenButtonPressed();
             }
-        }
-        else if(v == fullScreenButton){
-            final boolean currentState = Utils.isFullScreen(activity);
-            if(onPlayerControllerChangedListener != null && onPlayerControllerChangedListener.onFullScreenButtonPressed(currentState)) return;
-            fragment.onFullScreenButtonPressed(currentState);
-        }
-        else if(v == shareButton && fragment != null){
-            fragment.onShare();
-        }
-        else if( v == minimizeButton && onPlayerControllerChangedListener != null){
-            onPlayerControllerChangedListener.onMinimizeButtonPressed();
-        }
-        else if (v == drawerButton && onPlayerControllerChangedListener != null) {
-            onPlayerControllerChangedListener.onDrawerButtonPressed();
+        } else if (v == binding.share) {
+            for (OnPlayerControllerChangedListener onPlayerControllerChangedListener : onPlayerControllerChangedListeners) {
+                onPlayerControllerChangedListener.onShareButtonPressed();
+            }
+        } else if (v == binding.minimize) {
+            for (OnPlayerControllerChangedListener onPlayerControllerChangedListener : onPlayerControllerChangedListeners) {
+                onPlayerControllerChangedListener.onMinimizeButtonPressed();
+            }
+
+        } else if (v == binding.drawer) {
+            for (OnPlayerControllerChangedListener onPlayerControllerChangedListener : onPlayerControllerChangedListeners) {
+                onPlayerControllerChangedListener.onDrawerButtonPressed();
+            }
+
+        } else if (v == binding.preview) {
+            if (showControls()) {
+                if (simpleExoPlayer != null && simpleExoPlayer.isPlaying()) {
+                    hideControls(3000);
+                }
+            } else {
+                hideControls(0);
+            }
         }
     }
 
-    private List<Quality> getVideoQualityList(){
-        List<Quality> videoQualityList = new ArrayList<>();
-        int videoIndex = mPlayer.getSelectedTrack(DemoPlayer.TYPE_VIDEO);
-        if(videoIndex >= 0){
-            int count = mPlayer.getTrackCount(DemoPlayer.TYPE_VIDEO);
-            for(int i=0;i<count;i++){
-                boolean selected = (videoIndex == i);
-                Quality quality = new Quality(i,
-                        buildResolutionString(mPlayer.getTrackFormat(DemoPlayer.TYPE_VIDEO,i)),
-                        Quality.TYPE_VIDEO,selected);
-                videoQualityList.add(quality);
-            }
+    @Override
+    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+        switch (playbackState) {
+            case STATE_BUFFERING:
+                binding.preview.setOnClickListener(this);
+                binding.preview.setImageResource(android.R.color.black);
+                binding.play.setVisibility(GONE);
+                binding.buffering.setVisibility(VISIBLE);
+                showControls();
+                break;
+            case STATE_ENDED:
+            case STATE_IDLE:
+                binding.preview.setImageResource(android.R.color.black);
+                binding.play.setImageResource(R.mipmap.ic_media_play);
+                binding.buffering.setVisibility(GONE);
+                binding.play.setVisibility(VISIBLE);
+                showControls();
+                break;
+            case STATE_READY:
+                binding.preview.setImageResource(0);
+                if (playWhenReady) {
+                    binding.play.setImageResource(R.mipmap.ic_media_pause);
+                    binding.buffering.setVisibility(GONE);
+                    binding.play.setVisibility(VISIBLE);
+                    showControls();//it is necessary since we don't have preparing state of player
+                    hideControls(3000);
+                } else {
+                    binding.play.setImageResource(R.mipmap.ic_media_play);
+                    binding.buffering.setVisibility(GONE);
+                    binding.play.setVisibility(VISIBLE);
+                    showControls();
+                }
+                break;
+            default:
+                break;
         }
-        return videoQualityList;
     }
 
-    private static String buildResolutionString(MediaFormat format) {
-        if(format.adaptive){
-            return "Auto";
+
+    public void resizeView(Point size) {
+        int playerWidth;
+        int playerHeight;
+        int controlerWidth;
+        int controlerHeight;
+
+        playerWidth = size.x;
+        if (size.x > size.y) { //landscape
+            playerHeight = size.y;
+            controlerWidth = size.x;
+            controlerHeight = size.y;
+        } else {
+            Log.e("width: ", "" + playerWidth);
+            playerHeight = (playerWidth * 9) / 16;
+            Log.e("height: ", "" + playerHeight);
+            controlerWidth = playerWidth;
+            controlerHeight = playerHeight;
         }
-        return format.width == MediaFormat.NO_VALUE || format.height == MediaFormat.NO_VALUE
-                ? "" : format.width + "x" + format.height;
+
+
+        ViewGroup.LayoutParams params;
+        params = getLayoutParams();
+        params.width = controlerWidth;
+        params.height = controlerHeight;
+        setLayoutParams(params);
+
+        params = binding.playerContainer.getLayoutParams();
+        params.width = playerWidth;
+        params.height = playerHeight;
+        binding.playerContainer.setLayoutParams(params);
+
     }
 }

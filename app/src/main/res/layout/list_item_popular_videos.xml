@@ -64,15 +64,15 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
             android:ellipsize="end"
             android:singleLine="true"
+            android:text="@{data.program_name}"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#29466b"
-            android:text="@{data.program_name}"
             app:layout_constraintBottom_toBottomOf="@+id/view"
-            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintEnd_toStartOf="@+id/options"
             app:layout_constraintStart_toStartOf="@id/view"
             app:layout_constraintTop_toTopOf="@+id/view"
             tools:text="TextView" />
@@ -81,23 +81,15 @@
             android:id="@+id/options"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:padding="5dp"
+            android:layout_marginEnd="10dp"
             android:clickable="true"
             android:focusable="true"
-            android:layout_marginEnd="10dp"
             android:onClick="@{(v)->callback.onOptionClicked(v,data)}"
-            app:layout_constraintBottom_toBottomOf="@+id/view"
+            android:padding="5dp"
+            app:layout_constraintBottom_toBottomOf="@+id/name"
             app:layout_constraintEnd_toEndOf="@+id/view"
-            app:layout_constraintStart_toStartOf="@+id/guideline2"
-            app:layout_constraintTop_toTopOf="@+id/view"
-            app:srcCompat="@mipmap/ic_overlay_dark"/>
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.9026764"/>
+            app:layout_constraintTop_toTopOf="@+id/name"
+            app:srcCompat="@mipmap/ic_overlay_dark" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

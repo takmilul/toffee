@@ -14,6 +14,9 @@ import androidx.customview.widget.ViewDragHelper;
 
 import com.banglalink.toffee.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by shantanu on 12/9/16.
  */
@@ -35,7 +38,7 @@ public class DraggerLayout extends RelativeLayout {
     private int mHorizontalDragRange;
     private int mTop;
     private int mLeft;
-    private OnPositionChangedListener onPositionChangedListener;
+    private List<OnPositionChangedListener> onPositionChangedListenerList = new ArrayList<>();
 
     public DraggerLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -70,8 +73,13 @@ public class DraggerLayout extends RelativeLayout {
 
     public void minimize() {
         smoothSlideTo(1f);
-        if(onPositionChangedListener != null){
-            onPositionChangedListener.onViewMinimize();
+
+        int height = getHeight();
+        Log.e("Height",String.valueOf(height));
+        for(OnPositionChangedListener onPositionChangedListener : onPositionChangedListenerList){
+            if(onPositionChangedListener != null){
+                onPositionChangedListener.onViewMinimize();
+            }
         }
     }
 
@@ -83,8 +91,11 @@ public class DraggerLayout extends RelativeLayout {
 
     public void maximize() {
         smoothSlideTo(0f);
-        if(onPositionChangedListener != null){
-            onPositionChangedListener.onViewMaximize();
+
+        for(OnPositionChangedListener onPositionChangedListener : onPositionChangedListenerList){
+            if(onPositionChangedListener != null){
+                onPositionChangedListener.onViewMaximize();
+            }
         }
     }
 
@@ -202,8 +213,11 @@ public class DraggerLayout extends RelativeLayout {
                     if (viewDragHelper.smoothSlideViewTo(dragView, 0 - (getRight() - getPaddingRight()), newtop)) {
                         ViewCompat.postInvalidateOnAnimation(parent);
                     }
-                    if(onPositionChangedListener != null){
-                        onPositionChangedListener.onViewDestroy();
+
+                    for(OnPositionChangedListener onPositionChangedListener : onPositionChangedListenerList){
+                        if(onPositionChangedListener != null){
+                            onPositionChangedListener.onViewDestroy();
+                        }
                     }
                     dragView.setScaleX(1.0f);
                     dragView.setScaleY(1.0f);
@@ -241,7 +255,7 @@ public class DraggerLayout extends RelativeLayout {
                 if (bottomBound != 0) {
                     int colorValue = (256 - (top * 256 / bottomBound));
                     parent.setBackgroundColor(Color.argb(colorValue, colorValue, colorValue, colorValue));
-                    float scale = 1.0f - (0.50f * (top * 100 / bottomBound) / 100.0f);
+                    float scale = 1.0f - (0.50f * (top * 100f / bottomBound) / 100.0f);
                     dragView.setPivotX(dragView.getWidth() - 38);
                     dragView.setPivotY(dragView.getHeight() - 38);
                     int padding = (int) (20 - 20 * scale);
@@ -251,8 +265,8 @@ public class DraggerLayout extends RelativeLayout {
                     } else {
                         dragView.setBackgroundColor(Color.BLACK);
                     }
-                    ViewCompat.setScaleX(dragView, scale);
-                    ViewCompat.setScaleY(dragView, scale);
+                    dragView.setScaleX(scale);
+                    dragView.setScaleY(scale);
                 }
             }
             requestLayout();
@@ -290,8 +304,8 @@ public class DraggerLayout extends RelativeLayout {
         }
     }
 
-    public void setOnPositionChangedListener(OnPositionChangedListener onPositionChangedListener){
-        this.onPositionChangedListener = onPositionChangedListener;
+    public void addOnPositionChangedListener(OnPositionChangedListener onPositionChangedListener){
+        this.onPositionChangedListenerList.add(onPositionChangedListener);
     }
 
     public interface OnPositionChangedListener{

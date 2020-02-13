@@ -4,27 +4,25 @@ import com.banglalink.toffee.data.network.request.HeartBeatRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.util.getError
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import java.util.*
 
-class SendHeartBeat(private val coroutineScope: CoroutineScope,private val preference: Preference,private val toffeeApi: ToffeeApi):TimerTask() {
-    override fun run() {
-        coroutineScope.launch {
-            try{
-                execute()
-            }catch (e:Exception){
-                getError(e)
-            }
+class SendHeartBeat(
+    private val preference: Preference,
+    private val toffeeApi: ToffeeApi
+) {
 
-        }
-    }
-
-    private suspend fun execute(){
+    suspend fun execute(contentId: Int, contentType: String) {
         val response = tryIO {
-            toffeeApi.sendHeartBeat(HeartBeatRequest(preference.customerId,preference.password,preference.latitude,preference.longitude))
+            toffeeApi.sendHeartBeat(
+                HeartBeatRequest(
+                    contentId,
+                    contentType,
+                    preference.customerId,
+                    preference.password,
+                    preference.latitude,
+                    preference.longitude
+                )
+            )
         }
-        preference.sessionToken=response.response.sessionToken?:""
+        preference.sessionToken = response.response.sessionToken ?: ""
     }
 }

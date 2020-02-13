@@ -95,7 +95,7 @@ class EditProfileActivity : BaseAppCompatActivity() {
     private fun checkCameraPermissions() {
         lifecycleScope.launch{
             try {
-                if(askPermission(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE).isAccepted){
+                if(askPermission(Manifest.permission.CAMERA).isAccepted){
                     openCameraIntent()
                 }
             }

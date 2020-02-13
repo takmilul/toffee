@@ -81,9 +81,14 @@ class DrawerHelper(val activity: HomeActivity,val binding:ActivityMainMenuBindin
         profileName.setOnClickListener{
             activity.launchActivity<ViewProfileActivity>()
         }
+
+        val navBarClose = header.findViewById<ImageView>(R.id.nav_bar_close)
+        navBarClose.setOnClickListener{
+            binding.drawerLayout.closeDrawers()
+        }
     }
 
-    fun generateNavMenu(): List<NavigationMenu> {
+    private fun generateNavMenu(): List<NavigationMenu> {
         val navigationMenuList = ArrayList<NavigationMenu>()
         navigationMenuList.add(
             NavigationMenu(

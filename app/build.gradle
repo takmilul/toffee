@@ -49,19 +49,19 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.core:core-ktx:1.1.0'
+    implementation 'androidx.core:core-ktx:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
     //Retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.6.2'
+    implementation 'com.squareup.retrofit2:retrofit:2.7.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.2.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.1'
     //LifeCycle Extensions
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.1.0"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
     implementation "android.arch.lifecycle:extensions:2.1.0"
 
     implementation 'androidx.leanback:leanback:1.0.0'
-    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.google.android.material:material:1.1.0'
     //Switch Lib
     implementation 'com.github.zcweng:switch-button:0.0.3@aar'
 
@@ -73,34 +73,41 @@ dependencies {
     implementation 'com.xfinity:dahdit:0.9.3'
 
     //Coil image Lib
-    implementation 'io.coil-kt:coil:0.8.0'
+    implementation 'io.coil-kt:coil:0.9.3'
 
     //Firebase Push Notification
     implementation 'com.google.firebase:firebase-messaging:20.1.0'
      //Firebase in app messaging
-    implementation 'com.google.firebase:firebase-inappmessaging-display:19.0.2'
+    implementation 'com.google.firebase:firebase-inappmessaging-display:19.0.3'
     //Firebase core
-    implementation 'com.google.firebase:firebase-core:17.2.1'
+    implementation 'com.google.firebase:firebase-core:17.2.2'
+    // Recommended: Add the Firebase SDK for Google Analytics.
+    implementation 'com.google.firebase:firebase-analytics:17.2.2'
+
+    // Add the Firebase SDK for Crashlytics.
+    implementation 'com.google.firebase:firebase-crashlytics:17.0.0-beta01'
 
     implementation project(':slider')
 
-    implementation 'androidx.mediarouter:mediarouter:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.google.android.material:material:1.1.0'
 
 
-    implementation 'com.google.android.exoplayer:exoplayer:r1.5.7'
-    implementation 'com.google.android.gms:play-services-cast-framework:17.1.0'
+//    implementation 'com.google.android.exoplayer:exoplayer:2.11.1'
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.11.1'
+    implementation 'com.google.android.exoplayer:exoplayer-hls:2.11.1'
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.11.1'
+//    implementation 'com.google.android.gms:play-services-cast-framework:17.1.0'
 
     //Permission extension
     implementation 'com.github.florent37:runtime-permission-kotlin:1.1.1'
     //Facebook SDK
-    implementation 'com.facebook.android:facebook-android-sdk:5.13.0'
+    implementation 'com.facebook.android:facebook-android-sdk:5.15.3'
     //Leak canary
 //    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-4'
 
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0-rc03"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0-rc03"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0"
 
     testImplementation 'junit:junit:4.12'
     testImplementation "android.arch.core:core-testing:1.1.1"
@@ -110,3 +117,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }
 apply plugin: 'com.google.gms.google-services'
+// Apply the Crashlytics Gradle plugin
+apply plugin: 'com.google.firebase.crashlytics'

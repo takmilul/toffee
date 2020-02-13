@@ -17,7 +17,5 @@ class CommonChannelAdapter(private val optionCallBack: OptionCallBack, channelCa
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         super.onBindViewHolder(holder, position)
         holder.bindCallBack(optionCallBack)
-
-
     }
 }

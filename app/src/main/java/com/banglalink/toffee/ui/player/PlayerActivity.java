@@ -1,132 +1,238 @@
 package com.banglalink.toffee.ui.player;
 
-import android.media.AudioManager;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.KeyEvent;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.banglalink.toffee.data.storage.Preference;
+import com.banglalink.toffee.BuildConfig;
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener;
+import com.banglalink.toffee.model.Channel;
+import com.banglalink.toffee.model.ChannelInfo;
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity;
-import com.google.android.gms.cast.framework.CastContext;
-import com.google.android.gms.cast.framework.CastSession;
-import com.google.android.gms.cast.framework.SessionManagerListener;
+import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ParserException;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.source.BehindLiveWindowException;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.source.hls.HlsMediaSource;
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.google.android.exoplayer2.util.EventLogger;
+import com.google.android.exoplayer2.util.Util;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
+
 
 /**
  * Created by shantanu on 5/5/17.
  */
 
-public abstract class PlayerActivity extends BaseAppCompatActivity implements OnPlayerControllerChangedListener {
-    protected PlayerFragment2 mediaPlayer;
+public abstract class PlayerActivity extends BaseAppCompatActivity implements OnPlayerControllerChangedListener, Player.EventListener {
     protected Handler handler;
-    private CastContext mCastContext;
-    protected CastSession mCastSession;
-    private AudioManager audioManager;
+
+    @Nullable
+    protected SimpleExoPlayer player;
+    private DefaultTrackSelector defaultTrackSelector;
+
+    private MediaSource mediaSource;
+    private DefaultTrackSelector.Parameters trackSelectorParameters;
+    private TrackGroupArray lastSeenTrackGroupArray;
+
+
+    private boolean startAutoPlay;
+    private int startWindow;
+    private long startPosition;
+
+    private PlayerEventListener playerEventListener = new PlayerEventListener();
+
+    protected ChannelInfo channelInfo;
+    private boolean isShowingTrackSelectionDialog;
+
+    private static final CookieManager DEFAULT_COOKIE_MANAGER;
+    static {
+        DEFAULT_COOKIE_MANAGER = new CookieManager();
+        DEFAULT_COOKIE_MANAGER.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER);
+    }
+
+    private static final String KEY_TRACK_SELECTOR_PARAMETERS = "track_selector_parameters";
+    private static final String KEY_WINDOW = "window";
+    private static final String KEY_POSITION = "position";
+    private static final String KEY_AUTO_PLAY = "auto_play";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mCastContext = CastContext.getSharedInstance(this);
-        mCastSession = mCastContext.getSessionManager().getCurrentCastSession();
         handler = new Handler();
-        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(mCastSession == null || !mCastSession.isConnected()) {
-            if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-                audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI);
-                return true;
-            } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-                audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI);
-                return true;
-            }
+        if (CookieHandler.getDefault() != DEFAULT_COOKIE_MANAGER) {
+            CookieHandler.setDefault(DEFAULT_COOKIE_MANAGER);
         }
-        return super.onKeyDown(keyCode, event);
-    }
-
-    public CastSession getCastSession(){
-        return this.mCastSession;
+        if (savedInstanceState != null) {
+            trackSelectorParameters = savedInstanceState.getParcelable(KEY_TRACK_SELECTOR_PARAMETERS);
+            startAutoPlay = savedInstanceState.getBoolean(KEY_AUTO_PLAY);
+            startWindow = savedInstanceState.getInt(KEY_WINDOW);
+            startPosition = savedInstanceState.getLong(KEY_POSITION);
+        } else {
+            DefaultTrackSelector.ParametersBuilder builder =
+                    new DefaultTrackSelector.ParametersBuilder(/* context= */ this);
+            if (Util.SDK_INT >= 21) {
+                builder.setTunnelingAudioSessionId(C.generateAudioSessionIdV21(/* context= */ this));
+            }
+            trackSelectorParameters = builder.build();
+            clearStartPosition();
+        }
     }
 
     @Override
-    protected void onResume() {
+    public void onStart() {
+        super.onStart();
+        if (Util.SDK_INT > 23) {
+            initializePlayer();
+        }
+    }
+
+    @Override
+    public void onResume() {
         super.onResume();
-        mCastContext.getSessionManager().addSessionManagerListener(
-                mSessionManagerListener, CastSession.class);
+        if (Util.SDK_INT <= 23 || player == null) {
+            initializePlayer();
+        }
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
-        mCastContext.getSessionManager().removeSessionManagerListener(
-                mSessionManagerListener, CastSession.class);
+        if (Util.SDK_INT <= 23) {
+            releasePlayer();
+        }
     }
 
-    private SessionManagerListener<CastSession> mSessionManagerListener = new SessionManagerListener<CastSession>() {
-
-        @Override
-        public void onSessionEnded(CastSession session, int error) {
-            mediaPlayer.onCastSessionEnd(session);
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (Util.SDK_INT > 23) {
+            releasePlayer();
         }
+    }
 
-        @Override
-        public void onSessionResumed(CastSession session, boolean wasSuspended) {
-            mCastSession = session;
-            mediaPlayer.setCastSession(session);
-//            mediaPlayer.onCastSessionStarted(session);
-        }
 
-        @Override
-        public void onSessionResumeFailed(CastSession session, int error) {
-            mediaPlayer.onCastSessionEnd(session);
-        }
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        updateTrackSelectorParameters();
+        updateStartPosition();
+        outState.putParcelable(KEY_TRACK_SELECTOR_PARAMETERS, trackSelectorParameters);
+        outState.putBoolean(KEY_AUTO_PLAY, startAutoPlay);
+        outState.putInt(KEY_WINDOW, startWindow);
+        outState.putLong(KEY_POSITION, startPosition);
+    }
 
-        @Override
-        public void onSessionStarted(CastSession session, String sessionId) {
-            mCastSession = session;
-            mediaPlayer.onCastSessionStarted(session);
 
-            JSONObject jobj = new JSONObject();
-            try {
-                jobj.put("user", Preference.Companion.getInstance().getCustomerId());
-                jobj.put("pass", Preference.Companion.getInstance().getPassword());
-            } catch (JSONException e) {
-                e.printStackTrace();
+    private void initializePlayer() {
+        if (player == null) {
+            DefaultBandwidthMeter defaultBandwidthMeter = new DefaultBandwidthMeter.Builder(this).build();
+            AdaptiveTrackSelection.Factory adaptiveTrackSelectionFactory = new AdaptiveTrackSelection.Factory();
+            defaultTrackSelector = new DefaultTrackSelector(this, adaptiveTrackSelectionFactory);
+            defaultTrackSelector.setParameters(trackSelectorParameters);
+            lastSeenTrackGroupArray = null;
+
+            player =
+                    new SimpleExoPlayer.Builder(/* context= */ this)
+                            .setTrackSelector(defaultTrackSelector)
+                            .setBandwidthMeter(defaultBandwidthMeter)
+                            .build();
+            player.addListener(playerEventListener);
+            player.setPlayWhenReady(startAutoPlay);
+            if(BuildConfig.DEBUG){
+                player.addAnalyticsListener(new EventLogger(defaultTrackSelector));
             }
-            session.sendMessage("urn:x-cast:com.viewersent.cast.sampleplayer", jobj.toString());
         }
-
-        @Override
-        public void onSessionStartFailed(CastSession session, int error) {
-            mediaPlayer.onCastSessionEnd(session);
+        if(channelInfo!=null){
+            mediaSource = prepareMedia(Uri.parse( Channel.createChannel(channelInfo).getContentUri(this)));
+            player.setPlayWhenReady(false);
+            boolean haveStartPosition = startWindow != C.INDEX_UNSET;
+            if (haveStartPosition && !channelInfo.isLive()) {
+                player.seekTo(startWindow, startPosition);
+            }
+            player.prepare(mediaSource, !haveStartPosition, false);
         }
+    }
 
-        @Override
-        public void onSessionStarting(CastSession session) {
-            mediaPlayer.onCastSessionStarting(session);
+    private void releasePlayer() {
+        if (player != null) {
+            player.removeListener(playerEventListener);
+            updateTrackSelectorParameters();
+            updateStartPosition();
+            player.release();
+            player = null;
+            mediaSource = null;
+            defaultTrackSelector = null;
         }
+    }
 
-        @Override
-        public void onSessionEnding(CastSession session) {
+    private void updateTrackSelectorParameters() {
+        if (defaultTrackSelector != null) {
+            trackSelectorParameters = defaultTrackSelector.getParameters();
         }
+    }
 
-        @Override
-        public void onSessionResuming(CastSession session, String sessionId) {
+    private void updateStartPosition() {
+        if (player != null) {
+            startAutoPlay = player.getPlayWhenReady();
+            startWindow = player.getCurrentWindowIndex();
+            startPosition = Math.max(0, player.getContentPosition());
         }
+    }
 
-        @Override
-        public void onSessionSuspended(CastSession session, int reason) {
-            mediaPlayer.onCastSessionEnd(session);
+    private void clearStartPosition() {
+        startAutoPlay = true;
+        startWindow = C.INDEX_UNSET;
+        startPosition = C.TIME_UNSET;
+    }
+
+    private MediaSource prepareMedia(Uri uri){
+        DataSource.Factory dataSourceFactory = new DefaultHttpDataSourceFactory(
+                Util.getUserAgent(this, "Exo2"));
+        HlsMediaSource.Factory hlsDataSourceFactory = new HlsMediaSource.Factory(dataSourceFactory);
+        hlsDataSourceFactory.setAllowChunklessPreparation(true);
+        mediaSource = hlsDataSourceFactory.createMediaSource(uri);
+        return  hlsDataSourceFactory.createMediaSource(uri);
+    }
+
+    protected void playChannel(ChannelInfo channelInfo) {
+        this.channelInfo = channelInfo;
+        if(player!=null){
+            mediaSource = prepareMedia(Uri.parse( Channel.createChannel(channelInfo).getContentUri(this)));
+            player.prepare(mediaSource);
+            player.setPlayWhenReady(true);
+            if(!channelInfo.isLive()){
+                player.seekTo(0);
+            }
+
         }
+    }
 
-    };
+    //This will be called due to session token change while playing content
+    protected void reloadChannel(){
+        if(channelInfo!=null && player!=null){
+            playChannel(channelInfo);
+        }
+    }
+
 
     @Override
     public boolean onPlayButtonPressed(int currentState) {
@@ -134,27 +240,88 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
     }
 
     @Override
-    public boolean onFullScreenButtonPressed(boolean currentState) {
-        return false;// true will override fullscreen button behaviour
+    public boolean onFullScreenButtonPressed() {
+        boolean isPortrait = getResources().getConfiguration().orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        if(isPortrait)
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        else
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
+        return true;
     }
 
-    @Override
-    public boolean onDrawerButtonPressed() {
-        return false;
-    }
-
-    @Override
-    public boolean onMinimizeButtonPressed() {
-        return false;
-    }
 
     @Override
     public boolean onOptionMenuPressed() {
+                TrackSelectionDialog trackSelectionDialog =
+                TrackSelectionDialog.createForTrackSelector(
+                        defaultTrackSelector,
+                        /* onDismissListener= */ dismissedDialog -> {
+                            isShowingTrackSelectionDialog = false;
+                            onTrackerDialogDismissed();
+                        });
+        trackSelectionDialog.show(this.getSupportFragmentManager(), /* tag= */ null);
+        return true;
+    }
+
+    protected void onTrackerDialogDismissed(){
+        //hook for subclass to listen the dismiss event
+    }
+    @Override
+    public boolean onSeekPosition(int position) {
         return false;
     }
 
     @Override
-    public boolean onSeekPosition(int position) {
+    public boolean onShareButtonPressed() {
+        if(channelInfo != null) {
+            Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+            sharingIntent.setType("text/html");
+            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, channelInfo.video_share_url);
+            startActivity(Intent.createChooser(sharingIntent, "Share via"));
+            return true;
+        }
         return false;
+    }
+
+
+    private class PlayerEventListener implements Player.EventListener {
+
+        @Override
+        public void onPlayerError(ExoPlaybackException e) {
+            e.printStackTrace();
+            if (isBehindLiveWindow(e)) {
+                clearStartPosition();
+                reloadChannel();
+                Toast.makeText(PlayerActivity.this,"Behind live window exception",Toast.LENGTH_LONG).show();
+            }
+            else if(e.getSourceException() instanceof ParserException){
+                reloadChannel();
+                Toast.makeText(PlayerActivity.this,e.getSourceException().getMessage(),Toast.LENGTH_LONG).show();
+            }
+        }
+
+        @Override
+        @SuppressWarnings("ReferenceEquality")
+        public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+            if (trackGroups != lastSeenTrackGroupArray) {
+                lastSeenTrackGroupArray = trackGroups;
+            }
+        }
+
+        private boolean isBehindLiveWindow(ExoPlaybackException e) {
+            if (e.type != ExoPlaybackException.TYPE_SOURCE) {
+                return false;
+            }
+            Throwable cause = e.getSourceException();
+            while (cause != null) {
+                if (cause instanceof BehindLiveWindowException) {
+                    return true;
+                }
+                cause = cause.getCause();
+            }
+            return false;
+        }
     }
 }

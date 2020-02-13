@@ -27,6 +27,12 @@ suspend fun <T : BaseResponse> tryIO(block: suspend () -> Response<T>): T {
                         ""//we do not want to show error message for this error code
                     )
                 }
+               it.status == 1 ->{//server suffered a serious error
+                   throw ApiException(
+                       it.status,
+                       if(it.errorMsg.isNullOrBlank()) "Server not responding. Please try again later" else it.errorMsg!!
+                   )
+               }
                 it.errorCode!=0->{//hmmm....error occurred ....throw it
                     throw ApiException(
                         it.errorCode,
