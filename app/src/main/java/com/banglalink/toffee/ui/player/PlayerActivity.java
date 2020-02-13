@@ -17,6 +17,7 @@ import com.banglalink.toffee.model.ChannelInfo;
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.BehindLiveWindowException;
@@ -28,7 +29,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.util.Util;
 
@@ -164,7 +165,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
             mediaSource = prepareMedia(Uri.parse( Channel.createChannel(channelInfo).getContentUri(this)));
             player.setPlayWhenReady(false);
             boolean haveStartPosition = startWindow != C.INDEX_UNSET;
-            if (haveStartPosition) {
+            if (haveStartPosition && !channelInfo.isLive()) {
                 player.seekTo(startWindow, startPosition);
             }
             player.prepare(mediaSource, !haveStartPosition, false);
@@ -204,7 +205,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
     }
 
     private MediaSource prepareMedia(Uri uri){
-        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(this,
+        DataSource.Factory dataSourceFactory = new DefaultHttpDataSourceFactory(
                 Util.getUserAgent(this, "Exo2"));
         HlsMediaSource.Factory hlsDataSourceFactory = new HlsMediaSource.Factory(dataSourceFactory);
         hlsDataSourceFactory.setAllowChunklessPreparation(true);
@@ -218,13 +219,16 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
             mediaSource = prepareMedia(Uri.parse( Channel.createChannel(channelInfo).getContentUri(this)));
             player.prepare(mediaSource);
             player.setPlayWhenReady(true);
-            player.seekTo(0);
+            if(!channelInfo.isLive()){
+                player.seekTo(0);
+            }
+
         }
     }
 
     //This will be called due to session token change while playing content
     protected void reloadChannel(){
-        if(channelInfo!=null && player!=null && player.isPlaying()){
+        if(channelInfo!=null && player!=null){
             playChannel(channelInfo);
         }
     }
@@ -292,7 +296,8 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
                 reloadChannel();
                 Toast.makeText(PlayerActivity.this,"Behind live window exception",Toast.LENGTH_LONG).show();
             }
-            else{
+            else if(e.getSourceException() instanceof ParserException){
+                reloadChannel();
                 Toast.makeText(PlayerActivity.this,e.getSourceException().getMessage(),Toast.LENGTH_LONG).show();
             }
         }

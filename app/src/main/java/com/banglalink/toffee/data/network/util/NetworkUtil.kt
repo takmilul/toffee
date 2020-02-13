@@ -30,7 +30,7 @@ suspend fun <T : BaseResponse> tryIO(block: suspend () -> Response<T>): T {
                it.status == 1 ->{//server suffered a serious error
                    throw ApiException(
                        it.status,
-                       if(it.errorMsg.isNullOrBlank()) "Internal Error" else it.errorMsg!!
+                       if(it.errorMsg.isNullOrBlank()) "Server not responding. Please try again later" else it.errorMsg!!
                    )
                }
                 it.errorCode!=0->{//hmmm....error occurred ....throw it
