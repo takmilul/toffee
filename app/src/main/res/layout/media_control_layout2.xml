@@ -130,17 +130,6 @@
                 android:src="@mipmap/ic_menu_overflow"
                 android:layout_alignParentEnd="true" />
 
-            <androidx.mediarouter.app.MediaRouteButton
-                android:visibility="gone"
-                android:layout_marginLeft="25dp"
-                android:layout_marginRight="25dp"
-                android:id="@+id/cast"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@mipmap/ic_cast"
-                android:layout_alignBottom="@id/video_option"
-                android:layout_toLeftOf="@id/video_option"
-                />
 
             <ImageView
                 android:layout_marginEnd="10dp"

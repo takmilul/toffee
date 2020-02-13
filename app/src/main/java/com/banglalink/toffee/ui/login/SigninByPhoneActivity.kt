@@ -100,7 +100,7 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
                 is Resource.Failure -> {
                     when (it.error.code) {
                         INVALID_REFERRAL_ERROR_CODE -> {
-                            showInvalidReferralCodeDialog(it.error.msg)
+                            showInvalidReferralCodeDialog(it.error.msg, it.error.additionalMsg)
                         }
                         else -> {
                             showToast(it.error.msg)
@@ -113,7 +113,7 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
     }
 
     private fun showInvalidReferralCodeDialog(
-        referralStatusMessage: String
+        referralStatusMessage: String, referralStatus: String
     ) {
         val alertView = LayoutInflater.from(this)
             .inflate(R.layout.dialog_invalid_referral_code_layout, null)
@@ -125,6 +125,14 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
             ?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         alertDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+
+        if ("USED".equals(referralStatus, ignoreCase = true)) {
+            alertView.findViewById<View>(R.id.retry_btn).visibility = View.GONE
+            (alertView.findViewById<View>(R.id.continue_btn) as Button).text =
+                getString(R.string.continue_sign_in_txt)
+        }
+
         (alertView.findViewById<View>(R.id.title) as TextView).text = referralStatusMessage
         alertView.findViewById<View>(R.id.continue_btn)
             .setOnClickListener {
