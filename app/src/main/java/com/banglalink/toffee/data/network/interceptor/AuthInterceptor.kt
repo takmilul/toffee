@@ -28,6 +28,13 @@ class AuthInterceptor : Interceptor {
             .build()
         val response = chain.proceed(newRequest)
         if(!response.isSuccessful){
+            if(response.code == 403){
+                val msg = "Attention! Toffee is available only within Bangladesh territory. Please use a Bangladesh IP to access.";
+                return response.newBuilder()
+                    .code(response.code)
+                    .message(msg)
+                    .build()
+            }
             return response
         }
         try {
