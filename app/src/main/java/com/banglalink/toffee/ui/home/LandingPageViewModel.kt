@@ -69,7 +69,7 @@ class LandingPageViewModel(application: Application):BaseViewModel(application) 
     fun loadFeatureContents(){
         viewModelScope.launch {
             try{
-                val response = getFeatureContents.execute("",0,"",0,"VOD")
+                val response = getFeatureContents.execute("",0,"",0)
                 featureContentMutableLiveData.setSuccess(response)
             }catch (e:Exception){
                 featureContentMutableLiveData.setError(getError(e))

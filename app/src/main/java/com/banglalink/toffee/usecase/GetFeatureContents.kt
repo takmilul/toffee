@@ -16,8 +16,7 @@ class GetFeatureContents(private val preference: Preference,private val toffeeAp
         category: String,
         categoryId: Int,
         subcategory: String,
-        subcategoryId: Int,
-        type: String
+        subcategoryId: Int
     ): List<ChannelInfo> {
 
 
@@ -26,7 +25,7 @@ class GetFeatureContents(private val preference: Preference,private val toffeeAp
                 FeatureContentRequest(
                     categoryId,
                     subcategoryId,
-                    type,
+                    "NULL",
                     preference.customerId,
                     preference.password,
                     offset = mOffset,
