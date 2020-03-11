@@ -1,7 +1,6 @@
 package com.banglalink.toffee.data.network.interceptor
 
-import com.banglalink.toffee.data.network.util.decryptResponse
-import com.banglalink.toffee.data.network.util.encryptRequest
+import com.banglalink.toffee.util.EncryptionUtil
 import okhttp3.*
 import okhttp3.ResponseBody.Companion.toResponseBody
 import okio.Buffer
@@ -19,7 +18,7 @@ class AuthInterceptor : Interceptor {
 
         val string = bodyToString(request.body)
         val builder = FormBody.Builder()
-        builder.addEncoded("data", encryptRequest(string))
+        builder.addEncoded("data", EncryptionUtil.encryptRequest(string))
 
         val newRequest = request.newBuilder()
             .headers(request.headers)
@@ -38,7 +37,7 @@ class AuthInterceptor : Interceptor {
             return response
         }
         try {
-            val jsonString =  decryptResponse(response.body!!.string())
+            val jsonString =  EncryptionUtil.decryptResponse(response.body!!.string())
             val contentType = response.body!!.contentType()
             val body = jsonString.toResponseBody(contentType)
             return response.newBuilder().body(body).build()
