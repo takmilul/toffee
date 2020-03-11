@@ -74,7 +74,7 @@ class Preference private constructor(context: Context) {
         }
 
     var cellularProfileStatus: Int
-        get() = pref.getInt("CellularProfileStatus4", 3)
+        get() = pref.getInt("CellularProfileStatus4", 5)
         set(value) {
             pref.edit().putInt("CellularProfileStatus4", value).apply()
         }
