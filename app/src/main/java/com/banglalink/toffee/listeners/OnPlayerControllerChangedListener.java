@@ -11,5 +11,6 @@ public interface OnPlayerControllerChangedListener {
     boolean onMinimizeButtonPressed();
     boolean onOptionMenuPressed();
     boolean onShareButtonPressed();
+    void  onPlayerIdleDueToError();
     boolean onSeekPosition(int position);
 }

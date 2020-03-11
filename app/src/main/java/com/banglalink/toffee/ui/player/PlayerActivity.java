@@ -60,6 +60,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
 
     private PlayerEventListener playerEventListener = new PlayerEventListener();
 
+    @Nullable
     protected ChannelInfo channelInfo;
     private boolean isShowingTrackSelectionDialog;
 
@@ -251,6 +252,12 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
         return true;
     }
 
+    @Override
+    public void onPlayerIdleDueToError() {
+        if(player!=null && player.getPlayWhenReady()){
+            reloadChannel();
+        }
+    }
 
     @Override
     public boolean onOptionMenuPressed() {

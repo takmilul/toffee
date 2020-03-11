@@ -116,27 +116,20 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             drawerHelper.onMenuClick(NavigationMenu(ID_VIDEO, "All Videos", 0, listOf(), false))
         }
 
-        //Observing any changes in session token....
-        observe(Preference.getInstance().sessionTokenLiveData){
-           if(binding.playerView.isVisible){
-               reloadChannel()
-           }
-        }
-
-        binding.playerView.addPlayerControllerChangeListener(this)
-
         lifecycle.addObserver(HeartBeatManager)
 
     }
 
     override fun onResume() {
         super.onResume()
+        binding.playerView.addPlayerControllerChangeListener(this)
         binding.playerView.setPlayer(player)
         binding.playerView.resizeView(calculateScreenWidth())
     }
 
     override fun onPause() {
         super.onPause()
+        binding.playerView.clearListeners();
         if (Util.SDK_INT <= 23) {
             binding.playerView.setPlayer(null)
         }
