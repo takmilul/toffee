@@ -76,13 +76,13 @@ dependencies {
     implementation 'io.coil-kt:coil:0.9.3'
 
     //Firebase Push Notification
-    implementation 'com.google.firebase:firebase-messaging:20.1.0'
+    implementation 'com.google.firebase:firebase-messaging:20.1.1'
      //Firebase in app messaging
     implementation 'com.google.firebase:firebase-inappmessaging-display:19.0.3'
     //Firebase core
-    implementation 'com.google.firebase:firebase-core:17.2.2'
+    implementation 'com.google.firebase:firebase-core:17.2.3'
     // Recommended: Add the Firebase SDK for Google Analytics.
-    implementation 'com.google.firebase:firebase-analytics:17.2.2'
+    implementation 'com.google.firebase:firebase-analytics:17.2.3'
 
     // Add the Firebase SDK for Crashlytics.
     implementation 'com.google.firebase:firebase-crashlytics:17.0.0-beta01'
