@@ -61,7 +61,7 @@
     <string name="free_trial_text">You are enjoying free trial</string>
     <string name="free_trial">Free Trial</string>
     <string name="subscriptions">Subscriptions</string>
-    <string name="enter_code">Enter Code</string>
+    <string name="enter_code">Enter OTP</string>
     <string name="photo_update_success">Photo updated successfully</string>
     <string name="tag_line_txt">Watch TV &amp; Video Seamlessly!</string>
     <string name="powered_by_txt">Streaming and Content copyright for TV managed by <b>Nexdecade Technology (Pvt.) Ltd.</b> For any query please contact at <b>content@nexdecade.com</b></string>
@@ -110,5 +110,6 @@
     <string name="selection_default">Default</string>
     <string name="enable_random_adaptation">Enable random adaptation</string>
     <string name="track_selection_title">Track Title</string>
+    <string name="otp_hint">OTP</string>
 
 </resources>
