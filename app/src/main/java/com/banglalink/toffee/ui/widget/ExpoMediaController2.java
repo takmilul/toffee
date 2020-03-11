@@ -38,6 +38,7 @@ import static com.google.android.exoplayer2.Player.STATE_READY;
  */
 public class ExpoMediaController2 extends FrameLayout implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, Player.EventListener, DraggerLayout.OnPositionChangedListener, TextureView.SurfaceTextureListener {
     private static final int UPDATE_PROGRESS = 21;
+    private static final int FORWARD_BACKWARD_DURATION_IN_MILLIS = 10000;
     private LayoutInflater inflater;
     private MessageHandler handler;
     private List<OnPlayerControllerChangedListener> onPlayerControllerChangedListeners = new ArrayList<>();
@@ -81,6 +82,8 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
         binding = DataBindingUtil.inflate(inflater, R.layout.media_control_layout2, this, true);
         binding.minimize.setOnClickListener(this);
         binding.play.setOnClickListener(this);
+        binding.forward.setOnClickListener(this);
+        binding.backward.setOnClickListener(this);
         binding.drawer.setOnClickListener(this);
 
 
@@ -120,6 +123,14 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
         }
     }
 
+
+    private void forward(){
+        if(simpleExoPlayer != null) simpleExoPlayer.seekTo(Math.min(simpleExoPlayer.getCurrentPosition() + FORWARD_BACKWARD_DURATION_IN_MILLIS, simpleExoPlayer.getDuration()));
+    }
+
+    private void backward(){
+        if(simpleExoPlayer != null) simpleExoPlayer.seekTo(Math.max(0,simpleExoPlayer.getCurrentPosition() - FORWARD_BACKWARD_DURATION_IN_MILLIS));
+    }
 
     public void showWifiOnlyMessage() {
         binding.preview.setImageResource(R.mipmap.watch_wifi_only_msg);
@@ -216,9 +227,7 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
             long duration = simpleExoPlayer.getDuration();
             long newPosition = (duration * progress) / 1000L;
             simpleExoPlayer.seekTo((int) newPosition);
-            if (binding.currentTime != null) {
-                binding.currentTime.setText(stringForTime((int) newPosition));
-            }
+            binding.currentTime.setText(stringForTime((int) newPosition));
         }
     }
 
@@ -323,8 +332,18 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
                 }
                 simpleExoPlayer.setPlayWhenReady(true);
                 hideControls(3000);
+                handler.postDelayed(() -> {
+                    if(simpleExoPlayer.getPlayWhenReady() && simpleExoPlayer.getPlaybackState() == STATE_IDLE){
+                        for (OnPlayerControllerChangedListener onPlayerControllerChangedListener : onPlayerControllerChangedListeners) {
+                            onPlayerControllerChangedListener.onPlayerIdleDueToError();
+                        }
+                    }
+                },3000);
             }
             updateSeekBar();
+            for (OnPlayerControllerChangedListener OnPlayerControllerChangedListener : onPlayerControllerChangedListeners) {
+                OnPlayerControllerChangedListener.onPlayButtonPressed(simpleExoPlayer.getPlaybackState());
+            }
         } else if (v == binding.videoOption && binding.videoOption.isEnabled()) {
             for (OnPlayerControllerChangedListener OnPlayerControllerChangedListener : onPlayerControllerChangedListeners) {
                 OnPlayerControllerChangedListener.onOptionMenuPressed();
@@ -355,6 +374,10 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
             } else {
                 hideControls(0);
             }
+        } else if(v == binding.forward){
+            forward();
+        } else if(v == binding.backward){
+            backward();
         }
     }
 
@@ -365,6 +388,8 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
                 binding.preview.setOnClickListener(this);
                 binding.preview.setImageResource(android.R.color.black);
                 binding.play.setVisibility(GONE);
+                binding.forward.setVisibility(GONE);
+                binding.backward.setVisibility(GONE);
                 binding.buffering.setVisibility(VISIBLE);
                 showControls();
                 break;
@@ -374,6 +399,8 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
                 binding.play.setImageResource(R.mipmap.ic_media_play);
                 binding.buffering.setVisibility(GONE);
                 binding.play.setVisibility(VISIBLE);
+                binding.forward.setVisibility(GONE);
+                binding.backward.setVisibility(GONE);
                 showControls();
                 break;
             case STATE_READY:
@@ -382,12 +409,28 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
                     binding.play.setImageResource(R.mipmap.ic_media_pause);
                     binding.buffering.setVisibility(GONE);
                     binding.play.setVisibility(VISIBLE);
+                    if(simpleExoPlayer!=null && simpleExoPlayer.isCurrentWindowLive()){
+                        binding.forward.setVisibility(GONE);
+                        binding.backward.setVisibility(GONE);
+                    }
+                    else {
+                        binding.forward.setVisibility(VISIBLE);
+                        binding.backward.setVisibility(VISIBLE);
+                    }
                     showControls();//it is necessary since we don't have preparing state of player
                     hideControls(3000);
                 } else {
                     binding.play.setImageResource(R.mipmap.ic_media_play);
                     binding.buffering.setVisibility(GONE);
                     binding.play.setVisibility(VISIBLE);
+                    if(simpleExoPlayer!=null && simpleExoPlayer.isCurrentWindowLive()){
+                        binding.forward.setVisibility(GONE);
+                        binding.backward.setVisibility(GONE);
+                    }
+                    else {
+                        binding.forward.setVisibility(VISIBLE);
+                        binding.backward.setVisibility(VISIBLE);
+                    }
                     showControls();
                 }
                 break;
