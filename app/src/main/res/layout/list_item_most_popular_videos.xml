@@ -14,8 +14,10 @@
             type="com.banglalink.toffee.ui.home.OptionCallBack" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
+        android:layout_width="340dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         android:layout_marginBottom="16dp">
 
         <com.banglalink.toffee.ui.widget.CustomImageView
@@ -50,10 +52,8 @@
         <View
             android:background="@drawable/bottom_round_white_bg"
             android:id="@+id/view"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
             android:layout_width="0dp"
-            android:layout_height="120dp"
+            android:layout_height="96dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/poster" />
@@ -130,42 +130,6 @@
             app:layout_constraintStart_toStartOf="@+id/name"
             app:layout_constraintTop_toBottomOf="@+id/name"
             android:text="AsianStar- 14h" />
-
-        <TextView
-            android:id="@+id/textView5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#829AB8"
-            android:layout_marginTop="16dp"
-            android:text="@{data.formatted_view_count}"
-            android:drawableStart="@drawable/ic_view"
-            android:drawablePadding="8dp"
-            app:layout_constraintStart_toStartOf="@+id/owner"
-            app:layout_constraintTop_toBottomOf="@+id/owner"
-            tools:text="10K"/>
-
-        <TextView
-            android:id="@+id/textView8"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_share"
-            android:drawablePadding="8dp"
-            android:text="3.5K"
-            android:textColor="#829AB8"
-            app:layout_constraintEnd_toStartOf="@+id/textView9"
-            app:layout_constraintStart_toEndOf="@+id/textView5"
-            app:layout_constraintTop_toTopOf="@+id/textView5" />
-
-        <TextView
-            android:id="@+id/textView9"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_like_emo"
-            android:drawablePadding="8dp"
-            android:textColor="#829AB8"
-            android:text="2.7K"
-            app:layout_constraintEnd_toEndOf="@+id/name"
-            app:layout_constraintTop_toTopOf="@+id/textView5" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

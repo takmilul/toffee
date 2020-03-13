@@ -3,6 +3,7 @@ package com.banglalink.toffee.ui.common
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.exception.CustomerNotFoundException
 import com.banglalink.toffee.extension.launchActivity
@@ -15,6 +16,7 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         observe(EventProvider.getEventLiveData()){
             when(it.getValue()){
                 is CustomerNotFoundException->{

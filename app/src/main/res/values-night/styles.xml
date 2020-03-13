@@ -1,0 +1,6 @@
+<resources>
+    <style name="ToolBarStyle" parent="Theme.AppCompat.DayNight">
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="colorControlActivated">@color/colorAccent</item>
+    </style>
+</resources>

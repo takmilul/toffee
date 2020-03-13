@@ -26,12 +26,63 @@
                 <FrameLayout
                     android:id="@+id/content_viewer"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
                     />
 
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    app:tabTextAppearance="@style/TabTheme"
+                    android:background="@color/tab_background_color"
+                    app:tabIconTint="@drawable/tab_selector"
+                    app:tabIconTintMode="src_atop"
+                    app:tabTextColor="@drawable/tab_selector"
+                    app:tabIndicator="@null"
+                    >
+
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:icon="@drawable/ic_feed"
+                        android:text="@string/tab_feed_label"/>
+
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:icon="@drawable/ic_tv"
+                        android:text="@string/tab_tv_label"/>
+
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:icon="@drawable/ic_upload_dummy"
+                        android:text="@string/tab_upload_label"/>
+
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:icon="@drawable/ic_activities"
+                        android:text="@string/tab_activities_label"/>
+
+                    <com.google.android.material.tabs.TabItem
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:icon="@drawable/ic_mychannel"
+                        android:text="@string/tab_mychannel_label"/>
+
+                </com.google.android.material.tabs.TabLayout>
             </LinearLayout>
 
-
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:src="@drawable/ic_upload"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="24dp"/>
             <com.banglalink.toffee.ui.widget.DraggerLayout
                 xmlns:dragger_layout="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/draggable_view"

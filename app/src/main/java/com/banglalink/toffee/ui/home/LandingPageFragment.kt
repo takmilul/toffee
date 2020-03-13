@@ -1,6 +1,8 @@
 package com.banglalink.toffee.ui.home
 
 import android.os.Bundle
+import android.text.Html
+import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.R
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
+import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.model.ChannelInfo
@@ -20,6 +23,8 @@ import com.banglalink.toffee.util.unsafeLazy
 import com.daimajia.slider.library.SliderLayout
 import com.daimajia.slider.library.SliderTypes.BaseSliderView
 import com.daimajia.slider.library.SliderTypes.DefaultSliderView
+import com.daimajia.slider.library.Tricks.ViewPagerEx
+import kotlinx.android.synthetic.main.fragment_landing_page2.*
 
 class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListener {
     override fun onSliderClick(slider: BaseSliderView?) {
@@ -36,6 +41,19 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
     private var popularVideoListView: RecyclerView? = null
     private var channelListView: RecyclerView? = null
     private var bottomProgress: ProgressBar? = null
+    private val mostPopularVideoListAdapter by lazy {
+        MostPopularVideoListAdapter(this) {
+            //handle video click in adapter. Basically notify livedata to homeactivity to load channel
+            homeViewModel.fragmentDetailsMutableLiveData.postValue(it)
+        }
+    }
+
+    private val categoriesListAdapter by lazy {
+        CategoriesListAdapter(this) {
+            //handle video click in adapter. Basically notify livedata to homeactivity to load channel
+//            homeViewModel.fragmentDetailsMutableLiveData.postValue(it)
+        }
+    }
 
     private lateinit var channelScrollListener : EndlessRecyclerViewScrollListener
 
@@ -56,10 +74,21 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
             //handle video click in adapter. Basically notify livedata to homeactivity to playChannel channel
             homeViewModel.fragmentDetailsMutableLiveData.postValue(it)
         }
+        initCategories()
         popularVideoListAdapter.setHasStableIds(true)
         viewModel.loadPopularVideos()
         viewModel.loadChannels()
         viewModel.loadFeatureContents()
+        viewModel.loadMostPopularVideos()
+    }
+
+    private fun initCategories(){
+        categoriesListAdapter.add(Category("Movies", R.drawable.movie_cat_icon))
+        categoriesListAdapter.add(Category("Music", R.drawable.music_cat_icon))
+        categoriesListAdapter.add(Category("Games", R.drawable.games_cat_icon))
+        categoriesListAdapter.add(Category("News", R.drawable.news_cat_icon))
+        categoriesListAdapter.add(Category("Podcast", R.drawable.podcasts_cat_icon))
+        categoriesListAdapter.add(Category("Science", R.drawable.science_cat_icon))
     }
 
     override fun onCreateView(
@@ -74,7 +103,26 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
         super.onViewCreated(view, savedInstanceState)
         activity?.title = "Home"
         imageSlider = view.findViewById(R.id.slider)
+        imageSlider?.addOnPageChangeListener(object : ViewPagerEx.OnPageChangeListener {
+            override fun onPageScrollStateChanged(state: Int) {
 
+            }
+
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
+
+            }
+
+            override fun onPageSelected(position: Int) {
+                val sliderView = imageSlider?.getCurrentSlider() as DefaultSliderView
+                val channelInfo = sliderView.data as ChannelInfo
+                featureDescription.text = Html.fromHtml(String(Base64.decode(channelInfo.description, Base64.DEFAULT)))
+            }
+
+        })
 
         val listLayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         channelListView = view.findViewById<RecyclerView>(R.id.channel_list).apply {
@@ -88,6 +136,23 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
             }
         }
         channelListView?.addOnScrollListener(channelScrollListener)
+
+        mostPopularList.apply {
+            val lManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            layoutManager = lManager
+            adapter = mostPopularVideoListAdapter
+            addOnScrollListener(object : EndlessRecyclerViewScrollListener(lManager){
+                override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
+                    viewModel.loadMostPopularVideos()
+                }
+            })
+        }
+
+        categoriesList.apply {
+            val lManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            layoutManager = lManager
+            adapter = categoriesListAdapter
+        }
 
         val linearLayoutManager = LinearLayoutManager(context)
         popularVideoListView = view.findViewById<RecyclerView>(R.id.listview).apply {
@@ -113,6 +178,7 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
         observeFeatureContentList()
         observeChannelList()
         observePopularVideoList()
+        observeMostPopularVideoList()
 
         view.findViewById<View>(R.id.channel_view_all).setOnClickListener {
             homeViewModel.viewAllChannelLiveData.postValue(true)
@@ -128,6 +194,19 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
                 }
                 is Resource.Failure -> {
                     channelScrollListener.resetState()
+                    Log.e("LOG", it.error.msg)
+                }
+            }
+        })
+    }
+
+    private fun observeMostPopularVideoList() {
+        viewModel.mostPopularVideoLiveData.observe(viewLifecycleOwner, Observer {
+            when (it) {
+                is Resource.Success -> {
+                    mostPopularVideoListAdapter.addAll(it.data)
+                }
+                is Resource.Failure -> {
                     Log.e("LOG", it.error.msg)
                 }
             }
@@ -183,6 +262,8 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
             }
         })
     }
+
+
 
     fun onBackPressed(): Boolean {
         if(popularVideoListView!=null && popularVideoListView!!.computeVerticalScrollOffset() > 0){

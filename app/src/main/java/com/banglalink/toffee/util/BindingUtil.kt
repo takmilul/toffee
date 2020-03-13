@@ -12,6 +12,7 @@ import coil.api.load
 import coil.request.CachePolicy
 import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
+import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Package
 import java.util.*
@@ -35,6 +36,16 @@ fun bindRoundImage(view: ImageView, imageUrl: String?) {
             crossfade(true)
         }
     }
+}
+
+@BindingAdapter("loadCategoryImage")
+fun bindCategoryImage(view: ImageView, category : Category) {
+    view.setImageResource(category.icon)
+}
+
+@BindingAdapter("loadCategoryName")
+fun bindCategoryName(view: TextView, category : Category) {
+    view.text = category.name
 }
 
 @BindingAdapter("loadChannelImage")

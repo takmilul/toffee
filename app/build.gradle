@@ -76,8 +76,8 @@ dependencies {
     implementation 'io.coil-kt:coil:0.9.3'
 
     //Firebase Push Notification
-    implementation 'com.google.firebase:firebase-messaging:20.1.2'
-     //Firebase in app messaging
+    implementation 'com.google.firebase:firebase-messaging:20.1.1'
+    //Firebase in app messaging
     implementation 'com.google.firebase:firebase-inappmessaging-display:19.0.3'
     //Firebase core
     implementation 'com.google.firebase:firebase-core:17.2.3'
@@ -108,6 +108,8 @@ dependencies {
 
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0"
+
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
 
     testImplementation 'junit:junit:4.12'
     testImplementation "android.arch.core:core-testing:1.1.1"

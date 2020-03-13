@@ -19,12 +19,10 @@ import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
-import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProviders
-import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.data.storage.Preference
@@ -78,12 +76,12 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //disable screen capture
-        if (!BuildConfig.DEBUG) {
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE
-            )
-        }
+//        if (!BuildConfig.DEBUG) {
+//            window.setFlags(
+//                WindowManager.LayoutParams.FLAG_SECURE,
+//                WindowManager.LayoutParams.FLAG_SECURE
+//            )
+//        }
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main_menu)
         setSupportActionBar(binding.tbar.toolbar)
 

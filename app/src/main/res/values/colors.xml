@@ -30,6 +30,8 @@
 
     <color name="tool_bar_color">@android:color/white</color>
     <color name="channel_header">#3e5979</color>
+    <color name="tab_background_color">@android:color/white</color>
+
 
 
 </resources>

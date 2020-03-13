@@ -28,6 +28,9 @@ class LandingPageViewModel(application: Application):BaseViewModel(application) 
     private val popularVideoMutableLiveData = SingleLiveEvent<Resource<List<ChannelInfo>>>()
     val popularVideoLiveData = popularVideoMutableLiveData.toLiveData()
 
+    private val mostPopularVideoMutableLiveData = SingleLiveEvent<Resource<List<ChannelInfo>>>()
+    val mostPopularVideoLiveData = mostPopularVideoMutableLiveData.toLiveData()
+
     //LiveData for featureContent List
     private val featureContentMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
     val featureContentLiveData = featureContentMutableLiveData.toLiveData()
@@ -62,6 +65,17 @@ class LandingPageViewModel(application: Application):BaseViewModel(application) 
                 popularVideoMutableLiveData.setSuccess(response)
             }catch (e:Exception){
                 popularVideoMutableLiveData.setError(getError(e))
+            }
+        }
+    }
+
+    fun loadMostPopularVideos(){
+        viewModelScope.launch {
+            try{
+                val response = getPopularVideo.execute("",0,"",0,"VOD")
+                mostPopularVideoMutableLiveData.setSuccess(response)
+            }catch (e:Exception){
+                mostPopularVideoMutableLiveData.setError(getError(e))
             }
         }
     }

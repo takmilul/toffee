@@ -43,7 +43,11 @@
 
     //Landing Screen Category Titles
     <string name="channel">Popular TV Channels</string>
+    <string name="most_popular">Most Popular</string>
+    <string name="categories">Categories</string>
+    <string name="featured">Featured</string>
     <string name="vod">Videos</string>
+    <string name="latest_video">Latest Videos</string>
     <string name="terms_and_conditions">Terms &amp; Conditions</string>
     <string name="terms_and_conditions_text">I agree to the Terms and Conditions</string>
     <string name="privacy_policy">Privacy Policy</string>
@@ -102,6 +106,11 @@
 
     <string name="referral_code">Referral Code</string>
     <string name="have_referral_code">Have Referral Code?</string>
+    <string name="tab_feed_label">Feed</string>
+    <string name="tab_tv_label">TV</string>
+    <string name="tab_upload_label">Upload</string>
+    <string name="tab_activities_label">Activities</string>
+    <string name="tab_mychannel_label">My Channel</string>
     <string name="try_again_txt">Try again</string>
     <string name="continue_sign_in_txt">Continue signing in</string>
 
