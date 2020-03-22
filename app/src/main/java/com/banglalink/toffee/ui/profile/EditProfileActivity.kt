@@ -24,6 +24,7 @@ import androidx.lifecycle.lifecycleScope
 import coil.api.load
 import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.extension.getViewModel
 import com.banglalink.toffee.extension.loadProfileImage
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.util.unsafeLazy
@@ -49,7 +50,7 @@ class EditProfileActivity : BaseAppCompatActivity() {
         const val PROFILE_INFO = "Profile"
     }
     private val viewModel by unsafeLazy {
-        ViewModelProviders.of(this).get(EditProfileViewModel::class.java)
+        getViewModel<EditProfileViewModel>()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
