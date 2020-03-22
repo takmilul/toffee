@@ -7,5 +7,6 @@ data class HeartBeatRequest(
     val password:String,
     val lat: String,
     val lon: String,
+    val isNetworkSwitch:Boolean = false,
     val type: String = "FOREGROUND"
 ):BaseRequest("heartBeat")
