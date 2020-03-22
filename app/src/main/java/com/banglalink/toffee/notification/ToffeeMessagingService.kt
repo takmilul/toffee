@@ -14,6 +14,7 @@ import androidx.core.graphics.drawable.toBitmap
 import coil.Coil
 import coil.api.get
 import com.banglalink.toffee.R
+import com.banglalink.toffee.data.storage.Preference
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import kotlinx.coroutines.CoroutineScope
@@ -28,16 +29,25 @@ class ToffeeMessagingService:FirebaseMessagingService() {
     private var notificationId = 27745
 
 
-    val coroutineContext = Dispatchers.IO + SupervisorJob()
-    val imageCoroutineScope = CoroutineScope(coroutineContext)
+    private val coroutineContext = Dispatchers.IO + SupervisorJob()
+    private val imageCoroutineScope = CoroutineScope(coroutineContext)
+
+
+    override fun onNewToken(s: String) {
+        super.onNewToken(s)
+        Log.i(TAG, "Token: " + s)
+        Preference.getInstance().fcmToken = s
+    }
+
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        Log.d(TAG, "From: " + remoteMessage.getFrom()!!)
+        Log.d(TAG, "From: " + remoteMessage.from!!)
 
         if (remoteMessage.data.isNotEmpty()) {
             Log.d(TAG, "Data payload: " + remoteMessage.data)
-            prepareNotification(remoteMessage.getData())
+            prepareNotification(remoteMessage.data)
         }
     }
+
     private fun prepareNotification(data: Map<String, String>) {
         try {
             val notificationType = data["notificationType"]
@@ -62,7 +72,7 @@ class ToffeeMessagingService:FirebaseMessagingService() {
             }
 
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e(TAG, e.message, e)
         }
 
     }
