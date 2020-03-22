@@ -5,8 +5,9 @@ import android.content.SharedPreferences
 import android.text.TextUtils
 import androidx.lifecycle.MutableLiveData
 import com.banglalink.toffee.model.DBVersion
+import com.google.android.exoplayer2.util.Util
 
-class Preference private constructor(context: Context) {
+class Preference private constructor(val context: Context) {
     private val pref: SharedPreferences = context.getSharedPreferences("IP_TV", Context.MODE_PRIVATE)
 
     val balanceLiveData = MutableLiveData<Int>()
@@ -166,17 +167,54 @@ class Preference private constructor(context: Context) {
         pref.edit().putBoolean("DefaultDataQuality", value).apply()
     }
 
-    fun saveChannelInfoListResponse(response: String) {
-        pref.edit().putString("channel_info_list", response).apply()
+    fun setHeaderSessionToken(sessionToken: String?) {
+        pref.edit().putString("sessionTokenHeader", sessionToken).apply()
     }
 
+    fun getHeaderSessionToken(): String? {
+        return pref.getString("sessionTokenHeader", "")
+    }
+
+    fun setHlsOverrideUrl(hlsOverrideUrl: String?) {
+        pref.edit().putString("hlsOverrideUrl", hlsOverrideUrl).apply()
+    }
+
+    fun getHlsOverrideUrl(): String? {
+        return pref.getString("hlsOverrideUrl", "")
+    }
+
+    fun setShouldOverrideHlsUrl(value: Boolean) {
+        pref.edit().putBoolean("shouldOverride", value).apply()
+    }
+
+    fun shouldOverrideHlsUrl(): Boolean {
+        return pref.getBoolean("shouldOverride", false)
+    }
+
+    fun setSessionTokenLifeSpanInMillis(tokenLifeSpanInMillis: Long) {
+        pref.edit().putLong("deviceTimeInMillis", System.currentTimeMillis()).apply()
+        pref.edit().putLong("tokenLifeSpan", tokenLifeSpanInMillis - 10 * 60 * 1000)
+            .apply() //10minute threshold
+    }
+
+    fun getSessionTokenLifeSpanInMillis():Long{
+        return pref.getLong("tokenLifeSpan",0);
+    }
+
+    fun getSessionTokenSaveTimeInMillis():Long{
+        return pref.getLong("deviceTimeInMillis",System.currentTimeMillis());
+    }
+
+    fun getHeader():String{
+        return Util.getUserAgent(context,"Toffee");
+    }
 
     companion object {
         private var instance: Preference? = null
 
         fun init(context: Context) {
             if (instance == null) {
-                instance = Preference(context)
+                instance = Preference(context.applicationContext)
             }
         }
 
