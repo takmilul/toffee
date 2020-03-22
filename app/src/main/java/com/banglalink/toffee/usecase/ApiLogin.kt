@@ -18,6 +18,11 @@ class ApiLogin(private val pref: Preference, private val authApi: AuthApi) {
             if(it.dbVersion!=null)
                 pref.setDBVersion(it.dbVersion!!)
             pref.sessionToken = (it.sessionToken?:"")
+
+            pref.setHeaderSessionToken(it.headerSessionToken)
+            pref.setHlsOverrideUrl(it.hlsOverrideUrl)
+            pref.setShouldOverrideHlsUrl(it.hlsUrlOverride)
+            pref.setSessionTokenLifeSpanInMillis(it.tokenLifeSpan.toLong() * 1000 * 3600)
         }
         return response.customerInfoSignIn!!
     }

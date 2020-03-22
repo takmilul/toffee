@@ -10,17 +10,24 @@ class VerifyCode(private val preference: Preference,private val toffeeApi: Toffe
 
     suspend fun execute(code:String,regSessionToken:String,referralCode:String = ""):CustomerInfoSignIn{
         val response = tryIO { toffeeApi.verifyCode(getRequest(code,regSessionToken,referralCode)) }
-        preference.customerId = response.response.customerId
-        preference.customerName = response.response.customerName?:""
-        preference.sessionToken = response.response.sessionToken?:""
-        preference.password = response.response.password?:""
-        preference.balance = response.response.balance
-        if(response.response.dbVersion!=null){
-            preference.setDBVersion(response.response.dbVersion!!)
+
+        response.customerInfoSignIn.also {
+            preference.balance = it.balance
+            preference.customerId = it.customerId
+            preference.password = it.password?:""
+            preference.customerName = it.customerName?:""
+            if(it.dbVersion!=null)
+                preference.setDBVersion(it.dbVersion!!)
+            preference.sessionToken = (it.sessionToken?:"")
+
+            preference.setHeaderSessionToken(it.headerSessionToken)
+            preference.setHlsOverrideUrl(it.hlsOverrideUrl)
+            preference.setShouldOverrideHlsUrl(it.hlsUrlOverride)
+            preference.setSessionTokenLifeSpanInMillis(it.tokenLifeSpan.toLong() * 1000 * 3600)
         }
        
 
-        return response.response
+        return response.customerInfoSignIn
     }
 
     private fun getRequest(code:String,regSessionToken:String,referralCode:String):VerifyCodeRequest{
