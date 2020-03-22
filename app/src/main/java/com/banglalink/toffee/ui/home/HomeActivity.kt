@@ -116,8 +116,14 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             drawerHelper.onMenuClick(NavigationMenu(ID_VIDEO, "All Videos", 0, listOf(), false))
         }
 
-        lifecycle.addObserver(HeartBeatManager)
+        observe(Preference.getInstance().sessionTokenLiveData){
+            showToast("Session token changed")
+            if(binding.draggableView.visibility == View.VISIBLE)
+                updateStartPosition()//we are saving the player start position so that we can start where we left off for VOD.
+                reloadChannel()
+        }
 
+        lifecycle.addObserver(HeartBeatManager)
     }
 
     override fun onResume() {
@@ -290,6 +296,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     }
 
     override fun onViewDestroy() {
+        clearChannel()
         HeartBeatManager.triggerEventViewingContentStop()
         binding.draggableView.animation = AnimationUtils.loadAnimation(
             this,
@@ -311,7 +318,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             }
             .setNegativeButton(
                 "No"
-            ) { dialog, id -> dialog.cancel() }
+            ) { dialog, _ -> dialog.cancel() }
             .show()
     }
 
