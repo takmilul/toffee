@@ -6,7 +6,6 @@ data class ContentBean(
     @SerializedName(value = "channels", alternate = ["channelInfo"])
     val channels: List<ChannelInfo>?,
     val count: Int,
-    val totalCount: Int,
-    val balance: Int=0,
+    val totalCount: Int = 0,
     val systemTime: String?=null
 )
