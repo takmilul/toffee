@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.network.interceptor
 
+import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.util.EncryptionUtil
 import okhttp3.*
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -22,7 +23,7 @@ class AuthInterceptor : Interceptor {
 
         val newRequest = request.newBuilder()
             .headers(request.headers)
-            .addHeader("Connection", "close")
+            .addHeader("User-Agent", Preference.getInstance().getHeader())
             .method(request.method, builder.build())
             .build()
         val response = chain.proceed(newRequest)
