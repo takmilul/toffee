@@ -26,7 +26,6 @@ class GetHistory(private val preference: Preference, private val toffeeApi: Toff
         }
 
 
-        preference.balance = response.response.balance
         mOffset += response.response.count
         if (response.response.channels != null) {
             return response.response.channels.map {
