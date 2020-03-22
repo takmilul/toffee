@@ -76,7 +76,7 @@ dependencies {
     implementation 'io.coil-kt:coil:0.9.3'
 
     //Firebase Push Notification
-    implementation 'com.google.firebase:firebase-messaging:20.1.1'
+    implementation 'com.google.firebase:firebase-messaging:20.1.2'
      //Firebase in app messaging
     implementation 'com.google.firebase:firebase-inappmessaging-display:19.0.3'
     //Firebase core
