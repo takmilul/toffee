@@ -10,7 +10,11 @@ class SendHeartBeat(
     private val toffeeApi: ToffeeApi
 ) {
 
-    suspend fun execute(contentId: Int, contentType: String) {
+    suspend fun execute(contentId: Int, contentType: String, isNetworkSwitch: Boolean = false) {
+        var needToRefreshSessionToken = isNetworkSwitch
+        if(System.currentTimeMillis() - preference.getSessionTokenSaveTimeInMillis() > preference.getSessionTokenLifeSpanInMillis()){
+            needToRefreshSessionToken = true// we need to refresh token by setting isNetworkSwitch = true
+        }
         val response = tryIO {
             toffeeApi.sendHeartBeat(
                 HeartBeatRequest(
@@ -19,10 +23,13 @@ class SendHeartBeat(
                     preference.customerId,
                     preference.password,
                     preference.latitude,
-                    preference.longitude
+                    preference.longitude,
+                    isNetworkSwitch = needToRefreshSessionToken
                 )
             )
         }
         preference.sessionToken = response.response.sessionToken ?: ""
+        preference.setHeaderSessionToken(response.response.headerSessionToken)
+
     }
 }
