@@ -20,13 +20,15 @@ object HeartBeatManager : LifecycleObserver, ConnectivityManager.NetworkCallback
 
 
     private var isAppForeGround = false
+
     private val coroutineContext = Dispatchers.Main
+    private val coroutineContext2 = Dispatchers.Main
 
     private var contentId = 0;
     private var contentType = ""
 
     lateinit var  coroutineScope :CoroutineScope
-    val coroutineScope2 = CoroutineScope(coroutineContext)
+    val coroutineScope2 = CoroutineScope(coroutineContext2)
     private val sendHeartBeat by unsafeLazy {
         SendHeartBeat(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
@@ -85,7 +87,7 @@ object HeartBeatManager : LifecycleObserver, ConnectivityManager.NetworkCallback
         if(!coroutineScope2.isActive)
             return
         coroutineScope2.launch {
-            delay(1000)
+            delay(1500)
             sendHeartBeat(true)
         }
     }
