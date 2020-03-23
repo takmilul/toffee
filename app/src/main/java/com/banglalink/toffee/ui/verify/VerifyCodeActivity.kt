@@ -8,9 +8,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.LayoutLoginConfirmBinding
-import com.banglalink.toffee.extension.launchActivity
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.home.HomeActivity
@@ -40,7 +38,7 @@ class VerifyCodeActivity : BaseAppCompatActivity() {
     }
 
     private val viewModel by unsafeLazy {
-        ViewModelProviders.of(this).get(VerifyCodeViewModel::class.java)
+        getViewModel<VerifyCodeViewModel>()
     }
 
     private var resendCodeTimer:ResendCodeTimer? = null
@@ -53,13 +51,12 @@ class VerifyCodeActivity : BaseAppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this,R.layout.layout_login_confirm)
 
-        val codeEditText = findViewById<EditText>(R.id.code_number)
         binding.resend.paintFlags = binding.resend.paintFlags or Paint.UNDERLINE_TEXT_FLAG
         binding.resend.setOnClickListener{
             handleResendButton()
         }
         binding.confirmBtn.setOnClickListener{
-            verifyCode(codeEditText.text.toString())
+            verifyCode(binding.codeNumber.text.toString())
         }
 
         regSessionToken = intent.getStringExtra(REG_SESSION_TOKEN)?:""
@@ -80,7 +77,11 @@ class VerifyCodeActivity : BaseAppCompatActivity() {
                     finish()
                 }
                 is Resource.Failure->{
-                    showToast(it.error.msg)
+                    binding.root.snack(it.error.msg){
+                        action("Retry") {
+                            verifyCode(code)
+                        }
+                    }
                 }
             }
         }
@@ -98,7 +99,11 @@ class VerifyCodeActivity : BaseAppCompatActivity() {
                     startCountDown(if (resendBtnPressCount <= 1) 1 else 30)
                 }
                 is Resource.Failure->{
-                    showToast(it.error.msg)
+                    binding.root.snack(it.error.msg){
+                        action("Retry") {
+                           handleResendButton()
+                        }
+                    }
                 }
             }
         }

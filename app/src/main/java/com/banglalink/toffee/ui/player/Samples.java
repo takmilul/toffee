@@ -34,7 +34,7 @@ import static com.google.android.exoplayer2.C.TYPE_SS;
     public final String name;
     public final String contentId;
     public final String provider;
-    public final String uri;
+    public  String uri;
     public final int type;
 
     public Sample(String name, String uri, int type) {

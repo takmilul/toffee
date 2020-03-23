@@ -338,7 +338,7 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
                             onPlayerControllerChangedListener.onPlayerIdleDueToError();
                         }
                     }
-                },3000);
+                },1500);
             }
             updateSeekBar();
             for (OnPlayerControllerChangedListener OnPlayerControllerChangedListener : onPlayerControllerChangedListeners) {

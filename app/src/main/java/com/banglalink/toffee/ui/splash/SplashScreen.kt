@@ -5,9 +5,10 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.lifecycle.ViewModelProviders
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
+import com.banglalink.toffee.databinding.ActivitySplashScreenBinding
 import com.banglalink.toffee.exception.AppDeprecatedError
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource
@@ -20,13 +21,15 @@ import kotlinx.coroutines.launch
 
 class SplashScreen : BaseAppCompatActivity() {
 
+    lateinit var binding:ActivitySplashScreenBinding
+
     private val viewModel by unsafeLazy {
         getViewModel<SplashViewModel>()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_splash_screen)
+        binding = DataBindingUtil.setContentView(this,R.layout.activity_splash_screen)
 
         if(viewModel.isCustomerLoggedIn())
             initApp()
@@ -53,7 +56,11 @@ class SplashScreen : BaseAppCompatActivity() {
                             showUpdateDialog(it.error.title,it.error.updateMsg,it.error.forceUpdate)
                         }
                         else->{
-                            showToast(it.error.msg)
+                            binding.root.snack(it.error.msg){
+                                action("Retry") {
+                                    initApp(skipUpdate)
+                                }
+                            }
                         }
                     }
                 }

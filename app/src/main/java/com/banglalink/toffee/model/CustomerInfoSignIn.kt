@@ -25,4 +25,14 @@ class CustomerInfoSignIn:BodyResponse() {
     var referralStatusMessage: String? = null
     @SerializedName("referralStatus")
     var referralStatus: String? = null
+
+    @SerializedName("hlsUrlOverride")
+    var hlsUrlOverride = false
+    @SerializedName("hlsOverrideUrl")
+    var hlsOverrideUrl: String? = null
+    @SerializedName("headerSessionToken")
+    var headerSessionToken: String? = null
+    @SerializedName("tokenLifeSpan")
+    var tokenLifeSpan //toffeeLifeSpan = 4 means 4 hours
+            = 0
 }

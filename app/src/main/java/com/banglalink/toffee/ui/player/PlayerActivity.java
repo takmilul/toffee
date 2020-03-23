@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.banglalink.toffee.BuildConfig;
+import com.banglalink.toffee.data.storage.Preference;
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener;
 import com.banglalink.toffee.model.Channel;
 import com.banglalink.toffee.model.ChannelInfo;
@@ -29,7 +30,9 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.util.Util;
 
@@ -49,7 +52,6 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
     protected SimpleExoPlayer player;
     private DefaultTrackSelector defaultTrackSelector;
 
-    private MediaSource mediaSource;
     private DefaultTrackSelector.Parameters trackSelectorParameters;
     private TrackGroupArray lastSeenTrackGroupArray;
 
@@ -61,7 +63,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
     private PlayerEventListener playerEventListener = new PlayerEventListener();
 
     @Nullable
-    protected ChannelInfo channelInfo;
+    private ChannelInfo channelInfo;
     private boolean isShowingTrackSelectionDialog;
 
     private static final CookieManager DEFAULT_COOKIE_MANAGER;
@@ -163,13 +165,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
             }
         }
         if(channelInfo!=null){
-            mediaSource = prepareMedia(Uri.parse( Channel.createChannel(channelInfo).getContentUri(this)));
-            player.setPlayWhenReady(false);
-            boolean haveStartPosition = startWindow != C.INDEX_UNSET;
-            if (haveStartPosition && !channelInfo.isLive()) {
-                player.seekTo(startWindow, startPosition);
-            }
-            player.prepare(mediaSource, !haveStartPosition, false);
+            reloadChannel();
         }
     }
 
@@ -180,7 +176,6 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
             updateStartPosition();
             player.release();
             player = null;
-            mediaSource = null;
             defaultTrackSelector = null;
         }
     }
@@ -191,7 +186,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
         }
     }
 
-    private void updateStartPosition() {
+    protected void updateStartPosition() {
         if (player != null) {
             startAutoPlay = player.getPlayWhenReady();
             startWindow = player.getCurrentWindowIndex();
@@ -207,19 +202,27 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
 
     private MediaSource prepareMedia(Uri uri){
         DataSource.Factory dataSourceFactory = new DefaultHttpDataSourceFactory(
-                Util.getUserAgent(this, "Exo2"));
+                Util.getUserAgent(this, "Toffee"));
         HlsMediaSource.Factory hlsDataSourceFactory = new HlsMediaSource.Factory(dataSourceFactory);
         hlsDataSourceFactory.setAllowChunklessPreparation(true);
-        mediaSource = hlsDataSourceFactory.createMediaSource(uri);
-        return  hlsDataSourceFactory.createMediaSource(uri);
+
+        return
+                new HlsMediaSource.Factory(
+                        dataType -> {
+                            HttpDataSource dataSource =
+                                    new DefaultHttpDataSource(Util.getUserAgent(this, "Toffee"));
+                            dataSource.setRequestProperty("TOFFEE-SESSION-TOKEN", Preference.Companion.getInstance().getHeaderSessionToken());
+                            return dataSource;
+                        })
+                        .createMediaSource(uri);
     }
 
     protected void playChannel(ChannelInfo channelInfo) {
         this.channelInfo = channelInfo;
         if(player!=null){
-            mediaSource = prepareMedia(Uri.parse( Channel.createChannel(channelInfo).getContentUri(this)));
-            player.prepare(mediaSource);
             player.setPlayWhenReady(true);
+            MediaSource mediaSource = prepareMedia(Uri.parse( Channel.createChannel(channelInfo).getContentUri(this)));
+            player.prepare(mediaSource);
             if(!channelInfo.isLive()){
                 player.seekTo(0);
             }
@@ -227,10 +230,20 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
         }
     }
 
+    protected void clearChannel(){//set channelInfo = null
+        channelInfo = null;
+    }
+
     //This will be called due to session token change while playing content
     protected void reloadChannel(){
         if(channelInfo!=null && player!=null){
-            playChannel(channelInfo);
+            MediaSource mediaSource = prepareMedia(Uri.parse( Channel.createChannel(channelInfo).getContentUri(this)));
+            player.setPlayWhenReady(startAutoPlay);
+            boolean haveStartPosition = startWindow != C.INDEX_UNSET;
+            player.prepare(mediaSource, !haveStartPosition, false);
+            if (haveStartPosition && !channelInfo.isLive()) {
+                player.seekTo(startWindow, startPosition);
+            }
         }
     }
 
@@ -255,6 +268,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
     @Override
     public void onPlayerIdleDueToError() {
         if(player!=null && player.getPlayWhenReady()){
+            Toast.makeText(this,"Force play",Toast.LENGTH_LONG).show();
             reloadChannel();
         }
     }
@@ -301,10 +315,9 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
             if (isBehindLiveWindow(e)) {
                 clearStartPosition();
                 reloadChannel();
-                Toast.makeText(PlayerActivity.this,"Behind live window exception",Toast.LENGTH_LONG).show();
+                Toast.makeText(PlayerActivity.this,"Behind live window",Toast.LENGTH_LONG).show();
             }
             else if(e.getSourceException() instanceof ParserException){
-                reloadChannel();
                 Toast.makeText(PlayerActivity.this,e.getSourceException().getMessage(),Toast.LENGTH_LONG).show();
             }
         }

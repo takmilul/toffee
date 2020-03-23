@@ -17,6 +17,8 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Package
 import java.util.*
 
+const val crossFadeDurationInMills = 500
+
 @BindingAdapter("imageFromUrl")
 fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
     if (!imageUrl.isNullOrEmpty()) {
@@ -24,6 +26,7 @@ fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
             memoryCachePolicy(CachePolicy.DISABLED)
             diskCachePolicy(CachePolicy.ENABLED)
             crossfade(true)
+            crossfade(crossFadeDurationInMills)
         }
     }
 }
@@ -34,6 +37,7 @@ fun bindRoundImage(view: ImageView, imageUrl: String?) {
         view.load(imageUrl) {
             transformations(CircleCropTransformation())
             crossfade(true)
+            crossfade(crossFadeDurationInMills)
         }
     }
 }
@@ -54,6 +58,7 @@ fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
         view.load(channelInfo.channel_logo) {
             transformations(CircleCropTransformation())
             crossfade(true)
+            crossfade(crossFadeDurationInMills)
             memoryCachePolicy(CachePolicy.DISABLED)
             diskCachePolicy(CachePolicy.ENABLED)
         }
@@ -62,6 +67,7 @@ fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
             memoryCachePolicy(CachePolicy.DISABLED)
             diskCachePolicy(CachePolicy.ENABLED)
             crossfade(true)
+            crossfade(crossFadeDurationInMills)
             size(720, 405)
         }
     }

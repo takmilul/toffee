@@ -8,6 +8,9 @@ import com.banglalink.toffee.data.storage.Preference;
 import com.banglalink.toffee.ui.player.Samples;
 import com.banglalink.toffee.util.Utils;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import static com.google.android.exoplayer2.C.TYPE_HLS;
 
 /**
@@ -75,11 +78,19 @@ public class Channel extends Samples.Sample {
             text = "/" + Preference.Companion.getInstance().getCellularProfileStatus();
         }
 
+        if(Preference.Companion.getInstance().shouldOverrideHlsUrl()){
+            try {
+                String path = new URL(uri).getPath();
+                uri = Preference.Companion.getInstance().getHlsOverrideUrl()+path;
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        }
         if(uri.endsWith("/")){
-            contentUri = Uri.parse(uri + Preference.Companion.getInstance().getSessionToken()+ text);///Uri.parse(bundle.getString(DATA));
+            contentUri = Uri.parse(uri + Preference.Companion.getInstance().getSessionToken()+ text);
         }
         else {
-            contentUri = Uri.parse(uri + "/" + Preference.Companion.getInstance().getSessionToken() + text);///Uri.parse(bundle.getString(DATA));
+            contentUri = Uri.parse(uri + "/" + Preference.Companion.getInstance().getSessionToken() + text);
         }
         return contentUri.toString();
     }
