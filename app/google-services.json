@@ -1,34 +1,42 @@
 {
   "project_info": {
-    "project_number": "1010029804888",
-    "firebase_url": "https://toffee2.firebaseio.com",
-    "project_id": "toffee2",
-    "storage_bucket": "toffee2.appspot.com"
+    "project_number": "487375594964",
+    "firebase_url": "https://toffee-87671.firebaseio.com",
+    "project_id": "toffee-87671",
+    "storage_bucket": "toffee-87671.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1010029804888:android:e6aaa2c595218af068b92d",
+        "mobilesdk_app_id": "1:487375594964:android:7fcdfc81a9cb2e2f",
         "android_client_info": {
-          "package_name": "com.banglalink.toffee2"
+          "package_name": "com.banglalink.toffee"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1010029804888-aq1jierv8t1ibhbmo2njt7qger9ugf1m.apps.googleusercontent.com",
+          "client_id": "487375594964-q2rvnt3fhmepq71smkognejve7s87paa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.banglalink.toffee",
+            "certificate_hash": "4a6832f5553daddaedccdb7456ed94e1bad08418"
+          }
+        },
+        {
+          "client_id": "487375594964-7eg3dfo3jbbdsmu7una36t8m21rstpjg.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyATWpu-_Zz_h-ihA6X_sQ8u6Prdk5geYH8"
+          "current_key": "AIzaSyDIMYa1mPuBBN-jPXXqDXT1uSdKT7vrutU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1010029804888-aq1jierv8t1ibhbmo2njt7qger9ugf1m.apps.googleusercontent.com",
+              "client_id": "487375594964-7eg3dfo3jbbdsmu7una36t8m21rstpjg.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

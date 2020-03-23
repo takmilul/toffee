@@ -43,11 +43,11 @@ class Preference private constructor(val context: Context) {
     var sessionToken: String
         get() = pref.getString("sessionToken", "")?:""
         set(sessionToken) {
-            val storedToken = pref.getString("sessionToken", "")?:""
+            val storedToken = pref.getString("sessionToken", "")?:""//get stored token
+            pref.edit().putString("sessionToken", sessionToken).apply()//save new session token
             if(!sessionToken.equals(storedToken,true)){
-                sessionTokenLiveData.postValue(sessionToken)
+                sessionTokenLiveData.postValue(sessionToken)//post if there is mismatch of session token
             }
-            pref.edit().putString("sessionToken", sessionToken).apply()
         }
 
     var balance: Int

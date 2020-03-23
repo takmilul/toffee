@@ -20,8 +20,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true">
+        android:theme="@style/AppTheme">
         <activity android:name=".ui.home.ContentPurchaseActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="Content Purchase"
@@ -148,6 +147,10 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
 
         <meta-data
             android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"

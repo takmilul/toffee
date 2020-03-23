@@ -1,5 +1,5 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name">Toffee Kotlin</string>
+    <string name="app_name">Toffee</string>
 
     <string name="retry">Retry</string>
 
@@ -111,5 +111,6 @@
     <string name="enable_random_adaptation">Enable random adaptation</string>
     <string name="track_selection_title">Track Title</string>
     <string name="otp_hint">OTP</string>
+    <string name="facebook_app_id">1116781388516653</string>
 
 </resources>

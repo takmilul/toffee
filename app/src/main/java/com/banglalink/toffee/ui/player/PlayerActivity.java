@@ -318,7 +318,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
                 Toast.makeText(PlayerActivity.this,"Behind live window",Toast.LENGTH_LONG).show();
             }
             else if(e.getSourceException() instanceof ParserException){
-                Toast.makeText(PlayerActivity.this,e.getSourceException().getMessage(),Toast.LENGTH_LONG).show();
+//                Toast.makeText(PlayerActivity.this,e.getSourceException().getMessage(),Toast.LENGTH_LONG).show();
             }
         }
 
