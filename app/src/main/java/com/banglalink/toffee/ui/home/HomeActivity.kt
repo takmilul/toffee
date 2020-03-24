@@ -117,7 +117,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         }
 
         observe(Preference.getInstance().sessionTokenLiveData){
-            showToast("Session token changed")
+//            showToast("Session token changed")
             if(binding.draggableView.visibility == View.VISIBLE)
                 updateStartPosition()//we are saving the player start position so that we can start where we left off for VOD.
                 reloadChannel()
@@ -215,6 +215,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         if (uri == null) {
             binding.playerView.showWifiOnlyMessage()
         } else {
+            viewModel.sendViewContentEvent(channelInfo)
             playChannel(channelInfo)
             HeartBeatManager.triggerEventViewingContentStart(channelInfo.id.toInt(),channelInfo.type)
         }

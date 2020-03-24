@@ -2,6 +2,7 @@ package com.banglalink.toffee.data.network.util
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
+import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.exception.ApiException
 import com.banglalink.toffee.data.network.response.BaseResponse
 import com.banglalink.toffee.exception.CustomerNotFoundException
@@ -53,6 +54,8 @@ fun <T> resultLiveData(networkCall: suspend () -> T): LiveData<Resource<T>> =
             emit(Resource.Success(response))
 
         }catch (e:Exception){
-            emit(Resource.Failure<T>(getError(e)))
+            val error = getError(e)
+            ToffeeAnalytics.logApiError("not_implemented",error)
+            emit(Resource.Failure<T>(error))
         }
     }

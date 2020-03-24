@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.banglalink.toffee.BuildConfig;
+import com.banglalink.toffee.analytics.ToffeeAnalytics;
 import com.banglalink.toffee.data.storage.Preference;
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener;
 import com.banglalink.toffee.model.Channel;
@@ -268,7 +269,6 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
     @Override
     public void onPlayerIdleDueToError() {
         if(player!=null && player.getPlayWhenReady()){
-            Toast.makeText(this,"Force play",Toast.LENGTH_LONG).show();
             reloadChannel();
         }
     }
@@ -315,10 +315,12 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
             if (isBehindLiveWindow(e)) {
                 clearStartPosition();
                 reloadChannel();
-                Toast.makeText(PlayerActivity.this,"Behind live window",Toast.LENGTH_LONG).show();
+                if(channelInfo!=null)
+                    ToffeeAnalytics.INSTANCE.playerError(channelInfo,"Behind live window");//log error
             }
-            else if(e.getSourceException() instanceof ParserException){
-//                Toast.makeText(PlayerActivity.this,e.getSourceException().getMessage(),Toast.LENGTH_LONG).show();
+            else{
+                if(channelInfo!=null && e.getSourceException().getMessage()!=null)
+                    ToffeeAnalytics.INSTANCE.playerError(channelInfo,e.getSourceException().getMessage());//trying to log error with proper message.
             }
         }
 

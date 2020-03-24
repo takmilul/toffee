@@ -8,6 +8,8 @@ import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.ActivitySplashScreenBinding
 import com.banglalink.toffee.exception.AppDeprecatedError
 import com.banglalink.toffee.extension.*
@@ -47,6 +49,7 @@ class SplashScreen : BaseAppCompatActivity() {
         observe(viewModel.init(skipUpdate)){
             when(it){
                 is Resource.Success ->{
+                    ToffeeAnalytics.updateCustomerId(Preference.getInstance().customerId)
                     launchActivity<HomeActivity>()
                     finish()
                 }
@@ -56,6 +59,7 @@ class SplashScreen : BaseAppCompatActivity() {
                             showUpdateDialog(it.error.title,it.error.updateMsg,it.error.forceUpdate)
                         }
                         else->{
+                            ToffeeAnalytics.apiLoginFailed(it.error.msg)
                             binding.root.snack(it.error.msg){
                                 action("Retry") {
                                     initApp(skipUpdate)
