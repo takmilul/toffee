@@ -160,11 +160,11 @@ class Preference private constructor(val context: Context) {
     }
 
     fun defaultDataQuality(): Boolean {
-        return pref.getBoolean("DefaultDataQuality", true)
+        return pref.getBoolean("DefaultDataQuality2", false)
     }
 
     fun setDefaultDataQuality(value: Boolean) {
-        pref.edit().putBoolean("DefaultDataQuality", value).apply()
+        pref.edit().putBoolean("DefaultDataQuality2", value).apply()
     }
 
     fun setHeaderSessionToken(sessionToken: String?) {

@@ -15,7 +15,7 @@ import kotlinx.coroutines.*
 object HeartBeatManager : LifecycleObserver, ConnectivityManager.NetworkCallback() {
 
 
-    private val TIMER_PERIOD = 30000
+    private const val TIMER_PERIOD = 30000// 30 sec
     private var INITIAL_DELAY = 0L
 
 
@@ -27,8 +27,8 @@ object HeartBeatManager : LifecycleObserver, ConnectivityManager.NetworkCallback
     private var contentId = 0;
     private var contentType = ""
 
-    lateinit var  coroutineScope :CoroutineScope
-    val coroutineScope2 = CoroutineScope(coroutineContext2)
+    private lateinit var  coroutineScope :CoroutineScope
+    private val coroutineScope2 = CoroutineScope(coroutineContext2)
     private val sendHeartBeat by unsafeLazy {
         SendHeartBeat(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }

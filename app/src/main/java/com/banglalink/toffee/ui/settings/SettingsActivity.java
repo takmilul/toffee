@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.settings;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
@@ -12,7 +11,6 @@ import com.banglalink.toffee.R;
 import com.banglalink.toffee.data.storage.Preference;
 import com.banglalink.toffee.databinding.ActivitySettingsBinding;
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity;
-import com.suke.widget.SwitchButton;
 
 
 public class SettingsActivity extends BaseAppCompatActivity {
@@ -42,16 +40,9 @@ public class SettingsActivity extends BaseAppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this,R.layout.activity_settings);
 
-        if (binding.toolbar != null) {
-            setSupportActionBar(binding.toolbar);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
-        binding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        setSupportActionBar(binding.toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        binding.toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
         wifiStateProgressBar = findViewById(R.id.wifi_profile_state_bar);
         binding.wifiProfileStateBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -93,19 +84,9 @@ public class SettingsActivity extends BaseAppCompatActivity {
             }
         });
 
-        binding.dataQualityToggleBtn.setOnCheckedChangeListener(new SwitchButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(SwitchButton view, boolean isChecked) {
-                handleDefaultDataQualityToggleBtn();
-            }
-        });
+        binding.dataQualityToggleBtn.setOnCheckedChangeListener((view, isChecked) -> handleDefaultDataQualityToggleBtn());
 
-        binding.watchOnlyWifiToggleBtn.setOnCheckedChangeListener(new SwitchButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(SwitchButton view, boolean isChecked) {
-                handleWatchOnlyWifiToggleBtn();
-            }
-        });
+        binding.watchOnlyWifiToggleBtn.setOnCheckedChangeListener((view, isChecked) -> handleWatchOnlyWifiToggleBtn());
 
         initializeSettings();
     }

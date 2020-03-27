@@ -75,7 +75,6 @@ public class DraggerLayout extends RelativeLayout {
         smoothSlideTo(1f);
 
         int height = getHeight();
-        Log.e("Height",String.valueOf(height));
         for(OnPositionChangedListener onPositionChangedListener : onPositionChangedListenerList){
             if(onPositionChangedListener != null){
                 onPositionChangedListener.onViewMinimize();
@@ -208,7 +207,6 @@ public class DraggerLayout extends RelativeLayout {
         public void onViewReleased(View releasedChild, float xvel, float yvel) {
             super.onViewReleased(releasedChild, xvel, yvel);
             if(isHorizontalDragged()){
-                Log.e("horizontal ", "drag right: " + dragView.getRight() + " boundary " + getRight());
                 if((getRight() - getPaddingRight() - dragView.getRight()) > getRight() / 5){
                     if (viewDragHelper.smoothSlideViewTo(dragView, 0 - (getRight() - getPaddingRight()), newtop)) {
                         ViewCompat.postInvalidateOnAnimation(parent);
