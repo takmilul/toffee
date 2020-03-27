@@ -56,6 +56,10 @@ class HomeViewModel(application: Application):BaseViewModel(application),OnCompl
         SetFcmToken(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
 
+    private val sendViewContentEvent by unsafeLazy {
+        SendViewContentEvent(Preference.getInstance(),RetrofitApiClient.toffeeApi)
+    }
+
     init {
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener(this)
         getCategory()
@@ -106,5 +110,16 @@ class HomeViewModel(application: Application):BaseViewModel(application),OnCompl
        return resultLiveData{
            getContentFromShareableUrl.execute(shareUrl)
        }
+    }
+
+    fun sendViewContentEvent(channelInfo: ChannelInfo){
+        viewModelScope.launch {
+            try {
+                sendViewContentEvent.execute(channelInfo)
+
+            }catch (e:Exception){
+                e.printStackTrace()
+            }
+        }
     }
 }

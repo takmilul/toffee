@@ -8,6 +8,7 @@ import coil.Coil
 import coil.ImageLoader
 import coil.util.CoilUtils
 import com.banglalink.toffee.analytics.HeartBeatManager
+import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.storage.Preference
 import okhttp3.OkHttpClient
 
@@ -18,6 +19,7 @@ class ToffeeApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         Preference.init(this)
+        ToffeeAnalytics.initFireBaseAnalytics(this)
 
         val imageLoader = ImageLoader(this) {
             crossfade(true)
