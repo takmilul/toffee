@@ -128,7 +128,7 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
                 }
                 is Resource.Failure -> {
                     channelScrollListener.resetState()
-                    Log.e("LOG", it.error.msg)
+                    requireActivity().showToast(it.error.msg)
                 }
             }
         })
@@ -154,7 +154,7 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
                   }
                 }
                 is Resource.Failure -> {
-                    Log.e("LOG", it.error.msg)
+                    requireActivity().showToast(it.error.msg)
                 }
             }
         })
