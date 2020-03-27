@@ -39,6 +39,7 @@ class ReferAFriendActivity : BaseAppCompatActivity() {
     }
 
     private fun getMyReferralCode(){
+        progressDialog.show()
         observe(viewModel.getMyReferralCode()) {
             progressDialog.dismiss()
             when(it){
@@ -53,8 +54,7 @@ class ReferAFriendActivity : BaseAppCompatActivity() {
                 is Resource.Failure->{
                     binding.root.snack(it.error.msg){
                         action("Retry") {
-                            progressDialog.show()
-                            viewModel.getMyReferralCode()
+                            getMyReferralCode()
                         }
                     }
                 }
@@ -68,7 +68,7 @@ class ReferAFriendActivity : BaseAppCompatActivity() {
                 .setType("text/plan")
                 .setText(shareableText)
                 .intent
-            if (shareIntent.resolveActivity(getPackageManager()) != null) {
+            if (shareIntent.resolveActivity(packageManager) != null) {
                 startActivity(shareIntent)
             }
         }

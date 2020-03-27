@@ -679,7 +679,6 @@ public class StickyHeaderGridLayoutManager extends RecyclerView.LayoutManager im
    }
 
    private LayoutRow getBottomRow() {
-      Log.e("sticky","bottom-row size " + mLayoutRows.size());
       if(mLayoutRows.size() > 0)
          return mLayoutRows.get(mLayoutRows.size() - 1);
       return null;

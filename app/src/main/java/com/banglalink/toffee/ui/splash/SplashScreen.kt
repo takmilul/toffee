@@ -18,6 +18,7 @@ import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.login.SigninByPhoneActivity
 import com.banglalink.toffee.util.unsafeLazy
+import com.facebook.appevents.AppEventsLogger
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -42,6 +43,10 @@ class SplashScreen : BaseAppCompatActivity() {
                 finish()
             }
         }
+
+        val appEventsLogger = AppEventsLogger.newLogger(this)
+        appEventsLogger.logEvent("app_launch")
+        appEventsLogger.flush()
 
     }
 

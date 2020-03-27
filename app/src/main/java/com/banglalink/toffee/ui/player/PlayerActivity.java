@@ -34,6 +34,8 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.util.Util;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import java.net.CookieHandler;
 import java.net.CookieManager;
@@ -63,7 +65,6 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
 
     @Nullable
     private ChannelInfo channelInfo;
-    private boolean isShowingTrackSelectionDialog;
 
     private static final CookieManager DEFAULT_COOKIE_MANAGER;
     static {
@@ -75,6 +76,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
     private static final String KEY_WINDOW = "window";
     private static final String KEY_POSITION = "position";
     private static final String KEY_AUTO_PLAY = "auto_play";
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -158,7 +160,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
                             .setBandwidthMeter(defaultBandwidthMeter)
                             .build();
             player.addListener(playerEventListener);
-            player.setPlayWhenReady(startAutoPlay);
+            player.setPlayWhenReady(false);
             if(BuildConfig.DEBUG){
                 player.addAnalyticsListener(new EventLogger(defaultTrackSelector));
             }
@@ -237,7 +239,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
     protected void reloadChannel(){
         if(channelInfo!=null && player!=null){
             MediaSource mediaSource = prepareMedia(Uri.parse( Channel.createChannel(channelInfo).getContentUri(this)));
-            player.setPlayWhenReady(startAutoPlay);
+            player.setPlayWhenReady(player.getPlayWhenReady());
             boolean haveStartPosition = startWindow != C.INDEX_UNSET;
             player.prepare(mediaSource, !haveStartPosition, false);
             if (haveStartPosition && !channelInfo.isLive()) {
@@ -267,20 +269,28 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
     @Override
     public void onPlayerIdleDueToError() {
         if(player!=null && player.getPlayWhenReady()){
+            ToffeeAnalytics.INSTANCE.logForcePlay();
             reloadChannel();
         }
     }
 
     @Override
     public boolean onOptionMenuPressed() {
-                TrackSelectionDialog trackSelectionDialog =
-                TrackSelectionDialog.createForTrackSelector(
-                        defaultTrackSelector,
-                        /* onDismissListener= */ dismissedDialog -> {
-                            isShowingTrackSelectionDialog = false;
-                            onTrackerDialogDismissed();
-                        });
-        trackSelectionDialog.show(this.getSupportFragmentManager(), /* tag= */ null);
+        TrackSelectionDialog bottomSheetDialog = new TrackSelectionDialog(this);
+        bottomSheetDialog.init(defaultTrackSelector);
+        getLifecycle().addObserver(bottomSheetDialog);
+
+        bottomSheetDialog.setOnDismissListener(dialogInterface -> {
+            getLifecycle().removeObserver(bottomSheetDialog);
+            onTrackerDialogDismissed();
+        });
+        bottomSheetDialog.setOnCancelListener(dialogInterface -> {
+            getLifecycle().removeObserver(bottomSheetDialog);
+            onTrackerDialogDismissed();
+        });
+        bottomSheetDialog.show();
+        bottomSheetDialog.getBehavior().setState(BottomSheetBehavior.STATE_EXPANDED);
+
         return true;
     }
 
@@ -310,6 +320,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
         @Override
         public void onPlayerError(ExoPlaybackException e) {
             e.printStackTrace();
+            FirebaseCrashlytics.getInstance().recordException(e);
             if (isBehindLiveWindow(e)) {
                 clearStartPosition();
                 reloadChannel();
