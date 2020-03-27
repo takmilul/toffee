@@ -48,6 +48,12 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
         }
     }
 
+    private val trendingNowVideoListAdapter by lazy {
+        TrendingNowVideoListAdapter(this){
+            homeViewModel.fragmentDetailsMutableLiveData.postValue(it)
+        }
+    }
+
     private val categoriesListAdapter by lazy {
         CategoriesListAdapter(this) {
             //handle video click in adapter. Basically notify livedata to homeactivity to load channel
@@ -154,6 +160,11 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
             adapter = categoriesListAdapter
         }
 
+        trendingNowList.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = trendingNowVideoListAdapter
+        }
+
         val linearLayoutManager = LinearLayoutManager(context)
         popularVideoListView = view.findViewById<RecyclerView>(R.id.listview).apply {
             layoutManager = linearLayoutManager
@@ -205,6 +216,11 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
             when (it) {
                 is Resource.Success -> {
                     mostPopularVideoListAdapter.addAll(it.data)
+                    if(it.data.size >= 3){
+                        trendingNowVideoListAdapter.removeAll()
+                        trendingNowVideoListAdapter.addAll(it.data.subList(0,3))
+                        trendingNowVideoListAdapter.notifyDataSetChanged()
+                    }
                 }
                 is Resource.Failure -> {
                     Log.e("LOG", it.error.msg)
