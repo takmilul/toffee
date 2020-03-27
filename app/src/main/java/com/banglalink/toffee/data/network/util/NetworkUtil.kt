@@ -28,7 +28,7 @@ suspend fun <T : BaseResponse> tryIO(block: suspend () -> Response<T>): T {
                it.status == 1 ->{//server suffered a serious error
                    throw ApiException(
                        it.status,
-                       if(it.errorMsg.isNullOrBlank()) "Server not responding. Please try again later" else it.errorMsg!!
+                       if(it.errorMsg.isNullOrBlank()) "Something went wrong. Please try again later" else it.errorMsg!!
                    )
                }
                 it.errorCode!=0->{//hmmm....error occurred ....throw it
@@ -54,8 +54,6 @@ fun <T> resultLiveData(networkCall: suspend () -> T): LiveData<Resource<T>> =
             emit(Resource.Success(response))
 
         }catch (e:Exception){
-            val error = getError(e)
-            ToffeeAnalytics.logApiError("not_implemented",error)
-            emit(Resource.Failure<T>(error))
+            emit(Resource.Failure<T>(getError(e)))
         }
     }
