@@ -30,6 +30,7 @@ import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.util.unsafeLazy
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.yalantis.ucrop.UCrop
 import kotlinx.coroutines.launch
 import java.io.File
@@ -177,6 +178,7 @@ class EditProfileActivity : BaseAppCompatActivity() {
             progressDialog.dismiss()
             when(it){
                 is Resource.Success->{
+                    showToast("Profile updated successfully")
                     val intent = intent
                     intent.putExtra(PROFILE_INFO,binding.profileForm)
                     setResult(RESULT_OK, intent)
@@ -191,7 +193,9 @@ class EditProfileActivity : BaseAppCompatActivity() {
 
     private fun handleUploadImage(photoUri:Uri){
         try {
+            progressDialog.show()
             observe( viewModel.uploadProfileImage(photoUri)){
+                progressDialog.dismiss()
                 when (it) {
                     is Resource.Success -> {
                         showToast(
@@ -205,6 +209,8 @@ class EditProfileActivity : BaseAppCompatActivity() {
             }
 
         } catch (e: Exception) {
+            progressDialog.dismiss()
+            FirebaseCrashlytics.getInstance().recordException(e)
             Log.e(TAG, e.message, e)
         }
     }

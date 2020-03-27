@@ -13,6 +13,7 @@ import com.banglalink.toffee.usecase.GetProfile
 import com.banglalink.toffee.usecase.UpdateProfile
 import com.banglalink.toffee.usecase.UploadProfileImage
 import com.banglalink.toffee.util.unsafeLazy
+import kotlinx.coroutines.delay
 
 class EditProfileViewModel(application: Application) : BaseViewModel(application) {
 
@@ -42,6 +43,7 @@ class EditProfileViewModel(application: Application) : BaseViewModel(application
     fun uploadProfileImage(photoData: Uri):LiveData<Resource<Customer>> {
         return resultLiveData{
             uploadProfileImage.execute(photoData,getApplication())
+            delay(1500)
             getProfile.execute()
         }
     }
