@@ -18,7 +18,7 @@ import com.banglalink.toffee.util.unsafeLazy
 
 class ChannelFragment:Fragment(), ChannelStickyListAdapter.OnItemClickListener {
 
-    val homeViewModel by unsafeLazy {
+    private val homeViewModel by unsafeLazy {
         ViewModelProviders.of(activity!!).get(HomeViewModel::class.java)
     }
 
@@ -28,6 +28,7 @@ class ChannelFragment:Fragment(), ChannelStickyListAdapter.OnItemClickListener {
 
     private var category: String? = null
     private var subCategory: String? = null
+    private var title: String? = null
     private var subCategoryID: Int = 0
 
 
@@ -59,6 +60,7 @@ class ChannelFragment:Fragment(), ChannelStickyListAdapter.OnItemClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        this.title = arguments!!.getString("title")
         this.category = arguments!!.getString("category")
         this.subCategory = arguments!!.getString("sub-category")
         this.subCategoryID = arguments!!.getInt("sub-category-id")
@@ -74,8 +76,8 @@ class ChannelFragment:Fragment(), ChannelStickyListAdapter.OnItemClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity?.let {
-            it.title = arguments?.getString("title")?:it.title
+        title?.let {
+            activity?.title = it
         }
         var channelAdapter: ChannelStickyListAdapter?
         val gridView: RecyclerView  = view.findViewById(R.id.gridView)
@@ -89,7 +91,7 @@ class ChannelFragment:Fragment(), ChannelStickyListAdapter.OnItemClickListener {
           when(it){
               is Resource.Success->{
                   channelAdapter = ChannelStickyListAdapter(
-                      context!!,
+                      requireContext(),
                       it.data.toMutableList(),
                       this
                   )
