@@ -80,14 +80,14 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical|right"
                                 android:text="@string/view_all"
-                                android:textColor="@color/view_all_txt_color"/>
+                                android:textColor="@color/view_all_text_color"/>
 
                             <ImageView
                                 android:layout_width="14dp"
                                 android:layout_height="14dp"
                                 android:layout_marginRight="20dp"
                                 android:layout_gravity="center"
-                                android:tint="@color/view_all_txt_color"
+                                android:tint="@color/view_all_text_color"
                                 app:srcCompat="@drawable/ic_right_arrow_accent"/>
 
                         </LinearLayout>
@@ -148,14 +148,14 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical|right"
                             android:text="@string/view_all"
-                            android:textColor="@color/view_all_txt_color"/>
+                            android:textColor="@color/view_all_text_color"/>
 
                         <ImageView
                             android:layout_width="14dp"
                             android:layout_height="14dp"
                             android:layout_marginRight="20dp"
                             android:layout_gravity="center"
-                            android:tint="@color/view_all_txt_color"
+                            android:tint="@color/view_all_text_color"
                             app:srcCompat="@drawable/ic_right_arrow_accent"/>
 
                     </LinearLayout>
@@ -232,14 +232,14 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical|right"
                                 android:text="@string/view_all"
-                                android:textColor="@color/view_all_txt_color"/>
+                                android:textColor="@color/view_all_text_color"/>
 
                             <ImageView
                                 android:layout_width="14dp"
                                 android:layout_height="14dp"
                                 android:layout_marginRight="20dp"
                                 android:layout_gravity="center"
-                                android:tint="@color/view_all_txt_color"
+                                android:tint="@color/view_all_text_color"
                                 app:srcCompat="@drawable/ic_right_arrow_accent"/>
 
                         </LinearLayout>
@@ -289,14 +289,14 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical|right"
                                 android:text="@string/view_all"
-                                android:textColor="@color/view_all_txt_color"/>
+                                android:textColor="@color/view_all_text_color"/>
 
                             <ImageView
                                 android:layout_width="14dp"
                                 android:layout_height="14dp"
                                 android:layout_marginRight="20dp"
                                 android:layout_gravity="center"
-                                android:tint="@color/view_all_txt_color"
+                                android:tint="@color/view_all_text_color"
                                 app:srcCompat="@drawable/ic_right_arrow_accent"/>
 
                         </LinearLayout>
