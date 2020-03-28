@@ -42,6 +42,7 @@ class ChannelFragment:Fragment(), ChannelStickyListAdapter.OnItemClickListener {
             bundle.putInt("sub-category-id", subCategoryID)
             bundle.putString("sub-category", subCategory)
             bundle.putString("category", category)
+            bundle.putString("title", "TV Channels")
             channelListFragment.arguments = bundle
             return channelListFragment
         }
@@ -73,7 +74,7 @@ class ChannelFragment:Fragment(), ChannelStickyListAdapter.OnItemClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity?.title = this.category
+        activity?.title = arguments?.getString("title")?:"Home"
         var channelAdapter: ChannelStickyListAdapter?
         val gridView: RecyclerView  = view.findViewById(R.id.gridView)
         gridView.setHasFixedSize(true)
