@@ -75,7 +75,7 @@
                             android:id="@+id/channel_view_all"
                             android:orientation="horizontal">
                             <TextView
-                                style="@style/CategoryTextView"
+                                style="@style/ViewAllTextView"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical|right"
@@ -119,7 +119,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="16dp"
                     android:orientation="horizontal"
                     >
 
@@ -143,7 +143,7 @@
                         android:id="@+id/mostPopularViewAll"
                         android:orientation="horizontal">
                         <TextView
-                            style="@style/CategoryTextView"
+                            style="@style/ViewAllTextView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical|right"
@@ -227,7 +227,7 @@
                             android:id="@+id/categoriesViewAll"
                             android:orientation="horizontal">
                             <TextView
-                                style="@style/CategoryTextView"
+                                style="@style/ViewAllTextView"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical|right"
@@ -284,7 +284,7 @@
                             android:id="@+id/trendingNowViewAll"
                             android:orientation="horizontal">
                             <TextView
-                                style="@style/CategoryTextView"
+                                style="@style/ViewAllTextView"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical|right"
@@ -325,6 +325,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="10dp"
         android:id="@+id/listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

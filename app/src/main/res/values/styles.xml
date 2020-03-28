@@ -110,6 +110,16 @@
         <item name="android:fontFamily">sans-serif-medium</item>
     </style>
 
+    <style name="ViewAllTextView" parent="@android:style/Widget.TextView">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textColor">@color/view_all_text_color</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
 
     <style name="textInputEditText2" parent="@android:style/Widget.EditText">
         <item name="android:layout_height">wrap_content</item>

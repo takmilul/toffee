@@ -24,8 +24,6 @@ const val crossFadeDurationInMills = 500
 fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
     if (!imageUrl.isNullOrEmpty()) {
         view.load(imageUrl) {
-            memoryCachePolicy(CachePolicy.DISABLED)
-            diskCachePolicy(CachePolicy.ENABLED)
             crossfade(true)
             crossfade(crossFadeDurationInMills)
         }
@@ -61,8 +59,6 @@ fun bindChannel(view: CircleImageView, channelInfo: ChannelInfo) {
         }
     } else {
         view.load(channelInfo.landscape_ratio_1280_720) {
-            memoryCachePolicy(CachePolicy.DISABLED)
-            diskCachePolicy(CachePolicy.ENABLED)
             crossfade(true)
             crossfade(crossFadeDurationInMills)
             size(720, 405)
@@ -77,13 +73,9 @@ fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
             transformations(CircleCropTransformation())
             crossfade(true)
             crossfade(crossFadeDurationInMills)
-            memoryCachePolicy(CachePolicy.DISABLED)
-            diskCachePolicy(CachePolicy.ENABLED)
         }
     } else {
         view.load(channelInfo.landscape_ratio_1280_720) {
-            memoryCachePolicy(CachePolicy.DISABLED)
-            diskCachePolicy(CachePolicy.ENABLED)
             crossfade(true)
             crossfade(crossFadeDurationInMills)
             size(720, 405)
