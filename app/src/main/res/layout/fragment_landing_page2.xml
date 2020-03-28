@@ -12,101 +12,103 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <LinearLayout
-                android:background="@drawable/bottom_round_white_bg"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="16dp"
-                android:orientation="vertical">
 
-                <com.daimajia.slider.library.SliderLayout
-                    android:id="@+id/slider"
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <FrameLayout
+                    android:background="@drawable/bottom_round_white_bg"
                     android:layout_width="match_parent"
-                    app:indicator_visibility="invisible"
-                    android:layout_height="@dimen/slider_height"/>
-
-                <TextView
-                    android:layout_marginStart="5dp"
-                    style="@style/CategoryTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/featured"/>
-
-                <TextView
-                    android:id="@+id/featureDescription"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:textColor="#29466b"
-                    android:maxLines="2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_marginTop="8dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                    android:layout_height="332dp"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:orientation="horizontal"
-                    >
+                    android:orientation="vertical">
+
+                    <com.daimajia.slider.library.SliderLayout
+                        android:id="@+id/slider"
+                        android:layout_width="match_parent"
+                        app:indicator_visibility="invisible"
+                        android:layout_height="@dimen/slider_height"/>
 
                     <TextView
                         android:layout_marginStart="10dp"
-                        android:id="@+id/channel_tv"
                         style="@style/CategoryTextView"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_weight="1"
-                        android:text="@string/channel"/>
-
-
-                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:id="@+id/channel_view_all"
-                        android:orientation="horizontal">
+                        android:text="@string/featured"/>
+
+                    <TextView
+                        android:id="@+id/featureDescription"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="10dp"
+                        android:textColor="#29466b"
+                        android:maxLines="2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:orientation="horizontal"
+                        >
+
                         <TextView
+                            android:layout_marginStart="10dp"
+                            android:id="@+id/channel_tv"
                             style="@style/CategoryTextView"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_weight="1"
+                            android:text="@string/channel"/>
+
+
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical|right"
-                            android:text="@string/view_all"
-                            android:textColor="@color/view_all_txt_color"/>
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:id="@+id/channel_view_all"
+                            android:orientation="horizontal">
+                            <TextView
+                                style="@style/CategoryTextView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical|right"
+                                android:text="@string/view_all"
+                                android:textColor="@color/view_all_txt_color"/>
 
-                        <ImageView
-                            android:layout_width="14dp"
-                            android:layout_height="14dp"
-                            android:layout_marginRight="20dp"
-                            android:layout_gravity="center"
-                            android:tint="@color/view_all_txt_color"
-                            app:srcCompat="@drawable/ic_right_arrow_accent"/>
+                            <ImageView
+                                android:layout_width="14dp"
+                                android:layout_height="14dp"
+                                android:layout_marginRight="20dp"
+                                android:layout_gravity="center"
+                                android:tint="@color/view_all_txt_color"
+                                app:srcCompat="@drawable/ic_right_arrow_accent"/>
+
+                        </LinearLayout>
+
 
                     </LinearLayout>
 
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/channel_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        />
 
                 </LinearLayout>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/channel_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:clipToPadding="false"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    />
 
-            </LinearLayout>
+            </FrameLayout>
+
 
             <LinearLayout
                 android:layout_marginTop="8dp"
@@ -160,147 +162,163 @@
 
 
                 </LinearLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/mostPopularList"
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:clipToPadding="false"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    />
+                    android:layout_height="wrap_content">
+                    <FrameLayout
+                        android:background="@drawable/top_bottom_round_white_bg"
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="50dp"
+                        android:layout_height="240dp"/>
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/mostPopularList"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        />
+
+                </FrameLayout>
+
 
             </LinearLayout>
-
-            <LinearLayout
-                android:layout_marginTop="8dp"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="wrap_content">
+
+                <FrameLayout
+                    android:background="@drawable/top_bottom_round_white_bg"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="115dp"
+                    android:layout_height="520dp"/>
 
                 <LinearLayout
+                    android:layout_marginTop="8dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:orientation="horizontal"
-                    >
-
-                    <TextView
-                        android:layout_marginStart="10dp"
-                        android:id="@+id/categoriesHeader"
-                        style="@style/CategoryTextView"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_weight="1"
-                        android:text="@string/categories"/>
-
+                    android:orientation="vertical">
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:id="@+id/categoriesViewAll"
-                        android:orientation="horizontal">
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal"
+                        >
+
                         <TextView
+                            android:layout_marginStart="10dp"
+                            android:id="@+id/categoriesHeader"
                             style="@style/CategoryTextView"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_weight="1"
+                            android:text="@string/categories"/>
+
+
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical|right"
-                            android:text="@string/view_all"
-                            android:textColor="@color/view_all_txt_color"/>
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:id="@+id/categoriesViewAll"
+                            android:orientation="horizontal">
+                            <TextView
+                                style="@style/CategoryTextView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical|right"
+                                android:text="@string/view_all"
+                                android:textColor="@color/view_all_txt_color"/>
 
-                        <ImageView
-                            android:layout_width="14dp"
-                            android:layout_height="14dp"
-                            android:layout_marginRight="20dp"
-                            android:layout_gravity="center"
-                            android:tint="@color/view_all_txt_color"
-                            app:srcCompat="@drawable/ic_right_arrow_accent"/>
+                            <ImageView
+                                android:layout_width="14dp"
+                                android:layout_height="14dp"
+                                android:layout_marginRight="20dp"
+                                android:layout_gravity="center"
+                                android:tint="@color/view_all_txt_color"
+                                app:srcCompat="@drawable/ic_right_arrow_accent"/>
+
+                        </LinearLayout>
+
 
                     </LinearLayout>
 
-
-                </LinearLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/categoriesList"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:clipToPadding="false"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_marginTop="8dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:orientation="horizontal"
-                    >
-
-                    <TextView
-                        android:layout_marginStart="10dp"
-                        android:id="@+id/trendingNowHeader"
-                        style="@style/CategoryTextView"
-                        android:layout_width="0dp"
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/categoriesList"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_weight="1"
-                        android:text="@string/trending_now"/>
-
+                        android:clipToPadding="false"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        />
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:id="@+id/trendingNowViewAll"
-                        android:orientation="horizontal">
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal"
+                        >
+
                         <TextView
+                            android:layout_marginStart="10dp"
+                            android:id="@+id/trendingNowHeader"
                             style="@style/CategoryTextView"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_weight="1"
+                            android:text="@string/trending_now"/>
+
+
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical|right"
-                            android:text="@string/view_all"
-                            android:textColor="@color/view_all_txt_color"/>
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:id="@+id/trendingNowViewAll"
+                            android:orientation="horizontal">
+                            <TextView
+                                style="@style/CategoryTextView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical|right"
+                                android:text="@string/view_all"
+                                android:textColor="@color/view_all_txt_color"/>
 
-                        <ImageView
-                            android:layout_width="14dp"
-                            android:layout_height="14dp"
-                            android:layout_marginRight="20dp"
-                            android:layout_gravity="center"
-                            android:tint="@color/view_all_txt_color"
-                            app:srcCompat="@drawable/ic_right_arrow_accent"/>
+                            <ImageView
+                                android:layout_width="14dp"
+                                android:layout_height="14dp"
+                                android:layout_marginRight="20dp"
+                                android:layout_gravity="center"
+                                android:tint="@color/view_all_txt_color"
+                                app:srcCompat="@drawable/ic_right_arrow_accent"/>
+
+                        </LinearLayout>
+
 
                     </LinearLayout>
 
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/trendingNowList"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        />
 
                 </LinearLayout>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/trendingNowList"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:clipToPadding="false"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    />
+            </FrameLayout>
 
-            </LinearLayout>
+
+
 
         </LinearLayout>
 

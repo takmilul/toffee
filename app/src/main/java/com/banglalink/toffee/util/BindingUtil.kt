@@ -15,6 +15,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Package
+import de.hdodenhof.circleimageview.CircleImageView
 import java.util.*
 
 const val crossFadeDurationInMills = 500
@@ -50,6 +51,23 @@ fun bindCategoryImage(view: ImageView, category : Category) {
 @BindingAdapter("loadCategoryName")
 fun bindCategoryName(view: TextView, category : Category) {
     view.text = category.name
+}
+
+@BindingAdapter("loadChannelImage")
+fun bindChannel(view: CircleImageView, channelInfo: ChannelInfo) {
+    if (channelInfo.isLive) {
+        view.load(channelInfo.channel_logo) {
+            crossfade(false)
+        }
+    } else {
+        view.load(channelInfo.landscape_ratio_1280_720) {
+            memoryCachePolicy(CachePolicy.DISABLED)
+            diskCachePolicy(CachePolicy.ENABLED)
+            crossfade(true)
+            crossfade(crossFadeDurationInMills)
+            size(720, 405)
+        }
+    }
 }
 
 @BindingAdapter("loadChannelImage")
