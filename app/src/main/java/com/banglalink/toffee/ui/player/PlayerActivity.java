@@ -93,9 +93,6 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
         } else {
             DefaultTrackSelector.ParametersBuilder builder =
                     new DefaultTrackSelector.ParametersBuilder(/* context= */ this);
-            if (Util.SDK_INT >= 21) {
-                builder.setTunnelingAudioSessionId(C.generateAudioSessionIdV21(/* context= */ this));
-            }
             trackSelectorParameters = builder.build();
             clearStartPosition();
         }
