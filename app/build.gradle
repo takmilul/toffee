@@ -11,8 +11,8 @@ android {
         applicationId "com.banglalink.toffee"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 13
-        versionName "1.1.1_kotlin"
+        versionCode 15
+        versionName "1.1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {
@@ -73,7 +73,7 @@ dependencies {
     implementation 'com.xfinity:dahdit:0.9.3'
 
     //Coil image Lib
-    implementation 'io.coil-kt:coil:0.9.3'
+    implementation 'io.coil-kt:coil:0.9.5'
 
     //Firebase Push Notification
     implementation 'com.google.firebase:firebase-messaging:20.1.3'
@@ -96,7 +96,6 @@ dependencies {
 //    implementation 'com.google.android.exoplayer:exoplayer:2.11.1'
     implementation 'com.google.android.exoplayer:exoplayer-core:2.11.1'
     implementation 'com.google.android.exoplayer:exoplayer-hls:2.11.1'
-    implementation 'com.google.android.exoplayer:exoplayer-ui:2.11.1'
 //    implementation 'com.google.android.gms:play-services-cast-framework:17.1.0'
 
     //Permission extension
