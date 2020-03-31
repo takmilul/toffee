@@ -115,7 +115,6 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         }
 
         observe(Preference.getInstance().sessionTokenLiveData){
-//            showToast("Session token changed")
             if(binding.draggableView.visibility == View.VISIBLE)
                 updateStartPosition()//we are saving the player start position so that we can start where we left off for VOD.
                 reloadChannel()
@@ -166,6 +165,10 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         updateFullScreenState()
     }
 
+    override fun channelCannotBePlayedDueToSettings() {
+        binding.playerView.showWifiOnlyMessage()
+    }
+
     private fun updateFullScreenState() {
         val state =
             resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -209,14 +212,8 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     }
 
     private fun loadChannel(@Nonnull channelInfo: ChannelInfo) {
-        val uri = Channel.createChannel(channelInfo).getContentUri(this)
-        if (uri == null) {
-            binding.playerView.showWifiOnlyMessage()
-        } else {
-            viewModel.sendViewContentEvent(channelInfo)
-            playChannel(channelInfo)
-            HeartBeatManager.triggerEventViewingContentStart(channelInfo.id.toInt(),channelInfo.type)
-        }
+        viewModel.sendViewContentEvent(channelInfo)
+       playChannel(channelInfo)
     }
 
     fun onDetailsFragmentLoad(channelInfo: ChannelInfo?) {

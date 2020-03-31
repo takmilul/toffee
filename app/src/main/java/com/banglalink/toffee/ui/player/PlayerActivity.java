@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.banglalink.toffee.BuildConfig;
+import com.banglalink.toffee.analytics.HeartBeatManager;
 import com.banglalink.toffee.analytics.ToffeeAnalytics;
 import com.banglalink.toffee.data.storage.Preference;
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener;
@@ -162,6 +163,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
                 player.addAnalyticsListener(new EventLogger(defaultTrackSelector));
             }
         }
+        //we are checking both channelInfo and contenturi because for wifi only settings contenturi can be null
         if(channelInfo!=null){
             reloadChannel();
         }
@@ -217,14 +219,22 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
 
     protected void playChannel(ChannelInfo channelInfo) {
         this.channelInfo = channelInfo;
+        String uri = Channel.createChannel(channelInfo).getContentUri(this);
+        if(uri == null){//in this case settings does not allow us to play content. So stop player and trigger event viewing stop
+            if(player!=null)
+                player.stop(true);
+            channelCannotBePlayedDueToSettings();
+            HeartBeatManager.INSTANCE.triggerEventViewingContentStop();
+            return;
+        }
         if(player!=null){
             player.setPlayWhenReady(true);
-            MediaSource mediaSource = prepareMedia(Uri.parse( Channel.createChannel(channelInfo).getContentUri(this)));
+            MediaSource mediaSource = prepareMedia(Uri.parse(uri));
             player.prepare(mediaSource);
             if(!channelInfo.isLive()){
                 player.seekTo(0);
             }
-
+            HeartBeatManager.INSTANCE.triggerEventViewingContentStart(Integer.parseInt(channelInfo.id),channelInfo.type);
         }
     }
 
@@ -232,10 +242,17 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
         channelInfo = null;
     }
 
-    //This will be called due to session token change while playing content
+    //This will be called due to session token change while playing content or after init of player
     protected void reloadChannel(){
         if(channelInfo!=null && player!=null){
-            MediaSource mediaSource = prepareMedia(Uri.parse( Channel.createChannel(channelInfo).getContentUri(this)));
+            String uriString = Channel.createChannel(channelInfo).getContentUri(this);
+            if(uriString == null) {//in this case settings does not allow us to play content. So stop player and trigger event viewing stop
+                channelCannotBePlayedDueToSettings();
+                player.stop(true);
+                HeartBeatManager.INSTANCE.triggerEventViewingContentStop();
+                return;
+            }
+            MediaSource mediaSource = prepareMedia(Uri.parse(uriString));
             player.setPlayWhenReady(player.getPlayWhenReady());
             boolean haveStartPosition = startWindow != C.INDEX_UNSET;
             player.prepare(mediaSource, !haveStartPosition, false);
@@ -245,6 +262,9 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
         }
     }
 
+    protected void channelCannotBePlayedDueToSettings(){
+        //subclass will hook into it
+    }
 
     @Override
     public boolean onPlayButtonPressed(int currentState) {
