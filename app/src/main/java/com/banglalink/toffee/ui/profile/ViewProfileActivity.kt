@@ -32,12 +32,14 @@ class ViewProfileActivity : BaseAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this,R.layout.activity_profile)
-        binding.data = EditProfileForm()//initializing with empty profile form
-        if (binding.toolbar != null) {
-            setSupportActionBar(binding.toolbar)
-            supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            binding.toolbar.setNavigationOnClickListener { onBackPressed() }
+        binding.data = EditProfileForm().apply {
+            fullName = Preference.getInstance().customerName
+            phoneNo = Preference.getInstance().phoneNumber
+            photoUrl = Preference.getInstance().userImageUrl?:""
         }
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        binding.toolbar.setNavigationOnClickListener { onBackPressed() }
 
         loadProfile()
         observe(Preference.getInstance().profileImageUrlLiveData){

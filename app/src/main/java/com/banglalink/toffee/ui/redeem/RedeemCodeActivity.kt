@@ -45,6 +45,7 @@ class RedeemCodeActivity : BaseAppCompatActivity() {
     }
 
     private fun redeemReferralCode(redeemCode: String) {
+        progressDialog.show()
         observe(viewModel.redeemReferralCode(redeemCode)) {
             progressDialog.dismiss()
             when (it) {

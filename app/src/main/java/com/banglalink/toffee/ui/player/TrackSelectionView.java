@@ -30,14 +30,13 @@ import androidx.annotation.AttrRes;
 import androidx.annotation.Nullable;
 
 import com.banglalink.toffee.R;
+import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.RendererCapabilities;
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.SelectionOverride;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector.MappedTrackInfo;
-import com.google.android.exoplayer2.ui.DefaultTrackNameProvider;
-import com.google.android.exoplayer2.ui.TrackNameProvider;
 import com.google.android.exoplayer2.util.Assertions;
 
 import java.util.ArrayList;
@@ -67,7 +66,6 @@ public class TrackSelectionView extends LinearLayout {
     private boolean allowAdaptiveSelections;
     private boolean allowMultipleOverrides;
 
-    private TrackNameProvider trackNameProvider;
     private TextView[][] trackViews;
 
     private  MappedTrackInfo mappedTrackInfo;
@@ -101,15 +99,12 @@ public class TrackSelectionView extends LinearLayout {
 
         inflater = LayoutInflater.from(context);
         componentListener = new ComponentListener();
-        trackNameProvider = new DefaultTrackNameProvider(getResources());
         trackGroups = TrackGroupArray.EMPTY;
 
 
-        // Divider view.
-        addView(inflater.inflate(R.layout.exo_list_divider, this, false));
         // View for clearing the override to allow the selector to use its default selection logic.
         defaultView = (TextView) inflater.inflate(R.layout.list_item_quality, this, false);
-        defaultView.setText(R.string.exo_track_selection_auto);
+        defaultView.setText("Auto");
         defaultView.setEnabled(false);
         defaultView.setFocusable(true);
         defaultView.setOnClickListener(componentListener);
@@ -148,17 +143,6 @@ public class TrackSelectionView extends LinearLayout {
             }
             updateViews();
         }
-    }
-
-    /**
-     * Sets the {@link TrackNameProvider} used to generate the user visible name of each track and
-     * updates the view with track names queried from the specified provider.
-     *
-     * @param trackNameProvider The {@link TrackNameProvider} to use.
-     */
-    public void setTrackNameProvider(TrackNameProvider trackNameProvider) {
-        this.trackNameProvider = Assertions.checkNotNull(trackNameProvider);
-        updateViews();
     }
 
     /**
@@ -232,7 +216,8 @@ public class TrackSelectionView extends LinearLayout {
             trackViews[groupIndex] = new TextView[group.length];
             for (int trackIndex = 0; trackIndex < group.length; trackIndex++) {
                 TextView trackView = (TextView) inflater.inflate(R.layout.list_item_quality, this, false);
-                trackView.setText(trackNameProvider.getTrackName(group.getFormat(trackIndex)));
+                Format format = group.getFormat(trackIndex);
+                trackView.setText(format.width + "x" + format.height);
                 if (mappedTrackInfo.getTrackSupport(rendererIndex, groupIndex, trackIndex)
                         == RendererCapabilities.FORMAT_HANDLED) {
                     trackView.setFocusable(true);
