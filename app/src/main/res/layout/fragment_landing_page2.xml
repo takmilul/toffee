@@ -44,8 +44,9 @@
                         android:id="@+id/featureDescription"
                         android:layout_marginStart="16dp"
                         android:layout_marginEnd="10dp"
-                        android:textColor="#29466b"
+                        android:textColor="#6781A1"
                         android:maxLines="2"
+                        android:fontFamily="sans-serif-medium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
 
