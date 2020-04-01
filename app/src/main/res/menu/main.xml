@@ -10,6 +10,12 @@
         android:voiceSearchMode="showVoiceSearchButton|launchRecognizer"
         app:showAsAction="always" />
 
+
+    <item
+        android:id="@+id/action_notification"
+        android:title="Notification"
+        android:icon="@drawable/menu_notification"
+        app:showAsAction="always" />
     <item
         android:id="@+id/action_avatar"
         android:title="Avatar"
