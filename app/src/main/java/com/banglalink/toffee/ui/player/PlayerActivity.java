@@ -163,7 +163,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
                 player.addAnalyticsListener(new EventLogger(defaultTrackSelector));
             }
         }
-        //we are checking both channelInfo and contenturi because for wifi only settings contenturi can be null
+        //we are checking whether there is already channelInfo exist. If not null then play it
         if(channelInfo!=null){
             reloadChannel();
         }
