@@ -235,6 +235,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
         }
 
         if(player!=null){
+            HeartBeatManager.INSTANCE.triggerEventViewingContentStart(Integer.parseInt(channelInfo.id),channelInfo.type);
             player.setPlayWhenReady(!isReload || player.getPlayWhenReady());
             MediaSource mediaSource = prepareMedia(Uri.parse(uri));
             if(isReload){//We need to start where we left off for VODs
@@ -242,15 +243,10 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
                 if (haveStartPosition && !channelInfo.isLive()) {
                     player.prepare(mediaSource, false, false);
                     player.seekTo(startWindow, startPosition);//we seek to where we left for VODs
-                }
-                else{
-                    player.prepare(mediaSource);
+                    return;
                 }
             }
-            else{
-                player.prepare(mediaSource);//Non reload event. Just prepare the media and play it
-            }
-            HeartBeatManager.INSTANCE.triggerEventViewingContentStart(Integer.parseInt(channelInfo.id),channelInfo.type);
+            player.prepare(mediaSource);//Non reload event or reload for live. Just prepare the media and play it
         }
     }
 
