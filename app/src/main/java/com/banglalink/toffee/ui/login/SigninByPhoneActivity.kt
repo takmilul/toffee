@@ -1,6 +1,8 @@
 package com.banglalink.toffee.ui.login
 
+import android.app.Activity
 import android.app.AlertDialog
+import android.app.PendingIntent
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -28,10 +30,18 @@ import com.banglalink.toffee.ui.verify.VerifyCodeActivity
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.ui.widget.showAlertDialog
 import com.banglalink.toffee.util.unsafeLazy
+import com.google.android.gms.auth.api.Auth
+import com.google.android.gms.auth.api.credentials.Credential
+import com.google.android.gms.auth.api.credentials.HintRequest
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.api.GoogleApiClient
 
-class SigninByPhoneActivity : BaseAppCompatActivity() {
+
+class SigninByPhoneActivity : BaseAppCompatActivity(), GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     lateinit var binding :ActivitySigninByPhoneBinding
+    var apiClient: GoogleApiClient? = null
+    private val RESOLVE_HINT = 2;
 
     private val viewModel by unsafeLazy {
        getViewModel<SigninByPhoneViewModel>()
@@ -53,6 +63,14 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
         binding.termsAndConditionsCheckbox.setOnClickListener {
             binding.loginBtn.isEnabled = binding.termsAndConditionsCheckbox.isChecked
         }
+
+        apiClient =  GoogleApiClient.Builder(this)
+            .addConnectionCallbacks(this)
+            .enableAutoManage(this, this)
+            .addApi(Auth.CREDENTIALS_API)
+            .build();
+
+        getHintPhoneNumber()
 
     }
 
@@ -171,4 +189,49 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
         binding.termsAndConditionsTv.movementMethod = LinkMovementMethod.getInstance()
 
     }
+
+    private fun getHintPhoneNumber() {
+        val hintRequest = HintRequest.Builder()
+            .setPhoneNumberIdentifierSupported(true)
+            .build()
+        val intent: PendingIntent = Auth.CredentialsApi.getHintPickerIntent(
+            apiClient, hintRequest
+        )
+        startIntentSenderForResult(
+            intent.intentSender,
+            RESOLVE_HINT, null, 0, 0, 0
+        )
+    }
+
+    override fun onActivityResult(
+        requestCode: Int,
+        resultCode: Int,
+        data: Intent?
+    ) {
+        super.onActivityResult(requestCode, resultCode, data)
+        //Result if we want hint number
+        if (requestCode == RESOLVE_HINT) {
+            if (resultCode == Activity.RESULT_OK && data != null) {
+                val credential: Credential =
+                    data.getParcelableExtra(Credential.EXTRA_KEY)
+                println("mobile number:" + credential.id)
+                binding.phoneNumberEt.setText(credential.id)
+                binding.phoneNumberEt.setSelection(credential.id.length)
+            }
+        }
+    }
+
+
+    override fun onConnected(p0: Bundle?) {
+        //No Need to implement
+    }
+
+    override fun onConnectionSuspended(p0: Int) {
+        //No Need to implement
+    }
+
+    override fun onConnectionFailed(p0: ConnectionResult) {
+        //No Need to implement
+    }
+
 }
