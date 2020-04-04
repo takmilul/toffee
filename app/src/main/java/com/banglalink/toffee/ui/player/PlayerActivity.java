@@ -163,7 +163,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
                 player.addAnalyticsListener(new EventLogger(defaultTrackSelector));
             }
         }
-        //we are checking both channelInfo and contenturi because for wifi only settings contenturi can be null
+        //we are checking whether there is already channelInfo exist. If not null then play it
         if(channelInfo!=null){
             reloadChannel();
         }
@@ -217,53 +217,52 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
                         .createMediaSource(uri);
     }
 
-    protected void playChannel(ChannelInfo channelInfo) {
-        this.channelInfo = channelInfo;
+    protected void playChannel(@NonNull  ChannelInfo channelInfo) {
         String uri = Channel.createChannel(channelInfo).getContentUri(this);
         if(uri == null){//in this case settings does not allow us to play content. So stop player and trigger event viewing stop
             if(player!=null)
                 player.stop(true);
-            channelCannotBePlayedDueToSettings();
+            channelCannotBePlayedDueToSettings();//notify hook/subclass
             HeartBeatManager.INSTANCE.triggerEventViewingContentStop();
             return;
         }
-        if(player!=null){
-            player.setPlayWhenReady(true);
-            MediaSource mediaSource = prepareMedia(Uri.parse(uri));
-            player.prepare(mediaSource);
-            if(!channelInfo.isLive()){
-                player.seekTo(0);
-            }
-            HeartBeatManager.INSTANCE.triggerEventViewingContentStart(Integer.parseInt(channelInfo.id),channelInfo.type);
+        //Checking whether we need to reload or not. Reload happens because of network switch or re-initialization of player
+        boolean isReload = false;
+        ChannelInfo oldChannelInfo = this.channelInfo;
+        this.channelInfo = channelInfo;
+        if(oldChannelInfo != null && oldChannelInfo.id.equalsIgnoreCase(this.channelInfo.id)){
+            isReload = true;//that means we have reload situation. We need to start where we left for VODs
         }
-    }
 
-    protected void clearChannel(){//set channelInfo = null
-        channelInfo = null;
+        if(player!=null){
+            HeartBeatManager.INSTANCE.triggerEventViewingContentStart(Integer.parseInt(channelInfo.id),channelInfo.type);
+            player.setPlayWhenReady(!isReload || player.getPlayWhenReady());
+            MediaSource mediaSource = prepareMedia(Uri.parse(uri));
+            if(isReload){//We need to start where we left off for VODs
+                boolean haveStartPosition = startWindow != C.INDEX_UNSET;
+                if (haveStartPosition && !channelInfo.isLive()) {
+                    player.prepare(mediaSource, false, false);
+                    player.seekTo(startWindow, startPosition);//we seek to where we left for VODs
+                    return;
+                }
+            }
+            player.prepare(mediaSource);//Non reload event or reload for live. Just prepare the media and play it
+        }
     }
 
     //This will be called due to session token change while playing content or after init of player
     protected void reloadChannel(){
-        if(channelInfo!=null && player!=null){
-            String uriString = Channel.createChannel(channelInfo).getContentUri(this);
-            if(uriString == null) {//in this case settings does not allow us to play content. So stop player and trigger event viewing stop
-                channelCannotBePlayedDueToSettings();
-                player.stop(true);
-                HeartBeatManager.INSTANCE.triggerEventViewingContentStop();
-                return;
-            }
-            MediaSource mediaSource = prepareMedia(Uri.parse(uriString));
-            player.setPlayWhenReady(player.getPlayWhenReady());
-            boolean haveStartPosition = startWindow != C.INDEX_UNSET;
-            player.prepare(mediaSource, !haveStartPosition, false);
-            if (haveStartPosition && !channelInfo.isLive()) {
-                player.seekTo(startWindow, startPosition);
-            }
+        if(channelInfo!=null){
+            playChannel(this.channelInfo);
         }
     }
 
     protected void channelCannotBePlayedDueToSettings(){
         //subclass will hook into it
+    }
+
+    protected void clearChannel(){//set channelInfo = null
+        channelInfo = null;
     }
 
     @Override
