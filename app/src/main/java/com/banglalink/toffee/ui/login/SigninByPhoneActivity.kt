@@ -37,14 +37,15 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 
 
-class SigninByPhoneActivity : BaseAppCompatActivity(), GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+class SigninByPhoneActivity : BaseAppCompatActivity(), GoogleApiClient.ConnectionCallbacks,
+    GoogleApiClient.OnConnectionFailedListener {
 
-    lateinit var binding :ActivitySigninByPhoneBinding
+    lateinit var binding: ActivitySigninByPhoneBinding
     var apiClient: GoogleApiClient? = null
     private val RESOLVE_HINT = 2;
 
     private val viewModel by unsafeLazy {
-       getViewModel<SigninByPhoneViewModel>()
+        getViewModel<SigninByPhoneViewModel>()
     }
 
     private val progressDialog by unsafeLazy {
@@ -53,7 +54,7 @@ class SigninByPhoneActivity : BaseAppCompatActivity(), GoogleApiClient.Connectio
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this,R.layout.activity_signin_by_phone)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_signin_by_phone)
 
         setSpannableTermsAndConditions()
 
@@ -64,7 +65,7 @@ class SigninByPhoneActivity : BaseAppCompatActivity(), GoogleApiClient.Connectio
             binding.loginBtn.isEnabled = binding.termsAndConditionsCheckbox.isChecked
         }
 
-        apiClient =  GoogleApiClient.Builder(this)
+        apiClient = GoogleApiClient.Builder(this)
             .addConnectionCallbacks(this)
             .enableAutoManage(this, this)
             .addApi(Auth.CREDENTIALS_API)
@@ -99,8 +100,14 @@ class SigninByPhoneActivity : BaseAppCompatActivity(), GoogleApiClient.Connectio
             when (it) {
                 is Resource.Success -> {
                     launchActivity<VerifyCodeActivity> {
-                        putExtra(VerifyCodeActivity.PHONE_NUMBER, binding.phoneNumberEt.text.toString())
-                        putExtra(VerifyCodeActivity.REFERRAL_CODE, binding.refCodeEt.text.toString())
+                        putExtra(
+                            VerifyCodeActivity.PHONE_NUMBER,
+                            binding.phoneNumberEt.text.toString()
+                        )
+                        putExtra(
+                            VerifyCodeActivity.REFERRAL_CODE,
+                            binding.refCodeEt.text.toString()
+                        )
                         putExtra(VerifyCodeActivity.REG_SESSION_TOKEN, it.data)
                     }
                     finish()
@@ -111,9 +118,9 @@ class SigninByPhoneActivity : BaseAppCompatActivity(), GoogleApiClient.Connectio
                             showInvalidReferralCodeDialog(it.error.msg, it.error.additionalMsg)
                         }
                         else -> {
-                            binding.root.snack(it.error.msg){
+                            binding.root.snack(it.error.msg) {
                                 action("Retry") {
-                                   handleLogin()
+                                    handleLogin()
                                 }
                             }
                         }
@@ -209,15 +216,12 @@ class SigninByPhoneActivity : BaseAppCompatActivity(), GoogleApiClient.Connectio
         data: Intent?
     ) {
         super.onActivityResult(requestCode, resultCode, data)
-        //Result if we want hint number
-        if (requestCode == RESOLVE_HINT) {
-            if (resultCode == Activity.RESULT_OK && data != null) {
-                val credential: Credential =
-                    data.getParcelableExtra(Credential.EXTRA_KEY)
-                println("mobile number:" + credential.id)
-                binding.phoneNumberEt.setText(credential.id)
-                binding.phoneNumberEt.setSelection(credential.id.length)
-            }
+        if (requestCode == RESOLVE_HINT && resultCode == Activity.RESULT_OK && data != null) {
+            val credential: Credential =
+                data.getParcelableExtra(Credential.EXTRA_KEY)
+            println("mobile number:" + credential.id)
+            binding.phoneNumberEt.setText(credential.id)
+            binding.phoneNumberEt.setSelection(credential.id.length)
         }
     }
 
