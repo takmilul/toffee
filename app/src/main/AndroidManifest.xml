@@ -170,6 +170,11 @@
             </intent-filter>
         </service>
 
+        <receiver android:name=".receiver.NotificationActionReceiver">
+            <intent-filter android:priority="999" >
+                <action android:name="com.toffee.notification_receiver" />
+            </intent-filter>
+        </receiver>
 
 
     </application>
