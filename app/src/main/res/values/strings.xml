@@ -122,5 +122,7 @@
     <string name="track_selection_title">Track Title</string>
     <string name="otp_hint">OTP</string>
     <string name="facebook_app_id">1116781388516653</string>
+    <string name="topic_msg_subscribed">"Topic subscribed successfully "</string>
+    <string name="topic_msg_subscribe_failed">Topic subscribe failed</string>
 
 </resources>
