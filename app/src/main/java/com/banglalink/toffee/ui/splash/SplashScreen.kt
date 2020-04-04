@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
@@ -19,12 +20,15 @@ import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.login.SigninByPhoneActivity
 import com.banglalink.toffee.util.unsafeLazy
 import com.facebook.appevents.AppEventsLogger
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SplashScreen : BaseAppCompatActivity() {
 
     lateinit var binding:ActivitySplashScreenBinding
+
+    private val TAG = "SplashScreen"
 
     private val viewModel by unsafeLazy {
         getViewModel<SplashViewModel>()
@@ -33,6 +37,15 @@ class SplashScreen : BaseAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this,R.layout.activity_splash_screen)
+
+        FirebaseMessaging.getInstance().subscribeToTopic("buzz")
+            .addOnCompleteListener { task ->
+                var msg = getString(R.string.topic_msg_subscribed)
+                if (!task.isSuccessful) {
+                    msg = getString(R.string.topic_msg_subscribe_failed)
+                }
+                Log.d(TAG, msg)
+            }
 
         if(viewModel.isCustomerLoggedIn())
             initApp()
