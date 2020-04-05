@@ -44,18 +44,15 @@ class SplashScreen : BaseAppCompatActivity() {
                 if (!task.isSuccessful) {
                     msg = getString(R.string.topic_msg_subscribe_failed)
                 }
-                Log.d(TAG, msg)
+                if(viewModel.isCustomerLoggedIn())
+                    initApp()
+                else{
+                    lifecycleScope.launch {
+                        launchActivity<SigninByPhoneActivity>()
+                        finish()
+                    }
+                }
             }
-
-        if(viewModel.isCustomerLoggedIn())
-            initApp()
-        else{
-            lifecycleScope.launch {
-                delay(2000)
-                launchActivity<SigninByPhoneActivity>()
-                finish()
-            }
-        }
 
         val appEventsLogger = AppEventsLogger.newLogger(this)
         appEventsLogger.logEvent("app_launch")
