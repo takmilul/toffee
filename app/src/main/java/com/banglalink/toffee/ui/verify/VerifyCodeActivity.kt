@@ -74,7 +74,7 @@ class VerifyCodeActivity : BaseAppCompatActivity(),
         mSmsBroadcastReceiver.setOnOtpListeners(this)
         val intentFilter = IntentFilter()
         intentFilter.addAction(SmsRetriever.SMS_RETRIEVED_ACTION)
-        applicationContext.registerReceiver(mSmsBroadcastReceiver, intentFilter)
+        registerReceiver(mSmsBroadcastReceiver, intentFilter)
         startSMSListener()
     }
 
