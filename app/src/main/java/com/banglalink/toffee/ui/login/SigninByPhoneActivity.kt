@@ -94,6 +94,7 @@ class SigninByPhoneActivity : BaseAppCompatActivity(), GoogleApiClient.Connectio
 
         progressDialog.show()
         binding.phoneNumberEt.setText(phoneNo)
+        binding.phoneNumberEt.setSelection(phoneNo.length)
 
         observe(viewModel.signIn(phoneNo, binding.refCodeEt.text.toString())) {
             progressDialog.dismiss()
