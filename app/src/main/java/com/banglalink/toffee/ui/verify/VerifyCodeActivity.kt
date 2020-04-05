@@ -26,6 +26,7 @@ class VerifyCodeActivity : BaseAppCompatActivity(),
         const val REFERRAL_CODE = "REFERRAL_CODE"
         const val REG_SESSION_TOKEN = "REG_SESSION_TOKEN"
     }
+    private var mSmsBroadcastReceiver: SMSBroadcastReceiver? = null
 
     private val TAG = "VerifyCodeActivity"
 
@@ -69,8 +70,8 @@ class VerifyCodeActivity : BaseAppCompatActivity(),
         startCountDown(if (resendBtnPressCount <= 1) 1 else 30)
 
         // init broadcast receiver
-        val mSmsBroadcastReceiver = SMSBroadcastReceiver()
-        mSmsBroadcastReceiver.setOnOtpListeners(this)
+        mSmsBroadcastReceiver = SMSBroadcastReceiver()
+        mSmsBroadcastReceiver?.setOnOtpListeners(this)
         val intentFilter = IntentFilter()
         intentFilter.addAction(SmsRetriever.SMS_RETRIEVED_ACTION)
         applicationContext.registerReceiver(mSmsBroadcastReceiver, intentFilter)
@@ -155,6 +156,7 @@ class VerifyCodeActivity : BaseAppCompatActivity(),
     override fun onDestroy() {
         resendCodeTimer?.cancelTimer()
         resendCodeTimer = null
+        applicationContext.unregisterReceiver(mSmsBroadcastReceiver)
         super.onDestroy()
     }
 
