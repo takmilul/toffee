@@ -3,14 +3,12 @@ package com.banglalink.toffee.ui.verify
 import android.content.IntentFilter
 import android.graphics.Paint
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.LayoutLoginConfirmBinding
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.receiver.OtpReceiveListener
 import com.banglalink.toffee.receiver.SMSBroadcastReceiver
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.home.HomeActivity
@@ -18,8 +16,7 @@ import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.gms.auth.api.phone.SmsRetriever
 
-class VerifyCodeActivity : BaseAppCompatActivity(),
-    OtpReceiveListener {
+class VerifyCodeActivity : BaseAppCompatActivity(){
 
     companion object {
         const val PHONE_NUMBER = "PHONE"
@@ -69,13 +66,24 @@ class VerifyCodeActivity : BaseAppCompatActivity(),
         regSessionToken = intent.getStringExtra(REG_SESSION_TOKEN) ?: ""
         startCountDown(if (resendBtnPressCount <= 1) 1 else 30)
 
+       initSmsBroadcastReceiver()
+    }
+
+    private fun initSmsBroadcastReceiver(){
         // init broadcast receiver
         mSmsBroadcastReceiver = SMSBroadcastReceiver()
-        mSmsBroadcastReceiver.setOnOtpListeners(this)
+        observe(mSmsBroadcastReceiver.otpLiveData){
+            binding.codeNumber.setText(it)
+            binding.codeNumber.setSelection(it.length)
+            verifyCode(binding.codeNumber.text.toString())
+        }
+
         val intentFilter = IntentFilter()
         intentFilter.addAction(SmsRetriever.SMS_RETRIEVED_ACTION)
         registerReceiver(mSmsBroadcastReceiver, intentFilter)
-        startSMSListener()
+
+        val mClient = SmsRetriever.getClient(this)
+        mClient.startSmsRetriever()
     }
 
     private fun verifyCode(code: String) {
@@ -158,26 +166,5 @@ class VerifyCodeActivity : BaseAppCompatActivity(),
         resendCodeTimer = null
         unregisterReceiver(mSmsBroadcastReceiver)
         super.onDestroy()
-    }
-
-    private fun startSMSListener() {
-        val mClient = SmsRetriever.getClient(this)
-        val mTask = mClient.startSmsRetriever()
-        mTask.addOnSuccessListener {
-            Log.d(TAG,"SMS Retriever starts")
-        }
-        mTask.addOnFailureListener {
-            Log.d(TAG,"SMS Retriever starts error")
-        }
-    }
-
-    override fun onOtpReceived(otp: String?) {
-        binding.codeNumber.setText(otp)
-        binding.codeNumber.setSelection(otp!!.length)
-        verifyCode(binding.codeNumber.text.toString())
-    }
-
-    override fun onOtpTimeout() {
-        //empty method
     }
 }
