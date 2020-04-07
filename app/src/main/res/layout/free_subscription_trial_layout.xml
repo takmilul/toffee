@@ -10,7 +10,8 @@
             type="com.banglalink.toffee.model.Package" />
     </data>
     <androidx.cardview.widget.CardView
-        android:layout_height="160dp"
+        android:layout_height="wrap_content"
+        app:contentPadding="16dp"
         android:layout_width="match_parent"
         app:cardCornerRadius="@dimen/pack_corner_radious"
         android:elevation="5dp"
@@ -32,7 +33,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/guideline4"
                 app:layout_constraintTop_toTopOf="parent"
-                imageFromUrl="@{data.posterMobile}"
+                imageFromUrlRounded="@{data.mobileLogo}"
                 app:srcCompat="@drawable/ic_free_package" />
 
             <TextView

@@ -3,6 +3,7 @@ package com.banglalink.toffee.model;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 
 import com.banglalink.toffee.data.storage.Preference;
 import com.banglalink.toffee.ui.player.Samples;
@@ -80,7 +81,11 @@ public class Channel extends Samples.Sample {
 
         if(Preference.Companion.getInstance().shouldOverrideHlsUrl()){
             try {
-                String path = new URL(uri).getPath();
+                URL url = new URL(uri);
+                String path = url.getPath();
+                if(!TextUtils.isEmpty(url.getQuery())){
+                    path = path+"?"+ url.getQuery();
+                }
                 uri = Preference.Companion.getInstance().getHlsOverrideUrl()+path;
             } catch (MalformedURLException e) {
                 e.printStackTrace();

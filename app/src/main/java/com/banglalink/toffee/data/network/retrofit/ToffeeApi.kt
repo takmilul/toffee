@@ -43,10 +43,14 @@ interface ToffeeApi {
     suspend fun getContentFromShareableUrl(@Body shareableRequest: ContentShareableRequest):Response<ContentShareableResponse>
     @POST("heart-beat")
     suspend fun sendHeartBeat(@Body heartBeatRequest: HeartBeatRequest):Response<HeartBeatResponse>
-    @POST("subscribed-packages-v2")
+    @POST("packages-with-subscription")
     suspend fun getPackageList(@Body packageListRequest: PackageListRequest):Response<PackageListResponse>
     @POST("package-details-v2")
     suspend fun getPackageChannelList(@Body packageChannelListRequest: PackageChannelListRequest):Response<PackageChannelListResponse>
+    @POST("subscribe-a-package")
+    suspend fun subscribePackage(@Body subscribePackageRequest: SubscribePackageRequest):Response<SubscribePackageResponse>
+    @POST("set-auto-renew")
+    suspend fun setAutoRenew(@Body autoRenewRequest: AutoRenewRequest):Response<AutoRenewResponse>
     @POST("set-fcm-token")
     suspend fun setFcmToken(@Body fcmTokenRequest: FcmTokenRequest):Response<FcmTokenResponse>
     @POST("my-referral-code")

@@ -86,6 +86,7 @@ class ChannelFragment:Fragment(), ChannelStickyListAdapter.OnItemClickListener {
         layoutManager.setHeaderBottomOverlapMargin(resources.getDimensionPixelSize(R.dimen.header_shadow_size))
         gridView.layoutManager = layoutManager
 
+        homeViewModel.getChannelByCategory(0)
         //we will observe channel live data from home activity
         homeViewModel.channelLiveData.observe(viewLifecycleOwner, Observer {
           when(it){

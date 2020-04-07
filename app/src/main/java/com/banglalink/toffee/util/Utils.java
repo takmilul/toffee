@@ -4,30 +4,18 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.WindowManager;
 
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 
 /**
  * Created by shantanu on 9/25/16.
@@ -61,7 +49,7 @@ public class Utils {
 
     public static Date getDate(String dateTime) {
 
-        SimpleDateFormat currentFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //2016-10-20 06:45:29
+        SimpleDateFormat currentFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //2020-04-25 23:59:59
         Date dateObj = null;
         try {
             dateObj = currentFormatter.parse(dateTime);
@@ -71,56 +59,15 @@ public class Utils {
         return dateObj;
     }
 
-    public static int getCountOfDays(Date now, Date expireDate) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+    public static String getDateDiffInDayOrHour(Date stopDate) {
+        long diff = stopDate.getTime() - new Date().getTime();
+        long diffHours = diff / (3600000);
+        diffHours = Math.max(0, diffHours);
 
-        Date todayWithZeroTime = null;
-        try {
-            Date today = new Date();
-
-            todayWithZeroTime = dateFormat.parse(dateFormat.format(today));
-        } catch (ParseException e) {
-            e.printStackTrace();
+        if (diffHours >= 24) {
+            return (diffHours / 24) +" days";
         }
-
-        int cYear = 0, cMonth = 0, cDay = 0;
-
-        if (now.after(todayWithZeroTime)) {
-            Calendar cCal = Calendar.getInstance();
-            cCal.setTime(now);
-            cYear = cCal.get(Calendar.YEAR);
-            cMonth = cCal.get(Calendar.MONTH);
-            cDay = cCal.get(Calendar.DAY_OF_MONTH);
-
-        } else {
-            Calendar cCal = Calendar.getInstance();
-            cCal.setTime(todayWithZeroTime);
-            cYear = cCal.get(Calendar.YEAR);
-            cMonth = cCal.get(Calendar.MONTH);
-            cDay = cCal.get(Calendar.DAY_OF_MONTH);
-        }
-
-
-        Calendar eCal = Calendar.getInstance();
-        eCal.setTime(expireDate);
-
-        int eYear = eCal.get(Calendar.YEAR);
-        int eMonth = eCal.get(Calendar.MONTH);
-        int eDay = eCal.get(Calendar.DAY_OF_MONTH);
-
-        Calendar date1 = Calendar.getInstance();
-        Calendar date2 = Calendar.getInstance();
-
-        date1.clear();
-        date1.set(cYear, cMonth, cDay);
-        date2.clear();
-        date2.set(eYear, eMonth, eDay);
-
-        long diff = date2.getTimeInMillis() - date1.getTimeInMillis();
-
-        float dayCount = (float) diff / (24 * 60 * 60 * 1000);
-
-        return  (int) dayCount;
+        return diffHours + " hours";
     }
 
     String getRemainingTimeText(Date expiryDate){
