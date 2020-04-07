@@ -5,14 +5,20 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import com.banglalink.toffee.extension.toLiveData
+import com.banglalink.toffee.util.SingleLiveEvent
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Status
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 class SMSBroadcastReceiver : BroadcastReceiver() {
 
+    private val _otpLiveData = SingleLiveEvent<String>();
+    val otpLiveData = _otpLiveData.toLiveData()
+
     private val TAG = "SMSBroadcastReceiver"
-    var otpReceiveInterface: OtpReceiveListener? = null
     override fun onReceive(context: Context?, intent: Intent?) {
         Log.d(TAG, "onReceive: ")
         if (SmsRetriever.SMS_RETRIEVED_ACTION == intent?.action) {
@@ -25,22 +31,15 @@ class SMSBroadcastReceiver : BroadcastReceiver() {
                     val message =
                         extras?.get(SmsRetriever.EXTRA_SMS_MESSAGE) as String?
                     Log.d(TAG, "onReceive: failure $message")
-                    if (otpReceiveInterface != null) {
-                        var start = message!!.indexOf(":") + 1;
-                        val otp = message!!.substring(start, start + 6)
-                        otpReceiveInterface!!.onOtpReceived(otp)
-                    }
+                    val start = message!!.indexOf(":") + 1;
+                    val otp = message!!.substring(start, start + 6)
+                    _otpLiveData.postValue(otp)
                 }
                 CommonStatusCodes.TIMEOUT -> {
                     // Waiting for SMS timed out (5 minutes)
                     Log.d(TAG, "onReceive: failure")
-                    otpReceiveInterface?.onOtpTimeout()
                 }
             }
         }
-    }
-
-    fun setOnOtpListeners(otpReceiveInterface: OtpReceiveListener?) {
-        this.otpReceiveInterface = otpReceiveInterface
     }
 }
