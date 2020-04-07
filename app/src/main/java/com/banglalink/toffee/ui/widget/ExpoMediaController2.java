@@ -285,6 +285,17 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
 
     }
 
+    public void showContentExpiredMessage() {
+        if(binding.textureView.isAvailable()){
+            binding.textureView.setVisibility(INVISIBLE);
+        }
+        binding.videoOption.setEnabled(false);
+        binding.share.setEnabled(false);
+        binding.preview.setImageResource(R.drawable.content_expired);
+        hideControls(0);
+        binding.preview.setOnClickListener(null);
+    }
+
 
     private class MessageHandler extends Handler {
         @Override
@@ -397,8 +408,12 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
                 showControls();
                 break;
             case STATE_READY:
+                if(binding.textureView.isAvailable()){
+                    binding.textureView.setVisibility(VISIBLE);
+                }
                 binding.videoOption.setEnabled(true);
                 binding.preview.setImageResource(0);
+                binding.share.setEnabled(true);
                 if (playWhenReady) {
                     binding.play.setImageResource(R.mipmap.ic_media_pause);
                     binding.buffering.setVisibility(GONE);
