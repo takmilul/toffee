@@ -10,6 +10,7 @@ import coil.api.load
 import coil.request.CachePolicy
 import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
+import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.widget.StickyHeaderGridAdapter
 
@@ -73,12 +74,21 @@ class ChannelStickyListAdapter(
         }
         val item = values[section].channelInfoList[offset]
         val liveTvViewHolder = viewHolder as LiveTvViewHolder
-        liveTvViewHolder.name.text = item.program_name
         liveTvViewHolder.icon.load(item.channel_logo){
             transformations(CircleCropTransformation())
             crossfade(true)
             memoryCachePolicy(CachePolicy.ENABLED)
 //            diskCachePolicy(CachePolicy.ENABLED)
+        }
+
+        if(!item.isExpired(Preference.getInstance().getSystemTime())){
+            liveTvViewHolder.premimumIcon.visibility = View.INVISIBLE
+        }
+        else if(item.isPurchased||item.subscription){
+            liveTvViewHolder.premimumIcon.visibility = View.INVISIBLE
+        }
+        else{
+            liveTvViewHolder.premimumIcon.visibility = View.VISIBLE
         }
 
     }
@@ -92,8 +102,8 @@ class ChannelStickyListAdapter(
 
     internal class LiveTvViewHolder(itemView: View) :
         ItemViewHolder(itemView) {
-        var name: TextView = itemView.findViewById(R.id.text)
         var icon: ImageView = itemView.findViewById(R.id.icon)
+        var premimumIcon: ImageView = itemView.findViewById(R.id.premium_icon)
 
     }
 
