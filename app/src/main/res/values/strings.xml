@@ -81,7 +81,7 @@
     <string name="subscribe_text">Subscribe ৳30</string>
     <string name="discount_foramtted_text"><strike>৳%1$d</strike></string>
     <string name="amount_formatted_text">৳%1$d</string>
-    <string name="day_formatted_text">৳%1$d days</string>
+    <string name="day_formatted_text">%1$d days</string>
     <string name="formatted_channel_number_text">%1$d Channels</string>
     <string name="package_price_formatted_text">%1$d TK/%2$s</string>
     <string name="menu_create_text">Submit Your Video</string>
@@ -114,5 +114,7 @@
     <string name="facebook_app_id">1116781388516653</string>
     <string name="topic_msg_subscribed">"Topic subscribed successfully "</string>
     <string name="topic_msg_subscribe_failed">Topic subscribe failed</string>
+    <string name="subscription_text">You have successfully subscribed to </string>
+    <string name="back_to_home">Back to Home</string>
 
 </resources>

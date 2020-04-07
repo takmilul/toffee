@@ -3,6 +3,7 @@ package com.banglalink.toffee.analytics
 import android.content.Context
 import android.os.Bundle
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.Package
 import com.google.firebase.analytics.FirebaseAnalytics
 
 object ToffeeAnalytics {
@@ -41,5 +42,13 @@ object ToffeeAnalytics {
         val params = Bundle()
         params.putString("msg", "force play occurred")
         firebaseAnalytics.logEvent("player_event",params)
+    }
+
+    fun logSubscription(mPackage: Package){
+        val params = Bundle()
+        params.putString("amount", mPackage.price.toString())
+        params.putString("package_name", mPackage.packageName)
+        params.putString("package_id", mPackage.packageId.toString())
+        firebaseAnalytics.logEvent("subscription",params)
     }
 }

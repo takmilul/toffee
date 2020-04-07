@@ -4,9 +4,11 @@ import android.net.ConnectivityManager
 import android.net.Network
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.OnLifecycleEvent
 import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
 import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.usecase.SendHeartBeat
 import com.banglalink.toffee.util.getError
 import com.banglalink.toffee.util.unsafeLazy
@@ -18,10 +20,12 @@ object HeartBeatManager : LifecycleObserver, ConnectivityManager.NetworkCallback
     private const val TIMER_PERIOD = 30000// 30 sec
     private var INITIAL_DELAY = 0L
 
+    private val _heartBeatEventLiveData = MutableLiveData<Boolean>()
+    val heartBeatEventLiveData = _heartBeatEventLiveData.toLiveData()
 
     private var isAppForeGround = false
 
-    private val coroutineContext = Dispatchers.Main
+    private val coroutineContext = Dispatchers.Default
     private val coroutineContext2 = Dispatchers.Main
 
     private var contentId = 0;
@@ -65,6 +69,7 @@ object HeartBeatManager : LifecycleObserver, ConnectivityManager.NetworkCallback
         if(Preference.getInstance().customerId!=0){
             try{
                 sendHeartBeat.execute(contentId, contentType,isNetworkSwitch)
+                _heartBeatEventLiveData.postValue(true)
             }catch (e:Exception){
                 e.printStackTrace()
                 getError(e)

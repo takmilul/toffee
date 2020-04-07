@@ -23,7 +23,7 @@ import com.banglalink.toffee.ui.recent.RecentFragment
 import com.banglalink.toffee.ui.redeem.RedeemCodeActivity
 import com.banglalink.toffee.ui.refer.ReferAFriendActivity
 import com.banglalink.toffee.ui.settings.SettingsActivity
-import com.banglalink.toffee.ui.subscription.MySubscriptionActivity
+import com.banglalink.toffee.ui.subscription.PackageListActivity
 import kotlinx.android.synthetic.main.layout_appbar.view.*
 import java.util.ArrayList
 
@@ -250,7 +250,8 @@ class DrawerHelper(val activity: HomeActivity,val binding:ActivityMainMenuBindin
                 binding.drawerLayout.closeDrawers()
             }
             ID_SUBSCRIPTIONS->{
-                activity.launchActivity<MySubscriptionActivity>()
+                binding.drawerLayout.closeDrawers()
+                activity.launchActivity<PackageListActivity>()
             }
             ID_SETTINGS -> {
                 activity.launchActivity<SettingsActivity>()

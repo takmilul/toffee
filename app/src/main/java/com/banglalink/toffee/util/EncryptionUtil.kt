@@ -6,13 +6,7 @@ import javax.crypto.spec.SecretKeySpec
 
 object EncryptionUtil {
     private const val KEY = "1234567891234567"
-    private val secretKeySpec by lazy {
-        SecretKeySpec(KEY.toByteArray(), "AES")
-    }
-
-    private val cipherInstance by lazy {
-        Cipher.getInstance("AES/ECB/PKCS5Padding")
-    }
+    private val secretKeySpec = SecretKeySpec(KEY.toByteArray(), "AES")
 
     fun encryptRequest(jsonRequest: String): String {
         val cipher = encrypt(jsonRequest.toByteArray())
@@ -24,11 +18,13 @@ object EncryptionUtil {
     }
 
     private fun decrypt(data: ByteArray): ByteArray {
+        val cipherInstance = Cipher.getInstance("AES/ECB/PKCS5Padding")
         cipherInstance.init(Cipher.DECRYPT_MODE, secretKeySpec)
         return cipherInstance.doFinal(data)
     }
 
     private fun encrypt(data: ByteArray): ByteArray {
+        val cipherInstance = Cipher.getInstance("AES/ECB/PKCS5Padding")
         cipherInstance.init(Cipher.ENCRYPT_MODE, secretKeySpec)
         return cipherInstance.doFinal(data)
     }
