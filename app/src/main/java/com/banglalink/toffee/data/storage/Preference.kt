@@ -6,6 +6,8 @@ import android.text.TextUtils
 import androidx.lifecycle.MutableLiveData
 import com.banglalink.toffee.model.DBVersion
 import com.google.android.exoplayer2.util.Util
+import java.text.SimpleDateFormat
+import java.util.*
 
 class Preference private constructor(val context: Context) {
     private val pref: SharedPreferences = context.getSharedPreferences("IP_TV", Context.MODE_PRIVATE)
@@ -134,8 +136,15 @@ class Preference private constructor(val context: Context) {
         pref.edit().putString("systemTime", systemTime).apply()
     }
 
-    fun getSystemTime():String?{
-        return pref.getString("systemTime","")
+    fun getSystemTime(): Date {
+        val dateString = pref.getString("systemTime","")
+        if(!TextUtils.isEmpty(dateString)){
+            val currentFormatter =
+                SimpleDateFormat("yyyyMMddHHmmss") //20200425235959
+            currentFormatter.timeZone = TimeZone.getTimeZone("UTC");
+            return currentFormatter.parse(dateString)
+        }
+        return Date()
     }
 
     fun setDBVersion(dbVersion: DBVersion) {
