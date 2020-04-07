@@ -30,6 +30,9 @@ class SendHeartBeat(
         }
         preference.sessionToken = response.response.sessionToken ?: ""
         preference.setHeaderSessionToken(response.response.headerSessionToken)
+        response.response.systemTime?.let{
+            preference.setSystemTime(it)
+        }
 
     }
 }

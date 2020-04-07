@@ -4,8 +4,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.banglalink.toffee.ui.player.HlsLinks;
+import com.banglalink.toffee.util.Utils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -209,8 +211,12 @@ public class ChannelInfo implements Parcelable {
         return Integer.parseInt(individual_price) > 0 && individual_purchase;
     }
 
-    public boolean isFree(){
+    public boolean isSubscribed(){
         return Integer.parseInt(individual_price
         ) == 0 && subscription;
+    }
+
+    public boolean isExpired(Date serverDate){
+       return serverDate.after(Utils.getDate(expireTime));
     }
 }
