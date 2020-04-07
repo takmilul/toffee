@@ -6,7 +6,6 @@ import android.graphics.SurfaceTexture;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
@@ -141,7 +140,6 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
     public boolean showControls() {
         boolean status = false;
         handler.removeCallbacks(hideRunnable);
-        Log.e("controls", "visibility " + getVisibility() + " minimize " + isMinimize);
         if (binding.controller.getVisibility() != VISIBLE && !isMinimize) {
             binding.controller.setVisibility(VISIBLE);
             status = true;
@@ -164,7 +162,6 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
     }
 
     private void updateSeekBar() {
-        Log.e("controls", "updating seekbar ");
         if (simpleExoPlayer == null) {
             return;
         }
@@ -181,15 +178,11 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
             binding.progress.setEnabled(false);
             binding.duration.setVisibility(INVISIBLE);
             binding.currentTime.setVisibility(INVISIBLE);
-            Log.e("seek bar: ", "seek bar is disable");
         }
         int percent = simpleExoPlayer.getBufferedPercentage();
         binding.progress.setSecondaryProgress(percent * 10);
         binding.duration.setText(stringForTime(duration));
         binding.currentTime.setText(stringForTime(lastPlayerPosition));
-        Log.e("lastPlayerPosition: ", "" + lastPlayerPosition);
-        Log.e("duration: ", "" + duration);
-        Log.e("percent: ", "" + percent);
         if (getVisibility() == VISIBLE && simpleExoPlayer.isPlaying()) {
             Message msg = new Message();
             msg.what = UPDATE_PROGRESS;
@@ -292,13 +285,23 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
 
     }
 
+    public void showContentExpiredMessage() {
+        if(binding.textureView.isAvailable()){
+            binding.textureView.setVisibility(INVISIBLE);
+        }
+        binding.videoOption.setEnabled(false);
+        binding.share.setEnabled(false);
+        binding.preview.setImageResource(R.drawable.content_expired);
+        hideControls(0);
+        binding.preview.setOnClickListener(null);
+    }
+
 
     private class MessageHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case UPDATE_PROGRESS:
-                    Log.e("update seek", "from timer");
                     updateSeekBar();
                     break;
                 default:
@@ -391,6 +394,7 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
                 binding.forward.setVisibility(GONE);
                 binding.backward.setVisibility(GONE);
                 binding.buffering.setVisibility(VISIBLE);
+                binding.videoOption.setEnabled(false);
                 showControls();
                 break;
             case STATE_ENDED:
@@ -404,7 +408,12 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
                 showControls();
                 break;
             case STATE_READY:
+                if(binding.textureView.isAvailable()){
+                    binding.textureView.setVisibility(VISIBLE);
+                }
+                binding.videoOption.setEnabled(true);
                 binding.preview.setImageResource(0);
+                binding.share.setEnabled(true);
                 if (playWhenReady) {
                     binding.play.setImageResource(R.mipmap.ic_media_pause);
                     binding.buffering.setVisibility(GONE);
@@ -452,9 +461,7 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
             controlerWidth = size.x;
             controlerHeight = size.y;
         } else {
-            Log.e("width: ", "" + playerWidth);
             playerHeight = (playerWidth * 9) / 16;
-            Log.e("height: ", "" + playerHeight);
             controlerWidth = playerWidth;
             controlerHeight = playerHeight;
         }

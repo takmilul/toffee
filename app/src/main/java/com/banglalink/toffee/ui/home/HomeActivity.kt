@@ -22,6 +22,7 @@ import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import androidx.lifecycle.ViewModelProviders
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.HeartBeatManager
@@ -31,17 +32,22 @@ import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.extension.loadProfileImage
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
-import com.banglalink.toffee.model.*
+import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.EXIT_FROM_APP_MSG
+import com.banglalink.toffee.model.NavigationMenu
+import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.channels.ChannelFragment
 import com.banglalink.toffee.ui.login.SigninByPhoneActivity
 import com.banglalink.toffee.ui.player.PlayerActivity
 import com.banglalink.toffee.ui.search.SearchFragment
+import com.banglalink.toffee.ui.subscription.PackageListActivity
 import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.exoplayer2.util.Util
 import kotlinx.android.synthetic.main.layout_appbar.view.*
+import java.util.*
 import javax.annotation.Nonnull
 
 const val ID_CHANNEL = 12
@@ -67,6 +73,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
 
     companion object {
         const val INTENT_REFERRAL_REDEEM_MSG = "REFERRAL_REDEEM_MSG"
+        const val INTENT_PACKAGE_SUBSCRIBED = "PACKAGE_SUBSCRIBED"
     }
 
     private val viewModel by unsafeLazy {
@@ -120,6 +127,10 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                 reloadChannel()
         }
 
+        if(intent.hasExtra(INTENT_PACKAGE_SUBSCRIBED)){
+            handlePackageSubscribe()
+        }
+
         lifecycle.addObserver(HeartBeatManager)
     }
 
@@ -169,6 +180,10 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         binding.playerView.showWifiOnlyMessage()
     }
 
+    override fun onContentExpired() {
+        binding.playerView.showContentExpiredMessage()
+    }
+
     private fun updateFullScreenState() {
         val state =
             resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -208,7 +223,40 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        if (Intent.ACTION_SEARCH == intent.action) {
+            val query = intent.getStringExtra(SearchManager.QUERY)
+            query?.let { handleVoiceSearchEvent(it) }
+
+        }
+        if(intent.hasExtra(INTENT_PACKAGE_SUBSCRIBED)){
+            handlePackageSubscribe()
+        }
         handleSharedUrl(intent)
+    }
+
+    private fun handleVoiceSearchEvent(query:String){
+        if (!TextUtils.isEmpty(query)) {
+            loadFragmentById(
+                R.id.content_viewer, SearchFragment.createInstance(query),
+                SearchFragment::class.java.name
+            )
+        }
+        if (searchView != null) {
+            searchView!!.setQuery(query.toLowerCase(), false)
+            searchView!!.clearFocus()
+        }
+    }
+
+    private fun handlePackageSubscribe(){
+        viewModel.getChannelByCategory(0)//reload the channels
+        //Clean up stack upto landingPageFragment inclusive
+        supportFragmentManager.popBackStack(
+            LandingPageFragment::class.java.name,
+            POP_BACK_STACK_INCLUSIVE
+        )
+        //Reload it again so that we can get updated VOD/Popular channels/Feature contents
+        supportFragmentManager.beginTransaction().replace(R.id.content_viewer, LandingPageFragment())
+            .addToBackStack(LandingPageFragment::class.java.name).commit()
     }
 
     private fun loadChannel(@Nonnull channelInfo: ChannelInfo) {
@@ -216,32 +264,38 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
        playChannel(channelInfo)
     }
 
-    fun onDetailsFragmentLoad(channelInfo: ChannelInfo?) {
-        if (channelInfo != null) {
-            if (channelInfo.isPurchased || channelInfo.isFree) {
-                maximizePlayer()
-                loadChannel(channelInfo)
-                if (channelInfo.isLive) {
-                    val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
-                    if (fragment !is ChannelFragment) {
-                        loadFragmentById(
-                            R.id.details_viewer, ChannelFragment.createInstance(
-                                getString(R.string.menu_channel_text)
-                            )
-                        )
-                    }
-                } else {
-                    loadFragmentById(
-                        R.id.details_viewer,
-                        CatchupDetailsFragment.createInstance(channelInfo)
-                    )
+    private fun onDetailsFragmentLoad(channelInfo: ChannelInfo?) {
+        channelInfo?.let {
+            when{
+                (it.isPurchased || it.isSubscribed) && !it.isExpired(Date())->{
+                    maximizePlayer()
+                    loadChannel(it)
+                    loadDetailFragment(it)
                 }
-            } else {
-                launchActivity<ContentPurchaseActivity>()
+                else ->{
+                    launchActivity<PackageListActivity>()
+                }
             }
         }
     }
 
+    private fun loadDetailFragment(channelInfo: ChannelInfo){
+        if (channelInfo.isLive) {
+            val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
+            if (fragment !is ChannelFragment) {
+                loadFragmentById(
+                    R.id.details_viewer, ChannelFragment.createInstance(
+                        getString(R.string.menu_channel_text)
+                    )
+                )
+            }
+        } else {
+            loadFragmentById(
+                R.id.details_viewer,
+                CatchupDetailsFragment.createInstance(channelInfo)
+            )
+        }
+    }
     fun loadFragmentById(id: Int, fragment: Fragment, tag: String) {
         supportFragmentManager.popBackStack(
             LandingPageFragment::class.java.name,
