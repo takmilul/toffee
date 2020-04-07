@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     >
     <data>
+        <import type="android.view.View"/>
         <variable
             name="data"
             type="com.banglalink.toffee.model.Package" />
@@ -13,8 +14,9 @@
             type="com.banglalink.toffee.ui.subscription.PackageCallBack" />
     </data>
     <androidx.cardview.widget.CardView
-        android:layout_height="200dp"
+        android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        app:contentPadding="16dp"
         app:cardCornerRadius="@dimen/pack_corner_radious"
         android:elevation="5dp"
         android:layout_margin="5dp"
@@ -29,11 +31,10 @@
 
             <ImageView
                 android:id="@+id/package_badge_icon"
+                imageFromUrlRounded="@{data.mobileLogo}"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="32dp"
-                imageFromUrl="@{data.posterMobile}"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_weekly_package" />
@@ -70,6 +71,7 @@
                 android:text='@{"Subscribe ৳"+data.price}'
                 android:clickable="true"
                 android:focusable="true"
+                android:visibility='@{data.isCommercial() == 0?View.INVISIBLE:View.VISIBLE}'
                 android:onClick="@{()->callback.onSubscribeClick(data)}"
                 tools:text="@string/subscribe_text" />
 
@@ -81,6 +83,7 @@
                 android:fontFamily="@font/roboto_bold"
                 tools:text="@string/strike_text"
                 discountText="@{data}"
+                android:visibility='@{data.isCommercial() == 0?View.GONE:View.VISIBLE}'
                 android:textColor="@color/main_text_color"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="@id/subscribe"
@@ -106,6 +109,21 @@
                 app:layout_constraintEnd_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toTopOf="@+id/channel_list_tv"
                 app:srcCompat="@drawable/ic_right_arrow_accent" />
+
+            <Switch
+                android:id="@+id/switch1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:enabled="false"
+                android:fontFamily="@font/roboto_medium"
+                android:text="Auto Renew"
+                android:textColor="@color/main_text_color"
+                android:textSize="14sp"
+                android:visibility="@{data.autoRenewButton == 1 ?View.VISIBLE:View.INVISIBLE}"
+                app:layout_constraintBottom_toBottomOf="@+id/subscribe"
+                app:layout_constraintEnd_toStartOf="@+id/discount_tv"
+                app:layout_constraintTop_toTopOf="@+id/subscribe" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

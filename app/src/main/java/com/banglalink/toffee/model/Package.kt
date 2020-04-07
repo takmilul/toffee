@@ -3,7 +3,7 @@ package com.banglalink.toffee.model
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-data class Package (
+data class Package(
     @SerializedName("id")
     val packageId: Int = 0,
     @SerializedName("package_name")
@@ -18,6 +18,8 @@ data class Package (
     val duration: Int = 0,
     @SerializedName("is_initial")
     val isInitial: Int = 0,
+    @SerializedName("is_base_package")
+    val isBasePackage: Int = 0,
     @SerializedName("price")
     val price: Int = 0,
     @SerializedName("discount")
@@ -46,6 +48,9 @@ data class Package (
     val startDate: String? = null,
     @SerializedName("package_expire_date")
     val expireDate: String? = null,
-    @SerializedName("autoRenew")
-    val isAutoRenewable: Boolean = false
-):Serializable
+    @SerializedName("is_auto_renew")
+    var isAutoRenewable: Int = 0,
+    @SerializedName("auto_renew_button")
+    val autoRenewButton: Int = 0
+
+) : Serializable

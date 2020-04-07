@@ -5,4 +5,4 @@ data class PackageListRequest(
     val password: String,
     val offset: Int = 0,
     val limit: Int = 100
-) : BaseRequest("getSubscribedPackagesV2")
+) : BaseRequest("getPackagesWithSubscription")

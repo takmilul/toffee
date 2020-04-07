@@ -5,4 +5,5 @@ import com.banglalink.toffee.model.Package
 interface PackageCallBack {
     fun onSubscribeClick(mPackage:Package)
     fun onShowChannelClick(mPackage: Package)
+    fun onAutoRenewUpdate(mPackage: Package)
 }
