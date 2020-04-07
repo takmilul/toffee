@@ -8,6 +8,7 @@ import android.os.Handler;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
 
 import com.banglalink.toffee.BuildConfig;
 import com.banglalink.toffee.analytics.HeartBeatManager;
@@ -97,6 +98,18 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
             trackSelectorParameters = builder.build();
             clearStartPosition();
         }
+        HeartBeatManager.INSTANCE.getHeartBeatEventLiveData().observe(this, aBoolean -> {
+            if(channelInfo!=null && channelInfo.isExpired(Preference.Companion.getInstance().getSystemTime())){
+                if(player!=null){
+                    player.stop(true);
+                }
+                onContentExpired();
+            }
+        });
+    }
+
+    protected void onContentExpired(){
+        //hook for subclass
     }
 
     @Override
@@ -252,6 +265,13 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
 
     //This will be called due to session token change while playing content or after init of player
     protected void reloadChannel(){
+        if(channelInfo!=null && channelInfo.isExpired(Preference.Companion.getInstance().getSystemTime())){
+            if(player!=null){
+                player.stop(true);
+            }
+            onContentExpired();
+            return;
+        }
         if(channelInfo!=null){
             playChannel(this.channelInfo);
         }

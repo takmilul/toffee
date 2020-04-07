@@ -9,7 +9,8 @@ class PackageListAdapter(private val packageCallBack: PackageCallBack,channelCal
     override fun getLayoutIdForPosition(position: Int): Int {
        val mPackage = values[position]
         return when {
-            mPackage.price == 0 -> R.layout.free_subscription_trial_layout
+            mPackage.isBasePackage == 1 -> R.layout.free_subscription_trial_layout
+            mPackage.isFree == 1 -> R.layout.free_subscription_layout
             mPackage.isSubscribed -> R.layout.already_subscribed_pack_layout
             else -> R.layout.subscribe_pack_layout
         }
@@ -18,5 +19,12 @@ class PackageListAdapter(private val packageCallBack: PackageCallBack,channelCal
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         super.onBindViewHolder(holder, position)
         holder.bindCallBack(packageCallBack)
+    }
+
+    fun updatePackage(mPackage: Package) {
+        val index = values.indexOf(mPackage)
+        if(index != -1){
+            notifyItemChanged(index)
+        }
     }
 }

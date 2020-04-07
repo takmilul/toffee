@@ -53,11 +53,17 @@ class PackageListActivity : AppCompatActivity(),PackageCallBack {
             adapter = mAdapter
         }
 
+        loadPackageList()
+
+    }
+
+    private fun loadPackageList(){
         progressDialog.show()
         observe(viewModel.packageLiveData){
             progressDialog.dismiss()
             when(it){
                 is Resource.Success->{
+                    mAdapter.removeAll()
                     mAdapter.addAll(it.data)
                 }
                 is Resource.Failure->{
@@ -70,6 +76,23 @@ class PackageListActivity : AppCompatActivity(),PackageCallBack {
     override fun onShowChannelClick(mPackage: Package) {
         launchActivity<PackageChannelListActivity> {
             putExtra(PackageChannelListActivity.PACKAGE,mPackage)
+        }
+    }
+
+    override fun onAutoRenewUpdate(mPackage: Package) {
+        progressDialog.show()
+        observe(viewModel.setAutoRenew(mPackage, mPackage.isAutoRenewable != 1)){
+            progressDialog.dismiss()
+            when(it){
+                is Resource.Success ->{
+                    mPackage.isAutoRenewable = mPackage.isAutoRenewable xor 1
+                    showToast(it.data)
+                }
+                is Resource.Failure ->{
+                    mAdapter.updatePackage(mPackage)
+                    showToast(it.error.msg)
+                }
+            }
         }
     }
 

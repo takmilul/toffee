@@ -1,34 +1,75 @@
 package com.banglalink.toffee.ui.subscription
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.databinding.ActivityConfirmPurchaseBinding
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Package
+import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
+import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.util.unsafeLazy
 
 class SubscribePackageActivity : BaseAppCompatActivity() {
 
     companion object{
-        const val PACKAGE = "PACAKGE"
+        const val PACKAGE = "PACKAGE"
     }
     lateinit var binding:ActivityConfirmPurchaseBinding
     lateinit var mPackage:Package
+
+    private val progressDialog by unsafeLazy {
+        VelBoxProgressDialog(this)
+    }
+    private val viewModel by unsafeLazy {
+        getViewModel<SubscribePackageViewModel>()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mPackage = intent.getSerializableExtra(PACKAGE) as Package
         binding = DataBindingUtil.setContentView(this,R.layout.activity_confirm_purchase)
 
+        setUpToolbar()
+        populateUI()
+
+        binding.confirmBtn.setOnClickListener{
+            subscribePackage()
+        }
+    }
+
+    private fun subscribePackage(){
+        progressDialog.show()
+        observe(viewModel.subscribePackage(mPackage,binding.purchaseCard.autoRenewCheckbox.isChecked)){
+            progressDialog.dismiss()
+            when(it){
+                is Resource.Success->{
+                    ToffeeAnalytics.logSubscription(mPackage)
+                    launchActivity<SubscriptionResultActivity>{
+                        putExtra(SubscriptionResultActivity.PACKAGE,mPackage)
+                    }
+                }
+                is Resource.Failure->{
+                    binding.root.snack(it.error.msg){
+                        action("Ok"){
+
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    private fun setUpToolbar(){
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding.toolbar.setNavigationOnClickListener { finish() }
-
-        populateUI()
     }
 
     private fun populateUI() {
@@ -55,5 +96,12 @@ class SubscribePackageActivity : BaseAppCompatActivity() {
             mPackage.duration,
             "Days"
         )
+
+//        if(!mPackage.isAutoRenewable){
+//            binding.purchaseCard.autoRenewCheckbox.isChecked = false
+//            binding.purchaseCard.autoRenewCheckbox.isEnabled = false
+//            binding.purchaseCard.autoRenewCheckbox.visibility = View.INVISIBLE
+//        }
+
     }
 }

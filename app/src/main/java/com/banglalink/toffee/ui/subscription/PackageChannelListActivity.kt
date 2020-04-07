@@ -31,6 +31,7 @@ class PackageChannelListActivity : AppCompatActivity() {
     }
     lateinit var binding:ActivityPackageChannelListLayoutBinding
     lateinit var mPackage:Package
+    lateinit var mAdapter:PackageChannelListAdapter
 
     private val viewModel by unsafeLazy {
         ViewModelProviders.of(this).get(PackageChannelListViewModel::class.java)
@@ -46,10 +47,13 @@ class PackageChannelListActivity : AppCompatActivity() {
         mPackage = intent.getSerializableExtra(PACKAGE) as Package
         binding= DataBindingUtil.setContentView(this,R.layout.activity_package_channel_list_layout)
 
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        binding.toolbar.setNavigationOnClickListener { onBackPressed() }
-        val mAdapter = PackageChannelListAdapter()
+        setupToolbar()
+        setupUi()
+        getPackages()
+    }
+
+    private fun setupUi(){
+        mAdapter = PackageChannelListAdapter()
         binding.listview.apply {
             val spanCount = 3// 3 columns
             val spacing = 10 // px
@@ -68,10 +72,31 @@ class PackageChannelListActivity : AppCompatActivity() {
 
         binding.packageChannelsTv.text= getString(R.string.formatted_channel_number_text,mPackage.programs)
 
-        progressDialog.show()
-        viewModel.getPackageChannels(mPackage.packageId)
 
-        observe(viewModel.channelListLiveData){
+
+        if(mPackage.price==0 || mPackage.isSubscribed || mPackage.autoRenewButton == 0){
+            binding.subscribe.visibility= View.GONE
+        }
+        else{
+            setSubscribeText(mPackage)
+        }
+
+        binding.subscribe.setOnClickListener{
+            launchActivity<SubscribePackageActivity> {
+                putExtra(SubscribePackageActivity.PACKAGE,mPackage)
+            }
+        }
+    }
+
+    private fun setupToolbar(){
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        binding.toolbar.setNavigationOnClickListener { onBackPressed() }
+    }
+
+    private fun getPackages(){
+        progressDialog.show()
+        observe(viewModel.getPackageChannels(mPackage.packageId)){
             progressDialog.dismiss()
             when(it){
                 is Resource.Success ->{
@@ -81,17 +106,6 @@ class PackageChannelListActivity : AppCompatActivity() {
                     showToast(it.error.msg)
                 }
             }
-        }
-
-        setSubscribeText(mPackage)
-        binding.subscribe.setOnClickListener{
-            launchActivity<SubscribePackageActivity> {
-                putExtra(SubscribePackageActivity.PACKAGE,mPackage)
-            }
-        }
-
-        if(mPackage.price==0){
-            binding.subscribe.visibility= View.GONE
         }
     }
 
