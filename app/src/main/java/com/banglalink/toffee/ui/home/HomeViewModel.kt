@@ -26,6 +26,7 @@ import java.util.*
 import com.banglalink.toffee.usecase.*
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.messaging.FirebaseMessaging
 
 
 class HomeViewModel(application: Application):BaseViewModel(application),OnCompleteListener<InstanceIdResult> {
@@ -64,6 +65,7 @@ class HomeViewModel(application: Application):BaseViewModel(application),OnCompl
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener(this)
         getCategory()
         getChannelByCategory(0)
+        FirebaseMessaging.getInstance().subscribeToTopic("buzz")
     }
 
     //overridden function for firebase token
