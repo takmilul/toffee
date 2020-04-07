@@ -38,22 +38,15 @@ class SplashScreen : BaseAppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this,R.layout.activity_splash_screen)
 
-        FirebaseMessaging.getInstance().subscribeToTopic("buzz")
-            .addOnCompleteListener { task ->
-                var msg = getString(R.string.topic_msg_subscribed)
-                if (!task.isSuccessful) {
-                    msg = getString(R.string.topic_msg_subscribe_failed)
-                }
-                if(viewModel.isCustomerLoggedIn())
-                    initApp()
-                else{
-                    lifecycleScope.launch {
-                        launchActivity<SigninByPhoneActivity>()
-                        finish()
-                    }
-                }
+        if(viewModel.isCustomerLoggedIn())
+            initApp()
+        else{
+            lifecycleScope.launch {
+                delay(2000)
+                launchActivity<SigninByPhoneActivity>()
+                finish()
             }
-
+        }
         val appEventsLogger = AppEventsLogger.newLogger(this)
         appEventsLogger.logEvent("app_launch")
         appEventsLogger.flush()
