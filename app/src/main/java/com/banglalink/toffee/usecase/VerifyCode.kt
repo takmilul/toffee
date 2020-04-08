@@ -24,6 +24,9 @@ class VerifyCode(private val preference: Preference,private val toffeeApi: Toffe
             preference.setHlsOverrideUrl(it.hlsOverrideUrl)
             preference.setShouldOverrideHlsUrl(it.hlsUrlOverride)
             preference.setSessionTokenLifeSpanInMillis(it.tokenLifeSpan.toLong() * 1000 * 3600)
+            if(it.isBanglalinkNumber!=null){
+                preference.isBanglalinkNumber = it.isBanglalinkNumber
+            }
         }
        
 

@@ -23,6 +23,10 @@ class ApiLogin(private val pref: Preference, private val authApi: AuthApi) {
             pref.setHlsOverrideUrl(it.hlsOverrideUrl)
             pref.setShouldOverrideHlsUrl(it.hlsUrlOverride)
             pref.setSessionTokenLifeSpanInMillis(it.tokenLifeSpan.toLong() * 1000 * 3600)
+
+            if(it.isBanglalinkNumber!=null){
+                pref.isBanglalinkNumber = it.isBanglalinkNumber
+            }
         }
         return response.customerInfoSignIn!!
     }

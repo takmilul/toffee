@@ -5,12 +5,16 @@ import android.content.SharedPreferences
 import android.text.TextUtils
 import androidx.lifecycle.MutableLiveData
 import com.banglalink.toffee.model.DBVersion
+import com.banglalink.toffee.util.Utils
 import com.google.android.exoplayer2.util.Util
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
 class Preference private constructor(val context: Context) {
-    private val pref: SharedPreferences = context.getSharedPreferences("IP_TV", Context.MODE_PRIVATE)
+    private val pref: SharedPreferences =
+        context.getSharedPreferences("IP_TV", Context.MODE_PRIVATE)
 
     val balanceLiveData = MutableLiveData<Int>()
     val sessionTokenLiveData = MutableLiveData<String>()
@@ -18,13 +22,13 @@ class Preference private constructor(val context: Context) {
     val customerNameLiveData = MutableLiveData<String>()
 
     var phoneNumber: String
-        get() = pref.getString("p_number", "")?:""
+        get() = pref.getString("p_number", "") ?: ""
         set(phoneNumber) {
             pref.edit().putString("p_number", phoneNumber).apply()
         }
 
     var customerName: String
-        get() = pref.getString("customer_name", "")?:""
+        get() = pref.getString("customer_name", "") ?: ""
         set(customerName) {
             customerNameLiveData.postValue(customerName)
             pref.edit().putString("customer_name", customerName).apply()
@@ -37,20 +41,25 @@ class Preference private constructor(val context: Context) {
         }
 
     var password: String
-        get() = pref.getString("passwd", "")?:""
+        get() = pref.getString("passwd", "") ?: ""
         set(password) {
             pref.edit().putString("passwd", password).apply()
         }
 
     var sessionToken: String
-        get() = pref.getString("sessionToken", "")?:""
+        get() = pref.getString("sessionToken", "") ?: ""
         set(sessionToken) {
-            val storedToken = pref.getString("sessionToken", "")?:""//get stored token
+            val storedToken = pref.getString("sessionToken", "") ?: ""//get stored token
             pref.edit().putString("sessionToken", sessionToken).apply()//save new session token
-            if(!sessionToken.equals(storedToken,true)){
+            if (!sessionToken.equals(storedToken, true)) {
                 sessionTokenLiveData.postValue(sessionToken)//post if there is mismatch of session token
             }
         }
+    var isBanglalinkNumber:String
+    get() = pref.getString("isBanglalinkNumber","false")?:"false"
+    set(isBanglalinkNumber){
+        pref.edit().putString("isBanglalinkNumber",isBanglalinkNumber).apply()
+    }
 
     var balance: Int
         get() = pref.getInt("balance", 0)
@@ -59,13 +68,13 @@ class Preference private constructor(val context: Context) {
         }
 
     var latitude: String
-        get() = pref.getString("latitude", "")?:""
+        get() = pref.getString("latitude", "") ?: ""
         set(latitude) {
             pref.edit().putString("latitude", latitude).apply()
         }
 
     var longitude: String
-        get() = pref.getString("Longitude", "")?:""
+        get() = pref.getString("Longitude", "") ?: ""
         set(Longitude) {
             pref.edit().putString("Longitude", Longitude).apply()
         }
@@ -119,7 +128,7 @@ class Preference private constructor(val context: Context) {
         }
 
     var fcmToken: String
-        get() = pref.getString("FCMToken", "")?:""
+        get() = pref.getString("FCMToken", "") ?: ""
         set(token) {
             pref.edit().putString("FCMToken", token).apply()
         }
@@ -128,23 +137,33 @@ class Preference private constructor(val context: Context) {
         get() = pref.getString("image_url", null)
         set(userPhoto) {
             pref.edit().putString("image_url", userPhoto).apply()
-            if(!TextUtils.isEmpty(userPhoto))
+            if (!TextUtils.isEmpty(userPhoto))
                 profileImageUrlLiveData.postValue(userPhoto)
         }
+
+    val netType: String
+        get() = if (Utils.checkWifiOnAndConnected(context)) "WIFI" else "CELLULAR"
 
     fun setSystemTime(systemTime: String) {
         pref.edit().putString("systemTime", systemTime).apply()
     }
 
     fun getSystemTime(): Date {
-        val dateString = pref.getString("systemTime","")
-        if(!TextUtils.isEmpty(dateString)){
-            val currentFormatter =
-                SimpleDateFormat("yyyyMMddHHmmss") //20200425235959
-            currentFormatter.timeZone = TimeZone.getTimeZone("UTC");
-            return currentFormatter.parse(dateString)
+        val dateString = pref.getString("systemTime", "")
+        val deviceDate = Date()
+        try{
+            dateString?.let {
+                val serverDate =  Utils.getDate(it)
+                if(serverDate!=null){
+                    return  if(deviceDate.after(serverDate)) deviceDate else serverDate//Date is after server date that means server date not updated. In that case use device time
+                }
+            }
+        }catch (pe:ParseException){
+            pe.printStackTrace()
+            FirebaseCrashlytics.getInstance().recordException(pe)
         }
-        return Date()
+
+        return deviceDate
     }
 
     fun setDBVersion(dbVersion: DBVersion) {
@@ -206,16 +225,16 @@ class Preference private constructor(val context: Context) {
             .apply() //10minute threshold
     }
 
-    fun getSessionTokenLifeSpanInMillis():Long{
-        return pref.getLong("tokenLifeSpan",0);
+    fun getSessionTokenLifeSpanInMillis(): Long {
+        return pref.getLong("tokenLifeSpan", 0);
     }
 
-    fun getSessionTokenSaveTimeInMillis():Long{
-        return pref.getLong("deviceTimeInMillis",System.currentTimeMillis());
+    fun getSessionTokenSaveTimeInMillis(): Long {
+        return pref.getLong("deviceTimeInMillis", System.currentTimeMillis());
     }
 
-    fun getHeader():String{
-        return Util.getUserAgent(context,"Toffee");
+    fun getHeader(): String {
+        return Util.getUserAgent(context, "Toffee");
     }
 
     companion object {
@@ -228,7 +247,7 @@ class Preference private constructor(val context: Context) {
         }
 
         fun getInstance(): Preference {
-            if(instance == null){
+            if (instance == null) {
                 throw InstantiationException("Instance is null...call init() first")
             }
             return instance as Preference
