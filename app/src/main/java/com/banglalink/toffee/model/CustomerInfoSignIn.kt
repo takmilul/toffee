@@ -26,6 +26,8 @@ class CustomerInfoSignIn:BodyResponse() {
     @SerializedName("referralStatus")
     var referralStatus: String? = null
 
+    @SerializedName("isBanglalinkNumber")
+    val isBanglalinkNumber:String? = "false"
     @SerializedName("hlsUrlOverride")
     var hlsUrlOverride = false
     @SerializedName("hlsOverrideUrl")

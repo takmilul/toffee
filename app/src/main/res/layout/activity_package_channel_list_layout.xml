@@ -73,6 +73,7 @@
             android:layout_marginTop="4dp"
             tools:text="50 Channels"
             android:textSize="18sp"
+            android:visibility="gone"
             android:textColor="@color/main_text_color"
             app:layout_constraintEnd_toEndOf="@+id/package_name_tv"
             app:layout_constraintStart_toStartOf="@+id/package_name_tv"
