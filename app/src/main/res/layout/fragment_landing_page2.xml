@@ -6,7 +6,8 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent">
         <LinearLayout
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             android:layout_width="match_parent"
@@ -25,6 +26,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
                     android:orientation="vertical">
 
                     <com.daimajia.slider.library.SliderLayout
@@ -194,7 +196,7 @@
                     android:background="@drawable/top_bottom_round_white_bg"
                     android:layout_width="match_parent"
                     android:layout_marginTop="115dp"
-                    android:layout_height="520dp"/>
+                    android:layout_height="536dp"/>
 
                 <LinearLayout
                     android:layout_marginTop="8dp"

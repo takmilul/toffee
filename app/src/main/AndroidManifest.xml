@@ -62,7 +62,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.home.HomeActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize|uiMode"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"

@@ -16,7 +16,7 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         observe(EventProvider.getEventLiveData()){
             when(it.getValue()){
                 is CustomerNotFoundException->{
