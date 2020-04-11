@@ -217,6 +217,10 @@ public class ChannelInfo implements Parcelable {
     }
 
     public boolean isExpired(Date serverDate){
-       return serverDate.after(Utils.getDate(expireTime));
+        try{
+            return serverDate.after(Utils.getDate(expireTime));
+        }catch (NullPointerException ne){
+            return true;
+        }
     }
 }
