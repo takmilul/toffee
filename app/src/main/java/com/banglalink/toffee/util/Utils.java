@@ -53,7 +53,7 @@ public class Utils {
         Date dateObj = null;
         try {
             dateObj = currentFormatter.parse(dateTime);
-        } catch (Exception e) {
+        } catch (ParseException e) {
             e.printStackTrace();
         }
         return dateObj;
