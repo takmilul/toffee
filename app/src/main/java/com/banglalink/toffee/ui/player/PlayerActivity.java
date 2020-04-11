@@ -8,7 +8,6 @@ import android.os.Handler;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.lifecycle.Observer;
 
 import com.banglalink.toffee.BuildConfig;
 import com.banglalink.toffee.analytics.HeartBeatManager;
@@ -98,12 +97,12 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
             trackSelectorParameters = builder.build();
             clearStartPosition();
         }
-        HeartBeatManager.INSTANCE.getHeartBeatEventLiveData().observe(this, aBoolean -> {
+        HeartBeatManager.INSTANCE.getHeartBeatEventLiveData().observe(this, aBoolean -> {//In each heartbeat we are checking channel's expire date. Seriously??
             if(channelInfo!=null && channelInfo.isExpired(Preference.Companion.getInstance().getSystemTime())){
                 if(player!=null){
                     player.stop(true);
                 }
-                onContentExpired();
+                onContentExpired();//content is expired. Notify the subclass
             }
         });
     }
@@ -166,7 +165,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
             lastSeenTrackGroupArray = null;
 
             player =
-                    new SimpleExoPlayer.Builder(/* context= */ this)
+                    new SimpleExoPlayer.Builder(this)
                             .setTrackSelector(defaultTrackSelector)
                             .setBandwidthMeter(defaultBandwidthMeter)
                             .build();
@@ -266,6 +265,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
     //This will be called due to session token change while playing content or after init of player
     protected void reloadChannel(){
         if(channelInfo!=null && channelInfo.isExpired(Preference.Companion.getInstance().getSystemTime())){
+            //channel is expired. Stop the player and notify hook/subclass
             if(player!=null){
                 player.stop(true);
             }
