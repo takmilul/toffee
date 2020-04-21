@@ -283,7 +283,7 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
 
     fun onBackPressed(): Boolean {
         if(popularVideoListView!=null && popularVideoListView!!.computeVerticalScrollOffset() > 0){
-            popularVideoListView?.smoothScrollToPosition(0)
+            popularVideoListView?.scrollToPosition(0)
             return true
         }
         return false

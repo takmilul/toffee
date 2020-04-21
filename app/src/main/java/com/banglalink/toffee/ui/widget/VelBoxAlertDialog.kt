@@ -34,29 +34,6 @@ fun showAlertDialog(context: Context, title: String, message: String) {
     showAlertDialog(context, title, message, true)
 }
 
-fun showAlertDialog(
-    context: Context,
-    title: String,
-    message: String,
-    listener: View.OnClickListener
-) {
-    val factory = LayoutInflater.from(context)
-    val alertView = factory.inflate(R.layout.alert_dialog_layout, null)
-    val alertDialog = AlertDialog.Builder(context).create()
-    alertDialog.setView(alertView)
-    alertDialog.setCancelable(false)
-    alertDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-    (alertView.findViewById(R.id.title_tv) as TextView).text = title
-    if (TextUtils.isEmpty(message)) {
-        alertView.findViewById<TextView>(R.id.message_tv).setVisibility(View.GONE)
-    } else {
-        (alertView.findViewById(R.id.message_tv) as TextView).text = message
-    }
-    alertView.findViewById<TextView>(R.id.ok_button).setOnClickListener(listener)
-    alertDialog.show()
-}
-
 fun showDisplayMessageDialog(
     context: Context?,
     message: String?,
@@ -71,9 +48,35 @@ fun showDisplayMessageDialog(
     alertDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     (alertView.findViewById<View>(R.id.message_tv) as TextView).text = message
     alertView.findViewById<View>(R.id.ok_button)
-        .setOnClickListener { alertDialog.dismiss()
-        callbacks.invoke()}
+        .setOnClickListener {
+            alertDialog.dismiss()
+            callbacks.invoke()
+        }
 
+
+    alertDialog.show()
+}
+
+fun showSubscriptionDialog(
+    context: Context?,
+    okCallBack: () -> Unit
+) {
+    val factory = LayoutInflater.from(context)
+    val alertView: View =
+        factory.inflate(R.layout.alert_dialog_subscribe_pack, null)
+    val alertDialog = AlertDialog.Builder(context).create()
+    alertDialog.setView(alertView)
+    alertDialog.setCancelable(true)
+
+    alertView.findViewById<View>(R.id.ok_button)
+        .setOnClickListener {
+            alertDialog.dismiss()
+            okCallBack.invoke()
+        }
+    alertView.findViewById<View>(R.id.close_iv)
+        .setOnClickListener {
+            alertDialog.dismiss()
+        }
 
     alertDialog.show()
 }

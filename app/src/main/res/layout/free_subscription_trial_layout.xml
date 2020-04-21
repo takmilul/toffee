@@ -11,7 +11,6 @@
     </data>
     <androidx.cardview.widget.CardView
         android:layout_height="wrap_content"
-        app:contentPadding="16dp"
         android:layout_width="match_parent"
         app:cardCornerRadius="@dimen/pack_corner_radious"
         android:elevation="5dp"
@@ -27,25 +26,36 @@
 
             <ImageView
                 android:id="@+id/package_badge_icon"
+                imageFromUrlRounded="@{data.mobileLogo}"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/guideline4"
                 app:layout_constraintTop_toTopOf="parent"
-                imageFromUrlRounded="@{data.mobileLogo}"
                 app:srcCompat="@drawable/ic_free_package" />
 
             <TextView
                 android:id="@+id/package_name_tv"
                 style="@style/subscription_pack_header_style"
                 android:layout_width="0dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="8dp"
                 android:text="@{data.packageName}"
-                tools:text="@string/free_trial"
                 app:layout_constraintEnd_toStartOf="@+id/guideline4"
                 app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintTop_toTopOf="@+id/package_badge_icon" />
+                app:layout_constraintTop_toTopOf="@+id/package_badge_icon"
+                tools:text="@string/free_trial" />
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="@dimen/check_dimen"
+                android:layout_height="@dimen/check_dimen"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_check" />
 
             <TextView
                 android:id="@+id/package_description_tv"

@@ -79,14 +79,15 @@
     <string name="subscription_to">Subscription to</string>
     <string name="subscription_amount">Subscription Amount</string>
     <string name="validity">Validity</string>
-    <string name="confirm_purchase_text"><b>৳120</b> will be deducted\nfrom your Banglalink balance after\nyou tap \'Confirm Purchase\'</string>
-    <string name="confirm_purchase_formatted_text">৳%1$d will be deducted\nfrom your Banglalink balance after\nyou tap \'Confirm Purchase\'</string>
+    <string name="confirm_purchase_text"><b>৳120</b> will be deducted from your balance after you tap \'Confirm Purchase\'</string>
+    <string name="confirm_purchase_formatted_text">৳%1$d will be deducted from your balance after you tap \'Confirm Purchase\'</string>
     <string name="confirm_purchase">Confirm Purchase</string>
     <string name="auto_renew_formatted_text">Auto Renew in %1$d %2$s</string>
     <string name="subscribe_text">Subscribe ৳30</string>
     <string name="discount_foramtted_text"><strike>৳%1$d</strike></string>
     <string name="amount_formatted_text">৳%1$d</string>
     <string name="day_formatted_text">%1$d days</string>
+    <string name="single_day_formatted_text">%1$d day</string>
     <string name="formatted_channel_number_text">%1$d Channels</string>
     <string name="package_price_formatted_text">%1$d TK/%2$s</string>
     <string name="menu_create_text">Submit Your Video</string>
@@ -126,5 +127,6 @@
     <string name="topic_msg_subscribe_failed">Topic subscribe failed</string>
     <string name="subscription_text">You have successfully subscribed to </string>
     <string name="back_to_home">Back to Home</string>
+    <string name="subscribe_pack">You need to subscribe premium pack to view this channel</string>
 
 </resources>

@@ -43,6 +43,7 @@ import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.subscription.PackageListActivity
 import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
+import com.banglalink.toffee.ui.widget.showSubscriptionDialog
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.exoplayer2.util.Util
@@ -273,9 +274,15 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                     loadDetailFragment(it)
                 }
                 else ->{
-                    launchActivity<PackageListActivity>()
+                    showSubscribePackDialog()
                 }
             }
+        }
+    }
+
+    private fun showSubscribePackDialog(){
+        showSubscriptionDialog(this) {
+            launchActivity<PackageListActivity>()
         }
     }
 

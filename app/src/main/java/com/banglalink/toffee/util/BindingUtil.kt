@@ -125,6 +125,16 @@ fun bindAutoRenewText(autoRenewTv:TextView,item: Package){
     }
 }
 
+@BindingAdapter("validityText")
+fun bindValidityText(validityTv:TextView,item: Package){
+    val days = Utils.formatValidityText(Utils.getDate(item.expireDate))
+    if (item.isAutoRenewable == 1) {
+        validityTv.text = "Auto renew on $days"
+    } else {
+        validityTv.text = "Expires on $days"
+    }
+}
+
 @BindingAdapter("discountText")
 fun bindDiscountText(discountTv:TextView,item:Package){
     if (item.discount == 0) {

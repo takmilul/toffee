@@ -63,16 +63,14 @@
             <TextView
                 android:id="@+id/subscribe"
                 style="@style/SubscribePackButtonStyle"
-                android:textColor="@android:color/white"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="16dp"
+                android:background="@drawable/ash_rect"
                 android:clickable="false"
                 android:enabled="false"
                 android:focusable="false"
                 android:text="@string/subscribed_pack"
                 android:textAllCaps="true"
-                android:background="@drawable/ash_rect"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:textColor="@android:color/white"
                 app:layout_constraintEnd_toEndOf="@+id/package_badge_icon"
                 app:layout_constraintStart_toStartOf="@+id/package_badge_icon"
                 app:layout_constraintTop_toBottomOf="@+id/package_badge_icon" />
@@ -141,6 +139,22 @@
                 app:layout_constraintBottom_toBottomOf="@+id/auto_renew_switch"
                 app:layout_constraintEnd_toStartOf="@+id/auto_renew_switch"
                 app:layout_constraintTop_toTopOf="@+id/auto_renew_switch" />
+
+            <TextView
+                android:id="@+id/expire_renew_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:textSize="12sp"
+                validityText="@{data}"
+                android:fontFamily="@font/roboto_medium"
+                android:textColor="@color/colorAccent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/guideline3"
+                app:layout_constraintTop_toBottomOf="@+id/textView5"
+                tools:text="Expires on 21 April 11:59 PM" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

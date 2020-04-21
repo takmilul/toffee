@@ -57,7 +57,7 @@ class PackageChannelListActivity : AppCompatActivity() {
         binding.listview.apply {
             val spanCount = 3// 3 columns
             val spacing = 10 // px
-            val includeEdge = true
+            val includeEdge = false
             addItemDecoration(GridSpacingItemDecoration(spanCount,spacing,includeEdge))
             layoutManager = GridLayoutManager(this@PackageChannelListActivity,spanCount)
             adapter = mAdapter
@@ -89,6 +89,7 @@ class PackageChannelListActivity : AppCompatActivity() {
     }
 
     private fun setupToolbar(){
+        binding.toolbar.title = mPackage.packageName
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding.toolbar.setNavigationOnClickListener { onBackPressed() }
@@ -110,15 +111,11 @@ class PackageChannelListActivity : AppCompatActivity() {
     }
 
     private fun setSubscribeText(mPackage: Package) {
-        var duration = ""
-        if (mPackage.duration >= 360) {
-            duration = "year"
-        } else if (mPackage.duration >= 30) {
-            duration = "month"
-        } else if (mPackage.duration >= 7) {
-            duration = "week"
-        } else if (mPackage.duration == 1) {
-            duration = "day"
+        val duration = when {
+            mPackage.duration >= 360 -> "year"
+            mPackage.duration >= 30 -> "month"
+            mPackage.duration >= 7 -> "week"
+            else -> "day"
         }
 
         if (mPackage.discount > 0) {

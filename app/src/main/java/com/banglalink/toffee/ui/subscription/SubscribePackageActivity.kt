@@ -75,7 +75,23 @@ class SubscribePackageActivity : BaseAppCompatActivity() {
     private fun populateUI() {
         binding.purchaseCard.packageNameTv.text = mPackage.packageName
         binding.purchaseCard.amount.text = getString(R.string.amount_formatted_text, mPackage.price)
-        binding.purchaseCard.validity.text = getString(R.string.day_formatted_text, mPackage.duration)
+        if(mPackage.duration == 1){
+            binding.purchaseCard.validity.text = getString(R.string.single_day_formatted_text, mPackage.duration)
+            binding.purchaseCard.autoRenewCheckbox.text = getString(
+                R.string.auto_renew_formatted_text,
+                mPackage.duration,
+                "Day"
+            )
+        }
+        else{
+            binding.purchaseCard.validity.text = getString(R.string.day_formatted_text, mPackage.duration)
+            binding.purchaseCard.autoRenewCheckbox.text = getString(
+                R.string.auto_renew_formatted_text,
+                mPackage.duration,
+                "Days"
+            )
+        }
+
 
         val str = SpannableStringBuilder(
             getString(
@@ -90,18 +106,6 @@ class SubscribePackageActivity : BaseAppCompatActivity() {
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
         binding.purchaseCard.purchaseDescriptionText.text = str
-
-        binding.purchaseCard.autoRenewCheckbox.text = getString(
-            R.string.auto_renew_formatted_text,
-            mPackage.duration,
-            "Days"
-        )
-
-//        if(!mPackage.isAutoRenewable){
-//            binding.purchaseCard.autoRenewCheckbox.isChecked = false
-//            binding.purchaseCard.autoRenewCheckbox.isEnabled = false
-//            binding.purchaseCard.autoRenewCheckbox.visibility = View.INVISIBLE
-//        }
 
     }
 }
