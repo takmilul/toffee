@@ -63,7 +63,6 @@ class CatchupFragment : CommonSingleListFragment() {
         activity?.title = title
         binding.progressBar.visibility = View.VISIBLE
         mAdapter?.removeAll()
-        mAdapter?.notifyDataSetChanged()
         viewModel.updateInfo(category, categoryId, subCategory, subCategoryID, type)
     }
 

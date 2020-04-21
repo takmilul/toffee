@@ -47,6 +47,12 @@ public class Utils {
         return dateTimeNew;
     }
 
+    public static String formatValidityText(Date date) {
+
+        SimpleDateFormat currentFormatter = new SimpleDateFormat("dd MMMM"); //2020-04-25 23:59:59
+        return currentFormatter.format(date);
+    }
+
     public static Date getDate(String dateTime) {
 
         SimpleDateFormat currentFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //2020-04-25 23:59:59

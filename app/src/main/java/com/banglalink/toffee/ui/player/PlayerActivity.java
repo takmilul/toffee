@@ -363,10 +363,6 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
                 if(channelInfo!=null)
                     ToffeeAnalytics.INSTANCE.playerError(channelInfo,"Behind live window");//log error
             }
-            else{
-                if(channelInfo!=null && e.getSourceException().getMessage()!=null)
-                    ToffeeAnalytics.INSTANCE.playerError(channelInfo,e.getSourceException().getMessage());//trying to log error with proper message.
-            }
         }
 
         @Override
