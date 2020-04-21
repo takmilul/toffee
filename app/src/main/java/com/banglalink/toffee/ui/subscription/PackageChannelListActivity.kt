@@ -56,8 +56,8 @@ class PackageChannelListActivity : AppCompatActivity() {
         mAdapter = PackageChannelListAdapter()
         binding.listview.apply {
             val spanCount = 3// 3 columns
-            val spacing = 10 // px
-            val includeEdge = false
+            val spacing = 35 // px
+            val includeEdge = true
             addItemDecoration(GridSpacingItemDecoration(spanCount,spacing,includeEdge))
             layoutManager = GridLayoutManager(this@PackageChannelListActivity,spanCount)
             adapter = mAdapter
