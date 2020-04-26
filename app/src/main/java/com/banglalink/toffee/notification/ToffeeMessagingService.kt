@@ -276,7 +276,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             val name = "Generic Notification"
             val description = "All kinds of generic notification of Toffee"
             val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel("Toffee Notification", name, importance)
+            val channel = NotificationChannel(NOTIFICATION_CHANNEL_NAME, name, importance)
             channel.description = description
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
