@@ -49,7 +49,7 @@ public class Utils {
 
     public static String formatValidityText(Date date) {
 
-        SimpleDateFormat currentFormatter = new SimpleDateFormat("dd MMMM"); //2020-04-25 23:59:59
+        SimpleDateFormat currentFormatter = new SimpleDateFormat("dd MMMM hh:mm aa"); //2020-04-25 23:59:59
         return currentFormatter.format(date);
     }
 
