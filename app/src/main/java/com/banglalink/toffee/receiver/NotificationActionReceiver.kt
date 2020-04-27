@@ -35,7 +35,8 @@ class NotificationActionReceiver : BroadcastReceiver() {
 
         val resourceUrl = intent?.getStringExtra(RESOURCE_URL)
         if (actionName == WATCH_NOW && !resourceUrl.isNullOrBlank()) {
-            val intent = Intent(context, HomeActivity::class.java);
+            val intent = Intent(context, HomeActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
             intent.data = Uri.parse(resourceUrl)
             context.startActivity(intent)
         }
