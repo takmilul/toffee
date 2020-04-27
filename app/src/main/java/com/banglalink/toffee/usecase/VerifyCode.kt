@@ -27,6 +27,7 @@ class VerifyCode(private val preference: Preference,private val toffeeApi: Toffe
             if(it.isBanglalinkNumber!=null){
                 preference.isBanglalinkNumber = it.isBanglalinkNumber
             }
+            preference.isSubscriptionActive = it.isSubscriptionActive?:"true"
         }
        
 

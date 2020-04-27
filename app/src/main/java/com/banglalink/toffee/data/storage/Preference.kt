@@ -144,6 +144,11 @@ class Preference private constructor(val context: Context) {
     val netType: String
         get() = if (Utils.checkWifiOnAndConnected(context)) "WIFI" else "CELLULAR"
 
+    var isSubscriptionActive: String
+        get() = pref.getString("subscription_active", "") ?: ""
+        set(phoneNumber) {
+            pref.edit().putString("subscription_active", phoneNumber).apply()
+        }
     fun setSystemTime(systemTime: String) {
         pref.edit().putString("systemTime", systemTime).apply()
     }
