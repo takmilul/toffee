@@ -27,6 +27,7 @@ class ApiLogin(private val pref: Preference, private val authApi: AuthApi) {
             if(it.isBanglalinkNumber!=null){
                 pref.isBanglalinkNumber = it.isBanglalinkNumber
             }
+            pref.isSubscriptionActive = it.isSubscriptionActive?:"true"
         }
         return response.customerInfoSignIn!!
     }
