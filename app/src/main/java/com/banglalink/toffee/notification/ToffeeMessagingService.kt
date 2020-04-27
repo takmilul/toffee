@@ -211,7 +211,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             Uri.parse("android.resource://" + packageName + "/" + R.raw.velbox_notificaiton)
 
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(resourceUrl))
-        val pendingIntent = PendingIntent.getActivity(applicationContext, 0, intent, 0)
+        val pendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
 
         val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_NAME)
 
@@ -229,6 +229,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         if (button == "true") {
 
             val watchNowIntent = Intent("com.toffee.notification_receiver")
+            watchNowIntent.setClass(this, NotificationActionReceiver::class.java)
             watchNowIntent.putExtra(NotificationActionReceiver.NOTIFICATION_ID, notificationId)
             watchNowIntent.putExtra(
                 NotificationActionReceiver.ACTION_NAME,
@@ -236,7 +237,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             )
             watchNowIntent.putExtra(NotificationActionReceiver.RESOURCE_URL, playNowUrl)
             val watchNowPendingIntent = PendingIntent.getBroadcast(
-                applicationContext,
+                this,
                 1,
                 watchNowIntent,
                 PendingIntent.FLAG_CANCEL_CURRENT
@@ -248,6 +249,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             )
 
             val watchLaterIntent = Intent("com.toffee.notification_receiver")
+            watchLaterIntent.setClass(this, NotificationActionReceiver::class.java)
             watchLaterIntent.putExtra(
                 NotificationActionReceiver.NOTIFICATION_ID,
                 notificationId
