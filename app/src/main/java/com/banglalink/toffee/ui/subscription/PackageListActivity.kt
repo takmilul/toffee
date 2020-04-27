@@ -86,6 +86,7 @@ class PackageListActivity : AppCompatActivity(),PackageCallBack {
             when(it){
                 is Resource.Success ->{
                     mPackage.isAutoRenewable = mPackage.isAutoRenewable xor 1
+                    mAdapter.notifyDataSetChanged()
                     showToast(it.data)
                 }
                 is Resource.Failure ->{
