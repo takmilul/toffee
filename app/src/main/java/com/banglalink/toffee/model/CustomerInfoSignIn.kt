@@ -35,6 +35,7 @@ class CustomerInfoSignIn:BodyResponse() {
     @SerializedName("headerSessionToken")
     var headerSessionToken: String? = null
     @SerializedName("tokenLifeSpan")
-    var tokenLifeSpan //toffeeLifeSpan = 4 means 4 hours
-            = 0
+    var tokenLifeSpan = 0
+    @SerializedName("isSubscriptionActive")
+    var isSubscriptionActive:String? = "true"
 }
