@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "toffee-261507",
+  "private_key_id": "c7793c98cdfd1fd51df46496d6c6dde4e5a1f8ad",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCi6i6vVpLBJoyj\nlRnz5miS6WEB38tFyFZeDpz3sT5dZyYKL+h5OG30+k827xily+SvDDE7hYBnxw2p\nqht4s5LBHnDQn/NO5qX/YpBcQznIHjkhCSqcJh6ueiM+4PdVhg5uFc1F92PRLIpq\ngPcTQQQI6bt90cJdEJVSVDdRJu3Hmc88Y7k7p6T2D6JuSCrjCvI1ekrd9iQ9Q7+k\nZOU6d60Ou5aAoaS1vA7d0BwG18E3tpRIcZLcmhRM6N7LEvIflOo/kySEB0ATiUPa\nPoD9WTkS68pVYzhS0/gcEH/O5t3R1YhBtyMBltItgoUmtQKTliTVk9Rnm2bensTJ\nXGbLDs/zAgMBAAECggEAJQyMwWM2zKYvpaPq2wSzE3XvkbWLTLtaqNk56TptrGAg\nzoBGpgqnNucVzLBjMpFD2Gs1ZwvdP7yM5uDAjpqH7VM25Lr7Yh4h8gpAOjsvkMsO\nwuyKvCgPIi60hUAz/0cVUQO0Qw0XriIq+D2L8tz+ReihsuNZCEEVNDviuJnZyWJc\nGHnFqFyGbL5mAJwsJhnybEawTimhGTgMq9+NshKZnhiATpttXEv1vJff7MgmnmqL\nyYjhpmjIfH+zV/lPr5IzTy4CFOiTkBoIxJRosWEHGGDwh3SvrhXFvwd86OVxcuNA\nCW60iIrbstf4oXa+AFpr6W/GLgar3nbqeSSeYCnXwQKBgQDbJlGrJ0UiimDOuybX\niU2fvapdB6BkbQgoEVRSYi/CnAHpkme5RI28GgkjWfR65lto2rs+gZ9XZv5j2XNn\nBCka5I8UdsEE1rr39wPu2HmjX5I58GBDDFVrRoOCsvehYRdZyQ1YCrnR/4yyaGZT\nK5GyDfTSV1O7VjCaSAnDmPEZ/QKBgQC+TyIqEz99c7UZzBoZL5YmhsVoME6d0tLr\nd19IwF2zeJj/qxrL14fhqh9ADMz0lPF2HGvMDdldlJB6QyqcZ+16aSWR21kMgWqF\nEzv96eTMXeDmaH6k+oyAHBdLs99kslhyIqoaQ6/+bsGL838zebyCGo4c5ZlCvHZB\n3UR+Ax38rwKBgA5+FDyLVkkYeZpySflK/TUpJ9ELJhI+G6H6s2bXU209P+sgYXeh\nDvZ3ik8qLb7K6RSgEm3pyI3RI9WalcUkQ0uh/cxOpikZwjePwFTVQAYL1fG68cK9\nWBDGEwBbsYCcmRy47Qb7fppimf1aZhnt8a6iuaQHXmQvKPuq8+pZfOhJAoGAJEKh\nqNCoDTgprnOkGV5mxopxPIvPvuR3iaPiBNOaRuLYjAZHAcXcPxQSBjsqJgPnCfEa\nXPPakakH6jO3/7sRlXxJS0Q28FoMOLTUfmm9TW8ptdz9HGQctyAjFCp+iwosLfsK\n3Bw/gUQLHqZTezRbxZJXt4vLqtqL0breHQBtC0MCgYAzSe5sd0B/A+Np5nahdftS\nQa3sWJzFUoP66rj3m0oDlmRMfAM4VkLJqW6GKe+dd2lJmgdtxn+UebXouIHyBU1T\n0KZ15GM5C8bsIX5xskiKMqGe+gZsRoW+DBWvC6x/hRvbrUJNyJxFSghStAz/nMs9\nfo7Cc/AQ3l2CjVK+d7ZbLQ==\n-----END PRIVATE KEY-----\n",
+  "client_email": "fcm-pub-sub-publisher@toffee-261507.iam.gserviceaccount.com",
+  "client_id": "115885807774663248856",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/fcm-pub-sub-publisher%40toffee-261507.iam.gserviceaccount.com"
+}
