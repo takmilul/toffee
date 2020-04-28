@@ -12,7 +12,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 15
-        versionName "1.1.7_stage"
+        versionName "1.1.10_stage"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {
@@ -43,6 +43,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    packagingOptions {
+        pickFirst 'META-INF/LICENSE'
+        pickFirst 'META-INF/io.netty.versions.properties'
+        pickFirst 'META-INF/INDEX.LIST'
+    }
+    useLibrary 'org.apache.http.legacy'
 }
 
 dependencies {
@@ -112,6 +119,29 @@ dependencies {
 
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
     implementation 'com.google.android.gms:play-services-auth-api-phone:17.4.0'
+
+    implementation ('com.google.apis:google-api-services-pubsub:v1-rev354-1.22.0') {
+        exclude group: 'com.google.code.findbugs'
+        exclude group: 'org.apache.httpcomponents'
+        exclude group: 'org.json'
+        exclude module: 'support-annotations'
+        exclude group: 'com.google.guava'
+    }
+    implementation ('com.google.api-client:google-api-client-android:1.22.0') {
+        exclude module: 'httpclient'
+        exclude group: 'com.google.code.findbugs'
+        exclude module: 'support-annotations'
+        exclude group: 'com.google.guava'
+    }
+    implementation ('com.google.http-client:google-http-client-gson:1.17.0-rc') {
+        exclude module: 'httpclient'
+        exclude group: 'com.google.code.findbugs'
+        exclude module: 'support-annotations'
+        exclude group: 'com.google.guava'
+    }
+
+//    implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
+
 
     testImplementation 'junit:junit:4.12'
     testImplementation "android.arch.core:core-testing:1.1.1"

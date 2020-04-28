@@ -47,9 +47,6 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             Log.d(TAG, "Data payload: " + remoteMessage.data)
             prepareNotification(remoteMessage.data)
         } else {
-            Log.d(TAG, "Data payload empty" + remoteMessage.notification?.title)
-            Log.d(TAG, "Data payload empty" + remoteMessage.notification?.body)
-
             imageCoroutineScope.launch {
                 handleDefaultNotification(
                     remoteMessage.notification?.title,
@@ -83,6 +80,11 @@ class ToffeeMessagingService : FirebaseMessagingService() {
 //                notificationType.equals("LOGOUT", ignoreCase = true) -> EventBus.getDefault()
 //                    .post(MessageEvent(content, MessageEvent.NOTIFICATION_LOGOUT_EVENT))
             }
+
+            //sending pub-sub message
+            val id = data["notificationId"]
+            //Message Status Meaning : /*0=Delivered,1=open, 2=later */
+            PubSubMessageUtil().sendPubSubMessage(applicationContext, id, PUBSUBMessageStatus.DELIVERED);
 
         } catch (e: Exception) {
             Log.e(TAG, e.message, e)
@@ -187,6 +189,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         val playNowUrl = data["playNowUrl"]
         val watchLaterUrl = data["watchLaterUrl"]
         val button = data["button"]
+        val pubSubId = data["notificationId"]
 
 
         val drawable = try {
@@ -231,6 +234,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             val watchNowIntent = Intent("com.toffee.notification_receiver")
             watchNowIntent.setClass(this, NotificationActionReceiver::class.java)
             watchNowIntent.putExtra(NotificationActionReceiver.NOTIFICATION_ID, notificationId)
+            watchNowIntent.putExtra(NotificationActionReceiver.PUB_SUB_ID, pubSubId)
             watchNowIntent.putExtra(
                 NotificationActionReceiver.ACTION_NAME,
                 NotificationActionReceiver.WATCH_NOW
@@ -254,6 +258,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                 NotificationActionReceiver.NOTIFICATION_ID,
                 notificationId
             )
+            watchLaterIntent.putExtra(NotificationActionReceiver.PUB_SUB_ID, pubSubId)
             watchLaterIntent.putExtra(
                 NotificationActionReceiver.ACTION_NAME,
                 NotificationActionReceiver.WATCH_LATER
