@@ -28,8 +28,6 @@ class NotificationActionReceiver : BroadcastReceiver() {
         const val DISMISS = 300
     }
 
-    private val coroutineContext = Dispatchers.IO + SupervisorJob()
-    private val CoroutineScope = CoroutineScope(coroutineContext)
 
     override fun onReceive(context: Context?, intent: Intent?) {
 
@@ -52,14 +50,10 @@ class NotificationActionReceiver : BroadcastReceiver() {
             intent.data = Uri.parse(resourceUrl)
             context.startActivity(intent)
 
-            CoroutineScope.launch {
-                PubSubMessageUtil().sendPubSubMessage(context, pusubId, PUBSUBMessageStatus.OPEN)
-            }
+            PubSubMessageUtil.sendPubSubMessage(context, pusubId, PUBSUBMessageStatus.OPEN)
 
         } else {
-            CoroutineScope.launch {
-                PubSubMessageUtil().sendPubSubMessage(context, pusubId, PUBSUBMessageStatus.LATER)
-            }
+            PubSubMessageUtil.sendPubSubMessage(context, pusubId, PUBSUBMessageStatus.LATER)
         }
 
 
