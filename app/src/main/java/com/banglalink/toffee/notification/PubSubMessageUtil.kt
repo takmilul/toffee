@@ -16,13 +16,21 @@ import com.google.api.services.pubsub.model.PublishResponse
 import com.google.api.services.pubsub.model.PubsubMessage
 import com.google.common.collect.ImmutableList
 import com.google.gson.JsonObject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
-class PubSubMessageUtil {
+object PubSubMessageUtil {
 
     private val TAG = "PubSubMessageUtil"
+    private val coroutineContext = Dispatchers.IO + SupervisorJob()
+    private val coroutineScope = CoroutineScope(coroutineContext)
 
     fun sendPubSubMessage(context: Context, notificationId: String?, messageStatus: PUBSUBMessageStatus) {
-        sendMessage(context, getPubSubMessage(notificationId, messageStatus))
+        coroutineScope.launch {
+            sendMessage(context, getPubSubMessage(notificationId, messageStatus))
+        }
     }
 
      private fun sendMessage(context: Context, message: String) {
@@ -37,9 +45,9 @@ class PubSubMessageUtil {
             val client = builder.build()
             val batch = client.batch()
 
-            var pubsubMessage = PubsubMessage()
+            val pubsubMessage = PubsubMessage()
             pubsubMessage.encodeData(message.toByteArray(charset("UTF-8")))
-            var publishRequest = PublishRequest()
+            val publishRequest = PublishRequest()
             publishRequest.messages = ImmutableList.of(
                 pubsubMessage
             )
@@ -71,7 +79,7 @@ class PubSubMessageUtil {
     private val topic = "projects/$PROJECTID/topics/$TOPIC_ID"
 
     private fun getPubSubMessage(notificationId: String?, messageStatus: PUBSUBMessageStatus): String {
-        var jObj = JsonObject();
+        val jObj = JsonObject();
         jObj.addProperty("notificationId", notificationId);
         jObj.addProperty("userId", Preference.getInstance().customerId);
         jObj.addProperty("messageStatus", messageStatus.ordinal);

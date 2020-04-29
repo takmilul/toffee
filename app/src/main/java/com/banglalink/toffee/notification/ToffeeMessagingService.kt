@@ -84,7 +84,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             //sending pub-sub message
             val id = data["notificationId"]
             //Message Status Meaning : /*0=Delivered,1=open, 2=later */
-            PubSubMessageUtil().sendPubSubMessage(applicationContext, id, PUBSUBMessageStatus.DELIVERED);
+            PubSubMessageUtil.sendPubSubMessage(applicationContext, id, PUBSUBMessageStatus.DELIVERED);
 
         } catch (e: Exception) {
             Log.e(TAG, e.message, e)
