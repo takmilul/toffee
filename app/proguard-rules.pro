@@ -38,6 +38,12 @@
 -keep class com.banglalink.toffee.model.** { <fields>; }
 -keep class com.banglalink.toffee.ui.player.** { <fields>; }
 
+-keep class com.google.api.services.pubsub.**
+-keep class com.google.api.client.googleapis.**
+-keep class com.banglalink.toffee.notification.**
+
+
+
 # Prevent proguard from stripping interface information from TypeAdapter, TypeAdapterFactory,
 # JsonSerializer, JsonDeserializer instances (so they can be used in @JsonAdapter)
 -keep class * implements com.google.gson.TypeAdapter
