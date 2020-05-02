@@ -39,6 +39,7 @@
 -keep class com.banglalink.toffee.ui.player.** { <fields>; }
 
 -keep class com.google.api.services.pubsub.**
+-keep class com.google.api.client.**
 -keep class com.google.api.client.googleapis.**
 -keep class com.banglalink.toffee.notification.**
 
