@@ -22,6 +22,8 @@ class NotificationActionReceiver : BroadcastReceiver() {
         const val WATCH_NOW = 100
         const val WATCH_LATER = 200
         const val DISMISS = 300
+        const val CONTENT_VIEW = 400
+
     }
 
 
@@ -48,7 +50,12 @@ class NotificationActionReceiver : BroadcastReceiver() {
 
             PubSubMessageUtil.sendPubSubMessage(context, pusubId, PUBSUBMessageStatus.OPEN)
 
-        } else {
+        } else if (actionName == CONTENT_VIEW && !resourceUrl.isNullOrBlank()) {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(resourceUrl))
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+            context.startActivity(intent)
+            PubSubMessageUtil.sendPubSubMessage(context, pusubId, PUBSUBMessageStatus.OPEN)
+        }else {
             PubSubMessageUtil.sendPubSubMessage(context, pusubId, PUBSUBMessageStatus.LATER)
         }
 
