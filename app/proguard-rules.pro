@@ -38,12 +38,25 @@
 -keep class com.banglalink.toffee.model.** { <fields>; }
 -keep class com.banglalink.toffee.ui.player.** { <fields>; }
 
--keep class com.google.api.services.pubsub.**
--keep class com.google.api.client.**
--keep class com.google.api.client.googleapis.**
--keep class com.banglalink.toffee.notification.**
+-keep class com.google.api.services.pubsub.** { <fields>; }
+-keep class com.google.api.client.** { <fields>; }
+-keep class com.google.api.client.googleapis.** { <fields>; }
+
+-assumenosideeffects class android.util.Log {
+    public static boolean isLoggable(java.lang.String, int);
+    public static int v(...);
+    public static int i(...);
+    public static int w(...);
+    public static int d(...);
+    public static int e(...);
+}
 
 
+-keepclassmembers class * extends java.lang.Enum {
+    <fields>;
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
 
 # Prevent proguard from stripping interface information from TypeAdapter, TypeAdapterFactory,
 # JsonSerializer, JsonDeserializer instances (so they can be used in @JsonAdapter)
