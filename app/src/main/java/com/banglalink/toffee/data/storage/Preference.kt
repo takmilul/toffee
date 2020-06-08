@@ -2,19 +2,26 @@ package com.banglalink.toffee.data.storage
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Build
 import android.text.TextUtils
 import androidx.lifecycle.MutableLiveData
+import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.model.DBVersion
 import com.banglalink.toffee.util.Utils
-import com.google.android.exoplayer2.util.Util
+import com.banglalink.toffee.util.unsafeLazy
+import com.google.android.exoplayer2.ExoPlayerLibraryInfo
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import java.text.ParseException
-import java.text.SimpleDateFormat
 import java.util.*
 
 class Preference private constructor(val context: Context) {
     private val pref: SharedPreferences =
         context.getSharedPreferences("IP_TV", Context.MODE_PRIVATE)
+
+    val toffeeGeneralHeader by unsafeLazy{
+        ("Toffee" + "/" + BuildConfig.VERSION_NAME + " (Linux;Android " + Build.VERSION.RELEASE
+                + ") " + ExoPlayerLibraryInfo.VERSION_SLASHY)
+    }
 
     val balanceLiveData = MutableLiveData<Int>()
     val sessionTokenLiveData = MutableLiveData<String>()
@@ -236,10 +243,6 @@ class Preference private constructor(val context: Context) {
 
     fun getSessionTokenSaveTimeInMillis(): Long {
         return pref.getLong("deviceTimeInMillis", System.currentTimeMillis());
-    }
-
-    fun getHeader(): String {
-        return Util.getUserAgent(context, "Toffee");
     }
 
     companion object {

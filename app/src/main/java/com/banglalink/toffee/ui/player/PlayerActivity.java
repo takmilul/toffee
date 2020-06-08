@@ -29,7 +29,6 @@ import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
@@ -158,7 +157,6 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
 
     private void initializePlayer() {
         if (player == null) {
-            DefaultBandwidthMeter defaultBandwidthMeter = new DefaultBandwidthMeter.Builder(this).build();
             AdaptiveTrackSelection.Factory adaptiveTrackSelectionFactory = new AdaptiveTrackSelection.Factory();
             defaultTrackSelector = new DefaultTrackSelector(this, adaptiveTrackSelectionFactory);
             defaultTrackSelector.setParameters(trackSelectorParameters);
@@ -167,7 +165,6 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
             player =
                     new SimpleExoPlayer.Builder(this)
                             .setTrackSelector(defaultTrackSelector)
-                            .setBandwidthMeter(defaultBandwidthMeter)
                             .build();
             player.addListener(playerEventListener);
             player.setPlayWhenReady(false);
@@ -177,7 +174,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
         }
         //we are checking whether there is already channelInfo exist. If not null then play it
         if(channelInfo!=null){
-            reloadChannel();
+            playChannel(channelInfo);
         }
     }
 
@@ -222,7 +219,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
                 new HlsMediaSource.Factory(
                         dataType -> {
                             HttpDataSource dataSource =
-                                    new DefaultHttpDataSource(Util.getUserAgent(this, "Toffee"));
+                                    new DefaultHttpDataSource(Preference.Companion.getInstance().getToffeeGeneralHeader());
                             dataSource.setRequestProperty("TOFFEE-SESSION-TOKEN", Preference.Companion.getInstance().getHeaderSessionToken());
                             return dataSource;
                         })

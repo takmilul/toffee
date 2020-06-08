@@ -15,7 +15,7 @@ object RetrofitApiClient {
     init {
         val clientBuilder = OkHttpClient.Builder()
         clientBuilder.connectTimeout(15, TimeUnit.SECONDS)
-        clientBuilder.readTimeout(15, TimeUnit.SECONDS)
+        clientBuilder.readTimeout(30, TimeUnit.SECONDS)
         clientBuilder.retryOnConnectionFailure(false)
         if (BuildConfig.DEBUG) {
             val interceptor = HttpLoggingInterceptor()
@@ -28,8 +28,8 @@ object RetrofitApiClient {
 
         retrofit = Retrofit.Builder()
             .client(client)
-//            .baseUrl("https://mapi.toffeelive.com/")
-            .baseUrl("https://staging.toffee-cms.com/")
+            .baseUrl("https://mapi.toffeelive.com/")
+//            .baseUrl("https://staging.toffee-cms.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
