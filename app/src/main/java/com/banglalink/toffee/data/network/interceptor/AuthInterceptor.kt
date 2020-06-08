@@ -23,7 +23,7 @@ class AuthInterceptor : Interceptor {
 
         val newRequest = request.newBuilder()
             .headers(request.headers)
-            .addHeader("User-Agent", Preference.getInstance().getHeader())
+            .addHeader("User-Agent", Preference.getInstance().toffeeGeneralHeader)
             .method(request.method, builder.build())
             .build()
         val response = chain.proceed(newRequest)
