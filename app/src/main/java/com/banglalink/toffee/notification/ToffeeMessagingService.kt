@@ -213,8 +213,24 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         val sound =
             Uri.parse("android.resource://" + packageName + "/" + R.raw.velbox_notificaiton)
 
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(resourceUrl))
-        val pendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
+//        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(resourceUrl))
+//        val pendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
+
+        val intent = Intent("com.toffee.notification_receiver")
+        intent.setClass(this, NotificationActionReceiver::class.java)
+        intent.putExtra(NotificationActionReceiver.NOTIFICATION_ID, notificationId)
+        intent.putExtra(NotificationActionReceiver.PUB_SUB_ID, pubSubId)
+        intent.putExtra(NotificationActionReceiver.RESOURCE_URL, resourceUrl)
+        intent.putExtra(
+            NotificationActionReceiver.ACTION_NAME,
+            NotificationActionReceiver.CONTENT_VIEW
+        )
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            0,
+            intent,
+            PendingIntent.FLAG_CANCEL_CURRENT
+        )
 
         val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_NAME)
 
