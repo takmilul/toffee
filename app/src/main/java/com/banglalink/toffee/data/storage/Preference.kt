@@ -58,7 +58,8 @@ class Preference private constructor(val context: Context) {
         set(sessionToken) {
             val storedToken = pref.getString("sessionToken", "") ?: ""//get stored token
             pref.edit().putString("sessionToken", sessionToken).apply()//save new session token
-            if (!sessionToken.equals(storedToken, true)) {
+            if (storedToken.isNotEmpty() && !sessionToken.equals(storedToken, true)) {
+                pref.edit().putLong("deviceTimeInMillis", System.currentTimeMillis()).apply()//Update session token change time
                 sessionTokenLiveData.postValue(sessionToken)//post if there is mismatch of session token
             }
         }
@@ -234,11 +235,11 @@ class Preference private constructor(val context: Context) {
     fun setSessionTokenLifeSpanInMillis(tokenLifeSpanInMillis: Long) {
         pref.edit().putLong("deviceTimeInMillis", System.currentTimeMillis()).apply()
         pref.edit().putLong("tokenLifeSpan", tokenLifeSpanInMillis - 10 * 60 * 1000)
-            .apply() //10minute threshold
+            .apply() //10 minute cut off for safety. We will request for new token 10 minutes early
     }
 
     fun getSessionTokenLifeSpanInMillis(): Long {
-        return pref.getLong("tokenLifeSpan", 0);
+        return pref.getLong("tokenLifeSpan",  3600000)//default token span set to 1 hour
     }
 
     fun getSessionTokenSaveTimeInMillis(): Long {
