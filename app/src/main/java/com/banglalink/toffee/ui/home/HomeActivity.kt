@@ -123,9 +123,10 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         }
 
         observe(Preference.getInstance().sessionTokenLiveData){
-            if(binding.draggableView.visibility == View.VISIBLE)
+            if(binding.draggableView.visibility == View.VISIBLE){
                 updateStartPosition()//we are saving the player start position so that we can start where we left off for VOD.
                 reloadChannel()
+            }
         }
 
         if(intent.hasExtra(INTENT_PACKAGE_SUBSCRIBED)){
