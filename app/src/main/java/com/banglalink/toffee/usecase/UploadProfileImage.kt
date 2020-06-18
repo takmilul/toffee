@@ -8,6 +8,7 @@ import com.banglalink.toffee.data.network.request.UploadProfileImageRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.model.SubscriberPhotoBean
 import com.banglalink.toffee.util.decodeSampledBitmap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -17,7 +18,7 @@ class UploadProfileImage(private val preference: Preference, private val toffeeA
 
     suspend fun execute(
         photoUri: Uri,context:Context
-    ): Boolean {
+    ): SubscriberPhotoBean {
         return withContext(Dispatchers.Default){
             val imageBitmap = decodeSampledBitmap(context, photoUri)
             val bao = ByteArrayOutputStream()
@@ -25,7 +26,7 @@ class UploadProfileImage(private val preference: Preference, private val toffeeA
             val imageData = bao.toByteArray()
             val imageString = Base64.encodeToString(imageData, Base64.DEFAULT)
 
-            tryIO {
+            val response = tryIO {
                 toffeeApi.uploadPhoto(
                     UploadProfileImageRequest(
                         imageString,
@@ -34,7 +35,10 @@ class UploadProfileImage(private val preference: Preference, private val toffeeA
                     )
                 )
             }
-            true
+            response.response.userPhoto?.let {
+                Preference.getInstance().userImageUrl = it
+            }
+            response.response
         }
 
     }
