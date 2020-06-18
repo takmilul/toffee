@@ -28,9 +28,7 @@ class GetRelativeContents(private val preference: Preference, private val toffee
         mOffset += response.response.count
         //filtering out already added current item
         if(response.response.channels!=null){
-            return response.response.channels.filter {
-                !it.program_name.equals(channelInfo.program_name,true)
-            }.map {
+            return response.response.channels.map {
                 it.formatted_view_count = getFormattedViewsText(it.view_count)
                 it.formattedDuration = discardZeroFromDuration(it.duration)
                 it
