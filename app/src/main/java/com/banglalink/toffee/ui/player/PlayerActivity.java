@@ -309,6 +309,9 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
 
     @Override
     public boolean onOptionMenuPressed() {
+        if(defaultTrackSelector==null || defaultTrackSelector.getCurrentMappedTrackInfo() == null)
+            return false;
+
         TrackSelectionDialog bottomSheetDialog = new TrackSelectionDialog(this);
         bottomSheetDialog.init(defaultTrackSelector);
         getLifecycle().addObserver(bottomSheetDialog);
@@ -353,7 +356,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
         @Override
         public void onPlayerError(ExoPlaybackException e) {
             e.printStackTrace();
-            FirebaseCrashlytics.getInstance().recordException(e);
+            ToffeeAnalytics.INSTANCE.logException(e);
             if (isBehindLiveWindow(e)) {
                 clearStartPosition();
                 reloadChannel();
