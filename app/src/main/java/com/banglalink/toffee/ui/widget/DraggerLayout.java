@@ -13,6 +13,7 @@ import androidx.core.view.ViewCompat;
 import androidx.customview.widget.ViewDragHelper;
 
 import com.banglalink.toffee.R;
+import com.banglalink.toffee.analytics.ToffeeAnalytics;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,24 +137,29 @@ public class DraggerLayout extends RelativeLayout {
     long duration;
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        if(isViewHit(dragView,(int)ev.getX(),(int)ev.getY()) || ((!isMaximized() && !isMinimize()) || isHorizontalDragged())) {
-            switch (ev.getActionMasked()) {
-                case MotionEvent.ACTION_DOWN:
-                    lastAction = MotionEvent.ACTION_DOWN;
-                    duration = System.currentTimeMillis();
-                    break;
-                case MotionEvent.ACTION_UP:
-                    if (lastAction == MotionEvent.ACTION_DOWN && (System.currentTimeMillis() - duration < 250) && shouldMaximize()) {
-                        maximize();
-                    }
-                    break;
+        try{
+            if(isViewHit(dragView,(int)ev.getX(),(int)ev.getY()) || ((!isMaximized() && !isMinimize()) || isHorizontalDragged())) {
+                switch (ev.getActionMasked()) {
+                    case MotionEvent.ACTION_DOWN:
+                        lastAction = MotionEvent.ACTION_DOWN;
+                        duration = System.currentTimeMillis();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        if (lastAction == MotionEvent.ACTION_DOWN && (System.currentTimeMillis() - duration < 250) && shouldMaximize()) {
+                            maximize();
+                        }
+                        break;
+                }
+                if (isMaximized() && (System.currentTimeMillis() - duration < 250)) {
+                    dragView.dispatchTouchEvent(ev);
+                }
+                viewDragHelper.processTouchEvent(ev);
+                return true;
             }
-            if (isMaximized() && (System.currentTimeMillis() - duration < 250)) {
-                dragView.dispatchTouchEvent(ev);
-            }
-            viewDragHelper.processTouchEvent(ev);
-            return true;
+        }catch (IllegalArgumentException e){
+            ToffeeAnalytics.INSTANCE.logException(e);
         }
+
 
         return false;
     }
