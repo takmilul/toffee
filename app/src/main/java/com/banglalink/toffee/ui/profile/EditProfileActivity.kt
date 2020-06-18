@@ -22,6 +22,7 @@ import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import androidx.lifecycle.lifecycleScope
 import coil.api.load
 import coil.transform.CircleCropTransformation
+import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.getViewModel
 import com.banglalink.toffee.extension.loadProfileImage
@@ -29,7 +30,6 @@ import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.util.unsafeLazy
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.yalantis.ucrop.UCrop
 import kotlinx.coroutines.launch
 import java.io.File
@@ -209,7 +209,7 @@ class EditProfileActivity : BaseAppCompatActivity() {
 
         } catch (e: Exception) {
             progressDialog.dismiss()
-            FirebaseCrashlytics.getInstance().recordException(e)
+            ToffeeAnalytics.logException(e)
             Log.e(TAG, e.message, e)
         }
     }
