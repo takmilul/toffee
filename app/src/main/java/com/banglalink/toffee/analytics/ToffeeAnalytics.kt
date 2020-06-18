@@ -2,9 +2,12 @@ package com.banglalink.toffee.analytics
 
 import android.content.Context
 import android.os.Bundle
+import android.text.TextUtils
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Package
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import java.lang.Exception
 
 object ToffeeAnalytics {
 
@@ -18,7 +21,10 @@ object ToffeeAnalytics {
         firebaseAnalytics.setUserId(customerId.toString())
     }
 
-    fun logApiError(apiName:String, errorMsg: String){
+    fun logApiError(apiName:String?, errorMsg: String?){
+        if(TextUtils.isEmpty(apiName) || TextUtils.isEmpty(errorMsg))
+            return
+
         val params = Bundle()
         params.putString("api_name",apiName)
         params.putString("error_msg",errorMsg)
@@ -50,5 +56,9 @@ object ToffeeAnalytics {
         params.putString("package_name", mPackage.packageName)
         params.putString("package_id", mPackage.packageId.toString())
         firebaseAnalytics.logEvent("subscription",params)
+    }
+
+    fun logException(e: Exception) {
+        FirebaseCrashlytics.getInstance().recordException(e)
     }
 }
