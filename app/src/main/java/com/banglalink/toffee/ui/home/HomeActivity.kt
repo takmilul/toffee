@@ -433,13 +433,9 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        val imageUrl = Preference.getInstance().userImageUrl
-        if (!imageUrl.isNullOrBlank()) {
-            observe(Preference.getInstance().profileImageUrlLiveData) {
-                menu?.findItem(R.id.action_avatar)
-                    ?.actionView?.findViewById<ImageView>(R.id.view_avatar)?.loadProfileImage(it)
-            }
-
+        observe(Preference.getInstance().profileImageUrlLiveData) {
+            menu?.findItem(R.id.action_avatar)
+                ?.actionView?.findViewById<ImageView>(R.id.view_avatar)?.loadProfileImage(it)
         }
         return super.onPrepareOptionsMenu(menu)
     }
