@@ -6,12 +6,11 @@ import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
 import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.model.Customer
+import com.banglalink.toffee.model.CustomerInfoSignIn
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.usecase.ApiLogin
 import com.banglalink.toffee.usecase.CheckUpdate
-import com.banglalink.toffee.usecase.GetProfile
 import com.banglalink.toffee.util.unsafeLazy
 
 class SplashViewModel(application: Application) : BaseViewModel(application) {
@@ -23,17 +22,12 @@ class SplashViewModel(application: Application) : BaseViewModel(application) {
         ApiLogin(Preference.getInstance(), RetrofitApiClient.authApi)
     }
 
-    private val getProfile by unsafeLazy {
-        GetProfile(Preference.getInstance(),RetrofitApiClient.toffeeApi)
-    }
-
-    fun init(skipUpdate:Boolean = false):LiveData<Resource<Customer>>{
+    fun init(skipUpdate:Boolean = false):LiveData<Resource<CustomerInfoSignIn>>{
         return resultLiveData {
             if(!skipUpdate){
                 checkUpdate.execute(BuildConfig.VERSION_CODE.toString())
             }
             apiLogin.execute()
-            getProfile.execute()
         }
     }
 
