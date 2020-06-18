@@ -67,8 +67,10 @@ abstract class CommonSingleListFragment : HomeBaseFragment() {
             when (it) {
                 is Resource.Success -> {
                     val itemCount = mAdapter.itemCount
+                    if(itemCount==0){
+                        updateHeader()//Working around header fo CatchupDetailsFragment. We need to add a header item in adapter
+                    }
                     if (it.data.isEmpty() && itemCount == 0) {
-                        updateHeader()
                         binding.emptyView.visibility = View.VISIBLE
                     } else {
                         binding.emptyView.visibility = View.GONE
