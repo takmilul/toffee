@@ -20,7 +20,7 @@ import com.foxrentacar.foxpress.ui.common.MyBaseAdapter
 abstract class CommonSingleListFragment : HomeBaseFragment() {
 
     lateinit var mAdapter: MyBaseAdapter<ChannelInfo>
-    lateinit var scrollListener: EndlessRecyclerViewScrollListener
+    private lateinit var scrollListener: EndlessRecyclerViewScrollListener
 
     lateinit var binding: FragmentCatchupBinding
 
@@ -39,9 +39,7 @@ abstract class CommonSingleListFragment : HomeBaseFragment() {
         arguments?.getString("title")?.let {
             activity?.title = it
         }
-        mAdapter = CommonChannelAdapter(this) {
-            homeViewModel.fragmentDetailsMutableLiveData.postValue(it)
-        }
+        initAdapter()
         val linearLayoutManager = LinearLayoutManager(context)
         binding.listview.layoutManager = linearLayoutManager
         binding.listview.adapter = mAdapter
@@ -57,19 +55,25 @@ abstract class CommonSingleListFragment : HomeBaseFragment() {
         loadChannelList()
     }
 
+    open fun initAdapter(){
+        mAdapter = CommonChannelAdapter(this) {
+            homeViewModel.fragmentDetailsMutableLiveData.postValue(it)
+        }
+    }
     fun loadChannelList() {
         showProgress()
         loadItems().observe(viewLifecycleOwner, Observer {
             hideProgress()
             when (it) {
                 is Resource.Success -> {
-                    mAdapter.addAll(it.data)
                     val itemCount = mAdapter.itemCount
                     if (it.data.isEmpty() && itemCount == 0) {
+                        updateHeader()
                         binding.emptyView.visibility = View.VISIBLE
                     } else {
                         binding.emptyView.visibility = View.GONE
                     }
+                    mAdapter.addAll(it.data)
                 }
                 is Resource.Failure -> {
                     scrollListener.resetState()
@@ -106,6 +110,9 @@ abstract class CommonSingleListFragment : HomeBaseFragment() {
                 binding.emptyView.visibility = View.VISIBLE
             }
         }
+    }
+    open fun updateHeader(){
+        //hook for sub class
     }
 
     //hook for removing item when set to unfavorite. Subclass can override it to change the behavior

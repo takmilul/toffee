@@ -32,19 +32,16 @@ class CatchupDetailsFragment:CommonSingleListFragment() {
         currentItem = arguments?.getParcelable(CHANNEL_INFO)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        //Okay we are changing the adapter
+    override fun initAdapter() {
         mAdapter = CatchUpDetailsAdapter(this) {
             homeViewModel.fragmentDetailsMutableLiveData.postValue(it)
         }
-
-        if(currentItem!=null)
-            mAdapter.add(currentItem!!)//Fake item for enabling header...because we are adding header at 0
-        binding.listview.adapter = mAdapter
     }
 
+    override fun updateHeader() {
+        if(currentItem!=null)
+            mAdapter.add(currentItem!!)//Fake item for enabling header...because we are adding header at 0
+    }
     override fun hideNotInterestedMenuItem(channelInfo: ChannelInfo): Boolean {
         return currentItem?.id == channelInfo.id
     }
