@@ -15,10 +15,6 @@ import com.banglalink.toffee.util.unsafeLazy
 
 class VerifyCodeViewModel(application: Application) : BaseViewModel(application) {
 
-    private val getProfile: GetProfile by unsafeLazy {
-        GetProfile(Preference.getInstance(), RetrofitApiClient.toffeeApi)
-    }
-
     private val verifyCode by unsafeLazy {
         VerifyCode(Preference.getInstance(), RetrofitApiClient.toffeeApi)
     }
@@ -34,7 +30,6 @@ class VerifyCodeViewModel(application: Application) : BaseViewModel(application)
     ): LiveData<Resource<CustomerInfoSignIn>> {
         return resultLiveData {
             val response = verifyCode.execute(code, regSessionToken, referralCode)
-            getProfile.execute()//we are fetching profile after successful verification
             response
         }
     }
