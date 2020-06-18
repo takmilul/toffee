@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.common
 
+import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.View
@@ -59,5 +60,10 @@ class HtmlPageViewActivity : BaseAppCompatActivity() {
 
         webView.settings.javaScriptEnabled = true
         webView.loadUrl(htmlUrl)
+    }
+
+    //For Android 5.0.0 webkit UI bug fix
+    override fun getAssets(): AssetManager {
+        return resources.assets
     }
 }
