@@ -45,6 +45,10 @@ class HomeViewModel(application: Application):BaseViewModel(application),OnCompl
         GetCategory(RetrofitApiClient.toffeeApi)
     }
 
+    private val getProfile by unsafeLazy {
+        GetProfile(Preference.getInstance(),RetrofitApiClient.toffeeApi)
+    }
+
     private val getChannelWithCategory by unsafeLazy {
         GetChannelWithCategory(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
@@ -62,10 +66,11 @@ class HomeViewModel(application: Application):BaseViewModel(application),OnCompl
     }
 
     init {
-        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener(this)
         getCategory()
         getChannelByCategory(0)
+        getProfile()
         FirebaseMessaging.getInstance().subscribeToTopic("buzz")
+        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener(this)
     }
 
     //overridden function for firebase token
@@ -105,6 +110,12 @@ class HomeViewModel(application: Application):BaseViewModel(application),OnCompl
             }catch (e:Exception){
                 channelMutableLiveData.setError(getError(e))
             }
+        }
+    }
+
+    private fun getProfile(){
+        viewModelScope.launch {
+            getProfile.execute()
         }
     }
 
