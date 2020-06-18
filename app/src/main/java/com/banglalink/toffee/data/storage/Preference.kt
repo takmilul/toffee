@@ -6,6 +6,7 @@ import android.os.Build
 import android.text.TextUtils
 import androidx.lifecycle.MutableLiveData
 import com.banglalink.toffee.BuildConfig
+import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.model.DBVersion
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
@@ -173,7 +174,7 @@ class Preference private constructor(val context: Context) {
             }
         }catch (pe:ParseException){
             pe.printStackTrace()
-            FirebaseCrashlytics.getInstance().recordException(pe)
+            ToffeeAnalytics.logException(pe)
         }
 
         return deviceDate
