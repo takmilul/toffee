@@ -21,7 +21,7 @@ public final class TrackSelectionDialog extends BottomSheetDialog implements Lif
         super(context);
     }
 
-    public void init(DefaultTrackSelector defaultTrackSelector){
+    public void init(@NonNull DefaultTrackSelector defaultTrackSelector){
         TrackGroupArray trackGroupArray = defaultTrackSelector.getCurrentMappedTrackInfo().getTrackGroups(0);
         DefaultTrackSelector.SelectionOverride initialOverride  =  defaultTrackSelector.getParameters().getSelectionOverride(/* rendererIndex= */ 0, trackGroupArray);
         TrackSelectionView bottomView = (TrackSelectionView) getLayoutInflater().inflate(R.layout.track_selection_dialog,null);
