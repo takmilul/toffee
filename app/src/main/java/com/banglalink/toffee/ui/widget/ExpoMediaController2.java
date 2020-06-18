@@ -335,13 +335,11 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
                 }
                 simpleExoPlayer.setPlayWhenReady(true);
                 hideControls(3000);
-                handler.postDelayed(() -> {
-                    if(simpleExoPlayer.getPlayWhenReady() && simpleExoPlayer.getPlaybackState() == STATE_IDLE){
-                        for (OnPlayerControllerChangedListener onPlayerControllerChangedListener : onPlayerControllerChangedListeners) {
-                            onPlayerControllerChangedListener.onPlayerIdleDueToError();
-                        }
+                if(simpleExoPlayer.getPlayWhenReady() && simpleExoPlayer.getPlaybackState() == STATE_IDLE){
+                    for (OnPlayerControllerChangedListener onPlayerControllerChangedListener : onPlayerControllerChangedListeners) {
+                        onPlayerControllerChangedListener.onPlayerIdleDueToError();
                     }
-                },1500);
+                }
             }
             updateSeekBar();
             for (OnPlayerControllerChangedListener OnPlayerControllerChangedListener : onPlayerControllerChangedListeners) {
