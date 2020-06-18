@@ -1,7 +1,7 @@
 package com.banglalink.toffee.util
 
+import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.exception.*
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
@@ -18,7 +18,7 @@ fun <T>unsafeLazy(initializer: () -> T): Lazy<T>{
 
 fun getError(e: Exception): Error {
     e.printStackTrace()
-    FirebaseCrashlytics.getInstance().recordException(e)
+    ToffeeAnalytics.logException(e)
     when (e) {
         is HttpException -> {
             return Error(e.code(), e.message())
