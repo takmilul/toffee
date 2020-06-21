@@ -105,7 +105,7 @@ class VerifyCodeActivity : BaseAppCompatActivity(){
                 is Resource.Failure -> {
                     binding.root.snack(it.error.msg) {
                         action("Retry") {
-                            verifyCode(code)
+                            verifyCode(binding.codeNumber.text.toString())
                         }
                     }
                 }

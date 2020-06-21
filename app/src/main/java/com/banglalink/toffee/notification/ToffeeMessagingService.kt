@@ -117,14 +117,14 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         if (drawable != null)
             builder.setLargeIcon(drawable?.toBitmap(48, 48))
 
-        var intent = Intent("com.toffee.notification_receiver")
+        val intent = Intent("com.toffee.notification_receiver")
         intent.putExtra(NotificationActionReceiver.NOTIFICATION_ID, notificationId)
         intent.putExtra(
             NotificationActionReceiver.ACTION_NAME,
             NotificationActionReceiver.DISMISS
         )
 
-        var pendingIntent = PendingIntent.getBroadcast(
+        val pendingIntent = PendingIntent.getBroadcast(
             applicationContext,
             0,
             intent,
