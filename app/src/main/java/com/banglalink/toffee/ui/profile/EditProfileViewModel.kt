@@ -24,10 +24,6 @@ class EditProfileViewModel(application: Application) : BaseViewModel(application
         UploadProfileImage(Preference.getInstance(), RetrofitApiClient.toffeeApi)
     }
 
-    private val getProfile by unsafeLazy {
-        GetProfile(Preference.getInstance(),RetrofitApiClient.toffeeApi)
-    }
-
 
     fun updateProfile(editProfileForm: EditProfileForm):LiveData<Resource<Boolean>> {
 
