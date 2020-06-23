@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
 import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.data.storage.Preference
@@ -115,7 +116,11 @@ class HomeViewModel(application: Application):BaseViewModel(application),OnCompl
 
     private fun getProfile(){
         viewModelScope.launch {
-            getProfile.execute()
+            try{
+                getProfile.execute()
+            }catch (e:Exception){
+                ToffeeAnalytics.logException(e)
+            }
         }
     }
 
