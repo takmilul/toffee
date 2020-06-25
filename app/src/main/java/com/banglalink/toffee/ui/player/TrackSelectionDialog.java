@@ -21,23 +21,25 @@ public final class TrackSelectionDialog extends BottomSheetDialog implements Lif
         super(context);
     }
 
-    public void init(@NonNull DefaultTrackSelector defaultTrackSelector){
+    public void init(DefaultTrackSelector defaultTrackSelector){
         TrackGroupArray trackGroupArray = defaultTrackSelector.getCurrentMappedTrackInfo().getTrackGroups(0);
         DefaultTrackSelector.SelectionOverride initialOverride  =  defaultTrackSelector.getParameters().getSelectionOverride(/* rendererIndex= */ 0, trackGroupArray);
         TrackSelectionView bottomView = (TrackSelectionView) getLayoutInflater().inflate(R.layout.track_selection_dialog,null);
         bottomView.init(defaultTrackSelector.getCurrentMappedTrackInfo(), 0, false, initialOverride == null
                 ? Collections.emptyList()
                 : Collections.singletonList(initialOverride), (isDisabled, overrides) -> {
-            DefaultTrackSelector.ParametersBuilder builder = defaultTrackSelector.getParameters().buildUpon();
+            if(defaultTrackSelector!=null && defaultTrackSelector.getCurrentMappedTrackInfo()!=null){
+                DefaultTrackSelector.ParametersBuilder builder = defaultTrackSelector.getParameters().buildUpon();
 
-            builder.clearSelectionOverrides(0);
-            builder.setRendererDisabled(0, isDisabled);
-            if (!overrides.isEmpty()) {
-                builder.setSelectionOverride(0,
-                        defaultTrackSelector.getCurrentMappedTrackInfo().getTrackGroups(0),
-                        overrides.get(0));
+                builder.clearSelectionOverrides(0);
+                builder.setRendererDisabled(0, isDisabled);
+                if (!overrides.isEmpty()) {
+                    builder.setSelectionOverride(0,
+                            defaultTrackSelector.getCurrentMappedTrackInfo().getTrackGroups(0),
+                            overrides.get(0));
+                }
+                defaultTrackSelector.setParameters(builder);
             }
-            defaultTrackSelector.setParameters(builder);
             dismiss();
 
         });
