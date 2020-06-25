@@ -35,7 +35,6 @@ import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import java.net.CookieHandler;
 import java.net.CookieManager;

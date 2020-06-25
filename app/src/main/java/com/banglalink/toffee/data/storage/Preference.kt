@@ -11,7 +11,6 @@ import com.banglalink.toffee.model.DBVersion
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.exoplayer2.ExoPlayerLibraryInfo
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import java.text.ParseException
 import java.util.*
 
