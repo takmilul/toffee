@@ -1,15 +1,12 @@
 package com.banglalink.toffee.ui.profile
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
 import com.banglalink.toffee.R
@@ -42,8 +39,7 @@ class EditProfileActivity : BaseAppCompatActivity() {
     var photoUri: Uri? = null
     private lateinit var progressDialog: VelBoxProgressDialog
     lateinit var binding:ActivityEditProfileBinding
-    private val REQUEST_IMAGE = 3
-    private val GALLERY_IMAGE_REQUEST = 4
+    private val REQUEST_IMAGE = 1729
     private val TAG = "EditProfileActivity"
 
     companion object{
@@ -101,7 +97,7 @@ class EditProfileActivity : BaseAppCompatActivity() {
                 }
             }
             catch (e: PermissionException){
-                showToast("Please grant permission ${e.denied[0]}")
+                showToast(getString(R.string.grant_camera_permission))
             }
         }
     }
@@ -129,40 +125,35 @@ class EditProfileActivity : BaseAppCompatActivity() {
 
         if (requestCode == REQUEST_IMAGE) {
             if (resultCode == RESULT_OK) {
-                startCrop(photoUri!!)
-            } else if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(this, "You cancelled the operation", Toast.LENGTH_SHORT).show()
-            }
-        } else if (requestCode == UCrop.REQUEST_CROP) {
-            if (resultCode == RESULT_OK) {
-                photoUri = UCrop.getOutput(data!!)
-                binding.profileEditLayout.profileIv.load(photoUri){
-                    transformations(CircleCropTransformation())
-                    placeholder(R.drawable.ic_profile_default)
-                }
                 photoUri?.let {
+                    startCrop(it)
+                }
+            } else if (resultCode == RESULT_CANCELED) {
+               showToast("You cancelled the operation")
+            }
+        } else if (requestCode == UCrop.REQUEST_CROP && resultCode == RESULT_OK) {
+            data?.let { intent ->
+                val uri = UCrop.getOutput(intent)
+                uri?.let {
+                    binding.profileEditLayout.profileIv.load(it){
+                        transformations(CircleCropTransformation())
+                    }
                     handleUploadImage(it)
                 }
-
-
             }
-        } else if (requestCode == GALLERY_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
-            startCrop(data.data!!)
         }
     }
 
     private fun startCrop(uri: Uri) {
-        val destinationFileName = "PersonImage"
 
         var uCrop = UCrop.of(
             uri,
-            Uri.fromFile(File(cacheDir, destinationFileName + System.currentTimeMillis()))
+            Uri.fromFile(createImageFile())
         )
 
         val options = UCrop.Options().apply {
             setHideBottomControls(true)
             setFreeStyleCropEnabled(true)
-            setActiveWidgetColor(ContextCompat.getColor(this@EditProfileActivity,R.color.colorAccent))
         }
 
         uCrop = uCrop.withOptions(options)
@@ -215,7 +206,7 @@ class EditProfileActivity : BaseAppCompatActivity() {
     }
 
     @Throws(IOException::class)
-    fun Context.createImageFile(): File {
+    fun createImageFile(): File {
 
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val imageFileName = "IMG_" + timeStamp + "_"
