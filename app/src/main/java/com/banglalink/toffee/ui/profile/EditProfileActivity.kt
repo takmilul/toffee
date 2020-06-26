@@ -97,6 +97,7 @@ class EditProfileActivity : BaseAppCompatActivity() {
                 }
             }
             catch (e: PermissionException){
+                ToffeeAnalytics.logBreadCrumb("Camera permission denied")
                 showToast(getString(R.string.grant_camera_permission))
             }
         }
@@ -109,14 +110,18 @@ class EditProfileActivity : BaseAppCompatActivity() {
             val photoFile: File?
             try {
                 photoFile = createImageFile()
+                ToffeeAnalytics.logBreadCrumb("Photo file created")
             } catch (e: IOException) {
                 e.printStackTrace()
                 return
             }
 
             photoUri = FileProvider.getUriForFile(this, "$packageName.provider", photoFile)
+            ToffeeAnalytics.logBreadCrumb("Photo uri set")
             pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
             startActivityForResult(pictureIntent, REQUEST_IMAGE)
+            ToffeeAnalytics.logBreadCrumb("Camera activity started")
+
         }
     }
 
@@ -125,6 +130,7 @@ class EditProfileActivity : BaseAppCompatActivity() {
 
         if (requestCode == REQUEST_IMAGE) {
             if (resultCode == RESULT_OK) {
+                ToffeeAnalytics.logBreadCrumb("Got result from camera")
                 photoUri?.let {
                     startCrop(it)
                 }
@@ -132,9 +138,11 @@ class EditProfileActivity : BaseAppCompatActivity() {
                showToast("You cancelled the operation")
             }
         } else if (requestCode == UCrop.REQUEST_CROP && resultCode == RESULT_OK) {
+            ToffeeAnalytics.logBreadCrumb("Got result from crop lib")
             data?.let { intent ->
                 val uri = UCrop.getOutput(intent)
                 uri?.let {
+                    ToffeeAnalytics.logBreadCrumb("Handling crop image")
                     binding.profileEditLayout.profileIv.load(it){
                         transformations(CircleCropTransformation())
                     }
@@ -159,6 +167,7 @@ class EditProfileActivity : BaseAppCompatActivity() {
         uCrop = uCrop.withOptions(options)
 
         uCrop.start(this)
+        ToffeeAnalytics.logBreadCrumb("Crop started")
 
     }
 

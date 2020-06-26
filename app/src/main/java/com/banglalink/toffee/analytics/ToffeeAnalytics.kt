@@ -11,7 +11,7 @@ import java.lang.Exception
 
 object ToffeeAnalytics {
 
-    lateinit var firebaseAnalytics: FirebaseAnalytics
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
 
     fun initFireBaseAnalytics(context: Context){
         firebaseAnalytics = FirebaseAnalytics.getInstance(context)
@@ -60,5 +60,9 @@ object ToffeeAnalytics {
 
     fun logException(e: Exception) {
         FirebaseCrashlytics.getInstance().recordException(e)
+    }
+
+    fun logBreadCrumb(msg:String){
+        FirebaseCrashlytics.getInstance().log(msg)
     }
 }
