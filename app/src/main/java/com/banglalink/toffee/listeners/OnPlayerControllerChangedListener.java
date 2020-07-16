@@ -12,5 +12,6 @@ public interface OnPlayerControllerChangedListener {
     boolean onOptionMenuPressed();
     boolean onShareButtonPressed();
     void  onPlayerIdleDueToError();
+    void onRotationLock(boolean isAutoRotationEnabled);
     boolean onSeekPosition(int position);
 }
