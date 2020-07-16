@@ -18,10 +18,7 @@ class Preference private constructor(val context: Context) {
     private val pref: SharedPreferences =
         context.getSharedPreferences("IP_TV", Context.MODE_PRIVATE)
 
-    val toffeeGeneralHeader by unsafeLazy{
-        ("Toffee" + "/" + BuildConfig.VERSION_NAME + " (Linux;Android " + Build.VERSION.RELEASE
-                + ") " + ExoPlayerLibraryInfo.VERSION_SLASHY)
-    }
+    val toffeeGeneralHeader= "Toffee" + "/" + BuildConfig.VERSION_NAME + " Android " + Build.VERSION.RELEASE
 
     val balanceLiveData = MutableLiveData<Int>()
     val sessionTokenLiveData = MutableLiveData<String>()
@@ -99,12 +96,6 @@ class Preference private constructor(val context: Context) {
             pref.edit().putInt("CellularProfileStatus4", value).apply()
         }
 
-    //    "channel_db_version": 0,
-    //            "vod_db_version": 0,
-    //            "notification_db_version": 0,
-    //            "catchup_db_version": 0,
-    //            "package_db_version": 0,
-    //            "category_db_version": 0
     var channelDbVersion: Int
         get() = pref.getInt("channel_db_version", 0)
         set(version) {
@@ -245,6 +236,49 @@ class Preference private constructor(val context: Context) {
     fun getSessionTokenSaveTimeInMillis(): Long {
         return pref.getLong("deviceTimeInMillis", System.currentTimeMillis());
     }
+
+//    https://github.com/shamanland/simple-string-obfuscator
+//    Our key is 1234567891234567
+    val key = object : Any() {
+        var t = 0
+        override fun toString(): String {
+            val buf = ByteArray(16)
+            t = -1930939990
+            buf[0] = (t ushr 8).toByte()
+            t = -1504968233
+            buf[1] = (t ushr 21).toByte()
+            t = 130652637
+            buf[2] = (t ushr 11).toByte()
+            t = 1497997422
+            buf[3] = (t ushr 11).toByte()
+            t = -425192637
+            buf[4] = (t ushr 21).toByte()
+            t = 1653453717
+            buf[5] = (t ushr 14).toByte()
+            t = 1701321722
+            buf[6] = (t ushr 7).toByte()
+            t = -924612210
+            buf[7] = (t ushr 12).toByte()
+            t = -670853495
+            buf[8] = (t ushr 12).toByte()
+            t = 51655855
+            buf[9] = (t ushr 20).toByte()
+            t = 1537623876
+            buf[10] = (t ushr 13).toByte()
+            t = -1556092827
+            buf[11] = (t ushr 20).toByte()
+            t = 1293143540
+            buf[12] = (t ushr 22).toByte()
+            t = -662934916
+            buf[13] = (t ushr 9).toByte()
+            t = -121737930
+            buf[14] = (t ushr 9).toByte()
+            t = -958150212
+            buf[15] = (t ushr 3).toByte()
+            return String(buf)
+        }
+    }.toString()
+
 
     companion object {
         private var instance: Preference? = null
