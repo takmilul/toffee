@@ -11,8 +11,8 @@ android {
         applicationId "com.banglalink.toffee"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 25
-        versionName "1.1.5"
+        versionCode 27
+        versionName "1.1.7"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {
@@ -74,7 +74,7 @@ dependencies {
     //GIF imageview
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.17'
     // Crop Image
-    implementation 'com.github.yalantis:ucrop:2.2.4'
+    implementation 'com.github.yalantis:ucrop:2.2.5'
 
     implementation 'com.xfinity:dahdit:0.9.3'
 
@@ -82,16 +82,16 @@ dependencies {
     implementation 'io.coil-kt:coil:0.9.5'
 
     //Firebase Push Notification
-    implementation 'com.google.firebase:firebase-messaging:20.2.1'
+    implementation 'com.google.firebase:firebase-messaging:20.2.3'
     //Firebase in app messaging
-    implementation 'com.google.firebase:firebase-inappmessaging-display:19.0.7'
+    implementation 'com.google.firebase:firebase-inappmessaging-display:19.1.0'
     //Firebase core
-    implementation 'com.google.firebase:firebase-core:17.4.3'
+    implementation 'com.google.firebase:firebase-core:17.4.4'
     // Recommended: Add the Firebase SDK for Google Analytics.
-    implementation 'com.google.firebase:firebase-analytics:17.4.3'
+    implementation 'com.google.firebase:firebase-analytics:17.4.4'
 
     // Add the Firebase SDK for Crashlytics.
-    implementation 'com.google.firebase:firebase-crashlytics:17.1.0'
+    implementation 'com.google.firebase:firebase-crashlytics:17.1.1'
 
     implementation project(':slider')
 
