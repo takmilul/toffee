@@ -237,48 +237,6 @@ class Preference private constructor(val context: Context) {
         return pref.getLong("deviceTimeInMillis", System.currentTimeMillis());
     }
 
-//    https://github.com/shamanland/simple-string-obfuscator
-//    Our key is 1234567891234567
-    val key = object : Any() {
-        var t = 0
-        override fun toString(): String {
-            val buf = ByteArray(16)
-            t = -1930939990
-            buf[0] = (t ushr 8).toByte()
-            t = -1504968233
-            buf[1] = (t ushr 21).toByte()
-            t = 130652637
-            buf[2] = (t ushr 11).toByte()
-            t = 1497997422
-            buf[3] = (t ushr 11).toByte()
-            t = -425192637
-            buf[4] = (t ushr 21).toByte()
-            t = 1653453717
-            buf[5] = (t ushr 14).toByte()
-            t = 1701321722
-            buf[6] = (t ushr 7).toByte()
-            t = -924612210
-            buf[7] = (t ushr 12).toByte()
-            t = -670853495
-            buf[8] = (t ushr 12).toByte()
-            t = 51655855
-            buf[9] = (t ushr 20).toByte()
-            t = 1537623876
-            buf[10] = (t ushr 13).toByte()
-            t = -1556092827
-            buf[11] = (t ushr 20).toByte()
-            t = 1293143540
-            buf[12] = (t ushr 22).toByte()
-            t = -662934916
-            buf[13] = (t ushr 9).toByte()
-            t = -121737930
-            buf[14] = (t ushr 9).toByte()
-            t = -958150212
-            buf[15] = (t ushr 3).toByte()
-            return String(buf)
-        }
-    }.toString()
-
 
     companion object {
         private var instance: Preference? = null
