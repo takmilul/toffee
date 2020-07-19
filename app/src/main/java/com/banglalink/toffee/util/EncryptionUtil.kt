@@ -1,13 +1,13 @@
 package com.banglalink.toffee.util
 
 import android.util.Base64
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.model.TOFFEE_KEY
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 
 object EncryptionUtil {
     private val TRANSFORMATION = "AES/ECB/PKCS5Padding"
-    private val secretKeySpec = SecretKeySpec(Preference.getInstance().key.toByteArray(), "AES")
+    private val secretKeySpec = SecretKeySpec(TOFFEE_KEY.toByteArray(), "AES")
 
     fun encryptRequest(jsonRequest: String): String {
         val cipher = encrypt(jsonRequest.toByteArray())
