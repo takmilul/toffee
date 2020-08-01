@@ -289,6 +289,7 @@
                             android:id="@+id/trendingNowViewAll"
                             android:orientation="horizontal">
                             <TextView
+                                android:visibility="invisible"
                                 style="@style/ViewAllTextView"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -297,6 +298,7 @@
                                 android:textColor="@color/view_all_text_color"/>
 
                             <ImageView
+                                android:visibility="invisible"
                                 android:layout_width="14dp"
                                 android:layout_height="14dp"
                                 android:layout_marginRight="20dp"
