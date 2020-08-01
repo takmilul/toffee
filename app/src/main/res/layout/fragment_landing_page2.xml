@@ -32,10 +32,12 @@
                     <com.daimajia.slider.library.SliderLayout
                         android:id="@+id/slider"
                         android:layout_width="match_parent"
-                        app:indicator_visibility="invisible"
+                        app:indicator_visibility="visible"
+                        app:selected_color="#FF0083"
                         android:layout_height="@dimen/slider_height"/>
 
                     <TextView
+                        android:layout_marginTop="-5dp"
                         android:layout_marginStart="10dp"
                         style="@style/CategoryTextView"
                         android:layout_width="wrap_content"

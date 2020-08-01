@@ -6,7 +6,7 @@
     <dimen name="nav_header_height">170dp</dimen>
 
     <item name="guide_line_width_percent" type="dimen" format="float">0.550</item>
-    <dimen name="slider_height">120dp</dimen>
+    <dimen name="slider_height">130dp</dimen>
 
     <dimen name="catchup_width">192dp</dimen>
     <dimen name="catchup_height">108dp</dimen>

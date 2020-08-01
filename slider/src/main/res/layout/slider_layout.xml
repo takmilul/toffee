@@ -7,12 +7,12 @@
     <com.daimajia.slider.library.Tricks.InfiniteViewPager
         android:id="@+id/daimajia_slider_viewpager"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"/>
     <com.daimajia.slider.library.Indicators.PagerIndicator
         android:id="@+id/default_center_bottom_indicator"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:paddingBottom="10dp"
         android:gravity="center"
         custom:shape="oval"
         android:layout_width="wrap_content"
@@ -22,7 +22,6 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:gravity="center"
-        android:paddingBottom="10dp"
         android:paddingRight="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
