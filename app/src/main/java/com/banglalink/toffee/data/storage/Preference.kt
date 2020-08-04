@@ -18,8 +18,6 @@ class Preference private constructor(val context: Context) {
     private val pref: SharedPreferences =
         context.getSharedPreferences("IP_TV", Context.MODE_PRIVATE)
 
-    val toffeeGeneralHeader= "Toffee" + "/" + BuildConfig.VERSION_NAME + " Android " + Build.VERSION.RELEASE
-
     val balanceLiveData = MutableLiveData<Int>()
     val sessionTokenLiveData = MutableLiveData<String>()
     val profileImageUrlLiveData = MutableLiveData<String>()
