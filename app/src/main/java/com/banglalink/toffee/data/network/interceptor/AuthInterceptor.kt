@@ -1,6 +1,7 @@
 package com.banglalink.toffee.data.network.interceptor
 
-import com.banglalink.toffee.data.storage.Preference
+import android.util.Log
+import com.banglalink.toffee.model.TOFFEE_HEADER
 import com.banglalink.toffee.util.EncryptionUtil
 import okhttp3.*
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -21,9 +22,10 @@ class AuthInterceptor : Interceptor {
         val builder = FormBody.Builder()
         builder.addEncoded("data", EncryptionUtil.encryptRequest(string))
 
+        Log.i("Header",TOFFEE_HEADER)
         val newRequest = request.newBuilder()
             .headers(request.headers)
-            .addHeader("User-Agent", Preference.getInstance().toffeeGeneralHeader)
+            .addHeader("User-Agent", TOFFEE_HEADER)
             .method(request.method, builder.build())
             .build()
         val response = chain.proceed(newRequest)
