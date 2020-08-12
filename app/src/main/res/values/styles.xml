@@ -148,6 +148,13 @@
         <item name="android:textStyle">normal</item>
     </style>
 
+    <style name="editTextSearch" parent="editTextOval">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+    </style>
 
     <style name="programNameTextView" parent="@android:style/Widget.TextView">
         <item name="android:layout_height">wrap_content</item>
@@ -196,6 +203,13 @@
         <item name="android:textAllCaps">true</item>
     </style>
 
+    <style name="SubscribePackButtonStyle2" parent="SubscribePackButtonStyle">
+        <item name="android:background">@drawable/button_selector_ring</item>
+        <item name="android:textColor">@drawable/button_text_selector_ring</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+    </style>
+
     <style name="TrackSelectionDialogThemeOverlay" parent="ThemeOverlay.AppCompat.Dialog.Alert">
         <item name="windowNoTitle">false</item>
     </style>
@@ -208,5 +222,11 @@
 <!--        <item name="surface_type">spherical_gl_surface_view</item>-->
 <!--    </style>-->
 
+    <style name="TitleTextStyle" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textSize">14sp</item>
+    </style>
 
+    <style name="TitleTextStyleLight" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textSize">14sp</item>
+    </style>
 </resources>

@@ -129,5 +129,6 @@
     <string name="back_to_home">Back to Home</string>
     <string name="subscribe_pack">You need to subscribe premium pack to view this channel</string>
     <string name="grant_camera_permission">Please grant camera permission</string>
+    <string name="text_unsubscribe_title">Are You Sure to Unsubscribe?</string>
 
 </resources>

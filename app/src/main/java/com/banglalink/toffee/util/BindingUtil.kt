@@ -15,7 +15,9 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.ChannelSubscriptionInfo
 import com.banglalink.toffee.model.Package
+import com.banglalink.toffee.ui.widget.MultiTextButton
 import com.suke.widget.SwitchButton
 import de.hdodenhof.circleimageview.CircleImageView
 import java.util.*
@@ -92,9 +94,29 @@ fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
     }
 }
 
+@BindingAdapter("loadChannelLogo")
+fun bindChannelLogo(view: ImageView, channelInfo: ChannelInfo) {
+    view.load(channelInfo.channel_logo) {
+        fallback(R.drawable.ic_portrait)
+        placeholder(R.drawable.ic_portrait)
+        error(R.drawable.ic_portrait)
+        memoryCachePolicy(CachePolicy.DISABLED)
+        diskCachePolicy(CachePolicy.ENABLED)
+        crossfade(true)
+        crossfade(crossFadeDurationInMills)
+        size(32, 32)
+    }
+}
+
 @BindingAdapter("bindDuration")
 fun bindDuration(view: TextView, channelInfo: ChannelInfo) {
     view.text = channelInfo.formattedDuration
+}
+
+@BindingAdapter("bindSubscriptionStatus")
+fun bindSubscriptionStatus(view: MultiTextButton, channelSubscriptionInfo: ChannelSubscriptionInfo) {
+    view.setSubscriptionInfo(channelSubscriptionInfo.subscriptionStatus,
+        channelSubscriptionInfo.subscriptionAmount)
 }
 
 @BindingAdapter("bindViewCount")
