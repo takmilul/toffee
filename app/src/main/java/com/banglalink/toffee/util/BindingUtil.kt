@@ -16,9 +16,7 @@ import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Package
-import com.suke.widget.SwitchButton
 import de.hdodenhof.circleimageview.CircleImageView
-import java.util.*
 
 const val crossFadeDurationInMills = 500
 
@@ -164,4 +162,10 @@ fun bindPremiumIcon(imageView: ImageView,channelInfo:ChannelInfo){
     else{
         imageView.visibility = View.VISIBLE
     }
+}
+
+
+@BindingAdapter("loadImageResource")
+fun loadImageFromResource(view: ImageView, image: Int){
+    view.setImageResource(image)
 }

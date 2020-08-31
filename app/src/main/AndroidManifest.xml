@@ -2,14 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.banglalink.toffee">
-
+    
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
-
+    
     <application
         android:name=".ToffeeApplication"
         android:allowBackup="false"
@@ -80,10 +80,10 @@
                 android:autoVerify="true"
                 tools:targetApi="m">
                 <action android:name="android.intent.action.VIEW" />
-
+                
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
+                
                 <data
                     android:host="toffeelive.com"
                     android:scheme="http" />
@@ -91,7 +91,7 @@
                     android:host="toffeelive.com"
                     android:scheme="https" />
             </intent-filter>
-
+            
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
@@ -106,7 +106,7 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
+                
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -144,7 +144,7 @@
             android:label="@string/redeem_code_txt"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
+        
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -154,7 +154,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
+        
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
@@ -167,20 +167,20 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_notification" />
-
+        
         <service android:name=".notification.ToffeeMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
+        
         <receiver android:name=".receiver.NotificationActionReceiver">
             <intent-filter android:priority="999" >
                 <action android:name="com.toffee.notification_receiver" />
             </intent-filter>
         </receiver>
-
-
+    
+    
     </application>
 
 </manifest>
