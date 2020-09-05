@@ -85,6 +85,9 @@ fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
         }
     } else {
         view.load(channelInfo.landscape_ratio_1280_720) {
+            fallback(R.drawable.ic_portrait)
+            placeholder(R.drawable.ic_portrait)
+            error(R.drawable.ic_portrait)
             memoryCachePolicy(CachePolicy.DISABLED)
             diskCachePolicy(CachePolicy.ENABLED)
             crossfade(true)

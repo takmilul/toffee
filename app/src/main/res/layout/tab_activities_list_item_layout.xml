@@ -9,8 +9,11 @@
             name="data"
             type="com.banglalink.toffee.model.ChannelInfo" />
         <variable
+            name="position"
+            type="java.lang.Integer" />
+        <variable
             name="callback"
-            type="com.banglalink.toffee.ui.home.OptionCallBack" />
+            type="com.banglalink.toffee.ui.common.SingleListItemCallback&lt;com.banglalink.toffee.model.ChannelInfo&gt;" />
     </data>
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -30,6 +33,7 @@
                 android:id="@+id/video_thumb"
                 android:layout_width="0dp"
                 android:layout_height="234dp"
+                android:scaleType="fitXY"
                 loadChannelImage="@{data}"
                 app:layout_constraintEnd_toStartOf="@+id/guideline6"
                 app:layout_constraintStart_toStartOf="parent"
@@ -139,7 +143,7 @@
                 android:layout_height="wrap_content"
                 android:padding="4dp"
                 android:background="?selectableItemBackgroundBorderless"
-                android:onClick="@{(v)->callback.onOptionClicked(v,data)}"
+                android:onClick="@{(v)->callback.onOpenMenu(data)}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_menu_more" />

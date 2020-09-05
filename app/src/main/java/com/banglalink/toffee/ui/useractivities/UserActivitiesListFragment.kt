@@ -1,13 +1,13 @@
 package com.banglalink.toffee.ui.useractivities
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
+import com.banglalink.toffee.R
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.common.CommonSingleListFragment
-import com.banglalink.toffee.util.unsafeLazy
+import com.banglalink.toffee.ui.common.SingleListFragmentV2
+import com.banglalink.toffee.ui.common.SingleListItemCallback
 
-class UserActivitiesListFragment: CommonSingleListFragment() {
+class UserActivitiesListFragment: SingleListFragmentV2<ChannelInfo>(),
+    SingleListItemCallback<ChannelInfo> {
     companion object {
         fun newInstance(): UserActivitiesListFragment {
             return UserActivitiesListFragment()
@@ -15,16 +15,11 @@ class UserActivitiesListFragment: CommonSingleListFragment() {
     }
 
     override fun initAdapter() {
-        mAdapter = UserActivitiesListAdapter(this) {
-            homeViewModel.fragmentDetailsMutableLiveData.postValue(it)
-        }
+        mAdapter = UserActivitiesListAdapter(this)
+        mViewModel = ViewModelProvider(this).get(UserActivitiesListViewModel::class.java)
     }
 
-    private val viewModel by unsafeLazy{
-        ViewModelProviders.of(this).get(UserActivitiesListViewModel::class.java)
-    }
-
-    override fun loadItems(): LiveData<Resource<List<ChannelInfo>>> {
-        return viewModel.loadUserActivities()
+    override fun getEmptyViewInfo(): Pair<Int, String?> {
+        return Pair(R.drawable.ic_activities_empty, "You don't have any activities yet")
     }
 }

@@ -129,6 +129,12 @@
     <string name="back_to_home">Back to Home</string>
     <string name="subscribe_pack">You need to subscribe premium pack to view this channel</string>
     <string name="grant_camera_permission">Please grant camera permission</string>
+    <string name="grant_storage_permission">Please grant storage permission</string>
     <string name="text_unsubscribe_title">Are You Sure to Unsubscribe?</string>
-
+    <string name="upload_selection_heading">Upload FREE from\nBanglalink Internet!</string>
+    <string name="thumb_selection_heading">Set Video Thumbnail</string>
+    <string name="txt_learn_more">Learn More</string>
+    <string name="btn_open_camera">Open Camera</string>
+    <string name="btn_open_gallery">Open Gallery</string>
+    <string name="upload_status_text">Uploading %1$d%%</string>
 </resources>

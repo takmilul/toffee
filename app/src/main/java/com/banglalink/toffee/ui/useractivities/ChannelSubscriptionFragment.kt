@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.banglalink.toffee.R
 import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.model.ChannelSubscriptionInfo
 import com.banglalink.toffee.ui.common.SingleListFragmentV2
@@ -27,6 +28,10 @@ class ChannelSubscriptionFragment
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeChanges()
+    }
+
+    override fun getEmptyViewInfo(): Pair<Int, String?> {
+        return Pair(R.drawable.ic_subscriptions_empty, "You haven't subscribed to any channel yet")
     }
 
     private fun observeChanges() {

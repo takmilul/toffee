@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.databinding.DataBindingUtil
@@ -55,6 +56,8 @@ abstract class SingleListFragmentV2<T: Any> : Fragment() {
             activity?.title = it
         }
 
+        setupEmptyView()
+
         binding.listview.adapter = mAdapter
         scrollListener = object : EndlessRecyclerViewScrollListener(binding.listview.layoutManager as LinearLayoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
@@ -94,6 +97,24 @@ abstract class SingleListFragmentV2<T: Any> : Fragment() {
 //            TransitionManager.beginDelayedTransition(panel, transition)
 //            constraintSet.applyTo(panel)
 //        }
+    }
+
+    protected open fun getEmptyViewInfo(): Pair<Int, String?> {
+        return Pair(0, "No item found")
+    }
+
+    private fun setupEmptyView() {
+        val info = getEmptyViewInfo()
+        if(info.first > 0) {
+            binding.emptyViewIcon.setImageResource(info.first)
+        }
+        else {
+            binding.emptyViewIcon.visibility = View.GONE
+        }
+
+        info.second?.let {
+            binding.emptyViewLabel.text = it
+        }
     }
 
     private fun observeList() {
