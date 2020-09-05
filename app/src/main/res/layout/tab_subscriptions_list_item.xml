@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+    <data>
+        <import type="android.view.View" />
+        <variable
+            name="data"
+            type="com.banglalink.toffee.model.ChannelSubscriptionInfo" />
+        <variable
+            name="position"
+            type="java.lang.Integer" />
+        <variable
+            name="callback"
+            type="com.banglalink.toffee.ui.useractivities.ChannelSubscriptionListItemCallback" />
+    </data>
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginVertical="8dp"
+        android:background="#ffffff"
+        android:foreground="?attr/selectableItemBackground"
+        android:onClick="@{()-> callback.onItemClicked(data)}"
+        >
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/ownerThumb"
+                android:layout_width="84dp"
+                android:layout_height="84dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:src="@drawable/ic_portrait"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{()->callback.onOpenMenu(data)}"
+                android:padding="4dp"
+                android:background="?selectableItemBackgroundBorderless"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_menu_more" />
+
+            <TextView
+                android:id="@+id/textView4"
+                style="@style/TitleTextStyle"
+                android:layout_width="0dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:text="@{data.channelName}"
+                app:layout_constraintEnd_toStartOf="@+id/imageView"
+                app:layout_constraintStart_toEndOf="@+id/ownerThumb"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="BBC Sports" />
+
+            <ImageView
+                android:id="@+id/imageView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="@{data.live ? View.VISIBLE : View.GONE}"
+                app:layout_constraintEnd_toEndOf="@+id/ownerThumb"
+                app:layout_constraintTop_toTopOf="@+id/ownerThumb"
+                app:srcCompat="@drawable/ic_badge_live" />
+
+            <com.banglalink.toffee.ui.widget.MultiTextButton
+                android:id="@+id/subscribe_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:onClick="@{()->callback.onSubscribeClicked(data)}"
+                bindSubscriptionStatus="@{data}"
+                app:layout_constraintBottom_toTopOf="@+id/textView13"
+                app:layout_constraintStart_toEndOf="@+id/ownerThumb"
+                app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+            <TextView
+                android:id="@+id/textView11"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="@{data.formattedViewCount}"
+                app:layout_constraintBottom_toBottomOf="@+id/subscribe_button"
+                app:layout_constraintStart_toEndOf="@+id/subscribe_button"
+                app:layout_constraintTop_toTopOf="@+id/subscribe_button"
+                tools:text="520K" />
+
+            <ImageView
+                android:id="@+id/imageView7"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="@{()->callback.onNotificationBellClicked(data, position)}"
+                android:padding="4dp"
+                android:background="?selectableItemBackgroundBorderless"
+                app:layout_constraintBottom_toBottomOf="@+id/textView11"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textView11"
+                android:src="@{data.notificationStatus ? @drawable/ic_sub_notification_active : @drawable/ic_sub_notification_inactive}" />
+
+            <TextView
+                android:id="@+id/textView13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                app:layout_constraintBottom_toBottomOf="@+id/ownerThumb"
+                app:layout_constraintStart_toEndOf="@+id/ownerThumb"
+                android:text="Expires in 15 days" />
+
+            <TextView
+                android:id="@+id/notification_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:background="@drawable/sub_notification_badge_bg"
+                android:textColor="#ffffff"
+                android:visibility="@{data.live ? View.GONE : View.VISIBLE}"
+                android:text="@{Integer.toString(data.notificationCount)}"
+                app:layout_constraintEnd_toEndOf="@+id/ownerThumb"
+                app:layout_constraintTop_toTopOf="@+id/ownerThumb"
+                tools:text="100" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+</layout>

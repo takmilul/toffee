@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.WindowManager;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -223,5 +224,10 @@ public class Utils {
         return dp * ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
     }
 
-
+    public static String readableFileSize(long size) {
+        if(size <= 0) return "0 B";
+        final String[] units = new String[] { "B", "KB", "MB", "GB", "TB" };
+        int digitGroups = (int) (Math.log10(size)/Math.log10(1024));
+        return new DecimalFormat("#,##0.##").format(size/Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+    }
 }
