@@ -20,10 +20,29 @@ class RecentFragment:CommonSingleListFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.listview.clearOnScrollListeners()
         activity?.title = "Recent"
     }
 
     override fun loadItems(): LiveData<Resource<List<ChannelInfo>>> {
         return viewModel.loadRecentItems()
     }
+
+    override fun handleFavoriteAddedSuccessfully(channelInfo: ChannelInfo) {
+        channelInfo.favorite = "1"
+        viewModel.updateRecentItem(channelInfo)
+    }
+
+    override fun handleFavoriteRemovedSuccessFully(channelInfo: ChannelInfo) {
+        channelInfo.favorite = "0"
+        viewModel.updateRecentItem(channelInfo)
+    }
+
+    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
+        super.removeItemNotInterestedItem(channelInfo)
+        viewModel.deleteRecentItem(channelInfo)
+    }
+
+
+
 }
