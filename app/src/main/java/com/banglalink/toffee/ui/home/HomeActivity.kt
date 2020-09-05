@@ -10,7 +10,10 @@ import android.content.res.Configuration
 import android.graphics.Point
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.*
+import android.view.Display
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.AutoCompleteTextView
 import android.widget.ImageView
@@ -39,6 +42,7 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.channels.ChannelFragment
 import com.banglalink.toffee.ui.login.SigninByPhoneActivity
 import com.banglalink.toffee.ui.player.PlayerActivity
+import com.banglalink.toffee.ui.points.MyPointsFragment
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.subscription.PackageListActivity
 import com.banglalink.toffee.ui.widget.DraggerLayout
@@ -332,8 +336,11 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     }
 
     private fun initLandingPageFragmentAndListenBackStack(){
-        supportFragmentManager.beginTransaction().replace(R.id.content_viewer, LandingPageFragment())
+        /*supportFragmentManager.beginTransaction().replace(R.id.content_viewer, LandingPageFragment())
             .addToBackStack(LandingPageFragment::class.java.name).commit()
+        supportFragmentManager.addOnBackStackChangedListener(this)*/
+        supportFragmentManager.beginTransaction().replace(R.id.content_viewer, MyPointsFragment.createInstance())
+            .addToBackStack(MyPointsFragment::class.java.name).commit()
         supportFragmentManager.addOnBackStackChangedListener(this)
     }
 

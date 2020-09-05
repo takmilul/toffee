@@ -34,6 +34,7 @@
     <color name="channel_header">#3e5979</color>
     <color name="tab_background_color">@android:color/white</color>
     <color name="home_screen_curve_bg_color">@android:color/white</color>
-
-
+    
+    
+    <item name="tooltip_mask" type="color">#CC4f5355</item>
 </resources>
