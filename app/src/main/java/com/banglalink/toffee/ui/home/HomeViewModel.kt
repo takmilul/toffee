@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
 import com.banglalink.toffee.data.network.util.resultLiveData
+import com.banglalink.toffee.data.storage.AppDatabase
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.setError
 import com.banglalink.toffee.extension.setSuccess
@@ -28,6 +29,9 @@ import com.banglalink.toffee.usecase.*
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 
 
 class HomeViewModel(application: Application):BaseViewModel(application),OnCompleteListener<InstanceIdResult> {
@@ -63,7 +67,11 @@ class HomeViewModel(application: Application):BaseViewModel(application),OnCompl
     }
 
     private val sendViewContentEvent by unsafeLazy {
-        SendViewContentEvent(Preference.getInstance(),RetrofitApiClient.toffeeApi)
+        SendViewContentEvent(Preference.getInstance(),RetrofitApiClient.toffeeApi,channelDAO)
+    }
+
+    private val channelDAO by lazy {
+        AppDatabase.getDatabase().channelDAO()
     }
 
     init {
@@ -133,7 +141,9 @@ class HomeViewModel(application: Application):BaseViewModel(application),OnCompl
     fun sendViewContentEvent(channelInfo: ChannelInfo){
         viewModelScope.launch {
             try {
-                sendViewContentEvent.execute(channelInfo)
+                CoroutineScope(Dispatchers.IO).launch {
+                    sendViewContentEvent.execute(channelInfo)
+                }
 
             }catch (e:Exception){
                 e.printStackTrace()
