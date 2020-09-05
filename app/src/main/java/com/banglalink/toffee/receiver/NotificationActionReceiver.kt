@@ -48,15 +48,15 @@ class NotificationActionReceiver : BroadcastReceiver() {
             intent.data = Uri.parse(resourceUrl)
             context.startActivity(intent)
 
-            PubSubMessageUtil.sendPubSubMessage(context, pusubId, PUBSUBMessageStatus.OPEN)
+            PubSubMessageUtil.sendNotificationStatus(pusubId, PUBSUBMessageStatus.OPEN)
 
         } else if (actionName == CONTENT_VIEW && !resourceUrl.isNullOrBlank()) {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(resourceUrl))
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
             context.startActivity(intent)
-            PubSubMessageUtil.sendPubSubMessage(context, pusubId, PUBSUBMessageStatus.OPEN)
+            PubSubMessageUtil.sendNotificationStatus(pusubId, PUBSUBMessageStatus.OPEN)
         }else {
-            PubSubMessageUtil.sendPubSubMessage(context, pusubId, PUBSUBMessageStatus.LATER)
+            PubSubMessageUtil.sendNotificationStatus(pusubId, PUBSUBMessageStatus.LATER)
         }
 
 
