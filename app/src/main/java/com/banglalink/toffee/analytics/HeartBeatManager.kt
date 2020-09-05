@@ -65,10 +65,10 @@ object HeartBeatManager : LifecycleObserver, ConnectivityManager.NetworkCallback
         }
     }
 
-    private suspend fun sendHeartBeat(isNetworkSwitch:Boolean = false){
+    private suspend fun sendHeartBeat(isNetworkSwitch:Boolean = false,sendToPubSub:Boolean = true){
         if(Preference.getInstance().customerId!=0){
             try{
-                sendHeartBeat.execute(contentId, contentType,isNetworkSwitch)
+                sendHeartBeat.execute(contentId, contentType,isNetworkSwitch,sendToPubSub)
                 _heartBeatEventLiveData.postValue(true)
             }catch (e:Exception){
                 e.printStackTrace()
@@ -93,7 +93,7 @@ object HeartBeatManager : LifecycleObserver, ConnectivityManager.NetworkCallback
             return
         coroutineScope2.launch {
             delay(1500)
-            sendHeartBeat(true)
+            sendHeartBeat(isNetworkSwitch = true, sendToPubSub = false)
         }
     }
 
