@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" >
+    <data>
+        <import type="android.view.View" />
+        <variable
+            name="viewmodel"
+            type="com.banglalink.toffee.ui.upload.EditUploadInfoViewModel" />
+    </data>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:background="@color/screen_bg_white"
+            android:layout_height="wrap_content">
+
+            <com.banglalink.toffee.ui.widget.CustomImageView
+                android:id="@+id/video_thumb"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/thumb_edit_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:scaleType="fitXY"
+                android:padding="4dp"
+                android:elevation="2dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="12dp"
+                android:background="?selectableItemBackgroundBorderless"
+                app:layout_constraintEnd_toEndOf="@+id/video_thumb"
+                app:layout_constraintTop_toTopOf="@+id/video_thumb"
+                app:srcCompat="@drawable/ic_edit_btn" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:progress="@{viewmodel.uploadProgress}"
+                android:max="100"
+                android:visibility="@{viewmodel.uploadProgress == 100 ? View.GONE : View.VISIBLE}"
+                android:progressDrawable="@drawable/upload_progress_bg"
+                app:layout_constraintBottom_toBottomOf="@+id/video_thumb"
+                app:layout_constraintEnd_toEndOf="@+id/video_thumb"
+                app:layout_constraintStart_toStartOf="@+id/video_thumb"
+                app:layout_constraintTop_toTopOf="@+id/video_thumb" />
+
+            <TextView
+                android:id="@+id/textView15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:text="Title"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/video_thumb" />
+
+            <EditText
+                android:id="@+id/upload_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/upload_edittext_bg"
+                android:ems="10"
+                android:text="@={viewmodel.title}"
+                android:inputType="textPersonName"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView15" />
+
+            <TextView
+                android:id="@+id/textView17"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:text="Description"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/upload_title" />
+
+            <com.banglalink.toffee.ui.widget.HashTagEditText
+                android:id="@+id/upload_description"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/upload_edittext_bg"
+                android:ems="10"
+                android:lines="4"
+                android:maxLines="8"
+                android:maxLength="2000"
+                android:text="@={viewmodel.description}"
+                android:gravity="top|start"
+                android:inputType="textMultiLine|textCapSentences"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView17" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5" />
+
+            <TextView
+                android:id="@+id/textView19"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:text="Tags"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/upload_description" />
+
+            <com.pchmn.materialchips.ChipsInput
+                android:id="@+id/upload_tags"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/upload_edittext_bg"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
+                android:gravity="top|start"
+                app:maxRows="2"
+                app:chip_deletable="true"
+                app:chip_backgroundColor="#E1D8FF"
+                app:chip_deleteIconColor="@color/colorAccent3"
+                app:chip_hasAvatarIcon="false"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView19"/>
+
+<!--            <com.banglalink.toffee.ui.widget.ChipEditText-->
+<!--                android:id="@+id/upload_tags"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="16dp"-->
+<!--                android:layout_marginTop="4dp"-->
+<!--                android:layout_marginEnd="16dp"-->
+<!--                android:background="@drawable/upload_edittext_bg"-->
+<!--                android:ems="10"-->
+<!--                android:lines="2"-->
+<!--                android:maxLines="2"-->
+<!--                android:gravity="top|start"-->
+<!--                android:inputType="textMultiLine"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@+id/textView19" />-->
+
+            <TextView
+                android:id="@+id/textView20"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:text="Category"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/upload_tags" />
+
+            <TextView
+                android:id="@+id/textView21"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="24dp"
+                android:text="Age Group"
+                app:layout_constraintStart_toStartOf="@+id/guideline9"
+                app:layout_constraintTop_toBottomOf="@+id/upload_tags" />
+
+            <RelativeLayout
+                android:id="@+id/category_spinner_wrap"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/upload_spinner_bg"
+                app:layout_constraintEnd_toStartOf="@+id/guideline9"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView20">
+                <Spinner
+                    android:id="@+id/category_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:entries="@{viewmodel.categories}"
+                    android:selectedItemPosition="@={viewmodel.categoryPosition}" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/age_group_spinner_wrap"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/upload_spinner_bg"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline9"
+                app:layout_constraintTop_toBottomOf="@+id/textView21"
+                >
+                <Spinner
+                    android:id="@+id/age_group_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:entries="@{viewmodel.ageGroup}"
+                    android:selectedItemPosition="@={viewmodel.ageGroupPosition}"
+                    />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/textView22"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:text="Submit to Challenge"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/category_spinner_wrap" />
+
+            <RelativeLayout
+                android:id="@+id/challenge_selection_spinner_wrap"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/upload_spinner_bg"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView22" >
+                <Spinner
+                    android:id="@+id/challenge_selection_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:entries="@{viewmodel.challengeSelectionList}"
+                    android:selectedItemPosition="@={viewmodel.challengeSelectionPosition}"/>
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/cancel_button"
+                style="@style/Button2Style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="24dp"
+                android:text="Cancel"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/guideline9"
+                app:layout_constraintTop_toBottomOf="@+id/challenge_selection_spinner_wrap" />
+
+            <Button
+                android:id="@+id/submit_button"
+                style="@style/Button1Style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp"
+                android:text="Submit"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline9"
+                app:layout_constraintTop_toBottomOf="@+id/challenge_selection_spinner_wrap" />
+
+            <TextView
+                android:id="@+id/upload_progress_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:textColor="#ffffff"
+                android:visibility="@{viewmodel.uploadProgress == 100 ? View.GONE : View.VISIBLE}"
+                tools:text="Uploading 70%"
+                android:text="@{@string/upload_status_text(viewmodel.uploadProgress)}"
+                app:layout_constraintBottom_toBottomOf="@+id/video_thumb"
+                app:layout_constraintStart_toStartOf="@+id/video_thumb"
+                app:layout_constraintTop_toTopOf="@+id/video_thumb" />
+
+            <TextView
+                android:id="@+id/upload_size_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:textColor="#ffffff"
+                tools:text="250 MB"
+                android:visibility="@{viewmodel.uploadProgress == 100 ? View.GONE : View.VISIBLE}"
+                android:text="@{viewmodel.uploadSize}"
+                app:layout_constraintBottom_toBottomOf="@+id/video_thumb"
+                app:layout_constraintEnd_toEndOf="@+id/video_thumb"
+                app:layout_constraintTop_toTopOf="@+id/video_thumb" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</layout>

@@ -2,6 +2,7 @@ package com.banglalink.toffee.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.text.TextUtils;
@@ -229,5 +230,13 @@ public class Utils {
         final String[] units = new String[] { "B", "KB", "MB", "GB", "TB" };
         int digitGroups = (int) (Math.log10(size)/Math.log10(1024));
         return new DecimalFormat("#,##0.##").format(size/Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+    }
+
+    public static int dpToPx(int dp) {
+        return (int)(dp * Resources.getSystem().getDisplayMetrics().density);
+    }
+
+    public static int pxToDp(int px) {
+        return (int)(px / Resources.getSystem().getDisplayMetrics().density);
     }
 }
