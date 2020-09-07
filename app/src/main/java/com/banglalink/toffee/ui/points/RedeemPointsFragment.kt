@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
@@ -19,6 +18,7 @@ import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
 import com.banglalink.toffee.model.RedeemPoints
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.onboarding.OnBoarding
+import com.banglalink.toffee.ui.user_channel.ChannelRatingFragment
 import com.banglalink.toffee.util.unsafeLazy
 
 class RedeemPointsFragment : Fragment() {
@@ -57,12 +57,6 @@ class RedeemPointsFragment : Fragment() {
         binding.listView.setHasFixedSize(true)
         binding.listView.setItemViewCacheSize(10)
         binding.listView.adapter = mAdapter
-    
-        binding.listView.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                binding.listView.viewTreeObserver.removeOnGlobalLayoutListener(this)
-            }
-        })
     }
     
     private fun getItemView(view1: View, view2: View) {
@@ -105,9 +99,13 @@ class RedeemPointsFragment : Fragment() {
         observe(viewModel.redeemPoints()){
             when(it){
                 is Resource.Success -> {
-                    fragmentManager?.beginTransaction()
+                    /*fragmentManager?.beginTransaction()
                         ?.replace(R.id.content_viewer, RedeemPointsSuccessFragment.createInstance(it.data.message))
                         ?.addToBackStack(RedeemPointsSuccessFragment::class.java.name)
+                        ?.commit()*/
+                    fragmentManager?.beginTransaction()
+                        ?.replace(R.id.content_viewer, ChannelRatingFragment.createInstance())
+                        ?.addToBackStack(ChannelRatingFragment::class.java.name)
                         ?.commit()
                 }
                 is Resource.Failure -> {
