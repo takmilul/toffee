@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
     <data>
+        <import type="android.view.View" />
         <variable
             name="viewmodel"
             type="com.banglalink.toffee.ui.common.SingleListViewModel" />
@@ -15,6 +16,7 @@
 
         <include
             android:id="@+id/top_panel"
+            android:visibility="@{viewmodel.enableToolbar ? View.VISIBLE : View.GONE}"
             layout="@layout/fragment_top_panel_search_collapsed"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
