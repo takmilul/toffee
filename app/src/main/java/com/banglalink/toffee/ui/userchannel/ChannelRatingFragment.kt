@@ -1,4 +1,4 @@
-package com.banglalink.toffee.ui.user_channel
+package com.banglalink.toffee.ui.userchannel
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,8 +11,6 @@ import androidx.fragment.app.Fragment
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentChannelRatingBinding
 import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
-import com.banglalink.toffee.ui.points.AboutPointsFragment
-import com.banglalink.toffee.ui.points.MyPointsFragment
 import com.google.android.material.tabs.TabLayoutMediator
 
 class ChannelRatingFragment : Fragment() {
@@ -45,8 +43,8 @@ class ChannelRatingFragment : Fragment() {
         binding.viewPager.offscreenPageLimit = 1
         binding.channelRatingView.subscriptionButton.setSubscriptionInfo(false, "৳50")
         
-        fragmentList.add(MyPointsFragment.createInstance())
-        fragmentList.add(AboutPointsFragment.createInstance())
+        fragmentList.add(ChannelVideosFragment.newInstance())
+        fragmentList.add(ChannelPlaylistsFragment.newInstance())
         
         fragmentTitleList.add("Videos")
         fragmentTitleList.add("Playlists")
@@ -64,7 +62,7 @@ class ChannelRatingFragment : Fragment() {
         // toggle the Expand button
         binding.channelRatingView.expandButton.setOnClickListener(View.OnClickListener {
             binding.channelRatingView.expandButton.background =
-                if (binding.channelRatingView.channelDescriptionTextView.isExpanded) ContextCompat.getDrawable(context !!, R.drawable.ic_down_arrow) else ContextCompat.getDrawable(context !!, R.drawable.ic_up_arrow)
+                if (binding.channelRatingView.channelDescriptionTextView.isExpanded) ContextCompat.getDrawable(context !!, R.drawable.ic_down_arrow) else ContextCompat.getDrawable(requireContext(), R.drawable.ic_up_arrow)
             binding.channelRatingView.channelDescriptionTextView.toggle()
         })
     }

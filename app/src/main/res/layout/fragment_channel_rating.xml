@@ -42,9 +42,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     app:tabGravity="fill"
+                    app:tabInlineLabel="true"
+                    app:tabIndicatorGravity="bottom"
                     app:tabIndicatorColor="@color/btn_end"
                     app:tabMode="fixed"
-                    app:tabSelectedTextColor="@color/browser_actions_text_color"
+                    app:tabSelectedTextColor="@color/purple"
                     app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"
                     app:tabTextColor="@color/browser_actions_text_color" />
             

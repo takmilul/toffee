@@ -21,10 +21,10 @@ class OnBoarding(private val context: Activity, private val numberOfTooltip: Int
     }
 
     init {
-        if (isSingleUse)
-            sequence = MaterialShowcaseSequence(context, SHOWCASE_ID, numberOfTooltip)
+        sequence = if (isSingleUse)
+            MaterialShowcaseSequence(context, SHOWCASE_ID, numberOfTooltip)
         else
-            sequence = MaterialShowcaseSequence(context, numberOfTooltip)
+            MaterialShowcaseSequence(context, numberOfTooltip)
     }
 
     fun build(targetViews: Array<View>, titles: Array<String>, contents: Array<String>) {

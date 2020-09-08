@@ -18,7 +18,7 @@ import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
 import com.banglalink.toffee.model.RedeemPoints
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.onboarding.OnBoarding
-import com.banglalink.toffee.ui.user_channel.ChannelRatingFragment
+import com.banglalink.toffee.ui.userchannel.ChannelRatingFragment
 import com.banglalink.toffee.util.unsafeLazy
 
 class RedeemPointsFragment : Fragment() {
@@ -43,7 +43,7 @@ class RedeemPointsFragment : Fragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mAdapter = RedeemPointsAdapter(activity!!, {
+        mAdapter = RedeemPointsAdapter(requireActivity(), {
             onItemClicked(it)
         }, {view1, view2 -> getItemView(view1, view2)})
         scrollListener = object : EndlessRecyclerViewScrollListener(LinearLayoutManager(context)) {

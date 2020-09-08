@@ -5,21 +5,32 @@
     xmlns:tools="http://schemas.android.com/tools">
     
     <data>
-    
+        <variable
+            name="data"
+            type="com.banglalink.toffee.model.ChannelPlaylist" />
+        
+        <variable
+            name="callback"
+            type="com.banglalink.toffee.ui.common.SingleListItemCallback" />
     </data>
     
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="8dp">
+        android:paddingStart="16dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp"
+        android:background="@color/screen_bg">
         
         <com.banglalink.toffee.ui.widget.CustomImageView
             android:id="@+id/poster"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
-            android:minHeight="200dp"
+            android:minHeight="160dp"
             android:src="@drawable/hero"
+            imageFromUrl="@{data.thumbUrl}"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -52,7 +63,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="13 Videos"
+            android:text='@{data.videoCount.toString().subSequence(0,2).toString().concat(" Videos")}'
             android:textColor="@color/screen_bg_white"
             android:gravity="center_horizontal"
             app:layout_constraintStart_toStartOf="@id/overlayView"
@@ -67,7 +78,7 @@
             android:layout_height="0dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:text="Keiser Report: Training Carbon to Repurchase Stolen Property"
+            android:text="@{data.title}"
             app:layout_constraintBottom_toBottomOf="@+id/poster"
             app:layout_constraintEnd_toStartOf="@+id/imageView11"
             app:layout_constraintStart_toEndOf="@+id/poster"
@@ -78,6 +89,7 @@
             android:id="@+id/imageView11"
             android:layout_width="24dp"
             android:layout_height="24dp"
+            android:onClick="@{()->callback.onOpenMenu(data)}"
             app:layout_constraintBottom_toBottomOf="@+id/textView18"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/textView18"
