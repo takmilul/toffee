@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.userchannel
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,7 +37,7 @@ class CreatorChannelEditFragment : Fragment() {
         observe(viewModel.getEditInfo()){
             when (it) {
                 is Resource.Success -> {
-                    Log.d("TAG", "onViewCreated: Item found")
+                    viewModel.userChannel.postValue(it.data)
                 }
                 is Resource.Failure -> {
                     context?.showToast(it.error.msg)

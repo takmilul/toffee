@@ -29,13 +29,12 @@ class ChannelPlaylistsFragment : SingleListFragmentV2<ChannelPlaylist>(), Single
         mViewModel.enableToolbar = enableToolbar
     }
     
-    override fun onOpenMenu(item: ChannelPlaylist) {
-        super.onOpenMenu(item)
-    }
-    
     override fun onItemClicked(item: ChannelPlaylist) {
         super.onItemClicked(item)
-        //parentFragment.parentFragmentManager.beginTransaction().replace(R.l)
+        /*parentFragment?.parentFragmentManager?.beginTransaction()
+            ?.replace(R.id.content_viewer, ChannelPlaylistVideosFragment.newInstance(false))
+            ?.addToBackStack(ChannelPlaylistVideosFragment::class.java.name)
+            ?.commit()*/
     }
     
     override fun getEmptyViewInfo(): Pair<Int, String?> {
