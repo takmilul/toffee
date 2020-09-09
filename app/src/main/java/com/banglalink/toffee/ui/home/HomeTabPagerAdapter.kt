@@ -9,6 +9,7 @@ import com.banglalink.toffee.ui.channels.ChannelFragment
 import com.banglalink.toffee.ui.landing.LandingRootFragment
 import com.banglalink.toffee.ui.recent.RecentFragment
 import com.banglalink.toffee.ui.useractivities.UserActivitiesMainFragment
+import com.banglalink.toffee.ui.userchannel.CreatorChannelFragment
 
 class HomeTabPagerAdapter(fragment: FragmentActivity):
     FragmentStateAdapter(fragment) {
@@ -30,11 +31,7 @@ class HomeTabPagerAdapter(fragment: FragmentActivity):
             2 -> {
                 UserActivitiesMainFragment.newInstance()
             }
-            else -> ChannelFragment.createInstance(
-                0,
-                "",
-                ""//getString(R.string.menu_channel_text)
-            )
+            else -> CreatorChannelFragment.createInstance()
         }
     }
 }

@@ -252,7 +252,7 @@
 
             <Button
                 android:id="@+id/cancel_button"
-                style="@style/Button2Style"
+                style="@style/ButtonStyleRingPurple"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
@@ -265,7 +265,7 @@
 
             <Button
                 android:id="@+id/submit_button"
-                style="@style/Button1Style"
+                style="@style/ButtonStyleSolidPink"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
