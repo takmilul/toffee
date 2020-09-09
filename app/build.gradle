@@ -141,7 +141,9 @@ dependencies {
         exclude module: 'support-annotations'
         exclude group: 'com.google.guava'
     }
-
+    implementation project(path: ':showcase_view')
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'at.blogc:expandabletextview:1.0.5'
 //    implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
 
 

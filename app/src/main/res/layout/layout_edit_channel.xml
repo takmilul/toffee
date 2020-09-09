@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    
+    <data>
+        <variable
+            name="data"
+            type="com.banglalink.toffee.model.UserChannel" />
+    </data>
+    
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/screen_bg_white">
+    
+        <com.banglalink.toffee.ui.widget.CustomImageView
+            android:id="@+id/posterView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="200dp"
+            imageFromUrl="@{data.posterUrl}"
+            android:src="@drawable/hero"
+            android:adjustViewBounds="true"
+            app:layout_constraintDimensionRatio="W,16:9"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/posterEditButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:scaleType="fitXY"
+            android:padding="4dp"
+            android:elevation="2dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="12dp"
+            android:background="?selectableItemBackgroundBorderless"
+            app:layout_constraintEnd_toEndOf="@+id/posterView"
+            app:layout_constraintBottom_toBottomOf="@id/posterView"
+            app:srcCompat="@drawable/ic_edit_btn" />
+    
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/logoImageView"
+            android:layout_width="104dp"
+            android:layout_height="104dp"
+            android:layout_margin="4dp"
+            android:src="@drawable/hero"
+            imageFromUrl="@{data.posterUrl}"
+            app:layout_constraintBottom_toBottomOf="@+id/posterView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/posterView" />
+    
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/logoEditButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:scaleType="fitXY"
+            android:padding="4dp"
+            android:elevation="2dp"
+            android:background="?selectableItemBackgroundBorderless"
+            app:layout_constraintStart_toStartOf="@id/logoImageView"
+            app:layout_constraintEnd_toEndOf="@id/logoImageView"
+            app:layout_constraintTop_toBottomOf="@id/logoImageView"
+            app:layout_constraintBottom_toBottomOf="@id/logoImageView"
+            app:srcCompat="@drawable/ic_edit_btn" />
+    
+    
+        <TextView
+            android:id="@+id/textView15"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:text="Channel Name"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/logoEditButton" />
+    
+        <EditText
+            android:id="@+id/title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/upload_edittext_bg"
+            android:ems="10"
+            android:text="@={data.title}"
+            android:inputType="textPersonName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView15" />
+    
+        <TextView
+            android:id="@+id/textView17"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:text="Description"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title" />
+    
+        <com.banglalink.toffee.ui.widget.HashTagEditText
+            android:id="@+id/description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/upload_edittext_bg"
+            android:ems="10"
+            android:lines="4"
+            android:maxLines="8"
+            android:maxLength="2000"
+            android:text="@={data.description}"
+            android:gravity="top|start"
+            android:inputType="textMultiLine|textCapSentences"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView17" />
+    
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+    
+        <TextView
+            android:id="@+id/textView20"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:text="Category"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/description" />
+    
+        <TextView
+            android:id="@+id/textView21"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="24dp"
+            android:text="Subscription Price"
+            app:layout_constraintStart_toStartOf="@+id/guideline9"
+            app:layout_constraintTop_toBottomOf="@+id/description" />
+    
+        <RelativeLayout
+            android:id="@+id/categorySpinnerWrap"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/upload_spinner_bg"
+            app:layout_constraintEnd_toStartOf="@+id/guideline9"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView20">
+            
+            <Spinner
+                android:id="@+id/categorySpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@{data.categoryList}" />
+            
+        </RelativeLayout>
+    
+        <RelativeLayout
+            android:id="@+id/subscriptionPriceSpinnerWrap"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/upload_spinner_bg"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline9"
+            app:layout_constraintTop_toBottomOf="@+id/textView21">
+            
+            <Spinner
+                android:id="@+id/subscriptionPriceSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@{data.subscriptionPriceList}"/>
+            
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:layout_marginHorizontal="8dp"
+            android:background="@drawable/button_bg_round_purple"
+            android:textColor="@color/purple"
+            android:textSize="18sp"
+            android:paddingHorizontal="36dp"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/categorySpinnerWrap"
+            app:layout_constraintEnd_toStartOf="@id/saveButton"
+            app:layout_constraintBottom_toBottomOf="parent" />
+        
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Save Changes"
+            android:layout_marginHorizontal="8dp"
+            android:background="@drawable/button_selector"
+            android:textColor="@color/screen_bg_white"
+            android:textSize="18sp"
+            android:paddingHorizontal="28dp"
+            app:layout_constraintStart_toEndOf="@id/cancelButton"
+            app:layout_constraintTop_toTopOf="@id/cancelButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/cancelButton"/>
+        
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
