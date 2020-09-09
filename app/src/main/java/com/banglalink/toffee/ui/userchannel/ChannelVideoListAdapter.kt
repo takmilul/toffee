@@ -8,6 +8,6 @@ import com.banglalink.toffee.ui.common.SingleListItemCallback
 class ChannelVideoListAdapter(callback: SingleListItemCallback<ChannelVideo>?): MyBaseAdapterV2<ChannelVideo>(callback) {
     
     override fun getLayoutIdForPosition(position: Int): Int {
-        return R.layout.list_channel_videos
+        return R.layout.list_item_channel_videos
     }
 }

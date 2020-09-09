@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    
+    <data>
+    
+    </data>-->
+    
+    <!--<androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent">-->
+    
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="8dp"
+            android:padding="16dp"
+            android:layout_margin="8dp"
+            android:background="@drawable/round_white_bg"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto">
+    
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+        
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="48dp"
+                    android:gravity="center_horizontal"
+                    android:text="Rate This Channel"
+                    android:textAllCaps="false"
+                    android:textSize="20sp"
+                    android:textColor="@color/main_text_color"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+        
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/rate1"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginTop="48dp"
+                    android:layout_marginBottom="56dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:scaleType="fitXY"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintBottom_toTopOf="@id/submitButton"
+                    app:layout_constraintEnd_toStartOf="@+id/rate2"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/title"
+                    app:srcCompat="@drawable/ic_rating_line" />
+        
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/rate2"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:scaleType="fitXY"
+                    android:layout_marginHorizontal="8dp"
+                    app:layout_constraintBottom_toBottomOf="@id/rate1"
+                    app:layout_constraintEnd_toStartOf="@+id/rate3"
+                    app:layout_constraintStart_toEndOf="@+id/rate1"
+                    app:layout_constraintTop_toTopOf="@id/rate1"
+                    app:srcCompat="@drawable/ic_rating_line" />
+        
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/rate3"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:scaleType="fitXY"
+                    android:layout_marginHorizontal="8dp"
+                    app:layout_constraintBottom_toBottomOf="@id/rate1"
+                    app:layout_constraintEnd_toStartOf="@+id/rate4"
+                    app:layout_constraintStart_toEndOf="@+id/rate2"
+                    app:layout_constraintTop_toTopOf="@id/rate1"
+                    app:srcCompat="@drawable/ic_rating_line" />
+        
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/rate4"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:scaleType="fitXY"
+                    android:layout_marginHorizontal="8dp"
+                    app:layout_constraintBottom_toBottomOf="@id/rate1"
+                    app:layout_constraintEnd_toStartOf="@+id/rate5"
+                    app:layout_constraintStart_toEndOf="@+id/rate3"
+                    app:layout_constraintTop_toTopOf="@id/rate1"
+                    app:srcCompat="@drawable/ic_rating_line" />
+    
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/rate5"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:scaleType="fitXY"
+                    app:layout_constraintBottom_toBottomOf="@id/rate1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/rate4"
+                    app:layout_constraintTop_toTopOf="@id/rate1"
+                    app:srcCompat="@drawable/ic_rating_line" />
+        
+                <Button
+                    android:id="@+id/submitButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="48dp"
+                    android:background="@drawable/button_bg_round_purple"
+                    android:backgroundTint="@color/purple"
+                    android:text="Submit"
+                    android:textColor="@color/screen_bg_white"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/rate1"
+                    app:layout_constraintWidth_percent="0.6" />
+    
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+    <!--</androidx.constraintlayout.widget.ConstraintLayout>-->
+<!--</layout>-->

@@ -42,9 +42,9 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.channels.ChannelFragment
 import com.banglalink.toffee.ui.login.SigninByPhoneActivity
 import com.banglalink.toffee.ui.player.PlayerActivity
-import com.banglalink.toffee.ui.points.MyPointsFragment
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.subscription.PackageListActivity
+import com.banglalink.toffee.ui.userchannel.CreatorChannelFragment
 import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.ui.widget.showSubscriptionDialog
@@ -339,8 +339,11 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         /*supportFragmentManager.beginTransaction().replace(R.id.content_viewer, LandingPageFragment())
             .addToBackStack(LandingPageFragment::class.java.name).commit()
         supportFragmentManager.addOnBackStackChangedListener(this)*/
-        supportFragmentManager.beginTransaction().replace(R.id.content_viewer, MyPointsFragment.createInstance())
-            .addToBackStack(MyPointsFragment::class.java.name).commit()
+        /*supportFragmentManager.beginTransaction().replace(R.id.content_viewer, ChannelRatingFragment.createInstance())
+            .addToBackStack(ChannelRatingFragment::class.java.name).commit()
+        supportFragmentManager.addOnBackStackChangedListener(this)*/
+        supportFragmentManager.beginTransaction().replace(R.id.content_viewer, CreatorChannelFragment.createInstance())
+            .addToBackStack(CreatorChannelFragment::class.java.name).commit()
         supportFragmentManager.addOnBackStackChangedListener(this)
     }
 

@@ -9,4 +9,6 @@ import com.banglalink.toffee.usecase.GetChannelVideos
 
 class ChannelVideosViewModel: SingleListViewModel<ChannelVideo>() {
     override var repo: SingleListRepository<ChannelVideo>  = GetChannelVideos(Preference.getInstance(), RetrofitApiClient.toffeeApi)
+    
+    //override var enableToolbar: Boolean = false
 }

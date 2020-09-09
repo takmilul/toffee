@@ -18,7 +18,6 @@ import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
 import com.banglalink.toffee.model.RedeemPoints
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.onboarding.OnBoarding
-import com.banglalink.toffee.ui.userchannel.ChannelRatingFragment
 import com.banglalink.toffee.util.unsafeLazy
 
 class RedeemPointsFragment : Fragment() {
@@ -99,13 +98,9 @@ class RedeemPointsFragment : Fragment() {
         observe(viewModel.redeemPoints()){
             when(it){
                 is Resource.Success -> {
-                    /*fragmentManager?.beginTransaction()
+                    fragmentManager?.beginTransaction()
                         ?.replace(R.id.content_viewer, RedeemPointsSuccessFragment.createInstance(it.data.message))
                         ?.addToBackStack(RedeemPointsSuccessFragment::class.java.name)
-                        ?.commit()*/
-                    fragmentManager?.beginTransaction()
-                        ?.replace(R.id.content_viewer, ChannelRatingFragment.createInstance())
-                        ?.addToBackStack(ChannelRatingFragment::class.java.name)
                         ?.commit()
                 }
                 is Resource.Failure -> {

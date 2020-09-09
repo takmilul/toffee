@@ -9,4 +9,5 @@ import com.banglalink.toffee.usecase.GetChannelPlaylists
 
 class ChannelPlaylistViewModel: SingleListViewModel<ChannelPlaylist>() {
     override var repo: SingleListRepository<ChannelPlaylist>  = GetChannelPlaylists(Preference.getInstance(), RetrofitApiClient.toffeeApi)
+    
 }

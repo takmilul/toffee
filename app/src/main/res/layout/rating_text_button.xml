@@ -10,8 +10,7 @@
         android:id="@+id/starView"
         android:layout_width="12dp"
         android:layout_height="12dp"
-        android:background="@drawable/ic_rating_star"
-        android:backgroundTint="@color/button_green_dark"
+        android:background="@drawable/ic_rating_fill"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>

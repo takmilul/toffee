@@ -17,7 +17,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp">
+        android:background="@color/bg_color">
 
         <com.banglalink.toffee.ui.widget.CustomImageView
             android:id="@+id/poster"
@@ -43,7 +43,7 @@
             android:textColor="@android:color/white"
             android:textSize="14sp"
             android:text="@{data.duration}"
-            app:layout_constraintBottom_toTopOf="@+id/progress"
+            app:layout_constraintBottom_toBottomOf="@id/poster"
             app:layout_constraintEnd_toEndOf="@+id/poster"
             tools:text="00:00" />
 
@@ -52,6 +52,7 @@
             android:id="@+id/view"
             android:layout_width="0dp"
             android:layout_height="120dp"
+            android:layout_marginBottom="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/poster"
@@ -96,18 +97,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.9026764"/>
-
-        <ProgressBar
-            android:id="@+id/progress"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="0dp"
-            android:layout_height="4dp"
-            android:progress="50"
-            android:max="100"
-            app:layout_constraintBottom_toBottomOf="@+id/poster"
-            app:layout_constraintEnd_toEndOf="@+id/duration"
-            app:layout_constraintStart_toStartOf="parent" />
-        
 
         <TextView
             android:id="@+id/textView5"
