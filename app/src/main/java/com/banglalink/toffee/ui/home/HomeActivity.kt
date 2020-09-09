@@ -47,6 +47,8 @@ import com.banglalink.toffee.ui.upload.EditUploadInfoFragment
 import com.banglalink.toffee.ui.upload.UploadMethodFragment
 import com.banglalink.toffee.ui.upload.UploadObserver
 import com.banglalink.toffee.ui.useractivities.UserActivitiesMainFragment
+import com.banglalink.toffee.ui.userchannel.ChannelRatingFragment
+import com.banglalink.toffee.ui.userchannel.CreatorChannelFragment
 import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.ui.widget.showSubscriptionDialog
@@ -104,6 +106,15 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         binding.homeTabPager.adapter = pagerAdapter
         binding.homeTabPager.isUserInputEnabled = false
         binding.tabNavigator.setOnNavigationItemSelectedListener {
+            if(supportFragmentManager.findFragmentById(R.id.content_viewer) != null) {
+                supportFragmentManager.popBackStack(
+                    LandingPageFragment::class.java.name,
+                    POP_BACK_STACK_INCLUSIVE
+                )
+            }
+            if(binding.draggableView.isMaximized) {
+                minimizePlayer()
+            }
             when(it.itemId) {
                 R.id.menu_feed-> {
                     binding.homeTabPager.currentItem = 0
@@ -163,6 +174,17 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         observe(viewModel.fragmentDetailsMutableLiveData) {
             onDetailsFragmentLoad(it)
         }
+
+        observe(viewModel.userChannelMutableLiveData) {
+            val currentFragment = supportFragmentManager.findFragmentById(R.id.content_viewer)
+            if (currentFragment !is ChannelRatingFragment) {
+                loadFragmentById( R.id.content_viewer, ChannelRatingFragment()
+                    , ChannelRatingFragment::class.java.getName())
+            }
+            binding.drawerLayout.closeDrawers()
+            minimizePlayer()
+        }
+
         observe(viewModel.viewAllChannelLiveData) {
 //            drawerHelper.onMenuClick(NavigationMenu(ID_CHANNEL, "All Videos", 0, listOf(), false))
             binding.tabNavigator.selectedItemId = R.id.menu_tv

@@ -15,7 +15,6 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.ChannelSubscriptionInfo
 import com.banglalink.toffee.model.Package
 import com.banglalink.toffee.ui.widget.MultiTextButton
 import com.suke.widget.SwitchButton
@@ -79,15 +78,13 @@ fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
             transformations(CircleCropTransformation())
             crossfade(true)
             crossfade(crossFadeDurationInMills)
-            memoryCachePolicy(CachePolicy.DISABLED)
+//            memoryCachePolicy(CachePolicy.DISABLED)
             diskCachePolicy(CachePolicy.ENABLED)
         }
     } else {
-        view.load(channelInfo.landscape_ratio_1280_720) {
-            fallback(R.drawable.dummy)
-            placeholder(R.drawable.dummy)
-            error(R.drawable.dummy)
-            memoryCachePolicy(CachePolicy.DISABLED)
+        view.load(channelInfo.landscape_ratio_1280_720)
+        {
+//            memoryCachePolicy(CachePolicy.DISABLED)
             diskCachePolicy(CachePolicy.ENABLED)
             crossfade(true)
             crossfade(crossFadeDurationInMills)
@@ -97,15 +94,15 @@ fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
 }
 
 @BindingAdapter("loadUserChannelLogo")
-fun bindUserChannelLogo(view: ImageView, channelInfo: ChannelSubscriptionInfo) {
-    if (channelInfo.channelLogo.isBlank()) {
+fun bindUserChannelLogo(view: ImageView, channelInfo: ChannelInfo) {
+    if (channelInfo.channel_logo.isBlank()) {
         view.setImageResource(R.drawable.ic_portrait)
     } else {
-        view.load(channelInfo.channelLogo) {
-            fallback(R.drawable.ic_portrait)
-            placeholder(R.drawable.ic_portrait)
-            error(R.drawable.ic_portrait)
-            memoryCachePolicy(CachePolicy.DISABLED)
+        view.load(channelInfo.channel_logo) {
+//            fallback(R.drawable.ic_portrait)
+//            placeholder(R.drawable.ic_portrait)
+//            error(R.drawable.ic_portrait)
+//            memoryCachePolicy(CachePolicy.DISABLED)
             diskCachePolicy(CachePolicy.ENABLED)
             crossfade(true)
             crossfade(crossFadeDurationInMills)
@@ -120,10 +117,10 @@ fun bindChannelLogo(view: ImageView, channelInfo: ChannelInfo) {
         view.setImageResource(R.drawable.ic_portrait)
     } else {
         view.load(channelInfo.channel_logo) {
-            fallback(R.drawable.ic_portrait)
-            placeholder(R.drawable.ic_portrait)
-            error(R.drawable.ic_portrait)
-            memoryCachePolicy(CachePolicy.DISABLED)
+//            fallback(R.drawable.ic_portrait)
+//            placeholder(R.drawable.ic_portrait)
+//            error(R.drawable.ic_portrait)
+//            memoryCachePolicy(CachePolicy.DISABLED)
             diskCachePolicy(CachePolicy.ENABLED)
             crossfade(true)
             crossfade(crossFadeDurationInMills)
@@ -138,9 +135,9 @@ fun bindDuration(view: TextView, channelInfo: ChannelInfo) {
 }
 
 @BindingAdapter("bindSubscriptionStatus")
-fun bindSubscriptionStatus(view: MultiTextButton, channelSubscriptionInfo: ChannelSubscriptionInfo) {
-    view.setSubscriptionInfo(channelSubscriptionInfo.subscriptionStatus,
-        channelSubscriptionInfo.subscriptionAmount)
+fun bindSubscriptionStatus(view: MultiTextButton, channelInfo: ChannelInfo) {
+    view.setSubscriptionInfo(channelInfo.subscription,
+        null)
 }
 
 @BindingAdapter("bindViewCount")

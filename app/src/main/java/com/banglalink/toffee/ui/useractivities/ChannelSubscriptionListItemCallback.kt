@@ -1,9 +1,9 @@
 package com.banglalink.toffee.ui.useractivities
 
-import com.banglalink.toffee.model.ChannelSubscriptionInfo
+import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.SingleListItemCallback
 
-interface ChannelSubscriptionListItemCallback: SingleListItemCallback<ChannelSubscriptionInfo> {
-    fun onSubscribeClicked(item: ChannelSubscriptionInfo)
-    fun onNotificationBellClicked(item: ChannelSubscriptionInfo, pos: Int)
+interface ChannelSubscriptionListItemCallback: SingleListItemCallback<ChannelInfo> {
+    fun onSubscribeClicked(item: ChannelInfo)
+    fun onNotificationBellClicked(item: ChannelInfo, pos: Int)
 }

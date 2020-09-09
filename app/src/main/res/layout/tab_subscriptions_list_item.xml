@@ -8,7 +8,7 @@
         <import type="android.view.View" />
         <variable
             name="data"
-            type="com.banglalink.toffee.model.ChannelSubscriptionInfo" />
+            type="com.banglalink.toffee.model.ChannelInfo" />
         <variable
             name="position"
             type="java.lang.Integer" />
@@ -36,7 +36,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
-                loadUserChannelLogo="@{data}"
+                loadChannelLogo="@{data}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -62,7 +62,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="8dp"
-                android:text="@{data.channelName}"
+                android:text="@{data.program_name}"
                 app:layout_constraintEnd_toStartOf="@+id/imageView"
                 app:layout_constraintStart_toEndOf="@+id/ownerThumb"
                 app:layout_constraintTop_toTopOf="parent"
@@ -72,7 +72,7 @@
                 android:id="@+id/imageView6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="@{data.live ? View.VISIBLE : View.GONE}"
+                android:visibility="@{data.isLive() ? View.VISIBLE : View.GONE}"
                 app:layout_constraintEnd_toEndOf="@+id/ownerThumb"
                 app:layout_constraintTop_toTopOf="@+id/ownerThumb"
                 app:srcCompat="@drawable/ic_badge_live" />
@@ -93,7 +93,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:text="@{data.formattedViewCount}"
+                android:text="@{data.formatted_view_count}"
                 app:layout_constraintBottom_toBottomOf="@+id/subscribe_button"
                 app:layout_constraintStart_toEndOf="@+id/subscribe_button"
                 app:layout_constraintTop_toTopOf="@+id/subscribe_button"
@@ -112,7 +112,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/textView11"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/textView11"
-                android:src="@{data.notificationStatus ? @drawable/ic_sub_notification_active : @drawable/ic_sub_notification_inactive}" />
+                android:src="@{data.subscription ? @drawable/ic_sub_notification_active : @drawable/ic_sub_notification_inactive}" />
 
             <TextView
                 android:id="@+id/textView13"
@@ -130,8 +130,8 @@
                 android:gravity="center"
                 android:background="@drawable/sub_notification_badge_bg"
                 android:textColor="#ffffff"
-                android:visibility="@{data.live ? View.GONE : View.VISIBLE}"
-                android:text="@{Integer.toString(data.notificationCount)}"
+                android:visibility="@{data.isLive() ? View.GONE : View.VISIBLE}"
+                android:text="32"
                 app:layout_constraintEnd_toEndOf="@+id/ownerThumb"
                 app:layout_constraintTop_toTopOf="@+id/ownerThumb"
                 tools:text="100" />

@@ -34,6 +34,7 @@ class HomeViewModel(application: Application):BaseViewModel(application),OnCompl
 
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val fragmentDetailsMutableLiveData = MutableLiveData<ChannelInfo>()
+    val userChannelMutableLiveData = MutableLiveData<ChannelInfo>()
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val viewAllChannelLiveData = MutableLiveData<Boolean>()
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity

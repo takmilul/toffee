@@ -10,6 +10,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.AutoTransition
@@ -21,6 +22,8 @@ import com.banglalink.toffee.databinding.FragmentCommonSingleListV2Binding
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.ui.home.HomeViewModel
+import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.android.synthetic.main.fragment_common_single_list_v2.*
 import kotlinx.android.synthetic.main.fragment_top_panel_search_collapsed.*
 
@@ -31,6 +34,10 @@ abstract class SingleListFragmentV2<T: Any> : Fragment() {
 
     protected lateinit var mAdapter: MyBaseAdapterV2<T>
     protected lateinit var mViewModel: SingleListViewModel<T>
+
+    val homeViewModel by unsafeLazy {
+        ViewModelProviders.of(activity!!).get(HomeViewModel::class.java)
+    }
 
     companion object {
         const val ARG_TITLE = "arg-title"

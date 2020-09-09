@@ -7,7 +7,7 @@
     <data>
         <variable
             name="data"
-            type="com.banglalink.toffee.model.ChannelSubscriptionInfo" />
+            type="com.banglalink.toffee.model.ChannelInfo" />
 
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -19,7 +19,7 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/icon"
-            loadUserChannelLogo="@{data}"
+            loadChannelLogo="@{data}"
             android:layout_width="92dp"
             android:layout_height="92dp"
             android:layout_marginStart="4dp"
@@ -44,7 +44,7 @@
             android:maxLines="1"
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
-            android:text="@{data.channelName}"
+            android:text="@{data.program_name}"
             android:textColor="#7990AC"
             android:textSize="14sp"
             android:textStyle="normal"
@@ -73,7 +73,7 @@
             android:layout_marginBottom="8dp"
             android:maxLines="1"
             android:ellipsize="end"
-            android:text="@{data.formattedViewCount}"
+            android:text="@{data.formatted_view_count}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

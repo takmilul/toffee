@@ -22,21 +22,21 @@ import kotlinx.coroutines.launch
 class LandingPageViewModel(application: Application):BaseViewModel(application) {
 
     //LiveData for fetching channel list
-    private val channelMutableLiveData = SingleLiveEvent<Resource<List<ChannelInfo>>>()
+    private val channelMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
     val channelLiveData = channelMutableLiveData.toLiveData()
 
     //LiveData for fetching popular list
-    private val popularVideoMutableLiveData = SingleLiveEvent<Resource<List<ChannelInfo>>>()
+    private val popularVideoMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
     val popularVideoLiveData = popularVideoMutableLiveData.toLiveData()
 
-    private val mostPopularVideoMutableLiveData = SingleLiveEvent<Resource<List<ChannelInfo>>>()
+    private val mostPopularVideoMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
     val mostPopularVideoLiveData = mostPopularVideoMutableLiveData.toLiveData()
 
     //LiveData for featureContent List
     private val featureContentMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
     val featureContentLiveData = featureContentMutableLiveData.toLiveData()
 
-    private val userChannelListMutableLiveData = MutableLiveData<Resource<List<ChannelSubscriptionInfo>>>()
+    private val userChannelListMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
     val userChannelList = userChannelListMutableLiveData.toLiveData()
 
     //LiveData for Categories List

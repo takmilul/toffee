@@ -5,7 +5,6 @@ import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.ChannelSubscriptionInfo
 import com.banglalink.toffee.ui.common.SingleListRepository
 import com.banglalink.toffee.util.discardZeroFromDuration
 import com.banglalink.toffee.util.getFormattedViewsText

@@ -22,4 +22,8 @@ class UserActivitiesListFragment: SingleListFragmentV2<ChannelInfo>(),
     override fun getEmptyViewInfo(): Pair<Int, String?> {
         return Pair(R.drawable.ic_activities_empty, "You don't have any activities yet")
     }
+
+    override fun onItemClicked(item: ChannelInfo) {
+        homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+    }
 }

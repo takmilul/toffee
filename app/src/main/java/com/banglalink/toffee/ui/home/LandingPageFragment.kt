@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -41,20 +42,11 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
 //    private lateinit var popularVideoScrollListener : EndlessRecyclerViewScrollListener
 
 
-    val viewModel by unsafeLazy {
-        ViewModelProviders.of(this).get(LandingPageViewModel::class.java)
-    }
+    lateinit var viewModel: LandingPageViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-//        popularVideoListAdapter = PopularVideoListAdapter(this) {
-//            //handle video click in adapter. Basically notify livedata to homeactivity to playChannel channel
-//            homeViewModel.fragmentDetailsMutableLiveData.postValue(it)
-//        }
-
-//        popularVideoListAdapter.setHasStableIds(true)
-//        viewModel.loadPopularVideos()
+        viewModel = ViewModelProvider(activity!!).get(LandingPageViewModel::class.java)
     }
 
     override fun onCreateView(
@@ -69,69 +61,20 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
         super.onViewCreated(view, savedInstanceState)
         activity?.title = "Home"
 
-//        val linearLayoutManager = LinearLayoutManager(context)
-//        popularVideoListView = view.findViewById<RecyclerView>(R.id.listview).apply {
-//            layoutManager = linearLayoutManager
-//            adapter = popularVideoListAdapter
-//        }
-//        popularVideoListView?.setItemViewCacheSize(10)//We are defining offscreen cache size
-//        popularVideoListView?.setHasFixedSize(true)
-//
-//        popularVideoScrollListener =  object:EndlessRecyclerViewScrollListener(linearLayoutManager){
-//            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
-//                bottomProgress?.visibility = View.VISIBLE
-//                viewModel.loadPopularVideos()
-//            }
-//        }
-//        popularVideoListView?.addOnScrollListener(popularVideoScrollListener)
-
-
-//        bottomProgress = view.findViewById(R.id.progress_bar)
-//        if (popularVideoListAdapter.itemCount == 0)
-//            bottomProgress?.visibility = View.VISIBLE
-
-//        observePopularVideoList()
+//        viewModel.loadChannels()
+//        viewModel.loadPopularVideos()
+//        viewModel.loadCategories()
+//        viewModel.loadFeatureContents()
+//        viewModel.loadUserChannels()
+        viewModel.loadMostPopularVideos()
     }
 
-//    private fun observePopularVideoList() {
-//        viewModel.popularVideoLiveData.observe(viewLifecycleOwner, Observer {
-//            when (it) {
-//                is Resource.Success -> {
-//                    bottomProgress?.visibility = View.GONE
-//                    if (popularVideoListAdapter.itemCount == 0) {
-//                        val fakeChannelInfo =
-//                            ChannelInfo()//we are adding fake channelinfo because of header in adapter....
-//                        fakeChannelInfo.id = System.currentTimeMillis().toString()
-//                        popularVideoListAdapter.add(fakeChannelInfo)
-//                    }
-//                    if (it.data.isNotEmpty()) {
-//                        popularVideoListAdapter.addAll(it.data)
-//                    }
-//
-//                }
-//                is Resource.Failure -> {
-//                    popularVideoScrollListener.resetState()
-//                   context?.showToast(it.error.msg)
-//                }
-//            }
-//        })
-//    }
-
-
-
     fun onBackPressed(): Boolean {
-//        if(popularVideoListView!=null && popularVideoListView!!.computeVerticalScrollOffset() > 0){
-//            popularVideoListView?.scrollToPosition(0)
-//            return true
-//        }
+
         return false
     }
 
     override fun onDestroyView() {
-//        popularVideoListView?.adapter = null
-//        popularVideoListView?.clearOnScrollListeners()
-//        popularVideoListView = null
-//        bottomProgress = null
         super.onDestroyView()
 
     }
