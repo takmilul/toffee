@@ -29,14 +29,6 @@ class ChannelVideosFragment : SingleListFragmentV2<ChannelVideo>(), SingleListIt
         mViewModel.enableToolbar = enableToolbar
     }
     
-    override fun onOpenMenu(item: ChannelVideo) {
-        super.onOpenMenu(item)
-    }
-    
-    override fun onItemClicked(item: ChannelVideo) {
-        super.onItemClicked(item)
-    }
-    
     override fun getEmptyViewInfo(): Pair<Int, String?> {
         return Pair(R.drawable.ic_videos_empty, "You haven't uploaded any video yet")
     }

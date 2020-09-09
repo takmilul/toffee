@@ -30,6 +30,7 @@
             android:layout_width="104dp"
             android:layout_height="104dp"
             android:layout_margin="4dp"
+            android:elevation="2dp"
             android:src="@drawable/hero"
             app:layout_constraintBottom_toBottomOf="@+id/posterView"
             app:layout_constraintEnd_toEndOf="parent"

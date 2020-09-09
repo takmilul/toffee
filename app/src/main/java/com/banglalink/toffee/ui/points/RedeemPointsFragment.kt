@@ -25,7 +25,6 @@ class RedeemPointsFragment : Fragment() {
     private lateinit var mAdapter: RedeemPointsAdapter
     private lateinit var binding: FragmentRedeemPointsBinding
     private lateinit var scrollListener: EndlessRecyclerViewScrollListener
-    private lateinit var item: View
     private val viewModel by unsafeLazy { 
         ViewModelProviders.of(this).get(RedeemPointsViewModel::class.java)
     }
