@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/mostPopularHeader"
+        style="@style/CategoryTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_weight="1"
+        android:text="@string/most_popular"
+        app:layout_constraintEnd_toStartOf="@+id/viewAllButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/viewAllButton"
+        style="@style/ViewAllTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:drawablePadding="8dp"
+        android:visibility="gone"
+        android:gravity="center"
+        android:text="@string/view_all"
+        android:textColor="@color/view_all_text_color"
+        app:drawableRightCompat="@drawable/ic_right_arrow_accent"
+        app:layout_constraintBottom_toBottomOf="@+id/mostPopularHeader"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+<!--    <ImageView-->
+<!--        android:layout_width="14dp"-->
+<!--        android:layout_height="14dp"-->
+<!--        android:layout_marginRight="20dp"-->
+<!--        android:layout_gravity="center"-->
+<!--        android:tint="@color/view_all_text_color"-->
+<!--        app:srcCompat="@drawable/ic_right_arrow_accent"/>-->
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/top_bottom_round_white_bg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mostPopularHeader" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/mostPopularList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mostPopularHeader"
+        app:reverseLayout="false" />
+        </androidx.constraintlayout.widget.ConstraintLayout>

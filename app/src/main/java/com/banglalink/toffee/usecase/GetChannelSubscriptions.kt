@@ -35,8 +35,8 @@ class GetChannelSubscriptions(private val preference: Preference,
                 it.formattedDuration = discardZeroFromDuration(it.duration)
                 it
             }.map {
-                ChannelSubscriptionInfo(it.content_provider_name ?: "N/A",
-                    it.channel_logo,
+                ChannelSubscriptionInfo(it.program_name ?: "N/A",
+                    it.landscape_ratio_1280_720,
                     it.isLive,
                     it.view_count,
                     it.isLive,

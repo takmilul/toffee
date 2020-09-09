@@ -11,12 +11,9 @@ import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.setError
 import com.banglalink.toffee.extension.setSuccess
 import com.banglalink.toffee.extension.toLiveData
-import com.banglalink.toffee.model.NavCategoryGroup
-import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.channels.StickyHeaderInfo
 import com.banglalink.toffee.ui.common.BaseViewModel
-import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.NavCategory
 import com.banglalink.toffee.util.getError
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
@@ -41,6 +38,8 @@ class HomeViewModel(application: Application):BaseViewModel(application),OnCompl
     val viewAllChannelLiveData = MutableLiveData<Boolean>()
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val viewAllVideoLiveData = MutableLiveData<Boolean>()
+    val viewAllCategories = MutableLiveData<Boolean>()
+    val openCategoryLiveData = MutableLiveData<Category>()
 
     private val getCategory by lazy {
         GetCategory(RetrofitApiClient.toffeeApi)

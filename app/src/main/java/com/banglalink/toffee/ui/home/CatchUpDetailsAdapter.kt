@@ -9,7 +9,7 @@ import com.foxrentacar.foxpress.ui.common.MyViewHolder
 class CatchUpDetailsAdapter(private val optionCallBack: OptionCallBack, channelCallback:(ChannelInfo)->Unit={}): MyBaseAdapter<ChannelInfo>(channelCallback) {
     override fun getLayoutIdForPosition(position: Int): Int {
         if(position == 0)
-            return R.layout.catchup_details_list_header
+            return R.layout.catchup_details_list_header_new
 
         if(values[position].isLive){
             return R.layout.list_item_live

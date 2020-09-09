@@ -10,113 +10,114 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:openDrawer="start">
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
 
-            <LinearLayout
+            <androidx.coordinatorlayout.widget.CoordinatorLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:layout_height="match_parent">
 
                 <include android:id="@+id/tbar"
                     layout="@layout/layout_appbar" />
-                <FrameLayout
-                    android:id="@+id/content_viewer"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    />
 
-                <com.google.android.material.tabs.TabLayout
-                    android:id="@+id/tabs"
-                    android:layout_width="match_parent"
-                    android:layout_height="54dp"
-                    app:tabTextAppearance="@style/TabTheme"
-                    android:background="@color/tab_background_color"
-                    app:tabIconTint="@drawable/tab_selector"
-                    app:tabIconTintMode="src_atop"
-                    app:tabTextColor="@drawable/tab_selector"
-                    app:tabIndicator="@null"
-                    >
-
-                    <com.google.android.material.tabs.TabItem
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:icon="@drawable/ic_feed"
-                        android:text="@string/tab_feed_label"/>
-
-                    <com.google.android.material.tabs.TabItem
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:icon="@drawable/ic_tv"
-                        android:text="@string/tab_tv_label"/>
-
-                    <com.google.android.material.tabs.TabItem
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:icon="@drawable/ic_upload_dummy"
-                        android:text="@string/tab_upload_label"/>
-
-                    <com.google.android.material.tabs.TabItem
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:icon="@drawable/ic_activities"
-                        android:text="@string/tab_activities_label"/>
-
-                    <com.google.android.material.tabs.TabItem
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:icon="@drawable/ic_mychannel"
-                        android:text="@string/tab_mychannel_label"/>
-
-                </com.google.android.material.tabs.TabLayout>
-            </LinearLayout>
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:src="@drawable/ic_upload"
-                android:layout_centerHorizontal="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="22dp"/>
-            <com.banglalink.toffee.ui.widget.DraggerLayout
-                xmlns:dragger_layout="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/draggable_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                dragger_layout:top_view_id="@+id/player_view"
-                dragger_layout:bottom_view_id="@+id/details_viewer"
-                >
-
-
-
-                <FrameLayout
-                    android:id="@+id/details_viewer"
-                    android:layout_below="@+id/player_view"
+                <RelativeLayout
+                    android:layout_marginTop="?attr/actionBarSize"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:clickable="true"
-                    />
+                    android:layout_marginBottom="?attr/actionBarSize"
+                    android:clipToPadding="false"
+                    android:orientation="vertical">
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        >
+                        <androidx.viewpager2.widget.ViewPager2
+                            android:id="@+id/home_tab_pager"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+                        <FrameLayout
+                            android:id="@+id/content_viewer"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            />
+                    </FrameLayout>
+                    <com.banglalink.toffee.ui.widget.DraggerLayout
+                        xmlns:dragger_layout="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/draggable_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        dragger_layout:top_view_id="@+id/player_view"
+                        dragger_layout:bottom_view_id="@+id/details_viewer"
+                        >
+                        <FrameLayout
+                            android:id="@+id/details_viewer"
+                            android:layout_below="@+id/player_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:clickable="true"
+                            />
 
-<!--                <fragment-->
-<!--                    android:background="@android:color/black"-->
-<!--                    android:layout_alignParentRight="true"-->
-<!--                    android:id="@+id/player_view"-->
-<!--                    android:layout_width="fill_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:name="com.banglalink.toffee.ui.player.PlayerFragment2"/>-->
-                <com.banglalink.toffee.ui.widget.ExpoMediaController2
-                    android:background="@android:color/black"
-                    android:id="@+id/player_view"
+                        <!--                <fragment-->
+                        <!--                    android:background="@android:color/black"-->
+                        <!--                    android:layout_alignParentRight="true"-->
+                        <!--                    android:id="@+id/player_view"-->
+                        <!--                    android:layout_width="fill_parent"-->
+                        <!--                    android:layout_height="wrap_content"-->
+                        <!--                    android:name="com.banglalink.toffee.ui.player.PlayerFragment2"/>-->
+                        <com.banglalink.toffee.ui.widget.ExpoMediaController2
+                            android:background="@android:color/black"
+                            android:id="@+id/player_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                    </com.banglalink.toffee.ui.widget.DraggerLayout>
+            </RelativeLayout>
+            <com.google.android.material.bottomappbar.BottomAppBar
+                    android:id="@+id/bottom_app_bar"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    app:backgroundTint="@color/screen_bg_white"
+                    app:fabCradleMargin="0dp"
+                    app:contentInsetStart="0dp"
+                    app:contentInsetEnd="0dp"
+                    app:fabCradleVerticalOffset="0dp"
+                    app:fabCradleRoundedCornerRadius="0dp"
+                    app:fabAlignmentMode="center">
+                    <com.google.android.material.bottomnavigation.BottomNavigationView
+                        android:id="@+id/tab_navigator"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:menu="@menu/menu_bottom_nav"
+                        app:labelVisibilityMode="labeled"
+                        app:itemIconTint="@color/bottom_nav_icon_color"
+                        app:itemTextColor="@color/bottom_nav_icon_color"
+                        >
 
-            </com.banglalink.toffee.ui.widget.DraggerLayout>
+                    </com.google.android.material.bottomnavigation.BottomNavigationView>
+                </com.google.android.material.bottomappbar.BottomAppBar>
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/upload_button"
+                    android:backgroundTint="@android:color/white"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_upload_add"
+                    app:borderWidth="2dp"
+                    app:fabCustomSize="50dp"
+                    app:elevation="0dp"
+                    app:tint="@color/colorAccent2"
+                    app:backgroundTint="@color/colorAccent2"
+                    app:layout_anchor="@id/bottom_app_bar" />
 
-        </RelativeLayout>
+            </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+<!--            <ImageView-->
+<!--                android:id="@+id/upload_button"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:adjustViewBounds="true"-->
+<!--                android:src="@drawable/ic_upload"-->
+<!--                android:layout_centerHorizontal="true"-->
+<!--                android:layout_alignParentBottom="true"-->
+<!--                android:layout_marginBottom="22dp"/>-->
 
         <com.google.android.material.navigation.NavigationView
             android:id="@+id/nav_view"

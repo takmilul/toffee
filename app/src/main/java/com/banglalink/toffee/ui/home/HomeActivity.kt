@@ -36,11 +36,17 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.EXIT_FROM_APP_MSG
 import com.banglalink.toffee.model.NavigationMenu
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.channels.ChannelFragment
+import com.banglalink.toffee.ui.landing.AllCategoriesFragment
 import com.banglalink.toffee.ui.login.SigninByPhoneActivity
 import com.banglalink.toffee.ui.player.PlayerActivity
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.subscription.PackageListActivity
+import com.banglalink.toffee.ui.upload.EditUploadInfoFragment
+import com.banglalink.toffee.ui.upload.UploadMethodFragment
+import com.banglalink.toffee.ui.upload.UploadObserver
+import com.banglalink.toffee.ui.useractivities.UserActivitiesMainFragment
 import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.ui.widget.showSubscriptionDialog
@@ -48,6 +54,7 @@ import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.exoplayer2.util.Util
 import kotlinx.android.synthetic.main.layout_appbar.view.*
+import net.gotev.uploadservice.observer.request.GlobalRequestObserver
 import java.util.*
 import javax.annotation.Nonnull
 
@@ -93,12 +100,38 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main_menu)
         setSupportActionBar(binding.tbar.toolbar)
 
+        val pagerAdapter = HomeTabPagerAdapter(this)
+        binding.homeTabPager.adapter = pagerAdapter
+        binding.homeTabPager.isUserInputEnabled = false
+        binding.tabNavigator.setOnNavigationItemSelectedListener {
+            when(it.itemId) {
+                R.id.menu_feed-> {
+                    binding.homeTabPager.currentItem = 0
+                    true
+                }
+                R.id.menu_tv-> {
+                    binding.homeTabPager.currentItem = 1
+                    true
+                }
+                R.id.menu_activities-> {
+                    binding.homeTabPager.currentItem = 2
+                    true
+                }
+                R.id.menu_channel-> {
+                    binding.homeTabPager.currentItem = 3
+                    true
+                }
+                else -> true
+            }
+        }
+
         initializeDraggableView()
         initDrawer()
         initLandingPageFragmentAndListenBackStack()
         showRedeemMessageIfPossible()
 
         handleSharedUrl(intent)
+//        UploadObserver(this, this).start()
 
         observe(viewModel.getCategory()) {
             when (it) {
@@ -111,11 +144,49 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             }
         }
 
+        binding.uploadButton.setOnClickListener {
+            val frag = supportFragmentManager.findFragmentByTag(UploadMethodFragment::class.java.name)
+            if(frag != null && frag.isVisible) {
+                supportFragmentManager.popBackStack()
+                return@setOnClickListener
+            }
+
+            supportFragmentManager.beginTransaction().add(R.id.content_viewer, UploadMethodFragment.newInstance(), UploadMethodFragment::class.java.name)
+                .addToBackStack(UploadMethodFragment::class.java.name).commit()
+
+//            onUploadStartedWithId("Hello", "World")
+
+//            val uploadFragment = UploadMethodFragment.newInstance()
+//            uploadFragment.show(supportFragmentManager, UploadMethodFragment::class.java.simpleName)
+        }
+
         observe(viewModel.fragmentDetailsMutableLiveData) {
             onDetailsFragmentLoad(it)
         }
         observe(viewModel.viewAllChannelLiveData) {
-            drawerHelper.onMenuClick(NavigationMenu(ID_CHANNEL, "All Videos", 0, listOf(), false))
+//            drawerHelper.onMenuClick(NavigationMenu(ID_CHANNEL, "All Videos", 0, listOf(), false))
+            binding.tabNavigator.selectedItemId = R.id.menu_tv
+//            binding.homeTabPager.currentItem = 1
+        }
+
+        observe(viewModel.viewAllCategories) {
+            val currentFragment = supportFragmentManager.findFragmentById(R.id.content_viewer)
+            if (currentFragment !is AllCategoriesFragment) {
+                loadFragmentById( R.id.content_viewer, AllCategoriesFragment()
+                , AllCategoriesFragment::class.java.getName())
+            }
+            binding.drawerLayout.closeDrawers()
+            minimizePlayer()
+        }
+
+        observe(viewModel.openCategoryLiveData) {
+            val currentFragment = supportFragmentManager.findFragmentById(R.id.content_viewer)
+            if (currentFragment !is CategoryDetailsFragment) {
+                loadFragmentById( R.id.content_viewer, CategoryDetailsFragment.newInstance(it)
+                    , CategoryDetailsFragment::class.java.getName())
+            }
+            binding.drawerLayout.closeDrawers()
+            minimizePlayer()
         }
 
         observe(viewModel.viewAllVideoLiveData) {
@@ -134,6 +205,16 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         }
 
         lifecycle.addObserver(HeartBeatManager)
+    }
+
+    fun onUploadStartedWithId(uploadUri: String, uploadId: String) {
+        val frag = supportFragmentManager.findFragmentByTag(UploadMethodFragment::class.java.name)
+        if(frag != null && frag.isVisible) {
+            supportFragmentManager.popBackStack()
+        }
+
+        supportFragmentManager.beginTransaction().add(R.id.content_viewer, EditUploadInfoFragment.newInstance(uploadUri, uploadId), EditUploadInfoFragment::class.java.name)
+            .addToBackStack(EditUploadInfoFragment::class.java.name).commit()
     }
 
     override fun onResume() {
@@ -332,8 +413,12 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     }
 
     private fun initLandingPageFragmentAndListenBackStack(){
-        supportFragmentManager.beginTransaction().replace(R.id.content_viewer, LandingPageFragment())
-            .addToBackStack(LandingPageFragment::class.java.name).commit()
+//        supportFragmentManager.beginTransaction().replace(R.id.content_viewer, LandingPageFragment())
+//            .addToBackStack(LandingPageFragment::class.java.name).commit()
+
+//        supportFragmentManager.beginTransaction().replace(R.id.content_viewer, UserActivitiesMainFragment())
+//            .addToBackStack(UserActivitiesMainFragment::class.java.name).commit()
+
         supportFragmentManager.addOnBackStackChangedListener(this)
     }
 
