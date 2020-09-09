@@ -150,7 +150,7 @@ class UploadMethodFragment: Fragment() {
         Log.e("UPLOAD - ", upId)
 
         if(activity is HomeActivity) {
-            //(activity as HomeActivity).onUploadStartedWithId(uri, upId)
+            (activity as HomeActivity).onUploadStartedWithId(uri, upId)
         }
     }
 }
