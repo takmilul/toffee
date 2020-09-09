@@ -28,8 +28,8 @@ object RetrofitApiClient {
 
         retrofit = Retrofit.Builder()
             .client(client)
-            .baseUrl("https://mapi.toffeelive.com/")
-//            .baseUrl("https://staging.toffee-cms.com/")
+//            .baseUrl("https://mapi.toffeelive.com/")
+            .baseUrl("https://staging.toffee-cms.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
