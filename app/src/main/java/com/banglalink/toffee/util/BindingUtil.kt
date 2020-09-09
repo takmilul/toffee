@@ -96,17 +96,39 @@ fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
     }
 }
 
+@BindingAdapter("loadUserChannelLogo")
+fun bindUserChannelLogo(view: ImageView, channelInfo: ChannelSubscriptionInfo) {
+    if (channelInfo.channelLogo.isBlank()) {
+        view.setImageResource(R.drawable.ic_portrait)
+    } else {
+        view.load(channelInfo.channelLogo) {
+            fallback(R.drawable.ic_portrait)
+            placeholder(R.drawable.ic_portrait)
+            error(R.drawable.ic_portrait)
+            memoryCachePolicy(CachePolicy.DISABLED)
+            diskCachePolicy(CachePolicy.ENABLED)
+            crossfade(true)
+            crossfade(crossFadeDurationInMills)
+//        size(Utils.dpToPx(imageHeight), Utils.dpToPx(imageHeight))
+        }
+    }
+}
+
 @BindingAdapter("loadChannelLogo")
 fun bindChannelLogo(view: ImageView, channelInfo: ChannelInfo) {
-    view.load(channelInfo.channel_logo) {
-        fallback(R.drawable.ic_portrait)
-        placeholder(R.drawable.ic_portrait)
-        error(R.drawable.ic_portrait)
-        memoryCachePolicy(CachePolicy.DISABLED)
-        diskCachePolicy(CachePolicy.ENABLED)
-        crossfade(true)
-        crossfade(crossFadeDurationInMills)
-        size(Utils.dpToPx(32), Utils.dpToPx(32))
+    if (channelInfo.channel_logo.isNullOrBlank()) {
+        view.setImageResource(R.drawable.ic_portrait)
+    } else {
+        view.load(channelInfo.channel_logo) {
+            fallback(R.drawable.ic_portrait)
+            placeholder(R.drawable.ic_portrait)
+            error(R.drawable.ic_portrait)
+            memoryCachePolicy(CachePolicy.DISABLED)
+            diskCachePolicy(CachePolicy.ENABLED)
+            crossfade(true)
+            crossfade(crossFadeDurationInMills)
+//        size(Utils.dpToPx(imageHeight), Utils.dpToPx(imageHeight))
+        }
     }
 }
 

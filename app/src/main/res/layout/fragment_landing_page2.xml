@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.banglalink.toffee.ui.widget.NestedCoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -7,349 +8,73 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent">
-        <LinearLayout
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+        >
+<!--        android:background="@android:color/transparent"-->
+<!--        <androidx.core.widget.NestedScrollView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:layout_scrollFlags="scroll|exitUntilCollapsed"-->
+<!--            app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
+<!--            >-->
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+    <LinearLayout
+        app:layout_scrollFlags="scroll|exitUntilCollapsed"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+                        <androidx.fragment.app.FragmentContainerView
+                            android:id="@+id/featuredFragment"
+                            android:name="com.banglalink.toffee.ui.landing.FeaturedFragment"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
 
-                <FrameLayout
-                    android:background="@drawable/bottom_round_white_bg"
-                    android:layout_width="match_parent"
-                    android:layout_height="332dp"/>
+                        <androidx.fragment.app.FragmentContainerView
+                            android:id="@+id/popularTvChannelsFragment"
+                            android:name="com.banglalink.toffee.ui.landing.PopularTVChannelsFragment"
+                            android:layout_marginTop="16dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:orientation="vertical">
+                        <androidx.fragment.app.FragmentContainerView
+                            android:id="@+id/mostPopularFragment"
+                            android:name="com.banglalink.toffee.ui.landing.MostPopularFragment"
+                            android:layout_marginTop="8dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
 
-                    <com.daimajia.slider.library.SliderLayout
-                        android:id="@+id/slider"
-                        android:layout_width="match_parent"
-                        app:indicator_visibility="visible"
-                        app:selected_color="#FF0083"
-                        android:layout_height="@dimen/slider_height"/>
+                        <androidx.fragment.app.FragmentContainerView
+                            android:id="@+id/categoriesFragment"
+                            android:name="com.banglalink.toffee.ui.landing.LandingCategoriesFragment"
+                            android:layout_marginTop="8dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
 
-                    <TextView
-                        android:layout_marginTop="-5dp"
-                        android:layout_marginStart="10dp"
-                        style="@style/CategoryTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/featured"/>
+                        <androidx.fragment.app.FragmentContainerView
+                            android:id="@+id/trendingNowFragment"
+                            android:name="com.banglalink.toffee.ui.landing.TrendingNowFragment"
+                            android:layout_marginTop="8dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
 
-                    <TextView
-                        android:id="@+id/featureDescription"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="10dp"
-                        android:textColor="#6781A1"
-                        android:maxLines="2"
-                        android:fontFamily="sans-serif-medium"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:orientation="horizontal"
-                        >
-
-                        <TextView
-                            android:layout_marginStart="10dp"
-                            android:id="@+id/channel_tv"
-                            style="@style/CategoryTextView"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_weight="1"
-                            android:text="@string/channel"/>
-
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:id="@+id/channel_view_all"
-                            android:orientation="horizontal">
-                            <TextView
-                                style="@style/ViewAllTextView"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical|right"
-                                android:text="@string/view_all"
-                                android:textColor="@color/view_all_text_color"/>
-
-                            <ImageView
-                                android:layout_width="14dp"
-                                android:layout_height="14dp"
-                                android:layout_marginRight="20dp"
-                                android:layout_gravity="center"
-                                android:tint="@color/view_all_text_color"
-                                app:srcCompat="@drawable/ic_right_arrow_accent"/>
-
-                        </LinearLayout>
-
-
-                    </LinearLayout>
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/channel_list"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clipToPadding="false"
-                        android:paddingStart="8dp"
-                        android:paddingEnd="8dp"
-                        />
-
-                </LinearLayout>
-
-
-            </FrameLayout>
-
-
-            <LinearLayout
-                android:layout_marginTop="8dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:orientation="horizontal"
-                    >
-
-                    <TextView
-                        android:layout_marginStart="10dp"
-                        android:id="@+id/mostPopularHeader"
-                        style="@style/CategoryTextView"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_weight="1"
-                        android:text="@string/most_popular"/>
-
-
-                    <LinearLayout
-                        android:visibility="gone"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:id="@+id/mostPopularViewAll"
-                        android:orientation="horizontal">
-                        <TextView
-                            style="@style/ViewAllTextView"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical|right"
-                            android:text="@string/view_all"
-                            android:textColor="@color/view_all_text_color"/>
-
-                        <ImageView
-                            android:layout_width="14dp"
-                            android:layout_height="14dp"
-                            android:layout_marginRight="20dp"
-                            android:layout_gravity="center"
-                            android:tint="@color/view_all_text_color"
-                            app:srcCompat="@drawable/ic_right_arrow_accent"/>
-
-                    </LinearLayout>
-
-
-                </LinearLayout>
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <FrameLayout
-                        android:background="@drawable/top_bottom_round_white_bg"
-                        android:layout_width="match_parent"
-                        android:layout_marginTop="50dp"
-                        android:layout_height="240dp"/>
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/mostPopularList"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clipToPadding="false"
-                        android:paddingTop="8dp"
-                        android:paddingBottom="8dp"
-                        android:paddingStart="8dp"
-                        android:paddingEnd="8dp"
-                        />
-
-                </FrameLayout>
-
-
-            </LinearLayout>
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <FrameLayout
-                    android:background="@drawable/top_bottom_round_white_bg"
-                    android:layout_width="match_parent"
-                    android:layout_marginTop="115dp"
-                    android:layout_height="536dp"/>
-
-                <LinearLayout
-                    android:layout_marginTop="8dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:orientation="horizontal"
-                        >
-
-                        <TextView
-                            android:layout_marginStart="10dp"
-                            android:id="@+id/categoriesHeader"
-                            style="@style/CategoryTextView"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_weight="1"
-                            android:text="@string/categories"/>
-
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:id="@+id/categoriesViewAll"
-                            android:orientation="horizontal">
-                            <TextView
-                                style="@style/ViewAllTextView"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical|right"
-                                android:text="@string/view_all"
-                                android:textColor="@color/view_all_text_color"/>
-
-                            <ImageView
-                                android:layout_width="14dp"
-                                android:layout_height="14dp"
-                                android:layout_marginRight="20dp"
-                                android:layout_gravity="center"
-                                android:tint="@color/view_all_text_color"
-                                app:srcCompat="@drawable/ic_right_arrow_accent"/>
-
-                        </LinearLayout>
-
-
-                    </LinearLayout>
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/categoriesList"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clipToPadding="false"
-                        android:paddingTop="8dp"
-                        android:paddingBottom="8dp"
-                        android:paddingStart="8dp"
-                        android:paddingEnd="8dp"
-                        />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:orientation="horizontal"
-                        >
-
-                        <TextView
-                            android:layout_marginStart="10dp"
-                            android:id="@+id/trendingNowHeader"
-                            style="@style/CategoryTextView"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_weight="1"
-                            android:text="@string/trending_now"/>
-
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:id="@+id/trendingNowViewAll"
-                            android:orientation="horizontal">
-                            <TextView
-                                android:visibility="invisible"
-                                style="@style/ViewAllTextView"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical|right"
-                                android:text="@string/view_all"
-                                android:textColor="@color/view_all_text_color"/>
-
-                            <ImageView
-                                android:visibility="invisible"
-                                android:layout_width="14dp"
-                                android:layout_height="14dp"
-                                android:layout_marginRight="20dp"
-                                android:layout_gravity="center"
-                                android:tint="@color/view_all_text_color"
-                                app:srcCompat="@drawable/ic_right_arrow_accent"/>
-
-                        </LinearLayout>
-
-
-                    </LinearLayout>
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/trendingNowList"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clipToPadding="false"
-                        android:paddingTop="8dp"
-                        android:paddingBottom="8dp"
-                        />
-
-                </LinearLayout>
-
-            </FrameLayout>
-
-
-
+                        <androidx.fragment.app.FragmentContainerView
+                            android:id="@+id/userChannelList"
+                            android:name="com.banglalink.toffee.ui.landing.LandingUserChannelsFragment"
+                            android:layout_marginTop="8dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
 
         </LinearLayout>
 
+<!--            </LinearLayout>-->
+<!--        </androidx.core.widget.NestedScrollView>-->
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginTop="10dp"
-        android:id="@+id/listview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="8dp"
-        android:clipToPadding="false"
-        android:cacheColorHint="@android:color/transparent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        android:padding="10dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_gravity="center|bottom"
-        android:visibility="gone"
-        android:layout_alignParentBottom="true" />
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/latestVideosFragment"
+            android:name="com.banglalink.toffee.ui.landing.LatestVideosFragment"
+            android:layout_marginTop="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            />
+</com.banglalink.toffee.ui.widget.NestedCoordinatorLayout>

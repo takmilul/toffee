@@ -70,7 +70,7 @@ dependencies {
     implementation "android.arch.lifecycle:extensions:2.1.0"
 
     implementation 'androidx.leanback:leanback:1.0.0'
-    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'com.google.android.material:material:1.2.1'
     //Switch Lib
     implementation 'com.github.zcweng:switch-button:0.0.3@aar'
 

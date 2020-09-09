@@ -1,15 +1,16 @@
 package com.banglalink.toffee.ui.home
 
 import com.banglalink.toffee.R
-import com.banglalink.toffee.databinding.ListItemPopularVideosBinding
 import com.banglalink.toffee.model.ChannelInfo
 import com.foxrentacar.foxpress.ui.common.MyBaseAdapter
 import com.foxrentacar.foxpress.ui.common.MyViewHolder
 
-class MostPopularVideoListAdapter(private val optionCallBack: OptionCallBack, channelCallback:(ChannelInfo)->Unit={}): MyBaseAdapter<ChannelInfo>(channelCallback) {
+class FeaturedListAdapter(private val optionCallBack: OptionCallBack,
+                          channelCallback:(ChannelInfo)->Unit={})
+    :MyBaseAdapter<ChannelInfo>(channelCallback) {
 
     override fun getLayoutIdForPosition(position: Int): Int {
-        return R.layout.list_item_most_popular_videos
+        return R.layout.landing_featured_item_layout
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
@@ -18,12 +19,5 @@ class MostPopularVideoListAdapter(private val optionCallBack: OptionCallBack, ch
 //            holder.itemView.setOnClickListener(null)
 //        }
         holder.bindCallBack(optionCallBack)
-    }
-
-    override fun onViewRecycled(holder: MyViewHolder) {
-        if(holder.binding is ListItemPopularVideosBinding){
-            holder.binding.poster.setImageDrawable(null)
-        }
-        super.onViewRecycled(holder)
     }
 }

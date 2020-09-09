@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_feed"
+        android:title="@string/tab_feed_label"
+        android:icon="@drawable/ic_feed" />
+    <item
+        android:id="@+id/menu_tv" android:title="@string/tab_tv_label"
+        android:icon="@drawable/ic_tv" />
+    <item android:title="@string/tab_upload_label" android:enabled="false" />
+    <item
+        android:id="@+id/menu_activities" android:title="@string/tab_activities_label"
+        android:icon="@drawable/ic_activities" />
+    <item
+        android:id="@+id/menu_channel" android:title="@string/tab_mychannel_label"
+        android:icon="@drawable/ic_mychannel" />
+</menu>
