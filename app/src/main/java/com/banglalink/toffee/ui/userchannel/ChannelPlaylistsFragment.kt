@@ -35,6 +35,7 @@ class ChannelPlaylistsFragment : SingleListFragmentV2<ChannelPlaylist>(), Single
     
     override fun onItemClicked(item: ChannelPlaylist) {
         super.onItemClicked(item)
+        //parentFragment.parentFragmentManager.beginTransaction().replace(R.l)
     }
     
     override fun getEmptyViewInfo(): Pair<Int, String?> {
