@@ -18,14 +18,13 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.ChannelSubscriptionInfo
 import com.banglalink.toffee.model.Package
 import com.banglalink.toffee.ui.widget.MultiTextButton
-import com.suke.widget.SwitchButton
 import de.hdodenhof.circleimageview.CircleImageView
 
 const val crossFadeDurationInMills = 500
 
 @BindingAdapter("imageFromUrl")
 fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
-    if (!imageUrl.isNullOrEmpty()) {
+    if (! imageUrl.isNullOrEmpty()) {
         view.load(imageUrl) {
             memoryCachePolicy(CachePolicy.DISABLED)
             diskCachePolicy(CachePolicy.ENABLED)
@@ -37,7 +36,7 @@ fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
 
 @BindingAdapter("imageFromUrlRounded")
 fun bindRoundImage(view: ImageView, imageUrl: String?) {
-    if (!imageUrl.isNullOrEmpty()) {
+    if (! imageUrl.isNullOrEmpty()) {
         view.load(imageUrl) {
             transformations(CircleCropTransformation())
             crossfade(true)
@@ -48,12 +47,12 @@ fun bindRoundImage(view: ImageView, imageUrl: String?) {
 }
 
 @BindingAdapter("loadCategoryImage")
-fun bindCategoryImage(view: ImageView, category : Category) {
+fun bindCategoryImage(view: ImageView, category: Category) {
     view.setImageResource(category.icon)
 }
 
 @BindingAdapter("loadCategoryName")
-fun bindCategoryName(view: TextView, category : Category) {
+fun bindCategoryName(view: TextView, category: Category) {
     view.text = category.name
 }
 
@@ -63,7 +62,8 @@ fun bindChannel(view: CircleImageView, channelInfo: ChannelInfo) {
         view.load(channelInfo.channel_logo) {
             crossfade(false)
         }
-    } else {
+    }
+    else {
         view.load(channelInfo.landscape_ratio_1280_720) {
             crossfade(true)
             crossfade(crossFadeDurationInMills)
@@ -82,7 +82,8 @@ fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
             memoryCachePolicy(CachePolicy.DISABLED)
             diskCachePolicy(CachePolicy.ENABLED)
         }
-    } else {
+    }
+    else {
         view.load(channelInfo.landscape_ratio_1280_720) {
             fallback(R.drawable.dummy)
             placeholder(R.drawable.dummy)
@@ -100,7 +101,8 @@ fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
 fun bindUserChannelLogo(view: ImageView, channelInfo: ChannelSubscriptionInfo) {
     if (channelInfo.channelLogo.isBlank()) {
         view.setImageResource(R.drawable.ic_portrait)
-    } else {
+    }
+    else {
         view.load(channelInfo.channelLogo) {
             fallback(R.drawable.ic_portrait)
             placeholder(R.drawable.ic_portrait)
@@ -118,7 +120,8 @@ fun bindUserChannelLogo(view: ImageView, channelInfo: ChannelSubscriptionInfo) {
 fun bindChannelLogo(view: ImageView, channelInfo: ChannelInfo) {
     if (channelInfo.channel_logo.isNullOrBlank()) {
         view.setImageResource(R.drawable.ic_portrait)
-    } else {
+    }
+    else {
         view.load(channelInfo.channel_logo) {
             fallback(R.drawable.ic_portrait)
             placeholder(R.drawable.ic_portrait)
@@ -139,8 +142,10 @@ fun bindDuration(view: TextView, channelInfo: ChannelInfo) {
 
 @BindingAdapter("bindSubscriptionStatus")
 fun bindSubscriptionStatus(view: MultiTextButton, channelSubscriptionInfo: ChannelSubscriptionInfo) {
-    view.setSubscriptionInfo(channelSubscriptionInfo.subscriptionStatus,
-        channelSubscriptionInfo.subscriptionAmount)
+    view.setSubscriptionInfo(
+        channelSubscriptionInfo.subscriptionStatus,
+        channelSubscriptionInfo.subscriptionAmount
+    )
 }
 
 @BindingAdapter("bindViewCount")
@@ -149,43 +154,47 @@ fun bindViewCount(view: TextView, channelInfo: ChannelInfo) {
 }
 
 @BindingAdapter("packageExpiryText")
-fun bindPackageExpiryText(view:TextView,mPackage: Package){
-    if(TextUtils.isEmpty(mPackage.expireDate)){
+fun bindPackageExpiryText(view: TextView, mPackage: Package) {
+    if (TextUtils.isEmpty(mPackage.expireDate)) {
         view.visibility = View.INVISIBLE
-    }else{
+    }
+    else {
         view.visibility = View.VISIBLE
     }
-
+    
     val days = Utils.getDateDiffInDayOrHour(Utils.getDate(mPackage.expireDate))
     view.text = "$days left"
 }
 
 @BindingAdapter("autoRenewText")
-fun bindAutoRenewText(autoRenewTv:TextView,item: Package){
+fun bindAutoRenewText(autoRenewTv: TextView, item: Package) {
     if (item.isAutoRenewable == 1) {
         val days = Utils.getDateDiffInDayOrHour(Utils.getDate(item.expireDate))
         autoRenewTv.text = "Auto renew in $days"
         autoRenewTv.visibility = View.VISIBLE
-    } else {
+    }
+    else {
         autoRenewTv.visibility = View.INVISIBLE
     }
 }
 
 @BindingAdapter("validityText")
-fun bindValidityText(validityTv:TextView,item: Package){
+fun bindValidityText(validityTv: TextView, item: Package) {
     val days = Utils.formatValidityText(Utils.getDate(item.expireDate))
     if (item.isAutoRenewable == 1) {
         validityTv.text = "Auto renew on $days"
-    } else {
+    }
+    else {
         validityTv.text = "Expires on $days"
     }
 }
 
 @BindingAdapter("discountText")
-fun bindDiscountText(discountTv:TextView,item:Package){
+fun bindDiscountText(discountTv: TextView, item: Package) {
     if (item.discount == 0) {
         discountTv.visibility = View.INVISIBLE
-    } else {
+    }
+    else {
         discountTv.visibility = View.VISIBLE
         val discountString = discountTv.context.getString(R.string.discount_foramtted_text, item.discount)
         val str = SpannableStringBuilder(discountString)
@@ -200,20 +209,30 @@ fun bindDiscountText(discountTv:TextView,item:Package){
 }
 
 @BindingAdapter("togglePremiumIcon")
-fun bindPremiumIcon(imageView: ImageView,channelInfo:ChannelInfo){
-    if(!channelInfo.isExpired(Preference.getInstance().getSystemTime())){
+fun bindPremiumIcon(imageView: ImageView, channelInfo: ChannelInfo) {
+    if (! channelInfo.isExpired(Preference.getInstance().getSystemTime())) {
         imageView.visibility = View.INVISIBLE
     }
-    else if(channelInfo.isPurchased||channelInfo.subscription){
+    else if (channelInfo.isPurchased || channelInfo.subscription) {
         imageView.visibility = View.INVISIBLE
     }
-    else{
+    else {
         imageView.visibility = View.VISIBLE
     }
 }
 
 
 @BindingAdapter("loadImageResource")
-fun loadImageFromResource(view: ImageView, image: Int){
+fun loadImageFromResource(view: ImageView, image: Int) {
     view.setImageResource(image)
+}
+
+
+@BindingAdapter("loadCircleImageFromUrl")
+fun bindCircleImageFromUrl(view: CircleImageView, imageUrl: String?) {
+    if (!imageUrl.isNullOrEmpty()) {
+        view.load(imageUrl) {
+            crossfade(false)
+        }
+    }
 }

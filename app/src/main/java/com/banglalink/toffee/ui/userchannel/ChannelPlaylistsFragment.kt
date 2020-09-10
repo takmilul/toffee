@@ -31,10 +31,10 @@ class ChannelPlaylistsFragment : SingleListFragmentV2<ChannelPlaylist>(), Single
     
     override fun onItemClicked(item: ChannelPlaylist) {
         super.onItemClicked(item)
-        /*parentFragment?.parentFragmentManager?.beginTransaction()
-            ?.replace(R.id.content_viewer, ChannelPlaylistVideosFragment.newInstance(false))
-            ?.addToBackStack(ChannelPlaylistVideosFragment::class.java.name)
-            ?.commit()*/
+        /*childFragmentManager.beginTransaction()
+            .replace(R.id.content_viewer, ChannelPlaylistVideosFragment.newInstance(false))
+            .addToBackStack(ChannelPlaylistVideosFragment::class.java.name)
+            .commit()*/
     }
     
     override fun getEmptyViewInfo(): Pair<Int, String?> {

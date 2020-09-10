@@ -9,25 +9,26 @@ import android.view.animation.OvershootInterpolator
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentCreatorChannelBinding
-import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.layout_empty_channel.*
 
 class CreatorChannelFragment : Fragment(), OnClickListener {
     
     private lateinit var binding: FragmentCreatorChannelBinding
-    private lateinit var scrollListener: EndlessRecyclerViewScrollListener
     private lateinit var viewPagerAdapter: ViewPagerAdapter
     private var fragmentList: ArrayList<Fragment> = arrayListOf()
     private var fragmentTitleList: ArrayList<String> = arrayListOf()
-    /*private val viewModel by unsafeLazy {
-        ViewModelProviders.of(this).get(RedeemPointsViewModel::class.java)
-    }*/
+    private val viewModel by unsafeLazy {
+        ViewModelProviders.of(this).get(CreatorChannelViewModel::class.java)
+    }
     
     companion object {
-        
         fun createInstance(): CreatorChannelFragment {
             return CreatorChannelFragment()
         }
@@ -36,11 +37,15 @@ class CreatorChannelFragment : Fragment(), OnClickListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_creator_channel, container, false)
         binding.lifecycleOwner = this
+        binding.viewModel = viewModel
         return binding.root
     }
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        
+        observeData()
+        viewModel.loadData()
         
         binding.viewPager.offscreenPageLimit = 1
         binding.creatorChannelView.addBioButton.setOnClickListener(this)
@@ -70,16 +75,30 @@ class CreatorChannelFragment : Fragment(), OnClickListener {
         })
     }
     
+    private fun observeData() {
+        observe(viewModel.liveData) {
+            when(it){
+                is Resource.Success -> {
+                    viewModel.channelInfo.postValue(it.data)
+                }
+                is Resource.Failure -> {
+                    
+                }
+            }
+        }
+    }
+    
     override fun onClick(v: View?) {
         when (v) {
             addBioButton ->
                 fragmentManager?.beginTransaction()
-                    ?.replace(R.id.content_viewer, CreatorChannelEditFragment.newInstance())
+                    ?.replace(R.id.content_viewer, CreatorChannelEditFragment.newInstance(viewModel.channelInfo.value))
                     ?.addToBackStack(CreatorChannelEditFragment::class.java.name)
                     ?.commit()
+                
             editButton ->
                 fragmentManager?.beginTransaction()
-                    ?.replace(R.id.content_viewer, CreatorChannelEditFragment.newInstance())
+                    ?.replace(R.id.content_viewer, CreatorChannelEditFragment.newInstance(viewModel.channelInfo.value))
                     ?.addToBackStack(CreatorChannelEditFragment::class.java.name)
                     ?.commit()
         }
