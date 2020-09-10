@@ -24,8 +24,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="200dp"
-                imageFromUrl="@{viewModel.userChannel.posterUrl}"
                 android:src="@drawable/hero"
+                imageFromUrl="@{viewModel.userChannel.posterUrl}"
                 android:adjustViewBounds="true"
                 app:layout_constraintDimensionRatio="W,16:9"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -50,9 +50,10 @@
                 android:id="@+id/logoImageView"
                 android:layout_width="104dp"
                 android:layout_height="104dp"
-                android:layout_margin="4dp"
+                android:layout_margin="8dp"
+                android:elevation="2dp"
                 android:src="@drawable/hero"
-                imageFromUrl="@{viewModel.userChannel.posterUrl}"
+                loadCircleImageFromUrl="@{viewModel.userChannel.posterUrl}"
                 app:layout_constraintBottom_toBottomOf="@+id/posterView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -64,7 +65,7 @@
                 android:layout_height="48dp"
                 android:scaleType="fitXY"
                 android:padding="4dp"
-                android:elevation="2dp"
+                android:elevation="4dp"
                 android:background="?selectableItemBackgroundBorderless"
                 app:layout_constraintStart_toStartOf="@id/logoImageView"
                 app:layout_constraintEnd_toEndOf="@id/logoImageView"
@@ -170,7 +171,7 @@
                     android:id="@+id/categorySpinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:entries="@{viewModel.userChannel.categoryList}" />
+                    android:entries="@{viewModel.userChannel.categoryList}"/>
         
             </RelativeLayout>
         
@@ -190,7 +191,7 @@
                     android:id="@+id/subscriptionPriceSpinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:entries="@{viewModel.userChannel.subscriptionPriceList}" />
+                    android:entries="@{viewModel.userChannel.subscriptionPriceList}"/>
         
             </RelativeLayout>
         
@@ -200,11 +201,9 @@
                 android:layout_height="wrap_content"
                 android:text="Cancel"
                 android:layout_marginHorizontal="8dp"
-                android:background="@drawable/button_bg_round_purple"
-                android:textColor="@color/purple"
-                android:textSize="18sp"
+                style="@style/ButtonStyleRingPurple"
+                android:textSize="16sp"
                 android:layout_marginVertical="32dp"
-                android:paddingHorizontal="36dp"
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/categorySpinnerWrap"
@@ -216,11 +215,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Save Changes"
+                android:textSize="16sp"
                 android:layout_marginHorizontal="8dp"
-                android:background="@drawable/button_selector"
-                android:textColor="@color/screen_bg_white"
-                android:textSize="18sp"
-                android:paddingHorizontal="28dp"
+                style="@style/ButtonStyleSolidPink"
                 app:layout_constraintStart_toEndOf="@id/cancelButton"
                 app:layout_constraintTop_toTopOf="@id/cancelButton"
                 app:layout_constraintEnd_toEndOf="parent"
