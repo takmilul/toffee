@@ -1,5 +1,13 @@
 package com.banglalink.toffee.util
 
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.Rect
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.LayerDrawable
+import android.graphics.drawable.shapes.OvalShape
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.TextUtils
@@ -7,14 +15,15 @@ import android.text.style.StrikethroughSpan
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.BindingAdapter
 import coil.api.load
 import coil.request.CachePolicy
 import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.NavCategory
 import com.banglalink.toffee.model.Package
 import com.banglalink.toffee.ui.widget.MultiTextButton
 import de.hdodenhof.circleimageview.CircleImageView
@@ -46,14 +55,15 @@ fun bindRoundImage(view: ImageView, imageUrl: String?) {
 }
 
 @BindingAdapter("loadCategoryImage")
-fun bindCategoryImage(view: ImageView, category: Category) {
+fun bindCategoryImage(view: ImageView, category: NavCategory) {
+    val gd = GradientDrawable().apply {
+        shape = GradientDrawable.OVAL
+        color = ColorStateList.valueOf(Color.parseColor(category.bgColor))
+    }
+    view.background = gd
     view.setImageResource(category.icon)
 }
 
-@BindingAdapter("loadCategoryName")
-fun bindCategoryName(view: TextView, category: Category) {
-    view.text = category.name
-}
 
 @BindingAdapter("loadChannelImage")
 fun bindChannel(view: CircleImageView, channelInfo: ChannelInfo) {
@@ -139,8 +149,10 @@ fun bindDuration(view: TextView, channelInfo: ChannelInfo) {
 
 @BindingAdapter("bindSubscriptionStatus")
 fun bindSubscriptionStatus(view: MultiTextButton, channelInfo: ChannelInfo) {
-    view.setSubscriptionInfo(channelInfo.subscription,
-        null)
+    view.setSubscriptionInfo(
+        channelInfo.subscription,
+        null
+    )
 }
 
 @BindingAdapter("bindViewCount")
@@ -149,8 +161,8 @@ fun bindViewCount(view: TextView, channelInfo: ChannelInfo) {
 }
 
 @BindingAdapter("packageExpiryText")
-fun bindPackageExpiryText(view: TextView, mPackage: Package) {
-    if (TextUtils.isEmpty(mPackage.expireDate)) {
+fun bindPackageExpiryText(view:TextView,mPackage:Package) {
+    if(TextUtils.isEmpty(mPackage.expireDate)){
         view.visibility = View.INVISIBLE
     }
     else {
@@ -162,7 +174,7 @@ fun bindPackageExpiryText(view: TextView, mPackage: Package) {
 }
 
 @BindingAdapter("autoRenewText")
-fun bindAutoRenewText(autoRenewTv: TextView, item: Package) {
+fun bindAutoRenewText(autoRenewTv:TextView,item: Package){
     if (item.isAutoRenewable == 1) {
         val days = Utils.getDateDiffInDayOrHour(Utils.getDate(item.expireDate))
         autoRenewTv.text = "Auto renew in $days"
@@ -174,7 +186,7 @@ fun bindAutoRenewText(autoRenewTv: TextView, item: Package) {
 }
 
 @BindingAdapter("validityText")
-fun bindValidityText(validityTv: TextView, item: Package) {
+fun bindValidityText(validityTv:TextView,item: Package){
     val days = Utils.formatValidityText(Utils.getDate(item.expireDate))
     if (item.isAutoRenewable == 1) {
         validityTv.text = "Auto renew on $days"
@@ -185,13 +197,16 @@ fun bindValidityText(validityTv: TextView, item: Package) {
 }
 
 @BindingAdapter("discountText")
-fun bindDiscountText(discountTv: TextView, item: Package) {
+fun bindDiscountText(discountTv:TextView,item:Package){
     if (item.discount == 0) {
         discountTv.visibility = View.INVISIBLE
     }
     else {
         discountTv.visibility = View.VISIBLE
-        val discountString = discountTv.context.getString(R.string.discount_foramtted_text, item.discount)
+        val discountString = discountTv.context.getString(
+            R.string.discount_foramtted_text,
+            item.discount
+        )
         val str = SpannableStringBuilder(discountString)
         str.setSpan(
             StrikethroughSpan(),
@@ -204,8 +219,8 @@ fun bindDiscountText(discountTv: TextView, item: Package) {
 }
 
 @BindingAdapter("togglePremiumIcon")
-fun bindPremiumIcon(imageView: ImageView, channelInfo: ChannelInfo) {
-    if (! channelInfo.isExpired(Preference.getInstance().getSystemTime())) {
+fun bindPremiumIcon(imageView:ImageView,channelInfo:ChannelInfo) {
+    if(!channelInfo.isExpired(Preference.getInstance().getSystemTime())){
         imageView.visibility = View.INVISIBLE
     }
     else if (channelInfo.isPurchased || channelInfo.subscription) {
