@@ -88,15 +88,15 @@
         app:layout_constraintStart_toStartOf="@+id/categoryListPager" />
 
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <ImageView
         android:id="@+id/categoryIcon"
         android:layout_width="64dp"
         android:layout_height="64dp"
+        android:padding="20dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/categoryListPager"
-        app:srcCompat="@drawable/movie_cat_icon" />
+        app:layout_constraintTop_toBottomOf="@+id/categoryListPager" />
 
     <TextView
         android:id="@+id/categoryName"
@@ -135,6 +135,8 @@
             android:layout_height="match_parent"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
+            app:selectionRequired="true"
+            app:singleLine="true"
             app:singleSelection="true" />
     </HorizontalScrollView>
     <Button

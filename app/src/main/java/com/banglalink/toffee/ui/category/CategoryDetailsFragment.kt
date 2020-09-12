@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,6 +15,7 @@ import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.NavCategory
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
@@ -21,23 +23,19 @@ import com.banglalink.toffee.util.unsafeLazy
 import com.daimajia.slider.library.SliderTypes.BaseSliderView
 import com.daimajia.slider.library.SliderTypes.DefaultSliderView
 
-class CategoryDetailsFragment : HomeBaseFragment() {
-    lateinit var category: Category
+class CategoryDetailsFragment : Fragment(R.layout.fragment_category_details) {
+    lateinit var category: NavCategory
 
     companion object {
         const val ARG_CATEGORY_ITEM = "ARG_CATEGORY_ITEM"
 
-        fun newInstance(category: Category): CategoryDetailsFragment {
+        fun newInstance(category: NavCategory): CategoryDetailsFragment {
             return CategoryDetailsFragment().apply {
                 arguments = Bundle().also {
                     it.putParcelable(ARG_CATEGORY_ITEM, category)
                 }
             }
         }
-    }
-
-    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
-
     }
 
     val viewModel by unsafeLazy {
@@ -49,25 +47,8 @@ class CategoryDetailsFragment : HomeBaseFragment() {
         category = requireArguments().getParcelable(ARG_CATEGORY_ITEM)!!
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_category_details, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity?.title = category.name
-    }
-
-    fun onBackPressed(): Boolean {
-        return false
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-
+        activity?.title = category.categoryName
     }
 }

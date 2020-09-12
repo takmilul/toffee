@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentCreatorChannelBinding
 import com.banglalink.toffee.extension.observe
@@ -97,10 +98,11 @@ class CreatorChannelFragment : Fragment(), OnClickListener {
                     ?.commit()
                 
             editButton ->
-                fragmentManager?.beginTransaction()
-                    ?.replace(R.id.content_viewer, CreatorChannelEditFragment.newInstance(viewModel.channelInfo.value))
-                    ?.addToBackStack(CreatorChannelEditFragment::class.java.name)
-                    ?.commit()
+//                fragmentManager?.beginTransaction()
+//                    ?.replace(R.id.content_viewer, CreatorChannelEditFragment.newInstance(viewModel.channelInfo.value))
+//                    ?.addToBackStack(CreatorChannelEditFragment::class.java.name)
+//                    ?.commit()
+            findNavController().navigate(R.id.action_menu_channel_to_creatorChannelEditFragment)
         }
     }
 }

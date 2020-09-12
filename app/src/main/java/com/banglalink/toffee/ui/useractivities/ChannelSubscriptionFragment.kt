@@ -47,7 +47,7 @@ class ChannelSubscriptionFragment
     }
 
     override fun onItemClicked(item: ChannelInfo) {
-        homeViewModel.userChannelMutableLiveData.postValue(item)
+//        homeViewModel.userChannelMutableLiveData.postValue(item)
     }
 
     override fun onSubscribeClicked(item: ChannelInfo) {

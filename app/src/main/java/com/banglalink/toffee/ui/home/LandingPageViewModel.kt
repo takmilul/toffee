@@ -11,9 +11,7 @@ import com.banglalink.toffee.extension.setSuccess
 import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.common.BaseViewModel
-import com.banglalink.toffee.usecase.GetChannelSubscriptions
-import com.banglalink.toffee.usecase.GetContents
-import com.banglalink.toffee.usecase.GetFeatureContents
+import com.banglalink.toffee.usecase.*
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.getError
 import com.banglalink.toffee.util.unsafeLazy
@@ -39,14 +37,18 @@ class LandingPageViewModel(application: Application):BaseViewModel(application) 
     private val userChannelListMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
     val userChannelList = userChannelListMutableLiveData.toLiveData()
 
-    //LiveData for Categories List
-    private val categoriesMutableLiveData = MutableLiveData<List<Category>>()
-    val categoriesLiveData = categoriesMutableLiveData.toLiveData()
+//    //LiveData for Categories List
+//    private val categoriesMutableLiveData = MutableLiveData<List<Category>>()
+//    val categoriesLiveData = categoriesMutableLiveData.toLiveData()
 
     private val trendingNowMutableLiveData = MutableLiveData<List<ChannelInfo>>()
     val trendingNowLiveData = trendingNowMutableLiveData.toLiveData()
 
-    val categoryInfoLiveData = MutableLiveData<Category>()
+    val categoryInfoLiveData = MutableLiveData<Resource<List<NavCategory>>>()
+
+    private val getCategory by lazy {
+        GetCategoryNew(RetrofitApiClient.toffeeApi)
+    }
 
     private val getChannels by unsafeLazy {
         GetContents(RetrofitApiClient.toffeeApi)
@@ -120,34 +122,13 @@ class LandingPageViewModel(application: Application):BaseViewModel(application) 
         }
     }
 
-    fun loadCategoryInfo() {
-        viewModelScope.launch {
-            categoryInfoLiveData.value = Category("Movies", R.drawable.movie_cat_icon, "#FF6C3E", 786, listOf("All", "Action", "Romantic", "Sci-Fi", "Fantasy", "Adventure"))
-        }
-    }
-
     fun loadCategories() {
         viewModelScope.launch {
-            categoriesMutableLiveData.value = listOf(
-                Category("Movies", R.drawable.movie_cat_icon, "#FF6C3E", 786, listOf("All", "Action", "Romantic", "Sci-Fi", "Fantasy", "Adventure")),
-                Category("Music", R.drawable.music_cat_icon, "#FF53A8", 786, listOf()),
-                Category("Games", R.drawable.games_cat_icon, "#7974FF", 786, listOf()),
-                Category("News", R.drawable.news_cat_icon, "#4CDB4C", 786, listOf()),
-                Category("Podcast", R.drawable.podcasts_cat_icon, "#FBCC32", 786, listOf()),
-                Category("Science", R.drawable.science_cat_icon, "#4AE0FF", 786, listOf()),
-                Category("Fashion", R.drawable.movie_cat_icon, "#B93EFF", 786, listOf()),
-                Category("Food", R.drawable.music_cat_icon, "#FF523E", 786, listOf()),
-                Category("Drama", R.drawable.games_cat_icon, "#58E4A7", 786, listOf()),
-                Category("Movies", R.drawable.movie_cat_icon, "#FF6C3E", 786, listOf()),
-                Category("Music", R.drawable.music_cat_icon, "#FF53A8", 786, listOf()),
-                Category("Games", R.drawable.games_cat_icon, "#7974FF", 786, listOf()),
-                Category("News", R.drawable.news_cat_icon, "#4CDB4C", 786, listOf()),
-                Category("Podcast", R.drawable.podcasts_cat_icon, "#FBCC32", 786, listOf()),
-                Category("Science", R.drawable.science_cat_icon, "#4AE0FF", 786, listOf()),
-                Category("Fashion", R.drawable.movie_cat_icon, "#B93EFF", 786, listOf()),
-                Category("Food", R.drawable.music_cat_icon, "#FF523E", 786, listOf()),
-                Category("Drama", R.drawable.games_cat_icon, "#58E4A7", 786, listOf())
-            )
+            try {
+                categoryInfoLiveData.setSuccess(getCategory.execute())
+            } catch (e: Exception) {
+                categoryInfoLiveData.setError(getError(e))
+            }
         }
     }
 }

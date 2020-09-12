@@ -8,12 +8,11 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.extension.showToast
@@ -28,7 +27,7 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class UploadMethodFragment: Fragment() {
+class UploadMethodFragment: Fragment(R.layout.upload_method_fragment) {
 
     private var videoUri: Uri? = null
 
@@ -40,14 +39,12 @@ class UploadMethodFragment: Fragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? = inflater.inflate(R.layout.upload_method_fragment, container, false)
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        view.setOnClickListener {
+            requireActivity().supportFragmentManager.popBackStack()
+        }
 
         learn_more_button.setOnClickListener {
 
@@ -67,12 +64,15 @@ class UploadMethodFragment: Fragment() {
             try{
                 if(askPermission(Manifest.permission.READ_EXTERNAL_STORAGE).isAccepted) {
                     startActivityForResult(
-                        Intent(Intent.ACTION_PICK,
-                               MediaStore.Video.Media.EXTERNAL_CONTENT_URI),
-                        REQUEST_VIDEO)
+                        Intent(
+                            Intent.ACTION_PICK,
+                            MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+                        ),
+                        REQUEST_VIDEO
+                    )
                 }
             }
-            catch(e: PermissionException) {
+            catch (e: PermissionException) {
                 ToffeeAnalytics.logBreadCrumb("Storage permission denied")
                 requireContext().showToast(getString(R.string.grant_storage_permission))
             }
@@ -106,7 +106,11 @@ class UploadMethodFragment: Fragment() {
                 return
             }
 
-            videoUri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.provider", videoFile)
+            videoUri = FileProvider.getUriForFile(
+                requireContext(),
+                "${requireContext().packageName}.provider",
+                videoFile
+            )
             ToffeeAnalytics.logBreadCrumb("Video uri set")
             videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, videoUri)
             startActivityForResult(videoIntent, REQUEST_VIDEO)
@@ -149,8 +153,12 @@ class UploadMethodFragment: Fragment() {
 
         Log.e("UPLOAD - ", upId)
 
-        if(activity is HomeActivity) {
-            (activity as HomeActivity).onUploadStartedWithId(uri, upId)
-        }
+        activity?.
+            findNavController(R.id.home_nav_host)?.
+            navigate(R.id.action_uploadMethodFragment_to_editUploadInfoFragment,
+            Bundle().apply {
+                putString(EditUploadInfoFragment.ARG_UPLOAD_ID, upId)
+                putString(EditUploadInfoFragment.ARG_UPLOAD_URI, uri)
+            })
     }
 }

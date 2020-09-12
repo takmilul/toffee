@@ -60,6 +60,7 @@ abstract class CommonSingleListFragment : HomeBaseFragment() {
             homeViewModel.fragmentDetailsMutableLiveData.postValue(it)
         }
     }
+
     fun loadChannelList() {
         showProgress()
         loadItems().observe(viewLifecycleOwner, Observer {

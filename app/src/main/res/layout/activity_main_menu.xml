@@ -26,19 +26,32 @@
                     android:clipToPadding="false"
                     android:orientation="vertical">
                     <FrameLayout
+                        android:id="@+id/main_ui_frame"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_above="@+id/home_mini_progress_container"
                         >
-                        <androidx.viewpager2.widget.ViewPager2
-                            android:id="@+id/home_tab_pager"
+                        <androidx.fragment.app.FragmentContainerView
+                            android:id="@+id/home_nav_host"
+                            android:name="androidx.navigation.fragment.NavHostFragment"
+                            app:navGraph="@navigation/home_navigation_graph"
+                            app:defaultNavHost="true"
+                            android:background="@color/screen_bg"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
+                            android:layout_height="match_parent"
+                            />
                         <FrameLayout
                             android:id="@+id/content_viewer"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             />
                     </FrameLayout>
+                    <include
+                        android:id="@+id/home_mini_progress_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        layout="@layout/home_mini_upload_progress" />
                     <com.banglalink.toffee.ui.widget.DraggerLayout
                         xmlns:dragger_layout="http://schemas.android.com/apk/res-auto"
                         android:id="@+id/draggable_view"
@@ -125,17 +138,18 @@
             android:layout_height="match_parent"
             android:layout_gravity="end"
             app:insetForeground="@null"
+            app:menu="@menu/menu_drawer"
             app:headerLayout="@layout/nav_header_main">
 
-            <ExpandableListView
-                android:layout_marginTop="@dimen/nav_header_height"
-                android:id="@+id/nav_menu_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:divider="@null"
-                android:groupIndicator="@null">
+<!--            <ExpandableListView-->
+<!--                android:layout_marginTop="@dimen/nav_header_height"-->
+<!--                android:id="@+id/nav_menu_list"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:divider="@null"-->
+<!--                android:groupIndicator="@null">-->
 
-            </ExpandableListView>
+<!--            </ExpandableListView>-->
 
         </com.google.android.material.navigation.NavigationView>
 

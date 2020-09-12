@@ -43,9 +43,9 @@ class DrawerHelper(val activity: HomeActivity,val binding:ActivityMainMenuBindin
         //After instantiating your ActionBarDrawerToggle
         toggle.isDrawerIndicatorEnabled = false
         toggle.setHomeAsUpIndicator(R.drawable.ic_home)
-        val parentAdapter =
-            ParentLevelAdapter(activity, generateNavMenu(), this, binding.navMenuList)
-        binding.navMenuList.setAdapter(parentAdapter)
+//        val parentAdapter =
+//            ParentLevelAdapter(activity, generateNavMenu(), this, binding.navMenuList)
+//        binding.navMenuList.setAdapter(parentAdapter)
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
@@ -334,26 +334,26 @@ class DrawerHelper(val activity: HomeActivity,val binding:ActivityMainMenuBindin
     }
 
     fun updateAdapter(navCategoryList:List<NavCategory>) {
-        val parentAdapter = ParentLevelAdapter(
-            activity,
-            generateNavMenu(),
-            this,
-            binding.navMenuList
-        )
-        binding.navMenuList.setAdapter(parentAdapter)
-        var menu: NavigationMenu
-        try {
-            menu = NavigationMenu(
-                ID_VIDEO,
-                "All Videos",
-                R.mipmap.ic_menu_vod,
-                navCategoryList
-            )
-            parentAdapter.insert(menu, 1)
-            binding.navMenuList.expandGroup(1)
-        } catch (e: Exception) {
-            menu = NavigationMenu(ID_VOD, "VoD", R.mipmap.ic_menu_vod, ArrayList())
-            parentAdapter.insert(menu, 3)
-        }
+//        val parentAdapter = ParentLevelAdapter(
+//            activity,
+//            generateNavMenu(),
+//            this,
+//            binding.navMenuList
+//        )
+//        binding.navMenuList.setAdapter(parentAdapter)
+//        var menu: NavigationMenu
+//        try {
+//            menu = NavigationMenu(
+//                ID_VIDEO,
+//                "All Videos",
+//                R.mipmap.ic_menu_vod,
+//                navCategoryList
+//            )
+//            parentAdapter.insert(menu, 1)
+//            binding.navMenuList.expandGroup(1)
+//        } catch (e: Exception) {
+//            menu = NavigationMenu(ID_VOD, "VoD", R.mipmap.ic_menu_vod, ArrayList())
+//            parentAdapter.insert(menu, 3)
+//        }
     }
 }

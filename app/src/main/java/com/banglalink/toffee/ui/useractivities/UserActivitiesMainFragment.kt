@@ -11,6 +11,8 @@ import kotlinx.android.synthetic.main.tab_activities_main.*
 
 class UserActivitiesMainFragment: Fragment() {
     companion object {
+        const val ARG_SELECTED_TAB = "selected-tab"
+
         fun newInstance(): UserActivitiesMainFragment {
             return UserActivitiesMainFragment()
         }
@@ -29,11 +31,14 @@ class UserActivitiesMainFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val selectedTab = arguments?.getInt(ARG_SELECTED_TAB, 0) ?: 0
+
         activities_pager.isUserInputEnabled = false
         activities_pager.adapter = UserActivitiesPagerAdapter(this)
         TabLayoutMediator(tab_layout, activities_pager) { tab, position ->
             tab.text = tabTitle[position]
             activities_pager.currentItem = tab.position
         }.attach()
+        activities_pager.currentItem = selectedTab
     }
 }

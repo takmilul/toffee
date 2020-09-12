@@ -36,8 +36,8 @@ class EditUploadInfoFragment: Fragment() {
     }
 
     companion object {
-        private const val ARG_UPLOAD_ID = "arg_upload_id"
-        private const val ARG_UPLOAD_URI = "arg_upload_uri"
+        const val ARG_UPLOAD_ID = "arg_upload_id"
+        const val ARG_UPLOAD_URI = "arg_upload_uri"
 
         fun newInstance(_uploadUri: String, _uploadId: String): EditUploadInfoFragment {
             return EditUploadInfoFragment().apply {

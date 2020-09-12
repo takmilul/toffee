@@ -8,11 +8,15 @@
         <variable
             name="data"
             type="com.banglalink.toffee.model.NavCategory" />
-
+        <variable
+            name="callback"
+            type="com.banglalink.toffee.ui.common.SingleListItemCallback" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:onClick="@{()->callback.onItemClicked(data)}"
         xmlns:tools="http://schemas.android.com/tools">
 
 

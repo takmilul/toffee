@@ -10,20 +10,25 @@ import android.content.res.Configuration
 import android.graphics.Point
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.*
 import android.view.animation.AnimationUtils
-import android.widget.AutoCompleteTextView
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.widget.SearchView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
+import androidx.core.widget.PopupWindowCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.setupWithNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.data.storage.Preference
@@ -55,6 +60,7 @@ import com.banglalink.toffee.ui.widget.showSubscriptionDialog
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.exoplayer2.util.Util
+import kotlinx.android.synthetic.main.activity_main_menu.*
 import kotlinx.android.synthetic.main.layout_appbar.view.*
 import net.gotev.uploadservice.observer.request.GlobalRequestObserver
 import java.util.*
@@ -86,6 +92,8 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         const val INTENT_PACKAGE_SUBSCRIBED = "PACKAGE_SUBSCRIBED"
     }
 
+    private lateinit var navController: NavController
+
     private val viewModel by unsafeLazy {
         ViewModelProviders.of(this).get(HomeViewModel::class.java)
     }
@@ -99,42 +107,11 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
 //                WindowManager.LayoutParams.FLAG_SECURE
 //            )
 //        }
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main_menu)
         setSupportActionBar(binding.tbar.toolbar)
 
-        val pagerAdapter = HomeTabPagerAdapter(this)
-        binding.homeTabPager.adapter = pagerAdapter
-        binding.homeTabPager.isUserInputEnabled = false
-        binding.tabNavigator.setOnNavigationItemSelectedListener {
-            if(supportFragmentManager.findFragmentById(R.id.content_viewer) != null) {
-                supportFragmentManager.popBackStack(
-                    LandingPageFragment::class.java.name,
-                    POP_BACK_STACK_INCLUSIVE
-                )
-            }
-            if(binding.draggableView.isMaximized) {
-                minimizePlayer()
-            }
-            when(it.itemId) {
-                R.id.menu_feed-> {
-                    binding.homeTabPager.currentItem = 0
-                    true
-                }
-                R.id.menu_tv-> {
-                    binding.homeTabPager.currentItem = 1
-                    true
-                }
-                R.id.menu_activities-> {
-                    binding.homeTabPager.currentItem = 2
-                    true
-                }
-                R.id.menu_channel-> {
-                    binding.homeTabPager.currentItem = 3
-                    true
-                }
-                else -> true
-            }
-        }
+        setupNavController()
 
         initializeDraggableView()
         initDrawer()
@@ -156,19 +133,24 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         }
 
         binding.uploadButton.setOnClickListener {
-            val frag = supportFragmentManager.findFragmentByTag(UploadMethodFragment::class.java.name)
-            if(frag != null && frag.isVisible) {
+//            if(navController.currentDestination?.id == R.id.uploadMethodFragment) {
+//                navController.popBackStack()
+//            }
+//            else {
+//                navController.navigate(R.id.uploadMethodFragment)
+//            }
+            val uploadFragment = supportFragmentManager.findFragmentByTag(UploadMethodFragment::class.java.simpleName)
+            if(uploadFragment != null) {
                 supportFragmentManager.popBackStack()
-                return@setOnClickListener
             }
-
-            supportFragmentManager.beginTransaction().add(R.id.content_viewer, UploadMethodFragment.newInstance(), UploadMethodFragment::class.java.name)
-                .addToBackStack(UploadMethodFragment::class.java.name).commit()
-
-//            onUploadStartedWithId("Hello", "World")
-
-//            val uploadFragment = UploadMethodFragment.newInstance()
-//            uploadFragment.show(supportFragmentManager, UploadMethodFragment::class.java.simpleName)
+            else {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.content_viewer,
+                        UploadMethodFragment.newInstance(),
+                        UploadMethodFragment::class.java.simpleName)
+                    .addToBackStack(UploadMethodFragment::class.java.simpleName)
+                    .commit()
+            }
         }
 
         observe(viewModel.fragmentDetailsMutableLiveData) {
@@ -201,15 +183,15 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             minimizePlayer()
         }
 
-        observe(viewModel.openCategoryLiveData) {
-            val currentFragment = supportFragmentManager.findFragmentById(R.id.content_viewer)
-            if (currentFragment !is CategoryDetailsFragment) {
-                loadFragmentById( R.id.content_viewer, CategoryDetailsFragment.newInstance(it)
-                    , CategoryDetailsFragment::class.java.getName())
-            }
-            binding.drawerLayout.closeDrawers()
-            minimizePlayer()
-        }
+//        observe(viewModel.openCategoryLiveData) {
+//            val currentFragment = supportFragmentManager.findFragmentById(R.id.content_viewer)
+//            if (currentFragment !is CategoryDetailsFragment) {
+//                loadFragmentById( R.id.content_viewer, CategoryDetailsFragment.newInstance(it)
+//                    , CategoryDetailsFragment::class.java.getName())
+//            }
+//            binding.drawerLayout.closeDrawers()
+//            minimizePlayer()
+//        }
 
         observe(viewModel.viewAllVideoLiveData) {
             drawerHelper.onMenuClick(NavigationMenu(ID_VIDEO, "All Videos", 0, listOf(), false))
@@ -227,6 +209,22 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         }
 
         lifecycle.addObserver(HeartBeatManager)
+    }
+
+    private fun setupNavController() {
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.home_nav_host) as NavHostFragment
+        navController = navHostFragment.navController
+
+        NavigationUI.setupActionBarWithNavController(this, navController, drawer_layout)
+        binding.tabNavigator.setupWithNavController(navController)
+
+        navController.addOnDestinationChangedListener { controller, destination, arguments ->
+            supportFragmentManager.popBackStack(R.id.content_viewer, POP_BACK_STACK_INCLUSIVE)
+
+            if(binding.draggableView.isMaximized) {
+                minimizePlayer()
+            }
+        }
     }
 
     fun onUploadStartedWithId(uploadUri: String, uploadId: String) {

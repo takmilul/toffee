@@ -24,6 +24,6 @@ class UserActivitiesListFragment: SingleListFragmentV2<ChannelInfo>(),
     }
 
     override fun onItemClicked(item: ChannelInfo) {
-        homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+//        homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
     }
 }

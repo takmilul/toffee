@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/home_navigation_graph"
+    app:startDestination="@id/menu_feed">
+    <fragment
+        android:id="@+id/menu_activities"
+        android:name="com.banglalink.toffee.ui.useractivities.UserActivitiesMainFragment"
+        android:label="UserActivitiesMainFragment" />
+    <fragment
+        android:id="@+id/menu_feed"
+        android:name="com.banglalink.toffee.ui.home.LandingPageFragment"
+        android:label="FeedFragment">
+        <action
+            android:id="@+id/action_landingPageFragment_to_allCategoriesFragment"
+            app:destination="@id/allCategoriesFragment" />
+        <action
+            android:id="@+id/action_landingPageFragment_to_categoryDetailsFragment"
+            app:destination="@id/categoryDetailsFragment" />
+        <action
+            android:id="@+id/action_menu_feed_to_menu_tv"
+            app:destination="@id/menu_tv" />
+        <action
+            android:id="@+id/action_menu_feed_to_menu_activities"
+            app:destination="@id/menu_activities" />
+        <action
+            android:id="@+id/action_menu_feed_to_menu_channel"
+            app:destination="@id/menu_channel" />
+    </fragment>
+    <fragment
+        android:id="@+id/menu_tv"
+        android:name="com.banglalink.toffee.ui.channels.ChannelFragment"
+        android:label="ChannelFragment" >
+        <argument
+            android:name="title"
+            app:argType="string"
+            android:defaultValue="Tv Channels" />
+        <argument
+            android:name="category"
+            app:argType="string" />
+        <argument android:name="sub-category"
+            app:argType="string" />
+        <argument
+            android:name="sub-category-id"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+    <fragment
+        android:id="@+id/menu_channel"
+        android:name="com.banglalink.toffee.ui.userchannel.CreatorChannelFragment"
+        android:label="ChannelRatingFragment" >
+        <action
+            android:id="@+id/action_menu_channel_to_creatorChannelEditFragment"
+            app:destination="@id/creatorChannelEditFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/uploadMethodFragment"
+        android:name="com.banglalink.toffee.ui.upload.UploadMethodFragment"
+        android:label="UploadMethodFragment" >
+        <action
+            android:id="@+id/action_uploadMethodFragment_to_editUploadInfoFragment"
+            app:destination="@id/editUploadInfoFragment"
+            app:popUpTo="@id/uploadMethodFragment"
+            app:popUpToInclusive="true"
+            />
+    </fragment>
+    <fragment
+        android:id="@+id/editUploadInfoFragment"
+        android:name="com.banglalink.toffee.ui.upload.EditUploadInfoFragment"
+        android:label="EditUploadInfoFragment" />
+
+    <fragment
+        android:id="@+id/allCategoriesFragment"
+        android:name="com.banglalink.toffee.ui.category.AllCategoryFragment"
+        android:label="AllCategoriesFragment" >
+        <action
+            android:id="@+id/action_allCategoriesFragment_to_categoryDetailsFragment"
+            app:destination="@id/categoryDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/categoryDetailsFragment"
+        android:name="com.banglalink.toffee.ui.category.CategoryDetailsFragment"
+        android:label="CategoryDetailsFragment" />
+    <fragment
+        android:id="@+id/creatorChannelEditFragment"
+        android:name="com.banglalink.toffee.ui.userchannel.CreatorChannelEditFragment"
+        android:label="CreatorChannelEditFragment" />
+</navigation>

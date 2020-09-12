@@ -6,9 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.CategoriesListAdapter
 import com.banglalink.toffee.ui.home.LandingPageViewModel
@@ -34,21 +37,21 @@ class LandingCategoriesFragment: HomeBaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         mAdapter = CategoriesListAdapter(this) {
-            homeViewModel.openCategoryLiveData.value = it
+            parentFragment?.
+            findNavController()?.
+            navigate(R.id.action_landingPageFragment_to_categoryDetailsFragment,
+            Bundle().apply {
+                putParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM, it)
+            })
         }
 
         viewAllButton.setOnClickListener {
-            homeViewModel.viewAllCategories.postValue(true)
+            parentFragment?.findNavController()?.navigate(R.id.action_landingPageFragment_to_allCategoriesFragment)
         }
 
         with(categoriesList) {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter = mAdapter
-//            addOnScrollListener(object : EndlessRecyclerViewScrollListener(layoutManager as LinearLayoutManager){
-//                override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
-//                    viewModel.loadChannels()
-//                }
-//            })
         }
 
         viewModel.loadCategories()
@@ -57,8 +60,12 @@ class LandingCategoriesFragment: HomeBaseFragment() {
     }
 
     private fun observeList() {
-        viewModel.categoriesLiveData.observe(viewLifecycleOwner, Observer {
-            mAdapter.addAll(it)
+        viewModel.categoryInfoLiveData.observe(viewLifecycleOwner, Observer {
+            when(it) {
+                is Resource.Success -> {
+                    mAdapter.addAll(it.data)
+                }
+            }
         })
     }
 

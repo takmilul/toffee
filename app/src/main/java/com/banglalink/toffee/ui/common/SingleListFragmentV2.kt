@@ -10,7 +10,9 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.AutoTransition
@@ -21,6 +23,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentCommonSingleListV2Binding
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
+import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.util.unsafeLazy
@@ -34,9 +37,8 @@ abstract class SingleListFragmentV2<T: Any> : Fragment() {
 
     protected lateinit var mAdapter: MyBaseAdapterV2<T>
     protected lateinit var mViewModel: SingleListViewModel<T>
-
-    val homeViewModel by unsafeLazy {
-        ViewModelProviders.of(activity!!).get(HomeViewModel::class.java)
+    private val mHomeViewModel by lazy {
+        ViewModelProvider(activity!!)[HomeViewModel::class.java]
     }
 
     companion object {
@@ -65,45 +67,54 @@ abstract class SingleListFragmentV2<T: Any> : Fragment() {
 
         setupEmptyView()
 
-        binding.listview.adapter = mAdapter
-        scrollListener = object : EndlessRecyclerViewScrollListener(binding.listview.layoutManager as LinearLayoutManager) {
-            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
-                mViewModel.loadData()
-            }
-        }
-
-        binding.listview.addOnScrollListener(scrollListener)
-        binding.listview.setHasFixedSize(true)
-        binding.listview.setItemViewCacheSize(10)
+        setupListView()
 
         observeList()
 
         mViewModel.loadData()
+    }
 
-//        search_list.setOnClickListener {
-//            val constraintSet = ConstraintSet()
-//            val panel = top_panel as ConstraintLayout
-//            constraintSet.clone(requireContext(), R.layout.fragment_top_panel_search_expanded)
-//            val transition = TransitionSet()
-//            transition.ordering = TransitionSet.ORDERING_TOGETHER
-//            transition
-//                .addTransition(ChangeBounds())
-//                .addTransition(AutoTransition())
-////                .addTransition(fadeIn)
-//            transition.duration = 2000
-//            TransitionManager.beginDelayedTransition(panel, transition)
-//            constraintSet.applyTo(panel)
-//        }
-//
-//        back_button.setOnClickListener {
-//            val constraintSet = ConstraintSet()
-//            val panel = top_panel as ConstraintLayout
-//            constraintSet.clone(requireContext(), R.layout.fragment_top_panel_search_collapsed)
-//            val transition = ChangeBounds()
-//            transition.duration = 2000
-//            TransitionManager.beginDelayedTransition(panel, transition)
-//            constraintSet.applyTo(panel)
-//        }
+    private fun setupListView() {
+        with(binding.listview) {
+            adapter = mAdapter
+
+            val listLayoutManager = getRecyclerLayoutManager()
+            layoutManager = listLayoutManager
+
+            if(shouldLoadMore) {
+                if (listLayoutManager is LinearLayoutManager) {
+                    scrollListener = object : EndlessRecyclerViewScrollListener(listLayoutManager) {
+                        override fun onLoadMore(
+                            page: Int,
+                            totalItemsCount: Int,
+                            view: RecyclerView
+                        ) {
+                            mViewModel.loadData()
+                        }
+                    }
+                } else if (listLayoutManager is GridLayoutManager) {
+                    scrollListener = object : EndlessRecyclerViewScrollListener(listLayoutManager) {
+                        override fun onLoadMore(
+                            page: Int,
+                            totalItemsCount: Int,
+                            view: RecyclerView
+                        ) {
+                            mViewModel.loadData()
+                        }
+                    }
+                }
+                addOnScrollListener(scrollListener)
+            }
+            setHasFixedSize(true)
+//          TODO: Inspect for gridview
+//           setItemViewCacheSize(10)
+        }
+    }
+
+    protected open val shouldLoadMore = true
+
+    protected open fun getRecyclerLayoutManager(): RecyclerView.LayoutManager {
+        return LinearLayoutManager(context)
     }
 
     protected open fun getEmptyViewInfo(): Pair<Int, String?> {
@@ -121,6 +132,12 @@ abstract class SingleListFragmentV2<T: Any> : Fragment() {
 
         info.second?.let {
             binding.emptyViewLabel.text = it
+        }
+    }
+
+    fun playVideoChannel(T: Any) {
+        if(T is ChannelInfo) {
+            mHomeViewModel.fragmentDetailsMutableLiveData.postValue(T)
         }
     }
 
@@ -153,13 +170,11 @@ abstract class SingleListFragmentV2<T: Any> : Fragment() {
     }
 
     private fun showProgress() {
-        binding.progress.visibility = View.VISIBLE
         binding.progressBar.visibility = View.VISIBLE
     }
 
     private fun hideProgress() {
         binding.progressBar.visibility = View.GONE
-        binding.progress.visibility = View.GONE
     }
 
     override fun onDestroyView() {
