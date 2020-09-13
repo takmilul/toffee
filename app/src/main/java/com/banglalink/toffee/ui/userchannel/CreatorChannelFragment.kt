@@ -17,7 +17,7 @@ import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.android.synthetic.main.layout_empty_channel.*
+import kotlinx.android.synthetic.main.layout_creator_channel_info.*
 
 class CreatorChannelFragment : Fragment(), OnClickListener {
     
@@ -30,9 +30,23 @@ class CreatorChannelFragment : Fragment(), OnClickListener {
     }
     
     companion object {
-        fun createInstance(): CreatorChannelFragment {
+        fun newInstance(): CreatorChannelFragment {
             return CreatorChannelFragment()
         }
+    }
+    
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        
+        if (fragmentList.isEmpty()) {
+            
+            fragmentTitleList.add("Videos")
+            fragmentTitleList.add("Playlists")
+            
+            fragmentList.add(ChannelVideosFragment.newInstance(true))
+            fragmentList.add(ChannelPlaylistsFragment.newInstance(true))
+        }
+        
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -51,12 +65,6 @@ class CreatorChannelFragment : Fragment(), OnClickListener {
         binding.viewPager.offscreenPageLimit = 1
         binding.creatorChannelView.addBioButton.setOnClickListener(this)
         binding.creatorChannelView.editButton.setOnClickListener(this)
-        
-        fragmentList.add(ChannelVideosFragment.newInstance(true))
-        fragmentList.add(ChannelPlaylistsFragment.newInstance(true))
-        
-        fragmentTitleList.add("Videos")
-        fragmentTitleList.add("Playlists")
         
         viewPagerAdapter = ViewPagerAdapter(this, fragmentList)
         binding.viewPager.adapter = viewPagerAdapter
@@ -78,12 +86,12 @@ class CreatorChannelFragment : Fragment(), OnClickListener {
     
     private fun observeData() {
         observe(viewModel.liveData) {
-            when(it){
+            when (it) {
                 is Resource.Success -> {
                     viewModel.channelInfo.postValue(it.data)
                 }
                 is Resource.Failure -> {
-                    
+        
                 }
             }
         }
@@ -91,18 +99,20 @@ class CreatorChannelFragment : Fragment(), OnClickListener {
     
     override fun onClick(v: View?) {
         when (v) {
-            addBioButton ->
-                fragmentManager?.beginTransaction()
-                    ?.replace(R.id.content_viewer, CreatorChannelEditFragment.newInstance(viewModel.channelInfo.value))
-                    ?.addToBackStack(CreatorChannelEditFragment::class.java.name)
-                    ?.commit()
-                
-            editButton ->
-//                fragmentManager?.beginTransaction()
-//                    ?.replace(R.id.content_viewer, CreatorChannelEditFragment.newInstance(viewModel.channelInfo.value))
-//                    ?.addToBackStack(CreatorChannelEditFragment::class.java.name)
-//                    ?.commit()
+            addBioButton -> {
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.content_viewer, CreatorChannelEditFragment.newInstance(viewModel.channelInfo.value))
+                    .addToBackStack(CreatorChannelEditFragment::class.java.name)
+                    .commit()
+            }
+            
+            editButton -> {
+                /*requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.content_viewer, UserChannelHomeFragment.newInstance())
+                    .addToBackStack(UserChannelHomeFragment::class.java.name)
+                    .commit()*/
             findNavController().navigate(R.id.action_menu_channel_to_creatorChannelEditFragment)
+            }
         }
     }
 }

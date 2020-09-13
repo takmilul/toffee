@@ -28,7 +28,7 @@
                 
                 <include
                     android:id="@+id/channelRatingView"
-                    layout="@layout/channel_rating_done"
+                    layout="@layout/layout_user_channel_home_info"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clipChildren="false"

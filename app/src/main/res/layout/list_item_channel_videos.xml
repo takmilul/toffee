@@ -8,7 +8,7 @@
     <data>
         <variable
             name="data"
-            type="com.banglalink.toffee.model.ChannelVideo" />
+            type="com.banglalink.toffee.model.ChannelInfo" />
         <variable
             name="callback"
             type="com.banglalink.toffee.ui.common.SingleListItemCallback" />
@@ -24,7 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="200dp"
-            imageFromUrl="@{data.posterUrl}"
+            imageFromUrl="@{data.poster_url_mobile}"
             android:adjustViewBounds="true"
             app:layout_constraintDimensionRatio="W,16:9"
             app:layout_constraintEnd_toEndOf="parent"
@@ -42,7 +42,7 @@
             android:paddingBottom="3dp"
             android:textColor="@android:color/white"
             android:textSize="14sp"
-            android:text="@{data.duration}"
+            android:text="@{data.formattedDuration}"
             app:layout_constraintBottom_toBottomOf="@id/poster"
             app:layout_constraintEnd_toEndOf="@+id/poster"
             tools:text="00:00" />
@@ -67,14 +67,25 @@
             android:layout_marginTop="12dp"
             android:layout_marginEnd="10dp"
             android:ellipsize="end"
+            android:minLines="2"
             android:maxLines="2"
-            android:text="@{data.title}"
+            android:text="@{data.program_name}"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#7990AC"
-            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintEnd_toStartOf="@+id/uploadDuration"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/view"
             tools:text="This Makeup Tutorial By Kylie Jenner Is All you Need For Summer" />
+    
+        <TextView
+            android:id="@+id/uploadDuration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#829AB8"
+            app:layout_constraintStart_toEndOf="@+id/name"
+            app:layout_constraintTop_toTopOf="@+id/name"
+            app:layout_constraintEnd_toStartOf="@id/guideline2"
+            android:text="14h" />
 
         <ImageView
             android:id="@+id/options"
@@ -96,7 +107,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.9026764"/>
+            app:layout_constraintGuide_percent="0.90"/>
 
         <TextView
             android:id="@+id/textView5"
@@ -104,7 +115,7 @@
             android:layout_height="wrap_content"
             android:textColor="#829AB8"
             android:layout_marginTop="32dp"
-            android:text="@{data.viewCount}"
+            android:text="@{data.formatted_view_count}"
             android:drawableStart="@drawable/ic_view"
             android:drawablePadding="8dp"
             app:layout_constraintStart_toStartOf="@+id/name"
@@ -117,7 +128,7 @@
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/ic_share"
             android:drawablePadding="8dp"
-            android:text="@{data.commentCount}"
+            android:text="@{data.formatted_view_count}"
             android:textColor="#829AB8"
             app:layout_constraintEnd_toStartOf="@+id/textView9"
             app:layout_constraintStart_toEndOf="@+id/textView5"
@@ -130,8 +141,8 @@
             android:drawableStart="@drawable/ic_like_emo"
             android:drawablePadding="8dp"
             android:textColor="#829AB8"
-            android:text="@{data.reactCount}"
-            app:layout_constraintEnd_toEndOf="@+id/name"
+            android:text="@{data.formatted_view_count}"
+            app:layout_constraintEnd_toEndOf="@+id/uploadDuration"
             app:layout_constraintTop_toTopOf="@+id/textView5" />
 
 

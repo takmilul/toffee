@@ -1,13 +1,10 @@
 package com.banglalink.toffee.ui.home
 
-import android.app.Activity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.banglalink.toffee.R
 import com.banglalink.toffee.ui.channels.ChannelFragment
 import com.banglalink.toffee.ui.landing.LandingRootFragment
-import com.banglalink.toffee.ui.recent.RecentFragment
 import com.banglalink.toffee.ui.useractivities.UserActivitiesMainFragment
 import com.banglalink.toffee.ui.userchannel.CreatorChannelFragment
 
@@ -31,7 +28,7 @@ class HomeTabPagerAdapter(fragment: FragmentActivity):
             2 -> {
                 UserActivitiesMainFragment.newInstance()
             }
-            else -> CreatorChannelFragment.createInstance()
+            else -> CreatorChannelFragment.newInstance()
         }
     }
 }

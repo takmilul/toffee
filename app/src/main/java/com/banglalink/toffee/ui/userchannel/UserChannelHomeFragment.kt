@@ -14,14 +14,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.layout
-import com.banglalink.toffee.databinding.FragmentChannelRatingBinding
+import com.banglalink.toffee.databinding.FragmentUserChannelHomeBinding
 import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.layout_rate_channel.view.*
 
-class ChannelRatingFragment : Fragment() {
+class UserChannelHomeFragment : Fragment() {
     
-    private lateinit var binding: FragmentChannelRatingBinding
+    private lateinit var binding: FragmentUserChannelHomeBinding
     private lateinit var scrollListener: EndlessRecyclerViewScrollListener
     private lateinit var viewPagerAdapter: ViewPagerAdapter
     private var fragmentList: ArrayList<Fragment> = arrayListOf()
@@ -32,13 +32,24 @@ class ChannelRatingFragment : Fragment() {
     
     companion object {
         
-        fun createInstance(): ChannelRatingFragment {
-            return ChannelRatingFragment()
+        fun newInstance(): UserChannelHomeFragment {
+            return UserChannelHomeFragment()
+        }
+    }
+    
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (fragmentList.isEmpty()){
+            fragmentTitleList.add("Videos")
+            fragmentTitleList.add("Playlists")
+    
+            fragmentList.add(ChannelVideosFragment.newInstance(false))
+            fragmentList.add(ChannelPlaylistsFragment.newInstance(false))
         }
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_channel_rating, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_user_channel_home, container, false)
         binding.lifecycleOwner = this
         return binding.root
     }
@@ -48,12 +59,6 @@ class ChannelRatingFragment : Fragment() {
         
         binding.viewPager.offscreenPageLimit = 1
         binding.channelRatingView.subscriptionButton.setSubscriptionInfo(false, "৳50")
-        
-        fragmentList.add(ChannelVideosFragment.newInstance(false))
-        fragmentList.add(ChannelPlaylistsFragment.newInstance(false))
-        
-        fragmentTitleList.add("Videos")
-        fragmentTitleList.add("Playlists")
         
         viewPagerAdapter = ViewPagerAdapter(this, fragmentList)
         binding.viewPager.adapter = viewPagerAdapter
@@ -78,7 +83,7 @@ class ChannelRatingFragment : Fragment() {
     }
     
     private fun showRatingDialog() {
-        val dialogBuilder = AlertDialog.Builder(context !!)
+        val dialogBuilder = AlertDialog.Builder(requireContext())
         val inflater = this.layoutInflater
         val dialogView: View = inflater.inflate(layout.layout_rate_channel, null)
         dialogBuilder.setView(dialogView)
