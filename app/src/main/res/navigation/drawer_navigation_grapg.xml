@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_navigation_grapg">
+
+    <activity
+        android:id="@+id/menu_redeem"
+        android:name="com.banglalink.toffee.ui.redeem.RedeemCodeActivity"
+        android:label="RedeemCodeActivity" />
+    <activity
+        android:id="@+id/menu_invite"
+        android:name="com.banglalink.toffee.ui.refer.ReferAFriendActivity"
+        android:label="ReferAFriendActivity" />
+    <activity
+        android:id="@+id/menu_about"
+        android:name="com.banglalink.toffee.ui.about.AboutActivity"
+        android:label="AboutActivity" />
+    <activity
+        android:id="@+id/menu_settings"
+        android:name="com.banglalink.toffee.ui.settings.SettingsActivity"
+        android:label="SettingsActivity" />
+    <activity
+        android:id="@+id/htmlPageViewActivity"
+        android:name="com.banglalink.toffee.ui.common.HtmlPageViewActivity"
+        android:label="activity_html_page_view"
+        tools:layout="@layout/activity_html_page_view" />
+    <activity
+        android:id="@+id/packageListActivity"
+        android:name="com.banglalink.toffee.ui.subscription.PackageListActivity"
+        android:label="PackageListActivity" />
+    <activity
+        android:id="@+id/mySubscriptionActivity"
+        android:name="com.banglalink.toffee.ui.subscription.MySubscriptionActivity"
+        android:label="MySubscriptionActivity" />
+    <fragment
+        android:id="@+id/menu_channel"
+        android:name="com.banglalink.toffee.ui.channels.ChannelFragment"
+        android:label="ChannelFragment" />
+</navigation>

@@ -17,10 +17,10 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.util.unsafeLazy
-import com.daimajia.slider.library.SliderTypes.BaseSliderView
-import com.daimajia.slider.library.SliderTypes.DefaultSliderView
+//import com.daimajia.slider.library.SliderTypes.BaseSliderView
+//import com.daimajia.slider.library.SliderTypes.DefaultSliderView
 
-class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListener {
+class LandingPageFragment : HomeBaseFragment()/*,BaseSliderView.OnSliderClickListener*/ {
 
     companion object {
         fun newInstance(): LandingPageFragment {
@@ -28,9 +28,9 @@ class LandingPageFragment : HomeBaseFragment(),BaseSliderView.OnSliderClickListe
         }
     }
 
-    override fun onSliderClick(slider: BaseSliderView?) {
-        homeViewModel.fragmentDetailsMutableLiveData.postValue((slider as DefaultSliderView).data as ChannelInfo)
-    }
+//    override fun onSliderClick(slider: BaseSliderView?) {
+//        homeViewModel.fragmentDetailsMutableLiveData.postValue((slider as DefaultSliderView).data as ChannelInfo)
+//    }
 
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
 //        popularVideoListAdapter.remove(channelInfo)

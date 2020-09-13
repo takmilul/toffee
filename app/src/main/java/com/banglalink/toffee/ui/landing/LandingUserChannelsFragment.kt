@@ -23,7 +23,7 @@ import com.banglalink.toffee.ui.useractivities.UserActivitiesMainFragment
 import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.android.synthetic.main.fragment_landing_user_channels.*
 
-class LandingUserChannelsFragment: Fragment(R.layout.fragment_landing_user_channels) {
+class LandingUserChannelsFragment: HomeBaseFragment(R.layout.fragment_landing_user_channels) {
     private lateinit var mAdapter: UserChannelsListAdapter
 
     val viewModel by unsafeLazy {
@@ -33,13 +33,10 @@ class LandingUserChannelsFragment: Fragment(R.layout.fragment_landing_user_chann
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mAdapter = UserChannelsListAdapter(object: OptionCallBack {
-            override fun onOptionClicked(anchor: View, channelInfo: ChannelInfo) {
-            }
-
-            override fun viewAllVideoClick() {
-            }
-        })
+        mAdapter = UserChannelsListAdapter(this) {
+//            homeViewModel.fragmentDetailsMutableLiveData.postValue(it)
+            parentFragment?.findNavController()?.navigate(R.id.action_menu_feed_to_channelRatingFragment)
+        }
 
         viewAllButton.setOnClickListener {
             parentFragment?.findNavController()?.
@@ -75,5 +72,9 @@ class LandingUserChannelsFragment: Fragment(R.layout.fragment_landing_user_chann
                 }
             }
         })
+    }
+
+    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
+
     }
 }

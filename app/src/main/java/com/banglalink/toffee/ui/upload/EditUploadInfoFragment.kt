@@ -18,7 +18,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentEditUploadInfoBinding
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.util.unsafeLazy
-import com.bumptech.glide.Glide
+//import com.bumptech.glide.Glide
 import com.pchmn.materialchips.ChipsInput
 import com.pchmn.materialchips.model.ChipInterface
 import net.gotev.uploadservice.data.UploadInfo
@@ -66,7 +66,7 @@ class EditUploadInfoFragment: Fragment() {
         uploadUri = arguments?.getString(ARG_UPLOAD_URI, null)
         uploadUri?.let {
             Log.e("IMAGE", it)
-            Glide.with(this).load(it).into(binding.videoThumb)
+//            Glide.with(this).load(it).into(binding.videoThumb)
         }
 
         binding.submitButton.setOnClickListener {

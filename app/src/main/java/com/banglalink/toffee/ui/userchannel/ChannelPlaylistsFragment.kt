@@ -2,6 +2,7 @@ package com.banglalink.toffee.ui.userchannel
 
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.model.ChannelPlaylist
 import com.banglalink.toffee.ui.common.SingleListFragmentV2
@@ -30,11 +31,7 @@ class ChannelPlaylistsFragment : SingleListFragmentV2<ChannelPlaylist>(), Single
     }
     
     override fun onItemClicked(item: ChannelPlaylist) {
-        super.onItemClicked(item)
-        /*childFragmentManager.beginTransaction()
-            .replace(R.id.content_viewer, ChannelPlaylistVideosFragment.newInstance(false))
-            .addToBackStack(ChannelPlaylistVideosFragment::class.java.name)
-            .commit()*/
+        findNavController().navigate(R.id.action_menu_channel_to_channelPlaylistVideosFragment)
     }
     
     override fun getEmptyViewInfo(): Pair<Int, String?> {
