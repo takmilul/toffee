@@ -100,7 +100,7 @@
         app:graph="@navigation/drawer_navigation_grapg" />
     <fragment
         android:id="@+id/channelRatingFragment"
-        android:name="com.banglalink.toffee.ui.userchannel.ChannelRatingFragment"
+        android:name="com.banglalink.toffee.ui.userchannel.UserChannelHomeFragment"
         android:label="ChannelRatingFragment" />
     <fragment
         android:id="@+id/channelPlaylistVideosFragment"

@@ -17,9 +17,9 @@
             android:id="@+id/posterView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
             android:minHeight="200dp"
             android:src="@drawable/hero"
-            android:adjustViewBounds="true"
             app:layout_constraintDimensionRatio="W,16:9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -40,8 +40,8 @@
             android:id="@+id/channelNameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:text="National Geographic"
             android:textColor="@color/main_text_color"
@@ -55,13 +55,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:gravity="center"
-            android:text="I'm nice, cute and beautiful. I love to dance to music all day long. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
-            android:maxLines="2"
             android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="2"
+            android:text="I'm nice, cute and beautiful. I love to dance to music all day long. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
+            android:textColor="@color/main_text_color"
             android:textSize="16sp"
             app:animation_duration="400"
-            android:textColor="@color/main_text_color"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/channelNameTextView" />
@@ -73,8 +73,8 @@
             android:layout_marginHorizontal="16dp"
             android:layout_marginVertical="8dp"
             android:gravity="center"
-            android:textColor="@color/main_text_color"
             android:text="#cutiepie    #attentionseeker    #love \n#hashtag    #morehashtag"
+            android:textColor="@color/main_text_color"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/channelDescriptionTextView" />
@@ -83,14 +83,14 @@
             android:id="@+id/expandButton"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:padding="16dp"
             android:layout_marginTop="8dp"
             android:background="@drawable/ic_down_arrow"
-            app:layout_constraintStart_toStartOf="parent"
+            android:padding="16dp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/hashTagTextView" />
         
-        <include
+        <!--<include
             android:id="@+id/ratingButton"
             layout="@layout/rating_text_button"
             android:layout_width="wrap_content"
@@ -104,9 +104,9 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/expandButton"/>
-            
-        <!--<Button
+            app:layout_constraintTop_toBottomOf="@+id/expandButton"/>-->
+        
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/ratingButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -116,27 +116,27 @@
             android:text="Rate"
             android:textAllCaps="false"
             style="@style/ButtonStyleRingGreen"
-            app:layout_constraintHorizontal_chainStyle="spread_inside"
-            app:layout_constraintEnd_toStartOf="@+id/subscriptionButton"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/expandButton"/>-->
+            app:layout_constraintEnd_toStartOf="@+id/subscriptionButton"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/expandButton" />
         
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="4.7"
             android:layout_marginStart="8dp"
+            android:text="4.7"
+            app:layout_constraintBottom_toBottomOf="@id/ratingButton"
             app:layout_constraintStart_toEndOf="@id/ratingButton"
-            app:layout_constraintTop_toTopOf="@id/ratingButton"
-            app:layout_constraintBottom_toBottomOf="@id/ratingButton"/>
+            app:layout_constraintTop_toTopOf="@id/ratingButton" />
         
         <TextView
             android:id="@+id/reactCountTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="565K"
             android:layout_marginEnd="8dp"
+            android:text="565K"
             app:layout_constraintBottom_toBottomOf="@+id/subscriptionButton"
             app:layout_constraintEnd_toStartOf="@+id/subscriptionButton"
             app:layout_constraintHorizontal_bias="1"
@@ -150,10 +150,10 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="16dp"
             android:text="Subscription"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@id/ratingButton"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/ratingButton"
-            app:layout_constraintTop_toTopOf="@id/ratingButton"/>
+            app:layout_constraintTop_toTopOf="@id/ratingButton" />
     
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

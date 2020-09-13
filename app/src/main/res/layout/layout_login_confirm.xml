@@ -78,7 +78,7 @@
 
             <Button
                 android:id="@+id/confirm_btn"
-                style="@style/toffeeButton"
+                style="@style/ButtonStyleSolidPink"
                 android:layout_width="@dimen/button_accent_width"
                 android:layout_height="@dimen/button_accent_height"
                 android:layout_gravity="center"

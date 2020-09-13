@@ -138,7 +138,7 @@
                 android:layout_width="14dp"
                 android:layout_height="14dp"
                 android:src="@drawable/ic_right_arrow_white"
-                android:tint="@color/colorAccent"
+                app:tint="@color/colorAccent"
                 app:layout_constraintBottom_toBottomOf="@+id/have_ref_tv"
                 app:layout_constraintStart_toEndOf="@+id/have_ref_tv"
                 app:layout_constraintTop_toTopOf="@+id/have_ref_tv" />

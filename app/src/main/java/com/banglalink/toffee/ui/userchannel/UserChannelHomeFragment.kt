@@ -17,7 +17,7 @@ import com.banglalink.toffee.R.layout
 import com.banglalink.toffee.databinding.FragmentUserChannelHomeBinding
 import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.android.synthetic.main.layout_rate_channel.view.*
+import kotlinx.android.synthetic.main.layout_rate_channel_dialog.view.*
 
 class UserChannelHomeFragment : Fragment() {
     
@@ -85,7 +85,7 @@ class UserChannelHomeFragment : Fragment() {
     private fun showRatingDialog() {
         val dialogBuilder = AlertDialog.Builder(requireContext())
         val inflater = this.layoutInflater
-        val dialogView: View = inflater.inflate(layout.layout_rate_channel, null)
+        val dialogView: View = inflater.inflate(layout.layout_rate_channel_dialog, null)
         dialogBuilder.setView(dialogView)
         
         dialogView.ratingBar.setOnRatingBarChangeListener { ratingBar, rating, fromUser ->
