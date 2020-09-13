@@ -61,10 +61,10 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/ownerPicture"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp"
             android:layout_width="42dp"
             android:layout_height="42dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
             android:src="@drawable/ic_portrait"
             app:layout_constraintStart_toStartOf="@id/view"
             app:layout_constraintTop_toTopOf="@id/view" />
@@ -77,38 +77,31 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="12dp"
-            android:layout_marginEnd="10dp"
             android:ellipsize="end"
             android:maxLines="2"
+            android:lines="2"
             android:text="@{data.program_name}"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#7990AC"
-            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintEnd_toStartOf="@+id/options"
             app:layout_constraintStart_toEndOf="@+id/ownerPicture"
             app:layout_constraintTop_toTopOf="@id/view"
             tools:text="This Makeup Tutorial By Kylie Jenner Is All you Need For Summer" />
 
         <ImageView
             android:id="@+id/options"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:focusable="true"
+            android:elevation="4dp"
             android:onClick="@{(v)->callback.onOptionClicked(v,data)}"
             android:padding="5dp"
             app:layout_constraintEnd_toEndOf="@+id/view"
-            app:layout_constraintStart_toStartOf="@+id/guideline2"
             app:layout_constraintTop_toTopOf="@+id/view"
-            app:srcCompat="@mipmap/ic_overlay_dark" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.9026764"/>
+            app:srcCompat="@drawable/ic_menu_more" />
 
         <ProgressBar
             android:id="@+id/progress"
@@ -117,6 +110,7 @@
             android:layout_height="4dp"
             android:progress="50"
             android:max="100"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/poster"
             app:layout_constraintEnd_toEndOf="@+id/duration"
             app:layout_constraintStart_toStartOf="parent" />
@@ -125,47 +119,52 @@
             android:id="@+id/owner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="4dp"
+            android:text="AsianStar- 14h"
             android:textColor="#829AB8"
             app:layout_constraintStart_toStartOf="@+id/name"
-            app:layout_constraintTop_toBottomOf="@+id/name"
-            android:text="AsianStar- 14h" />
+            app:layout_constraintTop_toBottomOf="@+id/name" />
 
         <TextView
             android:id="@+id/textView5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#829AB8"
             android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:drawablePadding="4dp"
             android:text="@{data.formatted_view_count}"
-            android:drawableStart="@drawable/ic_view"
-            android:drawablePadding="8dp"
+            android:textColor="#829AB8"
+            app:drawableStartCompat="@drawable/ic_view"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/owner"
             app:layout_constraintTop_toBottomOf="@+id/owner"
-            tools:text="10K"/>
+            tools:text="10K" />
 
         <TextView
             android:id="@+id/textView8"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_share"
-            android:drawablePadding="8dp"
+            android:drawablePadding="4dp"
             android:text="3.5K"
             android:textColor="#829AB8"
+            app:layout_constraintBottom_toBottomOf="@+id/textView5"
             app:layout_constraintEnd_toStartOf="@+id/textView9"
             app:layout_constraintStart_toEndOf="@+id/textView5"
-            app:layout_constraintTop_toTopOf="@+id/textView5" />
+            app:layout_constraintTop_toTopOf="@+id/textView5"
+            app:drawableStartCompat="@drawable/ic_share" />
 
         <TextView
             android:id="@+id/textView9"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_like_emo"
-            android:drawablePadding="8dp"
-            android:textColor="#829AB8"
+            android:layout_marginEnd="8dp"
+            android:drawablePadding="4dp"
             android:text="2.7K"
-            app:layout_constraintEnd_toEndOf="@+id/name"
-            app:layout_constraintTop_toTopOf="@+id/textView5" />
+            android:textColor="#829AB8"
+            app:drawableStartCompat="@drawable/ic_like_emo"
+            app:layout_constraintBottom_toBottomOf="@+id/textView8"
+            app:layout_constraintEnd_toEndOf="@+id/view"
+            app:layout_constraintTop_toTopOf="@+id/textView8" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

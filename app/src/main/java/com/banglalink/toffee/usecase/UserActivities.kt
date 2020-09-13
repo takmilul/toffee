@@ -1,5 +1,6 @@
 package com.banglalink.toffee.usecase
 
+import com.banglalink.toffee.data.network.request.ContentRequest
 import com.banglalink.toffee.data.network.request.HistoryContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO
@@ -17,8 +18,11 @@ class UserActivities(private val preference: Preference, private val toffeeApi: 
 
     override suspend fun execute(): List<ChannelInfo> {
         val response = tryIO {
-            toffeeApi.getHistoryContents(
-                HistoryContentRequest(
+            toffeeApi.getContents(
+                ContentRequest(
+                    0,
+                    0,
+                    "VOD",
                     preference.customerId,
                     preference.password,
                     mOffset,

@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.useractivities
 
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.SingleListFragmentV2
@@ -24,6 +25,6 @@ class UserActivitiesListFragment: SingleListFragmentV2<ChannelInfo>(),
     }
 
     override fun onItemClicked(item: ChannelInfo) {
-//        homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+        playVideoChannel(item)
     }
 }

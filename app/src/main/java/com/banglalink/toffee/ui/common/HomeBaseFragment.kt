@@ -14,7 +14,8 @@ import com.banglalink.toffee.ui.home.OptionCallBack
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.util.unsafeLazy
 
-abstract class HomeBaseFragment:Fragment(), OptionCallBack {
+abstract class HomeBaseFragment(layoutId: Int = 0):Fragment(layoutId), OptionCallBack {
+
     val homeViewModel by unsafeLazy {
         ViewModelProviders.of(activity!!).get(HomeViewModel::class.java)
     }

@@ -20,8 +20,8 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.util.unsafeLazy
-import com.daimajia.slider.library.SliderTypes.BaseSliderView
-import com.daimajia.slider.library.SliderTypes.DefaultSliderView
+//import com.daimajia.slider.library.SliderTypes.BaseSliderView
+//import com.daimajia.slider.library.SliderTypes.DefaultSliderView
 
 class CategoryDetailsFragment : Fragment(R.layout.fragment_category_details) {
     lateinit var category: NavCategory

@@ -5,6 +5,8 @@ import android.util.Log
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.model.ChannelInfo
@@ -48,6 +50,7 @@ class ChannelSubscriptionFragment
 
     override fun onItemClicked(item: ChannelInfo) {
 //        homeViewModel.userChannelMutableLiveData.postValue(item)
+        parentFragment?.findNavController()?.navigate(R.id.action_menu_activities_to_channelRatingFragment)
     }
 
     override fun onSubscribeClicked(item: ChannelInfo) {

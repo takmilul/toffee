@@ -6,7 +6,11 @@
     <fragment
         android:id="@+id/menu_activities"
         android:name="com.banglalink.toffee.ui.useractivities.UserActivitiesMainFragment"
-        android:label="UserActivitiesMainFragment" />
+        android:label="UserActivitiesMainFragment" >
+        <action
+            android:id="@+id/action_menu_activities_to_channelRatingFragment"
+            app:destination="@id/channelRatingFragment" />
+    </fragment>
     <fragment
         android:id="@+id/menu_feed"
         android:name="com.banglalink.toffee.ui.home.LandingPageFragment"
@@ -26,6 +30,9 @@
         <action
             android:id="@+id/action_menu_feed_to_menu_channel"
             app:destination="@id/menu_channel" />
+        <action
+            android:id="@+id/action_menu_feed_to_channelRatingFragment"
+            app:destination="@id/channelRatingFragment" />
     </fragment>
     <fragment
         android:id="@+id/menu_tv"
@@ -52,6 +59,9 @@
         <action
             android:id="@+id/action_menu_channel_to_creatorChannelEditFragment"
             app:destination="@id/creatorChannelEditFragment" />
+        <action
+            android:id="@+id/action_menu_channel_to_channelPlaylistVideosFragment"
+            app:destination="@id/channelPlaylistVideosFragment" />
     </fragment>
     <fragment
         android:id="@+id/uploadMethodFragment"
@@ -85,4 +95,15 @@
         android:id="@+id/creatorChannelEditFragment"
         android:name="com.banglalink.toffee.ui.userchannel.CreatorChannelEditFragment"
         android:label="CreatorChannelEditFragment" />
+
+    <include
+        app:graph="@navigation/drawer_navigation_grapg" />
+    <fragment
+        android:id="@+id/channelRatingFragment"
+        android:name="com.banglalink.toffee.ui.userchannel.ChannelRatingFragment"
+        android:label="ChannelRatingFragment" />
+    <fragment
+        android:id="@+id/channelPlaylistVideosFragment"
+        android:name="com.banglalink.toffee.ui.userchannel.ChannelPlaylistVideosFragment"
+        android:label="ChannelPlaylistVideosFragment" />
 </navigation>
