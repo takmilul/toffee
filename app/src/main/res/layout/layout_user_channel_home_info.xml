@@ -106,6 +106,22 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/expandButton"/>
             
+        <!--<Button
+            android:id="@+id/ratingButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="Rate"
+            android:textAllCaps="false"
+            style="@style/ButtonStyleRingGreen"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintEnd_toStartOf="@+id/subscriptionButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/expandButton"/>-->
+        
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -132,15 +148,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:text="Subscription"
-            app:layout_constraintVertical_bias="0"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/ratingButton"
             app:layout_constraintStart_toEndOf="@+id/ratingButton"
-            app:layout_constraintTop_toBottomOf="@+id/expandButton" />
+            app:layout_constraintTop_toTopOf="@id/ratingButton"/>
     
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

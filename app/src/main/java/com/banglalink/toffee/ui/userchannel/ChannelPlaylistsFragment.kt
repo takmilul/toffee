@@ -3,11 +3,11 @@ package com.banglalink.toffee.ui.userchannel
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import com.banglalink.toffee.R
-import com.banglalink.toffee.model.ChannelPlaylist
+import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.SingleListFragmentV2
 import com.banglalink.toffee.ui.common.SingleListItemCallback
 
-class ChannelPlaylistsFragment : SingleListFragmentV2<ChannelPlaylist>(), SingleListItemCallback<ChannelPlaylist> {
+class ChannelPlaylistsFragment : SingleListFragmentV2<ChannelInfo>(), SingleListItemCallback<ChannelInfo> {
     
     private var enableToolbar: Boolean = false
     
@@ -29,7 +29,7 @@ class ChannelPlaylistsFragment : SingleListFragmentV2<ChannelPlaylist>(), Single
         mViewModel.enableToolbar = enableToolbar
     }
     
-    override fun onItemClicked(item: ChannelPlaylist) {
+    override fun onItemClicked(item: ChannelInfo) {
         super.onItemClicked(item)
         /*childFragmentManager.beginTransaction()
             .replace(R.id.content_viewer, ChannelPlaylistVideosFragment.newInstance(false))

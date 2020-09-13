@@ -8,7 +8,7 @@
     <data>
         <variable
             name="data"
-            type="com.banglalink.toffee.model.ChannelVideo" />
+            type="com.banglalink.toffee.model.ChannelInfo" />
         <variable
             name="viewModel"
             type="com.banglalink.toffee.ui.userchannel.ChannelPlaylistVideosListAdapter" />
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:minHeight="180dp"
-            imageFromUrl="@{data.posterUrl}"
+            imageFromUrl="@{data.poster_url_mobile}"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -69,7 +69,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:minLines="3"
-            android:text="@{data.title}"
+            android:text="@{data.program_name}"
             app:layout_constraintVertical_chainStyle="packed"
             app:layout_constraintBottom_toTopOf="@id/viewCount"
             app:layout_constraintEnd_toStartOf="@+id/options"
@@ -82,7 +82,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#829AB8"
-            android:text="@{data.viewCount}"
+            android:text="@{data.formatted_view_count}"
             android:gravity="left"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="8dp"

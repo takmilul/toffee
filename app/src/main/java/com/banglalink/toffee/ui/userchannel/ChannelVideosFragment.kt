@@ -3,11 +3,11 @@ package com.banglalink.toffee.ui.userchannel
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import com.banglalink.toffee.R
-import com.banglalink.toffee.model.ChannelVideo
+import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.SingleListFragmentV2
 import com.banglalink.toffee.ui.common.SingleListItemCallback
 
-class ChannelVideosFragment : SingleListFragmentV2<ChannelVideo>(), SingleListItemCallback<ChannelVideo> {
+class ChannelVideosFragment : SingleListFragmentV2<ChannelInfo>(), SingleListItemCallback<ChannelInfo> {
     
     private var enableToolbar: Boolean = false
     

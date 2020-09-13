@@ -1,13 +1,27 @@
 package com.banglalink.toffee.ui.userchannel
 
+import com.banglalink.toffee.data.network.request.ContentRequest
 import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
 import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.model.ChannelVideo
+import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.SingleListRepository
 import com.banglalink.toffee.ui.common.SingleListViewModel
 import com.banglalink.toffee.usecase.GetChannelPlaylistVideos
 
-class ChannelPlaylistVideosViewModel: SingleListViewModel<ChannelVideo>() {
-    override var repo: SingleListRepository<ChannelVideo>  = GetChannelPlaylistVideos(Preference.getInstance(), RetrofitApiClient.toffeeApi)
+class ChannelPlaylistVideosViewModel: SingleListViewModel<ChannelInfo>() {
+    
+    private val contentRequest = ContentRequest(
+        0,
+        0,
+        "VOD",
+        Preference.getInstance().customerId,
+        Preference.getInstance().password,
+        offset = 0
+    )
+    
+    private val category: String = ""
+    private val subCategory: String = ""
+    
+    override var repo: SingleListRepository<ChannelInfo>  = GetChannelPlaylistVideos(RetrofitApiClient.toffeeApi, contentRequest, category, subCategory)
     
 }

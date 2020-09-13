@@ -10,22 +10,24 @@ import android.content.res.Configuration
 import android.graphics.Point
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
-import android.view.*
+import android.view.Display
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import android.view.animation.AnimationUtils
-import android.widget.*
+import android.widget.AutoCompleteTextView
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.widget.SearchView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
-import androidx.core.widget.PopupWindowCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
@@ -41,7 +43,6 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.EXIT_FROM_APP_MSG
 import com.banglalink.toffee.model.NavigationMenu
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.channels.ChannelFragment
 import com.banglalink.toffee.ui.landing.AllCategoriesFragment
 import com.banglalink.toffee.ui.login.SigninByPhoneActivity
@@ -50,10 +51,7 @@ import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.subscription.PackageListActivity
 import com.banglalink.toffee.ui.upload.EditUploadInfoFragment
 import com.banglalink.toffee.ui.upload.UploadMethodFragment
-import com.banglalink.toffee.ui.upload.UploadObserver
-import com.banglalink.toffee.ui.useractivities.UserActivitiesMainFragment
-import com.banglalink.toffee.ui.userchannel.ChannelRatingFragment
-import com.banglalink.toffee.ui.userchannel.CreatorChannelFragment
+import com.banglalink.toffee.ui.userchannel.UserChannelHomeFragment
 import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.ui.widget.showSubscriptionDialog
@@ -62,7 +60,6 @@ import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.exoplayer2.util.Util
 import kotlinx.android.synthetic.main.activity_main_menu.*
 import kotlinx.android.synthetic.main.layout_appbar.view.*
-import net.gotev.uploadservice.observer.request.GlobalRequestObserver
 import java.util.*
 import javax.annotation.Nonnull
 
@@ -159,9 +156,10 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
 
         observe(viewModel.userChannelMutableLiveData) {
             val currentFragment = supportFragmentManager.findFragmentById(R.id.content_viewer)
-            if (currentFragment !is ChannelRatingFragment) {
-                loadFragmentById( R.id.content_viewer, ChannelRatingFragment()
-                    , ChannelRatingFragment::class.java.getName())
+            if (currentFragment !is UserChannelHomeFragment) {
+                loadFragmentById( R.id.content_viewer, UserChannelHomeFragment()
+                    , UserChannelHomeFragment::class.java.name
+                )
             }
             binding.drawerLayout.closeDrawers()
             minimizePlayer()
