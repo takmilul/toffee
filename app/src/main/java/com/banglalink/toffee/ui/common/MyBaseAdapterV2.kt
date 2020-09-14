@@ -28,9 +28,9 @@ abstract class MyBaseAdapterV2<T: Any>(val callback: SingleListItemCallback<T>? 
         position: Int
     ) {
         val obj = getObjForPosition(position)
-        holder.bind(obj)
-        holder.bindPosition(position)
-        holder.bindCallBack(callback)
+//        holder.bindPosition(position)
+//        holder.bindCallBack(callback)
+        holder.bind(obj, callback, position)
     }
 
     override fun getItemViewType(position: Int): Int {

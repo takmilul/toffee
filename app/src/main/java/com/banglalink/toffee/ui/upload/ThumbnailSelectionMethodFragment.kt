@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.extension.showToast
@@ -31,6 +32,7 @@ class ThumbnailSelectionMethodFragment: Fragment() {
 
     companion object {
         private const val REQUEST_IMAGE = 0x225
+        const val THUMB_URI = "thumb-uri"
 
         fun newInstance(): ThumbnailSelectionMethodFragment {
             return ThumbnailSelectionMethodFragment()
@@ -150,7 +152,10 @@ class ThumbnailSelectionMethodFragment: Fragment() {
             else if(requestCode == UCrop.REQUEST_CROP && data != null) {
                 val uri = UCrop.getOutput(data)
                 if(uri != null) {
-                    // TODO: Process the output uri
+                    findNavController().let {
+                        it.previousBackStackEntry?.savedStateHandle?.set(THUMB_URI, uri.toString())
+                        it.popBackStack()
+                    }
                 }
             }
         }

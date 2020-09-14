@@ -133,23 +133,23 @@
 <!--                android:layout_marginBottom="22dp"/>-->
 
         <com.google.android.material.navigation.NavigationView
-            android:id="@+id/nav_view"
+            android:id="@+id/sideNavigation"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="end"
             app:insetForeground="@null"
-            app:menu="@menu/menu_drawer"
             app:headerLayout="@layout/nav_header_main">
+<!--            app:menu="@menu/menu_drawer"-->
 
-<!--            <ExpandableListView-->
-<!--                android:layout_marginTop="@dimen/nav_header_height"-->
-<!--                android:id="@+id/nav_menu_list"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:divider="@null"-->
-<!--                android:groupIndicator="@null">-->
+            <ExpandableListView
+                android:layout_marginTop="@dimen/nav_header_height"
+                android:id="@+id/nav_menu_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="@null"
+                android:groupIndicator="@null">
 
-<!--            </ExpandableListView>-->
+            </ExpandableListView>
 
         </com.google.android.material.navigation.NavigationView>
 

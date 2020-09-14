@@ -43,9 +43,9 @@ class DrawerHelper(val activity: HomeActivity,val binding:ActivityMainMenuBindin
         //After instantiating your ActionBarDrawerToggle
         toggle.isDrawerIndicatorEnabled = false
         toggle.setHomeAsUpIndicator(R.drawable.ic_home)
-//        val parentAdapter =
-//            ParentLevelAdapter(activity, generateNavMenu(), this, binding.navMenuList)
-//        binding.navMenuList.setAdapter(parentAdapter)
+        val parentAdapter =
+            ParentLevelAdapter(activity, generateNavMenu(), this, binding.navMenuList)
+        binding.navMenuList.setAdapter(parentAdapter)
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
@@ -59,7 +59,7 @@ class DrawerHelper(val activity: HomeActivity,val binding:ActivityMainMenuBindin
     }
 
     private fun setProfileInfo() {
-        val header = binding.navView.getHeaderView(0)
+        val header = binding.sideNavigation.getHeaderView(0)
         val profileName = header.findViewById(R.id.profile_name) as TextView
         activity.observe(Preference.getInstance().customerNameLiveData){
             when{
