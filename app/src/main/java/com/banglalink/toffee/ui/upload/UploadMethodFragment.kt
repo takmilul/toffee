@@ -153,11 +153,11 @@ class UploadMethodFragment: Fragment(R.layout.upload_method_fragment) {
 
         Log.e("UPLOAD - ", upId)
 
-        requireActivity().supportFragmentManager.popBackStack()
+//        requireActivity().supportFragmentManager.popBackStack()
 
         activity?.
             findNavController(R.id.home_nav_host)?.let {
-            it.navigate(R.id.editUploadInfoFragment,
+            it.navigate(R.id.action_uploadMethodFragment_to_editUploadInfoFragment,
             Bundle().apply {
                 putString(EditUploadInfoFragment.ARG_UPLOAD_ID, upId)
                 putString(EditUploadInfoFragment.ARG_UPLOAD_URI, uri)

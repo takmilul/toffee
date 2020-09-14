@@ -11,8 +11,12 @@ import android.view.ViewGroup
 import androidx.core.view.setPadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import coil.Coil
+import coil.api.load
 import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentEditUploadInfoBinding
@@ -78,14 +82,28 @@ class EditUploadInfoFragment: Fragment() {
         }
 
         binding.thumbEditButton.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.content_viewer, ThumbnailSelectionMethodFragment.newInstance())
-                .addToBackStack(ThumbnailSelectionMethodFragment::class.java.simpleName)
-                .commit()
+            findNavController().navigate(R.id.action_editUploadInfoFragment_to_thumbnailSelectionMethodFragment)
+//            parentFragmentManager.beginTransaction()
+//                .replace(R.id.content_viewer, ThumbnailSelectionMethodFragment.newInstance())
+//                .addToBackStack(ThumbnailSelectionMethodFragment::class.java.simpleName)
+//                .commit()
         }
 
         setupTagView()
         observeUpload()
+        observeThumbnailChange()
+    }
+
+    private fun observeThumbnailChange() {
+        findNavController().
+            currentBackStackEntry?.
+            savedStateHandle?.
+            getLiveData<String?>(ThumbnailSelectionMethodFragment.THUMB_URI)?.
+            observe(viewLifecycleOwner, Observer {
+                it?.let {
+                    binding.videoThumb.load(it)
+                }
+            })
     }
 
     private fun setupTagView() {

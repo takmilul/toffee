@@ -77,7 +77,11 @@
     <fragment
         android:id="@+id/editUploadInfoFragment"
         android:name="com.banglalink.toffee.ui.upload.EditUploadInfoFragment"
-        android:label="EditUploadInfoFragment" />
+        android:label="EditUploadInfoFragment" >
+        <action
+            android:id="@+id/action_editUploadInfoFragment_to_thumbnailSelectionMethodFragment"
+            app:destination="@id/thumbnailSelectionMethodFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/allCategoriesFragment"
@@ -96,14 +100,18 @@
         android:name="com.banglalink.toffee.ui.userchannel.CreatorChannelEditFragment"
         android:label="CreatorChannelEditFragment" />
 
-    <include
-        app:graph="@navigation/drawer_navigation_grapg" />
+<!--    <include-->
+<!--        app:graph="@navigation/drawer_navigation_grapg" />-->
     <fragment
         android:id="@+id/channelRatingFragment"
-        android:name="com.banglalink.toffee.ui.userchannel.ChannelRatingFragment"
+        android:name="com.banglalink.toffee.ui.userchannel.UserChannelHomeFragment"
         android:label="ChannelRatingFragment" />
     <fragment
         android:id="@+id/channelPlaylistVideosFragment"
         android:name="com.banglalink.toffee.ui.userchannel.ChannelPlaylistVideosFragment"
         android:label="ChannelPlaylistVideosFragment" />
+    <fragment
+        android:id="@+id/thumbnailSelectionMethodFragment"
+        android:name="com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment"
+        android:label="ThumbnailSelectionMethodFragment" />
 </navigation>

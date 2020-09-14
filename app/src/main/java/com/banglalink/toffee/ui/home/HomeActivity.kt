@@ -134,20 +134,20 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
 //                navController.popBackStack()
 //            }
 //            else {
-//                navController.navigate(R.id.uploadMethodFragment)
+                navController.navigate(R.id.uploadMethodFragment)
 //            }
-            val uploadFragment = supportFragmentManager.findFragmentByTag(UploadMethodFragment::class.java.simpleName)
-            if(uploadFragment != null) {
-                supportFragmentManager.popBackStack()
-            }
-            else {
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.content_viewer,
-                        UploadMethodFragment.newInstance(),
-                        UploadMethodFragment::class.java.simpleName)
-                    .addToBackStack(UploadMethodFragment::class.java.simpleName)
-                    .commit()
-            }
+//            val uploadFragment = supportFragmentManager.findFragmentByTag(UploadMethodFragment::class.java.simpleName)
+//            if(uploadFragment != null) {
+//                supportFragmentManager.popBackStack()
+//            }
+//            else {
+//                supportFragmentManager.beginTransaction()
+//                    .replace(R.id.content_viewer,
+//                        UploadMethodFragment.newInstance(),
+//                        UploadMethodFragment::class.java.simpleName)
+//                    .addToBackStack(UploadMethodFragment::class.java.simpleName)
+//                    .commit()
+//            }
         }
 
         observe(viewModel.fragmentDetailsMutableLiveData) {
@@ -213,7 +213,8 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.home_nav_host) as NavHostFragment
         navController = navHostFragment.navController
 
-        NavigationUI.setupActionBarWithNavController(this, navController, drawer_layout)
+//        NavigationUI.setupActionBarWithNavController(this, navController, drawer_layout)
+//        binding.sideNavigation.setupWithNavController(navController)
         binding.tabNavigator.setupWithNavController(navController)
 
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
