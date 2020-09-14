@@ -138,7 +138,7 @@
                 android:layout_width="14dp"
                 android:layout_height="14dp"
                 android:src="@drawable/ic_right_arrow_white"
-                android:tint="@color/colorAccent"
+                app:tint="@color/colorAccent"
                 app:layout_constraintBottom_toBottomOf="@+id/have_ref_tv"
                 app:layout_constraintStart_toEndOf="@+id/have_ref_tv"
                 app:layout_constraintTop_toTopOf="@+id/have_ref_tv" />
@@ -186,7 +186,7 @@
                 android:id="@+id/login_btn"
                 style="@style/ButtonStyleSolidPink"
                 android:layout_width="@dimen/button_accent_width"
-                android:layout_height="@dimen/button_accent_height"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="12dp"
                 android:enabled="false"
