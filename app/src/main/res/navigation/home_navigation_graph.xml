@@ -98,7 +98,13 @@
     <fragment
         android:id="@+id/creatorChannelEditFragment"
         android:name="com.banglalink.toffee.ui.userchannel.CreatorChannelEditFragment"
-        android:label="CreatorChannelEditFragment" />
+        android:label="CreatorChannelEditFragment" >
+    
+        <argument
+            android:name="userChannel"
+            app:argType="com.banglalink.toffee.model.UserChannel"
+            app:nullable="true" />
+    </fragment>
 
 <!--    <include-->
 <!--        app:graph="@navigation/drawer_navigation_grapg" />-->

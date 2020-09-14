@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentCreatorChannelEditBinding
-import com.banglalink.toffee.model.UserChannel
 import com.banglalink.toffee.util.unsafeLazy
 
 class CreatorChannelEditFragment : Fragment() {
@@ -20,16 +19,11 @@ class CreatorChannelEditFragment : Fragment() {
     }
     
     companion object {
-        private const val CHANNEL_INFO_KEY = "channelInfo"
-        fun newInstance(userChannelInfo: UserChannel?): CreatorChannelEditFragment {
-            val instance = CreatorChannelEditFragment()
-            val bundle = Bundle()
-            bundle.putParcelable(CHANNEL_INFO_KEY, userChannelInfo)
-            instance.arguments = bundle
-            return instance
+        fun newInstance(): CreatorChannelEditFragment {
+            return CreatorChannelEditFragment()
         }
     }
-    
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_creator_channel_edit, container, false)
         binding.lifecycleOwner = this
@@ -39,11 +33,7 @@ class CreatorChannelEditFragment : Fragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
-        val userChannel = arguments?.getParcelable<UserChannel>(CHANNEL_INFO_KEY)
-        userChannel?.let { 
-            viewModel.userChannel.postValue(userChannel)
-        }
-        
+        val args = CreatorChannelEditFragmentArgs.fromBundle(requireArguments())
+        viewModel.userChannel.postValue(args.userChannel)
     }
 }

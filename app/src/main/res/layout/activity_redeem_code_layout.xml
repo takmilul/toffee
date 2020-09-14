@@ -11,9 +11,9 @@
         <Button
             android:id="@+id/redeemBtn"
             android:enabled="true"
-            style="@style/toffeeButton"
+            style="@style/BgToggleButtonStyleSolidPink"
             android:layout_width="@dimen/button_accent_width"
-            android:layout_height="@dimen/button_accent_height"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="32dp"
             android:text="@string/redeem_button"

@@ -24,16 +24,17 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/continue_btn"
-        style="@style/toffeeButton"
+        style="@style/BgToggleButtonStyleSolidPink"
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/button_accent_height"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="32dp"
         android:paddingRight="20dp"
         android:paddingLeft="20dp"
         android:text="@string/do_you_continue_txt"
+        android:textColor="@color/white_to_accent_color"
         android:textAllCaps="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -41,15 +42,17 @@
 
     <Button
         android:id="@+id/retry_btn"
-        style="@style/Button2Style"
+        style="@style/BgToggleButtonStyleRingAccent"
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/button_accent_height"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="16dp"
+        android:layout_marginBottom="4dp"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
         android:visibility="visible"
         android:text="@string/try_again_txt"
+        android:textColor="@color/accent_to_pink_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/continue_btn"
         app:layout_constraintStart_toStartOf="@+id/continue_btn"

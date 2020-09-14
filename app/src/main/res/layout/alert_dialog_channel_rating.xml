@@ -62,6 +62,7 @@
                     android:layout_marginBottom="48dp"
                     android:text="Submit"
                     android:textSize="16sp"
+                    android:enabled="false"
                     style="@style/ButtonStyleSolidPurple"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

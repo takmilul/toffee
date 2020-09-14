@@ -100,18 +100,13 @@ class CreatorChannelFragment : Fragment(), OnClickListener {
     override fun onClick(v: View?) {
         when (v) {
             addBioButton -> {
-                requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.content_viewer, CreatorChannelEditFragment.newInstance(viewModel.channelInfo.value))
-                    .addToBackStack(CreatorChannelEditFragment::class.java.name)
-                    .commit()
+                val action = CreatorChannelFragmentDirections.actionMenuChannelToCreatorChannelEditFragment(viewModel.channelInfo.value)
+                findNavController().navigate(action)
             }
             
             editButton -> {
-                /*requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.content_viewer, UserChannelHomeFragment.newInstance())
-                    .addToBackStack(UserChannelHomeFragment::class.java.name)
-                    .commit()*/
-            findNavController().navigate(R.id.action_menu_channel_to_creatorChannelEditFragment)
+                val action = CreatorChannelFragmentDirections.actionMenuChannelToCreatorChannelEditFragment(viewModel.channelInfo.value)
+                findNavController().navigate(action)
             }
         }
     }

@@ -80,7 +80,7 @@
                 android:id="@+id/confirm_btn"
                 style="@style/ButtonStyleSolidPink"
                 android:layout_width="@dimen/button_accent_width"
-                android:layout_height="@dimen/button_accent_height"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="48dp"
                 android:text="@string/sign_in_text"
