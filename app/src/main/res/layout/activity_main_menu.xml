@@ -29,7 +29,6 @@
                         android:id="@+id/main_ui_frame"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_above="@+id/home_mini_progress_container"
                         >
                         <androidx.fragment.app.FragmentContainerView
                             android:id="@+id/home_nav_host"
@@ -46,12 +45,6 @@
                             android:layout_height="match_parent"
                             />
                     </FrameLayout>
-                    <include
-                        android:id="@+id/home_mini_progress_container"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        layout="@layout/home_mini_upload_progress" />
                     <com.banglalink.toffee.ui.widget.DraggerLayout
                         xmlns:dragger_layout="http://schemas.android.com/apk/res-auto"
                         android:id="@+id/draggable_view"

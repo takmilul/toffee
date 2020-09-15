@@ -9,6 +9,7 @@ import android.content.res.Configuration
 import android.graphics.Point
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.Display
 import android.view.Menu
 import android.view.MenuItem
@@ -34,10 +35,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
-import com.banglalink.toffee.extension.launchActivity
-import com.banglalink.toffee.extension.loadProfileImage
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.EXIT_FROM_APP_MSG
 import com.banglalink.toffee.model.NavigationMenu
@@ -57,7 +55,17 @@ import com.banglalink.toffee.ui.widget.showSubscriptionDialog
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.exoplayer2.util.Util
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.activity_main_menu.*
+import kotlinx.android.synthetic.main.fragment_edit_upload_info.*
+import kotlinx.android.synthetic.main.home_mini_upload_progress.*
+import kotlinx.android.synthetic.main.home_mini_upload_progress.upload_size_text
 import kotlinx.android.synthetic.main.layout_appbar.view.*
+import net.gotev.uploadservice.UploadService
+import net.gotev.uploadservice.data.UploadInfo
+import net.gotev.uploadservice.network.ServerResponse
+import net.gotev.uploadservice.observer.request.RequestObserver
+import net.gotev.uploadservice.observer.request.RequestObserverDelegate
 import java.util.*
 import javax.annotation.Nonnull
 
@@ -114,7 +122,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         showRedeemMessageIfPossible()
 
         handleSharedUrl(intent)
-//        UploadObserver(this, this).start()
+//        observeUpload()
 
         observe(viewModel.getCategory()) {
             when (it) {
@@ -128,10 +136,15 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         }
 
         binding.uploadButton.setOnClickListener {
-//            if(navController.currentDestination?.id == R.id.uploadMethodFragment) {
-//                navController.popBackStack()
-//            }
+            if(navController.currentDestination?.id == R.id.uploadMethodFragment) {
+                navController.popBackStack()
+                return@setOnClickListener
+            }
 //            else {
+            if(UploadService.taskList.isNotEmpty()) {
+                Snackbar.make(binding.uploadButton, "Another upload is in progress", Snackbar.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
                 navController.navigate(R.id.uploadMethodFragment)
 //            }
 //            val uploadFragment = supportFragmentManager.findFragmentByTag(UploadMethodFragment::class.java.simpleName)

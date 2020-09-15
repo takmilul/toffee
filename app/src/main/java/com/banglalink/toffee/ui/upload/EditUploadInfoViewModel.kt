@@ -21,14 +21,14 @@ class EditUploadInfoViewModel: ViewModel() {
     val challengeSelectionPosition = MutableLiveData<Int>()
 
     init {
-        title.value = "This is a title"
-        categories.value = listOf("Select", "Hello", "World")
+        title.value = ""
+        categories.value = listOf("Select", "Movie", "Natok", "Music video", "Games")
         categoryPosition.value = 2
 
         uploadProgress.value = 0
 
-        ageGroup.value = listOf("Select", "3+", "9+", "12+", "18+")
-        ageGroupPosition.value = 3
+        ageGroup.value = listOf("Select", "Everyone", "3+", "9+", "12+", "18+")
+        ageGroupPosition.value = 1
 
         challengeSelectionList.value = listOf("Select", "Music", "Movie", "Games", "TV Series")
         challengeSelectionPosition.value = 2

@@ -13,6 +13,7 @@ import coil.util.CoilUtils
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.ui.upload.UploadObserver
 import net.gotev.uploadservice.UploadServiceConfig
 import okhttp3.OkHttpClient
 
@@ -59,7 +60,8 @@ class ToffeeApplication : Application() {
 
         createNotificationChannel()
 
-        UploadServiceConfig.initialize(this, notificationChannelID, true)
+        UploadServiceConfig.initialize(this, notificationChannelID, BuildConfig.DEBUG)
+        UploadObserver(this).start()
     }
 
     private fun createNotificationChannel() {

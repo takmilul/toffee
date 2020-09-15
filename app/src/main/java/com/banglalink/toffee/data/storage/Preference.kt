@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
 import android.text.TextUtils
+import androidx.core.content.edit
 import androidx.lifecycle.MutableLiveData
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.analytics.ToffeeAnalytics
@@ -245,6 +246,18 @@ class Preference private constructor(val context: Context) {
     fun getSessionTokenSaveTimeInMillis(): Long {
         return pref.getLong("deviceTimeInMillis", System.currentTimeMillis());
     }
+
+    var uploadId: String?
+        get() = pref.getString("toffee-upload-id", null)
+        set(value) = pref.edit { putString("toffee-upload-id", value) }
+
+    var uploadStatus: Int
+        get() = pref.getInt("toffee-upload-status", -1)
+        set(value) = pref.edit { putInt("toffee-upload-status", value) }
+
+//    var uploadUri: String?
+//        get() = pref.getString("toffee-upload-uri", null)
+//        set(value) = pref.edit { putString("toffee-upload-uri", value) }
 
     companion object {
         private var instance: Preference? = null

@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.github.florent37.runtimepermission.kotlin.PermissionException
@@ -146,14 +147,12 @@ class UploadMethodFragment: Fragment(R.layout.upload_method_fragment) {
             requireContext(),
             "http://23.94.70.184:25478/upload?token=1148123456789"
         )
-            .setUploadID("toffee-video-upload")
             .setMethod("POST")
             .addFileToUpload(uri, "file")
             .startUpload()
 
-        Log.e("UPLOAD - ", upId)
-
-//        requireActivity().supportFragmentManager.popBackStack()
+        Preference.getInstance().uploadId = upId
+        Preference.getInstance().uploadStatus = 1
 
         activity?.
             findNavController(R.id.home_nav_host)?.let {
