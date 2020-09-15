@@ -69,6 +69,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:minLines="3"
+            android:maxLines="3"
             android:text="@{data.program_name}"
             app:layout_constraintVertical_chainStyle="packed"
             app:layout_constraintBottom_toTopOf="@id/viewCount"
