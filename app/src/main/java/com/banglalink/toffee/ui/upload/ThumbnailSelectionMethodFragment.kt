@@ -32,6 +32,7 @@ class ThumbnailSelectionMethodFragment: Fragment() {
 
     companion object {
         private const val REQUEST_IMAGE = 0x225
+        private const val REQUEST_IMAGE_FROM_FILE = 0x226
         const val THUMB_URI = "thumb-uri"
 
         fun newInstance(): ThumbnailSelectionMethodFragment {
@@ -67,7 +68,7 @@ class ThumbnailSelectionMethodFragment: Fragment() {
                         Intent(
                             Intent.ACTION_PICK,
                             MediaStore.Images.Media.EXTERNAL_CONTENT_URI),
-                        REQUEST_IMAGE
+                        REQUEST_IMAGE_FROM_FILE
                     )
                 }
             }
@@ -146,6 +147,11 @@ class ThumbnailSelectionMethodFragment: Fragment() {
             if(requestCode == REQUEST_IMAGE) {
                 ToffeeAnalytics.logBreadCrumb("Got result from camera")
                 imageUri?.let {
+                    startCrop(it)
+                }
+            }
+            else if(requestCode == REQUEST_IMAGE_FROM_FILE) {
+                data?.data?.let {
                     startCrop(it)
                 }
             }

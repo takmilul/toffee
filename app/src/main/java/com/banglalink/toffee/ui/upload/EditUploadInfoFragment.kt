@@ -1,6 +1,8 @@
 package com.banglalink.toffee.ui.upload
 
 import android.content.Context
+import android.media.MediaMetadataRetriever
+import android.net.Uri
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
@@ -13,18 +15,23 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import coil.Coil
 import coil.api.load
 import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
+import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.FragmentEditUploadInfoBinding
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.util.unsafeLazy
 //import com.bumptech.glide.Glide
 import com.pchmn.materialchips.ChipsInput
 import com.pchmn.materialchips.model.ChipInterface
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.gotev.uploadservice.data.UploadInfo
 import net.gotev.uploadservice.network.ServerResponse
 import net.gotev.uploadservice.observer.request.RequestObserver
@@ -69,8 +76,21 @@ class EditUploadInfoFragment: Fragment() {
         uploadId = arguments?.getString(ARG_UPLOAD_ID, null)
         uploadUri = arguments?.getString(ARG_UPLOAD_URI, null)
         uploadUri?.let {
-            Log.e("IMAGE", it)
-//            Glide.with(this).load(it).into(binding.videoThumb)
+            lifecycleScope.launch {
+                val bmp = withContext(Dispatchers.IO) {
+                    val mmr = MediaMetadataRetriever()
+                    mmr.setDataSource(context, Uri.parse(it))
+                    mmr.frameAtTime
+                }
+                binding.videoThumb.setImageBitmap(bmp)
+            }
+        }
+
+        binding.uploadTitle.requestFocus()
+
+        binding.cancelButton.setOnClickListener {
+            Preference.getInstance().uploadStatus = -1
+            findNavController().popBackStack()
         }
 
         binding.submitButton.setOnClickListener {
@@ -79,6 +99,7 @@ class EditUploadInfoFragment: Fragment() {
                         "You will be notified once its published.",
                 icon = R.drawable.subscription_success
             ).create().show()
+            Preference.getInstance().uploadStatus = -1
         }
 
         binding.thumbEditButton.setOnClickListener {
