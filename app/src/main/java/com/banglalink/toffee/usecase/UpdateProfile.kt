@@ -3,6 +3,7 @@ package com.banglalink.toffee.usecase
 import com.banglalink.toffee.data.network.request.UpdateProfileRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO
+import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.Preference
 
 class UpdateProfile(private val preference: Preference, private val toffeeApi: ToffeeApi) {
@@ -13,7 +14,7 @@ class UpdateProfile(private val preference: Preference, private val toffeeApi: T
         address: String,
         phoneNo: String
     ): Boolean {
-        tryIO {
+        tryIO2 {
             toffeeApi.updateProfile(
                 UpdateProfileRequest(
                     fullName,

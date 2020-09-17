@@ -33,11 +33,11 @@ class LandingPageViewModel(application: Application):BaseViewModel(application) 
     val featureContentLiveData = featureContentMutableLiveData.toLiveData()
 
     private val getChannels by unsafeLazy {
-        GetContents(RetrofitApiClient.toffeeApi)
+        GetContents(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
 
     private val getPopularVideo by unsafeLazy {
-        GetContents(RetrofitApiClient.toffeeApi)
+        GetContents(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
 
     private val getFeatureContents by unsafeLazy {

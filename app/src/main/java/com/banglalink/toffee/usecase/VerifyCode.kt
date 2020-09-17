@@ -3,31 +3,33 @@ package com.banglalink.toffee.usecase
 import com.banglalink.toffee.data.network.request.VerifyCodeRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO
+import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.CustomerInfoSignIn
 
 class VerifyCode(private val preference: Preference,private val toffeeApi: ToffeeApi) {
 
     suspend fun execute(code:String,regSessionToken:String,referralCode:String = ""):CustomerInfoSignIn{
-        val response = tryIO { toffeeApi.verifyCode(getRequest(code,regSessionToken,referralCode)) }
+        val response = tryIO2 { toffeeApi.verifyCode(getRequest(code,regSessionToken,referralCode)) }
 
-        response.customerInfoSignIn.also {
-            preference.balance = it.balance
-            preference.customerId = it.customerId
-            preference.password = it.password?:""
-            preference.customerName = it.customerName?:""
-            if(it.dbVersion!=null)
-                preference.setDBVersion(it.dbVersion!!)
-            preference.sessionToken = (it.sessionToken?:"")
+        response.customerInfoSignIn.also { customerInfoSignIn ->
+            preference.balance = customerInfoSignIn.balance
+            preference.customerId = customerInfoSignIn.customerId
+            preference.password = customerInfoSignIn.password?:""
+            preference.customerName = customerInfoSignIn.customerName?:""
+            preference.sessionToken = (customerInfoSignIn.sessionToken?:"")
 
-            preference.setHeaderSessionToken(it.headerSessionToken)
-            preference.setHlsOverrideUrl(it.hlsOverrideUrl)
-            preference.setShouldOverrideHlsUrl(it.hlsUrlOverride)
-            preference.setSessionTokenLifeSpanInMillis(it.tokenLifeSpan.toLong() * 1000 * 3600)
-            if(it.isBanglalinkNumber!=null){
-                preference.isBanglalinkNumber = it.isBanglalinkNumber
+            preference.setHeaderSessionToken(customerInfoSignIn.headerSessionToken)
+            preference.setHlsOverrideUrl(customerInfoSignIn.hlsOverrideUrl)
+            preference.setShouldOverrideHlsUrl(customerInfoSignIn.hlsUrlOverride)
+            preference.setSessionTokenLifeSpanInMillis(customerInfoSignIn.tokenLifeSpan.toLong() * 1000 * 3600)
+            if(customerInfoSignIn.isBanglalinkNumber!=null){
+                preference.isBanglalinkNumber = customerInfoSignIn.isBanglalinkNumber
             }
-            preference.isSubscriptionActive = it.isSubscriptionActive?:"true"
+            customerInfoSignIn.dbVersionList?.let {
+                preference.setDBVersion(it)
+            }
+            preference.isSubscriptionActive = customerInfoSignIn.isSubscriptionActive?:"true"
         }
        
 
