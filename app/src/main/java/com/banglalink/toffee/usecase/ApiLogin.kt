@@ -31,6 +31,8 @@ class ApiLogin(private val pref: Preference, private val authApi: AuthApi) {
             customerInfoSignIn.dbVersionList?.let {
                 pref.setDBVersion(it)
             }
+            pref.latitude = customerInfoSignIn.lat?:""
+            pref.longitude = customerInfoSignIn.long?:""
             pref.isSubscriptionActive = customerInfoSignIn.isSubscriptionActive?:"true"
         }
         return response.customerInfoSignIn!!

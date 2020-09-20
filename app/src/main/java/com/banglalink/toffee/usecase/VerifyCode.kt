@@ -29,6 +29,8 @@ class VerifyCode(private val preference: Preference,private val toffeeApi: Toffe
             customerInfoSignIn.dbVersionList?.let {
                 preference.setDBVersion(it)
             }
+            preference.latitude = customerInfoSignIn.lat?:""
+            preference.longitude = customerInfoSignIn.long?:""
             preference.isSubscriptionActive = customerInfoSignIn.isSubscriptionActive?:"true"
         }
        
