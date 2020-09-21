@@ -19,6 +19,7 @@ object ToffeeAnalytics {
 
     fun updateCustomerId(customerId:Int){
         firebaseAnalytics.setUserId(customerId.toString())
+        FirebaseCrashlytics.getInstance().setUserId(customerId.toString())
     }
 
     fun logApiError(apiName:String?, errorMsg: String?){
