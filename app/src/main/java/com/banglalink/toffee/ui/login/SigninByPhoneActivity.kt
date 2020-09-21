@@ -1,8 +1,6 @@
 package com.banglalink.toffee.ui.login
 
-import android.app.Activity
 import android.app.AlertDialog
-import android.app.PendingIntent
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -19,6 +17,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.databinding.ActivitySigninByPhoneBinding
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.INVALID_REFERRAL_ERROR_CODE
@@ -30,18 +29,15 @@ import com.banglalink.toffee.ui.verify.VerifyCodeActivity
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.ui.widget.showAlertDialog
 import com.banglalink.toffee.util.unsafeLazy
-import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.credentials.Credential
+import com.google.android.gms.auth.api.credentials.Credentials
 import com.google.android.gms.auth.api.credentials.HintRequest
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.api.GoogleApiClient
+import java.lang.Exception
 
 
-class SigninByPhoneActivity : BaseAppCompatActivity(), GoogleApiClient.ConnectionCallbacks,
-    GoogleApiClient.OnConnectionFailedListener {
+class SigninByPhoneActivity : BaseAppCompatActivity() {
 
     lateinit var binding: ActivitySigninByPhoneBinding
-    var apiClient: GoogleApiClient? = null
     private val RESOLVE_HINT = 2;
 
     private val viewModel by unsafeLazy {
@@ -64,12 +60,6 @@ class SigninByPhoneActivity : BaseAppCompatActivity(), GoogleApiClient.Connectio
         binding.termsAndConditionsCheckbox.setOnClickListener {
             binding.loginBtn.isEnabled = binding.termsAndConditionsCheckbox.isChecked
         }
-
-        apiClient = GoogleApiClient.Builder(this)
-            .addConnectionCallbacks(this)
-            .enableAutoManage(this, this)
-            .addApi(Auth.CREDENTIALS_API)
-            .build();
 
         getHintPhoneNumber()
 
@@ -199,16 +189,22 @@ class SigninByPhoneActivity : BaseAppCompatActivity(), GoogleApiClient.Connectio
     }
 
     private fun getHintPhoneNumber() {
-        val hintRequest = HintRequest.Builder()
-            .setPhoneNumberIdentifierSupported(true)
-            .build()
-        val intent: PendingIntent = Auth.CredentialsApi.getHintPickerIntent(
-            apiClient, hintRequest
-        )
-        startIntentSenderForResult(
-            intent.intentSender,
-            RESOLVE_HINT, null, 0, 0, 0
-        )
+        try{
+            val hintRequest = HintRequest.Builder()
+                .setPhoneNumberIdentifierSupported(true)
+                .build()
+            val intent = Credentials.getClient(this).getHintPickerIntent(hintRequest)
+            intent?.intentSender?.let {
+                startIntentSenderForResult(
+                    it,
+                    RESOLVE_HINT, null, 0, 0, 0
+                )
+            }
+        }catch (e:Exception){
+            ToffeeAnalytics.logException(e)
+            ToffeeAnalytics.logBreadCrumb("Could not retrieve phone number")
+        }
+
     }
 
     override fun onActivityResult(
@@ -217,26 +213,14 @@ class SigninByPhoneActivity : BaseAppCompatActivity(), GoogleApiClient.Connectio
         data: Intent?
     ) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == RESOLVE_HINT && resultCode == Activity.RESULT_OK && data != null) {
-            val credential: Credential =
+        if (requestCode == RESOLVE_HINT && resultCode == RESULT_OK && data != null) {
+            val credential: Credential? =
                 data.getParcelableExtra(Credential.EXTRA_KEY)
-            println("mobile number:" + credential.id)
-            binding.phoneNumberEt.setText(credential.id)
-            binding.phoneNumberEt.setSelection(credential.id.length)
+            credential?.let {
+                binding.phoneNumberEt.setText(it.id)
+                binding.phoneNumberEt.setSelection(it.id.length)
+            }
         }
-    }
-
-
-    override fun onConnected(p0: Bundle?) {
-        //No Need to implement
-    }
-
-    override fun onConnectionSuspended(p0: Int) {
-        //No Need to implement
-    }
-
-    override fun onConnectionFailed(p0: ConnectionResult) {
-        //No Need to implement
     }
 
 }

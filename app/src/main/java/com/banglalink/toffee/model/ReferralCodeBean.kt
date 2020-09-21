@@ -1,3 +1,9 @@
 package com.banglalink.toffee.model
 
-data class ReferralCodeBean(val referralCode:String,val sharableText:String)
+import com.google.gson.annotations.SerializedName
+
+data class ReferralCodeBean(
+    @SerializedName("referralCode")
+    val referralCode:String,
+    @SerializedName("sharableText")
+    val sharableText:String)

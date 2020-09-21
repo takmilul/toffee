@@ -37,7 +37,7 @@ public class ParentLevelAdapter extends BaseExpandableListAdapter implements Exp
 
     @Override
     public List<NavCategory> getChild(int groupPosition, int childPosition) {
-        return mListDataHeader.get(groupPosition).getCategories();//.categories.get(childPosition);
+        return mListDataHeader.get(groupPosition).getCategories();
     }
 
     @Override
@@ -101,7 +101,7 @@ public class ParentLevelAdapter extends BaseExpandableListAdapter implements Exp
 //        return (getChild(groupPosition,0).size() == 0);
     }
 
-    class ViewHolder{
+    static class ViewHolder{
         ImageView icon;
         TextView name;
         View topBorder;
