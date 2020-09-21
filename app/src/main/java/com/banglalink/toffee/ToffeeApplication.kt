@@ -10,6 +10,7 @@ import coil.util.CoilUtils
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.storage.Preference
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import okhttp3.OkHttpClient
 
 
@@ -18,9 +19,22 @@ class ToffeeApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        if (BuildConfig.DEBUG) {
+            FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(false)
+        }
         Preference.init(this)
         ToffeeAnalytics.initFireBaseAnalytics(this)
 
+        initCoil()
+
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), HeartBeatManager)
+
+
+    }
+
+    private fun initCoil() {
         val imageLoader = ImageLoader(this) {
             crossfade(true)
             bitmapPoolPercentage(0.3)
@@ -31,12 +45,7 @@ class ToffeeApplication : Application() {
             }
 
         }
-
-        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), HeartBeatManager)
-
         Coil.setDefaultImageLoader(imageLoader)
-
     }
 
     override fun onTerminate() {

@@ -18,10 +18,7 @@ class Preference private constructor(val context: Context) {
     private val pref: SharedPreferences =
         context.getSharedPreferences("IP_TV", Context.MODE_PRIVATE)
 
-    val toffeeGeneralHeader by unsafeLazy{
-        ("Toffee" + "/" + BuildConfig.VERSION_NAME + " (Linux;Android " + Build.VERSION.RELEASE
-                + ") " + ExoPlayerLibraryInfo.VERSION_SLASHY)
-    }
+    val toffeeGeneralHeader= "Toffee" + "/" + BuildConfig.VERSION_NAME + " Android " + Build.VERSION.RELEASE
 
     val balanceLiveData = MutableLiveData<Int>()
     val sessionTokenLiveData = MutableLiveData<String>()
@@ -99,12 +96,6 @@ class Preference private constructor(val context: Context) {
             pref.edit().putInt("CellularProfileStatus4", value).apply()
         }
 
-    //    "channel_db_version": 0,
-    //            "vod_db_version": 0,
-    //            "notification_db_version": 0,
-    //            "catchup_db_version": 0,
-    //            "package_db_version": 0,
-    //            "category_db_version": 0
     var channelDbVersion: Int
         get() = pref.getInt("channel_db_version", 0)
         set(version) {
@@ -245,6 +236,7 @@ class Preference private constructor(val context: Context) {
     fun getSessionTokenSaveTimeInMillis(): Long {
         return pref.getLong("deviceTimeInMillis", System.currentTimeMillis());
     }
+
 
     companion object {
         private var instance: Preference? = null

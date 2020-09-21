@@ -294,7 +294,6 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
         else
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
         return true;
     }
 
