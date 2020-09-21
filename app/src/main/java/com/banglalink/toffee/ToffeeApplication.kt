@@ -13,6 +13,7 @@ import coil.util.CoilUtils
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.banglalink.toffee.ui.upload.UploadObserver
 import net.gotev.uploadservice.UploadServiceConfig
@@ -28,6 +29,7 @@ class ToffeeApplication : Application() {
         if (BuildConfig.DEBUG) {
             FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(false)
         }
+        PubSubMessageUtil.init(this)
         Preference.init(this)
         ToffeeAnalytics.initFireBaseAnalytics(this)
 

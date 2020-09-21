@@ -25,6 +25,9 @@ import com.banglalink.toffee.usecase.*
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 
 
 class HomeViewModel(application: Application):BaseViewModel(application),OnCompleteListener<InstanceIdResult> {
@@ -133,7 +136,9 @@ class HomeViewModel(application: Application):BaseViewModel(application),OnCompl
     fun sendViewContentEvent(channelInfo: ChannelInfo){
         viewModelScope.launch {
             try {
-                sendViewContentEvent.execute(channelInfo)
+                CoroutineScope(Dispatchers.IO).launch {
+                    sendViewContentEvent.execute(channelInfo)
+                }
 
             }catch (e:Exception){
                 e.printStackTrace()

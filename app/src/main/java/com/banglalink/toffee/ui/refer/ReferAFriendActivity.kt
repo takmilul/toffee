@@ -5,11 +5,9 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.content.res.AssetManager
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.os.Build
 import android.os.Bundle
-import android.text.Html
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextPaint
@@ -147,6 +145,11 @@ class ReferAFriendActivity : BaseAppCompatActivity() {
 
         message.loadData(msg, "text/html", "UTF-8")
         alertDialog.show()
+    }
+
+    //For Android 5.0.0 webkit UI bug fix
+    override fun getAssets(): AssetManager {
+        return resources.assets
     }
 
 }

@@ -14,6 +14,7 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -238,5 +239,13 @@ public class Utils {
 
     public static int pxToDp(int px) {
         return (int)(px / Resources.getSystem().getDisplayMetrics().density);
+    }
+
+    public static String getDateTime(){
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Dhaka"));
+        Calendar cal = Calendar.getInstance(TimeZone.getDefault());
+        Date dateGMT = cal.getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.US);
+        return sdf.format(dateGMT);
     }
 }

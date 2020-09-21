@@ -27,24 +27,46 @@ object PubSubMessageUtil {
     private val coroutineContext = Dispatchers.IO + SupervisorJob()
     private val coroutineScope = CoroutineScope(coroutineContext)
 
-    fun sendPubSubMessage(context: Context, notificationId: String?, messageStatus: PUBSUBMessageStatus) {
+    private val PROJECTID = "toffee-261507"
+    private val TOPIC_ID = "fcm-notification-response"
+    private val notificationTopic = "projects/$PROJECTID/topics/$TOPIC_ID"
+    private val heartBeatTopic = "projects/$PROJECTID/topics/current_viewers_heartbeat"
+    private val viewContentTopic = "projects/$PROJECTID/topics/current_viewers"
+
+    private lateinit var client:Pubsub
+
+    fun init(context: Context){
+        val httpTransport = AndroidHttp.newCompatibleTransport()
+        val json: JacksonFactory? = JacksonFactory.getDefaultInstance()
+        val credential = GoogleCredential.fromStream(
+            context.assets.open("toffee-261507-c7793c98cdfd.json")
+        ).createScoped(PubsubScopes.all())
+        val builder =
+            Pubsub.Builder(httpTransport, json, credential).setApplicationName("PubSubClient")
+        client = builder.build()
+    }
+    fun sendNotificationStatus(notificationId: String?, messageStatus: PUBSUBMessageStatus) {
         coroutineScope.launch {
-            sendMessage(context, getPubSubMessage(notificationId, messageStatus))
+            sendMessage(getPubSubMessage(notificationId, messageStatus), notificationTopic)
         }
     }
 
-     private fun sendMessage(context: Context, message: String) {
-        try {
-            val httpTransport = AndroidHttp.newCompatibleTransport()
-            val json: JacksonFactory? = JacksonFactory.getDefaultInstance()
-            val credential = GoogleCredential.fromStream(
-                context.assets.open("toffee-261507-c7793c98cdfd.json")
-            ).createScoped(PubsubScopes.all())
-            val builder =
-                Pubsub.Builder(httpTransport, json, credential).setApplicationName("PubSubClient")
-            val client = builder.build()
-            val batch = client.batch()
+    fun sendHeartBeatToPubSub(jsonStringRequest:String){
+        coroutineScope.launch {
+            sendMessage(jsonStringRequest, heartBeatTopic)
+        }
+    }
 
+    fun sendViewContentToPubSub(jsonStringRequest:String){
+        coroutineScope.launch {
+            sendMessage(jsonStringRequest, viewContentTopic)
+        }
+    }
+
+     private fun sendMessage(message: String,topic:String) {
+        try {
+            val batch = client.batch()
+            Log.d("PUBSUB",  message)
             val pubsubMessage = PubsubMessage()
             pubsubMessage.encodeData(message.toByteArray(charset("UTF-8")))
             val publishRequest = PublishRequest()
@@ -52,7 +74,7 @@ object PubSubMessageUtil {
                 pubsubMessage
             )
 
-            client!!.projects().topics().publish(topic, publishRequest).queue(batch, callback)
+            client.projects().topics().publish(topic, publishRequest).queue(batch, callback)
             batch?.execute()
 
         } catch (ex: Exception) {
@@ -73,10 +95,6 @@ object PubSubMessageUtil {
                 Log.d("PUBSUB", "error Message: " + e.message)
             }
         }
-
-    private val PROJECTID = "toffee-261507"
-    private val TOPIC_ID = "fcm-notification-response"
-    private val topic = "projects/$PROJECTID/topics/$TOPIC_ID"
 
     private fun getPubSubMessage(notificationId: String?, messageStatus: PUBSUBMessageStatus): String {
         val jObj = JsonObject();
