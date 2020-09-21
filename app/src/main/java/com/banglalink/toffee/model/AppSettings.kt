@@ -1,5 +1,9 @@
 package com.banglalink.toffee.model
 
+import android.os.Build
+import com.banglalink.toffee.BuildConfig
+import com.google.android.exoplayer2.ExoPlayerLibraryInfo
+
 
 const val MULTI_DEVICE_LOGIN_ERROR_CODE = 109
 const val INVALID_REFERRAL_ERROR_CODE = -100
@@ -44,6 +48,9 @@ val TOFFEE_KEY = object : Any() {
         return String(buf)
     }
 }.toString()
+
+val TOFFEE_HEADER=("Toffee" + "/" + BuildConfig.VERSION_NAME + " (Linux;Android " + Build.VERSION.RELEASE
+        + ") " + ExoPlayerLibraryInfo.VERSION_SLASHY)
 
 val PRIVACY_POLICY_URL =
     "https://www.banglalink.net/en/personal/digital-services/toffee-privacy-policy"

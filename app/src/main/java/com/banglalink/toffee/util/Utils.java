@@ -12,6 +12,7 @@ import android.view.WindowManager;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -221,6 +222,15 @@ public class Utils {
 
     public static float convertDpToPixel(float dp, Context context){
         return dp * ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+    }
+
+    public static String getDateTime(){
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Dhaka"));
+        Calendar cal = Calendar.getInstance(TimeZone.getDefault());
+        Date dateGMT = cal.getTime();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.US);
+        return sdf.format(dateGMT);
     }
 
 
