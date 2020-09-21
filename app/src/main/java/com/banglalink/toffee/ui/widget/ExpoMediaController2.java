@@ -47,7 +47,11 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
     private Formatter mFormatter;
     private boolean isMinimize;
     private long lastPlayerPosition = 0;
+    private boolean isAutoRotationEnabled = true;
 
+    public boolean isAutoRotationEnabled() {
+        return isAutoRotationEnabled;
+    }
 
     private int videoWidth = 1920;
     private int videoHeight = 1080;
@@ -84,7 +88,14 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
         binding.forward.setOnClickListener(this);
         binding.backward.setOnClickListener(this);
         binding.drawer.setOnClickListener(this);
+        binding.rotation.setOnClickListener(this);
 
+        if(isAutoRotationEnabled){
+            binding.rotation.setImageResource(R.mipmap.rotation_on);
+        }
+        else {
+            binding.rotation.setImageResource(R.mipmap.rotation_off);
+        }
 
         binding.progress.setMax(1000);
         binding.progress.setOnSeekBarChangeListener(this);
@@ -379,6 +390,19 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
             forward();
         } else if(v == binding.backward){
             backward();
+        }
+        else if(v == binding.rotation){
+            if(isAutoRotationEnabled){
+                isAutoRotationEnabled = false;
+                binding.rotation.setImageResource(R.mipmap.rotation_off);
+            }
+            else {
+                isAutoRotationEnabled = true;
+                binding.rotation.setImageResource(R.mipmap.rotation_on);
+            }
+            for (OnPlayerControllerChangedListener OnPlayerControllerChangedListener : onPlayerControllerChangedListeners) {
+                OnPlayerControllerChangedListener.onRotationLock(isAutoRotationEnabled);
+            }
         }
     }
 

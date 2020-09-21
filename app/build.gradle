@@ -11,8 +11,8 @@ android {
         applicationId "com.banglalink.toffee"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 25
-        versionName "1.1.5"
+        versionCode 30
+        versionName "1.1.10"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {
@@ -55,16 +55,16 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8"
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.core:core-ktx:1.3.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.core:core-ktx:1.3.1'
     implementation "androidx.fragment:fragment-ktx:1.2.5"
     implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
     implementation "net.gotev:uploadservice:4.3.1"
 
     //Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.2.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.6.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.2.1'
+    implementation 'com.squareup.retrofit2:converter-gson:2.6.4'
     //LifeCycle Extensions
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
     implementation "android.arch.lifecycle:extensions:2.1.0"
@@ -77,7 +77,7 @@ dependencies {
     //GIF imageview
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.17'
     // Crop Image
-    implementation 'com.github.yalantis:ucrop:2.2.4'
+    implementation 'com.github.yalantis:ucrop:2.2.6'
 
     implementation 'com.xfinity:dahdit:0.9.3'
 
@@ -85,21 +85,21 @@ dependencies {
     implementation 'io.coil-kt:coil:0.9.5'
 
     //Firebase Push Notification
-    implementation 'com.google.firebase:firebase-messaging:20.2.1'
+    implementation 'com.google.firebase:firebase-messaging:20.2.4'
     //Firebase in app messaging
-    implementation 'com.google.firebase:firebase-inappmessaging-display:19.0.7'
+    implementation 'com.google.firebase:firebase-inappmessaging-display:19.1.1'
     //Firebase core
-    implementation 'com.google.firebase:firebase-core:17.4.3'
+    implementation 'com.google.firebase:firebase-core:17.5.0'
     // Recommended: Add the Firebase SDK for Google Analytics.
-    implementation 'com.google.firebase:firebase-analytics:17.4.3'
+    implementation 'com.google.firebase:firebase-analytics:17.5.0'
 
     // Add the Firebase SDK for Crashlytics.
-    implementation 'com.google.firebase:firebase-crashlytics:17.1.0'
+    implementation 'com.google.firebase:firebase-crashlytics:17.2.1'
 
     implementation project(':slider')
 
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'com.google.android.material:material:1.2.0'
     implementation 'com.github.pchmn:MaterialChipsInput:1.0.8'
 
 
@@ -123,8 +123,8 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0"
 
-    implementation 'de.hdodenhof:circleimageview:3.1.0'
-    implementation 'com.google.android.gms:play-services-auth:18.0.0'
+	implementation 'de.hdodenhof:circleimageview:3.1.0'
+    implementation 'com.google.android.gms:play-services-auth:18.1.0'
     implementation 'com.google.android.gms:play-services-auth-api-phone:17.4.0'
 
     implementation ('com.google.apis:google-api-services-pubsub:v1-rev354-1.22.0') {

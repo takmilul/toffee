@@ -166,6 +166,14 @@
                 />
 
             <ImageView
+                android:id="@+id/rotation"
+                android:layout_width="20dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="8dp"
+                android:layout_toStartOf="@id/share"
+                android:src="@mipmap/rotation_on" />
+
+            <ImageView
                 android:id="@+id/drawer"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -175,13 +183,14 @@
                 />
 
 
+
+
             <ImageView
                 android:id="@+id/minimize"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:src="@mipmap/ic_minimize"
                 android:layout_alignTop="@id/video_option"
-
                 android:layout_centerInParent="true"
                 />
 

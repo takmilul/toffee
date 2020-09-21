@@ -59,5 +59,7 @@ interface ToffeeApi {
     suspend fun checkReferralCode(@Body referralCodeStatusRequest: ReferralCodeStatusRequest):Response<ReferralCodeStatusResponse>
     @POST("redeem-referral-code")
     suspend fun  redeemReferralCode(@Body redeemReferralCodeRequest: RedeemReferralCodeRequest): Response<RedeemReferralCodeResponse>
+    @POST("referrer-policy")
+    suspend fun getReferrerPolicy(@Body referrerPolicyRequest: ReferrerPolicyRequest):Response<ReferrerPolicyResponse>
 
 }

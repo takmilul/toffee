@@ -137,7 +137,7 @@ class DrawerHelper(val activity: HomeActivity,val binding:ActivityMainMenuBindin
         navigationMenuList.add(
             NavigationMenu(
                 ID_INVITE_FRIEND,
-                activity.getString(R.string.invite_friends_txt),
+                activity.getString(R.string.refer_a_friend_txt),
                 R.mipmap.ic_menu_invite,
                 ArrayList()
             )
@@ -190,17 +190,23 @@ class DrawerHelper(val activity: HomeActivity,val binding:ActivityMainMenuBindin
     }
 
     override fun onMenuClick(menu: NavigationMenu?) {
-        when (menu?.id) {
+       menu?.let {
+           handleMenuItemById(it.id)
+       }
+    }
+
+    fun handleMenuItemById(id:Int){
+        when (id) {
             ID_VIDEO -> {
                 val currentFragment = getCurrentContentFragment()
                 if (CatchupFragment::class.java.name != currentFragment!!.tag) {
                     activity.loadFragmentById( R.id.content_viewer,
-                        CatchupFragment.createInstance(0, 0, "", "All Videos", menu.name, "VOD")
+                        CatchupFragment.createInstance(0, 0, "", "All Videos", "All Videos", "VOD")
                         ,CatchupFragment::class.java.name
                     )
                 } else {
                     val catchupFragment = currentFragment as CatchupFragment
-                    catchupFragment.updateInfo(0, 0, "", "All Videos", menu.name, "VOD")
+                    catchupFragment.updateInfo(0, 0, "", "All Videos", "All Videos", "VOD")
                 }
 
                 binding.drawerLayout.closeDrawers()
@@ -301,34 +307,37 @@ class DrawerHelper(val activity: HomeActivity,val binding:ActivityMainMenuBindin
         category: NavCategory?,
         parent: NavigationMenu?
     ) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        //Do nothing
     }
 
     override fun onCategoryClick(category: NavCategory, parent: NavigationMenu) {
-        if (parent.id == ID_VIDEO) run {
-            val currentFragment = getCurrentContentFragment()
-            if (CatchupFragment::class.java.name != currentFragment!!.tag) {
+        handleCategoryClick(parent.id,category.id,category.categoryName)
+        binding.drawerLayout.closeDrawers()
+    }
+
+    fun handleCategoryClick(parentId:Int,categoryId:Int,categoryName:String){
+        val currentFragment = getCurrentContentFragment()
+        if (parentId == ID_VIDEO && currentFragment!=null) {
+            if (CatchupFragment::class.java.name != currentFragment.tag) {
                 activity.loadFragmentById(R.id.content_viewer,CatchupFragment.createInstance(
-                    category.id,
+                    categoryId,
                     0,
                     "",
-                    parent.name,
-                    category.categoryName,
+                    "",
+                    categoryName,
                     "VOD"
                 ), CatchupFragment::class.java.name)
             } else {
                 val catchupFragment = currentFragment as CatchupFragment
                 catchupFragment.updateInfo(
-                    category.id,
+                   categoryId,
                     0,
                     "",
-                    parent.name,
-                    category.categoryName,
+                    "",
+                    categoryName,
                     "VOD"
                 )
             }
-
-            binding.drawerLayout.closeDrawers()
             activity.minimizePlayer()
         }
     }

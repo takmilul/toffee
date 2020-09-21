@@ -33,6 +33,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.HeartBeatManager
+import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
 import com.banglalink.toffee.extension.*
@@ -52,10 +53,13 @@ import com.banglalink.toffee.ui.userchannel.UserChannelHomeFragment
 import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.ui.widget.showSubscriptionDialog
+import com.banglalink.toffee.util.InAppMessageParser
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.exoplayer2.util.Util
+import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.android.synthetic.main.activity_main_menu.*
 import kotlinx.android.synthetic.main.fragment_edit_upload_info.*
 import kotlinx.android.synthetic.main.home_mini_upload_progress.*
@@ -88,7 +92,8 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
 
     private var searchView: SearchView? = null
     lateinit var binding: ActivityMainMenuBinding
-    lateinit var drawerHelper: DrawerHelper
+    private lateinit var drawerHelper: DrawerHelper
+    private lateinit var inAppMessageParser: InAppMessageParser
 
     companion object {
         const val INTENT_REFERRAL_REDEEM_MSG = "REFERRAL_REDEEM_MSG"
@@ -120,9 +125,6 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         initDrawer()
         initLandingPageFragmentAndListenBackStack()
         showRedeemMessageIfPossible()
-
-        handleSharedUrl(intent)
-//        observeUpload()
 
         observe(viewModel.getCategory()) {
             when (it) {
@@ -218,6 +220,8 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         }
 
         lifecycle.addObserver(HeartBeatManager)
+        observeInAppMessage()
+        handleSharedUrl(intent)
     }
 
     private fun setupNavController() {
@@ -321,18 +325,47 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         val uri = intent.data
         if (uri != null) {
             val strUri = uri.toString()
-            val hash = strUri.substring(strUri.lastIndexOf("/") + 1)
-            observe(viewModel.getShareableContent(hash)){ channelResource ->
-                when(channelResource){
-                    is Resource.Success->{
-                        channelResource.data?.let {
-                            onDetailsFragmentLoad(it)
+             handleDeepLink(strUri)
+        }
+    }
+
+    private fun handleDeepLink(url:String){
+//        https://toffeelive.com/#video/0d52770e16b19486d9914c81061cf2da
+        try{
+            var isDeepLinkHandled = false
+            val route = inAppMessageParser.parseUrl(url)
+            route?.drawerId?.let {
+                ToffeeAnalytics.logBreadCrumb("Trying to open menu item")
+                drawerHelper.handleMenuItemById(it)
+                isDeepLinkHandled = true
+            }
+            route?.categoryId?.let {
+                ToffeeAnalytics.logBreadCrumb("Trying to open category item")
+                drawerHelper.handleCategoryClick(ID_VIDEO,it,route.categoryName?:"")
+                isDeepLinkHandled = true
+            }
+
+            if(!isDeepLinkHandled){
+                ToffeeAnalytics.logBreadCrumb("Trying to open individual item")
+                val hash = url.substring(url.lastIndexOf("/") + 1)
+                observe(viewModel.getShareableContent(hash)){ channelResource ->
+                    when(channelResource){
+                        is Resource.Success->{
+                            channelResource.data?.let {
+                                onDetailsFragmentLoad(it)
+                            }
                         }
                     }
                 }
             }
+        }catch (e:Exception){
+            ToffeeAnalytics.logBreadCrumb("Failed to handle depplink $url")
+            ToffeeAnalytics.logException(e)
         }
+
+
     }
+
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
@@ -442,6 +475,12 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         drawerHelper.initDrawer()
     }
 
+    private fun observeInAppMessage(){
+        FirebaseAnalytics.getInstance(this).logEvent("trigger_inapp_messaging",null)
+        inAppMessageParser = InAppMessageParser()
+        FirebaseInAppMessaging.getInstance().triggerEvent("trigger_inapp_messaging")
+    }
+
     private fun initLandingPageFragmentAndListenBackStack(){
 //        supportFragmentManager.beginTransaction().replace(R.id.content_viewer, LandingPageFragment())
 //            .addToBackStack(LandingPageFragment::class.java.name).commit()
@@ -465,7 +504,21 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     }
 
     override fun onViewMaximize() {
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+        requestedOrientation = if(binding.playerView.isAutoRotationEnabled)
+            ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+        else{
+            ActivityInfo.SCREEN_ORIENTATION_LOCKED
+        }
+    }
+
+    override fun onRotationLock(isAutoRotationEnabled: Boolean) {
+       if(isAutoRotationEnabled){
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+            showToast(getString(R.string.auto_rotation_on))
+        } else{
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED
+            showToast(getString(R.string.auto_rotation_off))
+        }
     }
 
     override fun onViewDestroy() {
@@ -506,6 +559,14 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         return true
     }
 
+    override fun onFullScreenButtonPressed(): Boolean {
+        super.onFullScreenButtonPressed()
+        if(!binding.playerView.isAutoRotationEnabled)
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED;
+
+        return true
+    }
+
     override fun onBackStackChanged() {
         if (supportFragmentManager.backStackEntryCount == 0) {
             supportActionBar!!.setDisplayHomeAsUpEnabled(false)
@@ -543,7 +604,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     private fun maximizePlayer() {
         binding.draggableView.maximize()
         binding.draggableView.visibility = View.VISIBLE
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+//        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
@@ -622,7 +683,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                 ContextCompat.getDrawable(this@HomeActivity, R.drawable.searchview_input_bg)
         }
 
-        searchView!!.setOnQueryTextListener(this)
+        searchView?.setOnQueryTextListener(this)
 
         val awesomeMenuItem = menu.findItem(R.id.action_avatar)
         val awesomeActionView = awesomeMenuItem.actionView

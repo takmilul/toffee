@@ -14,6 +14,7 @@ import com.banglalink.toffee.analytics.HeartBeatManager;
 import com.banglalink.toffee.analytics.ToffeeAnalytics;
 import com.banglalink.toffee.data.storage.Preference;
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener;
+import com.banglalink.toffee.model.AppSettingsKt;
 import com.banglalink.toffee.model.Channel;
 import com.banglalink.toffee.model.ChannelInfo;
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity;
@@ -218,7 +219,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
                 new HlsMediaSource.Factory(
                         dataType -> {
                             HttpDataSource dataSource =
-                                    new DefaultHttpDataSource(Preference.Companion.getInstance().getToffeeGeneralHeader());
+                                    new DefaultHttpDataSource(AppSettingsKt.getTOFFEE_HEADER());
                             dataSource.setRequestProperty("TOFFEE-SESSION-TOKEN", Preference.Companion.getInstance().getHeaderSessionToken());
                             return dataSource;
                         })
@@ -294,7 +295,6 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
         else
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
         return true;
     }
 
