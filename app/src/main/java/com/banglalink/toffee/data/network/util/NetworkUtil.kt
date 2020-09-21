@@ -1,13 +1,16 @@
 package com.banglalink.toffee.data.network.util
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.exception.ApiException
 import com.banglalink.toffee.data.network.response.BaseResponse
+import com.banglalink.toffee.exception.ApiException
 import com.banglalink.toffee.exception.CustomerNotFoundException
 import com.banglalink.toffee.model.MULTI_DEVICE_LOGIN_ERROR_CODE
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.Resource.Failure
+import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.util.EventProvider
 import com.banglalink.toffee.util.getError
 import kotlinx.coroutines.Dispatchers
@@ -68,4 +71,26 @@ suspend fun <T> resultFromResponse(networkCall: suspend () -> T): Resource<T> =
 
     }catch (e:Exception){
         Resource.Failure<T>(getError(e))
+    }
+
+suspend fun <T> setAndResultFromResponse(liveData: MutableLiveData<T>, networkCall: suspend () -> T): Resource<T> =
+    try {
+        val response = networkCall.invoke()
+        liveData.postValue(response)
+        Resource.Success(response)
+
+    }catch (e:Exception){
+        Resource.Failure<T>(getError(e))
+    }
+
+fun <T> setAndResultLiveData(liveData: MutableLiveData<T>, networkCall: suspend () -> T): LiveData<Resource<T>> =
+    liveData(Dispatchers.IO) {
+        try {
+            val response = networkCall.invoke()
+            liveData.postValue(response)
+            emit(Success(response))
+
+        }catch (e:Exception){
+            emit(Failure<T>(getError(e)))
+        }
     }
