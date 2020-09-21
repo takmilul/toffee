@@ -4,8 +4,6 @@ import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.data.network.request.ViewingContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO
-import com.banglalink.toffee.data.storage.ChannelDAO
-import com.banglalink.toffee.data.storage.ChannelDataModel
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.notification.PubSubMessageUtil
@@ -13,28 +11,17 @@ import com.banglalink.toffee.util.Utils
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 
-class SendViewContentEvent(private val preference: Preference, private val toffeeApi: ToffeeApi,private val channelDAO: ChannelDAO) {
+class SendViewContentEvent(private val preference: Preference, private val toffeeApi: ToffeeApi) {
 
     private val gson = Gson()
     suspend fun execute(channel: ChannelInfo, sendToPubSub:Boolean = true){
         if(sendToPubSub){
-            sendToPubSub(channel.id.toInt(),channel.type)
+            sendToPubSub(channel.id.toInt(),channel.type ?: "")
         }
         else{
-            sendToToffeeServer(channel.id.toInt(),channel.type)
+            sendToToffeeServer(channel.id.toInt(),channel.type ?: "")
         }
-        saveToLocalDb(channel)
-    }
-
-    private fun saveToLocalDb(channel: ChannelInfo){
-        val channelDataModel = ChannelDataModel().apply {
-            payLoad =  gson.toJson(channel)
-            channelId = channel.id.toInt()
-            type = channel.type
-            category = "history"
-        }
-
-        channelDAO.saveChannel(channelDataModel)
+//        saveToLocalDb(channel)
     }
 
     private fun sendToPubSub(contentId: Int,contentType: String){

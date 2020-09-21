@@ -59,6 +59,7 @@ import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.exoplayer2.util.Util
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.android.synthetic.main.activity_main_menu.*
 import kotlinx.android.synthetic.main.fragment_edit_upload_info.*
 import kotlinx.android.synthetic.main.home_mini_upload_progress.*
