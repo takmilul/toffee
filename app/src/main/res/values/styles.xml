@@ -361,5 +361,8 @@
         <item name="android:minWidth">110dp</item>
     </style>
 
+    <style name="CheckBoxStyle" parent="Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/custom_checkbox</item>
+    </style>
     
 </resources>

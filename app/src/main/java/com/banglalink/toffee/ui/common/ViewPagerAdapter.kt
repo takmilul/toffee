@@ -1,4 +1,4 @@
-package com.banglalink.toffee.ui.userchannel
+package com.banglalink.toffee.ui.common
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
