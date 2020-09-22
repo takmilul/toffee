@@ -7,7 +7,7 @@
     <data>
         <variable
             name="callback"
-            type="com.banglalink.toffee.ui.common.SingleListItemCallback" />
+            type="com.banglalink.toffee.ui.common.CheckboxCheckedChangedListener" />
         <variable
             name="data"
             type="com.banglalink.toffee.model.PaymentMethod" />
@@ -97,7 +97,6 @@
                     android:layout_height="24dp"
                     android:layout_marginTop="8dp"
                     android:visibility="gone"
-                    android:onClick="@{() -> callback.onOpenMenu(data)}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/bankNameTextView"

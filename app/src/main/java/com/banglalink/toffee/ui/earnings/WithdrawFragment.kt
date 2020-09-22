@@ -21,12 +21,12 @@ import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
 import com.banglalink.toffee.model.PaymentMethod
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
+import com.banglalink.toffee.ui.common.CheckboxCheckedChangedListener
 import com.banglalink.toffee.ui.common.MyBaseAdapterV2
 import com.banglalink.toffee.ui.common.SingleListFragmentV2
-import com.banglalink.toffee.ui.common.SingleListItemCallback
 import kotlinx.android.synthetic.main.fragment_withdraw.*
 
-class WithdrawFragment : Fragment(), SingleListItemCallback<PaymentMethod>, OnClickListener {
+class WithdrawFragment : Fragment(), CheckboxCheckedChangedListener<PaymentMethod>,  OnClickListener {
 
     private lateinit var scrollListener: EndlessRecyclerViewScrollListener
     private lateinit var mAdapter: MyBaseAdapterV2<PaymentMethod>

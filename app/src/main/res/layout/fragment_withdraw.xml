@@ -166,6 +166,19 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
                     android:textSize="18sp" />
+                
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    style="@style/ButtonStyleSolidPurple"
+                    android:text="Add Payment Method"
+                    app:icon="@drawable/ic_upload_add"
+                    app:iconSize="16dp"
+                    app:iconGravity="textStart"
+                    app:iconEndPadding="16dp"
+                    app:iconTint="@color/screen_bg_white"
+                    android:textColor="@color/screen_bg_white"/>
             </LinearLayout>
 
             <Button
