@@ -42,16 +42,21 @@ class AddNewPaymentMethodFragment : Fragment(), OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        
         observeData()
+        viewModel.getAccountTypeList()
+        viewModel.getBankNameList()
+        viewModel.getDistrictNameList()
+        viewModel.getBranchNameList()
         
         binding.addButton.setOnClickListener(this)
     }
 
     private fun observeData() {
-        observe(viewModel.getAccountTypeList()){}
-        observe(viewModel.getBankNameList()){}
-        observe(viewModel.getDistrictNameList()){}
-        observe(viewModel.getBranchNameList()){}
+        observe(viewModel.accountTypesLiveData){}
+        observe(viewModel.bankNamesLiveData){}
+        observe(viewModel.districtNamesLiveData){}
+        observe(viewModel.branchNamesLiveData){}
     }
 
     override fun onClick(v: View?) {

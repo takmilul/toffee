@@ -6,8 +6,14 @@
 
     <data>
         <variable
+            name="selectedPosition"
+            type="java.lang.Integer" />
+        <variable
             name="callback"
             type="com.banglalink.toffee.ui.common.CheckboxCheckedChangedListener" />
+        <variable
+            name="position"
+            type="java.lang.Integer" />
         <variable
             name="data"
             type="com.banglalink.toffee.model.PaymentMethod" />
@@ -44,7 +50,8 @@
                     android:layout_marginTop="16dp"
                     android:button="@null"
                     android:text="@null"
-                    android:onClick="@{(view) -> callback.onCheckedChanged(view, data)}"
+                    android:checked="@{position.equals(selectedPosition)}"
+                    android:onClick="@{(view) -> callback.onCheckedChanged(view, data, position)}"
                     android:background="@drawable/custom_checkbox"
                     app:layout_constraintVertical_bias="0.5"
                     app:layout_constraintBottom_toBottomOf="parent"

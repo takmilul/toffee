@@ -1,25 +1,31 @@
 package com.banglalink.toffee.ui.earnings
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.banglalink.toffee.data.network.util.setAndResultLiveData
+import androidx.lifecycle.viewModelScope
+import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.Earning
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.usecase.GetEarningInfo
 import com.banglalink.toffee.util.unsafeLazy
+import kotlinx.coroutines.launch
 
 class EarningsViewModel : ViewModel() {
     private val earningRepo by unsafeLazy { GetEarningInfo() }
-    private val _earning: MutableLiveData<Earning> = MutableLiveData()
-    val data = _earning.toLiveData()
+    var data: Earning? = null
+    private val _liveData = MutableLiveData<Resource<Earning>>()
+    val liveData = _liveData.toLiveData()
 
-    fun getEarningInfo(): LiveData<Resource<Earning>> {
-        return setAndResultLiveData (_earning)
-        { 
-            earningRepo.execute() 
+    fun getEarningInfo() {
+        viewModelScope.launch {
+            val response = resultFromResponse { earningRepo.execute() }
+            _liveData.postValue(response)
+            
+            if (response is Success) {
+                data = response.data
+            }
         }
     }
-    
 }

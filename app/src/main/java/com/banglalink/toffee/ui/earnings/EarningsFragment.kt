@@ -56,7 +56,8 @@ class EarningsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         observeData()
-
+        viewModel.getEarningInfo()
+        
         binding.viewPager.offscreenPageLimit = 1
         viewPagerAdapter = ViewPagerAdapter(this, fragmentList)
         binding.viewPager.adapter = viewPagerAdapter
@@ -68,7 +69,7 @@ class EarningsFragment : Fragment() {
     }
     
     private fun observeData(){
-        observe(viewModel.getEarningInfo()){
+        observe(viewModel.liveData){
             when(it){
                 is Success -> {
 
