@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="data"
+            type="com.banglalink.toffee.model.Notification" />
+
+        <variable
+            name="callback"
+            type="com.banglalink.toffee.ui.common.SingleListItemCallback" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="4dp"
+        android:clipToPadding="false"
+        android:onClick="@{()-> callback.onItemClicked(data)}"
+        app:cardCornerRadius="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="16dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/logoImageView"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:src="@drawable/hero"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0" />
+
+            <TextView
+                android:id="@+id/headerTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:text="@{data.header}"
+                android:textColor="@color/title_text_color_light"
+                app:layout_constraintEnd_toStartOf="@id/options"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                app:layout_constraintStart_toEndOf="@+id/logoImageView"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Live Now" />
+
+            <TextView
+                android:id="@+id/titleTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:minLines="2"
+                android:text="@{data.title}"
+                app:layout_constraintEnd_toStartOf="@id/options"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toStartOf="@+id/headerTextView"
+                app:layout_constraintTop_toBottomOf="@+id/headerTextView"
+                tools:text="Somebody That I Used To Know (feat. Kimbra) official music video..." />
+
+            <TextView
+                android:id="@+id/contentTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:minLines="2"
+                android:text="@{data.content}"
+                android:visibility="@{data.content==null || data.content.isEmpty() ? View.GONE : View.VISIBLE}"
+                app:layout_constraintEnd_toStartOf="@id/options"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toStartOf="@+id/headerTextView"
+                app:layout_constraintTop_toBottomOf="@+id/titleTextView"
+                tools:text="Somebody That I Used To Know (feat. Kimbra) official music video..." />
+
+            <TextView
+                android:id="@+id/timeTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="@{data.time}"
+                android:textColor="@color/title_text_color_light"
+                app:layout_constraintEnd_toStartOf="@id/options"
+                app:layout_constraintStart_toStartOf="@+id/headerTextView"
+                app:layout_constraintTop_toBottomOf="@id/contentTextView"
+                tools:text="23m" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/learnMoreButton"
+                style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:gravity="center_vertical|start"
+                android:text="Learn More"
+                android:textColor="@color/purple"
+                android:visibility="@{contentTextView.visibility}"
+                app:icon="@drawable/ic_arrow_forward"
+                app:iconGravity="textEnd"
+                app:iconPadding="8dp"
+                app:iconSize="16dp"
+                app:iconTint="@color/purple"
+                app:layout_constraintStart_toStartOf="@id/headerTextView"
+                app:layout_constraintTop_toBottomOf="@id/timeTextView" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/viewStatusButton"
+                style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:text="View Status"
+                android:textColor="@color/colorAccent2"
+                android:visibility="@{contentTextView.visibility}"
+                app:icon="@drawable/ic_arrow_forward"
+                app:iconGravity="textEnd"
+                app:iconPadding="8dp"
+                app:iconSize="16dp"
+                app:iconTint="@color/colorAccent2"
+                app:layout_constraintEnd_toStartOf="@id/options"
+                app:layout_constraintStart_toEndOf="@id/learnMoreButton"
+                app:layout_constraintTop_toBottomOf="@id/timeTextView" />
+
+            <ImageView
+                android:id="@+id/options"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintStart_toEndOf="@+id/headerTextView"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0"
+                app:srcCompat="@drawable/ic_menu_more" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</layout>
