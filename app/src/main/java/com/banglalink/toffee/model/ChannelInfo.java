@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import com.banglalink.toffee.ui.player.HlsLinks;
 import com.banglalink.toffee.util.Utils;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,6 +49,8 @@ public class ChannelInfo implements Parcelable {
     public String feature_image;
     public String content_provider_name;
     public String content_provider_id;
+    @SerializedName("url_type")
+    public int urlType;
 
 
     public ChannelInfo() {
