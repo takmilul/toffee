@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
+import com.banglalink.toffee.data.storage.AppDatabase
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.setError
 import com.banglalink.toffee.extension.setSuccess
@@ -13,6 +14,7 @@ import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.usecase.GetContents
 import com.banglalink.toffee.usecase.GetFeatureContents
+import com.banglalink.toffee.usecase.GetViewCount
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.getError
 import com.banglalink.toffee.util.unsafeLazy
@@ -33,11 +35,11 @@ class LandingPageViewModel(application: Application):BaseViewModel(application) 
     val featureContentLiveData = featureContentMutableLiveData.toLiveData()
 
     private val getChannels by unsafeLazy {
-        GetContents(Preference.getInstance(),RetrofitApiClient.toffeeApi)
+        GetContents(Preference.getInstance(),RetrofitApiClient.toffeeApi, GetViewCount(AppDatabase.getDatabase().viewCountDAO()))
     }
 
     private val getPopularVideo by unsafeLazy {
-        GetContents(Preference.getInstance(),RetrofitApiClient.toffeeApi)
+        GetContents(Preference.getInstance(),RetrofitApiClient.toffeeApi, GetViewCount(AppDatabase.getDatabase().viewCountDAO()))
     }
 
     private val getFeatureContents by unsafeLazy {
