@@ -5,10 +5,11 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [ChannelDataModel::class], version = 1)
+@Database(entities = [ChannelDataModel::class,ViewCountDataModel::class], version = 2)
 abstract class AppDatabase: RoomDatabase() {
 
     abstract fun channelDAO(): ChannelDAO
+    abstract fun viewCountDAO(): ViewCountDAO
 
     companion object {
         private var INSTANCE: AppDatabase? = null
@@ -23,6 +24,7 @@ abstract class AppDatabase: RoomDatabase() {
             if (INSTANCE == null) {
                 synchronized(AppDatabase::class) {
                     INSTANCE = Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, DB_NAME)
+                        .addMigrations(MIGRATION_1_2)
                         .build()
                 }
             }
