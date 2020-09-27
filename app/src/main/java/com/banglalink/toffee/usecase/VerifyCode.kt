@@ -2,7 +2,6 @@ package com.banglalink.toffee.usecase
 
 import com.banglalink.toffee.data.network.request.VerifyCodeRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
-import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.CustomerInfoSignIn
@@ -13,25 +12,7 @@ class VerifyCode(private val preference: Preference,private val toffeeApi: Toffe
         val response = tryIO2 { toffeeApi.verifyCode(getRequest(code,regSessionToken,referralCode)) }
 
         response.customerInfoSignIn.also { customerInfoSignIn ->
-            preference.balance = customerInfoSignIn.balance
-            preference.customerId = customerInfoSignIn.customerId
-            preference.password = customerInfoSignIn.password?:""
-            preference.customerName = customerInfoSignIn.customerName?:""
-            preference.sessionToken = (customerInfoSignIn.sessionToken?:"")
-
-            preference.setHeaderSessionToken(customerInfoSignIn.headerSessionToken)
-            preference.setHlsOverrideUrl(customerInfoSignIn.hlsOverrideUrl)
-            preference.setShouldOverrideHlsUrl(customerInfoSignIn.hlsUrlOverride)
-            preference.setSessionTokenLifeSpanInMillis(customerInfoSignIn.tokenLifeSpan.toLong() * 1000 * 3600)
-            if(customerInfoSignIn.isBanglalinkNumber!=null){
-                preference.isBanglalinkNumber = customerInfoSignIn.isBanglalinkNumber
-            }
-            customerInfoSignIn.dbVersionList?.let {
-                preference.setDBVersion(it)
-            }
-            preference.latitude = customerInfoSignIn.lat?:""
-            preference.longitude = customerInfoSignIn.long?:""
-            preference.isSubscriptionActive = customerInfoSignIn.isSubscriptionActive?:"true"
+            preference.saveCustomerInfo(customerInfoSignIn)
         }
        
 
