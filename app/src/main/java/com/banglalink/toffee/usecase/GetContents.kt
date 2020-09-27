@@ -8,9 +8,15 @@ import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.util.discardZeroFromDuration
 import com.banglalink.toffee.util.getFormattedViewsText
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 
-class GetContents(private val preference: Preference,private val toffeeApi: ToffeeApi) {
+class GetContents(
+    private val preference: Preference,
+    private val toffeeApi: ToffeeApi,
+    private val getViewCount: GetViewCount
+) {
 
     var mOffset: Int = 0
         private set
@@ -25,7 +31,8 @@ class GetContents(private val preference: Preference,private val toffeeApi: Toff
     ): List<ChannelInfo> {
 
         val response = tryIO2 {
-            toffeeApi.getContents(categoryId,mOffset,type,preference.getDBVersionByApiName("getContentsV5"),
+            toffeeApi.getContents(
+                categoryId, mOffset, type, preference.getDBVersionByApiName("getContentsV5"),
                 ContentRequest(
                     categoryId,
                     subcategoryId,
@@ -40,13 +47,15 @@ class GetContents(private val preference: Preference,private val toffeeApi: Toff
 
         mOffset += response.response.count
         if (response.response.channels != null) {
-            return response.response.channels.map {
-                it.category = category
-                it.subCategoryId = subcategoryId
-                it.subCategory = subcategory
-                it.formatted_view_count = getFormattedViewsText(it.view_count)
-                it.formattedDuration = discardZeroFromDuration(it.duration)
-                it
+            return withContext(Dispatchers.IO) {
+                response.response.channels.map {
+                    it.category = category
+                    it.subCategoryId = subcategoryId
+                    it.subCategory = subcategory
+                    it.formatted_view_count = getViewCount(it)
+                    it.formattedDuration = discardZeroFromDuration(it.duration)
+                    it
+                }
             }
         }
         return listOf()

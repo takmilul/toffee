@@ -9,10 +9,10 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.util.discardZeroFromDuration
 import com.banglalink.toffee.util.getFormattedViewsText
 
-class GetRelativeContents(private val preference: Preference, private val toffeeApi: ToffeeApi){
+class GetRelativeContents(private val preference: Preference, private val toffeeApi: ToffeeApi,private val getViewCount: GetViewCount){
     var mOffset: Int = 0
         private set
-    private val limit = 10
+    private val limit = 30
     suspend fun execute(channelInfo: ChannelInfo): List<ChannelInfo> {
         val response = tryIO2 {
             toffeeApi.getRelativeContents(
@@ -30,7 +30,7 @@ class GetRelativeContents(private val preference: Preference, private val toffee
         //filtering out already added current item
         if(response.response.channels!=null){
             return response.response.channels.map {
-                it.formatted_view_count = getFormattedViewsText(it.view_count)
+                it.formatted_view_count = getViewCount(it)
                 it.formattedDuration = discardZeroFromDuration(it.duration)
                 it
             }
