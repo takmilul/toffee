@@ -37,10 +37,9 @@ class DownloadViewCountDb(
                     val buffer = response.body()?.byteStream()
                     if (buffer != null) {
                         file = createFile(context, "viewcount")
-                        Log.i(TAG, "File created")
+                        ToffeeAnalytics.logBreadCrumb("File created")
                         if (file != null) {
                             copyStreamToFile(buffer, file)
-                            Log.i(TAG, "File write finished")
                         }
                     }
                     if(processFile(file)){
@@ -58,12 +57,11 @@ class DownloadViewCountDb(
         if(file == null){
             return false
         }
-        Log.i(TAG, "Processing file")
+        ToffeeAnalytics.logBreadCrumb("Processing file")
         val filebytes = Files.toByteArray(file)
         val byteBuffer = ByteBuffer.wrap(filebytes)
         val checksum = CRC32()
         checksum.update(filebytes, 0, filebytes.size)
-        println("checksum value is ${checksum.value}")
 
         viewCountList.clear()
         while (byteBuffer.remaining() > 0) {
@@ -79,7 +77,9 @@ class DownloadViewCountDb(
     }
 
     private fun updateDb() {
+        ToffeeAnalytics.logBreadCrumb("Updating view count db")
         viewCountDAO.insertAll(*viewCountList.toTypedArray())
+        ToffeeAnalytics.logBreadCrumb("View count db updated")
     }
 
     private fun createFile(context: Context, fileName: String): File? {
@@ -88,7 +88,7 @@ class DownloadViewCountDb(
     }
 
     private fun copyStreamToFile(inputStream: InputStream, outputFile: File) {
-        Log.i(TAG, "File write started")
+        ToffeeAnalytics.logBreadCrumb("File write started")
         inputStream.use { input ->
             val outputStream = FileOutputStream(outputFile)
             outputStream.use { output ->
@@ -99,6 +99,7 @@ class DownloadViewCountDb(
                     output.write(buffer, 0, byteCount)
                 }
                 output.flush()
+                ToffeeAnalytics.logBreadCrumb("File write finished")
             }
         }
     }
