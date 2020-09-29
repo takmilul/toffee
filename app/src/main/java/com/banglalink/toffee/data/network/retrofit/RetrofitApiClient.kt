@@ -37,7 +37,7 @@ object RetrofitApiClient {
     }
 
     private fun buildApiHttpClient():OkHttpClient{
-        val cacheSize = 10 * 1024 * 1024 // 10 MB
+        val cacheSize = 25 * 1024 * 1024 // 25 MB
 
         val cache = Cache(getCacheDir(), cacheSize.toLong())
 
