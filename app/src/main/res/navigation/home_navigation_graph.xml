@@ -64,8 +64,8 @@
             android:id="@+id/action_menu_channel_to_channelPlaylistVideosFragment"
             app:destination="@id/channelPlaylistVideosFragment" />
         <action
-            android:id="@+id/action_menu_channel_to_earningsFragment"
-            app:destination="@id/earningsFragment" />
+            android:id="@+id/action_menu_channel_to_challengesFragment"
+            app:destination="@id/challengesFragment" />
     </fragment>
     <fragment
         android:id="@+id/uploadMethodFragment"
@@ -185,4 +185,24 @@
             android:name="notification"
             app:argType="com.banglalink.toffee.model.Notification" />
     </fragment>
+    <fragment
+        android:id="@+id/challengesFragment"
+        android:name="com.banglalink.toffee.ui.challenge.ChallengeFragment"
+        android:label="ChallengesFragment" >
+        <action
+            android:id="@+id/action_challengesFragment_to_challengeResultFragment"
+            app:destination="@id/challengeResultFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/challengeResultFragment"
+        android:name="com.banglalink.toffee.ui.challenge.ChallengeResultFragment"
+        android:label="ChallengeResultFragment" >
+        <action
+            android:id="@+id/action_challengeResultFragment_to_challengeDetailFragment"
+            app:destination="@id/challengeDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/challengeDetailFragment"
+        android:name="com.banglalink.toffee.ui.challenge.ChallengeDetailFragment"
+        android:label="ChallengeDetailFragment" />
 </navigation>

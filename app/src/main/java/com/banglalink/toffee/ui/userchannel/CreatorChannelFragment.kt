@@ -101,7 +101,7 @@ class CreatorChannelFragment : Fragment(), OnClickListener {
     override fun onClick(v: View?) {
         when (v) {
             addBioButton -> {
-                findNavController().navigate(R.id.action_menu_channel_to_earningsFragment)
+                findNavController().navigate(R.id.action_menu_channel_to_challengesFragment)
                 /*val action = CreatorChannelFragmentDirections.actionMenuChannelToCreatorChannelEditFragment(viewModel.channelInfo.value)
                 findNavController().navigate(action)*/
             }
