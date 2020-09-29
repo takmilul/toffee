@@ -96,7 +96,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginTop="8dp"
-                    android:onClick="@{() -> callback.onOpenMenu(data)}"
+                    android:onClick="@{(view) -> callback.onOpenMenu(view, data)}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/bankNameTextView"

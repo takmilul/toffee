@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.earnings
 
 import android.os.Bundle
+import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
@@ -35,8 +36,8 @@ class PaymentMethodFragment : SingleListFragmentV2<PaymentMethod>(), SingleListI
         return Pair(R.drawable.ic_payment_methods_empty, "Add payment method to withdraw money")
     }
 
-    override fun onOpenMenu(item: PaymentMethod) {
-        super.onOpenMenu(item)
+    override fun onOpenMenu(anchor: View, item: PaymentMethod) {
+        super.onOpenMenu(anchor, item)
         findNavController().navigate(R.id.action_earningsFragment_to_addNewPaymentMethodFragment)
     }
 }
