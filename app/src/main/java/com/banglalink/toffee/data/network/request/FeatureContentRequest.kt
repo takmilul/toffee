@@ -9,4 +9,4 @@ data class FeatureContentRequest(
     val telcoId: Int = 1,
     val offset:Int,
     val limit:Int=10
-) : BaseRequest("getFeatureContents")
+) : BaseRequest("getFeatureContentsV2")
