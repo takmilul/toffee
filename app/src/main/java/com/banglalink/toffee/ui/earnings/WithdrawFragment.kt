@@ -192,17 +192,29 @@ class WithdrawFragment : Fragment(), CheckboxCheckedChangedListener<PaymentMetho
         super.onDestroyView()
     }
 
-    override fun onCheckedChanged(view: View, item: PaymentMethod, position: Int) {
-        super.onCheckedChanged(view, item, position)
-        if ((view as CheckBox).isChecked) {
+    override fun onCheckedChanged(view: View, item: PaymentMethod, position: Int, isFromCheckBox: Boolean) {
+        super.onCheckedChanged(view, item, position, isFromCheckBox)
+        when(view){
+            is CheckBox -> {
+                if (isFromCheckBox)
+                    checkedChange(view.isChecked, position)
+                else
+                    checkedChange(!view.isChecked, position)
+            }
+        }
+    }
+
+    private fun checkedChange(setChecked: Boolean, position: Int){
+        if (setChecked) {
             mAdapter.setSelectedItemPosition(position)
             mAdapter.notifyDataSetChanged()
         }
         else {
             mAdapter.setSelectedItemPosition(- 1)
+            mAdapter.notifyDataSetChanged()
         }
     }
-
+    
     override fun onClick(v: View?) {
         when (v) {
             nextButton -> {

@@ -1,11 +1,9 @@
 package com.banglalink.toffee.ui.useractivities
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.extension.launchActivity
@@ -44,7 +42,7 @@ class ChannelSubscriptionFragment
         }
     }
 
-    override fun onOpenMenu(item: ChannelInfo) {
+    override fun onOpenMenu(anchor: View, item: ChannelInfo) {
 
     }
 

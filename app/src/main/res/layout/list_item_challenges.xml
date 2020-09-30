@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="data"
+            type="com.banglalink.toffee.model.Challenge" />
+        <variable
+            name="callback"
+            type="com.banglalink.toffee.ui.common.SingleListItemCallback" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/home_screen_curve_bg_color">
+        
+        <com.banglalink.toffee.ui.widget.CustomImageView
+            android:id="@+id/poster"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="200dp"
+            android:src="@drawable/hero"
+            imageFromUrl="@{data.posterUrl}"
+            android:adjustViewBounds="true"
+            app:layout_constraintDimensionRatio="W,16:9"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#88000000"
+            android:paddingLeft="8dp"
+            android:paddingTop="3dp"
+            android:paddingRight="8dp"
+            android:paddingBottom="3dp"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:text="@{data.duration}"
+            app:layout_constraintBottom_toBottomOf="@id/poster"
+            app:layout_constraintEnd_toEndOf="@+id/poster"
+            tools:text="00:00" />
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="0dp"
+            android:layout_height="156dp"
+            android:layout_marginBottom="16dp"
+            android:background="@color/home_screen_curve_bg_color"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/poster" />
+
+        <TextView
+            android:id="@+id/hashTagTextView"
+            style="@style/programNameTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginHorizontal="16dp"
+            android:text="@{data.hashTag}"
+            android:textSize="@dimen/default_text_size"
+            android:textColor="@color/main_text_color"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/view"
+            tools:text="#CricketScoreChallenge" />
+
+        <TextView
+            android:id="@+id/prizeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/main_text_color"
+            android:layout_marginTop="8dp"
+            android:text="@{data.prize}"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="@+id/hashTagTextView"
+            app:layout_constraintTop_toBottomOf="@+id/hashTagTextView"
+            app:layout_constraintEnd_toStartOf="@id/remainingTimeTextView"
+            tools:text="Join &amp; win prizes!"/>
+
+        <TextView
+            android:id="@+id/remainingTimeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/title_text_color_light"
+            android:text="@{data.remainingTime}"
+            tools:text="24d : 16h remaining"
+            app:layout_constraintStart_toEndOf="@id/prizeTextView"
+            app:layout_constraintEnd_toEndOf="@id/hashTagTextView"
+            app:layout_constraintTop_toTopOf="@+id/prizeTextView" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/logoImageView"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="24dp"
+            app:layout_constraintVertical_bias="0"
+            android:src="@drawable/hero"
+            loadCircleImageFromUrl="@{data.logoUrl}"
+            app:layout_constraintBottom_toBottomOf="@id/view"
+            app:layout_constraintStart_toStartOf="@+id/hashTagTextView"
+            app:layout_constraintTop_toBottomOf="@+id/prizeTextView" />
+
+        <TextView
+            android:id="@+id/adminNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{data.adminName}"
+            tools:text="Shakib Al Hasan"
+            android:textColor="@color/title_text_color_light"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            android:layout_marginStart="8dp"
+            app:layout_constraintEnd_toStartOf="@id/joinButton"
+            app:layout_constraintBottom_toBottomOf="@+id/logoImageView"
+            app:layout_constraintStart_toEndOf="@+id/logoImageView"
+            app:layout_constraintTop_toTopOf="@+id/logoImageView" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/joinButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cornerRadius="30dp"
+            android:backgroundTint="@color/button_bgcolor_pink"
+            android:textColor="@android:color/white"
+            android:text="Join Now"
+            android:onClick="@{() -> callback.onItemClicked(data)}"
+            app:layout_constraintBottom_toBottomOf="@+id/logoImageView"
+            app:layout_constraintEnd_toEndOf="@id/hashTagTextView"
+            app:layout_constraintStart_toEndOf="@+id/adminNameTextView"
+            app:layout_constraintTop_toTopOf="@+id/logoImageView" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

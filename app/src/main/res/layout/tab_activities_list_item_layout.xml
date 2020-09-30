@@ -145,7 +145,7 @@
                 android:layout_height="wrap_content"
                 android:padding="4dp"
                 android:background="?selectableItemBackgroundBorderless"
-                android:onClick="@{(v)->callback.onOpenMenu(data)}"
+                android:onClick="@{(v)->callback.onOpenMenu(v, data)}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_menu_more" />
