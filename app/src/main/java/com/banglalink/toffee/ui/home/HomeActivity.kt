@@ -36,7 +36,7 @@ import com.banglalink.toffee.model.EXIT_FROM_APP_MSG
 import com.banglalink.toffee.model.NavigationMenu
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.channels.ChannelFragment
-import com.banglalink.toffee.ui.common.HtmlPageViewActivity
+import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.ui.login.SigninByPhoneActivity
 import com.banglalink.toffee.ui.player.PlayerActivity
 import com.banglalink.toffee.ui.search.SearchFragment
@@ -309,10 +309,8 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         channelInfo?.let {
             when{
                 it.urlType == 1->{
-                    launchActivity<HtmlPageViewActivity> {
-                        putExtra(HtmlPageViewActivity.CONTENT_KEY,it.hlsLinks[0].hls_url_mobile)
-                        putExtra(HtmlPageViewActivity.TITLE_KEY,it.program_name)
-                        putExtra(HtmlPageViewActivity.HEADER,Preference.getInstance().phoneNumber)
+                    launchActivity<Html5PlayerViewActivity> {
+                        putExtra(Html5PlayerViewActivity.CONTENT_URL,it.hlsLinks[0].hls_url_mobile)
                     }
                 }
                 it.urlType == 2 ->{
