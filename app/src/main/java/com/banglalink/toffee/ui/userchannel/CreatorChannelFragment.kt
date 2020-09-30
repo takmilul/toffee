@@ -15,6 +15,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentCreatorChannelBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.ui.common.ViewPagerAdapter
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.layout_creator_channel_info.*
@@ -100,8 +101,9 @@ class CreatorChannelFragment : Fragment(), OnClickListener {
     override fun onClick(v: View?) {
         when (v) {
             addBioButton -> {
-                val action = CreatorChannelFragmentDirections.actionMenuChannelToCreatorChannelEditFragment(viewModel.channelInfo.value)
-                findNavController().navigate(action)
+                findNavController().navigate(R.id.action_menu_channel_to_earningsFragment)
+                /*val action = CreatorChannelFragmentDirections.actionMenuChannelToCreatorChannelEditFragment(viewModel.channelInfo.value)
+                findNavController().navigate(action)*/
             }
             
             editButton -> {

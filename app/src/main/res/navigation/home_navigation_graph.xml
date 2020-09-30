@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/home_navigation_graph"
     app:startDestination="@id/menu_feed">
     <fragment
@@ -62,6 +63,9 @@
         <action
             android:id="@+id/action_menu_channel_to_channelPlaylistVideosFragment"
             app:destination="@id/channelPlaylistVideosFragment" />
+        <action
+            android:id="@+id/action_menu_channel_to_earningsFragment"
+            app:destination="@id/earningsFragment" />
     </fragment>
     <fragment
         android:id="@+id/uploadMethodFragment"
@@ -120,4 +124,45 @@
         android:id="@+id/thumbnailSelectionMethodFragment"
         android:name="com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment"
         android:label="ThumbnailSelectionMethodFragment" />
+    <fragment
+        android:id="@+id/earningsFragment"
+        android:name="com.banglalink.toffee.ui.earnings.EarningsFragment"
+        android:label="EarningsFragment" >
+        <action
+            android:id="@+id/action_earningsFragment_to_addNewPaymentMethodFragment"
+            app:destination="@id/addNewPaymentMethodFragment" />
+        <action
+            android:id="@+id/action_earningsFragment_to_reviewWithdrawalFragment"
+            app:destination="@id/reviewWithdrawalFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addNewPaymentMethodFragment"
+        android:name="com.banglalink.toffee.ui.earnings.AddNewPaymentMethodFragment"
+        android:label="fragment_add_new_payment_method"
+        tools:layout="@layout/fragment_add_new_payment_method" />
+    <fragment
+        android:id="@+id/reviewWithdrawalFragment"
+        android:name="com.banglalink.toffee.ui.earnings.ReviewWithdrawalFragment"
+        android:label="fragment_review_withdrawal"
+        tools:layout="@layout/fragment_review_withdrawal" >
+        <argument
+            android:name="withdrawalAmount"
+            app:argType="string" />
+        <argument
+            android:name="paymentMethod"
+            app:argType="com.banglalink.toffee.model.PaymentMethod" />
+        <action
+            android:id="@+id/action_reviewWithdrawalFragment_to_withdrawalSuccessFragment"
+            app:destination="@id/withdrawalSuccessFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/withdrawalSuccessFragment"
+        android:name="com.banglalink.toffee.ui.earnings.WithdrawalSuccessFragment"
+        android:label="fragment_withdrawal_success"
+        tools:layout="@layout/fragment_withdrawal_success" >
+        <action
+            android:id="@+id/action_withdrawalSuccessFragment_to_earningsFragment"
+            app:destination="@id/earningsFragment"
+            app:popUpTo="@id/earningsFragment" />
+    </fragment>
 </navigation>

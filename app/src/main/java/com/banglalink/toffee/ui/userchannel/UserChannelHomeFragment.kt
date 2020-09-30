@@ -16,6 +16,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.R.layout
 import com.banglalink.toffee.databinding.FragmentUserChannelHomeBinding
 import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
+import com.banglalink.toffee.ui.common.ViewPagerAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.alert_dialog_channel_rating.view.*
 

@@ -14,28 +14,17 @@ import com.banglalink.toffee.util.Utils
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 
-class SendViewContentEvent(private val preference: Preference, private val toffeeApi: ToffeeApi,private val channelDAO: ChannelDAO) {
+class SendViewContentEvent(private val preference: Preference, private val toffeeApi: ToffeeApi) {
 
     private val gson = Gson()
     suspend fun execute(channel: ChannelInfo, sendToPubSub:Boolean = true){
         if(sendToPubSub){
-            sendToPubSub(channel.id.toInt(),channel.type)
+            sendToPubSub(channel.id.toInt(),channel.type ?: "")
         }
         else{
-            sendToToffeeServer(channel.id.toInt(),channel.type)
+            sendToToffeeServer(channel.id.toInt(),channel.type ?: "")
         }
-        saveToLocalDb(channel)
-    }
-
-    private fun saveToLocalDb(channel: ChannelInfo){
-        val channelDataModel = ChannelDataModel().apply {
-            payLoad =  gson.toJson(channel)
-            channelId = channel.id.toInt()
-            type = channel.type
-            category = "history"
-        }
-
-        channelDAO.saveChannel(channelDataModel)
+//        saveToLocalDb(channel)
     }
 
     private fun sendToPubSub(contentId: Int,contentType: String){
