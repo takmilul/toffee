@@ -3,14 +3,17 @@ package com.banglalink.toffee.usecase
 import com.banglalink.toffee.data.network.request.FeatureContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO
+import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.util.EncryptionUtil
+import com.google.gson.Gson
 
 class GetFeatureContents(private val preference: Preference,private val toffeeApi: ToffeeApi) {
 
     var mOffset: Int = 0
         private set
-    private val limit = 10
+    private val limit = 100
 
     suspend fun execute(
         category: String,
@@ -20,18 +23,18 @@ class GetFeatureContents(private val preference: Preference,private val toffeeAp
     ): List<ChannelInfo> {
 
 
-        val response = tryIO {
-            toffeeApi.getFeatureContents(
-                FeatureContentRequest(
-                    categoryId,
-                    subcategoryId,
-                    "NULL",
-                    preference.customerId,
-                    preference.password,
-                    offset = mOffset,
-                    limit = limit
-                )
-            )
+        val request =  FeatureContentRequest(
+            categoryId,
+            subcategoryId,
+            "VOD",
+            preference.customerId,
+            preference.password,
+            offset = mOffset,
+            limit = limit
+        )
+
+        val response = tryIO2 {
+            toffeeApi.getFeatureContentsV2(preference.getDBVersionByApiName("getFeatureContentsV2"),request)
         }
 
         mOffset += response.response.count

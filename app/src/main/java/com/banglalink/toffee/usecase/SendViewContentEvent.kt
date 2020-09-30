@@ -4,6 +4,7 @@ import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.data.network.request.ViewingContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO
+import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.ChannelDAO
 import com.banglalink.toffee.data.storage.ChannelDataModel
 import com.banglalink.toffee.data.storage.Preference
@@ -52,7 +53,7 @@ class SendViewContentEvent(private val preference: Preference, private val toffe
     }
 
     private suspend fun sendToToffeeServer(contentId: Int,contentType: String){
-        tryIO {
+        tryIO2 {
             toffeeApi.sendViewingContent(
                 ViewingContentRequest(
                     contentType,

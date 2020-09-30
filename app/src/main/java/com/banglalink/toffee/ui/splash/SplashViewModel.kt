@@ -16,7 +16,7 @@ import com.banglalink.toffee.util.unsafeLazy
 class SplashViewModel(application: Application) : BaseViewModel(application) {
 
     private val checkUpdate by unsafeLazy {
-        CheckUpdate(RetrofitApiClient.authApi)
+        CheckUpdate(Preference.getInstance(),RetrofitApiClient.authApi)
     }
     private val apiLogin by unsafeLazy {
         ApiLogin(Preference.getInstance(), RetrofitApiClient.authApi)
@@ -24,10 +24,11 @@ class SplashViewModel(application: Application) : BaseViewModel(application) {
 
     fun init(skipUpdate:Boolean = false):LiveData<Resource<CustomerInfoSignIn>>{
         return resultLiveData {
+            val response  = apiLogin.execute()
             if(!skipUpdate){
                 checkUpdate.execute(BuildConfig.VERSION_CODE.toString())
             }
-            apiLogin.execute()
+            response
         }
     }
 

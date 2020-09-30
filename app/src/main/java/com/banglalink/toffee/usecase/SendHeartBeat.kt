@@ -4,6 +4,7 @@ import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.data.network.request.HeartBeatRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO
+import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.util.Utils
@@ -54,7 +55,7 @@ class SendHeartBeat(
             needToRefreshSessionToken =
                 true// we need to refresh token by setting isNetworkSwitch = true
         }
-        val response = tryIO {
+        val response = tryIO2 {
             toffeeApi.sendHeartBeat(
                 HeartBeatRequest(
                     contentId,

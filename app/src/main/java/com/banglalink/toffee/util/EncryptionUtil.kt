@@ -11,7 +11,7 @@ object EncryptionUtil {
 
     fun encryptRequest(jsonRequest: String): String {
         val cipher = encrypt(jsonRequest.toByteArray())
-        return Base64.encodeToString(cipher, Base64.DEFAULT)
+        return Base64.encodeToString(cipher, Base64.NO_WRAP)
     }
 
     fun decryptResponse(response: String): String {

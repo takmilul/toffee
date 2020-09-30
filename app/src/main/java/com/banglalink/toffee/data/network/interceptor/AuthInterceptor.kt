@@ -1,6 +1,7 @@
 package com.banglalink.toffee.data.network.interceptor
 
 import android.util.Log
+import com.banglalink.toffee.model.CLIENT_API_HEADER
 import com.banglalink.toffee.model.TOFFEE_HEADER
 import com.banglalink.toffee.util.EncryptionUtil
 import okhttp3.*
@@ -13,22 +14,28 @@ import javax.crypto.BadPaddingException
 import javax.crypto.IllegalBlockSizeException
 import javax.crypto.NoSuchPaddingException
 
-class AuthInterceptor : Interceptor {
+class AuthInterceptor (private val iGetMethodTracker: IGetMethodTracker): Interceptor {
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
 
-        val string = bodyToString(request.body)
+        Log.i("Path",request.url.encodedPath)
+        val convertToGet = iGetMethodTracker.shouldConvertToGetRequest(request.url.encodedPath)
         val builder = FormBody.Builder()
-        builder.addEncoded("data", EncryptionUtil.encryptRequest(string))
+        val string = EncryptionUtil.encryptRequest(bodyToString(request.body))
+        if(!convertToGet){
+            builder.addEncoded("data", string)
+        }
 
         Log.i("Header",TOFFEE_HEADER)
         val newRequest = request.newBuilder()
             .headers(request.headers)
             .addHeader("User-Agent", TOFFEE_HEADER)
-            .method(request.method, builder.build())
-            .build()
-        val response = chain.proceed(newRequest)
+            .method(if(convertToGet) "GET" else "POST", if(convertToGet) null else builder.build())
+        if(convertToGet){
+            newRequest.addHeader(CLIENT_API_HEADER,string)
+        }
+        val response = chain.proceed(newRequest.build())
         if(!response.isSuccessful){
             if(response.code == 403){
                 val msg = "Attention! Toffee is available only within Bangladesh territory. Please use a Bangladesh IP to access.";
@@ -38,6 +45,12 @@ class AuthInterceptor : Interceptor {
                     .build()
             }
             return response
+        }
+        if(response.cacheResponse!=null){
+            Log.i("Network","FROM CACHE")
+        }
+        if(response.networkResponse!=null){
+            Log.i("Network","FROM NETWORK")
         }
         try {
             val jsonString =  EncryptionUtil.decryptResponse(response.body!!.string())

@@ -3,6 +3,7 @@ package com.banglalink.toffee.usecase
 import com.banglalink.toffee.data.network.request.FavoriteRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO
+import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
 
@@ -11,7 +12,7 @@ class UpdateFavorite(private val preference: Preference, private val toffeeApi: 
     private val REMOVE_FAVORITE = 0
 
     suspend fun execute(channelInfo: ChannelInfo, favorite: Boolean): ChannelInfo {
-        tryIO {
+        tryIO2 {
             toffeeApi.updateFavorite(
                 FavoriteRequest(
                     channelInfo.id.toInt(),
