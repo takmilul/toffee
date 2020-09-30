@@ -37,7 +37,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
     override fun onNewToken(s: String) {
         super.onNewToken(s)
         Log.i(TAG, "Token: $s")
-        Preference.getInstance().fcmToken = s
+//        Preference.getInstance().fcmToken = s
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {

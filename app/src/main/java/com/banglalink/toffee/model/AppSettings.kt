@@ -7,6 +7,7 @@ import com.google.android.exoplayer2.ExoPlayerLibraryInfo
 
 const val MULTI_DEVICE_LOGIN_ERROR_CODE = 109
 const val INVALID_REFERRAL_ERROR_CODE = -100
+const val CLIENT_API_HEADER = "CLIENT-API-HEADER"
 
 //    https://github.com/shamanland/simple-string-obfuscator
 val TOFFEE_KEY = object : Any() {

@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.model.DBVersion
+import com.banglalink.toffee.model.DBVersionV2
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.exoplayer2.ExoPlayerLibraryInfo
@@ -175,6 +176,16 @@ class Preference private constructor(val context: Context) {
         pref.edit().putInt("notification_db_version", dbVersion.notificationDbVersion).apply()
         pref.edit().putInt("catchup_db_version", dbVersion.catchupDbVersion).apply()
         pref.edit().putInt("package_db_version", dbVersion.packageDbVersion).apply()
+    }
+
+    fun setDBVersion(dbVersionList: List<DBVersionV2>) {
+        for(dbVersion in dbVersionList){
+            pref.edit().putInt(dbVersion.apiName,dbVersion.dbVersion).apply()
+        }
+    }
+
+    fun getDBVersionByApiName(apiName:String):Int{
+        return pref.getInt(apiName,0)
     }
 
     fun clear() {

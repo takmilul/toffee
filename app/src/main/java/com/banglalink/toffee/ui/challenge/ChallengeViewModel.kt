@@ -22,5 +22,5 @@ class ChallengeViewModel: SingleListViewModel<Challenge>() {
     private val category: String = ""
     private val subCategory: String = ""
 
-    override var repo: SingleListRepository<Challenge> = GetChallenges(RetrofitApiClient.toffeeApi, contentRequest, category, subCategory)
+    override var repo: SingleListRepository<Challenge> = GetChallenges(Preference.getInstance(), RetrofitApiClient.toffeeApi, contentRequest, category, subCategory)
 }

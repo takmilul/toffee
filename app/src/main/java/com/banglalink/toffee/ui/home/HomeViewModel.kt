@@ -46,7 +46,7 @@ class HomeViewModel(application: Application):BaseViewModel(application),OnCompl
     val openCategoryLiveData = MutableLiveData<Category>()
 
     private val getCategory by lazy {
-        GetCategory(RetrofitApiClient.toffeeApi)
+        GetCategory(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
 
     private val getProfile by unsafeLazy {

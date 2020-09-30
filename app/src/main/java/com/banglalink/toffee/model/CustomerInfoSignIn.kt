@@ -19,6 +19,8 @@ class CustomerInfoSignIn:BodyResponse() {
     var balance: Int = 0
     @SerializedName("dbVersion")
     var dbVersion: DBVersion? = null
+    @SerializedName("dbVersionV2")
+    var dbVersionList: List<DBVersionV2>? = null
     @SerializedName("customerName")
     var customerName: String? = null
     @SerializedName("referralStatusMessage")

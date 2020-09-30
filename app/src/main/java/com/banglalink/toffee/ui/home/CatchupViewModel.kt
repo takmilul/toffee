@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
 import com.banglalink.toffee.data.network.util.resultLiveData
+import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.model.ChannelInfo
@@ -23,7 +24,7 @@ class CatchupViewModel(application: Application):BaseViewModel(application) {
     private var type: String? = null
 
     private val getContent by unsafeLazy {
-        GetContents(RetrofitApiClient.toffeeApi)
+        GetContents(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
 
     fun parseBundle(arguments: Bundle){
