@@ -3,6 +3,7 @@ package com.banglalink.toffee.usecase
 import com.banglalink.toffee.data.network.request.ApiLoginRequest
 import com.banglalink.toffee.data.network.retrofit.AuthApi
 import com.banglalink.toffee.data.network.util.tryIO
+import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.CustomerInfoSignIn
 
@@ -10,24 +11,27 @@ class ApiLogin(private val pref: Preference, private val authApi: AuthApi) {
 
 
     suspend fun execute():CustomerInfoSignIn{
-        val response = tryIO { authApi.apiLogin(getApiLoginRequest()) }
-        response.customerInfoSignIn?.let {
-            pref.balance = (it.balance)
-            pref.customerId = (it.customerId)
-            pref.customerName = (it.customerName?:"")
-            if(it.dbVersion!=null)
-                pref.setDBVersion(it.dbVersion!!)
-            pref.sessionToken = (it.sessionToken?:"")
+        val response = tryIO2 { authApi.apiLogin(getApiLoginRequest()) }
+        response.customerInfoSignIn?.let { customerInfoSignIn ->
+            pref.balance = (customerInfoSignIn.balance)
+            pref.customerId = (customerInfoSignIn.customerId)
+            pref.customerName = (customerInfoSignIn.customerName?:"")
+            if(customerInfoSignIn.dbVersion!=null)
+                pref.setDBVersion(customerInfoSignIn.dbVersion!!)
+            pref.sessionToken = (customerInfoSignIn.sessionToken?:"")
 
-            pref.setHeaderSessionToken(it.headerSessionToken)
-            pref.setHlsOverrideUrl(it.hlsOverrideUrl)
-            pref.setShouldOverrideHlsUrl(it.hlsUrlOverride)
-            pref.setSessionTokenLifeSpanInMillis(it.tokenLifeSpan.toLong() * 1000 * 3600)
+            pref.setHeaderSessionToken(customerInfoSignIn.headerSessionToken)
+            pref.setHlsOverrideUrl(customerInfoSignIn.hlsOverrideUrl)
+            pref.setShouldOverrideHlsUrl(customerInfoSignIn.hlsUrlOverride)
+            pref.setSessionTokenLifeSpanInMillis(customerInfoSignIn.tokenLifeSpan.toLong() * 1000 * 3600)
 
-            if(it.isBanglalinkNumber!=null){
-                pref.isBanglalinkNumber = it.isBanglalinkNumber
+            if(customerInfoSignIn.isBanglalinkNumber!=null){
+                pref.isBanglalinkNumber = customerInfoSignIn.isBanglalinkNumber
             }
-            pref.isSubscriptionActive = it.isSubscriptionActive?:"true"
+            customerInfoSignIn.dbVersionList?.let {
+                pref.setDBVersion(it)
+            }
+            pref.isSubscriptionActive = customerInfoSignIn.isSubscriptionActive?:"true"
         }
         return response.customerInfoSignIn!!
     }
