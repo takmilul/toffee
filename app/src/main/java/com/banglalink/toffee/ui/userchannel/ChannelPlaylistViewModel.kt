@@ -22,6 +22,6 @@ class ChannelPlaylistViewModel: SingleListViewModel<ChannelInfo>() {
     private val category: String = ""
     private val subCategory: String = ""
     
-    override var repo: SingleListRepository<ChannelInfo>  = GetChannelPlaylists(RetrofitApiClient.toffeeApi, contentRequest, category, subCategory)
+    override var repo: SingleListRepository<ChannelInfo>  = GetChannelPlaylists(Preference.getInstance(), RetrofitApiClient.toffeeApi, contentRequest, category, subCategory)
     
 }

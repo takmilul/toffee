@@ -5,8 +5,6 @@ import com.banglalink.toffee.data.network.request.ViewingContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.network.util.tryIO2
-import com.banglalink.toffee.data.storage.ChannelDAO
-import com.banglalink.toffee.data.storage.ChannelDataModel
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.notification.PubSubMessageUtil

@@ -22,7 +22,7 @@ class ChannelVideosViewModel : SingleListViewModel<ChannelInfo>() {
     private val category: String = ""
     private val subCategory: String = ""
     
-    override var repo: SingleListRepository<ChannelInfo> = GetChannelVideos(RetrofitApiClient.toffeeApi, contentRequest, category, subCategory)
+    override var repo: SingleListRepository<ChannelInfo> = GetChannelVideos(Preference.getInstance(), RetrofitApiClient.toffeeApi, contentRequest, category, subCategory)
     
     //override var enableToolbar: Boolean = false
 }

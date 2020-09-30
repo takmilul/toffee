@@ -3,6 +3,8 @@ package com.banglalink.toffee.usecase
 import com.banglalink.toffee.data.network.request.ContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO
+import com.banglalink.toffee.data.network.util.tryIO2
+import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.SingleListRepository
 import com.banglalink.toffee.util.discardZeroFromDuration
@@ -10,7 +12,7 @@ import com.banglalink.toffee.util.getFormattedViewsText
 import kotlinx.coroutines.coroutineScope
 
 
-class GetChannelVideos(private val toffeeApi: ToffeeApi, private val contentRequest: ContentRequest, private val category: String, private val subCategory: String): SingleListRepository<ChannelInfo> {
+class GetChannelVideos(private val preference: Preference, private val toffeeApi: ToffeeApi, private val contentRequest: ContentRequest, private val category: String, private val subCategory: String): SingleListRepository<ChannelInfo> {
     
     var mOffset: Int = 0
         private set
@@ -18,8 +20,11 @@ class GetChannelVideos(private val toffeeApi: ToffeeApi, private val contentRequ
     
     override suspend fun execute(): List<ChannelInfo> {
         return coroutineScope<List<ChannelInfo>>{
-            val response = tryIO {
+            val response = tryIO2 {
                 toffeeApi.getContents(
+                    contentRequest.categoryId,
+                    mOffset, contentRequest.type,
+                    preference.getDBVersionByApiName("getContentsV5"),
                     ContentRequest(
                         contentRequest.categoryId,
                         contentRequest.subCategoryId,
