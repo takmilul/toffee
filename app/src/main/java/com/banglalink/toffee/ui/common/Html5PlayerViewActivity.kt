@@ -2,7 +2,7 @@ package com.banglalink.toffee.ui.common
 
 import android.content.res.AssetManager
 import android.os.Bundle
-import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.ui.widget.HTML5WebView
 
@@ -35,6 +35,11 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
 
         setContentView(mWebView.layout);
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        HeartBeatManager.triggerEventViewingContentStop()
     }
 
     //For Android 5.0.0 webkit UI bug fix
