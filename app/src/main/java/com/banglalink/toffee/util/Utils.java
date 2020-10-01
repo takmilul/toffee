@@ -57,7 +57,7 @@ public class Utils {
     public static Date getDate(String dateTime) {
 
         SimpleDateFormat currentFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //2020-04-25 23:59:59
-        Date dateObj = null;
+        Date dateObj = new Date();
         try {
             dateObj = currentFormatter.parse(dateTime);
         } catch (ParseException e) {
