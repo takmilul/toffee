@@ -302,13 +302,15 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
 
     private fun loadChannel(@Nonnull channelInfo: ChannelInfo) {
         viewModel.sendViewContentEvent(channelInfo)
-       playChannel(channelInfo)
+        playChannel(channelInfo)
     }
 
     private fun onDetailsFragmentLoad(channelInfo: ChannelInfo?) {
         channelInfo?.let {
             when{
                 it.urlType == 1->{
+                    HeartBeatManager.triggerEventViewingContentStart(it.id.toInt(),it.type)
+                    viewModel.sendViewContentEvent(it)
                     launchActivity<Html5PlayerViewActivity> {
                         putExtra(Html5PlayerViewActivity.CONTENT_URL,it.hlsLinks[0].hls_url_mobile)
                     }
