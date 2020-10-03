@@ -2,12 +2,10 @@ package com.banglalink.toffee.util
 
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.exception.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
-import java.lang.Exception
 import java.net.SocketTimeoutException
+import java.util.*
 
 //this will use non synchronized lazy method
 fun <T>unsafeLazy(initializer: () -> T): Lazy<T>{
@@ -35,8 +33,8 @@ fun getError(e: Exception): Error {
         is ReferralException -> {
             return Error(e.errorCode, e.referralStatusMessage, e.referralStatus)
         }
-        is UpdateRequiredException->{
-            return AppDeprecatedError(-1,"",e.title,e.updateMsg,e.forceUpdate)
+        is UpdateRequiredException -> {
+            return AppDeprecatedError(-1, "", e.title, e.updateMsg, e.forceUpdate)
         }
         else -> {
             return Error(-1, "Unknown error occurred")
@@ -44,21 +42,19 @@ fun getError(e: Exception): Error {
     }
 }
 
-suspend fun discardZeroFromDuration(duration: String): String {
-    return withContext(Dispatchers.Default){
-        if (duration.isBlank()) {
-           return@withContext "00:00"
-        }
+fun discardZeroFromDuration(duration: String?): String {
+    if (duration.isNullOrBlank()) {
+       return "00:00"
+    }
 
-        if (duration.startsWith("00:")) {
-            duration.substring(3)
-        } else {
-            duration
-        }
+    return if (duration.startsWith("00:")) {
+        duration.substring(3)
+    } else {
+        duration
     }
 }
 
-private val c = charArrayOf('K', 'M', 'B', 'T')
+private val c = charArrayOf('K', 'M', 'B', 'T', 'P', 'E')
 
 /**
  * Recursive implementation, invokes itself for each factor of a thousand, increasing the class on each invokation.
@@ -69,32 +65,25 @@ private val c = charArrayOf('K', 'M', 'B', 'T')
  */
 private fun viewCountFormat(n: Double, iteration: Int): String {
     val d = n.toLong() / 100 / 10.0
-    val isRound =
-        d * 10 % 10 == 0.0//true if the decimal part is equal to 0 (then it's trimmed anyway)
-    return (if (d < 1000)
-    //this determines the class, i.e. 'k', 'm' etc
+    val isRound = d * 10 % 10 == 0.0
+    return if (d < 1000)
         ((if (d > 99.9 || isRound || (!isRound && d > 9.99))
-        //this decides whether to trim the decimals
             d.toInt() * 10 / 10
         else
             (d).toString() + "" // (int) d * 10 / 10 drops the decimal
                 )).toString() + "" + c[iteration]
     else
-        viewCountFormat(d, iteration + 1))
+        viewCountFormat(d, iteration + 1)
 
 }
 
-suspend fun getFormattedViewsText(viewCount: String): String {
+fun getFormattedViewsText(viewCount: String?): String {
+    if (viewCount.isNullOrBlank())
+        return "0"
 
-    return withContext(Dispatchers.Default){
-        if (viewCount.isBlank())
-            return@withContext viewCount
-
-        val count = java.lang.Long.parseLong(viewCount)
-        if (count < 1000)
-            viewCount
-        else
-            viewCountFormat(count.toDouble(), 0)
-    }
-
+    val count = viewCount.toLong()
+    return if (count < 1000)
+        viewCount
+    else
+        viewCountFormat(count.toDouble(), 0)
 }

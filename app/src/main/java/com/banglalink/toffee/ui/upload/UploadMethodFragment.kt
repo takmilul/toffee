@@ -17,6 +17,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
@@ -28,7 +29,7 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class UploadMethodFragment: Fragment(R.layout.upload_method_fragment) {
+class UploadMethodFragment: BaseFragment(R.layout.upload_method_fragment) {
 
     private var videoUri: Uri? = null
 
@@ -151,8 +152,8 @@ class UploadMethodFragment: Fragment(R.layout.upload_method_fragment) {
             .addFileToUpload(uri, "file")
             .startUpload()
 
-        Preference.getInstance().uploadId = upId
-        Preference.getInstance().uploadStatus = 1
+        mPref.uploadId = upId
+        mPref.uploadStatus = 1
 
         activity?.
             findNavController(R.id.home_nav_host)?.let {

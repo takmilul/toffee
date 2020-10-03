@@ -10,6 +10,8 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.WindowManager;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -163,7 +165,7 @@ public class Utils {
         return "";
     }
 
-    public static void setFullScreen(Activity activity, boolean visible) {
+    public static void setFullScreen(AppCompatActivity activity, boolean visible) {
         int uiOptions = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                 // Set the content to appear under the system bars so that the
                 // content doesn't resize when the system bars hide and show.
@@ -175,8 +177,10 @@ public class Utils {
                 | View.SYSTEM_UI_FLAG_FULLSCREEN;
 
         if (!visible) {
+//            activity.getSupportActionBar().show();
             activity.getWindow().getDecorView().setSystemUiVisibility(0);
         } else {
+//            activity.getSupportActionBar().hide();
             activity.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
         }
     }

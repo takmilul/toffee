@@ -108,7 +108,7 @@ class ChannelPlaylistsFragment : SingleListFragmentV2<ChannelInfo>(), SingleList
     }
     
     private fun showAddToPlaylistDialog(){
-        val data = mAdapter.getItems().map { it.program_name }
+        val data = mAdapter.getItems().map { it.program_name!! }
         val fragment = ChannelAddToPlaylistFragment.newInstance(data)
         fragment.show(requireActivity().supportFragmentManager, "add_to_playlist")
         fragment.dialog?.setCanceledOnTouchOutside(true)

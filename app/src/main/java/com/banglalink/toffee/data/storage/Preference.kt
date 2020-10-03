@@ -16,9 +16,8 @@ import com.google.android.exoplayer2.ExoPlayerLibraryInfo
 import java.text.ParseException
 import java.util.*
 
-class Preference private constructor(val context: Context) {
-    private val pref: SharedPreferences =
-        context.getSharedPreferences("IP_TV", Context.MODE_PRIVATE)
+class Preference(private val pref: SharedPreferences,
+                                     private val context: Context) {
 
     val balanceLiveData = MutableLiveData<Int>()
     val sessionTokenLiveData = MutableLiveData<String>()
@@ -26,28 +25,26 @@ class Preference private constructor(val context: Context) {
     val customerNameLiveData = MutableLiveData<String>()
 
     var phoneNumber: String
-        get() = pref.getString("p_number", "") ?: ""
-        set(phoneNumber) {
-            pref.edit().putString("p_number", phoneNumber).apply()
-        }
+        get() = pref.getString(PHONE_NUMBER, "") ?: ""
+        set(phoneNumber) = pref.edit{ putString(PHONE_NUMBER, phoneNumber) }
 
     var customerName: String
-        get() = pref.getString("customer_name", "") ?: ""
+        get() = pref.getString(CUSTOMER_NAME, "") ?: ""
         set(customerName) {
             customerNameLiveData.postValue(customerName)
-            pref.edit().putString("customer_name", customerName).apply()
+            pref.edit{ putString(CUSTOMER_NAME, customerName) }
         }
 
     var customerId: Int
-        get() = pref.getInt("customer_id", 0)
+        get() = pref.getInt(CUSTOMER_ID, 0)
         set(customerId) {
-            pref.edit().putInt("customer_id", customerId).apply()
+            pref.edit{ putInt(CUSTOMER_ID, customerId) }
         }
 
     var password: String
-        get() = pref.getString("passwd", "") ?: ""
+        get() = pref.getString(PASSWORD, "") ?: ""
         set(password) {
-            pref.edit().putString("passwd", password).apply()
+            pref.edit().putString(PASSWORD, password).apply()
         }
 
     var sessionToken: String
@@ -260,11 +257,17 @@ class Preference private constructor(val context: Context) {
 //        set(value) = pref.edit { putString("toffee-upload-uri", value) }
 
     companion object {
+        private const val PHONE_NUMBER = "p_number"
+        private const val CUSTOMER_NAME = "customer_name"
+        private const val CUSTOMER_ID = "customer_id"
+        private const val PASSWORD = "passwd"
+
+
         private var instance: Preference? = null
 
-        fun init(context: Context) {
+        fun init(mContext: Context) {
             if (instance == null) {
-                instance = Preference(context.applicationContext)
+                instance = Preference(mContext.getSharedPreferences("IP_TV", Context.MODE_PRIVATE), mContext)
             }
         }
 

@@ -3,7 +3,7 @@ package com.banglalink.toffee.ui.home
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.banglalink.toffee.R
+import com.banglalink.toffee.apiservice.GetChannelSubscriptions
 import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.setError
@@ -12,7 +12,6 @@ import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.usecase.*
-import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.getError
 import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.coroutines.launch
@@ -103,7 +102,7 @@ class LandingPageViewModel(application: Application):BaseViewModel(application) 
     fun loadUserChannels() {
         viewModelScope.launch {
             try {
-                val response = getUserChannels.execute()
+                val response = getUserChannels.loadData(0, 10)
                 userChannelListMutableLiveData.setSuccess(response)
             } catch (e: Exception) {
                 userChannelListMutableLiveData.setError(getError(e))

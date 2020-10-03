@@ -1,5 +1,5 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name">Toffee</string>
+    <string name="app_name">Toffee UGC</string>
 
     <string name="retry">Retry</string>
 
@@ -145,4 +145,5 @@
     <string name="btn_open_camera">Open Camera</string>
     <string name="btn_open_gallery">Open Gallery</string>
     <string name="upload_status_text">Uploading %1$d%%</string>
+    <string name="live_watching_text">%1$s Watching</string>
 </resources>

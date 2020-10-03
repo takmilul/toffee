@@ -239,12 +239,12 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
         boolean isReload = false;
         ChannelInfo oldChannelInfo = this.channelInfo;
         this.channelInfo = channelInfo;
-        if(oldChannelInfo != null && oldChannelInfo.id.equalsIgnoreCase(this.channelInfo.id)){
+        if(oldChannelInfo != null && oldChannelInfo.getId().equalsIgnoreCase(this.channelInfo.getId())){
             isReload = true;//that means we have reload situation. We need to start where we left for VODs
         }
 
         if(player!=null){
-            HeartBeatManager.INSTANCE.triggerEventViewingContentStart(Integer.parseInt(channelInfo.id),channelInfo.type);
+            HeartBeatManager.INSTANCE.triggerEventViewingContentStart(Integer.parseInt(channelInfo.getId()),channelInfo.getType());
             player.setPlayWhenReady(!isReload || player.getPlayWhenReady());
             MediaSource mediaSource = prepareMedia(Uri.parse(uri));
             if(isReload){//We need to start where we left off for VODs
@@ -342,7 +342,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
         if(channelInfo != null) {
             Intent sharingIntent = new Intent(Intent.ACTION_SEND);
             sharingIntent.setType("text/html");
-            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, channelInfo.video_share_url);
+            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, channelInfo.getVideo_share_url());
             startActivity(Intent.createChooser(sharingIntent, "Share via"));
             return true;
         }

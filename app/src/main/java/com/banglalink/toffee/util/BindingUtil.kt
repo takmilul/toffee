@@ -106,7 +106,7 @@ fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
 
 @BindingAdapter("loadUserChannelLogo")
 fun bindUserChannelLogo(view: ImageView, channelInfo: ChannelInfo) {
-    if (channelInfo.channel_logo.isBlank()) {
+    if (channelInfo.channel_logo.isNullOrBlank()) {
         view.setImageResource(R.drawable.ic_portrait)
     }
     else {

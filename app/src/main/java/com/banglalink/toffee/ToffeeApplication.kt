@@ -16,12 +16,15 @@ import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.banglalink.toffee.ui.upload.UploadObserver
+import dagger.hilt.android.HiltAndroidApp
 import net.gotev.uploadservice.UploadServiceConfig
 import okhttp3.OkHttpClient
+import javax.inject.Inject
 
-
-
+@HiltAndroidApp
 class ToffeeApplication : Application() {
+
+    @Inject lateinit var mUploadObserver: UploadObserver
 
     override fun onCreate() {
         super.onCreate()
@@ -39,6 +42,7 @@ class ToffeeApplication : Application() {
         connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), HeartBeatManager)
 
 
+        initUploader()
     }
 
     private fun initCoil() {
@@ -53,7 +57,6 @@ class ToffeeApplication : Application() {
 
         }
         Coil.setDefaultImageLoader(imageLoader)
-        initUploader()
     }
 
     override fun onTerminate() {
@@ -72,7 +75,7 @@ class ToffeeApplication : Application() {
         createNotificationChannel()
 
         UploadServiceConfig.initialize(this, notificationChannelID, BuildConfig.DEBUG)
-        UploadObserver(this).start()
+        mUploadObserver.start()
     }
 
     private fun createNotificationChannel() {

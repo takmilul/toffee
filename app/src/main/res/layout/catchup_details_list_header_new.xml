@@ -20,10 +20,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/screen_bg_white"
-        android:paddingBottom="8dp"
         android:clickable="false"
-        android:focusable="false">
+        android:focusable="false"
+        android:paddingBottom="8dp">
 
+
+        <TextView
+            android:id="@+id/textView24"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="4dp"
+            android:text="8.5k"
+            android:visibility="@{data.live ? View.GONE : View.VISIBLE}"
+            android:gravity="center_vertical"
+            app:drawableLeftCompat="@drawable/ic_like_emo"
+            app:layout_constraintBottom_toBottomOf="@+id/textView25"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/textView26"
+            app:layout_constraintTop_toTopOf="@+id/textView25"
+            app:layout_constraintVertical_bias="0.0" />
 
         <TextView
             android:id="@+id/program_name"
@@ -70,36 +86,44 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/liveStatus" />
+            app:layout_constraintTop_toBottomOf="@+id/textView25" />
 
         <TextView
             android:id="@+id/liveStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:visibility="@{data.live ? View.VISIBLE : View.INVISIBLE}"
+            android:drawablePadding="4dp"
             android:text="LIVE"
+            android:textStyle="bold"
+            android:visibility="@{data.live ? View.VISIBLE : View.GONE}"
+            app:drawableLeftCompat="@drawable/ic_live_red"
+            app:layout_constraintBottom_toBottomOf="@+id/textView25"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@+id/textView25" />
 
         <TextView
             android:id="@+id/textView25"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="56k watching"
-            app:layout_constraintBottom_toBottomOf="@+id/liveStatus"
+            android:layout_marginTop="8dp"
+            android:drawableLeft="@drawable/ic_view"
+            android:drawablePadding="4dp"
+            android:text="@{data.live ? @string/live_watching_text(data.formatted_view_count) : data.formatted_view_count}"
             app:layout_constraintStart_toEndOf="@+id/liveStatus"
-            app:layout_constraintTop_toTopOf="@+id/liveStatus" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/textView26"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:drawablePadding="4dp"
             android:text="8.5k"
+            app:drawableLeftCompat="@drawable/ic_share_bg"
             app:layout_constraintBottom_toBottomOf="@+id/textView25"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/textView24"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/textView25"
             app:layout_constraintTop_toTopOf="@+id/textView25" />
 
@@ -142,6 +166,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/subscribe_button"
             app:layout_constraintEnd_toStartOf="@+id/subscribe_button"
             app:layout_constraintTop_toTopOf="@+id/subscribe_button" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

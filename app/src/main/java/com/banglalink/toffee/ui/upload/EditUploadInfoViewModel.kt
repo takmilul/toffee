@@ -1,10 +1,11 @@
 package com.banglalink.toffee.ui.upload
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.banglalink.toffee.util.Utils
 
-class EditUploadInfoViewModel: ViewModel() {
+class EditUploadInfoViewModel @ViewModelInject constructor(): ViewModel() {
     val title = MutableLiveData<String>()
     val description = MutableLiveData<String>()
 

@@ -18,7 +18,7 @@ class GetRelativeContents(private val preference: Preference, private val toffee
             toffeeApi.getRelativeContents(
                 RelativeContentRequest(
                     channelInfo.id,
-                    channelInfo.video_tags,
+                    channelInfo.video_tags ?: "",
                     preference.customerId,
                     preference.password,
                     mOffset,

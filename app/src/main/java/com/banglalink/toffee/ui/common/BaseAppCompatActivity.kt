@@ -10,9 +10,13 @@ import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.ui.login.SigninByPhoneActivity
 import com.banglalink.toffee.util.EventProvider
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
+open class BaseAppCompatActivity : AppCompatActivity() {
 
-abstract class BaseAppCompatActivity : AppCompatActivity() {
+    @Inject lateinit var mPref: Preference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,7 +24,7 @@ abstract class BaseAppCompatActivity : AppCompatActivity() {
         observe(EventProvider.getEventLiveData()){
             when(it.getValue()){
                 is CustomerNotFoundException->{
-                    Preference.getInstance().clear()
+                    mPref.clear()
                     launchActivity<SigninByPhoneActivity>{
                         flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                     }

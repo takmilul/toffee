@@ -2,27 +2,29 @@ package com.banglalink.toffee.ui.useractivities
 
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
+import com.banglalink.toffee.common.paging.BaseListFragment
+import com.banglalink.toffee.common.paging.BasePagingDataAdapter
+import com.banglalink.toffee.common.paging.BasePagingViewModel
 import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.SingleListFragmentV2
 import com.banglalink.toffee.ui.subscription.PackageListActivity
 
 class ChannelSubscriptionFragment
-    :SingleListFragmentV2<ChannelInfo>(), ChannelSubscriptionListItemCallback {
+    :BaseListFragment<ChannelInfo>(), ChannelSubscriptionListItemCallback {
+
+    override val mAdapter by lazy { ChannelSubscriptionListAdapter(this) }
+    override val mViewModel by viewModels<ChannelSubscriptionViewModel>()
 
     companion object {
         fun newInstance(): ChannelSubscriptionFragment {
             return ChannelSubscriptionFragment()
         }
-    }
-
-    override fun initAdapter() {
-        mAdapter = ChannelSubscriptionListAdapter(this)
-        mViewModel = ViewModelProvider(this)[ChannelSubscriptionViewModel::class.java]
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -35,9 +37,9 @@ class ChannelSubscriptionFragment
     }
 
     private fun observeChanges() {
-        (mViewModel as ChannelSubscriptionViewModel).let { vm->
+        mViewModel.let { vm->
             vm.itemUpdateEvent.observe(viewLifecycleOwner, Observer {
-                mAdapter.reloadItem(it)
+                mAdapter.notifyItemChanged(it)
             })
         }
     }
@@ -56,6 +58,6 @@ class ChannelSubscriptionFragment
     }
 
     override fun onNotificationBellClicked(item: ChannelInfo, pos: Int) {
-        (mViewModel as ChannelSubscriptionViewModel).toggleNotification(item, pos)
+        mViewModel.toggleNotification(item, pos)
     }
 }

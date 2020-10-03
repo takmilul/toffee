@@ -31,7 +31,7 @@ public class Channel extends Samples.Sample {
     }
 
     public static Channel createChannel(ChannelInfo channelInfo){
-        return new Channel(channelInfo.program_name,channelInfo.hlsLinks.get(0).hls_url_mobile);
+        return new Channel(channelInfo.getProgram_name(),channelInfo.getHlsLinks().get(0).hls_url_mobile);
     }
 
     public Channel(String name, String contentId, String provider, String uri, int type, String imageUrl) {
