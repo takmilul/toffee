@@ -1,9 +1,8 @@
 package com.banglalink.toffee.usecase
 
 import com.banglalink.toffee.data.network.request.ContentRequest
-import com.banglalink.toffee.data.network.request.HistoryContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
-import com.banglalink.toffee.data.network.util.tryIO
+import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.SingleListRepository
@@ -17,16 +16,18 @@ class UserActivities(private val preference: Preference, private val toffeeApi: 
     private val limit = 10
 
     override suspend fun execute(): List<ChannelInfo> {
-        val response = tryIO {
+        val response = tryIO2 {
             toffeeApi.getContents(
+                0, mOffset, "VOD",
+                preference.getDBVersionByApiName("getContentsV5"),
                 ContentRequest(
                     0,
                     0,
                     "VOD",
                     preference.customerId,
                     preference.password,
-                    mOffset,
-                    limit
+                    offset = mOffset,
+                    limit = limit
                 )
             )
         }

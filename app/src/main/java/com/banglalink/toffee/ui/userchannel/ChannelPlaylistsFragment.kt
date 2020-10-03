@@ -7,6 +7,7 @@ import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.layout
 import com.banglalink.toffee.model.ChannelInfo
@@ -40,8 +41,9 @@ class ChannelPlaylistsFragment : SingleListFragmentV2<ChannelInfo>(), SingleList
 
     override fun onItemClicked(item: ChannelInfo) {
         super.onItemClicked(item)
-        showCreatePlaylistDialog()
-        //findNavController().navigate(R.id.action_menu_channel_to_channelPlaylistVideosFragment)
+        findNavController().navigate(R.id.action_menu_channel_to_channelPlaylistVideosFragment)
+//        showCreatePlaylistDialog()
+//        showAddToPlaylistDialog()
     }
 
     override fun getEmptyViewInfo(): Pair<Int, String?> {
@@ -103,5 +105,12 @@ class ChannelPlaylistsFragment : SingleListFragmentV2<ChannelInfo>(), SingleList
             noButton.setOnClickListener { alertDialog.dismiss() }
             deleteButton.setOnClickListener { alertDialog.dismiss() }
         }
+    }
+    
+    private fun showAddToPlaylistDialog(){
+        val data = mAdapter.getItems().map { it.program_name }
+        val fragment = ChannelAddToPlaylistFragment.newInstance(data)
+        fragment.show(requireActivity().supportFragmentManager, "add_to_playlist")
+        fragment.dialog?.setCanceledOnTouchOutside(true)
     }
 }

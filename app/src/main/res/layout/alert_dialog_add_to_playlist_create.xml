@@ -11,27 +11,29 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginVertical="56dp"
         android:gravity="center">
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="16dp"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="56dp"
+            android:layout_marginHorizontal="16dp"
             app:cardCornerRadius="8dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="32dp">
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:id="@+id/dialogTitleTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Create New Playlist"
-                    android:textSize="@dimen/default_text_size"
                     android:textColor="@color/main_text_color"
+                    android:textSize="@dimen/default_text_size"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginHorizontal="24dp"
+                    app:layout_constraintBottom_toTopOf="@id/listview"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -39,19 +41,34 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/listview"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    tools:listitem="@layout/list_item_playlist_dialog"
+                    android:layout_marginHorizontal="24dp"
+                    style="@style/ScrollBarStyle"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constrainedHeight="true"
+                    app:layout_constraintBottom_toTopOf="@id/view"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/dialogTitleTextView"
-                    app:layout_constraintBottom_toTopOf="@id/textView51"/>
+                    tools:listitem="@layout/list_item_playlist_dialog" />
+
+                <View
+                    android:id="@+id/view"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:background="@drawable/bottom_round_top_shadow"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/listview"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
 
                 <TextView
                     android:id="@+id/textView51"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
+                    android:layout_marginHorizontal="24dp"
                     android:text="Playlist Name"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -70,33 +87,31 @@
                     app:layout_constraintStart_toStartOf="@+id/textView51"
                     app:layout_constraintTop_toBottomOf="@+id/textView51" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/noButton"
-                    style="@style/ButtonStyleSolidPurple"
+                <Button
+                    android:id="@+id/cancelButton"
+                    style="@style/ButtonStyleRingPurple"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
+                    android:layout_marginVertical="24dp"
                     android:minWidth="0dp"
-                    android:text=""
-                    app:icon="@drawable/ic_upload_add"
-                    app:iconSize="24dp"
+                    android:text="Cancel"
                     app:layout_constraintHorizontal_chainStyle="spread_inside"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/deleteButton"
+                    app:layout_constraintEnd_toStartOf="@id/createButton"
                     app:layout_constraintStart_toStartOf="@+id/listview"
                     app:layout_constraintTop_toBottomOf="@+id/playlistNameEditText" />
 
                 <Button
-                    android:id="@+id/deleteButton"
+                    android:id="@+id/createButton"
                     style="@style/ButtonStyleSolidPink"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
-                    android:text="Delete"
-                    app:layout_constraintBottom_toBottomOf="@id/noButton"
+                    android:text="Create"
+                    app:layout_constraintBottom_toBottomOf="@id/cancelButton"
                     app:layout_constraintEnd_toEndOf="@+id/listview"
-                    app:layout_constraintStart_toEndOf="@id/noButton"
-                    app:layout_constraintTop_toTopOf="@id/noButton" />
+                    app:layout_constraintStart_toEndOf="@id/cancelButton"
+                    app:layout_constraintTop_toTopOf="@id/cancelButton" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
