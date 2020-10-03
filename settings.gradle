@@ -1,3 +1,2 @@
-include ':showcase_view'
-include ':app', ':slider'
+include ':app', ':showcase_view'
 rootProject.name='ToffeeKotlin'
