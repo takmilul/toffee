@@ -23,11 +23,11 @@ import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
 import com.banglalink.toffee.model.PaymentMethod
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
-import com.banglalink.toffee.ui.common.CheckboxCheckedChangedListener
+import com.banglalink.toffee.ui.common.CheckedChangeListener
 import com.banglalink.toffee.ui.common.SingleListFragmentV2
 import kotlinx.android.synthetic.main.fragment_withdraw.*
 
-class WithdrawFragment : Fragment(), CheckboxCheckedChangedListener<PaymentMethod>, OnClickListener {
+class WithdrawFragment : Fragment(), CheckedChangeListener<PaymentMethod>, OnClickListener {
 
     private lateinit var scrollListener: EndlessRecyclerViewScrollListener
     private lateinit var mAdapter: WithdrawAdapter
@@ -192,11 +192,11 @@ class WithdrawFragment : Fragment(), CheckboxCheckedChangedListener<PaymentMetho
         super.onDestroyView()
     }
 
-    override fun onCheckedChanged(view: View, item: PaymentMethod, position: Int, isFromCheckBox: Boolean) {
-        super.onCheckedChanged(view, item, position, isFromCheckBox)
+    override fun onCheckedChanged(view: View, item: PaymentMethod, position: Int, isFromCheckableView: Boolean) {
+        super.onCheckedChanged(view, item, position, isFromCheckableView)
         when(view){
             is CheckBox -> {
-                if (isFromCheckBox)
+                if (isFromCheckableView)
                     checkedChange(view.isChecked, position)
                 else
                     checkedChange(!view.isChecked, position)

@@ -47,4 +47,6 @@
     <color name="accent_green">#C5E1A5</color>
     <color name="overlay_dark_color">#66000000</color>
     <color name="purple">#8663FF</color>
+    <color name="scrollbarTrackColor">#4D707070</color>
+    <color name="cardOverlayColor">#FFFFFFFF</color>
 </resources>

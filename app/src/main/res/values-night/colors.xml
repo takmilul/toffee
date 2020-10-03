@@ -7,5 +7,5 @@
     <color name="window_background">#000000</color>
     <color name="home_screen_curve_bg_color">#111F31</color>
     <color name="tab_unselected">#7F96B4</color>
-
+    <color name="cardOverlayColor">#B8000000</color>
 </resources>
