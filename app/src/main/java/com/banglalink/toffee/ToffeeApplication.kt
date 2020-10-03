@@ -13,11 +13,15 @@ import com.banglalink.toffee.data.storage.AppDatabase
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import okhttp3.OkHttpClient
 
 
 
 class ToffeeApplication : Application() {
+
+    val applicationScope = CoroutineScope(SupervisorJob())
 
     override fun onCreate() {
         super.onCreate()
@@ -62,5 +66,7 @@ class ToffeeApplication : Application() {
         super.onTrimMemory(level)
         Coil.loader().clearMemory()
     }
+
+    fun ToffeeApplication.applicationScope()=applicationScope
 }
 
