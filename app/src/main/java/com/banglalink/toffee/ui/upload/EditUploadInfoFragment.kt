@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import androidx.core.view.setPadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -24,11 +25,13 @@ import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.FragmentEditUploadInfoBinding
+import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.util.unsafeLazy
 //import com.bumptech.glide.Glide
 import com.pchmn.materialchips.ChipsInput
 import com.pchmn.materialchips.model.ChipInterface
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -37,14 +40,12 @@ import net.gotev.uploadservice.network.ServerResponse
 import net.gotev.uploadservice.observer.request.RequestObserver
 import net.gotev.uploadservice.observer.request.RequestObserverDelegate
 
-class EditUploadInfoFragment: Fragment() {
+class EditUploadInfoFragment: BaseFragment() {
     private var uploadId: String? = null
     private var uploadUri: String? = null
     private lateinit var binding: FragmentEditUploadInfoBinding
 
-    private val viewModel: EditUploadInfoViewModel by unsafeLazy {
-        ViewModelProvider(this)[EditUploadInfoViewModel::class.java]
-    }
+    private val viewModel: EditUploadInfoViewModel by viewModels()
 
     companion object {
         const val ARG_UPLOAD_ID = "arg_upload_id"
@@ -89,7 +90,7 @@ class EditUploadInfoFragment: Fragment() {
         binding.uploadTitle.requestFocus()
 
         binding.cancelButton.setOnClickListener {
-            Preference.getInstance().uploadStatus = -1
+            mPref.uploadStatus = -1
             findNavController().popBackStack()
         }
 
@@ -99,7 +100,7 @@ class EditUploadInfoFragment: Fragment() {
                         "You will be notified once its published.",
                 icon = R.drawable.subscription_success
             ).create().show()
-            Preference.getInstance().uploadStatus = -1
+            mPref.uploadStatus = -1
         }
 
         binding.thumbEditButton.setOnClickListener {
