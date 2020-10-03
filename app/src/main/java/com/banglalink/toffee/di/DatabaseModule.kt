@@ -7,6 +7,7 @@ import com.banglalink.toffee.data.database.ToffeeDatabase
 import com.banglalink.toffee.data.database.dao.UploadDao
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.repository.impl.UploadInfoRepositoryImpl
+import com.banglalink.toffee.data.storage.ViewCountDAO
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,6 +33,12 @@ object DatabaseModule {
     @Singleton
     fun providesUploadDao(db: ToffeeDatabase): UploadDao {
         return db.getUploadDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providesViewCountDao(db: ToffeeDatabase): ViewCountDAO {
+        return db.getViewCountDao()
     }
 
     @Provides

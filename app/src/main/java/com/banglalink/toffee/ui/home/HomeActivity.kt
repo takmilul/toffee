@@ -11,10 +11,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
-import android.view.Display
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.view.animation.AnimationUtils
 import android.widget.AutoCompleteTextView
 import android.widget.ImageView
@@ -422,17 +419,17 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         channelInfo?.let {
             when{
                 it.urlType == 1->{
-                    HeartBeatManager.triggerEventViewingContentStart(it.id.toInt(),it.type)
+                    HeartBeatManager.triggerEventViewingContentStart(it.id.toInt(),it.type ?: "VOD")
                     viewModel.sendViewContentEvent(it)
                     launchActivity<Html5PlayerViewActivity> {
-                        putExtra(Html5PlayerViewActivity.CONTENT_URL,it.hlsLinks[0].hls_url_mobile)
+                        putExtra(Html5PlayerViewActivity.CONTENT_URL,it.hlsLinks!![0].hls_url_mobile)
                     }
                 }
                 it.urlType == 2 ->{
                     startActivity(
                         Intent(
                             Intent.ACTION_VIEW,
-                            Uri.parse(it.hlsLinks[0].hls_url_mobile)
+                            Uri.parse(it.hlsLinks!![0].hls_url_mobile)
                         )
                     )
                 }

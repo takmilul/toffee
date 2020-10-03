@@ -65,7 +65,7 @@ class DownloadViewCountDb(
 
         viewCountList.clear()
         while (byteBuffer.remaining() > 0) {
-            val contentId = byteBuffer.int
+            val contentId = byteBuffer.long
             val viewCount = byteBuffer.long
             Log.i(TAG, "content id $contentId and viewcount $viewCount remaining ${byteBuffer.remaining()}")
             viewCountList.add(ViewCountDataModel().apply {

@@ -100,7 +100,7 @@ class HomeViewModel(application: Application):BaseViewModel(application),OnCompl
 
     fun populateViewCountDb(url:String){
         getApplication<ToffeeApplication>().applicationScope.launch {
-            DownloadViewCountDb(RetrofitApiClient.dbApi,AppDatabase.getDatabase().viewCountDAO()).execute(getApplication(),url)
+//            DownloadViewCountDb(RetrofitApiClient.dbApi,AppDatabase.getDatabase().viewCountDAO()).execute(getApplication(),url)
         }
     }
 

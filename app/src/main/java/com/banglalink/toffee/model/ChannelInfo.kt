@@ -3,6 +3,7 @@ package com.banglalink.toffee.model
 import android.os.Parcelable
 import com.banglalink.toffee.ui.player.HlsLinks
 import com.banglalink.toffee.util.Utils
+import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 import java.util.*
 
@@ -43,7 +44,10 @@ data class ChannelInfo(
     var landscape_ratio_1280_720: String? = null,
     var feature_image: String? = null,
     var content_provider_name: String? = null,
-    var content_provider_id: String? = null
+    var content_provider_id: String? = null,
+
+    @SerializedName("url_type")
+    val urlType: Int = 0
 ) :Parcelable
 {
 
