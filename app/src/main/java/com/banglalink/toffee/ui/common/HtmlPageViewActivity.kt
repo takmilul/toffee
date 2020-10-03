@@ -11,15 +11,18 @@ import android.widget.ProgressBar
 import androidx.appcompat.widget.Toolbar
 import com.banglalink.toffee.R
 
+
 class HtmlPageViewActivity : BaseAppCompatActivity() {
 
     companion object {
         const val CONTENT_KEY = "content_key"
         const val TITLE_KEY = "title_key"
+        const val HEADER = "HEADER"
     }
 
     private var htmlUrl: String? = ""
     private var title: String? = ""
+    private var header: String? = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,6 +37,7 @@ class HtmlPageViewActivity : BaseAppCompatActivity() {
         if (extras != null) {
             htmlUrl = extras.getString(CONTENT_KEY)
             title = extras.getString(TITLE_KEY)
+            header = extras.getString(HEADER)
         }
         if (toolbar != null) {
             setSupportActionBar(toolbar)
@@ -59,7 +63,14 @@ class HtmlPageViewActivity : BaseAppCompatActivity() {
         }
 
         webView.settings.javaScriptEnabled = true
-        webView.loadUrl(htmlUrl)
+        if(header.isNullOrEmpty()){
+            webView.loadUrl(htmlUrl)
+        }else{
+            val headerMap: MutableMap<String, String> = HashMap()
+            headerMap["MSISDN"] = header!!
+            webView.loadUrl(htmlUrl,headerMap)
+        }
+
     }
 
     //For Android 5.0.0 webkit UI bug fix

@@ -16,12 +16,33 @@ import java.util.concurrent.TimeUnit
 object RetrofitApiClient {
 
     private val retrofit: Retrofit
+    private val dbRetrofit: Retrofit
+
     init {
-        val cacheSize = 10 * 1024 * 1024 // 10 MB
+        //retrofit instance for api
+        retrofit = Retrofit.Builder()
+            .client(buildApiHttpClient())
+//            .baseUrl("https://mapi.toffeelive.com/")
+            .baseUrl("https://staging.toffee-cms.com/")
+//            .baseUrl("https://dev.toffeelive.com/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        //retrofit instance for db stream
+        dbRetrofit = Retrofit.Builder()
+            .client(OkHttpClient.Builder().build())
+            .baseUrl("https://real-db.toffeelive.com/")
+//            .baseUrl("https://dev.toffeelive.com/")
+            .build()
+    }
+
+    private fun buildApiHttpClient():OkHttpClient{
+        val cacheSize = 25 * 1024 * 1024 // 25 MB
 
         val cache = Cache(getCacheDir(), cacheSize.toLong())
 
         val clientBuilder = OkHttpClient.Builder()
+
         clientBuilder.connectTimeout(15, TimeUnit.SECONDS)
         clientBuilder.readTimeout(30, TimeUnit.SECONDS)
         clientBuilder.retryOnConnectionFailure(false)
@@ -33,15 +54,8 @@ object RetrofitApiClient {
             clientBuilder.addInterceptor(interceptor)
         }
         clientBuilder.addInterceptor(AuthInterceptor(GetTracker()))
+        return clientBuilder.build()
 
-        val client = clientBuilder.build()
-
-        retrofit = Retrofit.Builder()
-            .client(client)
-            .baseUrl("https://mapi.toffeelive.com/")
-//            .baseUrl("https://staging.toffee-cms.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
     }
 
     val authApi: AuthApi by unsafeLazy {
@@ -50,5 +64,9 @@ object RetrofitApiClient {
 
     val toffeeApi: ToffeeApi by unsafeLazy {
         retrofit.create(ToffeeApi::class.java)
+    }
+
+    val dbApi:DbApi by unsafeLazy {
+        dbRetrofit.create(DbApi::class.java)
     }
 }

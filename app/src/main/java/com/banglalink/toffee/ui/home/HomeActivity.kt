@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.Point
+import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -42,6 +43,7 @@ import com.banglalink.toffee.model.EXIT_FROM_APP_MSG
 import com.banglalink.toffee.model.NavigationMenu
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.channels.ChannelFragment
+import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.ui.landing.AllCategoriesFragment
 import com.banglalink.toffee.ui.login.SigninByPhoneActivity
 import com.banglalink.toffee.ui.player.PlayerActivity
@@ -212,6 +214,12 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             if(binding.draggableView.visibility == View.VISIBLE){
                 updateStartPosition()//we are saving the player start position so that we can start where we left off for VOD.
                 reloadChannel()
+            }
+        }
+
+        observe(Preference.getInstance().viewCountDbUrlLiveData){
+            if(it.isNotEmpty()){
+                viewModel.populateViewCountDb(it)
             }
         }
 
@@ -407,12 +415,27 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
 
     private fun loadChannel(@Nonnull channelInfo: ChannelInfo) {
         viewModel.sendViewContentEvent(channelInfo)
-       playChannel(channelInfo)
+        playChannel(channelInfo)
     }
 
     private fun onDetailsFragmentLoad(channelInfo: ChannelInfo?) {
         channelInfo?.let {
             when{
+                it.urlType == 1->{
+                    HeartBeatManager.triggerEventViewingContentStart(it.id.toInt(),it.type)
+                    viewModel.sendViewContentEvent(it)
+                    launchActivity<Html5PlayerViewActivity> {
+                        putExtra(Html5PlayerViewActivity.CONTENT_URL,it.hlsLinks[0].hls_url_mobile)
+                    }
+                }
+                it.urlType == 2 ->{
+                    startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse(it.hlsLinks[0].hls_url_mobile)
+                        )
+                    )
+                }
                 (it.isPurchased || it.isSubscribed) && !it.isExpired(Date())->{
                     maximizePlayer()
                     loadChannel(it)

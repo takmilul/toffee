@@ -88,7 +88,7 @@ dependencies {
     //Firebase Push Notification
     implementation 'com.google.firebase:firebase-messaging:20.2.4'
     //Firebase in app messaging
-    implementation 'com.google.firebase:firebase-inappmessaging-display:19.1.1'
+    implementation 'com.google.firebase:firebase-inappmessaging-display:19.1.0'
     //Firebase core
     implementation 'com.google.firebase:firebase-core:17.5.0'
     // Recommended: Add the Firebase SDK for Google Analytics.

@@ -125,6 +125,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".ui.common.Html5PlayerViewActivity"
+            android:screenOrientation="fullSensor"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".ui.settings.SettingsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="Settings"

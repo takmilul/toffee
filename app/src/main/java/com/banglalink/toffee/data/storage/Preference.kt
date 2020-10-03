@@ -2,24 +2,21 @@ package com.banglalink.toffee.data.storage
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.os.Build
 import android.text.TextUtils
 import androidx.core.content.edit
 import androidx.lifecycle.MutableLiveData
-import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.model.CustomerInfoSignIn
 import com.banglalink.toffee.model.DBVersion
 import com.banglalink.toffee.model.DBVersionV2
 import com.banglalink.toffee.util.Utils
-import com.banglalink.toffee.util.unsafeLazy
-import com.google.android.exoplayer2.ExoPlayerLibraryInfo
 import java.text.ParseException
 import java.util.*
 
 class Preference(private val pref: SharedPreferences,
                                      private val context: Context) {
 
-    val balanceLiveData = MutableLiveData<Int>()
+    val viewCountDbUrlLiveData = MutableLiveData<String>()
     val sessionTokenLiveData = MutableLiveData<String>()
     val profileImageUrlLiveData = MutableLiveData<String>()
     val customerNameLiveData = MutableLiveData<String>()
@@ -248,6 +245,16 @@ class Preference(private val pref: SharedPreferences,
         get() = pref.getString("toffee-upload-id", null)
         set(value) = pref.edit { putString("toffee-upload-id", value) }
 
+    var viewCountDbUrl: String
+        get() = pref.getString("viewCountDbUrl", "") ?: ""
+        set(viewCountDbUrl) {
+            val storedUrl = pref.getString("viewCountDbUrl", "") ?: ""//get stored url
+            pref.edit().putString("viewCountDbUrl", viewCountDbUrl).apply()//save new url
+            if (storedUrl.isEmpty() || !viewCountDbUrl.equals(storedUrl, true)) {
+                viewCountDbUrlLiveData.postValue(viewCountDbUrl)//post if there is mismatch of url
+            }
+        }
+
     var uploadStatus: Int
         get() = pref.getInt("toffee-upload-status", -1)
         set(value) = pref.edit { putInt("toffee-upload-status", value) }
@@ -255,6 +262,29 @@ class Preference(private val pref: SharedPreferences,
 //    var uploadUri: String?
 //        get() = pref.getString("toffee-upload-uri", null)
 //        set(value) = pref.edit { putString("toffee-upload-uri", value) }
+
+    fun saveCustomerInfo(customerInfoSignIn:CustomerInfoSignIn){
+        balance = customerInfoSignIn.balance
+        customerId = customerInfoSignIn.customerId
+        password = customerInfoSignIn.password?:""
+        customerName = customerInfoSignIn.customerName?:""
+        sessionToken = (customerInfoSignIn.sessionToken?:"")
+
+        setHeaderSessionToken(customerInfoSignIn.headerSessionToken)
+        setHlsOverrideUrl(customerInfoSignIn.hlsOverrideUrl)
+        setShouldOverrideHlsUrl(customerInfoSignIn.hlsUrlOverride)
+        setSessionTokenLifeSpanInMillis(customerInfoSignIn.tokenLifeSpan.toLong() * 1000 * 3600)
+        if(customerInfoSignIn.isBanglalinkNumber!=null){
+            isBanglalinkNumber = customerInfoSignIn.isBanglalinkNumber
+        }
+        customerInfoSignIn.dbVersionList?.let {
+            setDBVersion(it)
+        }
+        latitude = customerInfoSignIn.lat?:""
+        longitude = customerInfoSignIn.long?:""
+        isSubscriptionActive = customerInfoSignIn.isSubscriptionActive?:"true"
+        viewCountDbUrl = (customerInfoSignIn.viewCountDbUrl?:"")
+    }
 
     companion object {
         private const val PHONE_NUMBER = "p_number"

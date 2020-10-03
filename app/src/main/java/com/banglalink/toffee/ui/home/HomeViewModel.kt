@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.banglalink.toffee.ToffeeApplication
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
 import com.banglalink.toffee.data.network.util.resultLiveData
@@ -20,14 +21,12 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.iid.InstanceIdResult
 import kotlinx.coroutines.launch
 import java.lang.Exception
-import java.util.*
 import com.banglalink.toffee.usecase.*
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 
 
 class HomeViewModel(application: Application):BaseViewModel(application),OnCompleteListener<InstanceIdResult> {
@@ -96,6 +95,12 @@ class HomeViewModel(application: Application):BaseViewModel(application),OnCompl
             catch (e:Exception){
                 getError(e)
             }
+        }
+    }
+
+    fun populateViewCountDb(url:String){
+        getApplication<ToffeeApplication>().applicationScope.launch {
+            DownloadViewCountDb(RetrofitApiClient.dbApi,AppDatabase.getDatabase().viewCountDAO()).execute(getApplication(),url)
         }
     }
 
