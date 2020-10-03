@@ -2,16 +2,13 @@ package com.banglalink.toffee.data.storage
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.os.Build
 import android.text.TextUtils
 import androidx.lifecycle.MutableLiveData
-import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.model.CustomerInfoSignIn
 import com.banglalink.toffee.model.DBVersion
 import com.banglalink.toffee.model.DBVersionV2
 import com.banglalink.toffee.util.Utils
-import com.banglalink.toffee.util.unsafeLazy
-import com.google.android.exoplayer2.ExoPlayerLibraryInfo
 import java.text.ParseException
 import java.util.*
 
@@ -19,7 +16,7 @@ class Preference private constructor(val context: Context) {
     private val pref: SharedPreferences =
         context.getSharedPreferences("IP_TV", Context.MODE_PRIVATE)
 
-    val balanceLiveData = MutableLiveData<Int>()
+    val viewCountDbUrlLiveData = MutableLiveData<String>()
     val sessionTokenLiveData = MutableLiveData<String>()
     val profileImageUrlLiveData = MutableLiveData<String>()
     val customerNameLiveData = MutableLiveData<String>()
@@ -245,6 +242,41 @@ class Preference private constructor(val context: Context) {
     fun getSessionTokenSaveTimeInMillis(): Long {
         return pref.getLong("deviceTimeInMillis", System.currentTimeMillis());
     }
+
+    var viewCountDbUrl: String
+        get() = pref.getString("viewCountDbUrl", "") ?: ""
+        set(viewCountDbUrl) {
+            val storedUrl = pref.getString("viewCountDbUrl", "") ?: ""//get stored url
+            pref.edit().putString("viewCountDbUrl", viewCountDbUrl).apply()//save new url
+            if (storedUrl.isEmpty() || !viewCountDbUrl.equals(storedUrl, true)) {
+                viewCountDbUrlLiveData.postValue(viewCountDbUrl)//post if there is mismatch of url
+            }
+        }
+
+    fun saveCustomerInfo(customerInfoSignIn:CustomerInfoSignIn){
+        balance = customerInfoSignIn.balance
+        customerId = customerInfoSignIn.customerId
+        password = customerInfoSignIn.password?:""
+        customerName = customerInfoSignIn.customerName?:""
+        sessionToken = (customerInfoSignIn.sessionToken?:"")
+
+        setHeaderSessionToken(customerInfoSignIn.headerSessionToken)
+        setHlsOverrideUrl(customerInfoSignIn.hlsOverrideUrl)
+        setShouldOverrideHlsUrl(customerInfoSignIn.hlsUrlOverride)
+        setSessionTokenLifeSpanInMillis(customerInfoSignIn.tokenLifeSpan.toLong() * 1000 * 3600)
+        if(customerInfoSignIn.isBanglalinkNumber!=null){
+            isBanglalinkNumber = customerInfoSignIn.isBanglalinkNumber
+        }
+        customerInfoSignIn.dbVersionList?.let {
+            setDBVersion(it)
+        }
+        latitude = customerInfoSignIn.lat?:""
+        longitude = customerInfoSignIn.long?:""
+        isSubscriptionActive = customerInfoSignIn.isSubscriptionActive?:"true"
+        viewCountDbUrl = (customerInfoSignIn.viewCountDbUrl?:"")
+    }
+
+
 
 
     companion object {

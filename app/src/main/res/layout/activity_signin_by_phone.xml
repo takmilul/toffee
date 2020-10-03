@@ -174,7 +174,6 @@
                 android:ems="10"
                 android:gravity="center"
                 android:hint="@string/referral_code"
-                android:inputType="number"
                 android:letterSpacing="0.1"
                 app:layout_constraintEnd_toEndOf="@+id/phone_number_et"
                 app:layout_constraintStart_toStartOf="@+id/phone_number_et"
