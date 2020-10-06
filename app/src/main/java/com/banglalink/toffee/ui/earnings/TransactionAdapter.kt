@@ -1,13 +1,14 @@
 package com.banglalink.toffee.ui.earnings
 
 import com.banglalink.toffee.R
+import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.common.paging.BasePagingDataAdapter
+import com.banglalink.toffee.common.paging.ItemComparator
 import com.banglalink.toffee.model.Transaction
-import com.banglalink.toffee.ui.common.MyBaseAdapterV2
-import com.banglalink.toffee.ui.common.SingleListItemCallback
 
-class TransactionAdapter(callback: SingleListItemCallback<Transaction>?): MyBaseAdapterV2<Transaction>(callback) {
+class TransactionAdapter(callback: BaseListItemCallback<Transaction>?): BasePagingDataAdapter<Transaction>(callback, ItemComparator()) {
     
-    override fun getLayoutIdForPosition(position: Int): Int {
+    override fun getItemViewType(position: Int): Int {
         return R.layout.list_item_transaction
     }
 }

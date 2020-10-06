@@ -1,14 +1,17 @@
 package com.banglalink.toffee.ui.userchannel
 
 import android.os.Bundle
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
+import com.banglalink.toffee.common.paging.BaseListFragment
+import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.ui.common.SingleListFragmentV2
-import com.banglalink.toffee.ui.common.SingleListItemCallback
 
-class ChannelPlaylistVideosFragment : SingleListFragmentV2<ChannelInfo>(), SingleListItemCallback<ChannelInfo> {
+class ChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(), BaseListItemCallback<ChannelInfo> {
     
     private var enableToolbar: Boolean = false
+
+    override val mAdapter by lazy { ChannelPlaylistVideosListAdapter(this) }
+    override val mViewModel by viewModels<ChannelPlaylistVideosViewModel>()
     
     companion object {
         private const val SHOW_TOOLBAR = "enableToolbar"
@@ -21,10 +24,10 @@ class ChannelPlaylistVideosFragment : SingleListFragmentV2<ChannelInfo>(), Singl
         } 
     }
     
-    override fun initAdapter() {
+    /*override fun initAdapter() {
         mAdapter = ChannelPlaylistVideosListAdapter(this)
         mViewModel = ViewModelProvider(this).get(ChannelPlaylistVideosViewModel::class.java)
         enableToolbar = arguments?.getBoolean(SHOW_TOOLBAR) ?: false
         mViewModel.enableToolbar = enableToolbar
-    }
+    }*/
 }
