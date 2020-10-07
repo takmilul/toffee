@@ -69,6 +69,10 @@ public class ChannelInfo implements Parcelable {
         return "CATCHUP".equalsIgnoreCase(type);
     }
 
+    public String getHlsLink(){
+        return hlsLinks.get(0).hls_url_mobile;
+    }
+
 //    protected ChannelInfo(ChannelInfo channelInfo){
 //        this.id = channelInfo.id;
 //        this.program_name = channelInfo.program_name;
