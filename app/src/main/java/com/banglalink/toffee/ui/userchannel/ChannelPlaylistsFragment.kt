@@ -6,20 +6,23 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.layout
+import com.banglalink.toffee.common.paging.BaseListFragment
+import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.ui.common.SingleListFragmentV2
-import com.banglalink.toffee.ui.common.SingleListItemCallback
 import kotlinx.android.synthetic.main.alert_dialog_create_playlist.view.*
 import kotlinx.android.synthetic.main.alert_dialog_create_playlist.view.dialogTitleTextView
 import kotlinx.android.synthetic.main.alert_dialog_decision.view.*
 
-class ChannelPlaylistsFragment : SingleListFragmentV2<ChannelInfo>(), SingleListItemCallback<ChannelInfo> {
+class ChannelPlaylistsFragment : BaseListFragment<ChannelInfo>(), BaseListItemCallback<ChannelInfo> {
 
     private var enableToolbar: Boolean = false
+
+    override val mViewModel by viewModels<ChannelPlaylistViewModel>()
+    override val mAdapter by lazy { ChannelPlaylistListAdapter(this) }
 
     companion object {
         private const val SHOW_TOOLBAR = "enableToolbar"
@@ -32,12 +35,12 @@ class ChannelPlaylistsFragment : SingleListFragmentV2<ChannelInfo>(), SingleList
         }
     }
 
-    override fun initAdapter() {
+    /*override fun initAdapter() {
         mAdapter = ChannelPlaylistListAdapter(this)
         mViewModel = ViewModelProvider(this).get(ChannelPlaylistViewModel::class.java)
         enableToolbar = arguments?.getBoolean(SHOW_TOOLBAR) ?: false
         mViewModel.enableToolbar = enableToolbar
-    }
+    }*/
 
     override fun onItemClicked(item: ChannelInfo) {
         super.onItemClicked(item)
@@ -50,10 +53,10 @@ class ChannelPlaylistsFragment : SingleListFragmentV2<ChannelInfo>(), SingleList
         return Pair(R.drawable.ic_playlists_empty, "You haven't created any playlist yet")
     }
 
-    override fun onOpenMenu(anchor: View, item: ChannelInfo) {
-        super.onOpenMenu(anchor, item)
+    override fun onOpenMenu(view: View, item: ChannelInfo) {
+        super.onOpenMenu(view, item)
 
-        PopupMenu(requireContext(), anchor).apply {
+        PopupMenu(requireContext(), view).apply {
             inflate(R.menu.menu_channel_playlist)
             setOnMenuItemClickListener {
                 when (it.itemId) {
@@ -108,9 +111,9 @@ class ChannelPlaylistsFragment : SingleListFragmentV2<ChannelInfo>(), SingleList
     }
     
     private fun showAddToPlaylistDialog(){
-        val data = mAdapter.getItems().map { it.program_name!! }
+        /*val data = mAdapter.getItems().map { it.program_name!! }
         val fragment = ChannelAddToPlaylistFragment.newInstance(data)
         fragment.show(requireActivity().supportFragmentManager, "add_to_playlist")
-        fragment.dialog?.setCanceledOnTouchOutside(true)
+        fragment.dialog?.setCanceledOnTouchOutside(true)*/
     }
 }

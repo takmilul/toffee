@@ -14,7 +14,7 @@
 
         <variable
             name="callback"
-            type="com.banglalink.toffee.ui.common.SingleListItemCallback" />
+            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
     </data>
 
     <androidx.cardview.widget.CardView
