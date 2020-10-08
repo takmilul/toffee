@@ -7,6 +7,6 @@ data class ContentRequest(
     val customerId:Int,
     val password:String,
     val telcoId: Int = 1,
-    val offset:Int,
-    val limit:Int=10
-) : BaseRequest("getContentsV5")
+    override val offset:Int,
+    override val limit:Int=10
+) : BasePagingRequest("getContentsV5")

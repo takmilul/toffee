@@ -4,6 +4,6 @@ data class SearchContentRequest(
     val keyword: String,
     val customerId: Int,
     val password: String,
-    val offset: Int,
-    val limit: Int
-):BaseRequest("getSearchContents")
+    override val offset: Int,
+    override val limit: Int
+):BasePagingRequest("getSearchContents")
