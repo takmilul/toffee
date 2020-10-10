@@ -14,6 +14,7 @@ import androidx.customview.widget.ViewDragHelper;
 
 import com.banglalink.toffee.R;
 import com.banglalink.toffee.analytics.ToffeeAnalytics;
+import com.banglalink.toffee.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,9 @@ public class DraggerLayout extends RelativeLayout {
     private int lastAction;
     private float dY2;
     private float dY;
+
+    private int bottomMargin = Utils.dpToPx(52);
+
     private ViewDragHelper viewDragHelper;
     private float scaleFactor = 2.5f;
     private static final int INVALID_POINTER = -1;
@@ -261,7 +265,7 @@ public class DraggerLayout extends RelativeLayout {
                     parent.setBackgroundColor(Color.argb(colorValue, colorValue, colorValue, colorValue));
                     float scale = 1.0f - (0.50f * (top * 100f / bottomBound) / 100.0f);
                     dragView.setPivotX(dragView.getWidth() - 38);
-                    dragView.setPivotY(dragView.getHeight() - 38);
+                    dragView.setPivotY(dragView.getHeight() - bottomMargin);
                     int padding = (int) (20 - 20 * scale);
                     dragView.setPadding(padding, padding, padding, padding);
                     if (scale == .5f) {

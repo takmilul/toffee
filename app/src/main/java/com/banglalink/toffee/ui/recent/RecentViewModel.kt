@@ -11,7 +11,7 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.usecase.GetHistory
 import com.banglalink.toffee.util.unsafeLazy
 
-class RecentViewModel(application: Application):BaseViewModel(application) {
+class RecentViewModel:BaseViewModel() {
     private val getHistory by unsafeLazy {
         GetHistory(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }

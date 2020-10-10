@@ -11,7 +11,7 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.usecase.GetRelativeContents
 import com.banglalink.toffee.util.unsafeLazy
 
-class CatchupDetailsViewModel(application: Application):BaseViewModel(application) {
+class CatchupDetailsViewModel:BaseViewModel() {
 
 
     private val getRelativeContents by unsafeLazy {

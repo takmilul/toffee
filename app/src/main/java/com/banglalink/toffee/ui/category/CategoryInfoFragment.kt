@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.banglalink.toffee.R
+import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
@@ -50,29 +51,12 @@ class CategoryInfoFragment: Fragment(R.layout.fragment_category_info) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mAdapter = FeaturedListAdapter(object: OptionCallBack {
-            override fun onOptionClicked(anchor: View, channelInfo: ChannelInfo) {
+        mAdapter = FeaturedListAdapter(object: BaseListItemCallback<ChannelInfo> {
 
-            }
-
-            override fun viewAllVideoClick() {
-
-            }
-        }) {
-//            homeViewModel.fragmentDetailsMutableLiveData.postValue(it)
-        }
+        })
 
         with(categoryListPager) {
             adapter = mAdapter
-
-            registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    mAdapter.getItem(position)?.let {
-                        channelDescription.text = it.program_name
-                        bindChannelLogo(channelLogo, it)
-                    }
-                }
-            })
         }
 
         TabLayoutMediator(category_scroll_indicator, categoryListPager, true) { tab_, position -> }.attach()
@@ -84,18 +68,7 @@ class CategoryInfoFragment: Fragment(R.layout.fragment_category_info) {
     }
 
     private fun observeList() {
-        viewModel.featureContentLiveData.observe(viewLifecycleOwner, Observer {
-            when (it) {
-                is Resource.Success -> {
-                    mAdapter.addAll(it.data)
 
-                    startPageScroll()
-                }
-                is Resource.Failure -> {
-                    requireActivity().showToast(it.error.msg)
-                }
-            }
-        })
     }
 
     private fun observeCategoryData() {

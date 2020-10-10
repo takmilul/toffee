@@ -15,7 +15,7 @@ import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.coroutines.cancelChildren
 import java.util.concurrent.CancellationException
 
-class CatchupViewModel(application: Application):BaseViewModel(application) {
+class CatchupViewModel:BaseViewModel() {
 
     private var category: String? = null
     private var categoryId: Int = 0

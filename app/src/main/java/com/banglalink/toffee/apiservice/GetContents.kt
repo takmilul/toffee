@@ -1,0 +1,57 @@
+package com.banglalink.toffee.apiservice
+
+import com.banglalink.toffee.common.paging.BaseApiService
+import com.banglalink.toffee.data.network.request.ChannelRequestParams
+import com.banglalink.toffee.data.network.request.ContentRequest
+import com.banglalink.toffee.data.network.retrofit.ToffeeApi
+import com.banglalink.toffee.data.network.util.tryIO2
+import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.util.discardZeroFromDuration
+import com.banglalink.toffee.util.getFormattedViewsText
+import com.squareup.inject.assisted.Assisted
+import com.squareup.inject.assisted.AssistedInject
+
+class GetContents @AssistedInject constructor(
+    private val preference: Preference,
+    private val toffeeApi: ToffeeApi,
+    @Assisted private val requestParams: ChannelRequestParams
+): BaseApiService<ChannelInfo> {
+
+    override suspend fun loadData(offset: Int, limit: Int): List<ChannelInfo> {
+        val response = tryIO2 {
+            toffeeApi.getContents(
+                requestParams.categoryId,
+                offset,
+                requestParams.type,
+                preference.getDBVersionByApiName("getContentsV5"),
+                ContentRequest(
+                    requestParams.categoryId,
+                    requestParams.subcategoryId,
+                    requestParams.type,
+                    Preference.getInstance().customerId,
+                    Preference.getInstance().password,
+                    offset = offset,
+                    limit = limit
+                )
+            )
+        }
+
+        if (response.response.channels != null) {
+            return response.response.channels.map {
+                it.category = requestParams.category
+                it.subCategoryId = requestParams.subcategoryId
+                it.subCategory = requestParams.subcategory
+                it.formatted_view_count = getFormattedViewsText(it.view_count)
+                it.formattedDuration = discardZeroFromDuration(it.duration)
+                it
+            }
+        }
+        return emptyList()
+    }
+
+    @AssistedInject.Factory
+    interface AssistedFactory {
+        fun create(requestParams: ChannelRequestParams): GetContents
+    }
+}

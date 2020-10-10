@@ -11,7 +11,7 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.usecase.SearchContent
 import com.banglalink.toffee.util.unsafeLazy
 
-class SearchViewModel(application: Application):BaseViewModel(application) {
+class SearchViewModel:BaseViewModel() {
 
     private val searchContent by unsafeLazy {
         SearchContent(Preference.getInstance(),RetrofitApiClient.toffeeApi)

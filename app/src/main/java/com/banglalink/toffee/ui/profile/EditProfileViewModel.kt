@@ -14,7 +14,7 @@ import com.banglalink.toffee.usecase.UpdateProfile
 import com.banglalink.toffee.usecase.UploadProfileImage
 import com.banglalink.toffee.util.unsafeLazy
 
-class EditProfileViewModel(application: Application) : BaseViewModel(application) {
+class EditProfileViewModel(private val application: Application) : BaseViewModel(application) {
 
     private val updateProfile by unsafeLazy {
         UpdateProfile(Preference.getInstance(), RetrofitApiClient.toffeeApi)
@@ -37,7 +37,7 @@ class EditProfileViewModel(application: Application) : BaseViewModel(application
 
     fun uploadProfileImage(photoData: Uri):LiveData<Resource<SubscriberPhotoBean>> {
         return resultLiveData{
-            uploadProfileImage.execute(photoData,getApplication())
+            uploadProfileImage.execute(photoData, application)
         }
     }
 

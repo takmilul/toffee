@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.RecyclerView
@@ -12,15 +14,14 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.StickyHeaderGridLayoutManager
 import com.banglalink.toffee.util.unsafeLazy
 
-class ChannelFragment:Fragment(), ChannelStickyListAdapter.OnItemClickListener {
+class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListener {
 
-    private val homeViewModel by unsafeLazy {
-        ViewModelProviders.of(activity!!).get(HomeViewModel::class.java)
-    }
+    private val homeViewModel by activityViewModels<HomeViewModel>()
 
     override fun onItemClicked(channelInfo: ChannelInfo) {
         homeViewModel.fragmentDetailsMutableLiveData.postValue(channelInfo)

@@ -23,11 +23,19 @@ import com.banglalink.toffee.ui.useractivities.UserActivitiesMainFragment
 import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.android.synthetic.main.fragment_landing_user_channels.*
 
-class LandingUserChannelsFragment: HomeBaseFragment(R.layout.fragment_landing_user_channels) {
+class LandingUserChannelsFragment: HomeBaseFragment() {
     private lateinit var mAdapter: UserChannelsListAdapter
 
     val viewModel by unsafeLazy {
         ViewModelProvider(activity!!)[LandingPageViewModel::class.java]
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_landing_user_channels, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

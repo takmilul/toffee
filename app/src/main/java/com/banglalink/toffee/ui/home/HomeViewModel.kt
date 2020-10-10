@@ -1,13 +1,17 @@
 package com.banglalink.toffee.ui.home
 
 import android.app.Application
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.ToffeeApplication
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
 import com.banglalink.toffee.data.network.util.resultLiveData
+import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.setError
 import com.banglalink.toffee.extension.setSuccess
@@ -27,9 +31,10 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 
 
-class HomeViewModel(application: Application):BaseViewModel(application),OnCompleteListener<InstanceIdResult> {
+class HomeViewModel @ViewModelInject constructor():BaseViewModel(),OnCompleteListener<InstanceIdResult> {
 
     private val channelMutableLiveData = MutableLiveData<Resource<List<StickyHeaderInfo>>>()
     val channelLiveData = channelMutableLiveData.toLiveData()
@@ -99,9 +104,9 @@ class HomeViewModel(application: Application):BaseViewModel(application),OnCompl
     }
 
     fun populateViewCountDb(url:String){
-        getApplication<ToffeeApplication>().applicationScope.launch {
+//        getApplication<ToffeeApplication>().applicationScope.launch {
 //            DownloadViewCountDb(RetrofitApiClient.dbApi,AppDatabase.getDatabase().viewCountDAO()).execute(getApplication(),url)
-        }
+//        }
     }
 
     fun getCategory():LiveData<Resource<NavCategoryGroup>>{

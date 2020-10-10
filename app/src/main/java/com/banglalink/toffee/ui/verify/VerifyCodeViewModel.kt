@@ -13,7 +13,7 @@ import com.banglalink.toffee.usecase.SigninByPhone
 import com.banglalink.toffee.usecase.VerifyCode
 import com.banglalink.toffee.util.unsafeLazy
 
-class VerifyCodeViewModel(application: Application) : BaseViewModel(application) {
+class VerifyCodeViewModel : BaseViewModel() {
 
     private val verifyCode by unsafeLazy {
         VerifyCode(Preference.getInstance(), RetrofitApiClient.toffeeApi)

@@ -1,10 +1,14 @@
 package com.banglalink.toffee.ui.home
 
-import android.app.Application
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import com.banglalink.toffee.apiservice.GetChannelSubscriptions
-import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
+import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
+import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
+import com.banglalink.toffee.data.network.request.ChannelRequestParams
+import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.setError
 import com.banglalink.toffee.extension.setSuccess
@@ -14,24 +18,17 @@ import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.usecase.*
 import com.banglalink.toffee.util.getError
 import com.banglalink.toffee.util.unsafeLazy
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
-class LandingPageViewModel(application: Application):BaseViewModel(application) {
-
-    //LiveData for fetching channel list
-    private val channelMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
-    val channelLiveData = channelMutableLiveData.toLiveData()
-
-    //LiveData for fetching popular list
-    private val popularVideoMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
-    val popularVideoLiveData = popularVideoMutableLiveData.toLiveData()
-
+class LandingPageViewModel @ViewModelInject constructor(
+    private val mPref: Preference,
+    private val toffeeApi: ToffeeApi,
+    private val featuredContentAssistedFactory: com.banglalink.toffee.apiservice.GetFeatureContents.AssistedFactory,
+    private val getContentAssistedFactory: com.banglalink.toffee.apiservice.GetContents.AssistedFactory
+):BaseViewModel() {
     private val mostPopularVideoMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
     val mostPopularVideoLiveData = mostPopularVideoMutableLiveData.toLiveData()
-
-    //LiveData for featureContent List
-    private val featureContentMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
-    val featureContentLiveData = featureContentMutableLiveData.toLiveData()
 
     private val userChannelListMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
     val userChannelList = userChannelListMutableLiveData.toLiveData()
@@ -46,57 +43,23 @@ class LandingPageViewModel(application: Application):BaseViewModel(application) 
     val categoryInfoLiveData = MutableLiveData<Resource<List<NavCategory>>>()
 
     private val getCategory by lazy {
-        GetCategoryNew(RetrofitApiClient.toffeeApi)
-    }
-
-    private val getChannels by unsafeLazy {
-        GetContents(Preference.getInstance(),RetrofitApiClient.toffeeApi)
-    }
-
-    private val getPopularVideo by unsafeLazy {
-        GetContents(Preference.getInstance(),RetrofitApiClient.toffeeApi)
-    }
-
-    private val getFeatureContents by unsafeLazy {
-        GetFeatureContents(Preference.getInstance(),RetrofitApiClient.toffeeApi)
+        GetCategoryNew(toffeeApi)
     }
 
     private val getUserChannels by unsafeLazy {
-        GetChannelSubscriptions(Preference.getInstance(), RetrofitApiClient.toffeeApi)
+        GetChannelSubscriptions(mPref, toffeeApi)
     }
 
-    fun loadChannels(){
-        viewModelScope.launch {
-            try{
-                val response = getChannels.execute("",0,"",0,"LIVE")
-                channelMutableLiveData.setSuccess(response)
-            }catch (e:Exception){
-                channelMutableLiveData.setError(getError(e))
-            }
-        }
+    fun loadChannels(): Flow<PagingData<ChannelInfo>>{
+        return channelRepo.getList()
     }
 
-    fun loadPopularVideos(){
-        viewModelScope.launch {
-            try{
-                val response = getPopularVideo.execute("",0,"",0,"VOD")
-                popularVideoMutableLiveData.setSuccess(response)
-            }catch (e:Exception){
-                popularVideoMutableLiveData.setError(getError(e))
-            }
-        }
+    fun loadLatestVideos(): Flow<PagingData<ChannelInfo>> {
+        return latestVideosRepo.getList()
     }
 
-    fun loadMostPopularVideos(){
-        viewModelScope.launch {
-            try{
-                val response = getPopularVideo.execute("",0,"",0,"VOD")
-                mostPopularVideoMutableLiveData.setSuccess(response)
-                trendingNowMutableLiveData.value = response.subList(0, 3)
-            }catch (e:Exception){
-                mostPopularVideoMutableLiveData.setError(getError(e))
-            }
-        }
+    fun loadMostPopularVideos(): Flow<PagingData<ChannelInfo>> {
+        return latestVideosRepo.getList()
     }
 
     fun loadUserChannels() {
@@ -110,15 +73,38 @@ class LandingPageViewModel(application: Application):BaseViewModel(application) 
         }
     }
 
-    fun loadFeatureContents(){
-        viewModelScope.launch {
-            try{
-                val response = getFeatureContents.execute("",0,"",0)
-                featureContentMutableLiveData.setSuccess(response)
-            }catch (e:Exception){
-                featureContentMutableLiveData.setError(getError(e))
-            }
-        }
+    private val channelRepo by lazy {
+        BaseListRepositoryImpl(
+            BaseNetworkPagingSource(
+                getContentAssistedFactory.create(
+                    ChannelRequestParams("", 0, "", 0, "LIVE")
+                )
+            )
+        )
+    }
+
+    private val latestVideosRepo by lazy {
+        BaseListRepositoryImpl(
+            BaseNetworkPagingSource(
+                getContentAssistedFactory.create(
+                    ChannelRequestParams("", 0, "", 0, "VOD")
+                )
+            )
+        )
+    }
+
+    private val featureRepo by lazy {
+        BaseListRepositoryImpl(
+            BaseNetworkPagingSource(
+                featuredContentAssistedFactory.create(
+                    ChannelRequestParams("", 0, "", 0, "VOD")
+                )
+            )
+        )
+    }
+
+    fun loadFeatureContents(): Flow<PagingData<ChannelInfo>>{
+        return featureRepo.getList()
     }
 
     fun loadCategories() {
