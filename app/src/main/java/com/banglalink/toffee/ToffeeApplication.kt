@@ -28,8 +28,6 @@ class ToffeeApplication : Application() {
 
     @Inject lateinit var mUploadObserver: UploadObserver
 
-    val applicationScope = CoroutineScope(SupervisorJob())
-
     override fun onCreate() {
         super.onCreate()
 
@@ -97,7 +95,5 @@ class ToffeeApplication : Application() {
     companion object {
         const val notificationChannelID = "Toffee Upload"
     }
-
-    fun ToffeeApplication.applicationScope()=applicationScope
 }
 

@@ -1,6 +1,6 @@
 package com.banglalink.toffee.ui.upload
 
-import android.content.Context
+//import com.bumptech.glide.Glide
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Bundle
@@ -10,54 +10,55 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.core.view.setPadding
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import coil.Coil
 import coil.api.load
 import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.database.entities.UploadInfo
+import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.FragmentEditUploadInfoBinding
+import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
-import com.banglalink.toffee.util.unsafeLazy
-//import com.bumptech.glide.Glide
+import com.banglalink.toffee.util.UtilsKt
 import com.pchmn.materialchips.ChipsInput
 import com.pchmn.materialchips.model.ChipInterface
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import net.gotev.uploadservice.data.UploadInfo
-import net.gotev.uploadservice.network.ServerResponse
-import net.gotev.uploadservice.observer.request.RequestObserver
-import net.gotev.uploadservice.observer.request.RequestObserverDelegate
+import net.gotev.uploadservice.UploadService
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class EditUploadInfoFragment: BaseFragment() {
-    private var uploadId: String? = null
-    private var uploadUri: String? = null
     private lateinit var binding: FragmentEditUploadInfoBinding
 
+    private lateinit var uploadId: String
+
+    @Inject
+    lateinit var uploadRepo: UploadInfoRepository
+
+    @AppCoroutineScope
+    @Inject
+    lateinit var appScope: CoroutineScope
+
     private val viewModel: EditUploadInfoViewModel by viewModels()
+    private val uploadProgressViewModel by activityViewModels<UploadProgressViewModel>()
 
     companion object {
-        const val ARG_UPLOAD_ID = "arg_upload_id"
-        const val ARG_UPLOAD_URI = "arg_upload_uri"
-
-        fun newInstance(_uploadUri: String, _uploadId: String): EditUploadInfoFragment {
-            return EditUploadInfoFragment().apply {
-                arguments = Bundle().also {
-                    it.putString(ARG_UPLOAD_URI, _uploadUri)
-                    it.putString(ARG_UPLOAD_ID, _uploadId)
-                }
-            }
+        fun newInstance(): EditUploadInfoFragment {
+            return EditUploadInfoFragment()
         }
     }
 
@@ -74,46 +75,52 @@ class EditUploadInfoFragment: BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        uploadId = arguments?.getString(ARG_UPLOAD_ID, null)
-        uploadUri = arguments?.getString(ARG_UPLOAD_URI, null)
-        uploadUri?.let {
-            lifecycleScope.launch {
-                val bmp = withContext(Dispatchers.IO) {
-                    val mmr = MediaMetadataRetriever()
-                    mmr.setDataSource(context, Uri.parse(it))
-                    mmr.frameAtTime
-                }
-                binding.videoThumb.setImageBitmap(bmp)
+        lifecycleScope.launch {
+            uploadId = mPref.uploadId ?: return@launch
+            val uploadInfo = uploadRepo.getUploadById(UtilsKt.stringToUploadId(uploadId)) ?: return@launch
+            uploadInfo.fileUri.let {
+                // TODO: Fetch the thumbnail
+//                val bmp = withContext(Dispatchers.IO) {
+//                    val mmr = MediaMetadataRetriever()
+//                    mmr.setDataSource(context, Uri.parse(it))
+//                    mmr.frameAtTime
+//                }
+//                binding.videoThumb.setImageBitmap(bmp)
             }
+
+            binding.cancelButton.setOnClickListener {
+                lifecycleScope.launch {
+                    UploadService.stopAllUploads()
+                    mPref.uploadId = null
+                    findNavController().popBackStack()
+                }
+            }
+
+            binding.submitButton.setOnClickListener {
+                VelBoxAlertDialogBuilder(requireContext(),
+                    text="Your video has been submitted!\n" +
+                            "You will be notified once its published.",
+                    icon = R.drawable.subscription_success
+                ).create().show()
+//                mPref.uploadId = null
+            }
+
+            binding.thumbEditButton.setOnClickListener {
+                findNavController().navigate(R.id.action_editUploadInfoFragment_to_thumbnailSelectionMethodFragment)
+            }
+
+            setupUI(uploadInfo)
+            observeUpload()
+            observeThumbnailChange()
+
+            binding.uploadTitle.requestFocus()
         }
+    }
 
-        binding.uploadTitle.requestFocus()
+    private fun setupUI(uploadInfo: UploadInfo) {
+        viewModel.initUploadInfo(uploadInfo)
 
-        binding.cancelButton.setOnClickListener {
-            mPref.uploadStatus = -1
-            findNavController().popBackStack()
-        }
-
-        binding.submitButton.setOnClickListener {
-            VelBoxAlertDialogBuilder(requireContext(),
-                text="Your video has been submitted!\n" +
-                        "You will be notified once its published.",
-                icon = R.drawable.subscription_success
-            ).create().show()
-            mPref.uploadStatus = -1
-        }
-
-        binding.thumbEditButton.setOnClickListener {
-            findNavController().navigate(R.id.action_editUploadInfoFragment_to_thumbnailSelectionMethodFragment)
-//            parentFragmentManager.beginTransaction()
-//                .replace(R.id.content_viewer, ThumbnailSelectionMethodFragment.newInstance())
-//                .addToBackStack(ThumbnailSelectionMethodFragment::class.java.simpleName)
-//                .commit()
-        }
-
-        setupTagView()
-        observeUpload()
-        observeThumbnailChange()
+        setupTagView(uploadInfo.tags)
     }
 
     private fun observeThumbnailChange() {
@@ -128,8 +135,7 @@ class EditUploadInfoFragment: BaseFragment() {
             })
     }
 
-    private fun setupTagView() {
-//        binding.uploadTags.setMaxHeight(Utils.convertDpToPixel(200f, requireContext()).toInt())
+    private fun setupTagView(tags: String?) {
         with(binding.uploadTags.editText) {
             gravity = Gravity.START or Gravity.TOP
             setLines(2)
@@ -157,37 +163,58 @@ class EditUploadInfoFragment: BaseFragment() {
                 }
             }
         })
+
+        binding.uploadTags.editText.setText(tags)
+        tags?.split(" ")?.forEach {
+            Log.e("CHIPS", it)
+//            binding.uploadTags.addChip(it, null)
+        }
     }
 
     private fun observeUpload() {
-        RequestObserver(requireContext(), this, object: RequestObserverDelegate {
-            override fun onCompleted(context: Context, uploadInfo: UploadInfo) {
-                binding.progressBar.visibility = View.GONE
-                binding.uploadProgressText.visibility = View.GONE
-                binding.uploadSizeText.visibility = View.GONE
+        lifecycleScope.launchWhenStarted {
+            uploadProgressViewModel.getActiveUploadList().collectLatest {uploadList->
+                if(uploadList.isNotEmpty()) {
+                    val uploadInfo = uploadList[0]
+                    when(uploadInfo.status) {
+                        UploadStatus.SUCCESS.value -> {
+                            binding.uploadProgressGroup.isVisible = false
+                        }
+                        UploadStatus.ADDED.value, UploadStatus.STARTED.value -> {
+                            binding.uploadProgressGroup.isVisible = true
+                            viewModel.updateProgress(uploadInfo.completedPercent, uploadInfo.fileSize)
+                        }
+                    }
+                } else {
+                    findNavController().popBackStack()
+                }
             }
+        }
+    }
 
-            override fun onCompletedWhileNotObserving() {
-                binding.progressBar.visibility = View.GONE
-                binding.uploadProgressText.visibility = View.GONE
-                binding.uploadSizeText.visibility = View.GONE
+    override fun onDestroy() {
+        appScope.launch {
+            uploadRepo.getUploadById(UtilsKt.stringToUploadId(uploadId))?.apply {
+                title = binding.uploadTitle.text.toString()
+                description = binding.uploadDescription.text.toString()
+
+                tags = binding.uploadTags.selectedChipList.joinToString(" ") { it.label }
+                Log.e("TAG", "TAG - $tags, === ${binding.uploadTags.selectedChipList}")
+
+                ageGroupIndex = binding.ageGroupSpinner.selectedItemPosition
+                ageGroup = binding.ageGroupSpinner.selectedItem.toString()
+
+                categoryIndex = binding.categorySpinner.selectedItemPosition
+                category = binding.categorySpinner.selectedItem.toString()
+
+                submitToChallengeIndex = binding.challengeSelectionSpinner.selectedItemPosition
+                submitToChallenge = binding.challengeSelectionSpinner.selectedItem.toString()
+
+                Log.e("UploadInfo", "$this")
+            }?.let {
+                uploadRepo.updateUploadInfo(it)
             }
-
-            override fun onError(context: Context, uploadInfo: UploadInfo, exception: Throwable) {
-
-            }
-
-            override fun onProgress(context: Context, uploadInfo: UploadInfo) {
-                viewModel.updateProgress(uploadInfo.progressPercent, uploadInfo.totalBytes)
-            }
-
-            override fun onSuccess(
-                context: Context,
-                uploadInfo: UploadInfo,
-                serverResponse: ServerResponse
-            ) {
-
-            }
-        }, shouldAcceptEventsFrom = { it.uploadId == uploadId })
+        }
+        super.onDestroy()
     }
 }

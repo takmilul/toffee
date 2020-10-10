@@ -16,6 +16,7 @@ data class UploadInfo(
     var completedSize: Long = 0L,
     var completedPercent: Int = 0,
     var statusMessage: String? = null,
+
     var title: String? = null,
     var description: String? = null,
     var tags: String? = null,
@@ -25,6 +26,4 @@ data class UploadInfo(
     var ageGroupIndex: Int = 0,
     var submitToChallenge: String? = null,
     var submitToChallengeIndex: Int = 0
-) {
-    fun uploadIdToString() = "Toffee_Upload_$uploadId"
-}
+)

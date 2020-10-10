@@ -8,28 +8,42 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.data.database.entities.UploadInfo
+import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeActivity
+import com.banglalink.toffee.util.UtilsKt
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.upload_method_fragment.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.gotev.uploadservice.protocols.multipart.MultipartUploadRequest
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
-class UploadMethodFragment: BaseFragment(R.layout.upload_method_fragment) {
+@AndroidEntryPoint
+class UploadMethodFragment: BaseFragment() {
+
+    @Inject
+    lateinit var mUploadInfoRepository: UploadInfoRepository
 
     private var videoUri: Uri? = null
 
@@ -39,6 +53,14 @@ class UploadMethodFragment: BaseFragment(R.layout.upload_method_fragment) {
         fun newInstance(): UploadMethodFragment {
             return UploadMethodFragment()
         }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.upload_method_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -144,24 +166,24 @@ class UploadMethodFragment: BaseFragment(R.layout.upload_method_fragment) {
     }
 
     private fun uploadUri(uri: String) {
-        val upId = MultipartUploadRequest(
-            requireContext(),
-            "http://23.94.70.184:25478/upload?token=1148123456789"
-        )
-            .setMethod("POST")
-            .addFileToUpload(uri, "file")
-            .startUpload()
 
-        mPref.uploadId = upId
-        mPref.uploadStatus = 1
+        lifecycleScope.launch {
+            val upInfo = UploadInfo(fileUri = uri)
+            val upId = mUploadInfoRepository.insertUploadInfo(upInfo)
+            val uploadIdStr =
+                withContext(Dispatchers.IO + Job()) {
+                    MultipartUploadRequest(
+                        requireContext(),
+                        "http://23.94.70.184:25478/upload?token=1148123456789"
+                    )
+                        .setUploadID(UtilsKt.uploadIdToString(upId))
+                        .setMethod("POST")
+                        .addFileToUpload(uri, "file")
+                        .startUpload()
+                }
 
-        activity?.
-            findNavController(R.id.home_nav_host)?.let {
-            it.navigate(R.id.action_uploadMethodFragment_to_editUploadInfoFragment,
-            Bundle().apply {
-                putString(EditUploadInfoFragment.ARG_UPLOAD_ID, upId)
-                putString(EditUploadInfoFragment.ARG_UPLOAD_URI, uri)
-            })
+            mPref.uploadId = uploadIdStr
+            activity?.findNavController(R.id.home_nav_host)?.navigate(R.id.action_uploadMethodFragment_to_editUploadInfoFragment)
         }
     }
 }

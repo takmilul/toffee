@@ -4,10 +4,16 @@ import com.banglalink.toffee.data.database.entities.UploadInfo
 import kotlinx.coroutines.flow.Flow
 
 interface UploadInfoRepository {
-    suspend fun insertUploadInfo(item: UploadInfo)
+    suspend fun insertUploadInfo(item: UploadInfo): Long
     suspend fun updateUploadInfo(item: UploadInfo)
     suspend fun deleteUploadInfo(item: UploadInfo)
+    suspend fun deleteAll()
     fun getUploads(): Flow<List<UploadInfo>>
+    fun getActiveUploads(): Flow<List<UploadInfo>>
     suspend fun getUploadById(uploadId: Long): UploadInfo?
-    suspend fun updateProgressById(uploadId: Long, completedSize: Long, completedPercent: Int)
+    suspend fun updateProgressById(uploadId: Long,
+                                   completedSize: Long,
+                                   completedPercent: Int,
+                                   totalSize: Long
+    )
 }
