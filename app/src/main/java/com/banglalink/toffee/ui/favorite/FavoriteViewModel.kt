@@ -1,25 +1,20 @@
 package com.banglalink.toffee.ui.favorite
 
-import android.app.Application
-import androidx.lifecycle.LiveData
-import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
-import com.banglalink.toffee.data.network.util.resultLiveData
-import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.common.BaseViewModel
+import androidx.hilt.lifecycle.ViewModelInject
+import com.banglalink.toffee.apiservice.GetFavoriteContents
+import com.banglalink.toffee.common.paging.BaseListRepository
+import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
+import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
+import com.banglalink.toffee.common.paging.BasePagingViewModel
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.usecase.GetFavoriteContents
-import com.banglalink.toffee.util.unsafeLazy
 
-class FavoriteViewModel(application: Application) : BaseViewModel(application) {
+class FavoriteViewModel @ViewModelInject constructor(
+    apiService: GetFavoriteContents
+): BasePagingViewModel<ChannelInfo>() {
 
-    private val getFavoriteContents by unsafeLazy {
-        GetFavoriteContents(Preference.getInstance(), RetrofitApiClient.toffeeApi)
-    }
-
-    fun loadFavoriteContents(): LiveData<Resource<List<ChannelInfo>>> {
-        return resultLiveData {
-            getFavoriteContents.execute()
-        }
+    override val repo: BaseListRepository<ChannelInfo> by lazy {
+        BaseListRepositoryImpl(
+            BaseNetworkPagingSource(apiService)
+        )
     }
 }
