@@ -15,8 +15,9 @@ class GetChannelPlaylistVideos @Inject constructor(private val preference: Prefe
     override suspend fun loadData(offset: Int, limit: Int): List<ChannelInfo> {
         val response = tryIO2 {
             toffeeApi.getContents(
-                0,
-                offset, "VOD",
+                "VOD",
+                0, 0,
+                offset, 30,
                 preference.getDBVersionByApiName("getContentsV5"),
                 ContentRequest(
                     0,

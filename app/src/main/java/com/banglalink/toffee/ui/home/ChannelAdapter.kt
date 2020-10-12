@@ -11,6 +11,6 @@ class ChannelAdapter(cb: BaseListItemCallback<ChannelInfo>):
     BasePagingDataAdapter<ChannelInfo>(cb, ItemComparator()) {
 
     override fun getItemViewType(position: Int): Int {
-        return R.layout.live_tv_item
+        return R.layout.live_tv_item_new
     }
 }

@@ -10,31 +10,40 @@ import android.graphics.Point
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
-import android.view.*
+import android.view.Display
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
 import android.widget.AutoCompleteTextView
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
+import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.launchActivity
+import com.banglalink.toffee.extension.loadProfileImage
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.EXIT_FROM_APP_MSG
 import com.banglalink.toffee.model.NavigationMenu
@@ -54,21 +63,13 @@ import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.ui.widget.showSubscriptionDialog
 import com.banglalink.toffee.util.InAppMessageParser
 import com.banglalink.toffee.util.Utils
-import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.exoplayer2.util.Util
-import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.analytics.FirebaseAnalytics
-import kotlinx.android.synthetic.main.activity_main_menu.*
-import kotlinx.android.synthetic.main.fragment_edit_upload_info.*
-import kotlinx.android.synthetic.main.home_mini_upload_progress.*
-import kotlinx.android.synthetic.main.home_mini_upload_progress.upload_size_text
+import com.google.firebase.inappmessaging.FirebaseInAppMessaging
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.layout_appbar.view.*
 import net.gotev.uploadservice.UploadService
-import net.gotev.uploadservice.data.UploadInfo
-import net.gotev.uploadservice.network.ServerResponse
-import net.gotev.uploadservice.observer.request.RequestObserver
-import net.gotev.uploadservice.observer.request.RequestObserverDelegate
 import java.util.*
 import javax.annotation.Nonnull
 
@@ -86,6 +87,7 @@ const val ID_FAQ = 22
 const val ID_INVITE_FRIEND = 23
 const val ID_REDEEM_CODE = 24
 
+@AndroidEntryPoint
 class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListener,
     DraggerLayout.OnPositionChangedListener ,SearchView.OnQueryTextListener{
 
@@ -100,10 +102,9 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     }
 
     private lateinit var navController: NavController
+    private lateinit var appbarConfig: AppBarConfiguration
 
-    private val viewModel by unsafeLazy {
-        ViewModelProviders.of(this).get(HomeViewModel::class.java)
-    }
+    private val viewModel: HomeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -138,6 +139,12 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
 
         binding.uploadButton.setOnClickListener {
             if(navController.currentDestination?.id == R.id.uploadMethodFragment) {
+                ViewCompat.animate(binding.uploadButton)
+                    .rotation(0.0F)
+                    .withLayer()
+                    .setDuration(300L)
+                    .setInterpolator(AccelerateInterpolator())
+                    .start()
                 navController.popBackStack()
                 return@setOnClickListener
             }
@@ -146,20 +153,13 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                 Snackbar.make(binding.uploadButton, "Another upload is in progress", Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-                navController.navigate(R.id.uploadMethodFragment)
-//            }
-//            val uploadFragment = supportFragmentManager.findFragmentByTag(UploadMethodFragment::class.java.simpleName)
-//            if(uploadFragment != null) {
-//                supportFragmentManager.popBackStack()
-//            }
-//            else {
-//                supportFragmentManager.beginTransaction()
-//                    .replace(R.id.content_viewer,
-//                        UploadMethodFragment.newInstance(),
-//                        UploadMethodFragment::class.java.simpleName)
-//                    .addToBackStack(UploadMethodFragment::class.java.simpleName)
-//                    .commit()
-//            }
+            ViewCompat.animate(binding.uploadButton)
+                .rotation(135.0F)
+                .withLayer()
+                .setDuration(300L)
+                .setInterpolator(AccelerateInterpolator())
+                .start()
+            navController.navigate(R.id.uploadMethodFragment)
         }
 
         observe(viewModel.fragmentDetailsMutableLiveData) {
@@ -207,14 +207,14 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             drawerHelper.onMenuClick(NavigationMenu(ID_VIDEO, "All Videos", 0, listOf(), false))
         }
 
-        observe(Preference.getInstance().sessionTokenLiveData){
+        observe(mPref.sessionTokenLiveData){
             if(binding.draggableView.visibility == View.VISIBLE){
                 updateStartPosition()//we are saving the player start position so that we can start where we left off for VOD.
                 reloadChannel()
             }
         }
 
-        observe(Preference.getInstance().viewCountDbUrlLiveData){
+        observe(mPref.viewCountDbUrlLiveData){
             if(it.isNotEmpty()){
                 viewModel.populateViewCountDb(it)
             }
@@ -233,7 +233,30 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.home_nav_host) as NavHostFragment
         navController = navHostFragment.navController
 
-//        NavigationUI.setupActionBarWithNavController(this, navController, drawer_layout)
+//        appbarConfig = AppBarConfiguration(
+//            setOf(
+//                R.id.menu_feed,
+//                R.id.menu_tv,
+//                R.id.menu_activities,
+//                R.id.menu_channel,
+//
+//                R.id.menu_all_channel,
+//                R.id.menu_recent,
+//                R.id.menu_favorites
+////                ,
+////                R.id.menu_create,
+////                R.id.menu_subscriptions,
+////                R.id.menu_invite,
+////                R.id.menu_redeem,
+////                R.id.menu_settings,
+////                R.id.menu_about,
+////                R.id.menu_faq,
+////                R.id.menu_logout
+//            ),
+//            binding.drawerLayout
+//        )
+//        setupActionBarWithNavController(navController, appbarConfig)
+//        NavigationUI.setupActionBarWithNavController(this, navController, appbarConfig)
 //        binding.sideNavigation.setupWithNavController(navController)
         binding.tabNavigator.setupWithNavController(navController)
 
@@ -244,16 +267,11 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                 minimizePlayer()
             }
         }
-    }
 
-    fun onUploadStartedWithId(uploadUri: String, uploadId: String) {
-        val frag = supportFragmentManager.findFragmentByTag(UploadMethodFragment::class.java.name)
-        if(frag != null && frag.isVisible) {
-            supportFragmentManager.popBackStack()
+        binding.sideNavigation.setNavigationItemSelectedListener {
+            binding.drawerLayout.closeDrawers()
+            return@setNavigationItemSelectedListener false
         }
-
-        supportFragmentManager.beginTransaction().add(R.id.content_viewer, EditUploadInfoFragment.newInstance(uploadUri, uploadId), EditUploadInfoFragment::class.java.name)
-            .addToBackStack(EditUploadInfoFragment::class.java.name).commit()
     }
 
     override fun onResume() {
@@ -399,7 +417,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     }
 
     private fun handlePackageSubscribe(){
-        viewModel.getChannelByCategory(0)//reload the channels
+//        viewModel.getChannelByCategory(0)//reload the channels
         //Clean up stack upto landingPageFragment inclusive
         supportFragmentManager.popBackStack(
             LandingPageFragment::class.java.name,
@@ -558,7 +576,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             .setMessage(String.format(EXIT_FROM_APP_MSG, getString(R.string.app_name)))
             .setCancelable(false)
             .setPositiveButton("Yes") { _, _ ->
-                Preference.getInstance().clear()
+                mPref.clear()
                 launchActivity<SigninByPhoneActivity>()
                 finish()
             }
@@ -628,7 +646,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        observe(Preference.getInstance().profileImageUrlLiveData) {
+        observe(mPref.profileImageUrlLiveData) {
             menu?.findItem(R.id.action_avatar)
                 ?.actionView?.findViewById<ImageView>(R.id.view_avatar)?.loadProfileImage(it)
         }

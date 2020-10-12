@@ -11,8 +11,8 @@ class FavoriteAdapter(callback: BaseListItemCallback<ChannelInfo>):
 
     override fun getItemViewType(position: Int): Int {
         if(getItem(position)?.isLive == true){
-            return R.layout.list_item_live
+            return R.layout.list_item_live_new
         }
-        return R.layout.list_item_catchup
+        return R.layout.list_item_catchup_new
     }
 }

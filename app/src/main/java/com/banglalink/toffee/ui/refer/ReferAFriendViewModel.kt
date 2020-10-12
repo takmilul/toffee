@@ -13,7 +13,7 @@ import com.banglalink.toffee.usecase.GetMyReferralCode
 import com.banglalink.toffee.usecase.GetReferrerPolicy
 import com.banglalink.toffee.util.unsafeLazy
 
-class ReferAFriendViewModel(@NonNull application: Application) : BaseViewModel(application) {
+class ReferAFriendViewModel : BaseViewModel() {
 
     private val getMyReferralCode by unsafeLazy {
         GetMyReferralCode(Preference.getInstance(),RetrofitApiClient.toffeeApi)

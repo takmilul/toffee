@@ -25,7 +25,13 @@ class GetContents(private val preference: Preference,private val toffeeApi: Toff
     ): List<ChannelInfo> {
 
         val response = tryIO2 {
-            toffeeApi.getContents(categoryId,mOffset,type,preference.getDBVersionByApiName("getContentsV5"),
+            toffeeApi.getContents(
+                type,
+                categoryId,
+                subcategoryId,
+                mOffset,
+                limit,
+                preference.getDBVersionByApiName("getContentsV5"),
                 ContentRequest(
                     categoryId,
                     subcategoryId,

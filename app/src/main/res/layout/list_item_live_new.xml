@@ -10,7 +10,7 @@
             type="com.banglalink.toffee.model.ChannelInfo" />
         <variable
             name="callback"
-            type="com.banglalink.toffee.ui.home.OptionCallBack" />
+            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -51,7 +51,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:paddingTop="8dp"
-            android:onClick="@{(v)->callback.onOptionClicked(v, data)}"
+            android:onClick="@{(v)->callback.onOpenMenu(v, data)}"
             android:clickable="true"
             android:focusable="true"
             app:layout_constraintBottom_toBottomOf="@+id/name"

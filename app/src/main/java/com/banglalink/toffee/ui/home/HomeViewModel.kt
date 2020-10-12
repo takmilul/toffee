@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.home
 
 import android.app.Application
+import android.content.Context
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -13,6 +14,8 @@ import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
 import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.ViewCountDAO
+import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.extension.setError
 import com.banglalink.toffee.extension.setSuccess
 import com.banglalink.toffee.extension.toLiveData
@@ -29,15 +32,17 @@ import com.banglalink.toffee.usecase.*
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 
 
-class HomeViewModel @ViewModelInject constructor():BaseViewModel(),OnCompleteListener<InstanceIdResult> {
-
-    private val channelMutableLiveData = MutableLiveData<Resource<List<StickyHeaderInfo>>>()
-    val channelLiveData = channelMutableLiveData.toLiveData()
+class HomeViewModel @ViewModelInject constructor(
+    @AppCoroutineScope private val appScope: CoroutineScope,
+    private val viewCountDAO: ViewCountDAO,
+    @ApplicationContext private val mContext: Context
+):BaseViewModel(),OnCompleteListener<InstanceIdResult> {
 
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val fragmentDetailsMutableLiveData = MutableLiveData<ChannelInfo>()
@@ -75,7 +80,7 @@ class HomeViewModel @ViewModelInject constructor():BaseViewModel(),OnCompleteLis
 
     init {
         getCategory()
-        getChannelByCategory(0)
+//        getChannelByCategory(0)
         getProfile()
         FirebaseMessaging.getInstance().subscribeToTopic("buzz")
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener(this)
@@ -104,27 +109,14 @@ class HomeViewModel @ViewModelInject constructor():BaseViewModel(),OnCompleteLis
     }
 
     fun populateViewCountDb(url:String){
-//        getApplication<ToffeeApplication>().applicationScope.launch {
-//            DownloadViewCountDb(RetrofitApiClient.dbApi,AppDatabase.getDatabase().viewCountDAO()).execute(getApplication(),url)
-//        }
+        appScope.launch {
+            DownloadViewCountDb(RetrofitApiClient.dbApi, viewCountDAO)
+                .execute(mContext, url)
+        }
     }
 
     fun getCategory():LiveData<Resource<NavCategoryGroup>>{
         return resultLiveData { getCategory.execute() }
-    }
-
-    fun getChannelByCategory(subcategoryId:Int){
-        viewModelScope.launch {
-            try{
-                val response = getChannelWithCategory.execute(subcategoryId).map {
-                    StickyHeaderInfo(it.categoryName,it.channels)
-                }
-                channelMutableLiveData.setSuccess(response)
-
-            }catch (e:Exception){
-                channelMutableLiveData.setError(getError(e))
-            }
-        }
     }
 
     private fun getProfile(){

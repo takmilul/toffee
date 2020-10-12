@@ -16,29 +16,29 @@ class UserActivities @Inject constructor(
     : BaseApiService<ChannelInfo> {
 
     override suspend fun loadData(offset: Int, limit: Int): List<ChannelInfo> {
-        val response = tryIO2 {
-            toffeeApi.getContents(
-                0, offset, "VOD",
-                preference.getDBVersionByApiName("getContentsV5"),
-                ContentRequest(
-                    0,
-                    0,
-                    "VOD",
-                    preference.customerId,
-                    preference.password,
-                    offset = offset,
-                    limit = limit
-                )
-            )
-        }
-
-        if (response.response.channels != null) {
-            return response.response.channels.map {
-                it.formatted_view_count = getFormattedViewsText(it.view_count)
-                it.formattedDuration = discardZeroFromDuration(it.duration)
-                it
-            }
-        }
+//        val response = tryIO2 {
+//            toffeeApi.getContents(
+//                 "VOD",0, offset,
+//                preference.getDBVersionByApiName("getContentsV5"),
+//                ContentRequest(
+//                    0,
+//                    0,
+//                    "VOD",
+//                    preference.customerId,
+//                    preference.password,
+//                    offset = offset,
+//                    limit = limit
+//                )
+//            )
+//        }
+//
+//        if (response.response.channels != null) {
+//            return response.response.channels.map {
+//                it.formatted_view_count = getFormattedViewsText(it.view_count)
+//                it.formattedDuration = discardZeroFromDuration(it.duration)
+//                it
+//            }
+//        }
         return listOf()
     }
 }

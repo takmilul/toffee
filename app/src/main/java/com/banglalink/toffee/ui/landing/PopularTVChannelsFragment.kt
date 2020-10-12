@@ -42,7 +42,9 @@ class PopularTVChannelsFragment: HomeBaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         mAdapter = ChannelAdapter(object : BaseListItemCallback<ChannelInfo> {
-
+            override fun onItemClicked(item: ChannelInfo) {
+                homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+            }
         })
 
         viewAllButton.setOnClickListener {

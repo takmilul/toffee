@@ -10,7 +10,7 @@
             type="com.banglalink.toffee.model.ChannelInfo" />
         <variable
             name="callback"
-            type="com.banglalink.toffee.ui.home.OptionCallBack" />
+            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -29,18 +29,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-
             <ImageView
-                android:id="@+id/channel"
-                android:layout_width="@dimen/channel_width"
-                android:layout_height="@dimen/channel_height"
+                android:id="@+id/poster"
+                android:layout_width="@dimen/catchup_width"
+                android:layout_height="@dimen/catchup_height"
                 android:layout_gravity="center"
                 loadChannelImage="@{data}"
-                android:background="@drawable/circular_white_bg"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:src="@mipmap/ic_menu_channel" />
+                android:scaleType="centerCrop"
+                app:layout_constraintDimensionRatio="W,16:9" />
 
 
         </FrameLayout>
@@ -51,9 +47,9 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:paddingTop="8dp"
-            android:onClick="@{(v)->callback.onOptionClicked(v, data)}"
             android:clickable="true"
             android:focusable="true"
+            android:onClick="@{(v)->callback.onOpenMenu(v, data)}"
             app:layout_constraintBottom_toBottomOf="@+id/name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/name"
@@ -98,8 +94,8 @@
             android:paddingTop="3dp"
             android:paddingRight="8dp"
             android:paddingBottom="3dp"
-            android:text="00:00"
-            android:visibility="invisible"
+            tools:text="00:00"
+            bindDuration="@{data}"
             android:textColor="@android:color/white"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="@+id/poster_container"
@@ -127,7 +123,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:fontFamily="@font/roboto_regular"
-            android:text="views"
+            android:text="@string/views"
             android:textColor="@color/second_text_color"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="@+id/number_of_views"

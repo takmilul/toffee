@@ -47,7 +47,9 @@ class FeaturedFragment: HomeBaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         mAdapter = FeaturedListAdapter(object: BaseListItemCallback<ChannelInfo> {
-
+            override fun onItemClicked(item: ChannelInfo) {
+                homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+            }
         })
 
         featured_viewpager.adapter = mAdapter

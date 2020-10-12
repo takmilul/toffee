@@ -21,9 +21,11 @@ class GetContents @AssistedInject constructor(
     override suspend fun loadData(offset: Int, limit: Int): List<ChannelInfo> {
         val response = tryIO2 {
             toffeeApi.getContents(
-                requestParams.categoryId,
-                offset,
                 requestParams.type,
+                requestParams.categoryId,
+                requestParams.subcategoryId,
+                offset,
+                limit,
                 preference.getDBVersionByApiName("getContentsV5"),
                 ContentRequest(
                     requestParams.categoryId,

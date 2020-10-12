@@ -16,10 +16,11 @@ import com.banglalink.toffee.ui.widget.StickyHeaderGridAdapter
 
 class ChannelStickyListAdapter(
     private val context: Context,
-    private val values: MutableList<StickyHeaderInfo>,
     private val onItemClickListener: OnItemClickListener?
 ) :
     StickyHeaderGridAdapter() {
+
+    private var values: List<StickyHeaderInfo> = emptyList()
 
     override fun getSectionCount(): Int {
         return values.size
@@ -27,6 +28,11 @@ class ChannelStickyListAdapter(
 
     override fun getSectionItemCount(section: Int): Int {
         return values[section].channelInfoList.size
+    }
+
+    fun setItems(newList: List<StickyHeaderInfo>) {
+        values = newList
+        notifyAllSectionsDataSetChanged()
     }
 
     override fun onCreateHeaderViewHolder(

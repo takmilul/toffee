@@ -17,8 +17,9 @@ class GetChallengeReward @Inject constructor(private val preference: Preference,
     override suspend fun execute(): List<ChallengeReward> {
         val response = tryIO2 {
             toffeeApi.getContents(
-                0,
-                mOffset, "VOD",
+                "VOD",
+                0, 0,
+                mOffset, 30,
                 preference.getDBVersionByApiName("getContentsV5"),
                 ContentRequest(
                     0,

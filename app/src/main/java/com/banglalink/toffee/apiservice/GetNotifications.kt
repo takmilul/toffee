@@ -13,8 +13,9 @@ class GetNotifications @Inject constructor(private val preference: Preference, p
     override suspend fun loadData(offset: Int, limit: Int): List<Notification> {
         val response = tryIO2 {
             toffeeApi.getContents(
-                0,
-                offset, "VOD",
+                "VOD",
+                0, 0,
+                offset, 30,
                 preference.getDBVersionByApiName("getContentsV5"),
                 ContentRequest(
                     0,
