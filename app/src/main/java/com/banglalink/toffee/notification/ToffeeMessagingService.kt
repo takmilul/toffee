@@ -16,17 +16,23 @@ import androidx.core.graphics.drawable.toBitmap
 import coil.Coil
 import coil.api.get
 import com.banglalink.toffee.R
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.database.entities.NotificationInfo
+import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.receiver.NotificationActionReceiver
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class ToffeeMessagingService : FirebaseMessagingService() {
 
+    @Inject
+    lateinit var notificationInfoRepository: NotificationInfoRepository
     private val TAG = "ToffeeMessagingService"
     private val NOTIFICATION_CHANNEL_NAME = "Toffee Channel"
     private var notificationId = 1
@@ -178,6 +184,8 @@ class ToffeeMessagingService : FirebaseMessagingService() {
 
         showNotification(builder.build())
 
+        val notificationInfo = NotificationInfo(null, data["notificationType"], data["notificationId"], 0, 0, title, content, null, thumbnailUrl, null, resourceUrl)
+        notificationInfoRepository.insert(notificationInfo)
     }
 
     private suspend fun handleNotificationWithImage(data: Map<String, String>) {
@@ -292,6 +300,9 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             )
         }
         showNotification(builder.build())
+        
+        val notificationInfo = NotificationInfo(null, data["notificationType"], pubSubId, 0, 0, title, content, null, thumbnailUrl, imageUrl, resourceUrl, playNowUrl, watchLaterUrl)
+        notificationInfoRepository.insert(notificationInfo)
     }
 
     private fun showNotification(notification: Notification) {

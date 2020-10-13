@@ -1,16 +1,14 @@
 package com.banglalink.toffee.ui.notification
 
 import androidx.hilt.lifecycle.ViewModelInject
-import com.banglalink.toffee.apiservice.GetNotifications
 import com.banglalink.toffee.common.paging.BaseListRepository
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
-import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
 import com.banglalink.toffee.common.paging.BasePagingViewModel
-import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.Notification
+import com.banglalink.toffee.data.database.dao.NotificationDao
+import com.banglalink.toffee.data.database.entities.NotificationInfo
 
-class NotificationCenterViewModel @ViewModelInject constructor(apiService: GetNotifications) : BasePagingViewModel<Notification>() {
-    override val repo: BaseListRepository<Notification> by lazy {
-        BaseListRepositoryImpl(BaseNetworkPagingSource(apiService))
+class NotificationCenterViewModel @ViewModelInject constructor(notificationDao: NotificationDao) : BasePagingViewModel<NotificationInfo>() {
+    override val repo: BaseListRepository<NotificationInfo> by lazy {
+        BaseListRepositoryImpl(notificationDao.getAllNotification())
     }
 }

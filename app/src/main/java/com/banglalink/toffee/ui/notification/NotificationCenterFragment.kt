@@ -4,9 +4,9 @@ import android.os.Bundle
 import androidx.fragment.app.viewModels
 import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.common.paging.BaseListItemCallback
-import com.banglalink.toffee.model.Notification
+import com.banglalink.toffee.data.database.entities.NotificationInfo
 
-class NotificationCenterFragment: BaseListFragment<Notification>(), BaseListItemCallback<Notification> {
+class NotificationCenterFragment: BaseListFragment<NotificationInfo>(), BaseListItemCallback<NotificationInfo> {
 
     private var enableToolbar: Boolean = false
     override val mAdapter by lazy { NotificationCenterAdapter(this) }
