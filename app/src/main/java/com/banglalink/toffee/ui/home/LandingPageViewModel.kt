@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.banglalink.toffee.apiservice.GetChannelSubscriptions
+import com.banglalink.toffee.apiservice.GetMostPopularContents
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
 import com.banglalink.toffee.data.network.request.ChannelRequestParams
@@ -24,11 +25,10 @@ import kotlinx.coroutines.launch
 class LandingPageViewModel @ViewModelInject constructor(
     private val mPref: Preference,
     private val toffeeApi: ToffeeApi,
+    private val mostPopularApi: GetMostPopularContents,
     private val featuredContentAssistedFactory: com.banglalink.toffee.apiservice.GetFeatureContents.AssistedFactory,
     private val getContentAssistedFactory: com.banglalink.toffee.apiservice.GetContents.AssistedFactory
 ):BaseViewModel() {
-    private val mostPopularVideoMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
-    val mostPopularVideoLiveData = mostPopularVideoMutableLiveData.toLiveData()
 
     private val userChannelListMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
     val userChannelList = userChannelListMutableLiveData.toLiveData()
@@ -59,7 +59,7 @@ class LandingPageViewModel @ViewModelInject constructor(
     }
 
     fun loadMostPopularVideos(): Flow<PagingData<ChannelInfo>> {
-        return latestVideosRepo.getList()
+        return mostPopularRepo.getList()
     }
 
     fun loadUserChannels() {
@@ -97,6 +97,17 @@ class LandingPageViewModel @ViewModelInject constructor(
         BaseListRepositoryImpl(
             BaseNetworkPagingSource(
                 featuredContentAssistedFactory.create(
+                    ChannelRequestParams("", 0, "", 0, "VOD")
+                )
+            )
+        )
+    }
+
+    private val mostPopularRepo by lazy {
+        BaseListRepositoryImpl(
+            BaseNetworkPagingSource(
+//                mostPopularApi
+                getContentAssistedFactory.create(
                     ChannelRequestParams("", 0, "", 0, "VOD")
                 )
             )

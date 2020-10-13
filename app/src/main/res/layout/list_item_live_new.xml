@@ -12,30 +12,35 @@
             name="callback"
             type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
     </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
-        android:layout_marginTop="10dp"
         android:layout_marginEnd="12dp"
-        android:layout_marginBottom="10dp">
+        android:background="?selectableItemBackground"
+        android:onClick="@{()->callback.onItemClicked(data)}">
 
         <FrameLayout
             android:id="@+id/poster_container"
-            android:layout_width="@dimen/catchup_width"
-            android:layout_height="@dimen/catchup_height"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:background="@drawable/round_white_bg"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="16:9"
+            app:layout_constraintEnd_toStartOf="@+id/guideline12"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
 
             <ImageView
                 android:id="@+id/channel"
+                loadChannelImage="@{data}"
                 android:layout_width="@dimen/channel_width"
                 android:layout_height="@dimen/channel_height"
                 android:layout_gravity="center"
-                loadChannelImage="@{data}"
                 android:background="@drawable/circular_white_bg"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -48,16 +53,15 @@
 
         <ImageView
             android:id="@+id/options"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:paddingTop="8dp"
-            android:onClick="@{(v)->callback.onOpenMenu(v, data)}"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:clickable="true"
             android:focusable="true"
-            app:layout_constraintBottom_toBottomOf="@+id/name"
+            android:onClick="@{(v)->callback.onOpenMenu(v, data)}"
+            android:padding="4dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/name"
-            app:srcCompat="@drawable/ic_more" />
+            app:srcCompat="@drawable/ic_menu_more" />
 
         <TextView
             android:id="@+id/name"
@@ -67,6 +71,7 @@
             android:layout_marginStart="8dp"
             android:ellipsize="end"
             android:maxLines="2"
+            android:lines="2"
             android:text="@{data.program_name}"
             app:layout_constraintEnd_toStartOf="@+id/options"
             app:layout_constraintStart_toEndOf="@+id/poster_container"
@@ -78,13 +83,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
             android:ellipsize="end"
             android:fontFamily="@font/roboto_regular"
             android:maxLines="1"
+            android:text="@{data.content_provider_name}"
             android:textColor="@color/second_text_color"
             android:textSize="14sp"
-            android:text="@{data.content_provider_name}"
-            app:layout_constraintEnd_toStartOf="@+id/options"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/name"
             app:layout_constraintTop_toBottomOf="@+id/name"
             tools:text="Content Provider" />
@@ -99,14 +105,15 @@
             android:paddingRight="8dp"
             android:paddingBottom="3dp"
             android:text="00:00"
-            android:visibility="invisible"
             android:textColor="@android:color/white"
             android:textSize="14sp"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@+id/poster_container"
             app:layout_constraintEnd_toEndOf="@+id/poster_container" />
 
         <TextView
             android:id="@+id/number_of_views"
+            bindViewCount="@{data}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -114,7 +121,6 @@
             android:fontFamily="@font/roboto_regular"
             android:textColor="@color/second_text_color"
             android:textSize="16sp"
-            bindViewCount="@{data}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/eyeIV"
             app:layout_constraintHorizontal_chainStyle="packed"
@@ -134,6 +140,13 @@
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toEndOf="@+id/number_of_views"
             app:layout_constraintTop_toTopOf="@+id/number_of_views" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
