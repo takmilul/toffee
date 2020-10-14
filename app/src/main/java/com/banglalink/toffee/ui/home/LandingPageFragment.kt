@@ -16,11 +16,12 @@ import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.upload.UploadProgressViewModel
 import com.banglalink.toffee.ui.upload.UploadStatus
 import com.banglalink.toffee.util.Utils
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_landing_page2.*
 import kotlinx.android.synthetic.main.home_mini_upload_progress.*
 import kotlinx.coroutines.flow.collectLatest
 
-
+@AndroidEntryPoint
 class LandingPageFragment : HomeBaseFragment(){
 
     companion object {

@@ -12,9 +12,11 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.home.PopularVideoListAdapter
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_landing_latest_videos.*
 import kotlinx.coroutines.flow.collectLatest
 
+@AndroidEntryPoint
 class LatestVideosFragment: HomeBaseFragment() {
     private lateinit var mAdapter: PopularVideoListAdapter
 

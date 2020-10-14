@@ -7,10 +7,10 @@
     <data>
         <variable
             name="data"
-            type="com.banglalink.toffee.model.NavCategory" />
+            type="com.banglalink.toffee.model.UgcCategory" />
         <variable
             name="callback"
-            type="com.banglalink.toffee.ui.common.SingleListItemCallback" />
+            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -28,7 +28,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            loadCategoryImage="@{data}"
             android:src="@drawable/ic_cat_movie"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

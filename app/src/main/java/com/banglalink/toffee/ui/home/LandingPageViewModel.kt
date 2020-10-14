@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.banglalink.toffee.apiservice.GetChannelSubscriptions
 import com.banglalink.toffee.apiservice.GetMostPopularContents
+import com.banglalink.toffee.apiservice.GetUgcCategories
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
 import com.banglalink.toffee.data.network.request.ChannelRequestParams
@@ -26,16 +27,13 @@ class LandingPageViewModel @ViewModelInject constructor(
     private val mPref: Preference,
     private val toffeeApi: ToffeeApi,
     private val mostPopularApi: GetMostPopularContents,
+    private val categoryListApi: GetUgcCategories,
     private val featuredContentAssistedFactory: com.banglalink.toffee.apiservice.GetFeatureContents.AssistedFactory,
     private val getContentAssistedFactory: com.banglalink.toffee.apiservice.GetContents.AssistedFactory
 ):BaseViewModel() {
 
     private val userChannelListMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
     val userChannelList = userChannelListMutableLiveData.toLiveData()
-
-//    //LiveData for Categories List
-//    private val categoriesMutableLiveData = MutableLiveData<List<Category>>()
-//    val categoriesLiveData = categoriesMutableLiveData.toLiveData()
 
     private val trendingNowMutableLiveData = MutableLiveData<List<ChannelInfo>>()
     val trendingNowLiveData = trendingNowMutableLiveData.toLiveData()
@@ -62,6 +60,14 @@ class LandingPageViewModel @ViewModelInject constructor(
         return mostPopularRepo.getList()
     }
 
+    fun loadFeatureContents(): Flow<PagingData<ChannelInfo>>{
+        return featureRepo.getList()
+    }
+
+    fun loadCategories(): Flow<PagingData<UgcCategory>> {
+        return categoryListRepo.getList()
+    }
+
     fun loadUserChannels() {
         viewModelScope.launch {
             try {
@@ -79,6 +85,14 @@ class LandingPageViewModel @ViewModelInject constructor(
                 getContentAssistedFactory.create(
                     ChannelRequestParams("", 0, "", 0, "LIVE")
                 )
+            )
+        )
+    }
+
+    private val categoryListRepo by lazy {
+        BaseListRepositoryImpl(
+            BaseNetworkPagingSource(
+                categoryListApi
             )
         )
     }
@@ -112,19 +126,5 @@ class LandingPageViewModel @ViewModelInject constructor(
                 )
             )
         )
-    }
-
-    fun loadFeatureContents(): Flow<PagingData<ChannelInfo>>{
-        return featureRepo.getList()
-    }
-
-    fun loadCategories() {
-        viewModelScope.launch {
-            try {
-                categoryInfoLiveData.setSuccess(getCategory.execute())
-            } catch (e: Exception) {
-                categoryInfoLiveData.setError(getError(e))
-            }
-        }
     }
 }

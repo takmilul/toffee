@@ -25,6 +25,7 @@ import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.NavCategory
 import com.banglalink.toffee.model.Package
+import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.ui.widget.MultiTextButton
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -55,13 +56,22 @@ fun bindRoundImage(view: ImageView, imageUrl: String?) {
 }
 
 @BindingAdapter("loadCategoryImage")
-fun bindCategoryImage(view: ImageView, category: NavCategory) {
+fun bindCategoryImage(view: ImageView, category: UgcCategory) {
     val gd = GradientDrawable().apply {
         shape = GradientDrawable.OVAL
-        color = ColorStateList.valueOf(Color.parseColor(category.bgColor))
+        color = ColorStateList.valueOf(Color.parseColor(category.colorCode))
     }
     view.background = gd
-    view.setImageResource(category.icon)
+
+    if(!category.categoryIcon.isNullOrBlank()) {
+        view.setImageResource(R.drawable.ic_cat_music)
+    } else {
+        view.load(category.categoryIcon) {
+            crossfade(true)
+            error(R.drawable.ic_cat_movie)
+            crossfade(crossFadeDurationInMills)
+        }
+    }
 }
 
 

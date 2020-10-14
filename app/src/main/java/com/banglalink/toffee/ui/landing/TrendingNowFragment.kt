@@ -18,9 +18,11 @@ import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.home.MostPopularVideoListAdapter
 import com.banglalink.toffee.ui.home.TrendingNowVideoListAdapter
 import com.banglalink.toffee.util.unsafeLazy
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_landing_trending.*
 import kotlinx.android.synthetic.main.fragment_most_popular.*
 
+@AndroidEntryPoint
 class TrendingNowFragment: HomeBaseFragment() {
     private lateinit var mAdapter: TrendingNowVideoListAdapter
 

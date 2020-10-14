@@ -21,8 +21,10 @@ import com.banglalink.toffee.ui.home.OptionCallBack
 import com.banglalink.toffee.ui.home.UserChannelsListAdapter
 import com.banglalink.toffee.ui.useractivities.UserActivitiesMainFragment
 import com.banglalink.toffee.util.unsafeLazy
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_landing_user_channels.*
 
+@AndroidEntryPoint
 class LandingUserChannelsFragment: HomeBaseFragment() {
     private lateinit var mAdapter: UserChannelsListAdapter
 

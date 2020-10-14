@@ -69,8 +69,8 @@ class FeaturedFragment: HomeBaseFragment() {
     private fun observeList() {
         lifecycleScope.launchWhenStarted {
             viewModel.loadFeatureContents().collectLatest {
-                mAdapter.submitData(it)
                 startPageScroll()
+                mAdapter.submitData(it)
             }
         }
     }

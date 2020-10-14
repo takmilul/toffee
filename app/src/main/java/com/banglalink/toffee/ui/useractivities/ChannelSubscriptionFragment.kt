@@ -14,7 +14,9 @@ import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.SingleListFragmentV2
 import com.banglalink.toffee.ui.subscription.PackageListActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ChannelSubscriptionFragment
     :BaseListFragment<ChannelInfo>(), ChannelSubscriptionListItemCallback {
 

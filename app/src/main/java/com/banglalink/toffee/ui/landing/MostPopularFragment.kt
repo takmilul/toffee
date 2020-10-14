@@ -20,9 +20,11 @@ import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.home.MostPopularVideoListAdapter
 import com.banglalink.toffee.util.unsafeLazy
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_most_popular.*
 import kotlinx.coroutines.flow.collectLatest
 
+@AndroidEntryPoint
 class MostPopularFragment: HomeBaseFragment() {
     private lateinit var mAdapter: MostPopularVideoListAdapter
 

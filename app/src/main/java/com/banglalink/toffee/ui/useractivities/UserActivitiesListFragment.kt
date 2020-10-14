@@ -10,7 +10,9 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.model.ChannelInfo
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class UserActivitiesListFragment: BaseListFragment<ChannelInfo>(),
     BaseListItemCallback<ChannelInfo> {
 

@@ -1,3 +1,5 @@
 package com.banglalink.toffee.data.network.response
 
-data class UgcCategoryResponse(val response: String):BaseResponse()
+import com.banglalink.toffee.model.UgcCategoryBean
+
+data class UgcCategoryResponse(val response: UgcCategoryBean):BaseResponse()
