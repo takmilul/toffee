@@ -11,12 +11,13 @@
             type="com.banglalink.toffee.model.ChannelInfo" />
         <variable
             name="callback"
-            type="com.banglalink.toffee.ui.home.OptionCallBack" />
+            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:onClick="@{() -> callback.onItemClicked(data)}"
         android:layout_marginTop="10dp">
 
         <com.banglalink.toffee.ui.widget.CustomImageView

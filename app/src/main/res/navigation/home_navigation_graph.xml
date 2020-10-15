@@ -89,7 +89,7 @@
 
     <fragment
         android:id="@+id/allCategoriesFragment"
-        android:name="com.banglalink.toffee.ui.category.AllCategoryFragment"
+        android:name="com.banglalink.toffee.ui.landing.AllCategoriesFragment"
         android:label="AllCategoriesFragment" >
         <action
             android:id="@+id/action_allCategoriesFragment_to_categoryDetailsFragment"

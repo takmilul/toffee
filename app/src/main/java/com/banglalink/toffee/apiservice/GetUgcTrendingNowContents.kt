@@ -1,7 +1,7 @@
 package com.banglalink.toffee.apiservice
 
 import com.banglalink.toffee.common.paging.BaseApiService
-import com.banglalink.toffee.data.network.request.UgcFeatureContentRequest
+import com.banglalink.toffee.data.network.request.UgcTrendingNowRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.Preference
@@ -9,7 +9,13 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 
-class GetFeatureContents @AssistedInject constructor(
+data class TrendingNowRequestParams(
+    val type: String,
+    val isCategory: Int,
+    val categoryId: Int
+)
+
+class GetUgcTrendingNowContents @AssistedInject constructor(
     private val preference: Preference,
     private val toffeeApi: ToffeeApi,
     @Assisted private val requestParams: TrendingNowRequestParams
@@ -17,17 +23,17 @@ class GetFeatureContents @AssistedInject constructor(
 
     override suspend fun loadData(offset: Int, limit: Int): List<ChannelInfo> {
         if(offset > 0) return emptyList()
-        val request =  UgcFeatureContentRequest(
+        val request =  UgcTrendingNowRequest(
             preference.customerId,
             preference.password
         )
 
         val response = tryIO2 {
-            toffeeApi.getUgcFeatureContents(
+            toffeeApi.getUgcEditorsChoice(
                 requestParams.type,
                 requestParams.isCategory,
                 requestParams.categoryId,
-                preference.getDBVersionByApiName("getUgcFeatureCategoryContents"),
+                preference.getDBVersionByApiName("getUgcCategoryEditorChoice"),
                 request
             )
         }
@@ -41,6 +47,6 @@ class GetFeatureContents @AssistedInject constructor(
 
     @AssistedInject.Factory
     interface AssistedFactory {
-        fun create(requestParams: TrendingNowRequestParams): GetFeatureContents
+        fun create(requestParams: TrendingNowRequestParams): GetUgcTrendingNowContents
     }
 }

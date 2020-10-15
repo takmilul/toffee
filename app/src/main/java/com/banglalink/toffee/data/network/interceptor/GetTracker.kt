@@ -12,6 +12,8 @@ class GetTracker:IGetMethodTracker {
         "/check-for-update-v2/Android/",
         "/app-home-page-content-toffee-v2/",
         "/ugc-most-popular-contents/1",
+        "/ugc-category-wise-editors-choice/1",
+        "/ugc-category-featured-contents/1",
         "/ugc-categories/1"
     )
 

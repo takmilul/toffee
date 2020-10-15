@@ -21,22 +21,27 @@ import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.snack
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.util.UtilsKt
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
+import com.google.api.services.pubsub.PubsubScopes
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.upload_method_fragment.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import net.gotev.uploadservice.protocols.binary.BinaryUploadRequest
 import net.gotev.uploadservice.protocols.multipart.MultipartUploadRequest
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.logging.Logger
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -168,17 +173,34 @@ class UploadMethodFragment: BaseFragment() {
     private fun uploadUri(uri: String) {
 
         lifecycleScope.launch {
+            val accessToken = withContext(Dispatchers.IO) {
+                val credential = GoogleCredential.fromStream(
+                    requireContext().assets.open("toffee-261507-60ca3e5405df.json")
+                ).createScoped(listOf("https://www.googleapis.com/auth/devstorage.read_write"))
+                credential.refreshToken()
+                credential.accessToken
+            }
+
+            if(accessToken.isNullOrEmpty()) {
+                open_gallery_button.snack("Error uploading file. Please try again later."){}
+                return@launch
+            }
+            Log.e("TOKEN", accessToken)
             val upInfo = UploadInfo(fileUri = uri)
+            val fileName = UUID.randomUUID()
+            Log.e("FILENAME", fileName.toString())
             val upId = mUploadInfoRepository.insertUploadInfo(upInfo)
             val uploadIdStr =
                 withContext(Dispatchers.IO + Job()) {
-                    MultipartUploadRequest(
+                    BinaryUploadRequest(
                         requireContext(),
-                        "http://23.94.70.184:25478/upload?token=1148123456789"
+                        "https://storage.googleapis.com/upload/storage/v1/b/ugc-content-storage/o?uploadType=media&name=${fileName}"
                     )
                         .setUploadID(UtilsKt.uploadIdToString(upId))
                         .setMethod("POST")
-                        .addFileToUpload(uri, "file")
+                        .addHeader("Content-Type", "video/mp4")
+                        .setFileToUpload(uri)
+                        .setBearerAuth(accessToken)
                         .startUpload()
                 }
 

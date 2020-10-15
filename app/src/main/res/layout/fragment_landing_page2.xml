@@ -36,7 +36,6 @@
                             <androidx.fragment.app.FragmentContainerView
                                 android:id="@+id/popularTvChannelsFragment"
                                 android:name="com.banglalink.toffee.ui.landing.PopularTVChannelsFragment"
-                                android:layout_marginTop="16dp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
 
@@ -57,7 +56,6 @@
                             <androidx.fragment.app.FragmentContainerView
                                 android:id="@+id/trendingNowFragment"
                                 android:name="com.banglalink.toffee.ui.landing.TrendingNowFragment"
-                                android:layout_marginTop="8dp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
 

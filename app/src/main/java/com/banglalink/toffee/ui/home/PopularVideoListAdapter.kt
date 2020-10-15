@@ -15,17 +15,17 @@ class PopularVideoListAdapter(
 ): BasePagingDataAdapter<ChannelInfo>(cb, ItemComparator()) {
 
     override fun getItemViewType(position: Int): Int {
-        if(position == 0){
-            return R.layout.item_list_header_popular_video
-        }
+//        if(position == 0){
+//            return R.layout.item_list_header_popular_video
+//        }
         return R.layout.list_item_popular_videos
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         super.onBindViewHolder(holder, position)
-        if(position == 0){//disabling click on header view
-            holder.itemView.setOnClickListener(null)
-        }
+//        if(position == 0){//disabling click on header view
+//            holder.itemView.setOnClickListener(null)
+//        }
     }
 
     override fun onViewRecycled(holder: BaseViewHolder) {

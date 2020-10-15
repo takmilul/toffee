@@ -43,6 +43,10 @@ class LatestVideosFragment: HomeBaseFragment() {
             adapter = mAdapter
         }
 
+        viewAllButton.setOnClickListener {
+            
+        }
+
         observeList()
     }
 

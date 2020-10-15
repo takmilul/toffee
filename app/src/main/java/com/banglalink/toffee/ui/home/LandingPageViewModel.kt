@@ -4,9 +4,9 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import com.banglalink.toffee.apiservice.GetChannelSubscriptions
-import com.banglalink.toffee.apiservice.GetMostPopularContents
-import com.banglalink.toffee.apiservice.GetUgcCategories
+import com.banglalink.toffee.apiservice.*
+import com.banglalink.toffee.apiservice.GetContents
+import com.banglalink.toffee.apiservice.GetFeatureContents
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
 import com.banglalink.toffee.data.network.request.ChannelRequestParams
@@ -28,15 +28,13 @@ class LandingPageViewModel @ViewModelInject constructor(
     private val toffeeApi: ToffeeApi,
     private val mostPopularApi: GetMostPopularContents,
     private val categoryListApi: GetUgcCategories,
-    private val featuredContentAssistedFactory: com.banglalink.toffee.apiservice.GetFeatureContents.AssistedFactory,
-    private val getContentAssistedFactory: com.banglalink.toffee.apiservice.GetContents.AssistedFactory
+    private val trendingNowAssistedFactory: GetUgcTrendingNowContents.AssistedFactory,
+    private val featuredContentAssistedFactory: GetFeatureContents.AssistedFactory,
+    private val getContentAssistedFactory: GetContents.AssistedFactory
 ):BaseViewModel() {
 
     private val userChannelListMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
     val userChannelList = userChannelListMutableLiveData.toLiveData()
-
-    private val trendingNowMutableLiveData = MutableLiveData<List<ChannelInfo>>()
-    val trendingNowLiveData = trendingNowMutableLiveData.toLiveData()
 
     val categoryInfoLiveData = MutableLiveData<Resource<List<NavCategory>>>()
 
@@ -66,6 +64,10 @@ class LandingPageViewModel @ViewModelInject constructor(
 
     fun loadCategories(): Flow<PagingData<UgcCategory>> {
         return categoryListRepo.getList()
+    }
+
+    fun loadTrendingNowContent(): Flow<PagingData<ChannelInfo>> {
+        return trendingNowRepo.getList()
     }
 
     fun loadUserChannels() {
@@ -111,7 +113,7 @@ class LandingPageViewModel @ViewModelInject constructor(
         BaseListRepositoryImpl(
             BaseNetworkPagingSource(
                 featuredContentAssistedFactory.create(
-                    ChannelRequestParams("", 0, "", 0, "VOD")
+                    TrendingNowRequestParams("VOD", 0, 0)
                 )
             )
         )
@@ -120,9 +122,16 @@ class LandingPageViewModel @ViewModelInject constructor(
     private val mostPopularRepo by lazy {
         BaseListRepositoryImpl(
             BaseNetworkPagingSource(
-//                mostPopularApi
-                getContentAssistedFactory.create(
-                    ChannelRequestParams("", 0, "", 0, "VOD")
+                mostPopularApi
+            )
+        )
+    }
+
+    private val trendingNowRepo by lazy {
+        BaseListRepositoryImpl(
+            BaseNetworkPagingSource(
+                trendingNowAssistedFactory.create(
+                    TrendingNowRequestParams("VOD", 1, 0)
                 )
             )
         )
