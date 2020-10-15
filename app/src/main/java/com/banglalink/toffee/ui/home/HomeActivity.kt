@@ -33,12 +33,10 @@ import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
 import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.extension.loadProfileImage
@@ -55,8 +53,6 @@ import com.banglalink.toffee.ui.login.SigninByPhoneActivity
 import com.banglalink.toffee.ui.player.PlayerActivity
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.subscription.PackageListActivity
-import com.banglalink.toffee.ui.upload.EditUploadInfoFragment
-import com.banglalink.toffee.ui.upload.UploadMethodFragment
 import com.banglalink.toffee.ui.userchannel.UserChannelHomeFragment
 import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
@@ -662,7 +658,9 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             binding.drawerLayout.openDrawer(GravityCompat.END, true)
             return true
         }
-
+        else if(item.itemId == R.id.action_notification){
+            navController.navigate(R.id.notificationDropdownFragment)
+        }
         return super.onOptionsItemSelected(item)
     }
 

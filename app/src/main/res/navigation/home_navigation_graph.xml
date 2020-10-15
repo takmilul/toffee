@@ -178,12 +178,9 @@
         android:name="com.banglalink.toffee.ui.notification.NotificationDetailFragment"
         android:label="fragment_notification_detail"
         tools:layout="@layout/fragment_notification_detail" >
-        <action
-            android:id="@+id/action_notificationDetailFragment_to_notificationDropdownFragment"
-            app:destination="@id/notificationDropdownFragment" />
         <argument
-            android:name="notification"
-            app:argType="com.banglalink.toffee.model.Notification" />
+            android:name="notificationInfo"
+            app:argType="com.banglalink.toffee.data.database.entities.NotificationInfo" />
     </fragment>
     <fragment
         android:id="@+id/challengesFragment"
