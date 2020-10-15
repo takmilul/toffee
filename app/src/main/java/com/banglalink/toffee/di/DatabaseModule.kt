@@ -1,11 +1,13 @@
 package com.banglalink.toffee.di
 
-import android.app.Application
 import android.content.Context
 import androidx.room.Room
 import com.banglalink.toffee.data.database.ToffeeDatabase
+import com.banglalink.toffee.data.database.dao.NotificationDao
 import com.banglalink.toffee.data.database.dao.UploadDao
+import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.repository.UploadInfoRepository
+import com.banglalink.toffee.data.repository.impl.NotificationInfoRepositoryImpl
 import com.banglalink.toffee.data.repository.impl.UploadInfoRepositoryImpl
 import com.banglalink.toffee.data.storage.ViewCountDAO
 import dagger.Module
@@ -45,5 +47,17 @@ object DatabaseModule {
     @Singleton
     fun providesUploadInfoRepository(uploadDao: UploadDao): UploadInfoRepository {
         return UploadInfoRepositoryImpl(uploadDao)
+    }
+    
+    @Provides
+    @Singleton
+    fun provideNotificationInfoDao(db: ToffeeDatabase): NotificationDao {
+        return db.getNotificationDao()
+    }
+    
+    @Provides
+    @Singleton
+    fun provideNotificationInfoRepository(notificationDao: NotificationDao): NotificationInfoRepository {
+        return NotificationInfoRepositoryImpl(notificationDao)
     }
 }
