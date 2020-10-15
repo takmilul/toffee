@@ -50,4 +50,5 @@
     <color name="scrollbarTrackColor">#4D707070</color>
     <color name="cardOverlayColor">#FFFFFFFF</color>
     <color name="unseenCardColor">#EBFFFB</color>
+    <color name="reactionBgColor">#34C9B5</color>
 </resources>

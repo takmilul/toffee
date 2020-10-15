@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            app:cardCornerRadius="24dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <!--<RadioGroup
+                    android:id="@+id/radioGroup"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" >
+                    
+                    <RadioButton
+                        android:id="@+id/likeButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="928.5k"
+                        android:drawableTop="@drawable/ic_reaction_like"
+                        android:button="@drawable/reaction_bg_selector" />
+
+                </RadioGroup>-->
+
+                <ImageView
+                    android:id="@+id/likeButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/reaction_bg_selector"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_reaction_like"
+                    app:layout_constraintEnd_toStartOf="@+id/loveButton"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <TextView
+                    android:id="@+id/likeCountTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="929.5k"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/likeButton"
+                    app:layout_constraintStart_toStartOf="@+id/likeButton"
+                    app:layout_constraintTop_toBottomOf="@+id/likeButton"
+                    tools:text="929.5k" />
+
+                <ImageView
+                    android:id="@+id/loveButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/reaction_bg_selector"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_reaction_love"
+                    app:layout_constraintEnd_toStartOf="@+id/hahaButton"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/likeButton"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <TextView
+                    android:id="@+id/loveCountTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="122.5k"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/loveButton"
+                    app:layout_constraintStart_toStartOf="@+id/loveButton"
+                    app:layout_constraintTop_toBottomOf="@+id/loveButton"
+                    tools:text="929.5k" />
+
+                <ImageView
+                    android:id="@+id/hahaButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/reaction_bg_selector"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_reaction_haha"
+                    app:layout_constraintEnd_toStartOf="@+id/wowButton"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/loveButton"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <TextView
+                    android:id="@+id/hahaCountTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="170.5k"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/hahaButton"
+                    app:layout_constraintStart_toStartOf="@+id/hahaButton"
+                    app:layout_constraintTop_toBottomOf="@+id/hahaButton"
+                    tools:text="929.5k" />
+
+                <ImageView
+                    android:id="@+id/wowButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/reaction_bg_selector"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_reaction_wow"
+                    app:layout_constraintEnd_toStartOf="@+id/sadButton"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/hahaButton"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <TextView
+                    android:id="@+id/wowCountTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="705k"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/wowButton"
+                    app:layout_constraintStart_toStartOf="@+id/wowButton"
+                    app:layout_constraintTop_toBottomOf="@+id/wowButton"
+                    tools:text="929.5k" />
+
+                <ImageView
+                    android:id="@+id/sadButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/reaction_bg_selector"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_reaction_sad"
+                    app:layout_constraintEnd_toStartOf="@+id/angryButton"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/wowButton"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <TextView
+                    android:id="@+id/sadCountTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="68k"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/sadButton"
+                    app:layout_constraintStart_toStartOf="@+id/sadButton"
+                    app:layout_constraintTop_toBottomOf="@+id/sadButton"
+                    tools:text="929.5k" />
+
+                <ImageView
+                    android:id="@+id/angryButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/reaction_bg_selector"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_reaction_angry"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/sadButton"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <TextView
+                    android:id="@+id/angryCountTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="28k"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/angryButton"
+                    app:layout_constraintStart_toStartOf="@+id/angryButton"
+                    app:layout_constraintTop_toBottomOf="@+id/angryButton"
+                    tools:text="929.5k" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+</layout>
