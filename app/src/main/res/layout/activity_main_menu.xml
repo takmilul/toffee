@@ -86,6 +86,8 @@
                     app:contentInsetStart="0dp"
                     app:contentInsetEnd="0dp"
                     app:fabCradleVerticalOffset="0dp"
+                    app:paddingLeftSystemWindowInsets="false"
+                    app:paddingRightSystemWindowInsets="false"
                     app:fabCradleRoundedCornerRadius="0dp"
                     app:fabAlignmentMode="center">
                     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -106,6 +108,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_upload_add"
+                    android:contentDescription="@string/tab_upload_label"
                     app:borderWidth="2dp"
                     app:fabCustomSize="50dp"
                     app:elevation="0dp"
