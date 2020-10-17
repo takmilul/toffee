@@ -7,7 +7,7 @@
     <data>
         <variable
             name="data"
-            type="com.banglalink.toffee.model.ChannelInfo" />
+            type="com.banglalink.toffee.model.UgcUserChannelInfo" />
 
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -45,7 +45,7 @@
             android:maxLines="1"
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
-            android:text="@{data.program_name}"
+            android:text="@{data.contentProviderName}"
             android:textColor="#7990AC"
             android:textSize="14sp"
             android:textStyle="normal"
@@ -74,7 +74,7 @@
             android:layout_marginBottom="8dp"
             android:maxLines="1"
             android:ellipsize="end"
-            android:text="@{data.formatted_view_count}"
+            android:text="@{String.valueOf(data.subscriberCount)}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

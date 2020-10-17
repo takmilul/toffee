@@ -22,10 +22,7 @@ import coil.request.CachePolicy
 import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.NavCategory
-import com.banglalink.toffee.model.Package
-import com.banglalink.toffee.model.UgcCategory
+import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.widget.MultiTextButton
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -152,6 +149,25 @@ fun bindChannelLogo(view: ImageView, channelInfo: ChannelInfo) {
     }
 }
 
+@BindingAdapter("loadChannelLogo")
+fun bindChannelLogo(view: ImageView, channelInfo: UgcUserChannelInfo) {
+    if (channelInfo.profileUrl.isNullOrBlank()) {
+        view.setImageResource(R.drawable.ic_portrait)
+    }
+    else {
+        view.load(channelInfo.profileUrl) {
+//            fallback(R.drawable.ic_portrait)
+//            placeholder(R.drawable.ic_portrait)
+//            error(R.drawable.ic_portrait)
+//            memoryCachePolicy(CachePolicy.DISABLED)
+            diskCachePolicy(CachePolicy.ENABLED)
+            crossfade(true)
+            crossfade(crossFadeDurationInMills)
+//        size(Utils.dpToPx(imageHeight), Utils.dpToPx(imageHeight))
+        }
+    }
+}
+
 @BindingAdapter("bindDuration")
 fun bindDuration(view: TextView, channelInfo: ChannelInfo) {
     view.text = channelInfo.formattedDuration
@@ -161,6 +177,14 @@ fun bindDuration(view: TextView, channelInfo: ChannelInfo) {
 fun bindSubscriptionStatus(view: MultiTextButton, channelInfo: ChannelInfo) {
     view.setSubscriptionInfo(
         channelInfo.subscription,
+        null
+    )
+}
+
+@BindingAdapter("bindSubscriptionStatus")
+fun bindSubscriptionStatus(view: MultiTextButton, channelInfo: UgcUserChannelInfo) {
+    view.setSubscriptionInfo(
+        channelInfo.isSubscribed == 0,
         null
     )
 }

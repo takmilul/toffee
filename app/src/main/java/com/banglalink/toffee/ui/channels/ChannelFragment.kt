@@ -99,8 +99,7 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
         //we will observe channel live data from home activity
 
         lifecycleScope.launchWhenStarted {
-            channelViewModel
-                .getChannelFlow(0)
+            channelViewModel(0)
                 .collectLatest {
                     when(it){
                         is Resource.Success->{

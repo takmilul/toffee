@@ -9,7 +9,7 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 
-data class TrendingNowRequestParams(
+data class ApiCategoryRequestParams(
     val type: String,
     val isCategory: Int,
     val categoryId: Int
@@ -18,7 +18,7 @@ data class TrendingNowRequestParams(
 class GetUgcTrendingNowContents @AssistedInject constructor(
     private val preference: Preference,
     private val toffeeApi: ToffeeApi,
-    @Assisted private val requestParams: TrendingNowRequestParams
+    @Assisted private val requestParams: ApiCategoryRequestParams
 ): BaseApiService<ChannelInfo> {
 
     override suspend fun loadData(offset: Int, limit: Int): List<ChannelInfo> {
@@ -47,6 +47,6 @@ class GetUgcTrendingNowContents @AssistedInject constructor(
 
     @AssistedInject.Factory
     interface AssistedFactory {
-        fun create(requestParams: TrendingNowRequestParams): GetUgcTrendingNowContents
+        fun create(requestParams: ApiCategoryRequestParams): GetUgcTrendingNowContents
     }
 }
