@@ -138,6 +138,16 @@ interface ToffeeApi {
         @Path("dbVersion") dbVersion: Int = 0,
         @Body ugcFeatureRequest: UgcFeatureContentRequest
     ): UgcFeatureContentResponse
+
+    @POST("ugc-popular-channel/1/{isCategory}/{categoryId}/{limit}/{offset}/{dbVersion}")
+    suspend fun getUgcPopularChannels(
+        @Path("isCategory") isCategory: Int = 0,
+        @Path("categoryId") categoryId: Int = 0,
+        @Path("limit") limit: Int = 0,
+        @Path("offset") offset: Int = 0,
+        @Path("dbVersion") dbVersion: Int,
+        @Body ugcPopularChannelsRequest: UgcPopularChannelsRequest
+    ): UgcPopularChannelsResponse
     
     @POST("ugc-channel-details/1/{isOwner}/{channelId}/{dbVersion}")
     suspend fun getUgcMyChannelDetails(

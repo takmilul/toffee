@@ -24,28 +24,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class LandingPageViewModel @ViewModelInject constructor(
-    private val mPref: Preference,
-    private val toffeeApi: ToffeeApi,
     private val mostPopularApi: GetMostPopularContents,
     private val categoryListApi: GetUgcCategories,
+    private val popularChannelAssistedFactory: GetUgcPopularUserChannels.AssistedFactory,
     private val trendingNowAssistedFactory: GetUgcTrendingNowContents.AssistedFactory,
     private val featuredContentAssistedFactory: GetFeatureContents.AssistedFactory,
     private val getContentAssistedFactory: GetContents.AssistedFactory
 ):BaseViewModel() {
-
-    private val userChannelListMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
-    val userChannelList = userChannelListMutableLiveData.toLiveData()
-
-    val categoryInfoLiveData = MutableLiveData<Resource<List<NavCategory>>>()
-
-    private val getCategory by lazy {
-        GetCategoryNew(toffeeApi)
-    }
-
-    private val getUserChannels by unsafeLazy {
-        GetChannelSubscriptions(mPref, toffeeApi)
-    }
-
     fun loadChannels(): Flow<PagingData<ChannelInfo>>{
         return channelRepo.getList()
     }
@@ -70,15 +55,18 @@ class LandingPageViewModel @ViewModelInject constructor(
         return trendingNowRepo.getList()
     }
 
-    fun loadUserChannels() {
-        viewModelScope.launch {
-            try {
-                val response = getUserChannels.loadData(0, 10)
-                userChannelListMutableLiveData.setSuccess(response)
-            } catch (e: Exception) {
-                userChannelListMutableLiveData.setError(getError(e))
-            }
-        }
+    fun loadUserChannels(): Flow<PagingData<UgcUserChannelInfo>> {
+        return userChannelRepo.getList()
+    }
+
+    private val userChannelRepo by lazy {
+        BaseListRepositoryImpl(
+            BaseNetworkPagingSource(
+                popularChannelAssistedFactory.create(
+                    ApiCategoryRequestParams("", 0, 0)
+                )
+            )
+        )
     }
 
     private val channelRepo by lazy {
@@ -113,7 +101,7 @@ class LandingPageViewModel @ViewModelInject constructor(
         BaseListRepositoryImpl(
             BaseNetworkPagingSource(
                 featuredContentAssistedFactory.create(
-                    TrendingNowRequestParams("VOD", 0, 0)
+                    ApiCategoryRequestParams("VOD", 0, 0)
                 )
             )
         )
@@ -131,7 +119,7 @@ class LandingPageViewModel @ViewModelInject constructor(
         BaseListRepositoryImpl(
             BaseNetworkPagingSource(
                 trendingNowAssistedFactory.create(
-                    TrendingNowRequestParams("VOD", 1, 0)
+                    ApiCategoryRequestParams("VOD", 1, 0)
                 )
             )
         )

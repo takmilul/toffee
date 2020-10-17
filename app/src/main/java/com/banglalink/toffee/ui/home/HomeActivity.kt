@@ -10,10 +10,8 @@ import android.graphics.Point
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.Display
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.util.Log
+import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
 import android.widget.AutoCompleteTextView
@@ -26,6 +24,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.isGone
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -115,7 +114,9 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main_menu)
         setSupportActionBar(binding.tbar.toolbar)
 
-        setupNavController()
+        if(savedInstanceState == null) {
+            setupNavController()
+        }
 
         initializeDraggableView()
         initDrawer()
@@ -226,6 +227,8 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     }
 
     private fun setupNavController() {
+        Log.e("NAV", "SetupNavController")
+
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.home_nav_host) as NavHostFragment
         navController = navHostFragment.navController
 
@@ -277,6 +280,11 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         binding.playerView.resizeView(calculateScreenWidth())
     }
 
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        setupNavController()
+    }
+
     override fun onPause() {
         super.onPause()
         binding.playerView.clearListeners();
@@ -324,8 +332,23 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         val state =
             resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
         Utils.setFullScreen(this, state)
-        binding.playerView.resizeView(calculateScreenWidth())
+        toggleNavigations(state)
+        binding.playerView.resizeView(calculateScreenWidth().apply {
+            Log.e("FULLSCREEN", "$this")
+        })
         binding.playerView.onFullScreen(state)
+    }
+
+    private fun toggleNavigations(state: Boolean) {
+        if(state) {
+            supportActionBar?.hide()
+            binding.bottomAppBar.performHide()
+            binding.uploadButton.hide()
+        } else {
+            supportActionBar?.show()
+            binding.bottomAppBar.performShow()
+            binding.uploadButton.show()
+        }
     }
 
     override fun onTrackerDialogDismissed() {

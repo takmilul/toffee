@@ -14,7 +14,8 @@ class GetTracker:IGetMethodTracker {
         "/ugc-most-popular-contents/1",
         "/ugc-category-wise-editors-choice/1",
         "/ugc-category-featured-contents/1",
-        "/ugc-categories/1"
+        "/ugc-categories/1",
+        "/ugc-popular-channel/1",
     )
 
     override fun shouldConvertToGetRequest(urlEncodedFragmentString: String):Boolean {

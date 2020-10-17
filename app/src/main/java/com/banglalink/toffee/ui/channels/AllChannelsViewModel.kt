@@ -12,7 +12,7 @@ class AllChannelsViewModel @ViewModelInject constructor(
     private val allChannelService: GetChannelWithCategory
 ): BaseViewModel() {
 
-    fun getChannelFlow(subcategoryId: Int): Flow<Resource<List<StickyHeaderInfo>>> {
+    operator fun invoke(subcategoryId: Int): Flow<Resource<List<StickyHeaderInfo>>> {
         return flow<Resource<List<StickyHeaderInfo>>> {
             try{
                 val response = allChannelService(subcategoryId).map {
