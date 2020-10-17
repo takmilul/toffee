@@ -101,14 +101,14 @@ class CreatorChannelFragment : Fragment(), OnClickListener {
     override fun onClick(v: View?) {
         when (v) {
             addBioButton -> {
-                findNavController().navigate(R.id.action_menu_channel_to_challengesFragment)
-                /*val action = CreatorChannelFragmentDirections.actionMenuChannelToCreatorChannelEditFragment(viewModel.channelInfo.value)
-                findNavController().navigate(action)*/
+//                findNavController().navigate(R.id.action_menu_channel_to_challengesFragment)
+                val direction = CreatorChannelFragmentDirections.actionMenuChannelToCreatorChannelEditFragment(viewModel.channelInfo.value?.myChannelDetail)
+                findNavController().navigate(direction)
             }
             
             editButton -> {
-                val action = CreatorChannelFragmentDirections.actionMenuChannelToCreatorChannelEditFragment(viewModel.channelInfo.value)
-                findNavController().navigate(action)
+                val direction = CreatorChannelFragmentDirections.actionMenuChannelToCreatorChannelEditFragment(viewModel.channelInfo.value?.myChannelDetail)
+                findNavController().navigate(direction)
             }
         }
     }

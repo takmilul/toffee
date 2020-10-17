@@ -3,23 +3,22 @@ package com.banglalink.toffee.ui.userchannel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
 import com.banglalink.toffee.data.network.util.resultFromResponse
-import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.model.UserChannel
-import com.banglalink.toffee.usecase.GetChannelInfo
+import com.banglalink.toffee.model.UgcMyChannelDetailBean
+import com.banglalink.toffee.usecase.GetUgcMyChannelDetail
+import com.banglalink.toffee.usecase.MyChannelDetailParam
 import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.coroutines.launch
 
-class CreatorChannelViewModel: ViewModel() {
+class CreatorChannelViewModel(private val myChannelDetailAssistedFactory: GetUgcMyChannelDetail.AssistedFactory): ViewModel() {
     
-    private val _data = MutableLiveData<Resource<UserChannel?>>()
+    private val _data = MutableLiveData<Resource<UgcMyChannelDetailBean?>>()
     var liveData = _data.toLiveData()
-    val channelInfo = MutableLiveData<UserChannel?>()
+    val channelInfo = MutableLiveData<UgcMyChannelDetailBean?>()
     
-    private val getChannelInfo by unsafeLazy { GetChannelInfo(Preference.getInstance(), RetrofitApiClient.toffeeApi) }
+    private val getChannelInfo by unsafeLazy { myChannelDetailAssistedFactory.create(MyChannelDetailParam()) }
     
     fun loadData() {
         viewModelScope.launch {

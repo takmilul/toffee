@@ -34,6 +34,6 @@ class CreatorChannelEditFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val args = CreatorChannelEditFragmentArgs.fromBundle(requireArguments())
-        viewModel.userChannel.postValue(args.userChannel)
+        viewModel.userChannel.postValue(args.myChannelDetail)
     }
 }

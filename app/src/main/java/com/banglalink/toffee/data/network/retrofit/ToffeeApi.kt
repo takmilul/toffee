@@ -2,9 +2,9 @@ package com.banglalink.toffee.data.network.retrofit
 
 import com.banglalink.toffee.data.network.request.*
 import com.banglalink.toffee.data.network.response.*
-import com.banglalink.toffee.model.CLIENT_API_HEADER
-import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface ToffeeApi {
 
@@ -138,4 +138,12 @@ interface ToffeeApi {
         @Path("dbVersion") dbVersion: Int = 0,
         @Body ugcFeatureRequest: UgcFeatureContentRequest
     ): UgcFeatureContentResponse
+    
+    @POST("ugc-channel-details/1/{isOwner}/{channelId}/{dbVersion}")
+    suspend fun getUgcMyChannelDetails(
+        @Path("isOwner") isOwner: Int = 0,
+        @Path("channelId") channelId: Int = 0,
+        @Path("dbVersion") dbVersion: Int = 0,
+        @Body ugcMyChannelDetailRequest: UgcMyChannelDetailRequest
+    ): UgcMyChannelResponse
 }

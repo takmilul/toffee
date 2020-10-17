@@ -103,11 +103,10 @@
         android:id="@+id/creatorChannelEditFragment"
         android:name="com.banglalink.toffee.ui.userchannel.CreatorChannelEditFragment"
         android:label="CreatorChannelEditFragment" >
-    
         <argument
-            android:name="userChannel"
-            app:argType="com.banglalink.toffee.model.UserChannel"
-            app:nullable="true" />
+            android:name="myChannelDetail"
+            app:nullable="true"
+            app:argType="com.banglalink.toffee.model.UgcMyChannelDetail" />
     </fragment>
 
 <!--    <include-->

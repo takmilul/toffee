@@ -166,8 +166,7 @@
                 <Spinner
                     android:id="@+id/categorySpinner"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:entries="@{viewModel.userChannel.categoryList}"/>
+                    android:layout_height="wrap_content"/>
         
             </RelativeLayout>
         
@@ -186,8 +185,7 @@
                 <Spinner
                     android:id="@+id/subscriptionPriceSpinner"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:entries="@{viewModel.userChannel.subscriptionPriceList}"/>
+                    android:layout_height="wrap_content"/>
         
             </RelativeLayout>
         
