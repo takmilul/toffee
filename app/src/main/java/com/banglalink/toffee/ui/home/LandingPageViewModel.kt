@@ -4,6 +4,7 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.banglalink.toffee.apiservice.*
 import com.banglalink.toffee.apiservice.GetContents
 import com.banglalink.toffee.apiservice.GetFeatureContents
@@ -32,31 +33,31 @@ class LandingPageViewModel @ViewModelInject constructor(
     private val getContentAssistedFactory: GetContents.AssistedFactory
 ):BaseViewModel() {
     fun loadChannels(): Flow<PagingData<ChannelInfo>>{
-        return channelRepo.getList()
+        return channelRepo.getList().cachedIn(viewModelScope)
     }
 
     fun loadLatestVideos(): Flow<PagingData<ChannelInfo>> {
-        return latestVideosRepo.getList()
+        return latestVideosRepo.getList().cachedIn(viewModelScope)
     }
 
     fun loadMostPopularVideos(): Flow<PagingData<ChannelInfo>> {
-        return mostPopularRepo.getList()
+        return mostPopularRepo.getList().cachedIn(viewModelScope)
     }
 
     fun loadFeatureContents(): Flow<PagingData<ChannelInfo>>{
-        return featureRepo.getList()
+        return featureRepo.getList().cachedIn(viewModelScope)
     }
 
     fun loadCategories(): Flow<PagingData<UgcCategory>> {
-        return categoryListRepo.getList()
+        return categoryListRepo.getList().cachedIn(viewModelScope)
     }
 
     fun loadTrendingNowContent(): Flow<PagingData<ChannelInfo>> {
-        return trendingNowRepo.getList()
+        return trendingNowRepo.getList().cachedIn(viewModelScope)
     }
 
     fun loadUserChannels(): Flow<PagingData<UgcUserChannelInfo>> {
-        return userChannelRepo.getList()
+        return userChannelRepo.getList().cachedIn(viewModelScope)
     }
 
     private val userChannelRepo by lazy {
@@ -119,9 +120,29 @@ class LandingPageViewModel @ViewModelInject constructor(
         BaseListRepositoryImpl(
             BaseNetworkPagingSource(
                 trendingNowAssistedFactory.create(
-                    ApiCategoryRequestParams("VOD", 1, 0)
+                    ApiCategoryRequestParams("VOD", 0, 0)
                 )
             )
         )
+    }
+
+    fun loadLatestVideosByCategory(category: UgcCategory): Flow<PagingData<ChannelInfo>> {
+        return BaseListRepositoryImpl(
+            BaseNetworkPagingSource(
+                getContentAssistedFactory.create(
+                    ChannelRequestParams("", category.id.toInt(), "", 0, "VOD")
+                )
+            )
+        ).getList()
+    }
+
+    fun loadTrendingNowContentByCategory(category: UgcCategory): Flow<PagingData<ChannelInfo>> {
+        return BaseListRepositoryImpl(
+            BaseNetworkPagingSource(
+                trendingNowAssistedFactory.create(
+                    ApiCategoryRequestParams("VOD", 1, category.id.toInt())
+                )
+            )
+        ).getList()
     }
 }

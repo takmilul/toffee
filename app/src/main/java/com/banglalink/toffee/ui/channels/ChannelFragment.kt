@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.channels
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,8 +20,11 @@ import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.StickyHeaderGridLayoutManager
 import com.banglalink.toffee.util.unsafeLazy
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 
+@AndroidEntryPoint
 class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListener {
 
     private val homeViewModel by activityViewModels<HomeViewModel>()
@@ -97,6 +101,8 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
 
 //        homeViewModel.getChannelByCategory(0)
         //we will observe channel live data from home activity
+
+        Log.e("CHANNEL", channelViewModel.toString())
 
         lifecycleScope.launchWhenStarted {
             channelViewModel(0)

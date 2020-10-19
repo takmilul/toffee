@@ -148,4 +148,16 @@ interface ToffeeApi {
         @Path("dbVersion") dbVersion: Int,
         @Body ugcPopularChannelsRequest: UgcPopularChannelsRequest
     ): UgcPopularChannelsResponse
+
+    @POST("ugc-follow-on-category")
+    suspend fun followOnCategory(@Body ugcFollowCategoryRequest: UgcFollowCategoryRequest): UgcFollowCategoryResponse
+
+    @POST("ugc-subscribe-on-channel")
+    suspend fun subscribeOnChannel(@Body ugcSubscribeChannelRequest: UgcSubscribeChannelRequest): UgcSubscribeChannelResponse
+
+    @POST("ugc-delete-playlist-name")
+    suspend fun deletePlayList(@Body deletePlayListRequest: DeletePlayListRequest): DeletePlayListResponse
+
+    @POST("ugc-add-content-to-playlist")
+    suspend fun addToPlayList(@Body addToPlayListRequest: AddToPlayListRequest): AddToPlayListResponse
 }

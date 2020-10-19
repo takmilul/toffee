@@ -34,6 +34,9 @@
         <action
             android:id="@+id/action_menu_feed_to_channelRatingFragment"
             app:destination="@id/channelRatingFragment" />
+        <action
+            android:id="@+id/action_landingCategoriesFragment_to_categoryDetailsFragment"
+            app:destination="@id/categoryDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/menu_tv"

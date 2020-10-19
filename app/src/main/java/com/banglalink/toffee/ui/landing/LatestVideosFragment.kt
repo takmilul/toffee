@@ -9,6 +9,8 @@ import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.UgcCategory
+import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.home.PopularVideoListAdapter
@@ -20,7 +22,7 @@ import kotlinx.coroutines.flow.collectLatest
 class LatestVideosFragment: HomeBaseFragment() {
     private lateinit var mAdapter: PopularVideoListAdapter
 
-    val viewModel by activityViewModels<LandingPageViewModel>()
+    private val viewModel by activityViewModels<LandingPageViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,6 +34,8 @@ class LatestVideosFragment: HomeBaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val category: UgcCategory? = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM) as UgcCategory?
 
         mAdapter = PopularVideoListAdapter(object : BaseListItemCallback<ChannelInfo> {
             override fun onItemClicked(item: ChannelInfo) {
@@ -47,12 +51,17 @@ class LatestVideosFragment: HomeBaseFragment() {
             
         }
 
-        observeList()
+        observeList(category)
     }
 
-    private fun observeList() {
+    private fun observeList(category: UgcCategory?) {
         lifecycleScope.launchWhenStarted {
-            viewModel.loadLatestVideos().collectLatest {
+            val latestVideos = if(category != null) {
+                viewModel.loadLatestVideosByCategory(category)
+            } else {
+                viewModel.loadLatestVideos()
+            }
+            latestVideos.collectLatest {
                 mAdapter.submitData(it)
             }
         }
