@@ -4,7 +4,7 @@ data class UgcEditMyChannelRequest (
     var customerId:Int,
     var password:String,
     val channelId: Long,
-    val categoryId: Int,
+    val categoryId: Long,
     val channelName: String,
     val channelDesc: String? = null,
     val oldBannerImageUrl: String? = "NULL",

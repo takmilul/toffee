@@ -14,5 +14,7 @@ data class UgcMyChannelDetail(
     @SerializedName("profile_url")
     val profileUrl: String?,
     @SerializedName("banner_url")
-    val bannerUrl: String?
+    val bannerUrl: String?,
+    @SerializedName("category_id")
+    val categoryId: Long
 ) : Parcelable

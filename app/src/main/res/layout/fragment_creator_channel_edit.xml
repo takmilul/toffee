@@ -17,7 +17,6 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="56dp"
             android:background="@color/screen_bg_white">
         
             <com.banglalink.toffee.ui.widget.CustomImageView
@@ -92,7 +91,7 @@
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/upload_edittext_bg"
                 android:ems="10"
-                android:text=""
+                android:text="@{viewModel.ugcMyChannelDetail.channelName}"
                 android:inputType="textPersonName"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -121,6 +120,7 @@
                 android:maxLines="8"
                 android:maxLength="2000"
                 android:gravity="top|start"
+                android:text="@{viewModel.ugcMyChannelDetail.description}"
                 android:inputType="textMultiLine|textCapSentences"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -169,6 +169,8 @@
                     android:id="@+id/categorySpinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:selectedItemPosition="@{viewModel.categories.indexOf(viewModel.selectedItem.categoryName)}"
+                    android:onItemSelected="@{viewModel::onSelectItem}"
                     android:entries="@{viewModel.categories}"/>
         
             </RelativeLayout>

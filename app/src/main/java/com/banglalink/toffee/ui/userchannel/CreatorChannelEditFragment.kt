@@ -1,6 +1,6 @@
 package com.banglalink.toffee.ui.userchannel
 
-import android.graphics.Bitmap.CompressFormat.JPEG
+import android.graphics.Bitmap.CompressFormat.PNG
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Base64
@@ -23,12 +23,15 @@ import com.banglalink.toffee.model.UgcMyChannelDetail
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_creator_channel_edit.*
 import java.io.ByteArrayOutputStream
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class CreatorChannelEditFragment : Fragment(), OnClickListener {
     private var myChannelDetail: UgcMyChannelDetail? = null
     private lateinit var binding: FragmentCreatorChannelEditBinding
-    private val viewModel by viewModels<CreatorChannelEditViewModel>()
+
+    @Inject lateinit var viewModelAssistedFactory: CreatorChannelEditViewModel.AssistedFactory
+    private val viewModel by viewModels<CreatorChannelEditViewModel> { CreatorChannelEditViewModel.provideFactory(viewModelAssistedFactory, myChannelDetail) }
 
     companion object {
         fun newInstance(): CreatorChannelEditFragment {
@@ -38,7 +41,8 @@ class CreatorChannelEditFragment : Fragment(), OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        viewModel.getCategories()
+        val args = CreatorChannelEditFragmentArgs.fromBundle(requireArguments())
+        myChannelDetail = args.myChannelDetail
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -51,9 +55,7 @@ class CreatorChannelEditFragment : Fragment(), OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeLiveData()
-        val args = CreatorChannelEditFragmentArgs.fromBundle(requireArguments())
-        myChannelDetail = args.myChannelDetail
-        viewModel.userChannel.postValue(myChannelDetail)
+        
         binding.cancelButton.setOnClickListener(this)
         binding.saveButton.setOnClickListener(this)
     }
@@ -62,9 +64,11 @@ class CreatorChannelEditFragment : Fragment(), OnClickListener {
         observe(viewModel.liveData) {
             when (it) {
                 is Success -> {
+                    findNavController().navigateUp()
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
                 }
                 is Failure -> {
+                    println(it.error)
                     Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
                 }
             }
@@ -80,24 +84,32 @@ class CreatorChannelEditFragment : Fragment(), OnClickListener {
 
     private fun editChannel() {
         
-        val byteArrayOutputStream = ByteArrayOutputStream()
-        BitmapFactory.decodeResource(resources, R.drawable.hero).compress(JPEG, 100, byteArrayOutputStream)
+        var byteArrayOutputStream = ByteArrayOutputStream()
+        BitmapFactory.decodeResource(resources, R.drawable.hero).compress(PNG, 50, byteArrayOutputStream)
         val imageBytes: ByteArray = byteArrayOutputStream.toByteArray()
         val imageString: String = Base64.encodeToString(imageBytes, Base64.DEFAULT)
+        
+        val byteArrayOutputStream2 = ByteArrayOutputStream()
+        BitmapFactory.decodeResource(resources, R.drawable.avatar).compress(PNG, 50, byteArrayOutputStream2)
+        val imageBytes2: ByteArray = byteArrayOutputStream2.toByteArray()
+        val imageString2: String = Base64.encodeToString(imageBytes2, Base64.DEFAULT)
         
         val ugcEditMyChannelRequest = UgcEditMyChannelRequest(
             0,
             "",
-            myChannelDetail?.id ?: 0,
-            0,
+            myChannelDetail?.id ?: 1,
+            viewModel.selectedItem?.id!!,
             binding.channelName.text.toString(),
             binding.description.text.toString(),
             myChannelDetail?.bannerUrl ?: "NULL",
             imageString,
-            myChannelDetail?.profileUrl ?: "NULL",
-            imageString
+            myChannelDetail?.profileUrl ?:"NULL",
+            imageString2
         )
         
         viewModel.editChannel(ugcEditMyChannelRequest)
     }
 }
+
+//
+// 
