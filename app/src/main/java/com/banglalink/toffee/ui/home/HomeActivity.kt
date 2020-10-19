@@ -333,9 +333,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
         Utils.setFullScreen(this, state)
         toggleNavigations(state)
-        binding.playerView.resizeView(calculateScreenWidth().apply {
-            Log.e("FULLSCREEN", "$this")
-        })
+        binding.playerView.resizeView(calculateScreenWidth())
         binding.playerView.onFullScreen(state)
     }
 

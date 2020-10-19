@@ -46,7 +46,12 @@ class LandingCategoriesFragment: BaseFragment() {
 
         mAdapter = CategoriesListAdapter(object : BaseListItemCallback<UgcCategory>{
             override fun onItemClicked(item: UgcCategory) {
-
+                val args = Bundle().apply {
+                    putParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM, item)
+                }
+                parentFragment?.
+                findNavController()?.
+                navigate(R.id.action_landingCategoriesFragment_to_categoryDetailsFragment, args)
             }
         })
 

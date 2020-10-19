@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -19,6 +20,7 @@ import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.NavCategory
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.FeaturedListAdapter
 import com.banglalink.toffee.ui.home.LandingPageViewModel
@@ -34,18 +36,16 @@ import kotlinx.coroutines.launch
 import kotlin.random.Random
 import kotlin.random.nextInt
 
-class CategoryInfoFragment: Fragment(R.layout.fragment_category_info) {
-
+class CategoryInfoFragment: HomeBaseFragment() {
     private lateinit var mAdapter: FeaturedListAdapter
+    private val viewModel by activityViewModels<LandingPageViewModel>()
 
-    val viewModel by unsafeLazy {
-        ViewModelProvider(activity!!)[LandingPageViewModel::class.java]
-    }
-
-    companion object {
-        fun newInstance(): CategoryInfoFragment {
-            return CategoryInfoFragment()
-        }
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_category_info, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -68,7 +68,9 @@ class CategoryInfoFragment: Fragment(R.layout.fragment_category_info) {
     }
 
     private fun observeList() {
-
+        lifecycleScope.launchWhenStarted {
+//            viewModel.
+        }
     }
 
     private fun observeCategoryData() {
@@ -126,5 +128,9 @@ class CategoryInfoFragment: Fragment(R.layout.fragment_category_info) {
                 }
             }
         }
+    }
+
+    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
+
     }
 }

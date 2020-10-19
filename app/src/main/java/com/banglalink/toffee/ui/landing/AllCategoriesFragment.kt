@@ -49,7 +49,7 @@ class AllCategoriesFragment: BaseFragment() {
         mAdapter = CategoriesListAdapter(object: BaseListItemCallback<UgcCategory> {
             override fun onItemClicked(item: UgcCategory) {
                 val args = Bundle().apply {
-//                    putParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM, it)
+                    putParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM, item)
                 }
                 parentFragment?.
                 findNavController()?.

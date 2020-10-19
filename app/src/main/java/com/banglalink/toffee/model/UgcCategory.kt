@@ -1,7 +1,10 @@
 package com.banglalink.toffee.model
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class UgcCategory(
     val id: Long,
 
@@ -22,4 +25,4 @@ data class UgcCategory(
 
     @SerializedName("category_icon")
     val categoryIcon: String?
-)
+): Parcelable

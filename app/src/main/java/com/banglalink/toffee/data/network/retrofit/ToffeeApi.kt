@@ -2,9 +2,9 @@ package com.banglalink.toffee.data.network.retrofit
 
 import com.banglalink.toffee.data.network.request.*
 import com.banglalink.toffee.data.network.response.*
-import retrofit2.http.Body
-import retrofit2.http.POST
-import retrofit2.http.Path
+import com.banglalink.toffee.model.CLIENT_API_HEADER
+import retrofit2.Response
+import retrofit2.http.*
 
 interface ToffeeApi {
 
@@ -13,16 +13,16 @@ interface ToffeeApi {
     suspend fun signinByPhone(@Body signinByPhoneRequest: SigninByPhoneRequest): SigninByPhoneResponse
 
     @POST("confirm-code")
-    suspend fun verifyCode(@Body verifyCodeRequest: VerifyCodeRequest): VerifyCodeResponse
+    suspend fun verifyCode(@Body verifyCodeRequest: VerifyCodeRequest):VerifyCodeResponse
 
     @POST("subscriber-profile")
-    suspend fun getCustomerProfile(@Body profileRequest: ProfileRequest): ProfileResponse
+    suspend fun getCustomerProfile(@Body profileRequest: ProfileRequest):ProfileResponse
 
     @POST("categories-v2/1/{dbVersion}")//https://staging.toffee-cms.com/categories-v2/deviceType/dbVersion
     suspend fun getCategory(
         @Path("dbVersion") dbVersion: Int,
         @Body navCategoryRequest: NavCategoryRequest
-    ): NavCategoryResponse
+    ):NavCategoryResponse
 
     @POST("contents-v5/1/{type}/1/{categoryId}/{subcategoryId}/{limit}/{offset}/{dbVersion}")//https://staging.toffee-cms.com/contents-v5/deviceType/type/telcoId/categoryId/subCategoryId/limit/offset/dbVersion
     suspend fun getContents(
@@ -36,76 +36,76 @@ interface ToffeeApi {
     ): ContentResponse
 
     @POST("feature-contents")
-    suspend fun getFeatureContents(@Body featureContentRequest: FeatureContentRequest): FeatureContentResponse
+    suspend fun getFeatureContents(@Body featureContentRequest: FeatureContentRequest):FeatureContentResponse
 
     @POST("feature-contents-v2/1/VOD/1/0/100/0/{dbVersion}")//https://staging.toffee-cms.com/feature-contents-v2/deviceType/type/telcoId/subCategoryId/li mit/offset/dbVersion
     suspend fun getFeatureContentsV2(
         @Path("dbVersion") dbVersion: Int,
         @Body featureContentRequest: FeatureContentRequest
-    ): FeatureContentResponse
+    ):FeatureContentResponse
 
     @POST("history-contents")
-    suspend fun getHistoryContents(@Body historyContentRequest: HistoryContentRequest): HistoryContentResponse
+    suspend fun getHistoryContents(@Body historyContentRequest: HistoryContentRequest):HistoryContentResponse
 
     @POST("favorite-contents")
-    suspend fun getFavoriteContents(@Body favoriteContentRequest: FavoriteContentRequest): FavoriteContentResponse
+    suspend fun getFavoriteContents(@Body favoriteContentRequest: FavoriteContentRequest):FavoriteContentResponse
 
     @POST("app-home-page-content-toffee-v2/1/0/1/200/{dbVersion}")//https://staging.toffee-cms.com/app-home-page-content-toffee-v2/deviceType/subCategoryId/telc oId/limit/dbVesion
     suspend fun getChannels(
         @Path("dbVersion") dbVersion: Int,
         @Body allChannelRequest: AllChannelRequest
-    ): AllChannelResponse
+    ):AllChannelResponse
 
     @POST("relative-contents-ext")
-    suspend fun getRelativeContents(@Body relativeContentRequest: RelativeContentRequest): RelativeContentResponse
+    suspend fun getRelativeContents(@Body relativeContentRequest: RelativeContentRequest):RelativeContentResponse
 
     @POST("viewing-content")
-    suspend fun sendViewingContent(@Body viewingContentRequest: ViewingContentRequest): ViewingContentResponse
+    suspend fun sendViewingContent(@Body viewingContentRequest: ViewingContentRequest):ViewingContentResponse
 
     @POST("set-favorites")
-    suspend fun updateFavorite(@Body favoriteRequest: FavoriteRequest): FavoriteResponse
+    suspend fun updateFavorite(@Body favoriteRequest: FavoriteRequest):FavoriteResponse
 
     @POST("subscriber-profile-update")
-    suspend fun updateProfile(@Body updateProfileRequest: UpdateProfileRequest): UpdateProfileResponse
+    suspend fun updateProfile(@Body updateProfileRequest: UpdateProfileRequest):UpdateProfileResponse
 
     @POST("subscriber-profile-photo")
-    suspend fun uploadPhoto(@Body updateProfilePhotoRequest: UploadProfileImageRequest): UploadProfileImageResponse
+    suspend fun uploadPhoto(@Body updateProfilePhotoRequest: UploadProfileImageRequest):UploadProfileImageResponse
 
     @POST("search-contents")
-    suspend fun searchContent(@Body searchContentRequest: SearchContentRequest): SearchContentResponse
+    suspend fun searchContent(@Body searchContentRequest: SearchContentRequest):SearchContentResponse
 
     @POST("contents-shareable")
-    suspend fun getContentFromShareableUrl(@Body shareableRequest: ContentShareableRequest): ContentShareableResponse
+    suspend fun getContentFromShareableUrl(@Body shareableRequest: ContentShareableRequest):ContentShareableResponse
 
     @POST("heart-beat")
-    suspend fun sendHeartBeat(@Body heartBeatRequest: HeartBeatRequest): HeartBeatResponse
+    suspend fun sendHeartBeat(@Body heartBeatRequest: HeartBeatRequest):HeartBeatResponse
 
     @POST("packages-with-subscription")
-    suspend fun getPackageList(@Body packageListRequest: PackageListRequest): PackageListResponse
+    suspend fun getPackageList(@Body packageListRequest: PackageListRequest):PackageListResponse
 
     @POST("package-details-v2")
-    suspend fun getPackageChannelList(@Body packageChannelListRequest: PackageChannelListRequest): PackageChannelListResponse
+    suspend fun getPackageChannelList(@Body packageChannelListRequest: PackageChannelListRequest):PackageChannelListResponse
 
     @POST("subscribe-a-package")
-    suspend fun subscribePackage(@Body subscribePackageRequest: SubscribePackageRequest): SubscribePackageResponse
+    suspend fun subscribePackage(@Body subscribePackageRequest: SubscribePackageRequest):SubscribePackageResponse
 
     @POST("set-auto-renew")
-    suspend fun setAutoRenew(@Body autoRenewRequest: AutoRenewRequest): AutoRenewResponse
+    suspend fun setAutoRenew(@Body autoRenewRequest: AutoRenewRequest):AutoRenewResponse
 
     @POST("set-fcm-token")
-    suspend fun setFcmToken(@Body fcmTokenRequest: FcmTokenRequest): FcmTokenResponse
+    suspend fun setFcmToken(@Body fcmTokenRequest: FcmTokenRequest):FcmTokenResponse
 
     @POST("my-referral-code")
-    suspend fun getMyReferralCode(@Body referralCodeRequest: ReferralCodeRequest): ReferralCodeResponse
+    suspend fun getMyReferralCode(@Body referralCodeRequest: ReferralCodeRequest):ReferralCodeResponse
 
     @POST("referral-code-status")
-    suspend fun checkReferralCode(@Body referralCodeStatusRequest: ReferralCodeStatusRequest): ReferralCodeStatusResponse
+    suspend fun checkReferralCode(@Body referralCodeStatusRequest: ReferralCodeStatusRequest):ReferralCodeStatusResponse
 
     @POST("redeem-referral-code")
-    suspend fun redeemReferralCode(@Body redeemReferralCodeRequest: RedeemReferralCodeRequest): RedeemReferralCodeResponse
+    suspend fun  redeemReferralCode(@Body redeemReferralCodeRequest: RedeemReferralCodeRequest): RedeemReferralCodeResponse
 
     @POST("referrer-policy")
-    suspend fun getReferrerPolicy(@Body referrerPolicyRequest: ReferrerPolicyRequest): ReferrerPolicyResponse
+    suspend fun getReferrerPolicy(@Body referrerPolicyRequest: ReferrerPolicyRequest):ReferrerPolicyResponse
 
     //*************** UGC APIS **********************//
     @POST("ugc-most-popular-contents/1/{type}/1/{dbVersion}")
@@ -148,6 +148,18 @@ interface ToffeeApi {
         @Path("dbVersion") dbVersion: Int,
         @Body ugcPopularChannelsRequest: UgcPopularChannelsRequest
     ): UgcPopularChannelsResponse
+
+    @POST("ugc-follow-on-category")
+    suspend fun followOnCategory(@Body ugcFollowCategoryRequest: UgcFollowCategoryRequest): UgcFollowCategoryResponse
+
+    @POST("ugc-subscribe-on-channel")
+    suspend fun subscribeOnChannel(@Body ugcSubscribeChannelRequest: UgcSubscribeChannelRequest): UgcSubscribeChannelResponse
+
+    @POST("ugc-delete-playlist-name")
+    suspend fun deletePlayList(@Body deletePlayListRequest: DeletePlayListRequest): DeletePlayListResponse
+
+    @POST("ugc-add-content-to-playlist")
+    suspend fun addToPlayList(@Body addToPlayListRequest: AddToPlayListRequest): AddToPlayListResponse
 
     @POST("ugc-channel-details/1/{isOwner}/{channelId}/{dbVersion}")
     suspend fun getUgcMyChannelDetails(
