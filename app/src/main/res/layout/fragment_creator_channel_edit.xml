@@ -11,12 +11,13 @@
     
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:fillViewport="true">
     
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="56dp"
             android:background="@color/screen_bg_white">
         
             <com.banglalink.toffee.ui.widget.CustomImageView
@@ -83,7 +84,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/logoEditButton" />
         
             <EditText
-                android:id="@+id/title"
+                android:id="@+id/channelName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -91,6 +92,7 @@
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/upload_edittext_bg"
                 android:ems="10"
+                android:text=""
                 android:inputType="textPersonName"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -104,7 +106,7 @@
                 android:layout_marginTop="24dp"
                 android:text="Description"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/title" />
+                app:layout_constraintTop_toBottomOf="@+id/channelName" />
         
             <com.banglalink.toffee.ui.widget.HashTagEditText
                 android:id="@+id/description"
@@ -166,7 +168,8 @@
                 <Spinner
                     android:id="@+id/categorySpinner"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:entries="@{viewModel.categories}"/>
         
             </RelativeLayout>
         

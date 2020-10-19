@@ -8,7 +8,7 @@ import kotlinx.android.parcel.Parcelize
 data class UgcMyChannelDetail(
     val id: Long,
     @SerializedName("channel_name")
-    val name: String,
+    val channelName: String?,
     @SerializedName("channel_desc")
     val description: String?,
     @SerializedName("profile_url")

@@ -5,22 +5,17 @@ import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.UgcMyChannelDetailBean
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
+import com.banglalink.toffee.util.getFormattedViewsText
+import javax.inject.Inject
 
-data class MyChannelDetailParam(
-    val isOwner: Int = 0,
-    val channelId: Int = 0,
-)
+class GetUgcMyChannelDetail @Inject constructor(private val preference: Preference, private val toffeeApi: ToffeeApi) {
 
-class GetUgcMyChannelDetail @AssistedInject constructor(private val preference: Preference, private val toffeeApi: ToffeeApi, @Assisted private val requestParams: MyChannelDetailParam) {
-    
-    suspend fun execute(): UgcMyChannelDetailBean? {
-        
+    suspend fun execute(isOwner: Int, channelId: Int): UgcMyChannelDetailBean {
+
         val response = tryIO2 {
             toffeeApi.getUgcMyChannelDetails(
-                requestParams.isOwner,
-                requestParams.channelId,
+                isOwner,
+                channelId,
                 preference.getDBVersionByApiName("getUgcChannelDetails"),
                 UgcMyChannelDetailRequest(
                     preference.customerId,
@@ -28,12 +23,11 @@ class GetUgcMyChannelDetail @AssistedInject constructor(private val preference: 
                 )
             )
         }
+
+        response.response.apply {
+            this.subscriberCount = getFormattedViewsText(subscriberCount.toString())
+        }
         
         return response.response
-    }
-    
-    @AssistedInject.Factory
-    interface AssistedFactory{
-        fun create(requestParams: MyChannelDetailParam): GetUgcMyChannelDetail
     }
 }

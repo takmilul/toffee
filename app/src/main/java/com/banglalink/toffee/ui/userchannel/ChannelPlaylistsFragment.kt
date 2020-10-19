@@ -80,7 +80,7 @@ class ChannelPlaylistsFragment : BaseListFragment<ChannelInfo>(), BaseListItemCa
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             show()
         }
-        dialogView.submitButton.setOnClickListener { alertDialog.dismiss() }
+        dialogView.createButton.setOnClickListener { alertDialog.dismiss() }
     }
     
     private fun showEditPlaylistDialog() {
@@ -92,8 +92,8 @@ class ChannelPlaylistsFragment : BaseListFragment<ChannelInfo>(), BaseListItemCa
         }
         with(dialogView){
             dialogTitleTextView.text = "Edit Playlist"
-            submitButton.text = "Save"
-            submitButton.setOnClickListener { alertDialog.dismiss() }
+            createButton.text = "Save"
+            createButton.setOnClickListener { alertDialog.dismiss() }
         }
     }
     

@@ -7,6 +7,9 @@
 
     <data>
         <variable
+            name="position"
+            type="Integer" />
+        <variable
             name="data"
             type="com.banglalink.toffee.model.ChannelInfo" />
         <variable
@@ -146,7 +149,7 @@
             android:scaleType="fitEnd"
             android:src="@drawable/ic_like_emo"
             loadImageResource="@{data.reaction}"
-            android:onClick="@{(view) -> callback.onReactionClicked(view, data)}"
+            android:onClick="@{(view) -> callback.onReactionClicked(view, position, data)}"
             app:layout_constraintEnd_toStartOf="@id/textView9"
             app:layout_constraintHorizontal_bias="1"
             app:layout_constraintStart_toEndOf="@id/textView8"
@@ -168,8 +171,7 @@
             android:id="@+id/group2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contextClickable="true"
-            android:onClick="@{(view) -> callback.onReactionClicked(view, data)}"
+            android:onClick="@{(view) -> callback.onReactionClicked(view, position, data)}"
             app:constraint_referenced_ids="textView9,reactionIcon" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

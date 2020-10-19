@@ -14,7 +14,6 @@ import com.banglalink.toffee.R.layout
 import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.ReactionInfo
-import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.enums.Reaction.*
 import com.banglalink.toffee.model.ChannelInfo
@@ -28,38 +27,52 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReactionCallback<ChannelInfo> {
 
+    private var isOwner: Int = 0
+    private var channelId: Int = 0
     private var enableToolbar: Boolean = false
 
     @Inject
     lateinit var reactionDao: ReactionDao
 
-    @Inject
-    lateinit var pref: Preference
-    private var mReactionInfo: ReactionInfo? = null
     override val mAdapter by lazy { ChannelVideoListAdapter(this) }
-    override val mViewModel by viewModels<ChannelVideosViewModel>()
+//    override val mViewModel by viewModels<ChannelVideosViewModel>()
+
+    @Inject lateinit var viewModelAssistedFactory: ChannelVideosViewModel.AssistedFactory
+    override val mViewModel by viewModels<ChannelVideosViewModel> { ChannelVideosViewModel.provideFactory(viewModelAssistedFactory, isOwner, channelId) }
 
     companion object {
         private const val SHOW_TOOLBAR = "enableToolbar"
-        fun newInstance(enableToolbar: Boolean): ChannelVideosFragment {
+        private const val IS_OWNER = "isOwner"
+        private const val CHANNEL_ID = "channelId"
+        fun newInstance(enableToolbar: Boolean, isOwner: Int, channelId: Int): ChannelVideosFragment {
             val instance = ChannelVideosFragment()
             val bundle = Bundle()
             bundle.putBoolean(SHOW_TOOLBAR, enableToolbar)
+            bundle.putInt(IS_OWNER, isOwner)
+            bundle.putInt(CHANNEL_ID, channelId)
             instance.arguments = bundle
             return instance
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        isOwner = arguments?.getInt(IS_OWNER) ?: 0
+        channelId = arguments?.getInt(CHANNEL_ID) ?: 0
+
+    }
+    
     override fun getEmptyViewInfo(): Pair<Int, String?> {
         return Pair(R.drawable.ic_videos_empty, "You haven't uploaded any video yet")
     }
 
-    override fun onReactionClicked(view: View, item: ChannelInfo) {
-        super.onReactionClicked(view, item)
-        showReactionDialog(view, item)
+    override fun onReactionClicked(view: View, position: Int, item: ChannelInfo) {
+        super.onReactionClicked(view, position, item)
+        showReactionDialog(view, position, item)
     }
 
-    private fun showReactionDialog(reactView: View, item: ChannelInfo) {
+    private fun showReactionDialog(reactView: View, position: Int, item: ChannelInfo) {
         val dialogView: View = this.layoutInflater.inflate(layout.alert_dialog_reactions, null)
         val dialogBuilder = AlertDialog.Builder(requireContext()).setView(dialogView)
         val alertDialog: AlertDialog = dialogBuilder.create().apply {
@@ -75,37 +88,38 @@ class ChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReactionCa
             }
 
             with(dialogView) {
-                likeButton.setOnClickListener {button->
-                    reactionInfo?: react(reactView, button, item.id, Like)
+                likeButton.setOnClickListener {reactionButton->
+                    reactionInfo?: react(item, position, reactView, reactionButton, item.id, Like)
                     alertDialog.dismiss()
                 }
-                loveButton.setOnClickListener {button->
-                    reactionInfo?: react(reactView, button, item.id, Love)
+                loveButton.setOnClickListener {reactionButton->
+                    reactionInfo?: react(item, position, reactView, reactionButton, item.id, Love)
                     alertDialog.dismiss()
                 }
-                hahaButton.setOnClickListener {button->
-                    reactionInfo?: react(reactView, button, item.id, HaHa)
+                hahaButton.setOnClickListener {reactionButton->
+                    reactionInfo?: react(item, position, reactView, reactionButton, item.id, HaHa)
                     alertDialog.dismiss()
                 }
-                wowButton.setOnClickListener {button->
-                    reactionInfo?: react(reactView, button, item.id, Wow)
+                wowButton.setOnClickListener {reactionButton->
+                    reactionInfo?: react(item, position, reactView, reactionButton, item.id, Wow)
                     alertDialog.dismiss()
                 }
-                sadButton.setOnClickListener {button->
-                    reactionInfo?: react(reactView, button, item.id, Sad)
+                sadButton.setOnClickListener {reactionButton->
+                    reactionInfo?: react(item, position, reactView, reactionButton, item.id, Sad)
                     alertDialog.dismiss()
                 }
-                angryButton.setOnClickListener {button->
-                    reactionInfo?: react(reactView, button, item.id, Angry)
+                angryButton.setOnClickListener {reactionButton->
+                    reactionInfo?: react(item, position, reactView, reactionButton, item.id, Angry)
                     alertDialog.dismiss()
                 }
             }
         }
     }
 
-    private fun react(reactView: View, reactButton: View, contentId: String, reaction: Reaction) {
+    private fun react(item: ChannelInfo, position: Int, reactView: View, reactButton: View, contentId: String, reaction: Reaction) {
         val reactionInfo = ReactionInfo(null, contentId, reaction.value)
         mViewModel.insert(reactionInfo)
+        mAdapter.getItemByIndex(position)?.reaction = getReactionIcon(reaction.value)
         reactButton.background = ContextCompat.getDrawable(requireContext(), R.drawable.teal_round_bg)
         (reactView as ImageView).setImageDrawable((reactButton as ImageView).drawable)
     }
@@ -121,4 +135,17 @@ class ChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReactionCa
             Angry.value -> dialogView.angryButton.background = background
         }
     }
+
+    private fun getReactionIcon(reaction: Int?): Int? {
+        return when (reaction) {
+            Like.value -> R.drawable.ic_reaction_like
+            Love.value -> R.drawable.ic_reaction_love
+            HaHa.value -> R.drawable.ic_reaction_haha
+            Wow.value -> R.drawable.ic_reaction_wow
+            Sad.value -> R.drawable.ic_reaction_sad
+            Angry.value -> R.drawable.ic_reaction_angry
+            else -> R.drawable.ic_like_emo
+        }
+    }
+
 }
