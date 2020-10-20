@@ -23,7 +23,8 @@ class ChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<Str
     private var playlistId: Int = 0
     private lateinit var mAdapter: ChannelAddToPlaylistAdapter
     private val viewModel by viewModels<UgcMyChannelAddToPlaylistViewModel>()
-    
+    private lateinit var alertDialog: AlertDialog
+
     companion object {
         private const val CONTENT_ID = "contentId"
         fun newInstance(contentId: Int, items: ArrayList<String>): ChannelAddToPlaylistFragment {
@@ -43,7 +44,7 @@ class ChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<Str
         mAdapter.addAll(data)
         val dialogView: View = this.layoutInflater.inflate(layout.alert_dialog_add_to_playlist, null)
         val dialogBuilder = AlertDialog.Builder(requireContext()).setView(dialogView)
-        val alertDialog: AlertDialog = dialogBuilder.create().apply {
+        alertDialog = dialogBuilder.create().apply {
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }
         dialogView.listview.adapter = mAdapter
@@ -53,20 +54,25 @@ class ChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<Str
             fragment.show(requireActivity().supportFragmentManager, "add_to_playlist")
             fragment.dialog?.setCanceledOnTouchOutside(true)
         }
-        dialogView.doneButton.setOnClickListener { 
+        dialogView.doneButton.setOnClickListener {
             observeAddToPlaylist()
             viewModel.addToPlaylist(playlistId, contentId)
-            alertDialog.dismiss() 
         }
         
         return alertDialog
     }
 
     private fun observeAddToPlaylist() {
-        observe(viewModel.liveData){
-            when(it){
-                is Success -> Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
-                is Failure -> Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
+        observe(viewModel.liveData) {
+            when (it) {
+                is Success -> {
+                    Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
+                    alertDialog.dismiss()
+                }
+                is Failure -> {
+                    Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
+                    alertDialog.dismiss()
+                }
             }
         }
     }
@@ -79,8 +85,7 @@ class ChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<Str
                     playlistId = 12
                     mAdapter.setSelectedItemPosition(position)
                     mAdapter.notifyDataSetChanged()
-                }
-                else {
+                } else {
                     mAdapter.setSelectedItemPosition(-1)
                     mAdapter.notifyDataSetChanged()
                 }

@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.userchannel
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -15,33 +16,16 @@ import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.launch
 
-class CreatorChannelViewModel @AssistedInject constructor(private val apiService: GetUgcMyChannelDetail, @Assisted private val isOwner: Int, @Assisted private val channelId: Int) :
+class CreatorChannelViewModel @ViewModelInject constructor(private val apiService: GetUgcMyChannelDetail) :
     ViewModel() {
 
     private val _data = MutableLiveData<Resource<UgcMyChannelDetailBean?>>()
     var liveData = _data.toLiveData()
     val channelInfo = MutableLiveData<UgcMyChannelDetailBean>()
 
-    @AssistedInject.Factory
-    interface AssistedFactory {
-        fun create(isOwner: Int, channelId: Int): CreatorChannelViewModel
-    }
-
-    companion object {
-        fun provideFactory(
-            assistedFactory: AssistedFactory,
-            isOwner: Int, channelId: Int
-        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                return assistedFactory.create(isOwner, channelId) as T
-            }
-        }
-    }
-
-    fun loadData() {
+    fun loadData(isOwner: Int, channelId: Int) {
         viewModelScope.launch {
-            val response = resultFromResponse { apiService.execute(isOwner, channelId) }
-            when (response) {
+            when (val response = resultFromResponse { apiService.execute(isOwner, channelId) }) {
                 is Success -> channelInfo.postValue(response.data)
                 is Failure -> {
                 }

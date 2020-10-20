@@ -131,7 +131,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.5" />
+                app:layout_constraintGuide_percent="1.0" />
         
             <TextView
                 android:id="@+id/textView20"
@@ -149,6 +149,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="24dp"
+                android:visibility="gone"
                 android:text="Subscription Price"
                 app:layout_constraintStart_toStartOf="@+id/guideline9"
                 app:layout_constraintTop_toBottomOf="@+id/description" />
@@ -171,7 +172,7 @@
                     android:layout_height="wrap_content"
                     android:entries="@{viewModel.categories}"
                     android:selectedItemPosition="@{viewModel.categories.indexOf(viewModel.selectedItem.categoryName)}"
-                    android:onItemSelected="@{viewModel::onSelectItem}"/>
+                    android:onItemSelected="@{viewModel::onItemSelected}"/>
         
             </RelativeLayout>
         
@@ -182,6 +183,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="16dp"
+                android:visibility="gone"
                 android:background="@drawable/upload_spinner_bg"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/guideline9"

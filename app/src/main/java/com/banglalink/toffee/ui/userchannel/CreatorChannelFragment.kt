@@ -44,15 +44,10 @@ class CreatorChannelFragment : Fragment(), OnClickListener {
     private var fragmentList: ArrayList<Fragment> = arrayListOf()
     private var fragmentTitleList: ArrayList<String> = arrayListOf()
 
-    @Inject lateinit var myViewModelAssistedFactory: CreatorChannelViewModel.AssistedFactory
-    private val viewModel by viewModels<CreatorChannelViewModel> { CreatorChannelViewModel.provideFactory(myViewModelAssistedFactory, isOwner, channelId) }
-
-    @Inject lateinit var createPlaylistViewModelAssistedFactory: UgcMyChannelCreatePlaylistViewModel.AssistedFactory
-    private val createPlaylistViewModel by viewModels<UgcMyChannelCreatePlaylistViewModel> { UgcMyChannelCreatePlaylistViewModel.provideFactory(createPlaylistViewModelAssistedFactory, isOwner, channelId) }
-
-    @Inject lateinit var deletePlaylistViewModelAssistedFactory: UgcMyChannelDeletePlaylistViewModel.AssistedFactory
-    private val deletePlaylistViewModel by viewModels<UgcMyChannelDeletePlaylistViewModel> { UgcMyChannelDeletePlaylistViewModel.provideFactory(deletePlaylistViewModelAssistedFactory, playlistId) }
-
+    private val viewModel by viewModels<CreatorChannelViewModel>()
+    private val createPlaylistViewModel by viewModels<UgcMyChannelCreatePlaylistViewModel>()
+    private val deletePlaylistViewModel by viewModels<UgcMyChannelDeletePlaylistViewModel>()
+    
     companion object {
         private const val IS_OWNER = "isOwner"
         private const val CHANNEL_ID = "channelId"
@@ -97,7 +92,7 @@ class CreatorChannelFragment : Fragment(), OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.loadData()
+        viewModel.loadData(isOwner, channelId)
 
         binding.viewPager.offscreenPageLimit = 1
         binding.creatorChannelView.addBioButton.setOnClickListener(this)
@@ -169,7 +164,7 @@ class CreatorChannelFragment : Fragment(), OnClickListener {
         playlistBinding.createButton.setOnClickListener {
             if (!createPlaylistViewModel.playlistName.isNullOrEmpty()) {
                 observeCreatePlaylist()
-                createPlaylistViewModel.createPlaylist()
+                createPlaylistViewModel.createPlaylist(isOwner, channelId)
                 alertDialog.dismiss()
             }
             else {

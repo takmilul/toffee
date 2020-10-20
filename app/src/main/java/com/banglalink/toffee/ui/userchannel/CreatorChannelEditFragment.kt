@@ -93,8 +93,14 @@ class CreatorChannelEditFragment : Fragment(), OnClickListener {
         BitmapFactory.decodeResource(resources, R.drawable.avatar).compress(PNG, 20, byteArrayOutputStream2)
         val imageBytes2: ByteArray = byteArrayOutputStream2.toByteArray()
         val imageString2: String = Base64.encodeToString(imageBytes2, Base64.DEFAULT)
-        
-        if (!binding.channelName.text.isNullOrEmpty()) {
+
+        if (binding.channelName.text.isNullOrEmpty()) {
+            Toast.makeText(requireContext(), "Please give a channel name", Toast.LENGTH_SHORT).show()
+        }
+        else if (viewModel.selectedItem?.id == null){
+            Toast.makeText(requireContext(), "Category is not selected", Toast.LENGTH_SHORT).show()
+        }
+        else {
             val ugcEditMyChannelRequest = UgcEditMyChannelRequest(
                 0,
                 "",
@@ -109,9 +115,6 @@ class CreatorChannelEditFragment : Fragment(), OnClickListener {
             )
 
             viewModel.editChannel(ugcEditMyChannelRequest)
-        }
-        else{
-            Toast.makeText(requireContext(), "Please give a channel name", Toast.LENGTH_SHORT).show()
         }
     }
 }

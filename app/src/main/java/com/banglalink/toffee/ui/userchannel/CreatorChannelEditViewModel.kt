@@ -33,9 +33,8 @@ class CreatorChannelEditViewModel @AssistedInject constructor(private val apiSer
     init {
         viewModelScope.launch {
             categoryList = categoryApiService.loadData(0, 0)
-            selectedItem = categoryList.find { it.id == ugcMyChannelDetail?.categoryId } ?: categoryList[0]
+            selectedItem = categoryList.find { it.id == ugcMyChannelDetail?.categoryId }
             _categories.postValue(categoryList.map { it.categoryName })
-            selectedItemPosition()
         }
     }
 
@@ -61,12 +60,11 @@ class CreatorChannelEditViewModel @AssistedInject constructor(private val apiSer
         }
     }
 
-    fun onSelectItem(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
-        selectedItem = categoryList.find { it.categoryName == parent?.adapter?.getItem(pos) } ?: categoryList[0]
+    fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
+        selectedItem = categoryList.find { it.categoryName == parent?.adapter?.getItem(pos) }
     }
 
-    fun selectedItemPosition(): Int {
-        val pos = categories.value?.indexOf(selectedItem?.categoryName)?:0
-        return pos
-    }
+    /*fun selectedItemPosition(): Int {
+        return categories.value?.indexOf(selectedItem?.categoryName)?:0
+    }*/
 }
