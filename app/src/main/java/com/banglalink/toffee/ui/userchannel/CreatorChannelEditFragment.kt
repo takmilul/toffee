@@ -84,32 +84,34 @@ class CreatorChannelEditFragment : Fragment(), OnClickListener {
 
     private fun editChannel() {
         
-        var byteArrayOutputStream = ByteArrayOutputStream()
-        BitmapFactory.decodeResource(resources, R.drawable.hero).compress(PNG, 50, byteArrayOutputStream)
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        BitmapFactory.decodeResource(resources, R.drawable.hero).compress(PNG, 20, byteArrayOutputStream)
         val imageBytes: ByteArray = byteArrayOutputStream.toByteArray()
         val imageString: String = Base64.encodeToString(imageBytes, Base64.DEFAULT)
         
         val byteArrayOutputStream2 = ByteArrayOutputStream()
-        BitmapFactory.decodeResource(resources, R.drawable.avatar).compress(PNG, 50, byteArrayOutputStream2)
+        BitmapFactory.decodeResource(resources, R.drawable.avatar).compress(PNG, 20, byteArrayOutputStream2)
         val imageBytes2: ByteArray = byteArrayOutputStream2.toByteArray()
         val imageString2: String = Base64.encodeToString(imageBytes2, Base64.DEFAULT)
         
-        val ugcEditMyChannelRequest = UgcEditMyChannelRequest(
-            0,
-            "",
-            myChannelDetail?.id ?: 1,
-            viewModel.selectedItem?.id!!,
-            binding.channelName.text.toString(),
-            binding.description.text.toString(),
-            myChannelDetail?.bannerUrl ?: "NULL",
-            imageString,
-            myChannelDetail?.profileUrl ?:"NULL",
-            imageString2
-        )
-        
-        viewModel.editChannel(ugcEditMyChannelRequest)
+        if (!binding.channelName.text.isNullOrEmpty()) {
+            val ugcEditMyChannelRequest = UgcEditMyChannelRequest(
+                0,
+                "",
+                myChannelDetail?.id ?: 1,
+                viewModel.selectedItem?.id!!,
+                binding.channelName.text.toString(),
+                binding.description.text.toString(),
+                myChannelDetail?.bannerUrl ?: "NULL",
+                imageString,
+                myChannelDetail?.profileUrl ?: "NULL",
+                imageString2
+            )
+
+            viewModel.editChannel(ugcEditMyChannelRequest)
+        }
+        else{
+            Toast.makeText(requireContext(), "Please give a channel name", Toast.LENGTH_SHORT).show()
+        }
     }
 }
-
-//
-// 

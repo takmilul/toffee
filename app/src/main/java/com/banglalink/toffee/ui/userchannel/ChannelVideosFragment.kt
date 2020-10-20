@@ -67,6 +67,15 @@ class ChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReactionCa
         return Pair(R.drawable.ic_videos_empty, "You haven't uploaded any video yet")
     }
 
+    override fun onOpenMenu(view: View, item: ChannelInfo) {
+        super.onOpenMenu(view, item)
+
+        val data = arrayListOf("Test Playlist", "new list")
+        val fragment = ChannelAddToPlaylistFragment.newInstance(item.id.toInt(), data)
+        fragment.show(requireActivity().supportFragmentManager, "add_to_playlist")
+        fragment.dialog?.setCanceledOnTouchOutside(true)
+    }
+    
     override fun onReactionClicked(view: View, position: Int, item: ChannelInfo) {
         super.onReactionClicked(view, position, item)
         showReactionDialog(view, position, item)

@@ -4,7 +4,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
-
+        <variable
+            name="viewModel"
+            type="com.banglalink.toffee.ui.userchannel.UgcMyChannelCreatePlaylistViewModel" />
     </data>
 
     <LinearLayout
@@ -51,7 +53,7 @@
                     android:background="@drawable/upload_edittext_bg"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    android:text=""
+                    android:text="@={viewModel.playlistName}"
                     app:layout_constraintEnd_toEndOf="@+id/textView51"
                     app:layout_constraintStart_toStartOf="@+id/textView51"
                     app:layout_constraintTop_toBottomOf="@+id/textView51" />

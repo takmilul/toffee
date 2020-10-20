@@ -169,9 +169,9 @@
                     android:id="@+id/categorySpinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:entries="@{viewModel.categories}"
                     android:selectedItemPosition="@{viewModel.categories.indexOf(viewModel.selectedItem.categoryName)}"
-                    android:onItemSelected="@{viewModel::onSelectItem}"
-                    android:entries="@{viewModel.categories}"/>
+                    android:onItemSelected="@{viewModel::onSelectItem}"/>
         
             </RelativeLayout>
         
