@@ -1,8 +1,8 @@
 package com.banglalink.toffee.model
 
 data class SubscribeChannelBean(
-    val categoryId: Int,
-    val isFollowed: Int,
+    val channelId: Int,
+    val isSubscribed: Int,
     val message: String,
     val messageType: String,
     val systemTime: String

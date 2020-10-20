@@ -57,7 +57,7 @@ class NotificationDropdownFragment : BaseListFragment<NotificationInfo>(), BaseL
                 }
                 return@setOnMenuItemClickListener true
             }
-//            show()
+            show()
         }
     }
 }
