@@ -71,7 +71,7 @@ class ChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReactionCa
         super.onOpenMenu(view, item)
 
         val data = arrayListOf("Test Playlist", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list")
-        val fragment = ChannelAddToPlaylistFragment.newInstance(item.id.toInt(), data)
+        val fragment = ChannelAddToPlaylistFragment.newInstance(item.id.toInt(), isOwner, channelId)
         fragment.show(requireActivity().supportFragmentManager, "add_to_playlist")
         fragment.dialog?.setCanceledOnTouchOutside(true)
     }
