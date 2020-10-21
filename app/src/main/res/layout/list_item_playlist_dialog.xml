@@ -20,7 +20,7 @@
 
         <variable
             name="data"
-            type="String" />
+            type="com.banglalink.toffee.model.UgcChannelPlaylist" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -32,7 +32,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="@{data}"
+            android:text="@{data.name}"
             android:minLines="1"
             android:maxLines="2"
             android:checked="@{position.equals(selectedPosition)}"

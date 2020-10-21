@@ -16,8 +16,8 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="56dp"
             android:layout_marginHorizontal="16dp"
+            android:layout_marginVertical="56dp"
             app:cardCornerRadius="8dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -28,11 +28,11 @@
                     android:id="@+id/dialogTitleTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="24dp"
+                    android:layout_marginTop="24dp"
                     android:text="Create New Playlist"
                     android:textColor="@color/main_text_color"
                     android:textSize="@dimen/default_text_size"
-                    android:layout_marginTop="24dp"
-                    android:layout_marginHorizontal="24dp"
                     app:layout_constraintBottom_toTopOf="@id/listview"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -40,56 +40,119 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/listview"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginHorizontal="24dp"
                     style="@style/ScrollBarStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginHorizontal="24dp"
+                    android:layout_marginTop="8dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constrainedHeight="true"
                     app:layout_constraintBottom_toTopOf="@id/view"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHeight_default="wrap"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/dialogTitleTextView"
                     tools:listitem="@layout/list_item_playlist_dialog" />
 
-                <View
+                <LinearLayout
                     android:id="@+id/view"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
                     android:background="@drawable/bottom_round_top_shadow"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/listview"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintTop_toBottomOf="@+id/listview">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@id/addButton"
-                    style="@style/ButtonStyleSolidPurple"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginVertical="24dp"
-                    android:minWidth="0dp"
-                    android:text=""
-                    app:icon="@drawable/ic_upload_add"
-                    app:iconSize="16dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/doneButton"
-                    app:layout_constraintHorizontal_chainStyle="spread_inside"
-                    app:layout_constraintStart_toStartOf="@+id/listview"
-                    app:layout_constraintTop_toBottomOf="@+id/listview" />
+                    <RelativeLayout
+                        android:id="@+id/addToPlaylistGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="24dp"
+                        android:visibility="visible">
 
-                <Button
-                    android:id="@+id/doneButton"
-                    style="@style/ButtonStyleSolidPink"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="24dp"
-                    android:text="Done"
-                    app:layout_constraintBottom_toBottomOf="@id/addButton"
-                    app:layout_constraintEnd_toEndOf="@+id/listview"
-                    app:layout_constraintStart_toEndOf="@id/addButton"
-                    app:layout_constraintTop_toTopOf="@id/addButton" />
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@id/addButton"
+                            style="@style/ButtonStyleSolidPurple"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minWidth="0dp"
+                            android:text=""
+                            app:icon="@drawable/ic_upload_add"
+                            app:iconSize="16dp"
+                            android:layout_alignParentStart="true"/>
+
+                        <Button
+                            android:id="@+id/doneButton"
+                            style="@style/ButtonStyleSolidPink"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="24dp"
+                            android:text="Done"
+                            android:layout_alignParentEnd="true"/>
+                    </RelativeLayout>
+
+                    <LinearLayout
+                        android:id="@+id/createPlaylistGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="24dp"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/listview">
+
+                        <TextView
+                            android:id="@+id/textView51"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Playlist Name"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="parent" />
+
+                        <EditText
+                            android:id="@+id/playlistNameEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/upload_edittext_bg"
+                            android:ems="10"
+                            android:inputType="textPersonName"
+                            android:text=""
+                            app:layout_constraintEnd_toEndOf="@+id/textView51"
+                            app:layout_constraintStart_toStartOf="@+id/textView51"
+                            app:layout_constraintTop_toBottomOf="@+id/textView51" />
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="24dp">
+
+                            <Button
+                                android:id="@+id/cancelButton"
+                                style="@style/ButtonStyleRingPurple"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:minWidth="0dp"
+                                android:text="Cancel"
+                                android:layout_alignParentStart="true"/>
+
+                            <Button
+                                android:id="@+id/createButton"
+                                style="@style/ButtonStyleSolidPink"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="end"
+                                android:text="Create"
+                                android:layout_alignParentEnd="true"/>
+                        </RelativeLayout>
+
+                    </LinearLayout>
+                </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>

@@ -11,17 +11,18 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import com.banglalink.toffee.R.layout
+import com.banglalink.toffee.databinding.AlertDialogAddToPlaylistBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
+import com.banglalink.toffee.model.UgcChannelPlaylist
 import com.banglalink.toffee.ui.common.CheckedChangeListener
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.alert_dialog_add_to_playlist.view.*
 
 @AndroidEntryPoint
-class ChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<String> {
+class ChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<UgcChannelPlaylist> {
     private var playlistId: Int = 0
-    private lateinit var mAdapter: ChannelAddToPlaylistAdapter
+    private val mAdapter: ChannelAddToPlaylistAdapter by lazy { ChannelAddToPlaylistAdapter(this) }
     private val viewModel by viewModels<UgcMyChannelAddToPlaylistViewModel>()
     private lateinit var alertDialog: AlertDialog
 
@@ -40,21 +41,21 @@ class ChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<Str
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val data = arguments?.getStringArrayList("items") as List<String>
         val contentId = arguments?.getInt(CONTENT_ID) ?: 0
-        mAdapter = ChannelAddToPlaylistAdapter(this)
-        mAdapter.addAll(data)
+//        mAdapter.addAll(data)
+        val binding = AlertDialogAddToPlaylistBinding.inflate(this.layoutInflater)
         val dialogView: View = this.layoutInflater.inflate(layout.alert_dialog_add_to_playlist, null)
-        val dialogBuilder = AlertDialog.Builder(requireContext()).setView(dialogView)
+        val dialogBuilder = AlertDialog.Builder(requireContext()).setView(binding.root)
         alertDialog = dialogBuilder.create().apply {
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }
-        dialogView.listview.adapter = mAdapter
-        dialogView.addButton.setOnClickListener {
-            alertDialog.dismiss()
+        binding.listview.adapter = mAdapter
+        binding.addButton.setOnClickListener {
+            /*alertDialog.dismiss()
             val fragment = ChannelAddToPlaylistCreateFragment.newInstance(data)
             fragment.show(requireActivity().supportFragmentManager, "add_to_playlist")
-            fragment.dialog?.setCanceledOnTouchOutside(true)
+            fragment.dialog?.setCanceledOnTouchOutside(true)*/
         }
-        dialogView.doneButton.setOnClickListener {
+        binding.doneButton.setOnClickListener {
             observeAddToPlaylist()
             viewModel.addToPlaylist(playlistId, contentId)
         }
@@ -77,7 +78,7 @@ class ChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<Str
         }
     }
 
-    override fun onCheckedChanged(view: View, item: String, position: Int, isFromCheckableView: Boolean) {
+    override fun onCheckedChanged(view: View, item: UgcChannelPlaylist, position: Int, isFromCheckableView: Boolean) {
         super.onCheckedChanged(view, item, position, isFromCheckableView)
         when (view) {
             is RadioButton -> {

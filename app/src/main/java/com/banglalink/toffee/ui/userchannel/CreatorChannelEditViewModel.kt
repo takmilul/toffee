@@ -63,8 +63,4 @@ class CreatorChannelEditViewModel @AssistedInject constructor(private val apiSer
     fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
         selectedItem = categoryList.find { it.categoryName == parent?.adapter?.getItem(pos) }
     }
-
-    /*fun selectedItemPosition(): Int {
-        return categories.value?.indexOf(selectedItem?.categoryName)?:0
-    }*/
 }

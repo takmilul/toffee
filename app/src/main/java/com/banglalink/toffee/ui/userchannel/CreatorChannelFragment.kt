@@ -31,7 +31,6 @@ import kotlinx.android.synthetic.main.layout_creator_channel_info.addBioButton
 import kotlinx.android.synthetic.main.layout_creator_channel_info.editButton
 import kotlinx.android.synthetic.main.layout_my_channel_detail.*
 import java.util.*
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class CreatorChannelFragment : Fragment(), OnClickListener {
@@ -77,7 +76,7 @@ class CreatorChannelFragment : Fragment(), OnClickListener {
             fragmentTitleList.add("Playlists")
 
             fragmentList.add(ChannelVideosFragment.newInstance(true, isOwner, channelId))
-            fragmentList.add(ChannelPlaylistsFragment.newInstance(true))
+            fragmentList.add(ChannelPlaylistsFragment.newInstance(true, isOwner, channelId))
         }
     }
 

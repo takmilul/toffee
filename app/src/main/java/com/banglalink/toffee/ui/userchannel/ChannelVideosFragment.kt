@@ -70,7 +70,7 @@ class ChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReactionCa
     override fun onOpenMenu(view: View, item: ChannelInfo) {
         super.onOpenMenu(view, item)
 
-        val data = arrayListOf("Test Playlist", "new list")
+        val data = arrayListOf("Test Playlist", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list")
         val fragment = ChannelAddToPlaylistFragment.newInstance(item.id.toInt(), data)
         fragment.show(requireActivity().supportFragmentManager, "add_to_playlist")
         fragment.dialog?.setCanceledOnTouchOutside(true)

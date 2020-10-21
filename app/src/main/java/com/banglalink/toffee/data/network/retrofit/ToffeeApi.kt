@@ -183,6 +183,16 @@ interface ToffeeApi {
         @Body channelContentRequest: UgcMyChannelContentRequest
     ): UgcMyChannelContentResponse
 
+    @POST("ugc-playlist-names/1/{isOwner}/{channelId}/{limit}/{offset}/{dbVersion}")
+    suspend fun getUgcMyChannelPlaylist(
+        @Path("isOwner") isOwner: Int,
+        @Path("channelId") channelId: Int,
+        @Path("limit") limit: Int,
+        @Path("offset") offset: Int,
+        @Path("dbVersion") dbVersion: Int,
+        @Body channelPlaylistRequest: UgcGetMyChannelPlaylistRequest
+    ): UgcGetMyChannelPlaylistResponse
+
     @POST("/ugc-create-playlist-name")
     suspend fun ugcCreatePlaylist(@Body createPlaylistRequest: UgcCreatePlaylistRequest): UgcCreatePlaylistResponse
 

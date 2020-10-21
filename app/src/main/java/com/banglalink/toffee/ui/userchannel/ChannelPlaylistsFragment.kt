@@ -10,26 +10,39 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.layout
+import com.banglalink.toffee.apiservice.MyChannelPlaylistParams
 import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.common.paging.BaseListItemCallback
-import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.UgcChannelPlaylist
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.alert_dialog_create_playlist.view.*
 import kotlinx.android.synthetic.main.alert_dialog_create_playlist.view.dialogTitleTextView
 import kotlinx.android.synthetic.main.alert_dialog_decision.view.*
+import javax.inject.Inject
 
-class ChannelPlaylistsFragment : BaseListFragment<ChannelInfo>(), BaseListItemCallback<ChannelInfo> {
+@AndroidEntryPoint
+class ChannelPlaylistsFragment : BaseListFragment<UgcChannelPlaylist>(), BaseListItemCallback<UgcChannelPlaylist> {
 
     private var enableToolbar: Boolean = false
 
-    override val mViewModel by viewModels<ChannelPlaylistViewModel>()
+    private var isOwner: Int = 0
+    private var channelId: Int = 0
     override val mAdapter by lazy { ChannelPlaylistListAdapter(this) }
 
+    @Inject lateinit var viewModelAssistedFactory: ChannelPlaylistViewModel.AssistedFactory
+    override val mViewModel by viewModels<ChannelPlaylistViewModel> { ChannelPlaylistViewModel.provideFactory(viewModelAssistedFactory, MyChannelPlaylistParams(isOwner, channelId)) }
+    
     companion object {
         private const val SHOW_TOOLBAR = "enableToolbar"
-        fun newInstance(enableToolbar: Boolean): ChannelPlaylistsFragment {
+        private const val IS_OWNER = "isOwner"
+        private const val CHANNEL_ID = "channelId"
+        
+        fun newInstance(enableToolbar: Boolean, isOwner: Int, channelId: Int): ChannelPlaylistsFragment {
             val instance = ChannelPlaylistsFragment()
             val bundle = Bundle()
             bundle.putBoolean(SHOW_TOOLBAR, enableToolbar)
+            bundle.putInt(IS_OWNER, isOwner)
+            bundle.putInt(CHANNEL_ID, channelId)
             instance.arguments = bundle
             return instance
         }
@@ -42,7 +55,15 @@ class ChannelPlaylistsFragment : BaseListFragment<ChannelInfo>(), BaseListItemCa
         mViewModel.enableToolbar = enableToolbar
     }*/
 
-    override fun onItemClicked(item: ChannelInfo) {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        isOwner = arguments?.getInt(IS_OWNER) ?: 1
+        channelId = arguments?.getInt(CHANNEL_ID) ?: 2
+
+    }
+    
+    override fun onItemClicked(item: UgcChannelPlaylist) {
         super.onItemClicked(item)
         findNavController().navigate(R.id.action_menu_channel_to_channelPlaylistVideosFragment)
 //        showCreatePlaylistDialog()
@@ -53,7 +74,7 @@ class ChannelPlaylistsFragment : BaseListFragment<ChannelInfo>(), BaseListItemCa
         return Pair(R.drawable.ic_playlists_empty, "You haven't created any playlist yet")
     }
 
-    override fun onOpenMenu(view: View, item: ChannelInfo) {
+    override fun onOpenMenu(view: View, item: UgcChannelPlaylist) {
         super.onOpenMenu(view, item)
 
         PopupMenu(requireContext(), view).apply {
@@ -116,4 +137,5 @@ class ChannelPlaylistsFragment : BaseListFragment<ChannelInfo>(), BaseListItemCa
         fragment.show(requireActivity().supportFragmentManager, "add_to_playlist")
         fragment.dialog?.setCanceledOnTouchOutside(true)*/
     }
+
 }

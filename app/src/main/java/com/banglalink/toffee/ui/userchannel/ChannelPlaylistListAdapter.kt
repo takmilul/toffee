@@ -4,9 +4,9 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.common.paging.BasePagingDataAdapter
 import com.banglalink.toffee.common.paging.ItemComparator
-import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.UgcChannelPlaylist
 
-class ChannelPlaylistListAdapter(callback: BaseListItemCallback<ChannelInfo>?): BasePagingDataAdapter<ChannelInfo>(callback, ItemComparator()) {
+class ChannelPlaylistListAdapter(callback: BaseListItemCallback<UgcChannelPlaylist>?): BasePagingDataAdapter<UgcChannelPlaylist>(callback, ItemComparator()) {
     
     override fun getItemViewType(position: Int): Int {
         return R.layout.list_item_channel_playlist

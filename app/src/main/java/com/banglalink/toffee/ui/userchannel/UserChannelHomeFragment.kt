@@ -45,7 +45,7 @@ class UserChannelHomeFragment : Fragment() {
             fragmentTitleList.add("Playlists")
     
             fragmentList.add(ChannelVideosFragment.newInstance(false, 0, 2))
-            fragmentList.add(ChannelPlaylistsFragment.newInstance(false))
+            fragmentList.add(ChannelPlaylistsFragment.newInstance(false, 0, 2))
         }
     }
     
