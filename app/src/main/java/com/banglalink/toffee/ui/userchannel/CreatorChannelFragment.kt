@@ -23,6 +23,7 @@ import com.banglalink.toffee.databinding.FragmentCreatorChannelBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
+import com.banglalink.toffee.model.UgcMyChannelDetail
 import com.banglalink.toffee.ui.common.ViewPagerAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
@@ -31,30 +32,37 @@ import kotlinx.android.synthetic.main.layout_creator_channel_info.addBioButton
 import kotlinx.android.synthetic.main.layout_creator_channel_info.editButton
 import kotlinx.android.synthetic.main.layout_my_channel_detail.*
 import java.util.*
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class CreatorChannelFragment : Fragment(), OnClickListener {
 
     private var isOwner: Int = 0
     private var channelId: Int = 0
-    private var playlistId: Int = 7
+    private var isSubscribed: Int = 0
+    private var myChannelDetail: UgcMyChannelDetail? = null
     private lateinit var binding: FragmentCreatorChannelBinding
     private lateinit var viewPagerAdapter: ViewPagerAdapter
     private var fragmentList: ArrayList<Fragment> = arrayListOf()
     private var fragmentTitleList: ArrayList<String> = arrayListOf()
 
-    private val viewModel by viewModels<CreatorChannelViewModel>()
+    @Inject lateinit var viewModelAssistedFactory: CreatorChannelViewModel.AssistedFactory
+    private val viewModel by viewModels<CreatorChannelViewModel> { CreatorChannelViewModel.provideFactory(viewModelAssistedFactory, isOwner, channelId) }
+
+//    private val viewModel by viewModels<CreatorChannelViewModel>()
     private val createPlaylistViewModel by viewModels<UgcMyChannelCreatePlaylistViewModel>()
-    private val deletePlaylistViewModel by viewModels<UgcMyChannelDeletePlaylistViewModel>()
+    private val subscribeChannelViewModel by viewModels<SubscribeChannelViewModel>()
     
     companion object {
         private const val IS_OWNER = "isOwner"
         private const val CHANNEL_ID = "channelId"
-        fun newInstance(isOwner: Int, channelId: Int): CreatorChannelFragment {
+        private const val IS_SUBSCRIBED = "isSubscribed"
+        fun newInstance(isOwner: Int, channelId: Int, isSubscribed: Int): CreatorChannelFragment {
             val instance = CreatorChannelFragment()
             val bundle = Bundle()
             bundle.putInt(IS_OWNER, isOwner)
             bundle.putInt(CHANNEL_ID, channelId)
+            bundle.putInt(IS_SUBSCRIBED, isSubscribed)
             instance.arguments = bundle
             return instance
         }
@@ -67,8 +75,9 @@ class CreatorChannelFragment : Fragment(), OnClickListener {
         channelId = args.channelId
         isSubscribed = args.isSubscribed*/
 
-        isOwner = arguments?.getInt(IS_OWNER) ?: 1
+        isOwner = arguments?.getInt(IS_OWNER) ?: 0
         channelId = arguments?.getInt(CHANNEL_ID) ?: 2
+        isSubscribed = arguments?.getInt(IS_SUBSCRIBED) ?: 0
 
         if (fragmentList.isEmpty()) {
 
@@ -84,20 +93,23 @@ class CreatorChannelFragment : Fragment(), OnClickListener {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_creator_channel, container, false)
         binding.lifecycleOwner = this
         binding.isOwner = isOwner
-        binding.viewModel = viewModel
+        binding.isSubscribed = isSubscribed
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.loadData(isOwner, channelId)
+//        viewModel.loadData(isOwner, channelId)
+        observeChannelDetail()
+        observeOnSubscribe()
 
         binding.viewPager.offscreenPageLimit = 1
         binding.creatorChannelView.addBioButton.setOnClickListener(this)
         binding.creatorChannelView.editButton.setOnClickListener(this)
-        binding.creatorChannelView.ratingButton.setOnClickListener(this)
         binding.creatorChannelView.analyticsButton.setOnClickListener(this)
+        binding.creatorChannelView.ratingButton.setOnClickListener(this)
+        binding.creatorChannelView.subscriptionButton.setOnClickListener(this)
 
         viewPagerAdapter = ViewPagerAdapter(this, fragmentList)
         binding.viewPager.adapter = viewPagerAdapter
@@ -117,21 +129,55 @@ class CreatorChannelFragment : Fragment(), OnClickListener {
         })
     }
 
+    private fun observeChannelDetail(){
+        observe(viewModel.liveData){
+            when(it){
+                is Success -> {
+                    if (it.data != null) {
+                        myChannelDetail = it.data.myChannelDetail
+                        isSubscribed = it.data.isSubscribed
+                        binding.data = it.data
+                        binding.isSubscribed = isSubscribed
+                    }
+                }
+                is Failure -> {
+                    
+                }
+            }
+        }
+    }
+    
+    private fun observeOnSubscribe() {
+        observe(subscribeChannelViewModel.liveData){
+            when(it){
+                is Success -> {
+                    isSubscribed = it.data.isSubscribed
+                    binding.isSubscribed = isSubscribed
+                    Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
+                }
+                is Failure -> {
+                    Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
+                }
+            }
+            
+        }
+    }
+
     override fun onClick(v: View?) {
         when (v) {
             addBioButton -> {
-//                findNavController().navigate(R.id.action_menu_channel_to_challengesFragment)
-                val direction = CreatorChannelFragmentDirections.actionMenuChannelToCreatorChannelEditFragment(viewModel.channelInfo.value?.myChannelDetail)
+                val direction = CreatorChannelFragmentDirections.actionMenuChannelToCreatorChannelEditFragment(myChannelDetail)
                 findNavController().navigate(direction)
             }
 
             editButton -> {
-                val direction = CreatorChannelFragmentDirections.actionMenuChannelToCreatorChannelEditFragment(viewModel.channelInfo.value?.myChannelDetail)
+                val direction = CreatorChannelFragmentDirections.actionMenuChannelToCreatorChannelEditFragment(myChannelDetail)
                 findNavController().navigate(direction)
             }
 
             ratingButton -> showRatingDialog()
             analyticsButton -> showCreatePlaylistDialog()
+            subscriptionButton -> subscribeChannelViewModel.subscribe(channelId, isSubscribed)
         }
     }
 
@@ -141,7 +187,7 @@ class CreatorChannelFragment : Fragment(), OnClickListener {
         val dialogView: View = inflater.inflate(layout.alert_dialog_channel_rating, null)
         dialogBuilder.setView(dialogView)
 
-        dialogView.ratingBar.setOnRatingBarChangeListener { ratingBar, rating, fromUser ->
+        dialogView.ratingBar.setOnRatingBarChangeListener { _, rating, _ ->
             dialogView.submitButton.isEnabled = rating > 0
             Log.d("TAG", "showRatingDialog: $rating")
         }
@@ -174,19 +220,6 @@ class CreatorChannelFragment : Fragment(), OnClickListener {
 
     private fun observeCreatePlaylist() {
         observe(createPlaylistViewModel.liveData) {
-            when (it) {
-                is Success -> {
-                    Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
-                }
-                is Failure -> {
-                    Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-    }
-
-    private fun observeDeletePlaylist() {
-        observe(deletePlaylistViewModel.liveData) {
             when (it) {
                 is Success -> {
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()

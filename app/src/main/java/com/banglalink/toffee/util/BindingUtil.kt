@@ -2,12 +2,7 @@ package com.banglalink.toffee.util
 
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.graphics.Rect
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
-import android.graphics.drawable.LayerDrawable
-import android.graphics.drawable.shapes.OvalShape
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.TextUtils
@@ -15,14 +10,16 @@ import android.text.style.StrikethroughSpan
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.BindingAdapter
 import coil.api.load
 import coil.request.CachePolicy
 import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.model.*
+import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.Package
+import com.banglalink.toffee.model.UgcCategory
+import com.banglalink.toffee.model.UgcUserChannelInfo
 import com.banglalink.toffee.ui.widget.MultiTextButton
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -185,6 +182,14 @@ fun bindSubscriptionStatus(view: MultiTextButton, channelInfo: ChannelInfo) {
 fun bindSubscriptionStatus(view: MultiTextButton, channelInfo: UgcUserChannelInfo) {
     view.setSubscriptionInfo(
         channelInfo.isSubscribed == 0,
+        null
+    )
+}
+
+@BindingAdapter("bindSubscriptionStatus")
+fun bindSubscriptionStatus(view: MultiTextButton, isSubscribed: Int) {
+    view.setSubscriptionInfo(
+        isSubscribed == 1,
         null
     )
 }

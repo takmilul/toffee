@@ -14,7 +14,8 @@ import com.squareup.inject.assisted.AssistedInject
 
 class ChannelPlaylistViewModel @AssistedInject constructor(private val apiService: GetChannelPlaylists.AssistedFactory, @Assisted private val params: MyChannelPlaylistParams) : BasePagingViewModel<UgcChannelPlaylist>() {
 
-    override val repo: BaseListRepository<UgcChannelPlaylist> by lazy { BaseListRepositoryImpl(BaseNetworkPagingSource(apiService.create(params))) }
+    private val dataSource by lazy { BaseNetworkPagingSource(apiService.create(params)) } 
+    override val repo: BaseListRepository<UgcChannelPlaylist> by lazy { BaseListRepositoryImpl(dataSource) }
 
     @AssistedInject.Factory
     interface AssistedFactory {
@@ -28,6 +29,10 @@ class ChannelPlaylistViewModel @AssistedInject constructor(private val apiServic
                     return assistedFactory.create(params) as T
                 }
             }
+    }
+    
+    fun reloadContent(){
+        dataSource.invalidate()
     }
 
 }

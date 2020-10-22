@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.viewModels
@@ -13,6 +14,9 @@ import com.banglalink.toffee.R.layout
 import com.banglalink.toffee.apiservice.MyChannelPlaylistParams
 import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.model.Resource.Failure
+import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.model.UgcChannelPlaylist
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.alert_dialog_create_playlist.view.*
@@ -31,6 +35,7 @@ class ChannelPlaylistsFragment : BaseListFragment<UgcChannelPlaylist>(), BaseLis
 
     @Inject lateinit var viewModelAssistedFactory: ChannelPlaylistViewModel.AssistedFactory
     override val mViewModel by viewModels<ChannelPlaylistViewModel> { ChannelPlaylistViewModel.provideFactory(viewModelAssistedFactory, MyChannelPlaylistParams(isOwner, channelId)) }
+    private val deletePlaylistViewModel by viewModels<UgcMyChannelDeletePlaylistViewModel>()
     
     companion object {
         private const val SHOW_TOOLBAR = "enableToolbar"
@@ -48,13 +53,6 @@ class ChannelPlaylistsFragment : BaseListFragment<UgcChannelPlaylist>(), BaseLis
         }
     }
 
-    /*override fun initAdapter() {
-        mAdapter = ChannelPlaylistListAdapter(this)
-        mViewModel = ViewModelProvider(this).get(ChannelPlaylistViewModel::class.java)
-        enableToolbar = arguments?.getBoolean(SHOW_TOOLBAR) ?: false
-        mViewModel.enableToolbar = enableToolbar
-    }*/
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -66,8 +64,6 @@ class ChannelPlaylistsFragment : BaseListFragment<UgcChannelPlaylist>(), BaseLis
     override fun onItemClicked(item: UgcChannelPlaylist) {
         super.onItemClicked(item)
         findNavController().navigate(R.id.action_menu_channel_to_channelPlaylistVideosFragment)
-//        showCreatePlaylistDialog()
-//        showAddToPlaylistDialog()
     }
 
     override fun getEmptyViewInfo(): Pair<Int, String?> {
@@ -85,7 +81,7 @@ class ChannelPlaylistsFragment : BaseListFragment<UgcChannelPlaylist>(), BaseLis
                         showEditPlaylistDialog()
                     }
                     R.id.menu_delete_playlist -> {
-                        showDeletePlaylistDialog()
+                        showDeletePlaylistDialog(item.id)
                     }
                 }
                 return@setOnMenuItemClickListener true
@@ -118,19 +114,37 @@ class ChannelPlaylistsFragment : BaseListFragment<UgcChannelPlaylist>(), BaseLis
         }
     }
     
-    private fun showDeletePlaylistDialog(){
+    private fun showDeletePlaylistDialog(playlistId: Int){
         val dialogView: View = this.layoutInflater.inflate(layout.alert_dialog_decision, null)
         val dialogBuilder = AlertDialog.Builder(requireContext()).setView(dialogView)
         val alertDialog: AlertDialog = dialogBuilder.create().apply {
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             show()
         }
+        observeDeletePlaylist()
         with(dialogView){
             noButton.setOnClickListener { alertDialog.dismiss() }
-            deleteButton.setOnClickListener { alertDialog.dismiss() }
+            deleteButton.setOnClickListener { 
+                deletePlaylistViewModel.deletePlaylistName(playlistId)
+                alertDialog.dismiss() 
+            }
         }
     }
-    
+
+    private fun observeDeletePlaylist() {
+        observe(deletePlaylistViewModel.liveData) {
+            when (it) {
+                is Success -> {
+                    mAdapter.refresh()
+                    Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
+                }
+                is Failure -> {
+                    Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
     private fun showAddToPlaylistDialog(){
         /*val data = mAdapter.getItems().map { it.program_name!! }
         val fragment = ChannelAddToPlaylistFragment.newInstance(data)

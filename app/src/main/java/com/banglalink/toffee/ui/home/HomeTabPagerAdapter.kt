@@ -28,7 +28,7 @@ class HomeTabPagerAdapter(fragment: FragmentActivity):
             2 -> {
                 UserActivitiesMainFragment.newInstance()
             }
-            else -> CreatorChannelFragment.newInstance(0,2)
+            else -> CreatorChannelFragment.newInstance(0,2, 0)
         }
     }
 }

@@ -10,6 +10,9 @@
             name="isOwner"
             type="Integer" />
         <variable
+            name="isSubscribed"
+            type="Integer" />
+        <variable
             name="data"
             type="com.banglalink.toffee.model.UgcMyChannelDetailBean" />
     </data>
@@ -166,6 +169,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="16dp"
             android:text="Subscription"
+            bindSubscriptionStatus="@{isSubscribed}"
             app:layout_constraintBottom_toBottomOf="@id/ratingButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/ratingButton"
