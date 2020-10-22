@@ -11,6 +11,6 @@ import com.banglalink.toffee.model.Transaction
 
 class TransactionViewModel @ViewModelInject constructor(val apiService: GetTransaction): BasePagingViewModel<Transaction>() {
     override val repo: BaseListRepository<Transaction> by lazy {
-        BaseListRepositoryImpl(BaseNetworkPagingSource(apiService))
+        BaseListRepositoryImpl({ BaseNetworkPagingSource(apiService) })
     }
 }

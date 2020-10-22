@@ -13,8 +13,8 @@ class FavoriteViewModel @ViewModelInject constructor(
 ): BasePagingViewModel<ChannelInfo>() {
 
     override val repo: BaseListRepository<ChannelInfo> by lazy {
-        BaseListRepositoryImpl(
+        BaseListRepositoryImpl({
             BaseNetworkPagingSource(apiService)
-        )
+        })
     }
 }

@@ -11,6 +11,6 @@ import com.banglalink.toffee.model.ChannelInfo
 
 class ChallengeViewModel @ViewModelInject constructor(apiService: GetChallenges): BasePagingViewModel<Challenge>() {
     override val repo: BaseListRepository<Challenge> by lazy {
-        BaseListRepositoryImpl(BaseNetworkPagingSource(apiService))
+        BaseListRepositoryImpl( { BaseNetworkPagingSource(apiService) } )
     }
 }

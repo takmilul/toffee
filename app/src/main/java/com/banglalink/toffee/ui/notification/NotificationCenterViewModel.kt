@@ -9,6 +9,6 @@ import com.banglalink.toffee.data.database.entities.NotificationInfo
 
 class NotificationCenterViewModel @ViewModelInject constructor(notificationDao: NotificationDao) : BasePagingViewModel<NotificationInfo>() {
     override val repo: BaseListRepository<NotificationInfo> by lazy {
-        BaseListRepositoryImpl(notificationDao.getAllNotification())
+        BaseListRepositoryImpl({ notificationDao.getAllNotification() })
     }
 }

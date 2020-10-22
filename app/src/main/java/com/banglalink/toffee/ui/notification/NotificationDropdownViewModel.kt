@@ -2,8 +2,8 @@ package com.banglalink.toffee.ui.notification
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.viewModelScope
-import com.banglalink.toffee.common.paging.BaseDBListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseListRepository
+import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BasePagingViewModel
 import com.banglalink.toffee.data.database.entities.NotificationInfo
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 class NotificationDropdownViewModel @ViewModelInject constructor(private val notificationRepository: NotificationInfoRepository) :
     BasePagingViewModel<NotificationInfo>() {
     override val repo: BaseListRepository<NotificationInfo> by lazy {
-        BaseDBListRepositoryImpl({notificationRepository.getAllNotification()})
+        BaseListRepositoryImpl({notificationRepository.getAllNotification()})
     }
 
     fun insert(notificationInfo: NotificationInfo) {

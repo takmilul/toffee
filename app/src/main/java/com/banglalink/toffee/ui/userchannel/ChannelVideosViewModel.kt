@@ -10,6 +10,6 @@ import com.banglalink.toffee.model.ChannelInfo
 
 class ChannelVideosViewModel @ViewModelInject constructor(apiService: GetChannelVideos) : BasePagingViewModel<ChannelInfo>() {
     override val repo: BaseListRepository<ChannelInfo> by lazy {
-        BaseListRepositoryImpl(BaseNetworkPagingSource(apiService))
+        BaseListRepositoryImpl({BaseNetworkPagingSource(apiService)})
     }
 }
