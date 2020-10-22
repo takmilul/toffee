@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 class ChannelVideosViewModel @AssistedInject constructor(private val reactionDao: ReactionDao, private val getMyChannelAssistedFactory: GetChannelVideos.AssistedFactory, @Assisted private val isOwner: Int, @Assisted private val channelId: Int) : BasePagingViewModel<ChannelInfo>() {
     
     override val repo: BaseListRepository<ChannelInfo> by lazy {
-        BaseListRepositoryImpl(BaseNetworkPagingSource(getMyChannelAssistedFactory.create(MyChannelRequestParams("VOD", isOwner, channelId, 0, 0))))
+        BaseListRepositoryImpl({BaseNetworkPagingSource(getMyChannelAssistedFactory.create(MyChannelRequestParams("VOD", isOwner, channelId, 0, 0)))})
     }
 
     @AssistedInject.Factory
@@ -50,6 +50,5 @@ class ChannelVideosViewModel @AssistedInject constructor(private val reactionDao
         viewModelScope.launch {
             reactionDao.insert(reactionInfo)
         }
-        BaseListRepositoryImpl({BaseNetworkPagingSource(apiService)})
     }
 }

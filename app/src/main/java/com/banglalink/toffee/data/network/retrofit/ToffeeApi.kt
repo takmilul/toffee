@@ -193,10 +193,14 @@ interface ToffeeApi {
         @Body channelPlaylistRequest: UgcGetMyChannelPlaylistRequest
     ): UgcGetMyChannelPlaylistResponse
 
+    @POST("/ugc-edit-playlist-name")
+    suspend fun ugcEditMyChannelPlaylist(@Body channelPlaylistRequest: UgcEditMyChannelPlaylistRequest): UgcEditMyChannelPlaylistResponse
+
     @POST("/ugc-create-playlist-name")
     suspend fun ugcCreatePlaylist(@Body createPlaylistRequest: UgcCreatePlaylistRequest): UgcCreatePlaylistResponse
 
     @POST("/ugc-channel-edit")
     suspend fun ugcEditMyChannel(@Body createPlaylistRequest: UgcEditMyChannelRequest): UgcEditMyChannelResponse
 
+    
 }

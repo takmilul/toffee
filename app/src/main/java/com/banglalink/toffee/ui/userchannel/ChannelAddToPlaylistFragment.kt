@@ -11,7 +11,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.banglalink.toffee.R.layout
 import com.banglalink.toffee.apiservice.MyChannelPlaylistParams
 import com.banglalink.toffee.databinding.AlertDialogAddToPlaylistBinding
 import com.banglalink.toffee.extension.observe
@@ -21,7 +20,6 @@ import com.banglalink.toffee.model.UgcChannelPlaylist
 import com.banglalink.toffee.ui.common.CheckedChangeListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -109,7 +107,7 @@ class ChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<Ugc
     }
 
     private fun observeCreatePlaylist() {
-        observe(createPlaylistViewModel.liveData) {
+        observe(createPlaylistViewModel.createPlaylistLiveData) {
             when (it) {
                 is Success -> {
                     playlistId = it.data.playlistNameId

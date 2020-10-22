@@ -14,13 +14,12 @@ import com.banglalink.toffee.R.layout
 import com.banglalink.toffee.apiservice.MyChannelPlaylistParams
 import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.databinding.AlertDialogCreatePlaylistBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.model.UgcChannelPlaylist
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.alert_dialog_create_playlist.view.*
-import kotlinx.android.synthetic.main.alert_dialog_create_playlist.view.dialogTitleTextView
 import kotlinx.android.synthetic.main.alert_dialog_decision.view.*
 import javax.inject.Inject
 
@@ -36,12 +35,13 @@ class ChannelPlaylistsFragment : BaseListFragment<UgcChannelPlaylist>(), BaseLis
     @Inject lateinit var viewModelAssistedFactory: ChannelPlaylistViewModel.AssistedFactory
     override val mViewModel by viewModels<ChannelPlaylistViewModel> { ChannelPlaylistViewModel.provideFactory(viewModelAssistedFactory, MyChannelPlaylistParams(isOwner, channelId)) }
     private val deletePlaylistViewModel by viewModels<UgcMyChannelDeletePlaylistViewModel>()
-    
+    private val editPlaylistViewModel by viewModels<UgcMyChannelCreatePlaylistViewModel>()
+
     companion object {
         private const val SHOW_TOOLBAR = "enableToolbar"
         private const val IS_OWNER = "isOwner"
         private const val CHANNEL_ID = "channelId"
-        
+
         fun newInstance(enableToolbar: Boolean, isOwner: Int, channelId: Int): ChannelPlaylistsFragment {
             val instance = ChannelPlaylistsFragment()
             val bundle = Bundle()
@@ -60,7 +60,7 @@ class ChannelPlaylistsFragment : BaseListFragment<UgcChannelPlaylist>(), BaseLis
         channelId = arguments?.getInt(CHANNEL_ID) ?: 2
 
     }
-    
+
     override fun onItemClicked(item: UgcChannelPlaylist) {
         super.onItemClicked(item)
         findNavController().navigate(R.id.action_menu_channel_to_channelPlaylistVideosFragment)
@@ -78,7 +78,7 @@ class ChannelPlaylistsFragment : BaseListFragment<UgcChannelPlaylist>(), BaseLis
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_edit_playlist -> {
-                        showEditPlaylistDialog()
+                        showEditPlaylistDialog(item.id, item.name)
                     }
                     R.id.menu_delete_playlist -> {
                         showDeletePlaylistDialog(item.id)
@@ -89,32 +89,44 @@ class ChannelPlaylistsFragment : BaseListFragment<UgcChannelPlaylist>(), BaseLis
             show()
         }
     }
-    
-    private fun showCreatePlaylistDialog() {
-        val dialogView: View = this.layoutInflater.inflate(layout.alert_dialog_create_playlist, null)
-        val dialogBuilder = AlertDialog.Builder(requireContext()).setView(dialogView)
+
+    private fun observeEditPlaylist() {
+        observe(editPlaylistViewModel.editPlaylistLiveData) {
+            when (it) {
+                is Success -> {
+                    Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
+                }
+                is Failure -> {
+                    Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun showEditPlaylistDialog(playlistId: Int, playlistName: String) {
+        val playlistBinding = AlertDialogCreatePlaylistBinding.inflate(this.layoutInflater)
+        val dialogBuilder = AlertDialog.Builder(requireContext()).setView(playlistBinding.root)
         val alertDialog: AlertDialog = dialogBuilder.create().apply {
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             show()
         }
-        dialogView.createButton.setOnClickListener { alertDialog.dismiss() }
-    }
-    
-    private fun showEditPlaylistDialog() {
-        val dialogView: View = this.layoutInflater.inflate(layout.alert_dialog_create_playlist, null)
-        val dialogBuilder = AlertDialog.Builder(requireContext()).setView(dialogView)
-        val alertDialog: AlertDialog = dialogBuilder.create().apply {
-            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            show()
+        playlistBinding.viewModel = editPlaylistViewModel
+        editPlaylistViewModel.playlistName = playlistName
+        playlistBinding.dialogTitleTextView.text = "Edit Playlist"
+        playlistBinding.createButton.text = "Save"
+        playlistBinding.createButton.setOnClickListener {
+            if (!editPlaylistViewModel.playlistName.isNullOrEmpty()) {
+                observeEditPlaylist()
+                editPlaylistViewModel.editPlaylist(playlistId)
+                alertDialog.dismiss()
+            }
+            else {
+                Toast.makeText(requireContext(), "Please give a playlist name", Toast.LENGTH_SHORT).show()
+            }
         }
-        with(dialogView){
-            dialogTitleTextView.text = "Edit Playlist"
-            createButton.text = "Save"
-            createButton.setOnClickListener { alertDialog.dismiss() }
-        }
     }
-    
-    private fun showDeletePlaylistDialog(playlistId: Int){
+
+    private fun showDeletePlaylistDialog(playlistId: Int) {
         val dialogView: View = this.layoutInflater.inflate(layout.alert_dialog_decision, null)
         val dialogBuilder = AlertDialog.Builder(requireContext()).setView(dialogView)
         val alertDialog: AlertDialog = dialogBuilder.create().apply {
@@ -122,11 +134,11 @@ class ChannelPlaylistsFragment : BaseListFragment<UgcChannelPlaylist>(), BaseLis
             show()
         }
         observeDeletePlaylist()
-        with(dialogView){
+        with(dialogView) {
             noButton.setOnClickListener { alertDialog.dismiss() }
-            deleteButton.setOnClickListener { 
+            deleteButton.setOnClickListener {
                 deletePlaylistViewModel.deletePlaylistName(playlistId)
-                alertDialog.dismiss() 
+                alertDialog.dismiss()
             }
         }
     }
@@ -145,11 +157,21 @@ class ChannelPlaylistsFragment : BaseListFragment<UgcChannelPlaylist>(), BaseLis
         }
     }
 
-    private fun showAddToPlaylistDialog(){
-        /*val data = mAdapter.getItems().map { it.program_name!! }
+    /*private fun showCreatePlaylistDialog() {
+        val dialogView: View = this.layoutInflater.inflate(layout.alert_dialog_create_playlist, null)
+        val dialogBuilder = AlertDialog.Builder(requireContext()).setView(dialogView)
+        val alertDialog: AlertDialog = dialogBuilder.create().apply {
+            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            show()
+        }
+        dialogView.createButton.setOnClickListener { alertDialog.dismiss() }
+    }
+
+    private fun showAddToPlaylistDialog() {
+        *//*val data = mAdapter.getItems().map { it.program_name!! }
         val fragment = ChannelAddToPlaylistFragment.newInstance(data)
         fragment.show(requireActivity().supportFragmentManager, "add_to_playlist")
-        fragment.dialog?.setCanceledOnTouchOutside(true)*/
-    }
+        fragment.dialog?.setCanceledOnTouchOutside(true)*//*
+    }*/
 
 }

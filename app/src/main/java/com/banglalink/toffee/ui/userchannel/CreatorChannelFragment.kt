@@ -75,7 +75,7 @@ class CreatorChannelFragment : Fragment(), OnClickListener {
         channelId = args.channelId
         isSubscribed = args.isSubscribed*/
 
-        isOwner = arguments?.getInt(IS_OWNER) ?: 0
+        isOwner = arguments?.getInt(IS_OWNER) ?: 1
         channelId = arguments?.getInt(CHANNEL_ID) ?: 2
         isSubscribed = arguments?.getInt(IS_SUBSCRIBED) ?: 0
 
@@ -219,7 +219,7 @@ class CreatorChannelFragment : Fragment(), OnClickListener {
     }
 
     private fun observeCreatePlaylist() {
-        observe(createPlaylistViewModel.liveData) {
+        observe(createPlaylistViewModel.createPlaylistLiveData) {
             when (it) {
                 is Success -> {
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()

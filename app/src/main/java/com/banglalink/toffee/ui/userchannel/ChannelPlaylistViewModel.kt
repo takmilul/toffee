@@ -12,17 +12,14 @@ import com.banglalink.toffee.model.UgcChannelPlaylist
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 
-class ChannelPlaylistViewModel @AssistedInject constructor(private val apiService: GetChannelPlaylists.AssistedFactory, @Assisted private val params: MyChannelPlaylistParams) : BasePagingViewModel<UgcChannelPlaylist>() {
+class ChannelPlaylistViewModel @AssistedInject constructor(private val apiService: GetChannelPlaylists.AssistedFactory, @Assisted private val params: MyChannelPlaylistParams) :
+    BasePagingViewModel<UgcChannelPlaylist>() {
 
-    private val dataSource by lazy { BaseNetworkPagingSource(apiService.create(params)) } 
-    override val repo: BaseListRepository<UgcChannelPlaylist> by lazy { BaseListRepositoryImpl(dataSource) }
+    override val repo: BaseListRepository<UgcChannelPlaylist> by lazy { BaseListRepositoryImpl({BaseNetworkPagingSource(apiService.create(params))}) }
 
     @AssistedInject.Factory
     interface AssistedFactory {
         fun create(params: MyChannelPlaylistParams): ChannelPlaylistViewModel
-class ChannelPlaylistViewModel @ViewModelInject constructor(apiService: GetChannelPlaylists): BasePagingViewModel<ChannelInfo>() {
-    override val repo: BaseListRepository<ChannelInfo> by lazy {
-        BaseListRepositoryImpl({BaseNetworkPagingSource(apiService)})
     }
 
     companion object {
@@ -33,9 +30,4 @@ class ChannelPlaylistViewModel @ViewModelInject constructor(apiService: GetChann
                 }
             }
     }
-    
-    fun reloadContent(){
-        dataSource.invalidate()
-    }
-
 }
