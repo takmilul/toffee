@@ -12,6 +12,6 @@ class UserActivitiesListViewModel @ViewModelInject constructor(
     apiService: UserActivities
 ): BasePagingViewModel<ChannelInfo>() {
     override val repo: BaseListRepository<ChannelInfo> by lazy {
-        BaseListRepositoryImpl(BaseNetworkPagingSource(apiService))
+        BaseListRepositoryImpl({BaseNetworkPagingSource(apiService)})
     }
 }

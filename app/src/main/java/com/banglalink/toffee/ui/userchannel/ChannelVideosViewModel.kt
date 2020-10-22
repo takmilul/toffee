@@ -50,5 +50,6 @@ class ChannelVideosViewModel @AssistedInject constructor(private val reactionDao
         viewModelScope.launch {
             reactionDao.insert(reactionInfo)
         }
+        BaseListRepositoryImpl({BaseNetworkPagingSource(apiService)})
     }
 }

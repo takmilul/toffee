@@ -17,7 +17,7 @@ class ChannelSubscriptionViewModel @ViewModelInject constructor(
 )
     :BasePagingViewModel<ChannelInfo>() {
     override val repo: BaseListRepository<ChannelInfo> by lazy {
-        BaseListRepositoryImpl(BaseNetworkPagingSource(apiService))
+        BaseListRepositoryImpl({BaseNetworkPagingSource(apiService)})
     }
 
     val itemUpdateEvent = MutableLiveData<Int>()

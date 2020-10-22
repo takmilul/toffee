@@ -20,6 +20,9 @@ class ChannelPlaylistViewModel @AssistedInject constructor(private val apiServic
     @AssistedInject.Factory
     interface AssistedFactory {
         fun create(params: MyChannelPlaylistParams): ChannelPlaylistViewModel
+class ChannelPlaylistViewModel @ViewModelInject constructor(apiService: GetChannelPlaylists): BasePagingViewModel<ChannelInfo>() {
+    override val repo: BaseListRepository<ChannelInfo> by lazy {
+        BaseListRepositoryImpl({BaseNetworkPagingSource(apiService)})
     }
 
     companion object {

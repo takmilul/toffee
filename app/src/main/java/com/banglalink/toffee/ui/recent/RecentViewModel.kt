@@ -11,8 +11,8 @@ class RecentViewModel @ViewModelInject constructor(
     private val apiService: GetHistory
 ): BasePagingViewModel<ChannelInfo>() {
     override val repo by lazy {
-        BaseListRepositoryImpl(
+        BaseListRepositoryImpl({
             BaseNetworkPagingSource(apiService)
-        )
+        })
     }
 }

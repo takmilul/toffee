@@ -61,88 +61,88 @@ class LandingPageViewModel @ViewModelInject constructor(
     }
 
     private val userChannelRepo by lazy {
-        BaseListRepositoryImpl(
+        BaseListRepositoryImpl({
             BaseNetworkPagingSource(
                 popularChannelAssistedFactory.create(
                     ApiCategoryRequestParams("", 0, 0)
                 )
             )
-        )
+        })
     }
 
     private val channelRepo by lazy {
-        BaseListRepositoryImpl(
+        BaseListRepositoryImpl({
             BaseNetworkPagingSource(
                 getContentAssistedFactory.create(
                     ChannelRequestParams("", 0, "", 0, "LIVE")
                 )
             )
-        )
+        } )
     }
 
     private val categoryListRepo by lazy {
-        BaseListRepositoryImpl(
+        BaseListRepositoryImpl({
             BaseNetworkPagingSource(
                 categoryListApi
             )
-        )
+        })
     }
 
     private val latestVideosRepo by lazy {
-        BaseListRepositoryImpl(
+        BaseListRepositoryImpl({
             BaseNetworkPagingSource(
                 getContentAssistedFactory.create(
                     ChannelRequestParams("", 0, "", 0, "VOD")
                 )
             )
-        )
+        })
     }
 
     private val featureRepo by lazy {
-        BaseListRepositoryImpl(
+        BaseListRepositoryImpl({
             BaseNetworkPagingSource(
                 featuredContentAssistedFactory.create(
                     ApiCategoryRequestParams("VOD", 0, 0)
                 )
             )
-        )
+        })
     }
 
     private val mostPopularRepo by lazy {
-        BaseListRepositoryImpl(
+        BaseListRepositoryImpl({
             BaseNetworkPagingSource(
                 mostPopularApi
             )
-        )
+        })
     }
 
     private val trendingNowRepo by lazy {
-        BaseListRepositoryImpl(
+        BaseListRepositoryImpl({
             BaseNetworkPagingSource(
                 trendingNowAssistedFactory.create(
                     ApiCategoryRequestParams("VOD", 0, 0)
                 )
             )
-        )
+        })
     }
 
     fun loadLatestVideosByCategory(category: UgcCategory): Flow<PagingData<ChannelInfo>> {
-        return BaseListRepositoryImpl(
+        return BaseListRepositoryImpl({
             BaseNetworkPagingSource(
                 getContentAssistedFactory.create(
                     ChannelRequestParams("", category.id.toInt(), "", 0, "VOD")
                 )
             )
-        ).getList()
+        }).getList()
     }
 
     fun loadTrendingNowContentByCategory(category: UgcCategory): Flow<PagingData<ChannelInfo>> {
-        return BaseListRepositoryImpl(
+        return BaseListRepositoryImpl({
             BaseNetworkPagingSource(
                 trendingNowAssistedFactory.create(
                     ApiCategoryRequestParams("VOD", 1, category.id.toInt())
                 )
             )
-        ).getList()
+        }).getList()
     }
 }
