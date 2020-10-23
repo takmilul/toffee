@@ -19,6 +19,7 @@ class GetTracker:IGetMethodTracker {
         "/ugc-channel-details/1",
         "/ugc-channel-all-content/1",
         "/ugc-playlist-names/1",
+        "/ugc-content-by-playlist/1",
     )
 
     override fun shouldConvertToGetRequest(urlEncodedFragmentString: String):Boolean {

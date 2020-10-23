@@ -1,8 +1,6 @@
 package com.banglalink.toffee.data.network.request
 
-data class UgcGetMyChannelPlaylistRequest(
+data class UgcMyChannelPlaylistRequest(
     val customerId:Int,
-    val password:String,
-    val offset:Int,
-    val limit:Int=10
+    val password:String
 ): BaseRequest("getUgcPlaylistNames")

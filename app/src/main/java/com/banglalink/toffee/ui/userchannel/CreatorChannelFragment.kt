@@ -39,6 +39,7 @@ class CreatorChannelFragment : Fragment(), OnClickListener {
 
     private var isOwner: Int = 0
     private var channelId: Int = 0
+    private var rating: Float = 0.0f
     private var isSubscribed: Int = 0
     private var myChannelDetail: UgcMyChannelDetail? = null
     private lateinit var binding: FragmentCreatorChannelBinding
@@ -56,13 +57,11 @@ class CreatorChannelFragment : Fragment(), OnClickListener {
     companion object {
         private const val IS_OWNER = "isOwner"
         private const val CHANNEL_ID = "channelId"
-        private const val IS_SUBSCRIBED = "isSubscribed"
-        fun newInstance(isOwner: Int, channelId: Int, isSubscribed: Int): CreatorChannelFragment {
+        fun newInstance(isOwner: Int, channelId: Int): CreatorChannelFragment {
             val instance = CreatorChannelFragment()
             val bundle = Bundle()
             bundle.putInt(IS_OWNER, isOwner)
             bundle.putInt(CHANNEL_ID, channelId)
-            bundle.putInt(IS_SUBSCRIBED, isSubscribed)
             instance.arguments = bundle
             return instance
         }
@@ -75,9 +74,8 @@ class CreatorChannelFragment : Fragment(), OnClickListener {
         channelId = args.channelId
         isSubscribed = args.isSubscribed*/
 
-        isOwner = arguments?.getInt(IS_OWNER) ?: 1
+        isOwner = arguments?.getInt(IS_OWNER) ?: 0
         channelId = arguments?.getInt(CHANNEL_ID) ?: 2
-        isSubscribed = arguments?.getInt(IS_SUBSCRIBED) ?: 0
 
         if (fragmentList.isEmpty()) {
 
@@ -100,9 +98,9 @@ class CreatorChannelFragment : Fragment(), OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        viewModel.loadData(isOwner, channelId)
         observeChannelDetail()
-        observeOnSubscribe()
+        observeRatingChannel()
+        observeSubscribeChannel()
 
         binding.viewPager.offscreenPageLimit = 1
         binding.creatorChannelView.addBioButton.setOnClickListener(this)
@@ -129,40 +127,6 @@ class CreatorChannelFragment : Fragment(), OnClickListener {
         })
     }
 
-    private fun observeChannelDetail(){
-        observe(viewModel.liveData){
-            when(it){
-                is Success -> {
-                    if (it.data != null) {
-                        myChannelDetail = it.data.myChannelDetail
-                        isSubscribed = it.data.isSubscribed
-                        binding.data = it.data
-                        binding.isSubscribed = isSubscribed
-                    }
-                }
-                is Failure -> {
-                    
-                }
-            }
-        }
-    }
-    
-    private fun observeOnSubscribe() {
-        observe(subscribeChannelViewModel.liveData){
-            when(it){
-                is Success -> {
-                    isSubscribed = it.data.isSubscribed
-                    binding.isSubscribed = isSubscribed
-                    Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
-                }
-                is Failure -> {
-                    Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
-                }
-            }
-            
-        }
-    }
-
     override fun onClick(v: View?) {
         when (v) {
             addBioButton -> {
@@ -186,16 +150,18 @@ class CreatorChannelFragment : Fragment(), OnClickListener {
         val inflater = this.layoutInflater
         val dialogView: View = inflater.inflate(layout.alert_dialog_channel_rating, null)
         dialogBuilder.setView(dialogView)
-
         dialogView.ratingBar.setOnRatingBarChangeListener { _, rating, _ ->
+            this.rating = rating
             dialogView.submitButton.isEnabled = rating > 0
-            Log.d("TAG", "showRatingDialog: $rating")
         }
 
         val alertDialog: AlertDialog = dialogBuilder.create()
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         alertDialog.show()
-        dialogView.submitButton.setOnClickListener { alertDialog.dismiss() }
+        dialogView.submitButton.setOnClickListener {
+            viewModel.rateMyChannel(rating)
+            alertDialog.dismiss() 
+        }
     }
 
     private fun showCreatePlaylistDialog() {
@@ -214,6 +180,53 @@ class CreatorChannelFragment : Fragment(), OnClickListener {
             }
             else {
                 Toast.makeText(requireContext(), "Please give a playlist name", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun observeChannelDetail(){
+        observe(viewModel.liveData){
+            when(it){
+                is Success -> {
+                    if (it.data != null) {
+                        myChannelDetail = it.data.myChannelDetail
+                        isSubscribed = it.data.isSubscribed
+                        binding.data = it.data
+                        binding.isSubscribed = isSubscribed
+                    }
+                }
+                is Failure -> {
+
+                }
+            }
+        }
+    }
+
+    private fun observeSubscribeChannel() {
+        observe(subscribeChannelViewModel.liveData){
+            when(it){
+                is Success -> {
+                    isSubscribed = it.data.isSubscribed
+                    binding.isSubscribed = isSubscribed
+                    Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
+                }
+                is Failure -> {
+                    Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
+                }
+            }
+
+        }
+    }
+
+    private fun observeRatingChannel(){
+        observe(viewModel.ratingLiveData){
+            when(it){
+                is Success -> {
+                    Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
+                }
+                is Failure -> {
+                    Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }

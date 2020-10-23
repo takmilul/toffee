@@ -6,7 +6,7 @@ data class UgcMyChannelDetailBean(
     val code: Int,
     @SerializedName("details")
     val myChannelDetail: UgcMyChannelDetail?,
-    val ratingCount: Double = 0.0,
+    val ratingCount: Float = 0.0f,
     var subscriberCount: String? = null,
     val isOwner: Int = 0,
     val isSubscribed: Int = 0,

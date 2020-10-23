@@ -190,8 +190,19 @@ interface ToffeeApi {
         @Path("limit") limit: Int,
         @Path("offset") offset: Int,
         @Path("dbVersion") dbVersion: Int,
-        @Body channelPlaylistRequest: UgcGetMyChannelPlaylistRequest
-    ): UgcGetMyChannelPlaylistResponse
+        @Body channelPlaylistRequest: UgcMyChannelPlaylistRequest
+    ): UgcMyChannelPlaylistResponse
+
+    @POST("ugc-content-by-playlist/1/{channelId}/{isOwner}/{playlistId}/{limit}/{offset}/{dbVersion}")
+    suspend fun getUgcMyChannelPlaylistContents(
+        @Path("channelId") channelId: Int,
+        @Path("isOwner") isOwner: Int,
+        @Path("playlistId") playlistId: Int,
+        @Path("limit") limit: Int,
+        @Path("offset") offset: Int,
+        @Path("dbVersion") dbVersion: Int,
+        @Body channelPlaylistContentRequest: UgcMyChannelPlaylistContentRequest
+    ): UgcMyChannelPlaylistContentResponse
 
     @POST("/ugc-edit-playlist-name")
     suspend fun ugcEditMyChannelPlaylist(@Body channelPlaylistRequest: UgcEditMyChannelPlaylistRequest): UgcEditMyChannelPlaylistResponse
@@ -202,5 +213,6 @@ interface ToffeeApi {
     @POST("/ugc-channel-edit")
     suspend fun ugcEditMyChannel(@Body createPlaylistRequest: UgcEditMyChannelRequest): UgcEditMyChannelResponse
 
-    
+    @POST("/ugc-rating-on-channel")
+    suspend fun ugcRateMyChannel(@Body myChannelRatingRequest: MyChannelRatingRequest): MyChannelRatingResponse
 }

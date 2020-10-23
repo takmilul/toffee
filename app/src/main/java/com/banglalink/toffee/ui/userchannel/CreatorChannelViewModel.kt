@@ -4,8 +4,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.banglalink.toffee.apiservice.MyChannelRatingService
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.extension.toLiveData
+import com.banglalink.toffee.model.MyChannelRatingBean
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.UgcMyChannelDetailBean
 import com.banglalink.toffee.usecase.GetUgcMyChannelDetail
@@ -13,11 +15,13 @@ import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.launch
 
-class CreatorChannelViewModel @AssistedInject constructor(private val apiService: GetUgcMyChannelDetail, @Assisted private val isOwner: Int, @Assisted private val channelId: Int) :
+class CreatorChannelViewModel @AssistedInject constructor(private val apiService: GetUgcMyChannelDetail, private val ratingService: MyChannelRatingService, @Assisted private val isOwner: Int, @Assisted private val channelId: Int) :
     ViewModel() {
 
     private val _data = MutableLiveData<Resource<UgcMyChannelDetailBean?>>()
-    var liveData = _data.toLiveData()
+    val liveData = _data.toLiveData()
+    private val _ratingData = MutableLiveData<Resource<MyChannelRatingBean>>()
+    val ratingLiveData = _ratingData.toLiveData()
 //    val channelInfo = MutableLiveData<UgcMyChannelDetailBean>()
 
     init {
@@ -42,6 +46,11 @@ class CreatorChannelViewModel @AssistedInject constructor(private val apiService
             }
     }
 
+    fun rateMyChannel(rating: Float){
+        viewModelScope.launch { 
+            _ratingData.postValue(resultFromResponse { ratingService.execute(channelId, rating) })
+        }
+    }
     /*fun loadData(isOwner: Int, channelId: Int) {
         viewModelScope.launch {
             when (val response = resultFromResponse { apiService.execute(isOwner, channelId) }) {
