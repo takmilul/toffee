@@ -7,8 +7,14 @@
     
     <data>
         <variable
-            name="viewModel"
-            type="com.banglalink.toffee.ui.userchannel.CreatorChannelViewModel" />
+            name="isOwner"
+            type="Integer" />
+        <variable
+            name="isSubscribed"
+            type="Integer" />
+        <variable
+            name="data"
+            type="com.banglalink.toffee.model.UgcMyChannelDetailBean" />
     </data>
     
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -31,12 +37,14 @@
                 
                 <include
                     android:id="@+id/creatorChannelView"
-                    layout="@layout/layout_creator_channel_info"
+                    layout="@layout/layout_my_channel_detail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clipChildren="false"
                     android:clipToPadding="false"
-                    app:data="@{viewModel.channelInfo}"
+                    app:data="@{data}"
+                    app:isOwner="@{isOwner}"
+                    app:isSubscribed="@{isSubscribed}"
                     app:layout_collapseMode="parallax"
                     app:layout_collapseParallaxMultiplier="1"
                     app:layout_scrollFlags="scroll|exitUntilCollapsed" />

@@ -33,7 +33,7 @@ class UserChannelHomeFragment : Fragment() {
     
     companion object {
         
-        fun newInstance(): UserChannelHomeFragment {
+        fun newInstance(isOwner: Int = 1, isSubscribed: Int = 0): UserChannelHomeFragment {
             return UserChannelHomeFragment()
         }
     }
@@ -44,8 +44,8 @@ class UserChannelHomeFragment : Fragment() {
             fragmentTitleList.add("Videos")
             fragmentTitleList.add("Playlists")
     
-            fragmentList.add(ChannelVideosFragment.newInstance(false))
-            fragmentList.add(ChannelPlaylistsFragment.newInstance(false))
+            fragmentList.add(ChannelVideosFragment.newInstance(false, 0, 2))
+            fragmentList.add(ChannelPlaylistsFragment.newInstance(false, 0, 2))
         }
     }
     

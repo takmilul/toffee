@@ -25,4 +25,4 @@ data class NotificationInfo(
     val receiveTime: Long = System.currentTimeMillis(),
     var seenTime: Long? = null,
     var isSeen: Boolean = false
-) : Parcelable{}
+) : Parcelable

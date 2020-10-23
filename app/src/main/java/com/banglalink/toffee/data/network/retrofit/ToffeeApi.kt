@@ -2,9 +2,9 @@ package com.banglalink.toffee.data.network.retrofit
 
 import com.banglalink.toffee.data.network.request.*
 import com.banglalink.toffee.data.network.response.*
-import com.banglalink.toffee.model.CLIENT_API_HEADER
-import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface ToffeeApi {
 
@@ -160,4 +160,47 @@ interface ToffeeApi {
 
     @POST("ugc-add-content-to-playlist")
     suspend fun addToPlayList(@Body addToPlayListRequest: AddToPlayListRequest): AddToPlayListResponse
+
+    @POST("ugc-channel-details/1/{isOwner}/{channelId}/{dbVersion}")
+    suspend fun getUgcMyChannelDetails(
+        @Path("isOwner") isOwner: Int = 0,
+        @Path("channelId") channelId: Int = 2,
+        @Path("dbVersion") dbVersion: Int = 0,
+        @Body channelDetailRequest: UgcMyChannelDetailRequest
+    ): UgcMyChannelResponse
+
+    @POST("ugc-channel-all-content/1/{type}/{isOwner}/{channelId}/{categoryId}/{subcategoryId}/{limit}/{offset}/{dbVersion}")
+    //ugc-channel-all-content/deviceType/type/isOwner/channelId/categoryId/subCategoryId/limit/offset/dbVersion
+    suspend fun getUgcMyChannelContents(
+        @Path("type") type: String,
+        @Path("isOwner") isOwner: Int,
+        @Path("channelId") channelId: Int,
+        @Path("categoryId") categoryId: Int,
+        @Path("subcategoryId") subCategoryId: Int,
+        @Path("limit") limit: Int,
+        @Path("offset") offset: Int,
+        @Path("dbVersion") dbVersion: Int,
+        @Body channelContentRequest: UgcMyChannelContentRequest
+    ): UgcMyChannelContentResponse
+
+    @POST("ugc-playlist-names/1/{isOwner}/{channelId}/{limit}/{offset}/{dbVersion}")
+    suspend fun getUgcMyChannelPlaylist(
+        @Path("isOwner") isOwner: Int,
+        @Path("channelId") channelId: Int,
+        @Path("limit") limit: Int,
+        @Path("offset") offset: Int,
+        @Path("dbVersion") dbVersion: Int,
+        @Body channelPlaylistRequest: UgcGetMyChannelPlaylistRequest
+    ): UgcGetMyChannelPlaylistResponse
+
+    @POST("/ugc-edit-playlist-name")
+    suspend fun ugcEditMyChannelPlaylist(@Body channelPlaylistRequest: UgcEditMyChannelPlaylistRequest): UgcEditMyChannelPlaylistResponse
+
+    @POST("/ugc-create-playlist-name")
+    suspend fun ugcCreatePlaylist(@Body createPlaylistRequest: UgcCreatePlaylistRequest): UgcCreatePlaylistResponse
+
+    @POST("/ugc-channel-edit")
+    suspend fun ugcEditMyChannel(@Body createPlaylistRequest: UgcEditMyChannelRequest): UgcEditMyChannelResponse
+
+    
 }

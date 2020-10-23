@@ -46,6 +46,7 @@ data class ChannelInfo(
     var content_provider_name: String? = null,
     var content_provider_id: String? = null,
 
+    var reaction: Int? = 0,
     @SerializedName("url_type")
     val urlType: Int = 0
 ) :Parcelable

@@ -1,45 +1,41 @@
 package com.banglalink.toffee.apiservice
 
 import com.banglalink.toffee.common.paging.BaseApiService
-import com.banglalink.toffee.data.network.request.ContentRequest
+import com.banglalink.toffee.data.network.request.UgcGetMyChannelPlaylistRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.util.discardZeroFromDuration
-import com.banglalink.toffee.util.getFormattedViewsText
-import javax.inject.Inject
+import com.banglalink.toffee.model.UgcChannelPlaylist
+import com.squareup.inject.assisted.Assisted
+import com.squareup.inject.assisted.AssistedInject
 
-class GetChannelPlaylists @Inject constructor(private val preference: Preference, private val toffeeApi: ToffeeApi):
-    BaseApiService<ChannelInfo> {
+data class MyChannelPlaylistParams(val isOwner: Int, val channelId: Int)
+
+class GetChannelPlaylists @AssistedInject constructor(private val preference: Preference, private val toffeeApi: ToffeeApi, @Assisted private val params: MyChannelPlaylistParams):
+    BaseApiService<UgcChannelPlaylist> {
     
-    override suspend fun loadData(offset: Int, limit: Int): List<ChannelInfo> {
-
+    override suspend fun loadData(offset: Int, limit: Int): List<UgcChannelPlaylist> {
+        if(offset > 0) return emptyList()
         val response = tryIO2 {
-            toffeeApi.getContents(
-                "VOD",
-                0, 0, offset, 30,
-                preference.getDBVersionByApiName("getContentsV5"),
-                ContentRequest(
-                    0,
-                    0,
-                    "VOD",
-                    preference.customerId,
-                    preference.password,
-                    offset = offset,
-                    limit = limit
-                )
+            toffeeApi.getUgcMyChannelPlaylist(
+                params.isOwner,
+                params.channelId,
+                limit,
+                offset,
+                preference.getDBVersionByApiName("getUgcPlaylistNames"),
+                UgcGetMyChannelPlaylistRequest(preference.customerId, preference.password, offset, limit)
             )
         }
 
-        if (response.response.channels != null) {
-            return response.response.channels.map {
-                it.formatted_view_count = getFormattedViewsText(it.view_count)
-                it.formattedDuration = discardZeroFromDuration(it.duration)
-                it
-            }
+        if (response.response.channelPlaylist != null) {
+//            response.response.channelPlaylist.map { it.totalContent = getFormattedViewsText(it.totalContent) }
+            return response.response.channelPlaylist
         }
-        return listOf()
+        return emptyList()
+    }
 
+    @AssistedInject.Factory
+    interface AssistedFactory {
+        fun create(params: MyChannelPlaylistParams): GetChannelPlaylists
     }
 }

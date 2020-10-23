@@ -9,13 +9,14 @@ import android.widget.RadioButton
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import com.banglalink.toffee.R.layout
+import com.banglalink.toffee.model.UgcChannelPlaylist
 import com.banglalink.toffee.ui.common.CheckedChangeListener
 import kotlinx.android.synthetic.main.alert_dialog_add_to_playlist.view.listview
 import kotlinx.android.synthetic.main.alert_dialog_add_to_playlist_create.view.*
 import java.util.*
 
-class ChannelAddToPlaylistCreateFragment : DialogFragment(), CheckedChangeListener<String> {
-    private lateinit var mAdapter: ChannelAddToPlaylistAdapter
+class ChannelAddToPlaylistCreateFragment : DialogFragment(), CheckedChangeListener<UgcChannelPlaylist> {
+    private val mAdapter: ChannelAddToPlaylistAdapter by lazy { ChannelAddToPlaylistAdapter(this) }
 
     companion object {
         fun newInstance(items: List<String>): ChannelAddToPlaylistCreateFragment {
@@ -29,8 +30,7 @@ class ChannelAddToPlaylistCreateFragment : DialogFragment(), CheckedChangeListen
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val data = arguments?.getStringArrayList("items") as List<String>
-        mAdapter = ChannelAddToPlaylistAdapter(this)
-        mAdapter.addAll(data)
+//        mAdapter.addAll(data)
         val dialogView: View = this.layoutInflater.inflate(layout.alert_dialog_add_to_playlist_create, null)
         val dialogBuilder = AlertDialog.Builder(requireContext()).setView(dialogView)
         val alertDialog: AlertDialog = dialogBuilder.create().apply {
@@ -43,7 +43,7 @@ class ChannelAddToPlaylistCreateFragment : DialogFragment(), CheckedChangeListen
         return alertDialog
     }
 
-    override fun onCheckedChanged(view: View, item: String, position: Int, isFromCheckableView: Boolean) {
+    override fun onCheckedChanged(view: View, item: UgcChannelPlaylist, position: Int, isFromCheckableView: Boolean) {
         super.onCheckedChanged(view, item, position, isFromCheckableView)
         when (view) {
             is RadioButton -> {

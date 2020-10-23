@@ -15,12 +15,6 @@ class NotificationDropdownViewModel @ViewModelInject constructor(private val not
         BaseListRepositoryImpl({notificationRepository.getAllNotification()})
     }
 
-    fun insert(notificationInfo: NotificationInfo) {
-        viewModelScope.launch {
-            notificationRepository.insert(notificationInfo)
-        }
-    }
-
     fun setSeenStatus(id: Long, isSeen: Boolean, seenTime: Long) {
         viewModelScope.launch {
             notificationRepository.updateSeenStatus(id, isSeen, seenTime)

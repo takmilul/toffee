@@ -69,6 +69,15 @@
         <action
             android:id="@+id/action_menu_channel_to_challengesFragment"
             app:destination="@id/challengesFragment" />
+        <!--<argument
+            android:name="isOwner"
+            app:argType="integer" />
+        <argument
+            android:name="isSubscribed"
+            app:argType="integer" />
+        <argument
+            android:name="channelId"
+            app:argType="integer" />-->
     </fragment>
     <fragment
         android:id="@+id/uploadMethodFragment"
@@ -106,11 +115,10 @@
         android:id="@+id/creatorChannelEditFragment"
         android:name="com.banglalink.toffee.ui.userchannel.CreatorChannelEditFragment"
         android:label="CreatorChannelEditFragment" >
-    
         <argument
-            android:name="userChannel"
-            app:argType="com.banglalink.toffee.model.UserChannel"
-            app:nullable="true" />
+            android:name="myChannelDetail"
+            app:nullable="true"
+            app:argType="com.banglalink.toffee.model.UgcMyChannelDetail" />
     </fragment>
 
 <!--    <include-->

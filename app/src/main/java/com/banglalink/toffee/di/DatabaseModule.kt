@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.banglalink.toffee.data.database.ToffeeDatabase
 import com.banglalink.toffee.data.database.dao.NotificationDao
+import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.dao.UploadDao
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.repository.UploadInfoRepository
@@ -59,5 +60,11 @@ object DatabaseModule {
     @Singleton
     fun provideNotificationInfoRepository(notificationDao: NotificationDao): NotificationInfoRepository {
         return NotificationInfoRepositoryImpl(notificationDao)
+    }
+    
+    @Provides
+    @Singleton
+    fun provideReactionInfoDao(db: ToffeeDatabase): ReactionDao {
+        return db.getReactionDao()
     }
 }

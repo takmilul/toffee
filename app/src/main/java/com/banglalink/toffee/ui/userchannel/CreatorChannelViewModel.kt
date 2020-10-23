@@ -2,29 +2,53 @@ package com.banglalink.toffee.ui.userchannel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
 import com.banglalink.toffee.data.network.util.resultFromResponse
-import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.model.UserChannel
-import com.banglalink.toffee.usecase.GetChannelInfo
-import com.banglalink.toffee.util.unsafeLazy
+import com.banglalink.toffee.model.UgcMyChannelDetailBean
+import com.banglalink.toffee.usecase.GetUgcMyChannelDetail
+import com.squareup.inject.assisted.Assisted
+import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.launch
 
-class CreatorChannelViewModel: ViewModel() {
-    
-    private val _data = MutableLiveData<Resource<UserChannel?>>()
+class CreatorChannelViewModel @AssistedInject constructor(private val apiService: GetUgcMyChannelDetail, @Assisted private val isOwner: Int, @Assisted private val channelId: Int) :
+    ViewModel() {
+
+    private val _data = MutableLiveData<Resource<UgcMyChannelDetailBean?>>()
     var liveData = _data.toLiveData()
-    val channelInfo = MutableLiveData<UserChannel?>()
-    
-    private val getChannelInfo by unsafeLazy { GetChannelInfo(Preference.getInstance(), RetrofitApiClient.toffeeApi) }
-    
-    fun loadData() {
-        viewModelScope.launch {
-            _data.postValue(resultFromResponse { getChannelInfo.execute() })
+//    val channelInfo = MutableLiveData<UgcMyChannelDetailBean>()
+
+    init {
+        viewModelScope.launch { 
+            _data.postValue(resultFromResponse { apiService.execute(isOwner, channelId) })
         }
     }
-    
+
+    @AssistedInject.Factory
+    interface AssistedFactory {
+        fun create(isOwner: Int, channelId: Int): CreatorChannelViewModel
+    }
+
+    companion object {
+        fun provideFactory(
+            assistedFactory: AssistedFactory, isOwner: Int, channelId: Int
+        ): ViewModelProvider.Factory =
+            object : ViewModelProvider.Factory {
+                override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                    return assistedFactory.create(isOwner, channelId) as T
+                }
+            }
+    }
+
+    /*fun loadData(isOwner: Int, channelId: Int) {
+        viewModelScope.launch {
+            when (val response = resultFromResponse { apiService.execute(isOwner, channelId) }) {
+                is Success -> channelInfo.postValue(response.data)
+                is Failure -> {
+                }
+            }
+        }
+    }*/
 }

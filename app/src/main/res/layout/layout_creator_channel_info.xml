@@ -7,7 +7,7 @@
         <import type="android.view.View" />
         <variable
             name="data"
-            type="com.banglalink.toffee.model.UserChannel" />
+            type="com.banglalink.toffee.model.UgcMyChannelDetailBean" />
     </data>
     
     <androidx.constraintlayout.widget.ConstraintLayout
