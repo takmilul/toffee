@@ -11,7 +11,7 @@ class MyChannelRatingService @Inject constructor(private val preference: Prefere
     
     suspend fun execute(channelId: Int, rating: Float): MyChannelRatingBean{
         val response = tryIO2 {
-            toffeeApi.ugcRateMyChannel(
+            toffeeApi.rateMyChannel(
                 MyChannelRatingRequest(channelId, rating, preference.customerId, preference.password)
             )
         }

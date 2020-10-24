@@ -14,7 +14,7 @@
             type="Integer" />
         <variable
             name="data"
-            type="com.banglalink.toffee.model.UgcMyChannelDetailBean" />
+            type="com.banglalink.toffee.model.MyChannelDetailBean" />
     </data>
     
     <androidx.constraintlayout.widget.ConstraintLayout
