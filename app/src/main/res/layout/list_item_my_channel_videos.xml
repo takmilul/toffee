@@ -148,7 +148,7 @@
             android:layout_marginEnd="8dp"
             android:scaleType="fitEnd"
             android:src="@drawable/ic_like_emo"
-            loadImageResource="@{data.reaction}"
+            loadImageResource="@{data.userReaction}"
             android:onClick="@{(v) -> callback.onReactionClicked(v, position, data)}"
             app:layout_constraintEnd_toStartOf="@id/textView9"
             app:layout_constraintHorizontal_bias="1"

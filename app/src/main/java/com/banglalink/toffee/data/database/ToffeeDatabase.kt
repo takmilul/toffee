@@ -2,12 +2,8 @@ package com.banglalink.toffee.data.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.banglalink.toffee.data.database.dao.NotificationDao
-import com.banglalink.toffee.data.database.dao.ReactionDao
-import com.banglalink.toffee.data.database.dao.UploadDao
-import com.banglalink.toffee.data.database.entities.NotificationInfo
-import com.banglalink.toffee.data.database.entities.ReactionInfo
-import com.banglalink.toffee.data.database.entities.UploadInfo
+import com.banglalink.toffee.data.database.dao.*
+import com.banglalink.toffee.data.database.entities.*
 import com.banglalink.toffee.data.storage.ViewCountDAO
 import com.banglalink.toffee.data.storage.ViewCountDataModel
 
@@ -16,7 +12,9 @@ import com.banglalink.toffee.data.storage.ViewCountDataModel
         UploadInfo::class,
         ViewCountDataModel::class,
         NotificationInfo::class,
-        ReactionInfo::class
+        ReactionInfo::class,
+        HistoryItem::class,
+        UserActivities::class,
     ],
     version = 1,
     exportSchema = false)
@@ -25,6 +23,8 @@ abstract class ToffeeDatabase: RoomDatabase() {
     abstract fun getViewCountDao(): ViewCountDAO
     abstract fun getNotificationDao(): NotificationDao
     abstract fun getReactionDao(): ReactionDao
+    abstract fun getHistoryItemDao(): HistoryItemDao
+    abstract fun getUserActivitiesDao(): UserActivitiesDao
 
     companion object {
         const val DB_NAME = "toffee-db"

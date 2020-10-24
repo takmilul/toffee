@@ -37,7 +37,7 @@ class LandingPageViewModel @ViewModelInject constructor(
     }
 
     fun loadLatestVideos(): Flow<PagingData<ChannelInfo>> {
-        return latestVideosRepo.getList().cachedIn(viewModelScope)
+        return latestVideosRepo.getList()//.cachedIn(viewModelScope)
     }
 
     fun loadMostPopularVideos(): Flow<PagingData<ChannelInfo>> {

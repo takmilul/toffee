@@ -41,6 +41,7 @@ import kotlinx.coroutines.flow.Flow
 class HomeViewModel @ViewModelInject constructor(
     @AppCoroutineScope private val appScope: CoroutineScope,
     private val viewCountDAO: ViewCountDAO,
+    private val sendViewContentEvent: SendViewContentEvent,
     @ApplicationContext private val mContext: Context
 ):BaseViewModel(),OnCompleteListener<InstanceIdResult> {
 
@@ -72,10 +73,6 @@ class HomeViewModel @ViewModelInject constructor(
 
     private val setFcmToken by unsafeLazy {
         SetFcmToken(Preference.getInstance(),RetrofitApiClient.toffeeApi)
-    }
-
-    private val sendViewContentEvent by unsafeLazy {
-        SendViewContentEvent(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
 
     init {

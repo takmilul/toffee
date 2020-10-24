@@ -11,11 +11,21 @@ import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
 import com.banglalink.toffee.common.paging.BasePagingViewModel
 import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.ReactionInfo
+import com.banglalink.toffee.data.database.entities.UserActivities
+import com.banglalink.toffee.data.repository.UserActivitiesRepository
+import com.banglalink.toffee.enums.ActivityType
 import com.banglalink.toffee.model.ChannelInfo
+import com.google.gson.Gson
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.launch
 
+class ChannelVideosViewModel @AssistedInject constructor(
+    private val reactionDao: ReactionDao,
+    private val activitiesRepo: UserActivitiesRepository,
+    private val getMyChannelAssistedFactory: GetChannelVideos.AssistedFactory,
+    @Assisted private val isOwner: Int,
+    @Assisted private val channelId: Int) : BasePagingViewModel<ChannelInfo>() {
 class MyChannelVideosViewModel @AssistedInject constructor(private val reactionDao: ReactionDao, private val getMyChannelAssistedFactory: GetChannelVideos.AssistedFactory, @Assisted private val isOwner: Int, @Assisted private val channelId: Int) : BasePagingViewModel<ChannelInfo>() {
     
     override val repo: BaseListRepository<ChannelInfo> by lazy {
@@ -49,6 +59,20 @@ class MyChannelVideosViewModel @AssistedInject constructor(private val reactionD
     fun insert(reactionInfo: ReactionInfo) {
         viewModelScope.launch {
             reactionDao.insert(reactionInfo)
+        }
+    }
+
+    fun insertActivity(channelInfo: ChannelInfo, reactStatus: Int) {
+        viewModelScope.launch {
+            val item = UserActivities(
+                channelInfo.id.toLong(),
+                "activity",
+                channelInfo.type ?: "VOD",
+                Gson().toJson(channelInfo),
+                ActivityType.REACT.value,
+                reactStatus
+            )
+            activitiesRepo.insert(item)
         }
     }
 }

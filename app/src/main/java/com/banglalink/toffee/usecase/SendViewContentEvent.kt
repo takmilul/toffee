@@ -1,18 +1,25 @@
 package com.banglalink.toffee.usecase
 
 import com.banglalink.toffee.BuildConfig
+import com.banglalink.toffee.data.database.entities.HistoryItem
 import com.banglalink.toffee.data.network.request.ViewingContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.network.util.tryIO2
+import com.banglalink.toffee.data.repository.HistoryRepository
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.util.Utils
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
+import javax.inject.Inject
 
-class SendViewContentEvent(private val preference: Preference, private val toffeeApi: ToffeeApi) {
+class SendViewContentEvent @Inject constructor(
+    private val preference: Preference,
+    private val toffeeApi: ToffeeApi,
+    private val historyRepo: HistoryRepository
+) {
 
     private val gson = Gson()
     suspend fun execute(channel: ChannelInfo, sendToPubSub:Boolean = true){
@@ -22,7 +29,18 @@ class SendViewContentEvent(private val preference: Preference, private val toffe
         else{
             sendToToffeeServer(channel.id.toInt(),channel.type ?: "")
         }
-//        saveToLocalDb(channel)
+        saveToLocalDb(channel)
+    }
+
+    private suspend fun saveToLocalDb(channel: ChannelInfo){
+        val channelDataModel = HistoryItem(
+            channel.id.toLong(),
+            channel.type ?: "",
+            "history",
+            gson.toJson(channel)
+        )
+
+        historyRepo.insert(channelDataModel)
     }
 
     private fun sendToPubSub(contentId: Int,contentType: String){

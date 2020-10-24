@@ -50,7 +50,7 @@ class GetChannelVideos @AssistedInject constructor(
 
                 val reaction = reactionDao.getReactionByContentId(it.id)
                 it.subCategoryId = reaction?.reaction ?: 0
-                it.reaction = getReactionIcon(reaction?.reaction)
+                it.userReaction = getReactionIcon(reaction?.reaction ?: 0)
 
                 it
             }
@@ -58,7 +58,7 @@ class GetChannelVideos @AssistedInject constructor(
         return listOf()
     }
 
-    private fun getReactionIcon(reaction: Int?): Int? {
+    private fun getReactionIcon(reaction: Int): Int {
         return when (reaction) {
             Like.value -> R.drawable.ic_reaction_like
             Love.value -> R.drawable.ic_reaction_love
