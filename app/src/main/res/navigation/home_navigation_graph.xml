@@ -119,6 +119,9 @@
             android:name="myChannelDetail"
             app:nullable="true"
             app:argType="com.banglalink.toffee.model.MyChannelDetail" />
+        <action
+            android:id="@+id/action_MyChannelEditFragment_to_thumbnailSelectionMethodFragment"
+            app:destination="@id/thumbnailSelectionMethodFragment" />
     </fragment>
 
 <!--    <include-->

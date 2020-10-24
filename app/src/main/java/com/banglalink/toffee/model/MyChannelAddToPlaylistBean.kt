@@ -1,6 +1,6 @@
 package com.banglalink.toffee.model
 
-data class DeletePlayListBean(
+data class MyChannelAddToPlaylistBean(
     val message: String,
     val messageType: String,
     val systemTime: String

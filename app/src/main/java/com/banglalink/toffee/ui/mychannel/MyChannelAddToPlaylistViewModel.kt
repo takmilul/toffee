@@ -7,13 +7,13 @@ import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.apiservice.MyChannelAddToPlayListService
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.extension.toLiveData
-import com.banglalink.toffee.model.AddToPlayListBean
+import com.banglalink.toffee.model.MyChannelAddToPlaylistBean
 import com.banglalink.toffee.model.Resource
 import kotlinx.coroutines.launch
 
 class MyChannelAddToPlaylistViewModel @ViewModelInject constructor(private val apiService: MyChannelAddToPlayListService): ViewModel() {
     
-    private val _data = MutableLiveData<Resource<AddToPlayListBean>>()
+    private val _data = MutableLiveData<Resource<MyChannelAddToPlaylistBean>>()
     val liveData = _data.toLiveData()
     
     fun addToPlaylist(playlistId: Int, contentId: Int){

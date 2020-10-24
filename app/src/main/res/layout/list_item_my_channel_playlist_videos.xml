@@ -12,6 +12,9 @@
         <variable
             name="viewModel"
             type="com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosAdapter" />
+        <variable
+            name="callback"
+            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
     </data>
     
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -21,7 +24,8 @@
         android:paddingTop="8dp"
         android:paddingEnd="16dp"
         android:paddingBottom="8dp"
-        android:background="@color/screen_bg">
+        android:background="@color/screen_bg"
+        android:onClick="@{() -> callback.onItemClicked(data)}">
         
         <com.banglalink.toffee.ui.widget.CustomImageView
             android:id="@+id/poster"
@@ -56,6 +60,7 @@
             android:paddingTop="3dp"
             android:paddingRight="8dp"
             android:paddingBottom="3dp"
+            android:text="@{data.formattedDuration}"
             android:textColor="@android:color/white"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="@+id/poster"

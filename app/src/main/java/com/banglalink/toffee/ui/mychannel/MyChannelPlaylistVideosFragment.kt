@@ -1,11 +1,13 @@
 package com.banglalink.toffee.ui.mychannel
 
 import android.os.Bundle
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.banglalink.toffee.apiservice.MyChannelPlaylistContentParam
 import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosViewModel.AssistedFactory
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -18,7 +20,9 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(), BaseLis
     override val mAdapter by lazy { MyChannelPlaylistVideosAdapter(this) }
     @Inject lateinit var viewModelAssistedfactory: AssistedFactory
     override val mViewModel by viewModels<MyChannelPlaylistVideosViewModel>{MyChannelPlaylistVideosViewModel.provideAssisted(viewModelAssistedfactory, requestParams)}
-    
+
+    private val homeViewModel by activityViewModels<HomeViewModel>()
+
     companion object {
         private const val SHOW_TOOLBAR = "enableToolbar"
         fun newInstance(enableToolbar: Boolean): MyChannelPlaylistVideosFragment {
@@ -35,4 +39,11 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(), BaseLis
         val args = MyChannelPlaylistVideosFragmentArgs.fromBundle(requireArguments())
         requestParams = MyChannelPlaylistContentParam(args.channelId, args.isOwner, args.playlistId)
     }
+
+
+    override fun onItemClicked(item: ChannelInfo) {
+        super.onItemClicked(item)
+        homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+    }
+
 }

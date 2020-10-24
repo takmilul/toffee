@@ -20,11 +20,12 @@
             android:background="@color/screen_bg_white">
         
             <com.banglalink.toffee.ui.widget.CustomImageView
-                android:id="@+id/posterView"
+                android:id="@+id/bannerImageView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="200dp"
                 android:src="@drawable/hero"
+                imageFromUrl="@{viewModel.myChannelDetail.bannerUrl}"
                 android:adjustViewBounds="true"
                 app:layout_constraintDimensionRatio="W,16:9"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -32,7 +33,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
         
             <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/posterEditButton"
+                android:id="@+id/bannerEditButton"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:scaleType="fitXY"
@@ -41,34 +42,35 @@
                 android:layout_marginEnd="12dp"
                 android:layout_marginBottom="12dp"
                 android:background="?selectableItemBackgroundBorderless"
-                app:layout_constraintEnd_toEndOf="@+id/posterView"
-                app:layout_constraintBottom_toBottomOf="@id/posterView"
+                app:layout_constraintEnd_toEndOf="@+id/bannerImageView"
+                app:layout_constraintBottom_toBottomOf="@id/bannerImageView"
                 app:srcCompat="@drawable/ic_edit_btn" />
         
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/logoImageView"
+                android:id="@+id/profileImageView"
                 android:layout_width="104dp"
                 android:layout_height="104dp"
                 android:layout_margin="8dp"
                 android:elevation="2dp"
                 android:src="@drawable/hero"
-                app:layout_constraintBottom_toBottomOf="@+id/posterView"
+                loadCircleImageFromUrl="@{viewModel.myChannelDetail.profileUrl}"
+                app:layout_constraintBottom_toBottomOf="@+id/bannerImageView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/posterView" />
+                app:layout_constraintTop_toBottomOf="@+id/bannerImageView" />
         
             <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/logoEditButton"
+                android:id="@+id/profileImageEditButton"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:scaleType="fitXY"
                 android:padding="4dp"
                 android:elevation="4dp"
                 android:background="?selectableItemBackgroundBorderless"
-                app:layout_constraintStart_toStartOf="@id/logoImageView"
-                app:layout_constraintEnd_toEndOf="@id/logoImageView"
-                app:layout_constraintTop_toBottomOf="@id/logoImageView"
-                app:layout_constraintBottom_toBottomOf="@id/logoImageView"
+                app:layout_constraintStart_toStartOf="@id/profileImageView"
+                app:layout_constraintEnd_toEndOf="@id/profileImageView"
+                app:layout_constraintTop_toBottomOf="@id/profileImageView"
+                app:layout_constraintBottom_toBottomOf="@id/profileImageView"
                 app:srcCompat="@drawable/ic_edit_btn" />
         
         
@@ -80,7 +82,7 @@
                 android:layout_marginTop="24dp"
                 android:text="Channel Name"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/logoEditButton" />
+                app:layout_constraintTop_toBottomOf="@+id/profileImageEditButton" />
         
             <EditText
                 android:id="@+id/channelName"

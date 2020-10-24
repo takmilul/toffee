@@ -1,8 +1,8 @@
 package com.banglalink.toffee.data.network.response
 
-import com.banglalink.toffee.model.DeletePlayListBean
+import com.banglalink.toffee.model.MyChannelDeletePlaylistBean
 
 
 data class MyChannelPlaylistDeleteResponse(
-    val response: DeletePlayListBean
+    val response: MyChannelDeletePlaylistBean
 ): BaseResponse()

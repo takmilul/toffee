@@ -1,7 +1,7 @@
 package com.banglalink.toffee.data.network.response
 
-import com.banglalink.toffee.model.AddToPlayListBean
+import com.banglalink.toffee.model.MyChannelAddToPlaylistBean
 
 data class MyChannelAddToPlaylistResponse(
-    val response: AddToPlayListBean
+    val response: MyChannelAddToPlaylistBean
 ): BaseResponse()

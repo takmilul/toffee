@@ -3,8 +3,8 @@ package com.banglalink.toffee.ui.mychannel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.banglalink.toffee.apiservice.GetChannelVideos
-import com.banglalink.toffee.apiservice.MyChannelRequestParams
+import com.banglalink.toffee.apiservice.MyChannelVideosRequestParams
+import com.banglalink.toffee.apiservice.MyChannelVideosService
 import com.banglalink.toffee.common.paging.BaseListRepository
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
@@ -20,16 +20,21 @@ import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.launch
 
-class ChannelVideosViewModel @AssistedInject constructor(
+/*class ChannelVideosViewModel @AssistedInject constructor(
     private val reactionDao: ReactionDao,
     private val activitiesRepo: UserActivitiesRepository,
     private val getMyChannelAssistedFactory: GetChannelVideos.AssistedFactory,
     @Assisted private val isOwner: Int,
+    @Assisted private val channelId: Int) : BasePagingViewModel<ChannelInfo>() {*/
+class MyChannelVideosViewModel @AssistedInject constructor(
+    private val reactionDao: ReactionDao,
+    private val activitiesRepo: UserActivitiesRepository, 
+    private val getMyChannelAssistedFactory: MyChannelVideosService.AssistedFactory, 
+    @Assisted private val isOwner: Int, 
     @Assisted private val channelId: Int) : BasePagingViewModel<ChannelInfo>() {
-class MyChannelVideosViewModel @AssistedInject constructor(private val reactionDao: ReactionDao, private val getMyChannelAssistedFactory: GetChannelVideos.AssistedFactory, @Assisted private val isOwner: Int, @Assisted private val channelId: Int) : BasePagingViewModel<ChannelInfo>() {
     
     override val repo: BaseListRepository<ChannelInfo> by lazy {
-        BaseListRepositoryImpl({BaseNetworkPagingSource(getMyChannelAssistedFactory.create(MyChannelRequestParams("VOD", isOwner, channelId, 0, 0)))})
+        BaseListRepositoryImpl({BaseNetworkPagingSource(getMyChannelAssistedFactory.create(MyChannelVideosRequestParams("VOD", isOwner, channelId, 0, 0)))})
     }
 
     @AssistedInject.Factory

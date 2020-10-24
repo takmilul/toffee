@@ -14,7 +14,7 @@ import com.banglalink.toffee.util.getFormattedViewsText
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 
-data class MyChannelRequestParams(
+data class MyChannelVideosRequestParams(
     val type: String,
     val isOwner: Int,
     val channelId: Int,
@@ -22,11 +22,11 @@ data class MyChannelRequestParams(
     val subcategoryId: Int
 )
 
-class GetChannelVideos @AssistedInject constructor(
+class MyChannelVideosService @AssistedInject constructor(
     private val preference: Preference, 
     private val toffeeApi: ToffeeApi, 
     private val reactionDao: ReactionDao,
-    @Assisted private val requestParams: MyChannelRequestParams
+    @Assisted private val requestParams: MyChannelVideosRequestParams
 ) :
     BaseApiService<ChannelInfo> {
 
@@ -73,6 +73,6 @@ class GetChannelVideos @AssistedInject constructor(
 
     @AssistedInject.Factory
     interface AssistedFactory {
-        fun create(requestParams: MyChannelRequestParams): GetChannelVideos
+        fun create(requestParams: MyChannelVideosRequestParams): MyChannelVideosService
     }
 }

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_add_to_playlist"
+        android:title="Add To Playlist"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_fav"
+        android:title="@string/menu_add_to_fav"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_share"
+        android:title="@string/menu_share"
+        app:showAsAction="never" />
+    
+    <item
+        android:id="@+id/menu_not_interested"
+        android:title="@string/menu_not_interested"
+        app:showAsAction="never" />
+</menu>

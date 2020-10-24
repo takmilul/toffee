@@ -58,7 +58,19 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
 
         isOwner = arguments?.getInt(IS_OWNER) ?: 1
         channelId = arguments?.getInt(CHANNEL_ID) ?: 2
+        
+        channelId = if (isOwner == 0) 0 else channelId
+        
+        observeReloadPlaylist()
 
+    }
+
+    private fun observeReloadPlaylist() {
+        observe(mViewModel.reloadPlaylist){
+            if (it){
+                mAdapter.refresh()
+            }
+        }
     }
 
     override fun onItemClicked(item: MyChannelPlaylist) {
@@ -95,6 +107,7 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
         observe(editPlaylistViewModel.editPlaylistLiveData) {
             when (it) {
                 is Success -> {
+                    mAdapter.refresh()
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
                 }
                 is Failure -> {
@@ -118,7 +131,7 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
         playlistBinding.createButton.setOnClickListener {
             if (!editPlaylistViewModel.playlistName.isNullOrEmpty()) {
                 observeEditPlaylist()
-                editPlaylistViewModel.editPlaylist(playlistId)
+                editPlaylistViewModel.editPlaylist(playlistId, channelId , isOwner)
                 alertDialog.dismiss()
             }
             else {

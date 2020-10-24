@@ -13,7 +13,7 @@ import com.squareup.inject.assisted.AssistedInject
 
 data class MyChannelPlaylistContentParam(val channelId: Int, val isOwner: Int, val playlistId: Int)
 
-class MyChannelPlaylistContentService @AssistedInject constructor(private val preference: Preference, private val toffeeApi: ToffeeApi, @Assisted private val requestParams: MyChannelPlaylistContentParam):
+class MyChannelPlaylistVideosService @AssistedInject constructor(private val preference: Preference, private val toffeeApi: ToffeeApi, @Assisted private val requestParams: MyChannelPlaylistContentParam):
     BaseApiService<ChannelInfo> {
     
     override suspend fun loadData(offset: Int, limit: Int): List<ChannelInfo> {
@@ -40,6 +40,6 @@ class MyChannelPlaylistContentService @AssistedInject constructor(private val pr
 
     @AssistedInject.Factory
     interface AssistedFactory {
-        fun create(requestParams: MyChannelPlaylistContentParam): MyChannelPlaylistContentService
+        fun create(requestParams: MyChannelPlaylistContentParam): MyChannelPlaylistVideosService
     }
 }

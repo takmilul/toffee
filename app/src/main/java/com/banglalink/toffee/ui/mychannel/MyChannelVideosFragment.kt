@@ -1,13 +1,17 @@
 package com.banglalink.toffee.ui.mychannel
 
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.layout
@@ -16,8 +20,11 @@ import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.ReactionInfo
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.enums.Reaction.*
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.ContentReactionCallback
+import com.banglalink.toffee.ui.home.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.alert_dialog_reactions.view.*
 import kotlinx.coroutines.launch
@@ -35,10 +42,11 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
     lateinit var reactionDao: ReactionDao
 
     override val mAdapter by lazy { MyChannelVideosAdapter(this) }
-//    override val mViewModel by viewModels<ChannelVideosViewModel>()
 
     @Inject lateinit var viewModelAssistedFactory: MyChannelVideosViewModel.AssistedFactory
     override val mViewModel by viewModels<MyChannelVideosViewModel> { MyChannelVideosViewModel.provideFactory(viewModelAssistedFactory, isOwner, channelId) }
+    
+    private val homeViewModel by activityViewModels<HomeViewModel>()
 
     companion object {
         private const val SHOW_TOOLBAR = "enableToolbar"
@@ -69,11 +77,81 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
 
     override fun onOpenMenu(view: View, item: ChannelInfo) {
         super.onOpenMenu(view, item)
+        PopupMenu(requireContext(), view).apply {
+            inflate(R.menu.menu_channel_videos)
+            setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.menu_add_to_playlist -> {
+                        val fragment = MyChannelAddToPlaylistFragment.newInstance(item.id.toInt(), isOwner, channelId)
+                        fragment.show(requireActivity().supportFragmentManager, "add_to_playlist")
+                        return@setOnMenuItemClickListener true
+                    }
+                    R.id.menu_share->{
+                        val sharingIntent = Intent(Intent.ACTION_SEND)
+                        sharingIntent.type = "text/plain"
+                        sharingIntent.putExtra(
+                            Intent.EXTRA_TEXT,
+                            item.video_share_url
+                        )
+                        activity?.startActivity(Intent.createChooser(sharingIntent, "Share via"))
+                        return@setOnMenuItemClickListener true
+                    }
+                    R.id.menu_fav->{
+                        homeViewModel.updateFavorite(item).observe(viewLifecycleOwner, Observer {
+                            handleFavoriteResponse(it)
+                        })
+                        return@setOnMenuItemClickListener true
+                    }
+                    R.id.menu_not_interested->{
+                        removeItemNotInterestedItem(item)
+                        return@setOnMenuItemClickListener true
+                    }
+                    else->{
+                        return@setOnMenuItemClickListener false
+                    }
+                }
+            }
+            show()
+        }
+        
+    }
 
-        val data = arrayListOf("Test Playlist", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list", "new list")
-        val fragment = MyChannelAddToPlaylistFragment.newInstance(item.id.toInt(), isOwner, channelId)
-        fragment.show(requireActivity().supportFragmentManager, "add_to_playlist")
-        fragment.dialog?.setCanceledOnTouchOutside(true)
+    fun handleFavoriteResponse(it: Resource<ChannelInfo>){
+        when(it){
+            is Resource.Success->{
+                val channelInfo = it.data
+                when(channelInfo.favorite){
+                    "0"->{
+                        context?.showToast("Content successfully removed from favorite list")
+                        handleFavoriteRemovedSuccessFully(channelInfo)
+                    }
+                    "1"->{
+                        handleFavoriteAddedSuccessfully(channelInfo)
+                        context?.showToast("Content successfully added to favorite list")
+                    }
+                }
+            }
+            is Resource.Failure->{
+                context?.showToast(it.error.msg)
+            }
+        }
+    }
+
+    fun handleFavoriteAddedSuccessfully(channelInfo: ChannelInfo){
+        //subclass can hook here
+    }
+
+    fun handleFavoriteRemovedSuccessFully(channelInfo: ChannelInfo){
+        //subclass can hook here
+    }
+
+    fun removeItemNotInterestedItem(channelInfo: ChannelInfo){
+        
+    }
+    
+    override fun onItemClicked(item: ChannelInfo) {
+        super.onItemClicked(item)
+        homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
     }
     
     override fun onReactionClicked(view: View, position: Int, item: ChannelInfo) {

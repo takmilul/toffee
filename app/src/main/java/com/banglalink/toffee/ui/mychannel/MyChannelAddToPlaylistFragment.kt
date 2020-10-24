@@ -63,6 +63,8 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
 
         isOwner = arguments?.getInt(IS_OWNER) ?: 0
         channelId = arguments?.getInt(CHANNEL_ID) ?: 0
+        
+        channelId = if (isOwner == 0) 0 else channelId
 
     }
 
@@ -139,6 +141,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
             when (it) {
                 is Success -> {
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
+                    playlistViewModel.reloadPlaylist.postValue(true)
                     alertDialog.dismiss()
                 }
                 is Failure -> {
