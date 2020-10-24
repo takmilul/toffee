@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
+import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -13,6 +14,7 @@ import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.database.entities.UserActivities
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.home.HomeViewModel
+import com.banglalink.toffee.ui.widget.MyPopupWindow
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -52,5 +54,24 @@ class UserActivitiesListFragment: BaseListFragment<UserActivities>(),
 
     override fun onItemClicked(item: UserActivities) {
         homeViewModel.fragmentDetailsMutableLiveData.postValue(item.channelInfo)
+    }
+
+    override fun onOpenMenu(view: View, item: UserActivities) {
+        PopupMenu(requireContext(), view).apply {
+            menu.add(0, 0x112, 0, "Delete")
+            menu.add(0, 0x113, 0, "Share")
+            setOnMenuItemClickListener {
+                when (it.itemId) {
+                    0x112 -> {
+                        mViewModel.removeItem(item)
+                    }
+                    0x113 -> {
+                        homeViewModel.shareContentLiveData.postValue(item.channelInfo)
+                    }
+                }
+                return@setOnMenuItemClickListener true
+            }
+            show()
+        }
     }
 }

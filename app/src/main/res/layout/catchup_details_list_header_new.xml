@@ -12,18 +12,17 @@
             type="com.banglalink.toffee.model.ChannelInfo" />
         <variable
             name="callback"
-            type="com.banglalink.toffee.ui.home.OptionCallBack" />
+            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@color/screen_bg_white"
-        android:clickable="false"
-        android:focusable="false"
+        android:clickable="true"
+        android:focusable="true"
         android:paddingBottom="8dp">
-
 
         <TextView
             android:id="@+id/textView24"
@@ -31,7 +30,7 @@
             android:layout_height="wrap_content"
             android:drawablePadding="4dp"
             android:text="8.5k"
-            android:visibility="@{data.live ? View.GONE : View.VISIBLE}"
+            android:visibility="gone"
             android:gravity="center_vertical"
             app:drawableLeftCompat="@drawable/ic_like_emo"
             app:layout_constraintBottom_toBottomOf="@+id/textView25"
@@ -41,13 +40,13 @@
             app:layout_constraintTop_toTopOf="@+id/textView25"
             app:layout_constraintVertical_bias="0.0" />
 
+<!--            android:visibility="@{data.live ? View.GONE : View.VISIBLE}"-->
         <TextView
             android:id="@+id/program_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
             android:clickable="false"
             android:enabled="false"
             android:focusable="false"
@@ -56,7 +55,6 @@
             android:text="@{data.program_name}"
             android:textColor="@color/main_text_color"
             android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/options"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -71,7 +69,7 @@
             android:layout_marginEnd="15dp"
             android:clickable="true"
             android:focusable="true"
-            android:onClick="@{(v)->callback.onOptionClicked(v,data)}"
+            android:onClick="@{(v)->callback.onOpenMenu(v,data)}"
             android:padding="5dp"
             android:src="@mipmap/ic_overlay_dark"
             app:layout_constraintBottom_toBottomOf="@+id/program_name"
@@ -107,12 +105,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:drawableLeft="@drawable/ic_view"
+            android:layout_marginTop="16dp"
             android:drawablePadding="4dp"
-            android:text="@{data.live ? @string/live_watching_text(data.formatted_view_count) : data.formatted_view_count}"
+            android:text="@{data.formatted_view_count}"
             app:layout_constraintStart_toEndOf="@+id/liveStatus"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:drawableLeftCompat="@drawable/ic_view" />
+<!--            android:text="@{data.live ? @string/live_watching_text(data.formatted_view_count) : data.formatted_view_count}"-->
 
         <TextView
             android:id="@+id/textView26"
@@ -120,6 +119,7 @@
             android:layout_height="wrap_content"
             android:drawablePadding="4dp"
             android:text="8.5k"
+            android:visibility="gone"
             app:drawableLeftCompat="@drawable/ic_share_bg"
             app:layout_constraintBottom_toBottomOf="@+id/textView25"
             app:layout_constraintEnd_toStartOf="@+id/textView24"
@@ -153,6 +153,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
+            android:onClick="@{(v)-> v}"
             app:layout_constraintBottom_toBottomOf="@+id/circleImageView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/circleImageView" />
@@ -162,11 +163,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:text="565K"
+            android:text="@{data.formatted_view_count}"
             app:layout_constraintBottom_toBottomOf="@+id/subscribe_button"
             app:layout_constraintEnd_toStartOf="@+id/subscribe_button"
             app:layout_constraintTop_toTopOf="@+id/subscribe_button" />
 
+        <FrameLayout
+            android:id="@+id/relatedContainer"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/program_name" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

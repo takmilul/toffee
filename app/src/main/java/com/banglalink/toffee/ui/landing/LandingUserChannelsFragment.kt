@@ -18,7 +18,9 @@ import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.model.UgcUserChannelInfo
+import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.home.OptionCallBack
@@ -32,7 +34,7 @@ import kotlinx.coroutines.flow.collectLatest
 @AndroidEntryPoint
 class LandingUserChannelsFragment: HomeBaseFragment() {
     private lateinit var mAdapter: UserChannelsListAdapter
-
+    private var categoryInfo: UgcCategory? = null
     private val viewModel by activityViewModels<LandingPageViewModel>()
 
     override fun onCreateView(
@@ -45,6 +47,9 @@ class LandingUserChannelsFragment: HomeBaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        categoryInfo = parentFragment?.arguments?.getParcelable(
+            CategoryDetailsFragment.ARG_CATEGORY_ITEM)
 
         mAdapter = UserChannelsListAdapter(object: BaseListItemCallback<UgcUserChannelInfo> {
             override fun onItemClicked(item: UgcUserChannelInfo) {
@@ -69,7 +74,12 @@ class LandingUserChannelsFragment: HomeBaseFragment() {
 
     private fun observeList() {
         lifecycleScope.launchWhenStarted {
-            viewModel.loadUserChannels().collectLatest {
+            val content = if(categoryInfo == null) {
+                viewModel.loadUserChannels()
+            } else {
+                viewModel.loadUserChannelsByCategory(categoryInfo!!)
+            }
+            content.collectLatest {
                 mAdapter.submitData(it)
             }
         }

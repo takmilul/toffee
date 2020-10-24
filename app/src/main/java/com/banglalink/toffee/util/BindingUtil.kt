@@ -7,6 +7,7 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.TextUtils
 import android.text.style.StrikethroughSpan
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -60,9 +61,10 @@ fun bindCategoryImage(view: ImageView, category: UgcCategory) {
     }
     view.background = gd
 
-    if(!category.categoryIcon.isNullOrBlank()) {
+    if(category.categoryIcon.isNullOrBlank()) {
         view.setImageResource(R.drawable.ic_cat_music)
     } else {
+        Log.e("CATEGORY", "$category")
         view.load(category.categoryIcon) {
             crossfade(true)
             error(R.drawable.ic_cat_movie)
@@ -111,10 +113,21 @@ fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
     }
 }
 
+@BindingAdapter("bindFeaturedImage")
+fun bindFeatured(view: ImageView, channelInfo: ChannelInfo) {
+    view.load(channelInfo.feature_image)
+    {
+        diskCachePolicy(CachePolicy.ENABLED)
+        crossfade(true)
+        crossfade(crossFadeDurationInMills)
+//        size(720, 405)
+    }
+}
+
 @BindingAdapter("loadUserChannelLogo")
 fun bindUserChannelLogo(view: ImageView, channelInfo: ChannelInfo) {
     if (channelInfo.channel_logo.isNullOrBlank()) {
-        view.setImageResource(R.drawable.ic_portrait)
+        view.setImageResource(R.drawable.ic_profile_default)
     }
     else {
         view.load(channelInfo.channel_logo) {
@@ -133,7 +146,7 @@ fun bindUserChannelLogo(view: ImageView, channelInfo: ChannelInfo) {
 @BindingAdapter("loadChannelLogo")
 fun bindChannelLogo(view: ImageView, channelInfo: ChannelInfo) {
     if (channelInfo.channel_logo.isNullOrBlank()) {
-        view.setImageResource(R.drawable.ic_portrait)
+        view.setImageResource(R.drawable.ic_profile_default)
     }
     else {
         view.load(channelInfo.channel_logo) {
@@ -152,7 +165,7 @@ fun bindChannelLogo(view: ImageView, channelInfo: ChannelInfo) {
 @BindingAdapter("loadChannelLogo")
 fun bindChannelLogo(view: ImageView, channelInfo: UgcUserChannelInfo) {
     if (channelInfo.profileUrl.isNullOrBlank()) {
-        view.setImageResource(R.drawable.ic_portrait)
+        view.setImageResource(R.drawable.ic_profile_default)
     }
     else {
         view.load(channelInfo.profileUrl) {
@@ -310,4 +323,13 @@ fun bindActivityLogo(view: ImageView, item: UserActivities) {
         else -> R.drawable.ic_like_emo
     }
     view.setImageResource(reactLogo)
+}
+
+@BindingAdapter("bindEmoCount")
+fun bindEmoCount(view: TextView, item: ChannelInfo) {
+    var react = item.reaction?.run {
+        like + love + haha + wow + sad + angry
+    } ?: 0L
+    if(item.userReaction > 0) react++
+    view.text = Utils.getFormattedViewsText(react.toString())
 }

@@ -14,10 +14,7 @@ import android.util.Log
 import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
-import android.widget.AutoCompleteTextView
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
@@ -25,10 +22,12 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
+import androidx.fragment.app.commit
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -136,12 +135,6 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
 
         binding.uploadButton.setOnClickListener {
             if(navController.currentDestination?.id == R.id.uploadMethodFragment) {
-                ViewCompat.animate(binding.uploadButton)
-                    .rotation(0.0F)
-                    .withLayer()
-                    .setDuration(300L)
-                    .setInterpolator(AccelerateInterpolator())
-                    .start()
                 navController.popBackStack()
                 return@setOnClickListener
             }
@@ -150,12 +143,6 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                 Snackbar.make(binding.uploadButton, "Another upload is in progress", Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            ViewCompat.animate(binding.uploadButton)
-                .rotation(135.0F)
-                .withLayer()
-                .setDuration(300L)
-                .setInterpolator(AccelerateInterpolator())
-                .start()
             navController.navigate(R.id.uploadMethodFragment)
         }
 
@@ -217,6 +204,16 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             }
         }
 
+        observe(viewModel.shareContentLiveData) { channelInfo ->
+            val sharingIntent = Intent(Intent.ACTION_SEND)
+            sharingIntent.type = "text/plain"
+            sharingIntent.putExtra(
+                Intent.EXTRA_TEXT,
+                channelInfo.video_share_url
+            )
+            startActivity(Intent.createChooser(sharingIntent, "Share via"))
+        }
+
         if(intent.hasExtra(INTENT_PACKAGE_SUBSCRIBED)){
             handlePackageSubscribe()
         }
@@ -224,6 +221,15 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         lifecycle.addObserver(HeartBeatManager)
         observeInAppMessage()
         handleSharedUrl(intent)
+    }
+
+    fun rotateFab(isRotate: Boolean) {
+        ViewCompat.animate(binding.uploadButton)
+            .rotation(if(isRotate) 135.0F else 0.0F)
+            .withLayer()
+            .setDuration(300L)
+            .setInterpolator(AccelerateInterpolator())
+            .start()
     }
 
     private fun setupNavController() {
@@ -487,21 +493,22 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     }
 
     private fun loadDetailFragment(channelInfo: ChannelInfo){
-        if (channelInfo.isLive) {
-            val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
-            if (fragment !is ChannelFragment) {
-                loadFragmentById(
-                    R.id.details_viewer, ChannelFragment.createInstance(
-                        getString(R.string.menu_channel_text)
-                    )
-                )
-            }
-        } else {
-            loadFragmentById(
-                R.id.details_viewer,
-                CatchupDetailsFragment.createInstance(channelInfo)
-            )
-        }
+//        if (channelInfo.isLive) {
+//            val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
+//            if (fragment !is ChannelFragment) {
+//                loadFragmentById(
+//                    R.id.details_viewer, ChannelFragment.createInstance(
+//                        getString(R.string.menu_channel_text)
+//                    )
+//                )
+//            }
+//        } else {
+//            loadFragmentById(
+//                R.id.details_viewer,
+//                CatchupDetailsFragment.createInstance(channelInfo)
+//            )
+//        }
+        supportFragmentManager.commit { replace(R.id.details_viewer, ChannelViewFragment.newInstance(channelInfo)) }
     }
     fun loadFragmentById(id: Int, fragment: Fragment, tag: String) {
         supportFragmentManager.popBackStack(

@@ -16,6 +16,8 @@ import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.UgcCategory
+import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.home.MostPopularVideoListAdapter
@@ -29,7 +31,7 @@ import kotlinx.coroutines.flow.collectLatest
 @AndroidEntryPoint
 class TrendingNowFragment: HomeBaseFragment(), BaseListItemCallback<ChannelInfo> {
     private lateinit var mAdapter: TrendingNowVideoListAdapter
-
+    private var categoryInfo: UgcCategory? = null
     private val viewModel by activityViewModels<LandingPageViewModel>()
 
     override fun onCreateView(
@@ -43,11 +45,20 @@ class TrendingNowFragment: HomeBaseFragment(), BaseListItemCallback<ChannelInfo>
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        categoryInfo = parentFragment?.arguments?.getParcelable(
+            CategoryDetailsFragment.ARG_CATEGORY_ITEM)
+
         mAdapter = TrendingNowVideoListAdapter(object: BaseListItemCallback<ChannelInfo> {
             override fun onItemClicked(item: ChannelInfo) {
                 homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
             }
         })
+
+        mAdapter.addLoadStateListener {
+            if(mAdapter.itemCount > 0) {
+                trendingNowHeader.visibility = View.VISIBLE
+            }
+        }
 
         with(trendingNowList) {
             isNestedScrollingEnabled = false
@@ -59,7 +70,12 @@ class TrendingNowFragment: HomeBaseFragment(), BaseListItemCallback<ChannelInfo>
 
     private fun observeList() {
         lifecycleScope.launchWhenStarted {
-            viewModel.loadTrendingNowContent().collectLatest {
+            val content = if(categoryInfo == null) {
+                viewModel.loadTrendingNowContent()
+            } else {
+                viewModel.loadTrendingNowContentByCategory(categoryInfo!!)
+            }
+            content.collectLatest {
                 mAdapter.submitData(it)
             }
         }

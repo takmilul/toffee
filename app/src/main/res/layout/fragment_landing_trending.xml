@@ -18,6 +18,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_weight="1"
+        android:visibility="gone"
         android:text="@string/trending_now"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

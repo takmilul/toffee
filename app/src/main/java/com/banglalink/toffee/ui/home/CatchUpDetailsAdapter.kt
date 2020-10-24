@@ -8,8 +8,8 @@ import com.foxrentacar.foxpress.ui.common.MyViewHolder
 
 class CatchUpDetailsAdapter(private val optionCallBack: OptionCallBack, channelCallback:(ChannelInfo)->Unit={}): MyBaseAdapter<ChannelInfo>(channelCallback) {
     override fun getLayoutIdForPosition(position: Int): Int {
-        if(position == 0)
-            return R.layout.catchup_details_list_header_new
+//        if(position == 0)
+//            return R.layout.catchup_details_list_header_new
 
         if(values[position].isLive){
             return R.layout.list_item_live
@@ -19,9 +19,9 @@ class CatchUpDetailsAdapter(private val optionCallBack: OptionCallBack, channelC
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         super.onBindViewHolder(holder, position)
-        if(position==0){//setting null for headerview
-            holder.itemView.setOnClickListener(null)
-        }
+//        if(position==0){//setting null for headerview
+//            holder.itemView.setOnClickListener(null)
+//        }
         holder.bindCallBack(optionCallBack)
     }
 
