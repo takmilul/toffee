@@ -4,11 +4,15 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListFragment
+import com.banglalink.toffee.common.paging.BasePagingDataAdapter
+import com.banglalink.toffee.common.paging.BasePagingViewModel
 import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.ui.common.SingleListFragmentV2
 import com.banglalink.toffee.ui.subscription.PackageListActivity
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -48,7 +52,7 @@ class ChannelSubscriptionFragment
 
     override fun onItemClicked(item: ChannelInfo) {
 //        homeViewModel.userChannelMutableLiveData.postValue(item)
-        parentFragment?.findNavController()?.navigate(R.id.action_menu_activities_to_myChannelRatingFragment)
+//        parentFragment?.findNavController()?.navigate(R.id.action_menu_activities_to_channelRatingFragment)
     }
 
     override fun onSubscribeClicked(item: ChannelInfo) {

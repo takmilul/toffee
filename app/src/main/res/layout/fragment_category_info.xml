@@ -92,7 +92,6 @@
         android:id="@+id/categoryIcon"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:padding="20dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"

@@ -47,6 +47,7 @@ class HomeViewModel @ViewModelInject constructor(
 
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val fragmentDetailsMutableLiveData = MutableLiveData<ChannelInfo>()
+    val shareContentLiveData = MutableLiveData<ChannelInfo>()
     val userChannelMutableLiveData = MutableLiveData<ChannelInfo>()
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val viewAllChannelLiveData = MutableLiveData<Boolean>()

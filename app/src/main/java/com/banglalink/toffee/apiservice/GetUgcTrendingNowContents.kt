@@ -1,5 +1,6 @@
 package com.banglalink.toffee.apiservice
 
+import android.util.Log
 import com.banglalink.toffee.common.paging.BaseApiService
 import com.banglalink.toffee.data.network.request.UgcTrendingNowRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
@@ -37,7 +38,7 @@ class GetUgcTrendingNowContents @AssistedInject constructor(
                 request
             )
         }
-
+        Log.e("TRENDING", response.response.toString())
         if (response.response.channels != null) {
             return response.response.channels
         }

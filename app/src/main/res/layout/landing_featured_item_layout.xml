@@ -19,6 +19,6 @@
         android:layout_height="match_parent"
         android:minHeight="200dp"
         android:onClick="@{()->callback.onItemClicked(data)}"
-        loadChannelImage="@{data}"
+        bindFeaturedImage="@{data}"
         android:adjustViewBounds="true" />
 </layout>

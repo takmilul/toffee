@@ -70,6 +70,16 @@ class LandingPageViewModel @ViewModelInject constructor(
         })
     }
 
+    fun loadUserChannelsByCategory(category: UgcCategory): Flow<PagingData<UgcUserChannelInfo>> {
+        return BaseListRepositoryImpl({
+            BaseNetworkPagingSource(
+                popularChannelAssistedFactory.create(
+                    ApiCategoryRequestParams("", 1, category.id.toInt())
+                )
+            )
+        }).getList()
+    }
+
     private val channelRepo by lazy {
         BaseListRepositoryImpl({
             BaseNetworkPagingSource(
@@ -140,6 +150,16 @@ class LandingPageViewModel @ViewModelInject constructor(
         return BaseListRepositoryImpl({
             BaseNetworkPagingSource(
                 trendingNowAssistedFactory.create(
+                    ApiCategoryRequestParams("VOD", 1, category.id.toInt())
+                )
+            )
+        }).getList()
+    }
+
+    fun loadFeatureContentsByCategory(category: UgcCategory): Flow<PagingData<ChannelInfo>>{
+        return BaseListRepositoryImpl({
+            BaseNetworkPagingSource(
+                featuredContentAssistedFactory.create(
                     ApiCategoryRequestParams("VOD", 1, category.id.toInt())
                 )
             )

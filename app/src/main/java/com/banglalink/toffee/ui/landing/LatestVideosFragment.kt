@@ -41,6 +41,10 @@ class LatestVideosFragment: HomeBaseFragment() {
             override fun onItemClicked(item: ChannelInfo) {
                 homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
             }
+
+            override fun onOpenMenu(view: View, item: ChannelInfo) {
+                openMenu(view, item)
+            }
         })
 
         with(latestVideosList) {
@@ -68,6 +72,10 @@ class LatestVideosFragment: HomeBaseFragment() {
     }
 
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
+
+    }
+
+    private fun openMenu(view: View, item: ChannelInfo) {
 
     }
 }

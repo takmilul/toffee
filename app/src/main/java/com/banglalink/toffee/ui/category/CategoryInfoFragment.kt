@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -16,21 +17,22 @@ import androidx.viewpager2.widget.ViewPager2
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.extension.showToast
-import com.banglalink.toffee.model.Category
-import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.NavCategory
-import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.FeaturedListAdapter
+import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.home.OptionCallBack
+import com.banglalink.toffee.util.bindCategoryImage
 import com.banglalink.toffee.util.bindChannelLogo
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.material.chip.Chip
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.fragment_category_info.*
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlin.random.Random
@@ -39,6 +41,8 @@ import kotlin.random.nextInt
 class CategoryInfoFragment: HomeBaseFragment() {
     private lateinit var mAdapter: FeaturedListAdapter
     private val viewModel by activityViewModels<LandingPageViewModel>()
+    private var scrollJob: Job? = null
+    private lateinit var categoryInfo: UgcCategory
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,9 +54,12 @@ class CategoryInfoFragment: HomeBaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        categoryInfo = requireParentFragment().requireArguments().getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)!!
 
         mAdapter = FeaturedListAdapter(object: BaseListItemCallback<ChannelInfo> {
-
+            override fun onItemClicked(item: ChannelInfo) {
+                homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+            }
         })
 
         with(categoryListPager) {
@@ -63,46 +70,48 @@ class CategoryInfoFragment: HomeBaseFragment() {
 
         observeList()
         observeCategoryData()
-
-//        viewModel.loadCategoryInfo()
     }
 
     private fun observeList() {
         lifecycleScope.launchWhenStarted {
-//            viewModel.
+            viewModel.loadFeatureContentsByCategory(categoryInfo).collectLatest {
+                startPageScroll()
+                mAdapter.submitData(it)
+            }
         }
     }
 
     private fun observeCategoryData() {
-        val categoryInfo = requireParentFragment().requireArguments().getParcelable<NavCategory>(CategoryDetailsFragment.ARG_CATEGORY_ITEM)!!
+
 
         categoryInfo.let {
             categoryName.text = it.categoryName
             follower_count.text = "${Random.nextInt(500..10000)} Followers"
-            val intColor = Color.parseColor(it.bgColor)
+            val intColor = Color.parseColor(it.colorCode)
 
             categoryIcon.background = GradientDrawable().apply {
                 shape = GradientDrawable.OVAL
                 color = ColorStateList.valueOf(intColor)
             }
-            categoryIcon.setImageResource(it.icon)
+            bindCategoryImage(categoryIcon, categoryInfo)
 
-            categoryChipGroup.removeAllViews()
-            it.subCategoryList?.forEachIndexed { index, subCategory ->
-                val chip = layoutInflater.inflate(R.layout.category_chip_layout, categoryChipGroup, false) as Chip
-                chip.text = subCategory.subcategoryName
-
-                val chipColor = createChipBg(intColor)
-
-                chip.chipBackgroundColor = chipColor
-                chip.chipStrokeColor = ColorStateList.valueOf(intColor)
-                chip.rippleColor = chipColor
-
-                categoryChipGroup.addView(chip)
-                if(index == 0) {
-                    chip.isChecked = true
-                }
-            }
+            categoryChipGroup.isVisible = false
+//            categoryChipGroup.removeAllViews()
+//            it.subCategoryList?.forEachIndexed { index, subCategory ->
+//                val chip = layoutInflater.inflate(R.layout.category_chip_layout, categoryChipGroup, false) as Chip
+//                chip.text = subCategory.subcategoryName
+//
+//                val chipColor = createChipBg(intColor)
+//
+//                chip.chipBackgroundColor = chipColor
+//                chip.chipStrokeColor = ColorStateList.valueOf(intColor)
+//                chip.rippleColor = chipColor
+//
+//                categoryChipGroup.addView(chip)
+//                if(index == 0) {
+//                    chip.isChecked = true
+//                }
+//            }
         }
     }
 
@@ -120,7 +129,9 @@ class CategoryInfoFragment: HomeBaseFragment() {
     }
 
     private fun startPageScroll() {
-        lifecycleScope.launch {
+        scrollJob?.cancel()
+
+        scrollJob = lifecycleScope.launch {
             while(isActive) {
                 delay(5000)
                 if(isActive && mAdapter.itemCount > 0) {

@@ -6,11 +6,11 @@
     app:startDestination="@id/menu_feed">
     <fragment
         android:id="@+id/menu_activities"
-        android:name="com.banglalink.toffee.ui.useractivities.UserActivitiesMainFragment"
-        android:label="UserActivitiesMainFragment" >
-        <action
-            android:id="@+id/action_menu_activities_to_myChannelRatingFragment"
-            app:destination="@id/myChannelRatingFragment" />
+        android:name="com.banglalink.toffee.ui.useractivities.UserActivitiesListFragment"
+        android:label="UserActivitiesListFragment" >
+<!--        <action-->
+<!--            android:id="@+id/action_menu_activities_to_channelRatingFragment"-->
+<!--            app:destination="@id/channelRatingFragment" />-->
     </fragment>
     <fragment
         android:id="@+id/menu_feed"

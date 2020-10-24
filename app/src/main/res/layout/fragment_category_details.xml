@@ -23,11 +23,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-<!--            <androidx.fragment.app.FragmentContainerView-->
-<!--                android:id="@+id/featuredFragment"-->
-<!--                android:name="com.banglalink.toffee.ui.category.CategoryInfoFragment"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content" />-->
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/featuredFragment"
+                android:name="com.banglalink.toffee.ui.category.CategoryInfoFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
 <!--            <androidx.fragment.app.FragmentContainerView-->
 <!--                android:id="@+id/popularTvChannelsFragment"-->
@@ -50,19 +50,19 @@
 <!--                android:layout_width="match_parent"-->
 <!--                android:layout_height="wrap_content" />-->
 
-<!--        <androidx.fragment.app.FragmentContainerView-->
-<!--            android:id="@+id/userChannelList"-->
-<!--            android:name="com.banglalink.toffee.ui.landing.LandingUserChannelsFragment"-->
-<!--            android:layout_marginTop="8dp"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content" />-->
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/userChannelList"
+            android:name="com.banglalink.toffee.ui.landing.LandingUserChannelsFragment"
+            android:layout_marginTop="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-<!--            <androidx.fragment.app.FragmentContainerView-->
-<!--                android:id="@+id/trendingNowFragment"-->
-<!--                android:name="com.banglalink.toffee.ui.landing.TrendingNowFragment"-->
-<!--                android:layout_marginTop="8dp"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content" />-->
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/trendingNowFragment"
+                android:name="com.banglalink.toffee.ui.landing.TrendingNowFragment"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 

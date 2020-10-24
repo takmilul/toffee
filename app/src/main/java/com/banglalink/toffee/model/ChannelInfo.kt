@@ -71,6 +71,8 @@ data class ChannelInfo(
         return itemCategory
     }
 
+    fun formatedShareCount() = Utils.getFormattedViewsText(shareCount.toString())
+
     val isPurchased: Boolean
         get() = individual_price?.toInt() ?: 0 > 0 && individual_purchase
     val isSubscribed: Boolean

@@ -6,6 +6,7 @@
     android:layout_height="wrap_content">
 
     <View
+        android:id="@+id/categoriesBg"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@drawable/fragment_bg_top"
