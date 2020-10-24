@@ -15,7 +15,10 @@ import coil.api.load
 import coil.request.CachePolicy
 import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
+import com.banglalink.toffee.data.database.entities.UserActivities
 import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.enums.ActivityType
+import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Package
 import com.banglalink.toffee.model.UgcCategory
@@ -284,4 +287,27 @@ fun bindCircleImageFromUrl(view: CircleImageView, imageUrl: String?) {
             crossfade(false)
         }
     }
+}
+
+@BindingAdapter("bindActivityType")
+fun bindActivityType(view: TextView, item: UserActivities) {
+    view.text = when(item.activityType) {
+        ActivityType.REACT.value -> "Reacted"
+        ActivityType.PLAYLIST.value -> "Added to PlayList"
+        else -> null
+    }
+}
+
+@BindingAdapter("bindActivityLogo")
+fun bindActivityLogo(view: ImageView, item: UserActivities) {
+    val reactLogo = when (item.activitySubType) {
+        Reaction.Like.value -> R.drawable.ic_reaction_like
+        Reaction.Love.value -> R.drawable.ic_reaction_love
+        Reaction.HaHa.value -> R.drawable.ic_reaction_haha
+        Reaction.Wow.value -> R.drawable.ic_reaction_wow
+        Reaction.Sad.value -> R.drawable.ic_reaction_sad
+        Reaction.Angry.value -> R.drawable.ic_reaction_angry
+        else -> R.drawable.ic_like_emo
+    }
+    view.setImageResource(reactLogo)
 }

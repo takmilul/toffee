@@ -3,13 +3,15 @@ package com.banglalink.toffee.di
 import android.content.Context
 import androidx.room.Room
 import com.banglalink.toffee.data.database.ToffeeDatabase
-import com.banglalink.toffee.data.database.dao.NotificationDao
-import com.banglalink.toffee.data.database.dao.ReactionDao
-import com.banglalink.toffee.data.database.dao.UploadDao
+import com.banglalink.toffee.data.database.dao.*
+import com.banglalink.toffee.data.repository.HistoryRepository
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.repository.UploadInfoRepository
+import com.banglalink.toffee.data.repository.UserActivitiesRepository
+import com.banglalink.toffee.data.repository.impl.HistoryRepositoryImpl
 import com.banglalink.toffee.data.repository.impl.NotificationInfoRepositoryImpl
 import com.banglalink.toffee.data.repository.impl.UploadInfoRepositoryImpl
+import com.banglalink.toffee.data.repository.impl.UserActivitiesRepositoryImpl
 import com.banglalink.toffee.data.storage.ViewCountDAO
 import dagger.Module
 import dagger.Provides
@@ -42,6 +44,30 @@ object DatabaseModule {
     @Singleton
     fun providesViewCountDao(db: ToffeeDatabase): ViewCountDAO {
         return db.getViewCountDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providesHistoryDao(db: ToffeeDatabase): HistoryItemDao {
+        return db.getHistoryItemDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providesHistoryRepo(dao: HistoryItemDao): HistoryRepository {
+        return HistoryRepositoryImpl(dao)
+    }
+
+    @Provides
+    @Singleton
+    fun providesUserActivitiesDao(db: ToffeeDatabase): UserActivitiesDao {
+        return db.getUserActivitiesDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providesUserActivitiesRepo(dao: UserActivitiesDao): UserActivitiesRepository {
+        return UserActivitiesRepositoryImpl(dao)
     }
 
     @Provides

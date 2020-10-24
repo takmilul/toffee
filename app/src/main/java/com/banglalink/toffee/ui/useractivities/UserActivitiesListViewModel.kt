@@ -1,17 +1,16 @@
 package com.banglalink.toffee.ui.useractivities
 
 import androidx.hilt.lifecycle.ViewModelInject
-import com.banglalink.toffee.common.paging.BasePagingViewModel
-import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.apiservice.UserActivities
 import com.banglalink.toffee.common.paging.BaseListRepository
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
-import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
+import com.banglalink.toffee.common.paging.BasePagingViewModel
+import com.banglalink.toffee.data.database.entities.UserActivities
+import com.banglalink.toffee.data.repository.UserActivitiesRepository
 
 class UserActivitiesListViewModel @ViewModelInject constructor(
-    apiService: UserActivities
-): BasePagingViewModel<ChannelInfo>() {
-    override val repo: BaseListRepository<ChannelInfo> by lazy {
-        BaseListRepositoryImpl({BaseNetworkPagingSource(apiService)})
+    activitiesRepo: UserActivitiesRepository
+): BasePagingViewModel<UserActivities>() {
+    override val repo: BaseListRepository<UserActivities> by lazy {
+        BaseListRepositoryImpl({activitiesRepo.getAllItems()})
     }
 }

@@ -128,7 +128,8 @@ class ChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReactionCa
     private fun react(item: ChannelInfo, position: Int, reactView: View, reactButton: View, contentId: String, reaction: Reaction) {
         val reactionInfo = ReactionInfo(null, contentId, reaction.value)
         mViewModel.insert(reactionInfo)
-        mAdapter.getItemByIndex(position)?.reaction = getReactionIcon(reaction.value)
+        mViewModel.insertActivity(item, reaction.value)
+        mAdapter.getItemByIndex(position)?.userReaction = getReactionIcon(reaction.value) ?: 0
         reactButton.background = ContextCompat.getDrawable(requireContext(), R.drawable.teal_round_bg)
         (reactView as ImageView).setImageDrawable((reactButton as ImageView).drawable)
     }
