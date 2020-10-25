@@ -156,7 +156,10 @@ interface ToffeeApi {
     suspend fun subscribeOnMyChannel(@Body myChannelSubscribeRequest: MyChannelSubscribeRequest): MyChannelSubscribeResponse
 
     @POST("ugc-delete-playlist-name")
-    suspend fun deleteMyChannelPlayList(@Body myChannelPlaylistDeleteRequest: MyChannelPlaylistDeleteRequest): MyChannelPlaylistDeleteResponse
+    suspend fun deleteMyChannelPlaylist(@Body myChannelPlaylistDeleteRequest: MyChannelPlaylistDeleteRequest): MyChannelPlaylistDeleteResponse
+
+    @POST("ugc-delete-content-to-playlist")
+    suspend fun deleteMyChannelPlaylistVideo(@Body myChannelPlaylistVideoDeleteRequest: MyChannelPlaylistVideoDeleteRequest): MyChannelPlaylistVideoDeleteResponse
 
     @POST("ugc-add-content-to-playlist")
     suspend fun addToMyChannelPlayList(@Body myChannelAddToPlaylistRequest: MyChannelAddToPlaylistRequest): MyChannelAddToPlaylistResponse

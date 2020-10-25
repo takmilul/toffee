@@ -27,7 +27,7 @@
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
                 <include
-                    android:id="@+id/creatorChannelView"
+                    android:id="@+id/channelDetailView"
                     layout="@layout/layout_earnings_home_info"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

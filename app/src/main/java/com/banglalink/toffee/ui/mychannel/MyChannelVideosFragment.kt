@@ -1,33 +1,21 @@
 package com.banglalink.toffee.ui.mychannel
 
-import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
-import com.banglalink.toffee.R.layout
 import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.data.database.dao.ReactionDao
-import com.banglalink.toffee.data.database.entities.ReactionInfo
-import com.banglalink.toffee.enums.Reaction
-import com.banglalink.toffee.enums.Reaction.*
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.ui.common.AlertDialogReactionFragment
 import com.banglalink.toffee.ui.common.ContentReactionCallback
 import com.banglalink.toffee.ui.home.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.alert_dialog_reactions.view.*
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -78,7 +66,12 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
     override fun onOpenMenu(view: View, item: ChannelInfo) {
         super.onOpenMenu(view, item)
         PopupMenu(requireContext(), view).apply {
-            inflate(R.menu.menu_channel_videos)
+            if (isOwner == 1){
+                inflate(R.menu.menu_channel_owner_videos)
+            }
+            else {
+                inflate(R.menu.menu_channel_videos)
+            }
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_add_to_playlist -> {
@@ -87,13 +80,7 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
                         return@setOnMenuItemClickListener true
                     }
                     R.id.menu_share->{
-                        val sharingIntent = Intent(Intent.ACTION_SEND)
-                        sharingIntent.type = "text/plain"
-                        sharingIntent.putExtra(
-                            Intent.EXTRA_TEXT,
-                            item.video_share_url
-                        )
-                        activity?.startActivity(Intent.createChooser(sharingIntent, "Share via"))
+                        homeViewModel.shareContentLiveData.postValue(item)
                         return@setOnMenuItemClickListener true
                     }
                     R.id.menu_fav->{
@@ -156,10 +143,13 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
     
     override fun onReactionClicked(view: View, position: Int, item: ChannelInfo) {
         super.onReactionClicked(view, position, item)
-        showReactionDialog(view, position, item)
+        val fragment = AlertDialogReactionFragment.newInstance()
+        fragment.setItem(view, position, item)
+        fragment.show(requireActivity().supportFragmentManager, "ReactionDialog")
+//        showReactionDialog(view, position, item)
     }
-
-    private fun showReactionDialog(reactView: View, position: Int, item: ChannelInfo) {
+    
+    /*private fun showReactionDialog(reactView: View, position: Int, item: ChannelInfo) {
         val dialogView: View = this.layoutInflater.inflate(layout.alert_dialog_reactions, null)
         val dialogBuilder = AlertDialog.Builder(requireContext()).setView(dialogView)
         val alertDialog: AlertDialog = dialogBuilder.create().apply {
@@ -234,6 +224,6 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
             Angry.value -> R.drawable.ic_reaction_angry
             else -> R.drawable.ic_like_emo
         }
-    }
+    }*/
 
 }

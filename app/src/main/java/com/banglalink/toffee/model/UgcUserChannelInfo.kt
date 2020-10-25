@@ -30,4 +30,7 @@ data class UgcUserChannelInfo(
     val bannerUrl: String?,
 
     val isSubscribed: Int,
+    
+    @SerializedName("user_id")
+    val userId: Int,
 )

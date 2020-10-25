@@ -31,6 +31,8 @@ import kotlinx.android.synthetic.main.layout_my_channel_detail.*
 import java.util.*
 import javax.inject.Inject
 
+
+
 @AndroidEntryPoint
 class MyChannelHomeFragment : Fragment(), OnClickListener {
 
@@ -47,13 +49,13 @@ class MyChannelHomeFragment : Fragment(), OnClickListener {
     @Inject lateinit var myChannelHomeViewModelAssistedFactory: MyChannelHomeViewModel.AssistedFactory
     private val viewModel by viewModels<MyChannelHomeViewModel> { MyChannelHomeViewModel.provideFactory(myChannelHomeViewModelAssistedFactory, isOwner, channelId) }
 
-//    private val viewModel by viewModels<CreatorChannelViewModel>()
+    //    private val viewModel by viewModels<CreatorChannelViewModel>()
     private val createPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
     private val subscribeChannelViewModel by viewModels<MyChannelSubscribeViewModel>()
-    
+
     companion object {
-        private const val IS_OWNER = "isOwner"
-        private const val CHANNEL_ID = "channelId"
+        const val IS_OWNER = "isOwner"
+        const val CHANNEL_ID = "channelId"
         fun newInstance(isOwner: Int, channelId: Int): MyChannelHomeFragment {
             val instance = MyChannelHomeFragment()
             val bundle = Bundle()
@@ -66,22 +68,11 @@ class MyChannelHomeFragment : Fragment(), OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        /*val args = CreatorChannelFragmentArgs.fromBundle(requireArguments())
-        isOwner = args.isOwner
-        channelId = args.channelId
-        isSubscribed = args.isSubscribed*/
+        val args = arguments
+        isOwner = args?.getInt(IS_OWNER) ?: 0
+        channelId = args?.getInt(CHANNEL_ID) ?: 0
+        /*isSubscribed = args.isSubscribed*/
 
-        isOwner = arguments?.getInt(IS_OWNER) ?: 1
-        channelId = arguments?.getInt(CHANNEL_ID) ?: 2
-
-        if (fragmentList.isEmpty()) {
-
-            fragmentTitleList.add("Videos")
-            fragmentTitleList.add("Playlists")
-
-            fragmentList.add(MyChannelVideosFragment.newInstance(true, isOwner, channelId))
-            fragmentList.add(MyChannelPlaylistsFragment.newInstance(true, isOwner, channelId))
-        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -89,39 +80,24 @@ class MyChannelHomeFragment : Fragment(), OnClickListener {
         binding.lifecycleOwner = this
         binding.isOwner = isOwner
         binding.isSubscribed = isSubscribed
+        binding.viewModel = viewModel
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.contentBody.visibility = View.GONE
+        binding.progressBar.visibility = View.VISIBLE
+
         observeChannelDetail()
-        observeRatingChannel()
-        observeSubscribeChannel()
+        viewModel.getDetail()
+        binding.channelDetailView.addBioButton.setOnClickListener(this)
+        binding.channelDetailView.editButton.setOnClickListener(this)
+        binding.channelDetailView.analyticsButton.setOnClickListener(this)
+        binding.channelDetailView.ratingButton.setOnClickListener(this)
+        binding.channelDetailView.subscriptionButton.setOnClickListener(this)
 
-        binding.viewPager.offscreenPageLimit = 1
-        binding.creatorChannelView.addBioButton.setOnClickListener(this)
-        binding.creatorChannelView.editButton.setOnClickListener(this)
-        binding.creatorChannelView.analyticsButton.setOnClickListener(this)
-        binding.creatorChannelView.ratingButton.setOnClickListener(this)
-        binding.creatorChannelView.subscriptionButton.setOnClickListener(this)
-
-        viewPagerAdapter = ViewPagerAdapter(this, fragmentList)
-        binding.viewPager.adapter = viewPagerAdapter
-
-        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-            tab.text = fragmentTitleList[position]
-        }.attach()
-
-        // set interpolators for both expanding and collapsing animations
-        binding.creatorChannelView.channelDescriptionTextView.setInterpolator(OvershootInterpolator())
-
-        // toggle the Expand button
-        binding.creatorChannelView.expandButton.setOnClickListener(View.OnClickListener {
-            binding.creatorChannelView.expandButton.background =
-                if (binding.creatorChannelView.channelDescriptionTextView.isExpanded) ContextCompat.getDrawable(requireContext(), R.drawable.ic_down_arrow) else ContextCompat.getDrawable(requireContext(), R.drawable.ic_up_arrow)
-            binding.creatorChannelView.channelDescriptionTextView.toggle()
-        })
     }
 
     override fun onClick(v: View?) {
@@ -157,7 +133,7 @@ class MyChannelHomeFragment : Fragment(), OnClickListener {
         alertDialog.show()
         dialogView.submitButton.setOnClickListener {
             viewModel.rateMyChannel(rating)
-            alertDialog.dismiss() 
+            alertDialog.dismiss()
         }
     }
 
@@ -181,15 +157,19 @@ class MyChannelHomeFragment : Fragment(), OnClickListener {
         }
     }
 
-    private fun observeChannelDetail(){
-        observe(viewModel.liveData){
-            when(it){
+    private fun observeChannelDetail() {
+        observe(viewModel.liveData) {
+            when (it) {
                 is Success -> {
                     if (it.data != null) {
                         myChannelDetail = it.data.myChannelDetail
                         isSubscribed = it.data.isSubscribed
+                        isOwner = it.data.isOwner
+                        channelId = myChannelDetail?.id?.toInt() ?: 0
                         binding.data = it.data
                         binding.isSubscribed = isSubscribed
+
+                        loadBody()
                     }
                 }
                 is Failure -> {
@@ -199,9 +179,44 @@ class MyChannelHomeFragment : Fragment(), OnClickListener {
         }
     }
 
+    private fun loadBody() {
+        binding.progressBar.visibility = View.GONE
+        binding.contentBody.visibility = View.VISIBLE
+
+        if (fragmentList.isEmpty()) {
+
+            fragmentTitleList.add("Videos")
+            fragmentTitleList.add("Playlists")
+
+            fragmentList.add(MyChannelVideosFragment.newInstance(true, isOwner, channelId))
+            fragmentList.add(MyChannelPlaylistsFragment.newInstance(true, isOwner, channelId))
+        }
+
+        observeRatingChannel()
+        observeSubscribeChannel()
+
+        binding.viewPager.offscreenPageLimit = 1
+        viewPagerAdapter = ViewPagerAdapter(this, fragmentList)
+        binding.viewPager.adapter = viewPagerAdapter
+
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            tab.text = fragmentTitleList[position]
+        }.attach()
+
+        // set interpolators for both expanding and collapsing animations
+        binding.channelDetailView.channelDescriptionTextView.setInterpolator(OvershootInterpolator())
+
+        // toggle the Expand button
+        binding.channelDetailView.expandButton.setOnClickListener(View.OnClickListener {
+            binding.channelDetailView.expandButton.background =
+                if (binding.channelDetailView.channelDescriptionTextView.isExpanded) ContextCompat.getDrawable(requireContext(), R.drawable.ic_down_arrow) else ContextCompat.getDrawable(requireContext(), R.drawable.ic_up_arrow)
+            binding.channelDetailView.channelDescriptionTextView.toggle()
+        })
+    }
+
     private fun observeSubscribeChannel() {
-        observe(subscribeChannelViewModel.liveData){
-            when(it){
+        observe(subscribeChannelViewModel.liveData) {
+            when (it) {
                 is Success -> {
                     isSubscribed = it.data.isSubscribed
                     binding.isSubscribed = isSubscribed
@@ -215,9 +230,9 @@ class MyChannelHomeFragment : Fragment(), OnClickListener {
         }
     }
 
-    private fun observeRatingChannel(){
-        observe(viewModel.ratingLiveData){
-            when(it){
+    private fun observeRatingChannel() {
+        observe(viewModel.ratingLiveData) {
+            when (it) {
                 is Success -> {
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
                 }
