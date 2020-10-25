@@ -17,7 +17,6 @@ import com.banglalink.toffee.R.layout
 import com.banglalink.toffee.databinding.FragmentAddNewPaymentMethodBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.util.unsafeLazy
-import kotlinx.android.synthetic.main.alert_dialog_channel_rating.view.*
 import kotlinx.android.synthetic.main.alert_dialog_success.view.*
 import kotlinx.android.synthetic.main.fragment_add_new_payment_method.*
 
@@ -79,6 +78,5 @@ class AddNewPaymentMethodFragment : Fragment(), OnClickListener {
         val alertDialog: AlertDialog = dialogBuilder.create()
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         alertDialog.show()
-        dialogView?.submitButton?.setOnClickListener { alertDialog.dismiss() }
     }
 }

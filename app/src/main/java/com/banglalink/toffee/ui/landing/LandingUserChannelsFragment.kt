@@ -53,7 +53,7 @@ class LandingUserChannelsFragment: HomeBaseFragment() {
 
         mAdapter = UserChannelsListAdapter(object: BaseListItemCallback<UgcUserChannelInfo> {
             override fun onItemClicked(item: UgcUserChannelInfo) {
-                parentFragment?.findNavController()?.navigate(R.id.action_menu_feed_to_channelRatingFragment)
+                parentFragment?.findNavController()?.navigate(R.id.action_menu_feed_to_myChannelRatingFragment)
             }
         })
 

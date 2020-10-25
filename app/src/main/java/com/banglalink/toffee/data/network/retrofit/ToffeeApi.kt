@@ -153,25 +153,25 @@ interface ToffeeApi {
     suspend fun followOnCategory(@Body ugcFollowCategoryRequest: UgcFollowCategoryRequest): UgcFollowCategoryResponse
 
     @POST("ugc-subscribe-on-channel")
-    suspend fun subscribeOnChannel(@Body ugcSubscribeChannelRequest: UgcSubscribeChannelRequest): UgcSubscribeChannelResponse
+    suspend fun subscribeOnMyChannel(@Body myChannelSubscribeRequest: MyChannelSubscribeRequest): MyChannelSubscribeResponse
 
     @POST("ugc-delete-playlist-name")
-    suspend fun deletePlayList(@Body deletePlayListRequest: DeletePlayListRequest): DeletePlayListResponse
+    suspend fun deleteMyChannelPlayList(@Body myChannelPlaylistDeleteRequest: MyChannelPlaylistDeleteRequest): MyChannelPlaylistDeleteResponse
 
     @POST("ugc-add-content-to-playlist")
-    suspend fun addToPlayList(@Body addToPlayListRequest: AddToPlayListRequest): AddToPlayListResponse
+    suspend fun addToMyChannelPlayList(@Body myChannelAddToPlaylistRequest: MyChannelAddToPlaylistRequest): MyChannelAddToPlaylistResponse
 
     @POST("ugc-channel-details/1/{isOwner}/{channelId}/{dbVersion}")
-    suspend fun getUgcMyChannelDetails(
+    suspend fun getMyChannelDetails(
         @Path("isOwner") isOwner: Int = 0,
         @Path("channelId") channelId: Int = 2,
         @Path("dbVersion") dbVersion: Int = 0,
-        @Body channelDetailRequest: UgcMyChannelDetailRequest
-    ): UgcMyChannelResponse
+        @Body channelDetailRequest: MyChannelDetailRequest
+    ): MyChannelDetailResponse
 
     @POST("ugc-channel-all-content/1/{type}/{isOwner}/{channelId}/{categoryId}/{subcategoryId}/{limit}/{offset}/{dbVersion}")
     //ugc-channel-all-content/deviceType/type/isOwner/channelId/categoryId/subCategoryId/limit/offset/dbVersion
-    suspend fun getUgcMyChannelContents(
+    suspend fun getMyChannelVideos(
         @Path("type") type: String,
         @Path("isOwner") isOwner: Int,
         @Path("channelId") channelId: Int,
@@ -180,27 +180,39 @@ interface ToffeeApi {
         @Path("limit") limit: Int,
         @Path("offset") offset: Int,
         @Path("dbVersion") dbVersion: Int,
-        @Body channelContentRequest: UgcMyChannelContentRequest
-    ): UgcMyChannelContentResponse
+        @Body channelVideosRequest: MyChannelVideosRequest
+    ): MyChannelVideosResponse
 
     @POST("ugc-playlist-names/1/{isOwner}/{channelId}/{limit}/{offset}/{dbVersion}")
-    suspend fun getUgcMyChannelPlaylist(
+    suspend fun getMyChannelPlaylist(
         @Path("isOwner") isOwner: Int,
         @Path("channelId") channelId: Int,
         @Path("limit") limit: Int,
         @Path("offset") offset: Int,
         @Path("dbVersion") dbVersion: Int,
-        @Body channelPlaylistRequest: UgcGetMyChannelPlaylistRequest
-    ): UgcGetMyChannelPlaylistResponse
+        @Body channelPlaylistRequest: MyChannelPlaylistRequest
+    ): MyChannelPlaylistResponse
+
+    @POST("ugc-content-by-playlist/1/{channelId}/{isOwner}/{playlistId}/{limit}/{offset}/{dbVersion}")
+    suspend fun getMyChannelPlaylistVideos(
+        @Path("channelId") channelId: Int,
+        @Path("isOwner") isOwner: Int,
+        @Path("playlistId") playlistId: Int,
+        @Path("limit") limit: Int,
+        @Path("offset") offset: Int,
+        @Path("dbVersion") dbVersion: Int,
+        @Body channelPlaylistVideosRequest: MyChannelPlaylistVideosRequest
+    ): MyChannelPlaylistVideosResponse
 
     @POST("/ugc-edit-playlist-name")
-    suspend fun ugcEditMyChannelPlaylist(@Body channelPlaylistRequest: UgcEditMyChannelPlaylistRequest): UgcEditMyChannelPlaylistResponse
+    suspend fun editMyChannelPlaylist(@Body channelPlaylistEditRequest: MyChannelPlaylistEditRequest): MyChannelPlaylistEditResponse
 
     @POST("/ugc-create-playlist-name")
-    suspend fun ugcCreatePlaylist(@Body createPlaylistRequest: UgcCreatePlaylistRequest): UgcCreatePlaylistResponse
+    suspend fun createMyChannelPlaylist(@Body createPlaylistRequest: MyChannelPlaylistCreateRequest): MyChannelPlaylistCreateResponse
 
     @POST("/ugc-channel-edit")
-    suspend fun ugcEditMyChannel(@Body createPlaylistRequest: UgcEditMyChannelRequest): UgcEditMyChannelResponse
+    suspend fun editMyChannelDetail(@Body createPlaylistEditRequest: MyChannelEditRequest): MyChannelEditResponse
 
-    
+    @POST("/ugc-rating-on-channel")
+    suspend fun rateMyChannel(@Body myChannelRatingRequest: MyChannelRatingRequest): MyChannelRatingResponse
 }

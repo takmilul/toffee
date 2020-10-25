@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    
+    <data>
+        <variable
+            name="data"
+            type="com.banglalink.toffee.model.MyChannelPlaylist" />
+        
+        <variable
+            name="callback"
+            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
+    </data>
+    
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp"
+        android:background="@color/screen_bg"
+        android:onClick="@{()-> callback.onItemClicked(data)}">
+        
+        <com.banglalink.toffee.ui.widget.CustomImageView
+            android:id="@+id/poster"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:minHeight="160dp"
+            android:src="@drawable/hero"
+            imageFromUrl="@{data.logoMobileUrl}"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintWidth_percent="0.45" />
+        
+        <View
+            android:id="@+id/overlayView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/overlay_dark_color"
+            app:layout_constraintWidth_percent="0.25"
+            app:layout_constraintTop_toTopOf="@id/poster"
+            app:layout_constraintEnd_toEndOf="@id/poster"
+            app:layout_constraintBottom_toBottomOf="@id/poster"/>
+        
+        <ImageView
+            android:id="@+id/folderImageView"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_folder"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="@id/overlayView"
+            app:layout_constraintTop_toTopOf="@id/overlayView"
+            app:layout_constraintEnd_toEndOf="@id/overlayView"
+            app:layout_constraintBottom_toTopOf="@id/videoCountTextView"/>
+        
+        <TextView
+            android:id="@+id/videoCountTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text='@{String.valueOf(data.totalContent).concat(" Videos")}'
+            android:textColor="@color/screen_bg_white"
+            android:gravity="center_horizontal"
+            app:layout_constraintStart_toStartOf="@id/overlayView"
+            app:layout_constraintTop_toBottomOf="@id/folderImageView"
+            app:layout_constraintEnd_toEndOf="@id/overlayView"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+        
+        <TextView
+            android:id="@+id/textView18"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:maxLines="3"
+            android:text="@{data.name}"
+            app:layout_constraintBottom_toBottomOf="@+id/poster"
+            app:layout_constraintEnd_toStartOf="@+id/imageView11"
+            app:layout_constraintStart_toEndOf="@+id/poster"
+            app:layout_constraintTop_toTopOf="@+id/poster"
+            app:layout_constraintVertical_bias="0.0" />
+        
+        <ImageView
+            android:id="@+id/imageView11"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:onClick="@{(view)->callback.onOpenMenu(view, data)}"
+            app:layout_constraintBottom_toBottomOf="@+id/textView18"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView18"
+            app:layout_constraintTop_toTopOf="@+id/textView18"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/ic_menu_more" />
+    
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

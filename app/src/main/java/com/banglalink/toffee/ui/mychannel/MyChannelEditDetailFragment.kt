@@ -1,0 +1,177 @@
+package com.banglalink.toffee.ui.mychannel
+
+import android.os.Bundle
+import android.util.Base64
+import android.util.Base64OutputStream
+import android.view.LayoutInflater
+import android.view.View
+import android.view.View.OnClickListener
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
+import coil.api.load
+import com.banglalink.toffee.R
+import com.banglalink.toffee.data.network.request.MyChannelEditRequest
+import com.banglalink.toffee.databinding.FragmentMyChannelEditDetailBinding
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.model.MyChannelDetail
+import com.banglalink.toffee.model.Resource.Failure
+import com.banglalink.toffee.model.Resource.Success
+import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
+import dagger.hilt.android.AndroidEntryPoint
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileInputStream
+import javax.inject.Inject
+
+@AndroidEntryPoint
+class MyChannelEditDetailFragment : Fragment(), OnClickListener {
+    private var isPosterClicked = false
+    private var myChannelDetail: MyChannelDetail? = null
+    private var newBannerUrl: String? = null
+    private var newProfileImageUrl: String? = null
+    private lateinit var binding: FragmentMyChannelEditDetailBinding
+
+    @Inject lateinit var viewModelAssistedFactory: MyChannelEditDetailViewModel.AssistedFactory
+    private val viewModel by viewModels<MyChannelEditDetailViewModel> { MyChannelEditDetailViewModel.provideFactory(viewModelAssistedFactory, myChannelDetail) }
+
+    companion object {
+        fun newInstance(): MyChannelEditDetailFragment {
+            return MyChannelEditDetailFragment()
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val args = MyChannelEditDetailFragmentArgs.fromBundle(requireArguments())
+        myChannelDetail = args.myChannelDetail
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_my_channel_edit_detail, container, false)
+        binding.lifecycleOwner = this
+        binding.viewModel = viewModel
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        observeLiveData()
+        observeThumbnailChange()
+
+        binding.bannerEditButton.setOnClickListener(this)
+        binding.profileImageEditButton.setOnClickListener(this)
+        binding.cancelButton.setOnClickListener(this)
+        binding.saveButton.setOnClickListener(this)
+    }
+
+    private fun observeThumbnailChange() {
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String?>(ThumbnailSelectionMethodFragment.THUMB_URI)
+            ?.observe(viewLifecycleOwner, Observer {
+                it?.let {
+                    if (isPosterClicked) {
+                        newBannerUrl = it
+                        binding.bannerImageView.load(it)
+                    }
+                    else {
+                        newProfileImageUrl = it
+                        binding.profileImageView.load(it)
+                    }
+                }
+            })
+    }
+
+    private fun observeLiveData() {
+        observe(viewModel.liveData) {
+            when (it) {
+                is Success -> {
+                    findNavController().navigateUp()
+                    Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
+                }
+                is Failure -> {
+                    println(it.error)
+                    Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    override fun onClick(v: View?) {
+        when (v) {
+            binding.cancelButton -> findNavController().navigateUp()
+            binding.saveButton -> editChannel()
+            binding.bannerEditButton -> {
+                isPosterClicked = true
+                findNavController().navigate(R.id.action_MyChannelEditFragment_to_thumbnailSelectionMethodFragment)
+            }
+            binding.profileImageEditButton -> {
+                isPosterClicked = false
+                findNavController().navigate(R.id.action_MyChannelEditFragment_to_thumbnailSelectionMethodFragment)
+            }
+        }
+    }
+
+    private fun editChannel() {
+        var bannerBase64 = "NULL"
+        try {
+            if (!newBannerUrl.isNullOrEmpty()) {
+                val image = File(newBannerUrl!!.substringAfter("file:"))
+                bannerBase64 = convertImageFileToBase64(image)
+            }
+        }
+        catch (e: Exception) {
+            bannerBase64 = "NULL"
+        }
+        
+        var profileImageBase64 = "NULL"
+        try {
+            if (!newProfileImageUrl.isNullOrEmpty()) {
+                val image = File(newProfileImageUrl!!.substringAfter("file:"))
+                profileImageBase64 = convertImageFileToBase64(image)
+            }
+        }
+        catch (e: Exception) {
+            profileImageBase64 = "NULL"
+        }
+
+        when {
+            binding.channelName.text.isNullOrEmpty() -> {
+                Toast.makeText(requireContext(), "Please give a channel name", Toast.LENGTH_SHORT).show()
+            }
+            viewModel.selectedItem?.id == null -> {
+                Toast.makeText(requireContext(), "Category is not selected", Toast.LENGTH_SHORT).show()
+            }
+            else -> {
+                val ugcEditMyChannelRequest = MyChannelEditRequest(
+                    0,
+                    "",
+                    myChannelDetail?.id ?: 1,
+                    viewModel.selectedItem?.id!!,
+                    binding.channelName.text.toString(),
+                    binding.description.text.toString(),
+                    myChannelDetail?.bannerUrl ?: "NULL",
+                    bannerBase64,
+                    myChannelDetail?.profileUrl ?: "NULL",
+                    profileImageBase64
+                )
+
+                viewModel.editChannel(ugcEditMyChannelRequest)
+            }
+        }
+    }
+    private fun convertImageFileToBase64(imageFile: File): String {
+        return FileInputStream(imageFile).use { inputStream ->
+            ByteArrayOutputStream().use { outputStream ->
+                Base64OutputStream(outputStream, Base64.NO_WRAP).use { base64FilterStream ->
+                    inputStream.copyTo(base64FilterStream)
+                    base64FilterStream.close()
+                    outputStream.toString()
+                }
+            }
+        }
+    }
+}
