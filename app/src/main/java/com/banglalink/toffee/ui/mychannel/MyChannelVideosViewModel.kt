@@ -20,12 +20,6 @@ import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.launch
 
-/*class ChannelVideosViewModel @AssistedInject constructor(
-    private val reactionDao: ReactionDao,
-    private val activitiesRepo: UserActivitiesRepository,
-    private val getMyChannelAssistedFactory: GetChannelVideos.AssistedFactory,
-    @Assisted private val isOwner: Int,
-    @Assisted private val channelId: Int) : BasePagingViewModel<ChannelInfo>() {*/
 class MyChannelVideosViewModel @AssistedInject constructor(
     private val reactionDao: ReactionDao,
     private val activitiesRepo: UserActivitiesRepository, 

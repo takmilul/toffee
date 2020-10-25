@@ -11,18 +11,22 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
-import android.view.*
+import android.view.Display
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
-import android.widget.*
+import android.widget.AutoCompleteTextView
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
-import androidx.core.view.isGone
-import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -44,14 +48,12 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.EXIT_FROM_APP_MSG
 import com.banglalink.toffee.model.NavigationMenu
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.channels.ChannelFragment
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.ui.landing.AllCategoriesFragment
 import com.banglalink.toffee.ui.login.SigninByPhoneActivity
 import com.banglalink.toffee.ui.player.PlayerActivity
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.subscription.PackageListActivity
-import com.banglalink.toffee.ui.mychannel.UserChannelHomeFragment
 import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.ui.widget.showSubscriptionDialog
@@ -150,7 +152,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             onDetailsFragmentLoad(it)
         }
 
-        observe(viewModel.userChannelMutableLiveData) {
+        /*observe(viewModel.userChannelMutableLiveData) {
             val currentFragment = supportFragmentManager.findFragmentById(R.id.content_viewer)
             if (currentFragment !is UserChannelHomeFragment) {
                 loadFragmentById( R.id.content_viewer, UserChannelHomeFragment()
@@ -159,7 +161,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             }
             binding.drawerLayout.closeDrawers()
             minimizePlayer()
-        }
+        }*/
 
         observe(viewModel.viewAllChannelLiveData) {
 //            drawerHelper.onMenuClick(NavigationMenu(ID_CHANNEL, "All Videos", 0, listOf(), false))

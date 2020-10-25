@@ -132,7 +132,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
                 playlistId = selectedItem!!.id
             }
             observeAddToPlaylist()
-            viewModel.addToPlaylist(playlistId, contentId)
+            viewModel.addToPlaylist(playlistId, contentId, channelId)
         }
     }
 

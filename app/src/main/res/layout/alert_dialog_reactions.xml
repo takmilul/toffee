@@ -5,7 +5,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
+        <variable
+            name="data"
+            type="com.banglalink.toffee.model.ChannelInfo" />
     </data>
 
     <LinearLayout
@@ -63,7 +65,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="929.5k"
+                    android:text="@{String.valueOf(data.reaction.like)}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/likeButton"
                     app:layout_constraintStart_toStartOf="@+id/likeButton"
@@ -89,7 +91,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="122.5k"
+                    android:text="@{String.valueOf(data.reaction.love)}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/loveButton"
                     app:layout_constraintStart_toStartOf="@+id/loveButton"
@@ -115,7 +117,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="170.5k"
+                    android:text="@{String.valueOf(data.reaction.haha)}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/hahaButton"
                     app:layout_constraintStart_toStartOf="@+id/hahaButton"
@@ -141,7 +143,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="705k"
+                    android:text="@{String.valueOf(data.reaction.wow)}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/wowButton"
                     app:layout_constraintStart_toStartOf="@+id/wowButton"
@@ -167,7 +169,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="68k"
+                    android:text="@{String.valueOf(data.reaction.sad)}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/sadButton"
                     app:layout_constraintStart_toStartOf="@+id/sadButton"
@@ -193,7 +195,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="28k"
+                    android:text="@{String.valueOf(data.reaction.angry)}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/angryButton"
                     app:layout_constraintStart_toStartOf="@+id/angryButton"

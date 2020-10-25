@@ -7,12 +7,16 @@
 
     <data>
         <variable
+            name="position"
+            type="Integer" />
+        <variable
             name="data"
             type="com.banglalink.toffee.model.ChannelInfo" />
         <variable
             name="callback"
-            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
+            type="com.banglalink.toffee.ui.common.ContentReactionCallback" />
     </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,11 +24,11 @@
 
         <com.banglalink.toffee.ui.widget.CustomImageView
             android:id="@+id/poster"
+            loadChannelImage="@{data}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="200dp"
-            loadChannelImage="@{data}"
             android:adjustViewBounds="true"
+            android:minHeight="200dp"
             android:onClick="@{()->callback.onItemClicked(data)}"
             app:layout_constraintDimensionRatio="W,16:9"
             app:layout_constraintEnd_toEndOf="parent"
@@ -49,12 +53,12 @@
             tools:text="00:00" />
 
         <View
-            android:background="@drawable/bottom_round_white_bg"
             android:id="@+id/view"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
             android:layout_width="0dp"
             android:layout_height="120dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/bottom_round_white_bg"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/poster" />
@@ -62,11 +66,11 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/ownerPicture"
+            loadChannelLogo="@{data}"
             android:layout_width="42dp"
             android:layout_height="42dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="12dp"
-            loadChannelLogo="@{data}"
             app:layout_constraintStart_toStartOf="@id/view"
             app:layout_constraintTop_toTopOf="@id/view" />
 
@@ -79,8 +83,8 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="12dp"
             android:ellipsize="end"
-            android:maxLines="2"
             android:lines="2"
+            android:maxLines="2"
             android:text="@{data.program_name}"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#7990AC"
@@ -96,8 +100,8 @@
             android:layout_marginTop="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
-            android:focusable="true"
             android:elevation="4dp"
+            android:focusable="true"
             android:onClick="@{(v)->callback.onOpenMenu(v, data)}"
             android:padding="5dp"
             app:layout_constraintEnd_toEndOf="@+id/view"
@@ -109,8 +113,8 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="0dp"
             android:layout_height="4dp"
-            android:progress="50"
             android:max="100"
+            android:progress="50"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/poster"
             app:layout_constraintEnd_toEndOf="@+id/duration"
@@ -148,13 +152,14 @@
             android:drawablePadding="4dp"
             android:text="@{data.formatedShareCount()}"
             android:textColor="#829AB8"
+            app:drawableStartCompat="@drawable/ic_share"
             app:layout_constraintBottom_toBottomOf="@+id/textView5"
-            app:layout_constraintEnd_toStartOf="@+id/textView9"
+            app:layout_constraintEnd_toStartOf="@+id/reactionIcon"
+            app:layout_constraintHorizontal_bias="0.53"
             app:layout_constraintStart_toEndOf="@+id/textView5"
-            app:layout_constraintTop_toTopOf="@+id/textView5"
-            app:drawableStartCompat="@drawable/ic_share" />
+            app:layout_constraintTop_toTopOf="@+id/textView5" />
 
-        <TextView
+        <!--<TextView
             android:id="@+id/textView9"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -165,8 +170,40 @@
             app:drawableStartCompat="@drawable/ic_like_emo"
             app:layout_constraintBottom_toBottomOf="@+id/textView8"
             app:layout_constraintEnd_toEndOf="@+id/view"
-            app:layout_constraintTop_toTopOf="@+id/textView8" />
+            app:layout_constraintTop_toTopOf="@+id/textView8" />-->
 
+
+        <ImageView
+            android:id="@+id/reactionIcon"
+            loadImageResource="@{data.userReaction}"
+            android:layout_width="wrap_content"
+            android:layout_height="28dp"
+            android:layout_marginEnd="8dp"
+            android:onClick="@{(v) -> callback.onReactionClicked(v, position, data)}"
+            android:scaleType="fitEnd"
+            android:src="@drawable/ic_like_emo"
+            app:layout_constraintBottom_toBottomOf="@+id/textView8"
+            app:layout_constraintEnd_toStartOf="@id/textView9"
+            app:layout_constraintTop_toTopOf="@+id/textView5" />
+
+        <TextView
+            android:id="@+id/textView9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="@{data.formatted_view_count}"
+            android:textColor="#829AB8"
+            app:layout_constraintBottom_toBottomOf="@id/reactionIcon"
+            app:layout_constraintEnd_toEndOf="@+id/view"
+            app:layout_constraintTop_toTopOf="@+id/reactionIcon"
+            tools:text="904.5k" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{(v) -> callback.onReactionClicked(v, position, data)}"
+            app:constraint_referenced_ids="textView9,reactionIcon" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

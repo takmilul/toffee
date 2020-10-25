@@ -7,10 +7,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
-import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
+import com.banglalink.toffee.ui.common.AlertDialogReactionFragment
+import com.banglalink.toffee.ui.common.ContentReactionCallback
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.home.PopularVideoListAdapter
@@ -37,13 +38,20 @@ class LatestVideosFragment: HomeBaseFragment() {
 
         val category: UgcCategory? = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM) as UgcCategory?
 
-        mAdapter = PopularVideoListAdapter(object : BaseListItemCallback<ChannelInfo> {
+        mAdapter = PopularVideoListAdapter(object : ContentReactionCallback<ChannelInfo> {
             override fun onItemClicked(item: ChannelInfo) {
                 homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
             }
 
             override fun onOpenMenu(view: View, item: ChannelInfo) {
                 openMenu(view, item)
+            }
+
+            override fun onReactionClicked(view: View, position: Int, item: ChannelInfo) {
+                super.onReactionClicked(view, position, item)
+                val fragment = AlertDialogReactionFragment.newInstance()
+                fragment.setItem(view, position, item)
+                fragment.show(requireActivity().supportFragmentManager, "ReactionDialog")
             }
         })
 

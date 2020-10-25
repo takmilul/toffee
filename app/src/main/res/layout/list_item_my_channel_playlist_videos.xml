@@ -106,6 +106,7 @@
             android:id="@+id/options"
             android:layout_width="24dp"
             android:layout_height="24dp"
+            android:onClick="@{(v) -> callback.onOpenMenu(v, data)}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/title"

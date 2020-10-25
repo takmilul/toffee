@@ -8,9 +8,9 @@ import com.banglalink.toffee.apiservice.MyChannelGetDetailService
 import com.banglalink.toffee.apiservice.MyChannelRatingService
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.extension.toLiveData
+import com.banglalink.toffee.model.MyChannelDetailBean
 import com.banglalink.toffee.model.MyChannelRatingBean
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.model.MyChannelDetailBean
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.launch
@@ -23,7 +23,7 @@ class MyChannelHomeViewModel @AssistedInject constructor(private val apiService:
     private val _ratingData = MutableLiveData<Resource<MyChannelRatingBean>>()
     val ratingLiveData = _ratingData.toLiveData()
 
-    init {
+    fun getDetail() {
         viewModelScope.launch { 
             _data.postValue(resultFromResponse { apiService.execute(isOwner, channelId) })
         }
