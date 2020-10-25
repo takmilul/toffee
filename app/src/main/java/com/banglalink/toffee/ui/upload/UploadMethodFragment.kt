@@ -2,6 +2,7 @@ package com.banglalink.toffee.ui.upload
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -11,6 +12,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.MimeTypeMap
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -186,8 +188,14 @@ class UploadMethodFragment: BaseFragment() {
                 return@launch
             }
             Log.e("TOKEN", accessToken)
+            val fn = Uri.parse(uri).lastPathSegment
+            val idx = fn?.lastIndexOf(".") ?: -1
+            val ext = if(idx >= 0) {
+                fn?.substring(idx) ?: ""
+            } else ""
+
             val upInfo = UploadInfo(fileUri = uri)
-            val fileName = UUID.randomUUID()
+            val fileName = mPref.customerId.toString() + "_" + UUID.randomUUID().toString() + ext
             Log.e("FILENAME", fileName.toString())
             val upId = mUploadInfoRepository.insertUploadInfo(upInfo)
             val uploadIdStr =
@@ -207,5 +215,41 @@ class UploadMethodFragment: BaseFragment() {
             mPref.uploadId = uploadIdStr
             activity?.findNavController(R.id.home_nav_host)?.navigate(R.id.action_uploadMethodFragment_to_editUploadInfoFragment)
         }
+    }
+
+    private fun uploadUri2(uri: String) {
+
+        lifecycleScope.launch {
+            val upInfo = UploadInfo(fileUri = uri)
+            val upId = mUploadInfoRepository.insertUploadInfo(upInfo)
+            val uploadIdStr =
+                withContext(Dispatchers.IO + Job()) {
+                    MultipartUploadRequest(
+                        requireContext(),
+                        "http://23.94.70.184:25478/upload?token=1148123456789"
+                    )
+                        .setUploadID(UtilsKt.uploadIdToString(upId))
+                        .setMethod("POST")
+                        .addFileToUpload(uri, "file")
+                        .startUpload()
+                }
+
+            mPref.uploadId = uploadIdStr
+            activity?.findNavController(R.id.home_nav_host)?.navigate(R.id.action_uploadMethodFragment_to_editUploadInfoFragment)
+        }
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if(context is HomeActivity) {
+            context.rotateFab(true)
+        }
+    }
+
+    override fun onDetach() {
+        requireActivity().let {
+            if(it is HomeActivity) it.rotateFab(false)
+        }
+        super.onDetach()
     }
 }
