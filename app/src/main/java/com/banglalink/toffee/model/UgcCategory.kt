@@ -25,4 +25,6 @@ data class UgcCategory(
 
     @SerializedName("category_icon")
     val categoryIcon: String?
-): Parcelable
+): Parcelable {
+    override fun toString(): String = categoryName
+}

@@ -54,7 +54,6 @@ class HomeViewModel @ViewModelInject constructor(
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val viewAllVideoLiveData = MutableLiveData<Boolean>()
     val viewAllCategories = MutableLiveData<Boolean>()
-    val openCategoryLiveData = MutableLiveData<Category>()
 
     private val getCategory by lazy {
         GetCategory(Preference.getInstance(),RetrofitApiClient.toffeeApi)
@@ -64,9 +63,6 @@ class HomeViewModel @ViewModelInject constructor(
         GetProfile(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
 
-    private val getChannelWithCategory by unsafeLazy {
-        GetChannelWithCategory(Preference.getInstance(),RetrofitApiClient.toffeeApi)
-    }
 
     private val getContentFromShareableUrl by unsafeLazy{
         GetContentFromShareableUrl(Preference.getInstance(),RetrofitApiClient.toffeeApi)
@@ -78,7 +74,6 @@ class HomeViewModel @ViewModelInject constructor(
 
     init {
         getCategory()
-//        getChannelByCategory(0)
         getProfile()
         FirebaseMessaging.getInstance().subscribeToTopic("buzz")
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener(this)

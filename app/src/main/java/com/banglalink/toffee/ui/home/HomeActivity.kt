@@ -141,8 +141,8 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                 return@setOnClickListener
             }
 //            else {
-            if(UploadService.taskList.isNotEmpty()) {
-                Snackbar.make(binding.uploadButton, "Another upload is in progress", Snackbar.LENGTH_SHORT).show()
+            if(mPref.uploadId != null) {
+                navController.navigate(R.id.action_menu_feed_to_editUploadInfoFragment)
                 return@setOnClickListener
             }
             navController.navigate(R.id.uploadMethodFragment)

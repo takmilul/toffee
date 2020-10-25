@@ -149,6 +149,17 @@ interface ToffeeApi {
         @Body ugcPopularChannelsRequest: UgcPopularChannelsRequest
     ): UgcPopularChannelsResponse
 
+    @POST("ugc-content-upload")
+    suspend fun uploadContent(
+        @Body contentUploadRequest: ContentUploadRequest
+    ): ContentUploadResponse
+
+    @POST("ugc-popular-playlist-names/1/{dbVersion}")
+    suspend fun getMostPopularPlaylists(
+        @Path("dbVersion") dbVersion: Int,
+        @Body mostPopularPlaylistsRequest: MostPopularPlaylistsRequest
+    ): MostPopularPlaylistsResponse
+
     @POST("ugc-follow-on-category")
     suspend fun followOnCategory(@Body ugcFollowCategoryRequest: UgcFollowCategoryRequest): UgcFollowCategoryResponse
 

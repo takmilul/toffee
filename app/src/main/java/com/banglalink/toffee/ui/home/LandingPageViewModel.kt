@@ -26,6 +26,7 @@ import kotlinx.coroutines.launch
 
 class LandingPageViewModel @ViewModelInject constructor(
     private val mostPopularApi: GetMostPopularContents,
+    private val mostPopularPlaylists: GetMostPopularPlaylists,
     private val categoryListApi: GetUgcCategories,
     private val popularChannelAssistedFactory: GetUgcPopularUserChannels.AssistedFactory,
     private val trendingNowAssistedFactory: GetUgcTrendingNowContents.AssistedFactory,
@@ -37,11 +38,15 @@ class LandingPageViewModel @ViewModelInject constructor(
     }
 
     fun loadLatestVideos(): Flow<PagingData<ChannelInfo>> {
-        return latestVideosRepo.getList()//.cachedIn(viewModelScope)
+        return latestVideosRepo.getList().cachedIn(viewModelScope)
     }
 
     fun loadMostPopularVideos(): Flow<PagingData<ChannelInfo>> {
         return mostPopularRepo.getList().cachedIn(viewModelScope)
+    }
+
+    fun loadMostPopularPlaylists(): Flow<PagingData<MyChannelPlaylist>> {
+        return mostPopularPlaylistsRepo.getList()
     }
 
     fun loadFeatureContents(): Flow<PagingData<ChannelInfo>>{
@@ -122,6 +127,14 @@ class LandingPageViewModel @ViewModelInject constructor(
         BaseListRepositoryImpl({
             BaseNetworkPagingSource(
                 mostPopularApi
+            )
+        })
+    }
+
+    private val mostPopularPlaylistsRepo by lazy {
+        BaseListRepositoryImpl({
+            BaseNetworkPagingSource(
+                mostPopularPlaylists
             )
         })
     }

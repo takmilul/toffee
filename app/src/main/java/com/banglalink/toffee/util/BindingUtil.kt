@@ -20,10 +20,7 @@ import com.banglalink.toffee.data.database.entities.UserActivities
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.enums.ActivityType
 import com.banglalink.toffee.enums.Reaction
-import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.Package
-import com.banglalink.toffee.model.UgcCategory
-import com.banglalink.toffee.model.UgcUserChannelInfo
+import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.widget.MultiTextButton
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -150,6 +147,24 @@ fun bindChannelLogo(view: ImageView, channelInfo: ChannelInfo) {
     }
     else {
         view.load(channelInfo.channel_logo) {
+//            fallback(R.drawable.ic_portrait)
+//            placeholder(R.drawable.ic_portrait)
+//            error(R.drawable.ic_portrait)
+//            memoryCachePolicy(CachePolicy.DISABLED)
+            diskCachePolicy(CachePolicy.ENABLED)
+            crossfade(true)
+            crossfade(crossFadeDurationInMills)
+//        size(Utils.dpToPx(imageHeight), Utils.dpToPx(imageHeight))
+        }
+    }
+}
+@BindingAdapter("loadChannelLogo")
+fun bindChannelLogo(view: ImageView, channelInfo: MyChannelPlaylist) {
+    if (channelInfo.logoMobileUrl.isNullOrBlank()) {
+        view.setImageResource(R.drawable.ic_profile_default)
+    }
+    else {
+        view.load(channelInfo.logoMobileUrl) {
 //            fallback(R.drawable.ic_portrait)
 //            placeholder(R.drawable.ic_portrait)
 //            error(R.drawable.ic_portrait)
