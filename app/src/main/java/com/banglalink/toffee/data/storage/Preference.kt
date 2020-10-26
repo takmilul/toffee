@@ -142,6 +142,11 @@ class Preference(private val pref: SharedPreferences,
         set(phoneNumber) {
             pref.edit().putString("subscription_active", phoneNumber).apply()
         }
+    
+    var channelId: Int
+        get() = pref.getInt(CHANNEL_ID, 0)
+        set(channelId) = pref.edit().putInt(CHANNEL_ID, channelId).apply()
+    
     fun setSystemTime(systemTime: String) {
         pref.edit().putString("systemTime", systemTime).apply()
     }
@@ -291,7 +296,7 @@ class Preference(private val pref: SharedPreferences,
         private const val CUSTOMER_NAME = "customer_name"
         private const val CUSTOMER_ID = "customer_id"
         private const val PASSWORD = "passwd"
-
+        private const val CHANNEL_ID = "channel_id"
 
         private var instance: Preference? = null
 
