@@ -5,8 +5,6 @@ import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.common.paging.BasePagingDataAdapter
 import com.banglalink.toffee.common.paging.ItemComparator
 import com.banglalink.toffee.model.ChannelInfo
-import com.foxrentacar.foxpress.ui.common.MyBaseAdapter
-import com.foxrentacar.foxpress.ui.common.MyViewHolder
 
 class FeaturedListAdapter(cb: BaseListItemCallback<ChannelInfo>)
     :BasePagingDataAdapter<ChannelInfo>(cb, ItemComparator()){

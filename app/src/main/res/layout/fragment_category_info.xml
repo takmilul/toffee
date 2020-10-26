@@ -67,7 +67,8 @@
         android:layout_marginBottom="8dp"
         android:paddingTop="16dp"
         android:textColor="@android:color/white"
-        android:textSize="14sp"
+        android:textSize="16sp"
+        android:textStyle="bold"
         android:text="Trending"
         app:layout_constraintBottom_toTopOf="@+id/channelDescription"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -82,11 +83,35 @@
         android:layout_marginBottom="8dp"
         android:maxLines="2"
         android:textColor="@android:color/white"
-        android:textSize="12sp"
+        android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@+id/channelLogo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/categoryListPager" />
 
+
+    <TextView
+        android:id="@+id/uploadTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:maxLines="1"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/channelLogo"
+        app:layout_constraintEnd_toStartOf="@+id/channelLogo"
+        app:layout_constraintTop_toTopOf="@+id/channelLogo" />
+
+    <TextView
+        android:id="@+id/channelName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        tools:text="AsianStar"
+        android:textSize="16sp"
+        android:maxLines="1"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/channelLogo"
+        app:layout_constraintEnd_toStartOf="@+id/uploadTime"
+        app:layout_constraintTop_toTopOf="@+id/channelLogo" />
 
     <ImageView
         android:id="@+id/categoryIcon"
