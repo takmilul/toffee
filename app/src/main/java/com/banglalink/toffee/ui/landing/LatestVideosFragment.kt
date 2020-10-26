@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
@@ -47,10 +48,10 @@ class LatestVideosFragment: HomeBaseFragment() {
                 openMenu(view, item)
             }
 
-            override fun onReactionClicked(view: View, position: Int, item: ChannelInfo) {
-                super.onReactionClicked(view, position, item)
+            override fun onReactionClicked(view: View, position: Int, item: ChannelInfo, textView: TextView) {
+                super.onReactionClicked(view, position, item, textView)
                 val fragment = AlertDialogReactionFragment.newInstance()
-                fragment.setItem(view, position, item)
+                fragment.setItem(view, position, item, textView)
                 fragment.show(requireActivity().supportFragmentManager, "ReactionDialog")
             }
         })
@@ -84,6 +85,6 @@ class LatestVideosFragment: HomeBaseFragment() {
     }
 
     private fun openMenu(view: View, item: ChannelInfo) {
-
+        super.onOptionClicked(view, item)
     }
 }

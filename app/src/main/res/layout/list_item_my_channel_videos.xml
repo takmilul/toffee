@@ -126,8 +126,11 @@
             android:text="@{data.formatted_view_count}"
             android:textColor="#829AB8"
             app:drawableStartCompat="@drawable/ic_view"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="@+id/name"
             app:layout_constraintTop_toBottomOf="@+id/name"
+            app:layout_constraintBottom_toBottomOf="@id/view"
+            app:layout_constraintEnd_toStartOf="@id/textView8"
             tools:text="10K" />
 
         <TextView
@@ -138,9 +141,10 @@
             android:text="@{data.formatedShareCount}"
             android:textColor="#829AB8"
             app:drawableStartCompat="@drawable/ic_share"
-            app:layout_constraintEnd_toStartOf="@+id/textView9"
+            app:layout_constraintEnd_toStartOf="@+id/reactionIcon"
             app:layout_constraintStart_toEndOf="@+id/textView5"
-            app:layout_constraintTop_toTopOf="@+id/textView5" />
+            app:layout_constraintTop_toTopOf="@+id/textView5"
+            app:layout_constraintBottom_toBottomOf="@id/textView5"/>
 
         <ImageView
             android:id="@+id/reactionIcon"
@@ -149,31 +153,31 @@
             android:layout_marginEnd="8dp"
             android:scaleType="fitEnd"
             android:src="@drawable/ic_like_emo"
-            loadImageResource="@{data.userReaction}"
-            android:onClick="@{(v) -> callback.onReactionClicked(v, position, data)}"
+            loadImageResource="@{data.userReactionIcon}"
+            android:onClick="@{(v) -> callback.onReactionClicked(v, position, data, textView9)}"
             app:layout_constraintEnd_toStartOf="@id/textView9"
-            app:layout_constraintHorizontal_bias="1"
             app:layout_constraintStart_toEndOf="@id/textView8"
-            app:layout_constraintTop_toTopOf="@+id/textView5" />
+            app:layout_constraintTop_toTopOf="@+id/textView5"
+            app:layout_constraintBottom_toBottomOf="@id/textView5"/>
 
         <TextView
             android:id="@+id/textView9"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:text="@{data.formatted_view_count}"
+            bindEmoCount="@{data}"
             android:textColor="#829AB8"
             app:layout_constraintBottom_toBottomOf="@id/reactionIcon"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/reactionIcon"
             tools:text="904.5k" />
 
-        <androidx.constraintlayout.widget.Group
+        <!--<androidx.constraintlayout.widget.Group
             android:id="@+id/group2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="@{(v) -> callback.onReactionClicked(v, position, data)}"
-            app:constraint_referenced_ids="textView9,reactionIcon" />
+            app:constraint_referenced_ids="textView9,reactionIcon" />-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

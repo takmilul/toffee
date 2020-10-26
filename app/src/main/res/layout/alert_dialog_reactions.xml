@@ -5,6 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+        <import type="com.banglalink.toffee.enums.Reaction"/>
         <variable
             name="data"
             type="com.banglalink.toffee.model.ChannelInfo" />
@@ -65,7 +66,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="@{String.valueOf(data.reaction.like)}"
+                    bindReaction="@{Reaction.Like}"
+                    bindReactionCount="@{data}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/likeButton"
                     app:layout_constraintStart_toStartOf="@+id/likeButton"
@@ -91,7 +93,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="@{String.valueOf(data.reaction.love)}"
+                    bindReaction="@{Reaction.Love}"
+                    bindReactionCount="@{data}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/loveButton"
                     app:layout_constraintStart_toStartOf="@+id/loveButton"
@@ -117,7 +120,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="@{String.valueOf(data.reaction.haha)}"
+                    bindReaction="@{Reaction.HaHa}"
+                    bindReactionCount="@{data}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/hahaButton"
                     app:layout_constraintStart_toStartOf="@+id/hahaButton"
@@ -143,7 +147,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="@{String.valueOf(data.reaction.wow)}"
+                    bindReaction="@{Reaction.Wow}"
+                    bindReactionCount="@{data}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/wowButton"
                     app:layout_constraintStart_toStartOf="@+id/wowButton"
@@ -169,7 +174,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="@{String.valueOf(data.reaction.sad)}"
+                    bindReaction="@{Reaction.Sad}"
+                    bindReactionCount="@{data}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/sadButton"
                     app:layout_constraintStart_toStartOf="@+id/sadButton"
@@ -195,7 +201,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="@{String.valueOf(data.reaction.angry)}"
+                    bindReaction="@{Reaction.Angry}"
+                    bindReactionCount="@{data}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/angryButton"
                     app:layout_constraintStart_toStartOf="@+id/angryButton"

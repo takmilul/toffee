@@ -2,6 +2,7 @@ package com.banglalink.toffee.ui.mychannel
 
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -141,89 +142,10 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
         homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
     }
     
-    override fun onReactionClicked(view: View, position: Int, item: ChannelInfo) {
-        super.onReactionClicked(view, position, item)
+    override fun onReactionClicked(view: View, position: Int, item: ChannelInfo, textView: TextView) {
+        super.onReactionClicked(view, position, item, textView)
         val fragment = AlertDialogReactionFragment.newInstance()
-        fragment.setItem(view, position, item)
+        fragment.setItem(view, position, item, textView)
         fragment.show(requireActivity().supportFragmentManager, "ReactionDialog")
-//        showReactionDialog(view, position, item)
     }
-    
-    /*private fun showReactionDialog(reactView: View, position: Int, item: ChannelInfo) {
-        val dialogView: View = this.layoutInflater.inflate(layout.alert_dialog_reactions, null)
-        val dialogBuilder = AlertDialog.Builder(requireContext()).setView(dialogView)
-        val alertDialog: AlertDialog = dialogBuilder.create().apply {
-            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            show()
-        }
-
-        lifecycleScope.launch {
-            val reactionInfo = reactionDao.getReactionByContentId(item.id)
-
-            if (reactionInfo?.contentId == item.id) {
-                setPreviousReaction(reactionInfo, dialogView)
-            }
-
-            with(dialogView) {
-                likeButton.setOnClickListener {reactionButton->
-                    reactionInfo?: react(item, position, reactView, reactionButton, item.id, Like)
-                    alertDialog.dismiss()
-                }
-                loveButton.setOnClickListener {reactionButton->
-                    reactionInfo?: react(item, position, reactView, reactionButton, item.id, Love)
-                    alertDialog.dismiss()
-                }
-                hahaButton.setOnClickListener {reactionButton->
-                    reactionInfo?: react(item, position, reactView, reactionButton, item.id, HaHa)
-                    alertDialog.dismiss()
-                }
-                wowButton.setOnClickListener {reactionButton->
-                    reactionInfo?: react(item, position, reactView, reactionButton, item.id, Wow)
-                    alertDialog.dismiss()
-                }
-                sadButton.setOnClickListener {reactionButton->
-                    reactionInfo?: react(item, position, reactView, reactionButton, item.id, Sad)
-                    alertDialog.dismiss()
-                }
-                angryButton.setOnClickListener {reactionButton->
-                    reactionInfo?: react(item, position, reactView, reactionButton, item.id, Angry)
-                    alertDialog.dismiss()
-                }
-            }
-        }
-    }
-
-    private fun react(item: ChannelInfo, position: Int, reactView: View, reactButton: View, contentId: String, reaction: Reaction) {
-        val reactionInfo = ReactionInfo(null, contentId, reaction.value)
-        mViewModel.insert(reactionInfo)
-        mViewModel.insertActivity(item, reaction.value)
-        mAdapter.getItemByIndex(position)?.userReaction = getReactionIcon(reaction.value) ?: 0
-        reactButton.background = ContextCompat.getDrawable(requireContext(), R.drawable.teal_round_bg)
-        (reactView as ImageView).setImageDrawable((reactButton as ImageView).drawable)
-    }
-
-    private fun setPreviousReaction(reactionInfo: ReactionInfo?, dialogView: View) {
-        val background = ContextCompat.getDrawable(requireContext(), R.drawable.teal_round_bg)
-        when (reactionInfo?.reaction) {
-            Like.value -> dialogView.likeButton.background = background
-            Love.value -> dialogView.loveButton.background = background
-            HaHa.value -> dialogView.hahaButton.background = background
-            Wow.value -> dialogView.wowButton.background = background
-            Sad.value -> dialogView.sadButton.background = background
-            Angry.value -> dialogView.angryButton.background = background
-        }
-    }
-
-    private fun getReactionIcon(reaction: Int?): Int? {
-        return when (reaction) {
-            Like.value -> R.drawable.ic_reaction_like
-            Love.value -> R.drawable.ic_reaction_love
-            HaHa.value -> R.drawable.ic_reaction_haha
-            Wow.value -> R.drawable.ic_reaction_wow
-            Sad.value -> R.drawable.ic_reaction_sad
-            Angry.value -> R.drawable.ic_reaction_angry
-            else -> R.drawable.ic_like_emo
-        }
-    }*/
-
 }

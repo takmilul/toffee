@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
@@ -18,6 +19,7 @@ import com.banglalink.toffee.databinding.AlertDialogReactionsBinding
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.enums.Reaction.*
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.util.Utils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -29,9 +31,11 @@ class AlertDialogReactionFragment : DialogFragment(), ContentReactionCallback<Ch
     private lateinit var contentReactView: View
     private lateinit var channelInfo: ChannelInfo
     private lateinit var alertDialog: AlertDialog
+    private lateinit var countTextView: TextView
+//    private lateinit var mAdapter: BasePagingDataAdapter<ChannelInfo>
     
     @Inject lateinit var reactionDao: ReactionDao
-    val mViewModel by viewModels<ReactionViewModel> ()
+    val mViewModel by viewModels<ReactionViewModel>()
     
     companion object {
         fun newInstance(): AlertDialogReactionFragment {
@@ -40,14 +44,17 @@ class AlertDialogReactionFragment : DialogFragment(), ContentReactionCallback<Ch
     }
     
     // must call this function and set data before show the alert dialog
-    fun setItem(reactView: View, position: Int, channelInfo: ChannelInfo){
+    fun setItem(/*adapter: BasePagingDataAdapter<ChannelInfo>, */reactView: View, position: Int, channelInfo: ChannelInfo, countTextView: TextView) {
         this.contentReactView = reactView
         this.position = position
         this.channelInfo = channelInfo
+        this.countTextView = countTextView
+//        this.mAdapter = adapter
     }
     
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val binding = AlertDialogReactionsBinding.inflate(this.layoutInflater)
+        binding.data = channelInfo
         val dialogBuilder = AlertDialog.Builder(requireContext()).setView(binding.root)
         alertDialog = dialogBuilder.create().apply {
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -61,40 +68,51 @@ class AlertDialogReactionFragment : DialogFragment(), ContentReactionCallback<Ch
             }
 
             with(binding) {
-                likeButton.setOnClickListener {reactionButton->
-                    reactionInfo?: react(reactionButton, Like)
+                likeButton.setOnClickListener { reactionButton ->
+                    channelInfo.reaction?.like = channelInfo.reaction?.like?.plus(1) ?: 1
+                    reactionInfo ?: react(reactionButton, Like)
                     alertDialog.dismiss()
                 }
-                loveButton.setOnClickListener {reactionButton->
-                    reactionInfo?: react(reactionButton, Love)
+                loveButton.setOnClickListener { reactionButton ->
+                    channelInfo.reaction?.love = channelInfo.reaction?.love?.plus(1) ?: 1
+                    reactionInfo ?: react(reactionButton, Love)
                     alertDialog.dismiss()
                 }
-                hahaButton.setOnClickListener {reactionButton->
-                    reactionInfo?: react(reactionButton, HaHa)
+                hahaButton.setOnClickListener { reactionButton ->
+                    channelInfo.reaction?.haha = channelInfo.reaction?.haha?.plus(1) ?: 1
+                    reactionInfo ?: react(reactionButton, HaHa)
                     alertDialog.dismiss()
                 }
-                wowButton.setOnClickListener {reactionButton->
-                    reactionInfo?: react(reactionButton, Wow)
+                wowButton.setOnClickListener { reactionButton ->
+                    channelInfo.reaction?.wow = channelInfo.reaction?.wow?.plus(1) ?: 1
+                    reactionInfo ?: react(reactionButton, Wow)
                     alertDialog.dismiss()
                 }
-                sadButton.setOnClickListener {reactionButton->
-                    reactionInfo?: react(reactionButton, Sad)
+                sadButton.setOnClickListener { reactionButton ->
+                    channelInfo.reaction?.sad = channelInfo.reaction?.sad?.plus(1) ?: 1
+                    reactionInfo ?: react(reactionButton, Sad)
                     alertDialog.dismiss()
                 }
-                angryButton.setOnClickListener {reactionButton->
-                    reactionInfo?: react(reactionButton, Angry)
+                angryButton.setOnClickListener { reactionButton ->
+                    channelInfo.reaction?.angry = channelInfo.reaction?.angry?.plus(1) ?: 1
+                    reactionInfo ?: react(reactionButton, Angry)
                     alertDialog.dismiss()
                 }
             }
         }
         return alertDialog
     }
-    
+
     private fun react(reactButton: View, reaction: Reaction) {
         val reactionInfo = ReactionInfo(null, channelInfo.id, reaction.value)
         mViewModel.insert(reactionInfo)
         mViewModel.insertActivity(channelInfo, reaction.value)
-        /*mAdapter.getItemByIndex(position)?*/channelInfo.userReaction = setReactionIcon(reaction.value) ?: 0
+        channelInfo.userReaction = reaction.value
+        val react = channelInfo.reaction?.run {
+            like + love + haha + wow + sad + angry
+        } ?: 0L
+        countTextView.text = Utils.getFormattedViewsText(react.toString())
+        /*mAdapter.getItemByIndex(position)?*/channelInfo.userReactionIcon = setReactionIcon(reaction.value)
         reactButton.background = ContextCompat.getDrawable(requireContext(), R.drawable.teal_round_bg)
         (contentReactView as ImageView).setImageDrawable((reactButton as ImageView).drawable)
     }
