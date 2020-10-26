@@ -24,6 +24,9 @@ interface UploadDao {
     @Query("SELECT * FROM UploadInfo WHERE status in (0, 1, 2, 3)")
     fun getActiveUploads(): Flow<List<UploadInfo>>
 
+    @Query("SELECT * FROM UploadInfo WHERE status in (0, 1, 2, 3)")
+    suspend fun getActiveUploadsList(): List<UploadInfo>
+
     @Query("SELECT * from UploadInfo WHERE uploadId=:uploadId")
     suspend fun getUploadById(uploadId: Long): UploadInfo?
 

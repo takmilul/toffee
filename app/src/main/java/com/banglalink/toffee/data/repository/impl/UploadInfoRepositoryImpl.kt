@@ -30,6 +30,10 @@ class UploadInfoRepositoryImpl(private val uploadDao: UploadDao): UploadInfoRepo
         return uploadDao.getActiveUploads()
     }
 
+    override suspend fun getActiveUploadsList(): List<UploadInfo> {
+        return uploadDao.getActiveUploadsList()
+    }
+
     override suspend fun getUploadById(uploadId: Long): UploadInfo? {
         return uploadDao.getUploadById(uploadId)
     }

@@ -12,25 +12,22 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.MimeTypeMap
 import androidx.core.content.FileProvider
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.repository.UploadInfoRepository
-import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.extension.snack
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeActivity
+import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.UtilsKt
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
-import com.google.api.services.pubsub.PubsubScopes
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.upload_method_fragment.*
 import kotlinx.coroutines.Dispatchers
@@ -43,7 +40,6 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.logging.Logger
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -175,6 +171,9 @@ class UploadMethodFragment: BaseFragment() {
     private fun uploadUri(uri: String) {
 
         lifecycleScope.launch {
+            val dialog = VelBoxProgressDialog(requireContext())
+            dialog.show()
+
             val accessToken = withContext(Dispatchers.IO) {
                 val credential = GoogleCredential.fromStream(
                     requireContext().assets.open("toffee-261507-60ca3e5405df.json")
@@ -187,16 +186,24 @@ class UploadMethodFragment: BaseFragment() {
                 open_gallery_button.snack("Error uploading file. Please try again later."){}
                 return@launch
             }
-            Log.e("TOKEN", accessToken)
-            val fn = Uri.parse(uri).lastPathSegment
-            val idx = fn?.lastIndexOf(".") ?: -1
+
+            val fn = withContext(Dispatchers.IO + Job()) {
+                UtilsKt.fileNameFromContentUri(requireContext(), Uri.parse(uri))
+            }
+            val idx = fn.lastIndexOf(".")
             val ext = if(idx >= 0) {
-                fn?.substring(idx) ?: ""
+                fn.substring(idx)
             } else ""
 
-            val upInfo = UploadInfo(fileUri = uri)
             val fileName = mPref.customerId.toString() + "_" + UUID.randomUUID().toString() + ext
-            Log.e("FILENAME", fileName.toString())
+            val upInfo = UploadInfo(fileUri = uri, fileName = fileName)
+
+            val contentType = withContext(Dispatchers.IO + Job()) {
+                UtilsKt.contentTypeFromContentUri(requireContext(), Uri.parse(uri))
+            }
+
+            Log.e("UPLOAD", "$fileName, $contentType")
+
             val upId = mUploadInfoRepository.insertUploadInfo(upInfo)
             val uploadIdStr =
                 withContext(Dispatchers.IO + Job()) {
@@ -206,13 +213,14 @@ class UploadMethodFragment: BaseFragment() {
                     )
                         .setUploadID(UtilsKt.uploadIdToString(upId))
                         .setMethod("POST")
-                        .addHeader("Content-Type", "video/mp4")
+                        .addHeader("Content-Type", contentType)
                         .setFileToUpload(uri)
                         .setBearerAuth(accessToken)
                         .startUpload()
                 }
 
             mPref.uploadId = uploadIdStr
+            dialog.dismiss()
             activity?.findNavController(R.id.home_nav_host)?.navigate(R.id.action_uploadMethodFragment_to_editUploadInfoFragment)
         }
     }
@@ -220,7 +228,7 @@ class UploadMethodFragment: BaseFragment() {
     private fun uploadUri2(uri: String) {
 
         lifecycleScope.launch {
-            val upInfo = UploadInfo(fileUri = uri)
+            val upInfo = UploadInfo(fileUri = uri, fileName = "fileName")
             val upId = mUploadInfoRepository.insertUploadInfo(upInfo)
             val uploadIdStr =
                 withContext(Dispatchers.IO + Job()) {

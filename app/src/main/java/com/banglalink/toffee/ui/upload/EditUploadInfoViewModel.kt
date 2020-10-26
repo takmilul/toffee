@@ -8,11 +8,14 @@ import com.banglalink.toffee.apiservice.GetUgcCategories
 import com.banglalink.toffee.apiservice.UgcContentUpload
 import com.banglalink.toffee.data.database.dao.UploadDao
 import com.banglalink.toffee.data.database.entities.UploadInfo
+import com.banglalink.toffee.data.network.response.UgcResponseBean
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.UtilsKt
+import com.banglalink.toffee.util.getError
 import kotlinx.coroutines.launch
 
 class EditUploadInfoViewModel @ViewModelInject constructor(
@@ -24,6 +27,7 @@ class EditUploadInfoViewModel @ViewModelInject constructor(
     val progressDialog = MutableLiveData<Boolean>()
 
     val submitButtonStatus = MutableLiveData<Boolean>()
+    val resultLiveData = MutableLiveData<Resource<UgcResponseBean>>()
 
     val title = MutableLiveData<String>()
     val description = MutableLiveData<String>()
@@ -47,7 +51,7 @@ class EditUploadInfoViewModel @ViewModelInject constructor(
 
         load()
 
-        ageGroup.value = listOf("Select", "Everyone", "3+", "9+", "12+", "18+")
+        ageGroup.value = listOf("For All", "3+", "9+", "13+", "18+")
         ageGroupPosition.value = 0
 
 //        challengeSelectionList.value = listOf("Select", "Music", "Movie", "Games", "TV Series")
@@ -89,9 +93,26 @@ class EditUploadInfoViewModel @ViewModelInject constructor(
         uploadSize.value = Utils.readableFileSize(size)
     }
 
-    fun saveUploadInfo(fileName: String, tags: String?) {
+    fun saveUploadInfo(fileName: String, tags: String?, categoryId: Long) {
         viewModelScope.launch {
-            contentUploadApi(0, fileName, title.value, description.value, tags, ageGroup.value.toString(), 1)
+            progressDialog.value = true
+            val ageGroupId = ageGroupPosition.value ?: -1
+            val resp = try {
+                Resource.Success(
+                    contentUploadApi(
+                        0,
+                        fileName,
+                        title.value,
+                        description.value,
+                        tags,
+                        ageGroupId.toString(),
+                        categoryId
+                    ))
+            } catch (ex: Exception) {
+                Resource.Failure(getError(ex))
+            }
+            //progressDialog.value = false
+            resultLiveData.postValue(resp)
         }
     }
 }

@@ -11,6 +11,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.core.view.setPadding
 import androidx.databinding.DataBindingUtil
@@ -27,6 +28,9 @@ import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.FragmentEditUploadInfoBinding
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
@@ -88,20 +92,21 @@ class EditUploadInfoFragment: BaseFragment() {
 
         binding.cancelButton.setOnClickListener {
             lifecycleScope.launch {
-                UploadService.stopAllUploads()
+                if(UploadService.taskList.isNotEmpty()) {
+                    UploadService.stopAllUploads()
+                }
+                getUploadInfo()?.apply {
+                    status = UploadStatus.CANCELED.value
+                }?.also {
+                    uploadRepo.updateUploadInfo(it)
+                }
                 mPref.uploadId = null
                 findNavController().popBackStack()
             }
         }
 
         binding.submitButton.setOnClickListener {
-            VelBoxAlertDialogBuilder(
-                requireContext(),
-                text = "Your video has been submitted!\n" +
-                        "You will be notified once its published.",
-                icon = R.drawable.subscription_success
-            ).create().show()
-//                mPref.uploadId = null
+            submitVideo()
         }
 
         binding.thumbEditButton.setOnClickListener {
@@ -185,8 +190,6 @@ class EditUploadInfoFragment: BaseFragment() {
                             )
                         }
                     }
-                } else {
-                    findNavController().popBackStack()
                 }
             }
         }
@@ -219,26 +222,9 @@ class EditUploadInfoFragment: BaseFragment() {
     }
 
     override fun onDestroy() {
-        appScope.launch {
-            uploadRepo.getUploadById(UtilsKt.stringToUploadId(mPref.uploadId!!))?.apply {
-                title = binding.uploadTitle.text.toString()
-                description = binding.uploadDescription.text.toString()
-
-                tags = binding.uploadTags.selectedChipList.joinToString(" ") { it.label }
-                Log.e("TAG", "TAG - $tags, === ${binding.uploadTags.selectedChipList}")
-
-                ageGroupIndex = binding.ageGroupSpinner.selectedItemPosition
-                ageGroup = binding.ageGroupSpinner.selectedItem.toString()
-
-                categoryIndex = binding.categorySpinner.selectedItemPosition
-                category = binding.categorySpinner.selectedItem.toString()
-
-//                submitToChallengeIndex = binding.challengeSelectionSpinner.selectedItemPosition
-//                submitToChallenge = binding.challengeSelectionSpinner.selectedItem.toString()
-
-                Log.e("UploadInfo", "$this")
-            }?.let {
-                uploadRepo.updateUploadInfo(it)
+        if(mPref.uploadId != null) {
+            appScope.launch {
+                saveInfo()
             }
         }
         super.onDestroy()
@@ -258,13 +244,89 @@ class EditUploadInfoFragment: BaseFragment() {
 
     private fun observeStatus() {
         observe(viewModel.tags) { tags ->
-            tags?.split(" ")?.filter { it.isNotBlank() }?.forEach {
+            tags?.split(" | ")?.filter { it.isNotBlank() }?.forEach {
                 binding.uploadTags.addChip(it, null)
             }
         }
 
         observe(viewModel.submitButtonStatus) {
             binding.submitButton.isEnabled = it
+        }
+
+        observe(viewModel.resultLiveData) {
+            when(it){
+                is Resource.Success -> {
+                    lifecycleScope.launch {
+                        getUploadInfo()?.apply {
+                            status = UploadStatus.SUBMITTED.value
+                        }?.also {info ->
+                            uploadRepo.updateUploadInfo(info)
+                        }
+                        mPref.uploadId = null
+                        progressDialog?.dismiss()
+                        val dialog = VelBoxAlertDialogBuilder(
+                            requireContext(),
+                            text = it.data.message,
+                            icon = R.drawable.subscription_success
+                        ).create()
+                        dialog.setOnDismissListener {
+                            findNavController().popBackStack()
+                        }
+                        dialog.show()
+                    }
+                }
+                else -> {
+                    context?.showToast("Unable to submit the video.")
+                }
+            }
+        }
+    }
+
+    private suspend fun getUploadInfo(): UploadInfo? {
+        return mPref.uploadId?.let {
+            uploadRepo.getUploadById(UtilsKt.stringToUploadId(it))
+        }
+    }
+
+    private suspend fun saveInfo(): UploadInfo? {
+        return getUploadInfo()?.apply {
+            title = binding.uploadTitle.text.toString()
+            description = binding.uploadDescription.text.toString()
+
+            tags = binding.uploadTags.selectedChipList.joinToString(" | ") { it.label }
+            Log.e("TAG", "TAG - $tags, === ${binding.uploadTags.selectedChipList}")
+
+            ageGroupIndex = binding.ageGroupSpinner.selectedItemPosition
+            ageGroup = binding.ageGroupSpinner.selectedItem.toString()
+
+            categoryIndex = binding.categorySpinner.selectedItemPosition
+            category = binding.categorySpinner.selectedItem.toString()
+
+//                submitToChallengeIndex = binding.challengeSelectionSpinner.selectedItemPosition
+//                submitToChallenge = binding.challengeSelectionSpinner.selectedItem.toString()
+
+            Log.e("UploadInfo", "$this")
+        }?.also {
+            uploadRepo.updateUploadInfo(it)
+        }
+    }
+
+    private fun submitVideo() {
+        val title = binding.uploadTitle.text.toString()
+        val description = binding.uploadDescription.text.toString()
+        if(title.isBlank() || description.isBlank()) {
+            context?.showToast("Missing required field", Toast.LENGTH_SHORT)
+            return
+        }
+        lifecycleScope.launch {
+            val uploadInfo = saveInfo()
+            val categoryObj = binding.categorySpinner.selectedItem
+            val categoryId = if(categoryObj is UgcCategory) {
+                categoryObj.id
+            } else -1
+            uploadInfo?.let {
+                viewModel.saveUploadInfo(it.fileName, it.tags, categoryId)
+            }
         }
     }
 }

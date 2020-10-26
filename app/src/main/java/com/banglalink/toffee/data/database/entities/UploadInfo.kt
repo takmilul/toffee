@@ -10,6 +10,8 @@ data class UploadInfo(
     val uploadId: Long? = null,
 
     val fileUri: String,
+    var fileName: String,
+
     var thumbUri: String? = null,
     var status: Int = UploadStatus.ADDED.value,
     var fileSize: Long = 0L,
