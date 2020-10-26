@@ -20,6 +20,7 @@ import com.banglalink.toffee.data.database.entities.UserActivities
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.enums.ActivityType
 import com.banglalink.toffee.enums.Reaction
+import com.banglalink.toffee.enums.Reaction.*
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.widget.MultiTextButton
 import de.hdodenhof.circleimageview.CircleImageView
@@ -28,7 +29,7 @@ const val crossFadeDurationInMills = 500
 
 @BindingAdapter("imageFromUrl")
 fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
-    if (! imageUrl.isNullOrEmpty()) {
+    if (!imageUrl.isNullOrEmpty()) {
         view.load(imageUrl) {
             memoryCachePolicy(CachePolicy.DISABLED)
             diskCachePolicy(CachePolicy.ENABLED)
@@ -40,7 +41,7 @@ fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
 
 @BindingAdapter("imageFromUrlRounded")
 fun bindRoundImage(view: ImageView, imageUrl: String?) {
-    if (! imageUrl.isNullOrEmpty()) {
+    if (!imageUrl.isNullOrEmpty()) {
         view.load(imageUrl) {
             transformations(CircleCropTransformation())
             crossfade(true)
@@ -58,9 +59,10 @@ fun bindCategoryImage(view: ImageView, category: UgcCategory) {
     }
     view.background = gd
 
-    if(category.categoryIcon.isNullOrBlank()) {
+    if (category.categoryIcon.isNullOrBlank()) {
         view.setImageResource(R.drawable.ic_cat_music)
-    } else {
+    }
+    else {
         Log.e("CATEGORY", "$category")
         view.load(category.categoryIcon) {
             crossfade(true)
@@ -158,6 +160,7 @@ fun bindChannelLogo(view: ImageView, channelInfo: ChannelInfo) {
         }
     }
 }
+
 @BindingAdapter("loadChannelLogo")
 fun bindChannelLogo(view: ImageView, channelInfo: MyChannelPlaylist) {
     if (channelInfo.logoMobileUrl.isNullOrBlank()) {
@@ -231,20 +234,20 @@ fun bindViewCount(view: TextView, channelInfo: ChannelInfo) {
 }
 
 @BindingAdapter("packageExpiryText")
-fun bindPackageExpiryText(view:TextView,mPackage:Package) {
-    if(TextUtils.isEmpty(mPackage.expireDate)){
+fun bindPackageExpiryText(view: TextView, mPackage: Package) {
+    if (TextUtils.isEmpty(mPackage.expireDate)) {
         view.visibility = View.INVISIBLE
     }
     else {
         view.visibility = View.VISIBLE
     }
-    
+
     val days = Utils.getDateDiffInDayOrHour(Utils.getDate(mPackage.expireDate))
     view.text = "$days left"
 }
 
 @BindingAdapter("autoRenewText")
-fun bindAutoRenewText(autoRenewTv:TextView,item: Package){
+fun bindAutoRenewText(autoRenewTv: TextView, item: Package) {
     if (item.isAutoRenewable == 1) {
         val days = Utils.getDateDiffInDayOrHour(Utils.getDate(item.expireDate))
         autoRenewTv.text = "Auto renew in $days"
@@ -256,7 +259,7 @@ fun bindAutoRenewText(autoRenewTv:TextView,item: Package){
 }
 
 @BindingAdapter("validityText")
-fun bindValidityText(validityTv:TextView,item: Package){
+fun bindValidityText(validityTv: TextView, item: Package) {
     val days = Utils.formatValidityText(Utils.getDate(item.expireDate))
     if (item.isAutoRenewable == 1) {
         validityTv.text = "Auto renew on $days"
@@ -267,7 +270,7 @@ fun bindValidityText(validityTv:TextView,item: Package){
 }
 
 @BindingAdapter("discountText")
-fun bindDiscountText(discountTv:TextView,item:Package){
+fun bindDiscountText(discountTv: TextView, item: Package) {
     if (item.discount == 0) {
         discountTv.visibility = View.INVISIBLE
     }
@@ -289,8 +292,8 @@ fun bindDiscountText(discountTv:TextView,item:Package){
 }
 
 @BindingAdapter("togglePremiumIcon")
-fun bindPremiumIcon(imageView:ImageView,channelInfo:ChannelInfo) {
-    if(!channelInfo.isExpired(Preference.getInstance().getSystemTime())){
+fun bindPremiumIcon(imageView: ImageView, channelInfo: ChannelInfo) {
+    if (!channelInfo.isExpired(Preference.getInstance().getSystemTime())) {
         imageView.visibility = View.INVISIBLE
     }
     else if (channelInfo.isPurchased || channelInfo.subscription) {
@@ -319,22 +322,27 @@ fun bindCircleImageFromUrl(view: CircleImageView, imageUrl: String?) {
 
 @BindingAdapter("bindActivityType")
 fun bindActivityType(view: TextView, item: UserActivities) {
-    view.text = when(item.activityType) {
+    view.text = when (item.activityType) {
         ActivityType.REACT.value -> "Reacted"
         ActivityType.PLAYLIST.value -> "Added to PlayList"
         else -> null
     }
 }
 
+@BindingAdapter("loadTextLeftDrawable")
+fun loadLeftDrawable(view: TextView, resourceId: Int){
+    view.setCompoundDrawablesWithIntrinsicBounds(resourceId, 0, 0, 0)
+}
+
 @BindingAdapter("bindActivityLogo")
 fun bindActivityLogo(view: ImageView, item: UserActivities) {
     val reactLogo = when (item.activitySubType) {
-        Reaction.Like.value -> R.drawable.ic_reaction_like
-        Reaction.Love.value -> R.drawable.ic_reaction_love
-        Reaction.HaHa.value -> R.drawable.ic_reaction_haha
-        Reaction.Wow.value -> R.drawable.ic_reaction_wow
-        Reaction.Sad.value -> R.drawable.ic_reaction_sad
-        Reaction.Angry.value -> R.drawable.ic_reaction_angry
+        Like.value -> R.drawable.ic_reaction_like
+        Love.value -> R.drawable.ic_reaction_love
+        HaHa.value -> R.drawable.ic_reaction_haha
+        Wow.value -> R.drawable.ic_reaction_wow
+        Sad.value -> R.drawable.ic_reaction_sad
+        Angry.value -> R.drawable.ic_reaction_angry
         else -> R.drawable.ic_like_emo
     }
     view.setImageResource(reactLogo)
@@ -345,6 +353,55 @@ fun bindEmoCount(view: TextView, item: ChannelInfo) {
     var react = item.reaction?.run {
         like + love + haha + wow + sad + angry
     } ?: 0L
-    if(item.userReaction > 0) react++
+    println("react count before inc: $react")
+    if (item.userReaction > 0) react++
+    println(item.userReaction)
+    println("react count after inc: $react")
     view.text = Utils.getFormattedViewsText(react.toString())
+}
+
+@BindingAdapter("bindReaction", "bindReactionCount", requireAll = true)
+fun bindReactionCount(view: TextView, reaction: Reaction, item: ChannelInfo) {
+    val reactionCount = when (reaction) {
+        Like -> {
+            if (item.userReaction == Like.value)
+                item.reaction?.like?.plus(1)
+            else
+                item.reaction?.like
+        }
+        Love -> {
+            if (item.userReaction == Love.value)
+                item.reaction?.love?.plus(1)
+            else
+                item.reaction?.love
+        }
+        HaHa -> {
+            if (item.userReaction == HaHa.value)
+                item.reaction?.haha?.plus(1)
+            else
+                item.reaction?.haha
+        }
+        Wow -> {
+            if (item.userReaction == Wow.value)
+                item.reaction?.wow?.plus(1)
+            else
+                item.reaction?.wow
+        }
+        Sad -> {
+            if (item.userReaction == Sad.value)
+                item.reaction?.sad?.plus(1)
+            else
+                item.reaction?.sad
+        }
+        Angry -> {
+            if (item.userReaction == Angry.value)
+                item.reaction?.angry?.plus(1)
+            else
+                item.reaction?.angry
+        }
+        None -> {
+            0L
+        }
+    }
+    view.text = Utils.getFormattedViewsText(reactionCount.toString())
 }

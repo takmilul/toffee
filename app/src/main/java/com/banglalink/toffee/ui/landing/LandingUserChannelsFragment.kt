@@ -50,7 +50,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
                 val customerId = Preference.getInstance().customerId
                 val isOwner = if (item.userId == customerId) 1 else 0
                 val channelId = item.id.toInt()
-                findNavController().navigate(R.id.action_menu_feed_to_menu_channel, Bundle().apply {
+                findNavController().navigate(R.id.action_menu_feed_to_myChannelHomeFragment, Bundle().apply {
                     putInt(MyChannelHomeFragment.IS_OWNER, 0)
                     putInt(MyChannelHomeFragment.CHANNEL_ID, 2)
                 })

@@ -50,7 +50,7 @@ class LatestVideosFragment: HomeBaseFragment() {
             override fun onReactionClicked(view: View, position: Int, item: ChannelInfo) {
                 super.onReactionClicked(view, position, item)
                 val fragment = AlertDialogReactionFragment.newInstance()
-                fragment.setItem(view, position, item)
+                fragment.setItem(mAdapter, view, position, item)
                 fragment.show(requireActivity().supportFragmentManager, "ReactionDialog")
             }
         })
@@ -84,6 +84,6 @@ class LatestVideosFragment: HomeBaseFragment() {
     }
 
     private fun openMenu(view: View, item: ChannelInfo) {
-
+        super.onOptionClicked(view, item)
     }
 }

@@ -1,6 +1,7 @@
 package com.banglalink.toffee.model
 
 import android.os.Parcelable
+import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.ui.player.HlsLinks
 import com.banglalink.toffee.util.Utils
 import com.google.gson.annotations.SerializedName
@@ -47,10 +48,12 @@ data class ChannelInfo(
     var content_provider_id: String? = null,
 
     var is_available: Int = 0,
-    var reaction: ReactionStatus? = null,
-    var userReaction: Int = 0,
+    var reaction: ReactionStatus? = null,   //individual reaction count from server
+    var userReaction: Int = Reaction.None.value, //enum value (Reaction.Like.value) etc...
+    var userReactionIcon: Int = 0, //resource reaction icon (R.drawable.ic_reaction_like) etc...
     var shareCount: Long = 0L,
-
+    @SerializedName("playlist_content_id")
+    val playlistContentId: Int = 0,
     @SerializedName("url_type")
     val urlType: Int = 0
 ) :Parcelable

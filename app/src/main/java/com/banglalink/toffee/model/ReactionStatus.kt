@@ -7,10 +7,10 @@ import kotlinx.android.parcel.Parcelize
 data class ReactionStatus(
     val id: Long,
     val content_id: Long,
-    val like: Long = 0,
-    val love: Long = 0,
-    val haha: Long = 0,
-    val wow: Long = 0,
-    val sad: Long = 0,
-    val angry: Long = 0
+    var like: Long = 0,
+    var love: Long = 0,
+    var haha: Long = 0,
+    var wow: Long = 0,
+    var sad: Long = 0,
+    var angry: Long = 0
 ): Parcelable

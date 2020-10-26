@@ -54,7 +54,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            android:text="@{data.myChannelDetail.channelName}"
+            android:text='@{(data.myChannelDetail.channelName == null || data.myChannelDetail.channelName.empty) ? "Channel Name" : data.myChannelDetail.channelName}'
             tools:text="National Geographic"
             android:textColor="@color/main_text_color"
             android:textSize="28sp"
@@ -69,7 +69,7 @@
             android:layout_margin="16dp"
             android:gravity="center"
             android:text="Add Bio"
-            android:visibility="@{isOwner == 1 &amp;&amp; data.myChannelDetail.description.empty ? View.VISIBLE : View.GONE}"
+            android:visibility="@{isOwner == 1 &amp;&amp; (data.myChannelDetail.description == null || data.myChannelDetail.description.empty) ? View.VISIBLE : View.GONE}"
             android:textAllCaps="false"
             style="@style/ButtonStyleRingPurple"
             app:layout_constraintEnd_toEndOf="parent"
