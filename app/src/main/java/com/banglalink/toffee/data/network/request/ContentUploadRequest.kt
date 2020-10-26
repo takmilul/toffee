@@ -7,6 +7,7 @@ data class ContentUploadRequest(
     val bucket_content_name: String,
     val program_name: String? = null,
     val content_dir: String? = null,
+    val category_id: Int = 0,
     val description: String? = null,
     val channel_logo: String? = null,
     val logo_web_url: String? = null,

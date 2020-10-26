@@ -32,6 +32,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import androidx.fragment.app.commit
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -39,6 +40,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
 import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.extension.loadProfileImage
@@ -54,20 +56,24 @@ import com.banglalink.toffee.ui.login.SigninByPhoneActivity
 import com.banglalink.toffee.ui.player.PlayerActivity
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.subscription.PackageListActivity
+import com.banglalink.toffee.ui.upload.UploadStatus
 import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.ui.widget.showSubscriptionDialog
 import com.banglalink.toffee.util.InAppMessageParser
 import com.banglalink.toffee.util.Utils
+import com.banglalink.toffee.util.UtilsKt
 import com.google.android.exoplayer2.util.Util
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.layout_appbar.view.*
+import kotlinx.coroutines.launch
 import net.gotev.uploadservice.UploadService
 import java.util.*
 import javax.annotation.Nonnull
+import javax.inject.Inject
 
 const val ID_CHANNEL = 12
 const val ID_RECENT = 13
@@ -86,6 +92,9 @@ const val ID_REDEEM_CODE = 24
 @AndroidEntryPoint
 class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListener,
     DraggerLayout.OnPositionChangedListener ,SearchView.OnQueryTextListener{
+
+    @Inject
+    lateinit var uploadRepo: UploadInfoRepository
 
     private var searchView: SearchView? = null
     lateinit var binding: ActivityMainMenuBinding
@@ -140,12 +149,32 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                 navController.popBackStack()
                 return@setOnClickListener
             }
-//            else {
-            if(mPref.uploadId != null) {
-                navController.navigate(R.id.action_menu_feed_to_editUploadInfoFragment)
-                return@setOnClickListener
+            lifecycleScope.launch {
+                Log.e("UPLOAD", "Upload id - ${mPref.uploadId}")
+                mPref.uploadId?.let {
+                    val uploads = uploadRepo.getUploadById(UtilsKt.stringToUploadId(it))
+                    if(uploads == null || uploads.status !in listOf(0, 1, 2, 3)) {
+                        mPref.uploadId = null
+                        navController.navigate(R.id.uploadMethodFragment)
+                        return@launch
+                    }
+//                    if(uploads.status in listOf(0, 1, 2, 3) && UploadService.taskList.isEmpty()) {
+//                        uploads.apply {
+//                            status = UploadStatus.ERROR.value
+//                            statusMessage = "Process killed"
+//                        }.also { info ->
+//                            uploadRepo.updateUploadInfo(info)
+//                        }
+//                        mPref.uploadId = null
+//                        navController.navigate(R.id.uploadMethodFragment)
+//                    }
+                    if(navController.currentDestination?.id != R.id.editUploadInfoFragment) {
+                        navController.navigate(R.id.editUploadInfoFragment)
+                    }
+                    return@launch
+                }
+                navController.navigate(R.id.uploadMethodFragment)
             }
-            navController.navigate(R.id.uploadMethodFragment)
         }
 
         observe(viewModel.fragmentDetailsMutableLiveData) {

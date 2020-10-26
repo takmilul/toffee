@@ -130,9 +130,9 @@ fun bindUserChannelLogo(view: ImageView, channelInfo: ChannelInfo) {
     }
     else {
         view.load(channelInfo.channel_logo) {
-//            fallback(R.drawable.ic_portrait)
-//            placeholder(R.drawable.ic_portrait)
-//            error(R.drawable.ic_portrait)
+            fallback(R.drawable.ic_profile_default)
+//            placeholder(R.drawable.ic_profile_default)
+            error(R.drawable.ic_profile_default)
 //            memoryCachePolicy(CachePolicy.DISABLED)
             diskCachePolicy(CachePolicy.ENABLED)
             crossfade(true)
@@ -149,9 +149,9 @@ fun bindChannelLogo(view: ImageView, channelInfo: ChannelInfo) {
     }
     else {
         view.load(channelInfo.channel_logo) {
-//            fallback(R.drawable.ic_portrait)
-//            placeholder(R.drawable.ic_portrait)
-//            error(R.drawable.ic_portrait)
+            fallback(R.drawable.ic_profile_default)
+//            placeholder(R.drawable.ic_profile_default)
+            error(R.drawable.ic_profile_default)
 //            memoryCachePolicy(CachePolicy.DISABLED)
             diskCachePolicy(CachePolicy.ENABLED)
             crossfade(true)
@@ -168,9 +168,9 @@ fun bindChannelLogo(view: ImageView, channelInfo: MyChannelPlaylist) {
     }
     else {
         view.load(channelInfo.logoMobileUrl) {
-//            fallback(R.drawable.ic_portrait)
-//            placeholder(R.drawable.ic_portrait)
-//            error(R.drawable.ic_portrait)
+            fallback(R.drawable.ic_profile_default)
+//            placeholder(R.drawable.ic_profile_default)
+            error(R.drawable.ic_profile_default)
 //            memoryCachePolicy(CachePolicy.DISABLED)
             diskCachePolicy(CachePolicy.ENABLED)
             crossfade(true)
@@ -187,9 +187,9 @@ fun bindChannelLogo(view: ImageView, channelInfo: UgcUserChannelInfo) {
     }
     else {
         view.load(channelInfo.profileUrl) {
-//            fallback(R.drawable.ic_portrait)
-//            placeholder(R.drawable.ic_portrait)
-//            error(R.drawable.ic_portrait)
+            fallback(R.drawable.ic_profile_default)
+            placeholder(R.drawable.ic_profile_default)
+            error(R.drawable.ic_profile_default)
 //            memoryCachePolicy(CachePolicy.DISABLED)
             diskCachePolicy(CachePolicy.ENABLED)
             crossfade(true)

@@ -10,6 +10,7 @@ interface UploadInfoRepository {
     suspend fun deleteAll()
     fun getUploads(): Flow<List<UploadInfo>>
     fun getActiveUploads(): Flow<List<UploadInfo>>
+    suspend fun getActiveUploadsList(): List<UploadInfo>
     suspend fun getUploadById(uploadId: Long): UploadInfo?
     suspend fun updateProgressById(uploadId: Long,
                                    completedSize: Long,

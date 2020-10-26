@@ -30,6 +30,7 @@ class UgcContentUpload @Inject constructor(
                     channelId,
                     fileName,
                     title,
+                    category_id = categoryId.toInt(),
                     description = description,
                     video_tags = tags,
                     age_restriction = ageGroup
