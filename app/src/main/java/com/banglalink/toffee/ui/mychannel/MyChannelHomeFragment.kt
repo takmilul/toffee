@@ -97,7 +97,6 @@ class MyChannelHomeFragment : Fragment(), OnClickListener {
         binding.channelDetailView.analyticsButton.setOnClickListener(this)
         binding.channelDetailView.ratingButton.setOnClickListener(this)
         binding.channelDetailView.subscriptionButton.setOnClickListener(this)
-
     }
 
     override fun onClick(v: View?) {
@@ -173,7 +172,12 @@ class MyChannelHomeFragment : Fragment(), OnClickListener {
                     }
                 }
                 is Failure -> {
-
+                    myChannelDetail = null
+                    isSubscribed = 0
+                    binding.data = null
+                    binding.isSubscribed = 0
+                    
+                    loadBody()
                 }
             }
         }

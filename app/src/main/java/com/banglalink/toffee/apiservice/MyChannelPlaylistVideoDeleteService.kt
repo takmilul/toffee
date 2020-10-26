@@ -11,12 +11,13 @@ class MyChannelPlaylistVideoDeleteService @Inject constructor(
     private val mPref: Preference,
     private val toffeeApi: ToffeeApi
 ) {
-    suspend operator fun invoke(channelId: Int, playListId: Int): MyChannelDeletePlaylistVideoBean {
+    suspend operator fun invoke(channelId: Int, playlistContentId: Int, playlistId: Int): MyChannelDeletePlaylistVideoBean {
         val response = tryIO2 {
             toffeeApi.deleteMyChannelPlaylistVideo(
                 MyChannelPlaylistVideoDeleteRequest(
                     channelId,
-                    playListId,
+                    playlistContentId,
+                    playlistId,
                     mPref.customerId,
                     mPref.password
                 )

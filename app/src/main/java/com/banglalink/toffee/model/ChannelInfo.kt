@@ -49,10 +49,11 @@ data class ChannelInfo(
 
     var is_available: Int = 0,
     var reaction: ReactionStatus? = null,   //individual reaction count from server
-    var userReaction: Int? = Reaction.None.value, //enum value (Reaction.Like.value) etc...
+    var userReaction: Int = Reaction.None.value, //enum value (Reaction.Like.value) etc...
     var userReactionIcon: Int = 0, //resource reaction icon (R.drawable.ic_reaction_like) etc...
     var shareCount: Long = 0L,
-
+    @SerializedName("playlist_content_id")
+    val playlistContentId: Int = 0,
     @SerializedName("url_type")
     val urlType: Int = 0
 ) :Parcelable

@@ -42,9 +42,9 @@ class MyChannelPlaylistVideosViewModel @AssistedInject constructor(private val p
             }
     }
     
-    fun deletePlaylistVideo(channelId: Int, playlistId: Int){
+    fun deletePlaylistVideo(channelId: Int, playlistContentId: Int, playlistId: Int){
         viewModelScope.launch { 
-            _data.postValue(resultFromResponse { playlistVideoDeleteApiService.invoke(channelId, playlistId) })
+            _data.postValue(resultFromResponse { playlistVideoDeleteApiService.invoke(channelId, playlistContentId, playlistId) })
         }
     }
 }

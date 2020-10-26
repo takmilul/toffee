@@ -32,8 +32,8 @@
             android:id="@+id/action_menu_feed_to_menu_channel"
             app:destination="@id/menu_channel" />
         <action
-            android:id="@+id/action_menu_feed_to_myChannelRatingFragment"
-            app:destination="@id/myChannelRatingFragment" />
+            android:id="@+id/action_menu_feed_to_myChannelHomeFragment"
+            app:destination="@id/myChannelHomeFragment" />
         <action
             android:id="@+id/action_landingCategoriesFragment_to_categoryDetailsFragment"
             app:destination="@id/categoryDetailsFragment" />
@@ -82,7 +82,7 @@
         <argument
             android:name="channelId"
             app:argType="integer"
-            android:defaultValue="2"/>
+            android:defaultValue="0"/>
     </fragment>
     <fragment
         android:id="@+id/uploadMethodFragment"
@@ -132,9 +132,9 @@
 <!--    <include-->
 <!--        app:graph="@navigation/drawer_navigation_grapg" />-->
     <fragment
-        android:id="@+id/myChannelRatingFragment"
+        android:id="@+id/myChannelHomeFragment"
         android:name="com.banglalink.toffee.ui.mychannel.MyChannelHomeFragment"
-        android:label="MyChannelRatingFragment" />
+        android:label="MyChannelHomeFragment" />
     <fragment
         android:id="@+id/myChannelPlaylistVideosFragment"
         android:name="com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment"

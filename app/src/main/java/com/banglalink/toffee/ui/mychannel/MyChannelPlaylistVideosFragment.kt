@@ -61,7 +61,7 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(), BaseLis
                 when (it.itemId) {
                     R.id.menu_delete_playlist_video -> {
                         observeDeletePlaylistVideo()
-                        mViewModel.deletePlaylistVideo(item.id.toInt(), item.id.toInt())
+                        mViewModel.deletePlaylistVideo(requestParams.channelId, item.playlistContentId, requestParams.playlistId)
                     }
                 }
                 return@setOnMenuItemClickListener true

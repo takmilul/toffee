@@ -2,7 +2,6 @@ package com.banglalink.toffee.ui.mychannel
 
 import android.os.Bundle
 import android.view.View
-import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -142,10 +141,10 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
         homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
     }
     
-    override fun onReactionClicked(view: View, position: Int, item: ChannelInfo, textView: TextView) {
-        super.onReactionClicked(view, position, item, textView)
+    override fun onReactionClicked(view: View, position: Int, item: ChannelInfo) {
+        super.onReactionClicked(view, position, item)
         val fragment = AlertDialogReactionFragment.newInstance()
-        fragment.setItem(view, position, item, textView)
+        fragment.setItem(mAdapter, view, position, item)
         fragment.show(requireActivity().supportFragmentManager, "ReactionDialog")
     }
 }

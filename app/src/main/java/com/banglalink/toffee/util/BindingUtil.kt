@@ -329,6 +329,11 @@ fun bindActivityType(view: TextView, item: UserActivities) {
     }
 }
 
+@BindingAdapter("loadTextLeftDrawable")
+fun loadLeftDrawable(view: TextView, resourceId: Int){
+    view.setCompoundDrawablesWithIntrinsicBounds(resourceId, 0, 0, 0)
+}
+
 @BindingAdapter("bindActivityLogo")
 fun bindActivityLogo(view: ImageView, item: UserActivities) {
     val reactLogo = when (item.activitySubType) {
@@ -348,20 +353,55 @@ fun bindEmoCount(view: TextView, item: ChannelInfo) {
     var react = item.reaction?.run {
         like + love + haha + wow + sad + angry
     } ?: 0L
-    if (item.userReaction != None.value) react++
+    println("react count before inc: $react")
+    if (item.userReaction > 0) react++
+    println(item.userReaction)
+    println("react count after inc: $react")
     view.text = Utils.getFormattedViewsText(react.toString())
 }
 
 @BindingAdapter("bindReaction", "bindReactionCount", requireAll = true)
 fun bindReactionCount(view: TextView, reaction: Reaction, item: ChannelInfo) {
     val reactionCount = when (reaction) {
-        Like -> item.reaction?.like
-        Love -> item.reaction?.love
-        HaHa -> item.reaction?.haha
-        Wow -> item.reaction?.wow
-        Sad -> item.reaction?.sad
-        Angry -> item.reaction?.angry
-        None -> {0L}
+        Like -> {
+            if (item.userReaction == Like.value)
+                item.reaction?.like?.plus(1)
+            else
+                item.reaction?.like
+        }
+        Love -> {
+            if (item.userReaction == Love.value)
+                item.reaction?.love?.plus(1)
+            else
+                item.reaction?.love
+        }
+        HaHa -> {
+            if (item.userReaction == HaHa.value)
+                item.reaction?.haha?.plus(1)
+            else
+                item.reaction?.haha
+        }
+        Wow -> {
+            if (item.userReaction == Wow.value)
+                item.reaction?.wow?.plus(1)
+            else
+                item.reaction?.wow
+        }
+        Sad -> {
+            if (item.userReaction == Sad.value)
+                item.reaction?.sad?.plus(1)
+            else
+                item.reaction?.sad
+        }
+        Angry -> {
+            if (item.userReaction == Angry.value)
+                item.reaction?.angry?.plus(1)
+            else
+                item.reaction?.angry
+        }
+        None -> {
+            0L
+        }
     }
     view.text = Utils.getFormattedViewsText(reactionCount.toString())
 }
