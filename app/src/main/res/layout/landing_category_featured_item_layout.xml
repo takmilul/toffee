@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+
+    <data>
+        <variable
+            name="data"
+            type="com.banglalink.toffee.model.ChannelInfo" />
+        <variable
+            name="callback"
+            type="com.banglalink.toffee.ui.common.SingleListItemCallback" />
+    </data>
+    <com.banglalink.toffee.ui.widget.CustomImageView
+        android:id="@+id/featured_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:minHeight="200dp"
+        android:onClick="@{()->callback.onItemClicked(data)}"
+        bindFeaturedImage="@{data}"
+        android:adjustViewBounds="true" />
+</layout>
