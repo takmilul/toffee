@@ -17,6 +17,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.layout
+import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBinding
 import com.banglalink.toffee.databinding.FragmentMyChannelHomeBinding
 import com.banglalink.toffee.extension.observe
@@ -45,6 +46,7 @@ class MyChannelHomeFragment : Fragment(), OnClickListener {
     private lateinit var viewPagerAdapter: ViewPagerAdapter
     private var fragmentList: ArrayList<Fragment> = arrayListOf()
     private var fragmentTitleList: ArrayList<String> = arrayListOf()
+    @Inject lateinit var preference: Preference
 
     @Inject lateinit var myChannelHomeViewModelAssistedFactory: MyChannelHomeViewModel.AssistedFactory
     private val viewModel by viewModels<MyChannelHomeViewModel> { MyChannelHomeViewModel.provideFactory(myChannelHomeViewModelAssistedFactory, isOwner, channelId) }
@@ -71,6 +73,7 @@ class MyChannelHomeFragment : Fragment(), OnClickListener {
         val args = arguments
         isOwner = args?.getInt(IS_OWNER) ?: 0
         channelId = args?.getInt(CHANNEL_ID) ?: 0
+        channelId = if (channelId == 0) preference.channelId else channelId
         /*isSubscribed = args.isSubscribed*/
 
     }
@@ -167,7 +170,8 @@ class MyChannelHomeFragment : Fragment(), OnClickListener {
                         channelId = myChannelDetail?.id?.toInt() ?: 0
                         binding.data = it.data
                         binding.isSubscribed = isSubscribed
-
+                        preference.channelId = channelId
+                        
                         loadBody()
                     }
                 }
