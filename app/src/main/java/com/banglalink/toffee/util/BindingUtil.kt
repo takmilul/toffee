@@ -36,6 +36,8 @@ fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
             crossfade(true)
             crossfade(crossFadeDurationInMills)
         }
+    } else {
+        view.setImageResource(R.drawable.dummy)
     }
 }
 
