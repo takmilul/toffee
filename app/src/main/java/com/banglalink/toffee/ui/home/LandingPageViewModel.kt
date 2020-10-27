@@ -33,6 +33,8 @@ class LandingPageViewModel @ViewModelInject constructor(
     private val featuredContentAssistedFactory: GetFeatureContents.AssistedFactory,
     private val getContentAssistedFactory: GetContents.AssistedFactory
 ):BaseViewModel() {
+    val latestVideoLiveData = MutableLiveData<Pair<Int, Int>>()
+
     fun loadChannels(): Flow<PagingData<ChannelInfo>>{
         return channelRepo.getList().cachedIn(viewModelScope)
     }
@@ -149,11 +151,11 @@ class LandingPageViewModel @ViewModelInject constructor(
         })
     }
 
-    fun loadLatestVideosByCategory(category: UgcCategory): Flow<PagingData<ChannelInfo>> {
+    fun loadLatestVideosByCategory(categoryId: Int, subCategoryId: Int): Flow<PagingData<ChannelInfo>> {
         return BaseListRepositoryImpl({
             BaseNetworkPagingSource(
                 getContentAssistedFactory.create(
-                    ChannelRequestParams("", category.id.toInt(), "", 0, "VOD")
+                    ChannelRequestParams("", categoryId, "", subCategoryId, "VOD")
                 )
             )
         }).getList()
@@ -167,5 +169,9 @@ class LandingPageViewModel @ViewModelInject constructor(
                 )
             )
         }).getList()
+    }
+
+    fun loadSubcategoryVideos(catId: Int, subCatId: Int) {
+        latestVideoLiveData.value = Pair(catId, subCatId)
     }
 }
