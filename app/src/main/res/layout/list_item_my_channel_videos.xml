@@ -22,7 +22,7 @@
 
         <com.banglalink.toffee.ui.widget.CustomImageView
             android:id="@+id/poster"
-            imageFromUrl="@{data.poster_url_mobile}"
+            loadChannelImage="@{data}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"

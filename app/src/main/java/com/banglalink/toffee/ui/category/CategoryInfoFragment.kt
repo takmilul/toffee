@@ -93,13 +93,16 @@ class CategoryInfoFragment: HomeBaseFragment() {
             val subList = it.sortedBy { sub -> sub.id }
             categoryChipGroup.removeAllViews()
 
-            subList.forEach{ subCategory ->
-                categoryChipGroup.addView(addChip(subCategory).apply {
+//            categoryChipGroup.isSelectionRequired = true
+//            categoryChipGroup.isSingleSelection = true
+            subList.forEachIndexed{ idx, subCategory ->
+                val newChip = addChip(subCategory).apply {
                     tag = subCategory
-                })
-            }
-            if(subList.isNotEmpty()) {
-                categoryChipGroup.check(0)
+                }
+                categoryChipGroup.addView(newChip)
+                if(subCategory.id == 0L) {
+                    categoryChipGroup.check(newChip.id)
+                }
             }
 
             categoryChipGroup.setOnCheckedChangeListener { group, checkedId ->
@@ -125,6 +128,7 @@ class CategoryInfoFragment: HomeBaseFragment() {
 
         val chip = layoutInflater.inflate(R.layout.category_chip_layout, categoryChipGroup, false) as Chip
         chip.text = subCategory.name
+        chip.id = View.generateViewId()
 
         val chipColor = createChipBg(intColor)
 

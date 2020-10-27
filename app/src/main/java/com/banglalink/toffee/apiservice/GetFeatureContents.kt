@@ -6,6 +6,7 @@ import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.util.Utils
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 
@@ -33,7 +34,10 @@ class GetFeatureContents @AssistedInject constructor(
         }
 
         if (response.response.channels != null) {
-            return response.response.channels
+            return response.response.channels.map {
+                it.formatted_view_count = Utils.getFormattedViewsText(it.view_count)
+                it
+            }
         }
 
         return emptyList()

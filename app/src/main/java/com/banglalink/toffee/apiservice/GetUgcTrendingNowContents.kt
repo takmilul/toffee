@@ -9,6 +9,7 @@ import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.discardZeroFromDuration
+import com.banglalink.toffee.util.getFormattedViewsText
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 
@@ -43,6 +44,7 @@ class GetUgcTrendingNowContents @AssistedInject constructor(
         Log.e("TRENDING", response.response.toString())
         if (response.response.channels != null) {
             return response.response.channels.map {
+                it.formatted_view_count = getFormattedViewsText(it.view_count)
                 it.formattedDuration = discardZeroFromDuration(it.duration)
                 it
             }

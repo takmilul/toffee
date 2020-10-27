@@ -5,6 +5,7 @@ import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.FeatureContentBean
+import com.banglalink.toffee.util.Utils
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 
@@ -28,6 +29,12 @@ class GetCategoryFeatureContents @AssistedInject constructor(
                 preference.getDBVersionByApiName("getUgcFeatureCategoryContents"),
                 request
             )
+        }
+
+        if(response.response.channels != null) {
+            response.response.channels.map {
+                it.formatted_view_count = Utils.getFormattedViewsText(it.view_count)
+            }
         }
 
         return response.response

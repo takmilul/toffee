@@ -39,11 +39,12 @@ class CatchupDetailsFragment:CommonSingleListFragment() {
     }
 
     override fun updateHeader() {
-        if(currentItem!=null)
-            mAdapter.add(currentItem!!)//Fake item for enabling header...because we are adding header at 0
+//        if(currentItem!=null)
+//            mAdapter.add(currentItem!!)//Fake item for enabling header...because we are adding header at 0
     }
     override fun hideNotInterestedMenuItem(channelInfo: ChannelInfo): Boolean {
-        return currentItem?.id == channelInfo.id
+//        return currentItem?.id == channelInfo.id
+        return false
     }
 
     override fun loadItems(): LiveData<Resource<List<ChannelInfo>>> {
