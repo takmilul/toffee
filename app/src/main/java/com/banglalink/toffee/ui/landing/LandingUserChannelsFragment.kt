@@ -65,14 +65,14 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
 
             override fun onSubscribeButtonClicked(view: View, info: UgcUserChannelInfo) {
                 if(info.isSubscribed == 0) {
-                    subscriptionViewModel.setSubscriptionStatus(info, 1)
+                    subscriptionViewModel.setSubscriptionStatus(info.id, 1)
                 } else {
                     VelBoxAlertDialogBuilder(
                         requireContext(),
                         text = getString(R.string.text_unsubscribe_title),
                         positiveButtonTitle = "Unsubscribe",
                         positiveButtonListener = {
-                            subscriptionViewModel.setSubscriptionStatus(info, 0)
+                            subscriptionViewModel.setSubscriptionStatus(info.id, 0)
                             it?.dismiss()
                         }
                     ).create().show()

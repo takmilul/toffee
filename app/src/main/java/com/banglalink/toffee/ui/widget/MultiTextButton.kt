@@ -27,7 +27,7 @@ class MultiTextButton @JvmOverloads constructor(mContext: Context, attrs: Attrib
         setSubscriptionInfo(false, null)
     }
 
-    fun setSubscriptionInfo(status: Boolean, amount: String?) {
+    fun setSubscriptionInfo(status: Boolean, amount: String? = null) {
         when(amount) {
             null -> {
                 subAmountView.visibility = View.GONE

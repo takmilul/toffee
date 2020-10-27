@@ -44,15 +44,15 @@
 <!--        android:layout_gravity="center"-->
 <!--        android:tint="@color/view_all_text_color"-->
 <!--        app:srcCompat="@drawable/ic_right_arrow_accent"/>-->
-    <FrameLayout
-        android:id="@+id/frameLayout"
-        android:layout_width="match_parent"
-        android:layout_height="240dp"
-        android:layout_marginTop="50dp"
-        android:background="@drawable/top_bottom_round_white_bg"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mostPopularHeader" />
+<!--    <FrameLayout-->
+<!--        android:id="@+id/frameLayout"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="240dp"-->
+<!--        android:layout_marginTop="50dp"-->
+<!--        android:background="@drawable/top_bottom_round_white_bg"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/mostPopularHeader" />-->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/mostPopularList"

@@ -24,5 +24,9 @@ data class MyChannelPlaylist (
     @SerializedName("channel_logo")
     val channelLogo: String?,
     @SerializedName("totalContent")
-    val totalContent: Int
+    val totalContent: Int,
+    @SerializedName("channel_name")
+    val channelName: String?,
+    @SerializedName("create_time")
+    val createTime: String?
 )

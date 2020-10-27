@@ -17,6 +17,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="340dp"
         android:layout_height="wrap_content"
+        android:background="@drawable/fragment_bg_bottom"
         android:layout_marginStart="5dp"
         android:layout_marginEnd="5dp"
         android:onClick="@{()->callback.onItemClicked(data)}">
@@ -62,14 +63,12 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/ownerPicture"
+            loadChannelLogo="@{data}"
             android:layout_width="42dp"
             android:layout_height="42dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            loadChannelLogo="@{data}"
             android:src="@drawable/ic_portrait"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/poster" />
 
@@ -101,6 +100,7 @@
             android:focusable="true"
             android:onClick="@{(v)->callback.onOpenMenu(v, data)}"
             android:padding="4dp"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/poster"
             app:srcCompat="@drawable/ic_menu_more" />
@@ -112,17 +112,17 @@
         <!--            android:orientation="vertical"-->
         <!--            app:layout_constraintGuide_percent="0.9026764"/>-->
 
-        <ProgressBar
-            android:id="@+id/progress"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="0dp"
-            android:layout_height="4dp"
-            android:max="100"
-            android:progress="50"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/poster"
-            app:layout_constraintEnd_toEndOf="@+id/duration"
-            app:layout_constraintStart_toStartOf="parent" />
+<!--        <ProgressBar-->
+<!--            android:id="@+id/progress"-->
+<!--            style="?android:attr/progressBarStyleHorizontal"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="4dp"-->
+<!--            android:max="100"-->
+<!--            android:progress="50"-->
+<!--            android:visibility="gone"-->
+<!--            app:layout_constraintBottom_toBottomOf="@+id/poster"-->
+<!--            app:layout_constraintEnd_toEndOf="@+id/duration"-->
+<!--            app:layout_constraintStart_toStartOf="parent" />-->
 
         <!--        a very long channel that is very long-->
         <View
@@ -134,6 +134,37 @@
             app:layout_constraintTop_toTopOf="@id/poster"
             app:layout_constraintEnd_toEndOf="@id/poster"
             app:layout_constraintBottom_toBottomOf="@id/poster"/>
+
+        <TextView
+            android:id="@+id/owner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:ellipsize="end"
+            android:maxWidth="200dp"
+            android:maxLines="1"
+            android:text="@{data.channelName}"
+            android:textColor="#829AB8"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/textView50"
+            app:layout_constraintStart_toStartOf="@+id/name"
+            app:layout_constraintTop_toBottomOf="@+id/name" />
+
+        <TextView
+            android:id="@+id/textView50"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:visibility="gone"
+            android:text=""
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/owner"
+            app:layout_constraintTop_toTopOf="@+id/owner" />
 
         <ImageView
             android:id="@+id/folderImageView"
