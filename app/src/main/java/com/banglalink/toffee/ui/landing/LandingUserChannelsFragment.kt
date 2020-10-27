@@ -55,11 +55,20 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
                 val customerId = Preference.getInstance().customerId
                 val isOwner = if (item.channelOwnerId == customerId) 1 else 0
                 val channelId = item.id.toInt()
-                findNavController().navigate(R.id.action_menu_feed_to_myChannelHomeFragment, Bundle().apply {
-                    putInt(MyChannelHomeFragment.IS_OWNER, isOwner)
-                    putInt(MyChannelHomeFragment.CHANNEL_ID, channelId)
-                    putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, customerId)
-                })
+                if (parentFragment is CategoryDetailsFragment) {
+                    findNavController().navigate(R.id.action_categoryDetailsFragment_to_myChannelHomeFragment, Bundle().apply {
+                        putInt(MyChannelHomeFragment.IS_OWNER, isOwner)
+                        putInt(MyChannelHomeFragment.CHANNEL_ID, channelId)
+                        putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, customerId)
+                    })
+                }
+                else {
+                    findNavController().navigate(R.id.action_menu_feed_to_myChannelHomeFragment, Bundle().apply {
+                        putInt(MyChannelHomeFragment.IS_OWNER, isOwner)
+                        putInt(MyChannelHomeFragment.CHANNEL_ID, channelId)
+                        putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, customerId)
+                    })
+                }
             }
 
             override fun onSubscribeButtonClicked(view: View, info: UgcUserChannelInfo) {
