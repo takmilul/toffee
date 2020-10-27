@@ -144,6 +144,25 @@ fun bindUserChannelLogo(view: ImageView, channelInfo: ChannelInfo) {
     }
 }
 
+@BindingAdapter("loadPlayListLogo")
+fun loadPlayListLogo(view: ImageView, playlistInfo: MyChannelPlaylist) {
+    if (playlistInfo.logoMobileUrl.isNullOrBlank()) {
+        view.setImageResource(R.drawable.dummy)
+    }
+    else {
+        view.load(playlistInfo.logoMobileUrl) {
+            fallback(R.drawable.dummy)
+//            placeholder(R.drawable.ic_profile_default)
+            error(R.drawable.dummy)
+//            memoryCachePolicy(CachePolicy.DISABLED)
+            diskCachePolicy(CachePolicy.ENABLED)
+            crossfade(true)
+            crossfade(crossFadeDurationInMills)
+//        size(Utils.dpToPx(imageHeight), Utils.dpToPx(imageHeight))
+        }
+    }
+}
+
 @BindingAdapter("loadChannelLogo")
 fun bindChannelLogo(view: ImageView, channelInfo: ChannelInfo) {
     if (channelInfo.channel_logo.isNullOrBlank()) {
@@ -165,11 +184,11 @@ fun bindChannelLogo(view: ImageView, channelInfo: ChannelInfo) {
 
 @BindingAdapter("loadChannelLogo")
 fun bindChannelLogo(view: ImageView, channelInfo: MyChannelPlaylist) {
-    if (channelInfo.logoMobileUrl.isNullOrBlank()) {
+    if (channelInfo.channelLogo.isNullOrBlank()) {
         view.setImageResource(R.drawable.ic_profile_default)
     }
     else {
-        view.load(channelInfo.logoMobileUrl) {
+        view.load(channelInfo.channelLogo) {
             fallback(R.drawable.ic_profile_default)
 //            placeholder(R.drawable.ic_profile_default)
             error(R.drawable.ic_profile_default)

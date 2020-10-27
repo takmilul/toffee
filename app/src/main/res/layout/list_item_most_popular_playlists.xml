@@ -39,7 +39,7 @@
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
                 android:minHeight="200dp"
-                imageFromUrl="@{data.logoMobileUrl}" />
+                loadPlayListLogo="@{data}" />
         </FrameLayout>
 
 <!--        <TextView-->
