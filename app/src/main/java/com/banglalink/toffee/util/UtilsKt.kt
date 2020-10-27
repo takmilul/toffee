@@ -1,9 +1,17 @@
 package com.banglalink.toffee.util
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Bitmap.CompressFormat.JPEG
+import android.graphics.BitmapFactory
+import android.graphics.BitmapFactory.Options
 import android.net.Uri
 import android.provider.OpenableColumns
-import java.io.File
+import android.util.Base64
+import android.util.Log
+import java.io.*
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 object UtilsKt {
     fun uploadIdToString(id: Long) = "Toffee_Upload_$id"
@@ -14,7 +22,8 @@ object UtilsKt {
 
         return if (type.isNullOrBlank()) {
             "application/octet-stream"
-        } else {
+        }
+        else {
             type
         }
     }
@@ -23,9 +32,79 @@ object UtilsKt {
         return context.contentResolver.query(uri, null, null, null, null)?.use {
             if (it.moveToFirst()) {
                 it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME))
-            } else {
+            }
+            else {
                 null
             }
         } ?: uri.toString().split(File.separator).last()
     }
+}
+
+
+const val IMAGE_MAX_SIZE = 500000 // 500KB
+const val TAG = "SCALE_IMAGE"
+
+
+fun getBitmap(path: String, requiredImageSize: Int): Bitmap? {
+
+//    val uri: Uri = Uri.parse(path.substringAfter("file:/"))
+    var inputStream: InputStream?
+    return try {
+        inputStream = FileInputStream(File(path.substringAfter("file:")))
+
+        // Decode image size
+        var options = Options()
+        options.inJustDecodeBounds = true
+        BitmapFactory.decodeStream(inputStream, null, options)
+        inputStream.close()
+        var scale = 1
+        while (options.outWidth * options.outHeight * (1 / scale.toDouble().pow(2.0)) > requiredImageSize) {
+            scale++
+        }
+        Log.d(TAG, "scale = " + scale + ", orig-width: " + options.outWidth + ", orig-height: " + options.outHeight)
+        var resultBitmap: Bitmap? = null
+        inputStream = FileInputStream(File(path.substringAfter("file:")))
+        if (scale > 1) {
+            scale--
+            // scale to max possible inSampleSize that still yields an image
+            // larger than target
+            options = Options()
+            options.inSampleSize = scale
+            resultBitmap = BitmapFactory.decodeStream(inputStream, null, options)
+
+            // resize to desired dimensions
+            val height = resultBitmap!!.height
+            val width = resultBitmap.width
+            Log.d(TAG, "1th scale operation dimenions - width: $width, height: $height")
+            val y = sqrt(requiredImageSize / (width.toDouble() / height))
+            val x = y / height * width
+            val scaledBitmap = Bitmap.createScaledBitmap(
+                resultBitmap, x.toInt(),
+                y.toInt(), true
+            )
+            resultBitmap.recycle()
+            resultBitmap = scaledBitmap
+        }
+        else {
+            resultBitmap = BitmapFactory.decodeStream(inputStream)
+        }
+        inputStream.close()
+        Log.d(
+            TAG, "bitmap size - width: " + resultBitmap!!.width + ", height: " +
+            resultBitmap.height
+        )
+        resultBitmap
+    }
+    catch (e: IOException) {
+        Log.e(TAG, e.message, e)
+        null
+    }
+}
+
+fun imagePathToBase64(imagePath: String, requiredImageByteSize: Int = IMAGE_MAX_SIZE): String{
+    val bitmap = getBitmap(imagePath, requiredImageByteSize)
+    val byteArrayOutputStream = ByteArrayOutputStream()
+    bitmap?.compress(JPEG, 100, byteArrayOutputStream)
+    val byteArray = byteArrayOutputStream.toByteArray()
+    return Base64.encodeToString(byteArray, Base64.NO_WRAP)
 }

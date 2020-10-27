@@ -7,9 +7,6 @@
 
     <data>
         <variable
-            name="position"
-            type="Integer" />
-        <variable
             name="data"
             type="com.banglalink.toffee.model.ChannelInfo" />
         <variable
@@ -153,7 +150,7 @@
             android:layout_marginEnd="16dp"
             android:drawablePadding="4dp"
             bindEmoCount="@{data}"
-            android:onClick="@{(v) -> callback.onReactionClicked(v, position, data)}"
+            android:onClick="@{(v) -> callback.onReactionClicked(v, data)}"
             android:textColor="#829AB8"
             android:gravity="center_vertical"
             app:drawableStartCompat="@drawable/ic_like_emo"

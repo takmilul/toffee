@@ -13,7 +13,6 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
-import com.banglalink.toffee.common.paging.BasePagingDataAdapter
 import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.ReactionInfo
 import com.banglalink.toffee.databinding.AlertDialogReactionsBinding
@@ -28,12 +27,12 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class AlertDialogReactionFragment : DialogFragment(), ContentReactionCallback<ChannelInfo> {
 
-    private var position: Int = 0
+//    private var position: Int = 0
 //    private lateinit var reactionImageView: ImageView
     private lateinit var reactionCountTextView: TextView
     private lateinit var channelInfo: ChannelInfo
     private lateinit var alertDialog: AlertDialog
-    private lateinit var mAdapter: BasePagingDataAdapter<ChannelInfo>
+//    private lateinit var mAdapter: BasePagingDataAdapter<ChannelInfo>
     
     @Inject lateinit var reactionDao: ReactionDao
     val mViewModel by viewModels<ReactionViewModel>()
@@ -45,13 +44,13 @@ class AlertDialogReactionFragment : DialogFragment(), ContentReactionCallback<Ch
     }
     
     // must call this function and set data before show the alert dialog
-    fun setItem(adapter: BasePagingDataAdapter<ChannelInfo>, reactView: View, position: Int, channelInfo: ChannelInfo) {
+    fun setItem(/*adapter: BasePagingDataAdapter<ChannelInfo>, */reactView: View, channelInfo: ChannelInfo) {
 //        val layout = reactView as LinearLayout
 //        this.reactionImageView = layout.getChildAt(0) as ImageView
         this.reactionCountTextView = reactView as TextView
-        this.position = position
+//        this.position = position
         this.channelInfo = channelInfo
-        this.mAdapter = adapter
+//        this.mAdapter = adapter
     }
     
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -106,8 +105,8 @@ class AlertDialogReactionFragment : DialogFragment(), ContentReactionCallback<Ch
         val react = channelInfo.reaction?.run {
             like + love + haha + wow + sad + angry + 1
         } ?: 1L
-        mAdapter.getItemByIndex(position)?.userReaction = reaction.value
-        mAdapter.getItemByIndex(position)?.userReactionIcon = setReactionIcon(reaction.value)
+        /*mAdapter.getItemByIndex(position)?*/channelInfo.userReaction = reaction.value
+        /*mAdapter.getItemByIndex(position)?*/channelInfo.userReactionIcon = setReactionIcon(reaction.value)
         reactButton.background = ContextCompat.getDrawable(requireContext(), R.drawable.teal_round_bg)
         reactionCountTextView.text = Utils.getFormattedViewsText(react.toString())
         reactionCountTextView.setCompoundDrawablesWithIntrinsicBounds((reactButton as ImageView).drawable, null, null, null)

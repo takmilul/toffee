@@ -10,10 +10,11 @@ import javax.inject.Inject
 
 class MyChannelGetDetailService @Inject constructor(private val preference: Preference, private val toffeeApi: ToffeeApi) {
 
-    suspend fun execute(isOwner: Int, channelId: Int): MyChannelDetailBean {
+    suspend fun execute(isOwner: Int, channelId: Int, channelOwnerId: Int): MyChannelDetailBean {
 
         val response = tryIO2 {
             toffeeApi.getMyChannelDetails(
+                channelOwnerId,
                 isOwner,
                 channelId,
                 preference.getDBVersionByApiName("getUgcChannelDetails"),

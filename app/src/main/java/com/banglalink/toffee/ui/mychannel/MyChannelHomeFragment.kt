@@ -39,6 +39,7 @@ class MyChannelHomeFragment : Fragment(), OnClickListener {
 
     private var isOwner: Int = 0
     private var channelId: Int = 0
+    private var channelOwnerId: Int = 0
     private var rating: Float = 0.0f
     private var isSubscribed: Int = 0
     private var myChannelDetail: MyChannelDetail? = null
@@ -49,7 +50,7 @@ class MyChannelHomeFragment : Fragment(), OnClickListener {
     @Inject lateinit var preference: Preference
 
     @Inject lateinit var myChannelHomeViewModelAssistedFactory: MyChannelHomeViewModel.AssistedFactory
-    private val viewModel by viewModels<MyChannelHomeViewModel> { MyChannelHomeViewModel.provideFactory(myChannelHomeViewModelAssistedFactory, isOwner, channelId) }
+    private val viewModel by viewModels<MyChannelHomeViewModel> { MyChannelHomeViewModel.provideFactory(myChannelHomeViewModelAssistedFactory, isOwner, channelId, channelOwnerId) }
 
     //    private val viewModel by viewModels<CreatorChannelViewModel>()
     private val createPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
@@ -58,11 +59,13 @@ class MyChannelHomeFragment : Fragment(), OnClickListener {
     companion object {
         const val IS_OWNER = "isOwner"
         const val CHANNEL_ID = "channelId"
-        fun newInstance(isOwner: Int, channelId: Int): MyChannelHomeFragment {
+        const val CHANNEL_OWNER_ID = "channelOwnerId"
+        fun newInstance(isOwner: Int, channelId: Int, channelOwnerId: Int): MyChannelHomeFragment {
             val instance = MyChannelHomeFragment()
             val bundle = Bundle()
             bundle.putInt(IS_OWNER, isOwner)
             bundle.putInt(CHANNEL_ID, channelId)
+            bundle.putInt(CHANNEL_OWNER_ID, channelOwnerId)
             instance.arguments = bundle
             return instance
         }
@@ -74,8 +77,9 @@ class MyChannelHomeFragment : Fragment(), OnClickListener {
         isOwner = args?.getInt(IS_OWNER) ?: 0
         channelId = args?.getInt(CHANNEL_ID) ?: 0
         channelId = if (channelId == 0) preference.channelId else channelId
+        channelOwnerId = args?.getInt(CHANNEL_OWNER_ID) ?: preference.customerId
+        channelOwnerId = if (channelOwnerId == 0) preference.customerId else channelOwnerId
         /*isSubscribed = args.isSubscribed*/
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -94,7 +98,7 @@ class MyChannelHomeFragment : Fragment(), OnClickListener {
         binding.progressBar.visibility = View.VISIBLE
 
         observeChannelDetail()
-        viewModel.getDetail()
+//        viewModel.getDetail()
         binding.channelDetailView.addBioButton.setOnClickListener(this)
         binding.channelDetailView.editButton.setOnClickListener(this)
         binding.channelDetailView.analyticsButton.setOnClickListener(this)

@@ -8,7 +8,6 @@ import com.banglalink.toffee.apiservice.MyChannelGetDetailService
 import com.banglalink.toffee.apiservice.MyChannelSubscribeService
 import com.banglalink.toffee.model.MyChannelSubscribeBean
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.model.UgcUserChannelInfo
 import com.banglalink.toffee.util.getError
 import kotlinx.coroutines.launch
 
@@ -32,10 +31,10 @@ class UserChannelViewModel @ViewModelInject constructor(
         }
     }
 
-    fun getChannelInfo(channdlId: Long, isOwner: Int) {
+    fun getChannelInfo(isOwner: Int, channelId: Long, channelOwnerId: Int) {
         viewModelScope.launch {
             try {
-                val ret = channelInfoApi.execute(isOwner, channdlId.toInt())
+                val ret = channelInfoApi.execute(isOwner, channelId.toInt(), channelOwnerId)
                 isChannelSubscribed.value = ret.isSubscribed == 1
                 channelSubscriberCount.value = ret.formattedSubscriberCount
             } catch (ex: Exception) {

@@ -1,8 +1,6 @@
 package com.banglalink.toffee.ui.mychannel
 
 import android.os.Bundle
-import android.util.Base64
-import android.util.Base64OutputStream
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
@@ -22,11 +20,10 @@ import com.banglalink.toffee.model.MyChannelDetail
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
+import com.banglalink.toffee.util.imagePathToBase64
 import dagger.hilt.android.AndroidEntryPoint
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileInputStream
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class MyChannelEditDetailFragment : Fragment(), OnClickListener {
@@ -75,11 +72,21 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                 it?.let {
                     if (isPosterClicked) {
                         newBannerUrl = it
-                        binding.bannerImageView.load(it)
+                        binding.bannerImageView.load(it){
+                            /*memoryCachePolicy(CachePolicy.DISABLED)
+                            diskCachePolicy(CachePolicy.ENABLED)
+                            crossfade(true)
+                            crossfade(crossFadeDurationInMills)*/
+                        }
                     }
                     else {
                         newProfileImageUrl = it
-                        binding.profileImageView.load(it)
+                        binding.profileImageView.load(it){
+                            crossfade(false)
+                            /*memoryCachePolicy(CachePolicy.DISABLED)
+                            diskCachePolicy(CachePolicy.ENABLED)
+                            crossfade(false)*/
+                        }
                     }
                 }
             })
@@ -89,10 +96,12 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         observe(viewModel.liveData) {
             when (it) {
                 is Success -> {
+                    binding.progressBar.visibility = View.GONE
                     findNavController().navigateUp()
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
                 }
                 is Failure -> {
+                    binding.progressBar.visibility = View.GONE
                     println(it.error)
                     Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
                 }
@@ -116,11 +125,14 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     }
 
     private fun editChannel() {
+        binding.progressBar.visibility = View.VISIBLE
+        
         var bannerBase64 = "NULL"
         try {
             if (!newBannerUrl.isNullOrEmpty()) {
-                val image = File(newBannerUrl!!.substringAfter("file:"))
-                bannerBase64 = convertImageFileToBase64(image)
+                /*val image = File(newBannerUrl!!.substringAfter("file:"))
+                bannerBase64 = convertImageFileToBase64(image)*/
+                bannerBase64 = imagePathToBase64(newBannerUrl!!)
             }
         }
         catch (e: Exception) {
@@ -130,8 +142,9 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         var profileImageBase64 = "NULL"
         try {
             if (!newProfileImageUrl.isNullOrEmpty()) {
-                val image = File(newProfileImageUrl!!.substringAfter("file:"))
-                profileImageBase64 = convertImageFileToBase64(image)
+                /*val image = File(newProfileImageUrl!!.substringAfter("file:"))
+                profileImageBase64 = convertImageFileToBase64(image)*/
+                profileImageBase64 = imagePathToBase64(newProfileImageUrl!!)
             }
         }
         catch (e: Exception) {
@@ -142,15 +155,15 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             binding.channelName.text.isNullOrEmpty() -> {
                 Toast.makeText(requireContext(), "Please give a channel name", Toast.LENGTH_SHORT).show()
             }
-            viewModel.selectedItem?.id == null -> {
+            viewModel.selectedCategory?.id == null -> {
                 Toast.makeText(requireContext(), "Category is not selected", Toast.LENGTH_SHORT).show()
             }
             else -> {
                 val ugcEditMyChannelRequest = MyChannelEditRequest(
                     0,
                     "",
-                    myChannelDetail?.id ?: 1,
-                    viewModel.selectedItem?.id!!,
+                    myChannelDetail?.id ?: 0,
+                    viewModel.selectedCategory?.id!!,
                     binding.channelName.text.toString(),
                     binding.description.text.toString(),
                     myChannelDetail?.bannerUrl ?: "NULL",
@@ -163,7 +176,8 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             }
         }
     }
-    private fun convertImageFileToBase64(imageFile: File): String {
+    
+    /*private fun convertImageFileToBase64(imageFile: File): String {
         return FileInputStream(imageFile).use { inputStream ->
             ByteArrayOutputStream().use { outputStream ->
                 Base64OutputStream(outputStream, Base64.NO_WRAP).use { base64FilterStream ->
@@ -173,5 +187,5 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                 }
             }
         }
-    }
+    }*/
 }
