@@ -7,43 +7,33 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.banglalink.toffee.R
-import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.*
-import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.common.SingleListItemCallback
 import com.banglalink.toffee.ui.home.*
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.bindCategoryImage
 import com.banglalink.toffee.util.bindChannelLogo
-import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.material.chip.Chip
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_category_info.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlin.random.Random
-import kotlin.random.nextInt
 
 @AndroidEntryPoint
 class CategoryInfoFragment: HomeBaseFragment() {
     private lateinit var mAdapter: FeaturedCategoryListAdapter
     private val viewModel by viewModels<CategoryInfoViewModel>()
+    private val landingViewModel by activityViewModels<LandingPageViewModel>()
     private var scrollJob: Job? = null
     private lateinit var categoryInfo: UgcCategory
 
@@ -104,10 +94,20 @@ class CategoryInfoFragment: HomeBaseFragment() {
             categoryChipGroup.removeAllViews()
 
             subList.forEach{ subCategory ->
-                categoryChipGroup.addView(addChip(subCategory))
+                categoryChipGroup.addView(addChip(subCategory).apply {
+                    tag = subCategory
+                })
             }
             if(subList.isNotEmpty()) {
                 categoryChipGroup.check(0)
+            }
+
+            categoryChipGroup.setOnCheckedChangeListener { group, checkedId ->
+                val selectedChip = group.findViewById<Chip>(checkedId)
+                if(selectedChip != null) {
+                    val selectedSub = selectedChip.tag as UgcSubCategory
+                    landingViewModel.loadSubcategoryVideos(selectedSub.categoryId.toInt(), selectedSub.id.toInt())
+                }
             }
         }
 

@@ -20,6 +20,7 @@ class CategoryDetailsFragment : BaseFragment() {
 
     companion object {
         const val ARG_CATEGORY_ITEM = "ARG_CATEGORY_ITEM"
+        const val ARG_SUBCATEGORY_ITEM = "ARG_CATEGORY_ITEM"
 
         fun newInstance(category: UgcCategory): CategoryDetailsFragment {
             return CategoryDetailsFragment().apply {
