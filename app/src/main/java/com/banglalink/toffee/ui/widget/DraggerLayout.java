@@ -32,7 +32,7 @@ public class DraggerLayout extends RelativeLayout {
     private float dY2;
     private float dY;
 
-    private int bottomMargin = Utils.dpToPx(52);
+    private int bottomMargin = Utils.dpToPx(52 + 56*2);
 
     private ViewDragHelper viewDragHelper;
     private float scaleFactor = 2.5f;

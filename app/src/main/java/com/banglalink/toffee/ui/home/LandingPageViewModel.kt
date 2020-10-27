@@ -168,14 +168,4 @@ class LandingPageViewModel @ViewModelInject constructor(
             )
         }).getList()
     }
-
-    fun loadFeatureContentsByCategory(category: UgcCategory): Flow<PagingData<ChannelInfo>>{
-        return BaseListRepositoryImpl({
-            BaseNetworkPagingSource(
-                featuredContentAssistedFactory.create(
-                    ApiCategoryRequestParams("VOD", 1, category.id.toInt())
-                )
-            )
-        }).getList()
-    }
 }

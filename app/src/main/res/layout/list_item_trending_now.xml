@@ -55,7 +55,7 @@
             android:layout_width="42dp"
             android:layout_height="42dp"
             android:layout_marginTop="8dp"
-            android:src="@drawable/ic_portrait"
+            loadChannelLogo="@{data}"
             app:layout_constraintStart_toStartOf="@+id/name"
             app:layout_constraintTop_toBottomOf="@+id/name" />
 

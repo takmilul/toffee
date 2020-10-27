@@ -215,7 +215,7 @@ fun bindSubscriptionStatus(view: MultiTextButton, channelInfo: ChannelInfo) {
 @BindingAdapter("bindSubscriptionStatus")
 fun bindSubscriptionStatus(view: MultiTextButton, channelInfo: UgcUserChannelInfo) {
     view.setSubscriptionInfo(
-        channelInfo.isSubscribed == 0,
+        channelInfo.isSubscribed == 1,
         null
     )
 }

@@ -231,4 +231,12 @@
         android:id="@+id/challengeDetailFragment"
         android:name="com.banglalink.toffee.ui.challenge.ChallengeDetailFragment"
         android:label="ChallengeDetailFragment" />
+    <fragment
+        android:id="@+id/recentFragment"
+        android:name="com.banglalink.toffee.ui.recent.RecentFragment"
+        android:label="RecentFragment" />
+    <fragment
+        android:id="@+id/favoriteFragment"
+        android:name="com.banglalink.toffee.ui.favorite.FavoriteFragment"
+        android:label="FavoriteFragment" />
 </navigation>

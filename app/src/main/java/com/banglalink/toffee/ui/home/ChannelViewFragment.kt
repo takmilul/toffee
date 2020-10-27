@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import com.banglalink.toffee.BR
@@ -37,6 +38,7 @@ class ChannelViewFragment: BaseFragment(), BaseListItemCallback<ChannelInfo> {
         binding.executePendingBindings()
 
         if (channelInfo.isLive) {
+            binding.channelDetailsGroup.isVisible = false
             val fragment = parentFragmentManager.findFragmentById(R.id.relatedContainer)
             if (fragment !is ChannelFragment) {
                 parentFragmentManager.commit {

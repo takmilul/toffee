@@ -63,6 +63,7 @@ class UserChannelHomeFragment : Fragment() {
         
         viewPagerAdapter = ViewPagerAdapter(this, fragmentList)
         binding.viewPager.adapter = viewPagerAdapter
+        binding.viewPager.isUserInputEnabled = false
         
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = fragmentTitleList[position]

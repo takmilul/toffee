@@ -1,12 +1,14 @@
 package com.banglalink.toffee.data.database.entities
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity
-data class Favorite(
+@Entity(indices = [Index(value = ["channelId"], unique = true)])
+data class FavoriteItem(
     @PrimaryKey(autoGenerate = true)
     val id: Long? = null,
 
-    val channelId: Long
+    val channelId: Long,
+    val isFavorite: Int
 )

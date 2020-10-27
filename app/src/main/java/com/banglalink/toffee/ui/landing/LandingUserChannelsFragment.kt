@@ -5,13 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.model.UgcUserChannelInfo
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
@@ -19,7 +23,9 @@ import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.home.UserChannelsListAdapter
 import com.banglalink.toffee.ui.mychannel.MyChannelHomeFragment
+import com.banglalink.toffee.ui.useractivities.ChannelSubscriptionViewModel
 import com.banglalink.toffee.ui.useractivities.UserActivitiesMainFragment
+import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_landing_user_channels.*
 import kotlinx.coroutines.flow.collectLatest
@@ -29,6 +35,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
     private lateinit var mAdapter: UserChannelsListAdapter
     private var categoryInfo: UgcCategory? = null
     private val viewModel by activityViewModels<LandingPageViewModel>()
+    private val subscriptionViewModel by viewModels<UserChannelViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,7 +52,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
             CategoryDetailsFragment.ARG_CATEGORY_ITEM
         )
 
-        mAdapter = UserChannelsListAdapter(object : BaseListItemCallback<UgcUserChannelInfo> {
+        mAdapter = UserChannelsListAdapter(object : LandingPopularChannelCallback {
             override fun onItemClicked(item: UgcUserChannelInfo) {
                 val customerId = Preference.getInstance().customerId
                 val isOwner = if (item.userId == customerId) 1 else 0
@@ -54,6 +61,22 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
                     putInt(MyChannelHomeFragment.IS_OWNER, 0)
                     putInt(MyChannelHomeFragment.CHANNEL_ID, 2)
                 })
+            }
+
+            override fun onSubscribeButtonClicked(view: View, info: UgcUserChannelInfo) {
+                if(info.isSubscribed == 0) {
+                    subscriptionViewModel.setSubscriptionStatus(info, 1)
+                } else {
+                    VelBoxAlertDialogBuilder(
+                        requireContext(),
+                        text = getString(R.string.text_unsubscribe_title),
+                        positiveButtonTitle = "Unsubscribe",
+                        positiveButtonListener = {
+                            subscriptionViewModel.setSubscriptionStatus(info, 0)
+                            it?.dismiss()
+                        }
+                    ).create().show()
+                }
             }
         })
 
@@ -82,6 +105,11 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
             content.collectLatest {
                 mAdapter.submitData(it)
             }
+        }
+
+        observe(subscriptionViewModel.subscriptionResponse) {
+            if(it is Resource.Success) mAdapter.refresh()
+            else requireContext().showToast("Failed to subscribe channel")
         }
     }
 

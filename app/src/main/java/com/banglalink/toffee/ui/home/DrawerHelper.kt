@@ -213,38 +213,41 @@ class DrawerHelper(val activity: HomeActivity,val binding:ActivityMainMenuBindin
                 activity.minimizePlayer()
             }
             ID_RECENT -> {
-                val currentFragment = getCurrentContentFragment()
-                if (currentFragment !is RecentFragment) {
-                    activity.loadFragmentById(
-                        R.id.content_viewer, RecentFragment(),
-                        RecentFragment::class.java.name
-                    )
-                }
+//                val currentFragment = getCurrentContentFragment()
+//                if (currentFragment !is RecentFragment) {
+//                    activity.loadFragmentById(
+//                        R.id.content_viewer, RecentFragment(),
+//                        RecentFragment::class.java.name
+//                    )
+//                }
                 binding.drawerLayout.closeDrawers()
-                activity.minimizePlayer()
+//                activity.minimizePlayer()
+                activity.getNavController().navigate(R.id.recentFragment)
             }
             ID_CHANNEL -> {
-                val currentFragment = getCurrentContentFragment()
-                if (currentFragment !is ChannelFragment) {
-                    activity.loadFragmentById( R.id.content_viewer, ChannelFragment.createInstance(
-                        0,
-                        "",
-                        activity.getString(R.string.menu_channel_text)
-                    ), ChannelFragment::class.java.getName())
-                }
+//                val currentFragment = getCurrentContentFragment()
+//                if (currentFragment !is ChannelFragment) {
+//                    activity.loadFragmentById( R.id.content_viewer, ChannelFragment.createInstance(
+//                        0,
+//                        "",
+//                        activity.getString(R.string.menu_channel_text)
+//                    ), ChannelFragment::class.java.getName())
+//                }
                 binding.drawerLayout.closeDrawers()
-                activity.minimizePlayer()
+//                activity.minimizePlayer()
+                activity.getHomeViewModel().viewAllChannelLiveData.postValue(true)
             }
             ID_FAV -> {
-                val currentFragment = getCurrentContentFragment()
-                if (currentFragment !is FavoriteFragment) {
-                    activity.loadFragmentById(
-                        R.id.content_viewer, FavoriteFragment(),
-                        FavoriteFragment::class.java.getName()
-                    )
-                }
+                activity.getNavController().navigate(R.id.favoriteFragment)
+//                val currentFragment = getCurrentContentFragment()
+//                if (currentFragment !is FavoriteFragment) {
+//                    activity.loadFragmentById(
+//                        R.id.content_viewer, FavoriteFragment(),
+//                        FavoriteFragment::class.java.getName()
+//                    )
+//                }
                 binding.drawerLayout.closeDrawers()
-                activity.minimizePlayer()
+//                activity.minimizePlayer()
             }
             ID_SUB_VIDEO -> {
                 activity.launchActivity<HtmlPageViewActivity> {

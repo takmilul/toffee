@@ -263,6 +263,9 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             .start()
     }
 
+    fun getNavController() = navController
+    fun getHomeViewModel() = viewModel
+
     private fun setupNavController() {
         Log.e("NAV", "SetupNavController")
 
@@ -726,7 +729,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
         val searchMenuItem = menu.findItem(R.id.action_search)
-        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        val searchManager = getSystemService(SEARCH_SERVICE) as SearchManager
         searchView = searchMenuItem.actionView as SearchView
         searchView?.apply {
             maxWidth = Integer.MAX_VALUE
@@ -737,7 +740,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             if (supportFragmentManager.backStackEntryCount > 1) {
                 supportFragmentManager.popBackStack(
                     SearchFragment::class.java.name,
-                    FragmentManager.POP_BACK_STACK_INCLUSIVE
+                    POP_BACK_STACK_INCLUSIVE
                 )
                 return@setOnCloseListener true
             }

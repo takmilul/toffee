@@ -71,15 +71,20 @@
     <!--            </LinearLayout>-->
     <!--        </androidx.core.widget.NestedScrollView>-->
         </com.google.android.material.appbar.AppBarLayout>
-
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/latestVideosFragment"
-            android:name="com.banglalink.toffee.ui.landing.LatestVideosFragment"
-            android:layout_marginTop="8dp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+        <androidx.core.widget.NestedScrollView
+            android:fillViewport="true"
+            android:layout_gravity="fill_vertical"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            />
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/latestVideosFragment"
+                android:name="com.banglalink.toffee.ui.landing.LatestVideosFragment"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+        </androidx.core.widget.NestedScrollView>
     </com.banglalink.toffee.ui.widget.NestedCoordinatorLayout>
     <include
         android:id="@+id/home_mini_progress_container"

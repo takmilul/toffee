@@ -104,9 +104,10 @@ class CategoryInfoFragment: HomeBaseFragment() {
             categoryChipGroup.removeAllViews()
 
             subList.forEach{ subCategory ->
-                categoryChipGroup.addView(addChip(subCategory).apply {
-                    isChecked = subCategory.id == 0L
-                })
+                categoryChipGroup.addView(addChip(subCategory))
+            }
+            if(subList.isNotEmpty()) {
+                categoryChipGroup.check(0)
             }
         }
 

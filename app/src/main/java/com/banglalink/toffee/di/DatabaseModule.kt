@@ -93,4 +93,16 @@ object DatabaseModule {
     fun provideReactionInfoDao(db: ToffeeDatabase): ReactionDao {
         return db.getReactionDao()
     }
+
+    @Provides
+    @Singleton
+    fun providesFavoritesItemDao(db: ToffeeDatabase): FavoriteItemDao {
+        return db.getFavoriteItemsDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providesSubscribedItemDao(db: ToffeeDatabase): SubscribedItemDao {
+        return db.getSubscribedItemsDao()
+    }
 }

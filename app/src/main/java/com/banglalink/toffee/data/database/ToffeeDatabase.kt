@@ -15,6 +15,8 @@ import com.banglalink.toffee.data.storage.ViewCountDataModel
         ReactionInfo::class,
         HistoryItem::class,
         UserActivities::class,
+        FavoriteItem::class,
+        SubscribedItem::class,
     ],
     version = 1,
     exportSchema = false)
@@ -25,6 +27,8 @@ abstract class ToffeeDatabase: RoomDatabase() {
     abstract fun getReactionDao(): ReactionDao
     abstract fun getHistoryItemDao(): HistoryItemDao
     abstract fun getUserActivitiesDao(): UserActivitiesDao
+    abstract fun getFavoriteItemsDao(): FavoriteItemDao
+    abstract fun getSubscribedItemsDao(): SubscribedItemDao
 
     companion object {
         const val DB_NAME = "toffee-db"

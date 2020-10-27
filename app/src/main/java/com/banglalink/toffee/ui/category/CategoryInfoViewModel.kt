@@ -47,8 +47,10 @@ class CategoryInfoViewModel @ViewModelInject constructor(
     fun updateFollow(categoryId: Int) {
         viewModelScope.launch {
             followCategoryResponse.value = try {
-                val resp = followCategory(categoryId, isCategoryFollowing.value?.toInt() ?: 0)
-                isCategoryFollowing.value = resp.isFollowed
+                val followStatus: Int = isCategoryFollowing.value?.toInt() ?: return@launch
+                val newFollowStatus = 1 - followStatus
+                val resp = followCategory(categoryId, newFollowStatus)
+                isCategoryFollowing.value = 1 - resp.isFollowed
                 Resource.Success(resp)
             } catch (ex: Exception) {
                 ex.printStackTrace()

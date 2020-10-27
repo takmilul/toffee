@@ -11,30 +11,34 @@
 
         <variable
             name="callback"
-            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
+            type="com.banglalink.toffee.ui.landing.LandingPopularChannelCallback" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
-        android:onClick="@{() -> callback.onItemClicked(data)}"
-        android:background="?attr/selectableItemBackground"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/icon"
-            loadChannelLogo="@{data}"
+        <FrameLayout
+            android:id="@+id/iconHolder"
             android:layout_width="92dp"
             android:layout_height="92dp"
             android:layout_marginStart="4dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:onClick="@{() -> callback.onItemClicked(data)}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:src="@mipmap/ic_menu_channel" />
-
+            >
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/icon"
+                loadChannelLogo="@{data}"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:src="@drawable/ic_profile_default" />
+        </FrameLayout>
         <TextView
             android:id="@+id/text"
             android:layout_width="0dp"
@@ -53,9 +57,9 @@
             android:textColor="#7990AC"
             android:textSize="14sp"
             android:textStyle="normal"
-            app:layout_constraintEnd_toEndOf="@+id/icon"
-            app:layout_constraintStart_toStartOf="@+id/icon"
-            app:layout_constraintTop_toBottomOf="@+id/icon"
+            app:layout_constraintEnd_toEndOf="@+id/iconHolder"
+            app:layout_constraintStart_toStartOf="@+id/iconHolder"
+            app:layout_constraintTop_toBottomOf="@+id/iconHolder"
             tools:text="Abir87" />
 
         <com.banglalink.toffee.ui.widget.MultiTextButton
@@ -63,7 +67,10 @@
             bindSubscriptionStatus="@{data}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
             android:layout_marginTop="4dp"
+            android:onClick="@{(v) -> callback.onSubscribeButtonClicked(v, data)}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/text" />
@@ -78,7 +85,7 @@
             android:layout_marginBottom="8dp"
             android:maxLines="1"
             android:ellipsize="end"
-            android:text="@{String.valueOf(data.subscriberCount)}"
+            android:text="@{data.formatedSubscriberCount}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

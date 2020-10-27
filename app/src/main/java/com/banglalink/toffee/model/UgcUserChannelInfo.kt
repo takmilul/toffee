@@ -1,5 +1,6 @@
 package com.banglalink.toffee.model
 
+import com.banglalink.toffee.util.Utils
 import com.google.gson.annotations.SerializedName
 
 data class UgcUserChannelInfo(
@@ -33,4 +34,6 @@ data class UgcUserChannelInfo(
     
     @SerializedName("user_id")
     val userId: Int,
-)
+) {
+    fun getFormatedSubscriberCount() = Utils.getFormattedViewsText(subscriberCount.toString())
+}
