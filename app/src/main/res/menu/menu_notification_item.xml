@@ -2,8 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/menu_unseen_notification"
-        android:title="Unseen" />
+        android:id="@+id/menu_seen_notification"
+        android:title="Seen" />
     <item
         android:id="@+id/menu_delete_notification"
         android:title="Delete" />

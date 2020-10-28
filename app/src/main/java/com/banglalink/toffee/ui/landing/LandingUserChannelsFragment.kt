@@ -59,14 +59,14 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
                     findNavController().navigate(R.id.action_categoryDetailsFragment_to_myChannelHomeFragment, Bundle().apply {
                         putInt(MyChannelHomeFragment.IS_OWNER, isOwner)
                         putInt(MyChannelHomeFragment.CHANNEL_ID, channelId)
-                        putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, customerId)
+                        putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, item.channelOwnerId)
                     })
                 }
                 else {
                     findNavController().navigate(R.id.action_menu_feed_to_myChannelHomeFragment, Bundle().apply {
                         putInt(MyChannelHomeFragment.IS_OWNER, isOwner)
                         putInt(MyChannelHomeFragment.CHANNEL_ID, channelId)
-                        putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, customerId)
+                        putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, item.channelOwnerId)
                     })
                 }
             }
