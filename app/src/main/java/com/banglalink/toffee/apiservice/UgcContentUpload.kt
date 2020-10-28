@@ -14,7 +14,6 @@ class UgcContentUpload @Inject constructor(
     private val toffeeApi: ToffeeApi
 ) {
     suspend operator fun invoke(
-        channelId: Long,
         fileName: String,
         title: String?,
         description: String?,
@@ -28,14 +27,13 @@ class UgcContentUpload @Inject constructor(
                 ContentUploadRequest(
                     mPref.customerId,
                     mPref.password,
-                    channelId,
-                    fileName,
                     title,
-                    landscape_ratio_1280_720 = base64Image,
-                    category_id = categoryId.toInt(),
+                    fileName,
                     description = description,
-                    video_tags = tags,
-                    age_restriction = ageGroup
+                    categoryId = categoryId.toInt(),
+                    ageRestriction = ageGroup,
+                    videoTags = tags,
+                    contentBanner = base64Image,
                 )
             )
         }
