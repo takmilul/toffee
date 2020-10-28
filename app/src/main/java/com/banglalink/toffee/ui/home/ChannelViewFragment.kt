@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -51,15 +52,16 @@ class ChannelViewFragment: BaseFragment(), ContentReactionCallback<ChannelInfo> 
 
         if (channelInfo.isLive) {
             binding.channelDetailsGroup.isVisible = false
-            val fragment = parentFragmentManager.findFragmentById(R.id.relatedContainer)
-            if (fragment !is ChannelFragment) {
+//            val fragment = parentFragmentManager.findFragmentById(R.id.relatedContainer)
+//            Log.e("FRAG", "$fragment")
+//            if (fragment !is ChannelFragment) {
                 parentFragmentManager.commit {
                     replace(
                         R.id.relatedContainer,
                         ChannelFragment.createInstance(getString(R.string.menu_channel_text))
                     )
                 }
-            }
+//            }
         } else {
             parentFragmentManager.commit { replace(R.id.relatedContainer, CatchupDetailsFragment.createInstance(channelInfo)) }
         }
