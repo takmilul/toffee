@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.ReactionInfo
+import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.AlertDialogReactionsBinding
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.enums.Reaction.*
@@ -33,7 +34,7 @@ class AlertDialogReactionFragment : DialogFragment(), ContentReactionCallback<Ch
     private lateinit var channelInfo: ChannelInfo
     private lateinit var alertDialog: AlertDialog
 //    private lateinit var mAdapter: BasePagingDataAdapter<ChannelInfo>
-    
+    @Inject lateinit var preference: Preference
     @Inject lateinit var reactionDao: ReactionDao
     val mViewModel by viewModels<ReactionViewModel>()
     
@@ -62,7 +63,7 @@ class AlertDialogReactionFragment : DialogFragment(), ContentReactionCallback<Ch
         }
 
         lifecycleScope.launch {
-            val reactionInfo = reactionDao.getReactionByContentId(channelInfo.id)
+            val reactionInfo = reactionDao.getReactionByContentId(channelInfo.id, preference.customerId)
 
             if (reactionInfo?.contentId == channelInfo.id) {
                 setPreviousReaction(reactionInfo, binding)
@@ -99,7 +100,7 @@ class AlertDialogReactionFragment : DialogFragment(), ContentReactionCallback<Ch
     }
 
     private fun react(reactButton: View, reaction: Reaction) {
-        val reactionInfo = ReactionInfo(null, channelInfo.id, reaction.value)
+        val reactionInfo = ReactionInfo(null, preference.customerId, channelInfo.id, reaction.value)
         mViewModel.insert(reactionInfo)
         mViewModel.insertActivity(channelInfo, reaction.value)
         val react = channelInfo.reaction?.run {

@@ -34,8 +34,8 @@ fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
         view.load(imageUrl) {
             memoryCachePolicy(CachePolicy.DISABLED)
             diskCachePolicy(CachePolicy.ENABLED)
-            crossfade(true)
-            crossfade(crossFadeDurationInMills)
+            crossfade(false)
+//            crossfade(crossFadeDurationInMills)
         }
     } else {
         view.setImageResource(R.drawable.placeholder)
@@ -47,10 +47,13 @@ fun bindRoundImage(view: ImageView, imageUrl: String?) {
     if (!imageUrl.isNullOrEmpty()) {
         view.load(imageUrl) {
             transformations(CircleCropTransformation())
-            crossfade(true)
+            crossfade(false)
             error(R.drawable.ic_home)
-            crossfade(crossFadeDurationInMills)
+//            crossfade(crossFadeDurationInMills)
         }
+    }
+    else{
+        view.setImageResource(R.drawable.ic_profile_default)
     }
 }
 
@@ -68,9 +71,9 @@ fun bindCategoryImage(view: ImageView, category: UgcCategory) {
     else {
         Log.e("CATEGORY", "$category")
         view.load(category.categoryIcon) {
-            crossfade(true)
+            crossfade(false)
             error(R.drawable.ic_cat_movie)
-            crossfade(crossFadeDurationInMills)
+//            crossfade(crossFadeDurationInMills)
         }
     }
 }
@@ -79,14 +82,24 @@ fun bindCategoryImage(view: ImageView, category: UgcCategory) {
 @BindingAdapter("loadChannelImage")
 fun bindChannel(view: CircleImageView, channelInfo: ChannelInfo) {
     if (channelInfo.isLive) {
-        view.load(channelInfo.channel_logo) {
-            crossfade(false)
+        if (channelInfo.channel_logo.isNullOrBlank()){
+            view.setImageResource(R.drawable.ic_profile_default)
+        }
+        else {
+            view.load(channelInfo.channel_logo) {
+                crossfade(false)
+            }
         }
     }
     else {
-        view.load(channelInfo.landscape_ratio_1280_720) {
-            crossfade(false)
-            size(720, 405)
+        if (channelInfo.landscape_ratio_1280_720.isNullOrBlank()){
+            view.setImageResource(R.drawable.placeholder)
+        }
+        else {
+            view.load(channelInfo.landscape_ratio_1280_720) {
+                crossfade(false)
+                size(720, 405)
+            }
         }
     }
 }
@@ -94,34 +107,49 @@ fun bindChannel(view: CircleImageView, channelInfo: ChannelInfo) {
 @BindingAdapter("loadChannelImage")
 fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
     if (channelInfo.isLive) {
-        view.load(channelInfo.channel_logo) {
-            transformations(CircleCropTransformation())
-            crossfade(true)
-            crossfade(crossFadeDurationInMills)
+        if (channelInfo.channel_logo.isNullOrBlank()){
+            view.setImageResource(R.drawable.ic_profile_default)
+        }
+        else {
+            view.load(channelInfo.channel_logo) {
+                transformations(CircleCropTransformation())
+                crossfade(false)
+//            crossfade(crossFadeDurationInMills)
 //            memoryCachePolicy(CachePolicy.DISABLED)
-            diskCachePolicy(CachePolicy.ENABLED)
+                diskCachePolicy(CachePolicy.ENABLED)
+            }
         }
     }
     else {
-        view.load(channelInfo.landscape_ratio_1280_720)
-        {
+        if (channelInfo.landscape_ratio_1280_720.isNullOrBlank()){
+            view.setImageResource(R.drawable.placeholder)
+        }
+        else {
+            view.load(channelInfo.landscape_ratio_1280_720)
+            {
 //            memoryCachePolicy(CachePolicy.DISABLED)
-            diskCachePolicy(CachePolicy.ENABLED)
-            crossfade(true)
-            crossfade(crossFadeDurationInMills)
-            size(720, 405)
+                diskCachePolicy(CachePolicy.ENABLED)
+                crossfade(false)
+//            crossfade(crossFadeDurationInMills)
+                size(720, 405)
+            }
         }
     }
 }
 
 @BindingAdapter("bindFeaturedImage")
 fun bindFeatured(view: ImageView, channelInfo: ChannelInfo) {
-    view.load(channelInfo.feature_image)
-    {
-        diskCachePolicy(CachePolicy.ENABLED)
-        crossfade(true)
-        crossfade(crossFadeDurationInMills)
+    if (channelInfo.feature_image.isNullOrBlank()){
+        view.setImageResource(R.drawable.placeholder)
+    }
+    else {
+        view.load(channelInfo.feature_image)
+        {
+            diskCachePolicy(CachePolicy.ENABLED)
+            crossfade(false)
+//            crossfade(crossFadeDurationInMills)
 //        size(720, 405)
+        }
     }
 }
 
@@ -137,8 +165,8 @@ fun bindUserChannelLogo(view: ImageView, channelInfo: ChannelInfo) {
             error(R.drawable.ic_profile_default)
 //            memoryCachePolicy(CachePolicy.DISABLED)
             diskCachePolicy(CachePolicy.ENABLED)
-            crossfade(true)
-            crossfade(crossFadeDurationInMills)
+            crossfade(false)
+//            crossfade(crossFadeDurationInMills)
 //        size(Utils.dpToPx(imageHeight), Utils.dpToPx(imageHeight))
         }
     }
@@ -156,8 +184,8 @@ fun loadPlayListLogo(view: ImageView, playlistInfo: MyChannelPlaylist) {
             error(R.drawable.placeholder)
 //            memoryCachePolicy(CachePolicy.DISABLED)
             diskCachePolicy(CachePolicy.ENABLED)
-            crossfade(true)
-            crossfade(crossFadeDurationInMills)
+            crossfade(false)
+//            crossfade(crossFadeDurationInMills)
 //        size(Utils.dpToPx(imageHeight), Utils.dpToPx(imageHeight))
         }
     }
@@ -193,8 +221,8 @@ fun bindChannelLogo(view: ImageView, channelInfo: MyChannelPlaylist) {
             error(R.drawable.ic_profile_default)
 //            memoryCachePolicy(CachePolicy.DISABLED)
             diskCachePolicy(CachePolicy.ENABLED)
-            crossfade(true)
-            crossfade(crossFadeDurationInMills)
+            crossfade(false)
+//            crossfade(crossFadeDurationInMills)
 //        size(Utils.dpToPx(imageHeight), Utils.dpToPx(imageHeight))
         }
     }
@@ -212,8 +240,8 @@ fun bindChannelLogo(view: ImageView, channelInfo: UgcUserChannelInfo) {
             error(R.drawable.ic_profile_default)
 //            memoryCachePolicy(CachePolicy.DISABLED)
             diskCachePolicy(CachePolicy.ENABLED)
-            crossfade(true)
-            crossfade(crossFadeDurationInMills)
+            crossfade(false)
+//            crossfade(crossFadeDurationInMills)
 //        size(Utils.dpToPx(imageHeight), Utils.dpToPx(imageHeight))
         }
     }
@@ -333,7 +361,9 @@ fun loadImageFromResource(view: ImageView, image: Int) {
 
 @BindingAdapter("loadCircleImageFromUrl")
 fun bindCircleImageFromUrl(view: CircleImageView, imageUrl: String?) {
-    if (!imageUrl.isNullOrEmpty()) {
+    if (imageUrl.isNullOrEmpty()) {
+        view.setImageResource(R.drawable.ic_profile_default)
+    } else {
         view.load(imageUrl) {
             fallback(R.drawable.ic_profile_default)
             placeholder(R.drawable.ic_profile_default)
@@ -341,9 +371,6 @@ fun bindCircleImageFromUrl(view: CircleImageView, imageUrl: String?) {
             diskCachePolicy(ENABLED)
             crossfade(false)
         }
-    }
-    else{
-        view.setImageResource(R.drawable.ic_profile_default)
     }
 }
 

@@ -37,8 +37,8 @@ class GetContents @AssistedInject constructor(
                     requestParams.categoryId,
                     requestParams.subcategoryId,
                     requestParams.type,
-                    Preference.getInstance().customerId,
-                    Preference.getInstance().password,
+                    preference.customerId,
+                    preference.password,
                     offset = offset,
                     limit = limit
                 )
@@ -55,7 +55,7 @@ class GetContents @AssistedInject constructor(
 //                favoriteDao.isFavorite(it.id.toLong())?.also {fav->
 //                    it.favorite = fav.toString()
 //                }
-                val reaction = reactionDao.getReactionByContentId(it.id)
+                val reaction = reactionDao.getReactionByContentId(it.id, preference.customerId)
                 it.userReaction = reaction?.reaction ?: 0
                 it.userReactionIcon = setReactionIcon(reaction?.reaction ?: 0)
                 it

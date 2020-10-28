@@ -39,6 +39,8 @@
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
                 android:minHeight="200dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/placeholder"
                 loadPlayListLogo="@{data}" />
         </FrameLayout>
 
@@ -70,7 +72,7 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/ownerPicture"
-            loadChannelLogo="@{data}"
+            loadCircleImageFromUrl="@{data.channelLogo}"
             android:layout_width="42dp"
             android:layout_height="42dp"
             android:layout_marginStart="8dp"

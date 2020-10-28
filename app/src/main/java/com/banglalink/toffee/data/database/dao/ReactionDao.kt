@@ -17,6 +17,6 @@ interface ReactionDao {
     @Query("SELECT * FROM ReactionInfo")
     suspend fun getAllReaction(): List<ReactionInfo>
     
-    @Query("SELECT * FROM ReactionInfo WHERE contentId == :contentId")
-    suspend fun getReactionByContentId(contentId: String): ReactionInfo?
+    @Query("SELECT * FROM ReactionInfo WHERE contentId == :contentId AND customerId == :customerId")
+    suspend fun getReactionByContentId(contentId: String, customerId: Int): ReactionInfo?
 }

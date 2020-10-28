@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 data class ReactionInfo (
     @PrimaryKey(autoGenerate = true)
     val id: Long? = null,
+    val customerId: Int,
     val contentId: String,
     val reaction: Int,
     val reactionTime: Long = System.currentTimeMillis()
