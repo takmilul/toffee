@@ -24,6 +24,9 @@ data class UgcUserChannelInfo(
     @SerializedName("content_provider_id")
     val contentProviderId: Long,
 
+    @SerializedName("channel_owner_id")
+    val channelOwnerId: Int,
+    
     @SerializedName("profile_url")
     val profileUrl: String?,
 

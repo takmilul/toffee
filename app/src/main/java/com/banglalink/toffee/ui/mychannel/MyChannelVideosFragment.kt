@@ -141,10 +141,10 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
         homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
     }
     
-    override fun onReactionClicked(view: View, position: Int, item: ChannelInfo) {
-        super.onReactionClicked(view, position, item)
+    override fun onReactionClicked(view: View, item: ChannelInfo) {
+        super.onReactionClicked(view, item)
         val fragment = AlertDialogReactionFragment.newInstance()
-        fragment.setItem(mAdapter, view, position, item)
+        fragment.setItem(view, item)
         fragment.show(requireActivity().supportFragmentManager, "ReactionDialog")
     }
 }

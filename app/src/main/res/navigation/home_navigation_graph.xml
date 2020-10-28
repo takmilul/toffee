@@ -76,13 +76,13 @@
             android:name="isOwner"
             app:argType="integer"
             android:defaultValue="1"/>
-        <!--<argument
-            android:name="isSubscribed"
-            app:argType="integer" />-->
         <argument
             android:name="channelId"
             app:argType="integer"
             android:defaultValue="0"/>
+        <argument
+            android:name="channelOwnerId"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/uploadMethodFragment"
@@ -115,7 +115,14 @@
     <fragment
         android:id="@+id/categoryDetailsFragment"
         android:name="com.banglalink.toffee.ui.category.CategoryDetailsFragment"
-        android:label="CategoryDetailsFragment" />
+        android:label="CategoryDetailsFragment" >
+        <action
+            android:id="@+id/action_categoryDetailsFragment_to_myChannelPlaylistVideosFragment"
+            app:destination="@id/myChannelPlaylistVideosFragment" />
+        <action
+            android:id="@+id/action_categoryDetailsFragment_to_myChannelHomeFragment"
+            app:destination="@id/myChannelHomeFragment" />
+    </fragment>
     <fragment
         android:id="@+id/MyChannelEditFragment"
         android:name="com.banglalink.toffee.ui.mychannel.MyChannelEditDetailFragment"

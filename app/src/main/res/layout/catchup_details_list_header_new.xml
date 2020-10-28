@@ -12,7 +12,7 @@
             type="com.banglalink.toffee.model.ChannelInfo" />
         <variable
             name="callback"
-            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
+            type="com.banglalink.toffee.ui.common.ContentReactionCallback" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -24,23 +24,6 @@
         android:focusable="true"
         android:paddingBottom="8dp">
 
-        <TextView
-            android:id="@+id/textView24"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawablePadding="4dp"
-            android:gravity="center_vertical"
-            bindEmoCount="@{data}"
-            android:visibility="gone"
-            app:drawableLeftCompat="@drawable/ic_like_emo"
-            app:layout_constraintBottom_toBottomOf="@+id/textView25"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/textView26"
-            app:layout_constraintTop_toTopOf="@+id/textView25"
-            app:layout_constraintVertical_bias="0.0" />
-
-        <!--            android:visibility="@{data.live ? View.GONE : View.VISIBLE}"-->
         <TextView
             android:id="@+id/program_name"
             android:layout_width="0dp"
@@ -93,14 +76,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             android:drawablePadding="4dp"
             android:text="LIVE"
             android:textStyle="bold"
             android:visibility="@{data.live ? View.VISIBLE : View.GONE}"
             app:drawableLeftCompat="@drawable/ic_live_red"
-            app:layout_constraintBottom_toBottomOf="@+id/textView25"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/textView25" />
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
             android:id="@+id/textView25"
@@ -127,6 +110,24 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/textView25"
             app:layout_constraintTop_toTopOf="@+id/textView25" />
+
+        <TextView
+            android:id="@+id/textView24"
+            bindEmoCount="@{data}"
+            loadTextLeftDrawable="@{data.userReactionIcon}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="4dp"
+            android:gravity="center_vertical"
+            android:onClick="@{(v) -> callback.onReactionClicked(v, data)}"
+            android:visibility="visible"
+            app:drawableLeftCompat="@drawable/ic_like_emo"
+            app:layout_constraintBottom_toBottomOf="@+id/textView25"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/textView26"
+            app:layout_constraintTop_toTopOf="@+id/textView25"
+            app:layout_constraintVertical_bias="0.0" />
 
         <TextView
             android:id="@+id/textView28"
@@ -183,6 +184,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:constraint_referenced_ids="options,subscribe_button,program_name,circleImageView,textView26,textView24,channelSubCount,liveStatus,textView28,textView25" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:constraint_referenced_ids="textView25,textView26,textView24" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

@@ -10,7 +10,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
-import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
@@ -23,7 +22,6 @@ import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.home.UserChannelsListAdapter
 import com.banglalink.toffee.ui.mychannel.MyChannelHomeFragment
-import com.banglalink.toffee.ui.useractivities.ChannelSubscriptionViewModel
 import com.banglalink.toffee.ui.useractivities.UserActivitiesMainFragment
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -55,12 +53,22 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
         mAdapter = UserChannelsListAdapter(object : LandingPopularChannelCallback {
             override fun onItemClicked(item: UgcUserChannelInfo) {
                 val customerId = Preference.getInstance().customerId
-                val isOwner = if (item.userId == customerId) 1 else 0
+                val isOwner = if (item.channelOwnerId == customerId) 1 else 0
                 val channelId = item.id.toInt()
-                findNavController().navigate(R.id.action_menu_feed_to_myChannelHomeFragment, Bundle().apply {
-                    putInt(MyChannelHomeFragment.IS_OWNER, 0)
-                    putInt(MyChannelHomeFragment.CHANNEL_ID, 2)
-                })
+                if (parentFragment is CategoryDetailsFragment) {
+                    findNavController().navigate(R.id.action_categoryDetailsFragment_to_myChannelHomeFragment, Bundle().apply {
+                        putInt(MyChannelHomeFragment.IS_OWNER, isOwner)
+                        putInt(MyChannelHomeFragment.CHANNEL_ID, channelId)
+                        putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, customerId)
+                    })
+                }
+                else {
+                    findNavController().navigate(R.id.action_menu_feed_to_myChannelHomeFragment, Bundle().apply {
+                        putInt(MyChannelHomeFragment.IS_OWNER, isOwner)
+                        putInt(MyChannelHomeFragment.CHANNEL_ID, channelId)
+                        putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, customerId)
+                    })
+                }
             }
 
             override fun onSubscribeButtonClicked(view: View, info: UgcUserChannelInfo) {

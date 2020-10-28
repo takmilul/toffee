@@ -28,12 +28,12 @@ class MyChannelEditDetailViewModel @AssistedInject constructor(private val myCha
     var categoryList = listOf<UgcCategory>()
     private var _categories = MutableLiveData<List<String>>()
     val categories = _categories.toLiveData()
-    var selectedItem: UgcCategory? = null
+    var selectedCategory: UgcCategory? = null
 
     init {
         viewModelScope.launch {
             categoryList = categoryApiService.loadData(0, 0)
-            selectedItem = categoryList.find { it.id == myChannelDetail?.categoryId }
+            selectedCategory = categoryList.find { it.id == myChannelDetail?.categoryId }
             _categories.postValue(categoryList.map { it.categoryName })
         }
     }
@@ -61,6 +61,6 @@ class MyChannelEditDetailViewModel @AssistedInject constructor(private val myCha
     }
 
     fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
-        selectedItem = categoryList.find { it.categoryName == parent?.adapter?.getItem(pos) }
+        selectedCategory = categoryList.find { it.categoryName == parent?.adapter?.getItem(pos) }
     }
 }
