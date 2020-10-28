@@ -165,11 +165,11 @@ fun loadPlayListLogo(view: ImageView, playlistInfo: MyChannelPlaylist) {
 
 @BindingAdapter("loadChannelLogo")
 fun bindChannelLogo(view: ImageView, channelInfo: ChannelInfo) {
-    if (channelInfo.channel_logo.isNullOrBlank()) {
+    if (channelInfo.channelProfileUrl.isNullOrBlank()) {
         view.setImageResource(R.drawable.ic_profile_default)
     }
     else {
-        view.load(channelInfo.channel_logo) {
+        view.load(channelInfo.channelProfileUrl) {
             fallback(R.drawable.ic_profile_default)
 //            placeholder(R.drawable.ic_profile_default)
             error(R.drawable.ic_profile_default)

@@ -75,7 +75,7 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
 
     override fun onItemClicked(item: MyChannelPlaylist) {
         super.onItemClicked(item)
-        val action = MyChannelHomeFragmentDirections.actionMenuChannelToMyChannelPlaylistVideosFragment(channelId, isOwner, item.id)
+        val action = MyChannelPlaylistsFragmentDirections.actionMyChannelPlaylistsFragmentToMyChannelPlaylistVideosFragment(channelId, isOwner, item.id)
         findNavController().navigate(action)
     }
 

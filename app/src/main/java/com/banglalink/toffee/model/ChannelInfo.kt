@@ -54,6 +54,8 @@ data class ChannelInfo(
     var shareCount: Long = 0L,
     @SerializedName("playlist_content_id")
     val playlistContentId: Int = 0,
+    @SerializedName("channel_profile_url")
+    val channelProfileUrl: String? = null,
     @SerializedName("url_type")
     val urlType: Int = 0
 ) :Parcelable

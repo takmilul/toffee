@@ -65,7 +65,7 @@
         android:label="MyChannelHomeFragment">
         <action
             android:id="@+id/action_menu_channel_to_myChannelEditFragment"
-            app:destination="@id/MyChannelEditFragment" />
+            app:destination="@id/MyChannelEditDetailFragment" />
         <action
             android:id="@+id/action_menu_channel_to_myChannelPlaylistVideosFragment"
             app:destination="@id/myChannelPlaylistVideosFragment" />
@@ -83,6 +83,9 @@
         <argument
             android:name="channelOwnerId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_menu_channel_to_myChannelHomeFragment"
+            app:destination="@id/myChannelHomeFragment" />
     </fragment>
     <fragment
         android:id="@+id/uploadMethodFragment"
@@ -124,9 +127,9 @@
             app:destination="@id/myChannelHomeFragment" />
     </fragment>
     <fragment
-        android:id="@+id/MyChannelEditFragment"
+        android:id="@+id/MyChannelEditDetailFragment"
         android:name="com.banglalink.toffee.ui.mychannel.MyChannelEditDetailFragment"
-        android:label="MyChannelEditFragment">
+        android:label="MyChannelEditDetailFragment">
         <argument
             android:name="myChannelDetail"
             app:nullable="true"
@@ -141,7 +144,11 @@
     <fragment
         android:id="@+id/myChannelHomeFragment"
         android:name="com.banglalink.toffee.ui.mychannel.MyChannelHomeFragment"
-        android:label="MyChannelHomeFragment" />
+        android:label="MyChannelHomeFragment" >
+        <action
+            android:id="@+id/action_myChannelHomeFragment_to_MyChannelEditDetailFragment"
+            app:destination="@id/MyChannelEditDetailFragment" />
+    </fragment>
     <fragment
         android:id="@+id/myChannelPlaylistVideosFragment"
         android:name="com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment"
@@ -246,4 +253,12 @@
         android:id="@+id/favoriteFragment"
         android:name="com.banglalink.toffee.ui.favorite.FavoriteFragment"
         android:label="FavoriteFragment" />
+    <fragment
+        android:id="@+id/myChannelPlaylistsFragment"
+        android:name="com.banglalink.toffee.ui.mychannel.MyChannelPlaylistsFragment"
+        android:label="MyChannelPlaylistsFragment" >
+        <action
+            android:id="@+id/action_myChannelPlaylistsFragment_to_myChannelPlaylistVideosFragment"
+            app:destination="@id/myChannelPlaylistVideosFragment" />
+    </fragment>
 </navigation>

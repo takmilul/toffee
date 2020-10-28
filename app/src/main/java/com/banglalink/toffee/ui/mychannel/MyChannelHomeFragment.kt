@@ -9,10 +9,8 @@ import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
@@ -35,7 +33,7 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class MyChannelHomeFragment : Fragment(), OnClickListener {
+class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener {
 
     private var isOwner: Int = 0
     private var channelId: Int = 0
@@ -45,7 +43,7 @@ class MyChannelHomeFragment : Fragment(), OnClickListener {
     private var myChannelDetail: MyChannelDetail? = null
     private lateinit var binding: FragmentMyChannelHomeBinding
     private lateinit var viewPagerAdapter: ViewPagerAdapter
-    private var fragmentList: ArrayList<Fragment> = arrayListOf()
+    private var fragmentList: ArrayList<androidx.fragment.app.Fragment> = arrayListOf()
     private var fragmentTitleList: ArrayList<String> = arrayListOf()
     @Inject lateinit var preference: Preference
 
@@ -109,13 +107,15 @@ class MyChannelHomeFragment : Fragment(), OnClickListener {
     override fun onClick(v: View?) {
         when (v) {
             addBioButton -> {
-                val action = MyChannelHomeFragmentDirections.actionMenuChannelToMyChannelEditFragment(myChannelDetail)
-                findNavController().navigate(action)
+                findNavController().navigate(R.id.action_menu_channel_to_myChannelEditFragment, Bundle().apply { putParcelable("myChannelDetail", myChannelDetail) })
+                /*val action = MyChannelHomeFragmentDirections.actionMyChannelHomeFragmentToMyChannelEditDetailFragment(myChannelDetail)
+                findNavController().navigate(action)*/
             }
 
             editButton -> {
-                val action = MyChannelHomeFragmentDirections.actionMenuChannelToMyChannelEditFragment(myChannelDetail)
-                findNavController().navigate(action)
+                findNavController().navigate(R.id.action_menu_channel_to_myChannelEditFragment, Bundle().apply { putParcelable("myChannelDetail", myChannelDetail) })
+                /*val action = MyChannelHomeFragmentDirections.actionMyChannelHomeFragmentToMyChannelEditDetailFragment(myChannelDetail)
+                findNavController().navigate(action)*/
             }
 
             ratingButton -> showRatingDialog()
@@ -125,7 +125,7 @@ class MyChannelHomeFragment : Fragment(), OnClickListener {
     }
 
     private fun showRatingDialog() {
-        val dialogBuilder = AlertDialog.Builder(requireContext())
+        val dialogBuilder = android.app.AlertDialog.Builder(requireContext())
         val inflater = this.layoutInflater
         val dialogView: View = inflater.inflate(layout.alert_dialog_my_channel_rating, null)
         dialogBuilder.setView(dialogView)
@@ -134,7 +134,7 @@ class MyChannelHomeFragment : Fragment(), OnClickListener {
             dialogView.submitButton.isEnabled = rating > 0
         }
 
-        val alertDialog: AlertDialog = dialogBuilder.create()
+        val alertDialog: android.app.AlertDialog = dialogBuilder.create()
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         alertDialog.show()
         dialogView.submitButton.setOnClickListener {
@@ -145,8 +145,8 @@ class MyChannelHomeFragment : Fragment(), OnClickListener {
 
     private fun showCreatePlaylistDialog() {
         val playlistBinding = AlertDialogMyChannelPlaylistCreateBinding.inflate(this.layoutInflater)
-        val dialogBuilder = AlertDialog.Builder(requireContext()).setView(playlistBinding.root)
-        val alertDialog: AlertDialog = dialogBuilder.create().apply {
+        val dialogBuilder = android.app.AlertDialog.Builder(requireContext()).setView(playlistBinding.root)
+        val alertDialog: android.app.AlertDialog = dialogBuilder.create().apply {
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             show()
         }
