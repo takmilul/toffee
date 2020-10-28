@@ -11,10 +11,12 @@ import android.view.animation.OvershootInterpolator
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.layout
+import com.banglalink.toffee.apiservice.MyChannelPlaylistParams
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBinding
 import com.banglalink.toffee.databinding.FragmentMyChannelHomeBinding
@@ -52,6 +54,9 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
     //    private val viewModel by viewModels<CreatorChannelViewModel>()
     private val createPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
     private val subscribeChannelViewModel by viewModels<MyChannelSubscribeViewModel>()
+
+    @Inject lateinit var viewModelAssistedFactory: MyChannelPlaylistViewModel.AssistedFactory
+    val playListViewModel by activityViewModels<MyChannelPlaylistViewModel> { MyChannelPlaylistViewModel.provideFactory(viewModelAssistedFactory, MyChannelPlaylistParams(isOwner, channelId)) }
 
     companion object {
         const val IS_OWNER = "isOwner"
@@ -266,6 +271,7 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
         observe(createPlaylistViewModel.createPlaylistLiveData) {
             when (it) {
                 is Success -> {
+                    playListViewModel.reloadPlaylist.value = true
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
                 }
                 is Failure -> {
