@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:minHeight="160dp"
-            android:src="@drawable/hero"
+            android:src="@drawable/placeholder"
             loadPlayListLogo="@{data}"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
