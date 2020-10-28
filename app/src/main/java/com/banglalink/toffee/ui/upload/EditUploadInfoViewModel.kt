@@ -147,7 +147,6 @@ class EditUploadInfoViewModel @ViewModelInject constructor(
             val resp = try {
                 Resource.Success(
                     contentUploadApi(
-                        0,
                         fileName,
                         title.value,
                         description.value,
