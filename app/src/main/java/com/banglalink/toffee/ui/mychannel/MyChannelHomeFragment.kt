@@ -33,7 +33,6 @@ import java.util.*
 import javax.inject.Inject
 
 
-
 @AndroidEntryPoint
 class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener {
 
@@ -124,7 +123,14 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
             }
 
             ratingButton -> showRatingDialog()
-            analyticsButton -> showCreatePlaylistDialog()
+            analyticsButton -> {
+                if (channelId > 0) {
+                    showCreatePlaylistDialog()
+                }
+                else {
+                    Toast.makeText(requireContext(), "Please create channel first", Toast.LENGTH_SHORT).show()
+                }
+            }
             subscriptionButton -> subscribeChannelViewModel.subscribe(channelId, isSubscribed)
         }
     }
@@ -180,7 +186,7 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
                         binding.data = it.data
                         binding.isSubscribed = isSubscribed
                         preference.channelId = channelId
-                        
+
                         loadBody()
                     }
                 }
@@ -189,7 +195,7 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
                     isSubscribed = 0
                     binding.data = null
                     binding.isSubscribed = 0
-                    
+
                     loadBody()
                 }
             }

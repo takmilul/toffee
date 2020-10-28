@@ -14,6 +14,7 @@ import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import coil.api.load
 import coil.request.CachePolicy
+import coil.request.CachePolicy.ENABLED
 import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.database.entities.UserActivities
@@ -37,7 +38,7 @@ fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
             crossfade(crossFadeDurationInMills)
         }
     } else {
-        view.setImageResource(R.drawable.dummy)
+        view.setImageResource(R.drawable.placeholder)
     }
 }
 
@@ -84,8 +85,7 @@ fun bindChannel(view: CircleImageView, channelInfo: ChannelInfo) {
     }
     else {
         view.load(channelInfo.landscape_ratio_1280_720) {
-            crossfade(true)
-            crossfade(crossFadeDurationInMills)
+            crossfade(false)
             size(720, 405)
         }
     }
@@ -147,13 +147,13 @@ fun bindUserChannelLogo(view: ImageView, channelInfo: ChannelInfo) {
 @BindingAdapter("loadPlayListLogo")
 fun loadPlayListLogo(view: ImageView, playlistInfo: MyChannelPlaylist) {
     if (playlistInfo.logoMobileUrl.isNullOrBlank()) {
-        view.setImageResource(R.drawable.dummy)
+        view.setImageResource(R.drawable.placeholder)
     }
     else {
         view.load(playlistInfo.logoMobileUrl) {
-            fallback(R.drawable.dummy)
+            fallback(R.drawable.placeholder)
 //            placeholder(R.drawable.ic_profile_default)
-            error(R.drawable.dummy)
+            error(R.drawable.placeholder)
 //            memoryCachePolicy(CachePolicy.DISABLED)
             diskCachePolicy(CachePolicy.ENABLED)
             crossfade(true)
@@ -175,8 +175,7 @@ fun bindChannelLogo(view: ImageView, channelInfo: ChannelInfo) {
             error(R.drawable.ic_profile_default)
 //            memoryCachePolicy(CachePolicy.DISABLED)
             diskCachePolicy(CachePolicy.ENABLED)
-            crossfade(true)
-            crossfade(crossFadeDurationInMills)
+            crossfade(false)
 //        size(Utils.dpToPx(imageHeight), Utils.dpToPx(imageHeight))
         }
     }
@@ -336,8 +335,15 @@ fun loadImageFromResource(view: ImageView, image: Int) {
 fun bindCircleImageFromUrl(view: CircleImageView, imageUrl: String?) {
     if (!imageUrl.isNullOrEmpty()) {
         view.load(imageUrl) {
+            fallback(R.drawable.ic_profile_default)
+            placeholder(R.drawable.ic_profile_default)
+            error(R.drawable.ic_profile_default)
+            diskCachePolicy(ENABLED)
             crossfade(false)
         }
+    }
+    else{
+        view.setImageResource(R.drawable.ic_profile_default)
     }
 }
 
