@@ -1,5 +1,6 @@
 package com.banglalink.toffee.util
 
+import android.content.ContentResolver
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Bitmap.CompressFormat.JPEG
@@ -9,6 +10,7 @@ import android.net.Uri
 import android.provider.OpenableColumns
 import android.util.Base64
 import android.util.Log
+import androidx.core.content.ContextCompat
 import java.io.*
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -16,6 +18,25 @@ import kotlin.math.sqrt
 object UtilsKt {
     fun uploadIdToString(id: Long) = "Toffee_Upload_$id"
     fun stringToUploadId(uploadId: String) = uploadId.filter { it.isDigit() }.toLong()
+
+    fun resizeBitmap(image: Bitmap, maxWidth: Int, maxHeight: Int): Bitmap? {
+        return if (maxHeight > 0 && maxWidth > 0) {
+            val width = image.width
+            val height = image.height
+            val ratioBitmap = width.toFloat() / height.toFloat()
+            val ratioMax = maxWidth.toFloat() / maxHeight.toFloat()
+            var finalWidth = maxWidth
+            var finalHeight = maxHeight
+            if (ratioMax > 1) {
+                finalWidth = (maxHeight.toFloat() * ratioBitmap).toInt()
+            } else {
+                finalHeight = (maxWidth.toFloat() / ratioBitmap).toInt()
+            }
+            Bitmap.createScaledBitmap(image, finalWidth, finalHeight, true)
+        } else {
+            image
+        }
+    }
 
     fun contentTypeFromContentUri(context: Context, uri: Uri): String {
         val type = context.contentResolver.getType(uri)
@@ -44,26 +65,32 @@ object UtilsKt {
 const val IMAGE_MAX_SIZE = 500000 // 500KB
 const val TAG = "SCALE_IMAGE"
 
+fun getInputStream(ctx: Context, uri: String): InputStream? {
+    if(uri.startsWith("content://")) {
+        return ctx.contentResolver.openInputStream(Uri.parse(uri))
+    }
+    return FileInputStream(File(uri.substringAfter("file:")))
+}
 
-fun getBitmap(path: String, requiredImageSize: Int): Bitmap? {
+fun getBitmap(ctx: Context, path: String, requiredImageSize: Int): Bitmap? {
 
 //    val uri: Uri = Uri.parse(path.substringAfter("file:/"))
     var inputStream: InputStream?
     return try {
-        inputStream = FileInputStream(File(path.substringAfter("file:")))
+        inputStream = getInputStream(ctx, path)
 
         // Decode image size
         var options = Options()
         options.inJustDecodeBounds = true
         BitmapFactory.decodeStream(inputStream, null, options)
-        inputStream.close()
+        inputStream?.close()
         var scale = 1
         while (options.outWidth * options.outHeight * (1 / scale.toDouble().pow(2.0)) > requiredImageSize) {
             scale++
         }
         Log.d(TAG, "scale = " + scale + ", orig-width: " + options.outWidth + ", orig-height: " + options.outHeight)
         var resultBitmap: Bitmap? = null
-        inputStream = FileInputStream(File(path.substringAfter("file:")))
+        inputStream = getInputStream(ctx, path)
         if (scale > 1) {
             scale--
             // scale to max possible inSampleSize that still yields an image
@@ -88,10 +115,10 @@ fun getBitmap(path: String, requiredImageSize: Int): Bitmap? {
         else {
             resultBitmap = BitmapFactory.decodeStream(inputStream)
         }
-        inputStream.close()
+        inputStream?.close()
         Log.d(
             TAG, "bitmap size - width: " + resultBitmap!!.width + ", height: " +
-            resultBitmap.height
+                    resultBitmap.height
         )
         resultBitmap
     }
@@ -101,10 +128,10 @@ fun getBitmap(path: String, requiredImageSize: Int): Bitmap? {
     }
 }
 
-fun imagePathToBase64(imagePath: String, requiredImageByteSize: Int = IMAGE_MAX_SIZE): String{
-    val bitmap = getBitmap(imagePath, requiredImageByteSize)
+fun imagePathToBase64(ctx: Context, imagePath: String, requiredImageByteSize: Int = IMAGE_MAX_SIZE): String{
+    val bitmap = getBitmap(ctx, imagePath, requiredImageByteSize)
     val byteArrayOutputStream = ByteArrayOutputStream()
-    bitmap?.compress(JPEG, 100, byteArrayOutputStream)
+    bitmap?.compress(JPEG, 70, byteArrayOutputStream)
     val byteArray = byteArrayOutputStream.toByteArray()
     return Base64.encodeToString(byteArray, Base64.NO_WRAP)
 }

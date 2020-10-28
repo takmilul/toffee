@@ -132,7 +132,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             if (!newBannerUrl.isNullOrEmpty()) {
                 /*val image = File(newBannerUrl!!.substringAfter("file:"))
                 bannerBase64 = convertImageFileToBase64(image)*/
-                bannerBase64 = imagePathToBase64(newBannerUrl!!)
+                bannerBase64 = imagePathToBase64(requireContext(), newBannerUrl!!)
             }
         }
         catch (e: Exception) {
@@ -144,7 +144,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             if (!newProfileImageUrl.isNullOrEmpty()) {
                 /*val image = File(newProfileImageUrl!!.substringAfter("file:"))
                 profileImageBase64 = convertImageFileToBase64(image)*/
-                profileImageBase64 = imagePathToBase64(newProfileImageUrl!!)
+                profileImageBase64 = imagePathToBase64(requireContext(), newProfileImageUrl!!)
             }
         }
         catch (e: Exception) {

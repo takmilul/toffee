@@ -27,6 +27,7 @@ import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.FragmentEditUploadInfoBinding
 import com.banglalink.toffee.di.AppCoroutineScope
+import com.banglalink.toffee.extension.loadBase64
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
@@ -35,9 +36,11 @@ import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.UtilsKt
+import com.banglalink.toffee.util.imagePathToBase64
 import com.pchmn.materialchips.ChipsInput
 import com.pchmn.materialchips.model.ChipInterface
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.list_item_notification.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -117,16 +120,18 @@ class EditUploadInfoFragment: BaseFragment() {
         observeStatus()
         observeUpload()
         observeProgressDialog()
+        observeThumbnailLoad()
         observeThumbnailChange()
 
         binding.uploadTitle.requestFocus()
+    }
 
-//            uploadInfo.fileUri.let {
-                // TODO: Fetch the thumbnail
-//                appScope.launch {
-//                    fetchAndSaveThumbnail(uploadInfo)
-//                }
-//            }
+    private fun observeThumbnailLoad() {
+        observe(viewModel.thumbnailData) {
+            it?.let { thumb ->
+                binding.videoThumb.loadBase64(thumb)
+            }
+        }
     }
 
     private fun observeThumbnailChange() {
@@ -135,9 +140,7 @@ class EditUploadInfoFragment: BaseFragment() {
             savedStateHandle?.
             getLiveData<String?>(ThumbnailSelectionMethodFragment.THUMB_URI)?.
             observe(viewLifecycleOwner, {
-                it?.let {
-                    binding.videoThumb.load(it)
-                }
+                viewModel.saveThumbnail(it)
             })
     }
 
