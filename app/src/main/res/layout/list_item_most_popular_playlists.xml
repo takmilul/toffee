@@ -34,6 +34,7 @@
             app:layout_constraintTop_toTopOf="parent"
             >
             <com.banglalink.toffee.ui.widget.CustomImageView
+                imageFromUrl="@{data.landscape_ratio_1280_720}"
                 android:id="@+id/poster"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -41,7 +42,7 @@
                 android:minHeight="200dp"
                 android:scaleType="fitXY"
                 android:src="@drawable/placeholder"
-                loadPlayListLogo="@{data}" />
+                />
         </FrameLayout>
 
 <!--        <TextView-->
@@ -153,7 +154,7 @@
             android:ellipsize="end"
             android:maxWidth="200dp"
             android:maxLines="1"
-            android:text="@{data.channelName}"
+            android:text='@{data.channelName + " - " + data.formattedCreateTime}'
             android:textColor="#829AB8"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/textView50"

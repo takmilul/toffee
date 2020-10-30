@@ -67,12 +67,12 @@
             android:id="@+id/action_menu_channel_to_myChannelEditFragment"
             app:destination="@id/MyChannelEditDetailFragment" />
         <action
-            android:id="@+id/action_menu_channel_to_myChannelPlaylistVideosFragment"
-            app:destination="@id/myChannelPlaylistVideosFragment" />
-        <action
             android:id="@+id/action_menu_channel_to_challengesFragment"
             app:destination="@id/challengesFragment" />
-        <argument
+        <action
+            android:id="@+id/action_menu_channel_to_myChannelPlaylistVideosFragment"
+            app:destination="@id/myChannelPlaylistVideosFragment" />
+        <!--<argument
             android:name="isOwner"
             app:argType="integer"
             android:defaultValue="1"/>
@@ -82,10 +82,7 @@
             android:defaultValue="0"/>
         <argument
             android:name="channelOwnerId"
-            app:argType="integer" />
-        <action
-            android:id="@+id/action_menu_channel_to_myChannelHomeFragment"
-            app:destination="@id/myChannelHomeFragment" />
+            app:argType="integer" />-->
     </fragment>
     <fragment
         android:id="@+id/uploadMethodFragment"
@@ -145,16 +142,25 @@
         android:id="@+id/myChannelHomeFragment"
         android:name="com.banglalink.toffee.ui.mychannel.MyChannelHomeFragment"
         android:label="MyChannelHomeFragment" >
-        <action
+        <!--<action
             android:id="@+id/action_myChannelHomeFragment_to_MyChannelEditDetailFragment"
             app:destination="@id/MyChannelEditDetailFragment" />
+        <action
+            android:id="@+id/action_myChannelHomeFragment_to_myChannelPlaylistVideosFragment"
+            app:destination="@id/myChannelPlaylistVideosFragment" />
+        <action
+            android:id="@+id/action_myChannelHomeFragment_to_myChannelPlaylistsFragment"
+            app:destination="@id/myChannelPlaylistsFragment" />-->
+        <action
+            android:id="@+id/action_myChannelHomeFragment_to_myChannelPlaylistVideosFragment"
+            app:destination="@id/myChannelPlaylistVideosFragment" />
     </fragment>
     <fragment
         android:id="@+id/myChannelPlaylistVideosFragment"
         android:name="com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment"
         android:label="MyChannelPlaylistVideosFragment">
         <argument
-            android:name="channelId"
+            android:name="channelOwnerId"
             app:argType="integer" />
         <argument
             android:name="isOwner"
@@ -253,12 +259,4 @@
         android:id="@+id/favoriteFragment"
         android:name="com.banglalink.toffee.ui.favorite.FavoriteFragment"
         android:label="FavoriteFragment" />
-    <fragment
-        android:id="@+id/myChannelPlaylistsFragment"
-        android:name="com.banglalink.toffee.ui.mychannel.MyChannelPlaylistsFragment"
-        android:label="MyChannelPlaylistsFragment" >
-        <action
-            android:id="@+id/action_myChannelPlaylistsFragment_to_myChannelPlaylistVideosFragment"
-            app:destination="@id/myChannelPlaylistVideosFragment" />
-    </fragment>
 </navigation>

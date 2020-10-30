@@ -28,5 +28,8 @@ data class MyChannelPlaylist (
     @SerializedName("channel_name")
     val channelName: String?,
     @SerializedName("create_time")
-    val createTime: String?
+    val createTime: String? = null,
+    var formattedCreateTime: String? = null,
+    val landscape_ratio_1280_720: String? = null,
+    val created_at: String? = null,
 )

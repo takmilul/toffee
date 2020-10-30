@@ -57,7 +57,11 @@ data class ChannelInfo(
     @SerializedName("channel_profile_url")
     val channelProfileUrl: String? = null,
     @SerializedName("url_type")
-    val urlType: Int = 0
+    val urlType: Int = 0,
+    @SerializedName("is_approved")
+    val isApproved: Int? = null,
+    val created_at: String? = null,
+    var formattedCreateTime: String? = null,
 ) :Parcelable
 {
 

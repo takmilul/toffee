@@ -175,42 +175,44 @@ interface ToffeeApi {
     @POST("ugc-add-content-to-playlist")
     suspend fun addToMyChannelPlayList(@Body myChannelAddToPlaylistRequest: MyChannelAddToPlaylistRequest): MyChannelAddToPlaylistResponse
 
-    @POST("ugc-channel-details/1/{channelOwnerId}/{isOwner}/{channelId}/{dbVersion}")
+    @POST("ugc-channel-details/1/{channelOwnerId}/{isOwner}/{isPublic}/{channelId}/{dbVersion}")
     suspend fun getMyChannelDetails(
         @Path("channelOwnerId") channelOwnerId: Int,
         @Path("isOwner") isOwner: Int,
+        @Path("isPublic") isPublic: Int,
         @Path("channelId") channelId: Int,
         @Path("dbVersion") dbVersion: Int,
         @Body channelDetailRequest: MyChannelDetailRequest
     ): MyChannelDetailResponse
 
-    @POST("ugc-channel-all-content/1/{type}/{isOwner}/{channelId}/{categoryId}/{subcategoryId}/{limit}/{offset}/{dbVersion}")
+    @POST("ugc-channel-all-content/1/{type}/{isOwner}/{channelOwnerId}/{categoryId}/{subcategoryId}/{isPublic}/{limit}/{offset}/{dbVersion}")
     //ugc-channel-all-content/deviceType/type/isOwner/channelId/categoryId/subCategoryId/limit/offset/dbVersion
     suspend fun getMyChannelVideos(
         @Path("type") type: String,
         @Path("isOwner") isOwner: Int,
-        @Path("channelId") channelId: Int,
+        @Path("channelOwnerId") channelOwnerId: Int,
         @Path("categoryId") categoryId: Int,
         @Path("subcategoryId") subCategoryId: Int,
+        @Path("isPublic") isPublic: Int,
         @Path("limit") limit: Int,
         @Path("offset") offset: Int,
         @Path("dbVersion") dbVersion: Int,
         @Body channelVideosRequest: MyChannelVideosRequest
     ): MyChannelVideosResponse
-
-    @POST("ugc-playlist-names/1/{isOwner}/{channelId}/{limit}/{offset}/{dbVersion}")
+    
+    @POST("ugc-playlist-names/1/{isOwner}/{channelOwnerId}/{limit}/{offset}/{dbVersion}")
     suspend fun getMyChannelPlaylist(
         @Path("isOwner") isOwner: Int,
-        @Path("channelId") channelId: Int,
+        @Path("channelOwnerId") channelOwnerId: Int,
         @Path("limit") limit: Int,
         @Path("offset") offset: Int,
         @Path("dbVersion") dbVersion: Int,
         @Body channelPlaylistRequest: MyChannelPlaylistRequest
     ): MyChannelPlaylistResponse
 
-    @POST("ugc-content-by-playlist/1/{channelId}/{isOwner}/{playlistId}/{limit}/{offset}/{dbVersion}")
+    @POST("ugc-content-by-playlist/1/{channelOwnerId}/{isOwner}/{playlistId}/{limit}/{offset}/{dbVersion}")
     suspend fun getMyChannelPlaylistVideos(
-        @Path("channelId") channelId: Int,
+        @Path("channelOwnerId") channelOwnerId: Int,
         @Path("isOwner") isOwner: Int,
         @Path("playlistId") playlistId: Int,
         @Path("limit") limit: Int,

@@ -31,10 +31,10 @@ class UserChannelViewModel @ViewModelInject constructor(
         }
     }
 
-    fun getChannelInfo(isOwner: Int, channelId: Long, channelOwnerId: Int) {
+    fun getChannelInfo(isOwner: Int, isPublic: Int, channelId: Long, channelOwnerId: Int) {
         viewModelScope.launch {
             try {
-                val ret = channelInfoApi.execute(isOwner, channelId.toInt(), channelOwnerId)
+                val ret = channelInfoApi.execute(isOwner, isPublic, channelId.toInt(), channelOwnerId)
                 isChannelSubscribed.value = ret.isSubscribed == 1
                 channelSubscriberCount.value = ret.formattedSubscriberCount
             } catch (ex: Exception) {

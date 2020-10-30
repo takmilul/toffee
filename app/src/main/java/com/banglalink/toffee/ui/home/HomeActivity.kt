@@ -2,7 +2,6 @@ package com.banglalink.toffee.ui.home
 
 import android.animation.LayoutTransition
 import android.app.SearchManager
-import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
@@ -56,7 +55,6 @@ import com.banglalink.toffee.ui.login.SigninByPhoneActivity
 import com.banglalink.toffee.ui.player.PlayerActivity
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.subscription.PackageListActivity
-import com.banglalink.toffee.ui.upload.UploadStatus
 import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.ui.widget.showSubscriptionDialog
@@ -64,13 +62,11 @@ import com.banglalink.toffee.util.InAppMessageParser
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.UtilsKt
 import com.google.android.exoplayer2.util.Util
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.layout_appbar.view.*
 import kotlinx.coroutines.launch
-import net.gotev.uploadservice.UploadService
 import java.util.*
 import javax.annotation.Nonnull
 import javax.inject.Inject

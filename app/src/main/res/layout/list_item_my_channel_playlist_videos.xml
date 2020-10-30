@@ -32,8 +32,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
+            android:scaleType="fitXY"
             android:minHeight="180dp"
-            imageFromUrl="@{data.poster_url_mobile}"
+            imageFromUrl="@{data.landscape_ratio_1280_720}"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -47,6 +48,7 @@
             android:layout_height="4dp"
             android:progress="50"
             android:max="100"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/poster"
             app:layout_constraintEnd_toEndOf="@+id/duration"
             app:layout_constraintStart_toStartOf="parent" />

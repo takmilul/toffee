@@ -25,24 +25,25 @@ class MyChannelVideosViewModel @AssistedInject constructor(
     private val activitiesRepo: UserActivitiesRepository, 
     private val getMyChannelAssistedFactory: MyChannelVideosService.AssistedFactory, 
     @Assisted private val isOwner: Int, 
-    @Assisted private val channelId: Int) : BasePagingViewModel<ChannelInfo>() {
+    @Assisted private val channelOwnerId: Int,
+    @Assisted private val isPublic: Int) : BasePagingViewModel<ChannelInfo>() {
     
     override val repo: BaseListRepository<ChannelInfo> by lazy {
-        BaseListRepositoryImpl({BaseNetworkPagingSource(getMyChannelAssistedFactory.create(MyChannelVideosRequestParams("VOD", isOwner, channelId, 0, 0)))})
+        BaseListRepositoryImpl({BaseNetworkPagingSource(getMyChannelAssistedFactory.create(MyChannelVideosRequestParams("VOD", isOwner, channelOwnerId, 0, 0, isPublic)))})
     }
 
     @AssistedInject.Factory
     interface AssistedFactory {
-        fun create(isOwner: Int, channelId: Int): MyChannelVideosViewModel
+        fun create(isOwner: Int, channelOwnerId: Int, isPublic: Int): MyChannelVideosViewModel
     }
 
     companion object {
         fun provideFactory(
             assistedFactory: AssistedFactory,
-            isOwner: Int, channelId: Int
+            isOwner: Int, channelOwnerId: Int, isPublic: Int
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                return assistedFactory.create(isOwner, channelId) as T
+                return assistedFactory.create(isOwner, channelOwnerId, isPublic) as T
             }
         }
     }

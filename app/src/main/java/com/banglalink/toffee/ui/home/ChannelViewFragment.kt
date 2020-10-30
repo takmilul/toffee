@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -80,7 +79,7 @@ class ChannelViewFragment: BaseFragment(), ContentReactionCallback<ChannelInfo> 
 
         val contentProviderId =  channelInfo.content_provider_id?.toLongOrNull() ?: 0L
         val isOwner = if(contentProviderId == mPref.customerId.toLong()) 0 else 1
-        viewModel.getChannelInfo(isOwner, contentProviderId, contentProviderId.toInt())
+        viewModel.getChannelInfo(isOwner, 1, contentProviderId, contentProviderId.toInt())
     }
 
     override fun onReactionClicked(view: View, item: ChannelInfo) {

@@ -3,6 +3,7 @@ package com.banglalink.toffee.ui.mychannel
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
@@ -16,7 +17,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.layout
-import com.banglalink.toffee.apiservice.MyChannelPlaylistParams
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBinding
 import com.banglalink.toffee.databinding.FragmentMyChannelHomeBinding
@@ -41,6 +41,7 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
     private var channelOwnerId: Int = 0
     private var rating: Float = 0.0f
     private var isSubscribed: Int = 0
+    private var isPublic: Int = 0
     private var myChannelDetail: MyChannelDetail? = null
     private lateinit var binding: FragmentMyChannelHomeBinding
     private lateinit var viewPagerAdapter: ViewPagerAdapter
@@ -49,24 +50,24 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
     @Inject lateinit var preference: Preference
 
     @Inject lateinit var myChannelHomeViewModelAssistedFactory: MyChannelHomeViewModel.AssistedFactory
-    private val viewModel by viewModels<MyChannelHomeViewModel> { MyChannelHomeViewModel.provideFactory(myChannelHomeViewModelAssistedFactory, isOwner, channelId, channelOwnerId) }
+    private val viewModel by viewModels<MyChannelHomeViewModel> { MyChannelHomeViewModel.provideFactory(myChannelHomeViewModelAssistedFactory, isOwner, isPublic, channelId, channelOwnerId) }
 
     //    private val viewModel by viewModels<CreatorChannelViewModel>()
     private val createPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
     private val subscribeChannelViewModel by viewModels<MyChannelSubscribeViewModel>()
-
-    @Inject lateinit var viewModelAssistedFactory: MyChannelPlaylistViewModel.AssistedFactory
-    val playListViewModel by activityViewModels<MyChannelPlaylistViewModel> { MyChannelPlaylistViewModel.provideFactory(viewModelAssistedFactory, MyChannelPlaylistParams(isOwner, channelId)) }
+    private val playlistReloadViewModel by activityViewModels<MyChannelPlaylistReloadViewModel>()
 
     companion object {
         const val IS_OWNER = "isOwner"
         const val CHANNEL_ID = "channelId"
+        const val IS_PUBLIC = "isPublic"
         const val CHANNEL_OWNER_ID = "channelOwnerId"
-        fun newInstance(isOwner: Int, channelId: Int, channelOwnerId: Int): MyChannelHomeFragment {
+        fun newInstance(isOwner: Int, channelId: Int, channelOwnerId: Int, isPublic: Int): MyChannelHomeFragment {
             val instance = MyChannelHomeFragment()
             val bundle = Bundle()
             bundle.putInt(IS_OWNER, isOwner)
             bundle.putInt(CHANNEL_ID, channelId)
+            bundle.putInt(IS_PUBLIC, isPublic)
             bundle.putInt(CHANNEL_OWNER_ID, channelOwnerId)
             instance.arguments = bundle
             return instance
@@ -76,11 +77,14 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val args = arguments
-        isOwner = args?.getInt(IS_OWNER) ?: 0
+        isOwner = args?.getInt(IS_OWNER) ?: 1
         channelId = args?.getInt(CHANNEL_ID) ?: 0
+        isPublic = args?.getInt(IS_PUBLIC) ?: 0
         channelId = if (channelId == 0) preference.channelId else channelId
         channelOwnerId = args?.getInt(CHANNEL_OWNER_ID) ?: preference.customerId
         channelOwnerId = if (channelOwnerId == 0) preference.customerId else channelOwnerId
+
+        Log.i("UGC_Playlist_Service", "UGC_Home -- isOwner: ${isOwner}, ownerId: ${channelOwnerId}")
         /*isSubscribed = args.isSubscribed*/
     }
 
@@ -166,6 +170,7 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
             if (!createPlaylistViewModel.playlistName.isNullOrEmpty()) {
                 observeCreatePlaylist()
                 createPlaylistViewModel.createPlaylist(isOwner, channelId)
+                createPlaylistViewModel.playlistName = null
                 alertDialog.dismiss()
             }
             else {
@@ -211,8 +216,8 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
             fragmentTitleList.add("Videos")
             fragmentTitleList.add("Playlists")
 
-            fragmentList.add(MyChannelVideosFragment.newInstance(true, isOwner, channelId))
-            fragmentList.add(MyChannelPlaylistsFragment.newInstance(true, isOwner, channelId))
+            fragmentList.add(MyChannelVideosFragment.newInstance(true, isOwner, channelOwnerId, isPublic))
+            fragmentList.add(MyChannelPlaylistsFragment.newInstance(true, isOwner, channelOwnerId))
         }
 
         observeRatingChannel()
@@ -271,7 +276,7 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
         observe(createPlaylistViewModel.createPlaylistLiveData) {
             when (it) {
                 is Success -> {
-                    playListViewModel.reloadPlaylist.value = true
+                    playlistReloadViewModel.reloadPlaylist.value = true
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
                 }
                 is Failure -> {

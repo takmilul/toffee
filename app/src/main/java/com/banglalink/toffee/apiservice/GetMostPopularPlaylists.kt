@@ -1,17 +1,13 @@
 package com.banglalink.toffee.apiservice
 
 import com.banglalink.toffee.common.paging.BaseApiService
-import com.banglalink.toffee.data.network.request.FavoriteContentRequest
-import com.banglalink.toffee.data.network.request.MostPopularContentRequest
 import com.banglalink.toffee.data.network.request.MostPopularPlaylistsRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
-import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelPlaylist
-import com.banglalink.toffee.util.discardZeroFromDuration
-import com.banglalink.toffee.util.getFormattedViewsText
+import com.banglalink.toffee.util.Utils
+import com.banglalink.toffee.util.Utils.getDate
 import javax.inject.Inject
 
 class GetMostPopularPlaylists @Inject constructor(
@@ -32,6 +28,9 @@ class GetMostPopularPlaylists @Inject constructor(
         }
 
         if (response.response.channelPlaylist != null) {
+            response.response.channelPlaylist.map { 
+                it.formattedCreateTime = Utils.getDateDiffInDayOrHourOrMinute(getDate(it.created_at).time).replace(" ", "")
+            }
             return response.response.channelPlaylist
         }
         return emptyList()

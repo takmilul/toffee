@@ -15,7 +15,7 @@ import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.launch
 
-class MyChannelHomeViewModel @AssistedInject constructor(private val apiService: MyChannelGetDetailService, private val ratingService: MyChannelRatingService, @Assisted private val isOwner: Int, @Assisted private val channelId: Int, @Assisted private val channelOwnerId: Int) :
+class MyChannelHomeViewModel @AssistedInject constructor(private val apiService: MyChannelGetDetailService, private val ratingService: MyChannelRatingService, @Assisted private val isOwner: Int, @Assisted private val isPublic: Int, @Assisted private val channelId: Int, @Assisted private val channelOwnerId: Int) :
     ViewModel() {
 
     private val _data = MutableLiveData<Resource<MyChannelDetailBean?>>()
@@ -25,22 +25,22 @@ class MyChannelHomeViewModel @AssistedInject constructor(private val apiService:
 
     init {
         viewModelScope.launch { 
-            _data.postValue(resultFromResponse { apiService.execute(isOwner, channelId, channelOwnerId) })
+            _data.postValue(resultFromResponse { apiService.execute(isOwner, isPublic, channelId, channelOwnerId) })
         }
     }
 
     @AssistedInject.Factory
     interface AssistedFactory {
-        fun create(isOwner: Int, channelId: Int, channelOwnerId: Int): MyChannelHomeViewModel
+        fun create(isOwner: Int, isPublic: Int, channelId: Int, channelOwnerId: Int): MyChannelHomeViewModel
     }
 
     companion object {
         fun provideFactory(
-            assistedFactory: AssistedFactory, isOwner: Int, channelId: Int, channelOwnerId: Int
+            assistedFactory: AssistedFactory, isOwner: Int, isPublic: Int, channelId: Int, channelOwnerId: Int
         ): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                    return assistedFactory.create(isOwner, channelId, channelOwnerId) as T
+                    return assistedFactory.create(isOwner, isPublic, channelId, channelOwnerId) as T
                 }
             }
     }

@@ -1,6 +1,9 @@
 package com.banglalink.toffee.common.paging
 
-import androidx.paging.*
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.PagingSource
 import kotlinx.coroutines.flow.Flow
 
 class BaseListRepositoryImpl<T: Any> constructor(
@@ -9,13 +12,13 @@ class BaseListRepositoryImpl<T: Any> constructor(
 ): BaseListRepository<T> {
     override fun getList(): Flow<PagingData<T>> {
         return Pager(
-            config = PagingConfig(PAGE_SIZE, enablePlaceholders = true, initialLoadSize = PAGE_SIZE * 2),
+            config = PagingConfig(PAGE_SIZE, enablePlaceholders = true, initialLoadSize = PAGE_SIZE),
 //            remoteMediator = remoteMediator,
             pagingSourceFactory = pagingFactory
         ).flow
     }
 
     companion object {
-        const val PAGE_SIZE = 20
+        const val PAGE_SIZE = 30
     }
 }

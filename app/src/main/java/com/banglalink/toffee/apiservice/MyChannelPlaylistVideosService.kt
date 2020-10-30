@@ -11,7 +11,7 @@ import com.banglalink.toffee.util.getFormattedViewsText
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 
-data class MyChannelPlaylistContentParam(val channelId: Int, val isOwner: Int, val playlistId: Int)
+data class MyChannelPlaylistContentParam(val channelOwnerId: Int, val isOwner: Int, val playlistId: Int)
 
 class MyChannelPlaylistVideosService @AssistedInject constructor(private val preference: Preference, private val toffeeApi: ToffeeApi, @Assisted private val requestParams: MyChannelPlaylistContentParam):
     BaseApiService<ChannelInfo> {
@@ -19,7 +19,7 @@ class MyChannelPlaylistVideosService @AssistedInject constructor(private val pre
     override suspend fun loadData(offset: Int, limit: Int): List<ChannelInfo> {
         val response = tryIO2 {
             toffeeApi.getMyChannelPlaylistVideos(
-                requestParams.channelId,
+                requestParams.channelOwnerId,
                 requestParams.isOwner, 
                 requestParams.playlistId,
                 limit, offset,

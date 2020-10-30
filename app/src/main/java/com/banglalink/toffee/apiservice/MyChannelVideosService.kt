@@ -8,6 +8,7 @@ import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.setReactionIcon
+import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.discardZeroFromDuration
 import com.banglalink.toffee.util.getFormattedViewsText
 import com.squareup.inject.assisted.Assisted
@@ -16,9 +17,10 @@ import com.squareup.inject.assisted.AssistedInject
 data class MyChannelVideosRequestParams(
     val type: String,
     val isOwner: Int,
-    val channelId: Int,
+    val channelOwnerId: Int,
     val categoryId: Int,
-    val subcategoryId: Int
+    val subcategoryId: Int,
+    val isPublic: Int
 )
 
 class MyChannelVideosService @AssistedInject constructor(
@@ -33,9 +35,10 @@ class MyChannelVideosService @AssistedInject constructor(
         val response = tryIO2 {
             toffeeApi.getMyChannelVideos(
                 requestParams.type,
-                requestParams.isOwner, requestParams.channelId,
+                requestParams.isOwner, requestParams.channelOwnerId,
                 requestParams.categoryId,
                 requestParams.subcategoryId,
+                requestParams.isPublic,
                 limit, offset,
                 preference.getDBVersionByApiName("getUgcChannelAllContent"),
                 MyChannelVideosRequest(preference.customerId, preference.password, offset, limit)
@@ -47,6 +50,9 @@ class MyChannelVideosService @AssistedInject constructor(
                 it.formatted_view_count = getFormattedViewsText(it.view_count)
                 it.formattedDuration = discardZeroFromDuration(it.duration)
 
+                if (!it.created_at.isNullOrEmpty()) {
+                    it.formattedCreateTime = Utils.getDateDiffInDayOrHourOrMinute(Utils.getDate(it.created_at).time).replace(" ", "")
+                }
                 val reaction = reactionDao.getReactionByContentId(it.id, preference.customerId)
                 it.userReaction = reaction?.reaction ?: 0
                 it.userReactionIcon = setReactionIcon(reaction?.reaction ?: 0)

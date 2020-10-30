@@ -30,15 +30,19 @@ const val crossFadeDurationInMills = 500
 
 @BindingAdapter("imageFromUrl")
 fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
-    if (!imageUrl.isNullOrEmpty()) {
+    if (imageUrl.isNullOrEmpty()) {
+        view.setImageResource(R.drawable.placeholder)
+    }
+    else {
         view.load(imageUrl) {
-            memoryCachePolicy(CachePolicy.DISABLED)
-            diskCachePolicy(CachePolicy.ENABLED)
+            fallback(R.drawable.placeholder)
+//            placeholder(R.drawable.ic_profile_default)
+            error(R.drawable.placeholder)
+//            memoryCachePolicy(CachePolicy.DISABLED)
+//            diskCachePolicy(CachePolicy.ENABLED)
             crossfade(false)
 //            crossfade(crossFadeDurationInMills)
         }
-    } else {
-        view.setImageResource(R.drawable.placeholder)
     }
 }
 

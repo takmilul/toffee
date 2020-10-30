@@ -3,16 +3,15 @@ package com.banglalink.toffee.ui.mychannel
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.layout
-import com.banglalink.toffee.apiservice.MyChannelPlaylistParams
 import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBinding
@@ -30,25 +29,29 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
     private var enableToolbar: Boolean = false
 
     private var isOwner: Int = 0
-    private var channelId: Int = 0
+    private var channelOwnerId: Int = 0
     override val mAdapter by lazy { MyChannelPlaylistAdapter(this) }
 
     @Inject lateinit var viewModelAssistedFactory: MyChannelPlaylistViewModel.AssistedFactory
-    override val mViewModel by activityViewModels<MyChannelPlaylistViewModel> { MyChannelPlaylistViewModel.provideFactory(viewModelAssistedFactory, MyChannelPlaylistParams(isOwner, channelId)) }
+    override val mViewModel by viewModels<MyChannelPlaylistViewModel> { MyChannelPlaylistViewModel.provideFactory(viewModelAssistedFactory, isOwner, channelOwnerId) }
     private val deletePlaylistViewModel by viewModels<MyChannelPlaylistDeleteViewModel>()
     private val editPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
+    private val playlistReloadViewModel by activityViewModels<MyChannelPlaylistReloadViewModel>()
 
     companion object {
-        private const val SHOW_TOOLBAR = "enableToolbar"
-        private const val IS_OWNER = "isOwner"
-        private const val CHANNEL_ID = "channelId"
+        const val SHOW_TOOLBAR = "enableToolbar"
+        const val IS_OWNER = "isOwner"
 
-        fun newInstance(enableToolbar: Boolean, isOwner: Int, channelId: Int): MyChannelPlaylistsFragment {
+        //        const val IS_PUBLIC = "isPublic"
+        const val CHANNEL_OWNER_ID = "channelOwnerId"
+        const val PLAYLIST_ID = "playlistId"
+
+        fun newInstance(enableToolbar: Boolean, isOwner: Int, channelOwnerId: Int): MyChannelPlaylistsFragment {
             val instance = MyChannelPlaylistsFragment()
             val bundle = Bundle()
             bundle.putBoolean(SHOW_TOOLBAR, enableToolbar)
             bundle.putInt(IS_OWNER, isOwner)
-            bundle.putInt(CHANNEL_ID, channelId)
+            bundle.putInt(CHANNEL_OWNER_ID, channelOwnerId)
             instance.arguments = bundle
             return instance
         }
@@ -56,19 +59,22 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+//        val customerId = Preference.getInstance().customerId
         isOwner = arguments?.getInt(IS_OWNER) ?: 1
-        channelId = arguments?.getInt(CHANNEL_ID) ?: 2
-        
-        channelId = if (isOwner == 0) 0 else channelId
-        
+        channelOwnerId = arguments?.getInt(CHANNEL_OWNER_ID) ?: 0
+
+        Log.i("UGC_Playlist_Service", "UGC_Playlist_Fragment -- isOwner: ${isOwner}, ownerId: ${channelOwnerId}")
+//        channelOwnerId = if(channelOwnerId == customerId) customerId else 0
+
+//        channelOwnerId = if (isOwner == 0) 0 else channelOwnerId
+
         observeReloadPlaylist()
 
     }
 
     private fun observeReloadPlaylist() {
-        observe(mViewModel.reloadPlaylist){
-            if (it){
+        observe(playlistReloadViewModel.reloadPlaylist) {
+            if (it) {
                 mAdapter.refresh()
             }
         }
@@ -76,8 +82,21 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
 
     override fun onItemClicked(item: MyChannelPlaylist) {
         super.onItemClicked(item)
-        val action = MyChannelPlaylistsFragmentDirections.actionMyChannelPlaylistsFragmentToMyChannelPlaylistVideosFragment(channelId, isOwner, item.id)
-        findNavController().navigate(action)
+        
+        if (findNavController().currentDestination?.id == R.id.action_menu_channel_to_myChannelPlaylistVideosFragment) {
+            findNavController().navigate(R.id.action_menu_channel_to_myChannelPlaylistVideosFragment, Bundle().apply {
+                putInt(CHANNEL_OWNER_ID, channelOwnerId)
+                putInt(IS_OWNER, isOwner)
+                putInt(PLAYLIST_ID, item.id)
+            })
+        }
+        else if(findNavController().currentDestination?.id == R.id.action_myChannelHomeFragment_to_myChannelPlaylistVideosFragment) {
+            findNavController().navigate(R.id.action_myChannelHomeFragment_to_myChannelPlaylistVideosFragment, Bundle().apply {
+                putInt(CHANNEL_OWNER_ID, channelOwnerId)
+                putInt(IS_OWNER, isOwner)
+                putInt(PLAYLIST_ID, item.id)
+            })
+        }
     }
 
     override fun getEmptyViewInfo(): Pair<Int, String?> {
@@ -87,7 +106,7 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
     override fun onOpenMenu(view: View, item: MyChannelPlaylist) {
         super.onOpenMenu(view, item)
 
-        PopupMenu(requireContext(), view).apply {
+        android.widget.PopupMenu(requireContext(), view).apply {
             inflate(R.menu.menu_channel_playlist)
             setOnMenuItemClickListener {
                 when (it.itemId) {
@@ -132,7 +151,7 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
         playlistBinding.createButton.setOnClickListener {
             if (!editPlaylistViewModel.playlistName.isNullOrEmpty()) {
                 observeEditPlaylist()
-                editPlaylistViewModel.editPlaylist(playlistId, channelId , isOwner)
+                editPlaylistViewModel.editPlaylist(playlistId, channelOwnerId, isOwner)
                 alertDialog.dismiss()
             }
             else {

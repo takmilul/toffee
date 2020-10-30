@@ -43,7 +43,7 @@ import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class UploadMethodFragment: BaseFragment() {
+class UploadMethodFragment : BaseFragment() {
 
     @Inject
     lateinit var mUploadInfoRepository: UploadInfoRepository
@@ -51,7 +51,8 @@ class UploadMethodFragment: BaseFragment() {
     private var videoUri: Uri? = null
 
     companion object {
-        private const val REQUEST_VIDEO = 0x220
+        private const val REQUEST_CAPTURE_VIDEO = 0x220
+        private const val REQUEST_PICK_VIDEO = 0x230
 
         fun newInstance(): UploadMethodFragment {
             return UploadMethodFragment()
@@ -88,14 +89,14 @@ class UploadMethodFragment: BaseFragment() {
 
     private fun checkFileSystemPermission() {
         lifecycleScope.launch {
-            try{
-                if(askPermission(Manifest.permission.READ_EXTERNAL_STORAGE).isAccepted) {
+            try {
+                if (askPermission(Manifest.permission.READ_EXTERNAL_STORAGE).isAccepted) {
                     startActivityForResult(
                         Intent(
                             Intent.ACTION_PICK,
                             MediaStore.Video.Media.EXTERNAL_CONTENT_URI
                         ),
-                        REQUEST_VIDEO
+                        REQUEST_PICK_VIDEO
                     )
                 }
             }
@@ -107,28 +108,30 @@ class UploadMethodFragment: BaseFragment() {
     }
 
     private fun checkCameraPermissions() {
-        lifecycleScope.launch{
+        lifecycleScope.launch {
             try {
-                if(askPermission(Manifest.permission.CAMERA).isAccepted){
+                if (askPermission(Manifest.permission.CAMERA).isAccepted) {
                     openCameraIntent()
                 }
             }
-            catch (e: PermissionException){
+            catch (e: PermissionException) {
                 ToffeeAnalytics.logBreadCrumb("Camera permission denied")
                 requireContext().showToast(getString(R.string.grant_camera_permission))
             }
         }
     }
 
+    var videoFile: File? = null
     private fun openCameraIntent() {
         val videoIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
         if (videoIntent.resolveActivity(requireActivity().packageManager) != null) {
 
-            val videoFile: File?
+//            val videoFile: File?
             try {
                 videoFile = createVideoFile()
                 ToffeeAnalytics.logBreadCrumb("Video file created")
-            } catch (e: IOException) {
+            }
+            catch (e: IOException) {
                 e.printStackTrace()
                 return
             }
@@ -136,11 +139,11 @@ class UploadMethodFragment: BaseFragment() {
             videoUri = FileProvider.getUriForFile(
                 requireContext(),
                 "${requireContext().packageName}.provider",
-                videoFile
+                videoFile!!
             )
             ToffeeAnalytics.logBreadCrumb("Video uri set")
             videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, videoUri)
-            startActivityForResult(videoIntent, REQUEST_VIDEO)
+            startActivityForResult(videoIntent, REQUEST_CAPTURE_VIDEO)
             ToffeeAnalytics.logBreadCrumb("Camera activity started")
 
         }
@@ -157,15 +160,35 @@ class UploadMethodFragment: BaseFragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if(resultCode == Activity.RESULT_OK
-            && requestCode == REQUEST_VIDEO
+        when (requestCode) {
+            REQUEST_PICK_VIDEO -> {
+                if (resultCode == Activity.RESULT_OK && data != null && data.dataString != null) {
+                    uploadUri(data.dataString!!)
+                }
+                else {
+                    ToffeeAnalytics.logBreadCrumb("Camera/video picker returned without any data")
+                }
+            }
+            REQUEST_CAPTURE_VIDEO -> {
+                if (resultCode == Activity.RESULT_OK && videoFile != null) {
+                    println("CaptureAbsolutePath${videoFile!!.absolutePath}")
+                    println("CapturePath${videoFile!!.path}")
+                    uploadUri(videoFile!!.absolutePath)
+                }
+                else {
+                    ToffeeAnalytics.logBreadCrumb("Camera/video capture result not returned")
+                }
+            }
+        }
+        /*if(resultCode == Activity.RESULT_OK
+            && requestCode == REQUEST_CAPTURE_VIDEO
             && data != null) {
             data.dataString?.let {
                 uploadUri(it)
             }
         } else {
             ToffeeAnalytics.logBreadCrumb("Camera/video picker returned without any data")
-        }
+        }*/
     }
 
     private fun uploadUri(uri: String) {
@@ -182,8 +205,8 @@ class UploadMethodFragment: BaseFragment() {
                 credential.accessToken
             }
 
-            if(accessToken.isNullOrEmpty()) {
-                open_gallery_button.snack("Error uploading file. Please try again later."){}
+            if (accessToken.isNullOrEmpty()) {
+                open_gallery_button.snack("Error uploading file. Please try again later.") {}
                 return@launch
             }
 
@@ -191,9 +214,10 @@ class UploadMethodFragment: BaseFragment() {
                 UtilsKt.fileNameFromContentUri(requireContext(), Uri.parse(uri))
             }
             val idx = fn.lastIndexOf(".")
-            val ext = if(idx >= 0) {
+            val ext = if (idx >= 0) {
                 fn.substring(idx)
-            } else ""
+            }
+            else ""
 
             val fileName = mPref.customerId.toString() + "_" + UUID.randomUUID().toString() + ext
             val upInfo = UploadInfo(fileUri = uri, fileName = fileName)
@@ -249,14 +273,14 @@ class UploadMethodFragment: BaseFragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if(context is HomeActivity) {
+        if (context is HomeActivity) {
             context.rotateFab(true)
         }
     }
 
     override fun onDetach() {
         requireActivity().let {
-            if(it is HomeActivity) it.rotateFab(false)
+            if (it is HomeActivity) it.rotateFab(false)
         }
         super.onDetach()
     }

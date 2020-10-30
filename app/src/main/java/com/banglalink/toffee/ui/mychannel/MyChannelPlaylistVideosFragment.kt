@@ -44,12 +44,17 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(), BaseLis
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val args = MyChannelPlaylistVideosFragmentArgs.fromBundle(requireArguments())
-        requestParams = MyChannelPlaylistContentParam(args.channelId, args.isOwner, args.playlistId)
+        requestParams = MyChannelPlaylistContentParam(args.channelOwnerId, args.isOwner, args.playlistId)
     }
     
     override fun onItemClicked(item: ChannelInfo) {
         super.onItemClicked(item)
-        homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+        if (item.isApproved == 0) {
+            Toast.makeText(requireContext(), "Your video has not approved yet. Once it's approved, you can play the video", Toast.LENGTH_SHORT).show()
+        }
+        else {
+            homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+        }
     }
 
     override fun onOpenMenu(view: View, item: ChannelInfo) {
@@ -61,7 +66,7 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(), BaseLis
                 when (it.itemId) {
                     R.id.menu_delete_playlist_video -> {
                         observeDeletePlaylistVideo()
-                        mViewModel.deletePlaylistVideo(requestParams.channelId, item.playlistContentId, requestParams.playlistId)
+                        mViewModel.deletePlaylistVideo(requestParams.channelOwnerId, item.playlistContentId, requestParams.playlistId)
                     }
                 }
                 return@setOnMenuItemClickListener true

@@ -76,8 +76,14 @@ public class Utils {
         long diffMinutes = diff / (60000);
         diffMinutes = Math.max(0, diffMinutes);
 
+        if(diffMinutes >= 365*24*60){
+            return (diffMinutes / (365*24*60)) + " Y";
+        }
+        if(diffMinutes >= 30*24*60){
+            return (diffMinutes / (30*24*60)) + " M";
+        }
         if (diffMinutes >= 24*60) {
-            return (diffMinutes / 24*60) +" d";
+            return (diffMinutes / (24*60)) +" d";
         }
         if (diffMinutes >= 60){
             return (diffMinutes / 60) + " h";

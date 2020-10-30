@@ -2,6 +2,7 @@ package com.banglalink.toffee.ui.mychannel
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -23,7 +24,8 @@ import javax.inject.Inject
 class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReactionCallback<ChannelInfo> {
 
     private var isOwner: Int = 0
-    private var channelId: Int = 0
+    private var channelOwnerId: Int = 0
+    private var isPublic: Int = 0
     private var enableToolbar: Boolean = false
 
     @Inject
@@ -32,20 +34,25 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
     override val mAdapter by lazy { MyChannelVideosAdapter(this) }
 
     @Inject lateinit var viewModelAssistedFactory: MyChannelVideosViewModel.AssistedFactory
-    override val mViewModel by viewModels<MyChannelVideosViewModel> { MyChannelVideosViewModel.provideFactory(viewModelAssistedFactory, isOwner, channelId) }
+    override val mViewModel by viewModels<MyChannelVideosViewModel> { MyChannelVideosViewModel.provideFactory(viewModelAssistedFactory, isOwner, channelOwnerId, isPublic) }
+    
+    /*@Inject lateinit var popularChannelViewModelAssistedFactory: MyChannelVideosViewModel.AssistedFactory
+    override val popularChannelViewModel by viewModels<MyChannelVideosViewModel> { MyChannelVideosViewModel.provideFactory(popularChannelViewModelAssistedFactory, isOwner, channelOwnerId) }*/
     
     private val homeViewModel by activityViewModels<HomeViewModel>()
 
     companion object {
         private const val SHOW_TOOLBAR = "enableToolbar"
         private const val IS_OWNER = "isOwner"
-        private const val CHANNEL_ID = "channelId"
-        fun newInstance(enableToolbar: Boolean, isOwner: Int, channelId: Int): MyChannelVideosFragment {
+        private const val CHANNEL_OWNER_ID = "channelOwnerId"
+        private const val IS_PUBLIC = "isPublic"
+        fun newInstance(enableToolbar: Boolean, isOwner: Int, channelOwnerId: Int, isPublic: Int): MyChannelVideosFragment {
             val instance = MyChannelVideosFragment()
             val bundle = Bundle()
             bundle.putBoolean(SHOW_TOOLBAR, enableToolbar)
             bundle.putInt(IS_OWNER, isOwner)
-            bundle.putInt(CHANNEL_ID, channelId)
+            bundle.putInt(CHANNEL_OWNER_ID, channelOwnerId)
+            bundle.putInt(IS_PUBLIC, isPublic)
             instance.arguments = bundle
             return instance
         }
@@ -55,8 +62,8 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
         super.onCreate(savedInstanceState)
 
         isOwner = arguments?.getInt(IS_OWNER) ?: 0
-        channelId = arguments?.getInt(CHANNEL_ID) ?: 0
-
+        channelOwnerId = arguments?.getInt(CHANNEL_OWNER_ID) ?: 0
+        isPublic = arguments?.getInt(IS_PUBLIC) ?: 0
     }
     
     override fun getEmptyViewInfo(): Pair<Int, String?> {
@@ -75,7 +82,7 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_add_to_playlist -> {
-                        val fragment = MyChannelAddToPlaylistFragment.newInstance(item.id.toInt(), isOwner, channelId)
+                        val fragment = MyChannelAddToPlaylistFragment.newInstance(item.id.toInt(), isOwner, channelOwnerId)
                         fragment.show(requireActivity().supportFragmentManager, "add_to_playlist")
                         return@setOnMenuItemClickListener true
                     }
@@ -138,7 +145,12 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
     
     override fun onItemClicked(item: ChannelInfo) {
         super.onItemClicked(item)
-        homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+        if (item.isApproved == 0) {
+            Toast.makeText(requireContext(), "Your video has not approved yet. Once it's approved, you can play the video", Toast.LENGTH_SHORT).show()
+        }
+        else {
+            homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+        }
     }
     
     override fun onReactionClicked(view: View, item: ChannelInfo) {

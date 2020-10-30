@@ -9,6 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelPlaylist
 import com.banglalink.toffee.ui.category.CategoryDetailsFragmentDirections
@@ -39,7 +40,8 @@ class MostPopularPlaylistsFragment: HomeBaseFragment() {
         mAdapter = MostPopularPlaylistsAdapter(object : BaseListItemCallback<MyChannelPlaylist> {
             override fun onItemClicked(item: MyChannelPlaylist) {
 //                homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
-                val action = CategoryDetailsFragmentDirections.actionCategoryDetailsFragmentToMyChannelPlaylistVideosFragment(item.channelId, item.isOwner, item.playlistTableId)
+                val isOwner = if(item.channelCreatorId == Preference.getInstance().customerId) 1 else 0
+                val action = CategoryDetailsFragmentDirections.actionCategoryDetailsFragmentToMyChannelPlaylistVideosFragment(item.channelCreatorId, isOwner, item.playlistTableId)
                 findNavController().navigate(action)
             }
         })

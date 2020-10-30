@@ -51,4 +51,5 @@
     <color name="cardOverlayColor">#FFFFFFFF</color>
     <color name="unseenCardColor">#EBFFFB</color>
     <color name="reactionBgColor">#34C9B5</color>
+    <color name="approvalPendingColor">#FF8B57</color>
 </resources>

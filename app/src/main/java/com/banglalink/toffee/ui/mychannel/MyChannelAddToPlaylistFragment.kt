@@ -12,7 +12,6 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.banglalink.toffee.apiservice.MyChannelPlaylistParams
 import com.banglalink.toffee.databinding.AlertDialogMyChannelAddToPlaylistBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.MyChannelPlaylist
@@ -37,10 +36,10 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
 
     @Inject
     lateinit var viewModelAssistedFactory: MyChannelPlaylistViewModel.AssistedFactory
-    private val playlistViewModel by activityViewModels<MyChannelPlaylistViewModel>{
-        MyChannelPlaylistViewModel.provideFactory(viewModelAssistedFactory,
-            MyChannelPlaylistParams(isOwner, channelId))
+    private val playlistViewModel by viewModels<MyChannelPlaylistViewModel>{
+        MyChannelPlaylistViewModel.provideFactory(viewModelAssistedFactory, isOwner, channelId)
     }
+    private val playlistReloadViewModel by activityViewModels<MyChannelPlaylistReloadViewModel>()
 
     private lateinit var alertDialog: AlertDialog
 
@@ -133,7 +132,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
                 playlistId = selectedItem!!.id
             }
             observeAddToPlaylist()
-            viewModel.addToPlaylist(playlistId, contentId, channelId)
+            viewModel.addToPlaylist(playlistId, contentId, channelId, isOwner)
         }
     }
 
@@ -142,7 +141,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
             when (it) {
                 is Success -> {
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
-                    playlistViewModel.reloadPlaylist.postValue(true)
+                    playlistReloadViewModel.reloadPlaylist.postValue(true)
                     alertDialog.dismiss()
                 }
                 is Failure -> {

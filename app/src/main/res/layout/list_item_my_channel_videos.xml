@@ -6,6 +6,10 @@
     >
 
     <data>
+        <import type="android.view.View"/>
+        <!--<variable
+            name="isPublic"
+            type="Integer" />-->
         <variable
             name="data"
             type="com.banglalink.toffee.model.ChannelInfo" />
@@ -27,6 +31,7 @@
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:minHeight="200dp"
+            android:scaleType="fitXY"
             app:layout_constraintDimensionRatio="W,16:9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -64,7 +69,7 @@
             style="@style/programNameTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="12dp"
             android:layout_marginEnd="10dp"
             android:ellipsize="end"
@@ -82,8 +87,8 @@
             android:id="@+id/uploadDuration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="14h"
             android:textColor="#829AB8"
+            android:text="@{data.formattedCreateTime}"
             app:layout_constraintEnd_toStartOf="@id/guideline2"
             app:layout_constraintStart_toEndOf="@+id/name"
             app:layout_constraintTop_toTopOf="@+id/name" />
@@ -118,17 +123,17 @@
             android:id="@+id/textView5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
             android:layout_marginTop="32dp"
             android:drawablePadding="8dp"
-            android:layout_marginStart="24dp"
             android:text="@{data.formatted_view_count}"
             android:textColor="#829AB8"
             app:drawableStartCompat="@drawable/ic_view"
+            app:layout_constraintBottom_toBottomOf="@id/view"
+            app:layout_constraintEnd_toStartOf="@id/textView8"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="@+id/name"
             app:layout_constraintTop_toBottomOf="@+id/name"
-            app:layout_constraintBottom_toBottomOf="@id/view"
-            app:layout_constraintEnd_toStartOf="@id/textView8"
             tools:text="10K" />
 
         <TextView
@@ -139,28 +144,51 @@
             android:text="@{data.formatedShareCount}"
             android:textColor="#829AB8"
             app:drawableStartCompat="@drawable/ic_share"
+            app:layout_constraintBottom_toBottomOf="@id/textView5"
             app:layout_constraintEnd_toStartOf="@+id/textView9"
             app:layout_constraintStart_toEndOf="@+id/textView5"
-            app:layout_constraintTop_toTopOf="@+id/textView5"
-            app:layout_constraintBottom_toBottomOf="@id/textView5"/>
+            app:layout_constraintTop_toTopOf="@+id/textView5" />
 
         <TextView
             android:id="@+id/textView9"
+            bindEmoCount="@{data}"
+            loadTextLeftDrawable="@{data.userReactionIcon}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="24dp"
             android:drawablePadding="4dp"
-            bindEmoCount="@{data}"
+            android:gravity="center_vertical"
             android:onClick="@{(v) -> callback.onReactionClicked(v, data)}"
             android:textColor="#829AB8"
-            android:gravity="center_vertical"
             app:drawableStartCompat="@drawable/ic_like_emo"
-            loadTextLeftDrawable="@{data.userReactionIcon}"
-            app:layout_constraintStart_toEndOf="@id/textView8"
             app:layout_constraintBottom_toBottomOf="@+id/textView5"
             app:layout_constraintEnd_toEndOf="@+id/view"
+            app:layout_constraintStart_toEndOf="@id/textView8"
             app:layout_constraintTop_toTopOf="@+id/textView5"
             tools:text="904.5k" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/reactionGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="@{data.isApproved == null || data.isApproved == 1 ? View.VISIBLE : View.GONE}"
+            app:constraint_referenced_ids="textView5,textView8,textView9" />
+        
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="32dp"
+            android:drawablePadding="8dp"
+            android:text="Approval Pending"
+            android:textSize="16sp"
+            android:visibility="@{reactionGroup.visibility == View.GONE ? View.VISIBLE : View.GONE}"
+            android:textColor="@color/approvalPendingColor"
+            app:drawableStartCompat="@drawable/ic_time"
+            app:layout_constraintBottom_toBottomOf="@id/view"
+            app:layout_constraintEnd_toStartOf="@id/textView8"
+            app:layout_constraintStart_toStartOf="@+id/name"
+            app:layout_constraintTop_toBottomOf="@+id/name" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
