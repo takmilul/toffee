@@ -42,6 +42,7 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
     private var rating: Float = 0.0f
     private var isSubscribed: Int = 0
     private var isPublic: Int = 0
+    private var isFromOutside: Boolean = false
     private var myChannelDetail: MyChannelDetail? = null
     private lateinit var binding: FragmentMyChannelHomeBinding
     private lateinit var viewPagerAdapter: ViewPagerAdapter
@@ -62,13 +63,16 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
         const val CHANNEL_ID = "channelId"
         const val IS_PUBLIC = "isPublic"
         const val CHANNEL_OWNER_ID = "channelOwnerId"
-        fun newInstance(isOwner: Int, channelId: Int, channelOwnerId: Int, isPublic: Int): MyChannelHomeFragment {
+        const val IS_FROM_OUTSIDE = "isFromOutside"
+        
+        fun newInstance(isOwner: Int, channelId: Int, channelOwnerId: Int, isPublic: Int, isFromOutside: Boolean): MyChannelHomeFragment {
             val instance = MyChannelHomeFragment()
             val bundle = Bundle()
             bundle.putInt(IS_OWNER, isOwner)
             bundle.putInt(CHANNEL_ID, channelId)
             bundle.putInt(IS_PUBLIC, isPublic)
             bundle.putInt(CHANNEL_OWNER_ID, channelOwnerId)
+            bundle.putBoolean(IS_FROM_OUTSIDE, isFromOutside)
             instance.arguments = bundle
             return instance
         }
@@ -84,6 +88,7 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
         channelOwnerId = args?.getInt(CHANNEL_OWNER_ID) ?: preference.customerId
         channelOwnerId = if (channelOwnerId == 0) preference.customerId else channelOwnerId
 
+        isFromOutside = args?.getBoolean(IS_FROM_OUTSIDE) ?: false
         Log.i("UGC_Playlist_Service", "UGC_Home -- isOwner: ${isOwner}, ownerId: ${channelOwnerId}")
         /*isSubscribed = args.isSubscribed*/
     }
@@ -104,7 +109,7 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
         binding.progressBar.visibility = View.VISIBLE
 
         observeChannelDetail()
-//        viewModel.getDetail()
+        
         binding.channelDetailView.addBioButton.setOnClickListener(this)
         binding.channelDetailView.editButton.setOnClickListener(this)
         binding.channelDetailView.analyticsButton.setOnClickListener(this)
@@ -115,15 +120,23 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
     override fun onClick(v: View?) {
         when (v) {
             addBioButton -> {
-                findNavController().navigate(R.id.action_menu_channel_to_myChannelEditFragment, Bundle().apply { putParcelable("myChannelDetail", myChannelDetail) })
-                /*val action = MyChannelHomeFragmentDirections.actionMyChannelHomeFragmentToMyChannelEditDetailFragment(myChannelDetail)
-                findNavController().navigate(action)*/
+                if (isFromOutside) {
+                    val action = MyChannelHomeFragmentDirections.actionMyChannelHomeFragmentToMyChannelEditDetailFragment(myChannelDetail)
+                    findNavController().navigate(action)
+                }
+                else{
+                    findNavController().navigate(R.id.action_menu_channel_to_myChannelEditFragment, Bundle().apply { putParcelable("myChannelDetail", myChannelDetail) })
+                }
             }
 
             editButton -> {
-                findNavController().navigate(R.id.action_menu_channel_to_myChannelEditFragment, Bundle().apply { putParcelable("myChannelDetail", myChannelDetail) })
-                /*val action = MyChannelHomeFragmentDirections.actionMyChannelHomeFragmentToMyChannelEditDetailFragment(myChannelDetail)
-                findNavController().navigate(action)*/
+                if (isFromOutside) {
+                    val action = MyChannelHomeFragmentDirections.actionMyChannelHomeFragmentToMyChannelEditDetailFragment(myChannelDetail)
+                    findNavController().navigate(action)
+                }
+                else{
+                    findNavController().navigate(R.id.action_menu_channel_to_myChannelEditFragment, Bundle().apply { putParcelable("myChannelDetail", myChannelDetail) })
+                }
             }
 
             ratingButton -> showRatingDialog()
@@ -217,7 +230,7 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
             fragmentTitleList.add("Playlists")
 
             fragmentList.add(MyChannelVideosFragment.newInstance(true, isOwner, channelOwnerId, isPublic))
-            fragmentList.add(MyChannelPlaylistsFragment.newInstance(true, isOwner, channelOwnerId))
+            fragmentList.add(MyChannelPlaylistsFragment.newInstance(true, isOwner, channelOwnerId, isFromOutside))
         }
 
         observeRatingChannel()

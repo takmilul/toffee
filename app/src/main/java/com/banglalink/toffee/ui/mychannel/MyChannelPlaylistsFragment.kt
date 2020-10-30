@@ -3,7 +3,6 @@ package com.banglalink.toffee.ui.mychannel
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -30,6 +29,7 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
 
     private var isOwner: Int = 0
     private var channelOwnerId: Int = 0
+    private var isFromOutside: Boolean = false
     override val mAdapter by lazy { MyChannelPlaylistAdapter(this) }
 
     @Inject lateinit var viewModelAssistedFactory: MyChannelPlaylistViewModel.AssistedFactory
@@ -46,12 +46,13 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
         const val CHANNEL_OWNER_ID = "channelOwnerId"
         const val PLAYLIST_ID = "playlistId"
 
-        fun newInstance(enableToolbar: Boolean, isOwner: Int, channelOwnerId: Int): MyChannelPlaylistsFragment {
+        fun newInstance(enableToolbar: Boolean, isOwner: Int, channelOwnerId: Int, isFromOutside: Boolean): MyChannelPlaylistsFragment {
             val instance = MyChannelPlaylistsFragment()
             val bundle = Bundle()
             bundle.putBoolean(SHOW_TOOLBAR, enableToolbar)
             bundle.putInt(IS_OWNER, isOwner)
             bundle.putInt(CHANNEL_OWNER_ID, channelOwnerId)
+            bundle.putBoolean(MyChannelHomeFragment.IS_FROM_OUTSIDE, isFromOutside)
             instance.arguments = bundle
             return instance
         }
@@ -59,17 +60,10 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        val customerId = Preference.getInstance().customerId
         isOwner = arguments?.getInt(IS_OWNER) ?: 1
         channelOwnerId = arguments?.getInt(CHANNEL_OWNER_ID) ?: 0
-
-        Log.i("UGC_Playlist_Service", "UGC_Playlist_Fragment -- isOwner: ${isOwner}, ownerId: ${channelOwnerId}")
-//        channelOwnerId = if(channelOwnerId == customerId) customerId else 0
-
-//        channelOwnerId = if (isOwner == 0) 0 else channelOwnerId
-
+        isFromOutside = arguments?.getBoolean(MyChannelHomeFragment.IS_FROM_OUTSIDE) ?: false
         observeReloadPlaylist()
-
     }
 
     private fun observeReloadPlaylist() {
@@ -82,16 +76,12 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
 
     override fun onItemClicked(item: MyChannelPlaylist) {
         super.onItemClicked(item)
-        
-        if (findNavController().currentDestination?.id == R.id.action_menu_channel_to_myChannelPlaylistVideosFragment) {
-            findNavController().navigate(R.id.action_menu_channel_to_myChannelPlaylistVideosFragment, Bundle().apply {
-                putInt(CHANNEL_OWNER_ID, channelOwnerId)
-                putInt(IS_OWNER, isOwner)
-                putInt(PLAYLIST_ID, item.id)
-            })
+        if (isFromOutside) {
+            val action = MyChannelHomeFragmentDirections.actionMyChannelHomeFragmentToMyChannelPlaylistVideosFragment(channelOwnerId, isOwner, item.id)
+            parentFragment?.findNavController()?.navigate(action)
         }
-        else if(findNavController().currentDestination?.id == R.id.action_myChannelHomeFragment_to_myChannelPlaylistVideosFragment) {
-            findNavController().navigate(R.id.action_myChannelHomeFragment_to_myChannelPlaylistVideosFragment, Bundle().apply {
+        else {
+            findNavController().navigate(R.id.action_menu_channel_to_myChannelPlaylistVideosFragment, Bundle().apply {
                 putInt(CHANNEL_OWNER_ID, channelOwnerId)
                 putInt(IS_OWNER, isOwner)
                 putInt(PLAYLIST_ID, item.id)

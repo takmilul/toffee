@@ -62,6 +62,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
                         putInt(MyChannelHomeFragment.CHANNEL_ID, channelId)
                         putInt(MyChannelHomeFragment.IS_PUBLIC, isPublic)
                         putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, item.channelOwnerId)
+                        putBoolean(MyChannelHomeFragment.IS_FROM_OUTSIDE, true)
                     })
                 }
                 else {
@@ -70,6 +71,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
                         putInt(MyChannelHomeFragment.CHANNEL_ID, channelId)
                         putInt(MyChannelHomeFragment.IS_PUBLIC, isPublic)
                         putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, item.channelOwnerId)
+                        putBoolean(MyChannelHomeFragment.IS_FROM_OUTSIDE, true)
                     })
                 }
             }

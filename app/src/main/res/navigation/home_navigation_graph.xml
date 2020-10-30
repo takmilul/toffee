@@ -72,17 +72,6 @@
         <action
             android:id="@+id/action_menu_channel_to_myChannelPlaylistVideosFragment"
             app:destination="@id/myChannelPlaylistVideosFragment" />
-        <!--<argument
-            android:name="isOwner"
-            app:argType="integer"
-            android:defaultValue="1"/>
-        <argument
-            android:name="channelId"
-            app:argType="integer"
-            android:defaultValue="0"/>
-        <argument
-            android:name="channelOwnerId"
-            app:argType="integer" />-->
     </fragment>
     <fragment
         android:id="@+id/uploadMethodFragment"
@@ -103,7 +92,6 @@
             android:id="@+id/action_editUploadInfoFragment_to_thumbnailSelectionMethodFragment"
             app:destination="@id/thumbnailSelectionMethodFragment" />
     </fragment>
-
     <fragment
         android:id="@+id/allCategoriesFragment"
         android:name="com.banglalink.toffee.ui.landing.AllCategoriesFragment"
@@ -142,15 +130,9 @@
         android:id="@+id/myChannelHomeFragment"
         android:name="com.banglalink.toffee.ui.mychannel.MyChannelHomeFragment"
         android:label="MyChannelHomeFragment" >
-        <!--<action
+        <action
             android:id="@+id/action_myChannelHomeFragment_to_MyChannelEditDetailFragment"
             app:destination="@id/MyChannelEditDetailFragment" />
-        <action
-            android:id="@+id/action_myChannelHomeFragment_to_myChannelPlaylistVideosFragment"
-            app:destination="@id/myChannelPlaylistVideosFragment" />
-        <action
-            android:id="@+id/action_myChannelHomeFragment_to_myChannelPlaylistsFragment"
-            app:destination="@id/myChannelPlaylistsFragment" />-->
         <action
             android:id="@+id/action_myChannelHomeFragment_to_myChannelPlaylistVideosFragment"
             app:destination="@id/myChannelPlaylistVideosFragment" />
