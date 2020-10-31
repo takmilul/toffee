@@ -16,6 +16,12 @@
             type="Integer" />
 
         <variable
+            name="isRated"
+            type="Integer" />
+        <variable
+            name="myRating"
+            type="Integer" />
+        <variable
             name="data"
             type="com.banglalink.toffee.model.MyChannelDetailBean" />
         <variable
@@ -52,6 +58,8 @@
                     app:data="@{data}"
                     app:isOwner="@{isOwner}"
                     app:isSubscribed="@{isSubscribed}"
+                    app:isRated="@{isRated}"
+                    app:myRating="@{myRating}"
                     app:layout_collapseMode="parallax"
                     app:layout_collapseParallaxMultiplier="1"
                     app:layout_scrollFlags="scroll|exitUntilCollapsed" />

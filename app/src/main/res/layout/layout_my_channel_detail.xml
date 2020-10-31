@@ -13,6 +13,12 @@
             name="isSubscribed"
             type="Integer" />
         <variable
+            name="myRating"
+            type="Integer" />
+        <variable
+            name="isRated"
+            type="Integer" />
+        <variable
             name="data"
             type="com.banglalink.toffee.model.MyChannelDetailBean" />
     </data>
@@ -126,15 +132,25 @@
             app:constraint_referenced_ids="channelDescriptionTextView,expandButton" />
 
         <com.google.android.material.button.MaterialButton
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
             android:id="@+id/ratingButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="32dp"
             android:layout_marginBottom="16dp"
-            android:text="Rate"
+            android:text='@{data.myRating > 0 ? String.valueOf(data.myRating) : "Rate"}'
             android:textAllCaps="false"
-            style="@style/ButtonStyleRingGreen"
+            app:icon="@drawable/ic_rating_fill"
+            app:iconSize="16dp"
+            app:iconGravity="textStart"
+            bindTextColor="@{data.myRating}"
+            app:strokeWidth="1dp"
+            app:cornerRadius="30dp"
+            android:gravity="center"
+            android:minWidth="110dp"
+            app:rippleColor="@color/dark_green"
+            app:strokeColor="@color/dark_green"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/subscriptionButton"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
@@ -158,7 +174,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:text="@{data.formattedSubscriberCount}"
+            android:text="@{String.valueOf(data.subscriberCount)}"
             android:textColor="@color/title_text_color_light"
             tools:text="565K"
             app:layout_constraintBottom_toBottomOf="@+id/subscriptionButton"

@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.mychannel
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
@@ -45,33 +46,35 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(), BaseLis
         super.onCreate(savedInstanceState)
         val args = MyChannelPlaylistVideosFragmentArgs.fromBundle(requireArguments())
         requestParams = MyChannelPlaylistContentParam(args.channelOwnerId, args.isOwner, args.playlistId)
+        Log.i("UGC_Owner", "isOwner: ${requestParams.isOwner}")
     }
     
     override fun onItemClicked(item: ChannelInfo) {
         super.onItemClicked(item)
-        if (item.isApproved == 0) {
-            Toast.makeText(requireContext(), "Your video has not approved yet. Once it's approved, you can play the video", Toast.LENGTH_SHORT).show()
+        if (item.isApproved == 1) {
+            homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
         }
         else {
-            homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+            Toast.makeText(requireContext(), "Your video has not approved yet. Once it's approved, you can play the video", Toast.LENGTH_SHORT).show()
         }
     }
 
     override fun onOpenMenu(view: View, item: ChannelInfo) {
         super.onOpenMenu(view, item)
-
-        PopupMenu(requireContext(), view).apply {
-            inflate(R.menu.menu_delete_playlist_video)
-            setOnMenuItemClickListener {
-                when (it.itemId) {
-                    R.id.menu_delete_playlist_video -> {
-                        observeDeletePlaylistVideo()
-                        mViewModel.deletePlaylistVideo(requestParams.channelOwnerId, item.playlistContentId, requestParams.playlistId)
+        if (requestParams.isOwner == 1) {
+            PopupMenu(requireContext(), view).apply {
+                inflate(R.menu.menu_delete_playlist_video)
+                setOnMenuItemClickListener {
+                    when (it.itemId) {
+                        R.id.menu_delete_playlist_video -> {
+                            observeDeletePlaylistVideo()
+                            mViewModel.deletePlaylistVideo(requestParams.channelOwnerId, item.playlistContentId, requestParams.playlistId)
+                        }
                     }
+                    return@setOnMenuItemClickListener true
                 }
-                return@setOnMenuItemClickListener true
+                show()
             }
-            show()
         }
     }
 

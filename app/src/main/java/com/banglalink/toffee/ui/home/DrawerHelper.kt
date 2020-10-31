@@ -14,19 +14,16 @@ import com.banglalink.toffee.extension.loadProfileImage
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.about.AboutActivity
-import com.banglalink.toffee.ui.channels.ChannelFragment
 import com.banglalink.toffee.ui.common.HtmlPageViewActivity
 import com.banglalink.toffee.ui.common.ParentLevelAdapter
-import com.banglalink.toffee.ui.favorite.FavoriteFragment
 import com.banglalink.toffee.ui.profile.ViewProfileActivity
-import com.banglalink.toffee.ui.recent.RecentFragment
 import com.banglalink.toffee.ui.redeem.RedeemCodeActivity
 import com.banglalink.toffee.ui.refer.ReferAFriendActivity
 import com.banglalink.toffee.ui.settings.SettingsActivity
 import com.banglalink.toffee.ui.subscription.MySubscriptionActivity
 import com.banglalink.toffee.ui.subscription.PackageListActivity
 import kotlinx.android.synthetic.main.layout_appbar.view.*
-import java.util.ArrayList
+import java.util.*
 
 class DrawerHelper(val activity: HomeActivity,val binding:ActivityMainMenuBinding): ParentLevelAdapter.OnNavigationItemClickListener{
 
@@ -42,6 +39,7 @@ class DrawerHelper(val activity: HomeActivity,val binding:ActivityMainMenuBindin
         )
         //After instantiating your ActionBarDrawerToggle
         toggle.isDrawerIndicatorEnabled = false
+        
         toggle.setHomeAsUpIndicator(R.drawable.ic_home)
         val parentAdapter =
             ParentLevelAdapter(activity, generateNavMenu(), this, binding.navMenuList)
@@ -50,9 +48,14 @@ class DrawerHelper(val activity: HomeActivity,val binding:ActivityMainMenuBindin
         toggle.syncState()
         binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         toggle.toolbarNavigationClickListener = View.OnClickListener {
-            if (activity.supportFragmentManager.backStackEntryCount > 1) {
-                activity.supportFragmentManager.popBackStack(LandingPageFragment::class.java.name, 0)
+            if(activity.getNavController().currentDestination?.id != R.id.menu_feed) {
+//                val navOption = NavOptions.Builder().setPopUpTo(R.id.menu_feed, true).build()
+                activity.getNavController().popBackStack(R.id.menu_feed, true)
+                activity.getNavController().navigate(R.id.menu_feed)
             }
+            /*if (activity.supportFragmentManager.backStackEntryCount > 1) {
+                activity.supportFragmentManager.popBackStack(LandingPageFragment::class.java.name, 0)
+            }*/
         }
 
         setProfileInfo()

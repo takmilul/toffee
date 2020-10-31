@@ -19,10 +19,10 @@ class UserChannelViewModel @ViewModelInject constructor(
     val isChannelSubscribed = MutableLiveData<Boolean>()
     val channelSubscriberCount = MutableLiveData<String>()
 
-    fun setSubscriptionStatus(channelId: Long, status: Int) {
+    fun setSubscriptionStatus(channelId: Long, status: Int, channelOwnerId: Int) {
         viewModelScope.launch {
             try {
-                val ret = subscribeApi(channelId.toInt(), status)
+                val ret = subscribeApi(channelId.toInt(), status, channelOwnerId)
                 subscriptionResponse.value = Resource.Success(ret)
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -43,12 +43,12 @@ class UserChannelViewModel @ViewModelInject constructor(
         }
     }
 
-    fun toggleSubscriptionStatus(channelId: Long) {
+    fun toggleSubscriptionStatus(channelId: Long, channelOwnerId: Int) {
         val currentStatus = isChannelSubscribed.value ?: return
         viewModelScope.launch {
             try {
                 val newStatus = 1 - (if(currentStatus) 1 else 0)
-                val ret = subscribeApi(channelId.toInt(), newStatus)
+                val ret = subscribeApi(channelId.toInt(), newStatus, channelOwnerId)
                 isChannelSubscribed.value = ret.isSubscribed == 1
             }catch (ex: Exception) {
                 ex.printStackTrace()

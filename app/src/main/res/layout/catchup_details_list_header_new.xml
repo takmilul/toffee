@@ -145,17 +145,18 @@
             android:textColor="@color/second_text_color"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="@+id/circleImageView"
-            app:layout_constraintEnd_toStartOf="@+id/channelSubCount"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/circleImageView"
             app:layout_constraintTop_toTopOf="@+id/circleImageView"
             tools:text="Banglalink" />
 
-        <com.banglalink.toffee.ui.widget.MultiTextButton
+        <!--<com.banglalink.toffee.ui.widget.MultiTextButton
             android:id="@+id/subscribe_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:onClick="@{(v)-> v}"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/circleImageView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/circleImageView" />
@@ -167,7 +168,7 @@
             android:layout_marginEnd="8dp"
             app:layout_constraintBottom_toBottomOf="@+id/subscribe_button"
             app:layout_constraintEnd_toStartOf="@+id/subscribe_button"
-            app:layout_constraintTop_toTopOf="@+id/subscribe_button" />
+            app:layout_constraintTop_toTopOf="@+id/subscribe_button" />-->
 
         <FrameLayout
             android:id="@+id/relatedContainer"
@@ -183,7 +184,7 @@
             android:id="@+id/channelDetailsGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="options,subscribe_button,program_name,circleImageView,textView26,textView24,channelSubCount,liveStatus,textView28,textView25" />
+            app:constraint_referenced_ids="options,program_name,circleImageView,textView26,textView24,liveStatus,textView28,textView25" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/group2"

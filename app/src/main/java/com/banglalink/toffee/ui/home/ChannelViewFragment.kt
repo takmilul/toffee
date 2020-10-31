@@ -13,7 +13,6 @@ import androidx.lifecycle.Observer
 import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.CatchupDetailsListHeaderNewBinding
-import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
@@ -65,7 +64,7 @@ class ChannelViewFragment: BaseFragment(), ContentReactionCallback<ChannelInfo> 
             parentFragmentManager.commit { replace(R.id.relatedContainer, CatchupDetailsFragment.createInstance(channelInfo)) }
         }
 
-        binding.subscribeButton.setOnClickListener {
+        /*binding.subscribeButton.setOnClickListener {
             viewModel.toggleSubscriptionStatus(channelInfo.content_provider_id?.toLongOrNull() ?: 0L)
         }
 
@@ -75,7 +74,7 @@ class ChannelViewFragment: BaseFragment(), ContentReactionCallback<ChannelInfo> 
 
         observe(viewModel.isChannelSubscribed) {
             binding.subscribeButton.setSubscriptionInfo(it)
-        }
+        }*/
 
         val contentProviderId =  channelInfo.content_provider_id?.toLongOrNull() ?: 0L
         val isOwner = if(contentProviderId == mPref.customerId.toLong()) 0 else 1

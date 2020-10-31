@@ -25,6 +25,7 @@ import com.banglalink.toffee.model.MyChannelDetail
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.ViewPagerAdapter
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.alert_dialog_my_channel_rating.view.*
@@ -39,7 +40,9 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
     private var isOwner: Int = 0
     private var channelId: Int = 0
     private var channelOwnerId: Int = 0
+    private var isRated: Int = 0
     private var rating: Float = 0.0f
+    private var myRating: Int = 0
     private var isSubscribed: Int = 0
     private var isPublic: Int = 0
     private var isFromOutside: Boolean = false
@@ -60,14 +63,16 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
 
     companion object {
         const val IS_OWNER = "isOwner"
+        const val IS_SUBSCRIBED = "isSubscribed"
         const val CHANNEL_ID = "channelId"
         const val IS_PUBLIC = "isPublic"
         const val CHANNEL_OWNER_ID = "channelOwnerId"
         const val IS_FROM_OUTSIDE = "isFromOutside"
         
-        fun newInstance(isOwner: Int, channelId: Int, channelOwnerId: Int, isPublic: Int, isFromOutside: Boolean): MyChannelHomeFragment {
+        fun newInstance(isSubscribed: Int, isOwner: Int, channelId: Int, channelOwnerId: Int, isPublic: Int, isFromOutside: Boolean): MyChannelHomeFragment {
             val instance = MyChannelHomeFragment()
             val bundle = Bundle()
+            bundle.putInt(IS_SUBSCRIBED, isSubscribed)
             bundle.putInt(IS_OWNER, isOwner)
             bundle.putInt(CHANNEL_ID, channelId)
             bundle.putInt(IS_PUBLIC, isPublic)
@@ -81,6 +86,7 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val args = arguments
+        isSubscribed = args?.getInt(IS_SUBSCRIBED) ?: 0
         isOwner = args?.getInt(IS_OWNER) ?: 1
         channelId = args?.getInt(CHANNEL_ID) ?: 0
         isPublic = args?.getInt(IS_PUBLIC) ?: 0
@@ -89,7 +95,7 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
         channelOwnerId = if (channelOwnerId == 0) preference.customerId else channelOwnerId
 
         isFromOutside = args?.getBoolean(IS_FROM_OUTSIDE) ?: false
-        Log.i("UGC_Playlist_Service", "UGC_Home -- isOwner: ${isOwner}, ownerId: ${channelOwnerId}")
+        Log.i("UGC_Home", "onCreate -- isSubscribed: ${isSubscribed}")
         /*isSubscribed = args.isSubscribed*/
     }
 
@@ -98,17 +104,20 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
         binding.lifecycleOwner = this
         binding.isOwner = isOwner
         binding.isSubscribed = isSubscribed
+        binding.isRated = isRated
         binding.viewModel = viewModel
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        activity?.title = "My Channel"
+        
         binding.contentBody.visibility = View.GONE
         binding.progressBar.visibility = View.VISIBLE
 
         observeChannelDetail()
+        viewModel.getChannelDetail()
         
         binding.channelDetailView.addBioButton.setOnClickListener(this)
         binding.channelDetailView.editButton.setOnClickListener(this)
@@ -148,7 +157,7 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
                     Toast.makeText(requireContext(), "Please create channel first", Toast.LENGTH_SHORT).show()
                 }
             }
-            subscriptionButton -> subscribeChannelViewModel.subscribe(channelId, isSubscribed)
+            subscriptionButton -> subscribeChannelViewModel.subscribe(channelId, if(isSubscribed == 0) 1 else 0, channelOwnerId)
         }
     }
 
@@ -157,16 +166,20 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
         val inflater = this.layoutInflater
         val dialogView: View = inflater.inflate(layout.alert_dialog_my_channel_rating, null)
         dialogBuilder.setView(dialogView)
+        dialogView.ratingBar.rating = myRating.toFloat()
+        var newRating = 0.0f
         dialogView.ratingBar.setOnRatingBarChangeListener { _, rating, _ ->
-            this.rating = rating
+            newRating = rating
             dialogView.submitButton.isEnabled = rating > 0
+            isRated = if(rating > 0) 1 else 0
+            myRating = if(rating > 0) rating.toInt() else 0
         }
 
         val alertDialog: android.app.AlertDialog = dialogBuilder.create()
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         alertDialog.show()
         dialogView.submitButton.setOnClickListener {
-            viewModel.rateMyChannel(rating)
+            viewModel.rateMyChannel(newRating)
             alertDialog.dismiss()
         }
     }
@@ -199,6 +212,13 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
                     if (it.data != null) {
                         myChannelDetail = it.data.myChannelDetail
                         isSubscribed = it.data.isSubscribed
+                        rating = it.data.ratingCount
+                        myRating = it.data.myRating
+                        isRated = it.data.isRated
+                        binding.isRated = isRated
+                        binding.myRating = myRating
+                        binding.channelDetailView.subscriptionCountTextView.text = it.data.subscriberCount.toString()
+                        Log.i("UGC_Home", "Detail Response Success -- isSubscribed: ${isSubscribed}, subscribeCount: ${it.data.subscriberCount}")
                         isOwner = it.data.isOwner
                         channelId = myChannelDetail?.id?.toInt() ?: 0
                         binding.data = it.data
@@ -211,6 +231,7 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
                 is Failure -> {
                     myChannelDetail = null
                     isSubscribed = 0
+                    Log.i("UGC_Home", "Response Failed -- isSubscribed: ${isSubscribed}")
                     binding.data = null
                     binding.isSubscribed = 0
 
@@ -261,6 +282,8 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
             when (it) {
                 is Success -> {
                     isSubscribed = it.data.isSubscribed
+                    binding.channelDetailView.subscriptionCountTextView.text = it.data.subscriberCount.toString()
+                    Log.i("UGC_Home", "Sucbscribe response -- isSubscribed: ${isSubscribed}, subscribeCount: ${it.data.subscriberCount}")
                     binding.isSubscribed = isSubscribed
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
                 }
@@ -276,6 +299,11 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
         observe(viewModel.ratingLiveData) {
             when (it) {
                 is Success -> {
+                    binding.isRated = it.data.isRated
+                    binding.myRating = myRating
+                    binding.channelDetailView.ratingButton.text = myRating.toString()
+                    bindTextColor(binding.channelDetailView.ratingButton, myRating)
+                    binding.channelDetailView.ratingCountTextView.text = it.data.ratingCount.toString()
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
                 }
                 is Failure -> {
@@ -284,7 +312,20 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
             }
         }
     }
-
+    
+    fun bindTextColor(view: MaterialButton, myRating: Int){
+        if(myRating > 0){
+            view.setIconTintResource(android.R.color.white)
+            view.setTextColor(Color.parseColor("#FFFFFF"))
+            view.background.setTint(Color.parseColor("#58DC3F"))
+        }
+        else{
+            view.setIconTintResource(R.color.dark_green)
+            view.setTextColor(Color.parseColor("#58DC3F"))
+            view.background.setTint(Color.parseColor("#FFFFFF"))
+        }
+    }
+    
     private fun observeCreatePlaylist() {
         observe(createPlaylistViewModel.createPlaylistLiveData) {
             when (it) {

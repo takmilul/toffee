@@ -6,12 +6,13 @@
     xmlns:tools="http://schemas.android.com/tools">
     
     <data>
+        <import type="android.view.View"/>
         <variable
             name="data"
             type="com.banglalink.toffee.model.ChannelInfo" />
         <variable
             name="viewModel"
-            type="com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosAdapter" />
+            type="com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosViewModel" />
         <variable
             name="callback"
             type="com.banglalink.toffee.common.paging.BaseListItemCallback" />

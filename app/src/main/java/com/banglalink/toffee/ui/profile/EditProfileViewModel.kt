@@ -1,20 +1,21 @@
 package com.banglalink.toffee.ui.profile
 
-import android.app.Application
+import android.content.Context
 import android.net.Uri
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
 import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
 import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.SubscriberPhotoBean
-import com.banglalink.toffee.ui.common.BaseViewModel
-import com.banglalink.toffee.usecase.GetProfile
 import com.banglalink.toffee.usecase.UpdateProfile
 import com.banglalink.toffee.usecase.UploadProfileImage
 import com.banglalink.toffee.util.unsafeLazy
+import dagger.hilt.android.qualifiers.ApplicationContext
 
-class EditProfileViewModel(private val application: Application) : BaseViewModel(application) {
+class EditProfileViewModel @ViewModelInject constructor(@ApplicationContext private val context: Context) : ViewModel() {
 
     private val updateProfile by unsafeLazy {
         UpdateProfile(Preference.getInstance(), RetrofitApiClient.toffeeApi)
@@ -37,7 +38,7 @@ class EditProfileViewModel(private val application: Application) : BaseViewModel
 
     fun uploadProfileImage(photoData: Uri):LiveData<Resource<SubscriberPhotoBean>> {
         return resultLiveData{
-            uploadProfileImage.execute(photoData, application)
+            uploadProfileImage.execute(photoData, context)
         }
     }
 

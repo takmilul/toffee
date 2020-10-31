@@ -1,15 +1,14 @@
 package com.banglalink.toffee.ui.home
 
-import android.app.Application
 import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
 import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseViewModel
-import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.usecase.GetContents
 import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.coroutines.cancelChildren

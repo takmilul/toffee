@@ -23,7 +23,7 @@ class MyChannelHomeViewModel @AssistedInject constructor(private val apiService:
     private val _ratingData = MutableLiveData<Resource<MyChannelRatingBean>>()
     val ratingLiveData = _ratingData.toLiveData()
 
-    init {
+    fun getChannelDetail() {
         viewModelScope.launch { 
             _data.postValue(resultFromResponse { apiService.execute(isOwner, isPublic, channelId, channelOwnerId) })
         }
@@ -47,7 +47,7 @@ class MyChannelHomeViewModel @AssistedInject constructor(private val apiService:
 
     fun rateMyChannel(rating: Float){
         viewModelScope.launch { 
-            _ratingData.postValue(resultFromResponse { ratingService.execute(channelId, rating) })
+            _ratingData.postValue(resultFromResponse { ratingService.execute(channelId, rating, channelOwnerId) })
         }
     }
 }

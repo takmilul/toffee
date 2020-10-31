@@ -20,8 +20,9 @@ import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.launch
 
-class MyChannelPlaylistVideosViewModel @AssistedInject constructor(private val playlistVideoDeleteApiService: MyChannelPlaylistVideoDeleteService, apiService: MyChannelPlaylistVideosService.AssistedFactory, @Assisted requestParams: MyChannelPlaylistContentParam) :
+class MyChannelPlaylistVideosViewModel @AssistedInject constructor(private val playlistVideoDeleteApiService: MyChannelPlaylistVideoDeleteService, apiService: MyChannelPlaylistVideosService.AssistedFactory, @Assisted var requestParams: MyChannelPlaylistContentParam) :
     BasePagingViewModel<ChannelInfo>() {
+    
     override val repo: BaseListRepository<ChannelInfo> by lazy {
         BaseListRepositoryImpl({ BaseNetworkPagingSource(apiService.create(requestParams)) })
     }
@@ -37,6 +38,7 @@ class MyChannelPlaylistVideosViewModel @AssistedInject constructor(private val p
         fun provideAssisted(assistedFactory: AssistedFactory, requestParams: MyChannelPlaylistContentParam): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                    
                     return assistedFactory.create(requestParams) as T
                 }
             }

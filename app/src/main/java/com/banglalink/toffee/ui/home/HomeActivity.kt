@@ -96,7 +96,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     lateinit var binding: ActivityMainMenuBinding
     private lateinit var drawerHelper: DrawerHelper
     private lateinit var inAppMessageParser: InAppMessageParser
-
+//    private var mFirebaseAnalytics: FirebaseAnalytics? = null
     companion object {
         const val INTENT_REFERRAL_REDEEM_MSG = "REFERRAL_REDEEM_MSG"
         const val INTENT_PACKAGE_SUBSCRIBED = "PACKAGE_SUBSCRIBED"
@@ -116,10 +116,12 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
 //                WindowManager.LayoutParams.FLAG_SECURE
 //            )
 //        }
-
+//        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main_menu)
         setSupportActionBar(binding.tbar.toolbar)
-
+        supportActionBar?.setHomeButtonEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        
         if(savedInstanceState == null) {
             setupNavController()
         }
@@ -197,8 +199,9 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         observe(viewModel.viewAllCategories) {
             val currentFragment = supportFragmentManager.findFragmentById(R.id.content_viewer)
             if (currentFragment !is AllCategoriesFragment) {
-                loadFragmentById( R.id.content_viewer, AllCategoriesFragment()
-                , AllCategoriesFragment::class.java.getName())
+                loadFragmentById(
+                    R.id.content_viewer, AllCategoriesFragment(), AllCategoriesFragment::class.java.getName()
+                )
             }
             binding.drawerLayout.closeDrawers()
             minimizePlayer()
@@ -252,7 +255,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
 
     fun rotateFab(isRotate: Boolean) {
         ViewCompat.animate(binding.uploadButton)
-            .rotation(if(isRotate) 135.0F else 0.0F)
+            .rotation(if (isRotate) 135.0F else 0.0F)
             .withLayer()
             .setDuration(300L)
             .setInterpolator(AccelerateInterpolator())
@@ -405,7 +408,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         }
     }
 
-    private fun handleDeepLink(url:String){
+    private fun handleDeepLink(url: String){
 //        https://toffeelive.com/#video/0d52770e16b19486d9914c81061cf2da
         try{
             var isDeepLinkHandled = false
@@ -417,7 +420,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             }
             route?.categoryId?.let {
                 ToffeeAnalytics.logBreadCrumb("Trying to open category item")
-                drawerHelper.handleCategoryClick(ID_VIDEO,it,route.categoryName?:"")
+                drawerHelper.handleCategoryClick(ID_VIDEO, it, route.categoryName ?: "")
                 isDeepLinkHandled = true
             }
 
@@ -426,7 +429,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                 val hash = url.substring(url.lastIndexOf("/") + 1)
                 observe(viewModel.getShareableContent(hash)){ channelResource ->
                     when(channelResource){
-                        is Resource.Success->{
+                        is Resource.Success -> {
                             channelResource.data?.let {
                                 onDetailsFragmentLoad(it)
                             }
@@ -434,7 +437,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                     }
                 }
             }
-        }catch (e:Exception){
+        }catch (e: Exception){
             ToffeeAnalytics.logBreadCrumb("Failed to handle depplink $url")
             ToffeeAnalytics.logException(e)
         }
@@ -456,7 +459,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         handleSharedUrl(intent)
     }
 
-    private fun handleVoiceSearchEvent(query:String){
+    private fun handleVoiceSearchEvent(query: String){
         if (!TextUtils.isEmpty(query)) {
             loadFragmentById(
                 R.id.content_viewer, SearchFragment.createInstance(query),
@@ -490,10 +493,10 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         channelInfo?.let {
             when{
                 it.urlType == 1->{
-                    HeartBeatManager.triggerEventViewingContentStart(it.id.toInt(),it.type ?: "VOD")
+                    HeartBeatManager.triggerEventViewingContentStart(it.id.toInt(), it.type ?: "VOD")
                     viewModel.sendViewContentEvent(it)
                     launchActivity<Html5PlayerViewActivity> {
-                        putExtra(Html5PlayerViewActivity.CONTENT_URL,it.hlsLinks!![0].hls_url_mobile)
+                        putExtra(Html5PlayerViewActivity.CONTENT_URL, it.hlsLinks!![0].hls_url_mobile)
                     }
                 }
                 it.urlType == 2 ->{
@@ -568,7 +571,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     }
 
     private fun observeInAppMessage(){
-        FirebaseAnalytics.getInstance(this).logEvent("trigger_inapp_messaging",null)
+        FirebaseAnalytics.getInstance(this).logEvent("trigger_inapp_messaging", null)
         inAppMessageParser = InAppMessageParser()
         FirebaseInAppMessaging.getInstance().triggerEvent("trigger_inapp_messaging")
     }
@@ -708,9 +711,10 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
+        
         if (item.itemId == android.R.id.home) {
-            supportFragmentManager.popBackStack()
+            navController.navigate(R.id.menu_feed)
+//            supportFragmentManager.popBackStack()
             return true
         } else if (item.itemId == R.id.action_avatar) {
             binding.drawerLayout.openDrawer(GravityCompat.END, true)
@@ -721,7 +725,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         }
         return super.onOptionsItemSelected(item)
     }
-
+    
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
         val searchMenuItem = menu.findItem(R.id.action_search)

@@ -232,4 +232,11 @@ interface ToffeeApi {
 
     @POST("/ugc-rating-on-channel")
     suspend fun rateMyChannel(@Body myChannelRatingRequest: MyChannelRatingRequest): MyChannelRatingResponse
+    
+    @POST("/ugc-sub-category/1/{categoryId}/{dbVersion}")
+    suspend fun getSubCategory(
+        @Path("categoryId") categoryId: Int,
+        @Path("dbVersion") dbVersion: Int,
+        @Body subCategoryRequest: SubCategoryRequest
+    ): SubCategoryResponse
 }

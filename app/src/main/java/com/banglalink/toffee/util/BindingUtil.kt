@@ -24,6 +24,7 @@ import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.enums.Reaction.*
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.widget.MultiTextButton
+import com.google.android.material.button.MaterialButton
 import de.hdodenhof.circleimageview.CircleImageView
 
 const val crossFadeDurationInMills = 500
@@ -272,6 +273,30 @@ fun bindSubscriptionStatus(view: MultiTextButton, channelInfo: UgcUserChannelInf
     )
 }
 
+@BindingAdapter("bindTextColor")
+fun bindTextColor(view: MaterialButton, myRating: Int){
+    if(myRating > 0){
+        view.setIconTintResource(android.R.color.white)
+        view.setTextColor(Color.parseColor("#FFFFFF"))
+        view.background.setTint(Color.parseColor("#58DC3F"))
+    }
+    else{
+        view.setIconTintResource(R.color.dark_green)
+        view.setTextColor(Color.parseColor("#58DC3F"))
+        view.background.setTint(Color.parseColor("#FFFFFF"))
+    }
+}
+
+/*@BindingAdapter("bindBackgroundColor")
+fun bindTextColor(view: MaterialButton, myRating: Int){
+    if(myRating > 0){
+        view.setTextColor(Color.parseColor("#FFFFFF"))
+    }
+    else{
+        view.setTextColor(Color.parseColor("#58DC3F"))
+    }
+}*/
+
 @BindingAdapter("bindSubscriptionStatus")
 fun bindSubscriptionStatus(view: MultiTextButton, isSubscribed: Int) {
     view.setSubscriptionInfo(
@@ -420,7 +445,7 @@ fun bindEmoCount(view: TextView, item: ChannelInfo) {
 
 @BindingAdapter("bindReaction", "bindReactionCount", requireAll = true)
 fun bindReactionCount(view: TextView, reaction: Reaction, item: ChannelInfo) {
-    val reactionCount = when (reaction) {
+    var reactionCount = when (reaction) {
         Like -> {
             if (item.userReaction == Like.value)
                 item.reaction?.like?.plus(1)
@@ -461,5 +486,6 @@ fun bindReactionCount(view: TextView, reaction: Reaction, item: ChannelInfo) {
             0L
         }
     }
+    reactionCount = reactionCount ?: 0
     view.text = Utils.getFormattedViewsText(reactionCount.toString())
 }

@@ -5,28 +5,24 @@ import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.util.Base64
-import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.apiservice.GetUgcCategories
 import com.banglalink.toffee.apiservice.UgcContentUpload
-import com.banglalink.toffee.data.database.dao.UploadDao
 import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.network.response.UgcResponseBean
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.extension.loadBase64
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.SubCategory
 import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.UtilsKt
 import com.banglalink.toffee.util.getError
 import com.banglalink.toffee.util.imagePathToBase64
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.android.synthetic.main.list_item_notification.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -38,7 +34,8 @@ class EditUploadInfoViewModel @ViewModelInject constructor(
     private val uploadRepo: UploadInfoRepository,
     private val contentUploadApi: UgcContentUpload,
     private val preference: Preference,
-    private val categoryApi: GetUgcCategories
+    private val categoryApi: GetUgcCategories,
+//    private val subCategoryApi: SubCategoryService
 ): ViewModel() {
     val progressDialog = MutableLiveData<Boolean>()
 
@@ -55,6 +52,9 @@ class EditUploadInfoViewModel @ViewModelInject constructor(
 
     val categories = MutableLiveData<List<UgcCategory>>()
     val categoryPosition = MutableLiveData<Int>()
+    
+    val subCategories = MutableLiveData<List<SubCategory>>()
+    val subCategoryPosition = MutableLiveData<Int>()
 
     val ageGroup = MutableLiveData<List<String>>()
     val ageGroupPosition = MutableLiveData<Int>()
@@ -81,6 +81,7 @@ class EditUploadInfoViewModel @ViewModelInject constructor(
             progressDialog.value = true
 
             categories.value = categoryApi.loadData(0, 0)
+//            subCategories.value = subCategoryApi.loadData(0,0)
 
             val uploadId = preference.uploadId ?: ""
             val info = uploadRepo.getUploadById(UtilsKt.stringToUploadId(uploadId)) ?: run {

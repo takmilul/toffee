@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.landing
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,6 +59,8 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
                 val channelId = item.id.toInt()
                 if (parentFragment is CategoryDetailsFragment) {
                     findNavController().navigate(R.id.action_categoryDetailsFragment_to_myChannelHomeFragment, Bundle().apply {
+                        putInt(MyChannelHomeFragment.IS_SUBSCRIBED, item.isSubscribed)
+                        Log.i("UGC_Home", "onItemClicked: ${item.isSubscribed}")
                         putInt(MyChannelHomeFragment.IS_OWNER, isOwner)
                         putInt(MyChannelHomeFragment.CHANNEL_ID, channelId)
                         putInt(MyChannelHomeFragment.IS_PUBLIC, isPublic)
@@ -67,6 +70,8 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
                 }
                 else {
                     findNavController().navigate(R.id.action_menu_feed_to_myChannelHomeFragment, Bundle().apply {
+                        putInt(MyChannelHomeFragment.IS_SUBSCRIBED, item.isSubscribed)
+                        Log.i("UGC_Home", "onItemClicked: ${item.isSubscribed}")
                         putInt(MyChannelHomeFragment.IS_OWNER, isOwner)
                         putInt(MyChannelHomeFragment.CHANNEL_ID, channelId)
                         putInt(MyChannelHomeFragment.IS_PUBLIC, isPublic)
@@ -77,15 +82,17 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
             }
 
             override fun onSubscribeButtonClicked(view: View, info: UgcUserChannelInfo) {
-                if(info.isSubscribed == 0) {
-                    subscriptionViewModel.setSubscriptionStatus(info.id, 1)
-                } else {
+
+                if (info.isSubscribed == 0) {
+                    subscriptionViewModel.setSubscriptionStatus(info.id, 1, info.channelOwnerId)
+                }
+                else {
                     VelBoxAlertDialogBuilder(
                         requireContext(),
                         text = getString(R.string.text_unsubscribe_title),
                         positiveButtonTitle = "Unsubscribe",
                         positiveButtonListener = {
-                            subscriptionViewModel.setSubscriptionStatus(info.id, 0)
+                            subscriptionViewModel.setSubscriptionStatus(info.id, 0, info.channelOwnerId)
                             it?.dismiss()
                         }
                     ).create().show()

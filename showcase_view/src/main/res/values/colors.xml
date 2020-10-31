@@ -2,4 +2,56 @@
 <resources>
     <color name="main_text_color">#29466B</color>
     <color name="button_background_color">#8663FF</color>
+
+    <color name="colorPrimary">#ECECEC</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <!--<color name="colorAccent">#FF8683FF</color>-->
+    <color name="colorAccent">#34C9B5</color>
+    <color name="colorAccent3">#8663FF</color>
+
+    <color name="btn_start">#FF3B3C</color>
+    <color name="btn_end">#223B73</color>
+    <color name="bg_color">#F5F5F5</color>
+
+    <color name="screen_bg">#ECECEC</color>
+    <color name="screen_bg_white">#FFFFFF</color>
+    <color name="colorAccent2">#FF3988</color>
+    <color name="nav_menu_text_color">@color/main_text_color</color>
+
+    <color name="window_background">#F3F3F3</color>
+
+    <color name="view_all_text_color">#34C9B5</color>
+    <color name="second_text_color">#829AB8</color>
+    <color name="edit_view_text_color">#1C2631</color>
+    <color name="view_all_txt_color">@android:color/black</color>
+
+    <color name="darker_gray">#7E7E7E</color>
+    <color name="searchview_input_text_color">#29466B</color>
+    <color name="tab_unselected">#29466B</color>
+
+    <color name="state_background_color">#BDBDBD</color>
+    <color name="state_background_text_color">#808080</color>
+    <color name="state_foreground_text_color">#eeeeee</color>
+
+    <color name="tool_bar_color">@android:color/white</color>
+    <color name="channel_header">#3e5979</color>
+    <color name="tab_background_color">@android:color/white</color>
+    <color name="home_screen_curve_bg_color">@android:color/white</color>
+
+
+    <color name="tooltip_mask">#CC4f5355</color>
+
+    <color name="title_text_color">#000000</color>
+    <color name="title_text_color_light">#d3d3d3</color>
+
+    <color name="dark_green">#58DC3F</color>
+    <color name="light_green">#8BC34A</color>
+    <color name="accent_green">#C5E1A5</color>
+    <color name="overlay_dark_color">#66000000</color>
+    <color name="purple">#8663FF</color>
+    <color name="scrollbarTrackColor">#4D707070</color>
+    <color name="cardOverlayColor">#FFFFFFFF</color>
+    <color name="unseenCardColor">#EBFFFB</color>
+    <color name="reactionBgColor">#34C9B5</color>
+    <color name="approvalPendingColor">#FF8B57</color>
 </resources>

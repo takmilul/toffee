@@ -27,7 +27,7 @@ class MyChannelGetDetailService @Inject constructor(private val preference: Pref
         }
 
         response.response.apply {
-            this.formattedSubscriberCount = getFormattedViewsText(subscriberCount)
+            this.formattedSubscriberCount = getFormattedViewsText(subscriberCount.toString())
         }
         
         return response.response

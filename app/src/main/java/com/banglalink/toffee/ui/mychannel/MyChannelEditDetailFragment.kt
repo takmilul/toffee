@@ -57,7 +57,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        observeLiveData()
+        observeEditChannel()
         observeThumbnailChange()
 
         binding.bannerEditButton.setOnClickListener(this)
@@ -92,15 +92,17 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             })
     }
 
-    private fun observeLiveData() {
+    private fun observeEditChannel() {
         observe(viewModel.liveData) {
             when (it) {
                 is Success -> {
+                    binding.saveButton.isClickable = true
                     binding.progressBar.visibility = View.GONE
                     findNavController().navigateUp()
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
                 }
                 is Failure -> {
+                    binding.saveButton.isClickable = true
                     binding.progressBar.visibility = View.GONE
                     println(it.error)
                     Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
@@ -125,6 +127,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     }
 
     private fun editChannel() {
+        binding.saveButton.isClickable = false
         binding.progressBar.visibility = View.VISIBLE
         
         var bannerBase64 = "NULL"

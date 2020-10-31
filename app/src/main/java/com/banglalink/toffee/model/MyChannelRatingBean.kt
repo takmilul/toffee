@@ -1,8 +1,8 @@
 package com.banglalink.toffee.model
 
-import com.google.gson.annotations.SerializedName
-
 data class MyChannelRatingBean (
+    val isRated: Int,
+    val ratingCount: Float,
     val message: String,
     val messageType: String,
     val systemTime: String

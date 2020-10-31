@@ -11,12 +11,13 @@ class MyChannelSubscribeService @Inject constructor(
     private val mPref: Preference,
     private val toffeeApi: ToffeeApi
 ) {
-    suspend operator fun invoke(channelId: Int, subStatus: Int): MyChannelSubscribeBean {
+    suspend operator fun invoke(channelId: Int, subStatus: Int, channelOwnerId: Int): MyChannelSubscribeBean {
         val response = tryIO2 {
             toffeeApi.subscribeOnMyChannel(
                 MyChannelSubscribeRequest(
                     channelId,
                     subStatus,
+                    channelOwnerId,
                     mPref.customerId,
                     mPref.password
                 )
