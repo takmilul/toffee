@@ -23,7 +23,12 @@ class GetUgcCategories @Inject constructor(
         }
 
         if (response.response.categories != null) {
-            return response.response.categories
+            return response.response.categories.map { cat->
+                cat.subcategories?.map {sub->
+                    sub.categoryId = cat.id
+                }
+                cat
+            }
         }
         return emptyList()
     }

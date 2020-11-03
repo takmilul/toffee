@@ -2,6 +2,7 @@ package com.banglalink.toffee.di
 
 import android.content.Context
 import androidx.room.Room
+import com.banglalink.toffee.data.database.MigrationProvider
 import com.banglalink.toffee.data.database.ToffeeDatabase
 import com.banglalink.toffee.data.database.dao.*
 import com.banglalink.toffee.data.repository.HistoryRepository
@@ -29,7 +30,7 @@ object DatabaseModule {
     fun providesDatabase(@ApplicationContext app: Context): ToffeeDatabase {
         return Room.databaseBuilder(app,
             ToffeeDatabase::class.java, ToffeeDatabase.DB_NAME)
-//            .addMigrations(ToffeeDatabase.MIGRATION_1_2, ToffeeDatabase.MIGRATION_2_3) // TODO: Add migration provider
+            .addMigrations(*MigrationProvider.getMigrationList().toTypedArray())
             .fallbackToDestructiveMigration()
             .build()
     }

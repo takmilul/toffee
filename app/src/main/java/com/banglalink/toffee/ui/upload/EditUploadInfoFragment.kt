@@ -198,32 +198,6 @@ class EditUploadInfoFragment: BaseFragment() {
         }
     }
 
-    private fun fetchAndSaveThumbnail(uploadInfo: UploadInfo) {
-        val mmr = MediaMetadataRetriever()
-        mmr.setDataSource(context, Uri.parse(uploadInfo.fileUri))
-        val bitmap = mmr.frameAtTime
-
-        val bmpVideoHeight = bitmap?.height ?: -1
-
-        val bmpVideoWidth = bitmap?.width ?: -1
-
-        val byteCount: Int = bitmap.width * bitmap.height * 4
-        val tmpByteBuffer: ByteBuffer = ByteBuffer.allocate(byteCount)
-        bitmap.copyPixelsToBuffer(tmpByteBuffer)
-        val tmpByteArray: ByteArray = tmpByteBuffer.array()
-
-//        val quality = 100
-//        val outputFile: File = File(
-//            mediaStorageDir, "IMG_" + (index + 1)
-//                .toString() + "_" + max.toString() + "_quality_" + quality.toString() + "_w" + scaleWidth.toString() + "_h" + scaleHeight.toString() + ".png"
-//        )
-//        val outputStream: OutputStream = FileOutputStream(outputFile)
-//        val bmpScaledSize =
-//            Bitmap.createScaledBitmap(bitmap, scaleWidth, scaleHeight, false)
-//        bmpScaledSize.compress(CompressFormat.PNG, quality, outputStream)
-//        outputStream.close()
-    }
-
     override fun onDestroy() {
         if(mPref.uploadId != null) {
             appScope.launch {
