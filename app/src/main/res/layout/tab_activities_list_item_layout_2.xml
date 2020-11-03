@@ -107,7 +107,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:background="#FFFFFF"
-                bindActivityLogo="@{data}"
+                loadReactionEmo="@{data.activitySubType}"
                 app:layout_constraintEnd_toStartOf="@+id/guideline6"
                 app:layout_constraintTop_toTopOf="@+id/video_thumb"
                 app:srcCompat="@drawable/lb_ic_thumb_up" />

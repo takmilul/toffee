@@ -83,9 +83,8 @@ class ChannelViewFragment: BaseFragment(), ContentReactionCallback<ChannelInfo> 
 
     override fun onReactionClicked(view: View, item: ChannelInfo) {
         super.onReactionClicked(view, item)
-        val fragment = AlertDialogReactionFragment.newInstance()
-        fragment.setItem(view, item)
-        fragment.show(requireActivity().supportFragmentManager, "ReactionDialog")
+        AlertDialogReactionFragment.newInstance(view, item)
+            .show(requireActivity().supportFragmentManager, "ReactionDialog")
     }
     
     override fun onOpenMenu(view: View, item: ChannelInfo) {
@@ -93,7 +92,7 @@ class ChannelViewFragment: BaseFragment(), ContentReactionCallback<ChannelInfo> 
         openMenu(view, item)
     }
     
-    fun openMenu(anchor: View, channelInfo: ChannelInfo) {
+    private fun openMenu(anchor: View, channelInfo: ChannelInfo) {
         val popupMenu = MyPopupWindow(requireContext(), anchor)
         popupMenu.inflate(R.menu.menu_catchup_item)
 

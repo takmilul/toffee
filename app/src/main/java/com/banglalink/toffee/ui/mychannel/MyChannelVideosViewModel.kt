@@ -13,6 +13,7 @@ import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.ReactionInfo
 import com.banglalink.toffee.data.database.entities.UserActivities
 import com.banglalink.toffee.data.repository.UserActivitiesRepository
+import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.enums.ActivityType
 import com.banglalink.toffee.model.ChannelInfo
 import com.google.gson.Gson
@@ -22,8 +23,9 @@ import kotlinx.coroutines.launch
 
 class MyChannelVideosViewModel @AssistedInject constructor(
     private val reactionDao: ReactionDao,
-    private val activitiesRepo: UserActivitiesRepository, 
-    private val getMyChannelAssistedFactory: MyChannelVideosService.AssistedFactory, 
+    private val activitiesRepo: UserActivitiesRepository,
+    private val preference: Preference,
+    private val getMyChannelAssistedFactory: MyChannelVideosService.AssistedFactory,
     @Assisted private val isOwner: Int, 
     @Assisted private val channelOwnerId: Int,
     @Assisted private val isPublic: Int) : BasePagingViewModel<ChannelInfo>() {
@@ -65,6 +67,7 @@ class MyChannelVideosViewModel @AssistedInject constructor(
     fun insertActivity(channelInfo: ChannelInfo, reactStatus: Int) {
         viewModelScope.launch {
             val item = UserActivities(
+                preference.customerId,
                 channelInfo.id.toLong(),
                 "activity",
                 channelInfo.type ?: "VOD",

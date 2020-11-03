@@ -152,7 +152,7 @@
         <TextView
             android:id="@+id/textView9"
             bindEmoCount="@{data}"
-            loadTextLeftDrawable="@{data.userReactionIcon}"
+            loadReactionEmo="@{data.myReaction}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="24dp"
@@ -160,7 +160,7 @@
             android:gravity="center_vertical"
             android:onClick="@{(v) -> callback.onReactionClicked(v, data)}"
             android:textColor="#829AB8"
-            app:drawableStartCompat="@drawable/ic_like_emo"
+            app:drawableStartCompat="@drawable/ic_reactions_emo"
             app:layout_constraintBottom_toBottomOf="@+id/textView5"
             app:layout_constraintEnd_toEndOf="@+id/view"
             app:layout_constraintStart_toEndOf="@id/textView8"
@@ -182,7 +182,7 @@
             android:drawablePadding="8dp"
             android:text="Approval Pending"
             android:textSize="16sp"
-            android:visibility="@{reactionGroup.visibility == View.GONE ? View.VISIBLE : View.GONE}"
+            android:visibility="gone"
             android:textColor="@color/approvalPendingColor"
             app:drawableStartCompat="@drawable/ic_time"
             app:layout_constraintBottom_toBottomOf="@id/view"
@@ -192,3 +192,4 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
+<!--@{reactionGroup.visibility == View.GONE ? View.VISIBLE : View.GONE}-->

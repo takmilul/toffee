@@ -20,9 +20,10 @@ class ReactionViewModel @ViewModelInject constructor(private val reactionDao: Re
         }
     }
 
-    fun insertActivity(channelInfo: ChannelInfo, reactStatus: Int) {
+    fun insertActivity(customerId: Int, channelInfo: ChannelInfo, reactStatus: Int) {
         viewModelScope.launch {
             val item = UserActivities(
+                customerId,
                 channelInfo.id.toLong(),
                 "activity",
                 channelInfo.type ?: "VOD",

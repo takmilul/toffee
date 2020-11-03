@@ -20,7 +20,6 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.data.database.entities.UserActivities
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.enums.ActivityType
-import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.enums.Reaction.*
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.widget.MultiTextButton
@@ -57,7 +56,7 @@ fun bindRoundImage(view: ImageView, imageUrl: String?) {
 //            crossfade(crossFadeDurationInMills)
         }
     }
-    else{
+    else {
         view.setImageResource(R.drawable.ic_profile_default)
     }
 }
@@ -87,7 +86,7 @@ fun bindCategoryImage(view: ImageView, category: UgcCategory) {
 @BindingAdapter("loadChannelImage")
 fun bindChannel(view: CircleImageView, channelInfo: ChannelInfo) {
     if (channelInfo.isLive) {
-        if (channelInfo.channel_logo.isNullOrBlank()){
+        if (channelInfo.channel_logo.isNullOrBlank()) {
             view.setImageResource(R.drawable.ic_profile_default)
         }
         else {
@@ -97,7 +96,7 @@ fun bindChannel(view: CircleImageView, channelInfo: ChannelInfo) {
         }
     }
     else {
-        if (channelInfo.landscape_ratio_1280_720.isNullOrBlank()){
+        if (channelInfo.landscape_ratio_1280_720.isNullOrBlank()) {
             view.setImageResource(R.drawable.placeholder)
         }
         else {
@@ -112,7 +111,7 @@ fun bindChannel(view: CircleImageView, channelInfo: ChannelInfo) {
 @BindingAdapter("loadChannelImage")
 fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
     if (channelInfo.isLive) {
-        if (channelInfo.channel_logo.isNullOrBlank()){
+        if (channelInfo.channel_logo.isNullOrBlank()) {
             view.setImageResource(R.drawable.ic_profile_default)
         }
         else {
@@ -126,7 +125,7 @@ fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
         }
     }
     else {
-        if (channelInfo.landscape_ratio_1280_720.isNullOrBlank()){
+        if (channelInfo.landscape_ratio_1280_720.isNullOrBlank()) {
             view.setImageResource(R.drawable.placeholder)
         }
         else {
@@ -144,7 +143,7 @@ fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
 
 @BindingAdapter("bindFeaturedImage")
 fun bindFeatured(view: ImageView, channelInfo: ChannelInfo) {
-    if (channelInfo.feature_image.isNullOrBlank()){
+    if (channelInfo.feature_image.isNullOrBlank()) {
         view.setImageResource(R.drawable.placeholder)
     }
     else {
@@ -274,13 +273,13 @@ fun bindSubscriptionStatus(view: MultiTextButton, channelInfo: UgcUserChannelInf
 }
 
 @BindingAdapter("bindTextColor")
-fun bindTextColor(view: MaterialButton, myRating: Int){
-    if(myRating > 0){
+fun bindTextColor(view: MaterialButton, myRating: Int) {
+    if (myRating > 0) {
         view.setIconTintResource(android.R.color.white)
         view.setTextColor(Color.parseColor("#FFFFFF"))
         view.background.setTint(Color.parseColor("#58DC3F"))
     }
-    else{
+    else {
         view.setIconTintResource(R.color.dark_green)
         view.setTextColor(Color.parseColor("#58DC3F"))
         view.background.setTint(Color.parseColor("#FFFFFF"))
@@ -392,7 +391,8 @@ fun loadImageFromResource(view: ImageView, image: Int) {
 fun bindCircleImageFromUrl(view: CircleImageView, imageUrl: String?) {
     if (imageUrl.isNullOrEmpty()) {
         view.setImageResource(R.drawable.ic_profile_default)
-    } else {
+    }
+    else {
         view.load(imageUrl) {
             fallback(R.drawable.ic_profile_default)
             placeholder(R.drawable.ic_profile_default)
@@ -412,23 +412,21 @@ fun bindActivityType(view: TextView, item: UserActivities) {
     }
 }
 
-@BindingAdapter("loadTextLeftDrawable")
-fun loadLeftDrawable(view: TextView, resourceId: Int){
-    view.setCompoundDrawablesWithIntrinsicBounds(resourceId, 0, 0, 0)
-}
-
-@BindingAdapter("bindActivityLogo")
-fun bindActivityLogo(view: ImageView, item: UserActivities) {
-    val reactLogo = when (item.activitySubType) {
+@BindingAdapter("loadReactionEmo")
+fun loadReactionEmo(view: View, reaction: Int) {
+    val reactionIcon = when (reaction) {
         Like.value -> R.drawable.ic_reaction_like
         Love.value -> R.drawable.ic_reaction_love
         HaHa.value -> R.drawable.ic_reaction_haha
         Wow.value -> R.drawable.ic_reaction_wow
         Sad.value -> R.drawable.ic_reaction_sad
         Angry.value -> R.drawable.ic_reaction_angry
-        else -> R.drawable.ic_like_emo
+        else -> R.drawable.ic_reactions_emo
     }
-    view.setImageResource(reactLogo)
+    when (view) {
+        is ImageView -> view.setImageResource(reactionIcon)
+        is TextView -> view.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
+    }
 }
 
 @BindingAdapter("bindEmoCount")
@@ -437,55 +435,15 @@ fun bindEmoCount(view: TextView, item: ChannelInfo) {
         like + love + haha + wow + sad + angry
     } ?: 0L
     println("react count before inc: $react")
-    if (item.userReaction > 0) react++
-    println(item.userReaction)
+    if (item.myReaction > 0) react++
+    println(item.myReaction)
     println("react count after inc: $react")
     view.text = Utils.getFormattedViewsText(react.toString())
 }
 
-@BindingAdapter("bindReaction", "bindReactionCount", requireAll = true)
-fun bindReactionCount(view: TextView, reaction: Reaction, item: ChannelInfo) {
-    var reactionCount = when (reaction) {
-        Like -> {
-            if (item.userReaction == Like.value)
-                item.reaction?.like?.plus(1)
-            else
-                item.reaction?.like
-        }
-        Love -> {
-            if (item.userReaction == Love.value)
-                item.reaction?.love?.plus(1)
-            else
-                item.reaction?.love
-        }
-        HaHa -> {
-            if (item.userReaction == HaHa.value)
-                item.reaction?.haha?.plus(1)
-            else
-                item.reaction?.haha
-        }
-        Wow -> {
-            if (item.userReaction == Wow.value)
-                item.reaction?.wow?.plus(1)
-            else
-                item.reaction?.wow
-        }
-        Sad -> {
-            if (item.userReaction == Sad.value)
-                item.reaction?.sad?.plus(1)
-            else
-                item.reaction?.sad
-        }
-        Angry -> {
-            if (item.userReaction == Angry.value)
-                item.reaction?.angry?.plus(1)
-            else
-                item.reaction?.angry
-        }
-        None -> {
-            0L
-        }
+@BindingAdapter("loadMyReactionBg")
+fun loadMyReactionBg(view: ImageView, isSetBg: Boolean){
+    if (isSetBg){
+        view.setBackgroundResource(R.drawable.teal_round_bg)
     }
-    reactionCount = reactionCount ?: 0
-    view.text = Utils.getFormattedViewsText(reactionCount.toString())
 }

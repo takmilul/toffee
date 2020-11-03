@@ -7,14 +7,16 @@ import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BasePagingViewModel
 import com.banglalink.toffee.data.database.entities.UserActivities
 import com.banglalink.toffee.data.repository.UserActivitiesRepository
+import com.banglalink.toffee.data.storage.Preference
 import kotlinx.coroutines.launch
 
 class UserActivitiesListViewModel @ViewModelInject constructor(
-    private val activitiesRepo: UserActivitiesRepository
+    private val activitiesRepo: UserActivitiesRepository,
+    private val preference: Preference
 ): BasePagingViewModel<UserActivities>() {
 
     override val repo: BaseListRepository<UserActivities> by lazy {
-        BaseListRepositoryImpl({activitiesRepo.getAllItems()})
+        BaseListRepositoryImpl({activitiesRepo.getAllItems(preference.customerId)})
     }
 
     fun removeItem(item: UserActivities) {

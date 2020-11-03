@@ -155,8 +155,6 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
     
     override fun onReactionClicked(view: View, item: ChannelInfo) {
         super.onReactionClicked(view, item)
-        val fragment = AlertDialogReactionFragment.newInstance()
-        fragment.setItem(view, item)
-        fragment.show(requireActivity().supportFragmentManager, "ReactionDialog")
+        AlertDialogReactionFragment.newInstance(view, item).show(requireActivity().supportFragmentManager, "ReactionDialog")
     }
 }
