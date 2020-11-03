@@ -6,8 +6,8 @@ import com.banglalink.toffee.data.network.request.MyChannelVideosRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.ui.common.setReactionIcon
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.discardZeroFromDuration
 import com.banglalink.toffee.util.getFormattedViewsText
@@ -53,9 +53,9 @@ class MyChannelVideosService @AssistedInject constructor(
                 if (!it.created_at.isNullOrEmpty()) {
                     it.formattedCreateTime = Utils.getDateDiffInDayOrHourOrMinute(Utils.getDate(it.created_at).time).replace(" ", "")
                 }
-                val reaction = reactionDao.getReactionByContentId(it.id, preference.customerId)
-                it.userReaction = reaction?.reaction ?: 0
-                it.userReactionIcon = setReactionIcon(reaction?.reaction ?: 0)
+                val reactionInfo = reactionDao.getReactionByContentId(preference.customerId, it.id)
+                it.myReaction = reactionInfo?.reaction ?: Reaction.None.value
+//                it.userReactionIcon = setReactionIcon(it.myReaction)
 
                 it
             }

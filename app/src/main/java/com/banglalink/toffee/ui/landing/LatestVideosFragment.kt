@@ -10,7 +10,6 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.UgcCategory
-import com.banglalink.toffee.model.UgcSubCategory
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.AlertDialogReactionFragment
 import com.banglalink.toffee.ui.common.ContentReactionCallback
@@ -54,9 +53,7 @@ class LatestVideosFragment: HomeBaseFragment() {
 
             override fun onReactionClicked(view: View, item: ChannelInfo) {
                 super.onReactionClicked(view, item)
-                val fragment = AlertDialogReactionFragment.newInstance()
-                fragment.setItem(view, item)
-                fragment.show(requireActivity().supportFragmentManager, "ReactionDialog")
+                AlertDialogReactionFragment.newInstance(view, item).show(requireActivity().supportFragmentManager, "ReactionDialog")
             }
         })
 

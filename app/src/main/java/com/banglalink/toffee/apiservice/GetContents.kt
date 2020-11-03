@@ -1,16 +1,14 @@
 package com.banglalink.toffee.apiservice
 
 import com.banglalink.toffee.common.paging.BaseApiService
-import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.database.dao.ReactionDao
-import com.banglalink.toffee.data.database.dao.SubscribedItemDao
 import com.banglalink.toffee.data.network.request.ChannelRequestParams
 import com.banglalink.toffee.data.network.request.ContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.ui.common.setReactionIcon
 import com.banglalink.toffee.util.discardZeroFromDuration
 import com.banglalink.toffee.util.getFormattedViewsText
 import com.squareup.inject.assisted.Assisted
@@ -55,9 +53,9 @@ class GetContents @AssistedInject constructor(
 //                favoriteDao.isFavorite(it.id.toLong())?.also {fav->
 //                    it.favorite = fav.toString()
 //                }
-                val reaction = reactionDao.getReactionByContentId(it.id, preference.customerId)
-                it.userReaction = reaction?.reaction ?: 0
-                it.userReactionIcon = setReactionIcon(reaction?.reaction ?: 0)
+                val reactionInfo = reactionDao.getReactionByContentId(preference.customerId, it.id)
+                it.myReaction = reactionInfo?.reaction ?: Reaction.None.value
+//                it.userReactionIcon = setReactionIcon(it.myReaction)
                 it
             }
         }

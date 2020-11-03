@@ -7,6 +7,7 @@ import com.google.gson.Gson
 
 @Entity
 data class UserActivities(
+    val customerId: Int = 0,
     val channelId: Long,
     val category: String,
     val type: String,

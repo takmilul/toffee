@@ -7,5 +7,5 @@ interface UserActivitiesRepository {
     suspend fun insert(item: UserActivities): Long
     suspend fun delete(item: UserActivities)
     suspend fun update(item: UserActivities)
-    fun getAllItems(): PagingSource<Int, UserActivities>
+    fun getAllItems(customerId: Int): PagingSource<Int, UserActivities>
 }

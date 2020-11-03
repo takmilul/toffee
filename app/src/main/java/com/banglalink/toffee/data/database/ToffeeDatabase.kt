@@ -18,7 +18,7 @@ import com.banglalink.toffee.data.storage.ViewCountDataModel
         FavoriteItem::class,
         SubscribedItem::class,
     ],
-    version = 1,
+    version = 3,
     exportSchema = false)
 abstract class ToffeeDatabase: RoomDatabase() {
     abstract fun getUploadDao(): UploadDao
