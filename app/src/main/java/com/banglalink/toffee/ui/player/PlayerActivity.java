@@ -359,8 +359,6 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
             if (isBehindLiveWindow(e)) {
                 clearStartPosition();
                 reloadChannel();
-                if(channelInfo!=null)
-                    ToffeeAnalytics.INSTANCE.playerError(channelInfo,"Behind live window");//log error
             }
         }
 

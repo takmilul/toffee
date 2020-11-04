@@ -26,7 +26,7 @@ suspend fun <T : BaseResponse> tryIO(block: suspend () -> Response<T>): T {
         response.body()?.let {
            return when{
                 it.errorCode == MULTI_DEVICE_LOGIN_ERROR_CODE->{
-                    ToffeeAnalytics.logApiError(it.apiName,it.errorMsg)
+//                    ToffeeAnalytics.logApiError(it.apiName,it.errorMsg)
                     EventProvider.post(CustomerNotFoundException("Customer multiple login occurred"))
                     throw ApiException(
                         it.errorCode,
@@ -34,14 +34,14 @@ suspend fun <T : BaseResponse> tryIO(block: suspend () -> Response<T>): T {
                     )
                 }
                it.status == 1 ->{//server suffered a serious error
-                   ToffeeAnalytics.logApiError(it.apiName,it.errorMsg)
+//                   ToffeeAnalytics.logApiError(it.apiName,it.errorMsg)
                    throw ApiException(
                        it.status,
                        it.errorMsg ?:"Something went wrong. Please try again later"
                    )
                }
                 it.errorCode!=0->{//hmmm....error occurred ....throw it
-                    ToffeeAnalytics.logApiError(it.apiName,it.errorMsg)
+//                    ToffeeAnalytics.logApiError(it.apiName,it.errorMsg)
                     throw ApiException(
                         it.errorCode,
                         it.errorMsg ?:"Unknown error occurred"
@@ -61,7 +61,7 @@ suspend fun <T : BaseResponse> tryIO2(block: suspend () -> T): T {
     val response = block()
     return when{
         response.errorCode == MULTI_DEVICE_LOGIN_ERROR_CODE->{
-            ToffeeAnalytics.logApiError(response.apiName,response.errorMsg)
+//            ToffeeAnalytics.logApiError(response.apiName,response.errorMsg)
             EventProvider.post(CustomerNotFoundException("Customer multiple login occurred"))
             throw ApiException(
                 response.errorCode,
@@ -69,14 +69,14 @@ suspend fun <T : BaseResponse> tryIO2(block: suspend () -> T): T {
             )
         }
         response.status == 1 ->{//server suffered a serious error
-            ToffeeAnalytics.logApiError(response.apiName,response.errorMsg)
+//            ToffeeAnalytics.logApiError(response.apiName,response.errorMsg)
             throw ApiException(
                 response.status,
                 response.errorMsg ?:"Something went wrong. Please try again later"
             )
         }
         response.errorCode!=0->{//hmmm....error occurred ....throw it
-            ToffeeAnalytics.logApiError(response.apiName,response.errorMsg)
+//            ToffeeAnalytics.logApiError(response.apiName,response.errorMsg)
             throw ApiException(
                 response.errorCode,
                 response.errorMsg ?:"Unknown error occurred"

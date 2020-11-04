@@ -32,6 +32,7 @@ public class HTML5WebView extends WebView {
     private void init(Context context) {
         mContext = context;
         progressDialog = new VelBoxProgressDialog(context);
+        progressDialog.setCancelable(true);
         progressDialog.show();
         Activity a = (Activity) mContext;
 
@@ -50,8 +51,7 @@ public class HTML5WebView extends WebView {
         s.setJavaScriptEnabled(true);
         mWebChromeClient = new MyWebChromeClient();
         setWebChromeClient(mWebChromeClient);
-
-        setWebViewClient(new WebViewClient());
+        setWebViewClient(new Html5WebViewClient());
 
         setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         s.setDomStorageEnabled(true);
