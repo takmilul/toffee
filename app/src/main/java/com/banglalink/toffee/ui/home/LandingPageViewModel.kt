@@ -1,10 +1,17 @@
 package com.banglalink.toffee.ui.home
 
-import android.app.Application
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.banglalink.toffee.apiservice.GetChannelSubscriptions
-import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import com.banglalink.toffee.apiservice.*
+import com.banglalink.toffee.apiservice.GetContents
+import com.banglalink.toffee.apiservice.GetFeatureContents
+import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
+import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
+import com.banglalink.toffee.data.network.request.ChannelRequestParams
+import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.setError
 import com.banglalink.toffee.extension.setSuccess
@@ -14,120 +21,157 @@ import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.usecase.*
 import com.banglalink.toffee.util.getError
 import com.banglalink.toffee.util.unsafeLazy
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
-class LandingPageViewModel(application: Application):BaseViewModel(application) {
+class LandingPageViewModel @ViewModelInject constructor(
+    private val mostPopularApi: GetMostPopularContents,
+    private val mostPopularPlaylists: GetMostPopularPlaylists,
+    private val categoryListApi: GetUgcCategories,
+    private val popularChannelAssistedFactory: GetUgcPopularUserChannels.AssistedFactory,
+    private val trendingNowAssistedFactory: GetUgcTrendingNowContents.AssistedFactory,
+    private val featuredContentAssistedFactory: GetFeatureContents.AssistedFactory,
+    private val getContentAssistedFactory: GetContents.AssistedFactory
+):BaseViewModel() {
+    val latestVideoLiveData = MutableLiveData<Pair<Int, Int>>()
 
-    //LiveData for fetching channel list
-    private val channelMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
-    val channelLiveData = channelMutableLiveData.toLiveData()
-
-    //LiveData for fetching popular list
-    private val popularVideoMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
-    val popularVideoLiveData = popularVideoMutableLiveData.toLiveData()
-
-    private val mostPopularVideoMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
-    val mostPopularVideoLiveData = mostPopularVideoMutableLiveData.toLiveData()
-
-    //LiveData for featureContent List
-    private val featureContentMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
-    val featureContentLiveData = featureContentMutableLiveData.toLiveData()
-
-    private val userChannelListMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
-    val userChannelList = userChannelListMutableLiveData.toLiveData()
-
-//    //LiveData for Categories List
-//    private val categoriesMutableLiveData = MutableLiveData<List<Category>>()
-//    val categoriesLiveData = categoriesMutableLiveData.toLiveData()
-
-    private val trendingNowMutableLiveData = MutableLiveData<List<ChannelInfo>>()
-    val trendingNowLiveData = trendingNowMutableLiveData.toLiveData()
-
-    val categoryInfoLiveData = MutableLiveData<Resource<List<NavCategory>>>()
-
-    private val getCategory by lazy {
-        GetCategoryNew(RetrofitApiClient.toffeeApi)
+    fun loadChannels(): Flow<PagingData<ChannelInfo>>{
+        return channelRepo.getList().cachedIn(viewModelScope)
     }
 
-    private val getChannels by unsafeLazy {
-        GetContents(Preference.getInstance(),RetrofitApiClient.toffeeApi)
+    fun loadLatestVideos(): Flow<PagingData<ChannelInfo>> {
+        return latestVideosRepo.getList().cachedIn(viewModelScope)
     }
 
-    private val getPopularVideo by unsafeLazy {
-        GetContents(Preference.getInstance(),RetrofitApiClient.toffeeApi)
+    fun loadMostPopularVideos(): Flow<PagingData<ChannelInfo>> {
+        return mostPopularRepo.getList().cachedIn(viewModelScope)
     }
 
-    private val getFeatureContents by unsafeLazy {
-        GetFeatureContents(Preference.getInstance(),RetrofitApiClient.toffeeApi)
+    fun loadMostPopularPlaylists(): Flow<PagingData<MyChannelPlaylist>> {
+        return mostPopularPlaylistsRepo.getList()
     }
 
-    private val getUserChannels by unsafeLazy {
-        GetChannelSubscriptions(Preference.getInstance(), RetrofitApiClient.toffeeApi)
+    fun loadFeatureContents(): Flow<PagingData<ChannelInfo>>{
+        return featureRepo.getList().cachedIn(viewModelScope)
     }
 
-    fun loadChannels(){
-        viewModelScope.launch {
-            try{
-                val response = getChannels.execute("",0,"",0,"LIVE")
-                channelMutableLiveData.setSuccess(response)
-            }catch (e:Exception){
-                channelMutableLiveData.setError(getError(e))
-            }
-        }
+    fun loadCategories(): Flow<PagingData<UgcCategory>> {
+        return categoryListRepo.getList().cachedIn(viewModelScope)
     }
 
-    fun loadPopularVideos(){
-        viewModelScope.launch {
-            try{
-                val response = getPopularVideo.execute("",0,"",0,"VOD")
-                popularVideoMutableLiveData.setSuccess(response)
-            }catch (e:Exception){
-                popularVideoMutableLiveData.setError(getError(e))
-            }
-        }
+    fun loadTrendingNowContent(): Flow<PagingData<ChannelInfo>> {
+        return trendingNowRepo.getList().cachedIn(viewModelScope)
     }
 
-    fun loadMostPopularVideos(){
-        viewModelScope.launch {
-            try{
-                val response = getPopularVideo.execute("",0,"",0,"VOD")
-                mostPopularVideoMutableLiveData.setSuccess(response)
-                trendingNowMutableLiveData.value = response.subList(0, 3)
-            }catch (e:Exception){
-                mostPopularVideoMutableLiveData.setError(getError(e))
-            }
-        }
+    fun loadUserChannels(): Flow<PagingData<UgcUserChannelInfo>> {
+        return userChannelRepo.getList().cachedIn(viewModelScope)
     }
 
-    fun loadUserChannels() {
-        viewModelScope.launch {
-            try {
-                val response = getUserChannels.loadData(0, 10)
-                userChannelListMutableLiveData.setSuccess(response)
-            } catch (e: Exception) {
-                userChannelListMutableLiveData.setError(getError(e))
-            }
-        }
+    private val userChannelRepo by lazy {
+        BaseListRepositoryImpl({
+            BaseNetworkPagingSource(
+                popularChannelAssistedFactory.create(
+                    ApiCategoryRequestParams("", 0, 0)
+                )
+            )
+        })
     }
 
-    fun loadFeatureContents(){
-        viewModelScope.launch {
-            try{
-                val response = getFeatureContents.execute("",0,"",0)
-                featureContentMutableLiveData.setSuccess(response)
-            }catch (e:Exception){
-                featureContentMutableLiveData.setError(getError(e))
-            }
-        }
+    fun loadUserChannelsByCategory(category: UgcCategory): Flow<PagingData<UgcUserChannelInfo>> {
+        return BaseListRepositoryImpl({
+            BaseNetworkPagingSource(
+                popularChannelAssistedFactory.create(
+                    ApiCategoryRequestParams("", 1, category.id.toInt())
+                )
+            )
+        }).getList()
     }
 
-    fun loadCategories() {
-        viewModelScope.launch {
-            try {
-                categoryInfoLiveData.setSuccess(getCategory.execute())
-            } catch (e: Exception) {
-                categoryInfoLiveData.setError(getError(e))
-            }
-        }
+    private val channelRepo by lazy {
+        BaseListRepositoryImpl({
+            BaseNetworkPagingSource(
+                getContentAssistedFactory.create(
+                    ChannelRequestParams("", 0, "", 0, "LIVE")
+                )
+            )
+        } )
+    }
+
+    private val categoryListRepo by lazy {
+        BaseListRepositoryImpl({
+            BaseNetworkPagingSource(
+                categoryListApi
+            )
+        })
+    }
+
+    private val latestVideosRepo by lazy {
+        BaseListRepositoryImpl({
+            BaseNetworkPagingSource(
+                getContentAssistedFactory.create(
+                    ChannelRequestParams("", 0, "", 0, "VOD")
+                )
+            )
+        })
+    }
+
+    private val featureRepo by lazy {
+        BaseListRepositoryImpl({
+            BaseNetworkPagingSource(
+                featuredContentAssistedFactory.create(
+                    ApiCategoryRequestParams("VOD", 0, 0)
+                )
+            )
+        })
+    }
+
+    private val mostPopularRepo by lazy {
+        BaseListRepositoryImpl({
+            BaseNetworkPagingSource(
+                mostPopularApi
+            )
+        })
+    }
+
+    private val mostPopularPlaylistsRepo by lazy {
+        BaseListRepositoryImpl({
+            BaseNetworkPagingSource(
+                mostPopularPlaylists
+            )
+        })
+    }
+
+    private val trendingNowRepo by lazy {
+        BaseListRepositoryImpl({
+            BaseNetworkPagingSource(
+                trendingNowAssistedFactory.create(
+                    ApiCategoryRequestParams("VOD", 0, 0)
+                )
+            )
+        })
+    }
+
+    fun loadLatestVideosByCategory(categoryId: Int, subCategoryId: Int): Flow<PagingData<ChannelInfo>> {
+        return BaseListRepositoryImpl({
+            BaseNetworkPagingSource(
+                getContentAssistedFactory.create(
+                    ChannelRequestParams("", categoryId, "", subCategoryId, "VOD")
+                )
+            )
+        }).getList()
+    }
+
+    fun loadTrendingNowContentByCategory(category: UgcCategory): Flow<PagingData<ChannelInfo>> {
+        return BaseListRepositoryImpl({
+            BaseNetworkPagingSource(
+                trendingNowAssistedFactory.create(
+                    ApiCategoryRequestParams("VOD", 1, category.id.toInt())
+                )
+            )
+        }).getList()
+    }
+
+    fun loadSubcategoryVideos(catId: Int, subCatId: Int) {
+        latestVideoLiveData.value = Pair(catId, subCatId)
     }
 }

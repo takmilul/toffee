@@ -133,6 +133,8 @@ class ThumbnailSelectionMethodFragment: Fragment() {
 
         val options = UCrop.Options().apply {
             setHideBottomControls(true)
+            withAspectRatio(16f, 9f)
+            withMaxResultSize(1280, 720)
             setFreeStyleCropEnabled(true)
         }
 

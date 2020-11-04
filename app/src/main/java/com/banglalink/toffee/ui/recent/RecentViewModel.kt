@@ -1,25 +1,20 @@
 package com.banglalink.toffee.ui.recent
 
-import android.app.Application
-import androidx.lifecycle.LiveData
-import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
-import com.banglalink.toffee.data.network.util.resultLiveData
-import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.common.BaseViewModel
+import androidx.hilt.lifecycle.ViewModelInject
+import com.banglalink.toffee.apiservice.GetHistory
+import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
+import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
+import com.banglalink.toffee.common.paging.BasePagingViewModel
+import com.banglalink.toffee.data.database.entities.HistoryItem
+import com.banglalink.toffee.data.repository.HistoryRepository
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.usecase.GetHistory
-import com.banglalink.toffee.util.unsafeLazy
 
-class RecentViewModel(application: Application):BaseViewModel(application) {
-    private val getHistory by unsafeLazy {
-        GetHistory(Preference.getInstance(),RetrofitApiClient.toffeeApi)
+class RecentViewModel @ViewModelInject constructor(
+    private val historyRepo: HistoryRepository
+): BasePagingViewModel<HistoryItem>() {
+    override val repo by lazy {
+        BaseListRepositoryImpl({
+            historyRepo.getAllItems()
+        })
     }
-
-    fun loadRecentItems(): LiveData<Resource<List<ChannelInfo>>> {
-        return resultLiveData {
-            getHistory.execute()
-        }
-    }
-
 }

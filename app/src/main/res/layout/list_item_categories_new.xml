@@ -7,13 +7,13 @@
     <data>
         <variable
             name="data"
-            type="com.banglalink.toffee.model.NavCategory" />
+            type="com.banglalink.toffee.model.UgcCategory" />
         <variable
             name="callback"
-            type="com.banglalink.toffee.ui.common.SingleListItemCallback" />
+            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:onClick="@{()->callback.onItemClicked(data)}"
@@ -24,7 +24,6 @@
             android:id="@+id/icon"
             android:layout_width="@dimen/channel_width"
             android:layout_height="@dimen/channel_height"
-            android:padding="30dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"

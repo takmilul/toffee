@@ -4,32 +4,25 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.banglalink.toffee.R
-import com.banglalink.toffee.extension.showToast
-import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
-import com.banglalink.toffee.model.Category
-import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.NavCategory
-import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.common.HomeBaseFragment
+import com.banglalink.toffee.model.UgcCategory
+import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
-import com.banglalink.toffee.util.unsafeLazy
-//import com.daimajia.slider.library.SliderTypes.BaseSliderView
-//import com.daimajia.slider.library.SliderTypes.DefaultSliderView
+import dagger.hilt.android.AndroidEntryPoint
 
-class CategoryDetailsFragment : Fragment(R.layout.fragment_category_details) {
-    lateinit var category: NavCategory
+@AndroidEntryPoint
+class CategoryDetailsFragment : BaseFragment() {
+    lateinit var category: UgcCategory
+    private val viewModel by activityViewModels<LandingPageViewModel>()
 
     companion object {
         const val ARG_CATEGORY_ITEM = "ARG_CATEGORY_ITEM"
+        const val ARG_SUBCATEGORY_ITEM = "ARG_CATEGORY_ITEM"
 
-        fun newInstance(category: NavCategory): CategoryDetailsFragment {
+        fun newInstance(category: UgcCategory): CategoryDetailsFragment {
             return CategoryDetailsFragment().apply {
                 arguments = Bundle().also {
                     it.putParcelable(ARG_CATEGORY_ITEM, category)
@@ -38,9 +31,14 @@ class CategoryDetailsFragment : Fragment(R.layout.fragment_category_details) {
         }
     }
 
-    val viewModel by unsafeLazy {
-        ViewModelProviders.of(this).get(LandingPageViewModel::class.java)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_category_details, container, false)
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

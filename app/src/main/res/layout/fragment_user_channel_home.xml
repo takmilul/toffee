@@ -28,7 +28,7 @@
                 
                 <include
                     android:id="@+id/channelRatingView"
-                    layout="@layout/layout_user_channel_home_info"
+                    layout="@layout/layout_my_channel_detail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clipChildren="false"
@@ -53,12 +53,16 @@
             </LinearLayout>
         
         </com.google.android.material.appbar.AppBarLayout>
-        
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewPager"
+        <androidx.core.widget.NestedScrollView
+            android:fillViewport="true"
+            android:layout_gravity="fill_vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-    
+            android:layout_height="match_parent">
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </androidx.core.widget.NestedScrollView>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

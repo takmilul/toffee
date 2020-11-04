@@ -7,33 +7,34 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import androidx.activity.viewModels
 import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
-import com.banglalink.toffee.R
-import com.banglalink.toffee.databinding.ActivityEditProfileBinding
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.showToast
-import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.widget.VelBoxFieldTextWatcher
-import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import androidx.lifecycle.lifecycleScope
 import coil.api.load
 import coil.transform.CircleCropTransformation
+import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.extension.getViewModel
+import com.banglalink.toffee.databinding.ActivityEditProfileBinding
 import com.banglalink.toffee.extension.loadProfileImage
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
-import com.banglalink.toffee.util.unsafeLazy
+import com.banglalink.toffee.ui.widget.VelBoxFieldTextWatcher
+import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
 import com.yalantis.ucrop.UCrop
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
+@AndroidEntryPoint
 class EditProfileActivity : BaseAppCompatActivity() {
 
     var photoUri: Uri? = null
@@ -45,9 +46,7 @@ class EditProfileActivity : BaseAppCompatActivity() {
     companion object{
         const val PROFILE_INFO = "Profile"
     }
-    private val viewModel by unsafeLazy {
-        getViewModel<EditProfileViewModel>()
-    }
+    private val viewModel by viewModels<EditProfileViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

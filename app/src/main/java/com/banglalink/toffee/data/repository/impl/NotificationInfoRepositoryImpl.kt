@@ -1,0 +1,32 @@
+package com.banglalink.toffee.data.repository.impl
+
+import androidx.paging.PagingSource
+import com.banglalink.toffee.data.database.dao.NotificationDao
+import com.banglalink.toffee.data.database.entities.NotificationInfo
+import com.banglalink.toffee.data.repository.NotificationInfoRepository
+
+class NotificationInfoRepositoryImpl(private val notificationDao: NotificationDao): NotificationInfoRepository {
+    override suspend fun insert(notificationInfo: NotificationInfo) {
+        notificationDao.insert(notificationInfo)
+    }
+
+    override suspend fun delete(notificationInfo: NotificationInfo) {
+        notificationDao.delete(notificationInfo)
+    }
+
+    override fun getAllNotification(): PagingSource<Int, NotificationInfo> {
+        return notificationDao.getAllNotification()
+    }
+
+    /*override suspend fun getNotificationByDate(date: Long): PagingSource<Int, NotificationInfo> {
+        return notificationDao.getNotificationByDate(date)
+    }
+
+    override suspend fun getNotificationByTopic(topic: Int): PagingSource<Int, NotificationInfo> {
+        return notificationDao.getNotificationByTopic(topic)
+    }*/
+
+    override suspend fun updateSeenStatus(id: Long, isSeen: Boolean, seenTime: Long): Int {
+        return notificationDao.updateSeenStatus(id, isSeen, seenTime)
+    }
+}

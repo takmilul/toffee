@@ -7,8 +7,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.banglalink.toffee.R
 import com.google.android.material.tabs.TabLayoutMediator
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.tab_activities_main.*
 
+@AndroidEntryPoint
 class UserActivitiesMainFragment: Fragment() {
     companion object {
         const val ARG_SELECTED_TAB = "selected-tab"

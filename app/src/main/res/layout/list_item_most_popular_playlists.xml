@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+
+    <data>
+        <variable
+            name="data"
+            type="com.banglalink.toffee.model.MyChannelPlaylist" />
+        <variable
+            name="callback"
+            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="340dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/fragment_bg_bottom"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp">
+
+        <FrameLayout
+            android:id="@+id/poster_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{()->callback.onItemClicked(data)}"
+            app:layout_constraintDimensionRatio="W,16:9"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            >
+            <com.banglalink.toffee.ui.widget.CustomImageView
+                imageFromUrl="@{data.landscape_ratio_1280_720}"
+                android:id="@+id/poster"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:minHeight="200dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/placeholder"
+                />
+        </FrameLayout>
+
+<!--        <TextView-->
+<!--            android:id="@+id/duration"-->
+<!--            bindDuration="@{data}"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="#88000000"-->
+<!--            android:paddingLeft="8dp"-->
+<!--            android:paddingTop="3dp"-->
+<!--            android:paddingRight="8dp"-->
+<!--            android:paddingBottom="3dp"-->
+<!--            android:textColor="@android:color/white"-->
+<!--            android:textSize="14sp"-->
+<!--            app:layout_constraintBottom_toBottomOf="@+id/poster"-->
+<!--            app:layout_constraintEnd_toEndOf="@+id/poster"-->
+<!--            tools:text="00:00" />-->
+
+        <!--        <View-->
+        <!--            android:id="@+id/view"-->
+        <!--            android:layout_width="0dp"-->
+        <!--            android:layout_height="96dp"-->
+        <!--            android:visibility="gone"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintStart_toStartOf="parent"-->
+        <!--            app:layout_constraintTop_toBottomOf="@+id/poster" />-->
+
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/ownerPicture"
+            loadCircleImageFromUrl="@{data.channelLogo}"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/poster_container" />
+
+
+        <TextView
+            android:id="@+id/name"
+            style="@style/programNameTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:lines="2"
+            android:maxLines="2"
+            android:text="@{data.name}"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#7990AC"
+            app:layout_constraintEnd_toStartOf="@+id/options"
+            app:layout_constraintStart_toEndOf="@+id/ownerPicture"
+            app:layout_constraintTop_toTopOf="@+id/ownerPicture"
+            tools:text="This Makeup Tutorial By Kylie Jenner Is All you Need For Summer" />
+
+        <ImageView
+            android:id="@+id/options"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{(v)->callback.onOpenMenu(v, data)}"
+            android:padding="4dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/poster_container"
+            app:srcCompat="@drawable/ic_menu_more" />
+
+        <!--        <androidx.constraintlayout.widget.Guideline-->
+        <!--            android:id="@+id/guideline2"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:orientation="vertical"-->
+        <!--            app:layout_constraintGuide_percent="0.9026764"/>-->
+
+<!--        <ProgressBar-->
+<!--            android:id="@+id/progress"-->
+<!--            style="?android:attr/progressBarStyleHorizontal"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="4dp"-->
+<!--            android:max="100"-->
+<!--            android:progress="50"-->
+<!--            android:visibility="gone"-->
+<!--            app:layout_constraintBottom_toBottomOf="@+id/poster"-->
+<!--            app:layout_constraintEnd_toEndOf="@+id/duration"-->
+<!--            app:layout_constraintStart_toStartOf="parent" />-->
+
+        <!--        a very long channel that is very long-->
+        <View
+            android:id="@+id/overlayView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/overlay_dark_color"
+            app:layout_constraintWidth_percent="0.4"
+            app:layout_constraintTop_toTopOf="@id/poster_container"
+            app:layout_constraintEnd_toEndOf="@id/poster_container"
+            app:layout_constraintBottom_toBottomOf="@id/poster_container"/>
+
+        <TextView
+            android:id="@+id/owner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:ellipsize="end"
+            android:maxWidth="200dp"
+            android:maxLines="1"
+            android:text='@{data.channelName + " - " + data.formattedCreateTime}'
+            android:textColor="#829AB8"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/textView50"
+            app:layout_constraintStart_toStartOf="@+id/name"
+            app:layout_constraintTop_toBottomOf="@+id/name" />
+
+        <TextView
+            android:id="@+id/textView50"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:visibility="gone"
+            android:text=""
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/owner"
+            app:layout_constraintTop_toTopOf="@+id/owner" />
+
+        <ImageView
+            android:id="@+id/folderImageView"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_folder"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="@id/overlayView"
+            app:layout_constraintTop_toTopOf="@id/overlayView"
+            app:layout_constraintEnd_toEndOf="@id/overlayView"
+            app:layout_constraintBottom_toTopOf="@id/videoCountTextView"/>
+
+        <TextView
+            android:id="@+id/videoCountTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text='@{String.valueOf(data.totalContent).concat(" Videos")}'
+            android:textColor="@color/screen_bg_white"
+            android:gravity="center_horizontal"
+            app:layout_constraintStart_toStartOf="@id/overlayView"
+            app:layout_constraintTop_toBottomOf="@id/folderImageView"
+            app:layout_constraintEnd_toEndOf="@id/overlayView"
+            app:layout_constraintBottom_toBottomOf="@id/poster_container"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,14 +1,16 @@
 package com.banglalink.toffee.ui.notification
 
 import android.os.Bundle
-import androidx.lifecycle.ViewModelProvider
-import com.banglalink.toffee.model.Notification
-import com.banglalink.toffee.ui.common.SingleListFragmentV2
-import com.banglalink.toffee.ui.common.SingleListItemCallback
+import androidx.fragment.app.viewModels
+import com.banglalink.toffee.common.paging.BaseListFragment
+import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.data.database.entities.NotificationInfo
 
-class NotificationCenterFragment: SingleListFragmentV2<Notification>(), SingleListItemCallback<Notification> {
+class NotificationCenterFragment: BaseListFragment<NotificationInfo>(), BaseListItemCallback<NotificationInfo> {
 
     private var enableToolbar: Boolean = false
+    override val mAdapter by lazy { NotificationCenterAdapter(this) }
+    override val mViewModel by viewModels<NotificationCenterViewModel>()
 
     companion object {
         private const val SHOW_TOOLBAR = "enableToolbar"
@@ -23,10 +25,10 @@ class NotificationCenterFragment: SingleListFragmentV2<Notification>(), SingleLi
         }
     }
 
-    override fun initAdapter() {
+    /*override fun initAdapter() {
         mAdapter = NotificationCenterAdapter(this)
         mViewModel = ViewModelProvider(this).get(NotificationCenterViewModel::class.java)
         enableToolbar = arguments?.getBoolean(SHOW_TOOLBAR) ?: false
         mViewModel.enableToolbar = enableToolbar
-    }
+    }*/
 }

@@ -1,26 +1,34 @@
 package com.banglalink.toffee.ui.channels
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.R
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.StickyHeaderGridLayoutManager
 import com.banglalink.toffee.util.unsafeLazy
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 
-class ChannelFragment:Fragment(), ChannelStickyListAdapter.OnItemClickListener {
+@AndroidEntryPoint
+class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListener {
 
-    private val homeViewModel by unsafeLazy {
-        ViewModelProviders.of(activity!!).get(HomeViewModel::class.java)
-    }
+    private val homeViewModel by activityViewModels<HomeViewModel>()
+    private val channelViewModel by activityViewModels<AllChannelsViewModel>()
 
     override fun onItemClicked(channelInfo: ChannelInfo) {
         homeViewModel.fragmentDetailsMutableLiveData.postValue(channelInfo)
@@ -60,10 +68,10 @@ class ChannelFragment:Fragment(), ChannelStickyListAdapter.OnItemClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        this.title = arguments!!.getString("title")
-        this.category = arguments!!.getString("category")
-        this.subCategory = arguments!!.getString("sub-category")
-        this.subCategoryID = arguments!!.getInt("sub-category-id")
+        this.title = requireArguments().getString("title")
+        this.category = requireArguments().getString("category")
+        this.subCategory = requireArguments().getString("sub-category")
+        this.subCategoryID = requireArguments().getInt("sub-category-id")
     }
 
     override fun onCreateView(
@@ -79,29 +87,35 @@ class ChannelFragment:Fragment(), ChannelStickyListAdapter.OnItemClickListener {
         title?.let {
             activity?.title = it
         }
-        var channelAdapter: ChannelStickyListAdapter?
         val gridView: RecyclerView  = view.findViewById(R.id.gridView)
         gridView.setHasFixedSize(true)
         val layoutManager = StickyHeaderGridLayoutManager(3)
         layoutManager.setHeaderBottomOverlapMargin(resources.getDimensionPixelSize(R.dimen.header_shadow_size))
         gridView.layoutManager = layoutManager
 
-        homeViewModel.getChannelByCategory(0)
+        val channelAdapter = ChannelStickyListAdapter(
+            requireContext(),
+            this
+        )
+        gridView.adapter = channelAdapter
+
+//        homeViewModel.getChannelByCategory(0)
         //we will observe channel live data from home activity
-        homeViewModel.channelLiveData.observe(viewLifecycleOwner, Observer {
-          when(it){
-              is Resource.Success->{
-                  channelAdapter = ChannelStickyListAdapter(
-                      requireContext(),
-                      it.data.toMutableList(),
-                      this
-                  )
-                  gridView.adapter = channelAdapter
-              }
-              is Resource.Failure->{
-                  context?.showToast(it.error.msg)
-              }
-          }
-        })
+
+        Log.e("CHANNEL", channelViewModel.toString())
+
+        lifecycleScope.launchWhenStarted {
+            channelViewModel(0)
+                .collectLatest {
+                    when(it){
+                        is Resource.Success->{
+                            channelAdapter.setItems(it.data)
+                        }
+                        is Resource.Failure->{
+                            context?.showToast(it.error.msg)
+                        }
+                    }
+            }
+        }
     }
 }

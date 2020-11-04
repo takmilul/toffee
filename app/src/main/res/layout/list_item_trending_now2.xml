@@ -11,11 +11,13 @@
             type="com.banglalink.toffee.model.ChannelInfo" />
         <variable
             name="callback"
-            type="com.banglalink.toffee.ui.home.OptionCallBack" />
+            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
+        android:onClick="@{()->callback.onItemClicked(data)}"
         android:layout_marginTop="10dp">
 
         <com.banglalink.toffee.ui.widget.CustomImageView
@@ -54,7 +56,7 @@
             android:layout_width="42dp"
             android:layout_height="42dp"
             android:layout_marginTop="8dp"
-            android:src="@drawable/ic_portrait"
+            loadChannelLogo="@{data}"
             app:layout_constraintStart_toStartOf="@+id/name"
             app:layout_constraintTop_toBottomOf="@+id/name" />
 
@@ -82,6 +84,7 @@
             android:layout_width="0dp"
             android:layout_height="4dp"
             android:max="100"
+            android:visibility="gone"
             android:progress="50"
             app:layout_constraintBottom_toBottomOf="@+id/poster"
             app:layout_constraintEnd_toEndOf="@+id/duration"
@@ -92,7 +95,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:text="AsianStar- 14h"
+            android:text="@{data.content_provider_name}"
             android:textColor="#829AB8"
             app:layout_constraintBottom_toBottomOf="@+id/ownerPicture"
             app:layout_constraintEnd_toEndOf="@+id/name"

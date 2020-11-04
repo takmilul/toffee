@@ -7,8 +7,7 @@ import androidx.paging.cachedIn
 import kotlinx.coroutines.flow.Flow
 
 abstract class BasePagingViewModel<T: Any>: ViewModel() {
-    protected abstract val apiService: BaseApiService<T>
-    private val repo: BaseListRepository<T> by lazy { BaseListRepositoryImpl(apiService) }
+    protected abstract val repo: BaseListRepository<T>// by lazy { BaseListRepositoryImpl(apiService) }
     open var enableToolbar = true
 
     fun getListData(): Flow<PagingData<T>> {

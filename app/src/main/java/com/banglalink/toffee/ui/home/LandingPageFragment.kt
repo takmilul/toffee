@@ -1,38 +1,28 @@
 package com.banglalink.toffee.ui.home
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.R
-import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.extension.showToast
-import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.HomeBaseFragment
+import com.banglalink.toffee.ui.upload.UploadProgressViewModel
+import com.banglalink.toffee.ui.upload.UploadStatus
 import com.banglalink.toffee.util.Utils
-import com.banglalink.toffee.util.unsafeLazy
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_landing_page2.*
 import kotlinx.android.synthetic.main.home_mini_upload_progress.*
-import net.gotev.uploadservice.data.UploadInfo
-import net.gotev.uploadservice.network.ServerResponse
-import net.gotev.uploadservice.observer.request.RequestObserver
-import net.gotev.uploadservice.observer.request.RequestObserverDelegate
+import kotlinx.coroutines.flow.collectLatest
 
-//import com.daimajia.slider.library.SliderTypes.BaseSliderView
-//import com.daimajia.slider.library.SliderTypes.DefaultSliderView
-
-class LandingPageFragment : HomeBaseFragment()/*,BaseSliderView.OnSliderClickListener*/ {
+@AndroidEntryPoint
+class LandingPageFragment : HomeBaseFragment(){
 
     companion object {
         fun newInstance(): LandingPageFragment {
@@ -40,26 +30,12 @@ class LandingPageFragment : HomeBaseFragment()/*,BaseSliderView.OnSliderClickLis
         }
     }
 
-//    override fun onSliderClick(slider: BaseSliderView?) {
-//        homeViewModel.fragmentDetailsMutableLiveData.postValue((slider as DefaultSliderView).data as ChannelInfo)
-//    }
-
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
 //        popularVideoListAdapter.remove(channelInfo)
     }
 
-//    lateinit var popularVideoListAdapter: PopularVideoListAdapter
-//    private var popularVideoListView: RecyclerView? = null
-//    private var bottomProgress: ProgressBar? = null
-//    private lateinit var popularVideoScrollListener : EndlessRecyclerViewScrollListener
-
-
-    lateinit var viewModel: LandingPageViewModel
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(activity!!).get(LandingPageViewModel::class.java)
-    }
+    private val viewModel: LandingPageViewModel by activityViewModels()
+    private val uploadViewModel by activityViewModels<UploadProgressViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -69,78 +45,49 @@ class LandingPageFragment : HomeBaseFragment()/*,BaseSliderView.OnSliderClickLis
         return inflater.inflate(R.layout.fragment_landing_page2, container, false)
     }
 
+    fun onBackPressed(): Boolean {
+        return false
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.title = "Home"
 
-//        viewModel.loadChannels()
-//        viewModel.loadPopularVideos()
-//        viewModel.loadCategories()
-//        viewModel.loadFeatureContents()
-//        viewModel.loadUserChannels()
         viewModel.loadMostPopularVideos()
-        observeUpload()
+        observeUpload2()
     }
 
-    fun onBackPressed(): Boolean {
-
-        return false
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-
-    }
-
-    private fun observeUpload() {
+    private fun observeUpload2() {
         add_upload_info_button.setOnClickListener {
             findNavController().navigate(R.id.editUploadInfoFragment)
         }
 
-        if(Preference.getInstance().uploadStatus < 0) {
-            home_mini_progress_container.visibility = View.GONE
-        } else {
-            home_mini_progress_container.visibility = View.VISIBLE
-        }
-
-        RequestObserver(requireContext(), this, object: RequestObserverDelegate {
-            override fun onCompleted(context: Context, uploadInfo: UploadInfo) {
-
-            }
-
-            override fun onCompletedWhileNotObserving() {
-
-            }
-
-            override fun onError(context: Context, uploadInfo: UploadInfo, exception: Throwable) {
-                home_mini_progress_container.visibility = View.GONE
-            }
-
-            override fun onProgress(context: Context, uploadInfo: UploadInfo) {
-                Log.e("UPLOAD", "UploadId - ${uploadInfo.uploadId}, " +
-                        "PrefUploadId - ${Preference.getInstance().uploadId}, " +
-                        "Progress - ${uploadInfo.progressPercent}")
-                if(uploadInfo.uploadId == Preference.getInstance().uploadId &&
-                    uploadInfo.progressPercent in 0..100) {
-                    Log.e("Upload2", "Inside onProgress")
-                    add_upload_info_button.visibility = View.INVISIBLE
-                    upload_size_text.visibility = View.VISIBLE
-                    mini_upload_progress_text.text = "Uploading - ${uploadInfo.progressPercent}%"
-                    mini_upload_progress.progress = uploadInfo.progressPercent
-                    upload_size_text.text = Utils.readableFileSize(uploadInfo.totalBytes)
+        lifecycleScope.launchWhenStarted {
+            uploadViewModel.getActiveUploadList().collectLatest {
+                Log.e("UPLOAD 2", "Collecting ->>> ${it.size}")
+                if(it.isNotEmpty()) {
+                    home_mini_progress_container.isVisible = true
+                    val upInfo = it[0]
+                    when(upInfo.status){
+                        UploadStatus.SUCCESS.value -> {
+                            mini_upload_progress.progress = 100
+                            add_upload_info_button.isVisible = true
+                            upload_size_text.isInvisible = true
+                            mini_upload_progress_text.text = "Upload complete"
+                        }
+                        UploadStatus.ADDED.value,
+                        UploadStatus.STARTED.value -> {
+                            add_upload_info_button.isInvisible = true
+                            upload_size_text.isVisible = true
+                            mini_upload_progress_text.text = "Uploading - ${upInfo.completedPercent}%"
+                            mini_upload_progress.progress = upInfo.completedPercent
+                            upload_size_text.text = Utils.readableFileSize(upInfo.fileSize)
+                        }
+                    }
+                } else {
+                    home_mini_progress_container.isVisible = false
                 }
             }
-
-            override fun onSuccess(
-                context: Context,
-                uploadInfo: UploadInfo,
-                serverResponse: ServerResponse
-            ) {
-                mini_upload_progress.progress = 100
-                add_upload_info_button.visibility = View.VISIBLE
-                upload_size_text.visibility = View.INVISIBLE
-                mini_upload_progress_text.text = "Upload complete"
-            }
-        })
+        }
     }
 }

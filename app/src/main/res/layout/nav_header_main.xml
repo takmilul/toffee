@@ -62,7 +62,7 @@
                 android:id="@+id/credit_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="right"
+                android:gravity="end"
                 android:text="Credit: 100"
                 android:textColor="@android:color/white"/>
 
@@ -75,11 +75,11 @@
         android:id="@+id/nav_bar_close"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_gravity="top|right"
+        android:layout_gravity="top|end"
         android:layout_margin="10dp"
-        android:tint="@android:color/white"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:focusable="true"
-        android:src="@drawable/close"/>
+        android:src="@drawable/close"
+        app:tint="@android:color/white" />
 </FrameLayout>

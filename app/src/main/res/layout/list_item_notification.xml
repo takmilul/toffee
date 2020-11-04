@@ -5,16 +5,15 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <import type="com.banglalink.toffee.util.Utils"/>
         <import type="android.view.View" />
-
         <variable
             name="data"
-            type="com.banglalink.toffee.model.Notification" />
+            type="com.banglalink.toffee.data.database.entities.NotificationInfo" />
 
         <variable
             name="callback"
-            type="com.banglalink.toffee.ui.common.SingleListItemCallback" />
+            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -25,6 +24,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="4dp"
         android:clipToPadding="false"
+        app:cardBackgroundColor="@{data.isSeen ? @android:color/white : @color/unseenCardColor}"
         android:onClick="@{()-> callback.onItemClicked(data)}"
         app:cardCornerRadius="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -38,45 +38,46 @@
             android:paddingBottom="16dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/logoImageView"
+                android:id="@+id/thumbnailImageView"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
                 android:src="@drawable/hero"
+                loadCircleImageFromUrl="@{data.thumbnailUrl}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0" />
 
             <TextView
-                android:id="@+id/headerTextView"
+                android:id="@+id/titleTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="8dp"
-                android:text="@{data.header}"
+                android:text="@{data.title}"
                 android:textColor="@color/title_text_color_light"
                 app:layout_constraintEnd_toStartOf="@id/options"
                 app:layout_constraintHorizontal_chainStyle="spread_inside"
-                app:layout_constraintStart_toEndOf="@+id/logoImageView"
+                app:layout_constraintStart_toEndOf="@+id/thumbnailImageView"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Live Now" />
 
             <TextView
-                android:id="@+id/titleTextView"
+                android:id="@+id/descriptionTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:minLines="2"
-                android:text="@{data.title}"
+                android:text="@{data.content}"
                 app:layout_constraintEnd_toStartOf="@id/options"
                 app:layout_constraintHorizontal_bias="0"
-                app:layout_constraintStart_toStartOf="@+id/headerTextView"
-                app:layout_constraintTop_toBottomOf="@+id/headerTextView"
+                app:layout_constraintStart_toStartOf="@+id/titleTextView"
+                app:layout_constraintTop_toBottomOf="@+id/titleTextView"
                 tools:text="Somebody That I Used To Know (feat. Kimbra) official music video..." />
 
             <TextView
@@ -86,12 +87,12 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:minLines="2"
-                android:text="@{data.content}"
-                android:visibility="@{data.content==null || data.content.isEmpty() ? View.GONE : View.VISIBLE}"
+                android:text="@{data.description}"
+                android:visibility="@{data.description==null || data.description.isEmpty() ? View.GONE : View.VISIBLE}"
                 app:layout_constraintEnd_toStartOf="@id/options"
                 app:layout_constraintHorizontal_bias="0"
-                app:layout_constraintStart_toStartOf="@+id/headerTextView"
-                app:layout_constraintTop_toBottomOf="@+id/titleTextView"
+                app:layout_constraintStart_toStartOf="@+id/titleTextView"
+                app:layout_constraintTop_toBottomOf="@+id/descriptionTextView"
                 tools:text="Somebody That I Used To Know (feat. Kimbra) official music video..." />
 
             <TextView
@@ -100,10 +101,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:text="@{data.time}"
+                android:text="@{Utils.getDateDiffInDayOrHourOrMinute(data.receiveTime)}"
                 android:textColor="@color/title_text_color_light"
                 app:layout_constraintEnd_toStartOf="@id/options"
-                app:layout_constraintStart_toStartOf="@+id/headerTextView"
+                app:layout_constraintStart_toStartOf="@+id/titleTextView"
                 app:layout_constraintTop_toBottomOf="@id/contentTextView"
                 tools:text="23m" />
 
@@ -123,7 +124,7 @@
                 app:iconPadding="8dp"
                 app:iconSize="16dp"
                 app:iconTint="@color/purple"
-                app:layout_constraintStart_toStartOf="@id/headerTextView"
+                app:layout_constraintStart_toStartOf="@id/titleTextView"
                 app:layout_constraintTop_toBottomOf="@id/timeTextView" />
 
             <com.google.android.material.button.MaterialButton
@@ -151,10 +152,11 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginTop="8dp"
+                android:onClick="@{(view) -> callback.onOpenMenu(view, data)}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1"
-                app:layout_constraintStart_toEndOf="@+id/headerTextView"
+                app:layout_constraintStart_toEndOf="@+id/titleTextView"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.0"
                 app:srcCompat="@drawable/ic_menu_more" />

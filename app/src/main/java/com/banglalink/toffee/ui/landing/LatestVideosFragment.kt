@@ -1,30 +1,33 @@
 package com.banglalink.toffee.ui.landing
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
-import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
+import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.UgcCategory
+import com.banglalink.toffee.ui.category.CategoryDetailsFragment
+import com.banglalink.toffee.ui.common.AlertDialogReactionFragment
+import com.banglalink.toffee.ui.common.ContentReactionCallback
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.home.PopularVideoListAdapter
-import com.banglalink.toffee.util.unsafeLazy
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_landing_latest_videos.*
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collectLatest
 
+@AndroidEntryPoint
 class LatestVideosFragment: HomeBaseFragment() {
     private lateinit var mAdapter: PopularVideoListAdapter
 
-    val viewModel by unsafeLazy {
-        ViewModelProvider(activity!!)[LandingPageViewModel::class.java]
-    }
+    private val viewModel by activityViewModels<LandingPageViewModel>()
+    private var category: UgcCategory? = null
+    private var listJob: Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,39 +40,57 @@ class LatestVideosFragment: HomeBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mAdapter = PopularVideoListAdapter(this) {
-            homeViewModel.fragmentDetailsMutableLiveData.postValue(it)
-        }
+        category = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM) as UgcCategory?
+
+        mAdapter = PopularVideoListAdapter(object : ContentReactionCallback<ChannelInfo> {
+            override fun onItemClicked(item: ChannelInfo) {
+                homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+            }
+
+            override fun onOpenMenu(view: View, item: ChannelInfo) {
+                openMenu(view, item)
+            }
+
+            override fun onReactionClicked(view: View, item: ChannelInfo) {
+                super.onReactionClicked(view, item)
+                AlertDialogReactionFragment.newInstance(view, item).show(requireActivity().supportFragmentManager, "ReactionDialog")
+            }
+        })
 
         with(latestVideosList) {
             adapter = mAdapter
-
-            addOnScrollListener(object : EndlessRecyclerViewScrollListener(layoutManager as LinearLayoutManager){
-                override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
-                    viewModel.loadPopularVideos()
-                }
-            })
         }
 
-        viewModel.loadPopularVideos()
+        viewAllButton.setOnClickListener {
+            
+        }
 
-        observeList()
+        observe(viewModel.latestVideoLiveData) {
+            observeList(it.first, it.second)
+        }
+
+        observeList(category?.id?.toInt() ?: 0)
     }
 
-    private fun observeList() {
-        viewModel.popularVideoLiveData.observe(viewLifecycleOwner, Observer {
-            when (it) {
-                is Resource.Success -> {
-                    mAdapter.addAll(it.data)
-                }
-                is Resource.Failure -> {
-                    Log.e("LOG", it.error.msg)
-                }
+    private fun observeList(categoryId: Int, subCategoryId: Int = 0) {
+        listJob?.cancel()
+        listJob = lifecycleScope.launchWhenStarted {
+            val latestVideos = if(categoryId == 0) {
+                viewModel.loadLatestVideos()
+            } else {
+                viewModel.loadLatestVideosByCategory(categoryId, subCategoryId)
             }
-        })
+            latestVideos.collectLatest {
+                mAdapter.submitData(it)
+            }
+        }
     }
 
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
 
+    }
+
+    private fun openMenu(view: View, item: ChannelInfo) {
+        super.onOptionClicked(view, item)
     }
 }

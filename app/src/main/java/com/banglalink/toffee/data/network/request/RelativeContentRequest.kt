@@ -5,6 +5,6 @@ data class RelativeContentRequest(
     val videoTag: String,
     val customerId: Int,
     val password: String,
-    val offset: Int,
-    val limit: Int
-):BaseRequest("getRelativeContentsExt")
+    override val offset: Int,
+    override val limit: Int
+):BasePagingRequest("getRelativeContentsExt")

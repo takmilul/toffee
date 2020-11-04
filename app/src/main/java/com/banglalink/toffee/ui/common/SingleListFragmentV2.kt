@@ -9,6 +9,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
@@ -37,9 +38,7 @@ abstract class SingleListFragmentV2<T: Any> : Fragment() {
 
     protected lateinit var mAdapter: MyBaseAdapterV2<T>
     protected lateinit var mViewModel: SingleListViewModel<T>
-    private val mHomeViewModel by lazy {
-        ViewModelProvider(activity!!)[HomeViewModel::class.java]
-    }
+    private val mHomeViewModel by activityViewModels<HomeViewModel>()
 
     companion object {
         const val ARG_TITLE = "arg-title"

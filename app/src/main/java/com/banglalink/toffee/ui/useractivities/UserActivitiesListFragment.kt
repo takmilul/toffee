@@ -4,18 +4,26 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
+import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.data.database.entities.UserActivities
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.ui.home.HomeViewModel
+import com.banglalink.toffee.ui.widget.MyPopupWindow
+import dagger.hilt.android.AndroidEntryPoint
 
-class UserActivitiesListFragment: BaseListFragment<ChannelInfo>(),
-    BaseListItemCallback<ChannelInfo> {
+@AndroidEntryPoint
+class UserActivitiesListFragment: BaseListFragment<UserActivities>(),
+    BaseListItemCallback<UserActivities> {
 
     override val mViewModel by viewModels<UserActivitiesListViewModel>()
     override val mAdapter by lazy { UserActivitiesListAdapter(this) }
+    private val homeViewModel by activityViewModels<HomeViewModel>()
 
     companion object {
         fun newInstance(): UserActivitiesListFragment {
@@ -25,7 +33,7 @@ class UserActivitiesListFragment: BaseListFragment<ChannelInfo>(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        activity?.title = "Activities"
         initTopPanel(view)
     }
 
@@ -44,7 +52,26 @@ class UserActivitiesListFragment: BaseListFragment<ChannelInfo>(),
         return Pair(R.drawable.ic_activities_empty, "You don't have any activities yet")
     }
 
-    override fun onItemClicked(item: ChannelInfo) {
+    override fun onItemClicked(item: UserActivities) {
+        homeViewModel.fragmentDetailsMutableLiveData.postValue(item.channelInfo)
+    }
 
+    override fun onOpenMenu(view: View, item: UserActivities) {
+        PopupMenu(requireContext(), view).apply {
+            menu.add(0, 0x112, 0, "Delete")
+            menu.add(0, 0x113, 0, "Share")
+            setOnMenuItemClickListener {
+                when (it.itemId) {
+                    0x112 -> {
+                        mViewModel.removeItem(item)
+                    }
+                    0x113 -> {
+                        homeViewModel.shareContentLiveData.postValue(item.channelInfo)
+                    }
+                }
+                return@setOnMenuItemClickListener true
+            }
+            show()
+        }
     }
 }

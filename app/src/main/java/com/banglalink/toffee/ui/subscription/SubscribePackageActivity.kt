@@ -3,12 +3,15 @@ package com.banglalink.toffee.ui.subscription
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
-import android.view.View
+import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.databinding.ActivityConfirmPurchaseBinding
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.action
+import com.banglalink.toffee.extension.launchActivity
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.snack
 import com.banglalink.toffee.model.Package
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
@@ -26,9 +29,7 @@ class SubscribePackageActivity : BaseAppCompatActivity() {
     private val progressDialog by unsafeLazy {
         VelBoxProgressDialog(this)
     }
-    private val viewModel by unsafeLazy {
-        getViewModel<SubscribePackageViewModel>()
-    }
+    private val viewModel by viewModels<SubscribePackageViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

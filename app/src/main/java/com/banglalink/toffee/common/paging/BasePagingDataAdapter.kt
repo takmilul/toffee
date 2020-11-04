@@ -25,4 +25,8 @@ open class BasePagingDataAdapter<T: Any>(val callback: BaseListItemCallback<T>? 
             holder.bind(obj, callback, position)
         }
     }
+
+    fun getItemByIndex(idx: Int): T? {
+        return getItem(idx)
+    }
 }

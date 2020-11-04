@@ -11,13 +11,15 @@
             type="com.banglalink.toffee.model.ChannelInfo" />
         <variable
             name="callback"
-            type="com.banglalink.toffee.ui.home.OptionCallBack" />
+            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
     </data>
     <com.banglalink.toffee.ui.widget.CustomImageView
         android:id="@+id/featured_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:minHeight="200dp"
-        loadChannelImage="@{data}"
+        android:scaleType="fitXY"
+        android:onClick="@{()->callback.onItemClicked(data)}"
+        bindFeaturedImage="@{data}"
         android:adjustViewBounds="true" />
 </layout>

@@ -4,26 +4,34 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
+import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
+import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.CategoriesListAdapter
+import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.util.unsafeLazy
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_landing_categories.*
+import kotlinx.coroutines.flow.collectLatest
 
-class LandingCategoriesFragment: HomeBaseFragment() {
+@AndroidEntryPoint
+class LandingCategoriesFragment: BaseFragment() {
     private lateinit var mAdapter: CategoriesListAdapter
 
-    val viewModel by unsafeLazy {
-        ViewModelProvider(activity!!)[LandingPageViewModel::class.java]
-    }
+    private val viewModel by activityViewModels<LandingPageViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,14 +44,16 @@ class LandingCategoriesFragment: HomeBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mAdapter = CategoriesListAdapter(this) {
-            parentFragment?.
-            findNavController()?.
-            navigate(R.id.action_landingPageFragment_to_categoryDetailsFragment,
-            Bundle().apply {
-                putParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM, it)
-            })
-        }
+        mAdapter = CategoriesListAdapter(object : BaseListItemCallback<UgcCategory>{
+            override fun onItemClicked(item: UgcCategory) {
+                val args = Bundle().apply {
+                    putParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM, item)
+                }
+                parentFragment?.
+                findNavController()?.
+                navigate(R.id.action_landingCategoriesFragment_to_categoryDetailsFragment, args)
+            }
+        })
 
         viewAllButton.setOnClickListener {
             parentFragment?.findNavController()?.navigate(R.id.action_landingPageFragment_to_allCategoriesFragment)
@@ -54,22 +64,14 @@ class LandingCategoriesFragment: HomeBaseFragment() {
             adapter = mAdapter
         }
 
-        viewModel.loadCategories()
-
         observeList()
     }
 
     private fun observeList() {
-        viewModel.categoryInfoLiveData.observe(viewLifecycleOwner, Observer {
-            when(it) {
-                is Resource.Success -> {
-                    mAdapter.addAll(it.data)
-                }
+        lifecycleScope.launchWhenStarted {
+            viewModel.loadCategories().collectLatest {
+                mAdapter.submitData(it)
             }
-        })
-    }
-
-    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
-
+        }
     }
 }

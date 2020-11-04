@@ -5,28 +5,34 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.R
+import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.UgcCategory
+import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.home.MostPopularVideoListAdapter
 import com.banglalink.toffee.ui.home.TrendingNowVideoListAdapter
 import com.banglalink.toffee.util.unsafeLazy
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_landing_trending.*
 import kotlinx.android.synthetic.main.fragment_most_popular.*
+import kotlinx.coroutines.flow.collectLatest
 
-class TrendingNowFragment: HomeBaseFragment() {
+@AndroidEntryPoint
+class TrendingNowFragment: HomeBaseFragment(), BaseListItemCallback<ChannelInfo> {
     private lateinit var mAdapter: TrendingNowVideoListAdapter
-
-    val viewModel by unsafeLazy {
-        ViewModelProvider(activity!!)[LandingPageViewModel::class.java]
-    }
+    private var categoryInfo: UgcCategory? = null
+    private val viewModel by activityViewModels<LandingPageViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,8 +45,19 @@ class TrendingNowFragment: HomeBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mAdapter = TrendingNowVideoListAdapter(this) {
-            homeViewModel.fragmentDetailsMutableLiveData.postValue(it)
+        categoryInfo = parentFragment?.arguments?.getParcelable(
+            CategoryDetailsFragment.ARG_CATEGORY_ITEM)
+
+        mAdapter = TrendingNowVideoListAdapter(object: BaseListItemCallback<ChannelInfo> {
+            override fun onItemClicked(item: ChannelInfo) {
+                homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+            }
+        })
+
+        mAdapter.addLoadStateListener {
+            if(mAdapter.itemCount > 0) {
+                trendingNowHeader.visibility = View.VISIBLE
+            }
         }
 
         with(trendingNowList) {
@@ -48,16 +65,20 @@ class TrendingNowFragment: HomeBaseFragment() {
             adapter = mAdapter
         }
 
-//        viewModel.loadMostPopularVideos()
-
         observeList()
     }
 
     private fun observeList() {
-        viewModel.trendingNowLiveData.observe(viewLifecycleOwner, Observer {
-            mAdapter.removeAll()
-            mAdapter.addAll(it)
-        })
+        lifecycleScope.launchWhenStarted {
+            val content = if(categoryInfo == null) {
+                viewModel.loadTrendingNowContent()
+            } else {
+                viewModel.loadTrendingNowContentByCategory(categoryInfo!!)
+            }
+            content.collectLatest {
+                mAdapter.submitData(it)
+            }
+        }
     }
 
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {

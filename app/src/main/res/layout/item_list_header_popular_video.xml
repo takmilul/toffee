@@ -7,7 +7,7 @@
     <data>
         <variable
             name="callback"
-            type="com.banglalink.toffee.ui.home.OptionCallBack" />
+            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,8 +16,7 @@
         android:layout_height="wrap_content"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:paddingEnd="10dp"
         android:clickable="false"
         android:focusable="false"
         >
@@ -47,7 +46,6 @@
             android:clickable="true"
             android:focusable="true"
             android:text="@string/view_all"
-            android:onClick="@{()->callback.viewAllVideoClick()}"
             android:textColor="@color/view_all_txt_color"
             app:layout_constraintEnd_toStartOf="@+id/catch_view_all_arrow"
             app:layout_constraintTop_toTopOf="@+id/catch_tv"/>
@@ -60,7 +58,7 @@
             android:layout_marginEnd="8dp"
             android:clickable="true"
             android:focusable="true"
-            android:tint="@color/view_all_txt_color"
+            app:tint="@color/view_all_txt_color"
             app:layout_constraintBottom_toBottomOf="@+id/catch_view_all"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/catch_view_all"

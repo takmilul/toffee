@@ -1,26 +1,16 @@
 package com.banglalink.toffee.ui.challenge
 
-import com.banglalink.toffee.data.network.request.ContentRequest
-import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
-import com.banglalink.toffee.data.storage.Preference
+import androidx.hilt.lifecycle.ViewModelInject
+import com.banglalink.toffee.apiservice.GetChallenges
+import com.banglalink.toffee.common.paging.BaseListRepository
+import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
+import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
+import com.banglalink.toffee.common.paging.BasePagingViewModel
 import com.banglalink.toffee.model.Challenge
-import com.banglalink.toffee.ui.common.SingleListRepository
-import com.banglalink.toffee.ui.common.SingleListViewModel
-import com.banglalink.toffee.usecase.GetChallenges
+import com.banglalink.toffee.model.ChannelInfo
 
-class ChallengeViewModel: SingleListViewModel<Challenge>() {
-
-    private val contentRequest = ContentRequest(
-        0,
-        0,
-        "VOD",
-        Preference.getInstance().customerId,
-        Preference.getInstance().password,
-        offset = 0
-    )
-
-    private val category: String = ""
-    private val subCategory: String = ""
-
-    override var repo: SingleListRepository<Challenge> = GetChallenges(Preference.getInstance(), RetrofitApiClient.toffeeApi, contentRequest, category, subCategory)
+class ChallengeViewModel @ViewModelInject constructor(apiService: GetChallenges): BasePagingViewModel<Challenge>() {
+    override val repo: BaseListRepository<Challenge> by lazy {
+        BaseListRepositoryImpl( { BaseNetworkPagingSource(apiService) } )
+    }
 }

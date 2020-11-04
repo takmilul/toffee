@@ -70,6 +70,30 @@ public class Utils {
         return dateObj;
     }
 
+    public static String getDateDiffInDayOrHourOrMinute(long stopDate) {
+        Date date = new Date(stopDate);
+        long diff = new Date().getTime() - date.getTime();
+        long diffMinutes = diff / (60000);
+        diffMinutes = Math.max(0, diffMinutes);
+
+        if(diffMinutes >= 365*24*60){
+            return (diffMinutes / (365*24*60)) + " Y";
+        }
+        if(diffMinutes >= 30*24*60){
+            return (diffMinutes / (30*24*60)) + " M";
+        }
+        if (diffMinutes >= 24*60) {
+            return (diffMinutes / (24*60)) +" d";
+        }
+        if (diffMinutes >= 60){
+            return (diffMinutes / 60) + " h";
+        }
+        if (diffMinutes > 0) {
+            return diffMinutes + " m";
+        }
+        return "Just Now";
+    }
+    
     public static String getDateDiffInDayOrHour(Date stopDate) {
         long diff = stopDate.getTime() - new Date().getTime();
         long diffHours = diff / (3600000);

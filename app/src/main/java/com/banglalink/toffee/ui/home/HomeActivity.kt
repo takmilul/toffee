@@ -2,7 +2,6 @@ package com.banglalink.toffee.ui.home
 
 import android.animation.LayoutTransition
 import android.app.SearchManager
-import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
@@ -11,28 +10,36 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
-import android.view.*
+import android.view.Display
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
 import android.widget.AutoCompleteTextView
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
+import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.commit
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
 import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.extension.loadProfileImage
@@ -42,38 +49,27 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.EXIT_FROM_APP_MSG
 import com.banglalink.toffee.model.NavigationMenu
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.channels.ChannelFragment
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.ui.landing.AllCategoriesFragment
 import com.banglalink.toffee.ui.login.SigninByPhoneActivity
 import com.banglalink.toffee.ui.player.PlayerActivity
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.subscription.PackageListActivity
-import com.banglalink.toffee.ui.upload.EditUploadInfoFragment
-import com.banglalink.toffee.ui.upload.UploadMethodFragment
-import com.banglalink.toffee.ui.userchannel.UserChannelHomeFragment
 import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.ui.widget.showSubscriptionDialog
 import com.banglalink.toffee.util.InAppMessageParser
 import com.banglalink.toffee.util.Utils
-import com.banglalink.toffee.util.unsafeLazy
+import com.banglalink.toffee.util.UtilsKt
 import com.google.android.exoplayer2.util.Util
-import com.google.firebase.inappmessaging.FirebaseInAppMessaging
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.analytics.FirebaseAnalytics
-import kotlinx.android.synthetic.main.activity_main_menu.*
-import kotlinx.android.synthetic.main.fragment_edit_upload_info.*
-import kotlinx.android.synthetic.main.home_mini_upload_progress.*
-import kotlinx.android.synthetic.main.home_mini_upload_progress.upload_size_text
+import com.google.firebase.inappmessaging.FirebaseInAppMessaging
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.layout_appbar.view.*
-import net.gotev.uploadservice.UploadService
-import net.gotev.uploadservice.data.UploadInfo
-import net.gotev.uploadservice.network.ServerResponse
-import net.gotev.uploadservice.observer.request.RequestObserver
-import net.gotev.uploadservice.observer.request.RequestObserverDelegate
+import kotlinx.coroutines.launch
 import java.util.*
 import javax.annotation.Nonnull
+import javax.inject.Inject
 
 const val ID_CHANNEL = 12
 const val ID_RECENT = 13
@@ -91,25 +87,27 @@ const val ID_REDEEM_CODE = 24
 
 const val PLAY_IN_WEB_VIEW = 1
 const val OPEN_IN_EXTERNAL_BROWSER = 2
-
+@AndroidEntryPoint
 class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListener,
     DraggerLayout.OnPositionChangedListener ,SearchView.OnQueryTextListener{
+
+    @Inject
+    lateinit var uploadRepo: UploadInfoRepository
 
     private var searchView: SearchView? = null
     lateinit var binding: ActivityMainMenuBinding
     private lateinit var drawerHelper: DrawerHelper
     private lateinit var inAppMessageParser: InAppMessageParser
-
+//    private var mFirebaseAnalytics: FirebaseAnalytics? = null
     companion object {
         const val INTENT_REFERRAL_REDEEM_MSG = "REFERRAL_REDEEM_MSG"
         const val INTENT_PACKAGE_SUBSCRIBED = "PACKAGE_SUBSCRIBED"
     }
 
     private lateinit var navController: NavController
+    private lateinit var appbarConfig: AppBarConfiguration
 
-    private val viewModel by unsafeLazy {
-        ViewModelProviders.of(this).get(HomeViewModel::class.java)
-    }
+    private val viewModel: HomeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -120,11 +118,15 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
 //                WindowManager.LayoutParams.FLAG_SECURE
 //            )
 //        }
-
+//        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main_menu)
         setSupportActionBar(binding.tbar.toolbar)
-
-        setupNavController()
+        supportActionBar?.setHomeButtonEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+        
+        if(savedInstanceState == null) {
+            setupNavController()
+        }
 
         initializeDraggableView()
         initDrawer()
@@ -147,32 +149,39 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                 navController.popBackStack()
                 return@setOnClickListener
             }
-//            else {
-            if(UploadService.taskList.isNotEmpty()) {
-                Snackbar.make(binding.uploadButton, "Another upload is in progress", Snackbar.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+            lifecycleScope.launch {
+                Log.e("UPLOAD", "Upload id - ${mPref.uploadId}")
+                mPref.uploadId?.let {
+                    val uploads = uploadRepo.getUploadById(UtilsKt.stringToUploadId(it))
+                    if(uploads == null || uploads.status !in listOf(0, 1, 2, 3)) {
+                        mPref.uploadId = null
+                        navController.navigate(R.id.uploadMethodFragment)
+                        return@launch
+                    }
+//                    if(uploads.status in listOf(0, 1, 2, 3) && UploadService.taskList.isEmpty()) {
+//                        uploads.apply {
+//                            status = UploadStatus.ERROR.value
+//                            statusMessage = "Process killed"
+//                        }.also { info ->
+//                            uploadRepo.updateUploadInfo(info)
+//                        }
+//                        mPref.uploadId = null
+//                        navController.navigate(R.id.uploadMethodFragment)
+//                    }
+                    if(navController.currentDestination?.id != R.id.editUploadInfoFragment) {
+                        navController.navigate(R.id.editUploadInfoFragment)
+                    }
+                    return@launch
+                }
                 navController.navigate(R.id.uploadMethodFragment)
-//            }
-//            val uploadFragment = supportFragmentManager.findFragmentByTag(UploadMethodFragment::class.java.simpleName)
-//            if(uploadFragment != null) {
-//                supportFragmentManager.popBackStack()
-//            }
-//            else {
-//                supportFragmentManager.beginTransaction()
-//                    .replace(R.id.content_viewer,
-//                        UploadMethodFragment.newInstance(),
-//                        UploadMethodFragment::class.java.simpleName)
-//                    .addToBackStack(UploadMethodFragment::class.java.simpleName)
-//                    .commit()
-//            }
+            }
         }
 
         observe(viewModel.fragmentDetailsMutableLiveData) {
             onDetailsFragmentLoad(it)
         }
 
-        observe(viewModel.userChannelMutableLiveData) {
+        /*observe(viewModel.userChannelMutableLiveData) {
             val currentFragment = supportFragmentManager.findFragmentById(R.id.content_viewer)
             if (currentFragment !is UserChannelHomeFragment) {
                 loadFragmentById( R.id.content_viewer, UserChannelHomeFragment()
@@ -181,7 +190,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             }
             binding.drawerLayout.closeDrawers()
             minimizePlayer()
-        }
+        }*/
 
         observe(viewModel.viewAllChannelLiveData) {
 //            drawerHelper.onMenuClick(NavigationMenu(ID_CHANNEL, "All Videos", 0, listOf(), false))
@@ -192,8 +201,9 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         observe(viewModel.viewAllCategories) {
             val currentFragment = supportFragmentManager.findFragmentById(R.id.content_viewer)
             if (currentFragment !is AllCategoriesFragment) {
-                loadFragmentById( R.id.content_viewer, AllCategoriesFragment()
-                , AllCategoriesFragment::class.java.getName())
+                loadFragmentById(
+                    R.id.content_viewer, AllCategoriesFragment(), AllCategoriesFragment::class.java.getName()
+                )
             }
             binding.drawerLayout.closeDrawers()
             minimizePlayer()
@@ -213,17 +223,27 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             drawerHelper.onMenuClick(NavigationMenu(ID_VIDEO, "All Videos", 0, listOf(), false))
         }
 
-        observe(Preference.getInstance().sessionTokenLiveData){
+        observe(mPref.sessionTokenLiveData){
             if(binding.draggableView.visibility == View.VISIBLE){
                 updateStartPosition()//we are saving the player start position so that we can start where we left off for VOD.
                 reloadChannel()
             }
         }
 
-        observe(Preference.getInstance().viewCountDbUrlLiveData){
+        observe(mPref.viewCountDbUrlLiveData){
             if(it.isNotEmpty()){
                 viewModel.populateViewCountDb(it)
             }
+        }
+
+        observe(viewModel.shareContentLiveData) { channelInfo ->
+            val sharingIntent = Intent(Intent.ACTION_SEND)
+            sharingIntent.type = "text/plain"
+            sharingIntent.putExtra(
+                Intent.EXTRA_TEXT,
+                channelInfo.video_share_url
+            )
+            startActivity(Intent.createChooser(sharingIntent, "Share via"))
         }
 
         if(intent.hasExtra(INTENT_PACKAGE_SUBSCRIBED)){
@@ -235,11 +255,48 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         handleSharedUrl(intent)
     }
 
+    fun rotateFab(isRotate: Boolean) {
+        ViewCompat.animate(binding.uploadButton)
+            .rotation(if (isRotate) 135.0F else 0.0F)
+            .withLayer()
+            .setDuration(300L)
+            .setInterpolator(AccelerateInterpolator())
+            .start()
+    }
+
+    fun getNavController() = navController
+    fun getHomeViewModel() = viewModel
+
     private fun setupNavController() {
+        Log.e("NAV", "SetupNavController")
+
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.home_nav_host) as NavHostFragment
         navController = navHostFragment.navController
 
-//        NavigationUI.setupActionBarWithNavController(this, navController, drawer_layout)
+//        appbarConfig = AppBarConfiguration(
+//            setOf(
+//                R.id.menu_feed,
+//                R.id.menu_tv,
+//                R.id.menu_activities,
+//                R.id.menu_channel,
+//
+//                R.id.menu_all_channel,
+//                R.id.menu_recent,
+//                R.id.menu_favorites
+////                ,
+////                R.id.menu_create,
+////                R.id.menu_subscriptions,
+////                R.id.menu_invite,
+////                R.id.menu_redeem,
+////                R.id.menu_settings,
+////                R.id.menu_about,
+////                R.id.menu_faq,
+////                R.id.menu_logout
+//            ),
+//            binding.drawerLayout
+//        )
+//        setupActionBarWithNavController(navController, appbarConfig)
+//        NavigationUI.setupActionBarWithNavController(this, navController, appbarConfig)
 //        binding.sideNavigation.setupWithNavController(navController)
         binding.tabNavigator.setupWithNavController(navController)
 
@@ -250,16 +307,11 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                 minimizePlayer()
             }
         }
-    }
 
-    fun onUploadStartedWithId(uploadUri: String, uploadId: String) {
-        val frag = supportFragmentManager.findFragmentByTag(UploadMethodFragment::class.java.name)
-        if(frag != null && frag.isVisible) {
-            supportFragmentManager.popBackStack()
+        binding.sideNavigation.setNavigationItemSelectedListener {
+            binding.drawerLayout.closeDrawers()
+            return@setNavigationItemSelectedListener false
         }
-
-        supportFragmentManager.beginTransaction().add(R.id.content_viewer, EditUploadInfoFragment.newInstance(uploadUri, uploadId), EditUploadInfoFragment::class.java.name)
-            .addToBackStack(EditUploadInfoFragment::class.java.name).commit()
     }
 
     override fun onResume() {
@@ -267,6 +319,11 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         binding.playerView.addPlayerControllerChangeListener(this)
         binding.playerView.setPlayer(player)
         binding.playerView.resizeView(calculateScreenWidth())
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        setupNavController()
     }
 
     override fun onPause() {
@@ -316,8 +373,21 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         val state =
             resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
         Utils.setFullScreen(this, state)
+        toggleNavigations(state)
         binding.playerView.resizeView(calculateScreenWidth())
         binding.playerView.onFullScreen(state)
+    }
+
+    private fun toggleNavigations(state: Boolean) {
+        if(state) {
+            supportActionBar?.hide()
+            binding.bottomAppBar.performHide()
+            binding.uploadButton.hide()
+        } else {
+            supportActionBar?.show()
+            binding.bottomAppBar.performShow()
+            binding.uploadButton.show()
+        }
     }
 
     override fun onTrackerDialogDismissed() {
@@ -340,7 +410,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         }
     }
 
-    private fun handleDeepLink(url:String){
+    private fun handleDeepLink(url: String){
 //        https://toffeelive.com/#video/0d52770e16b19486d9914c81061cf2da
         try{
             var isDeepLinkHandled = false
@@ -352,7 +422,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             }
             route?.categoryId?.let {
                 ToffeeAnalytics.logBreadCrumb("Trying to open category item")
-                drawerHelper.handleCategoryClick(ID_VIDEO,it,route.categoryName?:"")
+                drawerHelper.handleCategoryClick(ID_VIDEO, it, route.categoryName ?: "")
                 isDeepLinkHandled = true
             }
 
@@ -361,7 +431,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                 val hash = url.substring(url.lastIndexOf("/") + 1)
                 observe(viewModel.getShareableContent(hash)){ channelResource ->
                     when(channelResource){
-                        is Resource.Success->{
+                        is Resource.Success -> {
                             channelResource.data?.let {
                                 onDetailsFragmentLoad(it)
                             }
@@ -369,7 +439,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                     }
                 }
             }
-        }catch (e:Exception){
+        }catch (e: Exception){
             ToffeeAnalytics.logBreadCrumb("Failed to handle depplink $url")
             ToffeeAnalytics.logException(e)
         }
@@ -391,7 +461,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         handleSharedUrl(intent)
     }
 
-    private fun handleVoiceSearchEvent(query:String){
+    private fun handleVoiceSearchEvent(query: String){
         if (!TextUtils.isEmpty(query)) {
             loadFragmentById(
                 R.id.content_viewer, SearchFragment.createInstance(query),
@@ -405,7 +475,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     }
 
     private fun handlePackageSubscribe(){
-        viewModel.getChannelByCategory(0)//reload the channels
+//        viewModel.getChannelByCategory(0)//reload the channels
         //Clean up stack upto landingPageFragment inclusive
         supportFragmentManager.popBackStack(
             LandingPageFragment::class.java.name,
@@ -425,7 +495,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         channelInfo?.let {
             when{
                 it.urlType == PLAY_IN_WEB_VIEW->{
-                    HeartBeatManager.triggerEventViewingContentStart(it.id.toInt(),it.type ?: "VOD")
+                    HeartBeatManager.triggerEventViewingContentStart(it.id.toInt(), it.type ?: "VOD")
                     viewModel.sendViewContentEvent(it)
                     launchActivity<Html5PlayerViewActivity> {
                         putExtra(
@@ -461,21 +531,22 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     }
 
     private fun loadDetailFragment(channelInfo: ChannelInfo){
-        if (channelInfo.isLive) {
-            val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
-            if (fragment !is ChannelFragment) {
-                loadFragmentById(
-                    R.id.details_viewer, ChannelFragment.createInstance(
-                        getString(R.string.menu_channel_text)
-                    )
-                )
-            }
-        } else {
-            loadFragmentById(
-                R.id.details_viewer,
-                CatchupDetailsFragment.createInstance(channelInfo)
-            )
-        }
+//        if (channelInfo.isLive) {
+//            val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
+//            if (fragment !is ChannelFragment) {
+//                loadFragmentById(
+//                    R.id.details_viewer, ChannelFragment.createInstance(
+//                        getString(R.string.menu_channel_text)
+//                    )
+//                )
+//            }
+//        } else {
+//            loadFragmentById(
+//                R.id.details_viewer,
+//                CatchupDetailsFragment.createInstance(channelInfo)
+//            )
+//        }
+        supportFragmentManager.commit { replace(R.id.details_viewer, ChannelViewFragment.newInstance(channelInfo)) }
     }
     fun loadFragmentById(id: Int, fragment: Fragment, tag: String) {
         supportFragmentManager.popBackStack(
@@ -505,7 +576,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     }
 
     private fun observeInAppMessage(){
-        FirebaseAnalytics.getInstance(this).logEvent("trigger_inapp_messaging",null)
+        FirebaseAnalytics.getInstance(this).logEvent("trigger_inapp_messaging", null)
         inAppMessageParser = InAppMessageParser()
         FirebaseInAppMessaging.getInstance().triggerEvent("trigger_inapp_messaging")
     }
@@ -567,7 +638,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             .setMessage(String.format(EXIT_FROM_APP_MSG, getString(R.string.app_name)))
             .setCancelable(false)
             .setPositiveButton("Yes") { _, _ ->
-                Preference.getInstance().clear()
+                mPref.clear()
                 launchActivity<SigninByPhoneActivity>()
                 finish()
             }
@@ -637,7 +708,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        observe(Preference.getInstance().profileImageUrlLiveData) {
+        observe(mPref.profileImageUrlLiveData) {
             menu?.findItem(R.id.action_avatar)
                 ?.actionView?.findViewById<ImageView>(R.id.view_avatar)?.loadProfileImage(it)
         }
@@ -645,22 +716,25 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
+        
         if (item.itemId == android.R.id.home) {
-            supportFragmentManager.popBackStack()
+            navController.navigate(R.id.menu_feed)
+//            supportFragmentManager.popBackStack()
             return true
         } else if (item.itemId == R.id.action_avatar) {
             binding.drawerLayout.openDrawer(GravityCompat.END, true)
             return true
         }
-
+        else if(item.itemId == R.id.action_notification){
+            navController.navigate(R.id.notificationDropdownFragment)
+        }
         return super.onOptionsItemSelected(item)
     }
-
+    
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
         val searchMenuItem = menu.findItem(R.id.action_search)
-        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        val searchManager = getSystemService(SEARCH_SERVICE) as SearchManager
         searchView = searchMenuItem.actionView as SearchView
         searchView?.apply {
             maxWidth = Integer.MAX_VALUE
@@ -671,7 +745,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             if (supportFragmentManager.backStackEntryCount > 1) {
                 supportFragmentManager.popBackStack(
                     SearchFragment::class.java.name,
-                    FragmentManager.POP_BACK_STACK_INCLUSIVE
+                    POP_BACK_STACK_INCLUSIVE
                 )
                 return@setOnCloseListener true
             }

@@ -13,6 +13,7 @@ class BaseNetworkPagingSource<T: Any>(private val service: BaseApiService<T>): P
                 nextKey = if(resp.isEmpty()) null else page + 1
             )
         } catch (ex: Exception) {
+            ex.printStackTrace()
             LoadResult.Error(ex)
         }
     }

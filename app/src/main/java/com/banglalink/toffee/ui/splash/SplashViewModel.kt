@@ -13,7 +13,7 @@ import com.banglalink.toffee.usecase.ApiLogin
 import com.banglalink.toffee.usecase.CheckUpdate
 import com.banglalink.toffee.util.unsafeLazy
 
-class SplashViewModel(application: Application) : BaseViewModel(application) {
+class SplashViewModel : BaseViewModel() {
 
     private val checkUpdate by unsafeLazy {
         CheckUpdate(Preference.getInstance(),RetrofitApiClient.authApi)

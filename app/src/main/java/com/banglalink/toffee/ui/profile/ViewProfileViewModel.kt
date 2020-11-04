@@ -10,7 +10,7 @@ import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.usecase.GetProfile
 import com.banglalink.toffee.util.unsafeLazy
 
-class ViewProfileViewModel(application: Application) :BaseViewModel(application){
+class ViewProfileViewModel :BaseViewModel(){
 
     private val getProfile by unsafeLazy {
         GetProfile(Preference.getInstance(),RetrofitApiClient.toffeeApi)

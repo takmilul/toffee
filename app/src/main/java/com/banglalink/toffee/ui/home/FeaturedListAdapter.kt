@@ -1,23 +1,15 @@
 package com.banglalink.toffee.ui.home
 
 import com.banglalink.toffee.R
+import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.common.paging.BasePagingDataAdapter
+import com.banglalink.toffee.common.paging.ItemComparator
 import com.banglalink.toffee.model.ChannelInfo
-import com.foxrentacar.foxpress.ui.common.MyBaseAdapter
-import com.foxrentacar.foxpress.ui.common.MyViewHolder
 
-class FeaturedListAdapter(private val optionCallBack: OptionCallBack,
-                          channelCallback:(ChannelInfo)->Unit={})
-    :MyBaseAdapter<ChannelInfo>(channelCallback) {
+class FeaturedListAdapter(cb: BaseListItemCallback<ChannelInfo>)
+    :BasePagingDataAdapter<ChannelInfo>(cb, ItemComparator()){
 
-    override fun getLayoutIdForPosition(position: Int): Int {
+    override fun getItemViewType(position: Int): Int {
         return R.layout.landing_featured_item_layout
-    }
-
-    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        super.onBindViewHolder(holder, position)
-//        if(position == 0){//disabling click on header view
-//            holder.itemView.setOnClickListener(null)
-//        }
-        holder.bindCallBack(optionCallBack)
     }
 }

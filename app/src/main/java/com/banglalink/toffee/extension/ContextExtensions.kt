@@ -9,7 +9,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import com.banglalink.toffee.ui.common.BaseViewModel
 
-fun Context.showToast(message: String, length: Int = Toast.LENGTH_LONG) {
+fun Context.showToast(message: String, length: Int = Toast.LENGTH_SHORT) {
     if(message.isNotBlank())
         Toast.makeText(this, message, length).show()
 }
@@ -23,18 +23,10 @@ inline fun <reified T : Any> FragmentActivity.launchActivity(
     intent.init()
     when (requestCode) {
         -1 -> {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                startActivity(intent, options)
-            } else {
-                startActivity(intent)
-            }
+            startActivity(intent, options)
         }
         else -> {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                startActivityForResult(intent, requestCode, options)
-            } else {
-                startActivityForResult(intent, requestCode)
-            }
+            startActivityForResult(intent, requestCode, options)
         }
     }
 }

@@ -11,7 +11,13 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import javax.inject.Qualifier
 import javax.inject.Singleton
+
+@Qualifier
+annotation class AppCoroutineScope
 
 @InstallIn(ApplicationComponent::class)
 @Module
@@ -30,7 +36,14 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesGlobalUploadObserver(app: Application, repo: UploadInfoRepository): UploadObserver {
-        return UploadObserver(app, repo)
+    fun providesGlobalUploadObserver(app: Application, pref: Preference, repo: UploadInfoRepository): UploadObserver {
+        return UploadObserver(app, pref, repo)
+    }
+
+    @Provides
+    @Singleton
+    @AppCoroutineScope
+    fun providesApplicationCoroutineScope(): CoroutineScope {
+        return CoroutineScope(SupervisorJob())
     }
 }

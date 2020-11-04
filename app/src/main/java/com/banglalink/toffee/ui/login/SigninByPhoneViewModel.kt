@@ -11,7 +11,7 @@ import com.banglalink.toffee.usecase.CheckReferralCodeStatus
 import com.banglalink.toffee.usecase.SigninByPhone
 import com.banglalink.toffee.util.unsafeLazy
 
-class SigninByPhoneViewModel(application: Application) : BaseViewModel(application) {
+class SigninByPhoneViewModel : BaseViewModel() {
 
     private val signingByPhone by unsafeLazy {
         SigninByPhone(Preference.getInstance(), RetrofitApiClient.toffeeApi)

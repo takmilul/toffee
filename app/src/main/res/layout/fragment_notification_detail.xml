@@ -5,10 +5,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <import type="android.view.View"/>
         <variable
-            name="viewmodel"
-            type="com.banglalink.toffee.ui.notification.NotificationDetailViewModel" />
+            name="data"
+            type="com.banglalink.toffee.data.database.entities.NotificationInfo" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -19,17 +19,17 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/backButton"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
             android:layout_width="48dp"
             android:layout_height="?attr/actionBarSize"
             android:layout_marginStart="16dp"
             android:background="?selectableItemBackgroundBorderless"
+            android:gravity="center"
             android:paddingStart="0dp"
             android:paddingEnd="8dp"
-            android:gravity="center"
             app:icon="@drawable/ic_arrow_back"
             app:iconSize="32dp"
             app:iconTint="@color/purple"
-            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
             app:layout_constraintBottom_toBottomOf="@id/title"
             app:layout_constraintEnd_toStartOf="@id/title"
             app:layout_constraintStart_toStartOf="parent"
@@ -39,13 +39,14 @@
             android:id="@+id/title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:maxLines="2"
             android:layout_marginTop="8dp"
-            android:text="Detail Screen Template of Notification Items and a Two Line Example Here"
+            android:maxLines="2"
+            android:text="@{data.title}"
             android:textSize="22sp"
             app:layout_constraintEnd_toStartOf="@id/options"
             app:layout_constraintStart_toEndOf="@id/backButton"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Detail Screen Template of Notification Items and a Two Line Example Here" />
 
         <ImageView
             android:id="@+id/options"
@@ -54,6 +55,7 @@
             android:layout_marginEnd="16dp"
             android:paddingStart="4dp"
             android:paddingEnd="0dp"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1"
@@ -62,19 +64,33 @@
             app:layout_constraintVertical_bias="0"
             app:srcCompat="@drawable/ic_menu_more" />
 
+        <com.banglalink.toffee.ui.widget.CustomImageView
+            android:id="@+id/posterView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:adjustViewBounds="true"
+            android:minHeight="200dp"
+            android:src="@drawable/hero"
+            imageFromUrl="@{data.imageUrl}"
+            android:visibility="@{data.imageUrl == null || data.imageUrl.isEmpty() ? View.GONE : View.VISIBLE}"
+            app:layout_constraintDimensionRatio="W,16:9"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/title" />
+
         <TextView
             android:id="@+id/detailTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. 
-
-Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
+            android:text="@{data.content}"
             android:textSize="@dimen/default_text_size"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/title"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@id/posterView"
+            app:layout_constraintVertical_bias="0.0"
+            tools:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book." />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

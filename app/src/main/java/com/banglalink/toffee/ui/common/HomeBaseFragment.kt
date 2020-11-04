@@ -3,6 +3,7 @@ package com.banglalink.toffee.ui.common
 import android.content.Intent
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.banglalink.toffee.R
@@ -14,11 +15,9 @@ import com.banglalink.toffee.ui.home.OptionCallBack
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.util.unsafeLazy
 
-abstract class HomeBaseFragment(layoutId: Int = 0):Fragment(layoutId), OptionCallBack {
+abstract class HomeBaseFragment:Fragment(), OptionCallBack {
 
-    val homeViewModel by unsafeLazy {
-        ViewModelProviders.of(activity!!).get(HomeViewModel::class.java)
-    }
+    val homeViewModel by activityViewModels<HomeViewModel>()
 
     override fun onOptionClicked(anchor: View, channelInfo: ChannelInfo) {
         val popupMenu = MyPopupWindow(context!!, anchor)

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
@@ -74,7 +75,13 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
             layoutManager = listLayoutManager
 
             mAdapter.addLoadStateListener {
-                binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
+                binding.progressBar.isVisible = it.refresh is LoadState.Loading
+
+                mAdapter.apply {
+                    val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached
+                    binding.emptyView.isGone = !showEmpty
+                    binding.listview.isVisible = !showEmpty
+                }
             }
 
             setHasFixedSize(true)
@@ -88,7 +95,7 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
     }
 
     private fun observeList() {
-        lifecycleScope.launch {
+        lifecycleScope.launchWhenStarted {
             mViewModel.getListData().collectLatest {
                 mAdapter.submitData(it)
             }

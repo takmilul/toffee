@@ -6,6 +6,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-open class BaseFragment(layoutId: Int = 0): Fragment(layoutId) {
+open class BaseFragment: Fragment() {
     @Inject lateinit var mPref: Preference
 }
