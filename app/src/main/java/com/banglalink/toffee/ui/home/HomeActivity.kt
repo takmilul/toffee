@@ -30,7 +30,10 @@ import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.launchActivity
+import com.banglalink.toffee.extension.loadProfileImage
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.EXIT_FROM_APP_MSG
 import com.banglalink.toffee.model.NavigationMenu
@@ -67,6 +70,9 @@ const val ID_VOD = 21
 const val ID_FAQ = 22
 const val ID_INVITE_FRIEND = 23
 const val ID_REDEEM_CODE = 24
+
+const val PLAY_IN_WEB_VIEW = 1
+const val OPEN_IN_EXTERNAL_BROWSER = 2
 
 class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListener,
     DraggerLayout.OnPositionChangedListener ,SearchView.OnQueryTextListener{
@@ -308,18 +314,21 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     private fun onDetailsFragmentLoad(channelInfo: ChannelInfo?) {
         channelInfo?.let {
             when{
-                it.urlType == 1->{
-                    HeartBeatManager.triggerEventViewingContentStart(it.id.toInt(),it.type)
+                it.urlType == PLAY_IN_WEB_VIEW->{
+                    HeartBeatManager.triggerEventViewingContentStart(it.id.toInt(), it.type)
                     viewModel.sendViewContentEvent(it)
                     launchActivity<Html5PlayerViewActivity> {
-                        putExtra(Html5PlayerViewActivity.CONTENT_URL,it.hlsLinks[0].hls_url_mobile)
+                        putExtra(
+                            Html5PlayerViewActivity.CONTENT_URL,
+                            it.hlsLink
+                        )
                     }
                 }
-                it.urlType == 2 ->{
+                it.urlType == OPEN_IN_EXTERNAL_BROWSER ->{
                     startActivity(
                         Intent(
                             Intent.ACTION_VIEW,
-                            Uri.parse(it.hlsLinks[0].hls_url_mobile)
+                            Uri.parse(it.hlsLink)
                         )
                     )
                 }
