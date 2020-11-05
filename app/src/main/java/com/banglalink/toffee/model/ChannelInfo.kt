@@ -79,6 +79,8 @@ data class ChannelInfo(
         return itemCategory
     }
 
+    fun getHlsLink() = hlsLinks!![0].hls_url_mobile
+
     fun formatedShareCount() = Utils.getFormattedViewsText(shareCount.toString())
 
     val isPurchased: Boolean

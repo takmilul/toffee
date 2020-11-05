@@ -500,7 +500,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                     launchActivity<Html5PlayerViewActivity> {
                         putExtra(
                             Html5PlayerViewActivity.CONTENT_URL,
-                            it.hlsLink
+                            it.getHlsLink()
                         )
                     }
                 }
@@ -508,7 +508,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                     startActivity(
                         Intent(
                             Intent.ACTION_VIEW,
-                            Uri.parse(it.hlsLink)
+                            Uri.parse(it.getHlsLink())
                         )
                     )
                 }
