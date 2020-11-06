@@ -15,6 +15,7 @@ import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.about.AboutActivity
 import com.banglalink.toffee.ui.channels.ChannelFragment
+import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.ui.common.HtmlPageViewActivity
 import com.banglalink.toffee.ui.common.ParentLevelAdapter
 import com.banglalink.toffee.ui.favorite.FavoriteFragment
@@ -125,15 +126,19 @@ class DrawerHelper(val activity: HomeActivity,val binding:ActivityMainMenuBindin
                 true
             )
         )
-        navigationMenuList.add(
-            NavigationMenu(
-                ID_SUBSCRIPTIONS,
-                "Subscriptions",
-                R.mipmap.ic_menu_subscriptions,
-                ArrayList(),
-                true
+        val isBanglalinkNumber = Preference.getInstance().isBanglalinkNumber
+        if(isBanglalinkNumber == "true"){
+            navigationMenuList.add(
+                NavigationMenu(
+                    ID_INTERNET_PACK,
+                    activity.getString(R.string.menu_internet_pack),
+                    R.mipmap.ic_menu_internet_pack,
+                    ArrayList(),
+                    true
+                )
             )
-        )
+        }
+
         navigationMenuList.add(
             NavigationMenu(
                 ID_INVITE_FRIEND,
@@ -264,6 +269,16 @@ class DrawerHelper(val activity: HomeActivity,val binding:ActivityMainMenuBindin
                 else{
                     activity.launchActivity<MySubscriptionActivity>()
                 }
+
+            }
+            ID_INTERNET_PACK->{
+                binding.drawerLayout.closeDrawers()
+                activity.launchActivity<Html5PlayerViewActivity> {
+                putExtra(
+                    Html5PlayerViewActivity.CONTENT_URL,
+                    INTERNET_PACK_URL
+                )
+            }
 
             }
             ID_SETTINGS -> {

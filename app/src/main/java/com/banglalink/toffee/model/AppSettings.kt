@@ -68,3 +68,4 @@ val SERVER_ERROR_MSG =
 val EXIT_FROM_APP_MSG = "Are you sure to logout from the %s app?"
 val URL_ALL_CHANNEL_LIST = "http://test.viewersent.com.bd/channelList.php"
 val FAQ_URL = "https://portal.toffeelive.com/faq.html"
+val INTERNET_PACK_URL = "https://www.banglalink.net/en/apps-and-services/other-details/53"
