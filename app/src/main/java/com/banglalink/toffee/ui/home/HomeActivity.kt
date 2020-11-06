@@ -71,6 +71,7 @@ const val ID_VOD = 21
 const val ID_FAQ = 22
 const val ID_INVITE_FRIEND = 23
 const val ID_REDEEM_CODE = 24
+const val ID_INTERNET_PACK = 25
 
 const val PLAY_IN_WEB_VIEW = 1
 const val OPEN_IN_EXTERNAL_BROWSER = 2

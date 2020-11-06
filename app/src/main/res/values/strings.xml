@@ -123,5 +123,6 @@
     <string name="auto_rotation_off">Auto rotation off</string>
     <string name="refer_policy">Refer toffee to a friend and enjoy up to 1GB of free internet</string>
     <string name="read_more">Read More</string>
+    <string name="menu_internet_pack">Internet Pack</string>
 
 </resources>
