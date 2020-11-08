@@ -40,7 +40,6 @@ class ToffeeApplication : Application() {
         Preference.init(this)
         ToffeeAnalytics.initFireBaseAnalytics(this)
         
-        initTheme()
         initCoil()
 
         val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -48,20 +47,6 @@ class ToffeeApplication : Application() {
 
 
         initUploader()
-    }
-
-    private fun initTheme() {
-        when (Preference.getInstance().appThemeMode) {
-            Configuration.UI_MODE_NIGHT_NO -> {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
-            Configuration.UI_MODE_NIGHT_YES -> {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            }
-            else -> {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-            }
-        }
     }
 
     private fun initCoil() {

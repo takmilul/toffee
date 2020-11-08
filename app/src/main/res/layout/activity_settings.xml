@@ -289,12 +289,6 @@
                     app:trackTint="@color/switch_track_color"/>
 
                 <androidx.constraintlayout.widget.Group
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    app:constraint_referenced_ids="themeLabelTextView,darkThemeToggleBtn" />
-
-                <androidx.constraintlayout.widget.Group
                     android:id="@+id/profile_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

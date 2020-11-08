@@ -137,7 +137,7 @@
     <style name="editTextOval" parent="@android:style/Widget.EditText">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">match_parent</item>
-        <item name="android:textColor">@color/edit_view_text_color</item>
+        <item name="android:textColor">@color/main_text_color</item>
         <item name="android:textColorHint">@color/second_text_color</item>
         <item name="android:background">@drawable/editfield_oval_bg_white</item>
         <item name="android:fontFamily">@font/roboto_regular</item>

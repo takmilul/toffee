@@ -15,6 +15,7 @@
     <color name="screen_bg_white">#FFFFFF</color>
     <color name="colorAccent2">#FF3988</color>
     <color name="nav_menu_text_color">@color/main_text_color</color>
+    <color name="bottom_navbar_disabled_color">#29466B</color>
 
     <color name="input_bg_color">#F2F2F2</color>
     <color name="dialog_input_bg_color">#F2F2F2</color>

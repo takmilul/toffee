@@ -82,10 +82,6 @@ class SettingsActivity : BaseAppCompatActivity() {
     private fun initializeSettings() {
         binding.defaultDataQuality = preference.defaultDataQuality()
         binding.watchWifiOnly = preference.watchOnlyWifi()
-        /*binding.watchOnlyWifiToggleBtn.isChecked = watchWifiOnly
-        binding.dataQualityToggleBtn.isChecked = defaultDataQuality
-        binding.cellularProfileLayout.visibility = if (watchWifiOnly) View.GONE else View.VISIBLE
-        binding.profileLayout.visibility = if (defaultDataQuality) View.GONE else View.VISIBLE*/
         binding.cellularProfileDescTxt.text =
             getString(cellularProfileBWRequiredTxt[preference.cellularProfileStatus - 1])
         binding.cellularProfileStatusTv.text =
@@ -100,16 +96,14 @@ class SettingsActivity : BaseAppCompatActivity() {
         binding.darkThemeToggleBtn.isChecked = isDarkEnabled
     }
 
-    fun handleDefaultDataQualityToggleBtn() {
+    private fun handleDefaultDataQualityToggleBtn() {
         preference.setDefaultDataQuality(binding.dataQualityToggleBtn.isChecked)
         binding.defaultDataQuality = preference.defaultDataQuality()
-//        initializeSettings()
     }
 
-    fun handleWatchOnlyWifiToggleBtn() {
+    private fun handleWatchOnlyWifiToggleBtn() {
         preference.setWatchOnlyWifi(binding.watchOnlyWifiToggleBtn.isChecked)
         binding.watchWifiOnly = preference.watchOnlyWifi()
-//        initializeSettings()
     }
     
     private fun changeAppTheme(isDarkEnabled: Boolean){

@@ -11,6 +11,7 @@
     <color name="title_color">#FFFFFF</color>
     <color name="disabled_color">#525252</color>
     <color name="disabled_text_color">#757575</color>
+    <color name="bottom_navbar_disabled_color">#3F75B9</color>
     <color name="tool_bar_color">#111F31</color>
     <color name="tab_background_color">#111F31</color>
     <color name="window_background">#000000</color>
