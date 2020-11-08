@@ -108,7 +108,7 @@
                 android:layout_height="32dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginBottom="8dp"
-                loadChannelLogo="@{data.channelInfo}"
+                loadImageFromUrlRounded="@{data.channelInfo.channelProfileUrl}"
                 android:src="@drawable/ic_portrait"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/video_thumb" />
@@ -117,7 +117,7 @@
                 android:id="@+id/reactIcon"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:background="#FFFFFF"
+                android:background="@color/fab_icon_bg"
                 loadReactionEmo="@{data.activitySubType}"
                 app:layout_constraintEnd_toStartOf="@+id/guideline6"
                 app:layout_constraintTop_toTopOf="@+id/video_thumb"

@@ -35,7 +35,7 @@
             android:adjustViewBounds="true"
             android:scaleType="fitXY"
             android:minHeight="180dp"
-            imageFromUrl="@{data.landscape_ratio_1280_720}"
+            loadImageFromUrl="@{data.landscape_ratio_1280_720}"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

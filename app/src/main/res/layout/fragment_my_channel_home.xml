@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.banglalink.toffee.ui.mychannel.MyChannelHomeFragment">
@@ -18,12 +17,15 @@
         <variable
             name="isRated"
             type="Integer" />
+
         <variable
             name="myRating"
             type="Integer" />
+
         <variable
             name="data"
             type="com.banglalink.toffee.model.MyChannelDetailBean" />
+
         <variable
             name="viewModel"
             type="com.banglalink.toffee.ui.mychannel.MyChannelHomeViewModel" />
@@ -41,13 +43,6 @@
             android:background="@color/screen_bg_white"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="?attr/actionBarSize"
-                android:orientation="vertical"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed">
-
                 <include
                     android:id="@+id/channelDetailView"
                     layout="@layout/layout_my_channel_detail"
@@ -64,20 +59,6 @@
                     app:layout_collapseParallaxMultiplier="1"
                     app:layout_scrollFlags="scroll|exitUntilCollapsed" />
 
-                <com.google.android.material.tabs.TabLayout
-                    android:id="@+id/tabLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    app:tabGravity="fill"
-                    app:tabIndicatorColor="@color/btn_end"
-                    app:tabIndicatorGravity="bottom"
-                    app:tabInlineLabel="true"
-                    app:tabMode="fixed"
-                    app:tabSelectedTextColor="@color/purple"
-                    app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"
-                    app:tabTextColor="@color/browser_actions_text_color" />
-
-            </LinearLayout>
         </com.google.android.material.appbar.AppBarLayout>
 
         <ProgressBar
@@ -91,16 +72,40 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+        
         <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:fillViewport="true"
             android:layout_gravity="fill_vertical"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/viewPager"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="wrap_content"
+                android:minHeight="?attr/actionBarSize"
+                android:orientation="vertical">
+    
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tabLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    app:tabGravity="fill"
+                    app:tabIndicatorColor="@color/btn_end"
+                    app:tabIndicatorGravity="bottom"
+                    app:tabInlineLabel="true"
+                    app:tabMode="fixed"
+                    app:tabSelectedTextColor="@color/purple"
+                    app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"
+                    app:tabTextColor="@color/disabled_text_color" />
+    
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/viewPager"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:nestedScrollingEnabled="true" />
+
+            </LinearLayout>
         </androidx.core.widget.NestedScrollView>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

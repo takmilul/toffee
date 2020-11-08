@@ -27,7 +27,7 @@
             android:adjustViewBounds="true"
             android:minHeight="200dp"
             android:src="@drawable/hero"
-            imageFromUrl="@{data.poster_url_mobile}"
+            loadImageFromUrl="@{data.poster_url_mobile}"
             app:layout_constraintDimensionRatio="W,16:9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -172,7 +172,7 @@
             android:drawablePadding="4dp"
             android:text="2.7K"
             android:textColor="@color/second_text_color"
-            app:drawableStartCompat="@drawable/ic_like_emo"
+            app:drawableStartCompat="@drawable/ic_reactions_emo"
             app:layout_constraintBottom_toBottomOf="@+id/textView8"
             app:layout_constraintEnd_toEndOf="@+id/view"
             app:layout_constraintTop_toTopOf="@+id/textView8" />

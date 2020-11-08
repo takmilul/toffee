@@ -35,7 +35,7 @@
 
                 <com.banglalink.toffee.ui.widget.CustomImageView
                     android:id="@+id/poster"
-                    imageFromUrl="@{viewModel.data.posterUrl}"
+                    loadImageFromUrl="@{viewModel.data.posterUrl}"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
@@ -79,7 +79,7 @@
                     android:drawablePadding="8dp"
                     android:text="@{viewModel.data.reactionCount}"
                     android:textColor="@color/second_text_color"
-                    app:drawableStartCompat="@drawable/ic_like_emo"
+                    app:drawableStartCompat="@drawable/ic_reactions_emo"
                     app:layout_constraintEnd_toStartOf="@id/fullScreenButton"
                     app:layout_constraintStart_toEndOf="@id/textView8"
                     app:layout_constraintTop_toTopOf="@+id/textView5" />
@@ -97,7 +97,7 @@
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/circleImageView2"
-                    loadCircleImageFromUrl="@{viewModel.data.logoUrl}"
+                    loadImageFromUrlRounded="@{viewModel.data.logoUrl}"
                     android:layout_width="88dp"
                     android:layout_height="88dp"
                     android:layout_marginTop="32dp"

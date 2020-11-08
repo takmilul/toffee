@@ -105,7 +105,7 @@
                 </com.google.android.material.bottomappbar.BottomAppBar>
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/upload_button"
-                    android:backgroundTint="@android:color/white"
+                    android:backgroundTint="@color/fab_icon_bg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_upload_add"

@@ -9,236 +9,244 @@
             type="com.banglalink.toffee.ui.mychannel.MyChannelEditDetailViewModel" />
     </data>
     
-    <androidx.core.widget.NestedScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fillViewport="true">
+        android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/screen_bg_white">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:fillViewport="true">
 
-            <com.banglalink.toffee.ui.widget.CustomImageView
-                android:id="@+id/bannerImageView"
-                imageFromUrl="@{viewModel.myChannelDetail.bannerUrl}"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:minHeight="200dp"
-                android:scaleType="fitXY"
-                app:layout_constraintDimensionRatio="W,16:9"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:background="@color/screen_bg_white">
 
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/bannerEditButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="12dp"
-                android:layout_marginBottom="12dp"
-                android:background="?selectableItemBackgroundBorderless"
-                android:elevation="2dp"
-                android:padding="4dp"
-                android:scaleType="fitXY"
-                app:layout_constraintBottom_toBottomOf="@id/bannerImageView"
-                app:layout_constraintEnd_toEndOf="@+id/bannerImageView"
-                app:srcCompat="@drawable/ic_edit_btn" />
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/profileImageView"
-                loadCircleImageFromUrl="@{viewModel.myChannelDetail.profileUrl}"
-                android:layout_width="104dp"
-                android:layout_height="104dp"
-                android:layout_margin="8dp"
-                android:elevation="2dp"
-                app:layout_constraintBottom_toBottomOf="@+id/bannerImageView"
-                app:layout_constraintDimensionRatio="W,16:9"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/bannerImageView" />
-
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/profileImageEditButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?selectableItemBackgroundBorderless"
-                android:elevation="4dp"
-                android:padding="4dp"
-                android:scaleType="fitXY"
-                app:layout_constraintBottom_toBottomOf="@id/profileImageView"
-                app:layout_constraintEnd_toEndOf="@id/profileImageView"
-                app:layout_constraintStart_toStartOf="@id/profileImageView"
-                app:layout_constraintTop_toBottomOf="@id/profileImageView"
-                app:srcCompat="@drawable/ic_edit_btn" />
-
-
-            <TextView
-                android:id="@+id/textView15"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="24dp"
-                android:text="Channel Name"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/profileImageEditButton" />
-
-            <EditText
-                android:id="@+id/channelName"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="16dp"
-                android:background="@drawable/upload_edittext_bg"
-                android:ems="10"
-                android:inputType="textPersonName"
-                android:text="@{viewModel.myChannelDetail.channelName}"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView15" />
-
-            <TextView
-                android:id="@+id/textView17"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="24dp"
-                android:text="Description"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/channelName" />
-
-            <com.banglalink.toffee.ui.widget.HashTagEditText
-                android:id="@+id/description"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="16dp"
-                android:background="@drawable/upload_edittext_bg"
-                android:ems="10"
-                android:gravity="top|start"
-                android:inputType="textMultiLine|textCapSentences"
-                android:lines="4"
-                android:maxLength="2000"
-                android:maxLines="8"
-                android:text="@{viewModel.myChannelDetail.description}"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView17" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline9"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="1.0" />
-
-            <TextView
-                android:id="@+id/textView20"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="24dp"
-                android:text="Category"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/description" />
-
-            <TextView
-                android:id="@+id/textView21"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="24dp"
-                android:text="Subscription Price"
-                android:visibility="gone"
-                app:layout_constraintStart_toStartOf="@+id/guideline9"
-                app:layout_constraintTop_toBottomOf="@+id/description" />
-
-            <RelativeLayout
-                android:id="@+id/categorySpinnerWrap"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="8dp"
-                android:background="@drawable/upload_spinner_bg"
-                app:layout_constraintEnd_toStartOf="@+id/guideline9"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView20">
-
-                <Spinner
-                    android:id="@+id/categorySpinner"
+                <com.banglalink.toffee.ui.widget.CustomImageView
+                    android:id="@+id/bannerImageView"
+                    loadImageFromUrl="@{viewModel.myChannelDetail.bannerUrl}"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:entries="@{viewModel.categories}"
-                    android:onItemSelected="@{viewModel::onItemSelected}"
-                    android:selectedItemPosition="@{viewModel.categories.indexOf(viewModel.selectedCategory.categoryName)}" />
+                    android:adjustViewBounds="true"
+                    android:minHeight="200dp"
+                    android:scaleType="fitXY"
+                    app:layout_constraintDimensionRatio="W,16:9"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            </RelativeLayout>
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/bannerEditButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginBottom="12dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:elevation="2dp"
+                    android:padding="4dp"
+                    android:scaleType="fitXY"
+                    app:layout_constraintBottom_toBottomOf="@id/bannerImageView"
+                    app:layout_constraintEnd_toEndOf="@+id/bannerImageView"
+                    app:srcCompat="@drawable/ic_edit_btn" />
 
-            <RelativeLayout
-                android:id="@+id/subscriptionPriceSpinnerWrap"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="16dp"
-                android:background="@drawable/upload_spinner_bg"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/guideline9"
-                app:layout_constraintTop_toBottomOf="@+id/textView21">
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/profileImageView"
+                    loadImageFromUrlRounded="@{viewModel.myChannelDetail.profileUrl}"
+                    android:layout_width="104dp"
+                    android:layout_height="104dp"
+                    android:layout_margin="8dp"
+                    android:elevation="2dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/bannerImageView"
+                    app:layout_constraintDimensionRatio="W,16:9"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/bannerImageView" />
 
-                <Spinner
-                    android:id="@+id/subscriptionPriceSpinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/profileImageEditButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:elevation="4dp"
+                    android:padding="4dp"
+                    android:scaleType="fitXY"
+                    app:layout_constraintBottom_toBottomOf="@id/profileImageView"
+                    app:layout_constraintEnd_toEndOf="@id/profileImageView"
+                    app:layout_constraintStart_toStartOf="@id/profileImageView"
+                    app:layout_constraintTop_toBottomOf="@id/profileImageView"
+                    app:srcCompat="@drawable/ic_edit_btn" />
 
-            </RelativeLayout>
 
-            <Button
-                android:id="@+id/cancelButton"
-                style="@style/ButtonStyleRingPurple"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="8dp"
-                android:layout_marginVertical="32dp"
-                android:text="Cancel"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/saveButton"
-                app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/categorySpinnerWrap" />
+                <TextView
+                    android:id="@+id/textView15"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="24dp"
+                    android:text="Channel Name"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/profileImageEditButton" />
 
-            <Button
-                android:id="@+id/saveButton"
-                style="@style/ButtonStyleSolidPink"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="8dp"
-                android:text="Save Changes"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="@id/cancelButton"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/cancelButton"
-                app:layout_constraintTop_toTopOf="@id/cancelButton" />
+                <EditText
+                    android:id="@+id/channelName"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/single_line_input_text_height"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:background="@drawable/single_line_input_text_bg"
+                    android:ems="10"
+                    android:hint="Channel name"
+                    android:inputType="textPersonName"
+                    android:text="@{viewModel.myChannelDetail.channelName}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView15" />
 
-            <ProgressBar
-                android:id="@+id/progressBar"
-                style="?android:attr/progressBarStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:elevation="2dp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                <TextView
+                    android:id="@+id/textView17"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="24dp"
+                    android:text="Description"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/channelName" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-        
-    </androidx.core.widget.NestedScrollView>
+                <com.banglalink.toffee.ui.widget.HashTagEditText
+                    android:id="@+id/description"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:background="@drawable/multiline_input_text_bg"
+                    android:ems="10"
+                    android:hint="Description..."
+                    android:gravity="top|start"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:lines="4"
+                    android:maxLength="2000"
+                    android:maxLines="8"
+                    android:text="@{viewModel.myChannelDetail.description}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView17" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="1.0" />
+
+                <TextView
+                    android:id="@+id/textView20"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="24dp"
+                    android:text="Category"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/description" />
+
+                <TextView
+                    android:id="@+id/textView21"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="24dp"
+                    android:text="Subscription Price"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="@+id/guideline9"
+                    app:layout_constraintTop_toBottomOf="@+id/description" />
+
+                <RelativeLayout
+                    android:id="@+id/categorySpinnerWrap"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/single_line_input_text_height"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:background="@drawable/spinner_bg"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline9"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView20">
+
+                    <Spinner
+                        android:id="@+id/categorySpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:entries="@{viewModel.categories}"
+                        android:onItemSelected="@{viewModel::onItemSelected}"
+                        android:selectedItemPosition="@{viewModel.categories.indexOf(viewModel.selectedCategory.categoryName)}" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/subscriptionPriceSpinnerWrap"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@drawable/spinner_bg"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/guideline9"
+                    app:layout_constraintTop_toBottomOf="@+id/textView21">
+
+                    <Spinner
+                        android:id="@+id/subscriptionPriceSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </RelativeLayout>
+
+                <Button
+                    android:id="@+id/cancelButton"
+                    style="@style/ButtonStyleRingPurple"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginVertical="32dp"
+                    android:text="Cancel"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/saveButton"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/categorySpinnerWrap" />
+
+                <Button
+                    android:id="@+id/saveButton"
+                    style="@style/ButtonStyleSolidPink"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="8dp"
+                    android:text="Save Changes"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@id/cancelButton"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/cancelButton"
+                    app:layout_constraintTop_toTopOf="@id/cancelButton" />
+
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:elevation="2dp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.core.widget.NestedScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

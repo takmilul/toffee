@@ -19,7 +19,7 @@ import com.banglalink.toffee.ui.common.SingleListItemCallback
 import com.banglalink.toffee.ui.home.*
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.bindCategoryImage
-import com.banglalink.toffee.util.bindChannelLogo
+import com.banglalink.toffee.util.bindImageFromUrl
 import com.google.android.material.chip.Chip
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
@@ -63,7 +63,7 @@ class CategoryInfoFragment: HomeBaseFragment() {
                     mAdapter.getItem(position)?.let {
                         channelDescription.text = it.program_name
                         channelName.text = it.content_provider_name
-                        bindChannelLogo(channelLogo, it)
+                        bindImageFromUrl(channelLogo, it.channelProfileUrl)
                     }
                 }
             })

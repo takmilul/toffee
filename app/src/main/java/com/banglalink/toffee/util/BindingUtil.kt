@@ -1,5 +1,6 @@
 package com.banglalink.toffee.util
 
+import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
@@ -11,6 +12,8 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import coil.api.load
 import coil.request.CachePolicy
@@ -28,7 +31,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 
 const val crossFadeDurationInMills = 500
 
-@BindingAdapter("imageFromUrl")
+@BindingAdapter("loadImageFromUrl")
 fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
     if (imageUrl.isNullOrEmpty()) {
         view.setImageResource(R.drawable.placeholder)
@@ -36,7 +39,7 @@ fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
     else {
         view.load(imageUrl) {
             fallback(R.drawable.placeholder)
-//            placeholder(R.drawable.ic_profile_default)
+            placeholder(R.drawable.placeholder)
             error(R.drawable.placeholder)
 //            memoryCachePolicy(CachePolicy.DISABLED)
 //            diskCachePolicy(CachePolicy.ENABLED)
@@ -46,12 +49,14 @@ fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
     }
 }
 
-@BindingAdapter("imageFromUrlRounded")
+@BindingAdapter("loadImageFromUrlRounded")
 fun bindRoundImage(view: ImageView, imageUrl: String?) {
     if (!imageUrl.isNullOrEmpty()) {
         view.load(imageUrl) {
             transformations(CircleCropTransformation())
             crossfade(false)
+            fallback(R.drawable.placeholder)
+            placeholder(R.drawable.placeholder)
             error(R.drawable.ic_home)
 //            crossfade(crossFadeDurationInMills)
         }
@@ -59,6 +64,11 @@ fun bindRoundImage(view: ImageView, imageUrl: String?) {
     else {
         view.setImageResource(R.drawable.ic_profile_default)
     }
+}
+
+@BindingAdapter("loadImageResource")
+fun loadImageFromResource(view: ImageView, image: Int) {
+    view.setImageResource(image)
 }
 
 @BindingAdapter("loadCategoryImage")
@@ -78,32 +88,6 @@ fun bindCategoryImage(view: ImageView, category: UgcCategory) {
             crossfade(false)
             error(R.drawable.ic_cat_movie)
 //            crossfade(crossFadeDurationInMills)
-        }
-    }
-}
-
-
-@BindingAdapter("loadChannelImage")
-fun bindChannel(view: CircleImageView, channelInfo: ChannelInfo) {
-    if (channelInfo.isLive) {
-        if (channelInfo.channel_logo.isNullOrBlank()) {
-            view.setImageResource(R.drawable.ic_profile_default)
-        }
-        else {
-            view.load(channelInfo.channel_logo) {
-                crossfade(false)
-            }
-        }
-    }
-    else {
-        if (channelInfo.landscape_ratio_1280_720.isNullOrBlank()) {
-            view.setImageResource(R.drawable.placeholder)
-        }
-        else {
-            view.load(channelInfo.landscape_ratio_1280_720) {
-                crossfade(false)
-                size(720, 405)
-            }
         }
     }
 }
@@ -141,116 +125,6 @@ fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
     }
 }
 
-@BindingAdapter("bindFeaturedImage")
-fun bindFeatured(view: ImageView, channelInfo: ChannelInfo) {
-    if (channelInfo.feature_image.isNullOrBlank()) {
-        view.setImageResource(R.drawable.placeholder)
-    }
-    else {
-        view.load(channelInfo.feature_image)
-        {
-            diskCachePolicy(CachePolicy.ENABLED)
-            crossfade(false)
-//            crossfade(crossFadeDurationInMills)
-//        size(720, 405)
-        }
-    }
-}
-
-@BindingAdapter("loadUserChannelLogo")
-fun bindUserChannelLogo(view: ImageView, channelInfo: ChannelInfo) {
-    if (channelInfo.channel_logo.isNullOrBlank()) {
-        view.setImageResource(R.drawable.ic_profile_default)
-    }
-    else {
-        view.load(channelInfo.channel_logo) {
-            fallback(R.drawable.ic_profile_default)
-//            placeholder(R.drawable.ic_profile_default)
-            error(R.drawable.ic_profile_default)
-//            memoryCachePolicy(CachePolicy.DISABLED)
-            diskCachePolicy(CachePolicy.ENABLED)
-            crossfade(false)
-//            crossfade(crossFadeDurationInMills)
-//        size(Utils.dpToPx(imageHeight), Utils.dpToPx(imageHeight))
-        }
-    }
-}
-
-@BindingAdapter("loadPlayListLogo")
-fun loadPlayListLogo(view: ImageView, playlistInfo: MyChannelPlaylist) {
-    if (playlistInfo.logoMobileUrl.isNullOrBlank()) {
-        view.setImageResource(R.drawable.placeholder)
-    }
-    else {
-        view.load(playlistInfo.logoMobileUrl) {
-            fallback(R.drawable.placeholder)
-//            placeholder(R.drawable.ic_profile_default)
-            error(R.drawable.placeholder)
-//            memoryCachePolicy(CachePolicy.DISABLED)
-            diskCachePolicy(CachePolicy.ENABLED)
-            crossfade(false)
-//            crossfade(crossFadeDurationInMills)
-//        size(Utils.dpToPx(imageHeight), Utils.dpToPx(imageHeight))
-        }
-    }
-}
-
-@BindingAdapter("loadChannelLogo")
-fun bindChannelLogo(view: ImageView, channelInfo: ChannelInfo) {
-    if (channelInfo.channelProfileUrl.isNullOrBlank()) {
-        view.setImageResource(R.drawable.ic_profile_default)
-    }
-    else {
-        view.load(channelInfo.channelProfileUrl) {
-            fallback(R.drawable.ic_profile_default)
-//            placeholder(R.drawable.ic_profile_default)
-            error(R.drawable.ic_profile_default)
-//            memoryCachePolicy(CachePolicy.DISABLED)
-            diskCachePolicy(CachePolicy.ENABLED)
-            crossfade(false)
-//        size(Utils.dpToPx(imageHeight), Utils.dpToPx(imageHeight))
-        }
-    }
-}
-
-@BindingAdapter("loadChannelLogo")
-fun bindChannelLogo(view: ImageView, channelInfo: MyChannelPlaylist) {
-    if (channelInfo.channelLogo.isNullOrBlank()) {
-        view.setImageResource(R.drawable.ic_profile_default)
-    }
-    else {
-        view.load(channelInfo.channelLogo) {
-            fallback(R.drawable.ic_profile_default)
-//            placeholder(R.drawable.ic_profile_default)
-            error(R.drawable.ic_profile_default)
-//            memoryCachePolicy(CachePolicy.DISABLED)
-            diskCachePolicy(CachePolicy.ENABLED)
-            crossfade(false)
-//            crossfade(crossFadeDurationInMills)
-//        size(Utils.dpToPx(imageHeight), Utils.dpToPx(imageHeight))
-        }
-    }
-}
-
-@BindingAdapter("loadChannelLogo")
-fun bindChannelLogo(view: ImageView, channelInfo: UgcUserChannelInfo) {
-    if (channelInfo.profileUrl.isNullOrBlank()) {
-        view.setImageResource(R.drawable.ic_profile_default)
-    }
-    else {
-        view.load(channelInfo.profileUrl) {
-            fallback(R.drawable.ic_profile_default)
-            placeholder(R.drawable.ic_profile_default)
-            error(R.drawable.ic_profile_default)
-//            memoryCachePolicy(CachePolicy.DISABLED)
-            diskCachePolicy(CachePolicy.ENABLED)
-            crossfade(false)
-//            crossfade(crossFadeDurationInMills)
-//        size(Utils.dpToPx(imageHeight), Utils.dpToPx(imageHeight))
-        }
-    }
-}
-
 @BindingAdapter("bindDuration")
 fun bindDuration(view: TextView, channelInfo: ChannelInfo) {
     view.text = channelInfo.formattedDuration
@@ -276,25 +150,15 @@ fun bindSubscriptionStatus(view: MultiTextButton, channelInfo: UgcUserChannelInf
 fun bindTextColor(view: MaterialButton, myRating: Int) {
     if (myRating > 0) {
         view.setIconTintResource(android.R.color.white)
-        view.setTextColor(Color.parseColor("#FFFFFF"))
-        view.background.setTint(Color.parseColor("#58DC3F"))
+        view.setTextColor(ContextCompat.getColor(view.context, android.R.color.white))
+        view.background.setTint(ContextCompat.getColor(view.context, R.color.dark_green))
     }
     else {
         view.setIconTintResource(R.color.dark_green)
-        view.setTextColor(Color.parseColor("#58DC3F"))
-        view.background.setTint(Color.parseColor("#FFFFFF"))
+        view.setTextColor(ContextCompat.getColor(view.context, R.color.dark_green))
+        view.background.setTint(ContextCompat.getColor(view.context, R.color.screen_bg_white))
     }
 }
-
-/*@BindingAdapter("bindBackgroundColor")
-fun bindTextColor(view: MaterialButton, myRating: Int){
-    if(myRating > 0){
-        view.setTextColor(Color.parseColor("#FFFFFF"))
-    }
-    else{
-        view.setTextColor(Color.parseColor("#58DC3F"))
-    }
-}*/
 
 @BindingAdapter("bindSubscriptionStatus")
 fun bindSubscriptionStatus(view: MultiTextButton, isSubscribed: Int) {
@@ -380,29 +244,6 @@ fun bindPremiumIcon(imageView: ImageView, channelInfo: ChannelInfo) {
     }
 }
 
-
-@BindingAdapter("loadImageResource")
-fun loadImageFromResource(view: ImageView, image: Int) {
-    view.setImageResource(image)
-}
-
-
-@BindingAdapter("loadCircleImageFromUrl")
-fun bindCircleImageFromUrl(view: CircleImageView, imageUrl: String?) {
-    if (imageUrl.isNullOrEmpty()) {
-        view.setImageResource(R.drawable.ic_profile_default)
-    }
-    else {
-        view.load(imageUrl) {
-            fallback(R.drawable.ic_profile_default)
-            placeholder(R.drawable.ic_profile_default)
-            error(R.drawable.ic_profile_default)
-            diskCachePolicy(ENABLED)
-            crossfade(false)
-        }
-    }
-}
-
 @BindingAdapter("bindActivityType")
 fun bindActivityType(view: TextView, item: UserActivities) {
     view.text = when (item.activityType) {
@@ -445,5 +286,12 @@ fun bindEmoCount(view: TextView, item: ChannelInfo) {
 fun loadMyReactionBg(view: ImageView, isSetBg: Boolean){
     if (isSetBg){
         view.setBackgroundResource(R.drawable.teal_round_bg)
+    }
+}
+
+@BindingAdapter("loadUnseenCardBgColor")
+fun loadUnseenBgColor(view: CardView, isSeen: Boolean){
+    if (!isSeen){
+        view.setCardBackgroundColor(ContextCompat.getColor(view.context, R.color.unseenCardColor))
     }
 }

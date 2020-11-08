@@ -68,12 +68,13 @@
             <EditText
                 android:id="@+id/upload_title"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/single_line_input_text_height"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="16dp"
-                android:background="@drawable/upload_edittext_bg"
+                android:background="@drawable/single_line_input_text_bg"
                 android:ems="10"
+                android:hint="Title"
                 android:inputType="textPersonName"
                 android:text="@={viewmodel.title}"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -97,8 +98,9 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="16dp"
-                android:background="@drawable/upload_edittext_bg"
+                android:background="@drawable/multiline_input_text_bg"
                 android:ems="10"
+                android:hint="Description..."
                 android:gravity="top|start"
                 android:inputType="textMultiLine|textCapSentences"
                 android:lines="4"
@@ -133,7 +135,8 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="16dp"
-                android:background="@drawable/upload_edittext_bg"
+                app:hint="Tags"
+                android:background="@drawable/multiline_input_text_bg"
                 android:gravity="top|start"
                 app:chip_backgroundColor="#E1D8FF"
                 app:chip_deletable="true"
@@ -184,11 +187,11 @@
             <RelativeLayout
                 android:id="@+id/category_spinner_wrap"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/single_line_input_text_height"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="8dp"
-                android:background="@drawable/upload_spinner_bg"
+                android:background="@drawable/spinner_bg"
                 app:layout_constraintEnd_toStartOf="@+id/guideline9"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView20">
@@ -196,7 +199,7 @@
                 <Spinner
                     android:id="@+id/category_spinner"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:entries="@{viewmodel.categories}"
                     android:selectedItemPosition="@={viewmodel.categoryPosition}" />
             </RelativeLayout>
@@ -204,11 +207,11 @@
             <RelativeLayout
                 android:id="@+id/age_group_spinner_wrap"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/single_line_input_text_height"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="16dp"
-                android:background="@drawable/upload_spinner_bg"
+                android:background="@drawable/spinner_bg"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/guideline9"
                 app:layout_constraintTop_toBottomOf="@+id/textView21">
@@ -216,7 +219,7 @@
                 <Spinner
                     android:id="@+id/age_group_spinner"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:entries="@{viewmodel.ageGroup}"
                     android:selectedItemPosition="@={viewmodel.ageGroupPosition}" />
             </RelativeLayout>
@@ -240,7 +243,7 @@
                 android:layout_marginTop="4dp"
                 android:visibility="gone"
                 android:layout_marginEnd="16dp"
-                android:background="@drawable/upload_spinner_bg"
+                android:background="@drawable/spinner_bg"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView22">

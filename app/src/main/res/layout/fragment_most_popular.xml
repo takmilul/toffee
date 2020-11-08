@@ -64,5 +64,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mostPopularHeader"
-        app:reverseLayout="false" />
+        app:reverseLayout="false"
+        tools:listitem="@layout/list_item_most_popular_videos"/>
         </androidx.constraintlayout.widget.ConstraintLayout>

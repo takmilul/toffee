@@ -48,10 +48,11 @@
                 <EditText
                     android:id="@+id/playlistNameEditText"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/single_line_input_text_height"
                     android:layout_marginTop="8dp"
-                    android:background="@drawable/upload_edittext_bg"
+                    android:background="@drawable/single_line_dialog_input_text_bg"
                     android:ems="10"
+                    android:hint="Playlist name"
                     android:inputType="textPersonName"
                     android:text="@={viewModel.playlistName}"
                     app:layout_constraintEnd_toEndOf="@+id/textView51"

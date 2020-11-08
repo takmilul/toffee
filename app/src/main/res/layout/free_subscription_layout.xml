@@ -26,7 +26,7 @@
 
             <ImageView
                 android:id="@+id/package_badge_icon"
-                imageFromUrl="@{data.mobileLogo}"
+                loadImageFromUrl="@{data.mobileLogo}"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginStart="16dp"

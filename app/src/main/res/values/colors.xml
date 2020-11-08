@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#000000</color>
     <!--<color name="colorAccent">#FF8683FF</color>-->
     <color name="colorAccent">#34C9B5</color>
+    <color name="colorAccentDark">#009688</color>
     <color name="colorAccent3">#8663FF</color>
 
     <color name="btn_start">#FF3B3C</color>
@@ -15,11 +16,16 @@
     <color name="colorAccent2">#FF3988</color>
     <color name="nav_menu_text_color">@color/main_text_color</color>
 
+    <color name="input_bg_color">#F2F2F2</color>
+    <color name="dialog_input_bg_color">#F2F2F2</color>
+    <color name="fab_icon_bg">#FFFFFF</color>
+    
     <color name="window_background">#F3F3F3</color>
 
     <color name="main_text_color">#29466B</color>
     <color name="view_all_text_color">#34C9B5</color>
     <color name="second_text_color">#829AB8</color>
+    <color name="switch_color">#829AB8</color>
     <color name="edit_view_text_color">#1C2631</color>
     <color name="view_all_txt_color">@android:color/black</color>
 
@@ -28,14 +34,16 @@
     <color name="tab_unselected">#29466B</color>
 
     <color name="state_background_color">#BDBDBD</color>
+    <color name="disabled_color">#F9F9F9</color>
+    <color name="disabled_text_color">#757575</color>
     <color name="state_background_text_color">#808080</color>
     <color name="state_foreground_text_color">#eeeeee</color>
 
     <color name="tool_bar_color">@android:color/white</color>
-    <color name="channel_header">#3e5979</color>
+    <color name="title_color">#3e5979</color>
     <color name="tab_background_color">@android:color/white</color>
     <color name="home_screen_curve_bg_color">@android:color/white</color>
-    
+    <color name="home_screen_curve_bg_color_light">#F5F5F5</color>
     
     <color name="tooltip_mask">#CC4f5355</color>
 

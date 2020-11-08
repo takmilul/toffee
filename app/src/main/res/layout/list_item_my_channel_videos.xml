@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    >
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="android.view.View"/>
-        <!--<variable
-            name="isPublic"
-            type="Integer" />-->
+
+        <import type="android.view.View" />
+
         <variable
             name="data"
             type="com.banglalink.toffee.model.ChannelInfo" />
+
         <variable
             name="callback"
             type="com.banglalink.toffee.ui.common.ContentReactionCallback" />
@@ -21,7 +19,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/bg_color"
+        android:layout_marginBottom="16dp"
+        android:background="@color/home_screen_curve_bg_color"
         android:onClick="@{()->callback.onItemClicked(data)}">
 
         <com.banglalink.toffee.ui.widget.CustomImageView
@@ -35,7 +34,8 @@
             app:layout_constraintDimensionRatio="W,16:9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/placeholder" />
 
         <TextView
             android:id="@+id/duration"
@@ -53,17 +53,6 @@
             app:layout_constraintEnd_toEndOf="@+id/poster"
             tools:text="00:00" />
 
-        <View
-            android:id="@+id/view"
-            android:layout_width="0dp"
-            android:layout_height="120dp"
-            android:layout_marginBottom="16dp"
-            android:background="@color/home_screen_curve_bg_color"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/poster" />
-
         <TextView
             android:id="@+id/name"
             style="@style/programNameTextView"
@@ -80,15 +69,15 @@
             android:textColor="#7990AC"
             app:layout_constraintEnd_toStartOf="@+id/uploadDuration"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/view"
+            app:layout_constraintTop_toBottomOf="@id/poster"
             tools:text="This Makeup Tutorial By Kylie Jenner Is All you Need For Summer" />
 
         <TextView
             android:id="@+id/uploadDuration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#829AB8"
             android:text="@{data.formattedCreateTime}"
+            android:textColor="#829AB8"
             app:layout_constraintEnd_toStartOf="@id/guideline2"
             app:layout_constraintStart_toEndOf="@+id/name"
             app:layout_constraintTop_toTopOf="@+id/name" />
@@ -107,9 +96,9 @@
             android:onClick="@{(v)->callback.onOpenMenu(v, data)}"
             android:padding="5dp"
             android:scaleType="fitXY"
-            app:layout_constraintEnd_toEndOf="@+id/view"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline2"
-            app:layout_constraintTop_toTopOf="@+id/view"
+            app:layout_constraintTop_toBottomOf="@id/poster"
             app:srcCompat="@drawable/ic_menu_more" />
 
         <androidx.constraintlayout.widget.Guideline
@@ -123,13 +112,13 @@
             android:id="@+id/textView5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginVertical="16dp"
+            android:layout_marginStart="16dp"
             android:drawablePadding="8dp"
             android:text="@{data.formatted_view_count}"
             android:textColor="#829AB8"
             app:drawableStartCompat="@drawable/ic_view"
-            app:layout_constraintBottom_toBottomOf="@id/view"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/textView8"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="@+id/name"
@@ -147,7 +136,8 @@
             app:layout_constraintBottom_toBottomOf="@id/textView5"
             app:layout_constraintEnd_toStartOf="@+id/textView9"
             app:layout_constraintStart_toEndOf="@+id/textView5"
-            app:layout_constraintTop_toTopOf="@+id/textView5" />
+            app:layout_constraintTop_toTopOf="@+id/textView5"
+            tools:text="21K" />
 
         <TextView
             android:id="@+id/textView9"
@@ -155,14 +145,14 @@
             loadReactionEmo="@{data.myReaction}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="24dp"
+            android:layout_marginEnd="32dp"
             android:drawablePadding="4dp"
             android:gravity="center_vertical"
             android:onClick="@{(v) -> callback.onReactionClicked(v, data)}"
             android:textColor="#829AB8"
             app:drawableStartCompat="@drawable/ic_reactions_emo"
             app:layout_constraintBottom_toBottomOf="@+id/textView5"
-            app:layout_constraintEnd_toEndOf="@+id/view"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/textView8"
             app:layout_constraintTop_toTopOf="@+id/textView5"
             tools:text="904.5k" />
@@ -173,23 +163,23 @@
             android:layout_height="wrap_content"
             android:visibility="@{data.isApproved == null || data.isApproved == 1 ? View.VISIBLE : View.GONE}"
             app:constraint_referenced_ids="textView5,textView8,textView9" />
-        
+
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="24dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginVertical="16dp"
             android:drawablePadding="8dp"
+            android:gravity="center"
             android:text="Approval Pending"
-            android:textSize="16sp"
-            android:visibility="gone"
             android:textColor="@color/approvalPendingColor"
+            android:textSize="16sp"
+            android:visibility="@{reactionGroup.visibility == View.GONE ? View.VISIBLE : View.GONE}"
             app:drawableStartCompat="@drawable/ic_time"
-            app:layout_constraintBottom_toBottomOf="@id/view"
-            app:layout_constraintEnd_toStartOf="@id/textView8"
-            app:layout_constraintStart_toStartOf="@+id/name"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/name" />
-
+        
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
-<!--@{reactionGroup.visibility == View.GONE ? View.VISIBLE : View.GONE}-->

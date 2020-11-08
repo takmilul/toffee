@@ -134,6 +134,12 @@ class Preference(private val pref: SharedPreferences,
                 profileImageUrlLiveData.postValue(userPhoto)
         }
 
+    var appThemeMode: Int
+        get() = pref.getInt("app_theme", 0)
+        set(themeMode){
+            pref.edit().putInt("app_theme", themeMode).apply()
+        }
+    
     val netType: String
         get() = if (Utils.checkWifiOnAndConnected(context)) "WIFI" else "CELLULAR"
 

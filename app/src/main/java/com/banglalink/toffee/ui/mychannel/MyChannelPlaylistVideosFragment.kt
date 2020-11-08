@@ -51,11 +51,10 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(), BaseLis
     
     override fun onItemClicked(item: ChannelInfo) {
         super.onItemClicked(item)
-        if (item.isApproved == 1) {
-            homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
-        }
-        else {
+        if (item.isApproved == 0) {
             Toast.makeText(requireContext(), "Your video has not approved yet. Once it's approved, you can play the video", Toast.LENGTH_SHORT).show()
+        } else {
+            homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
         }
     }
 

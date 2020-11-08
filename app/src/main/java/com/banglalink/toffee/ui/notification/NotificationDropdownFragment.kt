@@ -29,6 +29,11 @@ class NotificationDropdownFragment : BaseListFragment<NotificationInfo>(), BaseL
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        activity?.title = "Notification"
+    }
+    
     override fun onItemClicked(item: NotificationInfo) {
         super.onItemClicked(item)
 
