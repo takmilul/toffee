@@ -39,7 +39,7 @@ fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
             fallback(R.drawable.placeholder)
             placeholder(R.drawable.placeholder)
             error(R.drawable.placeholder)
-            memoryCachePolicy(CachePolicy.DISABLED)
+            //memoryCachePolicy(CachePolicy.DISABLED)
             diskCachePolicy(CachePolicy.ENABLED)
             crossfade(false)
 //            crossfade(crossFadeDurationInMills)
@@ -56,7 +56,7 @@ fun bindRoundImage(view: ImageView, imageUrl: String?) {
             fallback(R.drawable.placeholder)
             placeholder(R.drawable.placeholder)
             error(R.drawable.ic_home)
-            memoryCachePolicy(CachePolicy.DISABLED)
+            //memoryCachePolicy(CachePolicy.DISABLED)
             diskCachePolicy(CachePolicy.ENABLED)
 //            crossfade(crossFadeDurationInMills)
         }
@@ -87,7 +87,7 @@ fun bindCategoryImage(view: ImageView, category: UgcCategory) {
         view.load(category.categoryIcon) {
             crossfade(false)
             error(R.drawable.ic_cat_movie)
-            memoryCachePolicy(CachePolicy.DISABLED)
+            //memoryCachePolicy(CachePolicy.DISABLED)
             diskCachePolicy(CachePolicy.ENABLED)
 //            crossfade(crossFadeDurationInMills)
         }
@@ -105,7 +105,7 @@ fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
                 transformations(CircleCropTransformation())
                 crossfade(false)
 //            crossfade(crossFadeDurationInMills)
-                memoryCachePolicy(CachePolicy.DISABLED)
+                //memoryCachePolicy(CachePolicy.DISABLED)
                 diskCachePolicy(CachePolicy.ENABLED)
             }
         }
@@ -117,7 +117,7 @@ fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
         else {
             view.load(channelInfo.landscape_ratio_1280_720)
             {
-                memoryCachePolicy(CachePolicy.DISABLED)
+                //memoryCachePolicy(CachePolicy.DISABLED)
                 diskCachePolicy(CachePolicy.ENABLED)
                 crossfade(false)
 //            crossfade(crossFadeDurationInMills)
