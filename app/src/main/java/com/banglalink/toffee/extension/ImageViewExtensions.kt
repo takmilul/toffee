@@ -3,14 +3,15 @@ package com.banglalink.toffee.extension
 import android.graphics.BitmapFactory
 import android.util.Base64
 import android.widget.ImageView
-import coil.api.load
+import androidx.core.content.ContextCompat
+import coil.load
 import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
 
 fun ImageView.loadProfileImage(imageUrl: String) {
 
     if (imageUrl.isBlank()) {
-        setImageDrawable(context.getDrawable(R.drawable.ic_profile_default))
+        setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_profile_default))
     } else {
         load(imageUrl) {
             crossfade(true)

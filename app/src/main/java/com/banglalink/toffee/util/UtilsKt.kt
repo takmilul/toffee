@@ -6,11 +6,15 @@ import android.graphics.Bitmap
 import android.graphics.Bitmap.CompressFormat.JPEG
 import android.graphics.BitmapFactory
 import android.graphics.BitmapFactory.Options
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.util.Base64
 import android.util.Log
 import androidx.core.content.ContextCompat
+import coil.imageLoader
+import coil.request.ImageRequest
+import coil.request.SuccessResult
 import java.io.*
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -58,6 +62,14 @@ object UtilsKt {
                 null
             }
         } ?: uri.toString().split(File.separator).last()
+    }
+
+    suspend fun coilExecuteGet(ctx: Context, url: Any?): Drawable? {
+        val request = ImageRequest.Builder(ctx)
+            .data(url)
+            .allowHardware(false) // Disable hardware bitmaps.
+            .build()
+        return (ctx.imageLoader.execute(request) as SuccessResult).drawable
     }
 }
 

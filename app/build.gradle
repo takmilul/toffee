@@ -59,7 +59,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.core:core-ktx:1.3.2'
     implementation "androidx.fragment:fragment-ktx:1.2.5"
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation "net.gotev:uploadservice:4.3.1"
 
     //Retrofit
@@ -83,16 +83,16 @@ dependencies {
     implementation 'com.xfinity:dahdit:0.9.3'
 
     //Coil image Lib
-    implementation 'io.coil-kt:coil:0.9.5'
+    implementation 'io.coil-kt:coil:1.0.0'
 
     //Firebase Push Notification
     implementation 'com.google.firebase:firebase-messaging:20.3.0'
     //Firebase in app messaging
     implementation 'com.google.firebase:firebase-inappmessaging-display:19.1.0'
     //Firebase core
-    implementation 'com.google.firebase:firebase-core:17.5.0'
+    implementation 'com.google.firebase:firebase-core:18.0.0'
     // Recommended: Add the Firebase SDK for Google Analytics.
-    implementation 'com.google.firebase:firebase-analytics:17.5.0'
+    implementation 'com.google.firebase:firebase-analytics:18.0.0'
 
     // Add the Firebase SDK for Crashlytics.
     implementation 'com.google.firebase:firebase-crashlytics:17.2.2'
@@ -108,12 +108,12 @@ dependencies {
     implementation 'com.google.android.exoplayer:exoplayer-ui:2.12.0'
 
     // Cast
-    implementation "androidx.mediarouter:mediarouter:1.1.0"
+    implementation 'androidx.mediarouter:mediarouter:1.2.0'
     implementation 'com.google.android.gms:play-services-cast-framework:19.0.0'
 
 
     // Paging
-    implementation "androidx.paging:paging-runtime-ktx:3.0.0-alpha07"
+    implementation "androidx.paging:paging-runtime-ktx:3.0.0-alpha08"
 
     // Hilt
     implementation "com.google.dagger:hilt-android:2.29.1-alpha"
@@ -132,7 +132,7 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
 
     // Navigation
-    def nav_version = "2.3.0"
+    def nav_version = "2.3.1"
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
@@ -177,7 +177,7 @@ dependencies {
 
     testImplementation 'junit:junit:4.12'
     testImplementation "android.arch.core:core-testing:1.1.1"
-    testImplementation("com.squareup.okhttp3:mockwebserver:4.2.1")
+    testImplementation('com.squareup.okhttp3:mockwebserver:4.9.0')
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
     androidTestImplementation 'androidx.test:runner:1.3.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'

@@ -11,6 +11,7 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 import coil.Coil
 import coil.ImageLoader
+import coil.imageLoader
 import coil.util.CoilUtils
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
@@ -50,7 +51,7 @@ class ToffeeApplication : Application() {
     }
 
     private fun initCoil() {
-        val imageLoader = ImageLoader(this) {
+        val imageLoader = ImageLoader.Builder(this).apply {
             crossfade(true)
             bitmapPoolPercentage(0.3)
             okHttpClient {
@@ -59,8 +60,8 @@ class ToffeeApplication : Application() {
                     .build()
             }
 
-        }
-        Coil.setDefaultImageLoader(imageLoader)
+        }.build()
+        Coil.setImageLoader(imageLoader)
     }
 
     override fun onTerminate() {
@@ -71,7 +72,11 @@ class ToffeeApplication : Application() {
 
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
-        Coil.loader().clearMemory()
+
+        with(imageLoader) {
+            bitmapPool.clear()
+            memoryCache.clear()
+        }
     }
 
     private fun initUploader() {

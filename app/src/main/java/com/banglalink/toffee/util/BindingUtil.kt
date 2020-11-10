@@ -15,9 +15,8 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
-import coil.api.load
+import coil.load
 import coil.request.CachePolicy
-import coil.request.CachePolicy.ENABLED
 import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.database.entities.UserActivities
@@ -27,7 +26,6 @@ import com.banglalink.toffee.enums.Reaction.*
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.widget.MultiTextButton
 import com.google.android.material.button.MaterialButton
-import de.hdodenhof.circleimageview.CircleImageView
 
 const val crossFadeDurationInMills = 500
 
@@ -41,8 +39,8 @@ fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
             fallback(R.drawable.placeholder)
             placeholder(R.drawable.placeholder)
             error(R.drawable.placeholder)
-//            memoryCachePolicy(CachePolicy.DISABLED)
-//            diskCachePolicy(CachePolicy.ENABLED)
+            memoryCachePolicy(CachePolicy.DISABLED)
+            diskCachePolicy(CachePolicy.ENABLED)
             crossfade(false)
 //            crossfade(crossFadeDurationInMills)
         }
@@ -58,6 +56,8 @@ fun bindRoundImage(view: ImageView, imageUrl: String?) {
             fallback(R.drawable.placeholder)
             placeholder(R.drawable.placeholder)
             error(R.drawable.ic_home)
+            memoryCachePolicy(CachePolicy.DISABLED)
+            diskCachePolicy(CachePolicy.ENABLED)
 //            crossfade(crossFadeDurationInMills)
         }
     }
@@ -87,6 +87,8 @@ fun bindCategoryImage(view: ImageView, category: UgcCategory) {
         view.load(category.categoryIcon) {
             crossfade(false)
             error(R.drawable.ic_cat_movie)
+            memoryCachePolicy(CachePolicy.DISABLED)
+            diskCachePolicy(CachePolicy.ENABLED)
 //            crossfade(crossFadeDurationInMills)
         }
     }
@@ -103,7 +105,7 @@ fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
                 transformations(CircleCropTransformation())
                 crossfade(false)
 //            crossfade(crossFadeDurationInMills)
-//            memoryCachePolicy(CachePolicy.DISABLED)
+                memoryCachePolicy(CachePolicy.DISABLED)
                 diskCachePolicy(CachePolicy.ENABLED)
             }
         }
@@ -115,7 +117,7 @@ fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
         else {
             view.load(channelInfo.landscape_ratio_1280_720)
             {
-//            memoryCachePolicy(CachePolicy.DISABLED)
+                memoryCachePolicy(CachePolicy.DISABLED)
                 diskCachePolicy(CachePolicy.ENABLED)
                 crossfade(false)
 //            crossfade(crossFadeDurationInMills)

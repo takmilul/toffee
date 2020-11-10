@@ -13,12 +13,11 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
-import coil.Coil
-import coil.api.get
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.database.entities.NotificationInfo
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.receiver.NotificationActionReceiver
+import com.banglalink.toffee.util.UtilsKt
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import dagger.hilt.android.AndroidEntryPoint
@@ -119,9 +118,9 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                     .bigText(content)
             )
 
-        val drawable = imageUrl?.let { Coil.get(it) }
+        val drawable = imageUrl?.let { UtilsKt.coilExecuteGet(this, it) }
         if (drawable != null)
-            builder.setLargeIcon(drawable?.toBitmap(48, 48))
+            builder.setLargeIcon(drawable.toBitmap(48, 48))
 
         val intent = Intent("com.toffee.notification_receiver")
         intent.putExtra(NotificationActionReceiver.NOTIFICATION_ID, notificationId)
@@ -153,11 +152,11 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         var thumbnailImage: Bitmap? = null
         if (!thumbnailUrl.isNullOrBlank()) {
             val thumbnailDrawable = try {
-                Coil.get(thumbnailUrl)
+                UtilsKt.coilExecuteGet(this, thumbnailUrl)
             } catch (e: Exception) {
                 null
             }
-            thumbnailImage = thumbnailDrawable?.toBitmap(48, 48) ?: null
+            thumbnailImage = thumbnailDrawable?.toBitmap(48, 48)
         }
 
         val intent = Intent(
@@ -201,7 +200,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
 
 
         val drawable = try {
-            Coil.get(imageUrl!!)
+            UtilsKt.coilExecuteGet(this, imageUrl)
         } catch (e: Exception) {
             null
         }
@@ -211,7 +210,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         var thumbnailImage: Bitmap? = image
         if (!thumbnailUrl.isNullOrBlank()) {
             val thumbnailDrawable = try {
-                Coil.get(thumbnailUrl)
+                UtilsKt.coilExecuteGet(this, thumbnailUrl)
             } catch (e: Exception) {
                 drawable
             }
