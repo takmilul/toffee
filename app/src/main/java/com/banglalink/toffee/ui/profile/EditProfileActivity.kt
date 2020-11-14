@@ -15,7 +15,6 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.ActivityEditProfileBinding
 import com.banglalink.toffee.extension.loadProfileImage
 import com.banglalink.toffee.extension.observe
@@ -83,7 +82,7 @@ class EditProfileActivity : BaseAppCompatActivity() {
             finish()
         }
 
-        observe(Preference.getInstance().profileImageUrlLiveData){
+        observe(mPref.profileImageUrlLiveData){
             binding.profileEditLayout.profileIv.loadProfileImage(it)
         }
     }

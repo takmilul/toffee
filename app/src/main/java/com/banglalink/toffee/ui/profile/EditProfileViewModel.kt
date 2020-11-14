@@ -15,17 +15,11 @@ import com.banglalink.toffee.usecase.UploadProfileImage
 import com.banglalink.toffee.util.unsafeLazy
 import dagger.hilt.android.qualifiers.ApplicationContext
 
-class EditProfileViewModel @ViewModelInject constructor(@ApplicationContext private val context: Context) : ViewModel() {
-
-    private val updateProfile by unsafeLazy {
-        UpdateProfile(Preference.getInstance(), RetrofitApiClient.toffeeApi)
-    }
-
-    private val uploadProfileImage by unsafeLazy {
-        UploadProfileImage(Preference.getInstance(), RetrofitApiClient.toffeeApi)
-    }
-
-
+class EditProfileViewModel @ViewModelInject constructor(
+    @ApplicationContext private val context: Context,
+    private val updateProfile: UpdateProfile,
+    private val uploadProfileImage: UploadProfileImage
+) : ViewModel() {
     fun updateProfile(editProfileForm: EditProfileForm):LiveData<Resource<Boolean>> {
 
         return resultLiveData{updateProfile.execute(

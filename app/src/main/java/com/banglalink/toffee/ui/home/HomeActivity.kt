@@ -581,7 +581,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     }
 
     private fun initDrawer(){
-        drawerHelper = DrawerHelper(this, binding)
+        drawerHelper = DrawerHelper(this, mPref, binding)
         drawerHelper.initDrawer()
     }
 

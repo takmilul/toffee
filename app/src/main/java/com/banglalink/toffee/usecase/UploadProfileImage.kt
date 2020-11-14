@@ -14,8 +14,12 @@ import com.banglalink.toffee.util.decodeSampledBitmap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
+import javax.inject.Inject
 
-class UploadProfileImage(private val preference: Preference, private val toffeeApi: ToffeeApi) {
+class UploadProfileImage @Inject constructor(
+    private val preference: Preference,
+    private val toffeeApi: ToffeeApi
+) {
 
     suspend fun execute(
         photoUri: Uri,context:Context
@@ -37,7 +41,7 @@ class UploadProfileImage(private val preference: Preference, private val toffeeA
                 )
             }
             response.response.userPhoto?.let {
-                Preference.getInstance().userImageUrl = it
+                preference.userImageUrl = it
             }
             response.response
         }

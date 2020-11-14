@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import com.banglalink.toffee.R
@@ -17,14 +18,15 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ViewProfileActivity : BaseAppCompatActivity() {
 
     lateinit var binding:ActivityProfileBinding
 
-    private val viewModel by unsafeLazy {
-        ViewModelProviders.of(this).get(ViewProfileViewModel::class.java)
-    }
+    private val viewModel by viewModels<ViewProfileViewModel>()
+
     private val progressDialog by unsafeLazy {
         VelBoxProgressDialog(this)
     }
@@ -33,19 +35,18 @@ class ViewProfileActivity : BaseAppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this,R.layout.activity_profile)
         binding.data = EditProfileForm().apply {
-            fullName = Preference.getInstance().customerName
-            phoneNo = Preference.getInstance().phoneNumber
-            photoUrl = Preference.getInstance().userImageUrl?:""
+            fullName = mPref.customerName
+            phoneNo = mPref.phoneNumber
+            photoUrl = mPref.userImageUrl?:""
         }
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding.toolbar.setNavigationOnClickListener { onBackPressed() }
 
         loadProfile()
-        observe(Preference.getInstance().profileImageUrlLiveData){
+        observe(mPref.profileImageUrlLiveData){
             binding.profileIv.loadProfileImage(it)
         }
-
     }
 
     private fun loadProfile(){

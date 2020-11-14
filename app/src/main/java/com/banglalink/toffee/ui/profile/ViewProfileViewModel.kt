@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.profile
 
 import android.app.Application
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
 import com.banglalink.toffee.data.network.util.resultLiveData
@@ -10,16 +11,12 @@ import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.usecase.GetProfile
 import com.banglalink.toffee.util.unsafeLazy
 
-class ViewProfileViewModel :BaseViewModel(){
-
-    private val getProfile by unsafeLazy {
-        GetProfile(Preference.getInstance(),RetrofitApiClient.toffeeApi)
-    }
-
+class ViewProfileViewModel @ViewModelInject constructor(
+    private val profileApi: GetProfile
+) :BaseViewModel(){
     fun loadCustomerProfile():LiveData<Resource<EditProfileForm>>{
         return resultLiveData {
-            getProfile.execute().profile.toProfileForm()
+            profileApi().profile.toProfileForm()
         }
     }
-
 }

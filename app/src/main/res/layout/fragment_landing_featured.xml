@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/home_screen_curve_bg_color_light"
-    android:paddingBottom="16dp"
+    android:paddingBottom="8dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -12,6 +12,7 @@
         android:id="@+id/featured_viewpager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        tools:minHeight="200dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -22,42 +23,43 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:background="@null"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/featured_viewpager"
+        app:layout_constraintBottom_toBottomOf="@+id/featured_viewpager"
+        app:layout_constraintEnd_toEndOf="@+id/featured_viewpager"
         app:tabBackground="@drawable/featured_page_indicator"
         app:tabGravity="center"
         app:tabIndicator="@null"
         app:tabIndicatorFullWidth="false"
-        app:tabPaddingTop="2dp"
-        app:tabPaddingBottom="2dp"
         app:tabPaddingEnd="8dp"
         app:tabPaddingStart="8dp"
+        app:tabPaddingTop="2dp"
         app:tabRippleColor="@null"
-        app:tabUnboundedRipple="true" />
+        app:tabUnboundedRipple="true"
+        tools:minWidth="50dp" />
 
-    <TextView
-        android:id="@+id/textView18"
-        style="@style/CategoryTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="@string/featured"
-        app:layout_constraintBottom_toBottomOf="@+id/featured_indicator"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/featured_viewpager" />
+<!--    <TextView-->
+<!--        android:id="@+id/textView18"-->
+<!--        style="@style/CategoryTextView"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="8dp"-->
+<!--        android:text="@string/featured"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/featured_indicator"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/featured_viewpager" />-->
 
     <TextView
         android:id="@+id/featureDescription"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="12dp"
-        android:fontFamily="sans-serif-medium"
-        android:maxLines="2"
+        android:fontFamily="@font/roboto_medium"
         android:lines="2"
+        android:maxLines="2"
         android:textColor="#6781A1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView18"
+        app:layout_constraintTop_toBottomOf="@+id/featured_viewpager"
         tools:text="This Makeup Tutorial By Kylie Jenner Is All You Need For Summer" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -26,7 +26,10 @@ import com.banglalink.toffee.ui.subscription.PackageListActivity
 import kotlinx.android.synthetic.main.layout_appbar.view.*
 import java.util.*
 
-class DrawerHelper(val activity: HomeActivity,val binding:ActivityMainMenuBinding): ParentLevelAdapter.OnNavigationItemClickListener{
+class DrawerHelper(private val activity: HomeActivity,
+                   private val mPref: Preference,
+                   private val binding:ActivityMainMenuBinding
+):ParentLevelAdapter.OnNavigationItemClickListener{
 
     lateinit var toggle: ActionBarDrawerToggle
 
@@ -65,18 +68,18 @@ class DrawerHelper(val activity: HomeActivity,val binding:ActivityMainMenuBindin
     private fun setProfileInfo() {
         val header = binding.sideNavigation.getHeaderView(0)
         val profileName = header.findViewById(R.id.profile_name) as TextView
-        activity.observe(Preference.getInstance().customerNameLiveData){
+        activity.observe(mPref.customerNameLiveData){
             when{
                 it.isBlank()->profileName.text =
                     activity.getString(R.string.profile)
                 else->{
-                    profileName.text=Preference.getInstance().customerName
+                    profileName.text=mPref.customerName
                 }
             }
         }
         val profilePicture = header.findViewById(R.id.profile_picture) as ImageView
 
-        activity.observe(Preference.getInstance().profileImageUrlLiveData){
+        activity.observe(mPref.profileImageUrlLiveData){
             profilePicture.loadProfileImage(it)
         }
 
@@ -129,7 +132,7 @@ class DrawerHelper(val activity: HomeActivity,val binding:ActivityMainMenuBindin
                 true
             )
         )
-        val isBanglalinkNumber = Preference.getInstance().isBanglalinkNumber
+        val isBanglalinkNumber = mPref.isBanglalinkNumber
         if(isBanglalinkNumber == "true"){
             navigationMenuList.add(
                 NavigationMenu(
@@ -269,7 +272,7 @@ class DrawerHelper(val activity: HomeActivity,val binding:ActivityMainMenuBindin
             }
             ID_SUBSCRIPTIONS->{
                 binding.drawerLayout.closeDrawers()
-                if(Preference.getInstance().isSubscriptionActive == "true"){
+                if(mPref.isSubscriptionActive == "true"){
                     activity.launchActivity<PackageListActivity>()
                 }
                 else{

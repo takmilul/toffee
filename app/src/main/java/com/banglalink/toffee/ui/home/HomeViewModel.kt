@@ -40,6 +40,7 @@ import kotlinx.coroutines.flow.Flow
 
 class HomeViewModel @ViewModelInject constructor(
     @AppCoroutineScope private val appScope: CoroutineScope,
+    private val profileApi: GetProfile,
     private val viewCountDAO: ViewCountDAO,
     private val sendViewContentEvent: SendViewContentEvent,
     @ApplicationContext private val mContext: Context
@@ -58,11 +59,6 @@ class HomeViewModel @ViewModelInject constructor(
     private val getCategory by lazy {
         GetCategory(Preference.getInstance(),RetrofitApiClient.toffeeApi)
     }
-
-    private val getProfile by unsafeLazy {
-        GetProfile(Preference.getInstance(),RetrofitApiClient.toffeeApi)
-    }
-
 
     private val getContentFromShareableUrl by unsafeLazy{
         GetContentFromShareableUrl(Preference.getInstance(),RetrofitApiClient.toffeeApi)
@@ -115,7 +111,7 @@ class HomeViewModel @ViewModelInject constructor(
     private fun getProfile(){
         viewModelScope.launch {
             try{
-                getProfile.execute()
+                profileApi()
             }catch (e:Exception){
                 ToffeeAnalytics.logException(e)
             }
