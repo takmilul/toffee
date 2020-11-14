@@ -16,7 +16,7 @@ import android.widget.SeekBar;
 import androidx.databinding.DataBindingUtil;
 
 import com.banglalink.toffee.R;
-import com.banglalink.toffee.databinding.MediaControlLayout2Binding;
+import com.banglalink.toffee.databinding.MediaControlLayout3Binding;
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener;
 import com.google.android.exoplayer2.Player;
 
@@ -56,7 +56,7 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
     private int videoWidth = 1920;
     private int videoHeight = 1080;
 
-    private MediaControlLayout2Binding binding;
+    private MediaControlLayout3Binding binding;
 
     public ExpoMediaController2(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -82,7 +82,7 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
     }
 
     private void initView() {
-        binding = DataBindingUtil.inflate(inflater, R.layout.media_control_layout2, this, true);
+        binding = DataBindingUtil.inflate(inflater, R.layout.media_control_layout3, this, true);
         binding.minimize.setOnClickListener(this);
         binding.play.setOnClickListener(this);
         binding.forward.setOnClickListener(this);
@@ -91,7 +91,7 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
         binding.rotation.setOnClickListener(this);
 
         if(isAutoRotationEnabled){
-            binding.rotation.setImageResource(R.mipmap.rotation_on);
+            binding.rotation.setImageResource(R.drawable.ic_screen_rotate);
         }
         else {
             binding.rotation.setImageResource(R.mipmap.rotation_off);
@@ -162,8 +162,8 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
 
     Runnable hideRunnable = new Runnable() {
         public void run() {
-            if (binding.controller.getVisibility() != INVISIBLE) {
-                binding.controller.setVisibility(INVISIBLE);
+            if (binding.controller.getVisibility() != GONE) {
+                binding.controller.setVisibility(GONE);
             }
         }
     };
@@ -184,10 +184,12 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
             binding.progress.setEnabled(true);
             binding.progress.setProgress((int) pos);
             binding.duration.setVisibility(VISIBLE);
+            binding.timeSeperator.setVisibility(VISIBLE);
             binding.currentTime.setVisibility(VISIBLE);
         } else {
             binding.progress.setEnabled(false);
             binding.duration.setVisibility(INVISIBLE);
+            binding.timeSeperator.setVisibility(INVISIBLE);
             binding.currentTime.setVisibility(INVISIBLE);
         }
         int percent = simpleExoPlayer.getBufferedPercentage();
@@ -325,11 +327,11 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
         if (state) { //fullscreen
             binding.minimize.setVisibility(INVISIBLE);
             binding.drawer.setVisibility(INVISIBLE);
-            binding.fullscreen.setImageResource(R.mipmap.ic_fullscreen_exit);
+            binding.fullscreen.setImageResource(R.drawable.ic_fullscreen_exit);
         } else {
             binding.minimize.setVisibility(VISIBLE);
             binding.drawer.setVisibility(VISIBLE);
-            binding.fullscreen.setImageResource(R.mipmap.ic_media_fullscreen);
+            binding.fullscreen.setImageResource(R.drawable.ic_fullscreen_enter);
         }
     }
 
@@ -398,7 +400,7 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
             }
             else {
                 isAutoRotationEnabled = true;
-                binding.rotation.setImageResource(R.mipmap.rotation_on);
+                binding.rotation.setImageResource(R.drawable.ic_screen_rotate);
             }
             for (OnPlayerControllerChangedListener OnPlayerControllerChangedListener : onPlayerControllerChangedListeners) {
                 OnPlayerControllerChangedListener.onRotationLock(isAutoRotationEnabled);
@@ -422,7 +424,7 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
             case STATE_ENDED:
             case STATE_IDLE:
                 binding.preview.setImageResource(android.R.color.black);
-                binding.play.setImageResource(R.mipmap.ic_media_play);
+                binding.play.setImageResource(R.drawable.ic_player_play);
                 binding.buffering.setVisibility(GONE);
                 binding.play.setVisibility(VISIBLE);
                 binding.forward.setVisibility(GONE);
@@ -437,7 +439,7 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
                 binding.preview.setImageResource(0);
                 binding.share.setEnabled(true);
                 if (playWhenReady) {
-                    binding.play.setImageResource(R.mipmap.ic_media_pause);
+                    binding.play.setImageResource(R.drawable.ic_player_pause);
                     binding.buffering.setVisibility(GONE);
                     binding.play.setVisibility(VISIBLE);
                     if(simpleExoPlayer!=null && simpleExoPlayer.isCurrentWindowLive()){
@@ -451,7 +453,7 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
                     showControls();//it is necessary since we don't have preparing state of player
                     hideControls(3000);
                 } else {
-                    binding.play.setImageResource(R.mipmap.ic_media_play);
+                    binding.play.setImageResource(R.drawable.ic_player_play);
                     binding.buffering.setVisibility(GONE);
                     binding.play.setVisibility(VISIBLE);
                     if(simpleExoPlayer!=null && simpleExoPlayer.isCurrentWindowLive()){

@@ -226,6 +226,12 @@
     <style name="TitleTextStyle" parent="TextAppearance.AppCompat.Title">
         <item name="android:textSize">14sp</item>
     </style>
+
+    <style name="TitleBoldTextStyle" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">@font/roboto_bold</item>
+        <item name="android:textColor">@color/main_text_color</item>
+    </style>
     
     <style name="TitleTextStyleLight" parent="TextAppearance.AppCompat.Title">
         <item name="android:textSize">14sp</item>

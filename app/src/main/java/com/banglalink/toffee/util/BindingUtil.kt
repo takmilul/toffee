@@ -200,6 +200,15 @@ fun bindAutoRenewText(autoRenewTv: TextView, item: Package) {
     }
 }
 
+@BindingAdapter("bindVideoUploadTime")
+fun bindVideoUploadTime(tv: TextView, item: ChannelInfo) {
+    if(item.created_at.isNullOrBlank()) {
+        tv.text = "1 year ago"
+    } else {
+        tv.text = Utils.getDateDiffInDayOrHour(Utils.getDate(item.created_at)) + " ago"
+    }
+}
+
 @BindingAdapter("validityText")
 fun bindValidityText(validityTv: TextView, item: Package) {
     val days = Utils.formatValidityText(Utils.getDate(item.expireDate))

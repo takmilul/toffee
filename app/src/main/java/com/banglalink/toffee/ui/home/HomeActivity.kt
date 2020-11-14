@@ -49,6 +49,7 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.EXIT_FROM_APP_MSG
 import com.banglalink.toffee.model.NavigationMenu
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.ui.channels.ChannelFragment
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.ui.landing.AllCategoriesFragment
 import com.banglalink.toffee.ui.login.SigninByPhoneActivity
@@ -532,22 +533,30 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     }
 
     private fun loadDetailFragment(channelInfo: ChannelInfo){
-//        if (channelInfo.isLive) {
-//            val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
-//            if (fragment !is ChannelFragment) {
-//                loadFragmentById(
-//                    R.id.details_viewer, ChannelFragment.createInstance(
-//                        getString(R.string.menu_channel_text)
-//                    )
+        if (channelInfo.isLive) {
+            val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
+            if (fragment !is ChannelFragment) {
+                loadFragmentById(
+                    R.id.details_viewer, ChannelFragment.createInstance(
+                        getString(R.string.menu_channel_text)
+                    )
+                )
+            }
+        } else {
+            loadFragmentById(
+                R.id.details_viewer,
+                CatchupDetailsFragment.createInstance(channelInfo)
+            )
+        }
+//        val frag = supportFragmentManager.findFragmentById(R.id.details_viewer)
+//        if(frag !is ChannelViewFragment) {
+//            supportFragmentManager.commit {
+//                replace(
+//                    R.id.details_viewer,
+//                    ChannelViewFragment.newInstance(channelInfo)
 //                )
 //            }
-//        } else {
-//            loadFragmentById(
-//                R.id.details_viewer,
-//                CatchupDetailsFragment.createInstance(channelInfo)
-//            )
 //        }
-        supportFragmentManager.commit { replace(R.id.details_viewer, ChannelViewFragment.newInstance(channelInfo)) }
     }
     fun loadFragmentById(id: Int, fragment: Fragment, tag: String) {
         supportFragmentManager.popBackStack(

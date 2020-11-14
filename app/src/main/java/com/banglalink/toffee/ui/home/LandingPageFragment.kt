@@ -51,7 +51,7 @@ class LandingPageFragment : HomeBaseFragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity?.title = "Home"
+        activity?.title = getString(R.string.app_name_short)
 
         viewModel.loadMostPopularVideos()
         observeUpload2()
