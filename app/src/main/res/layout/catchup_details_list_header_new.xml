@@ -156,13 +156,14 @@
             app:layout_constraintTop_toTopOf="@+id/circleImageView"
             tools:text="Banglalink" />
 
-        <!--<com.banglalink.toffee.ui.widget.MultiTextButton
+        <com.banglalink.toffee.ui.widget.MultiTextButton
             android:id="@+id/subscribe_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:onClick="@{(v)-> v}"
-            android:visibility="gone"
+            bindSubscriptionStatus="@{data}"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@+id/circleImageView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/circleImageView" />
@@ -172,9 +173,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
+            android:text="@{data.subscriptionCount}"
             app:layout_constraintBottom_toBottomOf="@+id/subscribe_button"
             app:layout_constraintEnd_toStartOf="@+id/subscribe_button"
-            app:layout_constraintTop_toTopOf="@+id/subscribe_button" />-->
+            app:layout_constraintTop_toTopOf="@+id/subscribe_button" />
 
         <FrameLayout
             android:id="@+id/relatedContainer"

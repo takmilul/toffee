@@ -14,6 +14,8 @@ class ChannelHeaderAdapter(private var channelInfo: ChannelInfo,
                            private val cb: ContentReactionCallback<ChannelInfo>? = null)
     :RecyclerView.Adapter<MyViewHolderV2>() {
 
+    lateinit var viewHolder: MyViewHolderV2
+    
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolderV2 {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = DataBindingUtil.inflate<ViewDataBinding>(
@@ -27,6 +29,7 @@ class ChannelHeaderAdapter(private var channelInfo: ChannelInfo,
     }
 
     override fun onBindViewHolder(holder: MyViewHolderV2, position: Int) {
+        viewHolder = holder
         holder.bind(channelInfo, cb, position)
     }
 

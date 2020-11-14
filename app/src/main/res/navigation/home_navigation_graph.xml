@@ -160,7 +160,11 @@
     <fragment
         android:id="@+id/thumbnailSelectionMethodFragment"
         android:name="com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment"
-        android:label="ThumbnailSelectionMethodFragment" />
+        android:label="ThumbnailSelectionMethodFragment" >
+        <argument
+            android:name="title"
+            app:argType="string" />
+    </fragment>
     <fragment
         android:id="@+id/earningsFragment"
         android:name="com.banglalink.toffee.ui.earnings.EarningsFragment"

@@ -43,12 +43,12 @@ class UserChannelViewModel @ViewModelInject constructor(
         }
     }
 
-    fun toggleSubscriptionStatus(channelId: Long, channelOwnerId: Int) {
+    fun toggleSubscriptionStatus(channelId: Int, channelOwnerId: Int) {
         val currentStatus = isChannelSubscribed.value ?: return
         viewModelScope.launch {
             try {
-                val newStatus = 1 - (if(currentStatus) 1 else 0)
-                val ret = subscribeApi(channelId.toInt(), newStatus, channelOwnerId)
+                val newStatus = if(currentStatus) 0 else 1
+                val ret = subscribeApi(channelId, newStatus, channelOwnerId)
                 isChannelSubscribed.value = ret.isSubscribed == 1
             }catch (ex: Exception) {
                 ex.printStackTrace()

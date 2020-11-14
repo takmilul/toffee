@@ -124,11 +124,13 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             binding.saveButton -> editChannel()
             binding.bannerEditButton -> {
                 isPosterClicked = true
-                findNavController().navigate(R.id.action_MyChannelEditFragment_to_thumbnailSelectionMethodFragment)
+                val action = MyChannelEditDetailFragmentDirections.actionMyChannelEditFragmentToThumbnailSelectionMethodFragment("Set Channel Cover Photo")
+                findNavController().navigate(action)
             }
             binding.profileImageEditButton -> {
                 isPosterClicked = false
-                findNavController().navigate(R.id.action_MyChannelEditFragment_to_thumbnailSelectionMethodFragment)
+                val action = MyChannelEditDetailFragmentDirections.actionMyChannelEditFragmentToThumbnailSelectionMethodFragment("Set Channel Photo")
+                findNavController().navigate(action)
             }
         }
     }

@@ -95,7 +95,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:text="@{data.content_provider_name}"
+            android:text='@{data.content_provider_name + " - " + data.formattedCreateTime}'
             android:textColor="#829AB8"
             app:layout_constraintBottom_toBottomOf="@+id/ownerPicture"
             app:layout_constraintEnd_toEndOf="@+id/name"

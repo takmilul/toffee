@@ -5,17 +5,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.AlertDialogReactionFragment
 import com.banglalink.toffee.ui.common.ContentReactionCallback
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.widget.MyPopupWindow
+import com.banglalink.toffee.util.getFormattedViewsText
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_catchup.*
 import kotlinx.coroutines.flow.collectLatest
@@ -54,7 +56,32 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        
         initAdapter()
+
+        /*detailsAdapter.subscribeButton.setOnClickListener {
+            viewModel.toggleSubscriptionStatus(channelInfo.content_provider_id?.toInt()?:0, channelInfo.content_provider_id?.toInt()?:0)
+        }*/
+        
+        observe(viewModel.channelSubscriberCount) {
+            currentItem.subscriptionCount = getFormattedViewsText(it)
+            detailsAdapter.notifyDataSetChanged()
+//            detailsAdapter.setChannelInfo(currentItem)
+        }
+
+        observe(viewModel.isChannelSubscribed) {
+            currentItem.individual_price = "0"
+            currentItem.subscription = it
+            detailsAdapter.notifyDataSetChanged()
+//            detailsAdapter.setChannelInfo(currentItem)
+        }
+
+        val customerId = Preference.getInstance().customerId
+        val isOwner = if (currentItem.content_provider_id?.toInt() == customerId) 1 else 0
+        val isPublic = if (currentItem.content_provider_id?.toInt() == customerId) 0 else 1
+        val channelId = currentItem.content_provider_id?.toLong() ?: 0L
+        viewModel.getChannelInfo(isOwner, isPublic, channelId, channelId.toInt())
+        
         with(listview) {
             layoutManager = LinearLayoutManager(context)
             adapter = mAdapter
@@ -63,6 +90,11 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
         observeList()
     }
 
+    override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
+        super.onSubscribeButtonClicked(view, item)
+        viewModel.toggleSubscriptionStatus(item.content_provider_id?.toInt()?:0, item.content_provider_id?.toInt()?:0)
+    }
+    
     private fun initAdapter() {
         catchupAdapter = CatchUpDetailsAdapter(object: BaseListItemCallback<ChannelInfo> {
             override fun onItemClicked(item: ChannelInfo) {

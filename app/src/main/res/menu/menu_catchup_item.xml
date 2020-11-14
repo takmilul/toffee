@@ -13,8 +13,8 @@
         android:title="@string/menu_share"
         app:showAsAction="never"
         />
-    <!--<item android:id="@+id/menu_not_interested"
+    <item android:id="@+id/menu_not_interested"
         android:title="@string/menu_not_interested"
         app:showAsAction="never"
-        />-->
+        />
 </menu>
