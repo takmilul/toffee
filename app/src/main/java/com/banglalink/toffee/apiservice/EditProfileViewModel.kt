@@ -1,18 +1,14 @@
-package com.banglalink.toffee.ui.profile
+package com.banglalink.toffee.apiservice
 
 import android.content.Context
 import android.net.Uri
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
 import com.banglalink.toffee.data.network.util.resultLiveData
-import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.SubscriberPhotoBean
-import com.banglalink.toffee.usecase.UpdateProfile
-import com.banglalink.toffee.usecase.UploadProfileImage
-import com.banglalink.toffee.util.unsafeLazy
+import com.banglalink.toffee.ui.profile.EditProfileForm
 import dagger.hilt.android.qualifiers.ApplicationContext
 
 class EditProfileViewModel @ViewModelInject constructor(

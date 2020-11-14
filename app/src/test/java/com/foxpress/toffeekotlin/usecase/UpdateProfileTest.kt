@@ -4,7 +4,7 @@ import com.banglalink.toffee.data.network.request.UpdateProfileRequest
 import com.banglalink.toffee.data.network.response.UpdateProfileResponse
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.exception.ApiException
-import com.banglalink.toffee.usecase.UpdateProfile
+import com.banglalink.toffee.apiservice.UpdateProfile
 import com.nhaarman.mockitokotlin2.*
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking

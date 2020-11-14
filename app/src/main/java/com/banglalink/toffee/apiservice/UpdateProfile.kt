@@ -1,4 +1,4 @@
-package com.banglalink.toffee.usecase
+package com.banglalink.toffee.apiservice
 
 import com.banglalink.toffee.data.network.request.UpdateProfileRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi

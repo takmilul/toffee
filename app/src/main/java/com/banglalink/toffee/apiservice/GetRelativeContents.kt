@@ -3,26 +3,30 @@ package com.banglalink.toffee.apiservice
 import com.banglalink.toffee.common.paging.BaseApiService
 import com.banglalink.toffee.data.network.request.RelativeContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
-import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.util.discardZeroFromDuration
 import com.banglalink.toffee.util.getFormattedViewsText
-import javax.inject.Inject
+import com.squareup.inject.assisted.Assisted
+import com.squareup.inject.assisted.AssistedInject
 
-class GetRelativeContents @Inject constructor(
+data class CatchupParams(
+    val id: String,
+    val tags: String?
+)
+
+class GetRelativeContents @AssistedInject constructor(
     private val preference: Preference,
-    private val toffeeApi: ToffeeApi
-): BaseApiService<ChannelInfo> {
-
+    private val toffeeApi: ToffeeApi,
+    @Assisted private val catchupParams: CatchupParams
+): BaseApiService<ChannelInfo>{
     override suspend fun loadData(offset: Int, limit: Int): List<ChannelInfo> {
         val response = tryIO2 {
             toffeeApi.getRelativeContents(
                 RelativeContentRequest(
-//                    channelInfo.id,
-//                    channelInfo.video_tags ?: "",
-                    "", "",
+                    catchupParams.id,
+                    catchupParams.tags ?: "",
                     preference.customerId,
                     preference.password,
                     offset = offset,
@@ -30,6 +34,7 @@ class GetRelativeContents @Inject constructor(
                 )
             )
         }
+
         if(response.response.channels!=null){
             return response.response.channels.map {
                 it.formatted_view_count = getFormattedViewsText(it.view_count)
@@ -37,6 +42,12 @@ class GetRelativeContents @Inject constructor(
                 it
             }
         }
-        return listOf()
+        return emptyList()
+    }
+
+
+    @AssistedInject.Factory
+    interface AssistedFactory {
+        fun create(catchupParams: CatchupParams): GetRelativeContents
     }
 }

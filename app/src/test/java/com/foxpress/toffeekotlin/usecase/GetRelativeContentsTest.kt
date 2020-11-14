@@ -1,21 +1,15 @@
 package com.foxpress.toffeekotlin.usecase
 
-import com.banglalink.toffee.data.network.request.ContentRequest
 import com.banglalink.toffee.data.network.request.RelativeContentRequest
-import com.banglalink.toffee.data.network.response.ContentResponse
 import com.banglalink.toffee.data.network.response.RelativeContentResponse
-import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.ContentBean
-import com.banglalink.toffee.usecase.GetContents
-import com.banglalink.toffee.usecase.GetRelativeContents
+import com.banglalink.toffee.apiservice.GetRelativeContents
 import com.nhaarman.mockitokotlin2.*
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking
-import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
-import org.mockito.Mock
 import org.mockito.Mockito
 import retrofit2.Response
 
