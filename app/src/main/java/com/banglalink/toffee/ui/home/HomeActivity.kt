@@ -266,7 +266,6 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     private fun observeNotification() {
         lifecycleScope.launchWhenStarted {
             notificationRepo.getUnseenNotificationCount().collect {
-                Log.e("NOTIF", "Count - $it")
                 if(it > 0) {
                     notificationBadge?.visibility = View.VISIBLE
                 } else {
@@ -818,7 +817,6 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         val notificationActionView = menu.findItem(R.id.action_notification)?.actionView
         notificationBadge = notificationActionView?.findViewById<TextView>(R.id.notification_badge)
         notificationActionView?.setOnClickListener {
-            Log.e("NOTIF", "Clicked menu - $notificationBadge")
             if(navController.currentDestination?.id != R.id.notificationDropdownFragment) {
                 navController.navigate(R.id.notificationDropdownFragment)
             }
