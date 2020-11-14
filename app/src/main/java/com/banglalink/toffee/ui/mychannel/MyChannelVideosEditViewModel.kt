@@ -1,4 +1,4 @@
-package com.banglalink.toffee.ui.upload
+package com.banglalink.toffee.ui.mychannel
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -12,13 +12,11 @@ import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.apiservice.GetUgcCategories
 import com.banglalink.toffee.apiservice.UgcContentUpload
 import com.banglalink.toffee.data.database.entities.UploadInfo
-import com.banglalink.toffee.data.network.response.UgcResponseBean
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.SubCategory
 import com.banglalink.toffee.model.UgcCategory
-import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.UtilsKt
 import com.banglalink.toffee.util.getError
 import com.banglalink.toffee.util.imagePathToBase64
@@ -37,18 +35,18 @@ class MyChannelVideosEditViewModel @ViewModelInject constructor(
     private val categoryApi: GetUgcCategories,
 //    private val subCategoryApi: SubCategoryService
 ): ViewModel() {
-    val progressDialog = MutableLiveData<Boolean>()
+//    val progressDialog = MutableLiveData<Boolean>()
 
-    val submitButtonStatus = MutableLiveData<Boolean>()
-    val resultLiveData = MutableLiveData<Resource<UgcResponseBean>>()
+//    val submitButtonStatus = MutableLiveData<Boolean>()
+//    val resultLiveData = MutableLiveData<Resource<UgcResponseBean>>()
 
     val title = MutableLiveData<String>()
     val description = MutableLiveData<String>()
 
     val tags = MutableLiveData<String>()
 
-    val uploadProgress = MutableLiveData<Int>()
-    val uploadSize = MutableLiveData<String>()
+//    val uploadProgress = MutableLiveData<Int>()
+//    val uploadSize = MutableLiveData<String>()
 
     val categories = MutableLiveData<List<UgcCategory>>()
     val categoryPosition = MutableLiveData<Int>()
@@ -59,7 +57,8 @@ class MyChannelVideosEditViewModel @ViewModelInject constructor(
     val ageGroup = MutableLiveData<List<String>>()
     val ageGroupPosition = MutableLiveData<Int>()
 
-    val thumbnailData = MutableLiveData<String?>()
+    val thumbnailUrl = MutableLiveData<String?>()
+    var bannerBase64: String? = null
 
 //    val challengeSelectionList = MutableLiveData<List<String>>()
 //    val challengeSelectionPosition = MutableLiveData<Int>()
@@ -78,47 +77,47 @@ class MyChannelVideosEditViewModel @ViewModelInject constructor(
 
     private fun load() {
         viewModelScope.launch {
-            progressDialog.value = true
-
+//            progressDialog.value = true
             categories.value = categoryApi.loadData(0, 0)
+
 //            subCategories.value = subCategoryApi.loadData(0,0)
 
-            val uploadId = preference.uploadId ?: ""
-            val info = uploadRepo.getUploadById(UtilsKt.stringToUploadId(uploadId)) ?: run {
+//            val uploadId = preference.uploadId ?: ""
+            /*val info = uploadRepo.getUploadById(UtilsKt.stringToUploadId(uploadId)) ?: run {
                 progressDialog.value = false
                 return@launch
-            }
+            }*/
 
-            initUploadInfo(info)
+//            initUploadInfo(info)
 
-            progressDialog.value = false
+//            progressDialog.value = false
         }
     }
 
-    private fun initUploadInfo(uploadInfo: UploadInfo) {
+    fun initUploadInfo(uploadInfo: UploadInfo) {
         title.value = uploadInfo.title
         description.value = uploadInfo.description
         tags.value = uploadInfo.tags
-
-        submitButtonStatus.value = uploadInfo.status == UploadStatus.SUCCESS.value
-        thumbnailData.value = uploadInfo.thumbUri
+        thumbnailUrl.value = uploadInfo.thumbUri
+        
+        categoryPosition.value = categories.value?.find { it.categoryName == uploadInfo.category }?.id?.toInt()?:0
         categoryPosition.value = uploadInfo.categoryIndex
         ageGroupPosition.value = uploadInfo.ageGroupIndex
 
-        if(uploadInfo.thumbUri == null) {
+        /*if(uploadInfo.thumbUri == null) {
             viewModelScope.launch {
                 withContext(Dispatchers.Default + Job()) {
                     generateThumbnail(uploadInfo)
                 }?.let { saveThumbnailToDb(it) }
             }
-        }
+        }*/
 //        challengeSelectionPosition.value = uploadInfo.submitToChallengeIndex
     }
 
-    fun updateProgress(progress: Int, size: Long) {
+    /*fun updateProgress(progress: Int, size: Long) {
         uploadProgress.value = progress
         uploadSize.value = Utils.readableFileSize(size)
-    }
+    }*/
 
     private fun generateThumbnail(uploadInfo: UploadInfo): String? {
         return try {
@@ -143,7 +142,7 @@ class MyChannelVideosEditViewModel @ViewModelInject constructor(
 
     fun saveUploadInfo(fileName: String, tags: String?, categoryId: Long) {
         viewModelScope.launch {
-            progressDialog.value = true
+//            progressDialog.value = true
             val ageGroupId = ageGroupPosition.value ?: -1
             val resp = try {
                 Resource.Success(
@@ -154,13 +153,13 @@ class MyChannelVideosEditViewModel @ViewModelInject constructor(
                         tags,
                         ageGroupId.toString(),
                         categoryId,
-                        thumbnailData.value
+                        thumbnailUrl.value
                     ))
             } catch (ex: Exception) {
                 Resource.Failure(getError(ex))
             }
             //progressDialog.value = false
-            resultLiveData.postValue(resp)
+//            resultLiveData.postValue(resp)
         }
     }
 
@@ -170,11 +169,12 @@ class MyChannelVideosEditViewModel @ViewModelInject constructor(
             val imageData = withContext(Dispatchers.Default + Job()) {
                 imagePathToBase64(appContext, uri)
             }
-            saveThumbnailToDb(imageData)
+            bannerBase64 = imageData
+//            saveThumbnailToDb(imageData)
         }
     }
 
-    private suspend fun saveThumbnailToDb(imageData: String) {
+    /*private suspend fun saveThumbnailToDb(imageData: String) {
         val uploadId = preference.uploadId ?: ""
         uploadRepo.getUploadById(UtilsKt.stringToUploadId(uploadId))?.apply {
             thumbUri = imageData
@@ -182,5 +182,5 @@ class MyChannelVideosEditViewModel @ViewModelInject constructor(
             uploadRepo.updateUploadInfo(info)
         }
         thumbnailData.value = imageData
-    }
+    }*/
 }

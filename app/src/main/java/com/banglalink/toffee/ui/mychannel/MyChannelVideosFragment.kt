@@ -7,6 +7,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.data.database.dao.ReactionDao
@@ -26,32 +27,27 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
     private var isOwner: Int = 0
     private var channelOwnerId: Int = 0
     private var isPublic: Int = 0
+    private var isFromOutside: Boolean = false
     private var enableToolbar: Boolean = false
 
-    @Inject
-    lateinit var reactionDao: ReactionDao
-
+    @Inject lateinit var reactionDao: ReactionDao
     override val mAdapter by lazy { MyChannelVideosAdapter(this) }
-
+    private val homeViewModel by activityViewModels<HomeViewModel>()
     @Inject lateinit var viewModelAssistedFactory: MyChannelVideosViewModel.AssistedFactory
     override val mViewModel by viewModels<MyChannelVideosViewModel> { MyChannelVideosViewModel.provideFactory(viewModelAssistedFactory, isOwner, channelOwnerId, isPublic) }
-    
-    /*@Inject lateinit var popularChannelViewModelAssistedFactory: MyChannelVideosViewModel.AssistedFactory
-    override val popularChannelViewModel by viewModels<MyChannelVideosViewModel> { MyChannelVideosViewModel.provideFactory(popularChannelViewModelAssistedFactory, isOwner, channelOwnerId) }*/
-    
-    private val homeViewModel by activityViewModels<HomeViewModel>()
 
     companion object {
         private const val SHOW_TOOLBAR = "enableToolbar"
         private const val IS_OWNER = "isOwner"
         private const val CHANNEL_OWNER_ID = "channelOwnerId"
         private const val IS_PUBLIC = "isPublic"
-        fun newInstance(enableToolbar: Boolean, isOwner: Int, channelOwnerId: Int, isPublic: Int): MyChannelVideosFragment {
+        fun newInstance(enableToolbar: Boolean, isOwner: Int, channelOwnerId: Int, isPublic: Int, isFromOutside: Boolean): MyChannelVideosFragment {
             val instance = MyChannelVideosFragment()
             val bundle = Bundle()
             bundle.putBoolean(SHOW_TOOLBAR, enableToolbar)
             bundle.putInt(IS_OWNER, isOwner)
             bundle.putInt(CHANNEL_OWNER_ID, channelOwnerId)
+            bundle.putBoolean(MyChannelHomeFragment.IS_FROM_OUTSIDE, isFromOutside)
             bundle.putInt(IS_PUBLIC, isPublic)
             instance.arguments = bundle
             return instance
@@ -64,8 +60,9 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
         isOwner = arguments?.getInt(IS_OWNER) ?: 0
         channelOwnerId = arguments?.getInt(CHANNEL_OWNER_ID) ?: 0
         isPublic = arguments?.getInt(IS_PUBLIC) ?: 0
+        isFromOutside = arguments?.getBoolean(MyChannelHomeFragment.IS_FROM_OUTSIDE) ?: false
     }
-    
+
     override fun getEmptyViewInfo(): Pair<Int, String?> {
         return Pair(R.drawable.ic_videos_empty, "You haven't uploaded any video yet")
     }
@@ -73,85 +70,100 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
     override fun onOpenMenu(view: View, item: ChannelInfo) {
         super.onOpenMenu(view, item)
         PopupMenu(requireContext(), view).apply {
-            if (isOwner == 1){
+            if (isOwner == 1) {
                 inflate(R.menu.menu_channel_owner_videos)
+                if (item.isApproved == 1) {
+                    this.menu.removeItem(R.id.menu_edit_content)
+                }
             }
             else {
                 inflate(R.menu.menu_channel_videos)
             }
             setOnMenuItemClickListener {
                 when (it.itemId) {
+                    R.id.menu_edit_content -> {
+                        if (isFromOutside) {
+                            val action = MyChannelHomeFragmentDirections.actionMyChannelHomeFragmentToMyChannelVideosEditFragment(item)
+                            parentFragment?.findNavController()?.navigate(action)
+
+                        }
+                        else {
+                            findNavController().navigate(R.id.action_menu_channel_to_myChannelVideosEditFragment, Bundle().apply { putParcelable(MyChannelVideosEditFragment.CHANNEL_INFO, item) })
+                        }
+                        return@setOnMenuItemClickListener true
+                    }
                     R.id.menu_add_to_playlist -> {
                         val fragment = MyChannelAddToPlaylistFragment.newInstance(item.id.toInt(), isOwner, channelOwnerId)
                         fragment.show(requireActivity().supportFragmentManager, "add_to_playlist")
                         return@setOnMenuItemClickListener true
                     }
-                    R.id.menu_share->{
+                    R.id.menu_share -> {
                         homeViewModel.shareContentLiveData.postValue(item)
                         return@setOnMenuItemClickListener true
                     }
-                    R.id.menu_fav->{
+                    R.id.menu_fav -> {
                         homeViewModel.updateFavorite(item).observe(viewLifecycleOwner, Observer {
                             handleFavoriteResponse(it)
                         })
                         return@setOnMenuItemClickListener true
                     }
-                    R.id.menu_not_interested->{
+                    R.id.menu_not_interested -> {
                         removeItemNotInterestedItem(item)
                         return@setOnMenuItemClickListener true
                     }
-                    else->{
+                    else -> {
                         return@setOnMenuItemClickListener false
                     }
                 }
             }
             show()
         }
-        
+
     }
 
-    fun handleFavoriteResponse(it: Resource<ChannelInfo>){
-        when(it){
-            is Resource.Success->{
+    fun handleFavoriteResponse(it: Resource<ChannelInfo>) {
+        when (it) {
+            is Resource.Success -> {
                 val channelInfo = it.data
-                when(channelInfo.favorite){
-                    "0"->{
+                when (channelInfo.favorite) {
+                    "0" -> {
                         context?.showToast("Content successfully removed from favorite list")
                         handleFavoriteRemovedSuccessFully(channelInfo)
                     }
-                    "1"->{
+                    "1" -> {
                         handleFavoriteAddedSuccessfully(channelInfo)
                         context?.showToast("Content successfully added to favorite list")
                     }
                 }
             }
-            is Resource.Failure->{
+            is Resource.Failure -> {
                 context?.showToast(it.error.msg)
             }
         }
     }
 
-    fun handleFavoriteAddedSuccessfully(channelInfo: ChannelInfo){
+    fun handleFavoriteAddedSuccessfully(channelInfo: ChannelInfo) {
         //subclass can hook here
     }
 
-    fun handleFavoriteRemovedSuccessFully(channelInfo: ChannelInfo){
+    fun handleFavoriteRemovedSuccessFully(channelInfo: ChannelInfo) {
         //subclass can hook here
     }
 
-    fun removeItemNotInterestedItem(channelInfo: ChannelInfo){
-        
+    fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
+
     }
-    
+
     override fun onItemClicked(item: ChannelInfo) {
         super.onItemClicked(item)
         if (item.isApproved == 0) {
             Toast.makeText(requireContext(), "Your video has not approved yet. Once it's approved, you can play the video", Toast.LENGTH_SHORT).show()
-        } else {
+        }
+        else {
             homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
         }
     }
-    
+
     override fun onReactionClicked(view: View, item: ChannelInfo) {
         super.onReactionClicked(view, item)
         AlertDialogReactionFragment.newInstance(view, item).show(requireActivity().supportFragmentManager, "ReactionDialog")

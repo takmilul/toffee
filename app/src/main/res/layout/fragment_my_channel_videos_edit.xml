@@ -7,7 +7,7 @@
         <import type="android.view.View" />
         <variable
             name="viewmodel"
-            type="com.banglalink.toffee.ui.upload.EditUploadInfoViewModel" />
+            type="com.banglalink.toffee.ui.mychannel.MyChannelVideosEditViewModel" />
     </data>
     <ScrollView
         android:layout_width="match_parent"
@@ -19,13 +19,18 @@
             android:background="@color/screen_bg_white">
 
             <com.banglalink.toffee.ui.widget.CustomImageView
-                android:id="@+id/video_thumb"
+                android:id="@+id/bannerImageView"
+                loadImageFromUrl="@{viewmodel.thumbnailUrl}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"
+                android:minHeight="200dp"
+                android:scaleType="fitXY"
+                app:layout_constraintDimensionRatio="W,16:9"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@drawable/placeholder"/>
 
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/thumb_edit_button"
@@ -37,11 +42,11 @@
                 android:elevation="2dp"
                 android:padding="4dp"
                 android:scaleType="fitXY"
-                app:layout_constraintEnd_toEndOf="@+id/video_thumb"
-                app:layout_constraintTop_toTopOf="@+id/video_thumb"
+                app:layout_constraintEnd_toEndOf="@+id/bannerImageView"
+                app:layout_constraintTop_toTopOf="@+id/bannerImageView"
                 app:srcCompat="@drawable/ic_edit_btn" />
 
-            <ProgressBar
+            <!--<ProgressBar
                 android:id="@+id/progressBar"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="0dp"
@@ -49,11 +54,11 @@
                 android:max="100"
                 android:progress="@{viewmodel.uploadProgress}"
                 android:progressDrawable="@drawable/upload_progress_bg"
-                android:visibility="@{viewmodel.uploadProgress == 100 ? View.GONE : View.VISIBLE}"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/video_thumb"
                 app:layout_constraintEnd_toEndOf="@+id/video_thumb"
                 app:layout_constraintStart_toStartOf="@+id/video_thumb"
-                app:layout_constraintTop_toTopOf="@+id/video_thumb" />
+                app:layout_constraintTop_toTopOf="@+id/video_thumb" />-->
 
             <TextView
                 android:id="@+id/textView15"
@@ -63,7 +68,7 @@
                 android:layout_marginTop="24dp"
                 android:text="Title"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/video_thumb" />
+                app:layout_constraintTop_toBottomOf="@+id/bannerImageView" />
 
             <EditText
                 android:id="@+id/upload_title"
@@ -312,7 +317,7 @@
                 app:layout_constraintStart_toStartOf="@+id/guideline9"
                 app:layout_constraintTop_toBottomOf="@+id/subCategorySpinnerWrap" />
 
-            <TextView
+            <!--<TextView
                 android:id="@+id/upload_progress_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -323,9 +328,9 @@
                 app:layout_constraintBottom_toBottomOf="@+id/video_thumb"
                 app:layout_constraintStart_toStartOf="@+id/video_thumb"
                 app:layout_constraintTop_toTopOf="@+id/video_thumb"
-                tools:text="Uploading 70%" />
+                tools:text="Uploading 70%" />-->
 
-            <TextView
+            <!--<TextView
                 android:id="@+id/upload_size_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -336,13 +341,14 @@
                 app:layout_constraintBottom_toBottomOf="@+id/video_thumb"
                 app:layout_constraintEnd_toEndOf="@+id/video_thumb"
                 app:layout_constraintTop_toTopOf="@+id/video_thumb"
-                tools:text="250 MB" />
+                tools:text="250 MB" />-->
 
-            <androidx.constraintlayout.widget.Group
+            <!--<androidx.constraintlayout.widget.Group
                 android:id="@+id/uploadProgressGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:constraint_referenced_ids="upload_progress_text,upload_size_text,progressBar" />
+                android:visibility="gone"
+                app:constraint_referenced_ids="upload_progress_text,upload_size_text,progressBar" />-->
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

@@ -10,7 +10,6 @@ import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -68,7 +67,7 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
         const val IS_PUBLIC = "isPublic"
         const val CHANNEL_OWNER_ID = "channelOwnerId"
         const val IS_FROM_OUTSIDE = "isFromOutside"
-        
+
         fun newInstance(isSubscribed: Int, isOwner: Int, channelId: Int, channelOwnerId: Int, isPublic: Int, isFromOutside: Boolean): MyChannelHomeFragment {
             val instance = MyChannelHomeFragment()
             val bundle = Bundle()
@@ -112,13 +111,13 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.title = "My Channel"
-        
+
         binding.contentBody.visibility = View.GONE
         binding.progressBar.visibility = View.VISIBLE
 
         observeChannelDetail()
         viewModel.getChannelDetail()
-        
+
         binding.channelDetailView.addBioButton.setOnClickListener(this)
         binding.channelDetailView.editButton.setOnClickListener(this)
         binding.channelDetailView.analyticsButton.setOnClickListener(this)
@@ -133,7 +132,7 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
                     val action = MyChannelHomeFragmentDirections.actionMyChannelHomeFragmentToMyChannelEditDetailFragment(myChannelDetail)
                     findNavController().navigate(action)
                 }
-                else{
+                else {
                     findNavController().navigate(R.id.action_menu_channel_to_myChannelEditFragment, Bundle().apply { putParcelable("myChannelDetail", myChannelDetail) })
                 }
             }
@@ -143,7 +142,7 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
                     val action = MyChannelHomeFragmentDirections.actionMyChannelHomeFragmentToMyChannelEditDetailFragment(myChannelDetail)
                     findNavController().navigate(action)
                 }
-                else{
+                else {
                     findNavController().navigate(R.id.action_menu_channel_to_myChannelEditFragment, Bundle().apply { putParcelable("myChannelDetail", myChannelDetail) })
                 }
             }
@@ -157,7 +156,7 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
                     Toast.makeText(requireContext(), "Please create channel first", Toast.LENGTH_SHORT).show()
                 }
             }
-            subscriptionButton -> subscribeChannelViewModel.subscribe(channelId, if(isSubscribed == 0) 1 else 0, channelOwnerId)
+            subscriptionButton -> subscribeChannelViewModel.subscribe(channelId, if (isSubscribed == 0) 1 else 0, channelOwnerId)
         }
     }
 
@@ -171,8 +170,8 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
         dialogView.ratingBar.setOnRatingBarChangeListener { _, rating, _ ->
             newRating = rating
             dialogView.submitButton.isEnabled = rating > 0
-            isRated = if(rating > 0) 1 else 0
-            myRating = if(rating > 0) rating.toInt() else 0
+            isRated = if (rating > 0) 1 else 0
+            myRating = if (rating > 0) rating.toInt() else 0
         }
 
         val alertDialog: android.app.AlertDialog = dialogBuilder.create()
@@ -250,7 +249,7 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
             fragmentTitleList.add("Videos")
             fragmentTitleList.add("Playlists")
 
-            fragmentList.add(MyChannelVideosFragment.newInstance(true, isOwner, channelOwnerId, isPublic))
+            fragmentList.add(MyChannelVideosFragment.newInstance(true, isOwner, channelOwnerId, isPublic, isFromOutside))
             fragmentList.add(MyChannelPlaylistsFragment.newInstance(true, isOwner, channelOwnerId, isFromOutside))
         }
 
@@ -267,15 +266,56 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
         }.attach()
 
         // set interpolators for both expanding and collapsing animations
-        binding.channelDetailView.channelDescriptionTextView.setInterpolator(OvershootInterpolator())
-
+        binding.channelDetailView.channelDescriptionTextView.collapseInterpolator = OvershootInterpolator()
+        binding.channelDetailView.channelDescriptionTextView.expandInterpolator = OvershootInterpolator()
         // toggle the Expand button
-        binding.channelDetailView.expandButton.setOnClickListener(View.OnClickListener {
-            binding.channelDetailView.expandButton.background =
-                if (binding.channelDetailView.channelDescriptionTextView.isExpanded) ContextCompat.getDrawable(requireContext(), R.drawable.ic_down_arrow) else ContextCompat.getDrawable(requireContext(), R.drawable.ic_up_arrow)
+        binding.channelDetailView.expandButton.setOnClickListener {
+            val resource = if (binding.channelDetailView.channelDescriptionTextView.isExpanded) R.drawable.ic_down_arrow else R.drawable.ic_up_arrow
+            binding.channelDetailView.expandButton.setImageResource(resource)
             binding.channelDetailView.channelDescriptionTextView.toggle()
-        })
+        }
+
+        /*binding.channelDetailView.channelDescriptionTextView.addOnExpandListener(object : ExpandableTextView.OnExpandListener{
+            override fun onExpand(view: ExpandableTextView) {
+                if (!isCollapsed) {
+//                    val lineCount: Int = binding.channelDetailView.channelDescriptionTextView.layout.lineCount
+                    val collapse = binding.channelDetailView.channelDescriptionTextView.toggle()
+                    isCollapsed = true
+                    Log.i("TextLineCount_", "lineCount: $collapse")
+                }
+            }
+
+            override fun onCollapse(view: ExpandableTextView) {
+                
+            }
+        })*/
+
+        /*val collapse = binding.channelDetailView.channelDescriptionTextView.toggle()
+        Log.i("TextLineCount_", "lineCount: $collapse")*/
+
+        val expand = binding.channelDetailView.channelDescriptionTextView.expand()
+        Log.i("TextLineCount_", "lineCount: $expand")
+
+        binding.channelDetailView.channelDescriptionTextView.viewTreeObserver.addOnPreDrawListener {
+            if (!isCollapsed) {
+                val lineCount: Int = binding.channelDetailView.channelDescriptionTextView.layout.lineCount
+//                val col = binding.channelDetailView.channelDescriptionTextView.toggle()
+//                isCollapsed = true
+                Log.i("TextLineCount_", "lineCount: $lineCount")
+            }
+            true
+        }
+        binding.channelDetailView.channelDescriptionTextView.viewTreeObserver.addOnDrawListener {
+            if (!isCollapsed) {
+                isCollapsed = true
+                val onCli = binding.channelDetailView.expandButton.performClick()
+                Log.i("TextLineCount_", "lineCount: $onCli")
+                
+            }
+        }
     }
+
+    private var isCollapsed = false
 
     private fun observeSubscribeChannel() {
         observe(subscribeChannelViewModel.liveData) {
@@ -312,20 +352,20 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
             }
         }
     }
-    
-    fun bindTextColor(view: MaterialButton, myRating: Int){
-        if(myRating > 0){
+
+    fun bindTextColor(view: MaterialButton, myRating: Int) {
+        if (myRating > 0) {
             view.setIconTintResource(android.R.color.white)
             view.setTextColor(Color.parseColor("#FFFFFF"))
             view.background.setTint(Color.parseColor("#58DC3F"))
         }
-        else{
+        else {
             view.setIconTintResource(R.color.dark_green)
             view.setTextColor(Color.parseColor("#58DC3F"))
             view.background.setTint(Color.parseColor("#FFFFFF"))
         }
     }
-    
+
     private fun observeCreatePlaylist() {
         observe(createPlaylistViewModel.createPlaylistLiveData) {
             when (it) {
