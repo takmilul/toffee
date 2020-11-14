@@ -14,7 +14,7 @@
     <item
         android:id="@+id/action_notification"
         android:title="Notification"
-        android:icon="@drawable/menu_notification"
+        app:actionLayout="@layout/notification_action_layout"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_avatar"

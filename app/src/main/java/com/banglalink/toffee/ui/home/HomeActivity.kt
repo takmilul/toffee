@@ -26,11 +26,11 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
-import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -39,6 +39,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
 import com.banglalink.toffee.extension.launchActivity
@@ -67,6 +68,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.layout_appbar.view.*
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.annotation.Nonnull
@@ -96,6 +98,10 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     @Inject
     lateinit var uploadRepo: UploadInfoRepository
 
+    @Inject
+    lateinit var notificationRepo: NotificationInfoRepository
+
+    private var notificationBadge: View? = null
     private var searchView: SearchView? = null
     lateinit var binding: ActivityMainMenuBinding
     private lateinit var drawerHelper: DrawerHelper
@@ -255,6 +261,18 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         lifecycle.addObserver(HeartBeatManager)
         observeInAppMessage()
         handleSharedUrl(intent)
+    }
+
+    private fun observeNotification() {
+        lifecycleScope.launchWhenStarted {
+            notificationRepo.getUnseenNotificationCount().collect {
+                if(it > 0) {
+                    notificationBadge?.visibility = View.VISIBLE
+                } else {
+                    notificationBadge?.visibility = View.GONE
+                }
+            }
+        }
     }
 
     fun rotateFab(isRotate: Boolean) {
@@ -736,7 +754,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             return true
         }
         else if(item.itemId == R.id.action_notification){
-            navController.navigate(R.id.notificationDropdownFragment)
+
         }
         return super.onOptionsItemSelected(item)
     }
@@ -796,12 +814,20 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                 ContextCompat.getDrawable(this@HomeActivity, R.drawable.searchview_input_bg)
         }
 
+        val notificationActionView = menu.findItem(R.id.action_notification)?.actionView
+        notificationBadge = notificationActionView?.findViewById<TextView>(R.id.notification_badge)
+        notificationActionView?.setOnClickListener {
+            if(navController.currentDestination?.id != R.id.notificationDropdownFragment) {
+                navController.navigate(R.id.notificationDropdownFragment)
+            }
+        }
         searchView?.setOnQueryTextListener(this)
 
         val awesomeMenuItem = menu.findItem(R.id.action_avatar)
         val awesomeActionView = awesomeMenuItem.actionView
         awesomeActionView.setOnClickListener {  binding.drawerLayout.openDrawer(GravityCompat.END, true) }
 
+        observeNotification()
         return true
     }
 

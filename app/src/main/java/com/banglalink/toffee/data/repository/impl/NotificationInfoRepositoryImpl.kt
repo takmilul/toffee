@@ -4,6 +4,7 @@ import androidx.paging.PagingSource
 import com.banglalink.toffee.data.database.dao.NotificationDao
 import com.banglalink.toffee.data.database.entities.NotificationInfo
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
+import kotlinx.coroutines.flow.Flow
 
 class NotificationInfoRepositoryImpl(private val notificationDao: NotificationDao): NotificationInfoRepository {
     override suspend fun insert(notificationInfo: NotificationInfo) {
@@ -16,6 +17,10 @@ class NotificationInfoRepositoryImpl(private val notificationDao: NotificationDa
 
     override fun getAllNotification(): PagingSource<Int, NotificationInfo> {
         return notificationDao.getAllNotification()
+    }
+
+    override fun getUnseenNotificationCount(): Flow<Int> {
+        return notificationDao.getUnseenNotificationCount()
     }
 
     /*override suspend fun getNotificationByDate(date: Long): PagingSource<Int, NotificationInfo> {

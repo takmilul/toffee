@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/menu_seen_notification"
-        android:title="Seen" />
+        android:title="Mark as unread" />
     <item
         android:id="@+id/menu_delete_notification"
         android:title="Delete" />

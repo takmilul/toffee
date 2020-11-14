@@ -16,7 +16,10 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/screen_bg_white">
+            android:clickable="true"
+            android:id="@+id/container"
+            android:background="@color/screen_bg_white"
+            android:focusable="true">
 
             <com.banglalink.toffee.ui.widget.CustomImageView
                 android:id="@+id/video_thumb"

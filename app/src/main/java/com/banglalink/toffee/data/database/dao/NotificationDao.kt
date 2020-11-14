@@ -6,6 +6,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.banglalink.toffee.data.database.entities.NotificationInfo
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface NotificationDao {
@@ -17,7 +18,10 @@ interface NotificationDao {
     
     @Query("SELECT * FROM NotificationInfo ORDER BY receiveTime DESC")
     fun getAllNotification(): PagingSource<Int, NotificationInfo>
-    
+
+    @Query("SELECT COUNT(id) FROM NotificationInfo WHERE isSeen=:isSeen")
+    fun getUnseenNotificationCount(isSeen: Boolean = false): Flow<Int>
+
     /*@Query("SELECT * FROM NotificationInfo WHERE receiveTime >= :date ORDER BY receiveTime DESC")
     fun getNotificationByDate(date: Long): PagingSource<Int, NotificationInfo>
     
