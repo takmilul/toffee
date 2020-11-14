@@ -1,6 +1,6 @@
 package com.banglalink.toffee.util
 
-import android.content.ContentResolver
+import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Bitmap.CompressFormat.JPEG
@@ -11,13 +11,14 @@ import android.net.Uri
 import android.provider.OpenableColumns
 import android.util.Base64
 import android.util.Log
-import androidx.core.content.ContextCompat
+import android.view.inputmethod.InputMethodManager
 import coil.imageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
 import java.io.*
 import kotlin.math.pow
 import kotlin.math.sqrt
+
 
 object UtilsKt {
     fun uploadIdToString(id: Long) = "Toffee_Upload_$id"
@@ -71,6 +72,14 @@ object UtilsKt {
             .build()
         return (ctx.imageLoader.execute(request) as SuccessResult).drawable
     }
+
+    fun hideSoftKeyboard(activity: Activity) {
+        val inputMethodManager = activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(
+            activity.currentFocus?.windowToken,
+            0
+        )
+    }
 }
 
 
@@ -100,7 +109,10 @@ fun getBitmap(ctx: Context, path: String, requiredImageSize: Int): Bitmap? {
         while (options.outWidth * options.outHeight * (1 / scale.toDouble().pow(2.0)) > requiredImageSize) {
             scale++
         }
-        Log.d(TAG, "scale = " + scale + ", orig-width: " + options.outWidth + ", orig-height: " + options.outHeight)
+        Log.d(
+            TAG,
+            "scale = " + scale + ", orig-width: " + options.outWidth + ", orig-height: " + options.outHeight
+        )
         var resultBitmap: Bitmap? = null
         inputStream = getInputStream(ctx, path)
         if (scale > 1) {

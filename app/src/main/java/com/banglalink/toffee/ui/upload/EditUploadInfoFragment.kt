@@ -92,6 +92,9 @@ class EditUploadInfoFragment: BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.container.setOnClickListener {
+            UtilsKt.hideSoftKeyboard(requireActivity())
+        }
 
         binding.cancelButton.setOnClickListener {
             lifecycleScope.launch {
