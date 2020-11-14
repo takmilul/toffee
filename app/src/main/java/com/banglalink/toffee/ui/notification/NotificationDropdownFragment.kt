@@ -51,13 +51,13 @@ class NotificationDropdownFragment : BaseListFragment<NotificationInfo>(), BaseL
         PopupMenu(requireContext(), view).apply {
             inflate(R.menu.menu_notification_item)
             val menu = this.menu
-            if (item.isSeen){
+            if (!item.isSeen){
                 menu.removeItem(R.id.menu_seen_notification)
             }
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_seen_notification -> {
-                        mViewModel.setSeenStatus(item.id!!, true, System.currentTimeMillis())
+                        mViewModel.setSeenStatus(item.id!!, false, System.currentTimeMillis())
 //                        mAdapter.notifyDataSetChanged()
                     }
                     R.id.menu_delete_notification -> {
