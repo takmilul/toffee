@@ -9,9 +9,9 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import coil.load
+import coil.request.CachePolicy
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.network.request.MyChannelEditRequest
 import com.banglalink.toffee.databinding.FragmentMyChannelEditDetailBinding
@@ -68,30 +68,37 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
 
     private fun observeThumbnailChange() {
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String?>(ThumbnailSelectionMethodFragment.THUMB_URI)
-            ?.observe(viewLifecycleOwner, Observer {
+            ?.observe(viewLifecycleOwner, {
                 it?.let {
                     if (isPosterClicked) {
                         newBannerUrl = it
-                        binding.bannerImageView.load(it){
-                            /*memoryCachePolicy(CachePolicy.DISABLED)
-                            diskCachePolicy(CachePolicy.ENABLED)
-                            crossfade(true)
-                            crossfade(crossFadeDurationInMills)*/
-                        }
+                        loadImage()
                     }
                     else {
                         newProfileImageUrl = it
-                        binding.profileImageView.load(it){
-                            crossfade(false)
-                            /*memoryCachePolicy(CachePolicy.DISABLED)
-                            diskCachePolicy(CachePolicy.ENABLED)
-                            crossfade(false)*/
-                        }
+                        loadImage()
                     }
                 }
             })
     }
 
+    private fun loadImage(){
+        newBannerUrl?.let {
+            binding.bannerImageView.load(it){
+                memoryCachePolicy(CachePolicy.DISABLED)
+                diskCachePolicy(CachePolicy.ENABLED)
+                crossfade(false)
+            }
+        }
+        newProfileImageUrl?.let {
+            binding.profileImageView.load(it) {
+                memoryCachePolicy(CachePolicy.DISABLED)
+                diskCachePolicy(CachePolicy.ENABLED)
+                crossfade(false)
+            }
+        }
+    }
+    
     private fun observeEditChannel() {
         observe(viewModel.liveData) {
             when (it) {

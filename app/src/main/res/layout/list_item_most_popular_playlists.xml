@@ -191,8 +191,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text='@{String.valueOf(data.totalContent).concat(" Videos")}'
-            android:textColor="@color/screen_bg_white"
+            android:text='@{String.valueOf(data.totalContent).concat(data.totalContent > 1 ? " Videos" : " Video")}'
+            tools:text="5 Videos"
+            android:textColor="@android:color/white"
             android:gravity="center_horizontal"
             app:layout_constraintStart_toStartOf="@id/overlayView"
             app:layout_constraintTop_toBottomOf="@id/folderImageView"

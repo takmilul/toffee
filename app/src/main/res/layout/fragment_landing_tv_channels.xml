@@ -9,7 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@drawable/fragment_bg_bottom"
-        android:backgroundTint="@color/home_screen_curve_bg_color_light"
         app:layout_constraintBottom_toTopOf="@+id/guideline14"
         app:layout_constraintTop_toTopOf="parent" />
 
