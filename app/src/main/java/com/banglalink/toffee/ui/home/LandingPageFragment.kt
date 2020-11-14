@@ -73,6 +73,7 @@ class LandingPageFragment : HomeBaseFragment(){
                             mini_upload_progress.progress = 100
                             add_upload_info_button.isVisible = true
                             upload_size_text.isInvisible = true
+                            mini_upload_progress_text.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_upload_done, 0, 0, 0)
                             mini_upload_progress_text.text = "Upload complete"
                         }
                         UploadStatus.ADDED.value,
