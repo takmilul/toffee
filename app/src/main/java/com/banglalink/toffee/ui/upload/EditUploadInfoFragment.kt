@@ -2,8 +2,6 @@ package com.banglalink.toffee.ui.upload
 
 //import com.bumptech.glide.Glide
 
-import android.media.MediaMetadataRetriever
-import android.net.Uri
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
@@ -20,7 +18,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
 import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.database.entities.UploadInfo
@@ -36,16 +33,13 @@ import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.UtilsKt
-import com.banglalink.toffee.util.imagePathToBase64
 import com.pchmn.materialchips.ChipsInput
 import com.pchmn.materialchips.model.ChipInterface
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.list_item_notification.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import net.gotev.uploadservice.UploadService
-import java.nio.ByteBuffer
 import javax.inject.Inject
 
 
@@ -116,7 +110,8 @@ class EditUploadInfoFragment: BaseFragment() {
         }
 
         binding.thumbEditButton.setOnClickListener {
-            findNavController().navigate(R.id.action_editUploadInfoFragment_to_thumbnailSelectionMethodFragment)
+            val action = EditUploadInfoFragmentDirections.actionEditUploadInfoFragmentToThumbnailSelectionMethodFragment("Set Video Cover Photo")
+            findNavController().navigate(action)
         }
 
         setupTagView()

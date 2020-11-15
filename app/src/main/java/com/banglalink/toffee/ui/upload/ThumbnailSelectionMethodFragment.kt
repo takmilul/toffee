@@ -29,11 +29,13 @@ import java.util.*
 
 class ThumbnailSelectionMethodFragment: Fragment() {
     private var imageUri: Uri? = null
+    private lateinit var title: String
 
     companion object {
         private const val REQUEST_IMAGE = 0x225
         private const val REQUEST_IMAGE_FROM_FILE = 0x226
         const val THUMB_URI = "thumb-uri"
+        const val TITLE_ARG = "thumb_arg_key"
 
         fun newInstance(): ThumbnailSelectionMethodFragment {
             return ThumbnailSelectionMethodFragment()
@@ -50,7 +52,10 @@ class ThumbnailSelectionMethodFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        
+        title = ThumbnailSelectionMethodFragmentArgs.fromBundle(requireArguments()).title
+        heading.text = title
+        
         open_gallery_button.setOnClickListener {
             checkFileSystemPermission()
         }

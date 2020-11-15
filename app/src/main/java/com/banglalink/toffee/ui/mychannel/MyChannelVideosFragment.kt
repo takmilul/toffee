@@ -107,10 +107,10 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
                         })
                         return@setOnMenuItemClickListener true
                     }
-                    R.id.menu_not_interested -> {
+                    /*R.id.menu_not_interested -> {
                         removeItemNotInterestedItem(item)
                         return@setOnMenuItemClickListener true
-                    }
+                    }*/
                     else -> {
                         return@setOnMenuItemClickListener false
                     }

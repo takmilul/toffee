@@ -61,6 +61,7 @@ data class ChannelInfo(
     val isApproved: Int? = null,
     val created_at: String? = null,
     var formattedCreateTime: String? = null,
+    var subscriptionCount: String? = null,
 ) :Parcelable
 {
 

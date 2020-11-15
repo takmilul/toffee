@@ -46,6 +46,9 @@ class GetUgcTrendingNowContents @AssistedInject constructor(
             return response.response.channels.map {
                 it.formatted_view_count = getFormattedViewsText(it.view_count)
                 it.formattedDuration = discardZeroFromDuration(it.duration)
+                if(!it.created_at.isNullOrEmpty()) {
+                    it.formattedCreateTime = Utils.getDateDiffInDayOrHourOrMinute(Utils.getDate(it.created_at).time).replace(" ", "")
+                }
                 it
             }
         }
