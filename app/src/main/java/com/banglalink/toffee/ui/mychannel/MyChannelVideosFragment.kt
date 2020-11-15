@@ -72,9 +72,10 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
         PopupMenu(requireContext(), view).apply {
             if (isOwner == 1) {
                 inflate(R.menu.menu_channel_owner_videos)
-                if (item.isApproved == 1) {
+                /*if (item.isApproved == 1) {
                     this.menu.removeItem(R.id.menu_edit_content)
-                }
+                }*/
+                this.menu.removeItem(R.id.menu_edit_content)
             }
             else {
                 inflate(R.menu.menu_channel_videos)

@@ -44,7 +44,8 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/circleImageView"
-            tools:text="@string/action_subscribe" />
+            tools:text="NOW: ICC Women's World Cup 2019
+Day 21 - AUS vs IND" />
 
 
         <ImageView
@@ -56,6 +57,7 @@
             android:focusable="true"
             android:onClick="@{(v)->callback.onOpenMenu(v,data)}"
             android:padding="5dp"
+            app:layout_constraintVertical_bias="0"
             app:srcCompat="@drawable/ic_menu_more"
             app:layout_constraintBottom_toBottomOf="@+id/program_name"
             app:layout_constraintEnd_toEndOf="parent"

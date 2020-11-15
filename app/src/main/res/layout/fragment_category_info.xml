@@ -133,14 +133,14 @@
         app:layout_constraintStart_toEndOf="@+id/categoryIcon"
         app:layout_constraintTop_toTopOf="@+id/categoryIcon" />
 
-    <TextView
+    <!--<TextView
         android:id="@+id/follower_count"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
         android:textColor="@android:color/white"
         app:layout_constraintStart_toEndOf="@+id/categoryIcon"
-        app:layout_constraintTop_toBottomOf="@+id/categoryName" />
+        app:layout_constraintTop_toBottomOf="@+id/categoryName" />-->
 
     <HorizontalScrollView
         android:id="@+id/categoryChipGroupHolder"
@@ -163,7 +163,7 @@
             app:singleLine="true"
             app:singleSelection="true" />
     </HorizontalScrollView>
-    <Button
+    <!--<Button
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:id="@+id/follow_button"
         android:layout_width="wrap_content"
@@ -176,6 +176,6 @@
         app:strokeColor="@android:color/white"
         app:rippleColor="@color/colorAccent2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/categoryListPager" />
+        app:layout_constraintTop_toBottomOf="@+id/categoryListPager" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

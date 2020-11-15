@@ -36,11 +36,11 @@
 <!--                android:layout_width="match_parent"-->
 <!--                android:layout_height="wrap_content" />-->
 
-            <androidx.fragment.app.FragmentContainerView
+            <!--<androidx.fragment.app.FragmentContainerView
                 android:id="@+id/mostPopularFragment"
                 android:name="com.banglalink.toffee.ui.landing.MostPopularPlaylistsFragment"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content" />-->
 
 <!--            <androidx.fragment.app.FragmentContainerView-->
 <!--                android:id="@+id/categoriesFragment"-->
@@ -49,19 +49,19 @@
 <!--                android:layout_width="match_parent"-->
 <!--                android:layout_height="wrap_content" />-->
 
-        <androidx.fragment.app.FragmentContainerView
+        <!--<androidx.fragment.app.FragmentContainerView
             android:id="@+id/userChannelList"
             android:name="com.banglalink.toffee.ui.landing.LandingUserChannelsFragment"
             android:layout_marginTop="8dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content" />-->
 
-            <androidx.fragment.app.FragmentContainerView
+            <!--<androidx.fragment.app.FragmentContainerView
                 android:id="@+id/trendingNowFragment"
                 android:name="com.banglalink.toffee.ui.landing.TrendingNowFragment"
                 android:layout_marginTop="8dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content" />-->
 
         </LinearLayout>
 
