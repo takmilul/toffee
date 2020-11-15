@@ -16,6 +16,7 @@ import android.widget.SeekBar;
 import androidx.databinding.DataBindingUtil;
 
 import com.banglalink.toffee.R;
+import com.banglalink.toffee.databinding.MediaControlLayout2Binding;
 import com.banglalink.toffee.databinding.MediaControlLayout3Binding;
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener;
 import com.google.android.exoplayer2.Player;
@@ -56,7 +57,7 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
     private int videoWidth = 1920;
     private int videoHeight = 1080;
 
-    private MediaControlLayout3Binding binding;
+    private MediaControlLayout2Binding binding;
 
     public ExpoMediaController2(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -82,7 +83,7 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
     }
 
     private void initView() {
-        binding = DataBindingUtil.inflate(inflater, R.layout.media_control_layout3, this, true);
+        binding = DataBindingUtil.inflate(inflater, R.layout.media_control_layout2, this, true);
         binding.minimize.setOnClickListener(this);
         binding.play.setOnClickListener(this);
         binding.forward.setOnClickListener(this);
@@ -184,12 +185,12 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
             binding.progress.setEnabled(true);
             binding.progress.setProgress((int) pos);
             binding.duration.setVisibility(VISIBLE);
-            binding.timeSeperator.setVisibility(VISIBLE);
+//            binding.timeSeperator.setVisibility(VISIBLE);
             binding.currentTime.setVisibility(VISIBLE);
         } else {
             binding.progress.setEnabled(false);
             binding.duration.setVisibility(INVISIBLE);
-            binding.timeSeperator.setVisibility(INVISIBLE);
+//            binding.timeSeperator.setVisibility(INVISIBLE);
             binding.currentTime.setVisibility(INVISIBLE);
         }
         int percent = simpleExoPlayer.getBufferedPercentage();
