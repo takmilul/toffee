@@ -93,7 +93,7 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
                         return@setOnMenuItemClickListener true
                     }
                     R.id.menu_add_to_playlist -> {
-                        val fragment = MyChannelAddToPlaylistFragment.newInstance(item.id.toInt(), isOwner, channelOwnerId)
+                        val fragment = MyChannelAddToPlaylistFragment.newInstance(item.id.toInt(), isOwner, channelOwnerId, item)
                         fragment.show(requireActivity().supportFragmentManager, "add_to_playlist")
                         return@setOnMenuItemClickListener true
                     }

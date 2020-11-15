@@ -119,6 +119,7 @@
                 android:layout_height="24dp"
                 android:background="@color/fab_icon_bg"
                 loadReactionEmo="@{data.activitySubType}"
+                android:scaleType="center"
                 app:layout_constraintEnd_toStartOf="@+id/guideline6"
                 app:layout_constraintTop_toTopOf="@+id/video_thumb"
                 app:srcCompat="@drawable/lb_ic_thumb_up" />

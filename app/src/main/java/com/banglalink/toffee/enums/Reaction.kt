@@ -7,5 +7,7 @@ enum class Reaction(val value: Int) {
     HaHa(3),
     Wow(4),
     Sad(5),
-    Angry(6)
+    Angry(6),
+    Add(7),
+    Delete(8)
 }

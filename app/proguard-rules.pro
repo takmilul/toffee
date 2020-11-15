@@ -34,6 +34,7 @@
 
 # Application classes that will be serialized/deserialized over Gson
 -keep class com.banglalink.toffee.data.network.request.** { <fields>; }
+-keep class com.banglalink.toffee.data.database.entities.** { <fields>; }
 -keep class com.banglalink.toffee.data.network.response.** { <fields>; }
 -keep class com.banglalink.toffee.model.** { <fields>; }
 -keep class com.banglalink.toffee.ui.player.** { <fields>; }
@@ -76,3 +77,5 @@
   @com.google.gson.annotations.SerializedName <fields>;
 }
 #********************************End rules for gson****************************************#
+
+-keep public class * extends androidx.fragment.app.Fragment

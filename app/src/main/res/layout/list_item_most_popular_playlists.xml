@@ -179,7 +179,7 @@
             android:id="@+id/folderImageView"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_folder"
+            android:src="@drawable/ic_playlist"
             app:layout_constraintVertical_chainStyle="packed"
             app:layout_constraintStart_toStartOf="@id/overlayView"
             app:layout_constraintTop_toTopOf="@id/overlayView"

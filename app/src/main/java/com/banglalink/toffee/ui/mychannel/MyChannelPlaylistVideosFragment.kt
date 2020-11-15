@@ -11,6 +11,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.apiservice.MyChannelPlaylistContentParam
 import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource.Failure
@@ -68,6 +69,7 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(), BaseLis
                         R.id.menu_delete_playlist_video -> {
                             observeDeletePlaylistVideo()
                             mViewModel.deletePlaylistVideo(requestParams.channelOwnerId, item.playlistContentId, requestParams.playlistId)
+                            mViewModel.insertActivity(item, Reaction.Delete.value)
                         }
                     }
                     return@setOnMenuItemClickListener true

@@ -13,7 +13,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.databinding.AlertDialogMyChannelAddToPlaylistBinding
+import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelPlaylist
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
@@ -29,6 +31,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
     private var isOwner: Int = 0
     private var channelId: Int = 0
     private var playlistId: Int = 0
+    private lateinit var channelInfo: ChannelInfo
     private val mAdapter: MyChannelAddToPlaylistAdapter by lazy { MyChannelAddToPlaylistAdapter(this) }
     private val viewModel by viewModels<MyChannelAddToPlaylistViewModel>()
 
@@ -47,12 +50,14 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
         private const val CONTENT_ID = "contentId"
         private const val IS_OWNER = "isOwner"
         private const val CHANNEL_ID = "channelId"
-        fun newInstance(contentId: Int, isOwner: Int, channelId: Int): MyChannelAddToPlaylistFragment {
+        private const val CHANNEL_INFO = "channelInfo"
+        fun newInstance(contentId: Int, isOwner: Int, channelId: Int, channelInfo: ChannelInfo): MyChannelAddToPlaylistFragment {
             val instance = MyChannelAddToPlaylistFragment()
             val bundle = Bundle()
             bundle.putInt(CONTENT_ID, contentId)
             bundle.putInt(IS_OWNER, isOwner)
             bundle.putInt(CHANNEL_ID, channelId)
+            bundle.putParcelable(CHANNEL_INFO, channelInfo)
             instance.arguments = bundle
             return instance
         }
@@ -65,7 +70,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
         channelId = arguments?.getInt(CHANNEL_ID) ?: 0
         
         channelId = if (isOwner == 0) 0 else channelId
-
+        channelInfo = arguments?.getParcelable(CHANNEL_INFO)!!
     }
 
     private fun observePlaylist() {
@@ -133,6 +138,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
             }
             observeAddToPlaylist()
             viewModel.addToPlaylist(playlistId, contentId, channelId, isOwner)
+            viewModel.insertActivity(channelInfo, Reaction.Add.value)
         }
     }
 

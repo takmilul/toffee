@@ -1,6 +1,5 @@
 package com.banglalink.toffee.util
 
-import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
@@ -22,8 +21,12 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.data.database.entities.UserActivities
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.enums.ActivityType
+import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.enums.Reaction.*
-import com.banglalink.toffee.model.*
+import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.Package
+import com.banglalink.toffee.model.UgcCategory
+import com.banglalink.toffee.model.UgcUserChannelInfo
 import com.banglalink.toffee.ui.widget.MultiTextButton
 import com.google.android.material.button.MaterialButton
 
@@ -259,7 +262,13 @@ fun bindPremiumIcon(imageView: ImageView, channelInfo: ChannelInfo) {
 fun bindActivityType(view: TextView, item: UserActivities) {
     view.text = when (item.activityType) {
         ActivityType.REACT.value -> "Reacted"
-        ActivityType.PLAYLIST.value -> "Added to PlayList"
+        ActivityType.PLAYLIST.value -> {
+            when(item.activitySubType) {
+                Reaction.Add.value -> "Added to PlayList"
+                Reaction.Delete.value -> "Deleted from Playlist"
+                else -> ""
+            }
+        }
         else -> null
     }
 }
@@ -273,6 +282,8 @@ fun loadReactionEmo(view: View, reaction: Int) {
         Wow.value -> R.drawable.ic_reaction_wow
         Sad.value -> R.drawable.ic_reaction_sad
         Angry.value -> R.drawable.ic_reaction_angry
+        Add.value -> R.drawable.ic_playlist
+        Delete.value -> R.drawable.ic_playlist
         else -> R.drawable.ic_reactions_emo
     }
     when (view) {

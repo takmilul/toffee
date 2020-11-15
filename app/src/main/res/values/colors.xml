@@ -61,4 +61,5 @@
     <color name="unseenCardColor">#EBFFFB</color>
     <color name="reactionBgColor">#34C9B5</color>
     <color name="approvalPendingColor">#FF8B57</color>
+    <color name="reverseBgColor">#000000</color>
 </resources>
