@@ -5,14 +5,8 @@ import androidx.room.Room
 import com.banglalink.toffee.data.database.MigrationProvider
 import com.banglalink.toffee.data.database.ToffeeDatabase
 import com.banglalink.toffee.data.database.dao.*
-import com.banglalink.toffee.data.repository.HistoryRepository
-import com.banglalink.toffee.data.repository.NotificationInfoRepository
-import com.banglalink.toffee.data.repository.UploadInfoRepository
-import com.banglalink.toffee.data.repository.UserActivitiesRepository
-import com.banglalink.toffee.data.repository.impl.HistoryRepositoryImpl
-import com.banglalink.toffee.data.repository.impl.NotificationInfoRepositoryImpl
-import com.banglalink.toffee.data.repository.impl.UploadInfoRepositoryImpl
-import com.banglalink.toffee.data.repository.impl.UserActivitiesRepositoryImpl
+import com.banglalink.toffee.data.repository.*
+import com.banglalink.toffee.data.repository.impl.*
 import com.banglalink.toffee.data.storage.ViewCountDAO
 import dagger.Module
 import dagger.Provides
@@ -87,6 +81,18 @@ object DatabaseModule {
     @Singleton
     fun provideNotificationInfoRepository(notificationDao: NotificationDao): NotificationInfoRepository {
         return NotificationInfoRepositoryImpl(notificationDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTVChannelsDao(db: ToffeeDatabase): TVChannelDao {
+        return db.getTVChannelsDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideTVChannelsRepository(tvChannelsDao: TVChannelDao): TVChannelRepository {
+        return TVChannelRepositoryImpl(tvChannelsDao)
     }
     
     @Provides

@@ -111,15 +111,13 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
 
         lifecycleScope.launchWhenStarted {
             channelViewModel(0)
-                .collectLatest {
-                    when(it){
-                        is Resource.Success->{
-                            channelAdapter.setItems(it.data)
-                        }
-                        is Resource.Failure->{
-                            context?.showToast(it.error.msg)
-                        }
+                .collectLatest { tvList->
+                    val res = tvList.groupBy { it.categoryName }.map {
+                        val categoryName = it.key
+                        val categoryList = it.value.map { ci -> ci.channelInfo }
+                        StickyHeaderInfo(categoryName, categoryList)
                     }
+                    channelAdapter.setItems(res)
             }
         }
 

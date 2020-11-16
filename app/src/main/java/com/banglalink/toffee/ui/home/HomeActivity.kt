@@ -69,6 +69,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.layout_appbar.view.*
+import kotlinx.android.synthetic.main.list_item_challenges.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.*
@@ -540,6 +541,9 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                 (it.isPurchased || it.isSubscribed) && !it.isExpired(Date())->{
                     maximizePlayer()
                     loadChannel(it)
+                    if(it.isLive) {
+                        viewModel.addTvChannelToRecent(it)
+                    }
                     loadDetailFragment(it)
                 }
                 else ->{
