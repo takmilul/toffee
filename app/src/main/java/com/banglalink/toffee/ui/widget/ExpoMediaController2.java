@@ -57,7 +57,7 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
     private int videoWidth = 1920;
     private int videoHeight = 1080;
 
-    private MediaControlLayout2Binding binding;
+    private MediaControlLayout3Binding binding;
 
     public ExpoMediaController2(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -83,7 +83,7 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
     }
 
     private void initView() {
-        binding = DataBindingUtil.inflate(inflater, R.layout.media_control_layout2, this, true);
+        binding = DataBindingUtil.inflate(inflater, R.layout.media_control_layout3, this, true);
         binding.minimize.setOnClickListener(this);
         binding.play.setOnClickListener(this);
         binding.forward.setOnClickListener(this);
@@ -183,14 +183,16 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
             // use long to avoid overflow
             long pos = 1000L * lastPlayerPosition / duration;
             binding.progress.setEnabled(true);
+            binding.progress.setVisibility(VISIBLE);
             binding.progress.setProgress((int) pos);
             binding.duration.setVisibility(VISIBLE);
-//            binding.timeSeperator.setVisibility(VISIBLE);
+            binding.timeSeperator.setVisibility(VISIBLE);
             binding.currentTime.setVisibility(VISIBLE);
         } else {
             binding.progress.setEnabled(false);
+            binding.progress.setVisibility(INVISIBLE);
             binding.duration.setVisibility(INVISIBLE);
-//            binding.timeSeperator.setVisibility(INVISIBLE);
+            binding.timeSeperator.setVisibility(INVISIBLE);
             binding.currentTime.setVisibility(INVISIBLE);
         }
         int percent = simpleExoPlayer.getBufferedPercentage();
@@ -326,7 +328,7 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
 
     public void onFullScreen(boolean state) {
         if (state) { //fullscreen
-            binding.minimize.setVisibility(INVISIBLE);
+            binding.minimize.setVisibility(GONE);
             binding.drawer.setVisibility(INVISIBLE);
             binding.fullscreen.setImageResource(R.drawable.ic_fullscreen_exit);
         } else {
