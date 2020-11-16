@@ -9,6 +9,7 @@ import android.text.TextUtils
 import android.text.style.StrikethroughSpan
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
@@ -26,9 +27,7 @@ import com.banglalink.toffee.enums.Reaction.*
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Package
 import com.banglalink.toffee.model.UgcCategory
-import com.banglalink.toffee.model.UgcUserChannelInfo
 import com.banglalink.toffee.ui.widget.MultiTextButton
-import com.google.android.material.button.MaterialButton
 
 const val crossFadeDurationInMills = 500
 
@@ -135,40 +134,15 @@ fun bindDuration(view: TextView, channelInfo: ChannelInfo) {
     view.text = channelInfo.formattedDuration
 }
 
-@BindingAdapter("bindSubscriptionStatus")
-fun bindSubscriptionStatus(view: MultiTextButton, channelInfo: ChannelInfo) {
-    view.setSubscriptionInfo(
-        channelInfo.subscription,
-        null
-    )
+@BindingAdapter("bindButtonState")
+fun bindButtonState(view: Button, isPressed: Boolean){
+    view.isPressed = isPressed
 }
 
 @BindingAdapter("bindSubscriptionStatus")
-fun bindSubscriptionStatus(view: MultiTextButton, channelInfo: UgcUserChannelInfo) {
+fun bindSubscriptionStatus(view: MultiTextButton, isSubscribed: Boolean) {
     view.setSubscriptionInfo(
-        channelInfo.isSubscribed == 1,
-        null
-    )
-}
-
-@BindingAdapter("bindTextColor")
-fun bindTextColor(view: MaterialButton, myRating: Int) {
-    if (myRating > 0) {
-        view.setIconTintResource(android.R.color.white)
-        view.setTextColor(ContextCompat.getColor(view.context, android.R.color.white))
-        view.background.setTint(ContextCompat.getColor(view.context, R.color.dark_green))
-    }
-    else {
-        view.setIconTintResource(R.color.dark_green)
-        view.setTextColor(ContextCompat.getColor(view.context, R.color.dark_green))
-        view.background.setTint(ContextCompat.getColor(view.context, R.color.screen_bg_white))
-    }
-}
-
-@BindingAdapter("bindSubscriptionStatus")
-fun bindSubscriptionStatus(view: MultiTextButton, isSubscribed: Int) {
-    view.setSubscriptionInfo(
-        isSubscribed == 1,
+        isSubscribed,
         null
     )
 }

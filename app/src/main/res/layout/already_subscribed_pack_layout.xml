@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:elevation="5dp"
-        app:cardCornerRadius="@dimen/pack_corner_radious"
+        app:cardCornerRadius="@dimen/pack_corner_radius"
 
         >
 
@@ -110,7 +110,7 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:layout_marginEnd="8dp"
-                android:tint="@color/colorAccent"
+                app:tint="@color/colorAccent"
                 app:layout_constraintBottom_toBottomOf="@+id/channel_list_tv"
                 app:layout_constraintEnd_toStartOf="@+id/guideline3"
                 app:layout_constraintTop_toTopOf="@+id/channel_list_tv"

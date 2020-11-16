@@ -5,22 +5,20 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import com.banglalink.toffee.R
 import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.home.HomeViewModel
-import com.banglalink.toffee.ui.widget.MyPopupWindow
 import com.banglalink.toffee.ui.home.OptionCallBack
-import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.util.unsafeLazy
+import com.banglalink.toffee.ui.widget.MyPopupWindow
 
 abstract class HomeBaseFragment:Fragment(), OptionCallBack {
 
     val homeViewModel by activityViewModels<HomeViewModel>()
 
     override fun onOptionClicked(anchor: View, channelInfo: ChannelInfo) {
-        val popupMenu = MyPopupWindow(context!!, anchor)
+        val popupMenu = MyPopupWindow(requireContext(), anchor)
         popupMenu.inflate(R.menu.menu_catchup_item)
 
         if (channelInfo.favorite == null || channelInfo.favorite == "0") {
@@ -31,6 +29,8 @@ abstract class HomeBaseFragment:Fragment(), OptionCallBack {
         if(hideNotInterestedMenuItem(channelInfo)){//we are checking if that could be shown or not
             popupMenu.menu.getItem(2).isVisible = false
         }
+        popupMenu.menu.findItem(R.id.menu_share).isVisible = hideShareMenuItem()
+        
         popupMenu.setOnMenuItemClickListener{
             when(it?.itemId){
                 R.id.menu_share->{
@@ -59,6 +59,10 @@ abstract class HomeBaseFragment:Fragment(), OptionCallBack {
             }
         }
         popupMenu.show()
+    }
+
+    open fun hideShareMenuItem(hide: Boolean = false): Boolean {
+        return hide
     }
 
     //hook for subclass for to hide Not Interested Menu Item.

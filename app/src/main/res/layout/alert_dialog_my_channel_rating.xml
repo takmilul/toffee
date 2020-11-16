@@ -43,13 +43,15 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
         
-                <RatingBar
+                <androidx.appcompat.widget.AppCompatRatingBar
                     android:id="@+id/ratingBar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:numStars="5"
                     style="@style/CustomRatingBarStyle"
                     android:layout_margin="16dp"
+                    android:progressTint="@color/ratingIconColor"
+                    android:progressBackgroundTint="@color/lightGray"
                     app:layout_constraintBottom_toTopOf="@id/submitButton"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

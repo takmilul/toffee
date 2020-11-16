@@ -20,4 +20,5 @@
     <color name="tab_unselected">#7F96B4</color>
     <color name="cardOverlayColor">#B8000000</color>
     <color name="reverseBgColor">#FFFFFF</color>
+    <color name="ratingIconColor">#FF3988</color>
 </resources>

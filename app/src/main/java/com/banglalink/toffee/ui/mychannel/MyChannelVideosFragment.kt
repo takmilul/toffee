@@ -80,6 +80,7 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
             else {
                 inflate(R.menu.menu_channel_videos)
             }
+            this.menu.removeItem(R.id.menu_share)
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_edit_content -> {
@@ -168,5 +169,10 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
     override fun onReactionClicked(view: View, item: ChannelInfo) {
         super.onReactionClicked(view, item)
         AlertDialogReactionFragment.newInstance(view, item).show(requireActivity().supportFragmentManager, "ReactionDialog")
+    }
+
+    override fun onShareClicked(view: View, item: ChannelInfo) {
+        super.onShareClicked(view, item)
+        homeViewModel.shareContentLiveData.postValue(item)
     }
 }

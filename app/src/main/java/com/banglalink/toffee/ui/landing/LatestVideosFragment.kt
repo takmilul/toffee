@@ -55,6 +55,11 @@ class LatestVideosFragment: HomeBaseFragment() {
                 super.onReactionClicked(view, item)
                 AlertDialogReactionFragment.newInstance(view, item).show(requireActivity().supportFragmentManager, "ReactionDialog")
             }
+
+            override fun onShareClicked(view: View, item: ChannelInfo) {
+                super.onShareClicked(view, item)
+                homeViewModel.shareContentLiveData.postValue(item)
+            }
         })
 
         with(latestVideosList) {
@@ -91,6 +96,11 @@ class LatestVideosFragment: HomeBaseFragment() {
     }
 
     private fun openMenu(view: View, item: ChannelInfo) {
+        hideShareMenuItem(true)
         super.onOptionClicked(view, item)
+    }
+
+    override fun hideShareMenuItem(hide: Boolean): Boolean {
+        return hide
     }
 }

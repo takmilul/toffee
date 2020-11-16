@@ -32,6 +32,7 @@
     <color name="view_all_txt_color">@android:color/black</color>
 
     <color name="darker_gray">#7E7E7E</color>
+    <color name="lightGray">#e0e0e0</color>
     <color name="searchview_input_text_color">#29466B</color>
     <color name="tab_unselected">#29466B</color>
 
@@ -64,4 +65,6 @@
     <color name="approvalPendingColor">#FF8B57</color>
     <color name="reverseBgColor">#000000</color>
     <color name="backgroundAlpha">#80ffffff</color>
+    <color name="ratingIconColor">#29466B</color>
+    <color name="ratingButtonActiveColor">#BED6F3</color>
 </resources>

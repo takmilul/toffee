@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_pressed="true">
+        <layer-list>
+            <item>
+                <shape>
+                    <stroke android:color="@color/ratingIconColor" />
+                    <solid android:color="@color/ratingButtonActiveColor" />
+                    <corners android:radius="30dp" />
+                    <padding
+                        android:bottom="6dp"
+                        android:left="10dp"
+                        android:right="10dp"
+                        android:top="6dp" />
+                </shape>
+            </item>
+            <item
+                android:drawable="@drawable/ic_rating"
+                android:left="12dp"
+                android:right="12dp"
+                android:gravity="center"/>
+        </layer-list>
+    </item>
+    <item android:state_activated="true">
+        <layer-list>
+            <item>
+                <shape>
+                    <stroke android:color="@color/ratingIconColor" />
+                    <solid android:color="@color/ratingButtonActiveColor" />
+                    <corners android:radius="30dp" />
+                    <padding
+                        android:bottom="6dp"
+                        android:left="10dp"
+                        android:right="10dp"
+                        android:top="6dp" />
+                </shape>
+            </item>
+            <item
+                android:drawable="@drawable/ic_rating"
+                android:left="12dp"
+                android:right="12dp"
+                android:gravity="center"/>
+        </layer-list>
+    </item>
+    <item>
+        <layer-list>
+            <item android:gravity="center">
+                <shape>
+                    <stroke
+                        android:width="1dp"
+                        android:color="@color/ratingIconColor" />
+                    <corners android:radius="1000dp" />
+                    <padding
+                        android:bottom="6dp"
+                        android:left="10dp"
+                        android:right="10dp"
+                        android:top="6dp" />
+                </shape>
+            </item>
+            <item
+                android:drawable="@drawable/ic_rating"
+                android:left="12dp"
+                android:right="12dp"
+                android:gravity="center"/>
+        </layer-list>
+    </item>
+
+</selector>

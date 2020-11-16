@@ -64,7 +64,7 @@
 
         <com.banglalink.toffee.ui.widget.MultiTextButton
             android:id="@+id/multiTextButton"
-            bindSubscriptionStatus="@{data}"
+            bindSubscriptionStatus="@{data.isSubscribed == 1}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"

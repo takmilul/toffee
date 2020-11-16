@@ -12,7 +12,7 @@
     <androidx.cardview.widget.CardView
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        app:cardCornerRadius="@dimen/pack_corner_radious"
+        app:cardCornerRadius="@dimen/pack_corner_radius"
         android:elevation="5dp"
         android:layout_margin="5dp"
 

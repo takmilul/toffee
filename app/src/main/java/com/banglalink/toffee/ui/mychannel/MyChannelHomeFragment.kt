@@ -24,7 +24,7 @@ import com.banglalink.toffee.model.MyChannelDetail
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.ViewPagerAdapter
-import com.google.android.material.button.MaterialButton
+import com.banglalink.toffee.util.bindButtonState
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.alert_dialog_my_channel_rating.view.*
@@ -39,7 +39,6 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
     private var isOwner: Int = 0
     private var channelId: Int = 0
     private var channelOwnerId: Int = 0
-    private var isRated: Int = 0
     private var rating: Float = 0.0f
     private var myRating: Int = 0
     private var isSubscribed: Int = 0
@@ -103,7 +102,6 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
         binding.lifecycleOwner = this
         binding.isOwner = isOwner
         binding.isSubscribed = isSubscribed
-        binding.isRated = isRated
         binding.viewModel = viewModel
         return binding.root
     }
@@ -170,17 +168,17 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
         dialogView.ratingBar.setOnRatingBarChangeListener { _, rating, _ ->
             newRating = rating
             dialogView.submitButton.isEnabled = rating > 0
-            isRated = if (rating > 0) 1 else 0
-            myRating = if (rating > 0) rating.toInt() else 0
         }
 
         val alertDialog: android.app.AlertDialog = dialogBuilder.create()
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         alertDialog.show()
         dialogView.submitButton.setOnClickListener {
+            myRating = newRating.toInt()
             viewModel.rateMyChannel(newRating)
             alertDialog.dismiss()
         }
+        alertDialog.setOnDismissListener { bindButtonState(binding.channelDetailView.ratingButton, myRating > 0) }
     }
 
     private fun showCreatePlaylistDialog() {
@@ -213,8 +211,6 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
                         isSubscribed = it.data.isSubscribed
                         rating = it.data.ratingCount
                         myRating = it.data.myRating
-                        isRated = it.data.isRated
-                        binding.isRated = isRated
                         binding.myRating = myRating
                         binding.channelDetailView.subscriptionCountTextView.text = it.data.subscriberCount.toString()
                         Log.i("UGC_Home", "Detail Response Success -- isSubscribed: ${isSubscribed}, subscribeCount: ${it.data.subscriberCount}")
@@ -339,10 +335,9 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
         observe(viewModel.ratingLiveData) {
             when (it) {
                 is Success -> {
-                    binding.isRated = it.data.isRated
                     binding.myRating = myRating
                     binding.channelDetailView.ratingButton.text = myRating.toString()
-                    bindTextColor(binding.channelDetailView.ratingButton, myRating)
+                    bindButtonState(binding.channelDetailView.ratingButton, myRating > 0)
                     binding.channelDetailView.ratingCountTextView.text = it.data.ratingCount.toString()
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
                 }
@@ -350,19 +345,6 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
                     Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
                 }
             }
-        }
-    }
-
-    fun bindTextColor(view: MaterialButton, myRating: Int) {
-        if (myRating > 0) {
-            view.setIconTintResource(android.R.color.white)
-            view.setTextColor(Color.parseColor("#FFFFFF"))
-            view.background.setTint(Color.parseColor("#58DC3F"))
-        }
-        else {
-            view.setIconTintResource(R.color.dark_green)
-            view.setTextColor(Color.parseColor("#58DC3F"))
-            view.background.setTint(Color.parseColor("#FFFFFF"))
         }
     }
 

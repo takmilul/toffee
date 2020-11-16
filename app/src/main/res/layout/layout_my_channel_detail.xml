@@ -28,16 +28,14 @@
         android:layout_height="wrap_content"
         android:background="@color/screen_bg_white">
         
-        <com.banglalink.toffee.ui.widget.CustomImageView
+        <ImageView
             android:id="@+id/posterView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="160dp"
             android:adjustViewBounds="true"
-            android:minHeight="200dp"
             android:src="@drawable/placeholder"
-            android:scaleType="fitXY"
+            android:scaleType="centerCrop"
             loadImageFromUrl="@{data.myChannelDetail.bannerUrl}"
-            app:layout_constraintDimensionRatio="W,16:9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -47,6 +45,8 @@
             android:layout_width="104dp"
             android:layout_height="104dp"
             android:layout_margin="4dp"
+            app:civ_border_width="1dp"
+            app:civ_border_color="@android:color/white"
             android:src="@drawable/ic_profile_default"
             loadImageFromUrlRounded="@{data.myChannelDetail.profileUrl}"
             app:layout_constraintBottom_toBottomOf="@+id/posterView"
@@ -59,7 +59,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
             android:text='@{(data.myChannelDetail.channelName == null || data.myChannelDetail.channelName.empty) ? "Channel Name" : data.myChannelDetail.channelName}'
             tools:text="National Geographic"
@@ -73,7 +73,7 @@
             android:id="@+id/addBioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_margin="8dp"
             android:gravity="center"
             android:text="Add Bio"
             android:visibility="@{isOwner == 1 &amp;&amp; (data.myChannelDetail.description == null || data.myChannelDetail.description.empty) ? View.VISIBLE : View.GONE}"
@@ -87,7 +87,8 @@
             android:id="@+id/channelDescriptionTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_marginVertical="8dp"
+            android:layout_marginHorizontal="16dp"
             android:ellipsize="end"
             android:gravity="center"
             android:maxLines="3"
@@ -115,8 +116,8 @@
         
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/expandButton"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_marginTop="8dp"
             android:src="@drawable/ic_down_arrow"
             android:scaleType="center"
@@ -132,14 +133,28 @@
             android:visibility="@{addBioButton.visibility == View.VISIBLE ? View.GONE : View.VISIBLE}"
             app:constraint_referenced_ids="channelDescriptionTextView,expandButton" />
 
-        <com.google.android.material.button.MaterialButton
+        <android.widget.Button
+            android:id="@+id/ratingButton"
+            style="@style/ToffeeButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginVertical="8dp"
+            bindButtonState="@{data.myRating > 0}"
+            android:background="@drawable/rating_bg_round"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/subscriptionButton"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/expandButton" />
+        
+        <!--<com.google.android.material.button.MaterialButton
             style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
             android:id="@+id/ratingButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginVertical="8dp"
             android:text='@{data.myRating > 0 ? String.valueOf(data.myRating) : "Rate"}'
             android:textAllCaps="false"
             app:icon="@drawable/ic_rating_fill"
@@ -156,7 +171,7 @@
             app:layout_constraintEnd_toStartOf="@+id/subscriptionButton"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/expandButton" />
+            app:layout_constraintTop_toBottomOf="@+id/expandButton" />-->
         
         <TextView
             android:id="@+id/ratingCountTextView"
@@ -191,7 +206,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="16dp"
             android:text="Subscription"
-            bindSubscriptionStatus="@{isSubscribed}"
+            bindSubscriptionStatus="@{isSubscribed==1}"
             app:layout_constraintBottom_toBottomOf="@id/ratingButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/ratingButton"
@@ -209,8 +224,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginVertical="8dp"
             android:text="Edit Channel"
             android:textAllCaps="false"
             android:textColor="@color/purple"
