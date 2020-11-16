@@ -117,7 +117,7 @@
                 android:id="@+id/reactIcon"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:background="@color/overlay_dark_color"
+                android:background="@color/backgroundAlpha"
                 loadReactionEmo="@{data.activitySubType}"
                 android:scaleType="center"
                 app:layout_constraintEnd_toStartOf="@+id/guideline6"
