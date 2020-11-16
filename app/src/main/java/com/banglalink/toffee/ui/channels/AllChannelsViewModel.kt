@@ -1,7 +1,9 @@
 package com.banglalink.toffee.ui.channels
 
 import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.MutableLiveData
 import com.banglalink.toffee.apiservice.GetChannelWithCategory
+import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.util.getError
@@ -11,6 +13,8 @@ import kotlinx.coroutines.flow.flow
 class AllChannelsViewModel @ViewModelInject constructor(
     private val allChannelService: GetChannelWithCategory
 ): BaseViewModel() {
+
+    val selectedChannel = MutableLiveData<ChannelInfo?>()
 
     operator fun invoke(subcategoryId: Int): Flow<Resource<List<StickyHeaderInfo>>> {
         return flow<Resource<List<StickyHeaderInfo>>> {

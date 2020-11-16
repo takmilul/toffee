@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.R
+import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.ChannelInfo
@@ -44,7 +45,8 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
         fun createInstance(
             subCategoryID: Int,
             subCategory: String,
-            category: String
+            category: String,
+            showSelected: Boolean = false
         ): ChannelFragment {
             val channelListFragment = ChannelFragment()
             val bundle = Bundle()
@@ -52,14 +54,17 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
             bundle.putString("sub-category", subCategory)
             bundle.putString("category", category)
             bundle.putString("title", "TV Channels")
+            bundle.putBoolean("show_selected", showSelected)
             channelListFragment.arguments = bundle
             return channelListFragment
         }
 
-        fun createInstance(category: String): ChannelFragment {
+        fun createInstance(category: String,
+                           showSelected: Boolean = false): ChannelFragment {
             val bundle = Bundle()
             val instance = ChannelFragment()
             bundle.putString("category", category)
+            bundle.putBoolean("show_selected", showSelected)
             instance.arguments = bundle
             return instance
         }
@@ -115,6 +120,13 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
                             context?.showToast(it.error.msg)
                         }
                     }
+            }
+        }
+
+        if(arguments?.getBoolean("show_selected") == true) {
+            observe(channelViewModel.selectedChannel) {
+                channelAdapter.setSelected(it)
+//            detailsAdapter?.setChannelInfo(it)
             }
         }
     }
