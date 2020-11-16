@@ -20,6 +20,7 @@ import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.common.SingleListItemCallback
 import com.banglalink.toffee.ui.home.FeaturedCategoryListAdapter
 import com.banglalink.toffee.ui.home.LandingPageViewModel
+import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.bindCategoryImage
 import com.banglalink.toffee.util.bindImageFromUrl
 import com.google.android.material.chip.Chip
@@ -76,9 +77,9 @@ class CategoryInfoFragment: HomeBaseFragment() {
         observeList()
         observeCategoryData()
 
-        /*follow_button.setOnClickListener {
+        follow_button.setOnClickListener {
             viewModel.updateFollow(categoryInfo.id.toInt())
-        }*/
+        }
     }
 
     private fun observeList() {
@@ -116,13 +117,13 @@ class CategoryInfoFragment: HomeBaseFragment() {
             }
         }
 
-        /*observe(viewModel.followerCount) {
+        observe(viewModel.followerCount) {
             follower_count.text = "${Utils.getFormattedViewsText(it.toString())} Followers"
         }
 
         observe(viewModel.isCategoryFollowing) {
             follow_button.text = if(it == 0) "Follow" else "Followed"
-        }*/
+        }
     }
 
     private fun addChip(subCategory: UgcSubCategory): Chip {
