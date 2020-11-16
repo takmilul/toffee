@@ -13,10 +13,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.banglalink.toffee.R
 import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.model.*
+import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.UgcCategory
+import com.banglalink.toffee.model.UgcSubCategory
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.common.SingleListItemCallback
-import com.banglalink.toffee.ui.home.*
+import com.banglalink.toffee.ui.home.FeaturedCategoryListAdapter
+import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.bindCategoryImage
 import com.banglalink.toffee.util.bindImageFromUrl
