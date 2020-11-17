@@ -70,6 +70,8 @@ Day 21 - AUS vs IND" />
             android:layout_height="56dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:onClick="@{()-> callback.onProviderIconClicked(data)}"
+            tools:src="@drawable/ic_profile_default"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView25" />
 

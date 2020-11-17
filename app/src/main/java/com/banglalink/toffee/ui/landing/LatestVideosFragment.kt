@@ -22,7 +22,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
-class LatestVideosFragment: HomeBaseFragment() {
+class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelInfo> {
     private lateinit var mAdapter: PopularVideoListAdapter
 
     private val viewModel by activityViewModels<LandingPageViewModel>()
@@ -42,25 +42,7 @@ class LatestVideosFragment: HomeBaseFragment() {
 
         category = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM) as UgcCategory?
 
-        mAdapter = PopularVideoListAdapter(object : ContentReactionCallback<ChannelInfo> {
-            override fun onItemClicked(item: ChannelInfo) {
-                homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
-            }
-
-            override fun onOpenMenu(view: View, item: ChannelInfo) {
-                openMenu(view, item)
-            }
-
-            override fun onReactionClicked(view: View, item: ChannelInfo) {
-                super.onReactionClicked(view, item)
-                AlertDialogReactionFragment.newInstance(view, item).show(requireActivity().supportFragmentManager, "ReactionDialog")
-            }
-
-            override fun onShareClicked(view: View, item: ChannelInfo) {
-                super.onShareClicked(view, item)
-                homeViewModel.shareContentLiveData.postValue(item)
-            }
-        })
+        mAdapter = PopularVideoListAdapter(this)
 
         with(latestVideosList) {
             adapter = mAdapter
@@ -90,7 +72,29 @@ class LatestVideosFragment: HomeBaseFragment() {
             }
         }
     }
+    override fun onItemClicked(item: ChannelInfo) {
+        homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+    }
 
+    override fun onOpenMenu(view: View, item: ChannelInfo) {
+        openMenu(view, item)
+    }
+
+    override fun onReactionClicked(view: View, item: ChannelInfo) {
+        super.onReactionClicked(view, item)
+        AlertDialogReactionFragment.newInstance(view, item).show(requireActivity().supportFragmentManager, "ReactionDialog")
+    }
+
+    override fun onShareClicked(view: View, item: ChannelInfo) {
+        super.onShareClicked(view, item)
+        homeViewModel.shareContentLiveData.postValue(item)
+    }
+
+    override fun onProviderIconClicked(item: ChannelInfo) {
+        super.onProviderIconClicked(item)
+        viewModel.navigateToMyChannel(this, item.content_provider_id!!, item.isSubscribed)
+    }
+    
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
 
     }

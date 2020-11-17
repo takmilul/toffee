@@ -16,7 +16,7 @@ class MyChannelGetDetailService @Inject constructor(private val preference: Pref
             toffeeApi.getMyChannelDetails(
                 channelOwnerId,
                 isOwner,
-                isPublic,
+//                isPublic,
                 channelId,
                 preference.getDBVersionByApiName("getUgcChannelDetails"),
                 MyChannelDetailRequest(

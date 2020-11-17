@@ -1,13 +1,14 @@
 package com.banglalink.toffee.ui.common
 
+import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import android.view.LayoutInflater
+import androidx.recyclerview.widget.RecyclerView
+import com.banglalink.toffee.common.paging.BaseListItemCallback
 
 
-abstract class MyBaseAdapterV2<T: Any>(val callback: SingleListItemCallback<T>? = null)
+abstract class MyBaseAdapterV2<T: Any>(val callback: BaseListItemCallback<T>? = null)
     :RecyclerView.Adapter<MyViewHolderV2>() {
 
     protected val values: MutableList<T> = mutableListOf()

@@ -7,12 +7,12 @@ import androidx.databinding.ViewDataBinding
 import androidx.paging.PagingDataAdapter
 import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
+import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.common.paging.BaseViewHolder
 import com.banglalink.toffee.common.paging.ItemComparator
 import com.banglalink.toffee.model.MyChannelPlaylist
-import com.banglalink.toffee.ui.common.SingleListItemCallback
 
-class MyChannelAddToPlaylistAdapter(private val callback: SingleListItemCallback<MyChannelPlaylist>): PagingDataAdapter<MyChannelPlaylist, BaseViewHolder>(ItemComparator()) {
+class MyChannelAddToPlaylistAdapter(private val callback: BaseListItemCallback<MyChannelPlaylist>): PagingDataAdapter<MyChannelPlaylist, BaseViewHolder>(ItemComparator()) {
     
     var selectedPosition = -1
         private set

@@ -12,12 +12,12 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.banglalink.toffee.R
+import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.model.UgcSubCategory
 import com.banglalink.toffee.ui.common.HomeBaseFragment
-import com.banglalink.toffee.ui.common.SingleListItemCallback
 import com.banglalink.toffee.ui.home.FeaturedCategoryListAdapter
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.util.Utils
@@ -33,7 +33,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class CategoryInfoFragment: HomeBaseFragment() {
+class CategoryInfoFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo> {
     private lateinit var mAdapter: FeaturedCategoryListAdapter
     private val viewModel by viewModels<CategoryInfoViewModel>()
     private val landingViewModel by activityViewModels<LandingPageViewModel>()
@@ -52,11 +52,7 @@ class CategoryInfoFragment: HomeBaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         categoryInfo = requireParentFragment().requireArguments().getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)!!
 
-        mAdapter = FeaturedCategoryListAdapter(object: SingleListItemCallback<ChannelInfo> {
-            override fun onItemClicked(item: ChannelInfo) {
-                homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
-            }
-        })
+        mAdapter = FeaturedCategoryListAdapter(this)
 
         with(categoryListPager) {
             adapter = mAdapter
@@ -79,6 +75,9 @@ class CategoryInfoFragment: HomeBaseFragment() {
 
         follow_button.setOnClickListener {
             viewModel.updateFollow(categoryInfo.id.toInt())
+        }
+        channelLogo.setOnClickListener{
+//            landingViewModel.redirectToChannel(this, )
         }
     }
 
@@ -181,7 +180,16 @@ class CategoryInfoFragment: HomeBaseFragment() {
             }
         }
     }
+    
+    override fun onItemClicked(item: ChannelInfo) {
+        homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+    }
 
+    override fun onProviderIconClicked(item: ChannelInfo) {
+        super.onProviderIconClicked(item)
+        landingViewModel.navigateToMyChannel(this, item.content_provider_id!!, item.isSubscribed)
+    }
+    
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
 
     }

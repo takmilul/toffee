@@ -40,6 +40,9 @@
         <action
             android:id="@+id/action_menu_feed_to_editUploadInfoFragment"
             app:destination="@id/editUploadInfoFragment" />
+        <action
+            android:id="@+id/action_menu_feed_to_catchupDetailsFragment"
+            app:destination="@id/catchupDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/menu_tv"
@@ -261,5 +264,13 @@
         <action
             android:id="@+id/action_myChannelVideosEditFragment_to_thumbnailSelectionMethodFragment"
             app:destination="@id/thumbnailSelectionMethodFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/catchupDetailsFragment"
+        android:name="com.banglalink.toffee.ui.home.CatchupDetailsFragment"
+        android:label="CatchupDetailsFragment" >
+        <action
+            android:id="@+id/action_catchupDetailsFragment_to_myChannelHomeFragment"
+            app:destination="@id/myChannelHomeFragment" />
     </fragment>
 </navigation>

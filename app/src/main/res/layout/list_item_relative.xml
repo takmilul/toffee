@@ -10,7 +10,7 @@
             type="com.banglalink.toffee.model.ChannelInfo" />
         <variable
             name="callback"
-            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
+            type="com.banglalink.toffee.common.paging.ProviderIconCallback" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -41,6 +41,7 @@
                 android:layout_height="@dimen/catchup_height"
                 android:layout_gravity="center"
                 android:scaleType="centerCrop"
+                tools:src="@drawable/placeholder"
                 app:layout_constraintDimensionRatio="W,16:9" />
 
 
@@ -80,8 +81,10 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginTop="8dp"
+            android:onClick="@{()-> callback.onProviderIconClicked(data)}"
             app:layout_constraintStart_toStartOf="@+id/name"
-            app:layout_constraintTop_toBottomOf="@+id/name" />
+            app:layout_constraintTop_toBottomOf="@+id/name"
+            tools:src="@drawable/ic_profile_default"/>
 
         <TextView
             style="@style/TitleBoldTextStyle"
@@ -92,7 +95,7 @@
             android:layout_marginEnd="8dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="@{data.content_provider_name}"
+            android:text='@{data.content_provider_name + " - " + data.formattedCreateTime}'
             app:layout_constraintBottom_toBottomOf="@+id/ownerPicture"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/ownerPicture"
@@ -105,12 +108,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#AA000000"
-            android:paddingStart="4dp"
-            android:paddingTop="2dp"
-            android:paddingEnd="4dp"
-            android:paddingBottom="2dp"
+            android:paddingHorizontal="@dimen/duration_horizontal_padding"
+            android:paddingVertical="@dimen/duration_vertical_padding"
             android:textColor="@android:color/white"
-            android:textSize="12sp"
+            android:textSize="@dimen/duration_text_size"
             app:layout_constraintBottom_toBottomOf="@+id/poster_container"
             app:layout_constraintEnd_toEndOf="@+id/poster_container"
             tools:text="00:00" />

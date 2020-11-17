@@ -1,11 +1,11 @@
 package com.banglalink.toffee.ui.home
 
 import com.banglalink.toffee.R
+import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.MyBaseAdapterV2
-import com.banglalink.toffee.ui.common.SingleListItemCallback
 
-class FeaturedCategoryListAdapter(cb: SingleListItemCallback<ChannelInfo>)
+class FeaturedCategoryListAdapter(cb: ProviderIconCallback<ChannelInfo>)
     :MyBaseAdapterV2<ChannelInfo>(cb){
 
     override fun getLayoutIdForPosition(position: Int): Int {

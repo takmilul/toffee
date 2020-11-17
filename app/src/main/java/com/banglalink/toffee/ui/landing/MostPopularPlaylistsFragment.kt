@@ -8,12 +8,12 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
-import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelPlaylist
 import com.banglalink.toffee.ui.category.CategoryDetailsFragmentDirections
 import com.banglalink.toffee.ui.common.HomeBaseFragment
+import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.home.MostPopularPlaylistsAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.fragment_most_popular.*
 import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
-class MostPopularPlaylistsFragment: HomeBaseFragment() {
+class MostPopularPlaylistsFragment: HomeBaseFragment(), ProviderIconCallback<MyChannelPlaylist> {
     private lateinit var mAdapter: MostPopularPlaylistsAdapter
 
     val viewModel by activityViewModels<LandingPageViewModel>()
@@ -37,14 +37,7 @@ class MostPopularPlaylistsFragment: HomeBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mAdapter = MostPopularPlaylistsAdapter(object : BaseListItemCallback<MyChannelPlaylist> {
-            override fun onItemClicked(item: MyChannelPlaylist) {
-//                homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
-                val isOwner = if(item.channelCreatorId == Preference.getInstance().customerId) 1 else 0
-                val action = CategoryDetailsFragmentDirections.actionCategoryDetailsFragmentToMyChannelPlaylistVideosFragment(item.channelCreatorId, isOwner, item.playlistTableId)
-                findNavController().navigate(action)
-            }
-        })
+        mAdapter = MostPopularPlaylistsAdapter(this)
 
         with(mostPopularList) {
             adapter = mAdapter
@@ -60,7 +53,18 @@ class MostPopularPlaylistsFragment: HomeBaseFragment() {
             }
         }
     }
+    override fun onItemClicked(item: MyChannelPlaylist) {
+//                homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+        val isOwner = if(item.channelCreatorId == Preference.getInstance().customerId) 1 else 0
+        val action = CategoryDetailsFragmentDirections.actionCategoryDetailsFragmentToMyChannelPlaylistVideosFragment(item.channelCreatorId, isOwner, item.playlistTableId)
+        findNavController().navigate(action)
+    }
 
+    override fun onProviderIconClicked(item: MyChannelPlaylist) {
+        super.onProviderIconClicked(item)
+        viewModel.navigateToMyChannel(this, item.channelCreatorId.toString(), false)
+    }
+    
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
 
     }

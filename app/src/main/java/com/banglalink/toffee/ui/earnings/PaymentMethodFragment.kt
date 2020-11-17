@@ -5,11 +5,11 @@ import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
+import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.model.PaymentMethod
 import com.banglalink.toffee.ui.common.SingleListFragmentV2
-import com.banglalink.toffee.ui.common.SingleListItemCallback
 
-class PaymentMethodFragment : SingleListFragmentV2<PaymentMethod>(), SingleListItemCallback<PaymentMethod> {
+class PaymentMethodFragment : SingleListFragmentV2<PaymentMethod>(), BaseListItemCallback<PaymentMethod> {
 
     private var enableToolbar: Boolean = false
 

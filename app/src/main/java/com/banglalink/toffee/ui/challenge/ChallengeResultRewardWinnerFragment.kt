@@ -8,15 +8,15 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.banglalink.toffee.R
+import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChallengeReward
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
-import com.banglalink.toffee.ui.common.SingleListItemCallback
 import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.android.synthetic.main.fragment_challenge_result_reward_winner.*
 
-class ChallengeResultRewardWinnerFragment: Fragment(), SingleListItemCallback<ChallengeReward> {
+class ChallengeResultRewardWinnerFragment: Fragment(), BaseListItemCallback<ChallengeReward> {
     private lateinit var mAdapter: ChallengeResultRewardWinnerAdapter
 
     val viewModel by unsafeLazy {

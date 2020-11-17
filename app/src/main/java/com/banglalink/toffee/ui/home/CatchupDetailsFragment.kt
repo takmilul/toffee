@@ -9,7 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
-import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
@@ -30,6 +30,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
     private lateinit var currentItem: ChannelInfo
 
     private val viewModel by viewModels<CatchupDetailsViewModel>()
+    private val landingViewModel by viewModels<LandingPageViewModel>()
 
     companion object{
         const val CHANNEL_INFO = "channel_info_"
@@ -96,13 +97,18 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
     }
     
     private fun initAdapter() {
-        catchupAdapter = CatchUpDetailsAdapter(object: BaseListItemCallback<ChannelInfo> {
+        catchupAdapter = CatchUpDetailsAdapter(object : ProviderIconCallback<ChannelInfo> {
             override fun onItemClicked(item: ChannelInfo) {
                 homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
             }
 
             override fun onOpenMenu(view: View, item: ChannelInfo) {
                 openMenu(view, item)
+            }
+
+            override fun onProviderIconClicked(item: ChannelInfo) {
+                super.onProviderIconClicked(item)
+                landingViewModel.navigateToMyChannel(this@CatchupDetailsFragment, item.content_provider_id!!, item.isSubscribed)
             }
         })
         detailsAdapter = ChannelHeaderAdapter(currentItem, this)
@@ -123,6 +129,11 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
             .show(requireActivity().supportFragmentManager, "ReactionDialog")
     }
 
+    override fun onProviderIconClicked(item: ChannelInfo) {
+        super.onProviderIconClicked(item)
+        landingViewModel.navigateToMyChannel(this, item.content_provider_id!!, item.isSubscribed)
+    }
+
     override fun onOpenMenu(view: View, item: ChannelInfo) {
         super.onOpenMenu(view, item)
         openMenu(view, item)
@@ -134,7 +145,8 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
 
         if (channelInfo.favorite == null || channelInfo.favorite == "0") {
             popupMenu.menu.getItem(0).title = "Add to Favorites"
-        } else {
+        }
+        else {
             popupMenu.menu.getItem(0).title = "Remove from Favorites"
         }
         if(hideNotInterestedMenuItem(channelInfo)){//we are checking if that could be shown or not

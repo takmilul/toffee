@@ -14,7 +14,7 @@
             type="java.lang.Integer" />
         <variable
             name="callback"
-            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
+            type="com.banglalink.toffee.common.paging.ProviderIconCallback" />
     </data>
     <LinearLayout
         android:orientation="vertical"
@@ -109,6 +109,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginBottom="8dp"
                 loadImageFromUrlRounded="@{data.channelInfo.channelProfileUrl}"
+                android:onClick="@{()-> callback.onProviderIconClicked(data)}"
                 android:src="@drawable/ic_portrait"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/video_thumb" />

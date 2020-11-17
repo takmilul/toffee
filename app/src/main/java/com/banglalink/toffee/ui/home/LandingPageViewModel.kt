@@ -1,28 +1,27 @@
 package com.banglalink.toffee.ui.home
 
+import android.os.Bundle
+import android.util.Log
+import androidx.fragment.app.Fragment
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.banglalink.toffee.R
 import com.banglalink.toffee.apiservice.*
-import com.banglalink.toffee.apiservice.GetContents
-import com.banglalink.toffee.apiservice.GetFeatureContents
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
 import com.banglalink.toffee.data.network.request.ChannelRequestParams
-import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.extension.setError
-import com.banglalink.toffee.extension.setSuccess
-import com.banglalink.toffee.extension.toLiveData
-import com.banglalink.toffee.model.*
+import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.MyChannelPlaylist
+import com.banglalink.toffee.model.UgcCategory
+import com.banglalink.toffee.model.UgcUserChannelInfo
 import com.banglalink.toffee.ui.common.BaseViewModel
-import com.banglalink.toffee.usecase.*
-import com.banglalink.toffee.util.getError
-import com.banglalink.toffee.util.unsafeLazy
+import com.banglalink.toffee.ui.mychannel.MyChannelHomeFragment
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
 
 class LandingPageViewModel @ViewModelInject constructor(
     private val mostPopularApi: GetMostPopularContents,
@@ -173,5 +172,44 @@ class LandingPageViewModel @ViewModelInject constructor(
 
     fun loadSubcategoryVideos(catId: Int, subCatId: Int) {
         latestVideoLiveData.value = Pair(catId, subCatId)
+    }
+    
+    fun navigateToMyChannel(fragment: Fragment, providerId: String, isSubscribed: Boolean){
+        val customerId = Preference.getInstance().customerId
+        val isOwner = if (providerId.toInt() == customerId) 1 else 0
+        val isPublic = if (providerId.toInt() == customerId) 0 else 1
+        val channelId = providerId.toInt()
+        val subscribed = if(isSubscribed) 1 else 0
+        findNavController(fragment).navigate(R.id.myChannelHomeFragment, Bundle().apply {
+            putInt(MyChannelHomeFragment.IS_SUBSCRIBED, subscribed)
+            Log.i("UGC_Home", "onItemClicked: $subscribed")
+            putInt(MyChannelHomeFragment.IS_OWNER, isOwner)
+            putInt(MyChannelHomeFragment.CHANNEL_ID, channelId)
+            putInt(MyChannelHomeFragment.IS_PUBLIC, isPublic)
+            putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, providerId.toInt())
+            putBoolean(MyChannelHomeFragment.IS_FROM_OUTSIDE, true)
+        })
+        /*if (findNavController(fragment).currentDestination?.id == R.id.menu_feed) {
+            findNavController(fragment).navigate(R.id.action_menu_feed_to_myChannelHomeFragment, Bundle().apply {
+                putInt(MyChannelHomeFragment.IS_SUBSCRIBED, subscribed)
+                Log.i("UGC_Home", "onItemClicked: $subscribed")
+                putInt(MyChannelHomeFragment.IS_OWNER, isOwner)
+                putInt(MyChannelHomeFragment.CHANNEL_ID, channelId)
+                putInt(MyChannelHomeFragment.IS_PUBLIC, isPublic)
+                putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, providerId.toInt())
+                putBoolean(MyChannelHomeFragment.IS_FROM_OUTSIDE, true)
+            })
+        }
+        else {
+            findNavController(fragment).navigate(R.id.action_categoryDetailsFragment_to_myChannelHomeFragment, Bundle().apply {
+                putInt(MyChannelHomeFragment.IS_SUBSCRIBED, subscribed)
+                Log.i("UGC_Home", "onItemClicked: $subscribed")
+                putInt(MyChannelHomeFragment.IS_OWNER, isOwner)
+                putInt(MyChannelHomeFragment.CHANNEL_ID, channelId)
+                putInt(MyChannelHomeFragment.IS_PUBLIC, isPublic)
+                putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, providerId.toInt())
+                putBoolean(MyChannelHomeFragment.IS_FROM_OUTSIDE, true)
+            })
+        }*/
     }
 }

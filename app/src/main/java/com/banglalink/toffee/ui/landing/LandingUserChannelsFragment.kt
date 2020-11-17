@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.landing
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +10,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
-import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
@@ -22,7 +20,6 @@ import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.home.UserChannelsListAdapter
-import com.banglalink.toffee.ui.mychannel.MyChannelHomeFragment
 import com.banglalink.toffee.ui.useractivities.UserActivitiesMainFragment
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -53,7 +50,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
 
         mAdapter = UserChannelsListAdapter(object : LandingPopularChannelCallback {
             override fun onItemClicked(item: UgcUserChannelInfo) {
-                val customerId = Preference.getInstance().customerId
+                /*val customerId = Preference.getInstance().customerId
                 val isOwner = if (item.channelOwnerId == customerId) 1 else 0
                 val isPublic = if (item.channelOwnerId == customerId) 0 else 1
                 val channelId = item.id.toInt()
@@ -78,7 +75,9 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
                         putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, item.channelOwnerId)
                         putBoolean(MyChannelHomeFragment.IS_FROM_OUTSIDE, true)
                     })
-                }
+                }*/
+                
+                viewModel.navigateToMyChannel(this@LandingUserChannelsFragment, item.channelOwnerId.toString(), item.isSubscribed == 1)
             }
 
             override fun onSubscribeButtonClicked(view: View, info: UgcUserChannelInfo) {

@@ -8,15 +8,15 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.banglalink.toffee.R
+import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentChallengeDetailBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
-import com.banglalink.toffee.ui.common.SingleListItemCallback
 import com.banglalink.toffee.util.unsafeLazy
 
-class ChallengeDetailFragment : Fragment(), SingleListItemCallback<String> {
+class ChallengeDetailFragment : Fragment(), BaseListItemCallback<String> {
 
     private lateinit var mAdapter: ChallengeDetailAdapter
     private lateinit var binding: FragmentChallengeDetailBinding

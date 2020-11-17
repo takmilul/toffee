@@ -1,15 +1,14 @@
 package com.banglalink.toffee.ui.useractivities
 
 import com.banglalink.toffee.R
-import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.common.paging.BasePagingDataAdapter
 import com.banglalink.toffee.common.paging.BaseViewHolder
 import com.banglalink.toffee.common.paging.ItemComparator
+import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.data.database.entities.UserActivities
 import com.banglalink.toffee.databinding.TabActivitiesListItemLayout2Binding
-import com.banglalink.toffee.model.ChannelInfo
 
-class UserActivitiesListAdapter(callback: BaseListItemCallback<UserActivities>):
+class UserActivitiesListAdapter(callback: ProviderIconCallback<UserActivities>):
     BasePagingDataAdapter<UserActivities>(callback, ItemComparator()) {
 
     override fun getItemViewType(position: Int): Int {

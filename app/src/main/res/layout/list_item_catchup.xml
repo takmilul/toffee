@@ -79,7 +79,7 @@
             android:maxLines="1"
             android:textColor="@color/second_text_color"
             android:textSize="14sp"
-            android:text="@{data.content_provider_name}"
+            android:text='@{data.content_provider_name + " - " + data.formattedCreateTime}'
             app:layout_constraintEnd_toStartOf="@+id/options"
             app:layout_constraintStart_toStartOf="@+id/name"
             app:layout_constraintTop_toBottomOf="@+id/name"
