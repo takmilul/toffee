@@ -7,8 +7,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.GetProfile
+import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
 import com.banglalink.toffee.data.network.util.resultLiveData
+import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.data.storage.ViewCountDAO
 import com.banglalink.toffee.di.AppCoroutineScope
@@ -24,6 +26,7 @@ import com.banglalink.toffee.usecase.*
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging
+import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +37,8 @@ class HomeViewModel @ViewModelInject constructor(
     private val profileApi: GetProfile,
     private val viewCountDAO: ViewCountDAO,
     private val sendViewContentEvent: SendViewContentEvent,
-    @ApplicationContext private val mContext: Context
+    @ApplicationContext private val mContext: Context,
+    private val tvChannelRepo: TVChannelRepository
 ):BaseViewModel(),OnCompleteListener<InstanceIdResult> {
 
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
@@ -125,6 +129,20 @@ class HomeViewModel @ViewModelInject constructor(
             }catch (e:Exception){
                 e.printStackTrace()
             }
+        }
+    }
+
+    fun addTvChannelToRecent(it: ChannelInfo) {
+        viewModelScope.launch {
+            tvChannelRepo.insertRecentItems(
+                TVChannelItem(
+                    it.id.toLong(),
+                    it.type ?: "LIVE",
+                    0,
+                    "Recent",
+                    Gson().toJson(it)
+                )
+            )
         }
     }
 }

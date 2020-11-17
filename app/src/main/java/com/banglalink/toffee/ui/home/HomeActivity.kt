@@ -50,6 +50,7 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.EXIT_FROM_APP_MSG
 import com.banglalink.toffee.model.NavigationMenu
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.ui.channels.AllChannelsViewModel
 import com.banglalink.toffee.ui.channels.ChannelFragment
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.ui.landing.AllCategoriesFragment
@@ -68,6 +69,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.layout_appbar.view.*
+import kotlinx.android.synthetic.main.list_item_challenges.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.*
@@ -116,6 +118,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     private lateinit var appbarConfig: AppBarConfiguration
 
     private val viewModel: HomeViewModel by viewModels()
+    private val allChannelViewModel by viewModels<AllChannelsViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -508,6 +511,9 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
 
     private fun loadChannel(@Nonnull channelInfo: ChannelInfo) {
         viewModel.sendViewContentEvent(channelInfo)
+        if(channelInfo.isLive) {
+            allChannelViewModel.selectedChannel.postValue(channelInfo)
+        }
         playChannel(channelInfo)
     }
 
@@ -535,6 +541,9 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                 (it.isPurchased || it.isSubscribed) && !it.isExpired(Date())->{
                     maximizePlayer()
                     loadChannel(it)
+                    if(it.isLive) {
+                        viewModel.addTvChannelToRecent(it)
+                    }
                     loadDetailFragment(it)
                 }
                 else ->{
@@ -556,7 +565,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             if (fragment !is ChannelFragment) {
                 loadFragmentById(
                     R.id.details_viewer, ChannelFragment.createInstance(
-                        getString(R.string.menu_channel_text)
+                        getString(R.string.menu_channel_text), showSelected = true
                     )
                 )
             }
@@ -650,6 +659,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     }
 
     override fun onViewDestroy() {
+        allChannelViewModel.selectedChannel.postValue(null)
         clearChannel()
         HeartBeatManager.triggerEventViewingContentStop()
         binding.draggableView.animation = AnimationUtils.loadAnimation(

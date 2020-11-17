@@ -10,7 +10,7 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.ContentReactionCallback
 import com.banglalink.toffee.ui.common.MyViewHolderV2
 
-class ChannelHeaderAdapter(private var channelInfo: ChannelInfo,
+class ChannelHeaderAdapter(private var channelInfo: ChannelInfo? = null,
                            private val cb: ContentReactionCallback<ChannelInfo>? = null)
     :RecyclerView.Adapter<MyViewHolderV2>() {
 
@@ -30,15 +30,17 @@ class ChannelHeaderAdapter(private var channelInfo: ChannelInfo,
 
     override fun onBindViewHolder(holder: MyViewHolderV2, position: Int) {
         viewHolder = holder
-        holder.bind(channelInfo, cb, position)
+        channelInfo?.let {
+            holder.bind(it, cb, position)
+        }
     }
 
     override fun getItemCount(): Int {
-        return 1
+        return if(channelInfo == null) 0 else 1
     }
 
-    fun setChannelInfo(info: ChannelInfo) {
+    fun setChannelInfo(info: ChannelInfo?) {
         channelInfo = info
-        notifyItemChanged(0)
+        notifyDataSetChanged()
     }
 }
