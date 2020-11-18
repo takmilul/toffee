@@ -12,8 +12,10 @@ import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.apiservice.GetUgcCategories
 import com.banglalink.toffee.apiservice.UgcContentEdit
 import com.banglalink.toffee.data.database.entities.UploadInfo
+import com.banglalink.toffee.data.network.response.UgcResponseBean
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.SubCategory
 import com.banglalink.toffee.model.UgcCategory
@@ -58,7 +60,10 @@ class MyChannelVideosEditViewModel @ViewModelInject constructor(
     val ageGroupPosition = MutableLiveData<Int>()
 
     val thumbnailUrl = MutableLiveData<String?>()
-    var bannerBase64: String? = null
+    var bannerBase64: String? = "NULL"
+    
+    private val responseLiveData = MutableLiveData<Resource<UgcResponseBean>>()
+    val editResponse = responseLiveData.toLiveData()
 
 //    val challengeSelectionList = MutableLiveData<List<String>>()
 //    val challengeSelectionPosition = MutableLiveData<Int>()
@@ -143,7 +148,7 @@ class MyChannelVideosEditViewModel @ViewModelInject constructor(
         viewModelScope.launch {
 //            progressDialog.value = true
             val ageGroupId = ageGroupPosition.value ?: -1
-            val resp = try {
+            responseLiveData.value = try {
                 Resource.Success(
                     contentEditApi(
                         contentId,
@@ -153,7 +158,8 @@ class MyChannelVideosEditViewModel @ViewModelInject constructor(
                         tags,
                         ageGroupId.toString(),
                         categoryId,
-                        thumbnailUrl.value
+                        thumbnailUrl.value,
+                        bannerBase64
                     ))
             } catch (ex: Exception) {
                 Resource.Failure(getError(ex))

@@ -12,5 +12,6 @@ data class ContentEditRequest(
     val ageRestriction: String? = null,
     val videoTags: String? = null,
     val keywords: String? = null,
+    val oldContentBanner: String? = null,
     val contentBanner: String? = null,
 ):BaseRequest("ugcContentUpdate")

@@ -2,6 +2,7 @@ package com.banglalink.toffee.ui.mychannel
 
 import android.os.Bundle
 import android.text.InputType
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -19,8 +20,10 @@ import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.databinding.FragmentMyChannelVideosEditBinding
+import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
@@ -86,10 +89,13 @@ class MyChannelVideosEditFragment : BaseFragment() {
         setupTagView()
 //        observeThumbnailLoad()
         observeThumbnailChange()
-//        observeCategory()
+        observeCategory()
         binding.cancelButton.setOnClickListener { findNavController().popBackStack() }
         binding.submitButton.setOnClickListener { submitVideo() }
-        binding.thumbEditButton.setOnClickListener { findNavController().navigate(R.id.action_myChannelVideosEditFragment_to_thumbnailSelectionMethodFragment) }
+        binding.thumbEditButton.setOnClickListener { 
+            val action = MyChannelVideosEditFragmentDirections.actionMyChannelVideosEditFragmentToThumbnailSelectionMethodFragment("Set Video Cover Photo")
+            findNavController().navigate(action) 
+        }
 
         uploadInfo?.let { info ->
             viewModel.initUploadInfo(info)
@@ -97,6 +103,14 @@ class MyChannelVideosEditFragment : BaseFragment() {
                 binding.uploadTags.addChip(it, null)
             }
             binding.uploadTitle.requestFocus()
+        }
+    }
+
+    private fun observeCategory() {
+        observe(viewModel.categories){
+            if(it.isNotEmpty()){
+                viewModel.categoryPosition.value = channelInfo?.categoryId
+            }
         }
     }
 
@@ -190,15 +204,32 @@ class MyChannelVideosEditFragment : BaseFragment() {
 
         val categoryIndex = binding.categorySpinner.selectedItemPosition
         val category = binding.categorySpinner.selectedItem.toString()
-        
-        lifecycleScope.launch {
+        val categoryId = viewModel.categoryPosition.value ?: 0
+        Log.i("_Edit", "Category Id: $categoryId")
+        observeEditResponse()
+        /*lifecycleScope.launch {
             val categoryObj = binding.categorySpinner.selectedItem
             val categoryId = if (categoryObj is UgcCategory) {
                 categoryObj.id
             }
             else -1
                 viewModel.saveUploadInfo(channelInfo?.id?.toInt()?:0, "",tags, categoryId)
-            
+
+        }*/
+        viewModel.saveUploadInfo(channelInfo?.id?.toInt()?:0, "",tags, categoryId.toLong())
+    }
+
+    private fun observeEditResponse() {
+        observe(viewModel.editResponse){
+            when(it){
+                is Resource.Success -> {
+                    Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
+                    findNavController().navigateUp()
+                }
+                is Resource.Failure -> {
+                    Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 }

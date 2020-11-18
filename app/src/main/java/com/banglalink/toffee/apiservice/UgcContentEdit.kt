@@ -19,7 +19,8 @@ class UgcContentEdit @Inject constructor(
         tags: String?,
         ageGroup: String?,
         categoryId: Long,
-        base64Image: String? = null
+        oldContentBanner: String? = "NULL",
+        base64Image: String? = "NULL"
     ): UgcResponseBean {
         val response = tryIO2 {
             toffeeApi.editContent(
@@ -33,6 +34,7 @@ class UgcContentEdit @Inject constructor(
                     categoryId = categoryId.toInt(),
                     ageRestriction = ageGroup,
                     videoTags = tags,
+                    oldContentBanner = oldContentBanner,
                     contentBanner = base64Image,
                 )
             )
