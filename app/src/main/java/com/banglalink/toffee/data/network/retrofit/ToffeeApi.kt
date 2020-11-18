@@ -175,11 +175,11 @@ interface ToffeeApi {
     @POST("ugc-add-content-to-playlist")
     suspend fun addToMyChannelPlayList(@Body myChannelAddToPlaylistRequest: MyChannelAddToPlaylistRequest): MyChannelAddToPlaylistResponse
 
-    @POST("ugc-channel-details/1/{channelOwnerId}/{isOwner}/{channelId}/{dbVersion}")
+    @POST("ugc-channel-details/1/{channelOwnerId}/{isOwner}/{isPublic}/{channelId}/{dbVersion}")
     suspend fun getMyChannelDetails(
         @Path("channelOwnerId") channelOwnerId: Int,
         @Path("isOwner") isOwner: Int,
-//        @Path("isPublic") isPublic: Int,
+        @Path("isPublic") isPublic: Int,
         @Path("channelId") channelId: Int,
         @Path("dbVersion") dbVersion: Int,
         @Body channelDetailRequest: MyChannelDetailRequest
