@@ -24,6 +24,7 @@ import com.banglalink.toffee.model.MyChannelDetail
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.ViewPagerAdapter
+import com.banglalink.toffee.ui.widget.ExpandableTextView
 import com.banglalink.toffee.util.bindButtonState
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
@@ -261,9 +262,6 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
             tab.text = fragmentTitleList[position]
         }.attach()
 
-        // set interpolators for both expanding and collapsing animations
-        binding.channelDetailView.channelDescriptionTextView.collapseInterpolator = OvershootInterpolator()
-        binding.channelDetailView.channelDescriptionTextView.expandInterpolator = OvershootInterpolator()
         // toggle the Expand button
         binding.channelDetailView.expandButton.setOnClickListener {
             val resource = if (binding.channelDetailView.channelDescriptionTextView.isExpanded) R.drawable.ic_down_arrow else R.drawable.ic_up_arrow
@@ -271,47 +269,12 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
             binding.channelDetailView.channelDescriptionTextView.toggle()
         }
 
-        /*binding.channelDetailView.channelDescriptionTextView.addOnExpandListener(object : ExpandableTextView.OnExpandListener{
-            override fun onExpand(view: ExpandableTextView) {
-                if (!isCollapsed) {
-//                    val lineCount: Int = binding.channelDetailView.channelDescriptionTextView.layout.lineCount
-                    val collapse = binding.channelDetailView.channelDescriptionTextView.toggle()
-                    isCollapsed = true
-                    Log.i("TextLineCount_", "lineCount: $collapse")
-                }
+        binding.channelDetailView.channelDescriptionTextView.addOnExpandListener(object : ExpandableTextView.SimpleOnExpandListener(){
+            override fun onControllerVisibility(view: ExpandableTextView, show: Boolean) {
+                binding.channelDetailView.expandButton.visibility = if(show) View.VISIBLE else View.GONE
             }
-
-            override fun onCollapse(view: ExpandableTextView) {
-                
-            }
-        })*/
-
-        /*val collapse = binding.channelDetailView.channelDescriptionTextView.toggle()
-        Log.i("TextLineCount_", "lineCount: $collapse")*/
-
-        val expand = binding.channelDetailView.channelDescriptionTextView.expand()
-        Log.i("TextLineCount_", "lineCount: $expand")
-
-        binding.channelDetailView.channelDescriptionTextView.viewTreeObserver.addOnPreDrawListener {
-            if (!isCollapsed) {
-                val lineCount: Int = binding.channelDetailView.channelDescriptionTextView.layout.lineCount
-//                val col = binding.channelDetailView.channelDescriptionTextView.toggle()
-//                isCollapsed = true
-                Log.i("TextLineCount_", "lineCount: $lineCount")
-            }
-            true
-        }
-        binding.channelDetailView.channelDescriptionTextView.viewTreeObserver.addOnDrawListener {
-            if (!isCollapsed) {
-                isCollapsed = true
-                val onCli = binding.channelDetailView.expandButton.performClick()
-                Log.i("TextLineCount_", "lineCount: $onCli")
-                
-            }
-        }
+        })
     }
-
-    private var isCollapsed = false
 
     private fun observeSubscribeChannel() {
         observe(subscribeChannelViewModel.liveData) {
