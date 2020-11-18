@@ -2,6 +2,8 @@ package com.banglalink.toffee.ui.widget
 
 import android.app.Dialog
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.app.AlertDialog
@@ -70,8 +72,11 @@ data class VelBoxAlertDialogBuilder(
                 } ?: run {
                     view.dialog_negative_button.visibility = View.GONE
                 }
+
+                view.close_button.setOnClickListener { dialog?.dismiss() }
             }
             return dialogBuilder.create().apply {
+                window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                 dialog = this
             }
         }
