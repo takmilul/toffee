@@ -147,7 +147,7 @@
                 android:layout_marginEnd="8dp"
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:text="@{data.channelInfo.content_provider_name}"
+                android:text='@{data.channelInfo.content_provider_name + " - " + data.channelInfo.formattedCreateTime}'
                 app:layout_constraintBottom_toBottomOf="@+id/ownerThumb"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/ownerThumb"

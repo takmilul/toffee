@@ -174,19 +174,18 @@ class LandingPageViewModel @ViewModelInject constructor(
         latestVideoLiveData.value = Pair(catId, subCatId)
     }
     
-    fun navigateToMyChannel(fragment: Fragment, providerId: String, isSubscribed: Boolean){
+    fun navigateToMyChannel(fragment: Fragment, channelOwnerId: Int, isSubscribed: Int){
         val customerId = Preference.getInstance().customerId
-        val isOwner = if (providerId.toInt() == customerId) 1 else 0
-        val isPublic = if (providerId.toInt() == customerId) 0 else 1
-        val channelId = providerId.toInt()
-        val subscribed = if(isSubscribed) 1 else 0
+        val isOwner = if (channelOwnerId == customerId) 1 else 0
+        val isPublic = if (channelOwnerId == customerId) 0 else 1
+        val channelId = channelOwnerId
         findNavController(fragment).navigate(R.id.myChannelHomeFragment, Bundle().apply {
-            putInt(MyChannelHomeFragment.IS_SUBSCRIBED, subscribed)
-            Log.i("UGC_Home", "onItemClicked: $subscribed")
+            putInt(MyChannelHomeFragment.IS_SUBSCRIBED, isSubscribed)
+            Log.i("UGC_Home", "onItemClicked: $isSubscribed")
             putInt(MyChannelHomeFragment.IS_OWNER, isOwner)
             putInt(MyChannelHomeFragment.CHANNEL_ID, channelId)
             putInt(MyChannelHomeFragment.IS_PUBLIC, isPublic)
-            putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, providerId.toInt())
+            putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, channelOwnerId)
             putBoolean(MyChannelHomeFragment.IS_FROM_OUTSIDE, true)
         })
         /*if (findNavController(fragment).currentDestination?.id == R.id.menu_feed) {

@@ -41,7 +41,7 @@ fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
             fallback(R.drawable.placeholder)
             placeholder(R.drawable.placeholder)
             error(R.drawable.placeholder)
-            //memoryCachePolicy(CachePolicy.DISABLED)
+            memoryCachePolicy(CachePolicy.ENABLED)
             diskCachePolicy(CachePolicy.ENABLED)
             crossfade(false)
 //            crossfade(crossFadeDurationInMills)
@@ -58,7 +58,7 @@ fun bindRoundImage(view: ImageView, imageUrl: String?) {
             fallback(R.drawable.placeholder)
             placeholder(R.drawable.placeholder)
             error(R.drawable.ic_home)
-            //memoryCachePolicy(CachePolicy.DISABLED)
+            memoryCachePolicy(CachePolicy.ENABLED)
             diskCachePolicy(CachePolicy.ENABLED)
 //            crossfade(crossFadeDurationInMills)
         }
@@ -88,8 +88,10 @@ fun bindCategoryImage(view: ImageView, category: UgcCategory) {
         Log.e("CATEGORY", "$category")
         view.load(category.categoryIcon) {
             crossfade(false)
+            fallback(R.drawable.placeholder)
+            placeholder(R.drawable.placeholder)
             error(R.drawable.ic_cat_movie)
-            //memoryCachePolicy(CachePolicy.DISABLED)
+            memoryCachePolicy(CachePolicy.ENABLED)
             diskCachePolicy(CachePolicy.ENABLED)
 //            crossfade(crossFadeDurationInMills)
         }
@@ -106,8 +108,11 @@ fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
             view.load(channelInfo.channel_logo) {
                 transformations(CircleCropTransformation())
                 crossfade(false)
+                fallback(R.drawable.placeholder)
+                placeholder(R.drawable.placeholder)
+                error(R.drawable.ic_home)
 //            crossfade(crossFadeDurationInMills)
-                //memoryCachePolicy(CachePolicy.DISABLED)
+                memoryCachePolicy(CachePolicy.ENABLED)
                 diskCachePolicy(CachePolicy.ENABLED)
             }
         }
@@ -119,9 +124,12 @@ fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
         else {
             view.load(channelInfo.landscape_ratio_1280_720)
             {
-                //memoryCachePolicy(CachePolicy.DISABLED)
+                memoryCachePolicy(CachePolicy.ENABLED)
                 diskCachePolicy(CachePolicy.ENABLED)
                 crossfade(false)
+                fallback(R.drawable.placeholder)
+                placeholder(R.drawable.placeholder)
+                error(R.drawable.ic_home)
 //            crossfade(crossFadeDurationInMills)
                 size(720, 405)
             }

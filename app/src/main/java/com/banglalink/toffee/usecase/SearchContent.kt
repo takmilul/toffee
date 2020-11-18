@@ -34,6 +34,7 @@ class SearchContent(private val preference: Preference, private val toffeeApi: T
                 if(!it.created_at.isNullOrBlank()) {
                     it.formattedCreateTime = Utils.getDateDiffInDayOrHourOrMinute(Utils.getDate(it.created_at).time).replace(" ", "")
                 }
+                it.formattedSubscriberCount = getFormattedViewsText(it.subscriberCount.toString())
                 it
             }
         }

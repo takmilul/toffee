@@ -154,6 +154,11 @@ interface ToffeeApi {
         @Body contentUploadRequest: ContentUploadRequest
     ): ContentUploadResponse
 
+    @POST("ugc-content-update")
+    suspend fun editContent(
+        @Body contentEditRequest: ContentEditRequest
+    ): ContentEditResponse
+
     @POST("ugc-popular-playlist-names/1/{dbVersion}")
     suspend fun getMostPopularPlaylists(
         @Path("dbVersion") dbVersion: Int,

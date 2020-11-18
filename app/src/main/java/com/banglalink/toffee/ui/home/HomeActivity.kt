@@ -26,7 +26,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
-import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -69,7 +68,6 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.layout_appbar.view.*
-import kotlinx.android.synthetic.main.list_item_challenges.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.*
@@ -538,7 +536,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                         )
                     )
                 }
-                (it.isPurchased || it.isSubscribed) && !it.isExpired(Date())->{
+                (it.isPurchased || it.isPaidSubscribed) && !it.isExpired(Date())->{
                     maximizePlayer()
                     loadChannel(it)
                     if(it.isLive) {

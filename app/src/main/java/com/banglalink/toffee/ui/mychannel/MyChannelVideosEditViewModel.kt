@@ -10,7 +10,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.apiservice.GetUgcCategories
-import com.banglalink.toffee.apiservice.UgcContentUpload
+import com.banglalink.toffee.apiservice.UgcContentEdit
 import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.Preference
@@ -30,7 +30,7 @@ import java.io.ByteArrayOutputStream
 class MyChannelVideosEditViewModel @ViewModelInject constructor(
     @ApplicationContext private val appContext: Context,
     private val uploadRepo: UploadInfoRepository,
-    private val contentUploadApi: UgcContentUpload,
+    private val contentEditApi: UgcContentEdit,
     private val preference: Preference,
     private val categoryApi: GetUgcCategories,
 //    private val subCategoryApi: SubCategoryService
@@ -100,7 +100,6 @@ class MyChannelVideosEditViewModel @ViewModelInject constructor(
         tags.value = uploadInfo.tags
         thumbnailUrl.value = uploadInfo.thumbUri
         
-        categoryPosition.value = categories.value?.find { it.categoryName == uploadInfo.category }?.id?.toInt()?:0
         categoryPosition.value = uploadInfo.categoryIndex
         ageGroupPosition.value = uploadInfo.ageGroupIndex
 
@@ -140,13 +139,14 @@ class MyChannelVideosEditViewModel @ViewModelInject constructor(
         }
     }
 
-    fun saveUploadInfo(fileName: String, tags: String?, categoryId: Long) {
+    fun saveUploadInfo(contentId: Int, fileName: String, tags: String?, categoryId: Long) {
         viewModelScope.launch {
 //            progressDialog.value = true
             val ageGroupId = ageGroupPosition.value ?: -1
             val resp = try {
                 Resource.Success(
-                    contentUploadApi(
+                    contentEditApi(
+                        contentId,
                         fileName,
                         title.value,
                         description.value,

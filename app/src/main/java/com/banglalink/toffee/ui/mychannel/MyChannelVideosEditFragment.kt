@@ -6,9 +6,11 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.setPadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
@@ -17,12 +19,15 @@ import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.databinding.FragmentMyChannelVideosEditBinding
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
 import com.pchmn.materialchips.ChipsInput
 import com.pchmn.materialchips.model.ChipInterface
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MyChannelVideosEditFragment : BaseFragment() {
@@ -72,7 +77,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
                     .removeSuffix("</p>"),*/
                 it.video_tags,
                 it.category,
-                0,
+                it.categoryId,
                 null,
                 it.age_restriction?.toInt() ?: 0
             )
@@ -81,7 +86,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
         setupTagView()
 //        observeThumbnailLoad()
         observeThumbnailChange()
-
+//        observeCategory()
         binding.cancelButton.setOnClickListener { findNavController().popBackStack() }
         binding.submitButton.setOnClickListener { submitVideo() }
         binding.thumbEditButton.setOnClickListener { findNavController().navigate(R.id.action_myChannelVideosEditFragment_to_thumbnailSelectionMethodFragment) }
@@ -171,22 +176,29 @@ class MyChannelVideosEditFragment : BaseFragment() {
     }*/
 
     private fun submitVideo() {
-        /*val title = binding.uploadTitle.text.toString()
+        val title = binding.uploadTitle.text.toString()
         val description = binding.uploadDescription.text.toString()
         if (title.isBlank() || description.isBlank()) {
             context?.showToast("Missing required field", Toast.LENGTH_SHORT)
             return
         }
+        
+        val tags = binding.uploadTags.selectedChipList.joinToString(" | ") { it.label }
+
+        val ageGroupIndex = binding.ageGroupSpinner.selectedItemPosition
+        val ageGroup = binding.ageGroupSpinner.selectedItem.toString()
+
+        val categoryIndex = binding.categorySpinner.selectedItemPosition
+        val category = binding.categorySpinner.selectedItem.toString()
+        
         lifecycleScope.launch {
-            val uploadInfo = saveInfo()
             val categoryObj = binding.categorySpinner.selectedItem
             val categoryId = if (categoryObj is UgcCategory) {
                 categoryObj.id
             }
             else -1
-            uploadInfo?.let {
-                viewModel.saveUploadInfo(it.fileName, it.tags, categoryId)
-            }
-        }*/
+                viewModel.saveUploadInfo(channelInfo?.id?.toInt()?:0, "",tags, categoryId)
+            
+        }
     }
 }

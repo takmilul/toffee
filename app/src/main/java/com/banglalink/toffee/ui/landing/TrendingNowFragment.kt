@@ -7,11 +7,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
+import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
-import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.home.TrendingNowVideoListAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -77,6 +77,6 @@ class TrendingNowFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
 
     override fun onProviderIconClicked(item: ChannelInfo) {
         super.onProviderIconClicked(item)
-        viewModel.navigateToMyChannel(this, item.content_provider_id!!, item.isSubscribed)
+        viewModel.navigateToMyChannel(this, item.channel_owner_id, item.isSubscribed)
     }
 }

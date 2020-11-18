@@ -63,24 +63,27 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
         /*detailsAdapter.subscribeButton.setOnClickListener {
             viewModel.toggleSubscriptionStatus(channelInfo.content_provider_id?.toInt()?:0, channelInfo.content_provider_id?.toInt()?:0)
         }*/
+        viewModel.isChannelSubscribed.value = currentItem.isSubscribed == 1
         
         observe(viewModel.channelSubscriberCount) {
-            currentItem.subscriptionCount = getFormattedViewsText(it)
+            currentItem.isSubscribed = if(viewModel.isChannelSubscribed.value!!) 1 else 0
+            currentItem.subscriberCount = it
+            currentItem.formattedSubscriberCount = getFormattedViewsText(it.toString())
             detailsAdapter.notifyDataSetChanged()
 //            detailsAdapter.setChannelInfo(currentItem)
         }
 
-        observe(viewModel.isChannelSubscribed) {
+        /*observe(viewModel.isChannelSubscribed) {
             currentItem.individual_price = "0"
-            currentItem.subscription = it
+            currentItem.isSubscribed = if(it) 1 else 0
             detailsAdapter.notifyDataSetChanged()
 //            detailsAdapter.setChannelInfo(currentItem)
-        }
+        }*/
 
         val customerId = Preference.getInstance().customerId
-        val isOwner = if (currentItem.content_provider_id?.toInt() == customerId) 1 else 0
-        val isPublic = if (currentItem.content_provider_id?.toInt() == customerId) 0 else 1
-        val channelId = currentItem.content_provider_id?.toLong() ?: 0L
+        val isOwner = if (currentItem.channel_owner_id == customerId) 1 else 0
+        val isPublic = if (currentItem.channel_owner_id == customerId) 0 else 1
+        val channelId = currentItem.channel_owner_id.toLong()
         viewModel.getChannelInfo(isOwner, isPublic, channelId, channelId.toInt())
         
         with(listview) {
@@ -93,7 +96,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
 
     override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
         super.onSubscribeButtonClicked(view, item)
-        viewModel.toggleSubscriptionStatus(item.content_provider_id?.toInt()?:0, item.content_provider_id?.toInt()?:0)
+        viewModel.toggleSubscriptionStatus(item.channel_owner_id, item.channel_owner_id)
     }
     
     private fun initAdapter() {
@@ -108,7 +111,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
 
             override fun onProviderIconClicked(item: ChannelInfo) {
                 super.onProviderIconClicked(item)
-                landingViewModel.navigateToMyChannel(this@CatchupDetailsFragment, item.content_provider_id!!, item.isSubscribed)
+                landingViewModel.navigateToMyChannel(this@CatchupDetailsFragment, item.channel_owner_id, item.isSubscribed)
             }
         })
         detailsAdapter = ChannelHeaderAdapter(currentItem, this)
@@ -131,9 +134,14 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
 
     override fun onProviderIconClicked(item: ChannelInfo) {
         super.onProviderIconClicked(item)
-        landingViewModel.navigateToMyChannel(this, item.content_provider_id!!, item.isSubscribed)
+        landingViewModel.navigateToMyChannel(this, item.channel_owner_id, item.isSubscribed)
     }
 
+    override fun onShareClicked(view: View, item: ChannelInfo) {
+        super.onShareClicked(view, item)
+        homeViewModel.shareContentLiveData.postValue(item)
+    }
+    
     override fun onOpenMenu(view: View, item: ChannelInfo) {
         super.onOpenMenu(view, item)
         openMenu(view, item)
@@ -152,6 +160,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
         if(hideNotInterestedMenuItem(channelInfo)){//we are checking if that could be shown or not
             popupMenu.menu.getItem(2).isVisible = false
         }
+        popupMenu.menu.findItem(R.id.menu_share).isVisible = false
         popupMenu.setOnMenuItemClickListener{
             when(it?.itemId){
                 R.id.menu_share->{

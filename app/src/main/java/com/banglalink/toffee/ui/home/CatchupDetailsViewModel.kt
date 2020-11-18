@@ -25,7 +25,7 @@ class CatchupDetailsViewModel @ViewModelInject constructor(
 ):BaseViewModel() {
     val subscriptionResponse = MutableLiveData<Resource<MyChannelSubscribeBean>>()
     val isChannelSubscribed = MutableLiveData<Boolean>()
-    val channelSubscriberCount = MutableLiveData<String>()
+    val channelSubscriberCount = MutableLiveData<Int>()
 
     fun setSubscriptionStatus(channelId: Long, status: Int, channelOwnerId: Int) {
         viewModelScope.launch {
@@ -44,10 +44,8 @@ class CatchupDetailsViewModel @ViewModelInject constructor(
             try {
                 val ret = channelInfoApi.execute(isOwner, isPublic, channelId.toInt(), channelOwnerId)
                 isChannelSubscribed.value = ret.isSubscribed == 1
-                channelSubscriberCount.value = ret.formattedSubscriberCount
+                channelSubscriberCount.value = ret.subscriberCount
             } catch (ex: Exception) {
-                isChannelSubscribed.value = false
-                channelSubscriberCount.value = "0"
                 ex.printStackTrace()
             }
         }
@@ -60,6 +58,7 @@ class CatchupDetailsViewModel @ViewModelInject constructor(
                 val newStatus = if(currentStatus) 0 else 1
                 val ret = subscribeApi(channelId, newStatus, channelOwnerId)
                 isChannelSubscribed.value = ret.isSubscribed == 1
+                channelSubscriberCount.value = ret.subscriberCount
             }catch (ex: Exception) {
                 ex.printStackTrace()
             }

@@ -59,15 +59,12 @@ class UserActivitiesListFragment: BaseListFragment<UserActivities>(),
 
     override fun onProviderIconClicked(item: UserActivities) {
         super.onProviderIconClicked(item)
-        val isOwner = if (item.channelId.toInt() == item.customerId) 1 else 0
-        val isPublic = if (item.channelId.toInt() == item.customerId) 0 else 1
-        val channelId = item.channelId.toInt()
-        mViewModel.getChannelInfo(isOwner, isPublic, channelId.toLong(), channelId)
+        landingPageViewModel.navigateToMyChannel(this, item.channelInfo?.channel_owner_id?:0, item.channelInfo?.isSubscribed?:0)
     }
 
     private fun observeChannelDetail() {
         observe(mViewModel.myChannelDetail){
-            landingPageViewModel.navigateToMyChannel(this, it.myChannelDetail?.id.toString(), it.isSubscribed ==0)
+            landingPageViewModel.navigateToMyChannel(this, it.myChannelDetail?.id?.toInt()?:0, it.isSubscribed)
         }
     }
 

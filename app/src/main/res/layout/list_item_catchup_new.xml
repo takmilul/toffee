@@ -84,7 +84,7 @@
             android:ellipsize="end"
             android:fontFamily="@font/roboto_regular"
             android:maxLines="1"
-            android:text="@{data.content_provider_name}"
+            android:text='@{data.content_provider_name + " - " + data.formattedCreateTime}'
             android:textColor="@color/second_text_color"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"

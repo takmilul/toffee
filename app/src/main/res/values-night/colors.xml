@@ -21,4 +21,5 @@
     <color name="cardOverlayColor">#B8000000</color>
     <color name="reverseBgColor">#FFFFFF</color>
     <color name="ratingIconColor">#FF3988</color>
+    <color name="tvChannelLogoBg">#424242</color>
 </resources>

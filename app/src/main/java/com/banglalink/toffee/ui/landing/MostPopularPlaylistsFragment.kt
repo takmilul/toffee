@@ -8,12 +8,12 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
+import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelPlaylist
 import com.banglalink.toffee.ui.category.CategoryDetailsFragmentDirections
 import com.banglalink.toffee.ui.common.HomeBaseFragment
-import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.home.MostPopularPlaylistsAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -62,7 +62,7 @@ class MostPopularPlaylistsFragment: HomeBaseFragment(), ProviderIconCallback<MyC
 
     override fun onProviderIconClicked(item: MyChannelPlaylist) {
         super.onProviderIconClicked(item)
-        viewModel.navigateToMyChannel(this, item.channelCreatorId.toString(), false)
+        viewModel.navigateToMyChannel(this, item.channelCreatorId, 0)
     }
     
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {

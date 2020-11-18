@@ -83,7 +83,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:onClick="@{()->callback.onSubscribeClicked(data)}"
-                bindSubscriptionStatus="@{data.subscribed}"
+                bindSubscriptionStatus="@{data.paidSubscribed}"
                 app:layout_constraintBottom_toTopOf="@+id/textView13"
                 app:layout_constraintStart_toEndOf="@+id/ownerThumb"
                 app:layout_constraintTop_toBottomOf="@+id/textView4" />

@@ -11,7 +11,6 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/icon"
-        loadChannelImage="@{data}"
         android:layout_width="@dimen/channel_width"
         android:layout_height="@dimen/channel_height"
         android:layout_gravity="center"
@@ -23,7 +22,6 @@
 
     <ImageView
         android:id="@+id/premium_icon"
-        togglePremiumIcon="@{data}"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_gravity="bottom|center_horizontal"

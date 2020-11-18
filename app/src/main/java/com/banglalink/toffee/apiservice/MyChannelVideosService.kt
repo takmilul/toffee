@@ -50,9 +50,10 @@ class MyChannelVideosService @AssistedInject constructor(
                 it.formatted_view_count = getFormattedViewsText(it.view_count)
                 it.formattedDuration = discardZeroFromDuration(it.duration)
 
-                if (!it.created_at.isNullOrEmpty()) {
+                if(!it.created_at.isNullOrEmpty()) {
                     it.formattedCreateTime = Utils.getDateDiffInDayOrHourOrMinute(Utils.getDate(it.created_at).time).replace(" ", "")
                 }
+                it.formattedSubscriberCount = getFormattedViewsText(it.subscriberCount.toString())
                 val reactionInfo = reactionDao.getReactionByContentId(preference.customerId, it.id)
                 it.myReaction = reactionInfo?.reaction ?: Reaction.None.value
 //                it.userReactionIcon = setReactionIcon(it.myReaction)

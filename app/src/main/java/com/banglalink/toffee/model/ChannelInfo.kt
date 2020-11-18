@@ -39,6 +39,7 @@ data class ChannelInfo(
     var channel_logo: String? = null,
     var category: String? = null,
     var subCategory: String? = null,
+    var categoryId: Int = 0,
     var subCategoryId: Int = 0,
     var favorite: String? = null,
     var potrait_ratio_800_1200: String? = null,
@@ -46,6 +47,9 @@ data class ChannelInfo(
     var feature_image: String? = null,
     var content_provider_name: String? = null,
     var content_provider_id: String? = null,
+    val channel_owner_id: Int = 0,
+    var isSubscribed: Int = 0,
+    var subscriberCount: Int = 0,
 
     var is_available: Int = 0,
     var reaction: ReactionStatus? = null,   //individual reaction count from server
@@ -61,7 +65,7 @@ data class ChannelInfo(
     val isApproved: Int? = null,
     val created_at: String? = null,
     var formattedCreateTime: String? = null,
-    var subscriptionCount: String? = null,
+    var formattedSubscriberCount: String? = null,
 ) :Parcelable
 {
 
@@ -86,7 +90,7 @@ data class ChannelInfo(
 
     val isPurchased: Boolean
         get() = individual_price?.toInt() ?: 0 > 0 && individual_purchase
-    val isSubscribed: Boolean
+    val isPaidSubscribed: Boolean
         get() = individual_price?.toInt() == 0 && subscription
 
     fun isExpired(serverDate: Date): Boolean {

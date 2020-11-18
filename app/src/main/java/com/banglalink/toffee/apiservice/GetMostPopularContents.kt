@@ -36,6 +36,7 @@ class GetMostPopularContents @Inject constructor(
                 if(!it.created_at.isNullOrEmpty()) {
                     it.formattedCreateTime = Utils.getDateDiffInDayOrHourOrMinute(Utils.getDate(it.created_at).time).replace(" ", "")
                 }
+                it.formattedSubscriberCount = getFormattedViewsText(it.subscriberCount.toString())
                 it
             }
         }

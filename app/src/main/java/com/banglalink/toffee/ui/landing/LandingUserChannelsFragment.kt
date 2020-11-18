@@ -77,7 +77,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
                     })
                 }*/
                 
-                viewModel.navigateToMyChannel(this@LandingUserChannelsFragment, item.channelOwnerId.toString(), item.isSubscribed == 1)
+                viewModel.navigateToMyChannel(this@LandingUserChannelsFragment, item.channelOwnerId, item.isSubscribed?:0)
             }
 
             override fun onSubscribeButtonClicked(view: View, info: UgcUserChannelInfo) {

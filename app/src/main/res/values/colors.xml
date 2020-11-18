@@ -67,4 +67,5 @@
     <color name="backgroundAlpha">#80ffffff</color>
     <color name="ratingIconColor">#29466B</color>
     <color name="ratingButtonActiveColor">#BED6F3</color>
+    <color name="tvChannelLogoBg">#FFFFFF</color>
 </resources>

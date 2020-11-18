@@ -187,7 +187,7 @@ class CategoryInfoFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo
 
     override fun onProviderIconClicked(item: ChannelInfo) {
         super.onProviderIconClicked(item)
-        landingViewModel.navigateToMyChannel(this, item.content_provider_id!!, item.isSubscribed)
+        landingViewModel.navigateToMyChannel(this, item.channel_owner_id, item.isSubscribed)
     }
     
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {

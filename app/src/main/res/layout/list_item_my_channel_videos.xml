@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:minHeight="200dp"
-            android:scaleType="fitXY"
+            android:scaleType="centerCrop"
             app:layout_constraintDimensionRatio="W,16:9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
