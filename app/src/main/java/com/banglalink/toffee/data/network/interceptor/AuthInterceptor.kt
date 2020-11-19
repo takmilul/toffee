@@ -68,6 +68,8 @@ class AuthInterceptor (private val iGetMethodTracker: IGetMethodTracker): Interc
             e.printStackTrace()
         } catch (e: NoSuchPaddingException) {
             e.printStackTrace()
+        } catch (e:IllegalArgumentException){
+            e.printStackTrace()
         }
 
         return response
