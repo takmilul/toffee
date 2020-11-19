@@ -3,18 +3,23 @@ package com.banglalink.toffee.ui.mychannel
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.text.Spannable
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
-import android.view.animation.OvershootInterpolator
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.core.text.toSpannable
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
+import com.banglalink.toffee.R.color
 import com.banglalink.toffee.R.layout
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBinding
@@ -31,6 +36,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.alert_dialog_my_channel_rating.view.*
 import kotlinx.android.synthetic.main.layout_my_channel_detail.*
 import java.util.*
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 
@@ -274,6 +280,15 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
                 binding.channelDetailView.expandButton.visibility = if(show) View.VISIBLE else View.GONE
             }
         })
+
+        myChannelDetail?.description?.let {
+            val spannable: Spannable = it.toSpannable()
+            val matcher = Pattern.compile("(#\\w+)").matcher(spannable)
+            while (matcher.find()) {
+                spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(requireContext(), color.purple)), matcher.start(), matcher.end(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
+            binding.channelDetailView.channelDescriptionTextView.text = spannable
+        }
     }
 
     private fun observeSubscribeChannel() {
