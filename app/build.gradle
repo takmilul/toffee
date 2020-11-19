@@ -84,14 +84,14 @@ dependencies {
     //Firebase Push Notification
     implementation 'com.google.firebase:firebase-messaging:21.0.0'
     //Firebase in app messaging
-    implementation 'com.google.firebase:firebase-inappmessaging-display:19.1.0'
+    implementation 'com.google.firebase:firebase-inappmessaging-display:19.1.2'
     //Firebase core
     implementation 'com.google.firebase:firebase-core:18.0.0'
     // Recommended: Add the Firebase SDK for Google Analytics.
     implementation 'com.google.firebase:firebase-analytics:18.0.0'
 
     // Add the Firebase SDK for Crashlytics.
-    implementation 'com.google.firebase:firebase-crashlytics:17.2.2'
+    implementation 'com.google.firebase:firebase-crashlytics:17.3.0'
 
     implementation project(':slider')
 
@@ -114,7 +114,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0"
 
-    implementation 'com.google.android.gms:play-services-auth:18.1.0'
+    implementation 'com.google.android.gms:play-services-auth:19.0.0'
     implementation 'com.google.android.gms:play-services-auth-api-phone:17.5.0'
 
     implementation ('com.google.apis:google-api-services-pubsub:v1-rev354-1.22.0') {
