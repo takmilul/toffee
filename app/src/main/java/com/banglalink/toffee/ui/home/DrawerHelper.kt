@@ -126,6 +126,19 @@ class DrawerHelper(val activity: HomeActivity,val binding:ActivityMainMenuBindin
                 true
             )
         )
+
+        val isSubscriptionActive = Preference.getInstance().isSubscriptionActive
+        if(isSubscriptionActive == "true"){
+            navigationMenuList.add(
+                NavigationMenu(
+                    ID_SUBSCRIPTIONS,
+                    activity.getString(R.string.subscriptions),
+                    R.mipmap.ic_menu_subscriptions,
+                    ArrayList(),
+                    true
+                )
+            )
+        }
         val isBanglalinkNumber = Preference.getInstance().isBanglalinkNumber
         if(isBanglalinkNumber == "true"){
             navigationMenuList.add(
@@ -134,7 +147,7 @@ class DrawerHelper(val activity: HomeActivity,val binding:ActivityMainMenuBindin
                     activity.getString(R.string.menu_internet_pack),
                     R.mipmap.ic_menu_internet_pack,
                     ArrayList(),
-                    true
+                    isSubscriptionActive == "false"
                 )
             )
         }
@@ -144,7 +157,8 @@ class DrawerHelper(val activity: HomeActivity,val binding:ActivityMainMenuBindin
                 ID_INVITE_FRIEND,
                 activity.getString(R.string.refer_a_friend_txt),
                 R.mipmap.ic_menu_invite,
-                ArrayList()
+                ArrayList(),
+                isSubscriptionActive == "false" && isBanglalinkNumber == "false"
             )
         )
 
