@@ -115,7 +115,7 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity?.title = "My Channel"
+        
 
         binding.contentBody.visibility = View.GONE
         binding.progressBar.visibility = View.VISIBLE
@@ -244,6 +244,12 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
     }
 
     private fun loadBody() {
+        if(isPublic == 1){
+            activity?.title = myChannelDetail?.channelName ?: "Channel"
+        }
+        else {
+            activity?.title = "My Channel"
+        }
         binding.progressBar.visibility = View.GONE
         binding.contentBody.visibility = View.VISIBLE
 
