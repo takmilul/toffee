@@ -174,7 +174,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                 val ugcEditMyChannelRequest = MyChannelEditRequest(
                     0,
                     "",
-                    myChannelDetail?.id ?: 0,
+                    0,
                     viewModel.selectedCategory?.id!!,
                     binding.channelName.text.toString(),
                     binding.description.text.toString(),
