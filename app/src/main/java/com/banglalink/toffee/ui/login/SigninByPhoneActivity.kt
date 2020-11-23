@@ -32,7 +32,6 @@ import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.Credentials
 import com.google.android.gms.auth.api.credentials.HintRequest
-import java.lang.Exception
 
 
 class SigninByPhoneActivity : BaseAppCompatActivity() {
@@ -156,12 +155,12 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
     }
 
     fun handleHaveReferralOption(view: View) {
-        binding.group.visibility = View.VISIBLE
+        binding.refCodeEt.visibility = View.VISIBLE
         binding.groupHaveRef.visibility = View.GONE
     }
 
     private fun setSpannableTermsAndConditions() {
-        val ss = SpannableString(getString(R.string.terms_and_conditions_text))
+        val ss = SpannableString(getString(R.string.terms_and_conditions))
         val clickableSpan = object : ClickableSpan() {
             override fun onClick(textView: View) {
                 val intent = Intent(this@SigninByPhoneActivity, HtmlPageViewActivity::class.java)
@@ -181,7 +180,7 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
                 ds.isUnderlineText = true
             }
         }
-        ss.setSpan(clickableSpan, 15, ss.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        ss.setSpan(clickableSpan, 0, ss.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 
         binding.termsAndConditionsTv.text = ss
         binding.termsAndConditionsTv.movementMethod = LinkMovementMethod.getInstance()

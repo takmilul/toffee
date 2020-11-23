@@ -1,134 +1,180 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout  xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.core.widget.NestedScrollView
+    <!--<androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/screen_bg_white"
-        >
+        android:fillViewport="true">-->
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/splash_gradient_bg">
+
+        <View
+            android:id="@+id/topView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
+            android:layout_height="56dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:id="@+id/logo"
-                android:layout_width="164dp"
-                android:layout_height="135dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="64dp"
-                android:adjustViewBounds="true"
-                android:src="@drawable/ic_logo_with_title"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-
-            <TextView
-                android:id="@+id/enter_code_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:fontFamily="@font/roboto_light"
-                android:text="@string/tag_line_txt"
-                android:textColor="@color/main_text_color"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="@+id/logo"
-                app:layout_constraintStart_toStartOf="@+id/logo"
-                app:layout_constraintTop_toBottomOf="@+id/logo"/>
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_splash_logo"
+            app:layout_constraintBottom_toBottomOf="@id/topView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/topView" />
 
 
-            <TextView
-                android:id="@+id/text_tv"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="48dp"
-                android:fontFamily="@font/roboto_medium"
-                android:gravity="center"
-                android:paddingLeft="30dp"
-                android:paddingRight="30dp"
-                android:text="@string/enter_code"
-                android:textColor="@color/main_text_color"
-                android:textSize="26sp"
-                app:layout_constraintEnd_toEndOf="@+id/enter_code_tv"
-                app:layout_constraintStart_toStartOf="@+id/enter_code_tv"
-                app:layout_constraintTop_toBottomOf="@+id/enter_code_tv" />
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:fillViewport="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/logo">
 
-
-            <EditText
-                android:id="@+id/code_number"
-                style="@style/editTextOval"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/mainLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="40dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginEnd="40dp"
-                android:ems="10"
-                android:gravity="center"
-                android:hint="@string/otp_hint"
-                android:inputType="phone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/text_tv"/>
-
-
-            <Button
-                android:id="@+id/confirm_btn"
-                style="@style/ButtonStyleSolidPink"
-                android:layout_width="@dimen/button_accent_width"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="48dp"
-                android:text="@string/sign_in_text"
-                android:textAllCaps="true"
-                app:layout_constraintEnd_toEndOf="@+id/code_number"
-                app:layout_constraintStart_toStartOf="@+id/code_number"
-                app:layout_constraintTop_toBottomOf="@+id/code_number"/>
-
-
-            <TextView
-                android:id="@+id/resend"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="16dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="true"
-                android:textStyle="bold"
-                android:fontFamily="@font/roboto_medium"
-                android:gravity="center"
-                android:text="@string/resend_code_text"
-                android:textColor="@color/colorAccent"
-                android:textSize="14sp"
-                android:visibility="invisible"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/confirm_btn" />
-
-
-            <TextView
-                android:id="@+id/countdown_tv"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="32dp"
-                android:fontFamily="@font/roboto_medium"
-                android:gravity="center"
-                android:textColor="@color/main_text_color"
-                android:visibility="visible"
+                android:layout_height="match_parent"
+                android:background="@drawable/top_round_bg"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/resend"
-                app:layout_constraintStart_toStartOf="@+id/resend"
-                app:layout_constraintTop_toBottomOf="@+id/confirm_btn"
-                tools:text="Resend will be enable after 30 secs" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/logo"
+                app:layout_constraintVertical_bias="1">
+
+                <!--<TextView
+                    android:id="@+id/enter_code_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:fontFamily="@font/roboto_light"
+                    android:text="@string/tag_line_txt"
+                    android:textColor="@color/main_text_color"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="@+id/logo"
+                    app:layout_constraintStart_toStartOf="@+id/logo"
+                    app:layout_constraintTop_toBottomOf="@+id/logo"/>-->
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.core.widget.NestedScrollView>
+                <TextView
+                    android:id="@+id/text_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:fontFamily="@font/roboto_medium"
+                    android:gravity="center"
+                    android:paddingLeft="30dp"
+                    android:paddingRight="30dp"
+                    android:text="@string/enter_code"
+                    android:textColor="@color/main_text_color"
+                    android:textSize="26sp"
+                    app:layout_constraintVertical_bias="0.3"
+                    app:layout_constraintVertical_chainStyle="packed"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/code_number"/>
+
+
+                <EditText
+                    android:id="@+id/code_number"
+                    android:background="@drawable/single_line_input_text_bg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginHorizontal="56dp"
+                    android:ems="10"
+                    android:gravity="center"
+                    android:hint="@string/otp_hint"
+                    android:inputType="phone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/text_tv" 
+                    app:layout_constraintBottom_toTopOf="@id/resend"/>
+
+                <Button
+                    android:id="@+id/resend"
+                    style="@style/BgToggleButtonStyleRingAccent"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Resend"
+                    android:visibility="gone"
+                    android:textColor="@color/accent_to_pink_color"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/code_number"
+                    app:layout_constraintBottom_toTopOf="@id/confirm_btn"/>
+
+                <Button
+                    android:id="@+id/confirm_btn"
+                    style="@style/ButtonStyleSolidPink"
+                    android:layout_width="@dimen/button_accent_width"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/sign_in_text"
+                    android:textAllCaps="true"
+                    app:layout_constraintEnd_toEndOf="@+id/code_number"
+                    app:layout_constraintStart_toStartOf="@+id/code_number"
+                    app:layout_constraintTop_toBottomOf="@+id/resend"
+                    app:layout_constraintBottom_toTopOf="@id/countdown_tv"/>
+
+
+                <!--<TextView
+                    android:id="@+id/resend"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="16dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="@font/roboto_medium"
+                    android:gravity="center"
+                    android:text="@string/resend_code_text"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:visibility="invisible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/confirm_btn" />-->
+
+
+                <TextView
+                    android:id="@+id/countdown_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="32dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:fontFamily="@font/roboto_medium"
+                    android:gravity="center"
+                    android:textColor="@color/main_text_color"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/confirm_btn"
+                    tools:text="Resend will be enable after 30 secs" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <!--</androidx.core.widget.NestedScrollView>-->
 </layout>
 

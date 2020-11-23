@@ -121,7 +121,7 @@ class VerifyCodeActivity : BaseAppCompatActivity(){
                 is Resource.Success -> {
                     regSessionToken = it.data//update reg session token
                     resendBtnPressCount++
-                    binding.resend.visibility = View.INVISIBLE
+                    binding.resend.visibility = View.GONE
                     startCountDown(if (resendBtnPressCount <= 1) 1 else 30)
                 }
                 is Resource.Failure -> {
