@@ -54,8 +54,7 @@ class BottomChannelFragment: BaseFragment() {
         }
 
         observe(viewModel.selectedChannel) {
-//            channelAdapter.setSelected(it)
-//            detailsAdapter?.setChannelInfo(it)
+            mAdapter.setSelectedItem(it)
         }
     }
 }
