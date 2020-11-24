@@ -97,8 +97,8 @@
                         android:layout_height="wrap_content"
                         app:menu="@menu/menu_bottom_nav"
                         app:labelVisibilityMode="labeled"
-                        app:itemIconTint="@color/bottom_nav_icon_color"
-                        app:itemTextColor="@color/bottom_nav_icon_color"
+                        app:itemIconTint="@color/colorSecondaryDark"
+                        app:itemTextColor="@color/colorSecondaryDark"
                         >
 
                     </com.google.android.material.bottomnavigation.BottomNavigationView>
