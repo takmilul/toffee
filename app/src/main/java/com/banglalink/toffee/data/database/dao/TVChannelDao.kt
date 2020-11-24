@@ -1,5 +1,7 @@
 package com.banglalink.toffee.data.database.dao
 
+import androidx.paging.PagingData
+import androidx.paging.PagingSource
 import androidx.room.*
 import com.banglalink.toffee.data.database.entities.TVChannelItem
 import kotlinx.coroutines.flow.Flow
@@ -14,6 +16,9 @@ abstract class TVChannelDao {
 
     @Query("SELECT * FROM TVChannelItem ORDER BY priority, updateTime DESC")
     abstract fun getAllItems(): Flow<List<TVChannelItem>>
+
+    @Query("SELECT * FROM TVChannelItem WHERE categoryName NOT IN (\"Recent\") ORDER BY priority")
+    abstract fun getAllChannels(): PagingSource<Int, TVChannelItem>
 
     @Query("DELETE FROM TVChannelItem WHERE categoryName NOT IN (\"Recent\")")
     abstract suspend fun deleteAll()

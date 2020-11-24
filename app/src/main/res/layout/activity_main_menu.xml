@@ -117,6 +117,7 @@
                     app:backgroundTint="@color/colorAccent2"
                     app:layout_anchor="@id/bottom_app_bar" />
 
+                <include layout="@layout/player_bottom_sheet_layout" />
             </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 <!--            <ImageView-->
