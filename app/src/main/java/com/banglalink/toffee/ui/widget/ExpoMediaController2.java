@@ -212,7 +212,7 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
             binding.currentTime.setVisibility(VISIBLE);
         } else {
             binding.progress.setEnabled(false);
-            binding.progress.setVisibility(INVISIBLE);
+            binding.progress.setVisibility(GONE);
             binding.duration.setVisibility(INVISIBLE);
             binding.timeSeperator.setVisibility(INVISIBLE);
             binding.currentTime.setVisibility(INVISIBLE);
