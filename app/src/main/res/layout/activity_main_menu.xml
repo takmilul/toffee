@@ -108,14 +108,15 @@
                     android:backgroundTint="@color/fab_icon_bg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_upload_add"
+                    android:src="@drawable/ic_upload_menu_plus"
                     android:contentDescription="@string/tab_upload_label"
                     app:borderWidth="2dp"
-                    app:fabCustomSize="50dp"
-                    app:elevation="2dp"
+                    app:fabCustomSize="32dp"
+                    app:elevation="0dp"
+                    android:layout_marginBottom="22dp"
+                    android:layout_gravity="center_horizontal|bottom"
                     app:tint="@color/colorAccent2"
-                    app:backgroundTint="@color/colorAccent2"
-                    app:layout_anchor="@id/bottom_app_bar" />
+                    app:backgroundTint="@color/colorAccent2" />
 
                 <include layout="@layout/player_bottom_sheet_layout" />
             </androidx.coordinatorlayout.widget.CoordinatorLayout>

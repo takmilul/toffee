@@ -4,16 +4,16 @@ import android.animation.LayoutTransition
 import android.app.SearchManager
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.content.res.ColorStateList
 import android.content.res.Configuration
+import android.graphics.Color
 import android.graphics.Point
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
-import android.view.Display
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
 import android.widget.AutoCompleteTextView
@@ -64,6 +64,8 @@ import com.banglalink.toffee.util.InAppMessageParser
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.UtilsKt
 import com.google.android.exoplayer2.util.Util
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
@@ -301,6 +303,17 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     fun rotateFab(isRotate: Boolean) {
         ViewCompat.animate(binding.uploadButton)
             .rotation(if (isRotate) 135.0F else 0.0F)
+            .withEndAction {
+                if (isRotate) {
+                    val colorStateList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorSecondaryDark))
+                    binding.uploadButton.backgroundTintList = colorStateList
+                    binding.uploadButton.imageTintList = colorStateList
+                } else {
+                    val colorStateList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorAccent2))
+                    binding.uploadButton.backgroundTintList = colorStateList
+                    binding.uploadButton.imageTintList = colorStateList
+                }
+            }
             .withLayer()
             .setDuration(300L)
             .setInterpolator(AccelerateInterpolator())
