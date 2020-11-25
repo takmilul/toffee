@@ -5,28 +5,21 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
-import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.databinding.ActivitySplashScreenBinding
 import com.banglalink.toffee.exception.AppDeprecatedError
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.getViewModel
+import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
-import com.banglalink.toffee.ui.home.HomeActivity
-import com.banglalink.toffee.ui.login.SigninByPhoneActivity
 import com.banglalink.toffee.util.unsafeLazy
 import com.facebook.appevents.AppEventsLogger
-import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SplashScreen : BaseAppCompatActivity() {
 
-    lateinit var binding:ActivitySplashScreenBinding
+//    lateinit var binding:ActivitySplashScreenTestBinding
 
     private val TAG = "SplashScreen"
 
@@ -36,15 +29,16 @@ class SplashScreen : BaseAppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this,R.layout.activity_splash_screen)
-
+        setContentView(R.layout.activity_splash_screen_test)
+//        binding = DataBindingUtil.setContentView(this,R.layout.activity_splash_screen_test)
+//        binding.animation.transitionToEnd()
         if(viewModel.isCustomerLoggedIn())
             initApp()
         else{
             lifecycleScope.launch {
                 delay(2000)
-                launchActivity<SigninByPhoneActivity>()
-                finish()
+//                launchActivity<SigninByPhoneActivity>()
+//                finish()
             }
         }
         val appEventsLogger = AppEventsLogger.newLogger(this)
@@ -57,9 +51,9 @@ class SplashScreen : BaseAppCompatActivity() {
         observe(viewModel.init(skipUpdate)){
             when(it){
                 is Resource.Success ->{
-                    ToffeeAnalytics.updateCustomerId(Preference.getInstance().customerId)
-                    launchActivity<HomeActivity>()
-                    finish()
+//                    ToffeeAnalytics.updateCustomerId(Preference.getInstance().customerId)
+//                    launchActivity<HomeActivity>()
+//                    finish()
                 }
                 is Resource.Failure->{
                     when(it.error){
@@ -68,11 +62,11 @@ class SplashScreen : BaseAppCompatActivity() {
                         }
                         else->{
 //                            ToffeeAnalytics.apiLoginFailed(it.error.msg)
-                            binding.root.snack(it.error.msg){
+                            /*binding.root.snack(it.error.msg){
                                 action("Retry") {
                                     initApp(skipUpdate)
                                 }
-                            }
+                            }*/
                         }
                     }
                 }
