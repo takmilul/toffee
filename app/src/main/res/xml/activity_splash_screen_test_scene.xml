@@ -6,171 +6,41 @@
     <Transition
         motion:constraintSetEnd="@+id/end"
         motion:constraintSetStart="@id/start"
-        motion:motionInterpolator="cubic(0,0.83,1,1.3)"
-        motion:duration="800">
-        <KeyFrameSet>
+        motion:duration="1000">
 
-            <!--<KeyAttribute
-                motion:motionTarget="@+id/splashLineImageView"
-                motion:framePosition="90"
-                android:scaleY="1.0" />
-            <KeyAttribute
-                motion:motionTarget="@+id/splashLineImageView"
-                motion:framePosition="95"
-                android:scaleY="1.2" />
-            <KeyAttribute
-                motion:motionTarget="@+id/splashLineImageView"
-                motion:framePosition="100"
-                android:scaleY="1.0" />
-            <KeyAttribute
-                motion:motionTarget="@+id/splashLineImageView"
-                motion:framePosition="90"
-                android:scaleX="1.0" />
-            <KeyAttribute
-                motion:motionTarget="@+id/splashLineImageView"
-                motion:framePosition="95"
-                android:scaleX="1.2" />
-            <KeyAttribute
-                motion:motionTarget="@+id/splashLineImageView"
-                motion:framePosition="100"
-                android:scaleX="1.0" />
-            
-            <KeyAttribute
-                motion:motionTarget="@+id/splashPinkImageView"
-                motion:framePosition="90"
-                android:scaleY="1.0" />
-            <KeyAttribute
-                motion:motionTarget="@+id/splashPinkImageView"
-                motion:framePosition="95"
-                android:scaleY="1.2" />
+        <KeyFrameSet>
             <KeyAttribute
                 motion:motionTarget="@+id/splashPinkImageView"
                 motion:framePosition="100"
-                android:scaleY="1.0" />
-            <KeyAttribute
-                motion:motionTarget="@+id/splashPinkImageView"
-                motion:framePosition="90"
-                android:scaleX="1.0" />
-            <KeyAttribute
-                motion:motionTarget="@+id/splashPinkImageView"
-                motion:framePosition="95"
-                android:scaleX="1.2" />
-            <KeyAttribute
-                motion:motionTarget="@+id/splashPinkImageView"
-                motion:framePosition="100"
-                android:scaleX="1.0" />
-            
-            <KeyAttribute
-                motion:motionTarget="@+id/splashWhiteImageView"
-                motion:framePosition="90"
-                android:scaleY="1.0" />
-            <KeyAttribute
-                motion:motionTarget="@+id/splashWhiteImageView"
-                motion:framePosition="95"
-                android:scaleY="1.2" />
-            <KeyAttribute
-                motion:motionTarget="@+id/splashWhiteImageView"
-                motion:framePosition="100"
-                android:scaleY="1.0" />
-            <KeyAttribute
-                motion:motionTarget="@+id/splashWhiteImageView"
-                motion:framePosition="90"
-                android:scaleX="1.0" />
-            <KeyAttribute
-                motion:motionTarget="@+id/splashWhiteImageView"
-                motion:framePosition="95"
-                android:scaleX="1.2" />
-            <KeyAttribute
-                motion:motionTarget="@+id/splashWhiteImageView"
-                motion:framePosition="100"
-                android:scaleX="1.0" />
-            
-            <KeyAttribute
-                motion:motionTarget="@+id/splashLogoImageView"
-                motion:framePosition="90"
-                android:scaleY="1.0" />
-            <KeyAttribute
-                motion:motionTarget="@+id/splashLogoImageView"
-                motion:framePosition="95"
-                android:scaleY="1.2" />
-            <KeyAttribute
-                motion:motionTarget="@+id/splashLogoImageView"
-                motion:framePosition="100"
-                android:scaleY="1.0" />
-            <KeyAttribute
-                motion:motionTarget="@+id/splashLogoImageView"
-                motion:framePosition="90"
-                android:scaleX="1.0" />
-            <KeyAttribute
-                motion:motionTarget="@+id/splashLogoImageView"
-                motion:framePosition="95"
-                android:scaleX="1.2" />
-            <KeyAttribute
-                motion:motionTarget="@+id/splashLogoImageView"
-                motion:framePosition="100"
-                android:scaleX="1.0" />-->
+                android:rotation="90" />
         </KeyFrameSet>
-        <OnClick motion:targetId="@+id/button" />
     </Transition>
 
     <ConstraintSet android:id="@+id/start"></ConstraintSet>
 
-    <ConstraintSet
-        android:id="@+id/end"
-        motion:transitionEasing="decelerate">
+    <ConstraintSet android:id="@+id/end">
+
         <Constraint
             android:id="@+id/splashLineImageView"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginStart="4dp"
+            android:layout_marginStart="8dp"
             motion:layout_constraintBottom_toBottomOf="parent"
-            motion:layout_constraintDimensionRatio="5.8:5.6"
+            motion:layout_constraintDimensionRatio="5.80:5.40"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintTop_toTopOf="parent"
-            motion:transitionEasing="decelerate" >
-            <Motion motion:transitionEasing="decelerate"/>
-        </Constraint>
+            motion:layout_constraintTop_toTopOf="parent" />
         <Constraint
             android:id="@+id/splashPinkImageView"
+            motion:layout_constraintEnd_toEndOf="@id/splashLineImageView"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginStart="32dp"
-            motion:layout_constraintBottom_toBottomOf="parent"
-            motion:layout_constraintEnd_toEndOf="parent"
-            motion:layout_constraintHeight_percent="0.50"
-            motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintTop_toTopOf="parent"
-            motion:layout_constraintVertical_bias="0.52"
-            motion:layout_constraintWidth_percent="0.99">
-            <!--            <Transform android:rotation="0" />-->
-        </Constraint>
-        <Constraint
-            android:id="@+id/splashWhiteImageView"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="6dp"
-            motion:layout_constraintBottom_toBottomOf="parent"
-            motion:layout_constraintEnd_toEndOf="parent"
-            motion:layout_constraintHeight_percent="0.44"
-            motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintTop_toTopOf="parent"
-            motion:layout_constraintVertical_bias="0.52"
-            motion:layout_constraintWidth_percent="0.70" />
-        <Constraint
-            android:id="@+id/splashLogoImageView"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="22dp"
-            motion:layout_constraintBottom_toBottomOf="parent"
-            motion:layout_constraintEnd_toEndOf="parent"
-            motion:layout_constraintHeight_percent="0.09"
-            motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintTop_toTopOf="parent"
-            motion:layout_constraintVertical_bias="0.58"
-            motion:layout_constraintWidth_percent="0.26" >
-            <Motion motion:transitionEasing="accelerate" />
-            <PropertySet motion:motionProgress="1"/>
-        </Constraint>
+            motion:layout_constraintBottom_toBottomOf="@id/splashLineImageView"
+            android:rotation="90"
+            android:layout_marginStart="36dp"
+            motion:layout_constraintHeight_percent="0.62"
+            motion:layout_constraintTop_toTopOf="@id/splashLineImageView"
+            motion:layout_constraintStart_toStartOf="@id/splashLineImageView"
+            android:layout_marginTop="8dp" />
     </ConstraintSet>
 </MotionScene>
