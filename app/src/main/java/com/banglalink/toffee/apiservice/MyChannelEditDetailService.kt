@@ -23,6 +23,7 @@ class MyChannelEditDetailService @Inject constructor(private val preference: Pre
                 myChannelEditRequest.apply { 
                     customerId = preference.customerId
                     password = preference.password
+                    channelId = preference.customerId
                 }
             )
         }

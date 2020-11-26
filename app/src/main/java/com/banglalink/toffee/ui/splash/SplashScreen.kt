@@ -5,7 +5,6 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
@@ -20,13 +19,12 @@ import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.login.SigninByPhoneActivity
 import com.banglalink.toffee.util.unsafeLazy
 import com.facebook.appevents.AppEventsLogger
-import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SplashScreen : BaseAppCompatActivity() {
 
-    lateinit var binding:ActivitySplashScreenBinding
+    lateinit var binding: ActivitySplashScreenBinding
 
     private val TAG = "SplashScreen"
 
@@ -37,7 +35,7 @@ class SplashScreen : BaseAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this,R.layout.activity_splash_screen)
-
+//        binding.animation.transitionToEnd()
         if(viewModel.isCustomerLoggedIn())
             initApp()
         else{
@@ -67,7 +65,7 @@ class SplashScreen : BaseAppCompatActivity() {
                             showUpdateDialog(it.error.title,it.error.updateMsg,it.error.forceUpdate)
                         }
                         else->{
-//                            ToffeeAnalytics.apiLoginFailed(it.error.msg)
+                            ToffeeAnalytics.apiLoginFailed(it.error.msg)
                             binding.root.snack(it.error.msg){
                                 action("Retry") {
                                     initApp(skipUpdate)
