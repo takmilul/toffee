@@ -6,6 +6,7 @@ import android.graphics.SurfaceTexture;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
@@ -16,9 +17,9 @@ import android.widget.SeekBar;
 import androidx.databinding.DataBindingUtil;
 
 import com.banglalink.toffee.R;
-import com.banglalink.toffee.databinding.MediaControlLayout2Binding;
 import com.banglalink.toffee.databinding.MediaControlLayout3Binding;
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener;
+import com.banglalink.toffee.util.Utils;
 import com.google.android.exoplayer2.Player;
 
 import java.util.ArrayList;
@@ -149,11 +150,29 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
         binding.preview.setOnClickListener(null);
     }
 
+    public boolean isControllerHidden() {
+        return binding.controller.getVisibility() != View.VISIBLE;
+    }
+
+    public void moveController(Float offset) {
+        int intOffset;
+        if(offset < 0.0f) {
+            intOffset = (int)(Utils.dpToPx(48) * (1.0f + offset));
+        }
+        else {
+            intOffset = (int)(Utils.dpToPx(104 - 48) * offset) + Utils.dpToPx(48);
+        }
+        binding.playerBottomSpace.setMinimumHeight(intOffset);
+    }
+
     public boolean showControls() {
         boolean status = false;
         handler.removeCallbacks(hideRunnable);
         if (binding.controller.getVisibility() != VISIBLE && !isMinimize) {
             binding.controller.setVisibility(VISIBLE);
+            for (OnPlayerControllerChangedListener onPlayerControllerChangedListener : onPlayerControllerChangedListeners) {
+                onPlayerControllerChangedListener.onControllerVisible();
+            }
             status = true;
         }
         updateSeekBar();
@@ -165,6 +184,9 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
         public void run() {
             if (binding.controller.getVisibility() != GONE) {
                 binding.controller.setVisibility(GONE);
+                for (OnPlayerControllerChangedListener onPlayerControllerChangedListener : onPlayerControllerChangedListeners) {
+                    onPlayerControllerChangedListener.onControllerInVisible();
+                }
             }
         }
     };

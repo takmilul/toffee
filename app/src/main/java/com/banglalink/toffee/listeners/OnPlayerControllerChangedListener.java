@@ -14,4 +14,6 @@ public interface OnPlayerControllerChangedListener {
     void  onPlayerIdleDueToError();
     void onRotationLock(boolean isAutoRotationEnabled);
     boolean onSeekPosition(int position);
+    void onControllerVisible();
+    void onControllerInVisible();
 }

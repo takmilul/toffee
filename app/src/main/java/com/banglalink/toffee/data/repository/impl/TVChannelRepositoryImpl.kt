@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.repository.impl
 
+import androidx.paging.PagingSource
 import com.banglalink.toffee.data.database.dao.TVChannelDao
 import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.data.repository.TVChannelRepository
@@ -16,5 +17,9 @@ class TVChannelRepositoryImpl(private val dao: TVChannelDao): TVChannelRepositor
 
     override fun getAllItems(): Flow<List<TVChannelItem>> {
         return dao.getAllItems()
+    }
+
+    override fun getAllChannels(): PagingSource<Int, TVChannelItem> {
+        return dao.getAllChannels()
     }
 }

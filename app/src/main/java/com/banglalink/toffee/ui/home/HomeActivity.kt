@@ -4,16 +4,16 @@ import android.animation.LayoutTransition
 import android.app.SearchManager
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.content.res.ColorStateList
 import android.content.res.Configuration
+import android.graphics.Color
 import android.graphics.Point
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
-import android.view.Display
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
 import android.widget.AutoCompleteTextView
@@ -64,10 +64,14 @@ import com.banglalink.toffee.util.InAppMessageParser
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.UtilsKt
 import com.google.android.exoplayer2.util.Util
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.layout_appbar.view.*
+import kotlinx.android.synthetic.main.player_bottom_sheet_layout.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.*
@@ -101,6 +105,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     @Inject
     lateinit var notificationRepo: NotificationInfoRepository
 
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private var notificationBadge: View? = null
     private var searchView: SearchView? = null
     lateinit var binding: ActivityMainMenuBinding
@@ -262,6 +267,25 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         lifecycle.addObserver(HeartBeatManager)
         observeInAppMessage()
         handleSharedUrl(intent)
+
+        configureBottomSheet()
+    }
+
+    private fun configureBottomSheet() {
+        bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet)
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        bottomSheetBehavior.addBottomSheetCallback(object: BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                if(newState == BottomSheetBehavior.STATE_COLLAPSED && binding.playerView.isControllerHidden) {
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+//                Log.e("SLIDE", slideOffset.toString())
+                binding.playerView.moveController(slideOffset)
+            }
+        })
     }
 
     private fun observeNotification() {
@@ -279,6 +303,17 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     fun rotateFab(isRotate: Boolean) {
         ViewCompat.animate(binding.uploadButton)
             .rotation(if (isRotate) 135.0F else 0.0F)
+            .withEndAction {
+                if (isRotate) {
+                    val colorStateList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorSecondaryDark))
+                    binding.uploadButton.backgroundTintList = colorStateList
+                    binding.uploadButton.imageTintList = colorStateList
+                } else {
+                    val colorStateList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorAccent2))
+                    binding.uploadButton.backgroundTintList = colorStateList
+                    binding.uploadButton.imageTintList = colorStateList
+                }
+            }
             .withLayer()
             .setDuration(300L)
             .setInterpolator(AccelerateInterpolator())
@@ -375,9 +410,14 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         it's not possible to get transition(animation) end listener
         If phone is already in landscape mode, it starts to move to full screen while drag transition is on going
         so player can't reset scale completely. Manually resetting player scale value
-         */if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+         */
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            bottom_sheet.visibility = View.VISIBLE
             binding.playerView.scaleX = 1f
             binding.playerView.scaleY = 1f
+        } else {
+            bottom_sheet.visibility = View.GONE
+            binding.playerView.moveController(-1.0f)
         }
         updateFullScreenState()
     }
@@ -636,6 +676,19 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
 
     override fun onViewMinimize() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+    }
+
+    override fun onControllerVisible() {
+        if(channelInfo?.isLive == true &&
+            resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+    }
+
+    override fun onControllerInVisible() {
+        if(bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
     }
 
     override fun onViewMaximize() {
