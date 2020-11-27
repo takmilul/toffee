@@ -282,12 +282,12 @@
     
     <style name="ButtonStyleRingPurple" parent="ToffeeButtonStyle">
         <item name="strokeWidth">1dp</item>
-        <item name="rippleColor">@color/colorAccent3</item>
+        <item name="rippleColor">@color/colorSecondary</item>
         <item name="strokeColor">@color/button_bgcolor_purple</item>
         <item name="android:paddingLeft">32dp</item>
         <item name="android:paddingRight">32dp</item>
         <item name="android:minWidth">110dp</item>
-        <item name="android:textColor">@color/colorAccent3</item>
+        <item name="android:textColor">@color/colorSecondary</item>
     </style>
     
     <style name="ButtonStyleRingPink" parent="ToffeeButtonStyle">

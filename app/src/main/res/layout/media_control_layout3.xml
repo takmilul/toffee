@@ -210,15 +210,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:progressDrawable="@drawable/player_seekbar_bg"
-                android:thumbTint="@color/colorAccent2"
                 android:thumb="@drawable/player_seekbar_thumb"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:thumbTint="@color/colorAccent2"
+                app:layout_constraintBottom_toTopOf="@+id/player_bottom_space"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 tools:progress="50"
                 tools:secondaryProgress="80" />
 
-        <ProgressBar
+            <ProgressBar
             android:visibility="gone"
             android:id="@+id/buffering"
             android:layout_width="wrap_content"
@@ -227,6 +228,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+            <Space
+                android:id="@+id/player_bottom_space"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 </layout>

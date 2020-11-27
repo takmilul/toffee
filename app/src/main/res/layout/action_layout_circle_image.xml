@@ -9,5 +9,5 @@
     android:layout_width="42dp"
     android:layout_height="42dp"
     android:padding="6dp"
-    android:src="@mipmap/ic_menu_profile"
+    android:src="@drawable/ic_menu_profile"
     android:layout_gravity="center" />

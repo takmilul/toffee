@@ -114,7 +114,7 @@
     <string name="tab_feed_label">Home</string>
     <string name="tab_tv_label">TV</string>
     <string name="tab_upload_label">Upload</string>
-    <string name="tab_activities_label">Activities</string>
+    <string name="tab_explore_label">Explore</string>
     <string name="tab_mychannel_label">My Channel</string>
     <string name="try_again_txt">Try again</string>
     <string name="continue_sign_in_txt">Continue signing in</string>

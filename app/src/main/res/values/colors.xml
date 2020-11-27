@@ -4,8 +4,12 @@
     <color name="colorPrimaryDark">#000000</color>
     <!--<color name="colorAccent">#FF8683FF</color>-->
     <color name="colorAccent">#34C9B5</color>
+    <color name="colorSecondaryLight">#62E1D0</color>
+    <color name="colorSecondaryAccent">#A0F1E6</color>
     <color name="colorAccentDark">#009688</color>
-    <color name="colorAccent3">#8663FF</color>
+    <color name="colorSecondary">#34C9B5</color>
+
+    <color name="colorSecondaryDark">#29466B</color>
 
     <color name="btn_start">#FF3B3C</color>
     <color name="btn_end">#223B73</color>
@@ -57,7 +61,7 @@
     <color name="light_green">#8BC34A</color>
     <color name="accent_green">#C5E1A5</color>
     <color name="overlay_dark_color">#66000000</color>
-    <color name="purple">#8663FF</color>
+    <color name="purple">#34C9B5</color>
     <color name="scrollbarTrackColor">#4D707070</color>
     <color name="cardOverlayColor">#FFFFFFFF</color>
     <color name="unseenCardColor">#EBFFFB</color>
