@@ -15,6 +15,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.databinding.DataBindingUtil
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
@@ -59,9 +60,23 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
         binding.termsAndConditionsCheckbox.setOnClickListener {
             binding.loginBtn.isEnabled = binding.termsAndConditionsCheckbox.isChecked
         }
+        binding.signinMotionLayout.addTransitionListener(object : MotionLayout.TransitionListener{
+            override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
+                println("Transition started")
+            }
 
-        getHintPhoneNumber()
+            override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
+                println("Transition changed")
+            }
 
+            override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
+                getHintPhoneNumber()
+            }
+
+            override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {
+                println("Transition triggered")
+            }
+        })
     }
 
     private fun handleLogin() {
@@ -89,6 +104,7 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
             progressDialog.dismiss()
             when (it) {
                 is Resource.Success -> {
+                    binding.mainLayout.transitionToEnd()
                     launchActivity<VerifyCodeActivity> {
                         putExtra(
                             VerifyCodeActivity.PHONE_NUMBER,
@@ -156,7 +172,7 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
 
     fun handleHaveReferralOption(view: View) {
         binding.refCodeEt.visibility = View.VISIBLE
-        binding.groupHaveRef.visibility = View.GONE
+        binding.groupHaveRef.visibility = View.INVISIBLE
     }
 
     private fun setSpannableTermsAndConditions() {

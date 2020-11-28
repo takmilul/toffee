@@ -21,7 +21,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
         android:focusable="true"
-        android:src="@drawable/menu_search"
+        android:src="@drawable/ic_menu_search"
         android:contentDescription="@string/abc_searchview_description_search" />
     <LinearLayout
         android:id="@+id/search_edit_frame"
@@ -57,8 +57,8 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_gravity="bottom"
-                android:paddingLeft="@dimen/abc_dropdownitem_text_padding_left"
-                android:paddingRight="@dimen/abc_dropdownitem_text_padding_right"
+                android:paddingStart="@dimen/abc_dropdownitem_text_padding_left"
+                android:paddingEnd="@dimen/abc_dropdownitem_text_padding_right"
                 android:singleLine="true"
                 android:ellipsize="end"
                 android:background="@drawable/searchview_input_bg"
@@ -66,7 +66,7 @@
                 android:imeOptions="actionSearch"
                 android:dropDownHeight="wrap_content"
                 android:dropDownAnchor="@id/search_edit_frame"
-                android:drawableRight="@drawable/menu_search"
+                android:drawableEnd="@drawable/ic_menu_search"
                 android:dropDownVerticalOffset="0dip"
                 android:dropDownHorizontalOffset="0dip" />
             <ImageView

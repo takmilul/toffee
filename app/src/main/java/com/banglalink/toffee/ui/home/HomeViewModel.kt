@@ -46,7 +46,7 @@ class HomeViewModel @ViewModelInject constructor(
     val shareContentLiveData = MutableLiveData<ChannelInfo>()
     val userChannelMutableLiveData = MutableLiveData<ChannelInfo>()
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
-    val viewAllChannelLiveData = MutableLiveData<Boolean>()
+    val switchBottomTab = MutableLiveData<Int>()
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val viewAllVideoLiveData = MutableLiveData<Boolean>()
     val viewAllCategories = MutableLiveData<Boolean>()

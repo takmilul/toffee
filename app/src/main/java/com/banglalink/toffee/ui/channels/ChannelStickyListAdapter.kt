@@ -15,6 +15,7 @@ import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.widget.StickyHeaderGridAdapter
 import com.banglalink.toffee.util.Utils
+import com.banglalink.toffee.util.bindChannel
 import com.banglalink.toffee.util.bindRoundImage
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -104,7 +105,15 @@ class ChannelStickyListAdapter(
     ) {
         if(viewHolder is TvTitleViewHolder && selectedChannel != null) {
             selectedChannel?.let {
-                bindRoundImage(viewHolder.providerIcon, it.channel_logo)
+                bindChannel(viewHolder.providerIcon, it)
+
+//                viewHolder.providerIcon.load(it.channel_logo){
+//                    transformations(CircleCropTransformation())
+////                    crossfade(true)
+//                    memoryCachePolicy(CachePolicy.ENABLED)
+////            diskCachePolicy(CachePolicy.ENABLED)
+//                }
+
                 viewHolder.providerName.text = it.program_name
                 viewHolder.nonTvGroup.visibility = View.GONE
             }
@@ -132,7 +141,7 @@ class ChannelStickyListAdapter(
 //            diskCachePolicy(CachePolicy.ENABLED)
         }
 
-        if(item.id == selectedChannel?.id.toString()) {
+        if(item.id == selectedChannel?.id.toString() && !getSection(section).header.contains("Recent")) {
             liveTvViewHolder.icon.borderWidth = Utils.dpToPx(4)
         } else {
             liveTvViewHolder.icon.borderWidth = 0

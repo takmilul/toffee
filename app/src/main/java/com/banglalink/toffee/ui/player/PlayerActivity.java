@@ -64,7 +64,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
     private PlayerEventListener playerEventListener = new PlayerEventListener();
 
     @Nullable
-    private ChannelInfo channelInfo;
+    protected ChannelInfo channelInfo;
 
     private static final CookieManager DEFAULT_COOKIE_MANAGER;
     static {
