@@ -5,6 +5,7 @@ import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,8 +23,11 @@ import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.analytics.AnalyticsListener;
+import com.google.android.exoplayer2.analytics.DefaultAnalyticsListener;
 import com.google.android.exoplayer2.source.BehindLiveWindowException;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.MediaSourceEventListener;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
@@ -37,6 +41,8 @@ import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
@@ -46,7 +52,7 @@ import java.net.CookiePolicy;
  * Created by shantanu on 5/5/17.
  */
 
-public abstract class PlayerActivity extends BaseAppCompatActivity implements OnPlayerControllerChangedListener, Player.EventListener {
+public abstract class PlayerActivity extends BaseAppCompatActivity implements OnPlayerControllerChangedListener, Player.EventListener, AnalyticsListener {
     protected Handler handler;
 
     @Nullable
@@ -166,6 +172,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
                     new SimpleExoPlayer.Builder(this)
                             .setTrackSelector(defaultTrackSelector)
                             .build();
+            player.addAnalyticsListener(new PlayerAnalyticsListener());
             player.addListener(playerEventListener);
             player.setPlayWhenReady(false);
             if(BuildConfig.DEBUG){
@@ -349,6 +356,14 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
         return false;
     }
 
+    private static class PlayerAnalyticsListener implements AnalyticsListener{
+        private long totalBytes = 0;
+        @Override
+        public void onLoadCompleted(@NotNull EventTime eventTime, @NotNull MediaSourceEventListener.LoadEventInfo loadEventInfo, @NotNull MediaSourceEventListener.MediaLoadData mediaLoadData) {
+            totalBytes+= loadEventInfo.bytesLoaded;
+            Log.e("PLAYER BYTES",""+totalBytes/1024+" KB");
+        }
+    }
 
     private class PlayerEventListener implements Player.EventListener {
 
