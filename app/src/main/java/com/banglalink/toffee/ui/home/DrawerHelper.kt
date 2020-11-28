@@ -246,7 +246,7 @@ class DrawerHelper(private val activity: HomeActivity,
 //                }
                 binding.drawerLayout.closeDrawers()
 //                activity.minimizePlayer()
-                activity.getHomeViewModel().viewAllChannelLiveData.postValue(true)
+                activity.getHomeViewModel().switchBottomTab.postValue(1)
             }
             ID_FAV -> {
                 activity.getNavController().navigate(R.id.favoriteFragment)

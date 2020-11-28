@@ -44,7 +44,7 @@ class AllCategoriesFragment: BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         categoriesBg.isVisible = false
-        categoriesHeader.isVisible = false
+//        categoriesHeader.isVisible = false
         viewAllButton.isVisible = false
 
         mAdapter = CategoriesListAdapter(object: BaseListItemCallback<UgcCategory> {
@@ -56,10 +56,10 @@ class AllCategoriesFragment: BaseFragment() {
                 findNavController()?.
                 navigate(R.id.action_allCategoriesFragment_to_categoryDetailsFragment, args)
             }
-        })
+        }, true)
 
         with(categoriesList) {
-            layoutManager = GridLayoutManager(context, 3)
+            layoutManager = GridLayoutManager(context, 2)
             adapter = mAdapter
         }
 

@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
@@ -32,6 +33,7 @@ class LandingCategoriesFragment: BaseFragment() {
     private lateinit var mAdapter: CategoriesListAdapter
 
     private val viewModel by activityViewModels<LandingPageViewModel>()
+    private val homeViewModel by activityViewModels<HomeViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,11 +58,12 @@ class LandingCategoriesFragment: BaseFragment() {
         })
 
         viewAllButton.setOnClickListener {
-            parentFragment?.findNavController()?.navigate(R.id.action_landingPageFragment_to_allCategoriesFragment)
+//            parentFragment?.findNavController()?.navigate(R.id.action_landingPageFragment_to_allCategoriesFragment)
+            homeViewModel.switchBottomTab.postValue(3)
         }
 
         with(categoriesList) {
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            layoutManager = GridLayoutManager(context, 2, GridLayoutManager.HORIZONTAL, false)
             adapter = mAdapter
         }
 

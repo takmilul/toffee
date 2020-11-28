@@ -100,7 +100,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
         })
 
         viewAllButton.setOnClickListener {
-            parentFragment?.findNavController()?.navigate(R.id.menu_activities,
+            parentFragment?.findNavController()?.navigate(R.id.menu_explore,
                 Bundle().apply {
                     putInt(UserActivitiesMainFragment.ARG_SELECTED_TAB, 1)
                 })
