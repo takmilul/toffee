@@ -5,6 +5,7 @@ import android.graphics.Paint
 import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.LayoutLoginConfirmBinding
 import com.banglalink.toffee.extension.*
@@ -15,6 +16,8 @@ import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.gms.auth.api.phone.SmsRetriever
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class VerifyCodeActivity : BaseAppCompatActivity(){
 
@@ -92,15 +95,19 @@ class VerifyCodeActivity : BaseAppCompatActivity(){
             progressDialog.dismiss()
             when (it) {
                 is Resource.Success -> {
-                    launchActivity<HomeActivity>() {
-                        if (it.data.referralStatus == "Valid") {
-                            putExtra(
-                                HomeActivity.INTENT_REFERRAL_REDEEM_MSG,
-                                it.data.referralStatusMessage
-                            )
+                    lifecycleScope.launch {
+                        binding.loadingAnimation.transitionToEnd()
+                        delay(500)
+                        launchActivity<HomeActivity>() {
+                            if (it.data.referralStatus == "Valid") {
+                                putExtra(
+                                    HomeActivity.INTENT_REFERRAL_REDEEM_MSG,
+                                    it.data.referralStatusMessage
+                                )
+                            }
                         }
+                        finish()
                     }
-                    finish()
                 }
                 is Resource.Failure -> {
                     binding.root.snack(it.error.msg) {

@@ -35,7 +35,7 @@ class SplashScreen : BaseAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this,R.layout.activity_splash_screen)
-//        binding.animation.transitionToEnd()
+        
         if(viewModel.isCustomerLoggedIn())
             initApp()
         else{
