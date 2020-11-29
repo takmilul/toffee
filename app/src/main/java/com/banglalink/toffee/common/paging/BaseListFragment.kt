@@ -21,7 +21,7 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
     protected abstract val mAdapter: BasePagingDataAdapter<T>
     protected abstract val mViewModel: BasePagingViewModel<T>
 
-    private lateinit var binding: FragmentBaseSingleListBinding
+    protected lateinit var binding: FragmentBaseSingleListBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -90,8 +90,12 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
 //          TODO: Inspect for gridview
 //           setItemViewCacheSize(10)
 
-            adapter = mAdapter
+            adapter = getRecyclerAdapter()
         }
+    }
+
+    open fun getRecyclerAdapter(): RecyclerView.Adapter<*> {
+        return mAdapter
     }
 
     private fun observeList() {
