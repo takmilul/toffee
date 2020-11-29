@@ -12,6 +12,7 @@ import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelPlaylist
+import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.ui.category.CategoryDetailsFragmentDirections
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
@@ -56,7 +57,9 @@ class MostPopularPlaylistsFragment: HomeBaseFragment(), ProviderIconCallback<MyC
     override fun onItemClicked(item: MyChannelPlaylist) {
 //                homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
         val isOwner = if(item.channelCreatorId == Preference.getInstance().customerId) 1 else 0
-        val action = CategoryDetailsFragmentDirections.actionCategoryDetailsFragmentToMyChannelPlaylistVideosFragment(item.channelCreatorId, isOwner, item.playlistTableId)
+        val action = CategoryDetailsFragmentDirections.actionCategoryDetailsFragmentToMyChannelPlaylistVideosFragment(
+            PlaylistPlaybackInfo(item.playlistTableId, item.channelCreatorId, isOwner, item.name, item.totalContent)
+        )
         findNavController().navigate(action)
     }
 

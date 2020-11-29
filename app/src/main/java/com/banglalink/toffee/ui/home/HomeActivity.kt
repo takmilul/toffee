@@ -45,15 +45,13 @@ import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.extension.loadProfileImage
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
-import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.EXIT_FROM_APP_MSG
-import com.banglalink.toffee.model.NavigationMenu
-import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.channels.AllChannelsViewModel
 import com.banglalink.toffee.ui.channels.ChannelFragment
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.ui.landing.AllCategoriesFragment
 import com.banglalink.toffee.ui.login.SigninByPhoneActivity
+import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
 import com.banglalink.toffee.ui.player.PlayerActivity
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.subscription.PackageListActivity
@@ -558,7 +556,17 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         playChannel(channelInfo)
     }
 
-    private fun onDetailsFragmentLoad(channelInfo: ChannelInfo?) {
+    private fun onDetailsFragmentLoad(detailsInfo: Any?) {
+        val channelInfo = when (detailsInfo) {
+            is ChannelInfo -> {
+                detailsInfo
+            }
+            is PlaylistPlaybackInfo -> {
+                detailsInfo.channelInfo
+            }
+            else -> null
+        }
+
         channelInfo?.let {
             when{
                 it.urlType == PLAY_IN_WEB_VIEW->{
@@ -585,7 +593,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                     if(it.isLive) {
                         viewModel.addTvChannelToRecent(it)
                     }
-                    loadDetailFragment(it)
+                    loadDetailFragment(detailsInfo)
                 }
                 else ->{
                     showSubscribePackDialog()
@@ -600,21 +608,34 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         }
     }
 
-    private fun loadDetailFragment(channelInfo: ChannelInfo){
-        if (channelInfo.isLive) {
-            val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
-            if (fragment !is ChannelFragment) {
-                loadFragmentById(
-                    R.id.details_viewer, ChannelFragment.createInstance(
-                        getString(R.string.menu_channel_text), showSelected = true
+    private fun loadDetailFragment(info: Any?){
+        if(info is ChannelInfo) {
+            if (info.isLive) {
+                val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
+                if (fragment !is ChannelFragment) {
+                    loadFragmentById(
+                        R.id.details_viewer, ChannelFragment.createInstance(
+                            getString(R.string.menu_channel_text), showSelected = true
+                        )
                     )
+                }
+            } else {
+                loadFragmentById(
+                    R.id.details_viewer,
+                    CatchupDetailsFragment.createInstance(info)
                 )
             }
-        } else {
-            loadFragmentById(
-                R.id.details_viewer,
-                CatchupDetailsFragment.createInstance(channelInfo)
-            )
+        } else if(info is PlaylistPlaybackInfo) {
+            val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
+            if (fragment !is MyChannelPlaylistVideosFragment || fragment.getPlaylistId() != info.playlistId) {
+                loadFragmentById(
+                    R.id.details_viewer, MyChannelPlaylistVideosFragment.newInstance(
+                        info
+                    )
+                )
+            } else {
+                fragment.setCurrentChannel(info.channelInfo)
+            }
         }
 //        val frag = supportFragmentManager.findFragmentById(R.id.details_viewer)
 //        if(frag !is ChannelViewFragment) {

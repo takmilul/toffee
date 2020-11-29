@@ -152,14 +152,8 @@
         android:name="com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment"
         android:label="MyChannelPlaylistVideosFragment">
         <argument
-            android:name="channelOwnerId"
-            app:argType="integer" />
-        <argument
-            android:name="isOwner"
-            app:argType="integer" />
-        <argument
-            android:name="playlistId"
-            app:argType="integer" />
+            android:name="playlistInfo"
+            app:argType="com.banglalink.toffee.model.PlaylistPlaybackInfo" />
     </fragment>
     <fragment
         android:id="@+id/thumbnailSelectionMethodFragment"
