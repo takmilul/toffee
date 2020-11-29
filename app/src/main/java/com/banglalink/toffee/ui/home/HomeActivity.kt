@@ -316,7 +316,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             .rotation(if (isRotate) 135.0F else 0.0F)
             .withEndAction {
                 if (isRotate) {
-                    val colorStateList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorSecondaryDark))
+                    val colorStateList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.menuColorSecondaryDark))
                     binding.uploadButton.backgroundTintList = colorStateList
                     binding.uploadButton.imageTintList = colorStateList
                 } else {
