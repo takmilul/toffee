@@ -5,7 +5,6 @@
         <layer-list>
             <item>
                 <shape>
-                    <stroke android:color="@color/ratingIconColor" />
                     <solid android:color="@color/ratingButtonActiveColor" />
                     <corners android:radius="30dp" />
                     <padding
@@ -26,7 +25,6 @@
         <layer-list>
             <item>
                 <shape>
-                    <stroke android:color="@color/ratingIconColor" />
                     <solid android:color="@color/ratingButtonActiveColor" />
                     <corners android:radius="30dp" />
                     <padding

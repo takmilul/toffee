@@ -15,6 +15,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.databinding.DataBindingUtil
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
@@ -32,7 +33,6 @@ import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.Credentials
 import com.google.android.gms.auth.api.credentials.HintRequest
-import java.lang.Exception
 
 
 class SigninByPhoneActivity : BaseAppCompatActivity() {
@@ -60,9 +60,23 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
         binding.termsAndConditionsCheckbox.setOnClickListener {
             binding.loginBtn.isEnabled = binding.termsAndConditionsCheckbox.isChecked
         }
+        binding.signinMotionLayout.addTransitionListener(object : MotionLayout.TransitionListener{
+            override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
+                println("Transition started")
+            }
 
-        getHintPhoneNumber()
+            override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
+                println("Transition changed")
+            }
 
+            override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
+                getHintPhoneNumber()
+            }
+
+            override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {
+                println("Transition triggered")
+            }
+        })
     }
 
     private fun handleLogin() {
@@ -90,6 +104,7 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
             progressDialog.dismiss()
             when (it) {
                 is Resource.Success -> {
+                    binding.mainLayout.transitionToEnd()
                     launchActivity<VerifyCodeActivity> {
                         putExtra(
                             VerifyCodeActivity.PHONE_NUMBER,
@@ -156,12 +171,12 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
     }
 
     fun handleHaveReferralOption(view: View) {
-        binding.group.visibility = View.VISIBLE
-        binding.groupHaveRef.visibility = View.GONE
+        binding.refCodeEt.visibility = View.VISIBLE
+        binding.groupHaveRef.visibility = View.INVISIBLE
     }
 
     private fun setSpannableTermsAndConditions() {
-        val ss = SpannableString(getString(R.string.terms_and_conditions_text))
+        val ss = SpannableString(getString(R.string.terms_and_conditions))
         val clickableSpan = object : ClickableSpan() {
             override fun onClick(textView: View) {
                 val intent = Intent(this@SigninByPhoneActivity, HtmlPageViewActivity::class.java)
@@ -181,7 +196,7 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
                 ds.isUnderlineText = true
             }
         }
-        ss.setSpan(clickableSpan, 15, ss.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        ss.setSpan(clickableSpan, 0, ss.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 
         binding.termsAndConditionsTv.text = ss
         binding.termsAndConditionsTv.movementMethod = LinkMovementMethod.getInstance()

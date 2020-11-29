@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
@@ -20,13 +21,12 @@ import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.login.SigninByPhoneActivity
 import com.banglalink.toffee.util.unsafeLazy
 import com.facebook.appevents.AppEventsLogger
-import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SplashScreen : BaseAppCompatActivity() {
 
-    lateinit var binding:ActivitySplashScreenBinding
+    lateinit var binding: ActivitySplashScreenBinding
 
     private val TAG = "SplashScreen"
 
@@ -37,20 +37,35 @@ class SplashScreen : BaseAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this,R.layout.activity_splash_screen)
-
-        if(viewModel.isCustomerLoggedIn())
-            initApp()
-        else{
-            lifecycleScope.launch {
-                delay(2000)
-                launchActivity<SigninByPhoneActivity>()
-                finish()
+        
+        binding.splashMotionLayout.addTransitionListener(object : MotionLayout.TransitionListener {
+            override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
+                println("Transition started")
             }
-        }
-        val appEventsLogger = AppEventsLogger.newLogger(this)
-        appEventsLogger.logEvent("app_launch")
-        appEventsLogger.flush()
 
+            override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
+                println("Transition changed")
+            }
+
+            override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
+                if (viewModel.isCustomerLoggedIn())
+                    initApp()
+                else {
+                    lifecycleScope.launch {
+                        launchActivity<SigninByPhoneActivity>()
+                        finish()
+                    }
+                }
+                val appEventsLogger = AppEventsLogger.newLogger(this@SplashScreen)
+                appEventsLogger.logEvent("app_launch")
+                appEventsLogger.flush()
+            }
+
+            override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {
+                println("Transition triggered")
+            }
+        })
+        
     }
 
     private fun initApp(skipUpdate:Boolean = false){
@@ -67,7 +82,7 @@ class SplashScreen : BaseAppCompatActivity() {
                             showUpdateDialog(it.error.title,it.error.updateMsg,it.error.forceUpdate)
                         }
                         else->{
-//                            ToffeeAnalytics.apiLoginFailed(it.error.msg)
+                            ToffeeAnalytics.apiLoginFailed(it.error.msg)
                             binding.root.snack(it.error.msg){
                                 action("Retry") {
                                     initApp(skipUpdate)

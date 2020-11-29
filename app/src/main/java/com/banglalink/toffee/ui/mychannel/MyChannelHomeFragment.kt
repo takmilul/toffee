@@ -115,7 +115,7 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity?.title = "My Channel"
+        
 
         binding.contentBody.visibility = View.GONE
         binding.progressBar.visibility = View.VISIBLE
@@ -188,6 +188,11 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
         alertDialog.setOnDismissListener { bindButtonState(binding.channelDetailView.ratingButton, myRating > 0) }
     }
 
+    override fun onResume() {
+        super.onResume()
+        bindButtonState(binding.channelDetailView.ratingButton, myRating > 0)
+    }
+    
     private fun showCreatePlaylistDialog() {
         val playlistBinding = AlertDialogMyChannelPlaylistCreateBinding.inflate(this.layoutInflater)
         val dialogBuilder = android.app.AlertDialog.Builder(requireContext()).setView(playlistBinding.root)
@@ -244,6 +249,12 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
     }
 
     private fun loadBody() {
+        if(isPublic == 1){
+            activity?.title = myChannelDetail?.channelName ?: "Channel"
+        }
+        else {
+            activity?.title = "My Channel"
+        }
         binding.progressBar.visibility = View.GONE
         binding.contentBody.visibility = View.VISIBLE
 
@@ -314,7 +325,6 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
             when (it) {
                 is Success -> {
                     binding.myRating = myRating
-                    binding.channelDetailView.ratingButton.text = myRating.toString()
                     bindButtonState(binding.channelDetailView.ratingButton, myRating > 0)
                     binding.channelDetailView.ratingCountTextView.text = it.data.ratingCount.toString()
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()

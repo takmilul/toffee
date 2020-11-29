@@ -47,6 +47,9 @@
         <action
             android:id="@+id/action_menu_feed_to_catchupDetailsFragment"
             app:destination="@id/catchupDetailsFragment" />
+        <action
+            android:id="@+id/action_menu_feed_to_trendingChannelsFragment"
+            app:destination="@id/trendingChannelsFragment" />
     </fragment>
     <fragment
         android:id="@+id/menu_tv"
@@ -118,6 +121,10 @@
             android:id="@+id/action_categoryDetailsFragment_to_myChannelHomeFragment"
             app:destination="@id/myChannelHomeFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/trendingChannelsFragment"
+        android:name="com.banglalink.toffee.ui.trendingchannels.TrendingChannelsFragment"
+        android:label="TrendingChannelsFragment"/>
     <fragment
         android:id="@+id/MyChannelEditDetailFragment"
         android:name="com.banglalink.toffee.ui.mychannel.MyChannelEditDetailFragment"
