@@ -1,4 +1,4 @@
-package com.banglalink.toffee.ui.landing
+package com.banglalink.toffee.ui.trendingchannels
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -20,14 +20,17 @@ import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.home.UserChannelsListAdapter
-import com.banglalink.toffee.ui.useractivities.UserActivitiesMainFragment
+import com.banglalink.toffee.ui.landing.LandingPopularChannelCallback
+import com.banglalink.toffee.ui.landing.UserChannelViewModel
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.fragment_landing_categories.*
 import kotlinx.android.synthetic.main.fragment_landing_user_channels.*
+import kotlinx.android.synthetic.main.fragment_landing_user_channels.viewAllButton
 import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
-class LandingUserChannelsFragment : HomeBaseFragment() {
+class TrendingChannelsListFragment : HomeBaseFragment() {
     private lateinit var mAdapter: UserChannelsListAdapter
     private var categoryInfo: UgcCategory? = null
     private val viewModel by activityViewModels<LandingPageViewModel>()
@@ -38,7 +41,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_landing_user_channels, container, false)
+        return inflater.inflate(R.layout.fragment_trending_channels_list, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -50,7 +53,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
 
         mAdapter = UserChannelsListAdapter(object : LandingPopularChannelCallback {
             override fun onItemClicked(item: UgcUserChannelInfo) {
-                viewModel.navigateToMyChannel(this@LandingUserChannelsFragment, item.channelOwnerId, item.isSubscribed?:0)
+                viewModel.navigateToMyChannel(this@TrendingChannelsListFragment, item.channelOwnerId, item.isSubscribed?:0)
             }
 
             override fun onSubscribeButtonClicked(view: View, info: UgcUserChannelInfo) {

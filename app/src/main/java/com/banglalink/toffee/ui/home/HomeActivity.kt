@@ -206,9 +206,12 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             minimizePlayer()
         }*/
 
-        observe(viewModel.viewAllChannelLiveData) {
+        observe(viewModel.switchBottomTab) {
 //            drawerHelper.onMenuClick(NavigationMenu(ID_CHANNEL, "All Videos", 0, listOf(), false))
-            binding.tabNavigator.selectedItemId = R.id.menu_tv
+            when(it) {
+                1-> binding.tabNavigator.selectedItemId = R.id.menu_tv
+                3-> binding.tabNavigator.selectedItemId = R.id.menu_explore
+            }
 //            binding.homeTabPager.currentItem = 1
         }
 
