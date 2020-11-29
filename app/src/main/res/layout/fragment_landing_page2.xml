@@ -86,10 +86,4 @@
                 />
         </androidx.core.widget.NestedScrollView>
     </com.banglalink.toffee.ui.widget.NestedCoordinatorLayout>
-    <include
-        android:id="@+id/home_mini_progress_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        layout="@layout/home_mini_upload_progress" />
 </RelativeLayout>

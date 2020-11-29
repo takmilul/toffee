@@ -26,13 +26,17 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.banglalink.toffee.R
@@ -55,6 +59,8 @@ import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
 import com.banglalink.toffee.ui.player.PlayerActivity
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.subscription.PackageListActivity
+import com.banglalink.toffee.ui.upload.UploadProgressViewModel
+import com.banglalink.toffee.ui.upload.UploadStatus
 import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.ui.widget.showSubscriptionDialog
@@ -68,9 +74,12 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.activity_main_menu.*
+import kotlinx.android.synthetic.main.home_mini_upload_progress.*
 import kotlinx.android.synthetic.main.layout_appbar.view.*
 import kotlinx.android.synthetic.main.player_bottom_sheet_layout.*
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.annotation.Nonnull
@@ -120,6 +129,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
 
     private val viewModel: HomeViewModel by viewModels()
     private val allChannelViewModel by viewModels<AllChannelsViewModel>()
+    private val uploadViewModel by viewModels<UploadProgressViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -268,8 +278,8 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         lifecycle.addObserver(HeartBeatManager)
         observeInAppMessage()
         handleSharedUrl(intent)
-
         configureBottomSheet()
+        observeUpload2()
     }
 
     private fun configureBottomSheet() {
@@ -929,5 +939,40 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
 
     override fun onQueryTextChange(newText: String?): Boolean {
         return false
+    }
+
+    private fun observeUpload2() {
+        add_upload_info_button.setOnClickListener {
+            navController.navigate(R.id.editUploadInfoFragment)
+        }
+
+        lifecycleScope.launchWhenStarted {
+            uploadViewModel.getActiveUploadList().collectLatest {
+                Log.e("UPLOAD 2", "Collecting ->>> ${it.size}")
+                if(it.isNotEmpty()) {
+                    home_mini_progress_container.isVisible = true
+                    val upInfo = it[0]
+                    when(upInfo.status){
+                        UploadStatus.SUCCESS.value -> {
+                            mini_upload_progress.progress = 100
+                            add_upload_info_button.isVisible = true
+                            upload_size_text.isInvisible = true
+                            mini_upload_progress_text.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_upload_done, 0, 0, 0)
+                            mini_upload_progress_text.text = "Upload complete"
+                        }
+                        UploadStatus.ADDED.value,
+                        UploadStatus.STARTED.value -> {
+                            add_upload_info_button.isInvisible = true
+                            upload_size_text.isVisible = true
+                            mini_upload_progress_text.text = "Uploading - ${upInfo.completedPercent}%"
+                            mini_upload_progress.progress = upInfo.completedPercent
+                            upload_size_text.text = Utils.readableFileSize(upInfo.fileSize)
+                        }
+                    }
+                } else {
+                    home_mini_progress_container.isVisible = false
+                }
+            }
+        }
     }
 }
