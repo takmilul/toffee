@@ -6,25 +6,27 @@ import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatEditText
+import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import com.banglalink.toffee.R
 
 class HashTagEditText @JvmOverloads constructor(mContext: Context,
                                                 attrs: AttributeSet? = null,
                                                 defStyleAttr: Int = androidx.appcompat.R.attr.editTextStyle): AppCompatEditText(mContext, attrs, defStyleAttr) {
-    var hashTagColor: Int = Color.parseColor("#000000")
-        set(value) {
-            field = value
-            text = text
-        }
+    private val hashTagColor: Int = ContextCompat.getColor(mContext, R.color.colorAccent2)
+//        set(value) {
+//            field = value
+//            text = text
+//        }
 
     init {
-        val a = context.obtainStyledAttributes(attrs, intArrayOf(R.attr.colorAccent))
-        try {
-            this.hashTagColor = a.getColor(0, Color.parseColor("#448aff"))
-        } finally {
-            a.recycle()
-        }
+        //
+//        val a = context.obtainStyledAttributes(attrs, intArrayOf(R.attr.colorAccent))
+//        try {
+//            this.hashTagColor = a.getColor(0, Color.parseColor("#448aff"))
+//        } finally {
+//            a.recycle()
+//        }
 
         addTextChangedListener {
             val text = it?.toString() ?: return@addTextChangedListener

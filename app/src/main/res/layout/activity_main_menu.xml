@@ -29,15 +29,26 @@
                         android:layout_height="match_parent"
                         android:layout_marginBottom="?attr/actionBarSize"
                         >
-                        <androidx.fragment.app.FragmentContainerView
-                            android:id="@+id/home_nav_host"
-                            android:name="androidx.navigation.fragment.NavHostFragment"
-                            app:navGraph="@navigation/home_navigation_graph"
-                            app:defaultNavHost="true"
-                            android:background="@color/screen_bg"
+                        <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            />
+                            android:layout_height="match_parent">
+                            <androidx.fragment.app.FragmentContainerView
+                                android:id="@+id/home_nav_host"
+                                android:name="androidx.navigation.fragment.NavHostFragment"
+                                app:navGraph="@navigation/home_navigation_graph"
+                                app:defaultNavHost="true"
+                                android:background="@color/screen_bg"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_above="@id/home_mini_progress_container"
+                                />
+                            <include
+                                android:id="@+id/home_mini_progress_container"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentBottom="true"
+                                layout="@layout/home_mini_upload_progress" />
+                        </RelativeLayout>
                         <FrameLayout
                             android:id="@+id/content_viewer"
                             android:layout_width="match_parent"
@@ -97,8 +108,8 @@
                         android:layout_height="wrap_content"
                         app:menu="@menu/menu_bottom_nav"
                         app:labelVisibilityMode="labeled"
-                        app:itemIconTint="@color/colorSecondaryDark"
-                        app:itemTextColor="@color/colorSecondaryDark"
+                        app:itemIconTint="@color/menuColorSecondaryDark"
+                        app:itemTextColor="@color/menuColorSecondaryDark"
                         >
 
                     </com.google.android.material.bottomnavigation.BottomNavigationView>

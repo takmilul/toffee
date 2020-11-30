@@ -42,7 +42,7 @@ class MultiTextButton @JvmOverloads constructor(mContext: Context, attrs: Attrib
                 subAmountView.setBackgroundResource(R.drawable.subscribe_bg_right)
             }
         }
-        subStatusView.setTextColor(ContextCompat.getColorStateList(context, R.color.subscribe_button_text_color))
+        subStatusView.setTextColor(ContextCompat.getColorStateList(context, R.color.colorAccent2))
         dispatchSetActivated(status)
     }
 }
