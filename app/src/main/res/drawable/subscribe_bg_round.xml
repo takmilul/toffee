@@ -11,7 +11,7 @@
     </item>
     <item android:state_activated="true">
         <shape>
-            <solid android:color="@color/colorAccent2" />
+            <solid android:color="@color/colorButtonActivated" />
             <corners
                 android:radius="30dp" />
             <padding android:left="10dp" android:top="6dp" android:right="10dp" android:bottom="6dp" />

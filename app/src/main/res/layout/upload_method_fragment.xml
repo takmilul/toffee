@@ -75,7 +75,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"
                 android:text="@string/btn_open_gallery"
-                app:backgroundTint="@color/colorSecondary"
+                app:backgroundTint="@color/colorButtonSecondary"
                 app:icon="@drawable/ic_photo_holder"
                 app:layout_constraintEnd_toEndOf="@+id/open_camera_button"
                 app:layout_constraintStart_toStartOf="@+id/open_camera_button"
