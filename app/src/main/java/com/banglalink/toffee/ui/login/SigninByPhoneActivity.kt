@@ -13,6 +13,7 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.*
 import android.widget.Button
 import android.widget.TextView
 import androidx.constraintlayout.motion.widget.MotionLayout
@@ -104,7 +105,7 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
             progressDialog.dismiss()
             when (it) {
                 is Resource.Success -> {
-                    binding.mainLayout.transitionToEnd()
+//                    binding.mainLayout.transitionToEnd()
                     launchActivity<VerifyCodeActivity> {
                         putExtra(
                             VerifyCodeActivity.PHONE_NUMBER,
@@ -171,8 +172,10 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
     }
 
     fun handleHaveReferralOption(view: View) {
-        binding.refCodeEt.visibility = View.VISIBLE
-        binding.groupHaveRef.visibility = View.INVISIBLE
+        binding.refCodeEt.visibility = VISIBLE
+        binding.groupHaveRef.visibility = GONE
+//        binding.haveRefTv.visibility = GONE
+//        binding.arrowIcon.visibility = GONE
     }
 
     private fun setSpannableTermsAndConditions() {
@@ -215,7 +218,7 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
                     RESOLVE_HINT, null, 0, 0, 0
                 )
             }
-        }catch (e:Exception){
+        }catch (e: Exception){
             ToffeeAnalytics.logException(e)
             ToffeeAnalytics.logBreadCrumb("Could not retrieve phone number")
         }

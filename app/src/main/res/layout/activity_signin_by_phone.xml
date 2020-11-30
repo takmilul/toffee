@@ -75,7 +75,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="parent">
 
-            <androidx.constraintlayout.motion.widget.MotionLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/mainLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -139,7 +139,7 @@
                     app:layout_constraintHorizontal_chainStyle="packed"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/arrow_icon"
-                    app:layout_constraintTop_toBottomOf="@+id/phone_number_et" />
+                    app:layout_constraintTop_toBottomOf="@id/phone_number_et"/>
 
                 <ImageView
                     android:id="@+id/arrow_icon"
@@ -163,11 +163,11 @@
                     android:gravity="center"
                     android:hint="@string/referral_code"
                     android:letterSpacing="0.1"
-                    android:visibility="invisible"
+                    android:visibility="gone"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/phone_number_et" />
+                    app:layout_constraintTop_toBottomOf="@id/have_ref_tv" />
 
                 <android.widget.CheckBox
                     android:id="@+id/terms_and_conditions_checkbox"
@@ -215,7 +215,7 @@
                     app:layout_constraintStart_toStartOf="@+id/signin_tv"
                     app:layout_constraintTop_toBottomOf="@+id/terms_and_conditions_checkbox" />
 
-            </androidx.constraintlayout.motion.widget.MotionLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
     </androidx.constraintlayout.motion.widget.MotionLayout>
 </layout>
