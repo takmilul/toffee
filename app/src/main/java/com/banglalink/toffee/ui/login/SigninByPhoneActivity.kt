@@ -105,7 +105,7 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
             progressDialog.dismiss()
             when (it) {
                 is Resource.Success -> {
-//                    binding.mainLayout.transitionToEnd()
+                    binding.mainLayout.transitionToEnd()
                     launchActivity<VerifyCodeActivity> {
                         putExtra(
                             VerifyCodeActivity.PHONE_NUMBER,
@@ -172,10 +172,9 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
     }
 
     fun handleHaveReferralOption(view: View) {
+        binding.haveRefTv.isClickable = false
         binding.refCodeEt.visibility = VISIBLE
-        binding.groupHaveRef.visibility = GONE
-//        binding.haveRefTv.visibility = GONE
-//        binding.arrowIcon.visibility = GONE
+        binding.groupHaveRef.visibility = INVISIBLE
     }
 
     private fun setSpannableTermsAndConditions() {

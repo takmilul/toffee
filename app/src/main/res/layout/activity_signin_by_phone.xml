@@ -75,7 +75,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <androidx.constraintlayout.motion.widget.MotionLayout
                 android:id="@+id/mainLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -116,42 +116,6 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/signin_tv" />
 
-                <androidx.constraintlayout.widget.Group
-                    android:id="@+id/group_have_ref"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:visibility="visible"
-                    app:constraint_referenced_ids="arrow_icon,have_ref_tv" />
-
-                <TextView
-                    android:id="@+id/have_ref_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:fontFamily="@font/roboto_medium"
-                    android:onClick="handleHaveReferralOption"
-                    android:text="@string/have_referral_code"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="16sp"
-                    app:layout_constraintHorizontal_chainStyle="packed"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/arrow_icon"
-                    app:layout_constraintTop_toBottomOf="@id/phone_number_et"/>
-
-                <ImageView
-                    android:id="@+id/arrow_icon"
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
-                    android:src="@drawable/ic_right_arrow_white"
-                    app:layout_constraintBottom_toBottomOf="@+id/have_ref_tv"
-                    app:layout_constraintStart_toEndOf="@+id/have_ref_tv"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/have_ref_tv"
-                    app:tint="@color/colorAccent" />
-
                 <EditText
                     android:id="@+id/ref_code_et"
                     android:layout_width="0dp"
@@ -163,11 +127,47 @@
                     android:gravity="center"
                     android:hint="@string/referral_code"
                     android:letterSpacing="0.1"
-                    android:visibility="gone"
+                    android:visibility="invisible"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/have_ref_tv" />
+                    app:layout_constraintTop_toBottomOf="@id/phone_number_et" />
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/group_have_ref"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible"
+                    app:constraint_referenced_ids="arrow_icon,have_ref_tv" />
+
+                <TextView
+                    android:id="@+id/have_ref_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="@font/roboto_medium"
+                    android:onClick="handleHaveReferralOption"
+                    android:text="@string/have_referral_code"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="16sp"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/arrow_icon"
+                    app:layout_constraintTop_toTopOf="@id/ref_code_et"
+                    app:layout_constraintBottom_toBottomOf="@id/ref_code_et"/>
+
+                <ImageView
+                    android:id="@+id/arrow_icon"
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:src="@drawable/ic_right_arrow_white"
+                    app:layout_constraintBottom_toBottomOf="@+id/have_ref_tv"
+                    app:layout_constraintStart_toEndOf="@+id/have_ref_tv"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/have_ref_tv"
+                    app:tint="@color/colorAccent" />
 
                 <android.widget.CheckBox
                     android:id="@+id/terms_and_conditions_checkbox"
@@ -215,7 +215,7 @@
                     app:layout_constraintStart_toStartOf="@+id/signin_tv"
                     app:layout_constraintTop_toBottomOf="@+id/terms_and_conditions_checkbox" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.motion.widget.MotionLayout>
         </androidx.core.widget.NestedScrollView>
     </androidx.constraintlayout.motion.widget.MotionLayout>
 </layout>

@@ -7,7 +7,7 @@
         motion:constraintSetEnd="@+id/end"
         motion:constraintSetStart="@id/start"
         motion:duration="1000">
-        <KeyFrameSet>
+        <!--<KeyFrameSet>
             <KeyPosition
                 motion:motionTarget="@id/have_ref_tv"
                 motion:framePosition="0"
@@ -32,7 +32,7 @@
                 motion:keyPositionType="parentRelative"
                 motion:percentX="0"
                 motion:percentY="0" />
-        </KeyFrameSet>
+        </KeyFrameSet>-->
     </Transition>
 
     <ConstraintSet android:id="@+id/start">
@@ -71,13 +71,33 @@
             motion:layout_constraintTop_toBottomOf="@+id/signin_tv" />
 
         <Constraint
+            android:id="@+id/ref_code_et"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="56dp"
+            android:layout_marginEnd="56dp"
+            android:layout_marginTop="16dp"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="@string/referral_code"
+            android:letterSpacing="0.1"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintHorizontal_bias="0.5"
+            motion:layout_constraintTop_toBottomOf="@id/phone_number_et" >
+            <PropertySet
+                android:visibility="invisible"
+                motion:visibilityMode="ignore"/>
+        </Constraint>
+        
+        <Constraint
             android:id="@+id/group_have_ref"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="visible"
             motion:constraint_referenced_ids="arrow_icon,have_ref_tv">
             <PropertySet
-                android:visibility="gone"
+                android:visibility="invisible"
                 motion:visibilityMode="ignore"/>
         </Constraint>
         
@@ -85,16 +105,16 @@
             android:id="@+id/have_ref_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:text="@string/have_referral_code"
             android:textColor="@color/colorAccent"
             android:textSize="16sp"
             motion:layout_constraintHorizontal_chainStyle="packed"
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintEnd_toStartOf="@id/arrow_icon"
-            motion:layout_constraintTop_toBottomOf="@id/phone_number_et">
+            motion:layout_constraintTop_toTopOf="@id/ref_code_et"
+            motion:layout_constraintBottom_toBottomOf="@id/ref_code_et">
             <PropertySet
-                android:visibility="gone"
+                android:visibility="invisible"
                 motion:visibilityMode="ignore"/>
         </Constraint>
 
@@ -109,29 +129,10 @@
             motion:layout_constraintTop_toTopOf="@+id/have_ref_tv"
             motion:tint="@color/colorAccent" >
             <PropertySet
-                android:visibility="gone"
+                android:visibility="invisible"
                 motion:visibilityMode="ignore"/>
         </Constraint>
 
-        <Constraint
-            android:id="@+id/ref_code_et"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="56dp"
-            android:layout_marginEnd="56dp"
-            android:layout_marginTop="16dp"
-            android:ems="10"
-            android:gravity="center"
-            android:hint="@string/referral_code"
-            android:letterSpacing="0.1"
-            motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintEnd_toEndOf="parent"
-            motion:layout_constraintHorizontal_bias="0.5"
-            motion:layout_constraintTop_toBottomOf="@id/have_ref_tv" >
-            <PropertySet
-                android:visibility="gone"
-                motion:visibilityMode="ignore"/>
-        </Constraint>
         <Constraint
             android:id="@+id/terms_and_conditions_checkbox"
             android:layout_width="wrap_content"
@@ -216,13 +217,13 @@
             android:id="@+id/have_ref_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:text="@string/have_referral_code"
             android:textColor="@color/colorAccent"
             android:textSize="16sp"
+            motion:layout_constraintHorizontal_chainStyle="packed"
             motion:layout_constraintTop_toTopOf="@id/ref_code_et"
-            motion:layout_constraintBottom_toBottomOf="@id/ref_code_et"
-            motion:layout_constraintEnd_toStartOf="parent"/>
+            motion:layout_constraintEnd_toStartOf="@id/arrow_icon"
+            motion:layout_constraintBottom_toBottomOf="@id/ref_code_et"/>
         
         <Constraint
             android:id="@+id/arrow_icon"
@@ -247,7 +248,7 @@
             android:letterSpacing="0.1"
             motion:layout_constraintEnd_toStartOf="parent"
             motion:layout_constraintHorizontal_bias="0.5"
-            motion:layout_constraintTop_toBottomOf="@id/have_ref_tv" />
+            motion:layout_constraintTop_toBottomOf="@id/phone_number_et" />
 
         <Constraint
             android:id="@+id/terms_and_conditions_checkbox"
