@@ -16,9 +16,7 @@
     <androidx.cardview.widget.CardView
         android:layout_width="160dp"
         android:layout_height="wrap_content"
-        android:maxWidth="200dp"
         android:layout_margin="8dp"
-        app:cardBackgroundColor="@color/colorAccent2"
         app:cardCornerRadius="16dp"
         app:cardUseCompatPadding="false"
         >
@@ -27,7 +25,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:backgroundTint="@color/colorAccent2"
             android:onClick="@{()->callback.onItemClicked(data)}">
 
             <ImageView
@@ -35,7 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
-                loadImageFromUrl="@{data.thumbnailUrl}"
+                loadCategoryBackground="@{data}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
