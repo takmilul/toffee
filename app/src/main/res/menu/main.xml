@@ -6,7 +6,7 @@
         android:title="Search"
         android:actionLayout="@layout/custom_searchview_layout"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
-        android:icon="@android:drawable/ic_menu_search"
+        android:icon="@drawable/ic_menu_search"
         android:voiceSearchMode="showVoiceSearchButton|launchRecognizer"
         app:showAsAction="always" />
 
