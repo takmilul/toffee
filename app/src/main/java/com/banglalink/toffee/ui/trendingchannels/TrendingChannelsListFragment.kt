@@ -8,6 +8,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
 import com.banglalink.toffee.extension.observe
@@ -75,12 +76,8 @@ class TrendingChannelsListFragment : HomeBaseFragment() {
             }
         })
 
-        viewAllButton.setOnClickListener {
-            parentFragment?.findNavController()?.navigate(R.id.action_menu_feed_to_trendingChannelsFragment)
-        }
-
         with(userChannelList) {
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            layoutManager = GridLayoutManager(context, 3)
             adapter = mAdapter
         }
         observeList()
