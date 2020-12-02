@@ -38,6 +38,8 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.HeartBeatManager
@@ -155,17 +157,6 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         initLandingPageFragmentAndListenBackStack()
         showRedeemMessageIfPossible()
 
-        observe(viewModel.getCategory()) {
-            when (it) {
-                is Resource.Success -> {
-                    drawerHelper.updateAdapter(it.data.vod)
-                }
-                is Resource.Failure -> {
-                    showToast(it.error.msg)
-                }
-            }
-        }
-
         binding.uploadButton.setOnClickListener {
             if(navController.currentDestination?.id == R.id.uploadMethodFragment) {
                 navController.popBackStack()
@@ -245,7 +236,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
 //        }
 
         observe(viewModel.viewAllVideoLiveData) {
-            drawerHelper.onMenuClick(NavigationMenu(ID_VIDEO, "All Videos", 0, listOf(), false))
+//            drawerHelper.onMenuClick(NavigationMenu(ID_VIDEO, "All Videos", 0, listOf(), false))
         }
 
         observe(mPref.sessionTokenLiveData){
@@ -258,6 +249,14 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         observe(mPref.viewCountDbUrlLiveData){
             if(it.isNotEmpty()){
                 viewModel.populateViewCountDb(it)
+            }
+        }
+
+        observe(viewModel.addToPlayListMutableLiveData) { item ->
+            item.forEach {
+                if(!it.isLive) {
+                    addToPlayList(it)
+                }
             }
         }
 
@@ -340,31 +339,22 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.home_nav_host) as NavHostFragment
         navController = navHostFragment.navController
 
-//        appbarConfig = AppBarConfiguration(
-//            setOf(
-//                R.id.menu_feed,
-//                R.id.menu_tv,
-//                R.id.menu_activities,
-//                R.id.menu_channel,
-//
-//                R.id.menu_all_channel,
-//                R.id.menu_recent,
-//                R.id.menu_favorites
-////                ,
-////                R.id.menu_create,
-////                R.id.menu_subscriptions,
-////                R.id.menu_invite,
-////                R.id.menu_redeem,
-////                R.id.menu_settings,
-////                R.id.menu_about,
-////                R.id.menu_faq,
-////                R.id.menu_logout
-//            ),
-//            binding.drawerLayout
-//        )
-//        setupActionBarWithNavController(navController, appbarConfig)
+        appbarConfig = AppBarConfiguration(
+            setOf(
+                R.id.menu_feed,
+                R.id.menu_tv,
+                R.id.menu_activities,
+                R.id.menu_channel,
+
+//                R.id.menu_all_tv_channel,
+                R.id.menu_activities,
+                R.id.menu_favorites
+            ),
+            binding.drawerLayout
+        )
+        setupActionBarWithNavController(navController, appbarConfig)
 //        NavigationUI.setupActionBarWithNavController(this, navController, appbarConfig)
-//        binding.sideNavigation.setupWithNavController(navController)
+        binding.sideNavigation.setupWithNavController(navController)
         binding.tabNavigator.setupWithNavController(navController)
 
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
@@ -375,10 +365,10 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             }
         }
 
-        binding.sideNavigation.setNavigationItemSelectedListener {
-            binding.drawerLayout.closeDrawers()
-            return@setNavigationItemSelectedListener false
-        }
+//        binding.sideNavigation.setNavigationItemSelectedListener {
+//            binding.drawerLayout.closeDrawers()
+//            return@setNavigationItemSelectedListener false
+//        }
     }
 
     override fun onResume() {
@@ -494,7 +484,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             }
             route?.categoryId?.let {
                 ToffeeAnalytics.logBreadCrumb("Trying to open category item")
-                drawerHelper.handleCategoryClick(ID_VIDEO, it, route.categoryName ?: "")
+//                drawerHelper.handleCategoryClick(ID_VIDEO, it, route.categoryName ?: "")
                 isDeepLinkHandled = true
             }
 
