@@ -106,6 +106,21 @@
             app:layout_constraintTop_toTopOf="@+id/play" />
 
         <ImageView
+            android:id="@+id/play_next"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:adjustViewBounds="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="2dp"
+            android:visibility="gone"
+            android:src="@drawable/ic_player_control_next"
+            app:layout_constraintBottom_toBottomOf="@+id/forward"
+            app:layout_constraintEnd_toEndOf="@+id/forward"
+            app:layout_constraintStart_toStartOf="@+id/forward"
+            app:layout_constraintTop_toTopOf="@+id/forward" />
+
+        <ImageView
             android:id="@+id/backward"
             android:layout_width="64dp"
             android:layout_height="64dp"
@@ -121,6 +136,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/play" />
 
+        <ImageView
+            android:id="@+id/play_prev"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:adjustViewBounds="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="2dp"
+            android:visibility="gone"
+            android:src="@drawable/ic_player_previous"
+            app:layout_constraintBottom_toBottomOf="@+id/backward"
+            app:layout_constraintEnd_toEndOf="@+id/backward"
+            app:layout_constraintStart_toStartOf="@+id/backward"
+            app:layout_constraintTop_toTopOf="@+id/backward" />
 
         <Chronometer
             android:id="@+id/current_time"

@@ -80,7 +80,7 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
 //        binding.topPanel.root.visibility = View.VISIBLE
 //        binding.topPanel.statusText.text = "${args.playlistInfo.playlistName} (${args.playlistInfo.playlistItemCount})"
 
-        detailsAdapter = ChannelHeaderAdapter(currentItem, object: ContentReactionCallback<ChannelInfo> {
+        detailsAdapter = ChannelHeaderAdapter(args.playlistInfo, object: ContentReactionCallback<ChannelInfo> {
             override fun onOpenMenu(view: View, item: ChannelInfo) {
                 openMenu(view, item)
             }

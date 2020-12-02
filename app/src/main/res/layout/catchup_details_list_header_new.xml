@@ -20,8 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:focusable="true"
-        android:paddingBottom="8dp">
+        android:focusable="true">
 
         <TextView
             android:id="@+id/program_name"
@@ -30,7 +29,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
             android:clickable="false"
             android:enabled="false"
             android:focusable="false"
@@ -39,7 +37,6 @@
             android:text="@{data.program_name}"
             android:textColor="@color/main_text_color"
             android:textSize="18sp"
-            app:layout_constraintBottom_toTopOf="@+id/relatedContainer"
             app:layout_constraintEnd_toStartOf="@+id/options"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -211,8 +208,44 @@ Day 21 - AUS vs IND" />
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="@{data.live ? View.GONE : View.VISIBLE}"
-            tools:visibility="gone"
-            app:constraint_referenced_ids="options,program_name,textView24,textView26,textView25,channelSubCount,subscribe_button" />
+            app:constraint_referenced_ids="options,program_name,textView24,textView26,textView25,channelSubCount,subscribe_button,video_description" />
+
+        <com.banglalink.toffee.ui.widget.ExpandableTextView
+            android:id="@+id/video_description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:maxLines="2"
+            android:text="@{data.description}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/program_name"
+            tools:text="Hello world!" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/autoplay_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="Autoplay"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/video_description" />
+
+        <TextView
+            android:id="@+id/bottom_panel_status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="TextView"
+            app:layout_constraintBottom_toBottomOf="@+id/autoplay_switch"
+            app:layout_constraintEnd_toStartOf="@+id/autoplay_switch"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/autoplay_switch" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

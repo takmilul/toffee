@@ -417,6 +417,10 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
             forward();
         } else if(v == binding.backward){
             backward();
+        } else if(v == binding.playPrev) {
+            if(simpleExoPlayer != null) simpleExoPlayer.previous();
+        } else if(v == binding.playNext) {
+            if(simpleExoPlayer != null) simpleExoPlayer.next();
         }
         else if(v == binding.rotation){
             if(isAutoRotationEnabled){
@@ -440,20 +444,38 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
                 binding.preview.setOnClickListener(this);
                 binding.preview.setImageResource(android.R.color.black);
                 binding.play.setVisibility(GONE);
-                binding.forward.setVisibility(GONE);
-                binding.backward.setVisibility(GONE);
+                binding.forward.setVisibility(INVISIBLE);
+                binding.backward.setVisibility(INVISIBLE);
+                binding.playPrev.setVisibility(INVISIBLE);
+                binding.playNext.setVisibility(INVISIBLE);
                 binding.buffering.setVisibility(VISIBLE);
                 binding.videoOption.setEnabled(false);
                 showControls();
                 break;
             case STATE_ENDED:
+//                binding.preview.setImageResource(android.R.color.black);
+                binding.play.setImageResource(R.drawable.ic_player_replay);
+                binding.buffering.setVisibility(GONE);
+                binding.play.setVisibility(VISIBLE);
+                binding.forward.setVisibility(INVISIBLE);
+                binding.backward.setVisibility(INVISIBLE);
+                binding.playPrev.setVisibility(VISIBLE);
+                binding.playNext.setVisibility(VISIBLE);
+                if(simpleExoPlayer != null && !simpleExoPlayer.hasNext()) {
+                    binding.playNext.setEnabled(false);
+                }
+                if(simpleExoPlayer != null && !simpleExoPlayer.hasPrevious()) {
+                    binding.playPrev.setEnabled(false);
+                }
+                showControls();
+                break;
             case STATE_IDLE:
                 binding.preview.setImageResource(android.R.color.black);
                 binding.play.setImageResource(R.drawable.ic_player_play);
                 binding.buffering.setVisibility(GONE);
                 binding.play.setVisibility(VISIBLE);
-                binding.forward.setVisibility(GONE);
-                binding.backward.setVisibility(GONE);
+                binding.forward.setVisibility(INVISIBLE);
+                binding.backward.setVisibility(INVISIBLE);
                 showControls();
                 break;
             case STATE_READY:
@@ -463,13 +485,15 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
                 binding.videoOption.setEnabled(true);
                 binding.preview.setImageResource(0);
                 binding.share.setEnabled(true);
+                binding.playNext.setVisibility(GONE);
+                binding.playPrev.setVisibility(GONE);
                 if (playWhenReady) {
                     binding.play.setImageResource(R.drawable.ic_player_pause);
                     binding.buffering.setVisibility(GONE);
                     binding.play.setVisibility(VISIBLE);
                     if(simpleExoPlayer!=null && simpleExoPlayer.isCurrentWindowLive()){
-                        binding.forward.setVisibility(GONE);
-                        binding.backward.setVisibility(GONE);
+                        binding.forward.setVisibility(INVISIBLE);
+                        binding.backward.setVisibility(INVISIBLE);
                     }
                     else {
                         binding.forward.setVisibility(VISIBLE);
@@ -482,8 +506,8 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
                     binding.buffering.setVisibility(GONE);
                     binding.play.setVisibility(VISIBLE);
                     if(simpleExoPlayer!=null && simpleExoPlayer.isCurrentWindowLive()){
-                        binding.forward.setVisibility(GONE);
-                        binding.backward.setVisibility(GONE);
+                        binding.forward.setVisibility(INVISIBLE);
+                        binding.backward.setVisibility(INVISIBLE);
                     }
                     else {
                         binding.forward.setVisibility(VISIBLE);
