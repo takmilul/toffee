@@ -364,4 +364,9 @@
         <item name="android:scrollbarTrackVertical">@drawable/scrollbar_track</item>
     </style>
 
+    <style name="NavigationMenuStyle" parent="Widget.Design.NavigationView">
+        <item name="itemIconTint">@color/side_menu_color_selector</item>
+        <item name="itemTextColor">@color/side_menu_color_selector</item>
+        <item name="itemIconPadding">16dp</item>
+    </style>
 </resources>

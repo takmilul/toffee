@@ -3,46 +3,51 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/menu_channel"
-        android:title="TV Channels"
-        android:icon="@mipmap/ic_menu_channels" />
+    <item android:id="@+id/ic_menu_internet_packs"
+        android:title="@string/menu_internet_pack"
+        android:icon="@drawable/ic_menu_internet_packs" />
 
-    <item android:id="@+id/menu_recent"
-        android:title="Recent"
-        android:icon="@mipmap/ic_menu_recent" />
+    <item android:id="@+id/menu_tv"
+        android:title="All TV Channels"
+        android:icon="@drawable/ic_menu_tv_normal" />
+
+    <item android:id="@+id/menu_activities"
+        android:title="Activities"
+        android:icon="@drawable/ic_menu_activites" />
 
     <item android:id="@+id/menu_favorites"
         android:title="Favorites"
-        android:icon="@mipmap/ic_menu_favorites" />
-    <item android:id="@+id/menu_create"
-        android:title="@string/menu_create_text"
-        android:icon="@mipmap/ic_menu_create" />
+        android:icon="@drawable/ic_menu_favorites" />
+
+<!--    <item android:id="@+id/menu_create"-->
+<!--        android:title="@string/menu_create_text"-->
+<!--        android:icon="@mipmap/ic_menu_create" />-->
 
     <item android:id="@+id/menu_subscriptions"
         android:title="Subscriptions"
-        android:icon="@mipmap/ic_menu_subscriptions" />
+        android:icon="@drawable/ic_menu_subscriptions" />
 
-    <item android:id="@+id/menu_invite"
-        android:title="@string/invite_friends_txt"
-        android:icon="@mipmap/ic_menu_invite" />
+<!--    <item android:id="@+id/menu_invite"-->
+<!--        android:title="@string/invite_friends_txt"-->
+<!--        android:icon="@mipmap/ic_menu_invite" />-->
 
-    <item android:id="@+id/menu_redeem"
-        android:title="@string/redeem_code_txt"
-        android:icon="@mipmap/ic_menu_redeem" />
+<!--    <item android:id="@+id/menu_redeem"-->
+<!--        android:title="@string/redeem_code_txt"-->
+<!--        android:icon="@mipmap/ic_menu_redeem" />-->
 
     <item android:id="@+id/menu_settings"
         android:title="Settings"
-        android:icon="@mipmap/ic_menu_settings" />
+        android:icon="@drawable/ic_side_menu_settings" />
 
-    <item android:id="@+id/menu_about"
-        android:title="About"
-        android:icon="@mipmap/ic_menu_about" />
+<!--    <item android:id="@+id/menu_about"-->
+<!--        android:title="About"-->
+<!--        android:icon="@mipmap/ic_menu_about" />-->
 
-    <item android:id="@+id/menu_faq"
-        android:title="@string/menu_faqs_text"
-        android:icon="@drawable/ic_menu_faq" />
+<!--    <item android:id="@+id/menu_faq"-->
+<!--        android:title="@string/menu_faqs_text"-->
+<!--        android:icon="@drawable/ic_menu_faq" />-->
 
-    <item android:id="@+id/menu_logout"
-        android:title="Logout"
-        android:icon="@mipmap/ic_menu_exit" />
+<!--    <item android:id="@+id/menu_logout"-->
+<!--        android:title="Logout"-->
+<!--        android:icon="@mipmap/ic_menu_exit" />-->
 </menu>

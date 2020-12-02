@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.drawerlayout.widget.DrawerLayout
+    <com.banglalink.toffee.ui.widget.ToffeeDrawerLayout
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
@@ -145,25 +145,26 @@
 
         <com.google.android.material.navigation.NavigationView
             android:id="@+id/sideNavigation"
+            style="@style/NavigationMenuStyle"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="end"
             app:insetForeground="@null"
-            app:headerLayout="@layout/nav_header_main">
-<!--            app:menu="@menu/menu_drawer"-->
+            app:headerLayout="@layout/nav_header_main"
+            app:menu="@menu/menu_drawer" />
 
-            <ExpandableListView
-                android:layout_marginTop="@dimen/nav_header_height"
-                android:id="@+id/nav_menu_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:divider="@null"
-                android:groupIndicator="@null">
+<!--            <ExpandableListView-->
+<!--                android:layout_marginTop="@dimen/nav_header_height"-->
+<!--                android:id="@+id/nav_menu_list"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:divider="@null"-->
+<!--                android:groupIndicator="@null">-->
 
-            </ExpandableListView>
+<!--            </ExpandableListView>-->
 
-        </com.google.android.material.navigation.NavigationView>
+<!--        </com.google.android.material.navigation.NavigationView>-->
 
-    </androidx.drawerlayout.widget.DrawerLayout>
+    </com.banglalink.toffee.ui.widget.ToffeeDrawerLayout>
 
 </layout>
