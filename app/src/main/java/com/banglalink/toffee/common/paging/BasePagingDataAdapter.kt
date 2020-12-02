@@ -16,8 +16,11 @@ open class BasePagingDataAdapter<T: Any>(val callback: BaseListItemCallback<T>? 
         val binding = DataBindingUtil.inflate<ViewDataBinding>(
             layoutInflater, viewType, parent, false
         )
+        adjustLayout(binding)
         return BaseViewHolder(binding)
     }
+
+    open fun adjustLayout(binding: ViewDataBinding){}
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         val obj = getItem(position)

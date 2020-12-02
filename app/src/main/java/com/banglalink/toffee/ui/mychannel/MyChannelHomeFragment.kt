@@ -296,7 +296,7 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
             val spannable: Spannable = it.toSpannable()
             val matcher = Pattern.compile("(#\\w+)").matcher(spannable)
             while (matcher.find()) {
-                spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(requireContext(), color.purple)), matcher.start(), matcher.end(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(requireContext(), color.colorAccent2)), matcher.start(), matcher.end(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
             binding.channelDetailView.channelDescriptionTextView.text = spannable
         }

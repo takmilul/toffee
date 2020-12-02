@@ -52,14 +52,15 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/ownerPicture"
+            loadImageFromUrlRounded="@{data.channelProfileUrl}"
             android:layout_width="42dp"
             android:layout_height="42dp"
             android:layout_marginTop="8dp"
-            tools:src="@drawable/ic_profile_default"
-            loadImageFromUrlRounded="@{data.channelProfileUrl}"
             android:onClick="@{()-> callback.onProviderIconClicked(data)}"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/name"
-            app:layout_constraintTop_toBottomOf="@+id/name" />
+            app:layout_constraintTop_toBottomOf="@+id/name"
+            tools:src="@drawable/ic_profile_default" />
 
 
         <TextView
@@ -77,7 +78,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/poster"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="This Makeup Tutorial By Kylie Jenner Is All you Need For Summer" />
+            tools:text="This Makeup Tutorial" />
 
         <ProgressBar
             android:id="@+id/progress"

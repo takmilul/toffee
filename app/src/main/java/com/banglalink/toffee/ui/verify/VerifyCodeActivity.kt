@@ -4,6 +4,7 @@ import android.content.IntentFilter
 import android.graphics.Paint
 import android.os.Bundle
 import android.view.View
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
@@ -96,17 +97,33 @@ class VerifyCodeActivity : BaseAppCompatActivity(){
             when (it) {
                 is Resource.Success -> {
                     lifecycleScope.launch {
-                        binding.loadingAnimation.transitionToEnd()
-                        delay(500)
-                        launchActivity<HomeActivity>() {
-                            if (it.data.referralStatus == "Valid") {
-                                putExtra(
-                                    HomeActivity.INTENT_REFERRAL_REDEEM_MSG,
-                                    it.data.referralStatusMessage
-                                )
+                        binding.loadingAnimation.addTransitionListener(object : MotionLayout.TransitionListener{
+                            override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
+                                println("Transition started")
                             }
-                        }
-                        finish()
+
+                            override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
+                                println("Transition changed")
+                            }
+
+                            override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
+                                launchActivity<HomeActivity>() {
+                                    if (it.data.referralStatus == "Valid") {
+                                        putExtra(
+                                            HomeActivity.INTENT_REFERRAL_REDEEM_MSG,
+                                            it.data.referralStatusMessage
+                                        )
+                                    }
+                                }
+                                finish()
+                            }
+
+                            override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {
+                                println("Transition triggered")
+                            }
+
+                        })
+                        binding.loadingAnimation.transitionToEnd()
                     }
                 }
                 is Resource.Failure -> {

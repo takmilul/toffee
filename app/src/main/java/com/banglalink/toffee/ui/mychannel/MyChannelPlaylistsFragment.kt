@@ -16,6 +16,7 @@ import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.MyChannelPlaylist
+import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,7 +45,7 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
 
         //        const val IS_PUBLIC = "isPublic"
         const val CHANNEL_OWNER_ID = "channelOwnerId"
-        const val PLAYLIST_ID = "playlistId"
+        const val PLAYLIST_INFO = "playlistInfo"
 
         fun newInstance(enableToolbar: Boolean, isOwner: Int, channelOwnerId: Int, isFromOutside: Boolean): MyChannelPlaylistsFragment {
             val instance = MyChannelPlaylistsFragment()
@@ -77,14 +78,12 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
     override fun onItemClicked(item: MyChannelPlaylist) {
         super.onItemClicked(item)
         if (isFromOutside) {
-            val action = MyChannelHomeFragmentDirections.actionMyChannelHomeFragmentToMyChannelPlaylistVideosFragment(channelOwnerId, isOwner, item.id)
+            val action = MyChannelHomeFragmentDirections.actionMyChannelHomeFragmentToMyChannelPlaylistVideosFragment(PlaylistPlaybackInfo(item.id, channelOwnerId, isOwner, item.name, item.totalContent))
             parentFragment?.findNavController()?.navigate(action)
         }
         else {
             findNavController().navigate(R.id.action_menu_channel_to_myChannelPlaylistVideosFragment, Bundle().apply {
-                putInt(CHANNEL_OWNER_ID, channelOwnerId)
-                putInt(IS_OWNER, isOwner)
-                putInt(PLAYLIST_ID, item.id)
+                putParcelable(PLAYLIST_INFO, PlaylistPlaybackInfo(item.id, channelOwnerId, isOwner, item.name, item.totalContent))
             })
         }
     }

@@ -48,7 +48,7 @@ class PopularTVChannelsFragment: HomeBaseFragment() {
         })
 
         viewAllButton.setOnClickListener {
-            homeViewModel.viewAllChannelLiveData.postValue(true)
+            homeViewModel.switchBottomTab.postValue(1)
         }
 
         with(channel_list) {

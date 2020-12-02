@@ -5,9 +5,13 @@
     android:id="@+id/home_navigation_graph"
     app:startDestination="@id/menu_feed">
     <fragment
-        android:id="@+id/menu_activities"
-        android:name="com.banglalink.toffee.ui.useractivities.UserActivitiesListFragment"
-        android:label="UserActivitiesListFragment" >
+        android:id="@+id/menu_explore"
+        android:name="com.banglalink.toffee.ui.explore.ExploreFragment"
+        android:label="Explore" >
+
+        <action
+            android:id="@+id/action_allCategoriesFragment_to_categoryDetailsFragment"
+            app:destination="@id/categoryDetailsFragment" />
 <!--        <action-->
 <!--            android:id="@+id/action_menu_activities_to_channelRatingFragment"-->
 <!--            app:destination="@id/channelRatingFragment" />-->
@@ -16,9 +20,9 @@
         android:id="@+id/menu_feed"
         android:name="com.banglalink.toffee.ui.home.LandingPageFragment"
         android:label="FeedFragment">
-        <action
-            android:id="@+id/action_landingPageFragment_to_allCategoriesFragment"
-            app:destination="@id/allCategoriesFragment" />
+<!--        <action-->
+<!--            android:id="@+id/action_landingPageFragment_to_allCategoriesFragment"-->
+<!--            app:destination="@id/allCategoriesFragment" />-->
         <action
             android:id="@+id/action_landingPageFragment_to_categoryDetailsFragment"
             app:destination="@id/categoryDetailsFragment" />
@@ -27,7 +31,7 @@
             app:destination="@id/menu_tv" />
         <action
             android:id="@+id/action_menu_feed_to_menu_activities"
-            app:destination="@id/menu_activities" />
+            app:destination="@id/menu_explore" />
         <action
             android:id="@+id/action_menu_feed_to_menu_channel"
             app:destination="@id/menu_channel" />
@@ -43,6 +47,9 @@
         <action
             android:id="@+id/action_menu_feed_to_catchupDetailsFragment"
             app:destination="@id/catchupDetailsFragment" />
+        <action
+            android:id="@+id/action_menu_feed_to_trendingChannelsFragment"
+            app:destination="@id/trendingChannelsFragment" />
     </fragment>
     <fragment
         android:id="@+id/menu_tv"
@@ -98,14 +105,11 @@
             android:id="@+id/action_editUploadInfoFragment_to_thumbnailSelectionMethodFragment"
             app:destination="@id/thumbnailSelectionMethodFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/allCategoriesFragment"
-        android:name="com.banglalink.toffee.ui.landing.AllCategoriesFragment"
-        android:label="AllCategoriesFragment" >
-        <action
-            android:id="@+id/action_allCategoriesFragment_to_categoryDetailsFragment"
-            app:destination="@id/categoryDetailsFragment" />
-    </fragment>
+<!--    <fragment-->
+<!--        android:id="@+id/allCategoriesFragment"-->
+<!--        android:name="com.banglalink.toffee.ui.landing.AllCategoriesFragment"-->
+<!--        android:label="AllCategoriesFragment" >-->
+<!--    </fragment>-->
     <fragment
         android:id="@+id/categoryDetailsFragment"
         android:name="com.banglalink.toffee.ui.category.CategoryDetailsFragment"
@@ -117,6 +121,10 @@
             android:id="@+id/action_categoryDetailsFragment_to_myChannelHomeFragment"
             app:destination="@id/myChannelHomeFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/trendingChannelsFragment"
+        android:name="com.banglalink.toffee.ui.trendingchannels.TrendingChannelsFragment"
+        android:label="TrendingChannelsFragment"/>
     <fragment
         android:id="@+id/MyChannelEditDetailFragment"
         android:name="com.banglalink.toffee.ui.mychannel.MyChannelEditDetailFragment"
@@ -151,14 +159,8 @@
         android:name="com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment"
         android:label="MyChannelPlaylistVideosFragment">
         <argument
-            android:name="channelOwnerId"
-            app:argType="integer" />
-        <argument
-            android:name="isOwner"
-            app:argType="integer" />
-        <argument
-            android:name="playlistId"
-            app:argType="integer" />
+            android:name="playlistInfo"
+            app:argType="com.banglalink.toffee.model.PlaylistPlaybackInfo" />
     </fragment>
     <fragment
         android:id="@+id/thumbnailSelectionMethodFragment"

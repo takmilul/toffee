@@ -9,7 +9,7 @@
         android:icon="@drawable/ic_menu_tv" />
     <item android:title="@string/tab_upload_label" android:enabled="false" />
     <item
-        android:id="@id/menu_activities" android:title="@string/tab_explore_label"
+        android:id="@id/menu_explore" android:title="@string/tab_explore_label"
         android:icon="@drawable/ic_menu_explore" />
     <item
         android:id="@id/menu_channel" android:title="@string/tab_mychannel_label"

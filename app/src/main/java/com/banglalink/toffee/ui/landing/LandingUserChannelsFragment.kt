@@ -50,33 +50,6 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
 
         mAdapter = UserChannelsListAdapter(object : LandingPopularChannelCallback {
             override fun onItemClicked(item: UgcUserChannelInfo) {
-                /*val customerId = Preference.getInstance().customerId
-                val isOwner = if (item.channelOwnerId == customerId) 1 else 0
-                val isPublic = if (item.channelOwnerId == customerId) 0 else 1
-                val channelId = item.id.toInt()
-                if (parentFragment is CategoryDetailsFragment) {
-                    findNavController().navigate(R.id.action_categoryDetailsFragment_to_myChannelHomeFragment, Bundle().apply {
-                        putInt(MyChannelHomeFragment.IS_SUBSCRIBED, item.isSubscribed)
-                        Log.i("UGC_Home", "onItemClicked: ${item.isSubscribed}")
-                        putInt(MyChannelHomeFragment.IS_OWNER, isOwner)
-                        putInt(MyChannelHomeFragment.CHANNEL_ID, channelId)
-                        putInt(MyChannelHomeFragment.IS_PUBLIC, isPublic)
-                        putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, item.channelOwnerId)
-                        putBoolean(MyChannelHomeFragment.IS_FROM_OUTSIDE, true)
-                    })
-                }
-                else {
-                    findNavController().navigate(R.id.action_menu_feed_to_myChannelHomeFragment, Bundle().apply {
-                        putInt(MyChannelHomeFragment.IS_SUBSCRIBED, item.isSubscribed)
-                        Log.i("UGC_Home", "onItemClicked: ${item.isSubscribed}")
-                        putInt(MyChannelHomeFragment.IS_OWNER, isOwner)
-                        putInt(MyChannelHomeFragment.CHANNEL_ID, channelId)
-                        putInt(MyChannelHomeFragment.IS_PUBLIC, isPublic)
-                        putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, item.channelOwnerId)
-                        putBoolean(MyChannelHomeFragment.IS_FROM_OUTSIDE, true)
-                    })
-                }*/
-                
                 viewModel.navigateToMyChannel(this@LandingUserChannelsFragment, item.channelOwnerId, item.isSubscribed?:0)
             }
 
@@ -100,10 +73,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
         })
 
         viewAllButton.setOnClickListener {
-            parentFragment?.findNavController()?.navigate(R.id.menu_activities,
-                Bundle().apply {
-                    putInt(UserActivitiesMainFragment.ARG_SELECTED_TAB, 1)
-                })
+            parentFragment?.findNavController()?.navigate(R.id.action_menu_feed_to_trendingChannelsFragment)
         }
 
         with(userChannelList) {

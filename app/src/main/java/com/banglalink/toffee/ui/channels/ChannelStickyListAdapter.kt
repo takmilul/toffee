@@ -141,7 +141,7 @@ class ChannelStickyListAdapter(
 //            diskCachePolicy(CachePolicy.ENABLED)
         }
 
-        if(item.id == selectedChannel?.id.toString()) {
+        if(item.id == selectedChannel?.id.toString() && !getSection(section).header.contains("Recent")) {
             liveTvViewHolder.icon.borderWidth = Utils.dpToPx(4)
         } else {
             liveTvViewHolder.icon.borderWidth = 0

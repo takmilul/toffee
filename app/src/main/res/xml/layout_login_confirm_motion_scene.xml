@@ -39,6 +39,21 @@
     </Transition>
 
     <ConstraintSet android:id="@+id/start">
+        <Constraint
+            android:id="@+id/resend"
+            style="@style/BgToggleButtonStyleRingAccent"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Resend"
+            android:textColor="@color/accent_to_pink_color"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintTop_toBottomOf="@id/code_number" >
+            <PropertySet
+                android:visibility="gone"
+                motion:visibilityMode="ignore"/>
+        </Constraint>
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/end">
@@ -82,10 +97,14 @@
             android:layout_marginTop="16dp"
             android:text="Resend"
             android:textColor="@color/accent_to_pink_color"
-            android:visibility="gone"
+            android:visibility="invisible"
             motion:layout_constraintTop_toBottomOf="@id/code_number"
             motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintEnd_toEndOf="parent" />
+            motion:layout_constraintEnd_toEndOf="parent" >
+            <PropertySet
+                android:visibility="gone"
+                motion:visibilityMode="ignore"/>
+        </Constraint>
         
         <Constraint
             android:id="@+id/confirm_btn"

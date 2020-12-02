@@ -73,13 +73,23 @@ fun loadImageFromResource(view: ImageView, image: Int) {
     view.setImageResource(image)
 }
 
+@BindingAdapter("loadCategoryBackground")
+fun bindCategoryBackground(view: ImageView, category: UgcCategory) {
+    view.load(category.thumbnailUrl) {
+        crossfade(false)
+//            memoryCachePolicy(CachePolicy.ENABLED)
+        diskCachePolicy(CachePolicy.ENABLED)
+        size(624, 320)
+    }
+}
+
 @BindingAdapter("loadCategoryImage")
 fun bindCategoryImage(view: ImageView, category: UgcCategory) {
-    val gd = GradientDrawable().apply {
-        shape = GradientDrawable.OVAL
-        color = ColorStateList.valueOf(Color.parseColor(category.colorCode))
-    }
-    view.background = gd
+//    val gd = GradientDrawable().apply {
+//        shape = GradientDrawable.OVAL
+//        color = ColorStateList.valueOf(Color.parseColor(category.colorCode))
+//    }
+//    view.background = gd
 
     if (category.categoryIcon.isNullOrBlank()) {
         view.setImageResource(R.drawable.ic_cat_music)
