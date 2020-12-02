@@ -17,9 +17,10 @@ import com.banglalink.toffee.data.storage.ViewCountDataModel
         UserActivities::class,
         FavoriteItem::class,
         SubscribedItem::class,
-        TVChannelItem::class
+        TVChannelItem::class,
+        ContentViewProgress::class,
     ],
-    version = 3,
+    version = 4,
     exportSchema = false)
 abstract class ToffeeDatabase: RoomDatabase() {
     abstract fun getUploadDao(): UploadDao
@@ -31,6 +32,7 @@ abstract class ToffeeDatabase: RoomDatabase() {
     abstract fun getFavoriteItemsDao(): FavoriteItemDao
     abstract fun getSubscribedItemsDao(): SubscribedItemDao
     abstract fun getTVChannelsDao(): TVChannelDao
+    abstract fun getContentViewProgressDao(): ContentViewProgressDao
 
     companion object {
         const val DB_NAME = "toffee-db"
