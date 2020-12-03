@@ -168,9 +168,14 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
 
     override fun onReactionClicked(view: View, item: ChannelInfo) {
         super.onReactionClicked(view, item)
-        AlertDialogReactionFragment.newInstance(view, item).show(requireActivity().supportFragmentManager, "ReactionDialog")
+//        AlertDialogReactionFragment.newInstance(view, item).show(requireActivity().supportFragmentManager, "ReactionDialog")
     }
 
+    override fun onReactionLongPressed(view: View, item: ChannelInfo) {
+        super.onReactionLongPressed(view, item)
+        AlertDialogReactionFragment.newInstance(view, item).show(requireActivity().supportFragmentManager, "ReactionDialog")
+    }
+    
     override fun onShareClicked(view: View, item: ChannelInfo) {
         super.onShareClicked(view, item)
         homeViewModel.shareContentLiveData.postValue(item)

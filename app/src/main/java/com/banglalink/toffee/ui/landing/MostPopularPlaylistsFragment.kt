@@ -65,7 +65,7 @@ class MostPopularPlaylistsFragment: HomeBaseFragment(), ProviderIconCallback<MyC
 
     override fun onProviderIconClicked(item: MyChannelPlaylist) {
         super.onProviderIconClicked(item)
-        viewModel.navigateToMyChannel(this, item.channelCreatorId, 0)
+        viewModel.navigateToMyChannel(this, item.id, item.channelCreatorId, 0)
     }
     
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {

@@ -111,7 +111,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
 
             override fun onProviderIconClicked(item: ChannelInfo) {
                 super.onProviderIconClicked(item)
-                landingViewModel.navigateToMyChannel(this@CatchupDetailsFragment, item.channel_owner_id, item.isSubscribed)
+                landingViewModel.navigateToMyChannel(this@CatchupDetailsFragment, item.id.toInt(), item.channel_owner_id, item.isSubscribed)
             }
         })
         detailsAdapter = ChannelHeaderAdapter(currentItem, this)
@@ -134,7 +134,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
 
     override fun onProviderIconClicked(item: ChannelInfo) {
         super.onProviderIconClicked(item)
-        landingViewModel.navigateToMyChannel(this, item.channel_owner_id, item.isSubscribed)
+        landingViewModel.navigateToMyChannel(this, item.id.toInt(), item.channel_owner_id, item.isSubscribed)
     }
 
     override fun onShareClicked(view: View, item: ChannelInfo) {

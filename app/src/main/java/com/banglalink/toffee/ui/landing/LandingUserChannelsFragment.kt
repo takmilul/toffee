@@ -20,7 +20,6 @@ import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.home.UserChannelsListAdapter
-import com.banglalink.toffee.ui.useractivities.UserActivitiesMainFragment
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_landing_user_channels.*
@@ -50,7 +49,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
 
         mAdapter = UserChannelsListAdapter(object : LandingPopularChannelCallback {
             override fun onItemClicked(item: UgcUserChannelInfo) {
-                viewModel.navigateToMyChannel(this@LandingUserChannelsFragment, item.channelOwnerId, item.isSubscribed?:0)
+                viewModel.navigateToMyChannel(this@LandingUserChannelsFragment, item.id.toInt(), item.channelOwnerId, item.isSubscribed?:0)
             }
 
             override fun onSubscribeButtonClicked(view: View, info: UgcUserChannelInfo) {

@@ -12,6 +12,8 @@ data class MyChannelDetailBean(
     var subscriberCount: Int = 0,
     var formattedSubscriberCount: String? = null,
     val isOwner: Int = 0,
+    @SerializedName("channel_owner_id")
+    val channelOwnerId: Int = 0,
     val isSubscribed: Int = 0,
     val systemTime: String? = null
 )

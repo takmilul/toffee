@@ -5,6 +5,7 @@ import com.banglalink.toffee.common.paging.ProviderIconCallback
 
 interface ContentReactionCallback<T : Any>: ProviderIconCallback<T> {
     fun onReactionClicked(view: View, item: T) {}
+    fun onReactionLongPressed(view: View, item: T) {}
     fun onShareClicked(view: View, item: T) {}
     fun onSubscribeButtonClicked(view: View, item: T) {}
 }

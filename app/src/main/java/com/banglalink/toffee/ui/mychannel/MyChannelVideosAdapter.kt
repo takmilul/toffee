@@ -1,14 +1,27 @@
 package com.banglalink.toffee.ui.mychannel
 
+import android.widget.TextView
+import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
+import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.common.paging.BasePagingDataAdapter
+import com.banglalink.toffee.common.paging.BaseViewHolder
 import com.banglalink.toffee.common.paging.ItemComparator
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.ContentReactionCallback
 
-class MyChannelVideosAdapter(callback: ContentReactionCallback<ChannelInfo>?): BasePagingDataAdapter<ChannelInfo>(callback, ItemComparator()) {
+class MyChannelVideosAdapter(override val callback: ContentReactionCallback<ChannelInfo>?): BasePagingDataAdapter<ChannelInfo>(callback as BaseListItemCallback<ChannelInfo>, ItemComparator()) {
 
     override fun getItemViewType(position: Int): Int {
-        return R.layout.list_item_my_channel_videos
+        return R.layout.list_item_videos
+    }
+
+    override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
+        super.onBindViewHolder(holder, position)
+        holder.binding.setVariable(BR.isMyChannel, true)
+        holder.itemView.findViewById<TextView>(R.id.reactionButton)?.setOnLongClickListener { 
+            callback?.onReactionLongPressed(it, getItem(position)!!)
+            true
+        }
     }
 }
