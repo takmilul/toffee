@@ -8,9 +8,6 @@
         motion:constraintSetStart="@id/start"
         motion:autoTransition="animateToEnd"
         motion:duration="1000">
-       <KeyFrameSet>
-       </KeyFrameSet>
-        <OnClick motion:targetId="@+id/topView" />
     </Transition>
 
     <ConstraintSet android:id="@+id/start">

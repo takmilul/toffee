@@ -16,7 +16,13 @@ object MigrationProvider {
         }
     }
 
+    private val MIGRATION_3_4 = object : Migration(3, 4) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("CREATE TABLE IF NOT EXISTS `ContentViewProgress` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `customerId` INTEGER NOT NULL, `contentId` INTEGER NOT NULL, `progress` INTEGER NOT NULL, `watchTime` INTEGER NOT NULL)")
+        }
+    }
+
     fun getMigrationList(): List<Migration> {
-        return listOf(MIGRATION_1_2, MIGRATION_2_3)
+        return listOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
     }
 }
