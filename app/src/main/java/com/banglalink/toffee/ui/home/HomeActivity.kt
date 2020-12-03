@@ -60,6 +60,7 @@ import com.banglalink.toffee.ui.login.SigninByPhoneActivity
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
 import com.banglalink.toffee.ui.player.PlayerActivity
 import com.banglalink.toffee.ui.search.SearchFragment
+import com.banglalink.toffee.ui.settings.SettingsActivity
 import com.banglalink.toffee.ui.subscription.PackageListActivity
 import com.banglalink.toffee.ui.upload.UploadProgressViewModel
 import com.banglalink.toffee.ui.upload.UploadStatus
@@ -352,10 +353,15 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             ),
             binding.drawerLayout
         )
-        setupActionBarWithNavController(navController, appbarConfig)
+//        setupActionBarWithNavController(navController, appbarConfig)
 //        NavigationUI.setupActionBarWithNavController(this, navController, appbarConfig)
+        binding.tbar.toolbar.setupWithNavController(navController, appbarConfig)
+        binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_home)
         binding.sideNavigation.setupWithNavController(navController)
         binding.tabNavigator.setupWithNavController(navController)
+        binding.sideNavigation.setNavigationItemSelectedListener {
+            drawerHelper.handleMenuItemById(it)
+        }
 
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             supportFragmentManager.popBackStack(R.id.content_viewer, POP_BACK_STACK_INCLUSIVE)
@@ -363,6 +369,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             if(binding.draggableView.isMaximized) {
                 minimizePlayer()
             }
+            binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_home)
         }
 
 //        binding.sideNavigation.setNavigationItemSelectedListener {
@@ -431,6 +438,11 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         binding.playerView.showContentExpiredMessage()
     }
 
+    override fun onSupportNavigateUp(): Boolean {
+        return NavigationUI.navigateUp(navController, appbarConfig)
+                || super.onSupportNavigateUp()
+    }
+
     private fun updateFullScreenState() {
         val state =
             resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -479,12 +491,12 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             val route = inAppMessageParser.parseUrl(url)
             route?.drawerId?.let {
                 ToffeeAnalytics.logBreadCrumb("Trying to open menu item")
-                drawerHelper.handleMenuItemById(it)
+//                drawerHelper.handleMenuItemById(it)
                 isDeepLinkHandled = true
             }
             route?.categoryId?.let {
                 ToffeeAnalytics.logBreadCrumb("Trying to open category item")
-//                drawerHelper.handleCategoryClick(ID_VIDEO, it, route.categoryName ?: "")
+////                drawerHelper.handleCategoryClick(ID_VIDEO, it, route.categoryName ?: "")
                 isDeepLinkHandled = true
             }
 

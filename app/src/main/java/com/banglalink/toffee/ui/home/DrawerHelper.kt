@@ -1,11 +1,14 @@
 package com.banglalink.toffee.ui.home
 
+import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.navigation.ui.NavigationUI
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
@@ -44,22 +47,19 @@ class DrawerHelper(private val activity: HomeActivity,
         //After instantiating your ActionBarDrawerToggle
         toggle.isDrawerIndicatorEnabled = false
         
-        toggle.setHomeAsUpIndicator(R.drawable.ic_home)
+//        activity.supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_home)
 //        val parentAdapter =
 //            ParentLevelAdapter(activity, generateNavMenu(), this, binding.navMenuList)
 //        binding.navMenuList.setAdapter(parentAdapter)
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+
         toggle.toolbarNavigationClickListener = View.OnClickListener {
             if(activity.getNavController().currentDestination?.id != R.id.menu_feed) {
-//                val navOption = NavOptions.Builder().setPopUpTo(R.id.menu_feed, true).build()
                 activity.getNavController().popBackStack(R.id.menu_feed, true)
                 activity.getNavController().navigate(R.id.menu_feed)
             }
-            /*if (activity.supportFragmentManager.backStackEntryCount > 1) {
-                activity.supportFragmentManager.popBackStack(LandingPageFragment::class.java.name, 0)
-            }*/
         }
 
         setProfileInfo()
@@ -83,17 +83,20 @@ class DrawerHelper(private val activity: HomeActivity,
             profilePicture.loadProfileImage(it)
         }
 
-        profilePicture.setOnClickListener{
+        header.findViewById<LinearLayout>(R.id.menu_profile).setOnClickListener {
             activity.launchActivity<ViewProfileActivity>()
         }
-        profileName.setOnClickListener{
-            activity.launchActivity<ViewProfileActivity>()
-        }
+//        profilePicture.setOnClickListener{
+//            activity.launchActivity<ViewProfileActivity>()
+//        }
+//        profileName.setOnClickListener{
+//            activity.launchActivity<ViewProfileActivity>()
+//        }
 
-        val navBarClose = header.findViewById<ImageView>(R.id.nav_bar_close)
-        navBarClose.setOnClickListener{
-            binding.drawerLayout.closeDrawers()
-        }
+//        val navBarClose = header.findViewById<ImageView>(R.id.nav_bar_close)
+//        navBarClose.setOnClickListener{
+//            binding.drawerLayout.closeDrawers()
+//        }
     }
 
 //    private fun generateNavMenu(): List<NavigationMenu> {
@@ -209,72 +212,43 @@ class DrawerHelper(private val activity: HomeActivity,
 //       }
 //    }
 
-    fun handleMenuItemById(id:Int){
-        when (id) {
-//            ID_VIDEO ->
-//            {
-//                val currentFragment = getCurrentContentFragment()
-//                if (CatchupFragment::class.java.name != currentFragment!!.tag) {
-//                    activity.loadFragmentById( R.id.content_viewer,
-//                        CatchupFragment.createInstance(0, 0, "", "All Videos", "All Videos", "VOD")
-//                        ,CatchupFragment::class.java.name
-//                    )
-//                } else {
-//                    val catchupFragment = currentFragment as CatchupFragment
-//                    catchupFragment.updateInfo(0, 0, "", "All Videos", "All Videos", "VOD")
+    fun handleMenuItemById(item: MenuItem): Boolean {
+        when (item.itemId) {
+//            R.id.menu_activities -> {
+////                with(activity.getNavController()) {
+////                    if(currentDestination?.id != R.id.menu_activities) {
+////                        navigate(R.id.menu_activities)
+////                    }
+////                }
+//                binding.drawerLayout.closeDrawers()
+//            }
+//            R.id.menu_tv -> {
+//                with(activity.getNavController()) {
+//                    if(currentDestination?.id != R.id.menu_tv) {
+//                        navigate(R.id.menu_tv)
+//                    }
 //                }
-//
 //                binding.drawerLayout.closeDrawers()
-//                activity.minimizePlayer()
 //            }
-//            ID_RECENT -> {
-////                val currentFragment = getCurrentContentFragment()
-////                if (currentFragment !is RecentFragment) {
-////                    activity.loadFragmentById(
-////                        R.id.content_viewer, RecentFragment(),
-////                        RecentFragment::class.java.name
-////                    )
-////                }
+//            R.id.menu_favorites -> {
+//                with(activity.getNavController()) {
+//                    if(currentDestination?.id != R.id.menu_favorites) {
+//                        navigate(R.id.menu_favorites)
+//                    }
+//                }
 //                binding.drawerLayout.closeDrawers()
-////                activity.minimizePlayer()
-//                activity.getNavController().navigate(R.id.recentFragment)
 //            }
-//            ID_CHANNEL -> {
-////                val currentFragment = getCurrentContentFragment()
-////                if (currentFragment !is ChannelFragment) {
-////                    activity.loadFragmentById( R.id.content_viewer, ChannelFragment.createInstance(
-////                        0,
-////                        "",
-////                        activity.getString(R.string.menu_channel_text)
-////                    ), ChannelFragment::class.java.getName())
-////                }
+//            ID_SUB_VIDEO -> {
+//                activity.launchActivity<HtmlPageViewActivity> {
+//                    putExtra(
+//                        HtmlPageViewActivity.TITLE_KEY,
+//                        activity.getString(R.string.menu_create_text)
+//                    )
+//                    putExtra(HtmlPageViewActivity.CONTENT_KEY, MICRO_SITE_URL)
+//                }
 //                binding.drawerLayout.closeDrawers()
-////                activity.minimizePlayer()
-//                activity.getHomeViewModel().switchBottomTab.postValue(1)
 //            }
-//            ID_FAV -> {
-//                activity.getNavController().navigate(R.id.favoriteFragment)
-////                val currentFragment = getCurrentContentFragment()
-////                if (currentFragment !is FavoriteFragment) {
-////                    activity.loadFragmentById(
-////                        R.id.content_viewer, FavoriteFragment(),
-////                        FavoriteFragment::class.java.getName()
-////                    )
-////                }
-//                binding.drawerLayout.closeDrawers()
-////                activity.minimizePlayer()
-//            }
-            ID_SUB_VIDEO -> {
-                activity.launchActivity<HtmlPageViewActivity> {
-                    putExtra(
-                        HtmlPageViewActivity.TITLE_KEY,
-                        activity.getString(R.string.menu_create_text)
-                    )
-                    putExtra(HtmlPageViewActivity.CONTENT_KEY, MICRO_SITE_URL)
-                }
-                binding.drawerLayout.closeDrawers()
-            }
-            ID_SUBSCRIPTIONS->{
+            R.id.menu_subscriptions ->{
                 binding.drawerLayout.closeDrawers()
                 if(mPref.isSubscriptionActive == "true"){
                     activity.launchActivity<PackageListActivity>()
@@ -282,53 +256,60 @@ class DrawerHelper(private val activity: HomeActivity,
                 else{
                     activity.launchActivity<MySubscriptionActivity>()
                 }
-
+                return true
             }
-            ID_INTERNET_PACK->{
+            R.id.ic_menu_internet_packs ->{
                 binding.drawerLayout.closeDrawers()
                 activity.launchActivity<Html5PlayerViewActivity> {
-                putExtra(
-                    Html5PlayerViewActivity.CONTENT_URL,
-                    INTERNET_PACK_URL
-                )
+                    putExtra(
+                        Html5PlayerViewActivity.CONTENT_URL,
+                        INTERNET_PACK_URL
+                    )
+                }
+                return true
             }
-
-            }
-            ID_SETTINGS -> {
+            R.id.menu_settings -> {
                 activity.launchActivity<SettingsActivity>()
                 binding.drawerLayout.closeDrawers()
-
+                return true
             }
-            ID_ABOUT -> {
-                activity.launchActivity<AboutActivity>()
+//            ID_ABOUT -> {
+//                activity.launchActivity<AboutActivity>()
+//                binding.drawerLayout.closeDrawers()
+//
+//            }
+//            ID_FAQ -> {
+//                activity.launchActivity<HtmlPageViewActivity> {
+//                    putExtra(HtmlPageViewActivity.CONTENT_KEY, FAQ_URL)
+//                    putExtra(HtmlPageViewActivity.TITLE_KEY, activity.getString(R.string.menu_faqs_text))
+//                }
+//                binding.drawerLayout.closeDrawers()
+//
+//            }
+//            ID_LOGOUT->{
+//                activity.handleExitApp()
+//            }
+//            ID_INVITE_FRIEND->{
+//                activity.launchActivity<ReferAFriendActivity>()
+//                binding.drawerLayout.closeDrawers()
+//            }
+//            ID_REDEEM_CODE->{
+//                activity.launchActivity<RedeemCodeActivity> ()
+//                binding.drawerLayout.closeDrawers()
+//            }
+        }
+        return run {
+            if(NavigationUI.onNavDestinationSelected(item, activity.getNavController())) {
                 binding.drawerLayout.closeDrawers()
-
+                return@run true
             }
-            ID_FAQ -> {
-                activity.launchActivity<HtmlPageViewActivity> {
-                    putExtra(HtmlPageViewActivity.CONTENT_KEY, FAQ_URL)
-                    putExtra(HtmlPageViewActivity.TITLE_KEY, activity.getString(R.string.menu_faqs_text))
-                }
-                binding.drawerLayout.closeDrawers()
-
-            }
-            ID_LOGOUT->{
-                activity.handleExitApp()
-            }
-            ID_INVITE_FRIEND->{
-                activity.launchActivity<ReferAFriendActivity>()
-                binding.drawerLayout.closeDrawers()
-            }
-            ID_REDEEM_CODE->{
-                activity.launchActivity<RedeemCodeActivity> ()
-                binding.drawerLayout.closeDrawers()
-            }
+            false
         }
     }
 
-    private fun getCurrentContentFragment(): Fragment? {
-        return activity.supportFragmentManager.findFragmentById(R.id.content_viewer)
-    }
+//    private fun getCurrentContentFragment(): Fragment? {
+//        return activity.supportFragmentManager.findFragmentById(R.id.content_viewer)
+//    }
 //
 //    override fun onSubCategoryClick(
 //        subcategory: NavSubcategory?,

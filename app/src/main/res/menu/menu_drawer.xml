@@ -3,6 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+<!--    <item android:id="@+id/ic_menu_user_profile"-->
+<!--        android:actionLayout="@layout/prof"-->
+<!--        android:icon="@drawable/ic_menu_internet_packs" />-->
+
     <item android:id="@+id/ic_menu_internet_packs"
         android:title="@string/menu_internet_pack"
         android:icon="@drawable/ic_menu_internet_packs" />
