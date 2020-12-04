@@ -174,11 +174,10 @@ class LandingPageViewModel @ViewModelInject constructor(
         latestVideoLiveData.value = Pair(catId, subCatId)
     }
     
-    fun navigateToMyChannel(fragment: Fragment, channelOwnerId: Int, isSubscribed: Int){
+    fun navigateToMyChannel(fragment: Fragment, channelId: Int, channelOwnerId: Int, isSubscribed: Int){
         val customerId = Preference.getInstance().customerId
         val isOwner = if (channelOwnerId == customerId) 1 else 0
         val isPublic = if (channelOwnerId == customerId) 0 else 1
-        val channelId = channelOwnerId
         findNavController(fragment).navigate(R.id.myChannelHomeFragment, Bundle().apply {
             putInt(MyChannelHomeFragment.IS_SUBSCRIBED, isSubscribed)
             Log.i("UGC_Home", "onItemClicked: $isSubscribed")

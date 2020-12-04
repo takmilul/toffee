@@ -10,9 +10,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.banglalink.toffee.BuildConfig;
+import com.banglalink.toffee.R;
 import com.banglalink.toffee.analytics.HeartBeatManager;
 import com.banglalink.toffee.analytics.ToffeeAnalytics;
-import com.banglalink.toffee.data.storage.Preference;
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener;
 import com.banglalink.toffee.model.AppSettingsKt;
 import com.banglalink.toffee.model.Channel;
@@ -20,6 +20,7 @@ import com.banglalink.toffee.model.ChannelInfo;
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.BehindLiveWindowException;
@@ -40,6 +41,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
+import java.util.List;
 
 
 /**
@@ -97,7 +99,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
             clearStartPosition();
         }
         HeartBeatManager.INSTANCE.getHeartBeatEventLiveData().observe(this, aBoolean -> {//In each heartbeat we are checking channel's expire date. Seriously??
-            if(channelInfo!=null && channelInfo.isExpired(Preference.Companion.getInstance().getSystemTime())){
+            if(channelInfo!=null && channelInfo.isExpired(mPref.getSystemTime())){
                 if(player!=null){
                     player.stop(true);
                 }
@@ -211,7 +213,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
 
     private MediaSource prepareMedia(Uri uri){
         DataSource.Factory dataSourceFactory = new DefaultHttpDataSourceFactory(
-                Util.getUserAgent(this, "Toffee"));
+                Util.getUserAgent(this, getString(R.string.app_name)));
         HlsMediaSource.Factory hlsDataSourceFactory = new HlsMediaSource.Factory(dataSourceFactory);
         hlsDataSourceFactory.setAllowChunklessPreparation(true);
 
@@ -220,10 +222,17 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
                         dataType -> {
                             HttpDataSource dataSource =
                                     new DefaultHttpDataSource(AppSettingsKt.getTOFFEE_HEADER());
-                            dataSource.setRequestProperty("TOFFEE-SESSION-TOKEN", Preference.Companion.getInstance().getHeaderSessionToken());
+                            dataSource.setRequestProperty("TOFFEE-SESSION-TOKEN", mPref.getHeaderSessionToken());
                             return dataSource;
                         })
-                        .createMediaSource(uri);
+                        .createMediaSource(MediaItem.fromUri(uri));
+    }
+
+    protected void addToPlayList(@NonNull ChannelInfo item) {
+        if(player != null) {
+            String uri = Channel.createChannel(item).getContentUri(this);
+            player.addMediaItem(MediaItem.fromUri(uri));
+        }
     }
 
     protected void playChannel(@NonNull  ChannelInfo channelInfo) {
@@ -250,18 +259,22 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
             if(isReload){//We need to start where we left off for VODs
                 boolean haveStartPosition = startWindow != C.INDEX_UNSET;
                 if (haveStartPosition && !channelInfo.isLive()) {
-                    player.prepare(mediaSource, false, false);
+                    player.setMediaSource(mediaSource, false);
+                    player.prepare();
+//                    player.prepare(mediaSource, false, false);
                     player.seekTo(startWindow, startPosition);//we seek to where we left for VODs
                     return;
                 }
             }
-            player.prepare(mediaSource);//Non reload event or reload for live. Just prepare the media and play it
+            player.setMediaSource(mediaSource);
+            player.prepare();
+//            player.prepare(mediaSource);//Non reload event or reload for live. Just prepare the media and play it
         }
     }
 
     //This will be called due to session token change while playing content or after init of player
     protected void reloadChannel(){
-        if(channelInfo!=null && channelInfo.isExpired(Preference.Companion.getInstance().getSystemTime())){
+        if(channelInfo!=null && channelInfo.isExpired(mPref.getSystemTime())){
             //channel is expired. Stop the player and notify hook/subclass
             if(player!=null){
                 player.stop(true);

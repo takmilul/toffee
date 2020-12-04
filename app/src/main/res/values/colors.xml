@@ -35,6 +35,7 @@
     <color name="main_text_color">#29466B</color>
     <color name="view_all_text_color">#34C9B5</color>
     <color name="second_text_color">#829AB8</color>
+    <color name="fixed_second_text_color">#829AB8</color>
     <color name="switch_color">#829AB8</color>
     <color name="edit_view_text_color">#1C2631</color>
     <color name="view_all_txt_color">@android:color/black</color>

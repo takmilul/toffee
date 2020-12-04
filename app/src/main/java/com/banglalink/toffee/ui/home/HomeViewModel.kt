@@ -43,6 +43,7 @@ class HomeViewModel @ViewModelInject constructor(
 
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val fragmentDetailsMutableLiveData = MutableLiveData<Any>()
+    val addToPlayListMutableLiveData = MutableLiveData<List<ChannelInfo>>()
     val shareContentLiveData = MutableLiveData<ChannelInfo>()
     val userChannelMutableLiveData = MutableLiveData<ChannelInfo>()
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
@@ -50,10 +51,6 @@ class HomeViewModel @ViewModelInject constructor(
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val viewAllVideoLiveData = MutableLiveData<Boolean>()
     val viewAllCategories = MutableLiveData<Boolean>()
-
-    private val getCategory by lazy {
-        GetCategory(Preference.getInstance(),RetrofitApiClient.toffeeApi)
-    }
 
     private val getContentFromShareableUrl by unsafeLazy{
         GetContentFromShareableUrl(Preference.getInstance(),RetrofitApiClient.toffeeApi)
@@ -64,7 +61,6 @@ class HomeViewModel @ViewModelInject constructor(
     }
 
     init {
-        getCategory()
         getProfile()
         FirebaseMessaging.getInstance().subscribeToTopic("buzz")
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener(this)
@@ -97,10 +93,6 @@ class HomeViewModel @ViewModelInject constructor(
             DownloadViewCountDb(RetrofitApiClient.dbApi, viewCountDAO)
                 .execute(mContext, url)
         }
-    }
-
-    fun getCategory():LiveData<Resource<NavCategoryGroup>>{
-        return resultLiveData { getCategory.execute() }
     }
 
     private fun getProfile(){

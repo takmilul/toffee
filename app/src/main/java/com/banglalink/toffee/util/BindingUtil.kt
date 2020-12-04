@@ -1,14 +1,12 @@
 package com.banglalink.toffee.util
 
-import android.content.res.ColorStateList
-import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.TextUtils
 import android.text.style.StrikethroughSpan
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup.MarginLayoutParams
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -276,7 +274,7 @@ fun loadReactionEmo(view: View, reaction: Int) {
         Angry.value -> R.drawable.ic_reaction_angry
         Add.value -> R.drawable.ic_playlist
         Delete.value -> R.drawable.ic_playlist
-        else -> R.drawable.ic_reactions_emo
+        else -> R.drawable.ic_reaction_love_empty
     }
     when (view) {
         is ImageView -> view.setImageResource(reactionIcon)
@@ -307,5 +305,15 @@ fun loadMyReactionBg(view: ImageView, isSetBg: Boolean){
 fun loadUnseenBgColor(view: CardView, isSeen: Boolean){
     if (!isSeen){
         view.setCardBackgroundColor(ContextCompat.getColor(view.context, R.color.unseenCardColor))
+    }
+}
+
+@BindingAdapter("contentNameMargin")
+fun setContentMargin(view: TextView, isMyChannel: Boolean){
+    if (isMyChannel){
+        (view.layoutParams as MarginLayoutParams).marginStart = Utils.dpToPx(16)
+    }
+    else{
+        (view.layoutParams as MarginLayoutParams).marginStart = Utils.dpToPx(8)
     }
 }

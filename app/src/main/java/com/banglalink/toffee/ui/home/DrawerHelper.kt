@@ -1,11 +1,14 @@
 package com.banglalink.toffee.ui.home
 
+import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.navigation.ui.NavigationUI
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
@@ -29,7 +32,7 @@ import java.util.*
 class DrawerHelper(private val activity: HomeActivity,
                    private val mPref: Preference,
                    private val binding:ActivityMainMenuBinding
-):ParentLevelAdapter.OnNavigationItemClickListener{
+) {
 
     lateinit var toggle: ActionBarDrawerToggle
 
@@ -44,22 +47,19 @@ class DrawerHelper(private val activity: HomeActivity,
         //After instantiating your ActionBarDrawerToggle
         toggle.isDrawerIndicatorEnabled = false
         
-        toggle.setHomeAsUpIndicator(R.drawable.ic_home)
-        val parentAdapter =
-            ParentLevelAdapter(activity, generateNavMenu(), this, binding.navMenuList)
-        binding.navMenuList.setAdapter(parentAdapter)
+//        activity.supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_home)
+//        val parentAdapter =
+//            ParentLevelAdapter(activity, generateNavMenu(), this, binding.navMenuList)
+//        binding.navMenuList.setAdapter(parentAdapter)
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+
         toggle.toolbarNavigationClickListener = View.OnClickListener {
             if(activity.getNavController().currentDestination?.id != R.id.menu_feed) {
-//                val navOption = NavOptions.Builder().setPopUpTo(R.id.menu_feed, true).build()
                 activity.getNavController().popBackStack(R.id.menu_feed, true)
                 activity.getNavController().navigate(R.id.menu_feed)
             }
-            /*if (activity.supportFragmentManager.backStackEntryCount > 1) {
-                activity.supportFragmentManager.popBackStack(LandingPageFragment::class.java.name, 0)
-            }*/
         }
 
         setProfileInfo()
@@ -83,194 +83,172 @@ class DrawerHelper(private val activity: HomeActivity,
             profilePicture.loadProfileImage(it)
         }
 
-        profilePicture.setOnClickListener{
+        header.findViewById<LinearLayout>(R.id.menu_profile).setOnClickListener {
             activity.launchActivity<ViewProfileActivity>()
         }
-        profileName.setOnClickListener{
-            activity.launchActivity<ViewProfileActivity>()
-        }
+//        profilePicture.setOnClickListener{
+//            activity.launchActivity<ViewProfileActivity>()
+//        }
+//        profileName.setOnClickListener{
+//            activity.launchActivity<ViewProfileActivity>()
+//        }
 
-        val navBarClose = header.findViewById<ImageView>(R.id.nav_bar_close)
-        navBarClose.setOnClickListener{
-            binding.drawerLayout.closeDrawers()
-        }
+//        val navBarClose = header.findViewById<ImageView>(R.id.nav_bar_close)
+//        navBarClose.setOnClickListener{
+//            binding.drawerLayout.closeDrawers()
+//        }
     }
 
-    private fun generateNavMenu(): List<NavigationMenu> {
-        val navigationMenuList = ArrayList<NavigationMenu>()
-        navigationMenuList.add(
-            NavigationMenu(
-                ID_CHANNEL,
-                "TV Channels",
-                R.mipmap.ic_menu_channels,
-                ArrayList(),
-                true
-            )
-        )
-        navigationMenuList.add(
-            NavigationMenu(
-                ID_RECENT,
-                "Recent",
-                R.mipmap.ic_menu_recent,
-                ArrayList()
-            )
-        )
-        navigationMenuList.add(
-            NavigationMenu(
-                ID_FAV,
-                "Favorites",
-                R.mipmap.ic_menu_favorites,
-                ArrayList()
-            )
-        )
-        navigationMenuList.add(
-            NavigationMenu(
-                ID_SUB_VIDEO,
-                activity.getString(R.string.menu_create_text),
-                R.mipmap.ic_menu_create,
-                ArrayList(),
-                true
-            )
-        )
-        val isBanglalinkNumber = mPref.isBanglalinkNumber
-        if(isBanglalinkNumber == "true"){
-            navigationMenuList.add(
-                NavigationMenu(
-                    ID_INTERNET_PACK,
-                    activity.getString(R.string.menu_internet_pack),
-                    R.mipmap.ic_menu_internet_pack,
-                    ArrayList(),
-                    true
-                )
-            )
-        }
+//    private fun generateNavMenu(): List<NavigationMenu> {
+//        val navigationMenuList = ArrayList<NavigationMenu>()
+//
+//        val isBanglalinkNumber = mPref.isBanglalinkNumber
+////        if(isBanglalinkNumber == "true"){
+//            navigationMenuList.add(
+//                NavigationMenu(
+//                    ID_INTERNET_PACK,
+//                    activity.getString(R.string.menu_internet_pack),
+//                    R.drawable.ic_menu_internet_packs,
+//                    ArrayList(),
+//                    true
+//                )
+//            )
+////        }
+//
+//        navigationMenuList.add(
+//            NavigationMenu(
+//                ID_CHANNEL,
+//                "TV Channels",
+//                R.drawable.ic_menu_tv_normal,
+//                ArrayList(),
+//                true
+//            )
+//        )
+//        navigationMenuList.add(
+//            NavigationMenu(
+//                ID_RECENT,
+//                "Recent",
+//                R.drawable.ic_menu_activites,
+//                ArrayList()
+//            )
+//        )
+//        navigationMenuList.add(
+//            NavigationMenu(
+//                ID_FAV,
+//                "Favorites",
+//                R.drawable.ic_menu_favorites,
+//                ArrayList()
+//            )
+//        )
+//        navigationMenuList.add(
+//            NavigationMenu(
+//                ID_SUB_VIDEO,
+//                activity.getString(R.string.menu_create_text),
+//                R.mipmap.ic_menu_create,
+//                ArrayList(),
+//                true
+//            )
+//        )
+//
 
-        navigationMenuList.add(
-            NavigationMenu(
-                ID_INVITE_FRIEND,
-                activity.getString(R.string.refer_a_friend_txt),
-                R.mipmap.ic_menu_invite,
-                ArrayList()
-            )
-        )
+//        navigationMenuList.add(
+//            NavigationMenu(
+//                ID_INVITE_FRIEND,
+//                activity.getString(R.string.refer_a_friend_txt),
+//                R.mipmap.ic_menu_invite,
+//                ArrayList()
+//            )
+//        )
 
-        navigationMenuList.add(
-            NavigationMenu(
-                ID_REDEEM_CODE,
-                activity.getString(R.string.redeem_code_txt),
-                R.mipmap.ic_menu_redeem,
-                ArrayList()
-            )
-        )
+//        navigationMenuList.add(
+//            NavigationMenu(
+//                ID_REDEEM_CODE,
+//                activity.getString(R.string.redeem_code_txt),
+//                R.mipmap.ic_menu_redeem,
+//                ArrayList()
+//            )
+//        )
 
-        navigationMenuList.add(
-            NavigationMenu(
-                ID_SETTINGS,
-                "Settings",
-                R.mipmap.ic_menu_settings,
-                ArrayList()
-            )
-        )
-        navigationMenuList.add(
-            NavigationMenu(
-                ID_ABOUT,
-                "About",
-                R.mipmap.ic_menu_about,
-                ArrayList()
-            )
-        )
-        navigationMenuList.add(
-            NavigationMenu(
-                ID_FAQ,
-                activity.getString(R.string.menu_faqs_text),
-                R.drawable.ic_menu_faq,
-                ArrayList()
-            )
-        )
-        navigationMenuList.add(
-            NavigationMenu(
-                ID_LOGOUT,
-                "Logout",
-                R.mipmap.ic_menu_exit,
-                ArrayList()
-            )
-        )
+//        navigationMenuList.add(
+//            NavigationMenu(
+//                ID_SETTINGS,
+//                "Settings",
+//                R.drawable.ic_side_menu_settings,
+//                ArrayList()
+//            )
+//        )
+//        navigationMenuList.add(
+//            NavigationMenu(
+//                ID_ABOUT,
+//                "About",
+//                R.mipmap.ic_menu_about,
+//                ArrayList()
+//            )
+//        )
+//        navigationMenuList.add(
+//            NavigationMenu(
+//                ID_FAQ,
+//                activity.getString(R.string.menu_faqs_text),
+//                R.drawable.ic_menu_faq,
+//                ArrayList()
+//            )
+//        )
+//        navigationMenuList.add(
+//            NavigationMenu(
+//                ID_LOGOUT,
+//                "Logout",
+//                R.mipmap.ic_menu_exit,
+//                ArrayList()
+//            )
+//        )
+//
+//
+//        return navigationMenuList
+//    }
 
+//    override fun onMenuClick(menu: NavigationMenu?) {
+//       menu?.let {
+//           handleMenuItemById(it.id)
+//       }
+//    }
 
-        return navigationMenuList
-    }
-
-    override fun onMenuClick(menu: NavigationMenu?) {
-       menu?.let {
-           handleMenuItemById(it.id)
-       }
-    }
-
-    fun handleMenuItemById(id:Int){
-        when (id) {
-            ID_VIDEO -> {
-                val currentFragment = getCurrentContentFragment()
-                if (CatchupFragment::class.java.name != currentFragment!!.tag) {
-                    activity.loadFragmentById( R.id.content_viewer,
-                        CatchupFragment.createInstance(0, 0, "", "All Videos", "All Videos", "VOD")
-                        ,CatchupFragment::class.java.name
-                    )
-                } else {
-                    val catchupFragment = currentFragment as CatchupFragment
-                    catchupFragment.updateInfo(0, 0, "", "All Videos", "All Videos", "VOD")
-                }
-
-                binding.drawerLayout.closeDrawers()
-                activity.minimizePlayer()
-            }
-            ID_RECENT -> {
-//                val currentFragment = getCurrentContentFragment()
-//                if (currentFragment !is RecentFragment) {
-//                    activity.loadFragmentById(
-//                        R.id.content_viewer, RecentFragment(),
-//                        RecentFragment::class.java.name
+    fun handleMenuItemById(item: MenuItem): Boolean {
+        when (item.itemId) {
+//            R.id.menu_activities -> {
+////                with(activity.getNavController()) {
+////                    if(currentDestination?.id != R.id.menu_activities) {
+////                        navigate(R.id.menu_activities)
+////                    }
+////                }
+//                binding.drawerLayout.closeDrawers()
+//            }
+//            R.id.menu_tv -> {
+//                with(activity.getNavController()) {
+//                    if(currentDestination?.id != R.id.menu_tv) {
+//                        navigate(R.id.menu_tv)
+//                    }
+//                }
+//                binding.drawerLayout.closeDrawers()
+//            }
+//            R.id.menu_favorites -> {
+//                with(activity.getNavController()) {
+//                    if(currentDestination?.id != R.id.menu_favorites) {
+//                        navigate(R.id.menu_favorites)
+//                    }
+//                }
+//                binding.drawerLayout.closeDrawers()
+//            }
+//            ID_SUB_VIDEO -> {
+//                activity.launchActivity<HtmlPageViewActivity> {
+//                    putExtra(
+//                        HtmlPageViewActivity.TITLE_KEY,
+//                        activity.getString(R.string.menu_create_text)
 //                    )
+//                    putExtra(HtmlPageViewActivity.CONTENT_KEY, MICRO_SITE_URL)
 //                }
-                binding.drawerLayout.closeDrawers()
-//                activity.minimizePlayer()
-                activity.getNavController().navigate(R.id.recentFragment)
-            }
-            ID_CHANNEL -> {
-//                val currentFragment = getCurrentContentFragment()
-//                if (currentFragment !is ChannelFragment) {
-//                    activity.loadFragmentById( R.id.content_viewer, ChannelFragment.createInstance(
-//                        0,
-//                        "",
-//                        activity.getString(R.string.menu_channel_text)
-//                    ), ChannelFragment::class.java.getName())
-//                }
-                binding.drawerLayout.closeDrawers()
-//                activity.minimizePlayer()
-                activity.getHomeViewModel().switchBottomTab.postValue(1)
-            }
-            ID_FAV -> {
-                activity.getNavController().navigate(R.id.favoriteFragment)
-//                val currentFragment = getCurrentContentFragment()
-//                if (currentFragment !is FavoriteFragment) {
-//                    activity.loadFragmentById(
-//                        R.id.content_viewer, FavoriteFragment(),
-//                        FavoriteFragment::class.java.getName()
-//                    )
-//                }
-                binding.drawerLayout.closeDrawers()
-//                activity.minimizePlayer()
-            }
-            ID_SUB_VIDEO -> {
-                activity.launchActivity<HtmlPageViewActivity> {
-                    putExtra(
-                        HtmlPageViewActivity.TITLE_KEY,
-                        activity.getString(R.string.menu_create_text)
-                    )
-                    putExtra(HtmlPageViewActivity.CONTENT_KEY, MICRO_SITE_URL)
-                }
-                binding.drawerLayout.closeDrawers()
-            }
-            ID_SUBSCRIPTIONS->{
+//                binding.drawerLayout.closeDrawers()
+//            }
+            R.id.menu_subscriptions ->{
                 binding.drawerLayout.closeDrawers()
                 if(mPref.isSubscriptionActive == "true"){
                     activity.launchActivity<PackageListActivity>()
@@ -278,115 +256,98 @@ class DrawerHelper(private val activity: HomeActivity,
                 else{
                     activity.launchActivity<MySubscriptionActivity>()
                 }
-
+                return true
             }
-            ID_INTERNET_PACK->{
+            R.id.ic_menu_internet_packs ->{
                 binding.drawerLayout.closeDrawers()
                 activity.launchActivity<Html5PlayerViewActivity> {
-                putExtra(
-                    Html5PlayerViewActivity.CONTENT_URL,
-                    INTERNET_PACK_URL
-                )
+                    putExtra(
+                        Html5PlayerViewActivity.CONTENT_URL,
+                        INTERNET_PACK_URL
+                    )
+                }
+                return true
             }
-
-            }
-            ID_SETTINGS -> {
+            R.id.menu_settings -> {
                 activity.launchActivity<SettingsActivity>()
                 binding.drawerLayout.closeDrawers()
-
+                return true
             }
-            ID_ABOUT -> {
-                activity.launchActivity<AboutActivity>()
+//            ID_ABOUT -> {
+//                activity.launchActivity<AboutActivity>()
+//                binding.drawerLayout.closeDrawers()
+//
+//            }
+//            ID_FAQ -> {
+//                activity.launchActivity<HtmlPageViewActivity> {
+//                    putExtra(HtmlPageViewActivity.CONTENT_KEY, FAQ_URL)
+//                    putExtra(HtmlPageViewActivity.TITLE_KEY, activity.getString(R.string.menu_faqs_text))
+//                }
+//                binding.drawerLayout.closeDrawers()
+//
+//            }
+//            ID_LOGOUT->{
+//                activity.handleExitApp()
+//            }
+//            ID_INVITE_FRIEND->{
+//                activity.launchActivity<ReferAFriendActivity>()
+//                binding.drawerLayout.closeDrawers()
+//            }
+//            ID_REDEEM_CODE->{
+//                activity.launchActivity<RedeemCodeActivity> ()
+//                binding.drawerLayout.closeDrawers()
+//            }
+        }
+        return run {
+            if(NavigationUI.onNavDestinationSelected(item, activity.getNavController())) {
                 binding.drawerLayout.closeDrawers()
-
+                return@run true
             }
-            ID_FAQ -> {
-                activity.launchActivity<HtmlPageViewActivity> {
-                    putExtra(HtmlPageViewActivity.CONTENT_KEY, FAQ_URL)
-                    putExtra(HtmlPageViewActivity.TITLE_KEY, activity.getString(R.string.menu_faqs_text))
-                }
-                binding.drawerLayout.closeDrawers()
-
-            }
-            ID_LOGOUT->{
-                activity.handleExitApp()
-            }
-            ID_INVITE_FRIEND->{
-                activity.launchActivity<ReferAFriendActivity>()
-                binding.drawerLayout.closeDrawers()
-            }
-            ID_REDEEM_CODE->{
-                activity.launchActivity<RedeemCodeActivity> ()
-                binding.drawerLayout.closeDrawers()
-            }
+            false
         }
     }
 
-    private fun getCurrentContentFragment(): Fragment? {
-        return activity.supportFragmentManager.findFragmentById(R.id.content_viewer)
-    }
+//    private fun getCurrentContentFragment(): Fragment? {
+//        return activity.supportFragmentManager.findFragmentById(R.id.content_viewer)
+//    }
+//
+//    override fun onSubCategoryClick(
+//        subcategory: NavSubcategory?,
+//        category: NavCategory?,
+//        parent: NavigationMenu?
+//    ) {
+//        //Do nothing
+//    }
+//
+//    override fun onCategoryClick(category: NavCategory, parent: NavigationMenu) {
+//        handleCategoryClick(parent.id,category.id,category.categoryName)
+//        binding.drawerLayout.closeDrawers()
+//    }
 
-    override fun onSubCategoryClick(
-        subcategory: NavSubcategory?,
-        category: NavCategory?,
-        parent: NavigationMenu?
-    ) {
-        //Do nothing
-    }
-
-    override fun onCategoryClick(category: NavCategory, parent: NavigationMenu) {
-        handleCategoryClick(parent.id,category.id,category.categoryName)
-        binding.drawerLayout.closeDrawers()
-    }
-
-    fun handleCategoryClick(parentId:Int,categoryId:Int,categoryName:String){
-        val currentFragment = getCurrentContentFragment()
-        if (parentId == ID_VIDEO && currentFragment!=null) {
-            if (CatchupFragment::class.java.name != currentFragment.tag) {
-                activity.loadFragmentById(R.id.content_viewer,CatchupFragment.createInstance(
-                    categoryId,
-                    0,
-                    "",
-                    "",
-                    categoryName,
-                    "VOD"
-                ), CatchupFragment::class.java.name)
-            } else {
-                val catchupFragment = currentFragment as CatchupFragment
-                catchupFragment.updateInfo(
-                   categoryId,
-                    0,
-                    "",
-                    "",
-                    categoryName,
-                    "VOD"
-                )
-            }
-            activity.minimizePlayer()
-        }
-    }
-
-    fun updateAdapter(navCategoryList:List<NavCategory>) {
-//        val parentAdapter = ParentLevelAdapter(
-//            activity,
-//            generateNavMenu(),
-//            this,
-//            binding.navMenuList
-//        )
-//        binding.navMenuList.setAdapter(parentAdapter)
-//        var menu: NavigationMenu
-//        try {
-//            menu = NavigationMenu(
-//                ID_VIDEO,
-//                "All Videos",
-//                R.mipmap.ic_menu_vod,
-//                navCategoryList
-//            )
-//            parentAdapter.insert(menu, 1)
-//            binding.navMenuList.expandGroup(1)
-//        } catch (e: Exception) {
-//            menu = NavigationMenu(ID_VOD, "VoD", R.mipmap.ic_menu_vod, ArrayList())
-//            parentAdapter.insert(menu, 3)
+//    fun handleCategoryClick(parentId:Int,categoryId:Int,categoryName:String){
+//        val currentFragment = getCurrentContentFragment()
+//        if (parentId == ID_VIDEO && currentFragment!=null) {
+//            if (CatchupFragment::class.java.name != currentFragment.tag) {
+//                activity.loadFragmentById(R.id.content_viewer,CatchupFragment.createInstance(
+//                    categoryId,
+//                    0,
+//                    "",
+//                    "",
+//                    categoryName,
+//                    "VOD"
+//                ), CatchupFragment::class.java.name)
+//            } else {
+//                val catchupFragment = currentFragment as CatchupFragment
+//                catchupFragment.updateInfo(
+//                   categoryId,
+//                    0,
+//                    "",
+//                    "",
+//                    categoryName,
+//                    "VOD"
+//                )
+//            }
+//            activity.minimizePlayer()
 //        }
-    }
+//    }
 }

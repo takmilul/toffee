@@ -3,7 +3,6 @@ package com.banglalink.toffee.ui.mychannel
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.activityViewModels
@@ -13,9 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.R
 import com.banglalink.toffee.apiservice.MyChannelPlaylistContentParam
 import com.banglalink.toffee.common.paging.BaseListFragment
-import com.banglalink.toffee.common.paging.BaseListItemCallback
-import com.banglalink.toffee.common.paging.BaseViewHolder
-import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
@@ -80,7 +76,7 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
 //        binding.topPanel.root.visibility = View.VISIBLE
 //        binding.topPanel.statusText.text = "${args.playlistInfo.playlistName} (${args.playlistInfo.playlistItemCount})"
 
-        detailsAdapter = ChannelHeaderAdapter(currentItem, object: ContentReactionCallback<ChannelInfo> {
+        detailsAdapter = ChannelHeaderAdapter(args.playlistInfo, object: ContentReactionCallback<ChannelInfo> {
             override fun onOpenMenu(view: View, item: ChannelInfo) {
                 openMenu(view, item)
             }
@@ -107,7 +103,7 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
 
     override fun onProviderIconClicked(item: ChannelInfo) {
         super.onProviderIconClicked(item)
-        landingViewModel.navigateToMyChannel(this, item.channel_owner_id, item.isSubscribed)
+        landingViewModel.navigateToMyChannel(this, item.id.toInt(), item.channel_owner_id, item.isSubscribed)
     }
     
     override fun onItemClicked(item: ChannelInfo) {

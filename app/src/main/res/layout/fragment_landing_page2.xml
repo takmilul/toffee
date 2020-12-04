@@ -39,12 +39,12 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
 
-                            <androidx.fragment.app.FragmentContainerView
-                                android:id="@+id/mostPopularFragment"
-                                android:name="com.banglalink.toffee.ui.landing.MostPopularFragment"
-                                android:layout_marginTop="8dp"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content" />
+<!--                            <androidx.fragment.app.FragmentContainerView-->
+<!--                                android:id="@+id/mostPopularFragment"-->
+<!--                                android:name="com.banglalink.toffee.ui.landing.MostPopularFragment"-->
+<!--                                android:layout_marginTop="8dp"-->
+<!--                                android:layout_width="match_parent"-->
+<!--                                android:layout_height="wrap_content" />-->
 
                             <androidx.fragment.app.FragmentContainerView
                                 android:id="@+id/categoriesFragment"

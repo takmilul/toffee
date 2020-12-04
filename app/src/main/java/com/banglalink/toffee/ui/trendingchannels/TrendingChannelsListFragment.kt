@@ -7,9 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
@@ -27,7 +25,6 @@ import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_landing_categories.*
 import kotlinx.android.synthetic.main.fragment_landing_user_channels.*
-import kotlinx.android.synthetic.main.fragment_landing_user_channels.viewAllButton
 import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
@@ -54,7 +51,7 @@ class TrendingChannelsListFragment : HomeBaseFragment() {
 
         mAdapter = UserChannelsListAdapter(object : LandingPopularChannelCallback {
             override fun onItemClicked(item: UgcUserChannelInfo) {
-                viewModel.navigateToMyChannel(this@TrendingChannelsListFragment, item.channelOwnerId, item.isSubscribed?:0)
+                viewModel.navigateToMyChannel(this@TrendingChannelsListFragment, item.id.toInt(), item.channelOwnerId, item.isSubscribed?:0)
             }
 
             override fun onSubscribeButtonClicked(view: View, info: UgcUserChannelInfo) {

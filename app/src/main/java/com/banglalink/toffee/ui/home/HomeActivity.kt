@@ -38,6 +38,8 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.HeartBeatManager
@@ -58,6 +60,7 @@ import com.banglalink.toffee.ui.login.SigninByPhoneActivity
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
 import com.banglalink.toffee.ui.player.PlayerActivity
 import com.banglalink.toffee.ui.search.SearchFragment
+import com.banglalink.toffee.ui.settings.SettingsActivity
 import com.banglalink.toffee.ui.subscription.PackageListActivity
 import com.banglalink.toffee.ui.upload.UploadProgressViewModel
 import com.banglalink.toffee.ui.upload.UploadStatus
@@ -155,17 +158,6 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         initLandingPageFragmentAndListenBackStack()
         showRedeemMessageIfPossible()
 
-        observe(viewModel.getCategory()) {
-            when (it) {
-                is Resource.Success -> {
-                    drawerHelper.updateAdapter(it.data.vod)
-                }
-                is Resource.Failure -> {
-                    showToast(it.error.msg)
-                }
-            }
-        }
-
         binding.uploadButton.setOnClickListener {
             if(navController.currentDestination?.id == R.id.uploadMethodFragment) {
                 navController.popBackStack()
@@ -245,7 +237,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
 //        }
 
         observe(viewModel.viewAllVideoLiveData) {
-            drawerHelper.onMenuClick(NavigationMenu(ID_VIDEO, "All Videos", 0, listOf(), false))
+//            drawerHelper.onMenuClick(NavigationMenu(ID_VIDEO, "All Videos", 0, listOf(), false))
         }
 
         observe(mPref.sessionTokenLiveData){
@@ -258,6 +250,14 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         observe(mPref.viewCountDbUrlLiveData){
             if(it.isNotEmpty()){
                 viewModel.populateViewCountDb(it)
+            }
+        }
+
+        observe(viewModel.addToPlayListMutableLiveData) { item ->
+            item.forEach {
+                if(!it.isLive) {
+                    addToPlayList(it)
+                }
             }
         }
 
@@ -340,32 +340,28 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.home_nav_host) as NavHostFragment
         navController = navHostFragment.navController
 
-//        appbarConfig = AppBarConfiguration(
-//            setOf(
-//                R.id.menu_feed,
-//                R.id.menu_tv,
-//                R.id.menu_activities,
-//                R.id.menu_channel,
-//
-//                R.id.menu_all_channel,
-//                R.id.menu_recent,
-//                R.id.menu_favorites
-////                ,
-////                R.id.menu_create,
-////                R.id.menu_subscriptions,
-////                R.id.menu_invite,
-////                R.id.menu_redeem,
-////                R.id.menu_settings,
-////                R.id.menu_about,
-////                R.id.menu_faq,
-////                R.id.menu_logout
-//            ),
-//            binding.drawerLayout
-//        )
+        appbarConfig = AppBarConfiguration(
+            setOf(
+                R.id.menu_feed,
+                R.id.menu_tv,
+                R.id.menu_activities,
+                R.id.menu_channel,
+
+//                R.id.menu_all_tv_channel,
+                R.id.menu_activities,
+                R.id.menu_favorites
+            ),
+            binding.drawerLayout
+        )
 //        setupActionBarWithNavController(navController, appbarConfig)
 //        NavigationUI.setupActionBarWithNavController(this, navController, appbarConfig)
-//        binding.sideNavigation.setupWithNavController(navController)
+        binding.tbar.toolbar.setupWithNavController(navController, appbarConfig)
+        binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_home)
+        binding.sideNavigation.setupWithNavController(navController)
         binding.tabNavigator.setupWithNavController(navController)
+        binding.sideNavigation.setNavigationItemSelectedListener {
+            drawerHelper.handleMenuItemById(it)
+        }
 
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             supportFragmentManager.popBackStack(R.id.content_viewer, POP_BACK_STACK_INCLUSIVE)
@@ -373,12 +369,13 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             if(binding.draggableView.isMaximized) {
                 minimizePlayer()
             }
+            binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_home)
         }
 
-        binding.sideNavigation.setNavigationItemSelectedListener {
-            binding.drawerLayout.closeDrawers()
-            return@setNavigationItemSelectedListener false
-        }
+//        binding.sideNavigation.setNavigationItemSelectedListener {
+//            binding.drawerLayout.closeDrawers()
+//            return@setNavigationItemSelectedListener false
+//        }
     }
 
     override fun onResume() {
@@ -441,6 +438,11 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         binding.playerView.showContentExpiredMessage()
     }
 
+    override fun onSupportNavigateUp(): Boolean {
+        return NavigationUI.navigateUp(navController, appbarConfig)
+                || super.onSupportNavigateUp()
+    }
+
     private fun updateFullScreenState() {
         val state =
             resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -489,12 +491,12 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             val route = inAppMessageParser.parseUrl(url)
             route?.drawerId?.let {
                 ToffeeAnalytics.logBreadCrumb("Trying to open menu item")
-                drawerHelper.handleMenuItemById(it)
+//                drawerHelper.handleMenuItemById(it)
                 isDeepLinkHandled = true
             }
             route?.categoryId?.let {
                 ToffeeAnalytics.logBreadCrumb("Trying to open category item")
-                drawerHelper.handleCategoryClick(ID_VIDEO, it, route.categoryName ?: "")
+////                drawerHelper.handleCategoryClick(ID_VIDEO, it, route.categoryName ?: "")
                 isDeepLinkHandled = true
             }
 

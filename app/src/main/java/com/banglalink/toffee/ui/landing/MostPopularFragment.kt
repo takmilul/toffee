@@ -63,7 +63,7 @@ class MostPopularFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
 
     override fun onProviderIconClicked(item: ChannelInfo) {
         super.onProviderIconClicked(item)
-        viewModel.navigateToMyChannel(this@MostPopularFragment, item.channel_owner_id, item.isSubscribed)
+        viewModel.navigateToMyChannel(this@MostPopularFragment, item.id.toInt(), item.channel_owner_id, item.isSubscribed)
     }
     
     private fun openMenu(view: View, item: ChannelInfo) {
