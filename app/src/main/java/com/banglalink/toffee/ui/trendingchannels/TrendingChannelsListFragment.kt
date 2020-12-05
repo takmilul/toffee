@@ -11,14 +11,10 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.banglalink.toffee.R
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
-import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.model.UgcCategory
-import com.banglalink.toffee.model.UgcUserChannelInfo
+import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
-import com.banglalink.toffee.ui.home.UserChannelsListAdapter
 import com.banglalink.toffee.ui.landing.LandingPopularChannelCallback
 import com.banglalink.toffee.ui.landing.UserChannelViewModel
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
@@ -29,9 +25,10 @@ import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
 class TrendingChannelsListFragment : HomeBaseFragment() {
-    private lateinit var mAdapter: UserChannelsListAdapter
+    private lateinit var mAdapter: TrendingChannelsListAdapter
     private var categoryInfo: UgcCategory? = null
-    private val viewModel by activityViewModels<LandingPageViewModel>()
+    private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
+    private val viewModel by viewModels<TrendingChannelsListViewModel>()
     private val subscriptionViewModel by viewModels<UserChannelViewModel>()
 
     override fun onCreateView(
@@ -49,12 +46,12 @@ class TrendingChannelsListFragment : HomeBaseFragment() {
             CategoryDetailsFragment.ARG_CATEGORY_ITEM
         )
 
-        mAdapter = UserChannelsListAdapter(object : LandingPopularChannelCallback {
-            override fun onItemClicked(item: UgcUserChannelInfo) {
-                viewModel.navigateToMyChannel(this@TrendingChannelsListFragment, item.id.toInt(), item.channelOwnerId, item.isSubscribed?:0)
+        mAdapter = TrendingChannelsListAdapter(object : LandingPopularChannelCallback<TrendingChannelInfo> {
+            override fun onItemClicked(item: TrendingChannelInfo) {
+                landingPageViewModel.navigateToMyChannel(this@TrendingChannelsListFragment, item.id.toInt(), item.channelOwnerId, item.isSubscribed?:0)
             }
 
-            override fun onSubscribeButtonClicked(view: View, info: UgcUserChannelInfo) {
+            override fun onSubscribeButtonClicked(view: View, info: TrendingChannelInfo) {
 
                 if (info.isSubscribed == 0) {
                     subscriptionViewModel.setSubscriptionStatus(info.id, 1, info.channelOwnerId)
@@ -82,12 +79,7 @@ class TrendingChannelsListFragment : HomeBaseFragment() {
 
     private fun observeList() {
         lifecycleScope.launchWhenStarted {
-            val content = if (categoryInfo == null) {
-                viewModel.loadUserChannels()
-            }
-            else {
-                viewModel.loadUserChannelsByCategory(categoryInfo!!)
-            }
+            val content = viewModel.loadUserChannels()
             content.collectLatest {
                 mAdapter.submitData(it)
             }

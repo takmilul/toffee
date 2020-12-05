@@ -47,7 +47,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
             CategoryDetailsFragment.ARG_CATEGORY_ITEM
         )
 
-        mAdapter = UserChannelsListAdapter(object : LandingPopularChannelCallback {
+        mAdapter = UserChannelsListAdapter(object : LandingPopularChannelCallback<UgcUserChannelInfo> {
             override fun onItemClicked(item: UgcUserChannelInfo) {
                 viewModel.navigateToMyChannel(this@LandingUserChannelsFragment, item.id.toInt(), item.channelOwnerId, item.isSubscribed?:0)
             }

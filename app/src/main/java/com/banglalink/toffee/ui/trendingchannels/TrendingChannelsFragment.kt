@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.trendingchannels
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -14,19 +13,12 @@ class TrendingChannelsFragment : Fragment() {
         fun newInstance() = TrendingChannelsFragment()
     }
 
-    private lateinit var viewModel: TrendingChannelsViewModel
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?, ): View? {
         return inflater.inflate(R.layout.fragment_trending_channels, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(TrendingChannelsViewModel::class.java)
-        
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        requireActivity().title = "Trending Channels"
     }
-
 }

@@ -244,4 +244,12 @@ interface ToffeeApi {
         @Path("dbVersion") dbVersion: Int,
         @Body subCategoryRequest: SubCategoryRequest
     ): SubCategoryResponse
+    
+    @POST("/ugc-all-user-channel/1/{limit}/{offset}/{dbVersion}")
+    suspend fun getTrendingChannels(
+        @Path("limit") limit: Int,
+        @Path("offset") offset: Int,
+        @Path("dbVersion") dbVersion: Int,
+        @Body trendingChannelsRequest: TrendingChannelsRequest
+    ): TrendingChannelsResponse
 }
