@@ -14,8 +14,8 @@ import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.common.AlertDialogReactionFragment
 import com.banglalink.toffee.ui.common.ContentReactionCallback
+import com.banglalink.toffee.ui.common.ReactionFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -166,14 +166,14 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
         }
     }
 
-    override fun onReactionClicked(view: View, item: ChannelInfo) {
-        super.onReactionClicked(view, item)
-//        AlertDialogReactionFragment.newInstance(view, item).show(requireActivity().supportFragmentManager, "ReactionDialog")
+    override fun onReactionClicked(view: View, reactionCountView: View, item: ChannelInfo) {
+        super.onReactionClicked(view, reactionCountView, item)
+        requireActivity().supportFragmentManager.beginTransaction().add(ReactionFragment.newInstance(view, reactionCountView, item, true), ReactionFragment.TAG).commit()
     }
 
-    override fun onReactionLongPressed(view: View, item: ChannelInfo) {
-        super.onReactionLongPressed(view, item)
-        AlertDialogReactionFragment.newInstance(view, item).show(requireActivity().supportFragmentManager, "ReactionDialog")
+    override fun onReactionLongPressed(view: View, reactionCountView: View, item: ChannelInfo) {
+        super.onReactionLongPressed(view, reactionCountView, item)
+        requireActivity().supportFragmentManager.beginTransaction().add(ReactionFragment.newInstance(view, reactionCountView, item), ReactionFragment.TAG).commit()
     }
     
     override fun onShareClicked(view: View, item: ChannelInfo) {

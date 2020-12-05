@@ -18,9 +18,9 @@ import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.channels.ChannelFragment
-import com.banglalink.toffee.ui.common.AlertDialogReactionFragment
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.common.ContentReactionCallback
+import com.banglalink.toffee.ui.common.ReactionFragment
 import com.banglalink.toffee.ui.landing.UserChannelViewModel
 import com.banglalink.toffee.ui.widget.MyPopupWindow
 import dagger.hilt.android.AndroidEntryPoint
@@ -82,10 +82,9 @@ class ChannelViewFragment: BaseFragment(), ContentReactionCallback<ChannelInfo> 
         viewModel.getChannelInfo(isOwner, 1, contentProviderId, contentProviderId.toInt())
     }
 
-    override fun onReactionClicked(view: View, item: ChannelInfo) {
-        super.onReactionClicked(view, item)
-        AlertDialogReactionFragment.newInstance(view, item)
-            .show(requireActivity().supportFragmentManager, "ReactionDialog")
+    override fun onReactionClicked(view: View, reactionCountView: View, item: ChannelInfo) {
+        super.onReactionClicked(view, reactionCountView, item)
+        requireActivity().supportFragmentManager.beginTransaction().add(ReactionFragment.newInstance(view, reactionCountView, item, true), ReactionFragment.TAG).commit()
     }
     
     override fun onOpenMenu(view: View, item: ChannelInfo) {

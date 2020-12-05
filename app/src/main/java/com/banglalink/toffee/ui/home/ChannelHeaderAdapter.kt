@@ -14,6 +14,7 @@ import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.ui.common.ContentReactionCallback
 import com.banglalink.toffee.ui.common.MyViewHolderV2
 import com.google.android.material.switchmaterial.SwitchMaterial
+import kotlinx.android.synthetic.main.list_item_videos.view.*
 
 class ChannelHeaderAdapter(private val headerData: Any? = null,
                            private val cb: ContentReactionCallback<ChannelInfo>? = null)
@@ -46,6 +47,10 @@ class ChannelHeaderAdapter(private val headerData: Any? = null,
             holder.autoplaySwitch.visibility = View.VISIBLE
             holder.bottomPanelStatus.visibility = View.VISIBLE
             holder.bottomPanelStatus.text = "${headerData.playlistName} (${headerData.playlistItemCount})"
+        }
+        holder.itemView.findViewById<TextView>(R.id.reactionButton)?.setOnLongClickListener {
+            cb?.onReactionLongPressed(it, holder.itemView.reactionCount, channelInfo!!)
+            true
         }
     }
 

@@ -6,9 +6,7 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.ColorStateList
 import android.content.res.Configuration
-import android.graphics.Color
 import android.graphics.Point
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
@@ -32,14 +30,11 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.HeartBeatManager
@@ -56,11 +51,10 @@ import com.banglalink.toffee.ui.channels.AllChannelsViewModel
 import com.banglalink.toffee.ui.channels.ChannelFragment
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.ui.landing.AllCategoriesFragment
-import com.banglalink.toffee.ui.login.SigninByPhoneActivity
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
 import com.banglalink.toffee.ui.player.PlayerActivity
 import com.banglalink.toffee.ui.search.SearchFragment
-import com.banglalink.toffee.ui.settings.SettingsActivity
+import com.banglalink.toffee.ui.splash.SplashScreenActivity
 import com.banglalink.toffee.ui.subscription.PackageListActivity
 import com.banglalink.toffee.ui.upload.UploadProgressViewModel
 import com.banglalink.toffee.ui.upload.UploadStatus
@@ -71,8 +65,6 @@ import com.banglalink.toffee.util.InAppMessageParser
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.UtilsKt
 import com.google.android.exoplayer2.util.Util
-import com.google.android.material.bottomnavigation.BottomNavigationMenuView
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
@@ -764,7 +756,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             .setCancelable(false)
             .setPositiveButton("Yes") { _, _ ->
                 mPref.clear()
-                launchActivity<SigninByPhoneActivity>()
+                launchActivity<SplashScreenActivity>()
                 finish()
             }
             .setNegativeButton(

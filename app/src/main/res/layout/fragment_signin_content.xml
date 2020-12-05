@@ -2,10 +2,11 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/mainLayout"
+    <androidx.constraintlayout.motion.widget.MotionLayout
+        android:id="@+id/signInContentMotionLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:layoutDescription="@xml/signin_content_motion_scene">
 
         <TextView
             android:id="@+id/signin_tv"
@@ -102,7 +103,7 @@
             android:layout_marginTop="16dp"
             android:background="@null"
             android:button="@drawable/custom_checkbox"
-            android:checked="false"
+            android:checked="true"
             android:gravity="center_vertical"
             android:text="  I agree to the "
             android:textColor="@color/colorAccent"
@@ -133,12 +134,11 @@
             android:layout_width="@dimen/button_accent_width"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:enabled="false"
             android:text="@string/next"
             android:textAllCaps="true"
             app:layout_constraintEnd_toEndOf="@+id/signin_tv"
             app:layout_constraintStart_toStartOf="@+id/signin_tv"
             app:layout_constraintTop_toBottomOf="@+id/terms_and_conditions_checkbox" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.motion.widget.MotionLayout>
 </layout>

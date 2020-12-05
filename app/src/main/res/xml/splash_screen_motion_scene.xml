@@ -36,8 +36,8 @@
                 motion:framePosition="75"
                 motion:motionTarget="@+id/splashLineImageView" />
             <KeyAttribute
-                android:scaleX="0.2"
-                android:scaleY="0.2"
+                android:scaleX="0.1"
+                android:scaleY="0.1"
                 motion:framePosition="0"
                 motion:motionTarget="@+id/splashLineImageView" />
             <KeyAttribute
@@ -51,8 +51,8 @@
                 motion:framePosition="75"
                 motion:motionTarget="@+id/splashPinkImageView" />
             <KeyAttribute
-                android:scaleX="0.3"
-                android:scaleY="0.3"
+                android:scaleX="0.2"
+                android:scaleY="0.2"
                 motion:framePosition="0"
                 motion:motionTarget="@+id/splashPinkImageView" />
             <KeyAttribute
@@ -66,8 +66,8 @@
                 motion:framePosition="75"
                 motion:motionTarget="@+id/splashWhiteImageView" />
             <KeyAttribute
-                android:scaleX="0.3"
-                android:scaleY="0.3"
+                android:scaleX="0.2"
+                android:scaleY="0.2"
                 motion:framePosition="0"
                 motion:motionTarget="@+id/splashWhiteImageView" />
             <KeyPosition
@@ -76,6 +76,12 @@
                 motion:motionTarget="@+id/splashLogoImageView"
                 motion:percentX="0.54"
                 motion:percentY="1.2" />
+            <KeyPosition
+                motion:framePosition="40"
+                motion:keyPositionType="parentRelative"
+                motion:motionTarget="@+id/splashLogoTitleImageView"
+                motion:percentX="0.54"
+                motion:percentY="1.242" />
             <KeyPosition
                 motion:framePosition="75"
                 motion:keyPositionType="parentRelative"
@@ -99,6 +105,22 @@
                 motion:keyPositionType="parentRelative"
                 motion:motionTarget="@+id/splashLogoImageView"
                 motion:percentX="0.525"
+                motion:percentY="0.5" />
+            <KeyPosition
+                motion:framePosition="75"
+                motion:keyPositionType="parentRelative"
+                motion:motionTarget="@+id/splashLogoTitleImageView"
+                motion:percentX="0.525"
+                motion:percentY="0.57" />
+            <KeyPosition
+                motion:motionTarget="@+id/splashWhiteImageView"
+                motion:framePosition="25"
+                motion:keyPositionType="deltaRelative"
+                motion:percentY="0.7" />
+            <KeyPosition
+                motion:motionTarget="@+id/splashPinkImageView"
+                motion:framePosition="25"
+                motion:keyPositionType="deltaRelative"
                 motion:percentY="0.5" />
         </KeyFrameSet>
         <OnClick motion:targetId="@+id/button" />

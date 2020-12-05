@@ -17,23 +17,17 @@ import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.databinding.ActivitySplashScreenBinding
 import com.banglalink.toffee.databinding.FragmentSplashScreenBinding
 import com.banglalink.toffee.exception.AppDeprecatedError
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.home.HomeActivity
-import com.banglalink.toffee.ui.login.SigninByPhoneActivity
-import com.banglalink.toffee.util.unsafeLazy
 import com.facebook.appevents.AppEventsLogger
 import kotlinx.coroutines.launch
 
 class SplashScreenFragment : Fragment() {
 
     lateinit var binding: FragmentSplashScreenBinding
-
-    private val TAG = "SplashScreen"
-
     private val viewModel by viewModels<SplashViewModel>()
 
     companion object {
@@ -50,7 +44,7 @@ class SplashScreenFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.splashMotionLayout.addTransitionListener(object : MotionLayout.TransitionListener {
+        binding.splashScreenMotionLayout.addTransitionListener(object : MotionLayout.TransitionListener {
             override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
                 println("Transition started")
             }
@@ -132,7 +126,7 @@ class SplashScreenFragment : Fragment() {
                 )
             }
 
-//            finish()
+            requireActivity().finish()
         }
 
         if (!forceUpdate) {

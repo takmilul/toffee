@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.mychannel
 
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.R
 import com.banglalink.toffee.apiservice.MyChannelPlaylistContentParam
 import com.banglalink.toffee.common.paging.BaseListFragment
+import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
@@ -20,13 +22,15 @@ import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
-import com.banglalink.toffee.ui.common.AlertDialogReactionFragment
 import com.banglalink.toffee.ui.common.ContentReactionCallback
+import com.banglalink.toffee.ui.common.ReactionFragment
+import com.banglalink.toffee.ui.home.CatchupDetailsViewModel
 import com.banglalink.toffee.ui.home.ChannelHeaderAdapter
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosViewModel.AssistedFactory
 import com.banglalink.toffee.ui.widget.MyPopupWindow
+import com.banglalink.toffee.util.getFormattedViewsText
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -41,7 +45,7 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
     override val mAdapter by lazy { MyChannelPlaylistVideosAdapter(this) }
     @Inject lateinit var viewModelAssistedFactory: AssistedFactory
     override val mViewModel by viewModels<MyChannelPlaylistVideosViewModel>{MyChannelPlaylistVideosViewModel.provideAssisted(viewModelAssistedFactory, requestParams)}
-
+    private val playerViewModel by viewModels<CatchupDetailsViewModel>()
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private val landingViewModel by activityViewModels<LandingPageViewModel>()
 
@@ -76,22 +80,48 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
 //        binding.topPanel.root.visibility = View.VISIBLE
 //        binding.topPanel.statusText.text = "${args.playlistInfo.playlistName} (${args.playlistInfo.playlistItemCount})"
 
+        currentItem?.let { channelInfo ->
+            playerViewModel.isChannelSubscribed.value = channelInfo.isSubscribed == 1
+    
+            observe(playerViewModel.channelSubscriberCount) {
+                channelInfo.isSubscribed = if(playerViewModel.isChannelSubscribed.value!!) 1 else 0
+                channelInfo.subscriberCount = it
+                channelInfo.formattedSubscriberCount = getFormattedViewsText(it.toString())
+                detailsAdapter?.notifyDataSetChanged()
+            }
+    
+            val customerId = Preference.getInstance().customerId
+            val isOwner = if (channelInfo.channel_owner_id == customerId) 1 else 0
+            val isPublic = if (channelInfo.channel_owner_id == customerId) 0 else 1
+            val channelId = channelInfo.channel_owner_id.toLong()
+            playerViewModel.getChannelInfo(isOwner, isPublic, channelId, channelId.toInt())
+        }
+
         detailsAdapter = ChannelHeaderAdapter(args.playlistInfo, object: ContentReactionCallback<ChannelInfo> {
             override fun onOpenMenu(view: View, item: ChannelInfo) {
                 openMenu(view, item)
             }
 
-            override fun onReactionClicked(view: View, item: ChannelInfo) {
-                AlertDialogReactionFragment.newInstance(view, item)
-                    .show(requireActivity().supportFragmentManager, "ReactionDialog")
+            override fun onReactionClicked(view: View, reactionCountView: View, item: ChannelInfo) {
+                requireActivity().supportFragmentManager.beginTransaction().add(ReactionFragment.newInstance(view, reactionCountView, item, true), ReactionFragment.TAG).commit()
             }
 
+            override fun onReactionLongPressed(view: View, reactionCountView: View, item: ChannelInfo) {
+                super.onReactionLongPressed(view, reactionCountView, item)
+                requireActivity().supportFragmentManager.beginTransaction().add(ReactionFragment.newInstance(view, reactionCountView, item), ReactionFragment.TAG).commit()
+            }
+            
             override fun onShareClicked(view: View, item: ChannelInfo) {
                 homeViewModel.shareContentLiveData.postValue(item)
             }
 
             override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
-//                viewModel.toggleSubscriptionStatus(item.channel_owner_id, item.channel_owner_id)
+                playerViewModel.toggleSubscriptionStatus(item.id.toInt(), item.channel_owner_id)
+            }
+            
+            override fun onProviderIconClicked(item: ChannelInfo) {
+                super.onProviderIconClicked(item)
+                landingViewModel.navigateToMyChannel(this@MyChannelPlaylistVideosFragment, item.id.toInt(), item.channel_owner_id, item.isSubscribed)
             }
         })
         super.onViewCreated(view, savedInstanceState)
@@ -108,6 +138,12 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
     
     override fun onItemClicked(item: ChannelInfo) {
         super.onItemClicked(item)
+        
+        item.description = Base64.decode(item.description, Base64.DEFAULT)
+            .toString(charset("UTF-8"))
+            .removePrefix("<p>")
+            .removeSuffix("</p>")
+
         if (item.isApproved == 0) {
             Toast.makeText(requireContext(), "Your video has not approved yet. Once it's approved, you can play the video", Toast.LENGTH_SHORT).show()
         } else {
@@ -191,7 +227,7 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
 
     private fun handleFavoriteResponse(it: Resource<ChannelInfo>){
         when(it){
-            is Resource.Success->{
+            is Success->{
                 val channelInfo = it.data
                 when(channelInfo.favorite){
                     "0"->{
@@ -202,7 +238,7 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
                     }
                 }
             }
-            is Resource.Failure->{
+            is Failure->{
                 context?.showToast(it.error.msg)
             }
         }

@@ -1,22 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<navigation xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/signin_animation"
-    app:startDestination="@id/signinByPhoneBodyFragment2">
-
+<navigation xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/signin_navigation.xml"
+    app:startDestination="@id/signInContentFragment">
     <fragment
-        android:id="@+id/signinByPhoneBodyFragment2"
-        android:name="com.banglalink.toffee.ui.login.SigninByPhoneBodyFragment"
+        android:id="@+id/signInContentFragment"
+        android:name="com.banglalink.toffee.ui.login.SignInContentFragment"
         android:label="SigninByPhoneBodyFragment" >
         <action
-            android:id="@+id/action_signinByPhoneBodyFragment2_to_verifySigninFragment2"
-            app:destination="@id/verifySigninFragment2"
-            app:enterAnim="@anim/slide_right_to_center"
-            app:exitAnim="@anim/slide_center_to_left"
-            app:popEnterAnim="@anim/slide_right_to_center"
-            app:popExitAnim="@anim/slide_center_to_left" />
+            android:id="@+id/action_signInContentFragment_to_verifySignInFragment"
+            app:destination="@id/verifySignInFragment" />
     </fragment>
     <fragment
-        android:id="@+id/verifySigninFragment2"
-        android:name="com.banglalink.toffee.ui.verify.VerifySigninFragment"
+        android:id="@+id/verifySignInFragment"
+        android:name="com.banglalink.toffee.ui.verify.VerifySignInFragment"
         android:label="VerifySigninFragment" >
         <argument
             android:name="phoneNumber"

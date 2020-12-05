@@ -286,7 +286,7 @@ class DrawerHelper(private val activity: HomeActivity,
 //                binding.drawerLayout.closeDrawers()
 //
 //            }
-//            ID_LOGOUT->{
+//            R.id.menu_logout->{
 //                activity.handleExitApp()
 //            }
 //            ID_INVITE_FRIEND->{

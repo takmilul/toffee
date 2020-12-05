@@ -70,7 +70,7 @@ Day 21 - AUS vs IND" />
             android:onClick="@{()-> callback.onProviderIconClicked(data)}"
             tools:src="@drawable/ic_profile_default"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView25" />
+            app:layout_constraintTop_toBottomOf="@+id/shareCount" />
 
         <TextView
             android:id="@+id/liveStatus"
@@ -88,15 +88,16 @@ Day 21 - AUS vs IND" />
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textView25"
+            android:id="@+id/shareCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginTop="16dp"
             android:drawablePadding="4dp"
-            android:text="@{data.formatted_view_count}"
-            app:drawableLeftCompat="@drawable/ic_view"
-            app:layout_constraintEnd_toStartOf="@id/textView26"
+            android:text="@{data.formatedShareCount()}"
+            android:onClick="@{(v)-> callback.onShareClicked(v, data)}"
+            app:drawableLeftCompat="@drawable/ic_share"
+            app:layout_constraintEnd_toStartOf="@id/reactionCount"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toEndOf="@+id/liveStatus"
             app:layout_constraintTop_toTopOf="parent"
@@ -104,37 +105,35 @@ Day 21 - AUS vs IND" />
         <!--            android:text="@{data.live ? @string/live_watching_text(data.formatted_view_count) : data.formatted_view_count}"-->
 
         <TextView
-            android:id="@+id/textView26"
+            android:id="@+id/reactionCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawablePadding="4dp"
-            android:text="@{data.formatedShareCount()}"
-            android:onClick="@{(v)-> callback.onShareClicked(v, data)}"
-            app:drawableLeftCompat="@drawable/ic_share"
-            app:layout_constraintBottom_toBottomOf="@+id/textView25"
-            app:layout_constraintEnd_toStartOf="@+id/textView24"
+            bindEmoCount="@{data}"
+            app:drawableLeftCompat="@drawable/ic_reactions_emo"
+            app:layout_constraintBottom_toBottomOf="@+id/shareCount"
+            app:layout_constraintEnd_toStartOf="@+id/reactionButton"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/textView25"
-            app:layout_constraintTop_toTopOf="@+id/textView25"
+            app:layout_constraintStart_toEndOf="@+id/shareCount"
+            app:layout_constraintTop_toTopOf="@+id/shareCount"
             tools:text="21K" />
 
         <TextView
-            android:id="@+id/textView24"
-            bindEmoCount="@{data}"
+            android:id="@+id/reactionButton"
             loadReactionEmo="@{data.myReaction}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="32dp"
             android:drawablePadding="4dp"
             android:gravity="center_vertical"
-            android:onClick="@{(v) -> callback.onReactionClicked(v, data)}"
-            android:visibility="visible"
-            app:drawableLeftCompat="@drawable/ic_reactions_emo"
-            app:layout_constraintBottom_toBottomOf="@+id/textView25"
+            android:text="Reaction"
+            android:onClick="@{(v) -> callback.onReactionClicked(v, reactionCount, data)}"
+            app:drawableLeftCompat="@drawable/ic_reaction_love_empty"
+            app:layout_constraintBottom_toBottomOf="@+id/shareCount"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/textView26"
-            app:layout_constraintTop_toTopOf="@+id/textView25"
+            app:layout_constraintStart_toEndOf="@+id/reactionCount"
+            app:layout_constraintTop_toTopOf="@+id/shareCount"
             app:layout_constraintVertical_bias="0.0"
             tools:text="32.5K" />
 
@@ -194,21 +193,21 @@ Day 21 - AUS vs IND" />
             android:id="@+id/channelDetailsGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="program_name,circleImageView,textView26,textView24,providerName,textView25" />
+            app:constraint_referenced_ids="program_name,circleImageView,reactionCount,reactionButton,providerName,shareCount" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/group2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="visible"
-            app:constraint_referenced_ids="textView25,textView26,textView24" />
+            app:constraint_referenced_ids="shareCount,reactionCount,reactionButton" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/tvExcludeList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="@{data.live ? View.GONE : View.VISIBLE}"
-            app:constraint_referenced_ids="options,program_name,textView24,textView26,textView25,channelSubCount,subscribe_button,video_description" />
+            app:constraint_referenced_ids="options,program_name,reactionButton,reactionCount,shareCount,channelSubCount,subscribe_button,video_description" />
 
         <com.banglalink.toffee.ui.widget.ExpandableTextView
             android:id="@+id/video_description"

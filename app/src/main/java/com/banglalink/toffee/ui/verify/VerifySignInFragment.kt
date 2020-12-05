@@ -11,8 +11,6 @@ import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentVerifySigninBinding
@@ -20,45 +18,37 @@ import com.banglalink.toffee.extension.action
 import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.snack
+import com.banglalink.toffee.model.CustomerInfoSignIn
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.receiver.SMSBroadcastReceiver
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.gms.auth.api.phone.SmsRetriever
-import kotlinx.coroutines.launch
+import com.google.android.material.snackbar.Snackbar
 
-class VerifySigninFragment : Fragment() {
-
-    private lateinit var mSmsBroadcastReceiver: SMSBroadcastReceiver
-
-    private val TAG = "VerifyCodeActivity"
-
+class VerifySignInFragment : Fragment() {
+    
     private var phoneNumber: String = ""
-
     private var referralCode: String = ""
-
     private var regSessionToken: String = ""
+    private var resendBtnPressCount: Int = 0
+    private var resendCodeTimer: ResendCodeTimer? = null
 
     private val progressDialog by unsafeLazy {
         VelBoxProgressDialog(requireContext())
     }
-
+    
     private val viewModel by viewModels<VerifyCodeViewModel>()
-
-    private var resendCodeTimer: ResendCodeTimer? = null
-
-    private var resendBtnPressCount: Int = 0
-
     private lateinit var binding: FragmentVerifySigninBinding
+    private lateinit var mSmsBroadcastReceiver: SMSBroadcastReceiver
 
     companion object {
         @JvmStatic
-        fun newInstance() =
-            VerifySigninFragment()
+        fun newInstance() = VerifySignInFragment ()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_verify_signin, container, false)
         return binding.root
     }
@@ -68,24 +58,21 @@ class VerifySigninFragment : Fragment() {
         
         ViewCompat.setTranslationZ(binding.root, 100f)
         
-        val args by navArgs<VerifySigninFragmentArgs>()
-        args.let {
+        val args by navArgs<VerifySignInFragmentArgs>()
+        args.let { 
             phoneNumber = it.phoneNumber
             referralCode = it.referralCode
             regSessionToken = it.regSessionToken
         }
-
+        
         binding.resend.paintFlags = binding.resend.paintFlags or Paint.UNDERLINE_TEXT_FLAG
         binding.resend.setOnClickListener {
             handleResendButton()
         }
         binding.confirmBtn.setOnClickListener {
-            val views = parentFragment?.parentFragmentManager?.fragments?.get(0)?.parentFragment?.view
-            (views as MotionLayout).setTransition(R.id.third, R.id.fourth)
-//            verifyCode(binding.codeNumber.text.toString())
+            verifyCode(binding.codeNumber.text.toString())
         }
 
-//        regSessionToken = intent.getStringExtra(VerifyCodeActivity.REG_SESSION_TOKEN) ?: ""
         startCountDown(if (resendBtnPressCount <= 1) 1 else 30)
 
         initSmsBroadcastReceiver()
@@ -111,20 +98,19 @@ class VerifySigninFragment : Fragment() {
 
     private fun verifyCode(code: String) {
         progressDialog.show()
+
+        val signInMotionLayout = parentFragment?.parentFragmentManager?.fragments?.get(0)?.parentFragment?.view
+        
         observe(viewModel.verifyCode(code, regSessionToken, referralCode)) {
             progressDialog.dismiss()
             when (it) {
                 is Resource.Success -> {
-                    lifecycleScope.launch {
-                        requireActivity().launchActivity<HomeActivity>() {
-                            if (it.data.referralStatus == "Valid") {
-                                putExtra(
-                                    HomeActivity.INTENT_REFERRAL_REDEEM_MSG,
-                                    it.data.referralStatusMessage
-                                )
-                            }
+                    signInMotionLayout?.let { view ->
+                        if (view is MotionLayout){
+                            homeAnimationListener(view, it.data)
+                            view.setTransition(R.id.firstEndAnim, R.id.secondEndAmin)
+                            view.transitionToEnd()
                         }
-                        requireActivity().finish()
                     }
                 }
                 is Resource.Failure -> {
@@ -136,6 +122,34 @@ class VerifySigninFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun homeAnimationListener(view: MotionLayout, data: CustomerInfoSignIn) {
+        view.addTransitionListener(object : MotionLayout.TransitionListener {
+            override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
+
+            }
+
+            override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
+
+            }
+
+            override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
+                requireActivity().launchActivity<HomeActivity>() {
+                    if (data.referralStatus == "Valid") {
+                        putExtra(
+                            HomeActivity.INTENT_REFERRAL_REDEEM_MSG,
+                            data.referralStatusMessage
+                        )
+                    }
+                }
+                requireActivity().finish()
+            }
+
+            override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {
+
+            }
+        })
     }
 
     private fun handleResendButton() {

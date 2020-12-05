@@ -9,7 +9,7 @@ import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.exception.CustomerNotFoundException
 import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.ui.login.SigninByPhoneActivity
+import com.banglalink.toffee.ui.splash.SplashScreenActivity
 import com.banglalink.toffee.util.EventProvider
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -36,7 +36,7 @@ open class BaseAppCompatActivity : AppCompatActivity() {
             when(it.getValue()){
                 is CustomerNotFoundException->{
                     mPref.clear()
-                    launchActivity<SigninByPhoneActivity>{
+                    launchActivity<SplashScreenActivity>{
                         flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                     }
                     finish()

@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.home
 
 import android.os.Bundle
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,9 +14,9 @@ import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.ui.common.AlertDialogReactionFragment
 import com.banglalink.toffee.ui.common.ContentReactionCallback
 import com.banglalink.toffee.ui.common.HomeBaseFragment
+import com.banglalink.toffee.ui.common.ReactionFragment
 import com.banglalink.toffee.ui.widget.MyPopupWindow
 import com.banglalink.toffee.util.getFormattedViewsText
 import dagger.hilt.android.AndroidEntryPoint
@@ -57,12 +58,13 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        currentItem.description = Base64.decode(currentItem.description, Base64.DEFAULT)
+            .toString(charset("UTF-8"))
+            .removePrefix("<p>")
+            .removeSuffix("</p>")
         
         initAdapter()
 
-        /*detailsAdapter.subscribeButton.setOnClickListener {
-            viewModel.toggleSubscriptionStatus(channelInfo.content_provider_id?.toInt()?:0, channelInfo.content_provider_id?.toInt()?:0)
-        }*/
         viewModel.isChannelSubscribed.value = currentItem.isSubscribed == 1
         
         observe(viewModel.channelSubscriberCount) {
@@ -70,15 +72,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
             currentItem.subscriberCount = it
             currentItem.formattedSubscriberCount = getFormattedViewsText(it.toString())
             detailsAdapter.notifyDataSetChanged()
-//            detailsAdapter.setChannelInfo(currentItem)
         }
-
-        /*observe(viewModel.isChannelSubscribed) {
-            currentItem.individual_price = "0"
-            currentItem.isSubscribed = if(it) 1 else 0
-            detailsAdapter.notifyDataSetChanged()
-//            detailsAdapter.setChannelInfo(currentItem)
-        }*/
 
         val customerId = Preference.getInstance().customerId
         val isOwner = if (currentItem.channel_owner_id == customerId) 1 else 0
@@ -96,7 +90,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
 
     override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
         super.onSubscribeButtonClicked(view, item)
-        viewModel.toggleSubscriptionStatus(item.channel_owner_id, item.channel_owner_id)
+        viewModel.toggleSubscriptionStatus(item.id.toInt(), item.channel_owner_id)
     }
     
     private fun initAdapter() {
@@ -126,12 +120,16 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
         }
     }
 
-    override fun onReactionClicked(view: View, item: ChannelInfo) {
-        super.onReactionClicked(view, item)
-        AlertDialogReactionFragment.newInstance(view, item)
-            .show(requireActivity().supportFragmentManager, "ReactionDialog")
+    override fun onReactionClicked(view: View, reactionCountView: View, item: ChannelInfo) {
+        super.onReactionClicked(view, reactionCountView, item)
+        requireActivity().supportFragmentManager.beginTransaction().add(ReactionFragment.newInstance(view, reactionCountView, item, true), ReactionFragment.TAG).commit()
     }
 
+    override fun onReactionLongPressed(view: View, reactionCountView: View, item: ChannelInfo) {
+        super.onReactionLongPressed(view, reactionCountView, item)
+        requireActivity().supportFragmentManager.beginTransaction().add(ReactionFragment.newInstance(view, reactionCountView, item), ReactionFragment.TAG).commit()
+    }
+    
     override fun onProviderIconClicked(item: ChannelInfo) {
         super.onProviderIconClicked(item)
         landingViewModel.navigateToMyChannel(this, item.id.toInt(), item.channel_owner_id, item.isSubscribed)

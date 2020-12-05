@@ -5,20 +5,18 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.motion.widget.MotionLayout
-        android:id="@+id/splashScreenMotionLayout"
+        android:id="@+id/signInMotionLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/splash_gradient_bg"
-        app:layoutDescription="@xml/splash_screen_motion_scene">
+        app:layoutDescription="@xml/signin_loading_motion_scene">
 
-        <Button
-            android:id="@+id/button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="click"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent"
+        <View
+            android:id="@+id/topView"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
@@ -26,9 +24,10 @@
             android:layout_width="448dp"
             android:layout_height="400dp"
             android:background="@drawable/ic_splash_logo_line_bg"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/splashPinkImageView"
@@ -36,7 +35,6 @@
             android:layout_height="420dp"
             android:layout_marginStart="28dp"
             android:layout_marginTop="24dp"
-            android:rotation="180"
             android:background="@drawable/ic_splash_logo_pink_bg"
             app:layout_constraintBottom_toBottomOf="@id/splashLineImageView"
             app:layout_constraintEnd_toEndOf="@id/splashLineImageView"
@@ -47,7 +45,6 @@
             android:id="@+id/splashWhiteImageView"
             android:layout_width="350dp"
             android:layout_height="372dp"
-            android:rotation="180"
             android:background="@drawable/ic_splash_logo_white_bg"
             app:layout_constraintBottom_toBottomOf="@id/splashLineImageView"
             app:layout_constraintEnd_toEndOf="@id/splashLineImageView"
@@ -75,7 +72,30 @@
             app:layout_constraintStart_toStartOf="@id/splashLogoImageView"
             app:layout_constraintTop_toBottomOf="@id/splashLogoImageView" />
 
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nestedScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="510dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/top_round_bg"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="parent">
+            
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/signInFragmentContainerView"
+                android:name="androidx.navigation.fragment.NavHostFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:defaultNavHost="false"
+                app:navGraph="@navigation/signin_navigation" />
+            
+            <!--<androidx.fragment.app.FragmentContainerView
+                android:id="@+id/signInFragmentContainerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:name="com.banglalink.toffee.ui.login.SignInContentFragment" />-->
+            
+        </androidx.core.widget.NestedScrollView>
     </androidx.constraintlayout.motion.widget.MotionLayout>
 </layout>
-
-

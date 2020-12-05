@@ -9,8 +9,9 @@ import com.banglalink.toffee.common.paging.BaseViewHolder
 import com.banglalink.toffee.common.paging.ItemComparator
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.ContentReactionCallback
+import kotlinx.android.synthetic.main.list_item_videos.view.*
 
-class MyChannelVideosAdapter(override val callback: ContentReactionCallback<ChannelInfo>?): BasePagingDataAdapter<ChannelInfo>(callback as BaseListItemCallback<ChannelInfo>, ItemComparator()) {
+class MyChannelVideosAdapter(private val listener: ContentReactionCallback<ChannelInfo>?): BasePagingDataAdapter<ChannelInfo>(listener as BaseListItemCallback<ChannelInfo>, ItemComparator()) {
 
     override fun getItemViewType(position: Int): Int {
         return R.layout.list_item_videos
@@ -20,7 +21,7 @@ class MyChannelVideosAdapter(override val callback: ContentReactionCallback<Chan
         super.onBindViewHolder(holder, position)
         holder.binding.setVariable(BR.isMyChannel, true)
         holder.itemView.findViewById<TextView>(R.id.reactionButton)?.setOnLongClickListener { 
-            callback?.onReactionLongPressed(it, getItem(position)!!)
+            listener?.onReactionLongPressed(it, holder.itemView.reactionCount, getItem(position)!!)
             true
         }
     }

@@ -13,21 +13,26 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.*
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.databinding.ActivitySigninByPhoneBinding
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.databinding.FragmentSigninContentBinding
+import com.banglalink.toffee.extension.action
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.snack
 import com.banglalink.toffee.model.INVALID_REFERRAL_ERROR_CODE
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.TERMS_AND_CONDITION_URL
-import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.common.HtmlPageViewActivity
-import com.banglalink.toffee.ui.verify.VerifyCodeActivity
+import com.banglalink.toffee.ui.verify.VerifySignInFragment
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.ui.widget.showAlertDialog
 import com.banglalink.toffee.util.unsafeLazy
@@ -35,56 +40,75 @@ import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.Credentials
 import com.google.android.gms.auth.api.credentials.HintRequest
 
+private const val RESOLVE_HINT = 2
 
-class SigninByPhoneActivity : BaseAppCompatActivity() {
+class SignInContentFragment : Fragment() {
 
-    lateinit var binding: ActivitySigninByPhoneBinding
-    private val RESOLVE_HINT = 2;
-
-    private val viewModel by unsafeLazy {
-        getViewModel<SigninByPhoneViewModel>()
-    }
+    private var phoneNumber: String = ""
+    private var referralCode: String = ""
+    private var regSessionToken: String = ""
 
     private val progressDialog by unsafeLazy {
-        VelBoxProgressDialog(this)
+        VelBoxProgressDialog(requireContext())
+    }
+    lateinit var binding: FragmentSigninContentBinding
+    private val viewModel by viewModels<SignInViewModel>()
+
+    
+
+    companion object {
+        @JvmStatic
+        fun newInstance() =
+            SignInContentFragment()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_signin_by_phone)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_signin_content, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         setSpannableTermsAndConditions()
-
+        binding.haveRefTv.setOnClickListener { handleHaveReferralOption() }
         binding.loginBtn.setOnClickListener {
             handleLogin()
         }
         binding.termsAndConditionsCheckbox.setOnClickListener {
             binding.loginBtn.isEnabled = binding.termsAndConditionsCheckbox.isChecked
         }
-        binding.signinMotionLayout.addTransitionListener(object : MotionLayout.TransitionListener{
-            override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
-                println("Transition started")
-            }
+        
+        val signinMotionLayout = parentFragment?.parentFragmentManager?.fragments?.get(0)?.parentFragment?.view
+        
+        signinMotionLayout?.let { 
+            if (it is MotionLayout){
+                it.addTransitionListener(object : MotionLayout.TransitionListener{
+                    override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
+                        println("Transition started")
+                    }
 
-            override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
-                println("Transition changed")
-            }
+                    override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
+                        println("Transition changed")
+                    }
 
-            override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
-                getHintPhoneNumber()
-            }
+                    override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
+                        getHintPhoneNumber()
+                    }
 
-            override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {
-                println("Transition triggered")
+                    override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {
+                        println("Transition triggered")
+                    }
+                })
             }
-        })
+        }
     }
 
     private fun handleLogin() {
         var phoneNo = binding.phoneNumberEt.text.toString()
 
         if (TextUtils.isEmpty(phoneNo)) {
-            showAlertDialog(this, getString(R.string.phone_no_required_title), "")
+            showAlertDialog(requireContext(), getString(R.string.phone_no_required_title), "")
             return
         }
 
@@ -95,29 +119,21 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
         if (!phoneNo.startsWith("+")) {
             phoneNo = "+$phoneNo"
         }
-
-
+        
         progressDialog.show()
         binding.phoneNumberEt.setText(phoneNo)
         binding.phoneNumberEt.setSelection(phoneNo.length)
-
+        
         observe(viewModel.signIn(phoneNo, binding.refCodeEt.text.toString())) {
             progressDialog.dismiss()
             when (it) {
                 is Resource.Success -> {
-                    binding.mainLayout.transitionToEnd()
-                    launchActivity<VerifyCodeActivity> {
-                        putExtra(
-                            VerifyCodeActivity.PHONE_NUMBER,
-                            binding.phoneNumberEt.text.toString()
-                        )
-                        putExtra(
-                            VerifyCodeActivity.REFERRAL_CODE,
-                            binding.refCodeEt.text.toString()
-                        )
-                        putExtra(VerifyCodeActivity.REG_SESSION_TOKEN, it.data)
-                    }
-                    finish()
+                    phoneNumber = binding.phoneNumberEt.text.toString()
+                    referralCode = binding.refCodeEt.text.toString()
+                    regSessionToken = it.data
+
+                    signinContentAnimationListener()
+                    binding.signInContentMotionLayout.transitionToEnd()
                 }
                 is Resource.Failure -> {
                     when (it.error.code) {
@@ -132,19 +148,38 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
                             }
                         }
                     }
-
                 }
             }
         }
     }
 
-    private fun showInvalidReferralCodeDialog(
-        referralStatusMessage: String, referralStatus: String
-    ) {
-        val alertView = LayoutInflater.from(this)
+    private fun signinContentAnimationListener() {
+        binding.signInContentMotionLayout.addTransitionListener(object : MotionLayout.TransitionListener {
+            override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
+
+            }
+
+            override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
+
+            }
+
+            override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
+                findNavController().navigate(
+                    SignInContentFragmentDirections.actionSignInContentFragmentToVerifySignInFragment(phoneNumber, referralCode, regSessionToken)
+                )
+            }
+
+            override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {
+
+            }
+        })
+    }
+
+    private fun showInvalidReferralCodeDialog(referralStatusMessage: String, referralStatus: String, ) {
+        val alertView = LayoutInflater.from(requireContext())
             .inflate(R.layout.dialog_invalid_referral_code_layout, null)
 
-        val alertDialog = AlertDialog.Builder(this).create()
+        val alertDialog = AlertDialog.Builder(requireContext()).create()
         alertDialog.setView(alertView)
         alertDialog.setCancelable(false)
         alertDialog.window
@@ -171,17 +206,17 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
         alertDialog.show()
     }
 
-    fun handleHaveReferralOption(view: View) {
+    fun handleHaveReferralOption() {
         binding.haveRefTv.isClickable = false
-        binding.refCodeEt.visibility = VISIBLE
-        binding.groupHaveRef.visibility = INVISIBLE
+        binding.refCodeEt.visibility = View.VISIBLE
+        binding.groupHaveRef.visibility = View.INVISIBLE
     }
 
     private fun setSpannableTermsAndConditions() {
         val ss = SpannableString(getString(R.string.terms_and_conditions))
         val clickableSpan = object : ClickableSpan() {
             override fun onClick(textView: View) {
-                val intent = Intent(this@SigninByPhoneActivity, HtmlPageViewActivity::class.java)
+                val intent = Intent(requireContext(), HtmlPageViewActivity::class.java)
                 intent.putExtra(
                     HtmlPageViewActivity.CONTENT_KEY,
                     TERMS_AND_CONDITION_URL
@@ -206,31 +241,22 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
     }
 
     private fun getHintPhoneNumber() {
-        try{
-            val hintRequest = HintRequest.Builder()
-                .setPhoneNumberIdentifierSupported(true)
-                .build()
-            val intent = Credentials.getClient(this).getHintPickerIntent(hintRequest)
+        try {
+            val hintRequest = HintRequest.Builder().setPhoneNumberIdentifierSupported(true).build()
+            val intent = Credentials.getClient(requireActivity()).getHintPickerIntent(hintRequest)
             intent?.intentSender?.let {
-                startIntentSenderForResult(
-                    it,
-                    RESOLVE_HINT, null, 0, 0, 0
-                )
+                startIntentSenderForResult(it, RESOLVE_HINT, null, 0, 0, 0, null)
             }
-        }catch (e: Exception){
+        } catch (e: Exception) {
             ToffeeAnalytics.logException(e)
             ToffeeAnalytics.logBreadCrumb("Could not retrieve phone number")
         }
 
     }
 
-    override fun onActivityResult(
-        requestCode: Int,
-        resultCode: Int,
-        data: Intent?
-    ) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == RESOLVE_HINT && resultCode == RESULT_OK && data != null) {
+        if (requestCode == RESOLVE_HINT && resultCode == AppCompatActivity.RESULT_OK && data != null) {
             val credential: Credential? =
                 data.getParcelableExtra(Credential.EXTRA_KEY)
             credential?.let {
@@ -239,5 +265,4 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
             }
         }
     }
-
 }

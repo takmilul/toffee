@@ -4,69 +4,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.motion.widget.MotionLayout
-        android:id="@+id/splashMotionLayout"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/splash_gradient_bg"
-        app:layoutDescription="@xml/activity_splash_screen_motion_scene">
+        android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="click"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/splashNavHostFragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:defaultNavHost="false"
+            app:navGraph="@navigation/splash_screen_navigation" />
 
-        <ImageView
-            android:id="@+id/splashLineImageView"
-            android:layout_width="448dp"
-            android:layout_height="400dp"
-            android:background="@drawable/ic_splash_logo_line_bg"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="parent"/>
-
-        <ImageView
-            android:id="@+id/splashPinkImageView"
-            android:layout_width="436dp"
-            android:layout_height="420dp"
-            android:layout_marginStart="28dp"
-            android:layout_marginTop="24dp"
-            android:rotation="180"
-            android:background="@drawable/ic_splash_logo_pink_bg"
-            app:layout_constraintBottom_toBottomOf="@id/splashLineImageView"
-            app:layout_constraintEnd_toEndOf="@id/splashLineImageView"
-            app:layout_constraintStart_toStartOf="@id/splashLineImageView"
-            app:layout_constraintTop_toTopOf="@id/splashLineImageView" />
-
-        <ImageView
-            android:id="@+id/splashWhiteImageView"
-            android:layout_width="350dp"
-            android:layout_height="372dp"
-            android:rotation="180"
-            android:background="@drawable/ic_splash_logo_white_bg"
-            app:layout_constraintBottom_toBottomOf="@id/splashLineImageView"
-            app:layout_constraintEnd_toEndOf="@id/splashLineImageView"
-            app:layout_constraintStart_toStartOf="@id/splashLineImageView"
-            app:layout_constraintTop_toTopOf="@id/splashLineImageView" />
-
-        <ImageView
-            android:id="@+id/splashLogoImageView"
-            android:layout_width="128dp"
-            android:layout_height="88dp"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="56dp"
-            android:background="@drawable/ic_splash_logo"
-            app:layout_constraintBottom_toBottomOf="@id/splashLineImageView"
-            app:layout_constraintEnd_toEndOf="@id/splashLineImageView"
-            app:layout_constraintStart_toStartOf="@id/splashLineImageView"
-            app:layout_constraintTop_toTopOf="@id/splashLineImageView" />
-
-    </androidx.constraintlayout.motion.widget.MotionLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
-
-

@@ -265,20 +265,42 @@ fun bindActivityType(view: TextView, item: UserActivities) {
 
 @BindingAdapter("loadReactionEmo")
 fun loadReactionEmo(view: View, reaction: Int) {
+    var reactionTitle = "React"
     val reactionIcon = when (reaction) {
-        Like.value -> R.drawable.ic_reaction_like
-        Love.value -> R.drawable.ic_reaction_love
-        HaHa.value -> R.drawable.ic_reaction_haha
-        Wow.value -> R.drawable.ic_reaction_wow
-        Sad.value -> R.drawable.ic_reaction_sad
-        Angry.value -> R.drawable.ic_reaction_angry
+        Like.value -> {
+            reactionTitle = Like.name
+            R.drawable.ic_reaction_like
+        }
+        Love.value -> {
+            reactionTitle = Love.name
+            R.drawable.ic_reaction_love_filled
+        }
+        HaHa.value -> {
+            reactionTitle = HaHa.name
+            R.drawable.ic_reaction_haha
+        }
+        Wow.value -> {
+            reactionTitle = Wow.name
+            R.drawable.ic_reaction_wow
+        }
+        Sad.value -> {
+            reactionTitle = Sad.name
+            R.drawable.ic_reaction_sad
+        }
+        Angry.value -> {
+            reactionTitle = Angry.name
+            R.drawable.ic_reaction_angry
+        }
         Add.value -> R.drawable.ic_playlist
         Delete.value -> R.drawable.ic_playlist
         else -> R.drawable.ic_reaction_love_empty
     }
     when (view) {
         is ImageView -> view.setImageResource(reactionIcon)
-        is TextView -> view.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
+        is TextView -> {
+            view.text = reactionTitle
+            view.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
+        }
     }
 }
 
