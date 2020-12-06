@@ -26,6 +26,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scaleType="centerCrop"
+                tools:src="@drawable/dummy"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -44,29 +45,29 @@
                 app:layout_constraintTop_toTopOf="@+id/video_thumb"
                 app:srcCompat="@drawable/ic_edit_btn" />
 
-            <ProgressBar
-                android:id="@+id/progressBar"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:max="100"
-                android:progress="@{viewmodel.uploadProgress}"
-                android:progressDrawable="@drawable/upload_progress_bg"
-                android:visibility="@{viewmodel.uploadProgress == 100 ? View.GONE : View.VISIBLE}"
-                app:layout_constraintBottom_toBottomOf="@+id/video_thumb"
-                app:layout_constraintEnd_toEndOf="@+id/video_thumb"
-                app:layout_constraintStart_toStartOf="@+id/video_thumb"
-                app:layout_constraintTop_toTopOf="@+id/video_thumb" />
+<!--            <ProgressBar-->
+<!--                android:id="@+id/progressBar"-->
+<!--                style="?android:attr/progressBarStyleHorizontal"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="0dp"-->
+<!--                android:max="100"-->
+<!--                android:progress="@{viewmodel.uploadProgress}"-->
+<!--                android:progressDrawable="@drawable/upload_progress_bg"-->
+<!--                android:visibility="gone"-->
+<!--                app:layout_constraintBottom_toBottomOf="@+id/video_thumb"-->
+<!--                app:layout_constraintEnd_toEndOf="@+id/video_thumb"-->
+<!--                app:layout_constraintStart_toStartOf="@+id/video_thumb"-->
+<!--                app:layout_constraintTop_toTopOf="@+id/video_thumb" />-->
 
             <TextView
                 android:id="@+id/textView15"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="8dp"
                 android:text="Title"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/video_thumb" />
+                app:layout_constraintTop_toBottomOf="@+id/upload_progress_text" />
 
             <EditText
                 android:id="@+id/upload_title"
@@ -89,7 +90,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="16dp"
                 android:text="Description"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/upload_title" />
@@ -126,7 +127,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="16dp"
                 android:text="Tags"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/upload_description" />
@@ -172,7 +173,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="16dp"
                 android:text="Category"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/upload_tags" />
@@ -181,11 +182,11 @@
                 android:id="@+id/textView21"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
                 android:text="Age Group"
-                app:layout_constraintStart_toStartOf="@+id/guideline9"
-                app:layout_constraintTop_toBottomOf="@+id/upload_tags" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/category_spinner_wrap" />
 
             <RelativeLayout
                 android:id="@+id/category_spinner_wrap"
@@ -211,12 +212,12 @@
                 android:id="@+id/age_group_spinner_wrap"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/single_line_input_text_height"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="4dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginEnd="8dp"
                 android:background="@drawable/spinner_bg"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/guideline9"
+                app:layout_constraintEnd_toStartOf="@+id/guideline9"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView21">
 
                 <Spinner
@@ -231,30 +232,30 @@
                 android:id="@+id/textView22"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="24dp"
-                android:visibility="gone"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
                 android:text="Sub Category"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/category_spinner_wrap" />
+                app:layout_constraintStart_toStartOf="@+id/guideline9"
+                app:layout_constraintTop_toBottomOf="@+id/upload_tags" />
 
             <RelativeLayout
                 android:id="@+id/subCategorySpinnerWrap"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="4dp"
-                android:visibility="gone"
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/spinner_bg"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline9"
                 app:layout_constraintTop_toBottomOf="@+id/textView22">
 
                 <Spinner
                     android:id="@+id/subCategorySpinner"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:entries="@{viewmodel.subCategories}"
+                    android:selectedItemPosition="@={viewmodel.subCategoryPosition}" />
             </RelativeLayout>
 <!--
 
@@ -317,35 +318,38 @@
 
             <TextView
                 android:id="@+id/upload_progress_text"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:text="@{@string/upload_status_text(viewmodel.uploadProgress)}"
-                android:textColor="#ffffff"
-                android:visibility="@{viewmodel.uploadProgress == 100 ? View.GONE : View.VISIBLE}"
-                app:layout_constraintBottom_toBottomOf="@+id/video_thumb"
-                app:layout_constraintStart_toStartOf="@+id/video_thumb"
-                app:layout_constraintTop_toTopOf="@+id/video_thumb"
-                tools:text="Uploading 70%" />
-
-            <TextView
-                android:id="@+id/upload_size_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:layout_marginEnd="16dp"
-                android:text="@{viewmodel.uploadSize}"
-                android:textColor="#ffffff"
-                android:visibility="@{viewmodel.uploadProgress == 100 ? View.GONE : View.VISIBLE}"
-                app:layout_constraintBottom_toBottomOf="@+id/video_thumb"
+                android:ellipsize="middle"
+                android:singleLine="true"
+                android:gravity="center_horizontal"
+                android:text="@{viewmodel.uploadStatusText}"
                 app:layout_constraintEnd_toEndOf="@+id/video_thumb"
-                app:layout_constraintTop_toTopOf="@+id/video_thumb"
-                tools:text="250 MB" />
+                app:layout_constraintStart_toStartOf="@+id/video_thumb"
+                app:layout_constraintTop_toBottomOf="@+id/video_thumb"
+                tools:text="File name.mp4 \u2022 250MB" />
 
-            <androidx.constraintlayout.widget.Group
-                android:id="@+id/uploadProgressGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:constraint_referenced_ids="upload_progress_text,upload_size_text,progressBar" />
+<!--            <TextView-->
+<!--                android:id="@+id/upload_size_text"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginEnd="16dp"-->
+<!--                android:text="@{viewmodel.uploadSize}"-->
+<!--                android:textColor="#ffffff"-->
+<!--                android:visibility="@{viewmodel.uploadProgress == 100 ? View.GONE : View.VISIBLE}"-->
+<!--                app:layout_constraintBottom_toBottomOf="@+id/video_thumb"-->
+<!--                app:layout_constraintEnd_toEndOf="@+id/video_thumb"-->
+<!--                app:layout_constraintTop_toTopOf="@+id/video_thumb"-->
+<!--                tools:text="250 MB" />-->
+
+<!--            <androidx.constraintlayout.widget.Group-->
+<!--                android:id="@+id/uploadProgressGroup"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                app:constraint_referenced_ids="upload_progress_text,upload_size_text" />-->
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
