@@ -11,35 +11,33 @@
             name="data"
             type="com.banglalink.toffee.model.ChannelInfo" />
         <variable
-            name="viewModel"
-            type="com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosViewModel" />
+            name="position"
+            type="java.lang.Integer" />
         <variable
             name="callback"
-            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
+            type="com.banglalink.toffee.ui.mychannel.MyChannelPlaylistItemListener" />
     </data>
     
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingTop="8dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="8dp"
-        android:background="@color/screen_bg"
-        android:onClick="@{() -> callback.onItemClicked(data)}">
-        
+        android:background="?selectableItemBackground"
+        android:onClick="@{()-> callback.onItemClickAtPosition(position, data)}" >
+
         <com.banglalink.toffee.ui.widget.CustomImageView
             android:id="@+id/poster"
+            loadImageFromUrl="@{data.landscape_ratio_1280_720}"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:adjustViewBounds="true"
-            android:scaleType="fitXY"
             android:minHeight="180dp"
-            loadImageFromUrl="@{data.landscape_ratio_1280_720}"
-            app:layout_constraintHorizontal_bias="0"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintWidth_percent="0.45" />
     
         <ProgressBar
@@ -83,36 +81,35 @@
             app:layout_constraintStart_toEndOf="@+id/poster"
             app:layout_constraintTop_toTopOf="@+id/poster"
             app:layout_constraintVertical_bias="0.0" />
-    
+
         <TextView
             android:id="@+id/viewCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#829AB8"
-            android:text="@{data.formatted_view_count}"
-            android:gravity="left"
             android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp"
             android:drawableStart="@drawable/ic_view"
             android:drawablePadding="8dp"
-            app:layout_constraintVertical_bias="0"
+            android:gravity="left"
+            android:text="@{data.formatted_view_count}"
+            android:textColor="#829AB8"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/title"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="@+id/title"
             app:layout_constraintTop_toBottomOf="@+id/title"
-            app:layout_constraintEnd_toEndOf="@id/title"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:text="10K"/>
-    
+            app:layout_constraintVertical_bias="0"
+            tools:text="10K" />
+
         <ImageView
             android:id="@+id/options"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="12dp"
+            android:padding="4dp"
             android:onClick="@{(v) -> callback.onOpenMenu(v, data)}"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/title"
             app:layout_constraintTop_toTopOf="@+id/title"
-            app:layout_constraintVertical_bias="0.0"
             app:srcCompat="@drawable/ic_menu_more" />
     
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -75,6 +75,19 @@
                 app:layout_constraintEnd_toStartOf="@+id/video_option"
                 app:layout_constraintTop_toTopOf="@+id/video_option" />
 
+            <com.mikhaellopez.circularprogressbar.CircularProgressBar
+                android:id="@+id/autoplayProgress"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                app:cpb_progressbar_color="@color/colorAccent2"
+                app:cpb_progressbar_width="4dp"
+                app:cpb_progress_max="1000"
+                android:visibility="gone"
+                app:layout_constraintTop_toTopOf="@+id/play"
+                app:layout_constraintStart_toStartOf="@+id/play"
+                app:layout_constraintEnd_toEndOf="@+id/play"
+                app:layout_constraintBottom_toBottomOf="@+id/play"
+                />
             <ImageView
                 android:id="@+id/play"
                 android:layout_width="64dp"

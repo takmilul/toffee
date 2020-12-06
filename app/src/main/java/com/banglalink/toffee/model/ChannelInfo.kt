@@ -1,6 +1,11 @@
 package com.banglalink.toffee.model
 
 import android.os.Parcelable
+import android.text.Html
+import android.text.Spanned
+import android.text.SpannedString
+import android.util.Base64
+import androidx.core.text.HtmlCompat
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.ui.player.HlsLinks
 import com.banglalink.toffee.util.Utils
@@ -82,6 +87,14 @@ data class ChannelInfo(
             itemCategory += ">$subCategory"
         }
         return itemCategory
+    }
+
+    fun getDescriptionDecoded(): Spanned? {
+        return try {
+            HtmlCompat.fromHtml(String(Base64.decode(description, Base64.NO_WRAP)), HtmlCompat.FROM_HTML_MODE_LEGACY)
+        } catch (ex: Exception) {
+            null
+        }
     }
 
     fun getHlsLink() = hlsLinks!![0].hls_url_mobile

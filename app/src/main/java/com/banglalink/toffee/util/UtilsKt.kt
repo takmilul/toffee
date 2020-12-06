@@ -7,6 +7,7 @@ import android.graphics.Bitmap.CompressFormat.JPEG
 import android.graphics.BitmapFactory
 import android.graphics.BitmapFactory.Options
 import android.graphics.drawable.Drawable
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.util.Base64
@@ -79,6 +80,28 @@ object UtilsKt {
             activity.currentFocus?.windowToken,
             0
         )
+    }
+
+
+    fun generateThumbnail(context: Context, filePath: String): String? {
+        return try {
+            val mmr = MediaMetadataRetriever()
+            if(filePath.startsWith("content://")) {
+                mmr.setDataSource(context, Uri.parse(filePath))
+            } else {
+                mmr.setDataSource(filePath)
+            }
+            val bmp = mmr.frameAtTime
+
+            val scaledBmp = resizeBitmap(bmp, 1280, 720)
+            val byteArrayOutputStream = ByteArrayOutputStream()
+            scaledBmp?.compress(JPEG, 70, byteArrayOutputStream)
+            val byteArray = byteArrayOutputStream.toByteArray()
+            Base64.encodeToString(byteArray, Base64.NO_WRAP)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            null
+        }
     }
 }
 

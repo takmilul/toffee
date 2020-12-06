@@ -77,6 +77,15 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <Button
+            android:id="@+id/dialog_positive_button"
+            style="@style/ButtonStyleSolidPink"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Yes" />
+
+        <Button
             android:id="@+id/dialog_negative_button"
             style="@style/ButtonStyleRingPink"
             android:layout_marginEnd="4dp"
@@ -85,14 +94,6 @@
             android:layout_height="wrap_content"
             android:text="No" />
 
-        <Button
-            android:id="@+id/dialog_positive_button"
-            style="@style/ButtonStyleSolidPink"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="4dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Yes" />
     </LinearLayout>
 
     <ImageView

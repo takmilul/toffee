@@ -53,6 +53,7 @@ import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.ui.landing.AllCategoriesFragment
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
 import com.banglalink.toffee.ui.player.PlayerActivity
+import com.banglalink.toffee.ui.player.PlaylistItem
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.splash.SplashScreenActivity
 import com.banglalink.toffee.ui.subscription.PackageListActivity
@@ -64,6 +65,7 @@ import com.banglalink.toffee.ui.widget.showSubscriptionDialog
 import com.banglalink.toffee.util.InAppMessageParser
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.UtilsKt
+import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.util.Util
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -246,11 +248,14 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         }
 
         observe(viewModel.addToPlayListMutableLiveData) { item ->
-            item.forEach {
-                if(!it.isLive) {
-                    addToPlayList(it)
-                }
-            }
+//            val playListItems = item.filter {
+//                !it.isLive
+//            }.map {
+//                val uriStr = Channel.createChannel(it).getContentUri(this)
+//                MediaItem.fromUri(uriStr)
+//            }
+
+            setPlayList(item)
         }
 
         observe(viewModel.shareContentLiveData) { channelInfo ->
@@ -372,6 +377,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
 
     override fun onResume() {
         super.onResume()
+        binding.playerView.setPlaylistListener(this)
         binding.playerView.addPlayerControllerChangeListener(this)
         binding.playerView.setPlayer(player)
         binding.playerView.resizeView(calculateScreenWidth())
@@ -552,12 +558,20 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
             .addToBackStack(LandingPageFragment::class.java.name).commit()
     }
 
-    private fun loadChannel(@Nonnull channelInfo: ChannelInfo) {
+    private fun loadChannel(channelInfo: ChannelInfo) {
         viewModel.sendViewContentEvent(channelInfo)
         if(channelInfo.isLive) {
+            viewModel.addTvChannelToRecent(channelInfo)
             allChannelViewModel.selectedChannel.postValue(channelInfo)
         }
-        playChannel(channelInfo)
+        addChannelToPlayList(channelInfo)
+    }
+
+    private fun loadPlayListItem(playbackInfo: PlaylistPlaybackInfo) {
+        playIndex(playbackInfo.playIndex)
+        playlistManager.getCurrentChannel()?.let {
+            viewModel.sendViewContentEvent(it)
+        }
     }
 
     private fun onDetailsFragmentLoad(detailsInfo: Any?) {
@@ -566,7 +580,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                 detailsInfo
             }
             is PlaylistPlaybackInfo -> {
-                detailsInfo.channelInfo
+                detailsInfo.currentItem
             }
             else -> null
         }
@@ -593,9 +607,10 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                 }
                 (it.isPurchased || it.isPaidSubscribed) && !it.isExpired(Date())->{
                     maximizePlayer()
-                    loadChannel(it)
-                    if(it.isLive) {
-                        viewModel.addTvChannelToRecent(it)
+                    if(detailsInfo is PlaylistPlaybackInfo) {
+                        loadPlayListItem(detailsInfo)
+                    } else {
+                        loadChannel(it)
                     }
                     loadDetailFragment(detailsInfo)
                 }
@@ -610,6 +625,27 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         showSubscriptionDialog(this) {
             launchActivity<PackageListActivity>()
         }
+    }
+
+    override fun playNext() {
+        super.playNext()
+        loadDetailFragment(
+            PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
+        )
+    }
+
+    override fun playPrevious() {
+        super.playPrevious()
+        loadDetailFragment(
+            PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
+        )
+    }
+
+    override fun playIndex(index: Int) {
+        super.playIndex(index)
+        loadDetailFragment(
+            PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
+        )
     }
 
     private fun loadDetailFragment(info: Any?){
@@ -638,6 +674,11 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
                     )
                 )
             } else {
+                fragment.setCurrentChannel(info.currentItem)
+            }
+        } else if(info is PlaylistItem) {
+            val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
+            if (fragment is MyChannelPlaylistVideosFragment) {
                 fragment.setCurrentChannel(info.channelInfo)
             }
         }
@@ -707,7 +748,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
     }
 
     override fun onControllerVisible() {
-        if(channelInfo?.isLive == true &&
+        if(playlistManager.getCurrentChannel()?.isLive == true &&
             resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }

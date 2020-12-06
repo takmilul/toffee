@@ -3,6 +3,7 @@ package com.banglalink.toffee.ui.widget;
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.SurfaceTexture;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -19,6 +20,7 @@ import androidx.databinding.DataBindingUtil;
 import com.banglalink.toffee.R;
 import com.banglalink.toffee.databinding.MediaControlLayout3Binding;
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener;
+import com.banglalink.toffee.listeners.PlaylistListener;
 import com.banglalink.toffee.util.Utils;
 import com.google.android.exoplayer2.Player;
 
@@ -50,6 +52,7 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
     private boolean isMinimize;
     private long lastPlayerPosition = 0;
     private boolean isAutoRotationEnabled = true;
+    private PlaylistListener mPlayListListener = null;
 
     public boolean isAutoRotationEnabled() {
         return isAutoRotationEnabled;
@@ -79,6 +82,10 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
         onPlayerControllerChangedListeners.add(onPlayerControllerChangedListener);
     }
 
+    public void setPlaylistListener(PlaylistListener listener) {
+        mPlayListListener = listener;
+    }
+
     public void clearListeners() {
         onPlayerControllerChangedListeners.clear();
     }
@@ -91,6 +98,8 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
         binding.backward.setOnClickListener(this);
         binding.drawer.setOnClickListener(this);
         binding.rotation.setOnClickListener(this);
+        binding.playPrev.setOnClickListener(this);
+        binding.playNext.setOnClickListener(this);
 
         if(isAutoRotationEnabled){
             binding.rotation.setImageResource(R.drawable.ic_screen_rotate);
@@ -418,9 +427,9 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
         } else if(v == binding.backward){
             backward();
         } else if(v == binding.playPrev) {
-            if(simpleExoPlayer != null) simpleExoPlayer.previous();
+            if(mPlayListListener != null) mPlayListListener.playPrevious();
         } else if(v == binding.playNext) {
-            if(simpleExoPlayer != null) simpleExoPlayer.next();
+            if(mPlayListListener != null) mPlayListListener.playNext();
         }
         else if(v == binding.rotation){
             if(isAutoRotationEnabled){
@@ -446,10 +455,12 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
                 binding.play.setVisibility(GONE);
                 binding.forward.setVisibility(INVISIBLE);
                 binding.backward.setVisibility(INVISIBLE);
-                binding.playPrev.setVisibility(INVISIBLE);
-                binding.playNext.setVisibility(INVISIBLE);
+                binding.playPrev.setVisibility(GONE);
+                binding.playNext.setVisibility(GONE);
+                binding.autoplayProgress.setVisibility(GONE);
                 binding.buffering.setVisibility(VISIBLE);
                 binding.videoOption.setEnabled(false);
+                stopAutoplayTimer();
                 showControls();
                 break;
             case STATE_ENDED:
@@ -459,13 +470,23 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
                 binding.play.setVisibility(VISIBLE);
                 binding.forward.setVisibility(INVISIBLE);
                 binding.backward.setVisibility(INVISIBLE);
-                binding.playPrev.setVisibility(VISIBLE);
-                binding.playNext.setVisibility(VISIBLE);
-                if(simpleExoPlayer != null && !simpleExoPlayer.hasNext()) {
-                    binding.playNext.setEnabled(false);
+                if(mPlayListListener != null &&
+                        mPlayListListener.isAutoplayEnabled() &&
+                        mPlayListListener.hasNext()) {
+                    binding.autoplayProgress.setVisibility(VISIBLE);
+                    startAutoplayTimer();
+                } else {
+                    binding.autoplayProgress.setVisibility(GONE);
                 }
-                if(simpleExoPlayer != null && !simpleExoPlayer.hasPrevious()) {
-                    binding.playPrev.setEnabled(false);
+                if(mPlayListListener != null && !mPlayListListener.hasNext()) {
+                    binding.playNext.setVisibility(GONE);
+                } else {
+                    binding.playNext.setVisibility(VISIBLE);
+                }
+                if(mPlayListListener != null && !mPlayListListener.hasPrevious()) {
+                    binding.playPrev.setVisibility(GONE);
+                } else {
+                    binding.playPrev.setVisibility(VISIBLE);
                 }
                 showControls();
                 break;
@@ -476,15 +497,19 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
                 binding.play.setVisibility(VISIBLE);
                 binding.forward.setVisibility(INVISIBLE);
                 binding.backward.setVisibility(INVISIBLE);
+                binding.autoplayProgress.setVisibility(GONE);
+                stopAutoplayTimer();
                 showControls();
                 break;
             case STATE_READY:
                 if(binding.textureView.isAvailable()){
                     binding.textureView.setVisibility(VISIBLE);
                 }
+                stopAutoplayTimer();
                 binding.videoOption.setEnabled(true);
                 binding.preview.setImageResource(0);
                 binding.share.setEnabled(true);
+                binding.autoplayProgress.setVisibility(GONE);
                 binding.playNext.setVisibility(GONE);
                 binding.playPrev.setVisibility(GONE);
                 if (playWhenReady) {
@@ -521,6 +546,36 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
         }
     }
 
+    private final long AUTOPLAY_INTERVAL = 5000L;
+    private CountDownTimer timer;
+
+    public void startAutoplayTimer() {
+        if(timer != null) {
+            timer.cancel();
+        }
+        binding.autoplayProgress.setProgress(0);
+        binding.autoplayProgress.setProgressWithAnimation(1000f, AUTOPLAY_INTERVAL);
+        timer = new CountDownTimer(AUTOPLAY_INTERVAL, AUTOPLAY_INTERVAL) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+//                int progress = (int)(5000 - millisUntilFinished) / 5;
+            }
+
+            @Override
+            public void onFinish() {
+                if(mPlayListListener != null && mPlayListListener.hasNext()) {
+                    mPlayListListener.playNext();
+                }
+            }
+        };
+        timer.start();
+    }
+
+    public void stopAutoplayTimer() {
+        if(timer != null) {
+            timer.cancel();
+        }
+    }
 
     public void resizeView(Point size) {
         int playerWidth;

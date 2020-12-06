@@ -10,5 +10,6 @@ data class PlaylistPlaybackInfo(
     val isOwner: Int,
     val playlistName: String,
     val playlistItemCount: Int,
-    var channelInfo: ChannelInfo? = null
+    var playIndex: Int = 0,
+    var currentItem: ChannelInfo? = null
 ): Parcelable

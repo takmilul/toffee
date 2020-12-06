@@ -24,7 +24,7 @@ class ChannelHeaderAdapter(private val headerData: Any? = null,
 
     init {
         if(headerData is ChannelInfo) channelInfo = headerData
-        else if(headerData is PlaylistPlaybackInfo) channelInfo = headerData.channelInfo
+        else if(headerData is PlaylistPlaybackInfo) channelInfo = headerData.currentItem
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HeaderViewHolder {
@@ -47,6 +47,9 @@ class ChannelHeaderAdapter(private val headerData: Any? = null,
             holder.autoplaySwitch.visibility = View.VISIBLE
             holder.bottomPanelStatus.visibility = View.VISIBLE
             holder.bottomPanelStatus.text = "${headerData.playlistName} (${headerData.playlistItemCount})"
+        } else {
+            holder.autoplaySwitch.visibility = View.GONE
+            holder.bottomPanelStatus.visibility = View.GONE
         }
         holder.itemView.findViewById<TextView>(R.id.reactionButton)?.setOnLongClickListener {
             cb?.onReactionLongPressed(it, holder.itemView.reactionCount, channelInfo!!)
@@ -64,8 +67,8 @@ class ChannelHeaderAdapter(private val headerData: Any? = null,
     }
 
     class HeaderViewHolder(private val binding: ViewDataBinding): RecyclerView.ViewHolder(binding.root) {
-        val autoplaySwitch = binding.root.findViewById<SwitchMaterial>(R.id.autoplay_switch)
-        val bottomPanelStatus = binding.root.findViewById<TextView>(R.id.bottom_panel_status)
+        val autoplaySwitch: SwitchMaterial = binding.root.findViewById(R.id.autoplay_switch)
+        val bottomPanelStatus: TextView = binding.root.findViewById(R.id.bottom_panel_status)
 
         fun bind(obj: Any, cb: Any?, pos: Int) {
             binding.setVariable(BR.callback, cb)

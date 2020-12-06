@@ -16,6 +16,7 @@ import com.banglalink.toffee.data.storage.ViewCountDAO
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.common.BaseViewModel
+import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.util.getError
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
@@ -43,7 +44,7 @@ class HomeViewModel @ViewModelInject constructor(
 
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val fragmentDetailsMutableLiveData = MutableLiveData<Any>()
-    val addToPlayListMutableLiveData = MutableLiveData<List<ChannelInfo>>()
+    val addToPlayListMutableLiveData = MutableLiveData<AddToPlaylistData>()
     val shareContentLiveData = MutableLiveData<ChannelInfo>()
     val userChannelMutableLiveData = MutableLiveData<ChannelInfo>()
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity

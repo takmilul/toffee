@@ -93,7 +93,7 @@ dependencies {
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.17'
     // Crop Image
     implementation 'com.github.yalantis:ucrop:2.2.6'
-
+    implementation 'com.mikhaellopez:circularprogressbar:3.0.3'
     implementation 'com.xfinity:dahdit:0.9.3'
 
     //Coil image Lib
@@ -109,7 +109,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics:18.0.0'
 
     // Add the Firebase SDK for Crashlytics.
-    implementation 'com.google.firebase:firebase-crashlytics:17.2.2'
+    implementation 'com.google.firebase:firebase-crashlytics:17.3.0'
 
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.google.android.material:material:1.2.1'
@@ -127,7 +127,7 @@ dependencies {
 
 
     // Paging
-    implementation "androidx.paging:paging-runtime-ktx:3.0.0-alpha08"
+    implementation "androidx.paging:paging-runtime-ktx:3.0.0-alpha09"
 
     // Hilt
     implementation "com.google.dagger:hilt-android:2.29.1-alpha"

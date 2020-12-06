@@ -8,12 +8,12 @@ import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.R
 import com.banglalink.toffee.apiservice.MyChannelPlaylistContentParam
 import com.banglalink.toffee.common.paging.BaseListFragment
-import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
@@ -29,14 +29,20 @@ import com.banglalink.toffee.ui.home.ChannelHeaderAdapter
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosViewModel.AssistedFactory
+import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.MyPopupWindow
 import com.banglalink.toffee.util.getFormattedViewsText
+import com.google.android.material.switchmaterial.SwitchMaterial
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.catchup_details_list_header_new.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
-    ContentReactionCallback<ChannelInfo> {
+    MyChannelPlaylistItemListener {
     private var currentItem: ChannelInfo? = null
     private var enableToolbar: Boolean = false
     private lateinit var requestParams: MyChannelPlaylistContentParam
@@ -68,12 +74,16 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
         return requestParams.playlistId
     }
 
+    fun isAutoplayEnabled(): Boolean {
+        return binding.root.findViewById<SwitchMaterial>(R.id.autoplay_switch).isChecked
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         args = MyChannelPlaylistVideosFragmentArgs.fromBundle(requireArguments())
         requestParams = MyChannelPlaylistContentParam(args.playlistInfo.channelOwnerId, args.playlistInfo.isOwner, args.playlistInfo.playlistId)
         Log.i("UGC_Owner", "isOwner: ${requestParams.isOwner}")
-        currentItem = args.playlistInfo.channelInfo
+        currentItem = args.playlistInfo.currentItem
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -90,7 +100,7 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
                 detailsAdapter?.notifyDataSetChanged()
             }
     
-            val customerId = Preference.getInstance().customerId
+            val customerId = mPref.customerId
             val isOwner = if (channelInfo.channel_owner_id == customerId) 1 else 0
             val isPublic = if (channelInfo.channel_owner_id == customerId) 0 else 1
             val channelId = channelInfo.channel_owner_id.toLong()
@@ -125,6 +135,23 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
             }
         })
         super.onViewCreated(view, savedInstanceState)
+
+        observeListState()
+    }
+
+    private fun observeListState() {
+        lifecycleScope.launch {
+            mAdapter
+                .loadStateFlow
+                .distinctUntilChangedBy {
+                    it.refresh
+                }.collect {
+                    val list = mAdapter.snapshot()
+                    homeViewModel.addToPlayListMutableLiveData.postValue(
+                        AddToPlaylistData(getPlaylistId(), list.items, false)
+                    )
+                }
+        }
     }
 
     override fun getRecyclerAdapter(): RecyclerView.Adapter<*> {
@@ -135,20 +162,23 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
         super.onProviderIconClicked(item)
         landingViewModel.navigateToMyChannel(this, item.id.toInt(), item.channel_owner_id, item.isSubscribed)
     }
-    
-    override fun onItemClicked(item: ChannelInfo) {
-        super.onItemClicked(item)
+
+    override fun onItemClickAtPosition(position: Int, item: ChannelInfo) {
         
-        item.description = Base64.decode(item.description, Base64.DEFAULT)
-            .toString(charset("UTF-8"))
-            .removePrefix("<p>")
-            .removeSuffix("</p>")
+//        item.description = Base64.decode(item.description, Base64.DEFAULT)
+//            .toString(charset("UTF-8"))
+//            .removePrefix("<p>")
+//            .removeSuffix("</p>")
 
         if (item.isApproved == 0) {
             Toast.makeText(requireContext(), "Your video has not approved yet. Once it's approved, you can play the video", Toast.LENGTH_SHORT).show()
         } else {
+            homeViewModel.addToPlayListMutableLiveData.postValue(
+                AddToPlaylistData(getPlaylistId(), mAdapter.snapshot().items)
+            )
             homeViewModel.fragmentDetailsMutableLiveData.postValue(args.playlistInfo.apply {
-                channelInfo = item
+                playIndex = position
+                currentItem = item
             })
         }
     }

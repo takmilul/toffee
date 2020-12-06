@@ -5,19 +5,23 @@ import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.banglalink.toffee.BuildConfig;
 import com.banglalink.toffee.R;
 import com.banglalink.toffee.analytics.HeartBeatManager;
 import com.banglalink.toffee.analytics.ToffeeAnalytics;
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener;
+import com.banglalink.toffee.listeners.PlaylistListener;
 import com.banglalink.toffee.model.AppSettingsKt;
 import com.banglalink.toffee.model.Channel;
 import com.banglalink.toffee.model.ChannelInfo;
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity;
+import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.MediaItem;
@@ -41,6 +45,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -48,7 +53,7 @@ import java.util.List;
  * Created by shantanu on 5/5/17.
  */
 
-public abstract class PlayerActivity extends BaseAppCompatActivity implements OnPlayerControllerChangedListener, Player.EventListener {
+public abstract class PlayerActivity extends BaseAppCompatActivity implements OnPlayerControllerChangedListener, Player.EventListener, PlaylistListener {
     protected Handler handler;
 
     @Nullable
@@ -58,6 +63,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
     private DefaultTrackSelector.Parameters trackSelectorParameters;
     private TrackGroupArray lastSeenTrackGroupArray;
 
+    protected PlaylistManager playlistManager = new PlaylistManager();
 
     private boolean startAutoPlay;
     private int startWindow;
@@ -65,8 +71,8 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
 
     private PlayerEventListener playerEventListener = new PlayerEventListener();
 
-    @Nullable
-    protected ChannelInfo channelInfo;
+//    @Nullable
+//    protected ChannelInfo channelInfo;
 
     private static final CookieManager DEFAULT_COOKIE_MANAGER;
     static {
@@ -99,7 +105,8 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
             clearStartPosition();
         }
         HeartBeatManager.INSTANCE.getHeartBeatEventLiveData().observe(this, aBoolean -> {//In each heartbeat we are checking channel's expire date. Seriously??
-            if(channelInfo!=null && channelInfo.isExpired(mPref.getSystemTime())){
+            ChannelInfo cinfo = playlistManager.getCurrentChannel();
+            if(cinfo != null && cinfo.isExpired(mPref.getSystemTime())){
                 if(player!=null){
                     player.stop(true);
                 }
@@ -175,8 +182,8 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
             }
         }
         //we are checking whether there is already channelInfo exist. If not null then play it
-        if(channelInfo!=null){
-            playChannel(channelInfo);
+        if(playlistManager.getCurrentChannel() != null){
+            playChannel(false);
         }
     }
 
@@ -228,14 +235,60 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
                         .createMediaSource(MediaItem.fromUri(uri));
     }
 
-    protected void addToPlayList(@NonNull ChannelInfo item) {
-        if(player != null) {
-            String uri = Channel.createChannel(item).getContentUri(this);
-            player.addMediaItem(MediaItem.fromUri(uri));
-        }
+    protected void setPlayList(AddToPlaylistData data) {
+        Log.e("PLAYLIST", "SetPlaylist - " + data.getItems().size());
+        playlistManager.setPlayList(data);
     }
 
-    protected void playChannel(@NonNull  ChannelInfo channelInfo) {
+    @Override
+    public boolean hasPrevious() {
+        return playlistManager.hasPrevious();
+    }
+
+    @Override
+    public boolean hasNext() {
+        return playlistManager.hasNext();
+    }
+
+    public void playIndex(int index) {
+        playlistManager.setIndex(index);
+        playChannel(false);
+    }
+
+    @Override
+    public boolean isAutoplayEnabled() {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.details_viewer);
+        if(fragment instanceof MyChannelPlaylistVideosFragment) {
+            return ((MyChannelPlaylistVideosFragment) fragment).isAutoplayEnabled();
+        }
+        return false;
+    }
+
+    @Override
+    public void playNext() {
+        playlistManager.nextChannel();
+        playChannel(false);
+    }
+
+    @Override
+    public void playPrevious() {
+        playlistManager.previousChannel();
+        playChannel(false);
+    }
+
+    protected void addChannelToPlayList(@NonNull ChannelInfo info) {
+        ChannelInfo cinfo = playlistManager.getCurrentChannel();
+        boolean isReload = false;
+        if(cinfo != null && cinfo.getId().equalsIgnoreCase(info.getId())) {
+            isReload = true;
+        } else {
+            playlistManager.setPlaylist(info);
+        }
+        playChannel(isReload);
+    }
+
+    protected void playChannel(boolean isReload) {
+        ChannelInfo channelInfo = playlistManager.getCurrentChannel();
         String uri = Channel.createChannel(channelInfo).getContentUri(this);
         if(uri == null){//in this case settings does not allow us to play content. So stop player and trigger event viewing stop
             if(player!=null)
@@ -245,12 +298,12 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
             return;
         }
         //Checking whether we need to reload or not. Reload happens because of network switch or re-initialization of player
-        boolean isReload = false;
-        ChannelInfo oldChannelInfo = this.channelInfo;
-        this.channelInfo = channelInfo;
-        if(oldChannelInfo != null && oldChannelInfo.getId().equalsIgnoreCase(this.channelInfo.getId())){
-            isReload = true;//that means we have reload situation. We need to start where we left for VODs
-        }
+//        boolean isReload = false;
+//        ChannelInfo oldChannelInfo = this.channelInfo;
+//        this.channelInfo = channelInfo;
+//        if(oldChannelInfo != null && oldChannelInfo.getId().equalsIgnoreCase(this.channelInfo.getId())){
+//            isReload = true;//that means we have reload situation. We need to start where we left for VODs
+//        }
 
         if(player!=null){
             HeartBeatManager.INSTANCE.triggerEventViewingContentStart(Integer.parseInt(channelInfo.getId()),channelInfo.getType());
@@ -274,7 +327,8 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
 
     //This will be called due to session token change while playing content or after init of player
     protected void reloadChannel(){
-        if(channelInfo!=null && channelInfo.isExpired(mPref.getSystemTime())){
+        ChannelInfo cinfo = playlistManager.getCurrentChannel();
+        if(cinfo != null && cinfo.isExpired(mPref.getSystemTime())){
             //channel is expired. Stop the player and notify hook/subclass
             if(player!=null){
                 player.stop(true);
@@ -282,8 +336,8 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
             onContentExpired();
             return;
         }
-        if(channelInfo!=null){
-            playChannel(this.channelInfo);
+        if(cinfo != null){
+            playChannel(true);
         }
     }
 
@@ -292,7 +346,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
     }
 
     protected void clearChannel(){//set channelInfo = null
-        channelInfo = null;
+        playlistManager.clearPlaylist();
     }
 
     @Override
@@ -352,10 +406,11 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
 
     @Override
     public boolean onShareButtonPressed() {
-        if(channelInfo != null) {
+        ChannelInfo info = playlistManager.getCurrentChannel();
+        if(info != null) {
             Intent sharingIntent = new Intent(Intent.ACTION_SEND);
             sharingIntent.setType("text/html");
-            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, channelInfo.getVideo_share_url());
+            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, info.getVideo_share_url());
             startActivity(Intent.createChooser(sharingIntent, "Share via"));
             return true;
         }
