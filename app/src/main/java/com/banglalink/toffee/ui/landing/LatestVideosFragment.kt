@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
@@ -48,8 +49,20 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
             adapter = mAdapter
         }
 
-        viewAllButton.setOnClickListener {
+        filterButton.setOnClickListener {
+            val popupMenu = PopupMenu(requireContext(), it)
+            popupMenu.menu.add("Latest Videos")
+            popupMenu.menu.add("Trending Videos")
+            popupMenu.show()
             
+            popupMenu.setOnMenuItemClickListener { item ->
+                latestVideosHeader.text = item.title
+                when(item.title){
+                    "Latest Videos" -> observeList(category?.id?.toInt() ?: 0)
+                    "Trending Videos" -> observeTrendingList(category?.id?.toInt() ?: 0)
+                }
+                true
+            }
         }
 
         observe(viewModel.latestVideoLiveData) {
@@ -72,6 +85,21 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
             }
         }
     }
+    
+    private fun observeTrendingList(categoryId: Int, subCategoryId: Int = 0){
+        listJob?.cancel()
+        listJob = lifecycleScope.launchWhenStarted {
+            val trendingVideos = if(categoryId == 0) {
+                viewModel.loadMostPopularVideos()
+            } else {
+                viewModel.loadMostPopularVideos()
+            }
+            trendingVideos.collectLatest {
+                mAdapter.submitData(it)
+            }
+        }
+    }
+    
     override fun onItemClicked(item: ChannelInfo) {
         homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
     }

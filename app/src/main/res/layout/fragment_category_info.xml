@@ -4,11 +4,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@android:color/black"
+    android:background="@drawable/bottom_round_white_bg"
     android:layout_height="wrap_content">
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/categoryListPager"
+        android:name="com.banglalink.toffee.ui.landing.FeaturedFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.viewpager2.widget.ViewPager2
+    <!--<androidx.viewpager2.widget.ViewPager2
         android:id="@+id/categoryListPager"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -18,16 +26,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-    </androidx.viewpager2.widget.ViewPager2>
+    </androidx.viewpager2.widget.ViewPager2>-->
 
-    <View
+    <!--<View
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/category_info_header_background"
         app:layout_constraintBottom_toBottomOf="@id/categoryListPager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/textView27" />
+        app:layout_constraintTop_toTopOf="@+id/textView27" />-->
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/category_scroll_indicator"
@@ -56,6 +64,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
         android:src="@drawable/ic_portrait"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/categoryListPager"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -70,6 +79,7 @@
         android:textSize="16sp"
         android:textStyle="bold"
         android:text="Trending"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/channelDescription"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -78,15 +88,16 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:gravity="end"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
+        android:layout_marginTop="16dp"
         android:maxLines="2"
-        android:textColor="@android:color/white"
         android:textSize="14sp"
-        app:layout_constraintBottom_toTopOf="@+id/channelLogo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/categoryListPager" />
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/categoryListPager"
+        app:layout_constraintEnd_toEndOf="@id/categoryListPager"
+        app:layout_constraintStart_toStartOf="@+id/categoryListPager"
+        tools:text="Video description goes here"/>
 
 
     <TextView
@@ -95,6 +106,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:maxLines="1"
+        android:visibility="gone"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="@+id/channelLogo"
         app:layout_constraintEnd_toStartOf="@+id/channelLogo"
@@ -108,6 +120,7 @@
         tools:text="AsianStar"
         android:textSize="16sp"
         android:maxLines="1"
+        android:visibility="gone"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="@+id/channelLogo"
         app:layout_constraintEnd_toStartOf="@+id/uploadTime"
@@ -115,23 +128,25 @@
 
     <ImageView
         android:id="@+id/categoryIcon"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        tools:src="@drawable/ic_profile_default"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/categoryListPager" />
+        app:layout_constraintTop_toBottomOf="@+id/channelDescription" />
 
     <TextView
         android:id="@+id/categoryName"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
-        android:textSize="20dp"
-        android:textColor="@android:color/white"
+        android:textSize="16dp"
+        tools:text="Movies"
+        android:textColor="@color/main_text_color"
         app:layout_constraintStart_toEndOf="@+id/categoryIcon"
-        app:layout_constraintTop_toTopOf="@+id/categoryIcon" />
+        app:layout_constraintTop_toTopOf="@+id/categoryIcon"
+        app:layout_constraintBottom_toBottomOf="@id/categoryIcon"/>
 
     <TextView
         android:id="@+id/follower_count"
@@ -139,6 +154,7 @@
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
         android:textColor="@android:color/white"
+        android:visibility="gone"
         app:layout_constraintStart_toEndOf="@+id/categoryIcon"
         app:layout_constraintTop_toBottomOf="@+id/categoryName" />
 
@@ -173,6 +189,7 @@
         android:text="Follow"
         app:strokeWidth="1dp"
         app:cornerRadius="30dp"
+        android:visibility="gone"
         app:strokeColor="@android:color/white"
         app:rippleColor="@color/colorAccent2"
         app:layout_constraintEnd_toEndOf="parent"

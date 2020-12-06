@@ -2,7 +2,6 @@ package com.banglalink.toffee.ui.common
 
 import android.content.Intent
 import android.view.View
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.banglalink.toffee.R
@@ -13,7 +12,7 @@ import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.home.OptionCallBack
 import com.banglalink.toffee.ui.widget.MyPopupWindow
 
-abstract class HomeBaseFragment:Fragment(), OptionCallBack {
+abstract class HomeBaseFragment:BaseFragment(), OptionCallBack {
 
     val homeViewModel by activityViewModels<HomeViewModel>()
 

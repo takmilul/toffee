@@ -9,10 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
-import androidx.viewpager2.widget.ViewPager2
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.ProviderIconCallback
+import com.banglalink.toffee.enums.PageType.Category
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.UgcCategory
@@ -22,15 +21,10 @@ import com.banglalink.toffee.ui.home.FeaturedCategoryListAdapter
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.bindCategoryImage
-import com.banglalink.toffee.util.bindImageFromUrl
 import com.google.android.material.chip.Chip
-import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_category_info.*
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class CategoryInfoFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo> {
@@ -54,7 +48,9 @@ class CategoryInfoFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo
 
         mAdapter = FeaturedCategoryListAdapter(this)
 
-        with(categoryListPager) {
+        landingViewModel.pageType.value = Category
+        landingViewModel.categoryId.value = categoryInfo.id.toInt()
+        /*with(categoryListPager) {
             adapter = mAdapter
 
             registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback() {
@@ -68,7 +64,7 @@ class CategoryInfoFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo
             })
         }
 
-        TabLayoutMediator(category_scroll_indicator, categoryListPager, true) { tab_, position -> }.attach()
+        TabLayoutMediator(category_scroll_indicator, categoryListPager, true) { tab_, position -> }.attach()*/
 
         observeList()
         observeCategoryData()
@@ -88,7 +84,7 @@ class CategoryInfoFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo
             mAdapter.removeAll()
             mAdapter.addAll(it)
             mAdapter.notifyDataSetChanged()
-            startPageScroll()
+//            startPageScroll()
         }
 
         observe(viewModel.subcategoryList) {
@@ -168,7 +164,7 @@ class CategoryInfoFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo
         )
     }
 
-    private fun startPageScroll() {
+    /*private fun startPageScroll() {
         scrollJob?.cancel()
 
         scrollJob = lifecycleScope.launch {
@@ -179,7 +175,7 @@ class CategoryInfoFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo
                 }
             }
         }
-    }
+    }*/
     
     override fun onItemClicked(item: ChannelInfo) {
         homeViewModel.fragmentDetailsMutableLiveData.postValue(item)

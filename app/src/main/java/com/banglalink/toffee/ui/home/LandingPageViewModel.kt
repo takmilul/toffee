@@ -15,10 +15,10 @@ import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
 import com.banglalink.toffee.data.network.request.ChannelRequestParams
 import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.MyChannelPlaylist
-import com.banglalink.toffee.model.UgcCategory
-import com.banglalink.toffee.model.UgcUserChannelInfo
+import com.banglalink.toffee.enums.PageType
+import com.banglalink.toffee.enums.PageType.Category
+import com.banglalink.toffee.enums.PageType.Landing
+import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.ui.mychannel.MyChannelHomeFragment
 import kotlinx.coroutines.flow.Flow
@@ -33,6 +33,8 @@ class LandingPageViewModel @ViewModelInject constructor(
     private val getContentAssistedFactory: GetContents.AssistedFactory
 ):BaseViewModel() {
     val latestVideoLiveData = MutableLiveData<Pair<Int, Int>>()
+    val pageType: MutableLiveData<PageType> = MutableLiveData()
+    val categoryId: MutableLiveData<Int> = MutableLiveData()
 
     fun loadChannels(): Flow<PagingData<ChannelInfo>>{
         return channelRepo.getList().cachedIn(viewModelScope)
@@ -118,7 +120,7 @@ class LandingPageViewModel @ViewModelInject constructor(
         BaseListRepositoryImpl({
             BaseNetworkPagingSource(
                 featuredContentAssistedFactory.create(
-                    ApiCategoryRequestParams("VOD", 0, 0)
+                    EditorsChoiceFeaturedRequestParams("VOD", pageType.value?:Landing, categoryId.value?:0)
                 )
             )
         })
@@ -144,7 +146,7 @@ class LandingPageViewModel @ViewModelInject constructor(
         BaseListRepositoryImpl({
             BaseNetworkPagingSource(
                 trendingNowAssistedFactory.create(
-                    ApiCategoryRequestParams("VOD", 0, 0)
+                    EditorsChoiceFeaturedRequestParams("VOD", pageType.value?:Landing, categoryId.value?:0)
                 )
             )
         })
@@ -164,7 +166,7 @@ class LandingPageViewModel @ViewModelInject constructor(
         return BaseListRepositoryImpl({
             BaseNetworkPagingSource(
                 trendingNowAssistedFactory.create(
-                    ApiCategoryRequestParams("VOD", 1, category.id.toInt())
+                    EditorsChoiceFeaturedRequestParams("VOD", pageType.value?:Category, category.id.toInt())
                 )
             )
         }).getList()

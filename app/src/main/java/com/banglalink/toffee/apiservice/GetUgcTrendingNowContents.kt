@@ -7,6 +7,7 @@ import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.EditorsChoiceFeaturedRequestParams
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.discardZeroFromDuration
 import com.banglalink.toffee.util.getFormattedViewsText
@@ -22,7 +23,7 @@ data class ApiCategoryRequestParams(
 class GetUgcTrendingNowContents @AssistedInject constructor(
     private val preference: Preference,
     private val toffeeApi: ToffeeApi,
-    @Assisted private val requestParams: ApiCategoryRequestParams
+    @Assisted private val requestParams: EditorsChoiceFeaturedRequestParams
 ): BaseApiService<ChannelInfo> {
 
     override suspend fun loadData(offset: Int, limit: Int): List<ChannelInfo> {
@@ -35,7 +36,7 @@ class GetUgcTrendingNowContents @AssistedInject constructor(
         val response = tryIO2 {
             toffeeApi.getUgcEditorsChoice(
                 requestParams.type,
-                requestParams.isCategory,
+                requestParams.pageType.value,
                 requestParams.categoryId,
                 preference.getDBVersionByApiName("getUgcCategoryEditorChoice"),
                 request
@@ -59,6 +60,6 @@ class GetUgcTrendingNowContents @AssistedInject constructor(
 
     @AssistedInject.Factory
     interface AssistedFactory {
-        fun create(requestParams: ApiCategoryRequestParams): GetUgcTrendingNowContents
+        fun create(requestParams: EditorsChoiceFeaturedRequestParams): GetUgcTrendingNowContents
     }
 }
