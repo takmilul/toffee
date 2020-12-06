@@ -58,10 +58,10 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        currentItem.description = Base64.decode(currentItem.description, Base64.DEFAULT)
-            .toString(charset("UTF-8"))
-            .removePrefix("<p>")
-            .removeSuffix("</p>")
+//        currentItem.description = Base64.decode(currentItem.description, Base64.DEFAULT)
+//            .toString(charset("UTF-8"))
+//            .removePrefix("<p>")
+//            .removeSuffix("</p>")
         
         initAdapter()
 
