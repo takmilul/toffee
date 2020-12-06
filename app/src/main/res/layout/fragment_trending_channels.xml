@@ -13,7 +13,7 @@
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/featuredFragment"
-            android:name="com.banglalink.toffee.ui.trendingchannels.TrendingChannelsFeaturedFragment"
+            android:name="com.banglalink.toffee.ui.landing.FeaturedFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
@@ -22,7 +22,7 @@
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/editorsChoiceFragment"
-            android:name="com.banglalink.toffee.ui.trendingchannels.TrendingChannelsEditorsChoiceFragment"
+            android:name="com.banglalink.toffee.ui.landing.TrendingNowFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"

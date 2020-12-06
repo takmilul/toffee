@@ -121,19 +121,19 @@ interface ToffeeApi {
         @Body ugcCategoryRequest: UgcCategoryRequest
     ): UgcCategoryResponse
 
-    @POST("ugc-category-wise-editors-choice/1/{type}/{isCategory}/{categoryId}/{dbVersion}")
+    @POST("ugc-category-wise-editors-choice/1/{type}/{editorChoiceType}/{categoryId}/{dbVersion}")
     suspend fun getUgcEditorsChoice(
         @Path("type") type: String,
-        @Path("isCategory") isCategory: Int = 0,
+        @Path("editorChoiceType") isCategory: Int = 1,
         @Path("categoryId") categoryId: Int = 0,
         @Path("dbVersion") dbVersion: Int = 0,
         @Body ugcTrendingNowRequest: UgcTrendingNowRequest
     ): UgcTrendingNowResponse
 
-    @POST("ugc-category-featured-contents/1/{type}/{isCategory}/{categoryId}/{dbVersion}")
+    @POST("ugc-category-featured-contents/1/{type}/{featureType}/{categoryId}/{dbVersion}")
     suspend fun getUgcFeatureContents(
         @Path("type") type: String,
-        @Path("isCategory") isCategory: Int = 0,
+        @Path("featureType") featureType: Int = 1,
         @Path("categoryId") categoryId: Int = 0,
         @Path("dbVersion") dbVersion: Int = 0,
         @Body ugcFeatureRequest: UgcFeatureContentRequest

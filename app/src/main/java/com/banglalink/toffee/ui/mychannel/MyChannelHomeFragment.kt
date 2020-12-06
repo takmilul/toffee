@@ -21,13 +21,13 @@ import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.color
 import com.banglalink.toffee.R.layout
-import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBinding
 import com.banglalink.toffee.databinding.FragmentMyChannelHomeBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.MyChannelDetail
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
+import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.common.ViewPagerAdapter
 import com.banglalink.toffee.ui.widget.ExpandableTextView
 import com.banglalink.toffee.util.bindButtonState
@@ -41,7 +41,7 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener {
+class MyChannelHomeFragment : BaseFragment(), OnClickListener {
 
     private var isOwner: Int = 0
     private var channelId: Int = 0
@@ -56,7 +56,7 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
     private lateinit var viewPagerAdapter: ViewPagerAdapter
     private var fragmentList: ArrayList<androidx.fragment.app.Fragment> = arrayListOf()
     private var fragmentTitleList: ArrayList<String> = arrayListOf()
-    @Inject lateinit var preference: Preference
+//    @Inject lateinit var preference: Preference
 
     @Inject lateinit var myChannelHomeViewModelAssistedFactory: MyChannelHomeViewModel.AssistedFactory
     private val viewModel by viewModels<MyChannelHomeViewModel> { MyChannelHomeViewModel.provideFactory(myChannelHomeViewModelAssistedFactory, isOwner, isPublic, channelId, channelOwnerId) }
@@ -95,9 +95,9 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
         isOwner = args?.getInt(IS_OWNER) ?: 1
         channelId = args?.getInt(CHANNEL_ID) ?: 0
         isPublic = args?.getInt(IS_PUBLIC) ?: 0
-        channelId = if (channelId == 0) preference.channelId else channelId
-        channelOwnerId = args?.getInt(CHANNEL_OWNER_ID) ?: preference.customerId
-        channelOwnerId = if (channelOwnerId == 0) preference.customerId else channelOwnerId
+        channelId = if (channelId == 0) mPref.channelId else channelId
+        channelOwnerId = args?.getInt(CHANNEL_OWNER_ID) ?: mPref.customerId
+        channelOwnerId = if (channelOwnerId == 0) mPref.customerId else channelOwnerId
 
         isFromOutside = args?.getBoolean(IS_FROM_OUTSIDE) ?: false
         Log.i("UGC_Home", "onCreate -- isSubscribed: ${isSubscribed}")
@@ -230,7 +230,7 @@ class MyChannelHomeFragment : androidx.fragment.app.Fragment(), OnClickListener 
                         channelId = myChannelDetail?.id?.toInt() ?: 0
                         binding.data = it.data
                         binding.isSubscribed = isSubscribed
-                        preference.channelId = channelId
+                        mPref.channelId = channelId
 
                         loadBody()
                     }
