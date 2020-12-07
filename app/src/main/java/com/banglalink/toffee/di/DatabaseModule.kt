@@ -112,4 +112,10 @@ object DatabaseModule {
     fun providesSubscribedItemDao(db: ToffeeDatabase): SubscribedItemDao {
         return db.getSubscribedItemsDao()
     }
+    
+    @Provides
+    @Singleton
+    fun providesContentViewProgressDao(db: ToffeeDatabase): ContentViewProgressDao {
+        return db.getContentViewProgressDao()
+    }
 }

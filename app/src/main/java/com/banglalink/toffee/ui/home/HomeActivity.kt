@@ -52,7 +52,7 @@ import com.banglalink.toffee.ui.channels.ChannelFragment
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.ui.landing.AllCategoriesFragment
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
-import com.banglalink.toffee.ui.player.PlayerActivity
+import com.banglalink.toffee.ui.player.PlayerPageActivity
 import com.banglalink.toffee.ui.player.PlaylistItem
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.splash.SplashScreenActivity
@@ -65,7 +65,6 @@ import com.banglalink.toffee.ui.widget.showSubscriptionDialog
 import com.banglalink.toffee.util.InAppMessageParser
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.UtilsKt
-import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.util.Util
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -79,7 +78,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.*
-import javax.annotation.Nonnull
 import javax.inject.Inject
 
 const val ID_CHANNEL = 12
@@ -100,7 +98,7 @@ const val ID_INTERNET_PACK = 25
 const val PLAY_IN_WEB_VIEW = 1
 const val OPEN_IN_EXTERNAL_BROWSER = 2
 @AndroidEntryPoint
-class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListener,
+class HomeActivity : PlayerPageActivity(), FragmentManager.OnBackStackChangedListener,
     DraggerLayout.OnPositionChangedListener ,SearchView.OnQueryTextListener{
 
     @Inject
@@ -466,7 +464,7 @@ class HomeActivity : PlayerActivity(), FragmentManager.OnBackStackChangedListene
         updateFullScreenState()
     }
 
-    private fun calculateScreenWidth(): Point? {
+    private fun calculateScreenWidth(): Point {
         val display: Display = windowManager.defaultDisplay
         val size = Point()
         display.getRealSize(size)

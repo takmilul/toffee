@@ -81,7 +81,7 @@
                         <!--                    android:layout_width="fill_parent"-->
                         <!--                    android:layout_height="wrap_content"-->
                         <!--                    android:name="com.banglalink.toffee.ui.player.PlayerFragment2"/>-->
-                        <com.banglalink.toffee.ui.widget.ExpoMediaController2
+                        <com.banglalink.toffee.ui.widget.ExoMediaController3
                             android:background="@android:color/black"
                             android:id="@+id/player_view"
                             android:layout_width="match_parent"
