@@ -64,6 +64,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
         val uploadInfo = channelInfo?.let {
             UploadInfo(
                 null,
+                -1L,
                 "",
                 "",
                 it.landscape_ratio_1280_720,

@@ -252,9 +252,9 @@ class Preference(private val pref: SharedPreferences,
         return pref.getLong("deviceTimeInMillis", System.currentTimeMillis());
     }
 
-    var uploadId: String?
-        get() = pref.getString("toffee-upload-id", null)
-        set(value) = pref.edit { putString("toffee-upload-id", value) }
+//    var uploadId: String?
+//        get() = pref.getString("toffee-upload-id", null)
+//        set(value) = pref.edit { putString("toffee-upload-id", value) }
 
     var viewCountDbUrl: String
         get() = pref.getString("viewCountDbUrl", "") ?: ""

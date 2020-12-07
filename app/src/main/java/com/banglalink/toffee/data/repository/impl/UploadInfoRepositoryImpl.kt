@@ -22,7 +22,7 @@ class UploadInfoRepositoryImpl(private val uploadDao: UploadDao): UploadInfoRepo
         uploadDao.deleteAll()
     }
 
-    override fun getUploads(): Flow<List<UploadInfo>> {
+    override suspend fun getUploads(): List<UploadInfo> {
         return uploadDao.getUploads()
     }
 

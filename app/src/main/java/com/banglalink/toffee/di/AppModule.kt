@@ -3,6 +3,7 @@ package com.banglalink.toffee.di
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import com.banglalink.toffee.apiservice.UgcUploadConfirmation
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.ui.upload.UploadObserver
@@ -36,8 +37,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesGlobalUploadObserver(app: Application, pref: Preference, repo: UploadInfoRepository): UploadObserver {
-        return UploadObserver(app, pref, repo)
+    fun providesGlobalUploadObserver(app: Application, pref: Preference, uploadConfApi: UgcUploadConfirmation, repo: UploadInfoRepository): UploadObserver {
+        return UploadObserver(app, pref, uploadConfApi, repo)
     }
 
     @Provides

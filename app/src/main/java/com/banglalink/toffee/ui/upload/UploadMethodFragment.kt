@@ -163,7 +163,7 @@ class UploadMethodFragment : BaseFragment() {
         when (requestCode) {
             REQUEST_PICK_VIDEO -> {
                 if (resultCode == Activity.RESULT_OK && data != null && data.dataString != null) {
-                    uploadUri(data.dataString!!)
+                    openEditUpload(data.dataString!!)
                 }
                 else {
                     ToffeeAnalytics.logBreadCrumb("Camera/video picker returned without any data")
@@ -173,7 +173,7 @@ class UploadMethodFragment : BaseFragment() {
                 if (resultCode == Activity.RESULT_OK && videoFile != null) {
                     println("CaptureAbsolutePath${videoFile!!.absolutePath}")
                     println("CapturePath${videoFile!!.path}")
-                    uploadUri(videoFile!!.absolutePath)
+                    openEditUpload(videoFile!!.absolutePath)
                 }
                 else {
                     ToffeeAnalytics.logBreadCrumb("Camera/video capture result not returned")
@@ -191,7 +191,13 @@ class UploadMethodFragment : BaseFragment() {
         }*/
     }
 
-    private fun uploadUri(uri: String) {
+    private fun openEditUpload(uri: String) {
+        activity?.findNavController(R.id.home_nav_host)?.navigate(R.id.action_uploadMethodFragment_to_editUploadInfoFragment, Bundle().apply {
+            putString(EditUploadInfoFragment.UPLOAD_FILE_URI, uri)
+        })
+    }
+
+    private fun uploadUri3(uri: String) {
 
         lifecycleScope.launch {
             val dialog = VelBoxProgressDialog(requireContext())
@@ -220,7 +226,7 @@ class UploadMethodFragment : BaseFragment() {
             else ""
 
             val fileName = mPref.customerId.toString() + "_" + UUID.randomUUID().toString() + ext
-            val upInfo = UploadInfo(fileUri = uri, fileName = fileName)
+            val upInfo = UploadInfo(serverContentId = 0L, fileUri = uri, fileName = fileName)
 
             val contentType = withContext(Dispatchers.IO + Job()) {
                 UtilsKt.contentTypeFromContentUri(requireContext(), Uri.parse(uri))
@@ -243,16 +249,15 @@ class UploadMethodFragment : BaseFragment() {
                         .startUpload()
                 }
 
-            mPref.uploadId = uploadIdStr
+//            mPref.uploadId = uploadIdStr
             dialog.dismiss()
-            activity?.findNavController(R.id.home_nav_host)?.navigate(R.id.action_uploadMethodFragment_to_editUploadInfoFragment)
         }
     }
 
     private fun uploadUri2(uri: String) {
 
         lifecycleScope.launch {
-            val upInfo = UploadInfo(fileUri = uri, fileName = "fileName")
+            val upInfo = UploadInfo(serverContentId = 0L, fileUri = uri, fileName = "fileName")
             val upId = mUploadInfoRepository.insertUploadInfo(upInfo)
             val uploadIdStr =
                 withContext(Dispatchers.IO + Job()) {
@@ -266,7 +271,7 @@ class UploadMethodFragment : BaseFragment() {
                         .startUpload()
                 }
 
-            mPref.uploadId = uploadIdStr
+//            mPref.uploadId = uploadIdStr
             activity?.findNavController(R.id.home_nav_host)?.navigate(R.id.action_uploadMethodFragment_to_editUploadInfoFragment)
         }
     }

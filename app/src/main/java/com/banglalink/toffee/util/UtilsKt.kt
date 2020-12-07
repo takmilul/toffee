@@ -66,6 +66,20 @@ object UtilsKt {
         } ?: uri.toString().split(File.separator).last()
     }
 
+    fun fileSizeFromContentUri(context: Context, uri: Uri): Long {
+        if(uri.scheme != "content") {
+            return File(uri.toString()).length()
+        }
+        return context.contentResolver.query(uri, null, null, null, null)?.use {
+            if(it.moveToFirst()) {
+                it.getLong(it.getColumnIndex(OpenableColumns.SIZE))
+            }
+            else {
+                0L
+            }
+        } ?: 0L
+    }
+
     suspend fun coilExecuteGet(ctx: Context, url: Any?): Drawable? {
         val request = ImageRequest.Builder(ctx)
             .data(url)

@@ -26,6 +26,11 @@
         android:name="com.banglalink.toffee.ui.favorite.FavoriteFragment"
         android:label="Favorites"
         />
+    <fragment
+        android:id="@+id/upload_minimize"
+        android:name="com.banglalink.toffee.ui.upload.MinimizeUploadFragment"
+        android:label="Upload Video"
+        />
 <!--    <activity-->
 <!--        android:id="@+id/menu_settings"-->
 <!--        android:name="com.banglalink.toffee.ui.settings.SettingsActivity"-->

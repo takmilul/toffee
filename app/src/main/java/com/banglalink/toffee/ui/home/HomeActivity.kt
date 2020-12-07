@@ -156,29 +156,33 @@ class HomeActivity : PlayerPageActivity(), FragmentManager.OnBackStackChangedLis
                 return@setOnClickListener
             }
             lifecycleScope.launch {
-                Log.e("UPLOAD", "Upload id - ${mPref.uploadId}")
-                mPref.uploadId?.let {
-                    val uploads = uploadRepo.getUploadById(UtilsKt.stringToUploadId(it))
-                    if(uploads == null || uploads.status !in listOf(0, 1, 2, 3)) {
-                        mPref.uploadId = null
-                        navController.navigate(R.id.uploadMethodFragment)
-                        return@launch
-                    }
-//                    if(uploads.status in listOf(0, 1, 2, 3) && UploadService.taskList.isEmpty()) {
-//                        uploads.apply {
-//                            status = UploadStatus.ERROR.value
-//                            statusMessage = "Process killed"
-//                        }.also { info ->
-//                            uploadRepo.updateUploadInfo(info)
-//                        }
-//                        mPref.uploadId = null
-//                        navController.navigate(R.id.uploadMethodFragment)
-//                    }
-                    if(navController.currentDestination?.id != R.id.editUploadInfoFragment) {
-                        navController.navigate(R.id.editUploadInfoFragment)
-                    }
+
+                if(uploadRepo.getActiveUploadsList().isNotEmpty()) {
                     return@launch
                 }
+
+//                mPref.uploadId?.let {
+//                    val uploads = uploadRepo.getUploadById(UtilsKt.stringToUploadId(it))
+//                    if(uploads == null || uploads.status !in listOf(0, 1, 2, 3)) {
+//                        mPref.uploadId = null
+//                        navController.navigate(R.id.uploadMethodFragment)
+//                        return@launch
+//                    }
+////                    if(uploads.status in listOf(0, 1, 2, 3) && UploadService.taskList.isEmpty()) {
+////                        uploads.apply {
+////                            status = UploadStatus.ERROR.value
+////                            statusMessage = "Process killed"
+////                        }.also { info ->
+////                            uploadRepo.updateUploadInfo(info)
+////                        }
+////                        mPref.uploadId = null
+////                        navController.navigate(R.id.uploadMethodFragment)
+////                    }
+//                    if(navController.currentDestination?.id != R.id.editUploadInfoFragment) {
+//                        navController.navigate(R.id.editUploadInfoFragment)
+//                    }
+//                    return@launch
+//                }
                 navController.navigate(R.id.uploadMethodFragment)
             }
         }
@@ -976,7 +980,16 @@ class HomeActivity : PlayerPageActivity(), FragmentManager.OnBackStackChangedLis
 
     private fun observeUpload2() {
         add_upload_info_button.setOnClickListener {
-            navController.navigate(R.id.editUploadInfoFragment)
+            lifecycleScope.launch {
+                uploadRepo.getActiveUploadsList().let {
+                    if(it.isNotEmpty()) {
+                        uploadRepo.updateUploadInfo(it[0].apply {
+                            this.status = UploadStatus.CLEARED.value
+                        })
+                    }
+                }
+                navController.navigate(R.id.myChannelHomeFragment)
+            }
         }
 
         lifecycleScope.launchWhenStarted {
@@ -986,7 +999,8 @@ class HomeActivity : PlayerPageActivity(), FragmentManager.OnBackStackChangedLis
                     home_mini_progress_container.isVisible = true
                     val upInfo = it[0]
                     when(upInfo.status){
-                        UploadStatus.SUCCESS.value -> {
+                        UploadStatus.SUCCESS.value,
+                        UploadStatus.SUBMITTED.value -> {
                             mini_upload_progress.progress = 100
                             add_upload_info_button.isVisible = true
                             upload_size_text.isInvisible = true

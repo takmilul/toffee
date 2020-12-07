@@ -9,6 +9,7 @@ data class UploadInfo(
     @PrimaryKey(autoGenerate = true)
     val uploadId: Long? = null,
 
+    val serverContentId: Long,
     val fileUri: String,
     var fileName: String,
 

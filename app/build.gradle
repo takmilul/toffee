@@ -69,7 +69,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.1"
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.core:core-ktx:1.3.2'
     implementation "androidx.fragment:fragment-ktx:1.2.5"
@@ -97,7 +97,7 @@ dependencies {
     implementation 'com.xfinity:dahdit:0.9.3'
 
     //Coil image Lib
-    implementation 'io.coil-kt:coil:1.0.0'
+    implementation 'io.coil-kt:coil:1.1.0'
 
     //Firebase Push Notification
     implementation 'com.google.firebase:firebase-messaging:20.3.0'
@@ -127,12 +127,12 @@ dependencies {
 
 
     // Paging
-    implementation "androidx.paging:paging-runtime-ktx:3.0.0-alpha09"
+    implementation 'androidx.paging:paging-runtime-ktx:3.0.0-alpha10'
 
     // Hilt
-    implementation "com.google.dagger:hilt-android:2.29.1-alpha"
+    implementation 'com.google.dagger:hilt-android:2.30.1-alpha'
     implementation 'androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha02'
-    kapt "com.google.dagger:hilt-android-compiler:2.29.1-alpha"
+    kapt 'com.google.dagger:hilt-android-compiler:2.30.1-alpha'
     kapt 'androidx.hilt:hilt-compiler:1.0.0-alpha02'
 
     // AssistedInject for Hilt
@@ -146,7 +146,7 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
 
     // Navigation
-    def nav_version = "2.3.1"
+    def nav_version = '2.3.2'
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 

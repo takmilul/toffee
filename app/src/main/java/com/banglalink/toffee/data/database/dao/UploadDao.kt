@@ -19,12 +19,12 @@ interface UploadDao {
     suspend fun deleteAll()
 
     @Query("SELECT * FROM UploadInfo")
-    fun getUploads(): Flow<List<UploadInfo>>
+    suspend fun getUploads(): List<UploadInfo>
 
-    @Query("SELECT * FROM UploadInfo WHERE status in (0, 1, 2, 3)")
+    @Query("SELECT * FROM UploadInfo WHERE status in (0, 1, 2, 5) ORDER BY uploadId DESC")
     fun getActiveUploads(): Flow<List<UploadInfo>>
 
-    @Query("SELECT * FROM UploadInfo WHERE status in (0, 1, 2, 3)")
+    @Query("SELECT * FROM UploadInfo WHERE status in (0, 1, 2, 5) ORDER BY uploadId DESC")
     suspend fun getActiveUploadsList(): List<UploadInfo>
 
     @Query("SELECT * from UploadInfo WHERE uploadId=:uploadId")

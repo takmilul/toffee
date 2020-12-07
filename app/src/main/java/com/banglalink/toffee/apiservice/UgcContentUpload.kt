@@ -2,6 +2,7 @@ package com.banglalink.toffee.apiservice
 
 import com.banglalink.toffee.data.network.request.ContentUploadRequest
 import com.banglalink.toffee.data.network.request.UgcFollowCategoryRequest
+import com.banglalink.toffee.data.network.response.UgcContentUploadResponseBean
 import com.banglalink.toffee.data.network.response.UgcResponseBean
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
@@ -20,8 +21,9 @@ class UgcContentUpload @Inject constructor(
         tags: String?,
         ageGroup: String?,
         categoryId: Long,
+        subcategoryId: Long,
         base64Image: String? = null
-    ): UgcResponseBean {
+    ): UgcContentUploadResponseBean {
         val response = tryIO2 {
             toffeeApi.uploadContent(
                 ContentUploadRequest(
@@ -31,6 +33,7 @@ class UgcContentUpload @Inject constructor(
                     fileName,
                     description = description,
                     categoryId = categoryId.toInt(),
+                    subCategoryId = subcategoryId.toInt(),
                     ageRestriction = ageGroup,
                     videoTags = tags,
                     contentBanner = base64Image,
