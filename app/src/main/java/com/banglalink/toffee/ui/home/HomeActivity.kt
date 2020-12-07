@@ -980,6 +980,10 @@ class HomeActivity : PlayerPageActivity(), FragmentManager.OnBackStackChangedLis
 
     private fun observeUpload2() {
         add_upload_info_button.setOnClickListener {
+            navController.navigate(R.id.myChannelHomeFragment)
+        }
+
+        close_button.setOnClickListener {
             lifecycleScope.launch {
                 uploadRepo.getActiveUploadsList().let {
                     if(it.isNotEmpty()) {
@@ -988,7 +992,6 @@ class HomeActivity : PlayerPageActivity(), FragmentManager.OnBackStackChangedLis
                         })
                     }
                 }
-                navController.navigate(R.id.myChannelHomeFragment)
             }
         }
 
@@ -1003,6 +1006,7 @@ class HomeActivity : PlayerPageActivity(), FragmentManager.OnBackStackChangedLis
                         UploadStatus.SUBMITTED.value -> {
                             mini_upload_progress.progress = 100
                             add_upload_info_button.isVisible = true
+                            close_button.isVisible = true
                             upload_size_text.isInvisible = true
                             mini_upload_progress_text.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_upload_done, 0, 0, 0)
                             mini_upload_progress_text.text = "Upload complete"
@@ -1011,6 +1015,7 @@ class HomeActivity : PlayerPageActivity(), FragmentManager.OnBackStackChangedLis
                         UploadStatus.STARTED.value -> {
                             add_upload_info_button.isInvisible = true
                             upload_size_text.isVisible = true
+                            close_button.isInvisible = true
                             mini_upload_progress_text.text = "Uploading - ${upInfo.completedPercent}%"
                             mini_upload_progress.progress = upInfo.completedPercent
                             upload_size_text.text = Utils.readableFileSize(upInfo.fileSize)
