@@ -7,7 +7,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.Fragment
 import androidx.navigation.ui.NavigationUI
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.storage.Preference
@@ -16,13 +15,8 @@ import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.extension.loadProfileImage
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.*
-import com.banglalink.toffee.ui.about.AboutActivity
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
-import com.banglalink.toffee.ui.common.HtmlPageViewActivity
-import com.banglalink.toffee.ui.common.ParentLevelAdapter
 import com.banglalink.toffee.ui.profile.ViewProfileActivity
-import com.banglalink.toffee.ui.redeem.RedeemCodeActivity
-import com.banglalink.toffee.ui.refer.ReferAFriendActivity
 import com.banglalink.toffee.ui.settings.SettingsActivity
 import com.banglalink.toffee.ui.subscription.MySubscriptionActivity
 import com.banglalink.toffee.ui.subscription.PackageListActivity
@@ -286,9 +280,9 @@ class DrawerHelper(private val activity: HomeActivity,
 //                binding.drawerLayout.closeDrawers()
 //
 //            }
-//            R.id.menu_logout->{
-//                activity.handleExitApp()
-//            }
+            R.id.menu_logout->{
+                activity.handleExitApp()
+            }
 //            ID_INVITE_FRIEND->{
 //                activity.launchActivity<ReferAFriendActivity>()
 //                binding.drawerLayout.closeDrawers()

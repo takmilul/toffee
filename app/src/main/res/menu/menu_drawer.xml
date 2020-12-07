@@ -51,7 +51,7 @@
 <!--        android:title="@string/menu_faqs_text"-->
 <!--        android:icon="@drawable/ic_menu_faq" />-->
 
-<!--    <item android:id="@+id/menu_logout"-->
-<!--        android:title="Logout"-->
-<!--        android:icon="@mipmap/ic_menu_exit" />-->
+    <item android:id="@+id/menu_logout"
+        android:title="Logout"
+        android:icon="@mipmap/ic_menu_exit" />
 </menu>

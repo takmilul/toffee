@@ -20,8 +20,8 @@ android {
         applicationId "com.banglalink.toffee.ugc"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 33
-        versionName "0.0.1-alpha2"
+        versionCode 35
+        versionName "0.0.1-alpha4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {

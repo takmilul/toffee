@@ -75,13 +75,13 @@
         <androidx.core.widget.NestedScrollView
             android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
-            android:layout_height="510dp"
+            android:layout_height="524dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/top_round_bg"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="parent">
-            
+
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/signInFragmentContainerView"
                 android:name="androidx.navigation.fragment.NavHostFragment"
@@ -89,13 +89,13 @@
                 android:layout_height="wrap_content"
                 app:defaultNavHost="false"
                 app:navGraph="@navigation/signin_navigation" />
-            
+
             <!--<androidx.fragment.app.FragmentContainerView
                 android:id="@+id/signInFragmentContainerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:name="com.banglalink.toffee.ui.login.SignInContentFragment" />-->
-            
+
         </androidx.core.widget.NestedScrollView>
     </androidx.constraintlayout.motion.widget.MotionLayout>
 </layout>

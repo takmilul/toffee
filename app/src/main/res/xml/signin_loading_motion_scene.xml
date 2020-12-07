@@ -13,32 +13,32 @@
                 motion:motionTarget="@+id/splashLineImageView"
                 motion:framePosition="70"
                 motion:keyPositionType="deltaRelative"
-                motion:percentY="1.02" />
+                motion:percentY="1.15" />
             <KeyPosition
                 motion:motionTarget="@+id/splashPinkImageView"
                 motion:framePosition="70"
                 motion:keyPositionType="deltaRelative"
-                motion:percentY="1.02" />
+                motion:percentY="1.15" />
             <KeyPosition
                 motion:motionTarget="@+id/splashWhiteImageView"
                 motion:framePosition="70"
                 motion:keyPositionType="deltaRelative"
-                motion:percentY="1.02" />
+                motion:percentY="1.15" />
             <KeyPosition
                 motion:motionTarget="@+id/splashLogoImageView"
                 motion:framePosition="70"
                 motion:keyPositionType="deltaRelative"
-                motion:percentY="1.02" />
+                motion:percentY="1.15" />
             <KeyPosition
                 motion:motionTarget="@+id/splashLogoTitleImageView"
                 motion:framePosition="70"
                 motion:keyPositionType="deltaRelative"
-                motion:percentY="1.02" />
+                motion:percentY="1.15" />
             <KeyPosition
                 motion:motionTarget="@+id/nestedScrollView"
-                motion:framePosition="75"
+                motion:framePosition="70"
                 motion:keyPositionType="deltaRelative"
-                motion:percentY="1.02" />
+                motion:percentY="1.025" />
         </KeyFrameSet>
     </Transition>
 
