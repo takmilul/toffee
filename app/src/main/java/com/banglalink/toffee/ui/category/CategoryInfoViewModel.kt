@@ -28,7 +28,7 @@ class CategoryInfoViewModel @ViewModelInject constructor(
         viewModelScope.launch {
             val featureContentApi = featureContentFactory.create(
                 ApiCategoryRequestParams(
-                    "VOD", 1, categoryId.toInt()
+                    "VOD", 2, categoryId.toInt()
                 )
             )
 
