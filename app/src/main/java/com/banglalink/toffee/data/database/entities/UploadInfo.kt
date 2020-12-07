@@ -9,7 +9,6 @@ data class UploadInfo(
     @PrimaryKey(autoGenerate = true)
     val uploadId: Long? = null,
 
-    val serverContentId: Long,
     val fileUri: String,
     var fileName: String,
 
@@ -28,5 +27,6 @@ data class UploadInfo(
     var ageGroup: String? = null,
     var ageGroupIndex: Int = 0,
     var submitToChallenge: String? = null,
-    var submitToChallengeIndex: Int = 0
+    var submitToChallengeIndex: Int = 0,
+    val serverContentId: Long,
 )

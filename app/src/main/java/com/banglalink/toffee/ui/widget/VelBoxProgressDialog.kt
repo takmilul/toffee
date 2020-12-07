@@ -25,7 +25,7 @@ class VelBoxProgressDialog(context: Context) : Dialog(context, R.style.Transpare
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
 
-        layout.addView(LayoutInflater.from(context).inflate(R.layout.gif_layout, null), params)
+        layout.addView(LayoutInflater.from(context).inflate(R.layout.gif_layout_new, null), params)
         addContentView(layout, params)
     }
 
