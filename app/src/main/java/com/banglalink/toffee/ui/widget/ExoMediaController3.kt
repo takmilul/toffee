@@ -25,6 +25,7 @@ import com.banglalink.toffee.ui.widget.DraggerLayout.OnPositionChangedListener
 import com.banglalink.toffee.util.Utils
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.Player.EventListener
+import kotlinx.android.synthetic.main.media_control_layout3.view.*
 import java.util.*
 import kotlin.math.max
 import kotlin.math.min
@@ -32,37 +33,36 @@ import kotlin.math.min
 /**
  * Created by shantanu on 5/4/16.
  */
-class ExoMediaController3 : FrameLayout, OnClickListener, OnSeekBarChangeListener, EventListener, OnPositionChangedListener, SurfaceTextureListener {
-    private var inflater: LayoutInflater
+class ExoMediaController3 @JvmOverloads constructor(context: Context,
+                          attrs: AttributeSet? = null,
+                          defStyleAttr: Int = 0
+):FrameLayout(context, attrs, defStyleAttr),
+    OnClickListener,
+    OnSeekBarChangeListener,
+    EventListener,
+    OnPositionChangedListener,
+    SurfaceTextureListener
+{
     private var handler: MessageHandler
-    private val onPlayerControllerChangedListeners: MutableList<OnPlayerControllerChangedListener> = ArrayList()
+    private val onPlayerControllerChangedListeners = mutableListOf<OnPlayerControllerChangedListener>()
     private var simpleExoPlayer: Player? = null
-    private var mFormatBuilder: StringBuilder? = null
-    private var mFormatter: Formatter? = null
+    private lateinit var mFormatBuilder: StringBuilder
+    private lateinit var mFormatter: Formatter
     private var isMinimize = false
-    var lastPlayerPosition: Long = 0
-        private set
+    private var lastPlayerPosition: Long = 0
     var isAutoRotationEnabled = true
-        private set
     private var mPlayListListener: PlaylistListener? = null
     private val videoWidth = 1920
     private val videoHeight = 1080
     private lateinit var binding: MediaControlLayout3Binding
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
-        inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+    init {
         handler = MessageHandler()
         initView()
     }
 
-    constructor(context: Context) : super(context) {
-        inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        handler = MessageHandler()
-        initView()
-    }
-
-    fun addPlayerControllerChangeListener(onPlayerControllerChangedListener: OnPlayerControllerChangedListener) {
-        onPlayerControllerChangedListeners.add(onPlayerControllerChangedListener)
+    fun addPlayerControllerChangeListener(listener: OnPlayerControllerChangedListener) {
+        onPlayerControllerChangedListeners.add(listener)
     }
 
     fun setPlaylistListener(listener: PlaylistListener?) {
@@ -74,6 +74,7 @@ class ExoMediaController3 : FrameLayout, OnClickListener, OnSeekBarChangeListene
     }
 
     private fun initView() {
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         binding = DataBindingUtil.inflate(inflater, layout.media_control_layout3, this, true)
         binding.minimize.setOnClickListener(this)
         binding.play.setOnClickListener(this)
@@ -100,8 +101,8 @@ class ExoMediaController3 : FrameLayout, OnClickListener, OnSeekBarChangeListene
     }
 
     //Use this method to set and unset the player
-    fun setPlayer(simpleExoPlayer: Player?) {
-        if (this.simpleExoPlayer === simpleExoPlayer) {
+    fun setPlayer(newPlayer: Player?) {
+        if (this.simpleExoPlayer === newPlayer) {
             return
         }
         binding.textureView.surfaceTextureListener = this
@@ -111,25 +112,28 @@ class ExoMediaController3 : FrameLayout, OnClickListener, OnSeekBarChangeListene
         val oldPlayer = this.simpleExoPlayer //get reference of old player which attached previously
         if (oldPlayer != null) { //if old player not null then clear it
             oldPlayer.removeListener(this)
-            if (oldPlayer.videoComponent != null) {
-                oldPlayer.videoComponent!!.clearVideoTextureView(binding.textureView)
-            }
+            oldPlayer.videoComponent?.clearVideoTextureView(binding.textureView)
         }
-        this.simpleExoPlayer = simpleExoPlayer
+        this.simpleExoPlayer = newPlayer
         if (this.simpleExoPlayer != null) {
-            this.simpleExoPlayer!!.addListener(this)
-            if (binding.textureView.isAvailable && this.simpleExoPlayer!!.videoComponent != null) {
-                this.simpleExoPlayer!!.videoComponent!!.setVideoTextureView(binding.textureView)
+            this.simpleExoPlayer?.addListener(this)
+            if (binding.textureView.isAvailable) {
+                this.simpleExoPlayer?.videoComponent?.setVideoTextureView(binding.textureView)
             }
         }
     }
 
     private fun forward() {
-        if (simpleExoPlayer != null) simpleExoPlayer!!.seekTo(min(simpleExoPlayer!!.currentPosition + FORWARD_BACKWARD_DURATION_IN_MILLIS, simpleExoPlayer!!.duration))
+        simpleExoPlayer?.let {
+            it.seekTo(min(it.currentPosition + FORWARD_BACKWARD_DURATION_IN_MILLIS, it.duration))
+        }
     }
 
     private fun backward() {
-        if (simpleExoPlayer != null) simpleExoPlayer!!.seekTo(max(0, simpleExoPlayer!!.currentPosition - FORWARD_BACKWARD_DURATION_IN_MILLIS))
+        simpleExoPlayer?.let {
+            it.seekTo(max(0, it.currentPosition - FORWARD_BACKWARD_DURATION_IN_MILLIS))
+        }
+
     }
 
     fun showWifiOnlyMessage() {
@@ -156,9 +160,12 @@ class ExoMediaController3 : FrameLayout, OnClickListener, OnSeekBarChangeListene
         handler.removeCallbacks(hideRunnable)
         if (binding.controller.visibility != VISIBLE && !isMinimize) {
             binding.controller.visibility = VISIBLE
-            for (onPlayerControllerChangedListener in onPlayerControllerChangedListeners) {
-                onPlayerControllerChangedListener.onControllerVisible()
+            onPlayerControllerChangedListeners.forEach {
+                it.onControllerVisible()
             }
+//            for (onPlayerControllerChangedListener in onPlayerControllerChangedListeners) {
+//                onPlayerControllerChangedListener.onControllerVisible()
+//            }
             status = true
         }
         updateSeekBar()
@@ -168,43 +175,47 @@ class ExoMediaController3 : FrameLayout, OnClickListener, OnSeekBarChangeListene
     private var hideRunnable = Runnable {
         if (binding.controller.visibility != GONE) {
             binding.controller.visibility = GONE
-            for (onPlayerControllerChangedListener in onPlayerControllerChangedListeners) {
-                onPlayerControllerChangedListener.onControllerInVisible()
+            onPlayerControllerChangedListeners.forEach {
+                it.onControllerInVisible()
             }
+//            for (onPlayerControllerChangedListener in onPlayerControllerChangedListeners) {
+//                onPlayerControllerChangedListener.onControllerInVisible()
+//            }
         }
     }
 
     private fun updateSeekBar() {
-        if (simpleExoPlayer == null) {
-            return
-        }
-        lastPlayerPosition = simpleExoPlayer!!.currentPosition
-        val duration = simpleExoPlayer!!.duration
-        if (duration > 0 && !simpleExoPlayer!!.isCurrentWindowLive) {
-            // use long to avoid overflow
-            val pos = 1000L * lastPlayerPosition / duration
-            binding.progress.isEnabled = true
-            binding.progress.visibility = VISIBLE
-            binding.progress.progress = pos.toInt()
-            binding.duration.visibility = VISIBLE
-            binding.timeSeperator.visibility = VISIBLE
-            binding.currentTime.visibility = VISIBLE
-        }
-        else {
-            binding.progress.isEnabled = false
-            binding.progress.visibility = GONE
-            binding.duration.visibility = INVISIBLE
-            binding.timeSeperator.visibility = INVISIBLE
-            binding.currentTime.visibility = INVISIBLE
-        }
-        val percent = simpleExoPlayer!!.bufferedPercentage
-        binding.progress.secondaryProgress = percent * 10
-        binding.duration.text = stringForTime(duration)
-        binding.currentTime.text = stringForTime(lastPlayerPosition)
-        if (visibility == VISIBLE && simpleExoPlayer!!.isPlaying) {
-            val msg = Message()
-            msg.what = UPDATE_PROGRESS
-            handler.sendMessageDelayed(msg, 1000)
+        simpleExoPlayer?.let {
+            lastPlayerPosition = it.currentPosition
+            val duration = it.duration
+            if (duration > 0 && !it.isCurrentWindowLive) {
+                // use long to avoid overflow
+                val pos = 1000L * lastPlayerPosition / duration
+                binding.progress.isEnabled = true
+                binding.progress.visibility = VISIBLE
+                binding.progress.progress = pos.toInt()
+                binding.duration.visibility = VISIBLE
+                binding.timeSeperator.visibility = VISIBLE
+                binding.currentTime.visibility = VISIBLE
+            }
+            else {
+                binding.progress.isEnabled = false
+                binding.progress.visibility = GONE
+                binding.duration.visibility = INVISIBLE
+                binding.timeSeperator.visibility = INVISIBLE
+                binding.currentTime.visibility = INVISIBLE
+            }
+            val percent = it.bufferedPercentage
+            binding.progress.secondaryProgress = percent * 10
+            binding.duration.text = stringForTime(duration)
+            binding.currentTime.text = stringForTime(lastPlayerPosition)
+            if (visibility == VISIBLE && it.isPlaying) {
+//                val msg = Message()
+//                msg.what = UPDATE_PROGRESS
+                handler.sendMessageDelayed(Message().apply {
+                    what = UPDATE_PROGRESS
+                }, 1000)
+            }
         }
     }
 
@@ -213,12 +224,12 @@ class ExoMediaController3 : FrameLayout, OnClickListener, OnSeekBarChangeListene
         val seconds = (totalSeconds % 60).toInt()
         val minutes = (totalSeconds / 60 % 60).toInt()
         val hours = (totalSeconds / 3600).toInt()
-        mFormatBuilder!!.setLength(0)
+        mFormatBuilder.setLength(0)
         return if (hours > 0) {
-            mFormatter!!.format("%d:%02d:%02d", hours, minutes, seconds).toString()
+            mFormatter.format("%d:%02d:%02d", hours, minutes, seconds).toString()
         }
         else {
-            mFormatter!!.format("%02d:%02d", minutes, seconds).toString()
+            mFormatter.format("%02d:%02d", minutes, seconds).toString()
         }
     }
 
@@ -231,11 +242,12 @@ class ExoMediaController3 : FrameLayout, OnClickListener, OnSeekBarChangeListene
         if (!fromUser && seekBar === binding.progress) {
             return
         }
-        if (seekBar === binding.progress && simpleExoPlayer != null) {
-            val duration = simpleExoPlayer!!.duration
-            val newPosition = duration * progress / 1000L
-            simpleExoPlayer!!.seekTo(newPosition)
-            binding.currentTime.text = stringForTime(newPosition)
+        if (seekBar === binding.progress) {
+            simpleExoPlayer?.let {
+                val newPosition = it.duration * progress / 1000L
+                it.seekTo(newPosition)
+                binding.currentTime.text = stringForTime(newPosition)
+            }
         }
     }
 
@@ -255,7 +267,7 @@ class ExoMediaController3 : FrameLayout, OnClickListener, OnSeekBarChangeListene
         binding.root.keepScreenOn = true
         isMinimize = false
         binding.textureView.setOnClickListener(this)
-        if (simpleExoPlayer != null && simpleExoPlayer!!.isPlaying) {
+        if (simpleExoPlayer?.isPlaying == true) {
             hideControls(2000)
         }
         else {
@@ -265,15 +277,11 @@ class ExoMediaController3 : FrameLayout, OnClickListener, OnSeekBarChangeListene
 
     override fun onViewDestroy() {
         binding.root.keepScreenOn = false
-        if (simpleExoPlayer != null) {
-            simpleExoPlayer!!.stop()
-        }
+        simpleExoPlayer?.stop()
     }
 
     override fun onSurfaceTextureAvailable(surfaceTexture: SurfaceTexture, i: Int, i1: Int) {
-        if (simpleExoPlayer != null && simpleExoPlayer!!.videoComponent != null) {
-            simpleExoPlayer!!.videoComponent!!.setVideoTextureView(binding.textureView)
-        }
+        simpleExoPlayer?.videoComponent?.setVideoTextureView(binding.textureView)
     }
 
     override fun onSurfaceTextureSizeChanged(surfaceTexture: SurfaceTexture, i: Int, i1: Int) {}
@@ -316,86 +324,92 @@ class ExoMediaController3 : FrameLayout, OnClickListener, OnSeekBarChangeListene
     }
 
     override fun onClick(v: View) {
-        if (v === binding.play && simpleExoPlayer != null) {
-            if (simpleExoPlayer!!.isPlaying) {
-                simpleExoPlayer!!.playWhenReady = false
-                showControls()
-            }
-            else {
-                if (simpleExoPlayer!!.playbackState == Player.STATE_ENDED) {
-                    simpleExoPlayer!!.seekTo(0)
-                }
-                simpleExoPlayer!!.playWhenReady = true
-                hideControls(3000)
-                if (simpleExoPlayer!!.playWhenReady && simpleExoPlayer!!.playbackState == Player.STATE_IDLE) {
-                    for (onPlayerControllerChangedListener in onPlayerControllerChangedListeners) {
-                        onPlayerControllerChangedListener.onPlayerIdleDueToError()
+        when(v) {
+            binding.play-> {
+                simpleExoPlayer?.let {
+                    if (it.isPlaying) {
+                        it.playWhenReady = false
+                        showControls()
+                    }
+                    else {
+                        if (it.playbackState == Player.STATE_ENDED) {
+                            it.seekTo(0)
+                        }
+                        it.playWhenReady = true
+                        hideControls(3000)
+                        if (it.playWhenReady && it.playbackState == Player.STATE_IDLE) {
+                            onPlayerControllerChangedListeners.forEach { listener->
+                                listener.onPlayerIdleDueToError()
+                            }
+                        }
+                    }
+                    updateSeekBar()
+                    onPlayerControllerChangedListeners.forEach { listener->
+                        listener.onPlayButtonPressed(it.playbackState)
                     }
                 }
             }
-            updateSeekBar()
-            for (OnPlayerControllerChangedListener in onPlayerControllerChangedListeners) {
-                OnPlayerControllerChangedListener.onPlayButtonPressed(simpleExoPlayer!!.playbackState)
-            }
-        }
-        else if (v === binding.videoOption && binding.videoOption.isEnabled) {
-            for (OnPlayerControllerChangedListener in onPlayerControllerChangedListeners) {
-                OnPlayerControllerChangedListener.onOptionMenuPressed()
-            }
-        }
-        else if (v === binding.fullscreen) {
-            for (onPlayerControllerChangedListener in onPlayerControllerChangedListeners) {
-                onPlayerControllerChangedListener.onFullScreenButtonPressed()
-            }
-        }
-        else if (v === binding.share) {
-            for (onPlayerControllerChangedListener in onPlayerControllerChangedListeners) {
-                onPlayerControllerChangedListener.onShareButtonPressed()
-            }
-        }
-        else if (v === binding.minimize) {
-            for (onPlayerControllerChangedListener in onPlayerControllerChangedListeners) {
-                onPlayerControllerChangedListener.onMinimizeButtonPressed()
-            }
-        }
-        else if (v === binding.drawer) {
-            for (onPlayerControllerChangedListener in onPlayerControllerChangedListeners) {
-                onPlayerControllerChangedListener.onDrawerButtonPressed()
-            }
-        }
-        else if (v === binding.preview) {
-            if (showControls()) {
-                if (simpleExoPlayer != null && simpleExoPlayer!!.isPlaying) {
-                    hideControls(3000)
+            binding.videoOption-> {
+                if(binding.videoOption.isEnabled) {
+                    onPlayerControllerChangedListeners.forEach {
+                        it.onOptionMenuPressed()
+                    }
                 }
             }
-            else {
-                hideControls(0)
+            binding.fullscreen -> {
+                onPlayerControllerChangedListeners.forEach {
+                    it.onFullScreenButtonPressed()
+                }
             }
-        }
-        else if (v === binding.forward) {
-            forward()
-        }
-        else if (v === binding.backward) {
-            backward()
-        }
-        else if (v === binding.playPrev) {
-            if (mPlayListListener != null) mPlayListListener!!.playPrevious()
-        }
-        else if (v === binding.playNext) {
-            if (mPlayListListener != null) mPlayListListener!!.playNext()
-        }
-        else if (v === binding.rotation) {
-            if (isAutoRotationEnabled) {
-                isAutoRotationEnabled = false
-                binding.rotation.setImageResource(mipmap.rotation_off)
+            binding.share -> {
+                onPlayerControllerChangedListeners.forEach {
+                    it.onShareButtonPressed()
+                }
             }
-            else {
-                isAutoRotationEnabled = true
-                binding.rotation.setImageResource(drawable.ic_screen_rotate)
+            binding.minimize -> {
+                onPlayerControllerChangedListeners.forEach {
+                    it.onMinimizeButtonPressed()
+                }
             }
-            for (OnPlayerControllerChangedListener in onPlayerControllerChangedListeners) {
-                OnPlayerControllerChangedListener.onRotationLock(isAutoRotationEnabled)
+            binding.drawer -> {
+                onPlayerControllerChangedListeners.forEach {
+                    it.onDrawerButtonPressed()
+                }
+            }
+            binding.preview -> {
+                if (showControls()) {
+                    if (simpleExoPlayer?.isPlaying == true) {
+                        hideControls(3000)
+                    }
+                }
+                else {
+                    hideControls(0)
+                }
+            }
+            binding.forward -> {
+                forward()
+            }
+            binding.backward -> {
+                backward()
+            }
+            binding.playPrev -> {
+                mPlayListListener?.playPrevious()
+            }
+            binding.playNext -> {
+                mPlayListListener?.playNext()
+            }
+            binding.rotation -> {
+                if (isAutoRotationEnabled) {
+                    isAutoRotationEnabled = false
+                    binding.rotation.setImageResource(mipmap.rotation_off)
+                }
+                else {
+                    isAutoRotationEnabled = true
+                    binding.rotation.setImageResource(drawable.ic_screen_rotate)
+                }
+                onPlayerControllerChangedListeners.forEach {
+                    it.onRotationLock(isAutoRotationEnabled)
+                }
             }
         }
     }
@@ -423,9 +437,8 @@ class ExoMediaController3 : FrameLayout, OnClickListener, OnSeekBarChangeListene
                 binding.play.visibility = VISIBLE
                 binding.forward.visibility = INVISIBLE
                 binding.backward.visibility = INVISIBLE
-                if (mPlayListListener != null &&
-                    mPlayListListener!!.isAutoplayEnabled() &&
-                    mPlayListListener!!.hasNext()
+                if (mPlayListListener?.isAutoplayEnabled() == true &&
+                    mPlayListListener?.hasNext() == true
                 ) {
                     binding.autoplayProgress.visibility = VISIBLE
                     startAutoPlayTimer()
@@ -433,13 +446,13 @@ class ExoMediaController3 : FrameLayout, OnClickListener, OnSeekBarChangeListene
                 else {
                     binding.autoplayProgress.visibility = GONE
                 }
-                if (mPlayListListener != null && !mPlayListListener!!.hasNext()) {
+                if (mPlayListListener?.hasNext() == false) {
                     binding.playNext.visibility = GONE
                 }
                 else {
                     binding.playNext.visibility = VISIBLE
                 }
-                if (mPlayListListener != null && !mPlayListListener!!.hasPrevious()) {
+                if (mPlayListListener?.hasPrevious() == false) {
                     binding.playPrev.visibility = GONE
                 }
                 else {
@@ -473,7 +486,7 @@ class ExoMediaController3 : FrameLayout, OnClickListener, OnSeekBarChangeListene
                     binding.play.setImageResource(drawable.ic_player_pause)
                     binding.buffering.visibility = GONE
                     binding.play.visibility = VISIBLE
-                    if (simpleExoPlayer != null && simpleExoPlayer!!.isCurrentWindowLive) {
+                    if (simpleExoPlayer?.isCurrentWindowLive == true) {
                         binding.forward.visibility = INVISIBLE
                         binding.backward.visibility = INVISIBLE
                     }
@@ -488,7 +501,7 @@ class ExoMediaController3 : FrameLayout, OnClickListener, OnSeekBarChangeListene
                     binding.play.setImageResource(drawable.ic_player_play)
                     binding.buffering.visibility = GONE
                     binding.play.visibility = VISIBLE
-                    if (simpleExoPlayer != null && simpleExoPlayer!!.isCurrentWindowLive) {
+                    if (simpleExoPlayer?.isCurrentWindowLive == true) {
                         binding.forward.visibility = INVISIBLE
                         binding.backward.visibility = INVISIBLE
                     }
@@ -504,22 +517,18 @@ class ExoMediaController3 : FrameLayout, OnClickListener, OnSeekBarChangeListene
         }
     }
 
-    private val AUTOPLAY_INTERVAL = 5000L
     private var timer: CountDownTimer? = null
+    
     private fun startAutoPlayTimer() {
-        if (timer != null) {
-            timer!!.cancel()
-        }
+        timer?.cancel()
         binding.autoplayProgress.progress = 0f
         binding.autoplayProgress.setProgressWithAnimation(1000f, AUTOPLAY_INTERVAL)
         timer = object : CountDownTimer(AUTOPLAY_INTERVAL, AUTOPLAY_INTERVAL) {
-            override fun onTick(millisUntilFinished: Long) {
-//                int progress = (int)(5000 - millisUntilFinished) / 5;
-            }
+            override fun onTick(millisUntilFinished: Long) { }
 
             override fun onFinish() {
-                if (mPlayListListener != null && mPlayListListener!!.hasNext()) {
-                    mPlayListListener!!.playNext()
+                if (mPlayListListener?.hasNext() == true) {
+                    mPlayListListener?.playNext()
                 }
             }
         }
@@ -527,9 +536,7 @@ class ExoMediaController3 : FrameLayout, OnClickListener, OnSeekBarChangeListene
     }
 
     private fun stopAutoplayTimer() {
-        if (timer != null) {
-            timer!!.cancel()
-        }
+        timer?.cancel()
     }
 
     fun resizeView(size: Point) {
@@ -561,5 +568,6 @@ class ExoMediaController3 : FrameLayout, OnClickListener, OnSeekBarChangeListene
     companion object {
         private const val UPDATE_PROGRESS = 21
         private const val FORWARD_BACKWARD_DURATION_IN_MILLIS = 10000
+        private const val AUTOPLAY_INTERVAL = 5000L
     }
 }
