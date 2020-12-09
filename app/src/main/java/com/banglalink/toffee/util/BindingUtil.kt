@@ -93,7 +93,6 @@ fun bindCategoryImage(view: ImageView, category: UgcCategory) {
         view.setImageResource(R.drawable.ic_cat_music)
     }
     else {
-        Log.e("CATEGORY", "$category")
         view.load(category.categoryIcon) {
             crossfade(false)
             fallback(R.drawable.placeholder)

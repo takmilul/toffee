@@ -85,7 +85,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
     private fun observeList() {
         lifecycleScope.launchWhenStarted {
             val content = if (categoryInfo == null) {
-                viewModel.loadUserChannels()
+                viewModel.loadUserChannels
             }
             else {
                 viewModel.loadUserChannelsByCategory(categoryInfo!!)

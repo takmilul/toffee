@@ -23,7 +23,7 @@ class UserActivitiesListFragment: BaseListFragment<UserActivities>(),
     override val mViewModel by viewModels<UserActivitiesListViewModel>()
     override val mAdapter by lazy { UserActivitiesListAdapter(this) }
     private val homeViewModel by activityViewModels<HomeViewModel>()
-    private val landingPageViewModel by viewModels<LandingPageViewModel>()
+    private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
 
     companion object {
         fun newInstance(): UserActivitiesListFragment {

@@ -25,7 +25,6 @@ import com.banglalink.toffee.ui.widget.DraggerLayout.OnPositionChangedListener
 import com.banglalink.toffee.util.Utils
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.Player.EventListener
-import kotlinx.android.synthetic.main.media_control_layout3.view.*
 import java.util.*
 import kotlin.math.max
 import kotlin.math.min

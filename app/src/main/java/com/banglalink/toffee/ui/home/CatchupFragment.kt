@@ -15,7 +15,7 @@ class CatchupFragment : CommonSingleListFragment() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        viewModel.parseBundle(arguments!!)
+        viewModel.parseBundle(requireArguments())
         super.onCreate(savedInstanceState)
 
     }

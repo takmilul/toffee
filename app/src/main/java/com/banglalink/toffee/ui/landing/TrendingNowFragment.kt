@@ -57,7 +57,7 @@ class TrendingNowFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
     private fun observeList() {
         lifecycleScope.launchWhenStarted {
             val content = if(categoryInfo == null) {
-                viewModel.loadTrendingNowContent()
+                viewModel.loadTrendingNowContent
             } else {
                 viewModel.loadTrendingNowContentByCategory(categoryInfo!!)
             }

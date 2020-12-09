@@ -13,7 +13,9 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.apiservice.*
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
+import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.data.network.request.ChannelRequestParams
+import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.enums.PageType.Category
@@ -27,6 +29,7 @@ class LandingPageViewModel @ViewModelInject constructor(
     private val mostPopularApi: GetMostPopularContents,
     private val mostPopularPlaylists: GetMostPopularPlaylists,
     private val categoryListApi: GetUgcCategories,
+    private val tvChannelRepo: TVChannelRepository,
     private val popularChannelAssistedFactory: GetUgcPopularUserChannels.AssistedFactory,
     private val trendingNowAssistedFactory: GetUgcTrendingNowContents.AssistedFactory,
     private val featuredContentAssistedFactory: GetFeatureContents.AssistedFactory,
@@ -36,36 +39,36 @@ class LandingPageViewModel @ViewModelInject constructor(
     val pageType: MutableLiveData<PageType> = MutableLiveData()
     val categoryId: MutableLiveData<Int> = MutableLiveData()
 
-    fun loadChannels(): Flow<PagingData<ChannelInfo>>{
-        return channelRepo.getList().cachedIn(viewModelScope)
+    val loadChannels by lazy {
+        channelRepo.getList().cachedIn(viewModelScope)
     }
 
-    fun loadLatestVideos(): Flow<PagingData<ChannelInfo>> {
-        return latestVideosRepo.getList().cachedIn(viewModelScope)
+    val loadLatestVideos by lazy {
+        latestVideosRepo.getList().cachedIn(viewModelScope)
     }
 
-    fun loadMostPopularVideos(): Flow<PagingData<ChannelInfo>> {
-        return mostPopularRepo.getList().cachedIn(viewModelScope)
+    val loadMostPopularVideos by lazy {
+        mostPopularRepo.getList().cachedIn(viewModelScope)
     }
 
     fun loadMostPopularPlaylists(): Flow<PagingData<MyChannelPlaylist>> {
         return mostPopularPlaylistsRepo.getList()
     }
 
-    fun loadFeatureContents(): Flow<PagingData<ChannelInfo>>{
-        return featureRepo.getList().cachedIn(viewModelScope)
+    val loadFeatureContents by lazy {
+        featureRepo.getList().cachedIn(viewModelScope)
     }
 
-    fun loadCategories(): Flow<PagingData<UgcCategory>> {
-        return categoryListRepo.getList().cachedIn(viewModelScope)
+    val loadCategories by lazy {
+        categoryListRepo.getList().cachedIn(viewModelScope)
     }
 
-    fun loadTrendingNowContent(): Flow<PagingData<ChannelInfo>> {
-        return trendingNowRepo.getList().cachedIn(viewModelScope)
+    val loadTrendingNowContent by lazy{
+        trendingNowRepo.getList().cachedIn(viewModelScope)
     }
 
-    fun loadUserChannels(): Flow<PagingData<UgcUserChannelInfo>> {
-        return userChannelRepo.getList().cachedIn(viewModelScope)
+    val loadUserChannels by lazy {
+        userChannelRepo.getList().cachedIn(viewModelScope)
     }
 
     private val userChannelRepo by lazy {
