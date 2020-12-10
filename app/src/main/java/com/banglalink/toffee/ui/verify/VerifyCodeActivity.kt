@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.databinding.LayoutLoginConfirmBinding
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource
@@ -103,6 +104,7 @@ class VerifyCodeActivity : BaseAppCompatActivity(){
                     finish()
                 }
                 is Resource.Failure -> {
+                    ToffeeAnalytics.logApiError("confirmCode",it.error.msg)
                     binding.root.snack(it.error.msg) {
                         action("Retry") {
                             verifyCode(binding.codeNumber.text.toString())

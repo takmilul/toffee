@@ -109,6 +109,7 @@ class SigninByPhoneActivity : BaseAppCompatActivity() {
                             showInvalidReferralCodeDialog(it.error.msg, it.error.additionalMsg)
                         }
                         else -> {
+                            ToffeeAnalytics.logApiError("reRegistration",it.error.msg,phoneNo)
                             binding.root.snack(it.error.msg) {
                                 action("Retry") {
                                     handleLogin()
