@@ -60,7 +60,7 @@ class PopularTVChannelsFragment: HomeBaseFragment() {
 
     private fun observeList() {
         lifecycleScope.launchWhenStarted {
-            viewModel.loadChannels().collectLatest {
+            viewModel.loadChannels.collectLatest {
                 mAdapter.submitData(it)
             }
         }

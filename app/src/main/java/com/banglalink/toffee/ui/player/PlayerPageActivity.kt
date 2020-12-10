@@ -1,12 +1,10 @@
 package com.banglalink.toffee.ui.player
 
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R.id
 import com.banglalink.toffee.R.string
@@ -47,12 +45,9 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import java.net.CookieHandler
 import java.net.CookieManager
 import java.net.CookiePolicy
+import kotlin.math.max
 
-/**
- * Created by shantanu on 5/5/17.
- */
 abstract class PlayerPageActivity : BaseAppCompatActivity(), OnPlayerControllerChangedListener, EventListener, PlaylistListener {
-    protected var handler: Handler? = null
     protected var player: SimpleExoPlayer? = null
     private var defaultTrackSelector: DefaultTrackSelector? = null
     private var trackSelectorParameters: Parameters? = null
@@ -62,27 +57,24 @@ abstract class PlayerPageActivity : BaseAppCompatActivity(), OnPlayerControllerC
     private var startWindow = 0
     private var startPosition: Long = 0
     private val playerEventListener: PlayerEventListener = PlayerEventListener()
+    private var defaultCookieManager = CookieManager()
+
+    init {
+        defaultCookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER)
+    }
 
     companion object {
-        //    @Nullable
-        //    protected ChannelInfo channelInfo;
-        private var DEFAULT_COOKIE_MANAGER: CookieManager? = null
         private const val KEY_TRACK_SELECTOR_PARAMETERS = "track_selector_parameters"
         private const val KEY_WINDOW = "window"
         private const val KEY_POSITION = "position"
         private const val KEY_AUTO_PLAY = "auto_play"
 
-        init {
-            DEFAULT_COOKIE_MANAGER = CookieManager()
-            DEFAULT_COOKIE_MANAGER!!.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER)
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        handler = Handler()
-        if (CookieHandler.getDefault() !== DEFAULT_COOKIE_MANAGER) {
-            CookieHandler.setDefault(DEFAULT_COOKIE_MANAGER)
+        if (CookieHandler.getDefault() !== defaultCookieManager) {
+            CookieHandler.setDefault(defaultCookieManager)
         }
         if (savedInstanceState != null) {
             trackSelectorParameters = savedInstanceState.getParcelable(KEY_TRACK_SELECTOR_PARAMETERS)
@@ -95,12 +87,10 @@ abstract class PlayerPageActivity : BaseAppCompatActivity(), OnPlayerControllerC
             trackSelectorParameters = builder.build()
             clearStartPosition()
         }
-        heartBeatEventLiveData.observe(this, { aBoolean: Boolean? ->  //In each heartbeat we are checking channel's expire date. Seriously??
+        heartBeatEventLiveData.observe(this, {    //In each heartbeat we are checking channel's expire date. Seriously??
             val cinfo = playlistManager.getCurrentChannel()
-            if (cinfo != null && cinfo.isExpired(mPref.getSystemTime())) {
-                if (player != null) {
-                    player!!.stop(true)
-                }
+            if (cinfo?.isExpired(mPref.getSystemTime()) == true) {
+                player?.stop(true)
                 onContentExpired() //content is expired. Notify the subclass
             }
         })
@@ -151,17 +141,19 @@ abstract class PlayerPageActivity : BaseAppCompatActivity(), OnPlayerControllerC
     private fun initializePlayer() {
         if (player == null) {
             val adaptiveTrackSelectionFactory = AdaptiveTrackSelection.Factory()
-            defaultTrackSelector = DefaultTrackSelector(this, adaptiveTrackSelectionFactory)
-            defaultTrackSelector!!.parameters = trackSelectorParameters!!
+            defaultTrackSelector = DefaultTrackSelector(this, adaptiveTrackSelectionFactory).apply {
+                parameters = trackSelectorParameters!!
+            }
             lastSeenTrackGroupArray = null
             player = Builder(this)
                 .setTrackSelector(defaultTrackSelector!!)
-                .build()
-            player!!.addListener(playerEventListener)
-            player!!.playWhenReady = false
-            if (BuildConfig.DEBUG) {
-                player!!.addAnalyticsListener(EventLogger(defaultTrackSelector))
-            }
+                .build().apply {
+                    addListener(playerEventListener)
+                    playWhenReady = false
+                    if (BuildConfig.DEBUG) {
+                        addAnalyticsListener(EventLogger(defaultTrackSelector))
+                    }
+                }
         }
         //we are checking whether there is already channelInfo exist. If not null then play it
         if (playlistManager.getCurrentChannel() != null) {
@@ -170,27 +162,27 @@ abstract class PlayerPageActivity : BaseAppCompatActivity(), OnPlayerControllerC
     }
 
     private fun releasePlayer() {
-        if (player != null) {
-            player!!.removeListener(playerEventListener)
+        player?.let {
+            it.removeListener(playerEventListener)
             updateTrackSelectorParameters()
             updateStartPosition()
-            player!!.release()
-            player = null
+            it.release()
             defaultTrackSelector = null
         }
+        player = null
     }
 
     private fun updateTrackSelectorParameters() {
         if (defaultTrackSelector != null) {
-            trackSelectorParameters = defaultTrackSelector!!.parameters
+            trackSelectorParameters = defaultTrackSelector?.parameters
         }
     }
 
     protected fun updateStartPosition() {
-        if (player != null) {
-            startAutoPlay = player!!.playWhenReady
-            startWindow = player!!.currentWindowIndex
-            startPosition = Math.max(0, player!!.contentPosition)
+        player?.let {
+            startAutoPlay = it.playWhenReady
+            startWindow = it.currentWindowIndex
+            startPosition = max(0, it.contentPosition)
         }
     }
 
@@ -206,16 +198,15 @@ abstract class PlayerPageActivity : BaseAppCompatActivity(), OnPlayerControllerC
         )
         val hlsDataSourceFactory = HlsMediaSource.Factory(dataSourceFactory)
         hlsDataSourceFactory.setAllowChunklessPreparation(true)
-        return HlsMediaSource.Factory { dataType: Int ->
+        return HlsMediaSource.Factory { _: Int ->
             val dataSource: HttpDataSource = DefaultHttpDataSource(TOFFEE_HEADER)
             dataSource.setRequestProperty("TOFFEE-SESSION-TOKEN", mPref.getHeaderSessionToken()!!)
             dataSource
         }
-            .createMediaSource(MediaItem.fromUri(uri))
+        .createMediaSource(MediaItem.fromUri(uri))
     }
 
     protected fun setPlayList(data: AddToPlaylistData) {
-        Log.e("PLAYLIST", "SetPlaylist - " + data.items.size)
         playlistManager.setPlayList(data)
     }
 
@@ -253,7 +244,7 @@ abstract class PlayerPageActivity : BaseAppCompatActivity(), OnPlayerControllerC
     protected fun addChannelToPlayList(info: ChannelInfo) {
         val cinfo = playlistManager.getCurrentChannel()
         var isReload = false
-        if (cinfo != null && cinfo.id.equals(info.id, ignoreCase = true)) {
+        if (cinfo?.id.equals(info.id, ignoreCase = true)) {
             isReload = true
         }
         else {
@@ -263,10 +254,10 @@ abstract class PlayerPageActivity : BaseAppCompatActivity(), OnPlayerControllerC
     }
 
     protected fun playChannel(isReload: Boolean) {
-        val channelInfo = playlistManager.getCurrentChannel()
+        val channelInfo = playlistManager.getCurrentChannel() ?: return
         val uri = Channel.createChannel(channelInfo).getContentUri(this)
         if (uri == null) { //in this case settings does not allow us to play content. So stop player and trigger event viewing stop
-            if (player != null) player!!.stop(true)
+            player?.stop(true)
             channelCannotBePlayedDueToSettings() //notify hook/subclass
             triggerEventViewingContentStop()
             return
@@ -278,22 +269,22 @@ abstract class PlayerPageActivity : BaseAppCompatActivity(), OnPlayerControllerC
 //        if(oldChannelInfo != null && oldChannelInfo.getId().equalsIgnoreCase(this.channelInfo.getId())){
 //            isReload = true;//that means we have reload situation. We need to start where we left for VODs
 //        }
-        if (player != null) {
-            triggerEventViewingContentStart(channelInfo!!.id.toInt(), channelInfo.type!!)
-            player!!.playWhenReady = !isReload || player!!.playWhenReady
+        player?.let {
+            triggerEventViewingContentStart(channelInfo.id.toInt(), channelInfo.type ?: "VOD")
+            it.playWhenReady = !isReload || it.playWhenReady
             val mediaSource = prepareMedia(Uri.parse(uri))
             if (isReload) { //We need to start where we left off for VODs
                 val haveStartPosition = startWindow != C.INDEX_UNSET
                 if (haveStartPosition && !channelInfo.isLive) {
-                    player!!.setMediaSource(mediaSource, false)
-                    player!!.prepare()
+                    it.setMediaSource(mediaSource, false)
+                    it.prepare()
                     //                    player.prepare(mediaSource, false, false);
-                    player!!.seekTo(startWindow, startPosition) //we seek to where we left for VODs
+                    it.seekTo(startWindow, startPosition) //we seek to where we left for VODs
                     return
                 }
             }
-            player!!.setMediaSource(mediaSource)
-            player!!.prepare()
+            it.setMediaSource(mediaSource)
+            it.prepare()
             //            player.prepare(mediaSource);//Non reload event or reload for live. Just prepare the media and play it
         }
     }
@@ -301,11 +292,9 @@ abstract class PlayerPageActivity : BaseAppCompatActivity(), OnPlayerControllerC
     //This will be called due to session token change while playing content or after init of player
     protected fun reloadChannel() {
         val cinfo = playlistManager.getCurrentChannel()
-        if (cinfo != null && cinfo.isExpired(mPref.getSystemTime())) {
+        if (cinfo?.isExpired(mPref.getSystemTime()) == true) {
             //channel is expired. Stop the player and notify hook/subclass
-            if (player != null) {
-                player!!.stop(true)
-            }
+            player?.stop(true)
             onContentExpired()
             return
         }
@@ -333,22 +322,22 @@ abstract class PlayerPageActivity : BaseAppCompatActivity(), OnPlayerControllerC
     }
 
     override fun onPlayerIdleDueToError() {
-        if (player != null && player!!.playWhenReady) {
+        if (player?.playWhenReady == true) {
             logForcePlay()
             reloadChannel()
         }
     }
 
     override fun onOptionMenuPressed(): Boolean {
-        if (defaultTrackSelector == null || defaultTrackSelector!!.currentMappedTrackInfo == null) return false
+        if (defaultTrackSelector == null || defaultTrackSelector?.currentMappedTrackInfo == null) return false
         val bottomSheetDialog = TrackSelectionDialog(this)
         bottomSheetDialog.init(defaultTrackSelector)
         lifecycle.addObserver(bottomSheetDialog)
-        bottomSheetDialog.setOnDismissListener { dialogInterface: DialogInterface? ->
+        bottomSheetDialog.setOnDismissListener {
             lifecycle.removeObserver(bottomSheetDialog)
             onTrackerDialogDismissed()
         }
-        bottomSheetDialog.setOnCancelListener { dialogInterface: DialogInterface? ->
+        bottomSheetDialog.setOnCancelListener {
             lifecycle.removeObserver(bottomSheetDialog)
             onTrackerDialogDismissed()
         }
@@ -367,10 +356,10 @@ abstract class PlayerPageActivity : BaseAppCompatActivity(), OnPlayerControllerC
 
     override fun onShareButtonPressed(): Boolean {
         val info = playlistManager.getCurrentChannel()
-        if (info != null) {
+        info?.let {
             val sharingIntent = Intent(Intent.ACTION_SEND)
             sharingIntent.type = "text/html"
-            sharingIntent.putExtra(Intent.EXTRA_TEXT, info.video_share_url)
+            sharingIntent.putExtra(Intent.EXTRA_TEXT, it.video_share_url)
             startActivity(Intent.createChooser(sharingIntent, "Share via"))
             return true
         }

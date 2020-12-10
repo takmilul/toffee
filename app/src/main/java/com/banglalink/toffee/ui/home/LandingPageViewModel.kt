@@ -15,6 +15,7 @@ import com.banglalink.toffee.apiservice.*
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
 import com.banglalink.toffee.data.network.request.ChannelRequestParams
+import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.enums.PageType
@@ -31,6 +32,7 @@ class LandingPageViewModel @ViewModelInject constructor(
     private val mostPopularApi: GetMostPopularContents,
     private val mostPopularPlaylists: GetMostPopularPlaylists,
     private val categoryListApi: GetUgcCategories,
+    private val tvChannelRepo: TVChannelRepository,
     private val popularChannelAssistedFactory: GetUgcPopularUserChannels.AssistedFactory,
     private val editorsChoiceAssistedFactory: GetUgcTrendingNowContents.AssistedFactory,
     private val featuredAssistedFactory: FeatureContentService,
@@ -45,16 +47,16 @@ class LandingPageViewModel @ViewModelInject constructor(
     private val subCategoryList: MutableLiveData<Resource<List<UgcSubCategory>>> = MutableLiveData()
     val subCategories = subCategoryList.toLiveData()
 
-    fun loadChannels(): Flow<PagingData<ChannelInfo>>{
-        return channelRepo.getList().cachedIn(viewModelScope)
+    val loadChannels by lazy {
+        channelRepo.getList().cachedIn(viewModelScope)
     }
 
-    fun loadLatestVideos(): Flow<PagingData<ChannelInfo>> {
-        return latestVideosRepo.getList().cachedIn(viewModelScope)
+    val loadLatestVideos by lazy {
+        latestVideosRepo.getList().cachedIn(viewModelScope)
     }
 
-    fun loadMostPopularVideos(): Flow<PagingData<ChannelInfo>> {
-        return mostPopularRepo.getList().cachedIn(viewModelScope)
+    val loadMostPopularVideos by lazy {
+        mostPopularRepo.getList().cachedIn(viewModelScope)
     }
 
     fun loadMostPopularPlaylists(): Flow<PagingData<MyChannelPlaylist>> {
@@ -80,8 +82,8 @@ class LandingPageViewModel @ViewModelInject constructor(
         return editorsChoiceRepo.getList().cachedIn(viewModelScope)
     }
 
-    fun loadUserChannels(): Flow<PagingData<UgcUserChannelInfo>> {
-        return userChannelRepo.getList().cachedIn(viewModelScope)
+    val loadUserChannels by lazy {
+        userChannelRepo.getList().cachedIn(viewModelScope)
     }
 
     private val userChannelRepo by lazy {

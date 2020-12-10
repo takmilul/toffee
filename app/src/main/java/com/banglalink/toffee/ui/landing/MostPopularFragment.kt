@@ -46,7 +46,7 @@ class MostPopularFragment: HomeBaseFragment(), ContentReactionCallback<ChannelIn
 
     private fun observeList() {
         lifecycleScope.launchWhenStarted {
-            viewModel.loadMostPopularVideos().collectLatest {
+            viewModel.loadMostPopularVideos.collectLatest {
                 mAdapter.submitData(it)
             }
         }

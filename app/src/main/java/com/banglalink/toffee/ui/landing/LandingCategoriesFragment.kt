@@ -72,7 +72,7 @@ class LandingCategoriesFragment: BaseFragment() {
 
     private fun observeList() {
         lifecycleScope.launchWhenStarted {
-            viewModel.loadCategories().collectLatest {
+            viewModel.loadCategories.collectLatest {
                 mAdapter.submitData(it)
             }
         }

@@ -76,7 +76,7 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
         listJob?.cancel()
         listJob = lifecycleScope.launchWhenStarted {
             val latestVideos = if(categoryId == 0) {
-                viewModel.loadLatestVideos()
+                viewModel.loadLatestVideos
             } else {
                 viewModel.loadLatestVideosByCategory(categoryId, subCategoryId)
             }
@@ -90,9 +90,9 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
         listJob?.cancel()
         listJob = lifecycleScope.launchWhenStarted {
             val trendingVideos = if(categoryId == 0) {
-                viewModel.loadMostPopularVideos()
+                viewModel.loadMostPopularVideos
             } else {
-                viewModel.loadMostPopularVideos()
+                viewModel.loadMostPopularVideos
             }
             trendingVideos.collectLatest {
                 mAdapter.submitData(it)

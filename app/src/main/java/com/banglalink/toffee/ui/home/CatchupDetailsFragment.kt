@@ -5,6 +5,7 @@ import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ConcatAdapter
@@ -31,7 +32,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
     private lateinit var currentItem: ChannelInfo
 
     private val viewModel by viewModels<CatchupDetailsViewModel>()
-    private val landingViewModel by viewModels<LandingPageViewModel>()
+    private val landingViewModel by activityViewModels<LandingPageViewModel>()
 
     companion object{
         const val CHANNEL_INFO = "channel_info_"
