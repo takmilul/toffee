@@ -46,7 +46,7 @@ class EditorsChoiceFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInf
 
     private fun observeList() {
         lifecycleScope.launchWhenStarted {
-            landingPageViewModel.loadEditorsChoiceContent().collectLatest {
+            landingPageViewModel.loadEditorsChoiceContent.collectLatest {
                 mAdapter.submitData(it)
             }
         }

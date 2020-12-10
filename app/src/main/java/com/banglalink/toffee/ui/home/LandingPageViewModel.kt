@@ -15,11 +15,10 @@ import com.banglalink.toffee.apiservice.*
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
 import com.banglalink.toffee.data.network.request.ChannelRequestParams
-import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.data.network.util.resultFromResponse
+import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.enums.PageType
-import com.banglalink.toffee.enums.PageType.Category
 import com.banglalink.toffee.enums.PageType.Landing
 import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.*
@@ -66,20 +65,22 @@ class LandingPageViewModel @ViewModelInject constructor(
     fun loadFeaturedContentList(){
         viewModelScope.launch {
             val response = featuredAssistedFactory.loadData("VOD", pageType.value?:Landing, categoryId.value?:0)
-            featuredContentList.postValue(resultFromResponse { response.channels })
+            response.channels?.let {
+                featuredContentList.postValue(resultFromResponse { it })
+            }
             response.subcategories?.let { 
                 if (it.isNotEmpty())
-                    subCategoryList.postValue(resultFromResponse { response.subcategories })
+                    subCategoryList.postValue(resultFromResponse { it })
             }
         }
     }
-    
-    fun loadCategories(): Flow<PagingData<UgcCategory>> {
-        return categoryListRepo.getList().cachedIn(viewModelScope)
+
+    val loadCategories by lazy {
+        categoryListRepo.getList().cachedIn(viewModelScope)
     }
 
-    fun loadEditorsChoiceContent(): Flow<PagingData<ChannelInfo>> {
-        return editorsChoiceRepo.getList().cachedIn(viewModelScope)
+    val loadEditorsChoiceContent by lazy {
+        editorsChoiceRepo.getList().cachedIn(viewModelScope)
     }
 
     val loadUserChannels by lazy {
@@ -165,16 +166,6 @@ class LandingPageViewModel @ViewModelInject constructor(
             BaseNetworkPagingSource(
                 getContentAssistedFactory.create(
                     ChannelRequestParams("", categoryId, "", subCategoryId, "VOD")
-                )
-            )
-        }).getList()
-    }
-
-    fun loadEditorsChoiceContentByCategory(category: UgcCategory): Flow<PagingData<ChannelInfo>> {
-        return BaseListRepositoryImpl({
-            BaseNetworkPagingSource(
-                editorsChoiceAssistedFactory.create(
-                    EditorsChoiceFeaturedRequestParams("VOD", Category, category.id.toInt())
                 )
             )
         }).getList()

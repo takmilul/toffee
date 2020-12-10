@@ -4,7 +4,6 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.TextUtils
 import android.text.style.StrikethroughSpan
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
 import android.widget.Button
@@ -53,16 +52,16 @@ fun bindRoundImage(view: ImageView, imageUrl: String?) {
         view.load(imageUrl) {
             transformations(CircleCropTransformation())
             crossfade(false)
-            fallback(R.drawable.ic_profile_default)
-            placeholder(R.drawable.ic_profile_default)
-            error(R.drawable.ic_profile_default)
+            fallback(R.drawable.ic_profile)
+            placeholder(R.drawable.ic_profile)
+            error(R.drawable.ic_profile)
 //            memoryCachePolicy(CachePolicy.ENABLED)
             diskCachePolicy(CachePolicy.ENABLED)
 //            crossfade(crossFadeDurationInMills)
         }
     }
     else {
-        view.setImageResource(R.drawable.ic_profile_default)
+        view.setImageResource(R.drawable.ic_profile)
     }
 }
 
@@ -109,15 +108,15 @@ fun bindCategoryImage(view: ImageView, category: UgcCategory) {
 fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
     if (channelInfo.isLive) {
         if (channelInfo.channel_logo.isNullOrBlank()) {
-            view.setImageResource(R.drawable.ic_profile_default)
+            view.setImageResource(R.drawable.ic_profile)
         }
         else {
             view.load(channelInfo.channel_logo) {
                 transformations(CircleCropTransformation())
                 crossfade(false)
-                fallback(R.drawable.ic_profile_default)
-                placeholder(R.drawable.ic_profile_default)
-                error(R.drawable.ic_profile_default)
+                fallback(R.drawable.ic_profile)
+                placeholder(R.drawable.ic_profile)
+                error(R.drawable.ic_profile)
 //            crossfade(crossFadeDurationInMills)
 //                memoryCachePolicy(CachePolicy.ENABLED)
                 diskCachePolicy(CachePolicy.ENABLED)
