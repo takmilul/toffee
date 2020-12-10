@@ -2,6 +2,7 @@ package com.banglalink.toffee.data.storage
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.provider.Settings
 import android.text.TextUtils
 import androidx.lifecycle.MutableLiveData
 import com.banglalink.toffee.analytics.ToffeeAnalytics
@@ -20,6 +21,11 @@ class Preference private constructor(val context: Context) {
     val sessionTokenLiveData = MutableLiveData<String>()
     val profileImageUrlLiveData = MutableLiveData<String>()
     val customerNameLiveData = MutableLiveData<String>()
+
+    val deviceId by lazy {
+        Settings.Secure.getString(context.getContentResolver(),
+            Settings.Secure.ANDROID_ID);
+    }
 
     var phoneNumber: String
         get() = pref.getString("p_number", "") ?: ""
