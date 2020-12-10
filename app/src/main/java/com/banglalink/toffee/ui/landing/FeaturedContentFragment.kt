@@ -5,32 +5,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.Resource.Failure
+import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.HomeBaseFragment
-import com.banglalink.toffee.ui.home.FeaturedListAdapter
 import com.banglalink.toffee.ui.home.LandingPageViewModel
-import com.banglalink.toffee.util.unsafeLazy
+import com.banglalink.toffee.util.Utils
 import com.google.android.material.tabs.TabLayoutMediator
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_landing_featured.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-@AndroidEntryPoint
-class FeaturedFragment: HomeBaseFragment() {
+class FeaturedContentFragment : HomeBaseFragment() {
 
-    private lateinit var mAdapter: FeaturedListAdapter
+    private lateinit var mAdapter: FeaturedContentAdapter
     private var slideJob: Job? = null
 
     val viewModel by activityViewModels<LandingPageViewModel>()
@@ -46,17 +41,17 @@ class FeaturedFragment: HomeBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mAdapter = FeaturedListAdapter(object: BaseListItemCallback<ChannelInfo> {
+        mAdapter = FeaturedContentAdapter(object : BaseListItemCallback<ChannelInfo> {
             override fun onItemClicked(item: ChannelInfo) {
                 homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
             }
         })
 
         featured_viewpager.adapter = mAdapter
-        featured_viewpager.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback() {
+        featured_viewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                mAdapter.getItemByIndex(position)?.let {
-                    featureDescription.text = it.program_name
+                mAdapter.getItem(position).let {
+                    featureDescription.text = it?.program_name
                 }
             }
         })
@@ -64,13 +59,31 @@ class FeaturedFragment: HomeBaseFragment() {
         TabLayoutMediator(featured_indicator, featured_viewpager, true) { tab_, position -> }.attach()
 
         observeList()
+        viewModel.loadFeaturedContentList()
     }
 
     private fun observeList() {
         lifecycleScope.launchWhenStarted {
-            viewModel.loadFeatureContents().collectLatest {
-                startPageScroll()
-                mAdapter.submitData(it)
+            observe(viewModel.featuredContents) {
+                when (it) {
+                    is Success -> {
+                        it.data?.let { channelInfoList ->
+                            val channels: List<ChannelInfo> = channelInfoList.map { channelInfo->
+                                channelInfo.formatted_view_count = Utils.getFormattedViewsText(channelInfo.view_count)
+                                if(!channelInfo.created_at.isNullOrEmpty()) {
+                                    channelInfo.formattedCreateTime = Utils.getDateDiffInDayOrHourOrMinute(Utils.getDate(channelInfo.created_at).time).replace(" ", "")
+                                }
+                                channelInfo.formattedSubscriberCount = Utils.getFormattedViewsText(channelInfo.subscriberCount.toString())
+                                channelInfo
+                            }
+                            startPageScroll()
+                            mAdapter.removeAll()
+                            mAdapter.addAll(channels)
+                        }
+                    }
+                    is Failure -> {
+                    }
+                }
             }
         }
     }
@@ -82,12 +95,22 @@ class FeaturedFragment: HomeBaseFragment() {
     private fun startPageScroll() {
         slideJob?.cancel()
         slideJob = lifecycleScope.launch {
-            while(isActive) {
+            while (isActive) {
                 delay(5000)
-                if(isActive && mAdapter.itemCount > 0) {
+                if (isActive && mAdapter.itemCount > 0) {
                     featured_viewpager?.currentItem = (featured_viewpager.currentItem + 1) % mAdapter.itemCount
                 }
             }
         }
+    }
+
+    override fun onStop() {
+        viewModel.featuredContents.removeObservers(this)
+        super.onStop()
+    }
+    
+    override fun onDestroy() {
+        slideJob?.cancel()
+        super.onDestroy()
     }
 }

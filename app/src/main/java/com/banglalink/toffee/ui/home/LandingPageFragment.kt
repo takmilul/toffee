@@ -9,11 +9,10 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.enums.PageType.Landing
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.HomeBaseFragment
-import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
 class LandingPageFragment : HomeBaseFragment(){
-    private val viewModel by activityViewModels<LandingPageViewModel>()
+    private val landingViewModel by activityViewModels<LandingPageViewModel>()
+    
     companion object {
         fun newInstance(): LandingPageFragment {
             return LandingPageFragment()
@@ -39,7 +38,7 @@ class LandingPageFragment : HomeBaseFragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.title = getString(R.string.app_name_short)
-        viewModel.pageType.value = Landing
-        viewModel.categoryId.value = 0
+        landingViewModel.pageType.value = Landing
+        landingViewModel.categoryId.value = 0
     }
 }

@@ -2,6 +2,7 @@ package com.banglalink.toffee.ui.home
 
 import android.os.Bundle
 import android.util.Log
+import android.util.Pair
 import androidx.fragment.app.Fragment
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
@@ -14,27 +15,35 @@ import com.banglalink.toffee.apiservice.*
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
 import com.banglalink.toffee.data.network.request.ChannelRequestParams
+import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.enums.PageType.Category
 import com.banglalink.toffee.enums.PageType.Landing
+import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.ui.mychannel.MyChannelHomeFragment
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 class LandingPageViewModel @ViewModelInject constructor(
     private val mostPopularApi: GetMostPopularContents,
     private val mostPopularPlaylists: GetMostPopularPlaylists,
     private val categoryListApi: GetUgcCategories,
     private val popularChannelAssistedFactory: GetUgcPopularUserChannels.AssistedFactory,
-    private val trendingNowAssistedFactory: GetUgcTrendingNowContents.AssistedFactory,
-    private val featuredContentAssistedFactory: GetFeatureContents.AssistedFactory,
+    private val editorsChoiceAssistedFactory: GetUgcTrendingNowContents.AssistedFactory,
+    private val featuredAssistedFactory: FeatureContentService,
     private val getContentAssistedFactory: GetContents.AssistedFactory
 ):BaseViewModel() {
+    
     val latestVideoLiveData = MutableLiveData<Pair<Int, Int>>()
     val pageType: MutableLiveData<PageType> = MutableLiveData()
     val categoryId: MutableLiveData<Int> = MutableLiveData()
+    private val featuredContentList: MutableLiveData<Resource<List<ChannelInfo>?>> = MutableLiveData()
+    val featuredContents = featuredContentList.toLiveData()
+    private val subCategoryList: MutableLiveData<Resource<List<UgcSubCategory>>> = MutableLiveData()
+    val subCategories = subCategoryList.toLiveData()
 
     fun loadChannels(): Flow<PagingData<ChannelInfo>>{
         return channelRepo.getList().cachedIn(viewModelScope)
@@ -52,16 +61,23 @@ class LandingPageViewModel @ViewModelInject constructor(
         return mostPopularPlaylistsRepo.getList()
     }
 
-    fun loadFeatureContents(): Flow<PagingData<ChannelInfo>>{
-        return featureRepo.getList().cachedIn(viewModelScope)
+    fun loadFeaturedContentList(){
+        viewModelScope.launch {
+            val response = featuredAssistedFactory.loadData("VOD", pageType.value?:Landing, categoryId.value?:0)
+            featuredContentList.postValue(resultFromResponse { response.channels })
+            response.subcategories?.let { 
+                if (it.isNotEmpty())
+                    subCategoryList.postValue(resultFromResponse { response.subcategories })
+            }
+        }
     }
-
+    
     fun loadCategories(): Flow<PagingData<UgcCategory>> {
         return categoryListRepo.getList().cachedIn(viewModelScope)
     }
 
-    fun loadTrendingNowContent(): Flow<PagingData<ChannelInfo>> {
-        return trendingNowRepo.getList().cachedIn(viewModelScope)
+    fun loadEditorsChoiceContent(): Flow<PagingData<ChannelInfo>> {
+        return editorsChoiceRepo.getList().cachedIn(viewModelScope)
     }
 
     fun loadUserChannels(): Flow<PagingData<UgcUserChannelInfo>> {
@@ -116,16 +132,6 @@ class LandingPageViewModel @ViewModelInject constructor(
         })
     }
 
-    private val featureRepo by lazy {
-        BaseListRepositoryImpl({
-            BaseNetworkPagingSource(
-                featuredContentAssistedFactory.create(
-                    EditorsChoiceFeaturedRequestParams("VOD", pageType.value?:Landing, categoryId.value?:0)
-                )
-            )
-        })
-    }
-
     private val mostPopularRepo by lazy {
         BaseListRepositoryImpl({
             BaseNetworkPagingSource(
@@ -142,10 +148,10 @@ class LandingPageViewModel @ViewModelInject constructor(
         })
     }
 
-    private val trendingNowRepo by lazy {
+    private val editorsChoiceRepo by lazy {
         BaseListRepositoryImpl({
             BaseNetworkPagingSource(
-                trendingNowAssistedFactory.create(
+                editorsChoiceAssistedFactory.create(
                     EditorsChoiceFeaturedRequestParams("VOD", pageType.value?:Landing, categoryId.value?:0)
                 )
             )
@@ -162,11 +168,11 @@ class LandingPageViewModel @ViewModelInject constructor(
         }).getList()
     }
 
-    fun loadTrendingNowContentByCategory(category: UgcCategory): Flow<PagingData<ChannelInfo>> {
+    fun loadEditorsChoiceContentByCategory(category: UgcCategory): Flow<PagingData<ChannelInfo>> {
         return BaseListRepositoryImpl({
             BaseNetworkPagingSource(
-                trendingNowAssistedFactory.create(
-                    EditorsChoiceFeaturedRequestParams("VOD", pageType.value?:Category, category.id.toInt())
+                editorsChoiceAssistedFactory.create(
+                    EditorsChoiceFeaturedRequestParams("VOD", Category, category.id.toInt())
                 )
             )
         }).getList()
@@ -189,27 +195,5 @@ class LandingPageViewModel @ViewModelInject constructor(
             putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, channelOwnerId)
             putBoolean(MyChannelHomeFragment.IS_FROM_OUTSIDE, true)
         })
-        /*if (findNavController(fragment).currentDestination?.id == R.id.menu_feed) {
-            findNavController(fragment).navigate(R.id.action_menu_feed_to_myChannelHomeFragment, Bundle().apply {
-                putInt(MyChannelHomeFragment.IS_SUBSCRIBED, subscribed)
-                Log.i("UGC_Home", "onItemClicked: $subscribed")
-                putInt(MyChannelHomeFragment.IS_OWNER, isOwner)
-                putInt(MyChannelHomeFragment.CHANNEL_ID, channelId)
-                putInt(MyChannelHomeFragment.IS_PUBLIC, isPublic)
-                putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, providerId.toInt())
-                putBoolean(MyChannelHomeFragment.IS_FROM_OUTSIDE, true)
-            })
-        }
-        else {
-            findNavController(fragment).navigate(R.id.action_categoryDetailsFragment_to_myChannelHomeFragment, Bundle().apply {
-                putInt(MyChannelHomeFragment.IS_SUBSCRIBED, subscribed)
-                Log.i("UGC_Home", "onItemClicked: $subscribed")
-                putInt(MyChannelHomeFragment.IS_OWNER, isOwner)
-                putInt(MyChannelHomeFragment.CHANNEL_ID, channelId)
-                putInt(MyChannelHomeFragment.IS_PUBLIC, isPublic)
-                putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, providerId.toInt())
-                putBoolean(MyChannelHomeFragment.IS_FROM_OUTSIDE, true)
-            })
-        }*/
     }
 }

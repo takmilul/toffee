@@ -9,44 +9,34 @@ import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.UgcCategory
-import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
+import com.banglalink.toffee.ui.home.EditorsChoiceListAdapter
 import com.banglalink.toffee.ui.home.LandingPageViewModel
-import com.banglalink.toffee.ui.home.TrendingNowVideoListAdapter
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_landing_trending.*
+import kotlinx.android.synthetic.main.fragment_editors_choice.*
 import kotlinx.coroutines.flow.collectLatest
 
-@AndroidEntryPoint
-class TrendingNowFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo> {
-    private lateinit var mAdapter: TrendingNowVideoListAdapter
-    private var categoryInfo: UgcCategory? = null
-    private val viewModel by activityViewModels<LandingPageViewModel>()
+class EditorsChoiceFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo> {
+    private lateinit var mAdapter: EditorsChoiceListAdapter
+    private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_landing_trending, container, false)
+        return inflater.inflate(R.layout.fragment_editors_choice, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        categoryInfo = parentFragment?.arguments?.getParcelable(
-            CategoryDetailsFragment.ARG_CATEGORY_ITEM)
-
-        mAdapter = TrendingNowVideoListAdapter(this)
-
+        mAdapter = EditorsChoiceListAdapter(this)
         mAdapter.addLoadStateListener {
             if(mAdapter.itemCount > 0) {
-                trendingNowHeader.visibility = View.VISIBLE
+                editorsChoiceHeader.visibility = View.VISIBLE
             }
         }
 
-        with(trendingNowList) {
+        with(editorsChoiceList) {
             isNestedScrollingEnabled = false
             adapter = mAdapter
         }
@@ -56,12 +46,7 @@ class TrendingNowFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
 
     private fun observeList() {
         lifecycleScope.launchWhenStarted {
-            val content = if(categoryInfo == null) {
-                viewModel.loadTrendingNowContent()
-            } else {
-                viewModel.loadTrendingNowContentByCategory(categoryInfo!!)
-            }
-            content.collectLatest {
+            landingPageViewModel.loadEditorsChoiceContent().collectLatest {
                 mAdapter.submitData(it)
             }
         }
@@ -77,6 +62,6 @@ class TrendingNowFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
 
     override fun onProviderIconClicked(item: ChannelInfo) {
         super.onProviderIconClicked(item)
-        viewModel.navigateToMyChannel(this, item.id.toInt(), item.channel_owner_id, item.isSubscribed)
+        landingPageViewModel.navigateToMyChannel(this, item.id.toInt(), item.channel_owner_id, item.isSubscribed)
     }
 }
