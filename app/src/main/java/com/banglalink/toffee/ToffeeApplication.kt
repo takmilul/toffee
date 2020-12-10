@@ -10,6 +10,7 @@ import coil.util.CoilUtils
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.storage.AppDatabase
+import com.banglalink.toffee.data.storage.PlayerPreference
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -32,6 +33,7 @@ class ToffeeApplication : Application() {
         AppDatabase.init(this)
         PubSubMessageUtil.init(this)
         Preference.init(this)
+        PlayerPreference.init(this)
         ToffeeAnalytics.initFireBaseAnalytics(this)
 
         initCoil()

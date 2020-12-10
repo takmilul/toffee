@@ -16,10 +16,19 @@ import com.google.api.services.pubsub.model.PublishResponse
 import com.google.api.services.pubsub.model.PubsubMessage
 import com.google.common.collect.ImmutableList
 import com.google.gson.JsonObject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+
+const val PROJECTID = "toffee-261507"
+const val TOPIC_ID = "fcm-notification-response"
+const val NOTIFICATION_TOPIC = "projects/$PROJECTID/topics/$TOPIC_ID"
+
+const val HEARTBEAT_TOPIC = "projects/$PROJECTID/topics/current_viewers_heartbeat"
+
+const val VIEWCONTENT_TOPIC = "projects/$PROJECTID/topics/current_viewers"
+const val BANDWIDTH_TRACK_TOPIC = "projects/$PROJECTID/topics/player_bandwidth"
+const val API_ERROR_TRACK_TOPIC = "projects/$PROJECTID/topics/api_error"
+const val FIREBASE_ERROR_TRACK_TOPIC = "projects/$PROJECTID/topics/firebase_connection_error"
+const val APP_LAUNCH_TOPIC = "projects/$PROJECTID/topics/app_launch"
 
 object PubSubMessageUtil {
 
@@ -27,12 +36,6 @@ object PubSubMessageUtil {
     private val coroutineContext = Dispatchers.IO + SupervisorJob()
     private val coroutineScope = CoroutineScope(coroutineContext)
 
-    private val PROJECTID = "toffee-261507"
-    private val TOPIC_ID = "fcm-notification-response"
-    private val notificationTopic = "projects/$PROJECTID/topics/$TOPIC_ID"
-    val heartBeatTopic = "projects/$PROJECTID/topics/current_viewers_heartbeat"
-    val viewContentTopic = "projects/$PROJECTID/topics/current_viewers"
-    val playerBandWidthTopic = "projects/$PROJECTID/topics/current_viewers"//todo need to change topic nam
 
     private lateinit var client:Pubsub
 
@@ -48,29 +51,32 @@ object PubSubMessageUtil {
     }
     fun sendNotificationStatus(notificationId: String?, messageStatus: PUBSUBMessageStatus) {
         coroutineScope.launch {
-            sendMessage(getPubSubMessage(notificationId, messageStatus), notificationTopic)
+            sendMessage(getPubSubMessage(notificationId, messageStatus), NOTIFICATION_TOPIC)
         }
     }
 
 
     fun sendMessage(jsonMessage: String, topic:String) {
          coroutineScope.launch {
-             try {
-                 val batch = client.batch()
-                 Log.d("PUBSUB",  jsonMessage)
-                 val pubsubMessage = PubsubMessage()
-                 pubsubMessage.encodeData(jsonMessage.toByteArray(charset("UTF-8")))
-                 val publishRequest = PublishRequest()
-                 publishRequest.messages = ImmutableList.of(
-                     pubsubMessage
-                 )
+             withContext(Dispatchers.IO){
+                 try {
+                     val batch = client.batch()
+                     Log.d("PUBSUB",  jsonMessage)
+                     val pubsubMessage = PubsubMessage()
+                     pubsubMessage.encodeData(jsonMessage.toByteArray(charset("UTF-8")))
+                     val publishRequest = PublishRequest()
+                     publishRequest.messages = ImmutableList.of(
+                         pubsubMessage
+                     )
 
-                 client.projects().topics().publish(topic, publishRequest).queue(batch, callback)
-                 batch?.execute()
+                     client.projects().topics().publish(topic, publishRequest).queue(batch, callback)
+                     batch?.execute()
 
-             } catch (ex: Exception) {
-                 Log.e(TAG, ex.message, ex)
+                 } catch (ex: Exception) {
+                     Log.e(TAG, ex.message, ex)
+                 }
              }
+
          }
 
     }
