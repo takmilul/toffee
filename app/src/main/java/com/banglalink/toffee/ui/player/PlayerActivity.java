@@ -9,22 +9,24 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.banglalink.toffee.BuildConfig;
 import com.banglalink.toffee.analytics.HeartBeatManager;
 import com.banglalink.toffee.analytics.ToffeeAnalytics;
+import com.banglalink.toffee.data.storage.PlayerPreference;
 import com.banglalink.toffee.data.storage.Preference;
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener;
 import com.banglalink.toffee.model.AppSettingsKt;
 import com.banglalink.toffee.model.Channel;
 import com.banglalink.toffee.model.ChannelInfo;
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity;
+import com.banglalink.toffee.usecase.ReportLastPlayerSession;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.analytics.AnalyticsListener;
-import com.google.android.exoplayer2.analytics.DefaultAnalyticsListener;
 import com.google.android.exoplayer2.source.BehindLiveWindowException;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.MediaSourceEventListener;
@@ -62,12 +64,14 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
     private DefaultTrackSelector.Parameters trackSelectorParameters;
     private TrackGroupArray lastSeenTrackGroupArray;
 
+    private PlayerViewModel playerViewModel;
 
     private boolean startAutoPlay;
     private int startWindow;
     private long startPosition;
 
-    private PlayerEventListener playerEventListener = new PlayerEventListener();
+    private final PlayerEventListener playerEventListener = new PlayerEventListener();
+    private PlayerAnalyticsListener playerAnalyticsListener;
 
     @Nullable
     private ChannelInfo channelInfo;
@@ -88,6 +92,8 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         handler = new Handler();
+        playerViewModel = ViewModelProviders.of(this).get(PlayerViewModel.class);
+
         if (CookieHandler.getDefault() != DEFAULT_COOKIE_MANAGER) {
             CookieHandler.setDefault(DEFAULT_COOKIE_MANAGER);
         }
@@ -108,6 +114,12 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
                     player.stop(true);
                 }
                 onContentExpired();//content is expired. Notify the subclass
+            }
+            if(playerAnalyticsListener!=null){
+                //In every heartbeat event we are sending bandwitdh data to Pubsub
+                Log.e("PLAYER BYTES","Flushing to pubsub");
+                playerViewModel.reportBandWidthFromPlayerPref(playerAnalyticsListener.getDurationInSeconds(),playerAnalyticsListener.getTotalBytesInMB());
+                playerAnalyticsListener.resetData();
             }
         });
     }
@@ -167,12 +179,13 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
             defaultTrackSelector = new DefaultTrackSelector(this, adaptiveTrackSelectionFactory);
             defaultTrackSelector.setParameters(trackSelectorParameters);
             lastSeenTrackGroupArray = null;
+            playerAnalyticsListener = new PlayerAnalyticsListener();
 
             player =
                     new SimpleExoPlayer.Builder(this)
                             .setTrackSelector(defaultTrackSelector)
                             .build();
-            player.addAnalyticsListener(new PlayerAnalyticsListener());
+            player.addAnalyticsListener(playerAnalyticsListener);
             player.addListener(playerEventListener);
             player.setPlayWhenReady(false);
             if(BuildConfig.DEBUG){
@@ -193,6 +206,9 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
             player.release();
             player = null;
             defaultTrackSelector = null;
+            if(playerAnalyticsListener!=null){
+                PlayerPreference.Companion.getInstance().savePlayerSessionBandWidth(playerAnalyticsListener.getDurationInSeconds(),playerAnalyticsListener.getTotalBytesInMB());
+            }
         }
     }
 
@@ -357,12 +373,41 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
     }
 
     private static class PlayerAnalyticsListener implements AnalyticsListener{
-        private long totalBytes = 0;
+        private long totalBytesInMB = 0;
+        private long initialTimeStamp = 0;
+        private long durationInMillis = 0;
+
         @Override
         public void onLoadCompleted(@NotNull EventTime eventTime, @NotNull MediaSourceEventListener.LoadEventInfo loadEventInfo, @NotNull MediaSourceEventListener.MediaLoadData mediaLoadData) {
-            totalBytes+= loadEventInfo.bytesLoaded;
-            Log.e("PLAYER BYTES",""+totalBytes/1024+" KB");
+            try{
+                totalBytesInMB += (loadEventInfo.bytesLoaded);
+                if(initialTimeStamp == 0){
+                    initialTimeStamp = System.currentTimeMillis();
+                }else{
+                    durationInMillis = System.currentTimeMillis() - initialTimeStamp;
+                }
+                Log.e("PLAYER BYTES","Event time "+(durationInMillis /1000)+" Bytes "+(totalBytesInMB * 0.000001) +" MB");
+            }catch (Exception e){
+                ToffeeAnalytics.INSTANCE.logBreadCrumb("Exception in PlayerAnalyticsListener");
+            }
+
         }
+
+        double getTotalBytesInMB(){
+            return (totalBytesInMB * 0.000001);
+        }
+
+        long getDurationInSeconds(){
+            return durationInMillis/1000;
+        }
+
+        void resetData(){
+            totalBytesInMB = 0;
+            durationInMillis = 0;
+            initialTimeStamp = 0;
+        }
+
+
     }
 
     private class PlayerEventListener implements Player.EventListener {
