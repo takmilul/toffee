@@ -59,7 +59,7 @@
         app:layout_constraintEnd_toStartOf="@+id/filter_list"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_goneMarginEnd="24dp"
-        app:srcCompat="@drawable/ic_search" />
+        app:srcCompat="@drawable/ic_menu_search" />
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/back_button"

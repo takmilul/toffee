@@ -79,8 +79,8 @@ class LandingPageViewModel @ViewModelInject constructor(
         categoryListRepo.getList().cachedIn(viewModelScope)
     }
 
-    val loadEditorsChoiceContent by lazy {
-        editorsChoiceRepo.getList().cachedIn(viewModelScope)
+    fun loadEditorsChoiceContent(): Flow<PagingData<ChannelInfo>> {
+        return editorsChoiceRepo.getList().cachedIn(viewModelScope)
     }
 
     val loadUserChannels by lazy {

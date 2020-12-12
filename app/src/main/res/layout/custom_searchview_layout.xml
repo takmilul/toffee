@@ -78,7 +78,7 @@
                 android:layout_gravity="center_vertical"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:focusable="true"
-                android:src="@drawable/close"
+                android:src="@drawable/ic_close"
                 android:contentDescription="@string/abc_searchview_description_clear" />
         </LinearLayout>
         <LinearLayout
@@ -105,7 +105,7 @@
                 android:paddingLeft="16dip"
                 android:paddingRight="16dip"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/microphone"
+                android:src="@drawable/ic_menu_microphone"
                 android:focusable="true"
                 android:contentDescription="@string/abc_searchview_description_voice" />
         </LinearLayout>

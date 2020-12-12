@@ -30,7 +30,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/appbar"
-            app:srcCompat="@drawable/subscription_success" />
+            app:srcCompat="@drawable/ic_subscription_success" />
 
         <TextView
             android:id="@+id/textView4"

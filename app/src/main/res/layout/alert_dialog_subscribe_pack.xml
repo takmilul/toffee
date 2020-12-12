@@ -48,7 +48,7 @@
         android:padding="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/close" />
+        app:srcCompat="@drawable/ic_close" />
 
     <ImageView
         android:id="@+id/imageView7"

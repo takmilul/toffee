@@ -15,6 +15,6 @@ class MoviesTrendingNowFragment: BaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.layout_horizontal_content_small, container, false)
+        return inflater.inflate(R.layout.layout_horizontal_content_container, container, false)
     }
 }

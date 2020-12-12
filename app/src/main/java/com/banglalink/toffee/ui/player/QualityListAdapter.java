@@ -51,7 +51,7 @@ public class QualityListAdapter extends ArrayAdapter<Quality> {
         Quality quality = getItem(position);
         holder.text.setText(quality.format);
         if(quality.selected){
-            holder.icon.setImageResource(R.drawable.ic_checkmark_holo_light);
+            holder.icon.setImageResource(R.drawable.ic_check_video_quality);
         }
         else{
             holder.icon.setImageDrawable(null);

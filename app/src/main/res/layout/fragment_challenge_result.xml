@@ -40,7 +40,7 @@
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
                     android:minHeight="200dp"
-                    android:src="@drawable/hero"
+                    android:src="@drawable/placeholder"
                     app:layout_constraintDimensionRatio="W,16:9"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -101,7 +101,7 @@
                     android:layout_width="88dp"
                     android:layout_height="88dp"
                     android:layout_marginTop="32dp"
-                    android:src="@drawable/ic_portrait"
+                    android:src="@drawable/ic_profile_default"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/textView5" />

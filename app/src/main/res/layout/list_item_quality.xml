@@ -2,6 +2,7 @@
 
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/quality_text"
     android:layout_width="match_parent"
     android:layout_height="40dp"
@@ -12,8 +13,9 @@
     android:paddingTop="5dp"
     android:paddingBottom="5dp"
     android:drawablePadding="5dp"
-    android:drawableStart="@drawable/ic_checkmark_holo_light"
+    app:drawableStartCompat="@drawable/ic_check_video_quality"
     android:gravity="center_vertical"
+    android:textStyle="bold"
     android:textAppearance="?android:attr/textAppearanceSmall"
     tools:text="200 X 454" />
 

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.ProviderIconCallback
@@ -46,7 +47,7 @@ class EditorsChoiceFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInf
 
     private fun observeList() {
         lifecycleScope.launchWhenStarted {
-            landingPageViewModel.loadEditorsChoiceContent.collectLatest {
+            landingPageViewModel.loadEditorsChoiceContent().collectLatest {
                 mAdapter.submitData(it)
             }
         }

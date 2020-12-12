@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
 
     <data>
         <variable
@@ -19,113 +17,9 @@
         android:layout_marginStart="5dp"
         android:layout_marginEnd="5dp">
 
-        <com.banglalink.toffee.ui.widget.CustomImageView
-            android:id="@+id/poster"
-            loadChannelImage="@{data}"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:minHeight="200dp"
-            android:onClick="@{()->callback.onItemClicked(data)}"
-            app:layout_constraintDimensionRatio="W,16:9"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/placeholder"/>
-
-        <TextView
-            android:id="@+id/duration"
-            bindDuration="@{data}"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#88000000"
-            android:paddingVertical="@dimen/duration_vertical_padding"
-            android:paddingHorizontal="@dimen/duration_horizontal_padding"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/duration_text_size"
-            app:layout_constraintBottom_toTopOf="@id/progress"
-            app:layout_constraintEnd_toEndOf="@+id/poster"
-            tools:text="00:00" />
-
-        <ProgressBar
-            android:id="@+id/progress"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="0dp"
-            android:layout_height="4dp"
-            android:max="100"
-            android:progress="50"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/poster"
-            app:layout_constraintEnd_toEndOf="@+id/duration"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <!--<androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/poster"
-            app:layout_constraintBottom_toBottomOf="parent">-->
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/ownerPicture"
-                loadImageFromUrlRounded="@{data.channelProfileUrl}"
-                android:layout_width="42dp"
-                android:layout_height="42dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:src="@drawable/ic_portrait"
-                android:onClick="@{()-> callback.onProviderIconClicked(data)}"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/poster" />
-
-            <TextView
-                android:id="@+id/name"
-                style="@style/programNameTextView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:maxLines="2"
-                android:ellipsize="end"
-                android:text="@{data.program_name}"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#7990AC"
-                app:layout_constraintVertical_chainStyle="packed"
-                app:layout_constraintEnd_toStartOf="@+id/options"
-                app:layout_constraintStart_toEndOf="@+id/ownerPicture"
-                app:layout_constraintTop_toTopOf="@+id/ownerPicture"
-                app:layout_constraintBottom_toTopOf="@id/owner"
-                tools:text="This Makeup Tutorial By Kylie Jenner Is All you Need For Summer" />
-
-            <ImageView
-                android:id="@+id/options"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginTop="4dp"
-                android:background="?selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="true"
-                android:onClick="@{(v)->callback.onOpenMenu(v, data)}"
-                android:padding="4dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/poster"
-                app:srcCompat="@drawable/ic_menu_more" />
-
-            <TextView
-                android:id="@+id/owner"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                tools:text="HBO - 14h"
-                android:text='@{data.content_provider_name + " - " + data.formattedCreateTime}'
-                android:textColor="@color/second_text_color"
-                app:layout_constraintEnd_toEndOf="@id/name"
-                app:layout_constraintStart_toStartOf="@+id/name"
-                app:layout_constraintTop_toBottomOf="@+id/name" />
-
-<!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
+        <include layout="@layout/layout_horizontal_content"
+            bind:data="@{data}"
+            bind:callback="@{callback}"/>
+        
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
