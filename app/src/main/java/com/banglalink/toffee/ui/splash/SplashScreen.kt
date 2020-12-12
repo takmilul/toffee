@@ -38,6 +38,8 @@ class SplashScreen : BaseAppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this,R.layout.activity_splash_screen)
 
+        viewModel.reportAppLaunch()
+
         if(viewModel.isCustomerLoggedIn())
             initApp()
         else{

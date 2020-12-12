@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.ToffeeApplication
+import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
 import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.data.storage.PlayerPreference
@@ -19,13 +20,6 @@ import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.coroutines.launch
 
 class SplashViewModel(application: Application) : BaseViewModel(application) {
-
-    init {
-        val toffeeApplication = application as ToffeeApplication
-        toffeeApplication.applicationScope.launch {
-            reportAppLaunch()
-        }
-    }
 
     private val checkUpdate by unsafeLazy {
         CheckUpdate(Preference.getInstance(),RetrofitApiClient.authApi)
@@ -53,8 +47,16 @@ class SplashViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    private fun reportAppLaunch(){
-        reportAppLaunch.execute()
+    fun reportAppLaunch(){
+        val toffeeApplication = getApplication() as ToffeeApplication
+        toffeeApplication.applicationScope.launch {
+            try {
+                reportAppLaunch.execute()
+            }catch (e:Exception){
+                ToffeeAnalytics.logBreadCrumb("Exception in ReportAppLaunch")
+            }
+
+        }
     }
 
     fun isCustomerLoggedIn()=Preference.getInstance().customerId != 0
