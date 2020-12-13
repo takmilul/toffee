@@ -31,9 +31,9 @@ class MoviesContinueWatchingFragment : BaseFragment(), ProviderIconCallback<Chan
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.titleTextView.text = "Continue Watching"
-        adapter = MoviesAdapter(this)
-        binding.listView.adapter = adapter
-        loadContent()
+//        adapter = MoviesAdapter(this)
+//        binding.listView.adapter = adapter
+//        loadContent()
     }
 
     private fun loadContent() {

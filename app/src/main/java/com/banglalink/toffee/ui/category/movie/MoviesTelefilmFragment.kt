@@ -9,6 +9,7 @@ import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.databinding.LayoutHorizontalContentContainerBinding
+import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.BaseFragment
 
@@ -32,12 +33,13 @@ class MoviesTelefilmFragment: BaseFragment(), ProviderIconCallback<ChannelInfo> 
         binding.titleTextView.text = "Telefilms"
         adapter = MoviesAdapter(this)
         binding.listView.adapter = adapter
-//        loadContent()
+        loadContent()
+        viewModel.loadTelefilms()
     }
 
-    /*private fun loadContent() {
+    private fun loadContent() {
         observe(viewModel.telefilms){
             adapter.addAll(it)
         }
-    }*/
+    }
 }

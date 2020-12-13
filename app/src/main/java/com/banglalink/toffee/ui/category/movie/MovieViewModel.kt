@@ -3,9 +3,11 @@ package com.banglalink.toffee.ui.category.movie
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.banglalink.toffee.apiservice.GetContents
 import com.banglalink.toffee.apiservice.GetMostPopularContents
 import com.banglalink.toffee.apiservice.MovieCategoryDetailService
 import com.banglalink.toffee.apiservice.MoviesPreviewService
+import com.banglalink.toffee.data.network.request.ChannelRequestParams
 import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MoviesContentVisibilityCards
@@ -19,6 +21,7 @@ class MovieViewModel @ViewModelInject constructor(
     private val movieApiService: MovieCategoryDetailService,
     private val moviePreviewsService: MoviesPreviewService,
     private val trendingNowService: GetMostPopularContents,
+    private val getContentAssistedFactory: GetContents.AssistedFactory
 ): BaseViewModel() {
     private val moviesContentCardsResponse = MutableLiveData<MoviesContentVisibilityCards>()
     val moviesContentCards = moviesContentCardsResponse.toLiveData()
@@ -36,6 +39,8 @@ class MovieViewModel @ViewModelInject constructor(
     val moviePreviews = moviePreviewsResponse.toLiveData()
     private val trendingNowMoviesResponse = MutableLiveData<List<ChannelInfo>>()
     val trendingNowMovies = trendingNowMoviesResponse.toLiveData()
+    private val telefilmsResponse = MutableLiveData<List<ChannelInfo>>()
+    val telefilms = telefilmsResponse.toLiveData()
     
     fun loadMovieCategoryDetail(){
         viewModelScope.launch { 
@@ -126,7 +131,7 @@ class MovieViewModel @ViewModelInject constructor(
     
     fun loadMoviePreviews(){
         viewModelScope.launch { 
-            val response = moviePreviewsService.loadData("VOD",0,0, 0, 0)
+            val response = moviePreviewsService.loadData("VOD",0,0, 10, 0)
             moviePreviewsResponse.value = response
         }
     }
@@ -137,4 +142,14 @@ class MovieViewModel @ViewModelInject constructor(
             trendingNowMoviesResponse.value = response
         }
     }
+
+    fun loadTelefilms() {
+        viewModelScope.launch { 
+            val response = getContentAssistedFactory.create(
+                ChannelRequestParams("", 1, "", 90, "VOD")
+            ).loadData(0,10)
+            telefilmsResponse.value = response
+        }
+    }
+
 }

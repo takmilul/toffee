@@ -30,7 +30,7 @@ class MoviesRomanticFragment: BaseFragment(), ProviderIconCallback<ChannelInfo> 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.titleTextView.text = "Romantic Movies"
+        binding.titleTextView.text = "Romantic"
         adapter = MoviesAdapter(this)
         binding.listView.adapter = adapter
         loadContent()

@@ -2,11 +2,10 @@ package com.banglalink.toffee.ui.category.movie
 
 import android.view.View
 import androidx.viewpager2.widget.ViewPager2
-import kotlin.math.abs
-import kotlin.math.max
 
-private const val MIN_SCALE = 0.85f
-private const val MIN_ALPHA = 0.5f
+private const val MAX_SCALE = 1f
+private const val MIN_SCALE = 0.7f
+private const val DIFF_SCALE = MAX_SCALE - MIN_SCALE
 
 class ZoomInPageTransformer : ViewPager2.PageTransformer {
 
@@ -14,47 +13,27 @@ class ZoomInPageTransformer : ViewPager2.PageTransformer {
         view.apply {
             val pageWidth = width
             val pageHeight = height
+            val scale = MAX_SCALE
             when {
                 position < -1 -> {
-                    // Modify the default slide transition to shrink the page as well
-                    val scaleFactor = max(MIN_SCALE, 1 - abs(position))
-                    val verticalMargin = pageHeight * (1 - scaleFactor) / 2
-                    val horizontalMargin = pageWidth * (1 - scaleFactor) / 2
-                    translationX = if (position < 0) {
-                        horizontalMargin - verticalMargin / 2
-                    } else {
-                        horizontalMargin + verticalMargin / 2
-                    }
-
-                    // Scale the page down (between MIN_SCALE and 1)
-                    scaleX = scaleFactor
-                    scaleY = scaleFactor
-
-                    // Fade the page relative to its size.
-                    alpha = (MIN_ALPHA +
-                        (((scaleFactor - MIN_SCALE) / (1 - MIN_SCALE)) * (1 - MIN_ALPHA)))
+                    scaleX = scale + position * DIFF_SCALE
+                    scaleY = MIN_SCALE
                 }
                 position <= 1 -> {
-                    alpha = 1f
-                }
-                else -> {
-                    // Modify the default slide transition to shrink the page as well
-                    val scaleFactor = max(MIN_SCALE, 1 - abs(position))
+                    /*val scaleFactor = max(MIN_SCALE, 1 - abs(position))
                     val verticalMargin = pageHeight * (1 - scaleFactor) / 2
                     val horizontalMargin = pageWidth * (1 - scaleFactor) / 2
                     translationX = if (position < 0) {
                         horizontalMargin - verticalMargin / 2
                     } else {
                         horizontalMargin + verticalMargin / 2
-                    }
-
-                    // Scale the page down (between MIN_SCALE and 1)
-                    scaleX = scaleFactor
-                    scaleY = scaleFactor
-
-                    // Fade the page relative to its size.
-                    alpha = (MIN_ALPHA +
-                        (((scaleFactor - MIN_SCALE) / (1 - MIN_SCALE)) * (1 - MIN_ALPHA)))
+                    }*/
+                    scaleX = scale - position * DIFF_SCALE
+                    scaleY = MAX_SCALE
+                }
+                else -> {
+                    scaleX = scale + position * DIFF_SCALE
+                    scaleY = MIN_SCALE
                 }
             }
         }

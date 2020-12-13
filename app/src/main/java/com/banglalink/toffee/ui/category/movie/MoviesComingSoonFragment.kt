@@ -31,9 +31,9 @@ class MoviesComingSoonFragment : Fragment(), ProviderIconCallback<ChannelInfo> {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.titleTextView.text = "Coming Soon"
-        adapter = MoviesAdapter(this)
-        binding.listView.adapter = adapter
-        loadContent()
+//        adapter = MoviesAdapter(this)
+//        binding.listView.adapter = adapter
+//        loadContent()
     }
 
     private fun loadContent() {
