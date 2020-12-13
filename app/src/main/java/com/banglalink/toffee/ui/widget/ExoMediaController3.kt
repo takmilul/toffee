@@ -25,6 +25,7 @@ import com.banglalink.toffee.ui.widget.DraggerLayout.OnPositionChangedListener
 import com.banglalink.toffee.util.Utils
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.Player.EventListener
+import com.google.android.gms.cast.framework.CastButtonFactory
 import java.util.*
 import kotlin.math.max
 import kotlin.math.min
@@ -97,6 +98,11 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
         binding.share.setOnClickListener(this)
         mFormatBuilder = StringBuilder()
         mFormatter = Formatter(mFormatBuilder, Locale.getDefault())
+        setupCastButton()
+    }
+
+    private fun setupCastButton() {
+        CastButtonFactory.setUpMediaRouteButton(context.applicationContext, binding.castButton)
     }
 
     //Use this method to set and unset the player

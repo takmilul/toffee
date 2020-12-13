@@ -98,8 +98,12 @@ const val ID_INTERNET_PACK = 25
 const val PLAY_IN_WEB_VIEW = 1
 const val OPEN_IN_EXTERNAL_BROWSER = 2
 @AndroidEntryPoint
-class HomeActivity : PlayerPageActivity(), FragmentManager.OnBackStackChangedListener,
-    DraggerLayout.OnPositionChangedListener ,SearchView.OnQueryTextListener{
+class HomeActivity :
+    PlayerPageActivity(),
+    FragmentManager.OnBackStackChangedListener,
+    DraggerLayout.OnPositionChangedListener ,
+    SearchView.OnQueryTextListener
+{
 
     @Inject
     lateinit var uploadRepo: UploadInfoRepository
@@ -381,8 +385,12 @@ class HomeActivity : PlayerPageActivity(), FragmentManager.OnBackStackChangedLis
         super.onResume()
         binding.playerView.setPlaylistListener(this)
         binding.playerView.addPlayerControllerChangeListener(this)
-        binding.playerView.setPlayer(player)
+        resetPlayer()
         binding.playerView.resizeView(calculateScreenWidth())
+    }
+
+    override fun resetPlayer() {
+        binding.playerView.setPlayer(player)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -392,7 +400,7 @@ class HomeActivity : PlayerPageActivity(), FragmentManager.OnBackStackChangedLis
 
     override fun onPause() {
         super.onPause()
-        binding.playerView.clearListeners();
+        binding.playerView.clearListeners()
         if (Util.SDK_INT <= 23) {
             binding.playerView.setPlayer(null)
         }

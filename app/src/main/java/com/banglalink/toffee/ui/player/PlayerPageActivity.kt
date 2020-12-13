@@ -4,7 +4,7 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
+import android.util.Log
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R.id
 import com.banglalink.toffee.R.string
@@ -20,12 +20,11 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.TOFFEE_HEADER
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
-import com.google.android.exoplayer2.C
-import com.google.android.exoplayer2.ExoPlaybackException
-import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.Player.EventListener
-import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.SimpleExoPlayer.Builder
+import com.google.android.exoplayer2.ext.cast.CastPlayer
+import com.google.android.exoplayer2.ext.cast.SessionAvailabilityListener
 import com.google.android.exoplayer2.source.BehindLiveWindowException
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.TrackGroupArray
@@ -40,15 +39,28 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.upstream.HttpDataSource
 import com.google.android.exoplayer2.util.EventLogger
+import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.exoplayer2.util.Util
+import com.google.android.gms.cast.MediaInfo
+import com.google.android.gms.cast.MediaMetadata
+import com.google.android.gms.cast.MediaQueueItem
+import com.google.android.gms.cast.framework.*
+import com.google.android.gms.common.images.WebImage
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import java.net.CookieHandler
 import java.net.CookieManager
 import java.net.CookiePolicy
 import kotlin.math.max
 
-abstract class PlayerPageActivity : BaseAppCompatActivity(), OnPlayerControllerChangedListener, EventListener, PlaylistListener {
-    protected var player: SimpleExoPlayer? = null
+
+abstract class PlayerPageActivity :
+    BaseAppCompatActivity(),
+    OnPlayerControllerChangedListener,
+    EventListener,
+    PlaylistListener,
+    SessionAvailabilityListener
+{
+    protected var player: Player? = null
     private var defaultTrackSelector: DefaultTrackSelector? = null
     private var trackSelectorParameters: Parameters? = null
     private var lastSeenTrackGroupArray: TrackGroupArray? = null
@@ -58,6 +70,13 @@ abstract class PlayerPageActivity : BaseAppCompatActivity(), OnPlayerControllerC
     private var startPosition: Long = 0
     private val playerEventListener: PlayerEventListener = PlayerEventListener()
     private var defaultCookieManager = CookieManager()
+
+    private var castContext: CastContext? = null
+    private var sessionManager: SessionManager? = null
+
+    private var exoPlayer: SimpleExoPlayer? = null
+    private var castPlayer: CastPlayer? = null
+
 
     init {
         defaultCookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER)
@@ -76,6 +95,9 @@ abstract class PlayerPageActivity : BaseAppCompatActivity(), OnPlayerControllerC
         if (CookieHandler.getDefault() !== defaultCookieManager) {
             CookieHandler.setDefault(defaultCookieManager)
         }
+
+//        castContext = CastContext.getSharedInstance(this)
+
         if (savedInstanceState != null) {
             trackSelectorParameters = savedInstanceState.getParcelable(KEY_TRACK_SELECTOR_PARAMETERS)
             startAutoPlay = savedInstanceState.getBoolean(KEY_AUTO_PLAY)
@@ -139,13 +161,24 @@ abstract class PlayerPageActivity : BaseAppCompatActivity(), OnPlayerControllerC
     }
 
     private fun initializePlayer() {
-        if (player == null) {
+        initializeLocalPlayer()
+        initializeRemotePlayer()
+        player = if(castPlayer?.isCastSessionAvailable == true) castPlayer else exoPlayer
+
+        //we are checking whether there is already channelInfo exist. If not null then play it
+        if (playlistManager.getCurrentChannel() != null) {
+            playChannel(false)
+        }
+    }
+
+    private fun initializeLocalPlayer() {
+        if (exoPlayer == null) {
             val adaptiveTrackSelectionFactory = AdaptiveTrackSelection.Factory()
             defaultTrackSelector = DefaultTrackSelector(this, adaptiveTrackSelectionFactory).apply {
                 parameters = trackSelectorParameters!!
             }
             lastSeenTrackGroupArray = null
-            player = Builder(this)
+            exoPlayer = Builder(this)
                 .setTrackSelector(defaultTrackSelector!!)
                 .build().apply {
                     addListener(playerEventListener)
@@ -155,21 +188,40 @@ abstract class PlayerPageActivity : BaseAppCompatActivity(), OnPlayerControllerC
                     }
                 }
         }
-        //we are checking whether there is already channelInfo exist. If not null then play it
-        if (playlistManager.getCurrentChannel() != null) {
-            playChannel(false)
+    }
+
+    private fun initializeRemotePlayer() {
+        castContext?.let {
+            Log.e("CAST", "Castplayer init")
+            castPlayer = CastPlayer(it).apply {
+                addListener(this@PlayerPageActivity)
+                playWhenReady = false
+                setSessionAvailabilityListener(this@PlayerPageActivity)
+            }
         }
     }
 
     private fun releasePlayer() {
-        player?.let {
+        releaseLocalPlayer()
+        releaseRemotePlayer()
+        player = null
+    }
+
+    private fun releaseLocalPlayer() {
+        exoPlayer?.let {
             it.removeListener(playerEventListener)
             updateTrackSelectorParameters()
             updateStartPosition()
             it.release()
             defaultTrackSelector = null
         }
-        player = null
+        exoPlayer = null
+    }
+
+    private fun releaseRemotePlayer() {
+        castPlayer?.setSessionAvailabilityListener(null)
+        castPlayer?.release()
+        castPlayer = null
     }
 
     private fun updateTrackSelectorParameters() {
@@ -192,7 +244,7 @@ abstract class PlayerPageActivity : BaseAppCompatActivity(), OnPlayerControllerC
         startPosition = C.TIME_UNSET
     }
 
-    private fun prepareMedia(uri: Uri): MediaSource {
+    private fun prepareMedia(mediaItem: MediaItem): MediaSource {
         val dataSourceFactory: Factory = DefaultHttpDataSourceFactory(
             Util.getUserAgent(this, getString(string.app_name))
         )
@@ -203,7 +255,7 @@ abstract class PlayerPageActivity : BaseAppCompatActivity(), OnPlayerControllerC
             dataSource.setRequestProperty("TOFFEE-SESSION-TOKEN", mPref.getHeaderSessionToken()!!)
             dataSource
         }
-        .createMediaSource(MediaItem.fromUri(uri))
+        .createMediaSource(mediaItem)
     }
 
     protected fun setPlayList(data: AddToPlaylistData) {
@@ -255,7 +307,7 @@ abstract class PlayerPageActivity : BaseAppCompatActivity(), OnPlayerControllerC
 
     protected fun playChannel(isReload: Boolean) {
         val channelInfo = playlistManager.getCurrentChannel() ?: return
-        val uri = Channel.createChannel(channelInfo).getContentUri(this)
+        val uri = Channel.createChannel(channelInfo).getContentUri(this, mPref)
         if (uri == null) { //in this case settings does not allow us to play content. So stop player and trigger event viewing stop
             player?.stop(true)
             channelCannotBePlayedDueToSettings() //notify hook/subclass
@@ -272,21 +324,57 @@ abstract class PlayerPageActivity : BaseAppCompatActivity(), OnPlayerControllerC
         player?.let {
             triggerEventViewingContentStart(channelInfo.id.toInt(), channelInfo.type ?: "VOD")
             it.playWhenReady = !isReload || it.playWhenReady
-            val mediaSource = prepareMedia(Uri.parse(uri))
+            val mediaSource = prepareMedia(MediaItem.fromUri(uri))
             if (isReload) { //We need to start where we left off for VODs
                 val haveStartPosition = startWindow != C.INDEX_UNSET
                 if (haveStartPosition && !channelInfo.isLive) {
-                    it.setMediaSource(mediaSource, false)
-                    it.prepare()
-                    //                    player.prepare(mediaSource, false, false);
-                    it.seekTo(startWindow, startPosition) //we seek to where we left for VODs
+                    if(it is SimpleExoPlayer) {
+                        it.setMediaSource(mediaSource, false)
+                        it.prepare()
+                        //                    player.prepare(mediaSource, false, false);
+                        it.seekTo(startWindow, startPosition) //we seek to where we left for VODs
+                    } else if(it is CastPlayer){
+                        it.loadItem(getMediaInfo(channelInfo), startPosition)
+                        it.playWhenReady = true
+                    }
                     return
                 }
             }
-            it.setMediaSource(mediaSource)
-            it.prepare()
+            if(it is SimpleExoPlayer) {
+                it.setMediaSource(mediaSource)
+                it.prepare()
+            } else if(it is CastPlayer) {
+                it.loadItem(getMediaInfo(channelInfo), startPosition)
+                it.playWhenReady = true
+            }
             //            player.prepare(mediaSource);//Non reload event or reload for live. Just prepare the media and play it
         }
+    }
+
+    private fun getMediaInfo(info: ChannelInfo): MediaQueueItem {
+        val mediaMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE )
+        mediaMetadata.putString( MediaMetadata.KEY_TITLE , info.program_name)
+        mediaMetadata.addImage(WebImage(Uri.parse(info.landscape_ratio_1280_720)))
+
+        val channelUrl = Channel.createChannel(info).getContentUri(this, mPref)
+
+        val mediaInfo = if (info.isLive) {
+            MediaInfo.Builder(channelUrl).apply {
+                setContentType(MimeTypes.APPLICATION_M3U8)//"application/x-mpegurl")
+                setStreamType( MediaInfo.STREAM_TYPE_BUFFERED )
+                setMetadata( mediaMetadata )
+            }
+    //                    .setStreamDuration(0) // 0 for Infinity
+                .build()
+        } else {
+            MediaInfo.Builder(channelUrl)
+                .setContentType(MimeTypes.APPLICATION_M3U8)//"application/x-mpegurl")
+                .setStreamType( MediaInfo.STREAM_TYPE_BUFFERED )
+                .setMetadata( mediaMetadata )
+    //                    .setStreamDuration(MediaInfo.STREAM_TYPE_LIVE)
+                .build()
+        }
+        return MediaQueueItem.Builder(mediaInfo).build()
     }
 
     //This will be called due to session token change while playing content or after init of player
@@ -395,5 +483,23 @@ abstract class PlayerPageActivity : BaseAppCompatActivity(), OnPlayerControllerC
             }
             return false
         }
+    }
+
+    abstract fun resetPlayer()
+
+    override fun onCastSessionAvailable() {
+        updateStartPosition()
+        player?.stop()
+        player = castPlayer
+        resetPlayer()
+        playChannel(true)
+    }
+
+    override fun onCastSessionUnavailable() {
+        updateStartPosition()
+        player?.stop()
+        player = exoPlayer
+        resetPlayer()
+        playChannel(true)
     }
 }
