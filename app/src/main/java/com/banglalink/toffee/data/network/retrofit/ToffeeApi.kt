@@ -266,4 +266,15 @@ interface ToffeeApi {
         @Path("dbVersion") dbVersion: Int,
         @Body movieCategoryDetailRequest: MovieCategoryDetailRequest
     ): MovieCategoryDetailResponse
+    
+    @POST("/ugc-movie-preview/1/{type}/{categoryId}/{subCategoryId}/{limit}/{offset}/{dbVersion}")
+    suspend fun getMoviePreviews(
+        @Path("type") type: String,
+        @Path("categoryId") categoryId: Int,
+        @Path("subCategoryId") subCategoryId: Int,
+        @Path("limit") limit: Int,
+        @Path("offset") offset: Int,
+        @Path("dbVersion") dbVersion: Int,
+        @Body moviesPreviewRequest: MoviesPreviewRequest
+    ): MoviesPreviewResponse
 }

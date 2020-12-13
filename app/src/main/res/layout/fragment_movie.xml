@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -34,6 +36,37 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
+                    <ImageView
+                        android:id="@+id/categoryIcon"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        tools:src="@drawable/ic_profile_default"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/featuredFragment" />
+
+                    <TextView
+                        android:id="@+id/categoryName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:textSize="16dp"
+                        tools:text="Movies"
+                        android:textColor="@color/main_text_color"
+                        app:layout_constraintStart_toEndOf="@+id/categoryIcon"
+                        app:layout_constraintTop_toTopOf="@+id/categoryIcon"
+                        app:layout_constraintBottom_toBottomOf="@id/categoryIcon"/>
+
+                    <androidx.fragment.app.FragmentContainerView
+                        android:id="@+id/continueWatchingFragment"
+                        android:name="com.banglalink.toffee.ui.category.movie.MoviesContinueWatchingFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/categoryIcon" />
+
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/editorsChoiceFragment"
                         android:name="com.banglalink.toffee.ui.landing.EditorsChoiceFragment"
@@ -41,7 +74,7 @@
                         android:layout_height="wrap_content"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/featuredFragment" />
+                        app:layout_constraintTop_toBottomOf="@id/continueWatchingFragment" />
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/moviePreviewFragment"

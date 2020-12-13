@@ -31,22 +31,29 @@
         app:layout_constraintTop_toTopOf="@id/latestVideosHeader"
         app:layout_constraintBottom_toBottomOf="@id/latestVideosHeader"
         app:layout_constraintEnd_toEndOf="parent" />
-    
-    <TextView
-        android:id="@+id/viewAllButton"
-        style="@style/ViewAllTextView"
-        android:layout_width="wrap_content"
+
+    <HorizontalScrollView
+        android:id="@+id/subCategoryChipGroupHolder"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:drawablePadding="4dp"
-        android:gravity="center"
-        android:text="@string/view_all"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:scrollbars="none"
         android:visibility="gone"
-        android:textColor="@color/view_all_text_color"
-        app:drawableRightCompat="@drawable/ic_right_arrow_accent_2"
-        app:layout_constraintBottom_toBottomOf="@+id/latestVideosHeader"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/latestVideosHeader" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/latestVideosHeader">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/subCategoryChipGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            app:selectionRequired="true"
+            app:singleLine="true"
+            app:singleSelection="true" />
+    </HorizontalScrollView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/latestVideosList"
@@ -59,6 +66,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/latestVideosHeader"
+        app:layout_constraintTop_toBottomOf="@+id/subCategoryChipGroupHolder"
         app:reverseLayout="false" />
         </androidx.constraintlayout.widget.ConstraintLayout>

@@ -37,7 +37,7 @@ class MoviesThrillerFragment: BaseFragment(), ProviderIconCallback<ChannelInfo> 
     }
 
     private fun loadContent() {
-        observe(viewModel.thrillerContents){
+        observe(viewModel.thrillerMovies){
             adapter.addAll(it)
         }
     }

@@ -8,12 +8,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.ProviderIconCallback
-import com.banglalink.toffee.databinding.LayoutHorizontalContentBinding
 import com.banglalink.toffee.databinding.LayoutHorizontalContentContainerBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.BaseFragment
-import kotlinx.android.synthetic.main.layout_horizontal_content_container.*
 
 class MoviesActionFragment: BaseFragment(), ProviderIconCallback<ChannelInfo> {
     private lateinit var adapter: MoviesAdapter
@@ -39,7 +37,7 @@ class MoviesActionFragment: BaseFragment(), ProviderIconCallback<ChannelInfo> {
     }
 
     private fun loadContent() {
-        observe(viewModel.actionContents){
+        observe(viewModel.actionMovies){
             adapter.addAll(it)
         }
     }

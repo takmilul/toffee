@@ -1,21 +1,24 @@
 package com.banglalink.toffee.ui.category.movie
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.navArgs
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentMovieBinding
 import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.setVisibility
 import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
+import com.banglalink.toffee.util.bindCategoryImage
+import kotlinx.android.synthetic.main.fragment_category_info.*
 
 class MovieFragment : BaseFragment() {
     private lateinit var category: UgcCategory
@@ -41,16 +44,37 @@ class MovieFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         category = requireArguments().getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)!!
         activity?.title = category.categoryName
+        setCategoryIcon()
         landingViewModel.pageType.value = PageType.Category
         landingViewModel.categoryId.value = category.id.toInt()
         observeCardsVisibility()
         viewModel.loadMovieCategoryDetail()
     }
 
+    private fun setCategoryIcon() {
+        category.let {
+            categoryName.text = it.categoryName
+            bindCategoryImage(categoryIcon, it)
+            categoryIcon.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.colorAccent2))
+        }
+    }
+
     private fun observeCardsVisibility() {
-        observe(viewModel.movieContentCards){
-            binding.moviePreviewFragment.visibility = if (it.moviePreview == 1) View.VISIBLE else View.GONE
-            binding.comingSoonFragment.visibility = if (it.commingSoon == 1) View.VISIBLE else View.GONE
+        observe(viewModel.moviesContentCards){
+            binding.featuredFragment.setVisibility(it.featuredContent == 1)
+//            binding.continueWatchingFragment.setVisibility(it.continueWatching == 1)
+            binding.editorsChoiceFragment.setVisibility(it.editorsChoice == 1)
+            binding.moviePreviewFragment.setVisibility(it.moviePreviews == 1)
+            binding.trendingNowMoviesFragment.setVisibility(it.trendingNow == 1)
+            binding.thrillerMoviesFragment.setVisibility(it.thriller == 1)
+            binding.actionMoviesFragment.setVisibility(it.action == 1)
+            binding.romanticMoviesFragment.setVisibility(it.romantic == 1)
+            binding.banglaMoviesFragment.setVisibility(it.bangla == 1)
+            binding.englishMoviesFragment.setVisibility(it.english == 1)
+            binding.comingSoonFragment.setVisibility(it.comingSoon == 1)
+            binding.telefilmFragment.setVisibility(it.telefilm == 1)
+            binding.topMovieChannelsFragment.setVisibility(it.topMovieChannels == 1)
+            binding.latestVideosFragment.setVisibility(it.feed == 1)
         }
     }
 }

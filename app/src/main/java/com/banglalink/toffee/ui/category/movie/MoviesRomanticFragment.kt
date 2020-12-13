@@ -37,7 +37,7 @@ class MoviesRomanticFragment: BaseFragment(), ProviderIconCallback<ChannelInfo> 
     }
 
     private fun loadContent() {
-        observe(viewModel.romanticContents){
+        observe(viewModel.romanticMovies){
             adapter.addAll(it)
         }
     }
