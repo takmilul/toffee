@@ -174,7 +174,13 @@ class LandingPageViewModel @ViewModelInject constructor(
     fun loadSubcategoryVideos(catId: Int, subCatId: Int) {
         latestVideoLiveData.value = Pair(catId, subCatId)
     }
-    
+
+    val loadPopularMovieChannels by lazy {
+        BaseListRepositoryImpl({
+            tvChannelRepo.getPopularMovieChannels()
+        }).getList()
+    }
+
     fun navigateToMyChannel(fragment: Fragment, channelId: Int, channelOwnerId: Int, isSubscribed: Int){
         val customerId = Preference.getInstance().customerId
         val isOwner = if (channelOwnerId == customerId) 1 else 0

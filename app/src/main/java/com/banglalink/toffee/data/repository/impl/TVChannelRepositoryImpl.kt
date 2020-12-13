@@ -22,4 +22,8 @@ class TVChannelRepositoryImpl(private val dao: TVChannelDao): TVChannelRepositor
     override fun getAllChannels(): PagingSource<Int, TVChannelItem> {
         return dao.getAllChannels()
     }
+
+    override fun getPopularMovieChannels(): PagingSource<Int, TVChannelItem> {
+        return dao.getPopularMovieChannels()
+    }
 }

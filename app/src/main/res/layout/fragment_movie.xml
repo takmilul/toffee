@@ -126,7 +126,7 @@
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/topMovieChannelsFragment"
-                        android:name="com.banglalink.toffee.ui.category.movie.MoviesTopChannelsFragment"
+                        android:name="com.banglalink.toffee.ui.category.PopularMovieChannelFragment"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:layout_constraintEnd_toEndOf="parent"

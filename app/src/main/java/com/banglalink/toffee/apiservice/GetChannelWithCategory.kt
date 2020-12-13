@@ -35,7 +35,8 @@ class GetChannelWithCategory @Inject constructor(
                     channelInfo.type ?: "LIVE",
                     index + 1,
                     channelCategory.categoryName,
-                    Gson().toJson(channelInfo)
+                    Gson().toJson(channelInfo),
+                    channelInfo.view_count?.toLong() ?: 0L
                 ).apply {
                     updateTime = upTime
                 })
