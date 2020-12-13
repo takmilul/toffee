@@ -8,89 +8,36 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
-<!--        android:background="@android:color/transparent"-->
-<!--        <androidx.core.widget.NestedScrollView-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            app:layout_scrollFlags="scroll|exitUntilCollapsed"-->
-<!--            app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
-<!--            >-->
-
-    <LinearLayout
-        app:layout_scrollFlags="scroll|exitUntilCollapsed"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
+        
+        <LinearLayout
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
         
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/featuredFragment"
                 android:name="com.banglalink.toffee.ui.category.CategoryInfoFragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-
-
-        <!--<androidx.fragment.app.FragmentContainerView
-            android:id="@+id/featuredFragment"
-            android:name="com.banglalink.toffee.ui.landing.FeaturedFragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />-->
-
-
-        <!--            <androidx.fragment.app.FragmentContainerView-->
-<!--                android:id="@+id/popularTvChannelsFragment"-->
-<!--                android:name="com.banglalink.toffee.ui.landing.PopularTVChannelsFragment"-->
-<!--                android:layout_marginTop="16dp"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content" />-->
-
-            <!--<androidx.fragment.app.FragmentContainerView
-                android:id="@+id/mostPopularFragment"
-                android:name="com.banglalink.toffee.ui.landing.MostPopularPlaylistsFragment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />-->
-
-<!--            <androidx.fragment.app.FragmentContainerView-->
-<!--                android:id="@+id/categoriesFragment"-->
-<!--                android:name="com.banglalink.toffee.ui.landing.LandingCategoriesFragment"-->
-<!--                android:layout_marginTop="8dp"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content" />-->
-
-        <!--<androidx.fragment.app.FragmentContainerView
-            android:id="@+id/userChannelList"
-            android:name="com.banglalink.toffee.ui.landing.LandingUserChannelsFragment"
-            android:layout_marginTop="8dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />-->
-
-            <!--<androidx.fragment.app.FragmentContainerView
-                android:id="@+id/trendingNowFragment"
-                android:name="com.banglalink.toffee.ui.landing.TrendingNowFragment"
-                android:layout_marginTop="8dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />-->
-
+        
         </LinearLayout>
-
-<!--            </LinearLayout>-->
-<!--        </androidx.core.widget.NestedScrollView>-->
+        
     </com.google.android.material.appbar.AppBarLayout>
+    
     <androidx.core.widget.NestedScrollView
         android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/latestVideosFragment"
             android:name="com.banglalink.toffee.ui.landing.LatestVideosFragment"
             android:layout_marginTop="8dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            />
+            android:layout_height="match_parent" />
+        
     </androidx.core.widget.NestedScrollView>
 </com.banglalink.toffee.ui.widget.NestedCoordinatorLayout>

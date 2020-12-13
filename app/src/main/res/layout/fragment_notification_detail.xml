@@ -71,7 +71,7 @@
             android:layout_marginTop="16dp"
             android:adjustViewBounds="true"
             android:minHeight="200dp"
-            android:src="@drawable/hero"
+            android:src="@drawable/placeholder"
             loadImageFromUrl="@{data.imageUrl}"
             android:visibility="@{data.imageUrl == null || data.imageUrl.isEmpty() ? View.GONE : View.VISIBLE}"
             app:layout_constraintDimensionRatio="W,16:9"

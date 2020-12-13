@@ -5,25 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
-import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.CategoriesListAdapter
 import com.banglalink.toffee.ui.home.LandingPageViewModel
-import com.banglalink.toffee.ui.home.OptionCallBack
-import com.banglalink.toffee.util.unsafeLazy
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_landing_categories.*
 import kotlinx.coroutines.flow.collectLatest
@@ -53,9 +45,12 @@ class AllCategoriesFragment: BaseFragment() {
                 val args = Bundle().apply {
                     putParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM, item)
                 }
-                parentFragment?.
-                findNavController()?.
-                navigate(R.id.action_allCategoriesFragment_to_categoryDetailsFragment, args)
+                if(item.id.toInt() == 1){
+                    parentFragment?.findNavController()?.navigate(R.id.action_allCategoriesFragment_to_movieFragment, args)
+                }
+                else {
+                    parentFragment?.findNavController()?.navigate(R.id.action_allCategoriesFragment_to_categoryDetailsFragment, args)
+                }
             }
         }, true)
 

@@ -64,7 +64,6 @@ import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.ui.widget.showSubscriptionDialog
 import com.banglalink.toffee.util.InAppMessageParser
 import com.banglalink.toffee.util.Utils
-import com.banglalink.toffee.util.UtilsKt
 import com.google.android.exoplayer2.util.Util
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -359,7 +358,7 @@ class HomeActivity :
 //        setupActionBarWithNavController(navController, appbarConfig)
 //        NavigationUI.setupActionBarWithNavController(this, navController, appbarConfig)
         binding.tbar.toolbar.setupWithNavController(navController, appbarConfig)
-        binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_home)
+        binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
         binding.sideNavigation.setupWithNavController(navController)
         binding.tabNavigator.setupWithNavController(navController)
         binding.sideNavigation.setNavigationItemSelectedListener {
@@ -372,7 +371,7 @@ class HomeActivity :
             if(binding.draggableView.isMaximized) {
                 minimizePlayer()
             }
-            binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_home)
+            binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
         }
 
 //        binding.sideNavigation.setNavigationItemSelectedListener {
@@ -926,19 +925,19 @@ class HomeActivity :
         //
 
         val mic = searchView!!.findViewById(androidx.appcompat.R.id.search_voice_btn) as ImageView
-        mic.setImageResource(R.drawable.microphone)
+        mic.setImageResource(R.drawable.ic_menu_microphone)
 
         val close = searchView!!.findViewById(androidx.appcompat.R.id.search_close_btn) as ImageView
-        close.setImageResource(R.drawable.close)
+        close.setImageResource(R.drawable.ic_close)
 
         val searchIv = searchView!!.findViewById(androidx.appcompat.R.id.search_button) as ImageView
-        searchIv.setImageResource(R.drawable.menu_search)
+        searchIv.setImageResource(R.drawable.ic_menu_search)
 
 
         val searchBadgeTv =
             searchView?.findViewById(androidx.appcompat.R.id.search_badge) as TextView
         searchBadgeTv.background =
-            ContextCompat.getDrawable(this@HomeActivity, R.drawable.menu_search)
+            ContextCompat.getDrawable(this@HomeActivity, R.drawable.ic_menu_search)
 
         val searchAutoComplete: AutoCompleteTextView =
             searchView!!.findViewById(androidx.appcompat.R.id.search_src_text)

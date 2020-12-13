@@ -57,7 +57,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/name"
-            app:srcCompat="@drawable/ic_more" />
+            app:srcCompat="@drawable/ic_menu_more" />
 
         <TextView
             android:id="@+id/name"

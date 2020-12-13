@@ -9,7 +9,6 @@ import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.ui.common.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
 class CategoryDetailsFragment : BaseFragment() {
     lateinit var category: UgcCategory
 

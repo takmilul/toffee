@@ -29,7 +29,7 @@
             android:orientation="vertical">
                             <androidx.fragment.app.FragmentContainerView
                                 android:id="@+id/featuredFragment"
-                                android:name="com.banglalink.toffee.ui.landing.FeaturedFragment"
+                                android:name="com.banglalink.toffee.ui.landing.FeaturedContentFragment"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
 
@@ -55,7 +55,7 @@
 
                             <androidx.fragment.app.FragmentContainerView
                                 android:id="@+id/trendingNowFragment"
-                                android:name="com.banglalink.toffee.ui.landing.TrendingNowFragment"
+                                android:name="com.banglalink.toffee.ui.landing.EditorsChoiceFragment"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
 

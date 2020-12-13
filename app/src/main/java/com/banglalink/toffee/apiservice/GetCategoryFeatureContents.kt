@@ -33,7 +33,7 @@ class GetCategoryFeatureContents @AssistedInject constructor(
         }
 
         if(response.response.channels != null) {
-            response.response.channels.map {
+            response.response.channels!!.map {
                 it.formatted_view_count = Utils.getFormattedViewsText(it.view_count)
                 if(!it.created_at.isNullOrEmpty()) {
                     it.formattedCreateTime = Utils.getDateDiffInDayOrHourOrMinute(Utils.getDate(it.created_at).time).replace(" ", "")

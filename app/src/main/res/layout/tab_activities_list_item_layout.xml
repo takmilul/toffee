@@ -40,7 +40,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/guideline6"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:src="@drawable/dummy" />
+                tools:src="@drawable/placeholder" />
 
             <ProgressBar
                 android:id="@+id/progress"
@@ -98,7 +98,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginBottom="8dp"
                 loadImageFromUrlRounded="@{data.channelProfileUrl}"
-                android:src="@drawable/ic_portrait"
+                android:src="@drawable/ic_profile_default"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/video_thumb" />
 

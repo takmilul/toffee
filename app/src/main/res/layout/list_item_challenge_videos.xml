@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:minHeight="200dp"
-            android:src="@drawable/hero"
+            android:src="@drawable/placeholder"
             loadImageFromUrl="@{data.poster_url_mobile}"
             app:layout_constraintDimensionRatio="W,16:9"
             app:layout_constraintEnd_toEndOf="parent"
@@ -56,7 +56,7 @@
             android:layout_height="42dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="12dp"
-            android:src="@drawable/ic_portrait"
+            android:src="@drawable/ic_profile_default"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/view" />
 

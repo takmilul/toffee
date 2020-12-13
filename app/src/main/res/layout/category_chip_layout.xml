@@ -6,10 +6,8 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     app:chipStrokeWidth="1dp"
-    app:chipBackgroundColor="@android:color/black"
     app:chipStartPadding="8dp"
     app:chipEndPadding="8dp"
     android:checkable="true"
-    android:textColor="#ffffff"
     android:textAllCaps="true"
     />

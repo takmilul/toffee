@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="data"
+            type="com.banglalink.toffee.model.ChannelInfo" />
+        <variable
+            name="callback"
+            type="com.banglalink.toffee.common.paging.ProviderIconCallback" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp">
+
+        <include layout="@layout/layout_horizontal_content"
+            bind:data="@{data}"
+            bind:callback="@{callback}"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
