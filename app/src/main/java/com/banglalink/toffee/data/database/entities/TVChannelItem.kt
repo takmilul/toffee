@@ -11,7 +11,8 @@ data class TVChannelItem(
     val type: String,
     val priority: Int,
     val categoryName: String,
-    val payload: String
+    val payload: String,
+    val viewCount: Long,
 ): BaseEntity() {
     @Ignore
     val channelInfo: ChannelInfo? = try {

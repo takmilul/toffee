@@ -133,7 +133,8 @@ class HomeViewModel @ViewModelInject constructor(
                     it.type ?: "LIVE",
                     0,
                     "Recent",
-                    Gson().toJson(it)
+                    Gson().toJson(it),
+                    it.view_count?.toLong() ?: 0L
                 )
             )
         }

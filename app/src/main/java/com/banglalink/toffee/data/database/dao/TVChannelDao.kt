@@ -45,4 +45,7 @@ abstract class TVChannelDao {
         deleteAll()
         insert(*items)
     }
+
+    @Query("SELECT * FROM TVChannelItem where categoryName=\"Movies\" ORDER BY viewCount DESC")
+    abstract fun getPopularMovieChannels(): PagingSource<Int, TVChannelItem>
 }
