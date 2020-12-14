@@ -7,13 +7,13 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
-import com.banglalink.toffee.common.paging.ProviderIconCallback
+import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentMoviesPreviewItemBinding
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
 
-class MoviesPreviewItemFragment : BaseFragment(), ProviderIconCallback<ChannelInfo> {
+class MoviesPreviewItemFragment : BaseFragment(), BaseListItemCallback<ChannelInfo> {
     private lateinit var moviePreview: ChannelInfo
     private lateinit var binding: FragmentMoviesPreviewItemBinding
     val homeViewModel by activityViewModels<HomeViewModel>()

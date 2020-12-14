@@ -47,6 +47,11 @@ class MoviesPreviewFragment : BaseFragment() {
         }
     }
 
+    override fun onStop() {
+        viewModel.moviePreviews.removeObservers(viewLifecycleOwner)
+        super.onStop()
+    }
+    
     inner class MoviesPreviewSliderAdapter(fragment: Fragment): FragmentStateAdapter(fragment) {
         override fun getItemCount(): Int {
             return moviePreviews.size

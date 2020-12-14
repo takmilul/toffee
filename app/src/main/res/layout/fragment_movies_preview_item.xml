@@ -10,7 +10,7 @@
             type="com.banglalink.toffee.model.ChannelInfo" />
         <variable
             name="callback"
-            type="com.banglalink.toffee.common.paging.ProviderIconCallback" />
+            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

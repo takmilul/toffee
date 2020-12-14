@@ -5,13 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.LayoutHorizontalContentContainerBinding
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.ui.common.BaseFragment
 
-class MoviesComingSoonFragment : Fragment() {
+class MoviesComingSoonFragment : BaseFragment() {
     private lateinit var adapter: MoviesComingSoonAdapter
     private lateinit var binding: LayoutHorizontalContentContainerBinding
     private val viewModel by activityViewModels<MovieViewModel>()
@@ -39,5 +39,10 @@ class MoviesComingSoonFragment : Fragment() {
         observe(viewModel.comingSoonContents){
             adapter.addAll(it)
         }
+    }
+
+    override fun onStop() {
+        viewModel.comingSoonContents.removeObservers(viewLifecycleOwner)
+        super.onStop()
     }
 }

@@ -44,9 +44,9 @@ class MovieFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         category = requireArguments().getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)!!
         activity?.title = category.categoryName
-        setCategoryIcon()
         landingViewModel.pageType.value = PageType.Category
         landingViewModel.categoryId.value = category.id.toInt()
+        setCategoryIcon()
         observeCardsVisibility()
         viewModel.loadMovieCategoryDetail
     }
@@ -76,5 +76,10 @@ class MovieFragment : BaseFragment() {
             binding.topMovieChannelsFragment.setVisibility(it.topMovieChannels == 1)
             binding.latestVideosFragment.setVisibility(it.feed == 1)
         }
+    }
+
+    override fun onStop() {
+        viewModel.moviesContentCards.removeObservers(viewLifecycleOwner)
+        super.onStop()
     }
 }

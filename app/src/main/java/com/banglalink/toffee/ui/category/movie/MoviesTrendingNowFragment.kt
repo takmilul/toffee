@@ -1,64 +1,30 @@
 package com.banglalink.toffee.ui.category.movie
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.activityViewModels
-import com.banglalink.toffee.R
-import com.banglalink.toffee.common.paging.ProviderIconCallback
-import com.banglalink.toffee.databinding.LayoutHorizontalContentContainerBinding
 import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.ui.common.HomeBaseFragment
-import com.banglalink.toffee.ui.home.LandingPageViewModel
 
-class MoviesTrendingNowFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo> {
-    private lateinit var adapter: MoviesAdapter<ChannelInfo>
-    private lateinit var binding: LayoutHorizontalContentContainerBinding
-    private val viewModel by activityViewModels<MovieViewModel>()
-    private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
+class MoviesTrendingNowFragment: MovieBaseFragment() {
+    override val cardTitle: String = "Trending"
 
     companion object {
         @JvmStatic
         fun newInstance() = MoviesTrendingNowFragment()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.layout_horizontal_content_container, container, false)
-        return binding.root
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.titleTextView.text = "Trending Now"
-        adapter = MoviesAdapter(this, false)
-        binding.listView.adapter = adapter
-        loadContent()
         viewModel.loadTrendingNowMovies
     }
-
-    private fun loadContent() {
+    
+    override fun loadContent() {
         observe(viewModel.trendingNowMovies){
             adapter.addAll(it)
         }
     }
 
-    override fun onItemClicked(item: ChannelInfo) {
-        homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
-    }
-
-    override fun onOpenMenu(view: View, item: ChannelInfo) {
-        super.onOptionClicked(view, item)
-    }
-
-    override fun onProviderIconClicked(item: ChannelInfo) {
-        super.onProviderIconClicked(item)
-        landingPageViewModel.navigateToMyChannel(this, item.id.toInt(), item.channel_owner_id, item.isSubscribed)
-    }
-    
-    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
-
+    override fun onStop() {
+        viewModel.trendingNowMovies.removeObservers(viewLifecycleOwner)
+        super.onStop()
     }
 }
