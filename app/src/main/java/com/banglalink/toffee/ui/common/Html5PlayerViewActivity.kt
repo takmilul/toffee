@@ -43,16 +43,19 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
         observe(mWebView.showProgressLiveData){
             when(it){
                 true->progressDialog.show()
-                false->progressDialog.dismiss()
+                false->{
+                    if(progressDialog.isShowing)
+                        progressDialog.dismiss()
+                }
             }
         }
 
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         progressDialog.dismiss()
         HeartBeatManager.triggerEventViewingContentStop()
+        super.onDestroy()
     }
 
     //For Android 5.0.0 webkit UI bug fix

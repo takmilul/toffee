@@ -3,6 +3,7 @@ package com.banglalink.toffee.data.network.request
 import android.os.Build
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.util.Utils
 import com.google.gson.annotations.SerializedName
 
 open class PubSubBaseRequest {
@@ -20,4 +21,7 @@ open class PubSubBaseRequest {
 
     @SerializedName("msisdn")
     val phoneNumber: String = Preference.getInstance().phoneNumber
+
+    @SerializedName("initialTime")
+    val reportTime = Utils.getDateTime()
 }

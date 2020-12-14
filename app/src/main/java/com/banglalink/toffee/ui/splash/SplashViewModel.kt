@@ -21,10 +21,10 @@ import kotlinx.coroutines.launch
 
 class SplashViewModel(application: Application) : BaseViewModel(application) {
 
-    private val checkUpdate by unsafeLazy {
+    private val checkUpdate by lazy {
         CheckUpdate(Preference.getInstance(),RetrofitApiClient.authApi)
     }
-    private val apiLogin by unsafeLazy {
+    private val apiLogin by lazy {
         ApiLogin(Preference.getInstance(), RetrofitApiClient.authApi)
     }
 
