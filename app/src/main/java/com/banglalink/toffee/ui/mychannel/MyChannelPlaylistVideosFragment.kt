@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.mychannel
 
 import android.os.Bundle
-import android.util.Base64
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -31,7 +30,6 @@ import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosViewModel.AssistedFactory
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.MyPopupWindow
-import com.banglalink.toffee.util.getFormattedViewsText
 import com.google.android.material.switchmaterial.SwitchMaterial
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.catchup_details_list_header_new.*
@@ -96,7 +94,7 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
             observe(playerViewModel.channelSubscriberCount) {
                 channelInfo.isSubscribed = if(playerViewModel.isChannelSubscribed.value!!) 1 else 0
                 channelInfo.subscriberCount = it
-                channelInfo.formattedSubscriberCount = getFormattedViewsText(it.toString())
+//                channelInfo.formattedSubscriberCount = getFormattedViewsText(it.toString())
                 detailsAdapter?.notifyDataSetChanged()
             }
     

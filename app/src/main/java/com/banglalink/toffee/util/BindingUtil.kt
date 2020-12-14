@@ -82,20 +82,14 @@ fun bindCategoryBackground(view: ImageView, category: UgcCategory) {
 
 @BindingAdapter("loadCategoryImage")
 fun bindCategoryImage(view: ImageView, category: UgcCategory) {
-//    val gd = GradientDrawable().apply {
-//        shape = GradientDrawable.OVAL
-//        color = ColorStateList.valueOf(Color.parseColor(category.colorCode))
-//    }
-//    view.background = gd
-
     if (category.categoryIcon.isNullOrBlank()) {
         view.setImageResource(R.drawable.ic_cat_music)
     }
     else {
         view.load(category.categoryIcon) {
             crossfade(false)
-            fallback(R.drawable.placeholder)
-            placeholder(R.drawable.placeholder)
+            fallback(R.drawable.ic_cat_movie)
+            placeholder(R.drawable.ic_cat_movie)
             error(R.drawable.ic_cat_movie)
 //            memoryCachePolicy(CachePolicy.ENABLED)
             diskCachePolicy(CachePolicy.ENABLED)
@@ -145,7 +139,7 @@ fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
 
 @BindingAdapter("bindDuration")
 fun bindDuration(view: TextView, channelInfo: ChannelInfo) {
-    view.text = channelInfo.formattedDuration
+    view.text = channelInfo.formattedDuration()
 }
 
 @BindingAdapter("bindButtonState")
@@ -163,7 +157,7 @@ fun bindSubscriptionStatus(view: MultiTextButton, isSubscribed: Boolean) {
 
 @BindingAdapter("bindViewCount")
 fun bindViewCount(view: TextView, channelInfo: ChannelInfo) {
-    view.text = channelInfo.formatted_view_count
+    view.text = channelInfo.formatted_view_count()
 }
 
 @BindingAdapter("packageExpiryText")
@@ -307,10 +301,7 @@ fun bindEmoCount(view: TextView, item: ChannelInfo) {
     var react = item.reaction?.run {
         like + love + haha + wow + sad + angry
     } ?: 0L
-    println("react count before inc: $react")
     if (item.myReaction > 0) react++
-    println(item.myReaction)
-    println("react count after inc: $react")
     view.text = Utils.getFormattedViewsText(react.toString())
 }
 

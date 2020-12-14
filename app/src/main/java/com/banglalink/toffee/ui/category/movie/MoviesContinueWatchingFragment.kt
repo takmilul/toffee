@@ -12,11 +12,13 @@ import com.banglalink.toffee.databinding.LayoutHorizontalContentContainerBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.BaseFragment
+import com.banglalink.toffee.ui.home.LandingPageViewModel
 
 class MoviesContinueWatchingFragment : BaseFragment(), ProviderIconCallback<ChannelInfo> {
-    private lateinit var adapter: MoviesAdapter
+    private lateinit var adapter: MoviesAdapter<ChannelInfo>
     private lateinit var binding: LayoutHorizontalContentContainerBinding
     private val viewModel by activityViewModels<MovieViewModel>()
+    private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
 
     companion object {
         @JvmStatic
@@ -40,5 +42,10 @@ class MoviesContinueWatchingFragment : BaseFragment(), ProviderIconCallback<Chan
         observe(viewModel.englishMovies){
             adapter.addAll(it)
         }
+    }
+
+    override fun onProviderIconClicked(item: ChannelInfo) {
+        super.onProviderIconClicked(item)
+        landingPageViewModel.navigateToMyChannel(this, item.id.toInt(), item.channel_owner_id, item.isSubscribed)
     }
 }

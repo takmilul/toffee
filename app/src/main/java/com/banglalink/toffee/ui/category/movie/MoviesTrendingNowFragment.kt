@@ -11,12 +11,11 @@ import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.databinding.LayoutHorizontalContentContainerBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.ui.common.BaseFragment
-import com.banglalink.toffee.ui.common.ContentReactionCallback
+import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 
-class MoviesTrendingNowFragment: BaseFragment(), ProviderIconCallback<ChannelInfo>, ContentReactionCallback<ChannelInfo> {
-    private lateinit var adapter: MoviesAdapter
+class MoviesTrendingNowFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo> {
+    private lateinit var adapter: MoviesAdapter<ChannelInfo>
     private lateinit var binding: LayoutHorizontalContentContainerBinding
     private val viewModel by activityViewModels<MovieViewModel>()
     private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
@@ -37,12 +36,29 @@ class MoviesTrendingNowFragment: BaseFragment(), ProviderIconCallback<ChannelInf
         adapter = MoviesAdapter(this, false)
         binding.listView.adapter = adapter
         loadContent()
-        viewModel.loadTrendingNowMovies()
+        viewModel.loadTrendingNowMovies
     }
 
     private fun loadContent() {
         observe(viewModel.trendingNowMovies){
             adapter.addAll(it)
         }
+    }
+
+    override fun onItemClicked(item: ChannelInfo) {
+        homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+    }
+
+    override fun onOpenMenu(view: View, item: ChannelInfo) {
+        super.onOptionClicked(view, item)
+    }
+
+    override fun onProviderIconClicked(item: ChannelInfo) {
+        super.onProviderIconClicked(item)
+        landingPageViewModel.navigateToMyChannel(this, item.id.toInt(), item.channel_owner_id, item.isSubscribed)
+    }
+    
+    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
+
     }
 }

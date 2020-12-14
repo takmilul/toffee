@@ -12,8 +12,9 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentMoviesPreviewBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.ui.common.BaseFragment
 
-class MoviesPreviewFragment : Fragment() {
+class MoviesPreviewFragment : BaseFragment() {
     private lateinit var moviePreviews: List<ChannelInfo>
     private lateinit var adapter: MoviesPreviewSliderAdapter
     private lateinit var binding: FragmentMoviesPreviewBinding
@@ -33,7 +34,7 @@ class MoviesPreviewFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.titleTextView.text = "Movie Previews"
         observeMoviePreviews()
-        viewModel.loadMoviePreviews()
+        viewModel.loadMoviePreviews
     }
 
     private fun observeMoviePreviews() {

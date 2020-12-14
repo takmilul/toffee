@@ -15,7 +15,6 @@ import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
-import com.banglalink.toffee.util.Utils
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.fragment_landing_featured.*
 import kotlinx.coroutines.Job
@@ -68,17 +67,9 @@ class FeaturedContentFragment : HomeBaseFragment() {
                 when (it) {
                     is Success -> {
                         it.data?.let { channelInfoList ->
-                            val channels: List<ChannelInfo> = channelInfoList.map { channelInfo->
-                                channelInfo.formatted_view_count = Utils.getFormattedViewsText(channelInfo.view_count)
-                                if(!channelInfo.created_at.isNullOrEmpty()) {
-                                    channelInfo.formattedCreateTime = Utils.getDateDiffInDayOrHourOrMinute(Utils.getDate(channelInfo.created_at).time).replace(" ", "")
-                                }
-                                channelInfo.formattedSubscriberCount = Utils.getFormattedViewsText(channelInfo.subscriberCount.toString())
-                                channelInfo
-                            }
                             startPageScroll()
                             mAdapter.removeAll()
-                            mAdapter.addAll(channels)
+                            mAdapter.addAll(channelInfoList)
                         }
                     }
                     is Failure -> {

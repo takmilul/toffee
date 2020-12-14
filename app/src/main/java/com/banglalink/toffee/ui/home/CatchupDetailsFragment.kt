@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.home
 
 import android.os.Bundle
-import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +18,6 @@ import com.banglalink.toffee.ui.common.ContentReactionCallback
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.common.ReactionFragment
 import com.banglalink.toffee.ui.widget.MyPopupWindow
-import com.banglalink.toffee.util.getFormattedViewsText
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_catchup.*
 import kotlinx.coroutines.flow.collectLatest
@@ -71,7 +69,6 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
         observe(viewModel.channelSubscriberCount) {
             currentItem.isSubscribed = if(viewModel.isChannelSubscribed.value!!) 1 else 0
             currentItem.subscriberCount = it
-            currentItem.formattedSubscriberCount = getFormattedViewsText(it.toString())
             detailsAdapter.notifyDataSetChanged()
         }
 

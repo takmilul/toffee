@@ -5,15 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.databinding.FragmentMoviesPreviewItemBinding
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.BaseFragment
+import com.banglalink.toffee.ui.home.HomeViewModel
 
 class MoviesPreviewItemFragment : BaseFragment(), ProviderIconCallback<ChannelInfo> {
     private lateinit var moviePreview: ChannelInfo
     private lateinit var binding: FragmentMoviesPreviewItemBinding
+    val homeViewModel by activityViewModels<HomeViewModel>()
 
     companion object {
         @JvmStatic
@@ -33,5 +36,9 @@ class MoviesPreviewItemFragment : BaseFragment(), ProviderIconCallback<ChannelIn
         super.onViewCreated(view, savedInstanceState)
         binding.data = moviePreview
         binding.callback = this
+    }
+
+    override fun onItemClicked(item: ChannelInfo) {
+        homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
     }
 }

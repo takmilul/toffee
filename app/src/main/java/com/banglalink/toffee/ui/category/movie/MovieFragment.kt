@@ -48,7 +48,7 @@ class MovieFragment : BaseFragment() {
         landingViewModel.pageType.value = PageType.Category
         landingViewModel.categoryId.value = category.id.toInt()
         observeCardsVisibility()
-        viewModel.loadMovieCategoryDetail()
+        viewModel.loadMovieCategoryDetail
     }
 
     private fun setCategoryIcon() {
@@ -62,7 +62,7 @@ class MovieFragment : BaseFragment() {
     private fun observeCardsVisibility() {
         observe(viewModel.moviesContentCards){
             binding.featuredFragment.setVisibility(it.featuredContent == 1)
-//            binding.continueWatchingFragment.setVisibility(it.continueWatching == 1)
+            binding.continueWatchingFragment.setVisibility(it.continueWatching == 1)
             binding.editorsChoiceFragment.setVisibility(it.editorsChoice == 1)
             binding.moviePreviewFragment.setVisibility(it.moviePreviews == 1)
             binding.trendingNowMoviesFragment.setVisibility(it.trendingNow == 1)

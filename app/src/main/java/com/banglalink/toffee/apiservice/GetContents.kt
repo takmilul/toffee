@@ -9,9 +9,6 @@ import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.util.Utils
-import com.banglalink.toffee.util.discardZeroFromDuration
-import com.banglalink.toffee.util.getFormattedViewsText
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 
@@ -49,14 +46,8 @@ class GetContents @AssistedInject constructor(
                 it.category = requestParams.category
                 it.subCategoryId = requestParams.subcategoryId
                 it.subCategory = requestParams.subcategory
-                it.formatted_view_count = getFormattedViewsText(it.view_count)
-                it.formattedDuration = discardZeroFromDuration(it.duration)
                 val reactionInfo = reactionDao.getReactionByContentId(preference.customerId, it.id)
                 it.myReaction = reactionInfo?.reaction ?: Reaction.None.value
-                if(!it.created_at.isNullOrEmpty()) {
-                    it.formattedCreateTime = Utils.getDateDiffInDayOrHourOrMinute(Utils.getDate(it.created_at).time).replace(" ", "")
-                }
-                it.formattedSubscriberCount = getFormattedViewsText(it.subscriberCount.toString())
                 it
             }
         }

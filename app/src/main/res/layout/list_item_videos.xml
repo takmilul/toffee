@@ -132,33 +132,34 @@
         
         <TextView
             android:id="@+id/owner"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintWidth_default="wrap"
+            app:layout_constrainedWidth="true"
             android:layout_marginTop="4dp"
             android:maxLines="1"
             android:ellipsize="end"
-            android:text="@{isMyChannel ? `` : data.content_provider_name + ` \u2022 `}"
+            android:text="@{isMyChannel ? `` : data.content_provider_name}"
             android:textColor="@color/fixed_second_text_color"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="@+id/name"
             app:layout_constraintTop_toBottomOf="@+id/titleBarrier"
             app:layout_constraintEnd_toStartOf="@id/uploadDuration"
-            tools:text="Banglalink &#8226; " />
+            tools:text="Banglalink" />
         
         <TextView
             android:id="@+id/uploadDuration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxLines="1"
-            android:text="@{data.formattedCreateTime}"
+            android:layout_marginEnd="8dp"
+            android:text="@{` \u2022 ` + data.formattedCreateTime}"
             android:textColor="@color/fixed_second_text_color"
             app:layout_constraintStart_toEndOf="@id/owner"
             app:layout_constraintEnd_toStartOf="@id/reactionCount"
             app:layout_constraintTop_toTopOf="@id/owner"
             app:layout_constraintBottom_toBottomOf="@id/owner"
-            tools:text="14h" />
+            tools:text=" &#8226; 14h" />
         
         <TextView
             android:id="@+id/reactionCount"

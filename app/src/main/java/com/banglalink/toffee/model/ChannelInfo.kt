@@ -1,14 +1,14 @@
 package com.banglalink.toffee.model
 
 import android.os.Parcelable
-import android.text.Html
 import android.text.Spanned
-import android.text.SpannedString
 import android.util.Base64
 import androidx.core.text.HtmlCompat
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.ui.player.HlsLinks
 import com.banglalink.toffee.util.Utils
+import com.banglalink.toffee.util.Utils.discardZeroFromDuration
+import com.banglalink.toffee.util.getFormattedViewsText
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 import java.util.*
@@ -27,12 +27,10 @@ data class ChannelInfo(
     var water_mark_url: String? = null,
     var type: String? = null,
     var view_count: String? = null,
-    var formatted_view_count: String? = null,
     var lcn: String? = null,
     var individual_price: String? = null,
     var video_tags: String? = null,
     var duration: String? = null,
-    var formattedDuration: String? = null,
     var age_restriction: String? = null,
     var service_operator_id: String? = null,
     var logo_mobile_url: String? = null,
@@ -69,8 +67,6 @@ data class ChannelInfo(
     @SerializedName("is_approved")
     val isApproved: Int? = null,
     val created_at: String? = null,
-    var formattedCreateTime: String? = null,
-    var formattedSubscriberCount: String? = null,
 ) :Parcelable
 {
 
@@ -137,4 +133,9 @@ data class ChannelInfo(
             return list
         }
     }
+    
+    fun formatted_view_count() = getFormattedViewsText(view_count)
+    fun formattedDuration() = discardZeroFromDuration(duration)
+    fun formattedCreateTime() = if(!created_at.isNullOrBlank()) Utils.getDateDiffInDayOrHourOrMinute(Utils.getDate(created_at).time).replace(" ", "") else "0"
+    fun formattedSubscriberCount() = getFormattedViewsText(subscriberCount.toString())
 }

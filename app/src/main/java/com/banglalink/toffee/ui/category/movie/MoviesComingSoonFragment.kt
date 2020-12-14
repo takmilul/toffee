@@ -8,13 +8,11 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
-import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.databinding.LayoutHorizontalContentContainerBinding
 import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.model.ChannelInfo
 
-class MoviesComingSoonFragment : Fragment(), ProviderIconCallback<ChannelInfo> {
-    private lateinit var adapter: MoviesAdapter
+class MoviesComingSoonFragment : Fragment() {
+    private lateinit var adapter: MoviesComingSoonAdapter
     private lateinit var binding: LayoutHorizontalContentContainerBinding
     private val viewModel by activityViewModels<MovieViewModel>()
 
@@ -31,13 +29,14 @@ class MoviesComingSoonFragment : Fragment(), ProviderIconCallback<ChannelInfo> {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.titleTextView.text = "Coming Soon"
-//        adapter = MoviesAdapter(this)
-//        binding.listView.adapter = adapter
-//        loadContent()
+        adapter = MoviesComingSoonAdapter()
+        binding.listView.adapter = adapter
+        loadContent()
+        viewModel.loadComingSoonContents
     }
 
     private fun loadContent() {
-        observe(viewModel.englishMovies){
+        observe(viewModel.comingSoonContents){
             adapter.addAll(it)
         }
     }

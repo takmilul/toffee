@@ -11,12 +11,14 @@ import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.databinding.LayoutHorizontalContentContainerBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.ui.common.BaseFragment
+import com.banglalink.toffee.ui.common.HomeBaseFragment
+import com.banglalink.toffee.ui.home.LandingPageViewModel
 
-class MoviesThrillerFragment: BaseFragment(), ProviderIconCallback<ChannelInfo> {
-    private lateinit var adapter: MoviesAdapter
+class MoviesThrillerFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo> {
+    private lateinit var adapter: MoviesAdapter<ChannelInfo>
     private lateinit var binding: LayoutHorizontalContentContainerBinding
     private val viewModel by activityViewModels<MovieViewModel>()
+    private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
 
     companion object {
         @JvmStatic
@@ -40,5 +42,22 @@ class MoviesThrillerFragment: BaseFragment(), ProviderIconCallback<ChannelInfo> 
         observe(viewModel.thrillerMovies){
             adapter.addAll(it)
         }
+    }
+
+    override fun onItemClicked(item: ChannelInfo) {
+        homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+    }
+
+    override fun onOpenMenu(view: View, item: ChannelInfo) {
+        super.onOptionClicked(view, item)
+    }
+
+    override fun onProviderIconClicked(item: ChannelInfo) {
+        super.onProviderIconClicked(item)
+        landingPageViewModel.navigateToMyChannel(this, item.id.toInt(), item.channel_owner_id, item.isSubscribed)
+    }
+
+    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
+
     }
 }

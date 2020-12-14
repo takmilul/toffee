@@ -264,7 +264,7 @@ interface ToffeeApi {
         @Path("limit") limit: Int,
         @Path("offset") offset: Int,
         @Path("dbVersion") dbVersion: Int,
-        @Body movieCategoryDetailRequest: MovieCategoryDetailRequest
+        @Body categoryDetailRequest: MovieCategoryDetailRequest
     ): MovieCategoryDetailResponse
     
     @POST("/ugc-movie-preview/1/{type}/{categoryId}/{subCategoryId}/{limit}/{offset}/{dbVersion}")
@@ -277,4 +277,15 @@ interface ToffeeApi {
         @Path("dbVersion") dbVersion: Int,
         @Body moviesPreviewRequest: MoviesPreviewRequest
     ): MoviesPreviewResponse
+    
+    @POST("/ugc-coming-soon/1/{type}/{categoryId}/{subCategoryId}/{limit}/{offset}/{dbVersion}")
+    suspend fun getComingSoonPosters(
+        @Path("type") type: String,
+        @Path("categoryId") categoryId: Int,
+        @Path("subCategoryId") subCategoryId: Int,
+        @Path("limit") limit: Int,
+        @Path("offset") offset: Int,
+        @Path("dbVersion") dbVersion: Int,
+        @Body moviesComingSoonRequest: MoviesComingSoonRequest
+    ): MoviesComingSoonResponse
 }

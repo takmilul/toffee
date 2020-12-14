@@ -25,10 +25,11 @@ class GetTracker:IGetMethodTracker {
         "/ugc-all-user-channel/1",
         "/ugc-movie-category-details/1",
         "/ugc-movie-preview/1",
+        "/ugc-coming-soon/1",
     )
 
     override fun shouldConvertToGetRequest(urlEncodedFragmentString: String):Boolean {
-        Log.i("PATH PATH",urlEncodedFragmentString?:"No String")
+        Log.i("PATH PATH",urlEncodedFragmentString)
         val resultString = getUrlList.find {
             urlEncodedFragmentString.contains(it)
         }
