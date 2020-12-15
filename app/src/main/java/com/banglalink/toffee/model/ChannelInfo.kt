@@ -54,6 +54,15 @@ data class ChannelInfo(
     var isSubscribed: Int = 0,
     var subscriberCount: Int = 0,
 
+    @SerializedName("serial_name")
+    val seriesName: String? = null,
+    @SerializedName("season_no")
+    val totalSeason: Int = 0,
+    @SerializedName("serial_summary_id")
+    val seriesSummaryId: Int = 0,
+    @SerializedName("episode_no")
+    val totalEpisode: Int = 0,
+
     var is_available: Int = 0,
     var reaction: ReactionStatus? = null,   //individual reaction count from server
     var myReaction: Int = Reaction.None.value, //enum value (Reaction.Like.value) etc...

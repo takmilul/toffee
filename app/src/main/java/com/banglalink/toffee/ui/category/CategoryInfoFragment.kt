@@ -2,7 +2,9 @@ package com.banglalink.toffee.ui.category
 
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +20,7 @@ import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.model.UgcSubCategory
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
+import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.bindCategoryImage
 import com.google.android.material.chip.Chip
 import kotlinx.android.synthetic.main.fragment_category_info.*
@@ -78,6 +81,7 @@ class CategoryInfoFragment: HomeBaseFragment() {
         val chipColor = createStateColor(intColor)
         val chip = layoutInflater.inflate(R.layout.category_chip_layout, categoryChipGroup, false) as Chip
         chip.text = subCategory.name
+        chip.typeface = Typeface.DEFAULT_BOLD
         chip.id = View.generateViewId()
 
         chip.chipBackgroundColor = chipColor

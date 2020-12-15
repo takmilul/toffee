@@ -15,6 +15,9 @@
         <action
             android:id="@+id/action_allCategoriesFragment_to_movieFragment"
             app:destination="@id/movieFragment" />
+        <action
+            android:id="@+id/action_allCategoriesFragment_to_dramaSeriesFragment"
+            app:destination="@id/dramaSeriesFragment" />
         <!--        <action-->
 <!--            android:id="@+id/action_menu_activities_to_channelRatingFragment"-->
 <!--            app:destination="@id/channelRatingFragment" />-->
@@ -77,6 +80,9 @@
         <action
             android:id="@+id/action_landingCategoriesFragment_to_movieFragment"
             app:destination="@id/movieFragment" />
+        <action
+            android:id="@+id/action_landingCategoriesFragment_to_dramaSeriesFragment"
+            app:destination="@id/dramaSeriesFragment" />
     </fragment>
     <fragment
         android:id="@+id/menu_tv"
@@ -317,6 +323,15 @@
         <argument
             android:name="title"
             app:argType="string"
-            android:defaultValue="Category" />
+            android:defaultValue="Movie" />
+    </fragment>
+    <fragment
+        android:id="@+id/dramaSeriesFragment"
+        android:name="com.banglalink.toffee.ui.category.drama.DramaSeriesFragment"
+        android:label="DramaSeriesFragment" >
+        <argument
+            android:name="title"
+            app:argType="string"
+            android:defaultValue="Drama Series" />
     </fragment>
 </navigation>

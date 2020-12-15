@@ -43,11 +43,16 @@ class LandingCategoriesFragment: BaseFragment() {
                 val args = Bundle().apply {
                     putParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM, item)
                 }
-                if (item.id.toInt() == 1){
-                    parentFragment?.findNavController()?.navigate(R.id.action_landingCategoriesFragment_to_movieFragment, args)
-                }
-                else {
-                    parentFragment?.findNavController()?.navigate(R.id.action_landingCategoriesFragment_to_categoryDetailsFragment, args)
+                when(item.id.toInt()) {
+                    1 -> {
+                        parentFragment?.findNavController()?.navigate(R.id.action_landingCategoriesFragment_to_movieFragment, args)
+                    }
+                    9 -> {
+                        parentFragment?.findNavController()?.navigate(R.id.action_landingCategoriesFragment_to_dramaSeriesFragment, args)
+                    }
+                    else -> {
+                        parentFragment?.findNavController()?.navigate(R.id.action_landingCategoriesFragment_to_categoryDetailsFragment, args)
+                    }
                 }
             }
         })

@@ -57,10 +57,6 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        currentItem.description = Base64.decode(currentItem.description, Base64.DEFAULT)
-//            .toString(charset("UTF-8"))
-//            .removePrefix("<p>")
-//            .removeSuffix("</p>")
         
         initAdapter()
 
@@ -98,7 +94,8 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
             }
 
             override fun onOpenMenu(view: View, item: ChannelInfo) {
-                openMenu(view, item)
+                super.onOpenMenu(view, item)
+                onOptionClicked(view, item)
             }
 
             override fun onProviderIconClicked(item: ChannelInfo) {
@@ -140,45 +137,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
     
     override fun onOpenMenu(view: View, item: ChannelInfo) {
         super.onOpenMenu(view, item)
-        openMenu(view, item)
-    }
-
-    private fun openMenu(anchor: View, channelInfo: ChannelInfo) {
-        val popupMenu = MyPopupWindow(requireContext(), anchor)
-        popupMenu.inflate(R.menu.menu_catchup_item)
-
-        if (channelInfo.favorite == null || channelInfo.favorite == "0") {
-            popupMenu.menu.getItem(0).title = "Add to Favorites"
-        }
-        else {
-            popupMenu.menu.getItem(0).title = "Remove from Favorites"
-        }
-        if(hideNotInterestedMenuItem(channelInfo)){//we are checking if that could be shown or not
-            popupMenu.menu.getItem(2).isVisible = false
-        }
-        popupMenu.menu.findItem(R.id.menu_share).isVisible = false
-        popupMenu.setOnMenuItemClickListener{
-            when(it?.itemId){
-                R.id.menu_share->{
-                    homeViewModel.shareContentLiveData.postValue(channelInfo)
-                    return@setOnMenuItemClickListener true
-                }
-                R.id.menu_fav->{
-                    homeViewModel.updateFavorite(channelInfo).observe(viewLifecycleOwner, { resp->
-                        handleFavoriteResponse(resp)
-                    })
-                    return@setOnMenuItemClickListener true
-                }
-                R.id.menu_not_interested->{
-//                    removeItemNotInterestedItem(channelInfo)
-                    return@setOnMenuItemClickListener true
-                }
-                else->{
-                    return@setOnMenuItemClickListener false
-                }
-            }
-        }
-        popupMenu.show()
+        onOptionClicked(view, item)
     }
 
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
