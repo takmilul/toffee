@@ -84,7 +84,7 @@ object PubSubMessageUtil {
     var callback: JsonBatchCallback<PublishResponse?> =
         object : JsonBatchCallback<PublishResponse?>() {
             override fun onSuccess(t: PublishResponse?, responseHeaders: HttpHeaders?) {
-                Log.d("PUBSUB", "published !")
+                Log.d("PUBSUB", "published ! "+t?.messageIds)
             }
             override fun onFailure(
                 e: GoogleJsonError,

@@ -16,9 +16,12 @@ class ReportLastPlayerSession(private val playerPreference: PlayerPreference) {
     suspend fun execute(){
         withContext(Dispatchers.IO){
             try {
+                val playerInitialTime = playerPreference.getInitialTime()
                 val sessionList = playerPreference.getPlayerSessionDetails()
                 if(sessionList.isNotEmpty()){
-                    val request = PlayerSessionDetailsRequest(sessionList)
+                    val request = PlayerSessionDetailsRequest(sessionList).apply {
+                        initialTime = playerInitialTime
+                    }
                     PubSubMessageUtil.sendMessage(gson.toJson(request),BANDWIDTH_TRACK_TOPIC)
                 }
             }catch (e:Exception){

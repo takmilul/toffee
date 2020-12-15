@@ -11,8 +11,8 @@ android {
         applicationId "com.banglalink.toffee"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 35
-        versionName "1.1.13"
+        versionCode 42
+        versionName "1.1.21"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {
@@ -60,7 +60,7 @@ dependencies {
 
     //Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.2.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.4'
     //LifeCycle Extensions
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
@@ -80,6 +80,8 @@ dependencies {
 
     //Coil image Lib
     implementation 'io.coil-kt:coil:0.9.5'
+
+    implementation 'com.google.android.gms:play-services-basement:17.5.0'
 
     //Firebase Push Notification
     implementation 'com.google.firebase:firebase-messaging:21.0.0'
@@ -114,6 +116,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0"
 
+    implementation 'com.google.android.gms:play-services-basement:17.5.0'
     implementation 'com.google.android.gms:play-services-auth:19.0.0'
     implementation 'com.google.android.gms:play-services-auth-api-phone:17.5.0'
 

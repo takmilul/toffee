@@ -382,6 +382,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
             try{
                 totalBytesInMB += (loadEventInfo.bytesLoaded);
                 if(initialTimeStamp == 0){
+                    PlayerPreference.Companion.getInstance().setInitialTime();
                     initialTimeStamp = System.currentTimeMillis();
                 }else{
                     durationInMillis = System.currentTimeMillis() - initialTimeStamp;
