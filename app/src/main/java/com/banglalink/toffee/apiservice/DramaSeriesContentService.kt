@@ -21,8 +21,8 @@ class DramaSeriesContentService @AssistedInject constructor(
             toffeeApi.getDramaSeriesContents(
                 requestParams.type,
                 requestParams.subcategoryId,
-                offset,
                 limit,
+                offset,
                 preference.getDBVersionByApiName("getContentsV5"),
                 DramaSeriesContentRequest(
                     preference.customerId,

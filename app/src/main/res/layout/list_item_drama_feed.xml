@@ -13,7 +13,7 @@
 
         <variable
             name="callback"
-            type="com.banglalink.toffee.ui.common.ContentReactionCallback" />
+            type="com.banglalink.toffee.common.paging.ProviderIconCallback" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.databinding.FragmentDramaSeriesContentBinding
+import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
@@ -40,7 +41,11 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
         mAdapter = DramaSeriesListAdapter(this)
 
         binding.latestVideosList.adapter = mAdapter
-        
+
+        observe(landingPageViewModel.latestVideoLiveData) {
+            observeList(it.first, it.second)
+        }
+
         observeList(category?.id?.toInt() ?: 0)
         
         /*filterButton.setOnClickListener {
@@ -62,7 +67,7 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
 
     private fun observeList(categoryId: Int, subCategoryId: Int = 0) {
         lifecycleScope.launchWhenStarted {
-            viewModel.loadDramaSeriesContents.collectLatest {
+            viewModel.loadDramaSeriesContents(categoryId, subCategoryId).collectLatest {
                 mAdapter.submitData(it)
             }
         }
