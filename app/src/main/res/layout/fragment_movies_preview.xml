@@ -43,8 +43,9 @@
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="8dp"
+            android:layout_height="wrap_content"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
             android:clipChildren="false"
             android:clipToPadding="false"
             android:background="@drawable/all_round_bg_with_top_space"

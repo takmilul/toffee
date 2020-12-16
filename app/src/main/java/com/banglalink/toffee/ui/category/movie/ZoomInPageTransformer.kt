@@ -2,40 +2,26 @@ package com.banglalink.toffee.ui.category.movie
 
 import android.view.View
 import androidx.viewpager2.widget.ViewPager2
+import com.banglalink.toffee.util.Utils
+import kotlin.math.abs
 
-private const val MAX_SCALE = 1f
-private const val MIN_SCALE = 0.7f
-private const val DIFF_SCALE = MAX_SCALE - MIN_SCALE
+/**
+ * https://stackoverflow.com/questions/10098040/android-viewpager-show-preview-of-page-on-left-and-right
+ */
 
 class ZoomInPageTransformer : ViewPager2.PageTransformer {
+//    val nextItemVisiblePx = Utils.dpToPx(24)
+//    val currentItemHorizontalMarginPx = Utils.dpToPx(24)
+    private val pageTranslationX = Utils.dpToPx(48) //nextItemVisiblePx + currentItemHorizontalMarginPx
+    private val DIFF_SCALE = 0.28f
 
     override fun transformPage(view: View, position: Float) {
-        view.apply {
-            val pageWidth = width
-            val pageHeight = height
-            val scale = MAX_SCALE
-            when {
-                position < -1 -> {
-                    scaleX = scale + position * DIFF_SCALE
-                    scaleY = MIN_SCALE
-                }
-                position <= 1 -> {
-                    /*val scaleFactor = max(MIN_SCALE, 1 - abs(position))
-                    val verticalMargin = pageHeight * (1 - scaleFactor) / 2
-                    val horizontalMargin = pageWidth * (1 - scaleFactor) / 2
-                    translationX = if (position < 0) {
-                        horizontalMargin - verticalMargin / 2
-                    } else {
-                        horizontalMargin + verticalMargin / 2
-                    }*/
-                    scaleX = scale - position * DIFF_SCALE
-                    scaleY = MAX_SCALE
-                }
-                else -> {
-                    scaleX = scale + position * DIFF_SCALE
-                    scaleY = MIN_SCALE
-                }
-            }
+        view.translationX = -pageTranslationX * position
+        // Next line scales the item's height. You can remove it if you don't want this effect
+
+        (1 - (DIFF_SCALE * abs(position))).let {
+            view.scaleX = it
+            view.scaleY = it
         }
     }
 }
