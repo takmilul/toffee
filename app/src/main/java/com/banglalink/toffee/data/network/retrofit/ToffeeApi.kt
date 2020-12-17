@@ -298,4 +298,13 @@ interface ToffeeApi {
         @Path("dbVersion") dbVersion: Int,
         @Body dramaSeriesContentRequest: DramaSeriesContentRequest
     ): DramaSeriesContentResponse
+    
+    @POST("/ugc-partner-list/1/{type}/{limit}/{offset}/{dbVersion}")
+    suspend fun getPartnersList(
+        @Path("type") type: String,
+        @Path("limit") limit: Int,
+        @Path("offset") offset: Int,
+        @Path("dbVersion") dbVersion: Int,
+        @Body partnersRequest: PartnersRequest
+    ): PartnersResponse
 }

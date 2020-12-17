@@ -1,0 +1,50 @@
+package com.banglalink.toffee.ui.explore
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
+import com.banglalink.toffee.R
+import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.databinding.FragmentPartnersListBinding
+import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.ui.common.BaseFragment
+import kotlinx.coroutines.flow.collectLatest
+
+class PartnersListFragment : BaseFragment(), BaseListItemCallback<ChannelInfo> {
+    private lateinit var mAdapter: PartnersListAdapter
+    private lateinit var binding: FragmentPartnersListBinding
+    private val viewModel by viewModels<PartnersViewModel>()
+    
+    companion object {
+        @JvmStatic
+        fun newInstance() = PartnersListFragment()
+    }
+    
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_partners_list, container, false)
+        return binding.root
+    }
+    
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        mAdapter = PartnersListAdapter(this)
+        with(binding.listView) {
+            layoutManager = GridLayoutManager(context, 3)
+            adapter = mAdapter
+        }
+        observePartners()
+    }
+    
+    private fun observePartners() {
+        lifecycleScope.launchWhenStarted {
+            viewModel.getPartnersList.collectLatest {
+                mAdapter.submitData(it)
+            }
+        }
+    }
+}

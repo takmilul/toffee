@@ -27,6 +27,7 @@ class GetTracker:IGetMethodTracker {
         "/ugc-movie-preview/1",
         "/ugc-coming-soon/1",
         "/ugc-latest-drama-serial/1",
+        "/ugc-partner-list/1",
     )
 
     override fun shouldConvertToGetRequest(urlEncodedFragmentString: String):Boolean {
