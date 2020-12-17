@@ -3,6 +3,7 @@ package com.banglalink.toffee.ui.landing
 import android.R.attr
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -189,6 +190,7 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
         val chipColor = createStateColor(intColor)
         val chip = layoutInflater.inflate(R.layout.category_chip_layout, categoryChipGroup, false) as Chip
         chip.text = subCategory.name
+        chip.typeface = Typeface.DEFAULT_BOLD
         chip.id = View.generateViewId()
 
         chip.chipBackgroundColor = chipColor

@@ -22,7 +22,7 @@
     <color name="reverseBgColor">#FFFFFF</color>
     <color name="ratingIconColor">#FF3988</color>
     <color name="tvChannelLogoBg">#424242</color>
-
+    <color name="colorButtonSecondary">#FF3988</color>
     <color name="menuColorSecondaryDark">#BED6F3</color>
     <color name="durationBgColor">#88000000</color>
     <color name="placeholderBgColor">#E1E1E1</color>
