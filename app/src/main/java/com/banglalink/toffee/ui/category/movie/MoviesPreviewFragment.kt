@@ -58,7 +58,7 @@ class MoviesPreviewFragment : BaseFragment() {
         }
     
         override fun createFragment(position: Int): Fragment {
-            return MoviesPreviewItemFragment.newInstance(moviePreviews.get(position))
+            return MoviesPreviewItemFragment.newInstance(moviePreviews[position])
         }
     }
 }
