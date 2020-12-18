@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <stroke
+        android:color="@color/colorButtonSecondary"
+        android:width="1dp" />
+    <corners android:radius="1000dp" />
+    <solid android:color="@color/input_bg_color" />
+    <padding android:left="8dp" android:right="4dp" android:bottom="8dp" android:top="8dp" />
+</shape>

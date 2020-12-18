@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
+import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.observe
@@ -104,7 +105,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
             }
         })
         detailsAdapter = ChannelHeaderAdapter(currentItem, this)
-        mAdapter = ConcatAdapter(detailsAdapter, catchupAdapter)
+        mAdapter = ConcatAdapter(detailsAdapter, catchupAdapter.withLoadStateFooter(ListLoadStateAdapter{catchupAdapter.retry()}))
     }
 
     private fun observeList() {

@@ -18,6 +18,7 @@ import com.banglalink.toffee.listeners.PlaylistListener
 import com.banglalink.toffee.model.Channel
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.TOFFEE_HEADER
+import com.banglalink.toffee.ui.category.drama.EpisodeListFragment
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
 import com.google.android.exoplayer2.*
@@ -275,12 +276,21 @@ abstract class PlayerPageActivity :
         playChannel(false)
     }
 
+    protected open fun playChannelId(channelId: Int) {
+        playlistManager.setChannelId(channelId)
+        playChannel(false)
+    }
+
     override fun isAutoplayEnabled(): Boolean {
-        val fragment = supportFragmentManager.findFragmentById(id.details_viewer)
-        return if (fragment is MyChannelPlaylistVideosFragment) {
-            fragment.isAutoplayEnabled()
+        return when (val fragment = supportFragmentManager.findFragmentById(id.details_viewer)) {
+            is MyChannelPlaylistVideosFragment -> {
+                fragment.isAutoplayEnabled()
+            }
+            is EpisodeListFragment -> {
+                fragment.isAutoplayEnabled()
+            }
+            else -> false
         }
-        else false
     }
 
     override fun playNext() {

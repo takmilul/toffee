@@ -77,19 +77,19 @@ public class Utils {
         diffMinutes = Math.max(0, diffMinutes);
 
         if(diffMinutes >= 365*24*60){
-            return (diffMinutes / (365*24*60)) + " Y";
+            return (diffMinutes / (365*24*60)) + " years";
         }
         if(diffMinutes >= 30*24*60){
-            return (diffMinutes / (30*24*60)) + " M";
+            return (diffMinutes / (30*24*60)) + " months";
         }
         if (diffMinutes >= 24*60) {
-            return (diffMinutes / (24*60)) +" d";
+            return (diffMinutes / (24*60)) +" days";
         }
         if (diffMinutes >= 60){
-            return (diffMinutes / 60) + " h";
+            return (diffMinutes / 60) + " hours";
         }
         if (diffMinutes > 0) {
-            return diffMinutes + " m";
+            return diffMinutes + " minutes";
         }
         return "Just Now";
     }

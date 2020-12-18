@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentBaseSingleListBinding
 import com.banglalink.toffee.ui.common.BaseFragment
+import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -23,12 +24,14 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
 
     protected lateinit var binding: FragmentBaseSingleListBinding
 
+    open val itemMargin = 0
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_base_single_list, container, false)
+        binding = FragmentBaseSingleListBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -74,8 +77,12 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
             val listLayoutManager = getRecyclerLayoutManager()
             layoutManager = listLayoutManager
 
+            if(itemMargin > 0) {
+                addItemDecoration(MarginItemDecoration(itemMargin))
+            }
+
             mAdapter.addLoadStateListener {
-                binding.progressBar.isVisible = it.refresh is LoadState.Loading
+                binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
 
                 mAdapter.apply {
                     val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached
@@ -95,7 +102,7 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
     }
 
     open fun getRecyclerAdapter(): RecyclerView.Adapter<*> {
-        return mAdapter
+        return mAdapter.withLoadStateFooter( ListLoadStateAdapter{ mAdapter.retry() } )
     }
 
     private fun observeList() {

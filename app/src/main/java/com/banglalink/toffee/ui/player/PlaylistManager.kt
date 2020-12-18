@@ -57,6 +57,11 @@ class PlaylistManager {
         playlistIndex = index
     }
 
+    fun setChannelId(channelId: Int) {
+        playlistIndex = playList.indexOfFirst { it.id.toInt() == channelId }
+        if(playlistIndex < 0 && playList.isNotEmpty()) playlistIndex = 0
+    }
+
     fun nextChannel() {
         if(hasNext()) playlistIndex++
     }
