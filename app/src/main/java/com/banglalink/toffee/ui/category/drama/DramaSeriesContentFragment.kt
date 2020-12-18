@@ -74,21 +74,22 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
     }
 
     override fun onItemClicked(item: ChannelInfo) {
+        val seriesData = SeriesPlaybackInfo(
+            item.seriesSummaryId,
+            item.seriesName ?: "",
+            item.seasonNo,
+            item.totalSeason,
+            item.id.toInt(),
+            item
+        )
         homeViewModel.addToPlayListMutableLiveData.postValue(
             AddToPlaylistData(
-                item.seriesSummaryId,
+                seriesData.playlistId(),
                 listOf(item)
             )
         )
         homeViewModel.fragmentDetailsMutableLiveData.postValue(
-            SeriesPlaybackInfo(
-                item.seriesSummaryId,
-                item.seriesName ?: "",
-                item.seasonNo,
-                item.totalSeason,
-                item.id.toInt(),
-                item
-            )
+            seriesData
         )
     }
     

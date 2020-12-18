@@ -68,9 +68,7 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
         } 
     }
 
-    fun getPlaylistId(): Int {
-        return requestParams.playlistId
-    }
+    fun getPlaylistId(): Long  = args.playlistInfo.getPlaylistIdLong()
 
     fun isAutoplayEnabled(): Boolean {
         return binding.root.findViewById<SwitchMaterial>(R.id.autoplay_switch).isChecked

@@ -1,10 +1,10 @@
 package com.banglalink.toffee.ui.category.drama
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
@@ -14,18 +14,15 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.ConcatAdapter
 import com.banglalink.toffee.R
 import com.banglalink.toffee.apiservice.DramaSeasonRequestParam
-import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.databinding.FragmentEpisodeListBinding
-import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.SeriesPlaybackInfo
 import com.banglalink.toffee.ui.common.*
 import com.banglalink.toffee.ui.home.CatchupDetailsViewModel
 import com.banglalink.toffee.ui.home.ChannelHeaderAdapter
-import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
@@ -103,6 +100,7 @@ class EpisodeListFragment: HomeBaseFragment(), ContentReactionCallback<ChannelIn
     }
 
     fun getSeriesId() = seriesInfo.seriesId
+    fun getPlaylistId() = seriesInfo.playlistId()
 
     fun isAutoplayEnabled(): Boolean {
         return binding.root.findViewById<SwitchMaterial>(R.id.autoplay_switch).isChecked
@@ -117,7 +115,7 @@ class EpisodeListFragment: HomeBaseFragment(), ContentReactionCallback<ChannelIn
                 }.collect {
                     val list = mAdapter.snapshot()
                     homeViewModel.addToPlayListMutableLiveData.postValue(
-                        AddToPlaylistData(getSeriesId(), list.items, false)
+                        AddToPlaylistData(getPlaylistId(), list.items, false)
                     )
                 }
         }
@@ -153,6 +151,7 @@ class EpisodeListFragment: HomeBaseFragment(), ContentReactionCallback<ChannelIn
             }
 
             override fun onSeasonChanged(newSeason: Int) {
+                mViewModel.selectedSeason.value = newSeason - 1
                 observeList(newSeason)
             }
         }, mViewModel)
@@ -161,14 +160,16 @@ class EpisodeListFragment: HomeBaseFragment(), ContentReactionCallback<ChannelIn
     private fun setupList() {
         mAdapter = EpisodeListAdapter(object: ProviderIconCallback<ChannelInfo> {
             override fun onItemClicked(item: ChannelInfo) {
+                seriesInfo = seriesInfo.apply {
+                    seasonNo = item.seasonNo
+                    channelId = item.id.toInt()
+                    currentItem = item
+                }
                 homeViewModel.addToPlayListMutableLiveData.postValue(
-                    AddToPlaylistData(getSeriesId(), mAdapter.snapshot().items)
+                    AddToPlaylistData(getPlaylistId(), mAdapter.snapshot().items)
                 )
                 homeViewModel.fragmentDetailsMutableLiveData.postValue(
-                    seriesInfo.apply {
-                        channelId = item.id.toInt()
-                        currentItem = item
-                    }
+                    seriesInfo
                 )
             }
         })
@@ -187,7 +188,7 @@ class EpisodeListFragment: HomeBaseFragment(), ContentReactionCallback<ChannelIn
                 }
             }
         }
-
+        Log.e("PLAYLIST_DEBUG", "SETUP - ${seriesInfo.seasonNo}")
         observeList(seriesInfo.seasonNo)
     }
 
@@ -197,7 +198,7 @@ class EpisodeListFragment: HomeBaseFragment(), ContentReactionCallback<ChannelIn
             mViewModel.getEpisodesBySeason(
                 DramaSeasonRequestParam(
                     seriesInfo.type,
-                    seriesInfo.seriesId.toInt(),
+                    seriesInfo.seriesId,
                     currentSeasonNo
                 ))
                 .collectLatest {

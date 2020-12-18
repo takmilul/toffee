@@ -4,7 +4,7 @@ import android.util.Log
 import com.banglalink.toffee.model.ChannelInfo
 
 class PlaylistManager {
-    var playlistId: Int = -1
+    var playlistId: Long = -1L
     private val playList: MutableList<ChannelInfo> = mutableListOf()
     private var playlistIndex = -1
 

@@ -692,7 +692,7 @@ class HomeActivity :
             }
         } else if(info is PlaylistPlaybackInfo) {
             val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
-            if (fragment !is MyChannelPlaylistVideosFragment || fragment.getPlaylistId() != info.playlistId) {
+            if (fragment !is MyChannelPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) {
                 loadFragmentById(
                     R.id.details_viewer, MyChannelPlaylistVideosFragment.newInstance(
                         info
@@ -710,7 +710,8 @@ class HomeActivity :
             }
         } else if(info is SeriesPlaybackInfo) {
             val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
-            if(fragment !is EpisodeListFragment || fragment.getSeriesId() != info.seriesId) {
+            if(fragment !is EpisodeListFragment
+                || fragment.getSeriesId() != info.seriesId) {
                 loadFragmentById(
                     R.id.details_viewer, EpisodeListFragment.newInstance(
                         info
