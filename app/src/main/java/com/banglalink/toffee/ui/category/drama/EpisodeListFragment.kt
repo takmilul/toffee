@@ -151,8 +151,10 @@ class EpisodeListFragment: HomeBaseFragment(), ContentReactionCallback<ChannelIn
             }
 
             override fun onSeasonChanged(newSeason: Int) {
-                mViewModel.selectedSeason.value = newSeason - 1
-                observeList(newSeason)
+                if(newSeason - 1 != mViewModel.selectedSeason.value) {
+                    mViewModel.selectedSeason.value = newSeason - 1
+                    observeList(newSeason)
+                }
             }
         }, mViewModel)
     }
@@ -181,14 +183,14 @@ class EpisodeListFragment: HomeBaseFragment(), ContentReactionCallback<ChannelIn
             mAdapter.addLoadStateListener {
                 binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
 
-                mAdapter.apply {
-                    val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached
-                    binding.emptyView.isGone = !showEmpty
-                    binding.listview.isVisible = !showEmpty
-                }
+//                mAdapter.apply {
+//                    val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached
+//                    binding.emptyView.isGone = !showEmpty
+//                    binding.listview.isVisible = !showEmpty
+//                }
             }
         }
-        Log.e("PLAYLIST_DEBUG", "SETUP - ${seriesInfo.seasonNo}")
+//        Log.e("PLAYLIST_DEBUG", "SETUP - ${seriesInfo.seasonNo}")
         observeList(seriesInfo.seasonNo)
     }
 
