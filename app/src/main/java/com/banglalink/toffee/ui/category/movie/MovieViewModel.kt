@@ -4,13 +4,17 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.apiservice.*
+import com.banglalink.toffee.data.database.entities.ContinueWatchingItem
 import com.banglalink.toffee.data.network.request.ChannelRequestParams
 import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
+import com.banglalink.toffee.data.repository.ContinueWatchingRepository
 import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.ComingSoonContent
 import com.banglalink.toffee.model.MoviesContentVisibilityCards
 import com.banglalink.toffee.ui.common.BaseViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class MovieViewModel @ViewModelInject constructor(
@@ -18,6 +22,7 @@ class MovieViewModel @ViewModelInject constructor(
     private val moviePreviewsService: MoviesPreviewService,
     private val trendingNowService: GetMostPopularContents,
     private val viewProgressRepo: ContentViewPorgressRepsitory,
+    private val continueWatchingRepo: ContinueWatchingRepository,
     private val getContentAssistedFactory: GetContents.AssistedFactory,
     private val comingSoonApiService: MoviesComingSoonService,
 ): BaseViewModel() {
@@ -163,6 +168,20 @@ class MovieViewModel @ViewModelInject constructor(
                     comingSoon = 0
                 }
                 emptyList()
+            }
+        }
+    }
+
+    fun getContinueWatchingFlow(catId: Int): Flow<List<ChannelInfo>> {
+        return continueWatchingRepo.getAllItemsByCategory(catId).map {
+            it.mapNotNull { item ->
+                item.channelInfo
+            }.apply {
+                if(isEmpty()) {
+                    moviesContentCardsResponse.value = moviesContentCardsResponse.value?.also { cardList ->
+                        cardList.continueWatching = 0
+                    }
+                }
             }
         }
     }
