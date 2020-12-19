@@ -6,6 +6,7 @@ import com.banglalink.toffee.data.network.request.ChannelRequestParams
 import com.banglalink.toffee.data.network.request.ContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
+import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.model.ChannelInfo
@@ -16,6 +17,7 @@ class GetContents @AssistedInject constructor(
     private val preference: Preference,
     private val toffeeApi: ToffeeApi,
     private val reactionDao: ReactionDao,
+    private val viewProgressRepo: ContentViewPorgressRepsitory,
 //    private val favoriteDao: FavoriteItemDao,
     @Assisted private val requestParams: ChannelRequestParams
 ): BaseApiService<ChannelInfo> {
@@ -48,6 +50,7 @@ class GetContents @AssistedInject constructor(
                 it.subCategory = requestParams.subcategory
                 val reactionInfo = reactionDao.getReactionByContentId(preference.customerId, it.id)
                 it.myReaction = reactionInfo?.reaction ?: Reaction.None.value
+                it.viewProgress = viewProgressRepo.getProgressByContent(it.id.toLong())?.progress ?: 0L
                 it
             }
         }

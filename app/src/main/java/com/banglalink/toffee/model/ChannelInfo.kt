@@ -8,6 +8,7 @@ import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.ui.player.HlsLinks
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.Utils.discardZeroFromDuration
+import com.banglalink.toffee.util.UtilsKt
 import com.banglalink.toffee.util.getFormattedViewsText
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
@@ -96,6 +97,14 @@ data class ChannelInfo(
             itemCategory += ">$subCategory"
         }
         return itemCategory
+    }
+
+    var viewProgress: Long = -1L
+    fun viewProgressPercent(): Int {
+        val durationInt = UtilsKt.getLongDuration(duration)
+        if(viewProgress < 0L || durationInt <= 0L || isLive) return 0
+        if(viewProgress > durationInt) return 1000
+        return ((viewProgress.toDouble() / durationInt) * 1000L).toInt()
     }
 
     fun getDescriptionDecoded(): Spanned? {

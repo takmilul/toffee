@@ -117,6 +117,22 @@ object UtilsKt {
             null
         }
     }
+
+    fun getLongDuration(str: String?): Long {
+        if(str.isNullOrBlank()) return 0L
+        val splist = str.split(":").reversed()
+        var ret = 0L
+        if(splist.isNotEmpty()) {
+            ret += splist[0].toLong()
+        }
+        if(splist.size > 1) {
+            ret += splist[1].toLong() * 60L
+        }
+        if(splist.size > 2) {
+            ret += splist[2].toLong() * 3600L
+        }
+        return ret * 1000L
+    }
 }
 
 

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
@@ -252,6 +253,16 @@ fun bindActivityType(view: TextView, item: UserActivities) {
             }
         }
         else -> null
+    }
+}
+
+@BindingAdapter("bindViewProgress")
+fun bindViewProgress(view: ProgressBar, item: ChannelInfo) {
+    if(item.viewProgressPercent() > 0) {
+        view.visibility = View.VISIBLE
+        view.progress = item.viewProgressPercent()
+    } else {
+        view.visibility = View.GONE
     }
 }
 

@@ -20,7 +20,6 @@ import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener
 import com.banglalink.toffee.listeners.PlaylistListener
 import com.banglalink.toffee.model.Channel
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.PlaybackState
 import com.banglalink.toffee.model.TOFFEE_HEADER
 import com.banglalink.toffee.ui.category.drama.EpisodeListFragment
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
@@ -352,6 +351,13 @@ abstract class PlayerPageActivity :
             val mediaItem = MediaItem.Builder().setUri(uri).setTag(channelInfo).build()
             val mediaSource = prepareMedia(mediaItem)
             if (isReload) { //We need to start where we left off for VODs
+                if(channelInfo.viewProgress > 0L) {
+                    startPosition = if(channelInfo.viewProgressPercent() >= 990) {
+                        C.TIME_UNSET
+                    } else {
+                        channelInfo.viewProgress
+                    }
+                }
                 val haveStartPosition = startWindow != C.INDEX_UNSET
                 if (haveStartPosition && !channelInfo.isLive) {
                     if(it is SimpleExoPlayer) {
@@ -366,8 +372,15 @@ abstract class PlayerPageActivity :
                     return
                 }
             }
+            if(channelInfo.viewProgress > 0L) {
+                startPosition = if(channelInfo.viewProgressPercent() >= 990) {
+                    C.TIME_UNSET
+                } else {
+                    channelInfo.viewProgress
+                }
+            }
             if(it is SimpleExoPlayer) {
-                it.setMediaSource(mediaSource)
+                it.setMediaSource(mediaSource, startPosition)
                 it.prepare()
             } else if(it is CastPlayer) {
                 it.loadItem(getMediaInfo(channelInfo), startPosition)
@@ -421,6 +434,7 @@ abstract class PlayerPageActivity :
         lifecycleScope.launch {
             Log.e("PLAYBACK_STATE", "Saving state - ${cinfo.id} -> $progress")
             if(!cinfo.isLive && progress > 0L) {
+                cinfo.viewProgress = progress
                 contentViewRepo.insert(
                     ContentViewProgress(
                         customerId = mPref.customerId,
