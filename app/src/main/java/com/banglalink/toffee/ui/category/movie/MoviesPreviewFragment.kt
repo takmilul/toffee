@@ -41,7 +41,7 @@ class MoviesPreviewFragment : BaseFragment() {
         observe(viewModel.moviePreviews){
             moviePreviews = it
             adapter = MoviesPreviewSliderAdapter(this)
-            binding.viewPager.offscreenPageLimit = 2
+            binding.viewPager.offscreenPageLimit = 1
             binding.viewPager.adapter = adapter
             binding.viewPager.setPageTransformer(ZoomInPageTransformer())
         }

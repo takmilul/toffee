@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.apiservice.*
 import com.banglalink.toffee.data.network.request.ChannelRequestParams
+import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
 import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.ComingSoonContent
@@ -16,6 +17,7 @@ class MovieViewModel @ViewModelInject constructor(
     private val movieApiService: MovieCategoryDetailService,
     private val moviePreviewsService: MoviesPreviewService,
     private val trendingNowService: GetMostPopularContents,
+    private val viewProgressRepo: ContentViewPorgressRepsitory,
     private val getContentAssistedFactory: GetContents.AssistedFactory,
     private val comingSoonApiService: MoviesComingSoonService,
 ): BaseViewModel() {
@@ -41,54 +43,127 @@ class MovieViewModel @ViewModelInject constructor(
     val comingSoonContents = comingSoonResponse.toLiveData()
     
     val loadMovieCategoryDetail by lazy{
-        viewModelScope.launch { 
-            val response = movieApiService.loadData("VOD", 0, 0)
-            moviesContentCardsResponse.value = response.cards
-            response.subCategoryWiseContent?.singleOrNull { it.subCategoryName == "Thriller" }?.let {
-                thrillerMoviesResponse.value = it.channels
+        viewModelScope.launch {
+            val response = try {
+                movieApiService.loadData("VOD", 0, 0)
+            } catch (ex: Exception) {
+                null
             }
-            response.subCategoryWiseContent?.singleOrNull { it.subCategoryName == "Action" }?.let {
-                actionMoviesResponse.value = it.channels
+            moviesContentCardsResponse.value = response?.cards ?: MoviesContentVisibilityCards()
+
+            thrillerMoviesResponse.value = response?.subCategoryWiseContent?.singleOrNull { it.subCategoryName == "Thriller" }?.let {
+                it.channels?.map { cinfo->
+                    cinfo.viewProgress = viewProgressRepo.getProgressByContent(cinfo.id.toLong())?.progress ?: 0L
+                    cinfo
+                }
+            } ?: kotlin.run {
+                moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply {
+                    thriller = 0
+                }
+                emptyList()
             }
-            response.subCategoryWiseContent?.singleOrNull { it.subCategoryName == "Romance" }?.let {
-                romanticMoviesResponse.value = it.channels
+
+            actionMoviesResponse.value = response?.subCategoryWiseContent?.singleOrNull { it.subCategoryName == "Action" }?.let {
+                it.channels?.map { cinfo->
+                    cinfo.viewProgress = viewProgressRepo.getProgressByContent(cinfo.id.toLong())?.progress ?: 0L
+                    cinfo
+                }
+            } ?: kotlin.run {
+                moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply {
+                    action = 0
+                }
+                emptyList()
             }
-            response.subCategoryWiseContent?.singleOrNull { it.subCategoryName == "Bangla" }?.let {
-                banglaMoviesResponse.value = it.channels
+
+            romanticMoviesResponse.value = response?.subCategoryWiseContent?.singleOrNull { it.subCategoryName == "Romance" }?.let {
+                it.channels?.map { cinfo->
+                    cinfo.viewProgress = viewProgressRepo.getProgressByContent(cinfo.id.toLong())?.progress ?: 0L
+                    cinfo
+                }
+            } ?: kotlin.run {
+                moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply {
+                    romantic = 0
+                }
+                emptyList()
             }
-            response.subCategoryWiseContent?.singleOrNull { it.subCategoryName == "English" }?.let {
-                englishMoviesResponse.value = it.channels
+
+            banglaMoviesResponse.value = response?.subCategoryWiseContent?.singleOrNull { it.subCategoryName == "Bangla" }?.let {
+                it.channels?.map { cinfo->
+                    cinfo.viewProgress = viewProgressRepo.getProgressByContent(cinfo.id.toLong())?.progress ?: 0L
+                    cinfo
+                }
+            } ?: kotlin.run {
+                moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply {
+                    bangla = 0
+                }
+                emptyList()
+            }
+
+            englishMoviesResponse.value = response?.subCategoryWiseContent?.singleOrNull { it.subCategoryName == "English" }?.let {
+                it.channels?.map { cinfo->
+                    cinfo.viewProgress = viewProgressRepo.getProgressByContent(cinfo.id.toLong())?.progress ?: 0L
+                    cinfo
+                }
+            } ?: kotlin.run {
+                moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply {
+                    english = 0
+                }
+                emptyList()
             }
         }
     }
     
     val loadMoviePreviews by lazy{
-        viewModelScope.launch { 
-            val response = moviePreviewsService.loadData("VOD",0,0, 10, 0)
-            moviePreviewsResponse.value = response
+        viewModelScope.launch {
+            moviePreviewsResponse.value = try {
+                moviePreviewsService.loadData("VOD", 0, 0, 10, 0)
+            } catch (ex: Exception) {
+                moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply {
+                    moviePreviews = 0
+                }
+                emptyList()
+            }
         }
     }
     
     val loadTrendingNowMovies by lazy{
-        viewModelScope.launch { 
-            val response = trendingNowService.loadData( 0, 10)
-            trendingNowMoviesResponse.value = response
+        viewModelScope.launch {
+            trendingNowMoviesResponse.value = try{
+                trendingNowService.loadData( 0, 10)
+            } catch (ex: Exception) {
+                moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply {
+                    trendingNow = 0
+                }
+                emptyList()
+            }
         }
     }
 
     val loadTelefilms by lazy {
-        viewModelScope.launch { 
-            val response = getContentAssistedFactory.create(
-                ChannelRequestParams("", 1, "", 90, "VOD")
-            ).loadData(0,10)
-            telefilmsResponse.value = response
+        viewModelScope.launch {
+            telefilmsResponse.value =  try{
+                getContentAssistedFactory.create(
+                    ChannelRequestParams("", 1, "", 90, "VOD")
+                ).loadData(0,10)
+            } catch (ex: Exception) {
+                moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply {
+                    telefilm = 0
+                }
+                emptyList()
+            }
         }
     }
 
     val loadComingSoonContents by lazy{
         viewModelScope.launch {
-            val response = comingSoonApiService.loadData("VOD", 1, 0, 10, 0)
-            comingSoonResponse.value = response
+            comingSoonResponse.value = try{
+                comingSoonApiService.loadData("VOD", 1, 0, 10, 0)
+            } catch (ex: Exception) {
+                moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply {
+                    comingSoon = 0
+                }
+                emptyList()
+            }
         }
     }
 }

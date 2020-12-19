@@ -4,6 +4,7 @@ import com.banglalink.toffee.common.paging.BaseApiService
 import com.banglalink.toffee.data.network.request.UgcTrendingNowRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
+import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.EditorsChoiceFeaturedRequestParams
@@ -19,6 +20,7 @@ data class ApiCategoryRequestParams(
 class GetUgcTrendingNowContents @AssistedInject constructor(
     private val preference: Preference,
     private val toffeeApi: ToffeeApi,
+    private val viewContentRepo: ContentViewPorgressRepsitory,
     @Assisted private val requestParams: EditorsChoiceFeaturedRequestParams
 ): BaseApiService<ChannelInfo> {
 
@@ -38,8 +40,12 @@ class GetUgcTrendingNowContents @AssistedInject constructor(
                 request
             )
         }
-        
-        return response.response.channels ?: emptyList()
+        return if (response.response.channels != null) {
+            response.response.channels.map {
+                it.viewProgress = viewContentRepo.getProgressByContent(it.id.toLong())?.progress ?: 0L
+                it
+            }
+        } else emptyList()
     }
 
     @AssistedInject.Factory
