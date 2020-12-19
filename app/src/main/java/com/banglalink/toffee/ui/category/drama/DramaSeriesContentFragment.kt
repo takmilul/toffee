@@ -13,12 +13,12 @@ import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.databinding.FragmentDramaSeriesContentBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.SeriesPlaybackInfo
 import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
-import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
-import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.home.LandingPageViewModel
+import com.banglalink.toffee.ui.player.AddToPlaylistData
 import kotlinx.coroutines.flow.collectLatest
 
 class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<ChannelInfo> {
@@ -74,7 +74,23 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
     }
 
     override fun onItemClicked(item: ChannelInfo) {
-        homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+        val seriesData = SeriesPlaybackInfo(
+            item.seriesSummaryId,
+            item.seriesName ?: "",
+            item.seasonNo,
+            item.totalSeason,
+            item.id.toInt(),
+            item
+        )
+        homeViewModel.addToPlayListMutableLiveData.postValue(
+            AddToPlaylistData(
+                seriesData.playlistId(),
+                listOf(item)
+            )
+        )
+        homeViewModel.fragmentDetailsMutableLiveData.postValue(
+            seriesData
+        )
     }
     
     override fun onOpenMenu(view: View, item: ChannelInfo) {

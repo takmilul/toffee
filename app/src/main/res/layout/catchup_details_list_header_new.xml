@@ -13,6 +13,9 @@
         <variable
             name="callback"
             type="com.banglalink.toffee.ui.common.ContentReactionCallback" />
+        <variable
+            name="viewmodel"
+            type="com.banglalink.toffee.ui.category.drama.EpisodeListViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -26,7 +29,6 @@
             android:id="@+id/program_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:clickable="false"
             android:enabled="false"
@@ -36,10 +38,11 @@
             android:text="@{data.program_name}"
             android:textColor="@color/main_text_color"
             android:textSize="18sp"
+            app:layout_goneMarginTop="8dp"
             app:layout_constraintEnd_toStartOf="@+id/options"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/circleImageView"
-            app:layout_constraintTop_toBottomOf="@+id/circleImageView"
+            app:layout_constraintTop_toBottomOf="@+id/seriesInfo"
             tools:text="NOW: ICC Women's World Cup 2019
 Day 21 - AUS vs IND" />
 
@@ -153,6 +156,15 @@ Day 21 - AUS vs IND" />
             app:layout_constraintTop_toTopOf="@+id/circleImageView"
             tools:text="Banglalink" />
 
+        <TextView
+            android:id="@+id/seriesInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@+id/circleImageView"
+            app:layout_constraintTop_toBottomOf="@+id/circleImageView" />
+
         <com.banglalink.toffee.ui.widget.MultiTextButton
             android:id="@+id/subscribe_button"
             android:layout_width="wrap_content"
@@ -207,23 +219,33 @@ Day 21 - AUS vs IND" />
 <!--            />-->
 
         <androidx.constraintlayout.widget.Group
+            android:id="@+id/seriesExcludeList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="@{data.seasonNo > 0 ? View.VISIBLE : View.GONE}"
+            app:constraint_referenced_ids="seriesInfo,seasonSpinnerWrap"
+            />
+
+        <androidx.constraintlayout.widget.Group
             android:id="@+id/tvExcludeList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="@{data.live ? View.GONE : View.VISIBLE}"
-            app:constraint_referenced_ids="options,program_name,reactionButton,reactionCount,shareCount,channelSubCount,subscribe_button,video_description" />
+            app:constraint_referenced_ids="options,program_name,reactionButton,reactionCount,shareCount,channelSubCount,subscribe_button,video_description,viewCount,uploadTime" />
+
+
 
         <com.banglalink.toffee.ui.widget.ExpandableTextView
             android:id="@+id/video_description"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
             android:maxLines="2"
             android:text="@{data.descriptionDecoded}"
             app:layout_constraintEnd_toEndOf="@+id/subscribe_button"
             app:layout_constraintStart_toStartOf="@+id/program_name"
-            app:layout_constraintTop_toBottomOf="@+id/program_name"
+            app:layout_constraintTop_toBottomOf="@+id/viewCount"
             app:layout_goneMarginBottom="8dp"
+            android:layout_marginTop="4dp"
             tools:text="Hello world!" />
 
         <com.google.android.material.switchmaterial.SwitchMaterial
@@ -244,13 +266,53 @@ Day 21 - AUS vs IND" />
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:text="TextView"
+            tools:text="TextView"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/autoplay_switch"
             app:layout_constraintEnd_toStartOf="@+id/autoplay_switch"
             app:layout_constraintStart_toStartOf="@+id/circleImageView"
             app:layout_constraintTop_toTopOf="@+id/autoplay_switch"
             tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/viewCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@{data.formatted_view_count() + ` views`}"
+            tools:text="352.5K views"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/circleImageView"
+            app:layout_constraintTop_toBottomOf="@+id/program_name" />
+
+        <TextView
+            android:id="@+id/uploadTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{` \u2022 ` + data.formattedCreateTime()}"
+            tools:text=" \u2022 14 hour"
+            app:layout_constraintBottom_toBottomOf="@+id/viewCount"
+            app:layout_constraintStart_toEndOf="@+id/viewCount"
+            app:layout_constraintTop_toTopOf="@+id/viewCount" />
+
+        <RelativeLayout
+            android:id="@+id/seasonSpinnerWrap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/spinner_bg_season"
+            app:layout_constraintBottom_toBottomOf="@+id/autoplay_switch"
+            app:layout_constraintEnd_toStartOf="@+id/autoplay_switch"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/circleImageView"
+            app:layout_constraintTop_toTopOf="@+id/autoplay_switch">
+
+            <Spinner
+                android:id="@+id/seasonSpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:entries='@{viewmodel != null ? viewmodel.seasonList : null}'
+                android:selectedItemPosition="@{viewmodel != null ? viewmodel.selectedSeason : 0}" />
+        </RelativeLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

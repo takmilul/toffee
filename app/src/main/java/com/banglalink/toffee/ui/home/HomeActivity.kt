@@ -47,6 +47,7 @@ import com.banglalink.toffee.extension.loadProfileImage
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.*
+import com.banglalink.toffee.ui.category.drama.EpisodeListFragment
 import com.banglalink.toffee.ui.channels.AllChannelsViewModel
 import com.banglalink.toffee.ui.channels.ChannelFragment
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
@@ -79,20 +80,12 @@ import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 
-const val ID_CHANNEL = 12
-const val ID_RECENT = 13
-const val ID_FAV = 14
 const val ID_SUBSCRIPTIONS = 15
 const val ID_SUB_VIDEO = 16
 const val ID_SETTINGS = 17
-const val ID_ABOUT = 18
-const val ID_LOGOUT = 19
-const val ID_VIDEO = 20
-const val ID_VOD = 21
 const val ID_FAQ = 22
 const val ID_INVITE_FRIEND = 23
 const val ID_REDEEM_CODE = 24
-const val ID_INTERNET_PACK = 25
 
 const val PLAY_IN_WEB_VIEW = 1
 const val OPEN_IN_EXTERNAL_BROWSER = 2
@@ -583,12 +576,22 @@ class HomeActivity :
         }
     }
 
+    private fun loadDramaSeasonInfo(seasonInfo: SeriesPlaybackInfo) {
+        playChannelId(seasonInfo.channelId)
+        playlistManager.getCurrentChannel()?.let {
+            viewModel.sendViewContentEvent(it)
+        }
+    }
+
     private fun onDetailsFragmentLoad(detailsInfo: Any?) {
         val channelInfo = when (detailsInfo) {
             is ChannelInfo -> {
                 detailsInfo
             }
             is PlaylistPlaybackInfo -> {
+                detailsInfo.currentItem
+            }
+            is SeriesPlaybackInfo -> {
                 detailsInfo.currentItem
             }
             else -> null
@@ -616,10 +619,16 @@ class HomeActivity :
                 }
                 (it.isPurchased || it.isPaidSubscribed) && !it.isExpired(Date())->{
                     maximizePlayer()
-                    if(detailsInfo is PlaylistPlaybackInfo) {
-                        loadPlayListItem(detailsInfo)
-                    } else {
-                        loadChannel(it)
+                    when (detailsInfo) {
+                        is PlaylistPlaybackInfo -> {
+                            loadPlayListItem(detailsInfo)
+                        }
+                        is SeriesPlaybackInfo -> {
+                            loadDramaSeasonInfo(detailsInfo)
+                        }
+                        else -> {
+                            loadChannel(it)
+                        }
                     }
                     loadDetailFragment(detailsInfo)
                 }
@@ -657,6 +666,13 @@ class HomeActivity :
         )
     }
 
+    override fun playChannelId(channelId: Int) {
+        super.playChannelId(channelId)
+        loadDetailFragment(
+            PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
+        )
+    }
+
     private fun loadDetailFragment(info: Any?){
         if(info is ChannelInfo) {
             if (info.isLive) {
@@ -676,7 +692,7 @@ class HomeActivity :
             }
         } else if(info is PlaylistPlaybackInfo) {
             val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
-            if (fragment !is MyChannelPlaylistVideosFragment || fragment.getPlaylistId() != info.playlistId) {
+            if (fragment !is MyChannelPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) {
                 loadFragmentById(
                     R.id.details_viewer, MyChannelPlaylistVideosFragment.newInstance(
                         info
@@ -689,6 +705,20 @@ class HomeActivity :
             val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
             if (fragment is MyChannelPlaylistVideosFragment) {
                 fragment.setCurrentChannel(info.channelInfo)
+            } else if(fragment is EpisodeListFragment) {
+                fragment.setCurrentChannel(info.channelInfo)
+            }
+        } else if(info is SeriesPlaybackInfo) {
+            val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
+            if(fragment !is EpisodeListFragment
+                || fragment.getSeriesId() != info.seriesId) {
+                loadFragmentById(
+                    R.id.details_viewer, EpisodeListFragment.newInstance(
+                        info
+                    )
+                )
+            } else {
+                fragment.setCurrentChannel(info.currentItem)
             }
         }
 //        val frag = supportFragmentManager.findFragmentById(R.id.details_viewer)

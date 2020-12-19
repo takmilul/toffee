@@ -56,12 +56,16 @@ data class ChannelInfo(
 
     @SerializedName("serial_name")
     val seriesName: String? = null,
-    @SerializedName("season_no")
+    @SerializedName("total_season_no")
     val totalSeason: Int = 0,
+    @SerializedName("season_no")
+    val seasonNo: Int = 0,
     @SerializedName("serial_summary_id")
     val seriesSummaryId: Int = 0,
-    @SerializedName("episode_no")
+    @SerializedName("total_episode_no")
     val totalEpisode: Int = 0,
+    @SerializedName("episode_no")
+    val episodeNo: Int = 0,
 
     var is_available: Int = 0,
     var reaction: ReactionStatus? = null,   //individual reaction count from server
@@ -145,6 +149,6 @@ data class ChannelInfo(
     
     fun formatted_view_count() = getFormattedViewsText(view_count)
     fun formattedDuration() = discardZeroFromDuration(duration)
-    fun formattedCreateTime() = if(!created_at.isNullOrBlank()) Utils.getDateDiffInDayOrHourOrMinute(Utils.getDate(created_at).time).replace(" ", "") else "0"
+    fun formattedCreateTime() = if(!created_at.isNullOrBlank()) Utils.getDateDiffInDayOrHourOrMinute(Utils.getDate(created_at).time)/*.replace(" ", "")*/ else "0"
     fun formattedSubscriberCount() = getFormattedViewsText(subscriberCount.toString())
 }

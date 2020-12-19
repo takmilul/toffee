@@ -30,6 +30,8 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
     private var isFromOutside: Boolean = false
     private var enableToolbar: Boolean = false
 
+    override val itemMargin: Int = 16
+
     @Inject lateinit var reactionDao: ReactionDao
     override val mAdapter by lazy { MyChannelVideosAdapter(this) }
     private val homeViewModel by activityViewModels<HomeViewModel>()

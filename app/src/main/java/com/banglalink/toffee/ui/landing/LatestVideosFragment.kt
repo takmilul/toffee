@@ -10,9 +10,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.core.content.ContextCompat
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import com.banglalink.toffee.R
+import com.banglalink.toffee.common.paging.ListLoadStateAdapter
+import com.banglalink.toffee.databinding.FragmentLandingLatestVideosBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource.Failure
@@ -25,6 +30,7 @@ import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.common.ReactionFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.home.PopularVideoListAdapter
+import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.google.android.material.chip.Chip
 import kotlinx.android.synthetic.main.fragment_category_info.*
 import kotlinx.android.synthetic.main.fragment_landing_latest_videos.*
@@ -38,12 +44,15 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
     private var category: UgcCategory? = null
     private var listJob: Job? = null
 
+    private lateinit var binding: FragmentLandingLatestVideosBinding
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_landing_latest_videos, container, false)
+        binding = FragmentLandingLatestVideosBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -53,11 +62,24 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
 
         mAdapter = PopularVideoListAdapter(this)
 
-        with(latestVideosList) {
-            adapter = mAdapter
+        with(binding.latestVideosList) {
+            addItemDecoration(MarginItemDecoration(16))
+
+            mAdapter.addLoadStateListener {
+                binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
+
+//                mAdapter.apply {
+//                    val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached
+//                    binding.emptyView.isGone = !showEmpty
+//                    binding.listview.isVisible = !showEmpty
+//                }
+            }
+
+            adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter{ mAdapter.retry() })
         }
 
         if(viewModel.categoryId.value == 1){
+            binding.subCategoryChipGroupHolder.visibility = View.VISIBLE
             observeSubCategoryList()
         }
         
@@ -68,7 +90,7 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
             popupMenu.show()
             
             popupMenu.setOnMenuItemClickListener { item ->
-                latestVideosHeader.text = item.title
+                binding.latestVideosHeader.text = item.title
                 when(item.title){
                     "Latest Videos" -> observeList(category?.id?.toInt() ?: 0)
                     "Trending Videos" -> observeTrendingList(category?.id?.toInt() ?: 0)
@@ -158,18 +180,19 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
             when(it){
                 is Success -> {
                     val subList = it.data.sortedBy { sub -> sub.id }
-                    subCategoryChipGroup.removeAllViews()
+                    binding.subCategoryChipGroup.removeAllViews()
                     subList.forEachIndexed{ _, subCategory ->
                         val newChip = addChip(subCategory).apply {
                             tag = subCategory
                         }
-                        subCategoryChipGroup.addView(newChip)
+                        binding.subCategoryChipGroup.addView(newChip)
                         if(subCategory.id == 0L) {
-                            subCategoryChipGroup.check(newChip.id)
+                            binding.subCategoryChipGroup.check(newChip.id)
                         }
                     }
                     subCategoryChipGroupHolder.visibility = View.VISIBLE
                     subCategoryChipGroup.setOnCheckedChangeListener { group, checkedId ->
+                    binding.subCategoryChipGroup.setOnCheckedChangeListener { group, checkedId ->
                         val selectedChip = group.findViewById<Chip>(checkedId)
                         if(selectedChip != null) {
                             val selectedSub = selectedChip.tag as UgcSubCategory

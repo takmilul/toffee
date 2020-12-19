@@ -4,7 +4,7 @@ import android.util.Log
 import com.banglalink.toffee.model.ChannelInfo
 
 class PlaylistManager {
-    var playlistId: Int = -1
+    var playlistId: Long = -1L
     private val playList: MutableList<ChannelInfo> = mutableListOf()
     private var playlistIndex = -1
 
@@ -55,6 +55,11 @@ class PlaylistManager {
 
     fun setIndex(index: Int) {
         playlistIndex = index
+    }
+
+    fun setChannelId(channelId: Int) {
+        playlistIndex = playList.indexOfFirst { it.id.toInt() == channelId }
+        if(playlistIndex < 0 && playList.isNotEmpty()) playlistIndex = 0
     }
 
     fun nextChannel() {

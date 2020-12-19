@@ -298,6 +298,18 @@ interface ToffeeApi {
         @Path("dbVersion") dbVersion: Int,
         @Body dramaSeriesContentRequest: DramaSeriesContentRequest
     ): DramaSeriesContentResponse
+
+    @POST("/ugc-drama-serial-by-season/1/{type}/{serialSummaryId}/{seasonNo}/{limit}/{offset}/{dbVersion}")
+    suspend fun getDramaEpisodsBySeason(
+        @Path("type") type: String,
+        @Path("serialSummaryId") serialSummaryId: Int,
+        @Path("seasonNo") seasonNo: Int,
+        @Path("limit") limit: Int,
+        @Path("offset") offset: Int,
+        @Path("dbVersion") dbVersion: Int,
+        @Body dramaEpisodesBySeasonRequest: DramaEpisodesBySeasonRequest
+    ): DramaEpisodesBySeasonResponse
+
     
     @POST("/ugc-partner-list/1/{type}/{limit}/{offset}/{dbVersion}")
     suspend fun getPartnersList(

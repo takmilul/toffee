@@ -12,4 +12,6 @@ data class PlaylistPlaybackInfo(
     val playlistItemCount: Int,
     var playIndex: Int = 0,
     var currentItem: ChannelInfo? = null
-): Parcelable
+): Parcelable {
+    fun getPlaylistIdLong(): Long = playlistId * 10L + 1L
+}
