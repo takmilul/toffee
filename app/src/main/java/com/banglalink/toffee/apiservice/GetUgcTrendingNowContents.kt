@@ -42,6 +42,7 @@ class GetUgcTrendingNowContents @AssistedInject constructor(
         }
         return if (response.response.channels != null) {
             response.response.channels.map {
+                it.categoryId = requestParams.categoryId
                 it.viewProgress = viewContentRepo.getProgressByContent(it.id.toLong())?.progress ?: 0L
                 it
             }

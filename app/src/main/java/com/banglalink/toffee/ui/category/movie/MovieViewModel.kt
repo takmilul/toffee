@@ -58,6 +58,7 @@ class MovieViewModel @ViewModelInject constructor(
 
             thrillerMoviesResponse.value = response?.subCategoryWiseContent?.singleOrNull { it.subCategoryName == "Thriller" }?.let {
                 it.channels?.map { cinfo->
+                    cinfo.categoryId = 1
                     cinfo.viewProgress = viewProgressRepo.getProgressByContent(cinfo.id.toLong())?.progress ?: 0L
                     cinfo
                 }
@@ -70,6 +71,7 @@ class MovieViewModel @ViewModelInject constructor(
 
             actionMoviesResponse.value = response?.subCategoryWiseContent?.singleOrNull { it.subCategoryName == "Action" }?.let {
                 it.channels?.map { cinfo->
+                    cinfo.categoryId = 1
                     cinfo.viewProgress = viewProgressRepo.getProgressByContent(cinfo.id.toLong())?.progress ?: 0L
                     cinfo
                 }
@@ -82,6 +84,7 @@ class MovieViewModel @ViewModelInject constructor(
 
             romanticMoviesResponse.value = response?.subCategoryWiseContent?.singleOrNull { it.subCategoryName == "Romance" }?.let {
                 it.channels?.map { cinfo->
+                    cinfo.categoryId = 1
                     cinfo.viewProgress = viewProgressRepo.getProgressByContent(cinfo.id.toLong())?.progress ?: 0L
                     cinfo
                 }
@@ -94,6 +97,7 @@ class MovieViewModel @ViewModelInject constructor(
 
             banglaMoviesResponse.value = response?.subCategoryWiseContent?.singleOrNull { it.subCategoryName == "Bangla" }?.let {
                 it.channels?.map { cinfo->
+                    cinfo.categoryId = 1
                     cinfo.viewProgress = viewProgressRepo.getProgressByContent(cinfo.id.toLong())?.progress ?: 0L
                     cinfo
                 }
@@ -106,6 +110,7 @@ class MovieViewModel @ViewModelInject constructor(
 
             englishMoviesResponse.value = response?.subCategoryWiseContent?.singleOrNull { it.subCategoryName == "English" }?.let {
                 it.channels?.map { cinfo->
+                    cinfo.categoryId = 1
                     cinfo.viewProgress = viewProgressRepo.getProgressByContent(cinfo.id.toLong())?.progress ?: 0L
                     cinfo
                 }
@@ -121,7 +126,11 @@ class MovieViewModel @ViewModelInject constructor(
     val loadMoviePreviews by lazy{
         viewModelScope.launch {
             moviePreviewsResponse.value = try {
-                moviePreviewsService.loadData("VOD", 0, 0, 10, 0)
+                moviePreviewsService.loadData("VOD", 0, 0, 10, 0).map {
+                    it.categoryId = 1
+                    it.viewProgress = viewProgressRepo.getProgressByContent(it.id.toLong())?.progress ?: 0L
+                    it
+                }
             } catch (ex: Exception) {
                 moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply {
                     moviePreviews = 0
@@ -134,7 +143,11 @@ class MovieViewModel @ViewModelInject constructor(
     val loadTrendingNowMovies by lazy{
         viewModelScope.launch {
             trendingNowMoviesResponse.value = try{
-                trendingNowService.loadData( 0, 10)
+                trendingNowService.loadData( 0, 10).map {
+                    it.categoryId = 1
+                    it.viewProgress = viewProgressRepo.getProgressByContent(it.id.toLong())?.progress ?: 0L
+                    it
+                }
             } catch (ex: Exception) {
                 moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply {
                     trendingNow = 0
@@ -149,7 +162,11 @@ class MovieViewModel @ViewModelInject constructor(
             telefilmsResponse.value =  try{
                 getContentAssistedFactory.create(
                     ChannelRequestParams("", 1, "", 90, "VOD")
-                ).loadData(0,10)
+                ).loadData(0,10).map {
+                    it.categoryId = 1
+                    it.viewProgress = viewProgressRepo.getProgressByContent(it.id.toLong())?.progress ?: 0L
+                    it
+                }
             } catch (ex: Exception) {
                 moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply {
                     telefilm = 0

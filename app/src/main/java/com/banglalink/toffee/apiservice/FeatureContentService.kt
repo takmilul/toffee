@@ -28,6 +28,10 @@ class FeatureContentService @Inject constructor(
                 request
             )
         }
-        return response.response
+        return response.response.apply {
+            channels?.map {
+                it.categoryId = categoryId
+            }
+        }
     }
 }
