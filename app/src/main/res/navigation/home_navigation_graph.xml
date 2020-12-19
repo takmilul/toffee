@@ -161,11 +161,11 @@
     <fragment
         android:id="@+id/trendingChannelsFragment"
         android:name="com.banglalink.toffee.ui.trendingchannels.TrendingChannelsFragment"
-        android:label="TrendingChannelsFragment"/>
+        android:label="Trending Channels"/>
     <fragment
         android:id="@+id/MyChannelEditDetailFragment"
         android:name="com.banglalink.toffee.ui.mychannel.MyChannelEditDetailFragment"
-        android:label="MyChannelEditDetailFragment">
+        android:label="Edit Details">
         <argument
             android:name="myChannelDetail"
             app:nullable="true"
@@ -194,7 +194,7 @@
     <fragment
         android:id="@+id/myChannelPlaylistVideosFragment"
         android:name="com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment"
-        android:label="MyChannelPlaylistVideosFragment">
+        android:label="Playlist Videos">
         <argument
             android:name="playlistInfo"
             app:argType="com.banglalink.toffee.model.PlaylistPlaybackInfo" />
@@ -300,7 +300,7 @@
     <fragment
         android:id="@+id/myChannelVideosEditFragment"
         android:name="com.banglalink.toffee.ui.mychannel.MyChannelVideosEditFragment"
-        android:label="MyChannelVideosEditFragment" >
+        android:label="Edit Video Details" >
         <argument
             android:name="channelInfo"
             app:argType="com.banglalink.toffee.model.ChannelInfo" />
@@ -323,7 +323,7 @@
         <argument
             android:name="title"
             app:argType="string"
-            android:defaultValue="Movie" />
+            android:defaultValue="Movies" />
     </fragment>
     <fragment
         android:id="@+id/dramaSeriesFragment"

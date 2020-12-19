@@ -4,7 +4,6 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +19,6 @@ import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.model.UgcSubCategory
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
-import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.bindCategoryImage
 import com.google.android.material.chip.Chip
 import kotlinx.android.synthetic.main.fragment_category_info.*
@@ -42,6 +40,7 @@ class CategoryInfoFragment: HomeBaseFragment() {
         categoryInfo = requireParentFragment().requireArguments().getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)!!
         landingViewModel.pageType.value = (Category)
         landingViewModel.categoryId.value = (categoryInfo.id.toInt())
+        landingViewModel.isDramaSeries.value = false
 
         observeList()
         observeCategoryData()

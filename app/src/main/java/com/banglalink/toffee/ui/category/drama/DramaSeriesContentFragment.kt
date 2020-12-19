@@ -2,6 +2,7 @@ package com.banglalink.toffee.ui.category.drama
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -9,8 +10,11 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
+import com.banglalink.toffee.R.string
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.databinding.FragmentDramaSeriesContentBinding
+import com.banglalink.toffee.enums.FilterContentType
+import com.banglalink.toffee.enums.FilterContentType.FEED
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.SeriesPlaybackInfo
@@ -24,6 +28,7 @@ import kotlinx.coroutines.flow.collectLatest
 class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<ChannelInfo> {
 
     private var category: UgcCategory? = null
+    private var selectedFilter: Int = FEED.value
     private val viewModel by viewModels<DramaSeriesViewModel>()
     private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
     private lateinit var binding: FragmentDramaSeriesContentBinding
@@ -43,29 +48,47 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
         binding.latestVideosList.adapter = mAdapter
 
         observe(landingPageViewModel.latestVideoLiveData) {
-            observeList(it.first, it.second)
+            if (selectedFilter == FilterContentType.LATEST_VIDEOS.value) {
+                observeLatestVideosList(it.first, it.second)
+            }
+            else{
+                observeTrendingVideosList(it.first, it.second)
+            }
         }
 
-        observeList(category?.id?.toInt() ?: 0)
-        
-        /*filterButton.setOnClickListener {
-            val popupMenu = PopupMenu(requireContext(), it)
-            popupMenu.menu.add("Latest Videos")
-            popupMenu.menu.add("Trending Videos")
+        observeLatestVideosList(category?.id?.toInt() ?: 0)
+
+        binding.filterButton.setOnClickListener {
+            val popupMenu = android.widget.PopupMenu(requireContext(), it)
+            popupMenu.menu.add(Menu.NONE, FilterContentType.LATEST_VIDEOS.value, 1, getString(string.latestVideos))
+            popupMenu.menu.add(Menu.NONE, FilterContentType.TRENDING_VIDEOS.value, 2, getString(string.trendingVideos))
             popupMenu.show()
 
             popupMenu.setOnMenuItemClickListener { item ->
-                latestVideosHeader.text = item.title
-                when(item.title){
-                    "Latest Videos" -> observeList(category?.id?.toInt() ?: 0)
-                    "Trending Videos" -> observeTrendingList(category?.id?.toInt() ?: 0)
+                selectedFilter = item.itemId
+                binding.latestVideosHeader.text = item.title
+                when(item.itemId){
+                    FilterContentType.LATEST_VIDEOS.value -> observeLatestVideosList(category?.id?.toInt() ?: 0)
+                    FilterContentType.TRENDING_VIDEOS.value -> observeTrendingVideosList(category?.id?.toInt() ?: 0)
                 }
                 true
             }
-        }*/
+        }
     }
 
-    private fun observeList(categoryId: Int, subCategoryId: Int = 0) {
+    private fun observeTrendingVideosList(categoryId: Int, subCategoryId: Int = 0) {
+        lifecycleScope.launchWhenStarted { 
+            if (categoryId != 0) {
+                landingPageViewModel.categoryId.value = categoryId
+                landingPageViewModel.subCategoryId.value = subCategoryId
+            }
+            landingPageViewModel.loadMostPopularVideos.collectLatest {
+                mAdapter.submitData(it)
+            }
+        }
+    }
+
+    private fun observeLatestVideosList(categoryId: Int, subCategoryId: Int = 0) {
         lifecycleScope.launchWhenStarted {
             viewModel.loadDramaSeriesContents(categoryId, subCategoryId).collectLatest {
                 mAdapter.submitData(it)

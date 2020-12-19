@@ -28,7 +28,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class LandingPageViewModel @ViewModelInject constructor(
-    private val mostPopularApi: GetMostPopularContents,
+    private val mostPopularApi: GetMostPopularContents.AssistedFactory,
     private val mostPopularPlaylists: GetMostPopularPlaylists,
     private val categoryListApi: GetUgcCategories,
     private val tvChannelRepo: TVChannelRepository,
@@ -41,6 +41,8 @@ class LandingPageViewModel @ViewModelInject constructor(
     val latestVideoLiveData = MutableLiveData<Pair<Int, Int>>()
     val pageType: MutableLiveData<PageType> = MutableLiveData()
     val categoryId: MutableLiveData<Int> = MutableLiveData()
+    val subCategoryId: MutableLiveData<Int> = MutableLiveData()
+    val isDramaSeries: MutableLiveData<Boolean> = MutableLiveData()
     private val featuredContentList: MutableLiveData<Resource<List<ChannelInfo>?>> = MutableLiveData()
     val featuredContents = featuredContentList.toLiveData()
     private val subCategoryList: MutableLiveData<Resource<List<UgcSubCategory>>> = MutableLiveData()
@@ -138,7 +140,9 @@ class LandingPageViewModel @ViewModelInject constructor(
     private val mostPopularRepo by lazy {
         BaseListRepositoryImpl({
             BaseNetworkPagingSource(
-                mostPopularApi
+                mostPopularApi.create(
+                    TrendingNowRequestParam("VOD", categoryId.value?:0, subCategoryId.value?:0, isDramaSeries.value?:false)
+                )
             )
         })
     }

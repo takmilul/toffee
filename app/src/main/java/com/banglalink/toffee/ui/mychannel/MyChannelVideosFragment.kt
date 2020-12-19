@@ -77,7 +77,6 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
                 if (item.isApproved == 1) {
                     this.menu.removeItem(R.id.menu_edit_content)
                 }
-//                this.menu.removeItem(R.id.menu_edit_content)
             }
             else {
                 inflate(R.menu.menu_channel_videos)
@@ -92,7 +91,7 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
 
                         }
                         else {
-                            findNavController().navigate(R.id.action_menu_channel_to_myChannelVideosEditFragment, Bundle().apply { putParcelable(MyChannelVideosEditFragment.CHANNEL_INFO, item) })
+                            this@MyChannelVideosFragment.findNavController().navigate(R.id.action_menu_channel_to_myChannelVideosEditFragment, Bundle().apply { putParcelable(MyChannelVideosEditFragment.CHANNEL_INFO, item) })
                         }
                         return@setOnMenuItemClickListener true
                     }

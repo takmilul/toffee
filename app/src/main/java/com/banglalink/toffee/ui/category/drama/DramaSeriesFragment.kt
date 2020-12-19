@@ -8,12 +8,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentDramaSeriesBinding
-import com.banglalink.toffee.databinding.FragmentMovieBinding
 import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
-import com.banglalink.toffee.ui.category.movie.MovieFragment
-import com.banglalink.toffee.ui.category.movie.MovieViewModel
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 
@@ -42,6 +39,7 @@ class DramaSeriesFragment: BaseFragment() {
         activity?.title = category.categoryName
         landingViewModel.pageType.value = PageType.Category
         landingViewModel.categoryId.value = category.id.toInt()
+        landingViewModel.isDramaSeries.value = true
     }
 
 }

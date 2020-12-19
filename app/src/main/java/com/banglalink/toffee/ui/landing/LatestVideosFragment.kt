@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
@@ -15,8 +16,11 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import com.banglalink.toffee.R
+import com.banglalink.toffee.R.string
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.databinding.FragmentLandingLatestVideosBinding
+import com.banglalink.toffee.enums.FilterContentType
+import com.banglalink.toffee.enums.FilterContentType.FEED
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource.Failure
@@ -42,7 +46,7 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
     private val viewModel by activityViewModels<LandingPageViewModel>()
     private var category: UgcCategory? = null
     private var listJob: Job? = null
-
+    private var selectedFilter: Int = FEED.value
     private lateinit var binding: FragmentLandingLatestVideosBinding
 
     override fun onCreateView(
@@ -83,28 +87,34 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
         
         filterButton.setOnClickListener {
             val popupMenu = PopupMenu(requireContext(), it)
-            popupMenu.menu.add("Latest Videos")
-            popupMenu.menu.add("Trending Videos")
+            popupMenu.menu.add(Menu.NONE, FilterContentType.LATEST_VIDEOS.value, 1, getString(string.latestVideos))
+            popupMenu.menu.add(Menu.NONE, FilterContentType.TRENDING_VIDEOS.value, 2, getString(string.trendingVideos))
             popupMenu.show()
             
             popupMenu.setOnMenuItemClickListener { item ->
+                selectedFilter = item.itemId
                 binding.latestVideosHeader.text = item.title
-                when(item.title){
-                    "Latest Videos" -> observeList(category?.id?.toInt() ?: 0)
-                    "Trending Videos" -> observeTrendingList(category?.id?.toInt() ?: 0)
+                when(item.itemId){
+                    FilterContentType.LATEST_VIDEOS.value -> observeLatestVideosList(category?.id?.toInt() ?: 0)
+                    FilterContentType.TRENDING_VIDEOS.value -> observeTrendingVideosList(category?.id?.toInt() ?: 0)
                 }
                 true
             }
         }
 
         observe(viewModel.latestVideoLiveData) {
-            observeList(it.first, it.second)
+            if (selectedFilter == FilterContentType.LATEST_VIDEOS.value) {
+                observeLatestVideosList(it.first, it.second)
+            }
+            else{
+                observeTrendingVideosList(it.first, it.second)
+            }
         }
 
-        observeList(category?.id?.toInt() ?: 0)
+        observeLatestVideosList(category?.id?.toInt() ?: 0)
     }
 
-    private fun observeList(categoryId: Int, subCategoryId: Int = 0) {
+    private fun observeLatestVideosList(categoryId: Int, subCategoryId: Int = 0) {
         listJob?.cancel()
         listJob = lifecycleScope.launchWhenStarted {
             val latestVideos = if(categoryId == 0) {
@@ -118,15 +128,14 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
         }
     }
     
-    private fun observeTrendingList(categoryId: Int, subCategoryId: Int = 0){
+    private fun observeTrendingVideosList(categoryId: Int, subCategoryId: Int = 0){
         listJob?.cancel()
         listJob = lifecycleScope.launchWhenStarted {
-            val trendingVideos = if(categoryId == 0) {
-                viewModel.loadMostPopularVideos
-            } else {
-                viewModel.loadMostPopularVideos
+            if (categoryId != 0) {
+                viewModel.categoryId.value = categoryId
+                viewModel.subCategoryId.value = subCategoryId
             }
-            trendingVideos.collectLatest {
+            viewModel.loadMostPopularVideos.collectLatest {
                 mAdapter.submitData(it)
             }
         }

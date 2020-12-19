@@ -108,9 +108,14 @@ interface ToffeeApi {
     suspend fun getReferrerPolicy(@Body referrerPolicyRequest: ReferrerPolicyRequest):ReferrerPolicyResponse
 
     //*************** UGC APIS **********************//
-    @POST("ugc-most-popular-contents/1/{type}/1/{dbVersion}")
+    @POST("ugc-most-popular-contents/1/{type}/{isSerialContent}/{categoryId}/{subCategoryId}/{limit}/{offset}/{dbVersion}")
     suspend fun getUgcMostPopularContents(
         @Path("type") type: String,
+        @Path("isSerialContent") isDramaSeries: Int = 0,
+        @Path("categoryId") categoryId: Int = 0,
+        @Path("subCategoryId") subCategoryId: Int = 0,
+        @Path("limit") limit: Int,
+        @Path("offset") offset: Int,
         @Path("dbVersion") dbVersion: Int,
         @Body mostPopularContentRequest: MostPopularContentRequest
     ): MostPopularContentResponse

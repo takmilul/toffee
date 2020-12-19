@@ -46,6 +46,7 @@ class MovieFragment : BaseFragment() {
         activity?.title = category.categoryName
         landingViewModel.pageType.value = PageType.Category
         landingViewModel.categoryId.value = category.id.toInt()
+        landingViewModel.isDramaSeries.value = false
         setCategoryIcon()
         observeCardsVisibility()
         viewModel.loadMovieCategoryDetail

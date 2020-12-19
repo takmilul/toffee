@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 class MovieViewModel @ViewModelInject constructor(
     private val movieApiService: MovieCategoryDetailService,
     private val moviePreviewsService: MoviesPreviewService,
-    private val trendingNowService: GetMostPopularContents,
+    private val trendingNowService: GetMostPopularContents.AssistedFactory,
     private val getContentAssistedFactory: GetContents.AssistedFactory,
     private val comingSoonApiService: MoviesComingSoonService,
 ): BaseViewModel() {
@@ -71,7 +71,7 @@ class MovieViewModel @ViewModelInject constructor(
     
     val loadTrendingNowMovies by lazy{
         viewModelScope.launch { 
-            val response = trendingNowService.loadData( 0, 10)
+            val response = trendingNowService.create(TrendingNowRequestParam("VOD", 1, 0, false)).loadData(0, 10)
             trendingNowMoviesResponse.value = response
         }
     }
