@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.core.content.ContextCompat
-import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -50,7 +49,7 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentLandingLatestVideosBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -79,7 +78,6 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
         }
 
         if(viewModel.categoryId.value == 1){
-            binding.subCategoryChipGroupHolder.visibility = View.VISIBLE
             observeSubCategoryList()
         }
         
@@ -190,8 +188,7 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
                             binding.subCategoryChipGroup.check(newChip.id)
                         }
                     }
-                    subCategoryChipGroupHolder.visibility = View.VISIBLE
-                    subCategoryChipGroup.setOnCheckedChangeListener { group, checkedId ->
+                    binding.subCategoryChipGroupHolder.visibility = View.VISIBLE
                     binding.subCategoryChipGroup.setOnCheckedChangeListener { group, checkedId ->
                         val selectedChip = group.findViewById<Chip>(checkedId)
                         if(selectedChip != null) {
