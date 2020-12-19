@@ -34,7 +34,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
 
-class EpisodeListFragment: HomeBaseFragment(), ContentReactionCallback<ChannelInfo> {
+class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo> {
     private lateinit var mAdapter: EpisodeListAdapter
     private var currentItem: ChannelInfo? = null
     private var detailsAdapter: ChannelHeaderAdapter? = null

@@ -24,8 +24,6 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
             android:background="@drawable/round_white_bg"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="16:9"
@@ -36,11 +34,10 @@
             <ImageView
                 android:id="@+id/poster"
                 loadChannelImage="@{data}"
-                android:layout_width="@dimen/catchup_width"
-                android:layout_height="@dimen/catchup_height"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:scaleType="centerCrop"
-                app:layout_constraintDimensionRatio="W,16:9"
                 tools:src="@drawable/placeholder" />
 
 

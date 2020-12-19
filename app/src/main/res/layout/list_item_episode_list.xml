@@ -34,11 +34,10 @@
             <ImageView
                 android:id="@+id/poster"
                 loadChannelImage="@{data}"
-                android:layout_width="@dimen/catchup_width"
-                android:layout_height="@dimen/catchup_height"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:scaleType="centerCrop"
-                app:layout_constraintDimensionRatio="W,16:9"
                 tools:src="@drawable/placeholder" />
 
 

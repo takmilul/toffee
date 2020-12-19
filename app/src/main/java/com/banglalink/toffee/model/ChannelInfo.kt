@@ -149,6 +149,6 @@ data class ChannelInfo(
     
     fun formatted_view_count() = getFormattedViewsText(view_count)
     fun formattedDuration() = discardZeroFromDuration(duration)
-    fun formattedCreateTime() = if(!created_at.isNullOrBlank()) Utils.getDateDiffInDayOrHourOrMinute(Utils.getDate(created_at).time).replace(" ", "") else "0"
+    fun formattedCreateTime() = if(!created_at.isNullOrBlank()) Utils.getDateDiffInDayOrHourOrMinute(Utils.getDate(created_at).time)/*.replace(" ", "")*/ else "0"
     fun formattedSubscriberCount() = getFormattedViewsText(subscriberCount.toString())
 }

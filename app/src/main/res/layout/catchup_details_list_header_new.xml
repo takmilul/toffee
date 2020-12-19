@@ -281,6 +281,7 @@ Day 21 - AUS vs IND" />
             android:layout_marginTop="4dp"
             android:text="@{data.formatted_view_count() + ` views`}"
             tools:text="352.5K views"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/circleImageView"
             app:layout_constraintTop_toBottomOf="@+id/program_name" />
 
