@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.RelativeLayout
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
@@ -58,15 +59,17 @@ class ChannelHeaderAdapter(private val headerData: Any? = null,
         when (headerData) {
             is PlaylistPlaybackInfo -> {
                 holder.autoplaySwitch.visibility = View.VISIBLE
-                holder.bottomPanelStatus.visibility = View.VISIBLE
                 holder.seasonInfoHeader.visibility = View.GONE
+                holder.bottomPanelStatus.visibility = View.VISIBLE
                 holder.bottomPanelStatus.text = "${headerData.playlistName} (${headerData.playlistItemCount})"
+                holder.seasonSpinnerWrap.visibility = View.GONE
             }
             is SeriesPlaybackInfo -> {
                 holder.autoplaySwitch.visibility = View.VISIBLE
                 holder.seasonInfoHeader.visibility = View.VISIBLE
                 holder.seasonInfoHeader.text = "${"S%02d \u2022 E%02d".format(channelInfo?.seasonNo, channelInfo?.episodeNo)}"
-
+                holder.seasonSpinnerWrap.visibility = View.VISIBLE
+                holder.bottomPanelStatus.visibility = View.GONE
                 holder.seasonSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
                     override fun onItemSelected(
                         parent: AdapterView<*>?,
@@ -88,6 +91,7 @@ class ChannelHeaderAdapter(private val headerData: Any? = null,
                 holder.autoplaySwitch.visibility = View.GONE
                 holder.bottomPanelStatus.visibility = View.GONE
                 holder.seasonInfoHeader.visibility = View.GONE
+                holder.seasonSpinnerWrap.visibility = View.GONE
             }
         }
         holder.itemView.findViewById<TextView>(R.id.reactionButton)?.setOnLongClickListener {
@@ -110,6 +114,7 @@ class ChannelHeaderAdapter(private val headerData: Any? = null,
         val bottomPanelStatus: TextView = binding.root.findViewById(R.id.bottom_panel_status)
         val seasonInfoHeader: TextView = binding.root.findViewById(R.id.seriesInfo)
         val seasonSpinner: Spinner = binding.root.findViewById(R.id.seasonSpinner)
+        val seasonSpinnerWrap: RelativeLayout = binding.root.findViewById(R.id.seasonSpinnerWrap)
 
         fun bind(obj: Any, cb: Any?, pos: Int, vm: EpisodeListViewModel?) {
             binding.setVariable(BR.callback, cb)
