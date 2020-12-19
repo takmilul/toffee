@@ -26,13 +26,11 @@ import com.banglalink.toffee.ui.common.ReactionFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.home.PopularVideoListAdapter
 import com.google.android.material.chip.Chip
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_category_info.*
 import kotlinx.android.synthetic.main.fragment_landing_latest_videos.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 
-@AndroidEntryPoint
 class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelInfo> {
     private lateinit var mAdapter: PopularVideoListAdapter
 
@@ -60,7 +58,6 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
         }
 
         if(viewModel.categoryId.value == 1){
-            subCategoryChipGroupHolder.visibility = View.VISIBLE
             observeSubCategoryList()
         }
         
@@ -171,6 +168,7 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
                             subCategoryChipGroup.check(newChip.id)
                         }
                     }
+                    subCategoryChipGroupHolder.visibility = View.VISIBLE
                     subCategoryChipGroup.setOnCheckedChangeListener { group, checkedId ->
                         val selectedChip = group.findViewById<Chip>(checkedId)
                         if(selectedChip != null) {

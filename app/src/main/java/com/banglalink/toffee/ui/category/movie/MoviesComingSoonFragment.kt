@@ -1,44 +1,23 @@
 package com.banglalink.toffee.ui.category.movie
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.activityViewModels
-import com.banglalink.toffee.R
-import com.banglalink.toffee.databinding.LayoutHorizontalContentContainerBinding
 import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.ui.common.BaseFragment
+import com.banglalink.toffee.model.ComingSoonContent
+import com.banglalink.toffee.ui.common.MyBaseAdapterV2
 
-class MoviesComingSoonFragment : BaseFragment() {
-    private lateinit var adapter: MoviesComingSoonAdapter
-    private lateinit var binding: LayoutHorizontalContentContainerBinding
-    private val viewModel by activityViewModels<MovieViewModel>()
-
+class MoviesComingSoonFragment : MovieBaseFragment<ComingSoonContent>() {
+    override val cardTitle: String = "Coming Soon"
+    override val adapter: MyBaseAdapterV2<ComingSoonContent> by lazy { MoviesComingSoonAdapter() }
+    
     companion object {
         @JvmStatic
         fun newInstance() = MoviesComingSoonFragment()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.layout_horizontal_content_container, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        binding.titleTextView.text = "Coming Soon"
-        adapter = MoviesComingSoonAdapter()
-        binding.listView.adapter = adapter
-        loadContent()
-        viewModel.loadComingSoonContents
-    }
-
-    private fun loadContent() {
+    override fun loadContent() {
         observe(viewModel.comingSoonContents){
             adapter.addAll(it)
         }
+        viewModel.loadComingSoonContents
     }
 
     override fun onStop() {

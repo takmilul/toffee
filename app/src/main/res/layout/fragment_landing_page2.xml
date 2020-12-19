@@ -4,86 +4,71 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    
     <com.banglalink.toffee.ui.widget.NestedCoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/home_mini_progress_container"
-        >
+        android:layout_above="@+id/home_mini_progress_container">
 
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
-    <!--        android:background="@android:color/transparent"-->
-    <!--        <androidx.core.widget.NestedScrollView-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            app:layout_scrollFlags="scroll|exitUntilCollapsed"-->
-    <!--            app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
-    <!--            >-->
+            android:layout_height="wrap_content">
+            
+            <LinearLayout
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/featuredFragment"
+                    android:name="com.banglalink.toffee.ui.landing.FeaturedContentFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
-        <LinearLayout
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-                            <androidx.fragment.app.FragmentContainerView
-                                android:id="@+id/featuredFragment"
-                                android:name="com.banglalink.toffee.ui.landing.FeaturedContentFragment"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content" />
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/popularTvChannelsFragment"
+                    android:name="com.banglalink.toffee.ui.landing.PopularTVChannelsFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
-                            <androidx.fragment.app.FragmentContainerView
-                                android:id="@+id/popularTvChannelsFragment"
-                                android:name="com.banglalink.toffee.ui.landing.PopularTVChannelsFragment"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content" />
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/categoriesFragment"
+                    android:name="com.banglalink.toffee.ui.landing.LandingCategoriesFragment"
+                    android:layout_marginTop="8dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
-<!--                            <androidx.fragment.app.FragmentContainerView-->
-<!--                                android:id="@+id/mostPopularFragment"-->
-<!--                                android:name="com.banglalink.toffee.ui.landing.MostPopularFragment"-->
-<!--                                android:layout_marginTop="8dp"-->
-<!--                                android:layout_width="match_parent"-->
-<!--                                android:layout_height="wrap_content" />-->
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/trendingNowFragment"
+                    android:name="com.banglalink.toffee.ui.landing.EditorsChoiceFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
-                            <androidx.fragment.app.FragmentContainerView
-                                android:id="@+id/categoriesFragment"
-                                android:name="com.banglalink.toffee.ui.landing.LandingCategoriesFragment"
-                                android:layout_marginTop="8dp"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content" />
-
-                            <androidx.fragment.app.FragmentContainerView
-                                android:id="@+id/trendingNowFragment"
-                                android:name="com.banglalink.toffee.ui.landing.EditorsChoiceFragment"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content" />
-
-                            <androidx.fragment.app.FragmentContainerView
-                                android:id="@+id/userChannelList"
-                                android:name="com.banglalink.toffee.ui.landing.LandingUserChannelsFragment"
-                                android:layout_marginTop="8dp"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content" />
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/userChannelList"
+                    android:name="com.banglalink.toffee.ui.landing.LandingUserChannelsFragment"
+                    android:layout_marginTop="8dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
             </LinearLayout>
-
-    <!--            </LinearLayout>-->
-    <!--        </androidx.core.widget.NestedScrollView>-->
         </com.google.android.material.appbar.AppBarLayout>
+        
         <androidx.core.widget.NestedScrollView
             android:fillViewport="true"
             android:layout_gravity="fill_vertical"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+            
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/latestVideosFragment"
                 android:name="com.banglalink.toffee.ui.landing.LatestVideosFragment"
                 android:layout_marginTop="8dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                />
+                android:layout_height="match_parent" />
+            
         </androidx.core.widget.NestedScrollView>
     </com.banglalink.toffee.ui.widget.NestedCoordinatorLayout>
 </RelativeLayout>

@@ -1,8 +1,9 @@
 package com.banglalink.toffee.ui.category.movie
 
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.model.ChannelInfo
 
-class MoviesThrillerFragment: MovieBaseFragment() {
+class MoviesThrillerFragment: MovieBaseFragment<ChannelInfo>() {
     override val cardTitle: String = "Thriller"
     
     companion object {

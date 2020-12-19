@@ -11,12 +11,13 @@ import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.databinding.LayoutHorizontalContentContainerBinding
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.HomeBaseFragment
+import com.banglalink.toffee.ui.common.MyBaseAdapterV2
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 
-abstract class MovieBaseFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo> {
+abstract class MovieBaseFragment<T: Any>: HomeBaseFragment(), ProviderIconCallback<T> {
     protected abstract val cardTitle: String
     protected open val isCategory: Boolean = true
-    protected lateinit var adapter: MoviesAdapter<ChannelInfo>
+    protected open val adapter: MyBaseAdapterV2<T> by lazy { MoviesAdapter(this, isCategory) }
     private lateinit var binding: LayoutHorizontalContentContainerBinding
     protected val viewModel by activityViewModels<MovieViewModel>()
     private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
@@ -29,27 +30,27 @@ abstract class MovieBaseFragment: HomeBaseFragment(), ProviderIconCallback<Chann
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.titleTextView.text = cardTitle
-        adapter = MoviesAdapter(this, isCategory)
         binding.listView.adapter = adapter
         loadContent()
     }
 
     protected abstract fun loadContent()
 
-    override fun onItemClicked(item: ChannelInfo) {
+    override fun onItemClicked(item: T) {
         homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
     }
 
-    override fun onOpenMenu(view: View, item: ChannelInfo) {
-        super.onOptionClicked(view, item)
+    override fun onOpenMenu(view: View, item: T) {
+        if (item is ChannelInfo) {
+            super.onOptionClicked(view, item)
+        }
     }
 
-    override fun onProviderIconClicked(item: ChannelInfo) {
-        super.onProviderIconClicked(item)
-        landingPageViewModel.navigateToMyChannel(this, item.id.toInt(), item.channel_owner_id, item.isSubscribed)
+    override fun onProviderIconClicked(item: T) {
+        if (item is ChannelInfo) {
+            landingPageViewModel.navigateToMyChannel(this, item.id.toInt(), item.channel_owner_id, item.isSubscribed)
+        }
     }
 
-    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
-        
-    }
+    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {}
 }

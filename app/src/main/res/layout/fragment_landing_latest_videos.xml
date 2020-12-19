@@ -59,7 +59,9 @@
         android:id="@+id/latestVideosList"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:layout_constrainedHeight="true"
         android:layout_marginTop="8dp"
+        android:clipChildren="false"
         android:clipToPadding="false"
         android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
@@ -68,4 +70,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/subCategoryChipGroupHolder"
         app:reverseLayout="false" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        
+</androidx.constraintlayout.widget.ConstraintLayout>

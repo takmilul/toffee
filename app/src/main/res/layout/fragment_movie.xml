@@ -23,8 +23,7 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
+                    android:layout_height="wrap_content"
                     app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
                     <androidx.fragment.app.FragmentContainerView
@@ -170,22 +169,18 @@
             </com.google.android.material.appbar.AppBarLayout>
 
             <androidx.core.widget.NestedScrollView
+                android:fillViewport="true"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="8dp"
                 android:layout_gravity="fill_vertical"
-                android:fillViewport="true"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-
+                
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/latestVideosFragment"
                     android:name="com.banglalink.toffee.ui.landing.LatestVideosFragment"
+                    android:layout_marginTop="8dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/topMovieChannelsFragment" />
+                    android:layout_height="match_parent" />
 
             </androidx.core.widget.NestedScrollView>
         </com.banglalink.toffee.ui.widget.NestedCoordinatorLayout>

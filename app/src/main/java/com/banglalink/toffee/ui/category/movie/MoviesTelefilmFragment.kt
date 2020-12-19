@@ -3,8 +3,9 @@ package com.banglalink.toffee.ui.category.movie
 import android.os.Bundle
 import android.view.View
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.model.ChannelInfo
 
-class MoviesTelefilmFragment: MovieBaseFragment() {
+class MoviesTelefilmFragment: MovieBaseFragment<ChannelInfo>() {
     override val cardTitle: String = "Telefilm"
     companion object {
         @JvmStatic
