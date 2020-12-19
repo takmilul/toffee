@@ -7,6 +7,7 @@ import com.banglalink.toffee.data.database.ToffeeDatabase
 import com.banglalink.toffee.data.database.dao.*
 import com.banglalink.toffee.data.repository.*
 import com.banglalink.toffee.data.repository.impl.*
+import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.data.storage.ViewCountDAO
 import dagger.Module
 import dagger.Provides
@@ -117,5 +118,11 @@ object DatabaseModule {
     @Singleton
     fun providesContentViewProgressDao(db: ToffeeDatabase): ContentViewProgressDao {
         return db.getContentViewProgressDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providesContentViewProgressRepository(dao: ContentViewProgressDao, pref: Preference): ContentViewPorgressRepsitory {
+        return ContentViewPorgressRepsitoryImpl(dao, pref)
     }
 }

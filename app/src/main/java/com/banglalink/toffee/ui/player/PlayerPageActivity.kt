@@ -5,6 +5,7 @@ import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R.id
 import com.banglalink.toffee.R.string
@@ -13,16 +14,19 @@ import com.banglalink.toffee.analytics.HeartBeatManager.triggerEventViewingConte
 import com.banglalink.toffee.analytics.HeartBeatManager.triggerEventViewingContentStop
 import com.banglalink.toffee.analytics.ToffeeAnalytics.logException
 import com.banglalink.toffee.analytics.ToffeeAnalytics.logForcePlay
+import com.banglalink.toffee.data.database.entities.ContentViewProgress
+import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener
 import com.banglalink.toffee.listeners.PlaylistListener
 import com.banglalink.toffee.model.Channel
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.PlaybackState
 import com.banglalink.toffee.model.TOFFEE_HEADER
 import com.banglalink.toffee.ui.category.drama.EpisodeListFragment
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
 import com.google.android.exoplayer2.*
-import com.google.android.exoplayer2.Player.EventListener
+import com.google.android.exoplayer2.Player.*
 import com.google.android.exoplayer2.SimpleExoPlayer.Builder
 import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.ext.cast.SessionAvailabilityListener
@@ -48,12 +52,15 @@ import com.google.android.gms.cast.MediaQueueItem
 import com.google.android.gms.cast.framework.*
 import com.google.android.gms.common.images.WebImage
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.net.CookieHandler
 import java.net.CookieManager
 import java.net.CookiePolicy
+import javax.inject.Inject
 import kotlin.math.max
 
-
+@AndroidEntryPoint
 abstract class PlayerPageActivity :
     BaseAppCompatActivity(),
     OnPlayerControllerChangedListener,
@@ -77,7 +84,8 @@ abstract class PlayerPageActivity :
 
     private var exoPlayer: SimpleExoPlayer? = null
     private var castPlayer: CastPlayer? = null
-
+    @Inject
+    lateinit var contentViewRepo: ContentViewPorgressRepsitory
 
     init {
         defaultCookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER)
@@ -332,9 +340,17 @@ abstract class PlayerPageActivity :
 //            isReload = true;//that means we have reload situation. We need to start where we left for VODs
 //        }
         player?.let {
+            val oldChannelInfo = it.currentMediaItem?.playbackProperties?.tag as ChannelInfo?
+            oldChannelInfo?.let { oldInfo ->
+                if(it.playbackState != STATE_ENDED) {
+                    insertContentViewProgress(oldInfo, it.currentPosition)
+                }
+            }
+
             triggerEventViewingContentStart(channelInfo.id.toInt(), channelInfo.type ?: "VOD")
             it.playWhenReady = !isReload || it.playWhenReady
-            val mediaSource = prepareMedia(MediaItem.fromUri(uri))
+            val mediaItem = MediaItem.Builder().setUri(uri).setTag(channelInfo).build()
+            val mediaSource = prepareMedia(mediaItem)
             if (isReload) { //We need to start where we left off for VODs
                 val haveStartPosition = startWindow != C.INDEX_UNSET
                 if (haveStartPosition && !channelInfo.isLive) {
@@ -398,6 +414,21 @@ abstract class PlayerPageActivity :
         }
         if (cinfo != null) {
             playChannel(true)
+        }
+    }
+
+    private fun insertContentViewProgress(cinfo: ChannelInfo, progress: Long) {
+        lifecycleScope.launch {
+            Log.e("PLAYBACK_STATE", "Saving state - ${cinfo.id} -> $progress")
+            if(!cinfo.isLive && progress > 0L) {
+                contentViewRepo.insert(
+                    ContentViewProgress(
+                        customerId = mPref.customerId,
+                        contentId = cinfo.id.toLong(),
+                        progress = progress
+                    )
+                )
+            }
         }
     }
 
@@ -472,6 +503,11 @@ abstract class PlayerPageActivity :
                 clearStartPosition()
                 reloadChannel()
             }
+            player?.currentMediaItem?.playbackProperties?.tag?.let { cinfo->
+                if(cinfo is ChannelInfo && !cinfo.isLive) {
+                    insertContentViewProgress(cinfo, player?.duration ?: -1)
+                }
+            }
         }
 
         override fun onTracksChanged(trackGroups: TrackGroupArray, trackSelections: TrackSelectionArray) {
@@ -492,6 +528,18 @@ abstract class PlayerPageActivity :
                 cause = cause.cause
             }
             return false
+        }
+
+        override fun onIsPlayingChanged(isPlaying: Boolean) {
+            super.onIsPlayingChanged(isPlaying)
+            if(isPlaying) return
+            player?.currentMediaItem?.playbackProperties?.tag?.let { cinfo->
+                if(cinfo is ChannelInfo) {
+                    if(player?.currentPosition ?: 0 > 0L) {
+                        insertContentViewProgress(cinfo, player?.currentPosition ?: -1)
+                    }
+                }
+            }
         }
     }
 
