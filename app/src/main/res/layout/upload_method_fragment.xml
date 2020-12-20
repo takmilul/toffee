@@ -50,8 +50,8 @@
                 android:focusable="true"
                 android:gravity="center_vertical"
                 android:text="@string/txt_learn_more"
-                android:textColor="@color/colorSecondary"
-                app:drawableTint="@color/colorSecondary"
+                android:textColor="@color/colorAccent"
+                app:drawableTint="@color/colorAccent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/upload_heading" />
