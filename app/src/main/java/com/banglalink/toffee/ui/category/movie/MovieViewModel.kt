@@ -196,10 +196,8 @@ class MovieViewModel @ViewModelInject constructor(
             it.mapNotNull { item ->
                 item.channelInfo
             }.apply {
-                if(isEmpty()) {
-                    moviesContentCardsResponse.value = moviesContentCardsResponse.value?.also { cardList ->
-                        cardList.continueWatching = 0
-                    }
+                moviesContentCardsResponse.value = moviesContentCardsResponse.value?.also { cardList ->
+                    cardList.continueWatching = if(isEmpty()) 0 else 1
                 }
             }
         }

@@ -178,6 +178,10 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
                     seriesInfo
                 )
             }
+
+            override fun onOpenMenu(view: View, item: ChannelInfo) {
+                openMenu(view, item)
+            }
         }, currentItem)
 
         with(binding.listview) {
