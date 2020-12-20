@@ -7,21 +7,15 @@ apply plugin: "kotlin-kapt"
 apply plugin: 'dagger.hilt.android.plugin'
 
 android {
-    signingConfigs {
-        release {
-            storeFile file('D:\\toffee_ugc_beta_1.jks')
-            storePassword 'banglalink.toffee12#'
-            keyPassword 'banglalink.toffee12#'
-            keyAlias 'toffee_ugc_beta_key'
-        }
-    }
+    
     compileSdkVersion 29
+    
     defaultConfig {
         applicationId "com.banglalink.toffee.ugc"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 35
-        versionName "0.0.1-alpha4"
+        versionCode 1
+        versionName "0.0.5-alpha"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {
@@ -47,10 +41,9 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
         }
         debug {
             minifyEnabled false

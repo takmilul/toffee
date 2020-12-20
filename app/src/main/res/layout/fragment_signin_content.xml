@@ -76,7 +76,7 @@
             android:focusable="true"
             android:fontFamily="@font/roboto_medium"
             android:text="@string/have_referral_code"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/main_text_color"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="@id/ref_code_et"
             app:layout_constraintEnd_toStartOf="@id/arrow_icon"
@@ -93,7 +93,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/have_ref_tv"
             app:layout_constraintTop_toTopOf="@+id/have_ref_tv"
-            app:tint="@color/colorAccent" />
+            app:tint="@color/main_text_color" />
 
         <android.widget.CheckBox
             android:id="@+id/terms_and_conditions_checkbox"
@@ -106,7 +106,7 @@
             android:checked="true"
             android:gravity="center_vertical"
             android:text="  I agree to the "
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/main_text_color"
             android:textSize="16sp"
             app:layout_constraintEnd_toStartOf="@+id/terms_and_conditions_tv"
             app:layout_constraintHorizontal_chainStyle="packed"
