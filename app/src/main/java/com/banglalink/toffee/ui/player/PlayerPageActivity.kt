@@ -15,7 +15,9 @@ import com.banglalink.toffee.analytics.HeartBeatManager.triggerEventViewingConte
 import com.banglalink.toffee.analytics.ToffeeAnalytics.logException
 import com.banglalink.toffee.analytics.ToffeeAnalytics.logForcePlay
 import com.banglalink.toffee.data.database.entities.ContentViewProgress
+import com.banglalink.toffee.data.database.entities.ContinueWatchingItem
 import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
+import com.banglalink.toffee.data.repository.ContinueWatchingRepository
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener
 import com.banglalink.toffee.listeners.PlaylistListener
 import com.banglalink.toffee.model.Channel
@@ -51,6 +53,7 @@ import com.google.android.gms.cast.MediaQueueItem
 import com.google.android.gms.cast.framework.*
 import com.google.android.gms.common.images.WebImage
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.net.CookieHandler
@@ -85,6 +88,9 @@ abstract class PlayerPageActivity :
     private var castPlayer: CastPlayer? = null
     @Inject
     lateinit var contentViewRepo: ContentViewPorgressRepsitory
+
+    @Inject
+    lateinit var continueWatchingRepo: ContinueWatchingRepository
 
     init {
         defaultCookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER)
@@ -372,6 +378,7 @@ abstract class PlayerPageActivity :
                     return
                 }
             }
+            startPosition = C.TIME_UNSET
             if(channelInfo.viewProgress > 0L) {
                 startPosition = if(channelInfo.viewProgressPercent() >= 990) {
                     C.TIME_UNSET
@@ -442,6 +449,19 @@ abstract class PlayerPageActivity :
                         progress = progress
                     )
                 )
+                Log.e("TOFFEE", "Category - ${cinfo.categoryId}")
+                if(cinfo.categoryId == 1 && cinfo.viewProgressPercent() < 970) {
+                    continueWatchingRepo.insertItem(
+                        ContinueWatchingItem(
+                            mPref.customerId,
+                            cinfo.id.toLong(),
+                            cinfo.type ?: "VOD",
+                            cinfo.categoryId,
+                            Gson().toJson(cinfo),
+                            progress
+                        )
+                    )
+                }
             }
         }
     }

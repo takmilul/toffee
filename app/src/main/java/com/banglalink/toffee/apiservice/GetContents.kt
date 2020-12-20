@@ -46,6 +46,7 @@ class GetContents @AssistedInject constructor(
         if (response.response.channels != null) {
             return response.response.channels.map {
                 it.category = requestParams.category
+                it.categoryId = requestParams.categoryId
                 it.subCategoryId = requestParams.subcategoryId
                 it.subCategory = requestParams.subcategory
                 val reactionInfo = reactionDao.getReactionByContentId(preference.customerId, it.id)

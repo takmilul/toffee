@@ -125,4 +125,16 @@ object DatabaseModule {
     fun providesContentViewProgressRepository(dao: ContentViewProgressDao, pref: Preference): ContentViewPorgressRepsitory {
         return ContentViewPorgressRepsitoryImpl(dao, pref)
     }
-}
+
+    @Provides
+    @Singleton
+    fun providesContinueWatchingDao(db: ToffeeDatabase): ContinueWatchingDao {
+        return db.getContinueWatchingDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providesContinueWatchingRepository(dao: ContinueWatchingDao, pref: Preference): ContinueWatchingRepository {
+        return ContinueWatchingRepositoryImpl(dao, pref)
+    }
+ }

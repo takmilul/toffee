@@ -6,6 +6,7 @@ import com.banglalink.toffee.data.network.request.DramaEpisodesBySeasonRequest
 import com.banglalink.toffee.data.network.request.DramaSeriesContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
+import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
 import com.squareup.inject.assisted.Assisted
@@ -20,6 +21,7 @@ data class DramaSeasonRequestParam(
 class GetDramaEpisodesBySeason @AssistedInject constructor(
     private val preference: Preference,
     private val toffeeApi: ToffeeApi,
+    private val viewProgressRepo: ContentViewPorgressRepsitory,
     @Assisted private val requestParams: DramaSeasonRequestParam
 ): BaseApiService<ChannelInfo> {
 
@@ -39,7 +41,12 @@ class GetDramaEpisodesBySeason @AssistedInject constructor(
             )
         }
 
-        return response.response.channels ?: emptyList()
+        return if (response.response.channels != null) {
+            response.response.channels.map {
+                it.viewProgress = viewProgressRepo.getProgressByContent(it.id.toLong())?.progress ?: 0L
+                it
+            }
+        } else emptyList()
     }
 
     @AssistedInject.Factory
