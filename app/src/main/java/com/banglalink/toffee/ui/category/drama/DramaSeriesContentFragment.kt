@@ -13,8 +13,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.R.string
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.databinding.FragmentDramaSeriesContentBinding
-import com.banglalink.toffee.enums.FilterContentType
-import com.banglalink.toffee.enums.FilterContentType.FEED
+import com.banglalink.toffee.enums.FilterContentType.*
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.SeriesPlaybackInfo
@@ -41,48 +40,48 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         category = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM) as UgcCategory?
         mAdapter = DramaSeriesListAdapter(this)
 
         binding.latestVideosList.adapter = mAdapter
+        landingPageViewModel.isDramaSeries.value = true
+        observeLatestVideosList(category?.id?.toInt() ?: 0)
 
-        observe(landingPageViewModel.latestVideoLiveData) {
-            if (selectedFilter == FilterContentType.LATEST_VIDEOS.value) {
-                observeLatestVideosList(it.first, it.second)
+        observe(landingPageViewModel.subCategoryId) {
+            if (selectedFilter == LATEST_VIDEOS.value || selectedFilter == FEED.value) {
+                observeLatestVideosList(category?.id?.toInt() ?: 9, it)
             }
             else{
-                observeTrendingVideosList(it.first, it.second)
+                observeTrendingVideosList(/*category?.id?.toInt() ?: 9, it*/)
             }
         }
 
-        observeLatestVideosList(category?.id?.toInt() ?: 0)
-
         binding.filterButton.setOnClickListener {
             val popupMenu = android.widget.PopupMenu(requireContext(), it)
-            popupMenu.menu.add(Menu.NONE, FilterContentType.LATEST_VIDEOS.value, 1, getString(string.latestVideos))
-            popupMenu.menu.add(Menu.NONE, FilterContentType.TRENDING_VIDEOS.value, 2, getString(string.trendingVideos))
+            popupMenu.menu.add(Menu.NONE, LATEST_VIDEOS.value, 1, getString(string.latestVideos))
+            popupMenu.menu.add(Menu.NONE, TRENDING_VIDEOS.value, 2, getString(string.trendingVideos))
             popupMenu.show()
 
             popupMenu.setOnMenuItemClickListener { item ->
                 selectedFilter = item.itemId
                 binding.latestVideosHeader.text = item.title
                 when(item.itemId){
-                    FilterContentType.LATEST_VIDEOS.value -> observeLatestVideosList(category?.id?.toInt() ?: 0)
-                    FilterContentType.TRENDING_VIDEOS.value -> observeTrendingVideosList(category?.id?.toInt() ?: 0)
+                    LATEST_VIDEOS.value -> landingPageViewModel.subCategoryId.value = 0 /*observeLatestVideosList(category?.id?.toInt() ?: 0)*/
+                    TRENDING_VIDEOS.value -> landingPageViewModel.subCategoryId.value = 0 /*observeTrendingVideosList(*//*category?.id?.toInt() ?: 0*//*)*/
                 }
                 true
             }
         }
     }
 
-    private fun observeTrendingVideosList(categoryId: Int, subCategoryId: Int = 0) {
+    private fun observeTrendingVideosList(/*categoryId: Int, subCategoryId: Int = 0*/) {
         lifecycleScope.launchWhenStarted { 
-            if (categoryId != 0) {
+            /*if (categoryId == 9) {
                 landingPageViewModel.categoryId.value = categoryId
                 landingPageViewModel.subCategoryId.value = subCategoryId
-            }
-            landingPageViewModel.loadMostPopularVideos.collectLatest {
+                landingPageViewModel.isDramaSeries.value = true
+            }*/
+            landingPageViewModel.loadMostPopularVideos().collectLatest {
                 mAdapter.submitData(it)
             }
         }

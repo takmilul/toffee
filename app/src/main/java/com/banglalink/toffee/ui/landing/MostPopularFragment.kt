@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
-import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.ContentReactionCallback
 import com.banglalink.toffee.ui.common.HomeBaseFragment
@@ -46,7 +45,7 @@ class MostPopularFragment: HomeBaseFragment(), ContentReactionCallback<ChannelIn
 
     private fun observeList() {
         lifecycleScope.launchWhenStarted {
-            viewModel.loadMostPopularVideos.collectLatest {
+            viewModel.loadMostPopularVideos().collectLatest {
                 mAdapter.submitData(it)
             }
         }

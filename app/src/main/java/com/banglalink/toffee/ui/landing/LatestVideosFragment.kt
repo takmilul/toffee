@@ -19,8 +19,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.R.string
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.databinding.FragmentLandingLatestVideosBinding
-import com.banglalink.toffee.enums.FilterContentType
-import com.banglalink.toffee.enums.FilterContentType.FEED
+import com.banglalink.toffee.enums.FilterContentType.*
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource.Failure
@@ -41,6 +40,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 
 class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelInfo> {
+    private var checkedChipId: Int = 0
     private lateinit var mAdapter: PopularVideoListAdapter
 
     private val viewModel by activityViewModels<LandingPageViewModel>()
@@ -82,60 +82,64 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
         }
 
         if(viewModel.categoryId.value == 1){
-            observeSubCategoryList()
+            createSubCategoryList()
+        }
+
+        selectedFilter = FEED.value
+        observeLatestVideosList(/*category?.id?.toInt() ?: 0*/)
+
+        observe(viewModel.subCategoryId) {
+            /*if (viewModel.checkedSubCategoryChipId.value != 0 && it == 0 && category?.id?.toInt() != 0)
+                binding.subCategoryChipGroup.check(binding.subCategoryChipGroup.get(0).id)*/
+            
+            if (selectedFilter == LATEST_VIDEOS.value || selectedFilter == FEED.value) {
+                observeLatestVideosList(/*it.first, it.second*/)
+            }
+            else{
+                observeTrendingVideosList(/*it.first, it.second*/)
+            }
         }
         
         filterButton.setOnClickListener {
             val popupMenu = PopupMenu(requireContext(), it)
-            popupMenu.menu.add(Menu.NONE, FilterContentType.LATEST_VIDEOS.value, 1, getString(string.latestVideos))
-            popupMenu.menu.add(Menu.NONE, FilterContentType.TRENDING_VIDEOS.value, 2, getString(string.trendingVideos))
+            popupMenu.menu.add(Menu.NONE, LATEST_VIDEOS.value, 1, getString(string.latestVideos))
+            popupMenu.menu.add(Menu.NONE, TRENDING_VIDEOS.value, 2, getString(string.trendingVideos))
             popupMenu.show()
             
             popupMenu.setOnMenuItemClickListener { item ->
                 selectedFilter = item.itemId
                 binding.latestVideosHeader.text = item.title
                 when(item.itemId){
-                    FilterContentType.LATEST_VIDEOS.value -> observeLatestVideosList(category?.id?.toInt() ?: 0)
-                    FilterContentType.TRENDING_VIDEOS.value -> observeTrendingVideosList(category?.id?.toInt() ?: 0)
+                    LATEST_VIDEOS.value -> viewModel.subCategoryId.value = 0 /*observeLatestVideosList(*//*category?.id?.toInt() ?: 0*//*)*/
+                    TRENDING_VIDEOS.value -> viewModel.subCategoryId.value = 0 /*observeTrendingVideosList(*//*category?.id?.toInt() ?: 0*//*)*/
                 }
                 true
             }
         }
-
-        observe(viewModel.latestVideoLiveData) {
-            if (selectedFilter == FilterContentType.LATEST_VIDEOS.value) {
-                observeLatestVideosList(it.first, it.second)
-            }
-            else{
-                observeTrendingVideosList(it.first, it.second)
-            }
-        }
-
-        observeLatestVideosList(category?.id?.toInt() ?: 0)
     }
 
-    private fun observeLatestVideosList(categoryId: Int, subCategoryId: Int = 0) {
+    private fun observeLatestVideosList(/*categoryId: Int, subCategoryId: Int = 0*/) {
         listJob?.cancel()
         listJob = lifecycleScope.launchWhenStarted {
-            val latestVideos = if(categoryId == 0) {
-                viewModel.loadLatestVideos
+            /*val latestVideos = if(categoryId == 0) {
+                viewModel.loadLatestVideos()
             } else {
                 viewModel.loadLatestVideosByCategory(categoryId, subCategoryId)
-            }
-            latestVideos.collectLatest {
+            }*/
+            viewModel.loadLatestVideos().collectLatest {
                 mAdapter.submitData(it)
             }
         }
     }
     
-    private fun observeTrendingVideosList(categoryId: Int, subCategoryId: Int = 0){
+    private fun observeTrendingVideosList(/*categoryId: Int, subCategoryId: Int = 0*/){
         listJob?.cancel()
         listJob = lifecycleScope.launchWhenStarted {
-            if (categoryId != 0) {
+            /*if (categoryId != 0) {
                 viewModel.categoryId.value = categoryId
                 viewModel.subCategoryId.value = subCategoryId
-            }
-            viewModel.loadMostPopularVideos.collectLatest {
+            }*/
+            viewModel.loadMostPopularVideos().collectLatest {
                 mAdapter.submitData(it)
             }
         }
@@ -182,7 +186,7 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
         return hide
     }
     
-    private fun observeSubCategoryList() {
+    private fun createSubCategoryList() {
         observe(viewModel.subCategories){
             when(it){
                 is Success -> {
@@ -199,10 +203,14 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
                     }
                     binding.subCategoryChipGroupHolder.visibility = View.VISIBLE
                     binding.subCategoryChipGroup.setOnCheckedChangeListener { group, checkedId ->
+//                        viewModel.checkedSubCategoryChipId.value = checkedId
                         val selectedChip = group.findViewById<Chip>(checkedId)
                         if(selectedChip != null) {
                             val selectedSub = selectedChip.tag as UgcSubCategory
-                            viewModel.loadSubcategoryVideos(selectedSub.categoryId.toInt(), selectedSub.id.toInt())
+                            viewModel.categoryId.value = selectedSub.categoryId.toInt()
+                            viewModel.subCategoryId.value = selectedSub.id.toInt()
+                            viewModel.isDramaSeries.value = selectedSub.categoryId.toInt() == 9
+//                            viewModel.loadSubcategoryVideos(selectedSub.categoryId.toInt(), selectedSub.id.toInt())
                         }
                     }
                 }

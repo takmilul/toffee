@@ -4,7 +4,6 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.apiservice.*
-import com.banglalink.toffee.data.database.entities.ContinueWatchingItem
 import com.banglalink.toffee.data.network.request.ChannelRequestParams
 import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
 import com.banglalink.toffee.data.repository.ContinueWatchingRepository
@@ -140,18 +139,17 @@ class MovieViewModel @ViewModelInject constructor(
         }
     }
     
-    val loadTrendingNowMovies by lazy{
-        viewModelScope.launch { 
-            val response = trendingNowService.create(TrendingNowRequestParam("VOD", 1, 0, false)).loadData(0, 10)
-            trendingNowMoviesResponse.value = response
+    val loadTrendingNowMovies by lazy {
         viewModelScope.launch {
-            trendingNowMoviesResponse.value = try{
-                trendingNowService.loadData( 0, 10).map {
+            val response = trendingNowService.create(TrendingNowRequestParam("VOD", 1, 0, false)).loadData(0, 10)
+            trendingNowMoviesResponse.value = try {
+                response.map {
                     it.categoryId = 1
                     it.viewProgress = viewProgressRepo.getProgressByContent(it.id.toLong())?.progress ?: 0L
                     it
                 }
-            } catch (ex: Exception) {
+            }
+            catch (ex: Exception) {
                 moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply {
                     trendingNow = 0
                 }

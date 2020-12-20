@@ -8,7 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.view.get
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
 import com.banglalink.toffee.enums.PageType.Category
 import com.banglalink.toffee.extension.observe
@@ -39,11 +41,22 @@ class CategoryInfoFragment: HomeBaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         categoryInfo = requireParentFragment().requireArguments().getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)!!
         landingViewModel.pageType.value = (Category)
+        landingViewModel.checkedSubCategoryChipId.value = 0
         landingViewModel.categoryId.value = (categoryInfo.id.toInt())
         landingViewModel.isDramaSeries.value = false
 
         observeList()
         observeCategoryData()
+//        observeChipCheck()
+    }
+
+    private fun observeChipCheck() {
+        lifecycleScope.launchWhenStarted { 
+            observe(landingViewModel.checkedSubCategoryChipId){
+                if (it != 0 && landingViewModel.subCategoryId.value == 0 && landingViewModel.categoryId.value != 0)
+                    categoryChipGroup.check(categoryChipGroup[0].id)
+            }
+        }
     }
 
     private fun observeList() {
@@ -62,10 +75,14 @@ class CategoryInfoFragment: HomeBaseFragment() {
                         }
                     }
                     categoryChipGroup.setOnCheckedChangeListener { group, checkedId ->
+//                        landingViewModel.checkedSubCategoryChipId.value = checkedId
                         val selectedChip = group.findViewById<Chip>(checkedId)
                         if(selectedChip != null) {
                             val selectedSub = selectedChip.tag as UgcSubCategory
-                            landingViewModel.loadSubcategoryVideos(selectedSub.categoryId.toInt(), selectedSub.id.toInt())
+                            landingViewModel.categoryId.value = selectedSub.categoryId.toInt()
+                            landingViewModel.subCategoryId.value = selectedSub.id.toInt()
+                            landingViewModel.isDramaSeries.value = selectedSub.categoryId.toInt() == 9
+//                            landingViewModel.loadSubcategoryVideos(selectedSub.categoryId.toInt(), selectedSub.id.toInt())
                         }
                     }
                 }

@@ -39,6 +39,7 @@ class LandingPageViewModel @ViewModelInject constructor(
 ):BaseViewModel() {
     
     val latestVideoLiveData = MutableLiveData<Pair<Int, Int>>()
+    val checkedSubCategoryChipId = MutableLiveData<Int>()
     val pageType: MutableLiveData<PageType> = MutableLiveData()
     val categoryId: MutableLiveData<Int> = MutableLiveData()
     val subCategoryId: MutableLiveData<Int> = MutableLiveData()
@@ -52,13 +53,13 @@ class LandingPageViewModel @ViewModelInject constructor(
         channelRepo.getList().cachedIn(viewModelScope)
     }
 
-    val loadLatestVideos by lazy {
+    /*val loadLatestVideos by lazy {
         latestVideosRepo.getList().cachedIn(viewModelScope)
-    }
+    }*/
 
-    val loadMostPopularVideos by lazy {
+    /*val loadMostPopularVideos by lazy {
         mostPopularRepo.getList().cachedIn(viewModelScope)
-    }
+    }*/
 
     fun loadMostPopularPlaylists(): Flow<PagingData<MyChannelPlaylist>> {
         return mostPopularPlaylistsRepo.getList()
@@ -127,24 +128,24 @@ class LandingPageViewModel @ViewModelInject constructor(
         })
     }
 
-    private val latestVideosRepo by lazy {
-        BaseListRepositoryImpl({
+    fun loadLatestVideos (): Flow<PagingData<ChannelInfo>> {
+        return BaseListRepositoryImpl({
             BaseNetworkPagingSource(
                 getContentAssistedFactory.create(
-                    ChannelRequestParams("", 0, "", 0, "VOD")
+                    ChannelRequestParams("", categoryId.value?:0, "", subCategoryId.value?:0, "VOD")
                 )
             )
-        })
+        }).getList()
     }
 
-    private val mostPopularRepo by lazy {
-        BaseListRepositoryImpl({
+    fun loadMostPopularVideos (): Flow<PagingData<ChannelInfo>> {
+        return BaseListRepositoryImpl({
             BaseNetworkPagingSource(
                 mostPopularApi.create(
                     TrendingNowRequestParam("VOD", categoryId.value?:0, subCategoryId.value?:0, isDramaSeries.value?:false)
                 )
             )
-        })
+        }).getList()
     }
 
     private val mostPopularPlaylistsRepo by lazy {

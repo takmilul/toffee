@@ -40,6 +40,7 @@ class LandingPageFragment : HomeBaseFragment(){
         activity?.title = getString(R.string.app_name_short)
         landingViewModel.pageType.value = Landing
         landingViewModel.categoryId.value = 0
+        landingViewModel.subCategoryId.value = 0
         landingViewModel.isDramaSeries.value = false
     }
 }
