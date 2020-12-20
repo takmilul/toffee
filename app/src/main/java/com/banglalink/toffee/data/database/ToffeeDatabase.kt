@@ -21,7 +21,7 @@ import com.banglalink.toffee.data.storage.ViewCountDataModel
         ContentViewProgress::class,
         ContinueWatchingItem::class,
     ],
-    version = 4,
+    version = 1,
     exportSchema = false)
 abstract class ToffeeDatabase: RoomDatabase() {
     abstract fun getUploadDao(): UploadDao

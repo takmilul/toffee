@@ -25,7 +25,7 @@ object DatabaseModule {
     fun providesDatabase(@ApplicationContext app: Context): ToffeeDatabase {
         return Room.databaseBuilder(app,
             ToffeeDatabase::class.java, ToffeeDatabase.DB_NAME)
-            .addMigrations(*MigrationProvider.getMigrationList().toTypedArray())
+//            .addMigrations(*MigrationProvider.getMigrationList().toTypedArray())
             .fallbackToDestructiveMigration()
             .build()
     }
