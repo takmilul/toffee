@@ -50,7 +50,6 @@
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/latestVideosFragment"
                     android:name="com.banglalink.toffee.ui.category.drama.DramaSeriesContentFragment"
-                    android:layout_marginTop="8dp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 

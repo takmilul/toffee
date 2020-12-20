@@ -89,6 +89,34 @@ class CategoryInfoFragment: HomeBaseFragment() {
                 is Failure -> {}
             }
         }
+
+        observe(landingViewModel.hashtagList) { hashtagList->
+            hashTagChipGroup.removeAllViews()
+            hashtagList.forEachIndexed{ _, hashtag ->
+                val newChip = addHashtagChip(hashtag).apply {
+                    tag = hashtag
+                }
+                hashTagChipGroup.addView(newChip)
+            }
+        }
+    }
+
+    private fun addHashtagChip(hashtag: String): Chip {
+        val intColor = ContextCompat.getColor(requireContext(), R.color.colorButtonSecondary)
+        val foregroundColor = ContextCompat.getColor(requireContext(), R.color.colorSecondaryAccent)
+
+        val chipColor = createStateColor(intColor, foregroundColor)
+        val chip = layoutInflater.inflate(R.layout.hashtag_chip_layout, hashTagChipGroup, false) as Chip
+        chip.text = hashtag
+//        chip.typeface = Typeface.DEFAULT_BOLD
+        chip.id = View.generateViewId()
+
+        chip.chipBackgroundColor = chipColor
+//        chip.chipStrokeColor = ColorStateList.valueOf(intColor)
+        chip.rippleColor = chipColor
+        chip.setTextColor(createStateColor(Color.WHITE, intColor))
+
+        return chip
     }
 
     private fun addChip(subCategory: UgcSubCategory): Chip {
@@ -114,6 +142,19 @@ class CategoryInfoFragment: HomeBaseFragment() {
             bindCategoryImage(categoryIcon, categoryInfo)
             categoryIcon.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.colorAccent2))
         }
+    }
+
+    private fun createHashtagStateColor(selectedColor: Int, unSelectedColor: Int = Color.TRANSPARENT): ColorStateList {
+        return ColorStateList(
+            arrayOf(
+                intArrayOf(android.R.attr.state_checked),
+                intArrayOf()
+            ),
+            intArrayOf(
+                selectedColor,
+                unSelectedColor
+            )
+        )
     }
 
     private fun createStateColor(selectedColor: Int, unSelectedColor: Int = Color.TRANSPARENT): ColorStateList {

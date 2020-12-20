@@ -8,6 +8,7 @@ data class FeatureContentBean(
 
     @SerializedName("subcategory")
     val subcategories: List<UgcSubCategory>?,
+    val hashTags: String? = null,
     val followers: Long,
     val isFollowed: Int = 0,
     val count: Int,

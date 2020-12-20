@@ -49,6 +49,9 @@ class LandingPageViewModel @ViewModelInject constructor(
     private val subCategoryList: MutableLiveData<Resource<List<UgcSubCategory>>> = MutableLiveData()
     val subCategories = subCategoryList.toLiveData()
 
+    private val hashtagData = MutableLiveData<List<String>>()
+    val hashtagList = hashtagData.toLiveData()
+
     val loadChannels by lazy {
         channelRepo.getList().cachedIn(viewModelScope)
     }
@@ -72,8 +75,14 @@ class LandingPageViewModel @ViewModelInject constructor(
                 featuredContentList.postValue(resultFromResponse { it })
             }
             response.subcategories?.let { 
-                if (it.isNotEmpty())
+                if (it.isNotEmpty()) {
                     subCategoryList.postValue(resultFromResponse { it })
+                }
+            }
+            response.hashTags?.let {
+                if(it.isNotBlank()) {
+                    hashtagData.value = it.split(",").filter { ht -> ht.isNotBlank() }
+                }
             }
         }
     }
