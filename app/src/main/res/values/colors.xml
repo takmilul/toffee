@@ -3,9 +3,9 @@
     <color name="colorPrimary">#ECECEC</color>
     <color name="colorPrimaryDark">#000000</color>
     <!--<color name="colorAccent">#FF8683FF</color>-->
-    <color name="colorAccent">#34C9B5</color>
+    <color name="colorAccent">#FF3988</color>
     <color name="colorSecondaryLight">#62E1D0</color>
-    <color name="colorSecondaryAccent">#A0F1E6</color>
+    <color name="colorSecondaryAccent">#BED6F3</color>
     <color name="colorAccentDark">#009688</color>
     <color name="colorSecondary">#34C9B5</color>
 
@@ -35,7 +35,7 @@
     <color name="window_background">#F3F3F3</color>
 
     <color name="main_text_color">#29466B</color>
-    <color name="view_all_text_color">#34C9B5</color>
+    <color name="view_all_text_color">@color/colorButtonSecondary</color>
     <color name="second_text_color">#829AB8</color>
     <color name="fixed_second_text_color">#829AB8</color>
     <color name="switch_color">#829AB8</color>
@@ -77,6 +77,7 @@
     <color name="approvalPendingColor">#FF8B57</color>
     <color name="reverseBgColor">#000000</color>
     <color name="backgroundAlpha">#80ffffff</color>
+    <color name="backgroundDarkAlpha">#80000000</color>
     <color name="ratingIconColor">#29466B</color>
     <color name="ratingButtonActiveColor">#BED6F3</color>
     <color name="tvChannelLogoBg">#FFFFFF</color>

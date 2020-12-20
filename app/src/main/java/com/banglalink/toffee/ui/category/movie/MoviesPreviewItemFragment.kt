@@ -20,11 +20,18 @@ class MoviesPreviewItemFragment : BaseFragment(), BaseListItemCallback<ChannelIn
 
     companion object {
         @JvmStatic
-        fun newInstance(moviePreview: ChannelInfo): MoviesPreviewItemFragment {
-            val instance = MoviesPreviewItemFragment()
-            instance.moviePreview = moviePreview
-            return instance
+        fun newInstance(preview: ChannelInfo): MoviesPreviewItemFragment {
+            return MoviesPreviewItemFragment().apply {
+                arguments = Bundle().also {
+                    it.putParcelable("channel-info", preview)
+                }
+            }
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        moviePreview = requireArguments().getParcelable("channel-info")!!
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
