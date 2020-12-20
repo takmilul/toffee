@@ -16,6 +16,9 @@
         <variable
             name="callback"
             type="com.banglalink.toffee.ui.mychannel.MyChannelPlaylistItemListener" />
+        <variable
+            name="selectedItem"
+            type="com.banglalink.toffee.model.ChannelInfo" />
     </data>
     
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -39,7 +42,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_percent="0.45" />
-    
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/backgroundDarkAlpha"
+            android:visibility="@{selectedItem != null &amp;&amp; selectedItem.id.equals(data.id) ? View.VISIBLE : View.GONE}"
+            android:padding="20dp"
+            app:layout_constraintBottom_toBottomOf="@+id/poster"
+            app:layout_constraintStart_toStartOf="@+id/poster"
+            app:layout_constraintTop_toTopOf="@+id/poster"
+            app:layout_constraintEnd_toEndOf="@+id/poster"
+            android:src="@drawable/ic_player_play" />
+
         <ProgressBar
             android:id="@+id/progress"
             style="?android:attr/progressBarStyleHorizontal"

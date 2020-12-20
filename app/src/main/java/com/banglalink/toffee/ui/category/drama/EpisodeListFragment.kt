@@ -63,6 +63,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
         seriesInfo = requireArguments().getParcelable(SERIES_INFO)!!
         mViewModel.seasonList.value =  (1..(seriesInfo.totalSeason)).map { "Season $it" }
         mViewModel.selectedSeason.value = seriesInfo.seasonNo - 1
+        currentItem = seriesInfo.currentItem
     }
 
     override fun onCreateView(
@@ -162,6 +163,9 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
     private fun setupList() {
         mAdapter = EpisodeListAdapter(object: ProviderIconCallback<ChannelInfo> {
             override fun onItemClicked(item: ChannelInfo) {
+                if(item == currentItem || item.id == currentItem?.id) {
+                    return
+                }
                 seriesInfo = seriesInfo.apply {
                     seasonNo = item.seasonNo
                     channelId = item.id.toInt()
@@ -174,7 +178,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
                     seriesInfo
                 )
             }
-        })
+        }, currentItem)
 
         with(binding.listview) {
             addItemDecoration(MarginItemDecoration(8))
@@ -260,6 +264,8 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
     }
 
     fun setCurrentChannel(channelInfo: ChannelInfo?) {
+        currentItem = channelInfo
         detailsAdapter?.setChannelInfo(channelInfo)
+        mAdapter.setSelectedItem(channelInfo)
     }
 }

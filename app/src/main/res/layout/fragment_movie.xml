@@ -14,8 +14,7 @@
         
         <com.banglalink.toffee.ui.widget.NestedCoordinatorLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/home_mini_progress_container">
+            android:layout_height="match_parent">
 
             <com.google.android.material.appbar.AppBarLayout
                 android:layout_width="match_parent"
@@ -35,27 +34,33 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <ImageView
-                        android:id="@+id/categoryIcon"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="8dp"
-                        tools:src="@drawable/ic_profile_default"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/featuredFragment" />
-
-                    <TextView
-                        android:id="@+id/categoryName"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:id="@+id/categoryContainer"
+                        android:paddingBottom="16dp"
+                        android:background="@drawable/fragment_bg_bottom"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:textSize="@dimen/default_text_size"
-                        tools:text="Movies"
-                        android:textColor="@color/main_text_color"
-                        app:layout_constraintStart_toEndOf="@+id/categoryIcon"
-                        app:layout_constraintTop_toTopOf="@+id/categoryIcon"
-                        app:layout_constraintBottom_toBottomOf="@id/categoryIcon"/>
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/featuredFragment"
+                        android:orientation="horizontal">
+                        <ImageView
+                            android:id="@+id/categoryIcon"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_marginStart="16dp"
+                            tools:src="@drawable/ic_profile_default" />
+
+                        <TextView
+                            android:id="@+id/categoryName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_gravity="center_vertical"
+                            android:textSize="@dimen/default_text_size"
+                            tools:text="Movies"
+                            android:textColor="@color/main_text_color"/>
+                    </LinearLayout>
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/continueWatchingFragment"
@@ -64,7 +69,7 @@
                         android:layout_height="wrap_content"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/categoryIcon" />
+                        app:layout_constraintTop_toBottomOf="@id/categoryContainer" />
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/editorsChoiceFragment"

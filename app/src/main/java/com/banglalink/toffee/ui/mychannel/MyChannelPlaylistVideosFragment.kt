@@ -46,7 +46,7 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
     private lateinit var requestParams: MyChannelPlaylistContentParam
     private var detailsAdapter: ChannelHeaderAdapter? = null
     private lateinit var args: MyChannelPlaylistVideosFragmentArgs
-    override val mAdapter by lazy { MyChannelPlaylistVideosAdapter(this) }
+    override val mAdapter by lazy { MyChannelPlaylistVideosAdapter(this , currentItem) }
     @Inject lateinit var viewModelAssistedFactory: AssistedFactory
     override val mViewModel by viewModels<MyChannelPlaylistVideosViewModel>{MyChannelPlaylistVideosViewModel.provideAssisted(viewModelAssistedFactory, requestParams)}
     private val playerViewModel by viewModels<CatchupDetailsViewModel>()
@@ -165,6 +165,9 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
 //            .toString(charset("UTF-8"))
 //            .removePrefix("<p>")
 //            .removeSuffix("</p>")
+        if(item == currentItem || item.id == currentItem?.id) {
+            return
+        }
 
         if (item.isApproved == 0) {
             Toast.makeText(requireContext(), "Your video has not approved yet. Once it's approved, you can play the video", Toast.LENGTH_SHORT).show()
@@ -271,6 +274,8 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
     }
 
     fun setCurrentChannel(channelInfo: ChannelInfo?) {
+        currentItem = channelInfo
         detailsAdapter?.setChannelInfo(channelInfo)
+        mAdapter.setSelectedItem(channelInfo)
     }
 }
