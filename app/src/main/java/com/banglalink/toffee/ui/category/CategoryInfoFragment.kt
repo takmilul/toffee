@@ -98,6 +98,13 @@ class CategoryInfoFragment: HomeBaseFragment() {
                 }
                 hashTagChipGroup.addView(newChip)
             }
+            hashTagChipGroup.setOnCheckedChangeListener{ group, checkedId ->
+                val selectedHashtag = group.findViewById<Chip>(checkedId)
+                if(selectedHashtag != null) {
+                    val hashtag = selectedHashtag.tag as String
+                    landingViewModel.selectedHashTag.value = hashtag.removePrefix("#")
+                }
+            }
         }
     }
 
@@ -121,8 +128,9 @@ class CategoryInfoFragment: HomeBaseFragment() {
 
     private fun addChip(subCategory: UgcSubCategory): Chip {
         val intColor = ContextCompat.getColor(requireContext(), R.color.colorButtonSecondary)
+        val foregroundColor = ContextCompat.getColor(requireContext(), R.color.colorSecondaryAccent)
 
-        val chipColor = createStateColor(intColor)
+        val chipColor = createStateColor(intColor, foregroundColor)
         val chip = layoutInflater.inflate(R.layout.category_chip_layout, categoryChipGroup, false) as Chip
         chip.text = subCategory.name
         chip.typeface = Typeface.DEFAULT_BOLD

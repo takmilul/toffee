@@ -7,5 +7,4 @@
     android:layout_height="wrap_content"
     app:chipStartPadding="8dp"
     app:chipEndPadding="8dp"
-    android:checkable="false"
-    />
+    android:checkable="true" />

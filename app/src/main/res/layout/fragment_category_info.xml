@@ -13,8 +13,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/categoryChipGroupHolder"
-        />
+        app:layout_constraintBottom_toBottomOf="@id/categoryChipGroupHolder" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/categoryListPager"
@@ -87,10 +86,11 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:paddingStart="16dp"
-            android:paddingEnd="16dp" />
-<!--            app:selectionRequired="true"-->
-<!--            app:singleLine="true"-->
-<!--            app:singleSelection="true"-->
+            android:paddingEnd="16dp"
+            app:selectionRequired="true"
+            app:singleLine="true"
+            app:singleSelection="true"/>
+        
     </HorizontalScrollView>
     
 </androidx.constraintlayout.widget.ConstraintLayout>

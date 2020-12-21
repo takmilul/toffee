@@ -35,7 +35,8 @@ class LandingPageViewModel @ViewModelInject constructor(
     private val popularChannelAssistedFactory: GetUgcPopularUserChannels.AssistedFactory,
     private val editorsChoiceAssistedFactory: GetUgcTrendingNowContents.AssistedFactory,
     private val featuredAssistedFactory: FeatureContentService,
-    private val getContentAssistedFactory: GetContents.AssistedFactory
+    private val getContentAssistedFactory: GetContents.AssistedFactory,
+    private val relativeContentsFactory: GetRelativeContents.AssistedFactory
 ):BaseViewModel() {
     
     val latestVideoLiveData = MutableLiveData<Pair<Int, Int>>()
@@ -51,6 +52,7 @@ class LandingPageViewModel @ViewModelInject constructor(
 
     private val hashtagData = MutableLiveData<List<String>>()
     val hashtagList = hashtagData.toLiveData()
+    val selectedHashTag = MutableLiveData<String>()
 
     val loadChannels by lazy {
         channelRepo.getList().cachedIn(viewModelScope)
@@ -194,7 +196,21 @@ class LandingPageViewModel @ViewModelInject constructor(
             tvChannelRepo.getPopularMovieChannels()
         }).getList()
     }
-
+    
+    val loadHashTagContents by lazy { 
+        relativeRepo.getList().cachedIn(viewModelScope)
+    }
+    
+    private val relativeRepo by lazy {
+        BaseListRepositoryImpl({
+            BaseNetworkPagingSource(
+                relativeContentsFactory.create(
+                    CatchupParams("null", selectedHashTag.value)
+                )
+            )
+        })
+    }
+    
     fun navigateToMyChannel(fragment: Fragment, channelId: Int, channelOwnerId: Int, isSubscribed: Int){
         val customerId = Preference.getInstance().customerId
         val isOwner = if (channelOwnerId == customerId) 1 else 0

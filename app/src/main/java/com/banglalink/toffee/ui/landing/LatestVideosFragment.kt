@@ -5,6 +5,7 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -98,6 +99,17 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
             else{
                 observeTrendingVideosList(/*it.first, it.second*/)
             }
+        }
+        
+        observe(viewModel.selectedHashTag) {
+            listJob?.cancel()
+            Log.e("HASHTAG", "onViewCreated: hashtag")
+            listJob = lifecycleScope.launchWhenCreated { 
+                viewModel.loadHashTagContents.collectLatest { 
+                    mAdapter.submitData(it)
+                }
+            }
+            Log.e("HASHTAG", "job ended: hashtag")
         }
         
         filterButton.setOnClickListener {
