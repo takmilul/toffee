@@ -85,23 +85,14 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 //        binding.topPanel.root.visibility = View.VISIBLE
 //        binding.topPanel.statusText.text = "${args.playlistInfo.playlistName} (${args.playlistInfo.playlistItemCount})"
-
-        currentItem?.let { channelInfo ->
-            playerViewModel.isChannelSubscribed.value = channelInfo.isSubscribed == 1
-    
-            observe(playerViewModel.channelSubscriberCount) {
-                channelInfo.isSubscribed = if(playerViewModel.isChannelSubscribed.value!!) 1 else 0
-                channelInfo.subscriberCount = it
-//                channelInfo.formattedSubscriberCount = getFormattedViewsText(it.toString())
-                detailsAdapter?.notifyDataSetChanged()
-            }
-    
-            val customerId = mPref.customerId
-            val isOwner = if (channelInfo.channel_owner_id == customerId) 1 else 0
-            val isPublic = if (channelInfo.channel_owner_id == customerId) 0 else 1
-            val channelId = channelInfo.channel_owner_id.toLong()
-            playerViewModel.getChannelInfo(isOwner, isPublic, channelId, channelId.toInt())
+        
+        observe(playerViewModel.channelSubscriberCount) {
+            currentItem?.isSubscribed = if (playerViewModel.isChannelSubscribed.value!!) 1 else 0
+            currentItem?.subscriberCount = it
+            detailsAdapter?.notifyDataSetChanged()
         }
+        
+        setSubscriptionStatus()
 
         detailsAdapter = ChannelHeaderAdapter(args.playlistInfo, object: ContentReactionCallback<ChannelInfo> {
             override fun onOpenMenu(view: View, item: ChannelInfo) {
@@ -135,6 +126,16 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
         observeListState()
     }
 
+    private fun setSubscriptionStatus() {
+        currentItem?.let { channelInfo ->
+            val customerId = mPref.customerId
+            val isOwner = if (channelInfo.channel_owner_id == customerId) 1 else 0
+            val isPublic = if (channelInfo.channel_owner_id == customerId) 0 else 1
+            val channelId = channelInfo.channel_owner_id.toLong()
+            playerViewModel.getChannelInfo(isOwner, isPublic, channelId, channelId.toInt())
+        }
+    }
+
     private fun observeListState() {
         lifecycleScope.launch {
             mAdapter
@@ -160,15 +161,9 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
     }
 
     override fun onItemClickAtPosition(position: Int, item: ChannelInfo) {
-        
-//        item.description = Base64.decode(item.description, Base64.DEFAULT)
-//            .toString(charset("UTF-8"))
-//            .removePrefix("<p>")
-//            .removeSuffix("</p>")
         if(item == currentItem || item.id == currentItem?.id) {
             return
         }
-
         if (item.isApproved == 0) {
             Toast.makeText(requireContext(), "Your video has not approved yet. Once it's approved, you can play the video", Toast.LENGTH_SHORT).show()
         } else {
@@ -277,5 +272,6 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
         currentItem = channelInfo
         detailsAdapter?.setChannelInfo(channelInfo)
         mAdapter.setSelectedItem(channelInfo)
+        setSubscriptionStatus()
     }
 }

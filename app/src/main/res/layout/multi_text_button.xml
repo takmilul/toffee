@@ -12,7 +12,7 @@
         android:clickable="false"
         android:background="@drawable/subscribe_bg_round"
         android:textStyle="bold"
-        android:textColor="@color/colorAccent2"
+        android:textColor="@color/button_text_color"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <TextView

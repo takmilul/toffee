@@ -13,6 +13,7 @@
 
     <color name="colorButtonSecondary">#29466B</color>
     <color name="colorButtonActivated">#FFC9DF</color>
+    <color name="colorButtonInActive">#E1E1E1</color>
 
     <color name="colorSecondaryDark">#29466B</color>
     <color name="menuColorSecondaryDark">#29466B</color>

@@ -1,11 +1,9 @@
 package com.banglalink.toffee.ui.category.drama
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -78,26 +76,26 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        observe(playerViewModel.channelSubscriberCount) {
+            currentItem?.isSubscribed = if (playerViewModel.isChannelSubscribed.value!!) 1 else 0
+            currentItem?.subscriberCount = it
+            detailsAdapter?.notifyDataSetChanged()
+        }
+        
+        setSubscriptionStatus()
+        setupHeader()
+        setupList()
+        observeListState()
+    }
+
+    private fun setSubscriptionStatus() {
         currentItem?.let { channelInfo ->
-            playerViewModel.isChannelSubscribed.value = channelInfo.isSubscribed == 1
-
-            observe(playerViewModel.channelSubscriberCount) {
-                channelInfo.isSubscribed = if(playerViewModel.isChannelSubscribed.value!!) 1 else 0
-                channelInfo.subscriberCount = it
-//                channelInfo.formattedSubscriberCount = getFormattedViewsText(it.toString())
-                detailsAdapter?.notifyDataSetChanged()
-            }
-
             val customerId = mPref.customerId
             val isOwner = if (channelInfo.channel_owner_id == customerId) 1 else 0
             val isPublic = if (channelInfo.channel_owner_id == customerId) 0 else 1
             val channelId = channelInfo.channel_owner_id.toLong()
             playerViewModel.getChannelInfo(isOwner, isPublic, channelId, channelId.toInt())
         }
-
-        setupHeader()
-        setupList()
-        observeListState()
     }
 
     fun getSeriesId() = seriesInfo.seriesId
@@ -271,5 +269,6 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
         currentItem = channelInfo
         detailsAdapter?.setChannelInfo(channelInfo)
         mAdapter.setSelectedItem(channelInfo)
+        setSubscriptionStatus()
     }
 }
