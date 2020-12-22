@@ -53,10 +53,10 @@ val TOFFEE_KEY = object : Any() {
 val TOFFEE_HEADER=("Toffee" + "/" + BuildConfig.VERSION_NAME + " (Linux;Android " + Build.VERSION.RELEASE
         + ") " + ExoPlayerLibraryInfo.VERSION_SLASHY)
 
-val PRIVACY_POLICY_URL =
-    "https://www.banglalink.net/en/personal/digital-services/toffee-privacy-policy"
-val TERMS_AND_CONDITION_URL =
-    "https://www.banglalink.net/en/personal/digital-services/toffee-privacy-policy"
+const val PRIVACY_POLICY_URL =
+    "https://www.banglalink.net/en/toffee-privacy-policy"
+const val TERMS_AND_CONDITION_URL =
+    "https://www.banglalink.net/en/toffee-privacy-policy"
 val MICRO_SITE_URL = "https://portal.toffeelive.com"
 
 val SERVER_URL = ""

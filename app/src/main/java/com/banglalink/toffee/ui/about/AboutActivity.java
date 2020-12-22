@@ -16,11 +16,11 @@ import com.banglalink.toffee.databinding.ActivityAboutBinding;
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity;
 import com.banglalink.toffee.ui.common.HtmlPageViewActivity;
 
+import static com.banglalink.toffee.model.AppSettingsKt.PRIVACY_POLICY_URL;
+import static com.banglalink.toffee.model.AppSettingsKt.TERMS_AND_CONDITION_URL;
+
 
 public class AboutActivity extends BaseAppCompatActivity {
-
-    public static final String PRIVACY_POLICY_URL = "https://www.banglalink.net/en/personal/digital-services/toffee-privacy-policy";
-    public static final String TERMS_AND_CONDITION_URL = "https://www.banglalink.net/en/personal/digital-services/toffee-privacy-policy";
 
     private ActivityAboutBinding binding;
 
