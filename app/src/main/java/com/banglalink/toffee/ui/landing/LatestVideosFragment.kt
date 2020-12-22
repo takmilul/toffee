@@ -71,14 +71,7 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
 
             mAdapter.addLoadStateListener {
                 binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
-
-//                mAdapter.apply {
-//                    val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached
-//                    binding.emptyView.isGone = !showEmpty
-//                    binding.listview.isVisible = !showEmpty
-//                }
             }
-
             adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter{ mAdapter.retry() })
         }
 
@@ -87,7 +80,7 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
         }
 
         selectedFilter = FEED.value
-        observeLatestVideosList(/*category?.id?.toInt() ?: 0*/)
+//        observeLatestVideosList(/*category?.id?.toInt() ?: 0*/)
 
         observe(viewModel.subCategoryId) {
             /*if (viewModel.checkedSubCategoryChipId.value != 0 && it == 0 && category?.id?.toInt() != 0)

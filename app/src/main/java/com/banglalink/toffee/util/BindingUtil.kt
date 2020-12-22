@@ -148,12 +148,13 @@ fun bindButtonState(view: Button, isPressed: Boolean){
     view.isPressed = isPressed
 }
 
-@BindingAdapter("bindSubscriptionStatus")
-fun bindSubscriptionStatus(view: MultiTextButton, isSubscribed: Boolean) {
+@BindingAdapter(value = ["bindSubscriptionStatus", "channelOwnerId"], requireAll = false)
+fun bindSubscriptionStatus(view: MultiTextButton, isSubscribed: Boolean, channelOwnerId: Int = 0) {
     view.setSubscriptionInfo(
         isSubscribed,
         null
     )
+    view.isEnabled = Preference.getInstance().customerId != channelOwnerId
 }
 
 @BindingAdapter("bindViewCount")

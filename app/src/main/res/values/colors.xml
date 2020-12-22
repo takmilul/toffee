@@ -84,4 +84,5 @@
     <color name="tvChannelLogoBg">#FFFFFF</color>
     <color name="durationBgColor">#88000000</color>
     <color name="placeholderBgColor">#E1E1E1</color>
+    <color name="statusTextBgColor">#E1E1E1</color>
 </resources>

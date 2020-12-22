@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -13,12 +14,14 @@ import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentPartnersListBinding
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.BaseFragment
+import com.banglalink.toffee.ui.home.HomeViewModel
 import kotlinx.coroutines.flow.collectLatest
 
 class PartnersListFragment : BaseFragment(), BaseListItemCallback<ChannelInfo> {
     private lateinit var mAdapter: PartnersListAdapter
     private lateinit var binding: FragmentPartnersListBinding
     private val viewModel by viewModels<PartnersViewModel>()
+    private val homeViewModel by activityViewModels<HomeViewModel>()
     
     companion object {
         @JvmStatic
@@ -46,5 +49,10 @@ class PartnersListFragment : BaseFragment(), BaseListItemCallback<ChannelInfo> {
                 mAdapter.submitData(it)
             }
         }
+    }
+
+    override fun onItemClicked(item: ChannelInfo) {
+        super.onItemClicked(item)
+        homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
     }
 }
