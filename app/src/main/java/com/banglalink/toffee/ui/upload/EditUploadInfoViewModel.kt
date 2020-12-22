@@ -267,7 +267,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
         }
         else ""
 
-        val fileName = preference.customerId.toString() + "_" + UUID.randomUUID().toString() + ext
+//        val fileName = preference.customerId.toString() + "_" + UUID.randomUUID().toString() + ext
         val upInfo = UploadInfo(serverContentId = serverContentId, fileUri = uploadFileUri, fileName = fileName)
 
         val contentType = withContext(Dispatchers.IO + Job()) {
