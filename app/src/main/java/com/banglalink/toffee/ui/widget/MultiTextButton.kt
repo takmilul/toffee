@@ -43,6 +43,6 @@ class MultiTextButton @JvmOverloads constructor(mContext: Context, attrs: Attrib
             }
         }
         subStatusView.setTextColor(ContextCompat.getColorStateList(context, R.color.colorAccent2))
-        dispatchSetActivated(status)
+        isActivated = status
     }
 }
