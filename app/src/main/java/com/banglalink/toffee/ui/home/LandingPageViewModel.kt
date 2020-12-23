@@ -222,7 +222,6 @@ class LandingPageViewModel @ViewModelInject constructor(
             putInt(MyChannelHomeFragment.CHANNEL_ID, channelId)
             putInt(MyChannelHomeFragment.IS_PUBLIC, isPublic)
             putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, channelOwnerId)
-            putBoolean(MyChannelHomeFragment.IS_FROM_OUTSIDE, true)
         })
     }
 }

@@ -27,7 +27,6 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
     private var isOwner: Int = 0
     private var channelOwnerId: Int = 0
     private var isPublic: Int = 0
-    private var isFromOutside: Boolean = false
     private var enableToolbar: Boolean = false
 
     override val itemMargin: Int = 16
@@ -43,13 +42,12 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
         private const val IS_OWNER = "isOwner"
         private const val CHANNEL_OWNER_ID = "channelOwnerId"
         private const val IS_PUBLIC = "isPublic"
-        fun newInstance(enableToolbar: Boolean, isOwner: Int, channelOwnerId: Int, isPublic: Int, isFromOutside: Boolean): MyChannelVideosFragment {
+        fun newInstance(enableToolbar: Boolean, isOwner: Int, channelOwnerId: Int, isPublic: Int): MyChannelVideosFragment {
             val instance = MyChannelVideosFragment()
             val bundle = Bundle()
             bundle.putBoolean(SHOW_TOOLBAR, enableToolbar)
             bundle.putInt(IS_OWNER, isOwner)
             bundle.putInt(CHANNEL_OWNER_ID, channelOwnerId)
-            bundle.putBoolean(MyChannelHomeFragment.IS_FROM_OUTSIDE, isFromOutside)
             bundle.putInt(IS_PUBLIC, isPublic)
             instance.arguments = bundle
             return instance
@@ -62,7 +60,6 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
         isOwner = arguments?.getInt(IS_OWNER) ?: 0
         channelOwnerId = arguments?.getInt(CHANNEL_OWNER_ID) ?: 0
         isPublic = arguments?.getInt(IS_PUBLIC) ?: 0
-        isFromOutside = arguments?.getBoolean(MyChannelHomeFragment.IS_FROM_OUTSIDE) ?: false
     }
 
     override fun getEmptyViewInfo(): Pair<Int, String?> {
@@ -85,10 +82,9 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_edit_content -> {
-                        if (isFromOutside) {
+                        if (findNavController().currentDestination?.id == R.id.myChannelHomeFragment) {
                             val action = MyChannelHomeFragmentDirections.actionMyChannelHomeFragmentToMyChannelVideosEditFragment(item)
                             parentFragment?.findNavController()?.navigate(action)
-
                         }
                         else {
                             this@MyChannelVideosFragment.findNavController().navigate(R.id.action_menu_channel_to_myChannelVideosEditFragment, Bundle().apply { putParcelable(MyChannelVideosEditFragment.CHANNEL_INFO, item) })
