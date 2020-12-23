@@ -17,11 +17,8 @@ import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.ui.profile.ViewProfileActivity
-import com.banglalink.toffee.ui.settings.SettingsActivity
 import com.banglalink.toffee.ui.subscription.MySubscriptionActivity
 import com.banglalink.toffee.ui.subscription.PackageListActivity
-import kotlinx.android.synthetic.main.layout_appbar.view.*
-import java.util.*
 
 class DrawerHelper(private val activity: HomeActivity,
                    private val mPref: Preference,
@@ -262,11 +259,11 @@ class DrawerHelper(private val activity: HomeActivity,
                 }
                 return true
             }
-            R.id.menu_settings -> {
-                activity.launchActivity<SettingsActivity>()
-                binding.drawerLayout.closeDrawers()
-                return true
-            }
+//            R.id.menu_settings -> {
+//                activity.launchActivity<SettingsActivity>()
+//                binding.drawerLayout.closeDrawers()
+//                return true
+//            }
 //            ID_ABOUT -> {
 //                activity.launchActivity<AboutActivity>()
 //                binding.drawerLayout.closeDrawers()
@@ -282,6 +279,7 @@ class DrawerHelper(private val activity: HomeActivity,
 //            }
             R.id.menu_logout->{
                 activity.handleExitApp()
+                return true
             }
 //            ID_INVITE_FRIEND->{
 //                activity.launchActivity<ReferAFriendActivity>()

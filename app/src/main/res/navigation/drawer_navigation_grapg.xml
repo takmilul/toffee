@@ -18,7 +18,7 @@
         android:label="AboutActivity" />
     <activity
         android:id="@+id/menu_settings"
-        android:name="com.banglalink.toffee.ui.settings.SettingsActivity"
+        android:name="com.banglalink.toffee.ui.settings.SettingsFragment"
         android:label="SettingsActivity" />
     <activity
         android:id="@+id/htmlPageViewActivity"

@@ -15,6 +15,7 @@
     <string name="resend_code_text">Resend Code </string>
     <string name="default_settings">Default Data and Quality Settings</string>
     <string name="data_usage_message">Higher quality video uses more data. Data usage may vary based on network conditions.</string>
+    <string name="txt_video_resolution">Video Resolution: %s</string>
     <string name="profile_1920x1080">Need 2Mbps+ bandwidth</string>
     <string name="profile_1280x720">Need 1Mbps+ bandwidth</string>
     <string name="profile_720x576">Need 512kbps+ bandwidth</string>

@@ -12,281 +12,253 @@
         <variable
             name="watchWifiOnly"
             type="Boolean" />
+
+        <variable
+            name="enableNotification"
+            type="boolean" />
         <!--<variable
             name="viewModel"
             type="com.banglalink.toffee.ui.settings.SettingsViewModel" />-->
     </data>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/screen_bg"
-        android:orientation="vertical">
-
-        <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/appBarLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                style="@style/CustomToolBarStyle" />
-        </com.google.android.material.appbar.AppBarLayout>
-
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:fillViewport="true"
             android:fitsSystemWindows="true">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="20dp">
-
-                <TextView
-                    android:id="@+id/dateQualityTextView"
-                    android:layout_width="0dp"
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:fontFamily="@font/roboto_regular"
-                    android:text="@string/default_settings"
-                    android:textColor="@color/main_text_color"
-                    android:textSize="16sp"
-                    app:layout_constraintEnd_toStartOf="@id/dataQualityToggleBtn"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:animateLayoutChanges="true"
+                    android:background="@color/screen_bg"
+                    android:orientation="vertical">
 
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/dataQualityToggleBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="@id/dateQualityTextView"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/dateQualityTextView"
-                    app:layout_constraintTop_toTopOf="@id/dateQualityTextView"
-                    android:checked="@{defaultDataQuality}"
-                    app:thumbTint="@color/switch_thumb_color"
-                    app:trackTint="@color/switch_track_color" />
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        style="@style/PrefItemStyle"
+                        android:paddingTop="12dp"
+                        android:paddingBottom="12dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/wifiProfileTextView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:fontFamily="@font/roboto_medium"
-                    android:text="Wi-Fi Profile"
-                    android:textColor="@color/main_text_color"
-                    android:textSize="16sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/dateQualityTextView" />
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center_vertical"
+                            app:srcCompat="@drawable/ic_menu_notification" />
+                        <TextView
+                            style="@style/PrefItemTextStyle"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:text="Notifications" />
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/notificationSwitch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minWidth="0dp"
+                            android:minHeight="0dp"
+                            android:layout_gravity="center_vertical"
+                            android:buttonTint="@color/colorAccent"
+                            android:checked="@{enableNotification}" />
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="1dp"
+                        android:background="@color/colorButtonInActive" />
 
-                <TextView
-                    android:id="@+id/wifi_profile_status_tv"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:fontFamily="@font/roboto_regular"
-                    android:textColor="@color/main_text_color"
-                    android:textSize="16sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/wifiProfileTextView"
-                    tools:text="Current Status: 1280x720" />
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-                <androidx.appcompat.widget.AppCompatSeekBar
-                    android:id="@+id/wifi_profile_state_bar"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:max="5"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/wifi_profile_status_tv"
-                    app:spb_animateToCurrentProgressState="true"
-                    app:spb_checkStateCompleted="false"
-                    app:spb_currentStateDescriptionColor="@color/colorAccent2"
-                    app:spb_currentStateNumber="three"
-                    app:spb_maxStateNumber="six"
-                    app:spb_stateBackgroundColor="@color/state_background_color"
-                    app:spb_stateDescriptionColor="@color/second_text_color"
-                    app:spb_stateForegroundColor="@color/colorAccent2"
-                    app:spb_stateNumberBackgroundColor="@color/state_background_text_color"
-                    app:spb_stateNumberForegroundColor="@color/state_foreground_text_color" />
+                            <ImageView
+                                android:id="@+id/imageView15"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginTop="16dp"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:srcCompat="@drawable/ic_pref_video_settings" />
 
-                <TextView
-                    android:id="@+id/wifi_profile_desc_txt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="8dp"
-                    android:fontFamily="@font/roboto_regular"
-                    android:textColor="@color/second_text_color"
-                    app:layout_constraintEnd_toEndOf="@id/wifi_profile_state_bar"
-                    app:layout_constraintStart_toStartOf="@id/wifi_profile_state_bar"
-                    app:layout_constraintTop_toBottomOf="@id/wifi_profile_state_bar"
-                    tools:text="Need 1 Mbps Connection" />
+                            <TextView
+                                android:id="@+id/dateQualityTextView"
+                                style="@style/PrefItemTextStyle"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="12dp"
+                                android:text="@string/default_settings"
+                                app:layout_constraintBottom_toBottomOf="@+id/imageView15"
+                                app:layout_constraintEnd_toStartOf="@id/dataQualityToggleBtn"
+                                app:layout_constraintStart_toEndOf="@+id/imageView15"
+                                app:layout_constraintTop_toTopOf="@+id/imageView15" />
 
-                <TextView
-                    android:id="@+id/textView2"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:fontFamily="@font/roboto_regular"
-                    android:text="Watch only when Wifi is available"
-                    android:textColor="@color/main_text_color"
-                    android:textSize="16sp"
-                    app:layout_constraintEnd_toStartOf="@id/watchOnlyWifiToggleBtn"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/wifi_profile_desc_txt" />
+                            <com.google.android.material.switchmaterial.SwitchMaterial
+                                android:id="@+id/dataQualityToggleBtn"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:minWidth="0dp"
+                                android:minHeight="0dp"
+                                app:layout_constraintBottom_toBottomOf="@id/dateQualityTextView"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toEndOf="@id/dateQualityTextView"
+                                app:layout_constraintTop_toTopOf="@id/dateQualityTextView"
+                                android:checked="@{defaultDataQuality}"
+                                android:buttonTint="@color/colorAccent" />
 
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/watchOnlyWifiToggleBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="@id/textView2"
-                    app:layout_constraintEnd_toEndOf="@id/dataQualityToggleBtn"
-                    app:layout_constraintStart_toEndOf="@id/textView2"
-                    app:layout_constraintTop_toTopOf="@id/textView2"
-                    android:checked="@{watchWifiOnly}"
-                    app:thumbTint="@color/switch_thumb_color"
-                    app:trackTint="@color/switch_track_color" />
+                            <TextView
+                                android:id="@+id/wifiProfileTextView"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="16dp"
+                                android:layout_marginStart="0dp"
+                                style="@style/PrefItemTextStyle"
+                                android:text="Wi-Fi Profile"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/dateQualityTextView" />
 
-                <TextView
-                    android:id="@+id/cellularProfileTextView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:fontFamily="@font/roboto_medium"
-                    android:text="Cellular Profile"
-                    android:textColor="@color/main_text_color"
-                    android:textSize="16sp"
-                    app:layout_constraintEnd_toEndOf="@id/dataQualityToggleBtn"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/textView2" />
+                        <TextView
+                            android:id="@+id/wifi_profile_status_tv"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:fontFamily="@font/roboto_regular"
+                            android:textColor="@color/main_text_color"
+                            android:textSize="12sp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/textView2"
+                            tools:text="Video Resolution: 1280x720" />
 
-                <TextView
-                    android:id="@+id/cellular_profile_status_tv"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:fontFamily="@font/roboto_regular"
-                    android:textColor="@color/main_text_color"
-                    android:textSize="16sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/cellularProfileTextView"
-                    tools:text="Current Status: 1280x720" />
+                        <androidx.appcompat.widget.AppCompatSeekBar
+                                android:id="@+id/wifi_profile_state_bar"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="12dp"
+                                android:max="5"
+                                android:paddingStart="6dp"
+                                android:paddingEnd="6dp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/wifi_profile_status_tv" />
 
-                <androidx.appcompat.widget.AppCompatSeekBar
-                    android:id="@+id/cellular_profile_state_bar"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:max="4"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/cellular_profile_status_tv"
-                    app:spb_animateToCurrentProgressState="true"
-                    app:spb_checkStateCompleted="false"
-                    app:spb_currentStateDescriptionColor="@color/colorAccent2"
-                    app:spb_currentStateNumber="three"
-                    app:spb_maxStateNumber="five"
-                    app:spb_stateBackgroundColor="@color/state_background_color"
-                    app:spb_stateDescriptionColor="@color/second_text_color"
-                    app:spb_stateForegroundColor="@color/colorAccent2"
-                    app:spb_stateNumberBackgroundColor="@color/state_background_text_color"
-                    app:spb_stateNumberForegroundColor="@color/state_foreground_text_color" />
+                            <TextView
+                                android:id="@+id/wifi_profile_desc_txt"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="8dp"
+                                android:fontFamily="@font/roboto_regular"
+                                android:textColor="@color/second_text_color"
+                                app:layout_constraintEnd_toEndOf="@id/wifi_profile_state_bar"
+                                app:layout_constraintStart_toStartOf="@id/wifi_profile_state_bar"
+                                app:layout_constraintTop_toBottomOf="@id/wifi_profile_state_bar"
+                                tools:text="Need 1 Mbps Connection" />
 
-                <TextView
-                    android:id="@+id/cellular_profile_desc_txt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="8dp"
-                    android:fontFamily="@font/roboto_regular"
-                    android:text="Need 1 Mbps Connection"
-                    android:textColor="@color/second_text_color"
-                    app:layout_constraintEnd_toEndOf="@id/cellular_profile_state_bar"
-                    app:layout_constraintStart_toStartOf="@id/cellular_profile_state_bar"
-                    app:layout_constraintTop_toBottomOf="@id/cellular_profile_state_bar" />
+                        <TextView
+                            android:id="@+id/textView2"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:fontFamily="@font/roboto_regular"
+                            android:text="Watch only when Wifi is available"
+                            android:textColor="@color/main_text_color"
+                            android:textSize="16sp"
+                            app:layout_constraintEnd_toStartOf="@id/watchOnlyWifiToggleBtn"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/wifiProfileTextView" />
 
-                <TextView
-                    android:id="@+id/textView3"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:fontFamily="@font/roboto_regular"
-                    android:text="Play From Background"
-                    android:textColor="@color/main_text_color"
-                    android:textSize="16sp"
-                    app:layout_constraintEnd_toStartOf="@id/checkBox"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/cellular_profile_desc_txt" />
+                            <com.google.android.material.switchmaterial.SwitchMaterial
+                                android:id="@+id/watchOnlyWifiToggleBtn"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:minWidth="0dp"
+                                android:minHeight="0dp"
+                                app:layout_constraintBottom_toBottomOf="@id/textView2"
+                                app:layout_constraintEnd_toEndOf="@id/dataQualityToggleBtn"
+                                app:layout_constraintStart_toEndOf="@id/textView2"
+                                app:layout_constraintTop_toTopOf="@id/textView2"
+                                android:buttonTint="@color/colorAccent"
+                                android:checked="@{watchWifiOnly}" />
 
-                <CheckBox
-                    android:id="@+id/checkBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:buttonTint="@color/colorAccent"
-                    android:checked="true"
-                    app:layout_constraintBottom_toBottomOf="@id/textView3"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/textView3"
-                    app:layout_constraintTop_toTopOf="@id/textView3" />
+                        <TextView
+                            android:id="@+id/cellularProfileTextView"
+                            style="@style/PrefItemTextStyle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginStart="0dp"
+                            android:text="Mobile Data Profile"
+                            app:layout_constraintEnd_toEndOf="@id/wifi_profile_desc_txt"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/wifi_profile_desc_txt" />
 
-                <TextView
-                    android:id="@+id/allowTransitionAnimationTextView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:fontFamily="@font/roboto_regular"
-                    android:text="Allow Transition Animation"
-                    android:textColor="@color/main_text_color"
-                    android:textSize="16sp"
-                    app:layout_constraintEnd_toStartOf="@id/allowTransitionAnimationCheckBox"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/checkBox" />
+                            <TextView
+                                android:id="@+id/cellular_profile_status_tv"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="12dp"
+                                android:fontFamily="@font/roboto_regular"
+                                android:textColor="@color/main_text_color"
+                                android:textSize="12sp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/cellularProfileTextView"
+                                tools:text="Video Resolution: 1280x720" />
 
-                <CheckBox
-                    android:id="@+id/allowTransitionAnimationCheckBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:buttonTint="@color/colorAccent"
-                    android:checked="true"
-                    app:layout_constraintBottom_toBottomOf="@id/allowTransitionAnimationTextView"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/allowTransitionAnimationTextView"
-                    app:layout_constraintTop_toTopOf="@id/allowTransitionAnimationTextView" />
+                            <androidx.appcompat.widget.AppCompatSeekBar
+                                android:id="@+id/cellular_profile_state_bar"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="12dp"
+                                android:max="4"
+                                android:paddingStart="6dp"
+                                android:paddingEnd="6dp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/cellular_profile_status_tv" />
 
-                <TextView
-                    android:id="@+id/themeLabelTextView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:fontFamily="@font/roboto_regular"
-                    android:gravity="center_vertical"
-                    android:text="Dark Theme"
-                    android:textSize="16sp"
-                    android:textColor="@color/main_text_color"
-                    app:layout_constraintEnd_toStartOf="@id/darkThemeToggleBtn"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/allowTransitionAnimationCheckBox" />
+                        <TextView
+                            android:id="@+id/cellular_profile_desc_txt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="8dp"
+                            android:fontFamily="@font/roboto_regular"
+                            android:text="Need 1 Mbps Connection"
+                            android:textColor="@color/second_text_color"
+                            app:layout_constraintEnd_toEndOf="@id/cellular_profile_state_bar"
+                            app:layout_constraintStart_toStartOf="@id/cellular_profile_state_bar"
+                            app:layout_constraintTop_toBottomOf="@id/cellular_profile_state_bar" />
 
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/darkThemeToggleBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="@id/themeLabelTextView"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/themeLabelTextView"
-                    app:layout_constraintTop_toTopOf="@id/themeLabelTextView"
-                    app:thumbTint="@color/switch_thumb_color"
-                    app:trackTint="@color/switch_track_color"/>
+<!--                <TextView-->
+<!--                    android:id="@+id/themeLabelTextView"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="16dp"-->
+<!--                    android:fontFamily="@font/roboto_regular"-->
+<!--                    android:gravity="center_vertical"-->
+<!--                    android:text="Dark Theme"-->
+<!--                    android:textSize="16sp"-->
+<!--                    android:textColor="@color/main_text_color"-->
+<!--                    app:layout_constraintEnd_toStartOf="@id/darkThemeToggleBtn"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toBottomOf="@id/allowTransitionAnimationCheckBox" />-->
+
+<!--                <com.google.android.material.switchmaterial.SwitchMaterial-->
+<!--                    android:id="@+id/darkThemeToggleBtn"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    app:layout_constraintBottom_toBottomOf="@id/themeLabelTextView"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintStart_toEndOf="@id/themeLabelTextView"-->
+<!--                    app:layout_constraintTop_toTopOf="@id/themeLabelTextView"-->
+<!--                    app:thumbTint="@color/switch_thumb_color"-->
+<!--                    app:trackTint="@color/switch_track_color"/>-->
 
                 <androidx.constraintlayout.widget.Group
                     android:id="@+id/profile_layout"
@@ -301,8 +273,189 @@
                     android:layout_height="wrap_content"
                     android:visibility="@{defaultDataQuality || watchWifiOnly ? View.GONE : View.VISIBLE}"
                     app:constraint_referenced_ids="cellularProfileTextView,cellular_profile_status_tv,cellular_profile_state_bar,cellular_profile_desc_txt" />
-                
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="16dp"
+                        android:background="@color/colorButtonInActive" />
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        style="@style/PrefItemStyle"
+                        android:paddingTop="12dp"
+                        android:paddingBottom="12dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center_vertical"
+                            app:srcCompat="@drawable/ic_background_playback" />
+                        <TextView
+                            style="@style/PrefItemTextStyle"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:text="Play From Background" />
+                        <com.google.android.material.checkbox.MaterialCheckBox
+                            android:id="@+id/checkBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minWidth="0dp"
+                            android:minHeight="0dp"
+                            android:layout_gravity="center_vertical"
+                            android:buttonTint="@color/colorAccent"
+                            android:checked="true" />
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="1dp"
+                        android:background="@color/colorButtonInActive" />
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        style="@style/PrefItemStyle"
+                        android:paddingTop="12dp"
+                        android:paddingBottom="12dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center_vertical"
+                            app:srcCompat="@drawable/ic_transition_anim" />
+                        <TextView
+                            style="@style/PrefItemTextStyle"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:text="Allow Animation Transition" />
+                        <com.google.android.material.checkbox.MaterialCheckBox
+                            android:id="@+id/allowTransitionAnimationCheckBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minWidth="0dp"
+                            android:minHeight="0dp"
+                            android:layout_gravity="center_vertical"
+                            android:buttonTint="@color/colorAccent"
+                            android:checked="true" />
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="1dp"
+                        android:visibility="gone"
+                        android:background="@color/colorButtonInActive" />
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/pref_clear_search"
+                        style="@style/PrefItemStyle"
+                        android:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            app:srcCompat="@drawable/ic_clear_search_pref" />
+                        <TextView
+                            style="@style/PrefItemTextStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Clear Search History" />
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="1dp"
+                        android:background="@color/colorButtonInActive" />
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/pref_clear_watch"
+                        style="@style/PrefItemStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            app:srcCompat="@drawable/ic_clear_watch_pref" />
+                        <TextView
+                            style="@style/PrefItemTextStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Clear Watch History" />
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="1dp"
+                        android:background="@color/colorButtonInActive" />
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/pref_terms"
+                        style="@style/PrefItemStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            app:srcCompat="@drawable/ic_pref_terms" />
+                        <TextView
+                            style="@style/PrefItemTextStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Terms &amp; Conditions" />
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="1dp"
+                        android:background="@color/colorButtonInActive"/>
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/pref_privacy"
+                        style="@style/PrefItemStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            app:srcCompat="@drawable/ic_pref_privacy" />
+                        <TextView
+                            style="@style/PrefItemTextStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Privacy Policy" />
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="1dp"
+                        android:background="@color/colorButtonInActive" />
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        style="@style/PrefItemStyle"
+                        android:id="@+id/pref_about"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            app:srcCompat="@drawable/ic_pref_about" />
+                        <TextView
+                            style="@style/PrefItemTextStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="About" />
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+                </androidx.appcompat.widget.LinearLayoutCompat>
         </ScrollView>
-    </LinearLayout>
 </layout>

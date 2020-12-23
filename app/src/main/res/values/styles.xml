@@ -381,4 +381,20 @@
         <item name="itemTextColor">@color/side_menu_color_selector</item>
         <item name="itemIconPadding">16dp</item>
     </style>
+
+    <style name="PrefItemTextStyle" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/main_text_color</item>
+        <item name="android:layout_marginStart">12dp</item>
+    </style>
+
+    <style name="PrefItemStyle">
+        <item name="android:background">?selectableItemBackground</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">16dp</item>
+    </style>
 </resources>

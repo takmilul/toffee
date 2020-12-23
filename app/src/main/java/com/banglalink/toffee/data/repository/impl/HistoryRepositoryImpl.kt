@@ -18,6 +18,10 @@ class HistoryRepositoryImpl (private val dao: HistoryItemDao): HistoryRepository
         dao.update(item)
     }
 
+    override suspend fun deleteAll() {
+        dao.deleteAll()
+    }
+
     override fun getAllItems(): PagingSource<Int, HistoryItem> {
         return dao.getHistoryItems()
     }

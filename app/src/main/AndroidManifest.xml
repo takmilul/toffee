@@ -122,12 +122,6 @@
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ui.settings.SettingsActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:label="Settings"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".ui.about.AboutActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="About"

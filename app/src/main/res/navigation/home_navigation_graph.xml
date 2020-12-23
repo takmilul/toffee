@@ -37,12 +37,12 @@
         android:name="com.banglalink.toffee.ui.upload.MinimizeUploadFragment"
         android:label="Upload Video"
         />
-<!--    <activity-->
-<!--        android:id="@+id/menu_settings"-->
-<!--        android:name="com.banglalink.toffee.ui.settings.SettingsActivity"-->
-<!--        android:label="Settings"-->
-<!--        tools:layout="@layout/activity_settings"-->
-<!--        />-->
+    <fragment
+        android:id="@+id/menu_settings"
+        android:name="com.banglalink.toffee.ui.settings.SettingsFragment"
+        android:label="Settings"
+        tools:layout="@layout/activity_settings"
+        />
     <fragment
         android:id="@+id/menu_feed"
         android:name="com.banglalink.toffee.ui.home.LandingPageFragment"

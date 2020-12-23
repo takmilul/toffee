@@ -7,5 +7,6 @@ interface HistoryRepository {
     suspend fun insert(item: HistoryItem): Long
     suspend fun delete(item: HistoryItem)
     suspend fun update(item: HistoryItem)
+    suspend fun deleteAll()
     fun getAllItems(): PagingSource<Int, HistoryItem>
 }
