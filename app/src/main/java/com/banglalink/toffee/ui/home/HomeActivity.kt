@@ -536,12 +536,22 @@ class HomeActivity :
         handleSharedUrl(intent)
     }
 
+    private fun navigateToSearch(query: String?) {
+//        if(navController.currentDestination?.id != R.id.searchFragment) {
+        navController.popBackStack(R.id.searchFragment, true)
+        navController.navigate(R.id.searchFragment, Bundle().apply {
+            putString(SearchFragment.SEARCH, query)
+        })
+//        }
+    }
+
     private fun handleVoiceSearchEvent(query: String){
         if (!TextUtils.isEmpty(query)) {
-            loadFragmentById(
-                R.id.content_viewer, SearchFragment.createInstance(query),
-                SearchFragment::class.java.name
-            )
+            navigateToSearch(query)
+//            loadFragmentById(
+//                R.id.content_viewer, SearchFragment.createInstance(query),
+//                SearchFragment::class.java.name
+//            )
         }
         if (searchView != null) {
             searchView!!.setQuery(query.toLowerCase(), false)
@@ -940,13 +950,14 @@ class HomeActivity :
             setIconifiedByDefault(true)
         }
         searchView?.setOnCloseListener {
-            if (supportFragmentManager.backStackEntryCount > 1) {
-                supportFragmentManager.popBackStack(
-                    SearchFragment::class.java.name,
-                    POP_BACK_STACK_INCLUSIVE
-                )
-                return@setOnCloseListener true
-            }
+//            if (supportFragmentManager.backStackEntryCount > 1) {
+//                supportFragmentManager.popBackStack(
+//                    SearchFragment::class.java.name,
+//                    POP_BACK_STACK_INCLUSIVE
+//                )
+//                return@setOnCloseListener true
+//            }
+            navController.popBackStack(R.id.searchFragment, true)
             false
         }
 
@@ -1002,14 +1013,15 @@ class HomeActivity :
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
-        if (!TextUtils.isEmpty(query)) {
-            loadFragmentById(
-                R.id.content_viewer, SearchFragment.createInstance(query!!),
-                SearchFragment::class.java.name
-            )
+        if (!query.isNullOrBlank()) {
+            navigateToSearch(query)
+//            loadFragmentById(
+//                R.id.content_viewer, SearchFragment.createInstance(query!!),
+//                SearchFragment::class.java.name
+//            )
             return true
         }
-        return false;
+        return false
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
