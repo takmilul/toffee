@@ -334,4 +334,8 @@
             app:argType="string"
             android:defaultValue="Drama Series" />
     </fragment>
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.banglalink.toffee.ui.search.SearchFragment"
+        android:label="Search" />
 </navigation>

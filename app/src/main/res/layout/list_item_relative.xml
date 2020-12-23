@@ -138,7 +138,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:fontFamily="@font/roboto_regular"
-            android:text="@{data.formattedCreateTime()}"
+            android:text="@{` \u2022 ` + data.formattedCreateTime()}"
             android:textColor="@color/second_text_color"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="@+id/number_of_views"

@@ -26,7 +26,7 @@
         
     </com.google.android.material.appbar.AppBarLayout>
     
-    <androidx.core.widget.NestedScrollView
+    <com.banglalink.toffee.ui.widget.SmartNestedScrollView
         android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
@@ -38,5 +38,5 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
         
-    </androidx.core.widget.NestedScrollView>
+    </com.banglalink.toffee.ui.widget.SmartNestedScrollView>
 </com.banglalink.toffee.ui.widget.NestedCoordinatorLayout>

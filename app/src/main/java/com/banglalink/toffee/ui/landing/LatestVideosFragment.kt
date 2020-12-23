@@ -73,6 +73,7 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
                 binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
             }
             adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter{ mAdapter.retry() })
+            setHasFixedSize(true)
         }
 
         if(viewModel.categoryId.value == 1){

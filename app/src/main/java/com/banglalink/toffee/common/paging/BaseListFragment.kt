@@ -82,7 +82,11 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
             }
 
             mAdapter.addLoadStateListener {
-                binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
+                if(it.source.refresh is LoadState.Loading) {
+                    binding.progressBar.visibility = View.VISIBLE
+                } else {
+                    binding.progressBar.visibility = View.GONE
+                }
 
                 mAdapter.apply {
                     val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached
@@ -107,7 +111,7 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
 
     private fun observeList() {
         lifecycleScope.launchWhenStarted {
-            mViewModel.getListData().collectLatest {
+            mViewModel.getListData.collectLatest {
                 mAdapter.submitData(it)
             }
         }

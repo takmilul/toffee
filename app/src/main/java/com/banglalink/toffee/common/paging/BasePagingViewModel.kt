@@ -10,10 +10,10 @@ abstract class BasePagingViewModel<T: Any>: ViewModel() {
     protected abstract val repo: BaseListRepository<T>// by lazy { BaseListRepositoryImpl(apiService) }
     open var enableToolbar = true
 
-    fun getListData(): Flow<PagingData<T>> {
-        return repo
-                .getList()
-                .cachedIn(viewModelScope)
+    val getListData: Flow<PagingData<T>> by lazy {
+        repo
+            .getList()
+            .cachedIn(viewModelScope)
     }
 
     open fun onItemClicked(item: T) {}
