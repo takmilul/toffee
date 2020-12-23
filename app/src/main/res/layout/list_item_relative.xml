@@ -93,7 +93,7 @@
             android:layout_marginEnd="16dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text='@{data.content_provider_name + " - " + data.formattedCreateTime}'
+            android:text='@{data.content_provider_name}'
             app:layout_constraintBottom_toBottomOf="@+id/ownerPicture"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/ownerPicture"
@@ -138,7 +138,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:fontFamily="@font/roboto_regular"
-            bindVideoUploadTime="@{data}"
+            android:text="@{` \u2022 ` + data.formattedCreateTime()}"
             android:textColor="@color/second_text_color"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="@+id/number_of_views"
