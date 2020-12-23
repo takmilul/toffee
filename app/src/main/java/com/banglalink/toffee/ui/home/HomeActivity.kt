@@ -14,12 +14,10 @@ import android.util.Log
 import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
-import android.widget.AutoCompleteTextView
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
@@ -270,6 +268,7 @@ class HomeActivity :
             handlePackageSubscribe()
         }
 
+        initSideNav()
         lifecycle.addObserver(HeartBeatManager)
         observeInAppMessage()
         handleSharedUrl(intent)
@@ -767,6 +766,32 @@ class HomeActivity :
     private fun initDrawer(){
         drawerHelper = DrawerHelper(this, mPref, binding)
         drawerHelper.initDrawer()
+    }
+
+    private fun initSideNav() {
+        val sideNav = binding.sideNavigation.menu.findItem(R.id.menu_change_theme)
+        sideNav?.let { themeMenu ->
+            val isDarkEnabled = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+            themeMenu.isChecked = isDarkEnabled
+            themeMenu.title = if(isDarkEnabled) "Light Mode" else "Dark Mode"
+
+            if(themeMenu.actionView is Switch) {
+                (themeMenu.actionView as Switch).setOnCheckedChangeListener { _, isChecked ->
+                    themeMenu.title = if(isChecked) "Light Mode" else "Dark Mode"
+                    changeAppTheme(isChecked)
+                }
+            }
+        }
+    }
+
+    private fun changeAppTheme(isDarkEnabled: Boolean){
+        if (isDarkEnabled) {
+            mPref.appThemeMode = Configuration.UI_MODE_NIGHT_YES
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            mPref.appThemeMode = Configuration.UI_MODE_NIGHT_NO
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
     }
 
     private fun observeInAppMessage(){
