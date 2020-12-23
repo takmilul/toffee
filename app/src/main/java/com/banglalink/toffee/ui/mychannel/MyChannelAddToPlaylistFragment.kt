@@ -75,7 +75,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
 
     private fun observePlaylist() {
         lifecycleScope.launchWhenStarted {
-            playlistViewModel.getListData().collectLatest {
+            playlistViewModel.getListData.collectLatest {
                 mAdapter.submitData(it)
             }
         }
