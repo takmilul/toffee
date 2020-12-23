@@ -80,6 +80,7 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
             }
 
             adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter{ mAdapter.retry() })
+            setHasFixedSize(true)
         }
 
         if(viewModel.categoryId.value == 1){

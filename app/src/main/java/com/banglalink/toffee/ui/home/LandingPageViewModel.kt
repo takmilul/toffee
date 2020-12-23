@@ -198,7 +198,7 @@ class LandingPageViewModel @ViewModelInject constructor(
     }
     
     val loadHashTagContents by lazy { 
-        relativeRepo.getList().cachedIn(viewModelScope)
+        relativeRepo.getList()
     }
     
     private val relativeRepo by lazy {

@@ -61,6 +61,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
                     VelBoxAlertDialogBuilder(
                         requireContext(),
                         text = getString(R.string.text_unsubscribe_title),
+                        icon = R.drawable.ic_unsubscribe_alert,
                         positiveButtonTitle = "Unsubscribe",
                         positiveButtonListener = {
                             subscriptionViewModel.setSubscriptionStatus(info.id, 0, info.channelOwnerId)
