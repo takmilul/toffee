@@ -344,7 +344,8 @@ class HomeActivity :
 
 //                R.id.menu_all_tv_channel,
                 R.id.menu_activities,
-                R.id.menu_favorites
+                R.id.menu_favorites,
+                R.id.menu_settings
             ),
             binding.drawerLayout
         )

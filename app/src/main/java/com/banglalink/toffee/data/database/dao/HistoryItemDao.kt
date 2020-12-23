@@ -15,6 +15,9 @@ interface HistoryItemDao {
     @Delete
     suspend fun delete(item: HistoryItem)
 
+    @Query("DELETE FROM HistoryItem")
+    suspend fun deleteAll()
+
     @Query("SELECT * from HistoryItem ORDER BY id DESC")
     fun getHistoryItems(): PagingSource<Int, HistoryItem>
 }

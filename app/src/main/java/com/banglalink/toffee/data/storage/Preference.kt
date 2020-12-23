@@ -206,6 +206,14 @@ class Preference(private val pref: SharedPreferences,
         pref.edit().putBoolean("WatchOnlyWifi", value).apply()
     }
 
+    fun isNotificationEnabled(): Boolean {
+        return pref.getBoolean("pref_key_notification", true)
+    }
+
+    fun setNotificationEnabled(value: Boolean) {
+        pref.edit { putBoolean("pref_key_notification", value) }
+    }
+
     fun defaultDataQuality(): Boolean {
         return pref.getBoolean("DefaultDataQuality2", false)
     }
