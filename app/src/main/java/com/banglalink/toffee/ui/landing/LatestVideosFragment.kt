@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.core.content.ContextCompat
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -63,7 +64,7 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
         super.onViewCreated(view, savedInstanceState)
 
         category = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM) as UgcCategory?
-
+        setupEmptyView()
         mAdapter = PopularVideoListAdapter(this)
 
         with(binding.latestVideosList) {
@@ -121,6 +122,38 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
                 }
                 true
             }
+        }
+        
+        mAdapter.addLoadStateListener {
+            if(it.source.refresh is LoadState.Loading) {
+                binding.progressBar.visibility = View.VISIBLE
+            } else {
+                binding.progressBar.visibility = View.GONE
+            }
+
+            mAdapter.apply {
+                val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached
+                binding.emptyView.isGone = !showEmpty
+                binding.latestVideosList.isVisible = !showEmpty
+            }
+        }
+    }
+
+    private fun getEmptyViewInfo(): Pair<Int, String?> {
+        return Pair(0, "No item found")
+    }
+
+    private fun setupEmptyView() {
+        val info = getEmptyViewInfo()
+        if(info.first > 0) {
+            binding.emptyViewIcon.setImageResource(info.first)
+        }
+        else {
+            binding.emptyViewIcon.visibility = View.GONE
+        }
+
+        info.second?.let {
+            binding.emptyViewLabel.text = it
         }
     }
 
