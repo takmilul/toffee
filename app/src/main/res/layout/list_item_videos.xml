@@ -245,24 +245,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="@{data.isApproved == null || data.isApproved == 1 ? View.VISIBLE : View.GONE}"
-            app:constraint_referenced_ids="viewCount,shareCount,reactionButton" />
+            app:constraint_referenced_ids="owner,uploadDuration,reactionCount,viewCount,shareCount,reactionButton" />
         
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="12dp"
-            android:layout_marginHorizontal="24dp"
-            android:drawablePadding="8dp"
+            android:layout_height="36dp"
+            android:layout_marginBottom="12dp"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="2dp"
             android:gravity="center"
             android:text="Approval Pending"
-            android:textColor="@color/approvalPendingColor"
+            android:textColor="@color/main_text_color"
             android:textSize="16sp"
+            android:background="@drawable/status_text_bg_round"
             android:visibility="@{reactionGroup.visibility == View.GONE ? View.VISIBLE : View.GONE}"
-            app:drawableStartCompat="@drawable/ic_time"
             app:layout_constraintVertical_bias="0"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/owner"
+            app:layout_constraintStart_toStartOf="@+id/name"
+            app:layout_constraintTop_toBottomOf="@+id/titleBarrier"
             app:layout_constraintBottom_toBottomOf="parent"/>
         
     </androidx.constraintlayout.widget.ConstraintLayout>

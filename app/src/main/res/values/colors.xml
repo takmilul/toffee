@@ -71,7 +71,7 @@
     <color name="accent_green">#C5E1A5</color>
     <color name="overlay_dark_color">#66000000</color>
     <color name="purple">#34C9B5</color>
-    <color name="scrollbarTrackColor">#4D707070</color>
+    <color name="scrollbarTrackColor">#33000000</color>
     <color name="cardOverlayColor">#FFFFFFFF</color>
     <color name="unseenCardColor">#EBFFFB</color>
     <color name="reactionBgColor">#34C9B5</color>
@@ -84,4 +84,5 @@
     <color name="tvChannelLogoBg">#FFFFFF</color>
     <color name="durationBgColor">#88000000</color>
     <color name="placeholderBgColor">#E1E1E1</color>
+    <color name="statusTextBgColor">#E1E1E1</color>
 </resources>

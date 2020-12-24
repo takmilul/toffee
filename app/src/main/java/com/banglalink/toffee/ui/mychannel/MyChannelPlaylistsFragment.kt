@@ -30,7 +30,6 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
 
     private var isOwner: Int = 0
     private var channelOwnerId: Int = 0
-    private var isFromOutside: Boolean = false
     override val mAdapter by lazy { MyChannelPlaylistAdapter(this) }
 
     @Inject lateinit var viewModelAssistedFactory: MyChannelPlaylistViewModel.AssistedFactory
@@ -47,13 +46,12 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
         const val CHANNEL_OWNER_ID = "channelOwnerId"
         const val PLAYLIST_INFO = "playlistInfo"
 
-        fun newInstance(enableToolbar: Boolean, isOwner: Int, channelOwnerId: Int, isFromOutside: Boolean): MyChannelPlaylistsFragment {
+        fun newInstance(enableToolbar: Boolean, isOwner: Int, channelOwnerId: Int): MyChannelPlaylistsFragment {
             val instance = MyChannelPlaylistsFragment()
             val bundle = Bundle()
             bundle.putBoolean(SHOW_TOOLBAR, enableToolbar)
             bundle.putInt(IS_OWNER, isOwner)
             bundle.putInt(CHANNEL_OWNER_ID, channelOwnerId)
-            bundle.putBoolean(MyChannelHomeFragment.IS_FROM_OUTSIDE, isFromOutside)
             instance.arguments = bundle
             return instance
         }
@@ -63,7 +61,6 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
         super.onCreate(savedInstanceState)
         isOwner = arguments?.getInt(IS_OWNER) ?: 1
         channelOwnerId = arguments?.getInt(CHANNEL_OWNER_ID) ?: 0
-        isFromOutside = arguments?.getBoolean(MyChannelHomeFragment.IS_FROM_OUTSIDE) ?: false
         observeReloadPlaylist()
     }
 
@@ -77,7 +74,7 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
 
     override fun onItemClicked(item: MyChannelPlaylist) {
         super.onItemClicked(item)
-        if (isFromOutside) {
+        if (findNavController().currentDestination?.id == R.id.myChannelHomeFragment){
             val action = MyChannelHomeFragmentDirections.actionMyChannelHomeFragmentToMyChannelPlaylistVideosFragment(PlaylistPlaybackInfo(item.id, channelOwnerId, isOwner, item.name, item.totalContent))
             parentFragment?.findNavController()?.navigate(action)
         }
@@ -147,6 +144,7 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
                 Toast.makeText(requireContext(), "Please give a playlist name", Toast.LENGTH_SHORT).show()
             }
         }
+        playlistBinding.closeIv.setOnClickListener{ alertDialog.dismiss() }
     }
 
     private fun showDeletePlaylistDialog(playlistId: Int) {
@@ -179,22 +177,4 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
             }
         }
     }
-
-    /*private fun showCreatePlaylistDialog() {
-        val dialogView: View = this.layoutInflater.inflate(layout.alert_dialog_create_playlist, null)
-        val dialogBuilder = AlertDialog.Builder(requireContext()).setView(dialogView)
-        val alertDialog: AlertDialog = dialogBuilder.create().apply {
-            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            show()
-        }
-        dialogView.createButton.setOnClickListener { alertDialog.dismiss() }
-    }
-
-    private fun showAddToPlaylistDialog() {
-        *//*val data = mAdapter.getItems().map { it.program_name!! }
-        val fragment = ChannelAddToPlaylistFragment.newInstance(data)
-        fragment.show(requireActivity().supportFragmentManager, "add_to_playlist")
-        fragment.dialog?.setCanceledOnTouchOutside(true)*//*
-    }*/
-
 }

@@ -75,7 +75,7 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/ownerPicture"
-            loadImageFromUrlRounded="@{data.channel_logo}"
+            loadImageFromUrlRounded="@{data.channelProfileUrl}"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginTop="8dp"
@@ -116,7 +116,6 @@
 
         <TextView
             android:id="@+id/number_of_views"
-            bindViewCount="@{data}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -124,6 +123,7 @@
             android:fontFamily="@font/roboto_regular"
             android:textColor="@color/second_text_color"
             android:textSize="14sp"
+            android:text="@{data.formatted_view_count() + ` views`}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/eyeIV"
             app:layout_constraintHorizontal_chainStyle="packed"

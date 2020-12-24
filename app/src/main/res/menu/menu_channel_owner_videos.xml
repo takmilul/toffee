@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/menu_edit_content"
-        android:title="Edit"
+        android:title="Edit Video"
         app:showAsAction="never"/>
     
     <item
@@ -16,6 +16,11 @@
         android:id="@+id/menu_share"
         android:title="@string/menu_share"
         app:showAsAction="never" />
+    
+    <!--<item
+        android:id="@+id/menu_delete_content"
+        android:title="Delete Video"
+        app:showAsAction="never" />-->
     
     <!--<item
         android:id="@+id/menu_not_interested"

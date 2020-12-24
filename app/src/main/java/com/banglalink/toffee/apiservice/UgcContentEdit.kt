@@ -19,6 +19,7 @@ class UgcContentEdit @Inject constructor(
         tags: String?,
         ageGroup: String?,
         categoryId: Long,
+        subCategoryId: Int,
         oldContentBanner: String? = "NULL",
         base64Image: String? = "NULL"
     ): UgcResponseBean {
@@ -32,6 +33,7 @@ class UgcContentEdit @Inject constructor(
                     fileName,
                     description = description,
                     categoryId = categoryId.toInt(),
+                    subCategoryId = subCategoryId,
                     ageRestriction = ageGroup,
                     videoTags = tags,
                     oldContentBanner = oldContentBanner,

@@ -56,18 +56,15 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     private var myRating: Int = 0
     private var isSubscribed: Int = 0
     private var isPublic: Int = 0
-    private var isFromOutside: Boolean = false
     private var myChannelDetail: MyChannelDetail? = null
     private lateinit var binding: FragmentMyChannelHomeBinding
     private lateinit var viewPagerAdapter: ViewPagerAdapter
     private var fragmentList: ArrayList<androidx.fragment.app.Fragment> = arrayListOf()
     private var fragmentTitleList: ArrayList<String> = arrayListOf()
-//    @Inject lateinit var preference: Preference
 
     @Inject lateinit var myChannelHomeViewModelAssistedFactory: MyChannelHomeViewModel.AssistedFactory
     private val viewModel by viewModels<MyChannelHomeViewModel> { MyChannelHomeViewModel.provideFactory(myChannelHomeViewModelAssistedFactory, isOwner, isPublic, channelId, channelOwnerId) }
 
-    //    private val viewModel by viewModels<CreatorChannelViewModel>()
     private val createPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
     private val subscribeChannelViewModel by viewModels<MyChannelSubscribeViewModel>()
     private val playlistReloadViewModel by activityViewModels<MyChannelPlaylistReloadViewModel>()
@@ -78,9 +75,8 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         const val CHANNEL_ID = "channelId"
         const val IS_PUBLIC = "isPublic"
         const val CHANNEL_OWNER_ID = "channelOwnerId"
-        const val IS_FROM_OUTSIDE = "isFromOutside"
 
-        fun newInstance(isSubscribed: Int, isOwner: Int, channelId: Int, channelOwnerId: Int, isPublic: Int, isFromOutside: Boolean): MyChannelHomeFragment {
+        fun newInstance(isSubscribed: Int, isOwner: Int, channelId: Int, channelOwnerId: Int, isPublic: Int): MyChannelHomeFragment {
             val instance = MyChannelHomeFragment()
             val bundle = Bundle()
             bundle.putInt(IS_SUBSCRIBED, isSubscribed)
@@ -88,7 +84,6 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             bundle.putInt(CHANNEL_ID, channelId)
             bundle.putInt(IS_PUBLIC, isPublic)
             bundle.putInt(CHANNEL_OWNER_ID, channelOwnerId)
-            bundle.putBoolean(IS_FROM_OUTSIDE, isFromOutside)
             instance.arguments = bundle
             return instance
         }
@@ -104,13 +99,9 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         channelId = if (channelId == 0) mPref.channelId else channelId
         channelOwnerId = args?.getInt(CHANNEL_OWNER_ID) ?: mPref.customerId
         channelOwnerId = if (channelOwnerId == 0) mPref.customerId else channelOwnerId
-
-        isFromOutside = args?.getBoolean(IS_FROM_OUTSIDE) ?: false
-        Log.i("UGC_Home", "onCreate -- isSubscribed: ${isSubscribed}")
-        /*isSubscribed = args.isSubscribed*/
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_my_channel_home, container, false)
         binding.lifecycleOwner = this
         binding.isOwner = isOwner
@@ -122,7 +113,6 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-
         binding.contentBody.visibility = View.GONE
         binding.progressBar.visibility = View.VISIBLE
 
@@ -139,17 +129,17 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     override fun onClick(v: View?) {
         when (v) {
             addBioButton -> {
-                if (isFromOutside) {
+                if (findNavController().currentDestination?.id == R.id.myChannelHomeFragment){
                     val action = MyChannelHomeFragmentDirections.actionMyChannelHomeFragmentToMyChannelEditDetailFragment(myChannelDetail)
                     findNavController().navigate(action)
                 }
-                else {
+                else{
                     findNavController().navigate(R.id.action_menu_channel_to_myChannelEditFragment, Bundle().apply { putParcelable("myChannelDetail", myChannelDetail) })
                 }
             }
 
             editButton -> {
-                if (isFromOutside) {
+                if (findNavController().currentDestination?.id == R.id.myChannelHomeFragment) {
                     val action = MyChannelHomeFragmentDirections.actionMyChannelHomeFragmentToMyChannelEditDetailFragment(myChannelDetail)
                     findNavController().navigate(action)
                 }
@@ -180,15 +170,16 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         var newRating = 0.0f
         dialogView.ratingBar.setOnRatingBarChangeListener { _, rating, _ ->
             newRating = rating
-            dialogView.submitButton.isEnabled = rating > 0
         }
 
         val alertDialog: android.app.AlertDialog = dialogBuilder.create()
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         alertDialog.show()
         dialogView.submitButton.setOnClickListener {
-            myRating = newRating.toInt()
-            viewModel.rateMyChannel(newRating)
+            if (newRating > 0 && newRating.toInt() != myRating) {
+                myRating = newRating.toInt()
+                viewModel.rateMyChannel(newRating)
+            }
             alertDialog.dismiss()
         }
         alertDialog.setOnDismissListener { bindButtonState(binding.channelDetailView.ratingButton, myRating > 0) }
@@ -218,6 +209,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                 Toast.makeText(requireContext(), "Please give a playlist name", Toast.LENGTH_SHORT).show()
             }
         }
+        playlistBinding.closeIv.setOnClickListener { alertDialog.dismiss() }
     }
 
     private fun observeChannelDetail() {
@@ -269,8 +261,8 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             fragmentTitleList.add("Videos")
             fragmentTitleList.add("Playlists")
 
-            fragmentList.add(MyChannelVideosFragment.newInstance(true, isOwner, channelOwnerId, isPublic, isFromOutside))
-            fragmentList.add(MyChannelPlaylistsFragment.newInstance(true, isOwner, channelOwnerId, isFromOutside))
+            fragmentList.add(MyChannelVideosFragment.newInstance(true, isOwner, channelOwnerId, isPublic))
+            fragmentList.add(MyChannelPlaylistsFragment.newInstance(true, isOwner, channelOwnerId))
         }
 
         observeRatingChannel()

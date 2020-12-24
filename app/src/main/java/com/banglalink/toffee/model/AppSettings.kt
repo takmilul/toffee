@@ -55,8 +55,8 @@ val TOFFEE_HEADER=("Toffee" + "/" + BuildConfig.VERSION_NAME + " (Linux;Android 
 
 val PRIVACY_POLICY_URL =
     "https://www.banglalink.net/en/personal/digital-services/toffee-privacy-policy"
-val TERMS_AND_CONDITION_URL =
-    "https://www.banglalink.net/en/personal/digital-services/toffee-privacy-policy"
+val TERMS_AND_CONDITION_URL = "https://www.banglalink.net/en/toffee-privacy-policy"
+val TERMS_AND_CONDITION_URL_OLD = "https://www.banglalink.net/en/personal/digital-services/toffee-privacy-policy"
 val MICRO_SITE_URL = "https://portal.toffeelive.com"
 
 val SERVER_URL = ""

@@ -2,7 +2,6 @@ package com.banglalink.toffee.ui.mychannel
 
 import android.os.Bundle
 import android.text.InputType
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -11,26 +10,22 @@ import android.widget.Toast
 import androidx.core.view.setPadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.request.CachePolicy
 import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
-import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.databinding.FragmentMyChannelVideosEditBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
 import com.pchmn.materialchips.ChipsInput
 import com.pchmn.materialchips.model.ChipInterface
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MyChannelVideosEditFragment : BaseFragment() {
@@ -59,36 +54,9 @@ class MyChannelVideosEditFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         channelInfo = MyChannelVideosEditFragmentArgs.fromBundle(requireArguments()).channelInfo
-        val uploadInfo = channelInfo?.let {
-            UploadInfo(
-                null,
-                "",
-                "",
-                it.landscape_ratio_1280_720,
-                0,
-                0,
-                0,
-                0,
-                null,
-                it.program_name,
-                it.description,
-                /*Base64.decode(it.description, Base64.DEFAULT)
-                    .toString(charset("UTF-8"))
-                    .removePrefix("<p>")
-                    .removeSuffix("</p>"),*/
-                it.video_tags,
-                it.category,
-                it.categoryId,
-                null,
-                it.age_restriction?.toInt() ?: 0,
-                serverContentId = -1L,
-            )
-        }
-
+        
         setupTagView()
-//        observeThumbnailLoad()
         observeThumbnailChange()
         observeCategory()
         binding.cancelButton.setOnClickListener { findNavController().popBackStack() }
@@ -97,10 +65,9 @@ class MyChannelVideosEditFragment : BaseFragment() {
             val action = MyChannelVideosEditFragmentDirections.actionMyChannelVideosEditFragmentToThumbnailSelectionMethodFragment("Set Video Cover Photo")
             findNavController().navigate(action) 
         }
-
-        uploadInfo?.let { info ->
-            viewModel.initUploadInfo(info)
-            info.tags?.split(" | ")?.filter { it.isNotBlank() }?.forEach {
+        
+        channelInfo?.let { info ->
+            info.video_tags?.split(" | ")?.filter { it.isNotBlank() }?.forEach {
                 binding.uploadTags.addChip(it, null)
             }
             binding.uploadTitle.requestFocus()
@@ -108,20 +75,26 @@ class MyChannelVideosEditFragment : BaseFragment() {
     }
 
     private fun observeCategory() {
-        observe(viewModel.categories){
-            if(it.isNotEmpty()){
-                viewModel.categoryPosition.value = channelInfo?.categoryId
+        observe(viewModel.categories){ categoryList ->
+            if(categoryList.isNotEmpty()){
+                val selectedCategory = categoryList.find { it.id.toInt() == channelInfo?.categoryId }
+                val categoryIndex = categoryList.indexOf(selectedCategory).takeIf { it > 0 } ?: 0
+                val subCategories = categoryList[categoryIndex].subcategories
+                val selectedSubCategory = subCategories.find { it.id.toInt() == channelInfo?.subCategoryId }
+                val subCategoryIndex = subCategories.indexOf(selectedSubCategory).takeIf { it > 0 } ?: 0
+
+                viewModel.title.value = channelInfo?.program_name
+                viewModel.description.value = channelInfo?.description
+                viewModel.tags.value = channelInfo?.video_tags
+                viewModel.thumbnailUrl.value = channelInfo?.landscape_ratio_1280_720
+                viewModel.subCategories.value = subCategories
+
+                viewModel.categoryPosition.value = categoryIndex
+                viewModel.subCategoryPosition.value = subCategoryIndex
+                viewModel.ageGroupPosition.value = channelInfo?.age_restriction?.toInt()?:0
             }
         }
     }
-
-    /*private fun observeThumbnailLoad() {
-        observe(viewModel.thumbnailUrl) {
-            it?.let { thumb ->
-                binding.bannerImageView.loadBase64(thumb)
-            }
-        }
-    }*/
 
     private fun observeThumbnailChange() {
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String?>(ThumbnailSelectionMethodFragment.THUMB_URI)?.observe(viewLifecycleOwner, {
@@ -167,57 +140,19 @@ class MyChannelVideosEditFragment : BaseFragment() {
         })
     }
 
-    /*private suspend fun saveInfo(): UploadInfo? {
-//        return getUploadInfo()?.apply {
-            title = binding.uploadTitle.text.toString()
-            description = binding.uploadDescription.text.toString()
-
-            tags = binding.uploadTags.selectedChipList.joinToString(" | ") { it.label }
-            Log.e("TAG", "TAG - $tags, === ${binding.uploadTags.selectedChipList}")
-
-            ageGroupIndex = binding.ageGroupSpinner.selectedItemPosition
-            ageGroup = binding.ageGroupSpinner.selectedItem.toString()
-
-            categoryIndex = binding.categorySpinner.selectedItemPosition
-            category = binding.categorySpinner.selectedItem.toString()
-
-//                submitToChallengeIndex = binding.challengeSelectionSpinner.selectedItemPosition
-//                submitToChallenge = binding.challengeSelectionSpinner.selectedItem.toString()
-
-            Log.e("UploadInfo", "$this")
-        *//*}?.also {
-            uploadRepo.updateUploadInfo(it)
-        }*//*
-    }*/
-
     private fun submitVideo() {
+        observeEditResponse()
+        
         val title = binding.uploadTitle.text.toString()
         val description = binding.uploadDescription.text.toString()
         if (title.isBlank() || description.isBlank()) {
             context?.showToast("Missing required field", Toast.LENGTH_SHORT)
             return
         }
-        
         val tags = binding.uploadTags.selectedChipList.joinToString(" | ") { it.label }
-
-        val ageGroupIndex = binding.ageGroupSpinner.selectedItemPosition
-        val ageGroup = binding.ageGroupSpinner.selectedItem.toString()
-
-        val categoryIndex = binding.categorySpinner.selectedItemPosition
-        val category = binding.categorySpinner.selectedItem.toString()
-        val categoryId = viewModel.categoryPosition.value ?: 0
-        Log.i("_Edit", "Category Id: $categoryId")
-        observeEditResponse()
-        /*lifecycleScope.launch {
-            val categoryObj = binding.categorySpinner.selectedItem
-            val categoryId = if (categoryObj is UgcCategory) {
-                categoryObj.id
-            }
-            else -1
-                viewModel.saveUploadInfo(channelInfo?.id?.toInt()?:0, "",tags, categoryId)
-
-        }*/
-        viewModel.saveUploadInfo(channelInfo?.id?.toInt()?:0, "",tags, categoryId.toLong())
+        val categoryId = viewModel.categories.value?.getOrNull(viewModel.categoryPosition.value ?: 0)?.id ?: 0
+        val subCategoryId = viewModel.subCategories.value?.getOrNull(viewModel.subCategoryPosition.value ?: 0)?.id ?: 0
+        viewModel.saveUploadInfo(channelInfo?.id?.toInt()?:0, "",tags, categoryId, subCategoryId.toInt())
     }
 
     private fun observeEditResponse() {

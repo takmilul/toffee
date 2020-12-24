@@ -60,9 +60,9 @@ class AboutActivity : BaseAppCompatActivity() {
         }
 
     companion object {
-        const val PRIVACY_POLICY_URL =
-            "https://www.banglalink.net/en/personal/digital-services/toffee-privacy-policy"
-        const val TERMS_AND_CONDITION_URL =
-            "https://www.banglalink.net/en/personal/digital-services/toffee-privacy-policy"
+        const val PRIVACY_POLICY_URL = "https://www.banglalink.net/en/toffee-privacy-policy"
+        const val TERMS_AND_CONDITION_URL = "https://www.banglalink.net/en/toffee-privacy-policy"
+        const val PRIVACY_POLICY_URL_OLD = "https://www.banglalink.net/en/personal/digital-services/toffee-privacy-policy"
+        const val TERMS_AND_CONDITION_URL_OLD = "https://www.banglalink.net/en/personal/digital-services/toffee-privacy-policy"
     }
 }
