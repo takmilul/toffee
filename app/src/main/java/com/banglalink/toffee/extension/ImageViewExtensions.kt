@@ -11,13 +11,13 @@ import com.banglalink.toffee.R
 fun ImageView.loadProfileImage(imageUrl: String) {
 
     if (imageUrl.isBlank()) {
-        setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_profile_default))
+        setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_menu_profile))
     } else {
         load(imageUrl) {
             crossfade(true)
             transformations(CircleCropTransformation())
-            placeholder(R.drawable.ic_profile_default)
-            error(R.drawable.ic_profile_default)
+            placeholder(R.drawable.ic_menu_profile)
+            error(R.drawable.ic_menu_profile)
         }
     }
 }
