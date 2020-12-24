@@ -2,7 +2,6 @@ package com.banglalink.toffee.ui.mychannel
 
 import android.os.Bundle
 import android.text.InputType
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +16,6 @@ import coil.load
 import coil.request.CachePolicy
 import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
-import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.databinding.FragmentMyChannelVideosEditBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
@@ -56,36 +54,9 @@ class MyChannelVideosEditFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         channelInfo = MyChannelVideosEditFragmentArgs.fromBundle(requireArguments()).channelInfo
-        val uploadInfo = channelInfo?.let {
-            UploadInfo(
-                null,
-                "",
-                "",
-                it.landscape_ratio_1280_720,
-                0,
-                0,
-                0,
-                0,
-                null,
-                it.program_name,
-                it.description,
-                /*Base64.decode(it.description, Base64.DEFAULT)
-                    .toString(charset("UTF-8"))
-                    .removePrefix("<p>")
-                    .removeSuffix("</p>"),*/
-                it.video_tags,
-                it.category,
-                it.categoryId,
-                null,
-                it.age_restriction?.toInt() ?: 0,
-                serverContentId = -1L,
-            )
-        }
-
+        
         setupTagView()
-//        observeThumbnailLoad()
         observeThumbnailChange()
         observeCategory()
         binding.cancelButton.setOnClickListener { findNavController().popBackStack() }
@@ -170,26 +141,17 @@ class MyChannelVideosEditFragment : BaseFragment() {
     }
 
     private fun submitVideo() {
+        observeEditResponse()
+        
         val title = binding.uploadTitle.text.toString()
         val description = binding.uploadDescription.text.toString()
         if (title.isBlank() || description.isBlank()) {
             context?.showToast("Missing required field", Toast.LENGTH_SHORT)
             return
         }
-        
         val tags = binding.uploadTags.selectedChipList.joinToString(" | ") { it.label }
-
-        val ageGroupIndex = binding.ageGroupSpinner.selectedItemPosition
-        val ageGroup = binding.ageGroupSpinner.selectedItem.toString()
-
-        val categoryIndex = binding.categorySpinner.selectedItemPosition
-        val category = binding.categorySpinner.selectedItem.toString()
         val categoryId = viewModel.categories.value?.getOrNull(viewModel.categoryPosition.value ?: 0)?.id ?: 0
         val subCategoryId = viewModel.subCategories.value?.getOrNull(viewModel.subCategoryPosition.value ?: 0)?.id ?: 0
-        Log.i("_Edit", "Category Id: $categoryId")
-        
-        observeEditResponse()
-        
         viewModel.saveUploadInfo(channelInfo?.id?.toInt()?:0, "",tags, categoryId, subCategoryId.toInt())
     }
 

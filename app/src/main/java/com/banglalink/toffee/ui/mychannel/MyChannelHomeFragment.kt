@@ -209,6 +209,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                 Toast.makeText(requireContext(), "Please give a playlist name", Toast.LENGTH_SHORT).show()
             }
         }
+        playlistBinding.closeIv.setOnClickListener { alertDialog.dismiss() }
     }
 
     private fun observeChannelDetail() {

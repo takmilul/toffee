@@ -97,10 +97,8 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
         }
         binding.doneButton.setOnClickListener { addToPlaylist() }
         binding.cancelButton.setOnClickListener { alertDialog.dismiss() }
-        binding.createButton.setOnClickListener {
-            createPlaylist()
-        }
-
+        binding.createButton.setOnClickListener { createPlaylist() }
+        binding.closeIv.setOnClickListener { alertDialog.dismiss() }
         return alertDialog
     }
 

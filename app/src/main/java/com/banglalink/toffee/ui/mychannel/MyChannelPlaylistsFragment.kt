@@ -144,6 +144,7 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
                 Toast.makeText(requireContext(), "Please give a playlist name", Toast.LENGTH_SHORT).show()
             }
         }
+        playlistBinding.closeIv.setOnClickListener{ alertDialog.dismiss() }
     }
 
     private fun showDeletePlaylistDialog(playlistId: Int) {
@@ -176,22 +177,4 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
             }
         }
     }
-
-    /*private fun showCreatePlaylistDialog() {
-        val dialogView: View = this.layoutInflater.inflate(layout.alert_dialog_create_playlist, null)
-        val dialogBuilder = AlertDialog.Builder(requireContext()).setView(dialogView)
-        val alertDialog: AlertDialog = dialogBuilder.create().apply {
-            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            show()
-        }
-        dialogView.createButton.setOnClickListener { alertDialog.dismiss() }
-    }
-
-    private fun showAddToPlaylistDialog() {
-        *//*val data = mAdapter.getItems().map { it.program_name!! }
-        val fragment = ChannelAddToPlaylistFragment.newInstance(data)
-        fragment.show(requireActivity().supportFragmentManager, "add_to_playlist")
-        fragment.dialog?.setCanceledOnTouchOutside(true)*//*
-    }*/
-
 }
