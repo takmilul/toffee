@@ -170,15 +170,16 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         var newRating = 0.0f
         dialogView.ratingBar.setOnRatingBarChangeListener { _, rating, _ ->
             newRating = rating
-            dialogView.submitButton.isEnabled = rating > 0
         }
 
         val alertDialog: android.app.AlertDialog = dialogBuilder.create()
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         alertDialog.show()
         dialogView.submitButton.setOnClickListener {
-            myRating = newRating.toInt()
-            viewModel.rateMyChannel(newRating)
+            if (newRating > 0 && newRating.toInt() != myRating) {
+                myRating = newRating.toInt()
+                viewModel.rateMyChannel(newRating)
+            }
             alertDialog.dismiss()
         }
         alertDialog.setOnDismissListener { bindButtonState(binding.channelDetailView.ratingButton, myRating > 0) }
