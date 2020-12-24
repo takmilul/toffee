@@ -146,7 +146,8 @@ class SettingsFragment : BaseFragment() {
             setPositiveButtonListener("Clear") {
                 lifecycleScope.launch {
                     historyRepository.deleteAll()
-                    Toast.makeText(requireContext(), "Watch history cleared", Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), "Watch history cleared", Toast.LENGTH_SHORT).show()
+                    it?.dismiss()
                 }
             }
         }.create().show()
