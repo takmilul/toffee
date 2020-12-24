@@ -66,6 +66,7 @@ import com.banglalink.toffee.util.InAppMessageParser
 import com.banglalink.toffee.util.Utils
 import com.google.android.exoplayer2.util.Util
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import dagger.hilt.android.AndroidEntryPoint
@@ -135,7 +136,7 @@ class HomeActivity :
         setSupportActionBar(binding.tbar.toolbar)
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
-        
+
         if(savedInstanceState == null) {
             setupNavController()
         }
@@ -770,16 +771,25 @@ class HomeActivity :
     }
 
     private fun initSideNav() {
+        val isBanglalinkNumber = mPref.isBanglalinkNumber
+        if(isBanglalinkNumber != "true") {
+            val subMenu = binding.sideNavigation.menu.findItem(R.id.ic_menu_internet_packs)
+            subMenu?.isVisible = false
+        }
+
         val sideNav = binding.sideNavigation.menu.findItem(R.id.menu_change_theme)
         sideNav?.let { themeMenu ->
             val isDarkEnabled = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
-            themeMenu.isChecked = isDarkEnabled
+
             themeMenu.title = if(isDarkEnabled) "Light Mode" else "Dark Mode"
 
-            if(themeMenu.actionView is Switch) {
-                (themeMenu.actionView as Switch).setOnCheckedChangeListener { _, isChecked ->
-                    themeMenu.title = if(isChecked) "Light Mode" else "Dark Mode"
-                    changeAppTheme(isChecked)
+            if(themeMenu.actionView is SwitchMaterial) {
+                (themeMenu.actionView as SwitchMaterial).let {
+                    it.isChecked = isDarkEnabled
+                    it.setOnCheckedChangeListener { _, isChecked ->
+                        themeMenu.title = if(isChecked) "Light Mode" else "Dark Mode"
+                        changeAppTheme(isChecked)
+                    }
                 }
             }
         }
