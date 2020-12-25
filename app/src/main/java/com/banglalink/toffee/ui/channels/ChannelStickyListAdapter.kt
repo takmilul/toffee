@@ -134,12 +134,15 @@ class ChannelStickyListAdapter(
         }
         val item = getSection(section).channelInfoList[offset]
         val liveTvViewHolder = viewHolder as LiveTvViewHolder
-        liveTvViewHolder.icon.load(item.channel_logo){
-            transformations(CircleCropTransformation())
-            crossfade(true)
-            memoryCachePolicy(CachePolicy.ENABLED)
-//            diskCachePolicy(CachePolicy.ENABLED)
-        }
+
+        bindChannel(liveTvViewHolder.icon, item)
+
+//        liveTvViewHolder.icon.load(item.channel_logo){
+//            transformations(CircleCropTransformation())
+//            crossfade(true)
+//            memoryCachePolicy(CachePolicy.ENABLED)
+////            diskCachePolicy(CachePolicy.ENABLED)
+//        }
 
         if(item.id == selectedChannel?.id.toString() && !getSection(section).header.contains("Recent")) {
             liveTvViewHolder.icon.borderWidth = Utils.dpToPx(4)
