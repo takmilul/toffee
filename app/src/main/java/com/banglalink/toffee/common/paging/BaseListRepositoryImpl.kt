@@ -12,7 +12,13 @@ class BaseListRepositoryImpl<T: Any> constructor(
 ): BaseListRepository<T> {
     override fun getList(): Flow<PagingData<T>> {
         return Pager(
-            config = PagingConfig(PAGE_SIZE, enablePlaceholders = true, initialLoadSize = PAGE_SIZE),
+            config = PagingConfig(
+                PAGE_SIZE,
+                enablePlaceholders = true,
+                initialLoadSize = PAGE_SIZE,
+                prefetchDistance = if(PAGE_SIZE > 30) PAGE_SIZE / 2 else 10,
+//                maxSize = 2 * PAGE_SIZE
+            ),
 //            remoteMediator = remoteMediator,
             pagingSourceFactory = pagingFactory
         ).flow

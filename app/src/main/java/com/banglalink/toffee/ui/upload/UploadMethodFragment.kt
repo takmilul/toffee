@@ -13,8 +13,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.FileProvider
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.database.entities.UploadInfo
@@ -43,7 +45,7 @@ import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class UploadMethodFragment : BaseFragment() {
+class UploadMethodFragment : DialogFragment() {
 
     @Inject
     lateinit var mUploadInfoRepository: UploadInfoRepository
@@ -59,6 +61,14 @@ class UploadMethodFragment : BaseFragment() {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setStyle(
+            STYLE_NORMAL,
+            R.style.FullScreenDialogStyle
+        )
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -71,7 +81,11 @@ class UploadMethodFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         view.setOnClickListener {
-            requireActivity().supportFragmentManager.popBackStack()
+            findNavController().popBackStack()
+        }
+
+        upload_method_card.setOnClickListener {
+            
         }
 
         learn_more_button.setOnClickListener {
@@ -121,7 +135,7 @@ class UploadMethodFragment : BaseFragment() {
         }
     }
 
-    var videoFile: File? = null
+    private var videoFile: File? = null
     private fun openCameraIntent() {
         val videoIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
         if (videoIntent.resolveActivity(requireActivity().packageManager) != null) {
@@ -197,84 +211,84 @@ class UploadMethodFragment : BaseFragment() {
         })
     }
 
-    private fun uploadUri3(uri: String) {
-
-        lifecycleScope.launch {
-            val dialog = VelBoxProgressDialog(requireContext())
-            dialog.show()
-
-            val accessToken = withContext(Dispatchers.IO) {
-                val credential = GoogleCredential.fromStream(
-                    requireContext().assets.open("toffee-261507-60ca3e5405df.json")
-                ).createScoped(listOf("https://www.googleapis.com/auth/devstorage.read_write"))
-                credential.refreshToken()
-                credential.accessToken
-            }
-
-            if (accessToken.isNullOrEmpty()) {
-                open_gallery_button.snack("Error uploading file. Please try again later.") {}
-                return@launch
-            }
-
-            val fn = withContext(Dispatchers.IO + Job()) {
-                UtilsKt.fileNameFromContentUri(requireContext(), Uri.parse(uri))
-            }
-            val idx = fn.lastIndexOf(".")
-            val ext = if (idx >= 0) {
-                fn.substring(idx)
-            }
-            else ""
-
-            val fileName = mPref.customerId.toString() + "_" + UUID.randomUUID().toString() + ext
-            val upInfo = UploadInfo(serverContentId = 0L, fileUri = uri, fileName = fileName)
-
-            val contentType = withContext(Dispatchers.IO + Job()) {
-                UtilsKt.contentTypeFromContentUri(requireContext(), Uri.parse(uri))
-            }
-
-            Log.e("UPLOAD", "$fileName, $contentType")
-
-            val upId = mUploadInfoRepository.insertUploadInfo(upInfo)
-            val uploadIdStr =
-                withContext(Dispatchers.IO + Job()) {
-                    BinaryUploadRequest(
-                        requireContext(),
-                        "https://storage.googleapis.com/upload/storage/v1/b/ugc-content-storage/o?uploadType=media&name=${fileName}"
-                    )
-                        .setUploadID(UtilsKt.uploadIdToString(upId))
-                        .setMethod("POST")
-                        .addHeader("Content-Type", contentType)
-                        .setFileToUpload(uri)
-                        .setBearerAuth(accessToken)
-                        .startUpload()
-                }
-
-//            mPref.uploadId = uploadIdStr
-            dialog.dismiss()
-        }
-    }
-
-    private fun uploadUri2(uri: String) {
-
-        lifecycleScope.launch {
-            val upInfo = UploadInfo(serverContentId = 0L, fileUri = uri, fileName = "fileName")
-            val upId = mUploadInfoRepository.insertUploadInfo(upInfo)
-            val uploadIdStr =
-                withContext(Dispatchers.IO + Job()) {
-                    MultipartUploadRequest(
-                        requireContext(),
-                        "http://23.94.70.184:25478/upload?token=1148123456789"
-                    )
-                        .setUploadID(UtilsKt.uploadIdToString(upId))
-                        .setMethod("POST")
-                        .addFileToUpload(uri, "file")
-                        .startUpload()
-                }
-
-//            mPref.uploadId = uploadIdStr
-            activity?.findNavController(R.id.home_nav_host)?.navigate(R.id.action_uploadMethodFragment_to_editUploadInfoFragment)
-        }
-    }
+//    private fun uploadUri3(uri: String) {
+//
+//        lifecycleScope.launch {
+//            val dialog = VelBoxProgressDialog(requireContext())
+//            dialog.show()
+//
+//            val accessToken = withContext(Dispatchers.IO) {
+//                val credential = GoogleCredential.fromStream(
+//                    requireContext().assets.open("toffee-261507-60ca3e5405df.json")
+//                ).createScoped(listOf("https://www.googleapis.com/auth/devstorage.read_write"))
+//                credential.refreshToken()
+//                credential.accessToken
+//            }
+//
+//            if (accessToken.isNullOrEmpty()) {
+//                open_gallery_button.snack("Error uploading file. Please try again later.") {}
+//                return@launch
+//            }
+//
+//            val fn = withContext(Dispatchers.IO + Job()) {
+//                UtilsKt.fileNameFromContentUri(requireContext(), Uri.parse(uri))
+//            }
+//            val idx = fn.lastIndexOf(".")
+//            val ext = if (idx >= 0) {
+//                fn.substring(idx)
+//            }
+//            else ""
+//
+//            val fileName = mPref.customerId.toString() + "_" + UUID.randomUUID().toString() + ext
+//            val upInfo = UploadInfo(serverContentId = 0L, fileUri = uri, fileName = fileName)
+//
+//            val contentType = withContext(Dispatchers.IO + Job()) {
+//                UtilsKt.contentTypeFromContentUri(requireContext(), Uri.parse(uri))
+//            }
+//
+//            Log.e("UPLOAD", "$fileName, $contentType")
+//
+//            val upId = mUploadInfoRepository.insertUploadInfo(upInfo)
+//            val uploadIdStr =
+//                withContext(Dispatchers.IO + Job()) {
+//                    BinaryUploadRequest(
+//                        requireContext(),
+//                        "https://storage.googleapis.com/upload/storage/v1/b/ugc-content-storage/o?uploadType=media&name=${fileName}"
+//                    )
+//                        .setUploadID(UtilsKt.uploadIdToString(upId))
+//                        .setMethod("POST")
+//                        .addHeader("Content-Type", contentType)
+//                        .setFileToUpload(uri)
+//                        .setBearerAuth(accessToken)
+//                        .startUpload()
+//                }
+//
+////            mPref.uploadId = uploadIdStr
+//            dialog.dismiss()
+//        }
+//    }
+//
+//    private fun uploadUri2(uri: String) {
+//
+//        lifecycleScope.launch {
+//            val upInfo = UploadInfo(serverContentId = 0L, fileUri = uri, fileName = "fileName")
+//            val upId = mUploadInfoRepository.insertUploadInfo(upInfo)
+//            val uploadIdStr =
+//                withContext(Dispatchers.IO + Job()) {
+//                    MultipartUploadRequest(
+//                        requireContext(),
+//                        "http://23.94.70.184:25478/upload?token=1148123456789"
+//                    )
+//                        .setUploadID(UtilsKt.uploadIdToString(upId))
+//                        .setMethod("POST")
+//                        .addFileToUpload(uri, "file")
+//                        .startUpload()
+//                }
+//
+////            mPref.uploadId = uploadIdStr
+//            activity?.findNavController(R.id.home_nav_host)?.navigate(R.id.action_uploadMethodFragment_to_editUploadInfoFragment)
+//        }
+//    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
