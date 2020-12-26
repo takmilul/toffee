@@ -10,7 +10,7 @@ class BaseNetworkPagingSource<T: Any>(private val service: BaseApiService<T>): P
             LoadResult.Page(
                 data = resp,
                 prevKey = if(page == 0) null else page - 1,
-                nextKey = if(resp.isEmpty()) null else page + 1
+                nextKey = if(resp.size < params.loadSize) null else page + 1
             )
         } catch (ex: Exception) {
             ex.printStackTrace()
