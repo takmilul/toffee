@@ -248,6 +248,7 @@
         <item name="android:fontFamily">@font/roboto_bold</item>
         <item name="android:letterSpacing">0</item>
         <item name="cornerRadius">30dp</item>
+        <item name="iconGravity">textStart</item>
         <item name="android:gravity">center</item>
     </style>
     
@@ -260,10 +261,27 @@
         <item name="android:minWidth">110dp</item>
         <item name="android:textSize">18sp</item>
         <item name="iconPadding">8dp</item>
-        <item name="textAllCaps">false</item>
+        <item name="textAllCaps">true</item>
         <item name="iconTint">#ffffff</item>
         <item name="rippleColor">#777777</item>
         <item name="android:textColor">#ffffff</item>
+    </style>
+
+    <style name="UploadButtonStyleV2Ring" parent="ToffeeButtonStyle">
+<!--        <item name="backgroundTint">@color/screen_bg_white</item>-->
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">@color/button_bgcolor_pink</item>
+        <item name="android:paddingLeft">32dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingRight">32dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:minWidth">110dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="iconPadding">8dp</item>
+        <item name="textAllCaps">true</item>
+        <item name="iconTint">@color/colorAccent</item>
+        <item name="rippleColor">#777777</item>
+        <item name="android:textColor">@color/colorAccent</item>
     </style>
     
     <style name="ButtonStyleSolidPink" parent="ToffeeButtonStyle">

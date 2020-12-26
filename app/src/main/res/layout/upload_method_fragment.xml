@@ -22,19 +22,25 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/upload_method_card"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
+            android:layout_marginStart="72dp"
+            android:layout_marginEnd="72dp"
             android:elevation="4dp"
-            app:cardCornerRadius="8dp"
+            app:cardCornerRadius="24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="24dp">
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:paddingTop="18dp"
+                android:paddingBottom="18dp"
+                >
 
                 <TextView
                     android:id="@+id/upload_heading"
@@ -70,9 +76,8 @@
                 <Button
                     android:id="@+id/open_camera_button"
                     style="@style/UploadButtonStyleV2"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     android:text="@string/btn_open_camera"
                     app:icon="@drawable/ic_photo_camera"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -81,12 +86,11 @@
 
                 <Button
                     android:id="@+id/open_gallery_button"
-                    style="@style/UploadButtonStyleV2"
-                    android:layout_width="0dp"
+                    style="@style/UploadButtonStyleV2Ring"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
+                    android:layout_marginTop="8dp"
                     android:text="@string/btn_open_gallery"
-                    app:backgroundTint="@color/colorButtonSecondary"
                     app:icon="@drawable/ic_photo_holder"
                     app:layout_constraintEnd_toEndOf="@+id/open_camera_button"
                     app:layout_constraintStart_toStartOf="@+id/open_camera_button"
