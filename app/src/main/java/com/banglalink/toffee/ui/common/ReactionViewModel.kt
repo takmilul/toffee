@@ -14,12 +14,24 @@ import kotlinx.coroutines.launch
 
 class ReactionViewModel @ViewModelInject constructor(private val reactionDao: ReactionDao, private val activitiesRepo: UserActivitiesRepository): ViewModel() {
 
-    fun insert(reactionInfo: ReactionInfo) {
+    fun insertReaction(reactionInfo: ReactionInfo) {
         viewModelScope.launch {
             reactionDao.insert(reactionInfo)
         }
     }
 
+    fun removeReaction(reactionInfo: ReactionInfo){
+        viewModelScope.launch { 
+            reactionDao.delete(reactionInfo)
+        }
+    }
+    
+    fun updateReaction(reactionInfo: ReactionInfo){
+        viewModelScope.launch { 
+            reactionDao.updateReactionByContentId(reactionInfo.customerId, reactionInfo.contentId, reactionInfo.reaction)
+        }
+    }
+    
     fun insertActivity(customerId: Int, channelInfo: ChannelInfo, reactStatus: Int) {
         viewModelScope.launch {
             val item = UserActivities(
