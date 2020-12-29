@@ -119,7 +119,7 @@
             android:id="@+id/action_menu_channel_to_myChannelVideosEditFragment"
             app:destination="@id/myChannelVideosEditFragment" />
     </fragment>
-    <fragment
+    <dialog
         android:id="@+id/uploadMethodFragment"
         android:name="com.banglalink.toffee.ui.upload.UploadMethodFragment"
         android:label="Upload" >
@@ -129,7 +129,7 @@
             app:popUpTo="@id/uploadMethodFragment"
             app:popUpToInclusive="true"
             />
-    </fragment>
+    </dialog>
     <fragment
         android:id="@+id/editUploadInfoFragment"
         android:name="com.banglalink.toffee.ui.upload.EditUploadInfoFragment"
