@@ -67,7 +67,7 @@
                     <View
                         android:layout_width="wrap_content"
                         android:layout_height="1dp"
-                        android:background="@color/colorButtonInActive" />
+                        android:background="@color/colorSettingsDivider" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
@@ -279,7 +279,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="1dp"
                         android:layout_marginTop="16dp"
-                        android:background="@color/colorButtonInActive" />
+                        android:background="@color/colorSettingsDivider" />
 
                     <androidx.appcompat.widget.LinearLayoutCompat
                         style="@style/PrefItemStyle"
@@ -313,7 +313,7 @@
                     <View
                         android:layout_width="wrap_content"
                         android:layout_height="1dp"
-                        android:background="@color/colorButtonInActive" />
+                        android:background="@color/colorSettingsDivider" />
 
                     <androidx.appcompat.widget.LinearLayoutCompat
                         style="@style/PrefItemStyle"
@@ -348,7 +348,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="1dp"
                         android:visibility="gone"
-                        android:background="@color/colorButtonInActive" />
+                        android:background="@color/colorSettingsDivider" />
 
                     <androidx.appcompat.widget.LinearLayoutCompat
                         android:id="@+id/pref_clear_search"
@@ -371,7 +371,7 @@
                     <View
                         android:layout_width="wrap_content"
                         android:layout_height="1dp"
-                        android:background="@color/colorButtonInActive" />
+                        android:background="@color/colorSettingsDivider" />
 
                     <androidx.appcompat.widget.LinearLayoutCompat
                         android:id="@+id/pref_clear_watch"
@@ -393,7 +393,7 @@
                     <View
                         android:layout_width="wrap_content"
                         android:layout_height="1dp"
-                        android:background="@color/colorButtonInActive" />
+                        android:background="@color/colorSettingsDivider" />
 
                     <androidx.appcompat.widget.LinearLayoutCompat
                         android:id="@+id/pref_terms"
@@ -415,7 +415,7 @@
                     <View
                         android:layout_width="wrap_content"
                         android:layout_height="1dp"
-                        android:background="@color/colorButtonInActive"/>
+                        android:background="@color/colorSettingsDivider"/>
 
                     <androidx.appcompat.widget.LinearLayoutCompat
                         android:id="@+id/pref_privacy"
@@ -437,7 +437,7 @@
                     <View
                         android:layout_width="wrap_content"
                         android:layout_height="1dp"
-                        android:background="@color/colorButtonInActive" />
+                        android:background="@color/colorSettingsDivider" />
 
                     <androidx.appcompat.widget.LinearLayoutCompat
                         style="@style/PrefItemStyle"
