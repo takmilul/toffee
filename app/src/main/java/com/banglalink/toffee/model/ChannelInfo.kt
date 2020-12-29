@@ -81,6 +81,7 @@ data class ChannelInfo(
     @SerializedName("is_approved")
     val isApproved: Int? = null,
     val created_at: String? = null,
+    val isHorizontal: Boolean = true
 ) :Parcelable
 {
 

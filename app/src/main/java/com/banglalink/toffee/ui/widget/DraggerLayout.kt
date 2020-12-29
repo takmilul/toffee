@@ -6,9 +6,12 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import android.widget.RelativeLayout
 import androidx.core.view.ViewCompat
 import androidx.customview.widget.ViewDragHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics.logException
 import com.banglalink.toffee.util.Utils
@@ -91,6 +94,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
 
     fun isMaximized() = dragView.scaleX == 1.0f
     fun isMinimize() = dragView.scaleX == 0.5f
+    fun isClamped() = dragView.isClamped()
 
     private fun shouldMaximize(): Boolean {
         return isMinimize() && !isHorizontalDragged()
@@ -98,24 +102,78 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
 
     fun isHorizontalDragged() = dragView.right != right - paddingRight
 
+    private val mTouchSlop = ViewConfiguration.get(context).scaledTouchSlop
+    private var scrollDir = 0
+    private var lastScrollY = 0f
+    private var isScrollCaptured = false
+
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+        val bottomHit = isBottomHit(ev)
+        when(ev.actionMasked) {
+            MotionEvent.ACTION_DOWN-> {
+                lastScrollY = ev.y
+//                Log.e("SCROLL", "ACTION_DOWN ->>> $bottomHit")
+                dragView.handleTouchDown2(ev)
+                isScrollCaptured = false
+            }
+            MotionEvent.ACTION_MOVE-> {
+                if(isScrollCaptured) return true
+
+                val scrollDiff = ev.y - lastScrollY
+                if(scrollDiff > mTouchSlop) {
+                    scrollDir = 1
+                }
+                if(scrollDiff < mTouchSlop) {
+                    scrollDir = -1
+                }
+//                Log.e("SCROLL", "ScrollDir ->> $scrollDir, ---->>> ${canScrollBottomPanel()}")
+                if(bottomHit){
+//                    if(dragView.isFullHeight() && scrollDir < 0) {
+                    if(dragView.layoutParams.height > dragView.minBound && scrollDir < 0) {
+                        isScrollCaptured = true
+                        return true
+                    }
+                    if(dragView.layoutParams.height < dragView.maxBound && scrollDir > 0 && !canScrollBottomPanel()) {
+                        isScrollCaptured = true
+                        return true
+                    }
+                }
+            }
+            MotionEvent.ACTION_CANCEL,
+            MotionEvent.ACTION_UP-> {
+//                Log.e("SCROLL", "ACTION_UP ->>> $bottomHit")
+                lastScrollY = 0f
+                scrollDir = 0
+//                Log.e("CLAMP", "Clamp")
+                dragView.clampOrFullHeight()
+                isScrollCaptured = false
+            }
+        }
+
+        if(bottomHit) return false
+
         if (viewDragHelper.shouldInterceptTouchEvent(ev) || isMinimize() && isViewHit(
                 dragView, ev.x
                     .toInt(), ev.y.toInt()
             )
         ) {
-            Log.e("intercpting", "true")
             return true
         }
-//        if(isViewHit(bottomView, ev.x.toInt(), ev.y.toInt())) {
-//            return true
-//        }
+
         return super.onInterceptTouchEvent(ev)
+    }
+
+    private fun isBottomHit(ev: MotionEvent): Boolean {
+        return isViewHit(bottomView, ev.x.toInt(), ev.y.toInt())
     }
 
     var duration: Long = 0
     override fun onTouchEvent(ev: MotionEvent): Boolean {
         try {
+            if(isBottomHit(ev)) {
+//                if(ev.actionMasked == MotionEvent.ACTION_UP) Log.e("SCROLL", "ACTION_UP2")
+                return dragView.handleTouchEvent(ev)
+            }
             if (isViewHit(
                     dragView,
                     ev.x.toInt(),
@@ -137,13 +195,32 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
                 viewDragHelper.processTouchEvent(ev)
                 return true
             }
-//            if(isViewHit(bottomView, ev.x.toInt(), ev.y.toInt())) {
-//                Log.e("BOTTOM", "onTouchEvent ->>> $bottomView")
-//            }
         } catch (e: IllegalArgumentException) {
             logException(e)
         }
         return false
+    }
+
+    private fun isBottomPanelScrolled(): Boolean {
+        return findBottomRecycler()?.canScrollVertically(1) ?: false
+    }
+
+    private fun canScrollBottomPanel(): Boolean {
+        findBottomRecycler()?.let {
+            if(it.layoutManager is LinearLayoutManager) {
+                (it.layoutManager as LinearLayoutManager).let { lm->
+                    val pos = lm.findFirstVisibleItemPosition()
+                    if(pos == 0 && lm.findViewByPosition(pos)?.top == 0) {
+                        return false
+                    }
+                }
+            }
+        }
+        return true
+    }
+
+    private fun findBottomRecycler(): RecyclerView? {
+        return bottomView.findViewById(R.id.listview)
     }
 
     private fun isViewHit(view: View?, x: Int, y: Int): Boolean {

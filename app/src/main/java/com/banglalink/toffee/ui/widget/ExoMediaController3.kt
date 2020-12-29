@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.widget
 
 import android.R.color
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Point
 import android.graphics.SurfaceTexture
@@ -8,7 +9,10 @@ import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Message
 import android.util.AttributeSet
+import android.util.Log
+import android.util.Size
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.TextureView.SurfaceTextureListener
 import android.view.View
 import android.view.View.OnClickListener
@@ -21,12 +25,19 @@ import com.banglalink.toffee.R.*
 import com.banglalink.toffee.databinding.MediaControlLayout3Binding
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener
 import com.banglalink.toffee.listeners.PlaylistListener
+import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.widget.DraggerLayout.OnPositionChangedListener
 import com.banglalink.toffee.util.Utils
+import com.banglalink.toffee.util.UtilsKt
+import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.Player.EventListener
+import com.google.android.exoplayer2.Renderer
+import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.gms.cast.framework.CastButtonFactory
+import kotlinx.android.synthetic.main.list_item_live.view.*
 import java.util.*
+import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
@@ -55,6 +66,8 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
     private val videoWidth = 1920
     private val videoHeight = 1080
     private lateinit var binding: MediaControlLayout3Binding
+    private val screenWidth = UtilsKt.getScreenWidth()
+    private var isVideoPortrait = false
 
     init {
         handler = MessageHandler()
@@ -522,6 +535,18 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
         }
     }
 
+    override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+        super.onMediaItemTransition(mediaItem, reason)
+        val channelInfo = mediaItem?.playbackProperties?.tag
+        if(channelInfo is ChannelInfo) {
+            isVideoPortrait = !channelInfo.isHorizontal
+            resizeView(Point(UtilsKt.getScreenWidth(), UtilsKt.getScreenHeight()))
+            if(isVideoPortrait && simpleExoPlayer is SimpleExoPlayer) {
+                (simpleExoPlayer as SimpleExoPlayer).videoScalingMode = Renderer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
+            }
+        }
+    }
+
     private var timer: CountDownTimer? = null
     
     private fun startAutoPlayTimer() {
@@ -545,18 +570,17 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
     }
 
     fun resizeView(size: Point) {
-        val playerWidth: Int
         val playerHeight: Int
         val controllerWidth: Int
         val controllerHeight: Int
-        playerWidth = size.x
+        val playerWidth: Int = size.x
         if (size.x > size.y) { //landscape
             playerHeight = size.y
             controllerWidth = size.x
             controllerHeight = size.y
         }
         else {
-            playerHeight = playerWidth * 9 / 16
+            playerHeight = if(isVideoPortrait) maxBound else minBound
             controllerWidth = playerWidth
             controllerHeight = playerHeight
         }
@@ -568,6 +592,155 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
         params.width = playerWidth
         params.height = playerHeight
         binding.playerContainer.layoutParams = params
+    }
+
+    fun isClamped(): Boolean {
+        return layoutParams.height <= minBound //|| layoutParams.height >= maxBound
+    }
+
+    fun isFullHeight(): Boolean {
+        return layoutParams.height >= if(isVideoPortrait) maxBound else minBound
+    }
+
+    val minBound = screenWidth * 9 / 16
+    val maxBound = screenWidth * 16 / 11
+
+    private var mActivePointerId = MotionEvent.INVALID_POINTER_ID
+    private var mLastTouchX: Float = 0f
+    var mLastTouchY: Float = 0f
+    private var mPosX: Float = 0f
+    private var mPosY: Float = 0f
+    private var startX: Float = 0f
+    private var startY: Float = 0f
+
+    fun clampOrFullHeight() {
+        val isInTop = layoutParams.height in minBound .. (minBound + ((maxBound - minBound) / 2))
+
+        heightAnim = ValueAnimator.ofInt(layoutParams.height, if(isInTop) minBound else maxBound)
+        heightAnim?.duration = 300
+        heightAnim?.addUpdateListener {
+            layoutParams = layoutParams.apply {
+                height = it.animatedValue as Int
+
+                binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.also {
+                    it.height = height
+                }
+            }
+        }
+        heightAnim?.start()
+    }
+
+    private var heightAnim: ValueAnimator? = null
+
+    fun handleTouchDown(ev: MotionEvent) {
+        heightAnim?.cancel()
+        heightAnim = null
+        mLastTouchY = ev.y
+        startY = mLastTouchY
+    }
+
+    fun handleTouchDown2(ev: MotionEvent) {
+        heightAnim?.cancel()
+        heightAnim = null
+        ev.actionIndex.also { pointerIndex ->
+            // Remember where we started (for dragging)
+            mLastTouchX = ev.getX(pointerIndex)
+            mLastTouchY = ev.getY(pointerIndex)
+        }
+        startX = mLastTouchX
+        startY = mLastTouchY
+        // Save the ID of this pointer (for dragging)
+        mActivePointerId = ev.getPointerId(0)
+    }
+
+    fun handleTouchEvent3(ev: MotionEvent): Boolean {
+        when(ev.actionMasked) {
+            MotionEvent.ACTION_DOWN-> {
+//                Log.e("SCROLL","ACTION_DOWN")
+                handleTouchDown(ev)
+            }
+            MotionEvent.ACTION_MOVE-> {
+                mPosY += ev.y - mLastTouchY
+                val distanceY = ev.y - mLastTouchY
+
+//                Log.e("SCROLL", "ACTION_MOVE ->>> $distanceY")
+                layoutParams = layoutParams.apply {
+                    height = min(max(height + distanceY.toInt(), minBound), maxBound)
+                }
+
+                invalidate()
+
+                // Remember this touch position for the next move event
+                mLastTouchY = ev.y
+            }
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                val changeY = abs(ev.y - startY)
+                clampOrFullHeight()
+//                if(changeY < 5) {
+//                    return false
+//                }
+            }
+        }
+        return true
+    }
+
+    fun handleTouchEvent(ev: MotionEvent): Boolean {
+
+        when (ev.actionMasked) {
+            MotionEvent.ACTION_DOWN -> {
+                handleTouchDown2(ev)
+            }
+
+            MotionEvent.ACTION_MOVE -> {
+                // Find the index of the active pointer and fetch its position
+                val (x: Float, y: Float) = ev.findPointerIndex(mActivePointerId).let { pointerIndex ->
+                        // Calculate the distance moved
+                    ev.getX(pointerIndex) to
+                            ev.getY(pointerIndex)
+                    }
+
+                mPosX += x - mLastTouchX
+                mPosY += y - mLastTouchY
+                val distanceY = y - mLastTouchY
+
+                layoutParams = layoutParams.apply {
+                    height = min(max(height + distanceY.toInt(), minBound), maxBound)
+                    binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.also {
+                        it.height = height
+                    }
+                }
+
+                invalidate()
+
+                // Remember this touch position for the next move event
+                mLastTouchX = x
+                mLastTouchY = y
+            }
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                mActivePointerId = MotionEvent.INVALID_POINTER_ID
+                val changeY = abs(ev.getY(ev.actionIndex) - startY)
+                clampOrFullHeight()
+                if(changeY < 5) {
+                    return false
+                }
+            }
+            MotionEvent.ACTION_POINTER_UP -> {
+                ev.actionIndex.also { pointerIndex ->
+                    ev.getPointerId(pointerIndex)
+                        .takeIf { it == mActivePointerId }
+                        ?.run {
+                            // This was our active pointer going up. Choose a new
+                            // active pointer and adjust accordingly.
+                            val newPointerIndex = if (pointerIndex == 0) 1 else 0
+                            mLastTouchX = ev.getX(pointerIndex)
+                            mLastTouchY = ev.getY(pointerIndex)
+                            mActivePointerId = ev.getPointerId(newPointerIndex)
+                        }
+                }
+            }
+        }
+
+        return true
     }
 
     companion object {
