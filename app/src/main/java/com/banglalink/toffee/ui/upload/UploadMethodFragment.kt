@@ -109,7 +109,7 @@ class UploadMethodFragment : DialogFragment() {
                         Intent(
                             Intent.ACTION_PICK,
                             MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-                        ),
+                        ).setType("video/*"),
                         REQUEST_PICK_VIDEO
                     )
                 }
