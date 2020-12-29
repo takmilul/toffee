@@ -2,9 +2,14 @@ package com.banglalink.toffee.ui.upload
 
 //import com.bumptech.glide.Glide
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
+import android.os.Handler
 import android.text.InputType
 import android.util.Log
 import android.view.Gravity
@@ -12,18 +17,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.view.isVisible
 import androidx.core.view.setPadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
-import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.FragmentEditUploadInfoBinding
 import com.banglalink.toffee.di.AppCoroutineScope
@@ -44,15 +46,14 @@ import io.tus.android.client.TusAndroidUpload
 import io.tus.android.client.TusPreferencesURLStore
 import io.tus.java.client.TusClient
 import io.tus.java.client.TusUpload
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collectLatest
-import net.gotev.uploadservice.UploadService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import java.net.URL
 import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class EditUploadInfoFragment: BaseFragment() {
+class EditUploadInfoFragment : BaseFragment() {
     private lateinit var binding: FragmentEditUploadInfoBinding
     private var client: TusClient? = null
     private var progressDialog: VelBoxProgressDialog? = null
@@ -70,6 +71,8 @@ class EditUploadInfoFragment: BaseFragment() {
     private lateinit var uploadFileUri: String
 
 
+    private var bool:Boolean?=false
+
     private val viewModel: EditUploadInfoViewModel by viewModels {
         EditUploadInfoViewModel.provideFactory(editUploadViewModelFactory, uploadFileUri)
     }
@@ -79,11 +82,13 @@ class EditUploadInfoFragment: BaseFragment() {
     companion object {
         const val UPLOAD_FILE_URI = "UPLOAD_FILE_URI"
 
+
         fun newInstance(): EditUploadInfoFragment {
             return EditUploadInfoFragment()
         }
     }
-    var myUri:Uri?=null
+
+    var myUri: Uri? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         uploadFileUri = requireArguments().getString(UPLOAD_FILE_URI, "")
@@ -91,15 +96,18 @@ class EditUploadInfoFragment: BaseFragment() {
         myUri = Uri.parse(uploadFileUri)
         try {
             client = TusClient()
-            val sharedPref = activity?.getSharedPreferences("tus",0)
-            client?.setUploadCreationURL(URL("https://tusd.tusdemo.net/files/"))
+            val sharedPref = activity?.getSharedPreferences("tus", 0)
+            client?.setUploadCreationURL(URL("https://ugc-upload.toffeelive.com/upload"))
             client?.enableResuming(TusPreferencesURLStore(sharedPref))
-        }  catch (e: Exception) {
+        } catch (e: Exception) {
 
         }
     }
-    class someTask(val clients: TusClient?,
-                   val uploads: TusUpload?) : AsyncTask<Void, Long, URL>() {
+
+    class someTask(
+        val clients: TusClient?,
+        val uploads: TusUpload?
+    ) : AsyncTask<Void, Long, URL>() {
         override fun doInBackground(vararg params: Void?): URL? {
             try {
                 val uploader = clients!!.resumeOrCreateUpload(uploads!!)
@@ -115,6 +123,8 @@ class EditUploadInfoFragment: BaseFragment() {
                 return uploader.uploadURL
             } catch (e: java.lang.Exception) {
                 cancel(true)
+
+
             }
             return null
         }
@@ -127,6 +137,20 @@ class EditUploadInfoFragment: BaseFragment() {
         override fun onPostExecute(result: URL?) {
             Log.e("data", "data" + result.toString())
             // ...
+        }
+
+        override fun onProgressUpdate(vararg updates: Long?) {
+            val uploadedBytes: Long? = updates.get(0)
+            val totalBytes: Long? = updates.get(1)
+            Log.e("data",String.format("Uploaded %d/%d.", uploadedBytes, totalBytes))
+            var data:Int
+            try {
+                data= (uploadedBytes?.toDouble()!! / totalBytes!! * 100).toInt()
+                Log.e("ff","prog"+data?.toString() )
+            } catch (e: Exception) {
+                Log.e("data","exception" +e.message)
+            }
+
         }
 
     }
@@ -171,8 +195,10 @@ class EditUploadInfoFragment: BaseFragment() {
 //            }
             VelBoxAlertDialogBuilder(requireContext()).apply {
                 setTitle("Cancel Uploading")
-                setText("Are you sure that you want to\n" +
-                        "cancel uploading video?")
+                setText(
+                    "Are you sure that you want to\n" +
+                            "cancel uploading video?"
+                )
                 setPositiveButtonListener("NO") {
                     it?.dismiss()
                 }
@@ -188,7 +214,10 @@ class EditUploadInfoFragment: BaseFragment() {
         }
 
         binding.thumbEditButton.setOnClickListener {
-            val action = EditUploadInfoFragmentDirections.actionEditUploadInfoFragmentToThumbnailSelectionMethodFragment("Set Video Cover Photo")
+            val action =
+                EditUploadInfoFragmentDirections.actionEditUploadInfoFragmentToThumbnailSelectionMethodFragment(
+                    "Set Video Cover Photo"
+                )
             findNavController().navigate(action)
         }
 
@@ -211,13 +240,11 @@ class EditUploadInfoFragment: BaseFragment() {
     }
 
     private fun observeThumbnailChange() {
-        findNavController().
-            currentBackStackEntry?.
-            savedStateHandle?.
-            getLiveData<String?>(ThumbnailSelectionMethodFragment.THUMB_URI)?.
-            observe(viewLifecycleOwner, {
-                viewModel.saveThumbnail(it)
-            })
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String?>(
+            ThumbnailSelectionMethodFragment.THUMB_URI
+        )?.observe(viewLifecycleOwner, {
+            viewModel.saveThumbnail(it)
+        })
     }
 
     private fun setupTagView() {
@@ -252,7 +279,6 @@ class EditUploadInfoFragment: BaseFragment() {
     }
 
 
-
 //    override fun onDestroy() {
 //        if(mPref.uploadId != null) {
 //            appScope.launch {
@@ -264,7 +290,7 @@ class EditUploadInfoFragment: BaseFragment() {
 
     private fun observeProgressDialog() {
         observe(viewModel.progressDialog) {
-            when(it) {
+            when (it) {
                 true -> {
                     progressDialog = VelBoxProgressDialog(requireContext())
                     progressDialog?.show()
@@ -286,7 +312,7 @@ class EditUploadInfoFragment: BaseFragment() {
         }
 
         observe(viewModel.resultLiveData) {
-            when(it){
+            when (it) {
                 is Resource.Success -> {
                     lifecycleScope.launch {
 //                        getUploadInfo()?.apply {
@@ -346,14 +372,14 @@ class EditUploadInfoFragment: BaseFragment() {
 //        }
 //    }
 
-    private fun submitVideo() {
-//        try {
-//            val upload: TusUpload = TusAndroidUpload(myUri, context)
-//            val uploadTask = someTask(client, upload)
-//            uploadTask.execute()
-//        } catch (e: java.lang.Exception) {
-//
-//        }
+    public fun submitVideo() {
+        try {
+            val upload: TusUpload = TusAndroidUpload(myUri, context)
+            val uploadTask = someTask(client, upload)
+            uploadTask.execute()
+        } catch (e: java.lang.Exception) {
+
+        }
         val title = binding.uploadTitle.text.toString()
         val description = binding.uploadDescription.text.toString()
         if(title.isBlank() || description.isBlank()) {
@@ -374,5 +400,27 @@ class EditUploadInfoFragment: BaseFragment() {
             val tags = binding.uploadTags.selectedChipList.joinToString(" | ") { it.label }
             viewModel.saveUploadInfo(tags, categoryId, subcategoryId)
         }
+    }
+    @SuppressLint("NewApi")
+    fun isOnline(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (connectivityManager != null) {
+            val capabilities =
+                connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+            if (capabilities != null) {
+                if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_CELLULAR")
+                    return true
+                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_WIFI")
+                    return true
+                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_ETHERNET")
+                    return true
+                }
+            }
+        }
+        return false
     }
 }
