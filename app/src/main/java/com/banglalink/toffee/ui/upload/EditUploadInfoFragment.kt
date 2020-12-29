@@ -2,6 +2,8 @@ package com.banglalink.toffee.ui.upload
 
 //import com.bumptech.glide.Glide
 
+import android.net.Uri
+import android.os.AsyncTask
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
@@ -38,16 +40,21 @@ import com.banglalink.toffee.util.UtilsKt
 import com.pchmn.materialchips.ChipsInput
 import com.pchmn.materialchips.model.ChipInterface
 import dagger.hilt.android.AndroidEntryPoint
+import io.tus.android.client.TusAndroidUpload
+import io.tus.android.client.TusPreferencesURLStore
+import io.tus.java.client.TusClient
+import io.tus.java.client.TusUpload
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import net.gotev.uploadservice.UploadService
+import java.net.URL
 import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class EditUploadInfoFragment: BaseFragment() {
     private lateinit var binding: FragmentEditUploadInfoBinding
-
+    private var client: TusClient? = null
     private var progressDialog: VelBoxProgressDialog? = null
 
     @Inject
@@ -62,6 +69,7 @@ class EditUploadInfoFragment: BaseFragment() {
 
     private lateinit var uploadFileUri: String
 
+
     private val viewModel: EditUploadInfoViewModel by viewModels {
         EditUploadInfoViewModel.provideFactory(editUploadViewModelFactory, uploadFileUri)
     }
@@ -75,10 +83,52 @@ class EditUploadInfoFragment: BaseFragment() {
             return EditUploadInfoFragment()
         }
     }
-
+    var myUri:Uri?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         uploadFileUri = requireArguments().getString(UPLOAD_FILE_URI, "")
+
+        myUri = Uri.parse(uploadFileUri)
+        try {
+            client = TusClient()
+            val sharedPref = activity?.getSharedPreferences("tus",0)
+            client?.setUploadCreationURL(URL("https://tusd.tusdemo.net/files/"))
+            client?.enableResuming(TusPreferencesURLStore(sharedPref))
+        }  catch (e: Exception) {
+
+        }
+    }
+    class someTask(val clients: TusClient?,
+                   val uploads: TusUpload?) : AsyncTask<Void, Long, URL>() {
+        override fun doInBackground(vararg params: Void?): URL? {
+            try {
+                val uploader = clients!!.resumeOrCreateUpload(uploads!!)
+                val totalBytes = uploads!!.size
+                var uploadedBytes = uploader.offset
+                // Upload file in 1MiB chunks
+                uploader.chunkSize = 1024 * 1024
+                while (!isCancelled && uploader.uploadChunk() > 0) {
+                    uploadedBytes = uploader.offset
+                    publishProgress(uploadedBytes, totalBytes)
+                }
+                uploader.finish()
+                return uploader.uploadURL
+            } catch (e: java.lang.Exception) {
+                cancel(true)
+            }
+            return null
+        }
+
+        override fun onPreExecute() {
+            super.onPreExecute()
+            // ...
+        }
+
+        override fun onPostExecute(result: URL?) {
+            Log.e("data", "data" + result.toString())
+            // ...
+        }
+
     }
 
     override fun onCreateView(
@@ -297,6 +347,13 @@ class EditUploadInfoFragment: BaseFragment() {
 //    }
 
     private fun submitVideo() {
+//        try {
+//            val upload: TusUpload = TusAndroidUpload(myUri, context)
+//            val uploadTask = someTask(client, upload)
+//            uploadTask.execute()
+//        } catch (e: java.lang.Exception) {
+//
+//        }
         val title = binding.uploadTitle.text.toString()
         val description = binding.uploadDescription.text.toString()
         if(title.isBlank() || description.isBlank()) {

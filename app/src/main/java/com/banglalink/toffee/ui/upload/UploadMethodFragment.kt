@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -19,27 +20,22 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.repository.UploadInfoRepository
+import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.showToast
-import com.banglalink.toffee.extension.snack
-import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeActivity
-import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
-import com.banglalink.toffee.util.UtilsKt
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
 import dagger.hilt.android.AndroidEntryPoint
+import io.tus.android.client.TusAndroidUpload
+import io.tus.android.client.TusPreferencesURLStore
+import io.tus.java.client.TusClient
+import io.tus.java.client.TusUpload
 import kotlinx.android.synthetic.main.upload_method_fragment.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import net.gotev.uploadservice.protocols.binary.BinaryUploadRequest
-import net.gotev.uploadservice.protocols.multipart.MultipartUploadRequest
 import java.io.File
 import java.io.IOException
+import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -47,6 +43,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class UploadMethodFragment : DialogFragment() {
 
+    @Inject
+    lateinit var mPreference:Preference
     @Inject
     lateinit var mUploadInfoRepository: UploadInfoRepository
 
@@ -74,6 +72,7 @@ class UploadMethodFragment : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         return inflater.inflate(R.layout.upload_method_fragment, container, false)
     }
 
@@ -99,6 +98,7 @@ class UploadMethodFragment : DialogFragment() {
         open_gallery_button.setOnClickListener {
             checkFileSystemPermission()
         }
+
     }
 
     private fun checkFileSystemPermission() {
@@ -178,6 +178,7 @@ class UploadMethodFragment : DialogFragment() {
             REQUEST_PICK_VIDEO -> {
                 if (resultCode == Activity.RESULT_OK && data != null && data.dataString != null) {
                     openEditUpload(data.dataString!!)
+
                 }
                 else {
                     ToffeeAnalytics.logBreadCrumb("Camera/video picker returned without any data")
