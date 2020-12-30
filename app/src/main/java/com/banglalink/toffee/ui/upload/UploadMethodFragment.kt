@@ -182,8 +182,6 @@ class UploadMethodFragment : DialogFragment() {
                 if (resultCode == Activity.RESULT_OK && videoFile != null) {
                     println("CaptureAbsolutePath${videoFile!!.absolutePath}")
                     println("CapturePath${videoFile!!.path}")
-                   // val resolver = context!!.contentResolver
-                   // val cursor = resolver.query(data?.data!!, arrayOf(OpenableColumns.SIZE, OpenableColumns.DISPLAY_NAME), null, null, null)
                     try {
                         openEditUpload(data?.dataString!!)
                     } catch (e: Exception) {
