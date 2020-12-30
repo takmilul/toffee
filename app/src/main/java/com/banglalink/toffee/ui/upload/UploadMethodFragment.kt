@@ -5,11 +5,10 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
+import android.provider.OpenableColumns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,15 +26,10 @@ import com.banglalink.toffee.ui.home.HomeActivity
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
 import dagger.hilt.android.AndroidEntryPoint
-import io.tus.android.client.TusAndroidUpload
-import io.tus.android.client.TusPreferencesURLStore
-import io.tus.java.client.TusClient
-import io.tus.java.client.TusUpload
 import kotlinx.android.synthetic.main.upload_method_fragment.*
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
-import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -188,7 +182,9 @@ class UploadMethodFragment : DialogFragment() {
                 if (resultCode == Activity.RESULT_OK && videoFile != null) {
                     println("CaptureAbsolutePath${videoFile!!.absolutePath}")
                     println("CapturePath${videoFile!!.path}")
-                    openEditUpload(videoFile!!.absolutePath)
+                   // val resolver = context!!.contentResolver
+                   // val cursor = resolver.query(data?.data!!, arrayOf(OpenableColumns.SIZE, OpenableColumns.DISPLAY_NAME), null, null, null)
+                    openEditUpload(data?.dataString!!)
                 }
                 else {
                     ToffeeAnalytics.logBreadCrumb("Camera/video capture result not returned")

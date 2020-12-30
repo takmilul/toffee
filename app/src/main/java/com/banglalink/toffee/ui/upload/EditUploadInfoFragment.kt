@@ -9,7 +9,7 @@ import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
-import android.os.Handler
+import android.os.Environment
 import android.text.InputType
 import android.util.Log
 import android.view.Gravity
@@ -17,6 +17,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.setPadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
@@ -27,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.repository.UploadInfoRepository
+import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.FragmentEditUploadInfoBinding
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.extension.loadBase64
@@ -46,17 +48,18 @@ import io.tus.android.client.TusAndroidUpload
 import io.tus.android.client.TusPreferencesURLStore
 import io.tus.java.client.TusClient
 import io.tus.java.client.TusUpload
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.net.URL
+import java.util.*
 import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class EditUploadInfoFragment : BaseFragment() {
     private lateinit var binding: FragmentEditUploadInfoBinding
-    private var client: TusClient? = null
+
     private var progressDialog: VelBoxProgressDialog? = null
+
 
     @Inject
     lateinit var editUploadViewModelFactory: EditUploadInfoViewModel.AssistedFactory
@@ -88,72 +91,14 @@ class EditUploadInfoFragment : BaseFragment() {
         }
     }
 
-    var myUri: Uri? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         uploadFileUri = requireArguments().getString(UPLOAD_FILE_URI, "")
 
-        myUri = Uri.parse(uploadFileUri)
-        try {
-            client = TusClient()
-            val sharedPref = activity?.getSharedPreferences("tus", 0)
-            client?.setUploadCreationURL(URL("https://ugc-upload.toffeelive.com/upload"))
-            client?.enableResuming(TusPreferencesURLStore(sharedPref))
-        } catch (e: Exception) {
-
-        }
     }
 
-    class someTask(
-        val clients: TusClient?,
-        val uploads: TusUpload?
-    ) : AsyncTask<Void, Long, URL>() {
-        override fun doInBackground(vararg params: Void?): URL? {
-            try {
-                val uploader = clients!!.resumeOrCreateUpload(uploads!!)
-                val totalBytes = uploads!!.size
-                var uploadedBytes = uploader.offset
-                // Upload file in 1MiB chunks
-                uploader.chunkSize = 1024 * 1024
-                while (!isCancelled && uploader.uploadChunk() > 0) {
-                    uploadedBytes = uploader.offset
-                    publishProgress(uploadedBytes, totalBytes)
-                }
-                uploader.finish()
-                return uploader.uploadURL
-            } catch (e: java.lang.Exception) {
-                cancel(true)
 
-
-            }
-            return null
-        }
-
-        override fun onPreExecute() {
-            super.onPreExecute()
-            // ...
-        }
-
-        override fun onPostExecute(result: URL?) {
-            Log.e("data", "data" + result.toString())
-            // ...
-        }
-
-        override fun onProgressUpdate(vararg updates: Long?) {
-            val uploadedBytes: Long? = updates.get(0)
-            val totalBytes: Long? = updates.get(1)
-            Log.e("data",String.format("Uploaded %d/%d.", uploadedBytes, totalBytes))
-            var data:Int
-            try {
-                data= (uploadedBytes?.toDouble()!! / totalBytes!! * 100).toInt()
-                Log.e("ff","prog"+data?.toString() )
-            } catch (e: Exception) {
-                Log.e("data","exception" +e.message)
-            }
-
-        }
-
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -332,12 +277,19 @@ class EditUploadInfoFragment : BaseFragment() {
 //                        dialog.show()
                         findNavController().navigate(R.id.upload_minimize, Bundle().apply {
                             putString(MinimizeUploadFragment.UPLOAD_ID, it.data.first)
+                            putString(MinimizeUploadFragment.UPLOAD_URI, uploadFileUri)
                             putLong(MinimizeUploadFragment.CONTENT_ID, it.data.second)
                         })
                     }
                 }
                 else -> {
-                    context?.showToast("Unable to submit the video.")
+                    progressDialog?.dismiss()
+                    findNavController().navigate(R.id.upload_minimize, Bundle().apply {
+                        putString(MinimizeUploadFragment.UPLOAD_ID, "")
+                        putString(MinimizeUploadFragment.UPLOAD_URI, uploadFileUri)
+                        putLong(MinimizeUploadFragment.CONTENT_ID, 0)
+                    })
+                    //context?.showToast("Unable to submit the video.")
                 }
             }
         }
@@ -372,14 +324,9 @@ class EditUploadInfoFragment : BaseFragment() {
 //        }
 //    }
 
-    public fun submitVideo() {
-        try {
-            val upload: TusUpload = TusAndroidUpload(myUri, context)
-            val uploadTask = someTask(client, upload)
-            uploadTask.execute()
-        } catch (e: java.lang.Exception) {
 
-        }
+      fun submitVideo() {
+
         val title = binding.uploadTitle.text.toString()
         val description = binding.uploadDescription.text.toString()
         if(title.isBlank() || description.isBlank()) {

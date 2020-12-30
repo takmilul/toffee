@@ -16,7 +16,7 @@ import java.util.Map;
 import io.tus.java.client.TusUpload;
 
 public class TusAndroidUpload extends TusUpload {
-    public TusAndroidUpload(Uri uri, Context context) throws FileNotFoundException {
+    public TusAndroidUpload(Uri uri, Context context,String filename) throws FileNotFoundException {
         ContentResolver resolver = context.getContentResolver();
         Cursor cursor = resolver.query(uri, new String[]{OpenableColumns.SIZE, OpenableColumns.DISPLAY_NAME}, null, null, null);
         if(cursor == null) {
@@ -51,7 +51,7 @@ public class TusAndroidUpload extends TusUpload {
         setFingerprint(String.format("%s-%d", uri.toString(), size));
 
         Map<String, String> metadata = new HashMap<>();
-        metadata.put("filename", name);
+        metadata.put("filename", filename);
         setMetadata(metadata);
 
         cursor.close();
