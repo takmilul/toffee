@@ -19,4 +19,7 @@ interface ReactionDao {
     
     @Query("SELECT * FROM ReactionInfo WHERE customerId == :customerId AND contentId == :contentId")
     suspend fun getReactionByContentId(customerId: Int, contentId: String): ReactionInfo?
+    
+    @Query("UPDATE ReactionInfo SET reaction = :reaction WHERE customerId == :customerId AND contentId == :contentId")
+    suspend fun updateReactionByContentId(customerId: Int, contentId: String, reaction: Int)
 }
