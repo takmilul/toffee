@@ -8,9 +8,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
-import android.widget.TextView
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.repository.UploadInfoRepository
@@ -95,21 +92,10 @@ class MinimizeUploadFragment: BaseFragment() {
         return view;
     }
     suspend fun value(){
-        actualFileName = withContext(Dispatchers.IO + Job()) {
-            UtilsKt.fileNameFromContentUri(context!!, Uri.parse(uploadURI))
-        }
         val fileSize = withContext(Dispatchers.IO + Job()) {
             UtilsKt.fileSizeFromContentUri(context!!, Uri.parse(uploadURI))
         }
-
         size=Utils.readableFileSize(fileSize)
-        val idx = actualFileName?.lastIndexOf(".") ?: -1
-        val ext = if (idx >= 0) {
-            actualFileName?.substring(idx) ?: ""
-        }
-        else ""
-//
-       // fileName = preference?.customerId.toString() + "_" + UUID.randomUUID().toString() + ext
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
