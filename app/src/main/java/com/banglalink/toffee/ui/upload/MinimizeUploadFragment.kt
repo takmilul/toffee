@@ -46,13 +46,14 @@ class MinimizeUploadFragment: BaseFragment() {
     var myUri: Uri? = null
     @Inject
     lateinit var uploadRepo: UploadInfoRepository
-    private var fileName: String = ""
+    private lateinit var fileName: String
     private var size: String = ""
     private var actualFileName: String? = null
     companion object {
         const val UPLOAD_ID = "UPLOAD_ID"
         const val UPLOAD_URI = "UPLOAD_URI"
         const val CONTENT_ID = "SERVER_CONTENT_ID"
+        const val FILE_NAME = "FILE"
         @JvmStatic
         fun newInstance(): MinimizeUploadFragment {
             return MinimizeUploadFragment()
@@ -65,6 +66,7 @@ class MinimizeUploadFragment: BaseFragment() {
         uploadId = requireArguments().getString(UPLOAD_ID)!!
         uploadURI = requireArguments().getString(UPLOAD_URI)!!
         contentId = requireArguments().getLong(CONTENT_ID)
+        fileName =  requireArguments().getString(FILE_NAME)!!
 
     }
 
@@ -107,7 +109,7 @@ class MinimizeUploadFragment: BaseFragment() {
         }
         else ""
 //
-        fileName = preference?.customerId.toString() + "_" + UUID.randomUUID().toString() + ext
+       // fileName = preference?.customerId.toString() + "_" + UUID.randomUUID().toString() + ext
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

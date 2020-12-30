@@ -40,6 +40,7 @@ import com.banglalink.toffee.model.UgcSubCategory
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.UtilsKt
 import com.pchmn.materialchips.ChipsInput
 import com.pchmn.materialchips.model.ChipInterface
@@ -59,7 +60,9 @@ class EditUploadInfoFragment : BaseFragment() {
     private lateinit var binding: FragmentEditUploadInfoBinding
 
     private var progressDialog: VelBoxProgressDialog? = null
-
+    private var fileName: String = ""
+    private var size: String = ""
+    private var actualFileName: String? = null
 
     @Inject
     lateinit var editUploadViewModelFactory: EditUploadInfoViewModel.AssistedFactory
@@ -73,6 +76,7 @@ class EditUploadInfoFragment : BaseFragment() {
 
     private lateinit var uploadFileUri: String
 
+    private var preference: Preference? = null
 
     private var bool:Boolean?=false
 
@@ -105,6 +109,7 @@ class EditUploadInfoFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        preference=Preference.getInstance()
         binding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_edit_upload_info,
@@ -277,6 +282,7 @@ class EditUploadInfoFragment : BaseFragment() {
 //                        dialog.show()
                         findNavController().navigate(R.id.upload_minimize, Bundle().apply {
                             putString(MinimizeUploadFragment.UPLOAD_ID, it.data.first)
+                            putString(MinimizeUploadFragment.FILE_NAME, fileName)
                             putString(MinimizeUploadFragment.UPLOAD_URI, uploadFileUri)
                             putLong(MinimizeUploadFragment.CONTENT_ID, it.data.second)
                         })
@@ -287,6 +293,7 @@ class EditUploadInfoFragment : BaseFragment() {
                     findNavController().navigate(R.id.upload_minimize, Bundle().apply {
                         putString(MinimizeUploadFragment.UPLOAD_ID, "")
                         putString(MinimizeUploadFragment.UPLOAD_URI, uploadFileUri)
+                        putString(MinimizeUploadFragment.FILE_NAME, fileName)
                         putLong(MinimizeUploadFragment.CONTENT_ID, 0)
                     })
                     //context?.showToast("Unable to submit the video.")
@@ -345,7 +352,22 @@ class EditUploadInfoFragment : BaseFragment() {
             } else -1
 
             val tags = binding.uploadTags.selectedChipList.joinToString(" | ") { it.label }
-            viewModel.saveUploadInfo(tags, categoryId, subcategoryId)
+            actualFileName = withContext(Dispatchers.IO + Job()) {
+                UtilsKt.fileNameFromContentUri(context!!, Uri.parse(uploadFileUri))
+            }
+            val fileSize = withContext(Dispatchers.IO + Job()) {
+                UtilsKt.fileSizeFromContentUri(context!!, Uri.parse(uploadFileUri))
+            }
+
+            size= Utils.readableFileSize(fileSize)
+            val idx = actualFileName?.lastIndexOf(".") ?: -1
+            val ext = if (idx >= 0) {
+                actualFileName?.substring(idx) ?: ""
+            }
+            else ""
+//
+            fileName = preference?.customerId.toString() + "_" + UUID.randomUUID().toString() + ext
+            viewModel.saveUploadInfo(tags, categoryId, subcategoryId,fileName)
         }
     }
     @SuppressLint("NewApi")
