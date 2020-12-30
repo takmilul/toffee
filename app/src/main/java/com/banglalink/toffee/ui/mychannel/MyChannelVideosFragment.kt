@@ -2,7 +2,6 @@ package com.banglalink.toffee.ui.mychannel
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -149,23 +148,23 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
 
     override fun onItemClicked(item: ChannelInfo) {
         super.onItemClicked(item)
-        if (item.isApproved == 0) {
-            Toast.makeText(requireContext(), "Your video has not approved yet. Once it's approved, you can play the video", Toast.LENGTH_SHORT).show()
-        }
-        else {
+//        if (item.isApproved == 0) {
+//            Toast.makeText(requireContext(), "Your video has not approved yet. Once it's approved, you can play the video", Toast.LENGTH_SHORT).show()
+//        }
+//        else {
             homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
-        }
+//        }
     }
 
     override fun onReactionClicked(view: View, reactionCountView: View, item: ChannelInfo) {
         super.onReactionClicked(view, reactionCountView, item)
-        requireActivity().supportFragmentManager.beginTransaction().add(ReactionFragment.newInstance(view, reactionCountView, item, true), ReactionFragment.TAG).commit()
-    }
-
-    override fun onReactionLongPressed(view: View, reactionCountView: View, item: ChannelInfo) {
-        super.onReactionLongPressed(view, reactionCountView, item)
         requireActivity().supportFragmentManager.beginTransaction().add(ReactionFragment.newInstance(view, reactionCountView, item), ReactionFragment.TAG).commit()
     }
+
+    /*override fun onReactionLongPressed(view: View, reactionCountView: View, item: ChannelInfo) {
+        super.onReactionLongPressed(view, reactionCountView, item)
+        requireActivity().supportFragmentManager.beginTransaction().add(ReactionFragment.newInstance(view, reactionCountView, item), ReactionFragment.TAG).commit()
+    }*/
     
     override fun onShareClicked(view: View, item: ChannelInfo) {
         super.onShareClicked(view, item)
