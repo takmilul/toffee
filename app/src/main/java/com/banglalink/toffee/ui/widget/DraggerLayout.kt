@@ -92,8 +92,12 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
         return false
     }
 
-    fun isMaximized() = dragView.scaleX == 1.0f
-    fun isMinimize() = dragView.scaleX == 0.5f
+    fun getMaxScale() = 1.0f
+    fun getMidScale() = (getMaxScale() + getMinScale()) / 2.0f
+    fun getMinScale() = 0.5f//if(dragView.isVideoPortrait) 0.25f else 0.5f
+
+    fun isMaximized() = dragView.scaleX == getMaxScale()
+    fun isMinimize() = dragView.scaleX == getMinScale()
     fun isClamped() = dragView.isClamped()
 
     private fun shouldMaximize(): Boolean {
@@ -275,15 +279,15 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
                     onPositionChangedListenerList.forEach {
                         it.onViewDestroy()
                     }
-                    dragView.scaleX = 1.0f
-                    dragView.scaleY = 1.0f
+                    dragView.scaleX = getMaxScale()
+                    dragView.scaleY = getMaxScale()
                 } else {
                     minimize()
                 }
             } else {
-                if (dragView.scaleX > .75 && dragView.scaleX <= 1f) {
+                if (dragView.scaleX > getMidScale() && dragView.scaleX <= getMaxScale()) {
                     maximize()
-                } else if (dragView.scaleX in 0.5 .. 0.75) {
+                } else if (dragView.scaleX in getMinScale() .. getMidScale()) {
                     minimize()
                 }
             }
@@ -318,12 +322,12 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
                             colorValue
                         )
                     )
-                    val scale = 1.0f - 0.50f * (top * 100f / bottomBound) / 100.0f
+                    val scale = getMaxScale() - (1 - getMinScale()) * (top * 100f / bottomBound) / 100.0f
                     dragView.pivotX = (dragView.width - 38).toFloat()
                     dragView.pivotY = (dragView.height - bottomMargin).toFloat()
                     val padding = (20 - 20 * scale).toInt()
                     dragView.setPadding(padding, padding, padding, padding)
-                    if (scale == .5f) {
+                    if (scale == getMinScale()) {
                         dragView.setBackgroundColor(Color.WHITE)
                     } else {
                         dragView.setBackgroundColor(Color.BLACK)

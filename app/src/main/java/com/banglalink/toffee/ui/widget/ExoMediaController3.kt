@@ -67,7 +67,7 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
     private val videoHeight = 1080
     private lateinit var binding: MediaControlLayout3Binding
     private val screenWidth = UtilsKt.getScreenWidth()
-    private var isVideoPortrait = false
+    var isVideoPortrait = false
 
     init {
         handler = MessageHandler()
@@ -570,28 +570,22 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
     }
 
     fun resizeView(size: Point) {
-        val playerHeight: Int
-        val controllerWidth: Int
-        val controllerHeight: Int
         val playerWidth: Int = size.x
-        if (size.x > size.y) { //landscape
-            playerHeight = size.y
-            controllerWidth = size.x
-            controllerHeight = size.y
+        val playerHeight: Int = if (size.x > size.y) { //landscape
+            size.y
+        } else {
+            maxBound
         }
-        else {
-            playerHeight = if(isVideoPortrait) maxBound else minBound
-            controllerWidth = playerWidth
-            controllerHeight = playerHeight
+
+        layoutParams = layoutParams.apply {
+            width = playerWidth
+            height = playerHeight
         }
-        var params: ViewGroup.LayoutParams = layoutParams
-        params.width = controllerWidth
-        params.height = controllerHeight
-        layoutParams = params
-        params = binding.playerContainer.layoutParams
-        params.width = playerWidth
-        params.height = playerHeight
-        binding.playerContainer.layoutParams = params
+
+        binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.apply {
+            width = playerWidth
+            height = playerHeight
+        }
     }
 
     fun isClamped(): Boolean {
@@ -603,7 +597,8 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
     }
 
     val minBound = screenWidth * 9 / 16
-    val maxBound = screenWidth * 16 / 11
+    val maxBound: Int
+        get() = if(isVideoPortrait) screenWidth * 16 / 11 else minBound
 
     private var mActivePointerId = MotionEvent.INVALID_POINTER_ID
     private var mLastTouchX: Float = 0f
@@ -614,6 +609,7 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
     private var startY: Float = 0f
 
     fun clampOrFullHeight() {
+        if(isClamped() || isFullHeight()) return
         val isInTop = layoutParams.height in minBound .. (minBound + ((maxBound - minBound) / 2))
 
         heightAnim = ValueAnimator.ofInt(layoutParams.height, if(isInTop) minBound else maxBound)
@@ -720,9 +716,9 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
                 mActivePointerId = MotionEvent.INVALID_POINTER_ID
                 val changeY = abs(ev.getY(ev.actionIndex) - startY)
                 clampOrFullHeight()
-                if(changeY < 5) {
-                    return false
-                }
+//                if(changeY < 5) {
+//                    return false
+//                }
             }
             MotionEvent.ACTION_POINTER_UP -> {
                 ev.actionIndex.also { pointerIndex ->
