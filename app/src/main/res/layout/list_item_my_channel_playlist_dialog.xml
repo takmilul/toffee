@@ -27,21 +27,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <RadioButton
+        <androidx.appcompat.widget.AppCompatRadioButton
             android:id="@+id/radioButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="@{data.name}"
+            android:text="@{` ` + data.name}"
             android:minLines="1"
             android:maxLines="2"
+            android:background="@null"
+            android:button="@drawable/custom_radio_button"
             android:checked="@{position.equals(selectedPosition)}"
             android:onClick="@{(view) -> callback.onCheckedChanged(view, data, position, true)}"
             android:textColor="@color/main_text_color"
-            tools:text="My All Time Favorite English Music Videos 2018"
+            tools:text=" My All Time Favorite English Music Videos 2018"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>

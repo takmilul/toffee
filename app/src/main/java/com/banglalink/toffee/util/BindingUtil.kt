@@ -1,5 +1,6 @@
 package com.banglalink.toffee.util
 
+import android.graphics.Color
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.TextUtils
@@ -277,6 +278,7 @@ fun loadReactionEmo(view: View, reaction: Int) {
         }
         Love.value -> {
             reactionTitle = Love.name
+            if(view is TextView) view.setTextColor(Color.RED)
             R.drawable.ic_reaction_love_filled
         }
         HaHa.value -> {

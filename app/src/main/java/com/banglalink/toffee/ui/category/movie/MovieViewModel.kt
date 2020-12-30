@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.category.movie
 
-import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -26,6 +25,7 @@ class MovieViewModel @ViewModelInject constructor(
     private val getContentAssistedFactory: GetContents.AssistedFactory,
     private val comingSoonApiService: MoviesComingSoonService,
 ): BaseViewModel() {
+    
     private val moviesContentCardsResponse = MutableLiveData<MoviesContentVisibilityCards>()
     val moviesContentCards = moviesContentCardsResponse.toLiveData()
     private val thrillerMoviesResponse = MutableLiveData<List<ChannelInfo>>()
@@ -46,6 +46,7 @@ class MovieViewModel @ViewModelInject constructor(
     val telefilms = telefilmsResponse.toLiveData()
     private val comingSoonResponse = MutableLiveData<List<ComingSoonContent>>()
     val comingSoonContents = comingSoonResponse.toLiveData()
+    private var continueWatchingCount = 0
     
     val loadMovieCategoryDetail by lazy{
         viewModelScope.launch {
@@ -54,9 +55,17 @@ class MovieViewModel @ViewModelInject constructor(
             } catch (ex: Exception) {
                 null
             }
-            moviesContentCardsResponse.value = response?.cards ?: MoviesContentVisibilityCards()
+            moviesContentCardsResponse.value = response?.cards?.let { card ->
+                card.continueWatching = if (continueWatchingCount == 0) 0 else card.continueWatching
+                card.moviePreviews = moviePreviewsResponse.value?.let{ if (it.isEmpty()) 0 else card.moviePreviews } ?: 0 
+                card.trendingNow = trendingNowMoviesResponse.value?.let{ if (it.isEmpty()) 0 else card.trendingNow } ?: 0 
+                card.telefilm = telefilmsResponse.value?.let{ if (it.isEmpty()) 0 else card.telefilm } ?: 0 
+                card.comingSoon = comingSoonResponse.value?.let{ if (it.isEmpty()) 0 else card.comingSoon } ?: 0 
+                
+                card
+            } ?: MoviesContentVisibilityCards()
 
-            thrillerMoviesResponse.value = response?.subCategoryWiseContent?.singleOrNull { it.subCategoryName == "Thriller" }?.let {
+            thrillerMoviesResponse.value = response?.subCategoryWiseContent?.find { it.subCategoryName == "Thriller" }?.let {
                 it.channels?.map { cinfo->
                     cinfo.categoryId = 1
                     cinfo.viewProgress = viewProgressRepo.getProgressByContent(cinfo.id.toLong())?.progress ?: 0L
@@ -69,7 +78,7 @@ class MovieViewModel @ViewModelInject constructor(
                 emptyList()
             }
 
-            actionMoviesResponse.value = response?.subCategoryWiseContent?.singleOrNull { it.subCategoryName == "Action" }?.let {
+            actionMoviesResponse.value = response?.subCategoryWiseContent?.find { it.subCategoryName == "Action" }?.let {
                 it.channels?.map { cinfo->
                     cinfo.categoryId = 1
                     cinfo.viewProgress = viewProgressRepo.getProgressByContent(cinfo.id.toLong())?.progress ?: 0L
@@ -82,7 +91,7 @@ class MovieViewModel @ViewModelInject constructor(
                 emptyList()
             }
 
-            romanticMoviesResponse.value = response?.subCategoryWiseContent?.singleOrNull { it.subCategoryName == "Romance" }?.let {
+            romanticMoviesResponse.value = response?.subCategoryWiseContent?.find { it.subCategoryName == "Romance" }?.let {
                 it.channels?.map { cinfo->
                     cinfo.categoryId = 1
                     cinfo.viewProgress = viewProgressRepo.getProgressByContent(cinfo.id.toLong())?.progress ?: 0L
@@ -95,7 +104,7 @@ class MovieViewModel @ViewModelInject constructor(
                 emptyList()
             }
 
-            banglaMoviesResponse.value = response?.subCategoryWiseContent?.singleOrNull { it.subCategoryName == "Bangla" }?.let {
+            banglaMoviesResponse.value = response?.subCategoryWiseContent?.find { it.subCategoryName == "Bangla" }?.let {
                 it.channels?.map { cinfo->
                     cinfo.categoryId = 1
                     cinfo.viewProgress = viewProgressRepo.getProgressByContent(cinfo.id.toLong())?.progress ?: 0L
@@ -108,7 +117,7 @@ class MovieViewModel @ViewModelInject constructor(
                 emptyList()
             }
 
-            englishMoviesResponse.value = response?.subCategoryWiseContent?.singleOrNull { it.subCategoryName == "English" }?.let {
+            englishMoviesResponse.value = response?.subCategoryWiseContent?.find { it.subCategoryName == "English" }?.let {
                 it.channels?.map { cinfo->
                     cinfo.categoryId = 1
                     cinfo.viewProgress = viewProgressRepo.getProgressByContent(cinfo.id.toLong())?.progress ?: 0L
@@ -130,6 +139,11 @@ class MovieViewModel @ViewModelInject constructor(
                     it.categoryId = 1
                     it.viewProgress = viewProgressRepo.getProgressByContent(it.id.toLong())?.progress ?: 0L
                     it
+                }.run { 
+                    moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply {
+                        moviePreviews = if (isEmpty()) 0 else moviePreviews
+                    }
+                    this
                 }
             } catch (ex: Exception) {
                 moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply {
@@ -148,6 +162,11 @@ class MovieViewModel @ViewModelInject constructor(
                     it.categoryId = 1
                     it.viewProgress = viewProgressRepo.getProgressByContent(it.id.toLong())?.progress ?: 0L
                     it
+                }.run {
+                    moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply {
+                        trendingNow = if(isEmpty()) 0 else trendingNow
+                    }
+                    this
                 }
             }
             catch (ex: Exception) {
@@ -168,6 +187,11 @@ class MovieViewModel @ViewModelInject constructor(
                     it.categoryId = 1
                     it.viewProgress = viewProgressRepo.getProgressByContent(it.id.toLong())?.progress ?: 0L
                     it
+                }.run {
+                    moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply {
+                        telefilm = if(isEmpty()) 0 else telefilm
+                    }
+                    this
                 }
             } catch (ex: Exception) {
                 moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply {
@@ -181,7 +205,12 @@ class MovieViewModel @ViewModelInject constructor(
     val loadComingSoonContents by lazy{
         viewModelScope.launch {
             comingSoonResponse.value = try{
-                comingSoonApiService.loadData("VOD", 1, 0, 10, 0)
+                comingSoonApiService.loadData("VOD", 1, 0, 10, 0).run { 
+                    moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply { 
+                        comingSoon = if(isEmpty()) 0 else comingSoon
+                    }
+                    this
+                }
             } catch (ex: Exception) {
                 moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply {
                     comingSoon = 0
@@ -193,11 +222,12 @@ class MovieViewModel @ViewModelInject constructor(
 
     fun getContinueWatchingFlow(catId: Int): Flow<List<ChannelInfo>> {
         return continueWatchingRepo.getAllItemsByCategory(catId).map {
+            continueWatchingCount = it.size
             it.mapNotNull { item ->
                 item.channelInfo
             }.apply {
                 moviesContentCardsResponse.value = moviesContentCardsResponse.value?.also { cardList ->
-                    cardList.continueWatching = if(isEmpty()) 0 else 1
+                    cardList.continueWatching = if (isEmpty()) 0 else cardList.continueWatching
                 }
             }
         }

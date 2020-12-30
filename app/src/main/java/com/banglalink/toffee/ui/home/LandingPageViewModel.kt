@@ -1,8 +1,10 @@
 package com.banglalink.toffee.ui.home
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.util.Pair
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
@@ -22,12 +24,16 @@ import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.enums.PageType.Landing
 import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.*
+import com.banglalink.toffee.model.Resource.Failure
+import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.ui.mychannel.MyChannelHomeFragment
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class LandingPageViewModel @ViewModelInject constructor(
+    @ApplicationContext private val context: Context,
     private val mostPopularApi: GetMostPopularContents.AssistedFactory,
     private val mostPopularPlaylists: GetMostPopularPlaylists,
     private val categoryListApi: GetUgcCategories,
@@ -72,18 +78,26 @@ class LandingPageViewModel @ViewModelInject constructor(
 
     fun loadFeaturedContentList(){
         viewModelScope.launch {
-            val response = featuredAssistedFactory.loadData("VOD", pageType.value?:Landing, categoryId.value?:0)
-            response.channels?.let {
-                featuredContentList.postValue(resultFromResponse { it })
-            }
-            response.subcategories?.let { 
-                if (it.isNotEmpty()) {
-                    subCategoryList.postValue(resultFromResponse { it })
+            val response = resultFromResponse { featuredAssistedFactory.loadData("VOD", pageType.value?:Landing, categoryId.value?:0) }
+
+            when (response) {
+                is Success -> {
+                    response.data.channels?.let {
+                        featuredContentList.postValue(resultFromResponse { it })
+                    }
+                    response.data.subcategories?.let {
+                        if (it.isNotEmpty()) {
+                            subCategoryList.postValue(resultFromResponse { it })
+                        }
+                    }
+                    response.data.hashTags?.let {
+                        if (it.isNotBlank()) {
+                            hashtagData.value = it.split(",").filter { ht -> ht.isNotBlank() }
+                        }
+                    }
                 }
-            }
-            response.hashTags?.let {
-                if(it.isNotBlank()) {
-                    hashtagData.value = it.split(",").filter { ht -> ht.isNotBlank() }
+                is Failure -> {
+                    Toast.makeText(context, response.error.msg, Toast.LENGTH_SHORT).show()
                 }
             }
         }
