@@ -184,7 +184,10 @@ class UploadMethodFragment : DialogFragment() {
                     println("CapturePath${videoFile!!.path}")
                    // val resolver = context!!.contentResolver
                    // val cursor = resolver.query(data?.data!!, arrayOf(OpenableColumns.SIZE, OpenableColumns.DISPLAY_NAME), null, null, null)
-                    openEditUpload(data?.dataString!!)
+                    try {
+                        openEditUpload(data?.dataString!!)
+                    } catch (e: Exception) {
+                    }
                 }
                 else {
                     ToffeeAnalytics.logBreadCrumb("Camera/video capture result not returned")
