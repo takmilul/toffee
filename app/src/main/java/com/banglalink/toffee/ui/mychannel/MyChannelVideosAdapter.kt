@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.mychannel
 
-import android.widget.TextView
 import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
@@ -9,9 +8,8 @@ import com.banglalink.toffee.common.paging.BaseViewHolder
 import com.banglalink.toffee.common.paging.ItemComparator
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.ContentReactionCallback
-import kotlinx.android.synthetic.main.list_item_videos.view.*
 
-class MyChannelVideosAdapter(private val listener: ContentReactionCallback<ChannelInfo>?): BasePagingDataAdapter<ChannelInfo>(listener as BaseListItemCallback<ChannelInfo>, ItemComparator()) {
+class MyChannelVideosAdapter(listener: ContentReactionCallback<ChannelInfo>?): BasePagingDataAdapter<ChannelInfo>(listener as BaseListItemCallback<ChannelInfo>, ItemComparator()) {
 
     override fun getItemViewType(position: Int): Int {
         return R.layout.list_item_videos
@@ -20,9 +18,9 @@ class MyChannelVideosAdapter(private val listener: ContentReactionCallback<Chann
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         super.onBindViewHolder(holder, position)
         holder.binding.setVariable(BR.isMyChannel, true)
-        holder.itemView.findViewById<TextView>(R.id.reactionButton)?.setOnLongClickListener { 
+        /*holder.itemView.findViewById<TextView>(R.id.reactionButton)?.setOnLongClickListener { 
             listener?.onReactionLongPressed(it, holder.itemView.reactionCount, getItem(position)!!)
             true
-        }
+        }*/
     }
 }

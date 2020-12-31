@@ -28,4 +28,6 @@
     <color name="durationBgColor">#88000000</color>
     <color name="placeholderBgColor">#E1E1E1</color>
     <color name="statusTextBgColor">#525252</color>
+    <color name="colorSettingsDivider">#212121</color>
+    <color name="searchBarBgColor">#29466B</color>
 </resources>

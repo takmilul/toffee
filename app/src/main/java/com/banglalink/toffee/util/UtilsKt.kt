@@ -2,6 +2,7 @@ package com.banglalink.toffee.util
 
 import android.app.Activity
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Bitmap.CompressFormat.JPEG
 import android.graphics.BitmapFactory
@@ -133,6 +134,9 @@ object UtilsKt {
         }
         return ret * 1000L
     }
+
+    fun getScreenWidth(): Int = Resources.getSystem().displayMetrics.widthPixels
+    fun getScreenHeight(): Int = Resources.getSystem().displayMetrics.heightPixels
 }
 
 

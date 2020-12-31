@@ -363,7 +363,7 @@ class HomeActivity :
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             supportFragmentManager.popBackStack(R.id.content_viewer, POP_BACK_STACK_INCLUSIVE)
 
-            if(binding.draggableView.isMaximized) {
+            if(binding.draggableView.isMaximized()) {
                 minimizePlayer()
             }
             binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
@@ -928,7 +928,7 @@ class HomeActivity :
             binding.drawerLayout.closeDrawer(GravityCompat.END)
         } else if (resources.configuration.orientation != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        } else if (binding.draggableView.isMaximized && binding.draggableView.visibility == View.VISIBLE) {
+        } else if (binding.draggableView.isMaximized() && binding.draggableView.visibility == View.VISIBLE) {
             minimizePlayer()
         } else if (supportFragmentManager.findFragmentById(R.id.content_viewer) is LandingPageFragment) {
             val landingPageFragment =

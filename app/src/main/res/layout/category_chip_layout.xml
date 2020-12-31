@@ -10,4 +10,4 @@
     app:chipEndPadding="8dp"
     android:checkable="true"
     android:textAllCaps="true"
-    />
+    app:chipSurfaceColor="@android:color/transparent"/>

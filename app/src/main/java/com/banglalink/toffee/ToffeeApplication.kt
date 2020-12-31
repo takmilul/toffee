@@ -53,7 +53,8 @@ class ToffeeApplication : Application() {
     private fun initCoil() {
         val imageLoader = ImageLoader.Builder(this).apply {
             crossfade(true)
-            bitmapPoolPercentage(0.3)
+//            availableMemoryPercentage(0.2)
+//            bitmapPoolPercentage(0.4)
             okHttpClient {
                 OkHttpClient.Builder()
                     .cache(CoilUtils.createDefaultCache(this@ToffeeApplication))

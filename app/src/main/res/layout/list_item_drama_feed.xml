@@ -71,7 +71,7 @@
             android:textColor="@android:color/white"
             android:gravity="center_horizontal"
             android:drawablePadding="8dp"
-            app:drawableTopCompat="@drawable/ic_drama_playlists"
+            app:drawableTopCompat="@drawable/ic_playlist"
             app:layout_constraintStart_toStartOf="@id/overlayView"
             app:layout_constraintTop_toTopOf="@id/overlayView"
             app:layout_constraintEnd_toEndOf="@id/overlayView"
