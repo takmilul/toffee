@@ -20,6 +20,11 @@ class PlaylistManager {
     }
 
     fun setPlayList(pdata: AddToPlaylistData) {
+        if(pdata.playlistId == -1L) {
+            playList.clear()
+            playList.addAll(pdata.items)
+            return
+        }
         if(pdata.playlistId == playlistId) {
             Log.e("PLAYLIST_DEBUG", "Playlist ID ${pdata.playlistId} is same, prev size - ${playList.size}, loading size - ${pdata.items.size}")
             if(pdata.items.size != playList.size) {
@@ -50,7 +55,7 @@ class PlaylistManager {
         playlistId = -1
     }
 
-    fun hasPrevious() = playlistIndex > 0
+    fun hasPrevious() = if(playlistId < 0) false else playlistIndex > 0
     fun hasNext() = playlistIndex < playList.size - 1
 
     fun setIndex(index: Int) {
@@ -63,6 +68,12 @@ class PlaylistManager {
     }
 
     fun nextChannel() {
+        if(playlistId < 0) {
+            if(playList.size > 1) {
+                playList.removeAt(0)
+            }
+            return
+        }
         if(hasNext()) playlistIndex++
     }
     fun previousChannel() {

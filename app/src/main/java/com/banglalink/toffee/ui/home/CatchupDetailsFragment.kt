@@ -18,10 +18,14 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.ContentReactionCallback
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.common.ReactionFragment
+import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_catchup.*
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<ChannelInfo> {
@@ -82,6 +86,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
         }
 
         observeList()
+        observeListState()
     }
 
     override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
@@ -107,6 +112,23 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
         })
         detailsAdapter = ChannelHeaderAdapter(currentItem, this)
         mAdapter = ConcatAdapter(detailsAdapter, catchupAdapter.withLoadStateFooter(ListLoadStateAdapter{catchupAdapter.retry()}))
+    }
+
+    private fun observeListState() {
+        lifecycleScope.launch {
+            catchupAdapter
+                .loadStateFlow
+                .distinctUntilChangedBy {
+                    it.refresh
+                }.collect {
+                    val list = catchupAdapter.snapshot()
+                    if(list.size > 0) {
+                        homeViewModel.addToPlayListMutableLiveData.postValue(
+                            AddToPlaylistData(-1, listOf(currentItem, list.items[0]))
+                        )
+                    }
+                }
+        }
     }
 
     private fun observeList() {
