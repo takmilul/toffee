@@ -539,7 +539,7 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
         super.onMediaItemTransition(mediaItem, reason)
         val channelInfo = mediaItem?.playbackProperties?.tag
         if(channelInfo is ChannelInfo) {
-            isVideoPortrait = !channelInfo.isHorizontal
+            isVideoPortrait = channelInfo.is_horizontal != 1
             resizeView(Point(UtilsKt.getScreenWidth(), UtilsKt.getScreenHeight()))
             if(isVideoPortrait && simpleExoPlayer is SimpleExoPlayer) {
                 (simpleExoPlayer as SimpleExoPlayer).videoScalingMode = Renderer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
