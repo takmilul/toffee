@@ -1,2 +1,2 @@
-include ':app', ':showcase_view'
+include ':app', ':showcase_view',':tus-android-client'
 rootProject.name='ToffeeKotlin'
