@@ -62,7 +62,9 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
     }
 
     override fun getEmptyViewInfo(): Pair<Int, String?> {
-        return Pair(R.drawable.ic_videos_empty, "You haven't uploaded any video yet")
+        return Pair(R.drawable.ic_videos_empty, 
+            if(isOwner == 1) "You haven't uploaded any video yet" else "This channel has no video yet"
+        )
     }
 
     override fun onOpenMenu(view: View, item: ChannelInfo) {
@@ -158,7 +160,7 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
 
     override fun onReactionClicked(view: View, reactionCountView: View, item: ChannelInfo) {
         super.onReactionClicked(view, reactionCountView, item)
-        requireActivity().supportFragmentManager.beginTransaction().add(ReactionFragment.newInstance(view, reactionCountView, item), ReactionFragment.TAG).commit()
+        ReactionFragment.newInstance(view.id, reactionCountView.id, item).show(requireActivity().supportFragmentManager, ReactionFragment.TAG)
     }
 
     /*override fun onReactionLongPressed(view: View, reactionCountView: View, item: ChannelInfo) {

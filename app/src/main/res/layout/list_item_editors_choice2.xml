@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:background="?selectableItemBackground"
         android:onClick="@{()->callback.onItemClicked(data)}"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="12dp">
 
         <com.banglalink.toffee.ui.widget.CustomImageView
             android:id="@+id/poster"
@@ -51,16 +51,14 @@
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/ownerPicture"
             loadImageFromUrlRounded="@{data.channelProfileUrl}"
-            android:layout_width="42dp"
-            android:layout_height="42dp"
-            android:layout_marginTop="8dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginTop="6dp"
             android:onClick="@{()-> callback.onProviderIconClicked(data)}"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/name"
             app:layout_constraintTop_toBottomOf="@+id/name"
             tools:src="@drawable/ic_profile_default" />
-
-
+        
         <TextView
             android:id="@+id/name"
             style="@style/programNameTextView"
@@ -69,7 +67,8 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:ellipsize="end"
-            android:maxLines="3"
+            android:minLines="2"
+            android:maxLines="2"
             android:text="@{data.program_name}"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#7990AC"
@@ -93,13 +92,14 @@
             android:id="@+id/owner"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:text='@{data.content_provider_name + " - " + data.formattedCreateTime}'
+            android:layout_marginStart="6dp"
+            android:text="@{data.content_provider_name + ` \u2022 ` + data.formatted_view_count()}"
             android:textColor="#829AB8"
             app:layout_constraintBottom_toBottomOf="@+id/ownerPicture"
             app:layout_constraintEnd_toEndOf="@+id/name"
             app:layout_constraintStart_toEndOf="@+id/ownerPicture"
-            app:layout_constraintTop_toTopOf="@+id/ownerPicture" />
+            app:layout_constraintTop_toTopOf="@+id/ownerPicture"
+            tools:text="G-Series &#8226; 40K" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline10"

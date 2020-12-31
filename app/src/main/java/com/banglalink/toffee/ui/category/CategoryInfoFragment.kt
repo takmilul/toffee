@@ -127,10 +127,10 @@ class CategoryInfoFragment: HomeBaseFragment() {
     }
 
     private fun addChip(subCategory: UgcSubCategory): Chip {
-        val intColor = ContextCompat.getColor(requireContext(), R.color.colorButtonSecondary)
-        val foregroundColor = ContextCompat.getColor(requireContext(), R.color.colorSecondaryAccent)
+        val intColor = ContextCompat.getColor(requireContext(), R.color.colorSecondaryDark)
+//        val foregroundColor = ContextCompat.getColor(requireContext(), R.color.colorSecondaryAccent)
 
-        val chipColor = createStateColor(intColor, foregroundColor)
+        val chipColor = createStateColor(intColor)
         val chip = layoutInflater.inflate(R.layout.category_chip_layout, categoryChipGroup, false) as Chip
         chip.text = subCategory.name
         chip.typeface = Typeface.DEFAULT_BOLD

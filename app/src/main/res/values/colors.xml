@@ -46,6 +46,7 @@
 
     <color name="darker_gray">#7E7E7E</color>
     <color name="lightGray">#e0e0e0</color>
+    <color name="searchBarBgColor">#F2F2F2</color>
     <color name="searchview_input_text_color">#29466B</color>
     <color name="tab_unselected">#29466B</color>
 
@@ -86,4 +87,5 @@
     <color name="durationBgColor">#88000000</color>
     <color name="placeholderBgColor">#E1E1E1</color>
     <color name="statusTextBgColor">#E1E1E1</color>
+    <color name="switchUnCheckedColor">#829AB8</color>
 </resources>

@@ -128,13 +128,13 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
             }
 
             override fun onReactionClicked(view: View, reactionCountView: View, item: ChannelInfo) {
-                requireActivity().supportFragmentManager.beginTransaction().add(ReactionFragment.newInstance(view, reactionCountView, item, true), ReactionFragment.TAG).commit()
+                ReactionFragment.newInstance(view.id, reactionCountView.id, item).show(requireActivity().supportFragmentManager, ReactionFragment.TAG)
             }
 
-            override fun onReactionLongPressed(view: View, reactionCountView: View, item: ChannelInfo) {
+            /*override fun onReactionLongPressed(view: View, reactionCountView: View, item: ChannelInfo) {
                 super.onReactionLongPressed(view, reactionCountView, item)
                 requireActivity().supportFragmentManager.beginTransaction().add(ReactionFragment.newInstance(view, reactionCountView, item), ReactionFragment.TAG).commit()
-            }
+            }*/
 
             override fun onShareClicked(view: View, item: ChannelInfo) {
                 homeViewModel.shareContentLiveData.postValue(item)

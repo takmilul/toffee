@@ -77,21 +77,21 @@ public class Utils {
         diffMinutes = Math.max(0, diffMinutes);
 
         if(diffMinutes >= 365*24*60){
-            return (diffMinutes / (365*24*60)) + " years";
+            return (diffMinutes / (365*24*60)) + "y";
         }
         if(diffMinutes >= 30*24*60){
-            return (diffMinutes / (30*24*60)) + " months";
+            return (diffMinutes / (30*24*60)) + "m";
         }
         if (diffMinutes >= 24*60) {
-            return (diffMinutes / (24*60)) +" days";
+            return (diffMinutes / (24*60)) +"d";
         }
         if (diffMinutes >= 60){
-            return (diffMinutes / 60) + " hours";
+            return (diffMinutes / 60) + "h";
         }
-        if (diffMinutes > 0) {
+        /*if (diffMinutes > 0) {
             return diffMinutes + " minutes";
-        }
-        return "Just Now";
+        }*/
+        return "Just Now!";
     }
     
     public static String getDateDiffInDayOrHour(Date stopDate) {

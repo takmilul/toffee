@@ -5,6 +5,11 @@
     xmlns:tools="http://schemas.android.com/tools">
     
     <data>
+        <import type="android.view.View"/>
+        <variable
+            name="isOwner"
+            type="Integer" />
+        
         <variable
             name="data"
             type="com.banglalink.toffee.model.MyChannelPlaylist" />
@@ -100,6 +105,7 @@
             android:id="@+id/imageView11"
             android:layout_width="24dp"
             android:layout_height="24dp"
+            android:visibility="@{isOwner == 1 ? View.VISIBLE : View.GONE}"
             android:onClick="@{(view)->callback.onOpenMenu(view, data)}"
             app:layout_constraintBottom_toBottomOf="@+id/textView18"
             app:layout_constraintEnd_toEndOf="parent"

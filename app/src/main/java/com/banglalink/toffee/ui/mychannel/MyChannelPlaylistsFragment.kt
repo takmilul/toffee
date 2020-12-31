@@ -61,6 +61,7 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
         super.onCreate(savedInstanceState)
         isOwner = arguments?.getInt(IS_OWNER) ?: 1
         channelOwnerId = arguments?.getInt(CHANNEL_OWNER_ID) ?: 0
+        mAdapter.isOwner = isOwner
         observeReloadPlaylist()
     }
 
@@ -86,26 +87,30 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
     }
 
     override fun getEmptyViewInfo(): Pair<Int, String?> {
-        return Pair(R.drawable.ic_playlists_empty, "You haven't created any playlist yet")
+        return Pair(R.drawable.ic_playlists_empty, 
+            if(isOwner == 1) "You haven't created any playlist yet" else "This channel has no playlist yet"
+        )
     }
 
     override fun onOpenMenu(view: View, item: MyChannelPlaylist) {
         super.onOpenMenu(view, item)
 
-        android.widget.PopupMenu(requireContext(), view).apply {
-            inflate(R.menu.menu_channel_playlist)
-            setOnMenuItemClickListener {
-                when (it.itemId) {
-                    R.id.menu_edit_playlist -> {
-                        showEditPlaylistDialog(item.id, item.name)
+        if (isOwner == 1) {
+            android.widget.PopupMenu(requireContext(), view).apply {
+                inflate(R.menu.menu_channel_playlist)
+                setOnMenuItemClickListener {
+                    when (it.itemId) {
+                        R.id.menu_edit_playlist -> {
+                            showEditPlaylistDialog(item.id, item.name)
+                        }
+                        R.id.menu_delete_playlist -> {
+                            showDeletePlaylistDialog(item.id)
+                        }
                     }
-                    R.id.menu_delete_playlist -> {
-                        showDeletePlaylistDialog(item.id)
-                    }
+                    return@setOnMenuItemClickListener true
                 }
-                return@setOnMenuItemClickListener true
+                show()
             }
-            show()
         }
     }
 
