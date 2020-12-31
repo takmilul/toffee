@@ -115,7 +115,7 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
     }
 
     private fun setupCastButton() {
-        CastButtonFactory.setUpMediaRouteButton(context.applicationContext, binding.castButton)
+//        CastButtonFactory.setUpMediaRouteButton(context.applicationContext, binding.castButton)
     }
 
     //Use this method to set and unset the player
