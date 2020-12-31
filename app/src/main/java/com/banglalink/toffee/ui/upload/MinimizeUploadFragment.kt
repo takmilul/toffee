@@ -44,13 +44,11 @@ class MinimizeUploadFragment : BaseFragment() {
     private var preference: Preference? = null
     private var client: TusClient? = null
     var myUri: Uri? = null
-
     @Inject
     lateinit var uploadRepo: UploadInfoRepository
     private lateinit var fileName: String
     private lateinit var exception: String
     private var size: String = ""
-    private var actualFileName: String? = null
 
     companion object {
         const val UPLOAD_ID = "UPLOAD_ID"
@@ -80,23 +78,11 @@ class MinimizeUploadFragment : BaseFragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-
         return inflater.inflate(R.layout.fragment_minimize_upload, container, false)
-
     }
-
-    suspend fun value() {
-        val fileSize = withContext(Dispatchers.IO + Job()) {
-            UtilsKt.fileSizeFromContentUri(context!!, Uri.parse(uploadURI))
-        }
-        size = Utils.readableFileSize(fileSize)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         preference = Preference.getInstance()
-
-
         try {
             client = TusClient()
             val sharedPref = activity?.getSharedPreferences("tus", 0)
@@ -112,10 +98,8 @@ class MinimizeUploadFragment : BaseFragment() {
         else{
             myUri = Uri.parse(uploadURI)
         }
-
-        //
-        runBlocking { value() }
-
+        val fileSize =UtilsKt.fileSizeFromContentUri(requireContext(), Uri.parse(uploadURI))
+        size = Utils.readableFileSize(fileSize)
         cancel_button.setOnClickListener {
             VelBoxAlertDialogBuilder(requireContext()).apply {
                 setTitle("Cancel Uploading")
@@ -142,14 +126,11 @@ class MinimizeUploadFragment : BaseFragment() {
     private fun observeUpload() {
         try {
             val upload: TusUpload = TusAndroidUpload(myUri, context, fileName, uploadURI)
-            val uploadTask = someTask(context!!, client, upload)
-
+            val uploadTask = someTask(requireContext(), client, upload)
             uploadTask.execute()
         } catch (e: java.lang.Exception) {
             Log.e("message", "message")
-
         }
-
     }
 
     inner class someTask(
@@ -172,24 +153,19 @@ class MinimizeUploadFragment : BaseFragment() {
                 return uploader.uploadURL
             } catch (e: java.lang.Exception) {
                 cancel(true)
-
-
             }
             return null
         }
 
-        private var progressDialog: VelBoxProgressDialog? = null
         override fun onPreExecute() {
             super.onPreExecute()
             uploadSize.text = size
-            // ...
         }
 
         override fun onPostExecute(result: URL?) {
             Log.e("data", "data" + result.toString())
             uploadPercent.text = "100%"
             progressBar.progress = 100
-            // ...
         }
 
         override fun onProgressUpdate(vararg updates: Long?) {
@@ -204,15 +180,13 @@ class MinimizeUploadFragment : BaseFragment() {
             } catch (e: Exception) {
                 Log.e("data", "exception" + e.message)
             }
-
-
         }
 
     }
-
     fun setData(value: Int) {
         uploadPercent.text = value?.toString() + "%"
         progressBar.progress = value
     }
+
 
 }

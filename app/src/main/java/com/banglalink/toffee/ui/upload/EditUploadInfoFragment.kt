@@ -24,6 +24,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.BR
@@ -208,9 +209,9 @@ class EditUploadInfoFragment : BaseFragment() {
     private fun observeThumbnailChange() {
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String?>(
             ThumbnailSelectionMethodFragment.THUMB_URI
-        )?.observe(viewLifecycleOwner, {
+        )?.observe(viewLifecycleOwner) {
             viewModel.saveThumbnail(it)
-        })
+        }
     }
 
     private fun setupTagView() {
