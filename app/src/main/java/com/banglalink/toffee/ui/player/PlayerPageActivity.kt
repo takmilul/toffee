@@ -483,6 +483,11 @@ abstract class PlayerPageActivity :
     }
 
     override fun onFullScreenButtonPressed(): Boolean {
+        player?.currentMediaItem?.playbackProperties?.tag?.let {
+            if(it is ChannelInfo && it.is_horizontal != 1) {
+                return true
+            }
+        }
         val isPortrait = resources.configuration.orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         requestedOrientation = if (isPortrait) ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE else ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         return true

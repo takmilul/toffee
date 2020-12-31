@@ -75,15 +75,15 @@
                 app:layout_constraintEnd_toStartOf="@+id/video_option"
                 app:layout_constraintTop_toTopOf="@+id/video_option" />
 
-            <androidx.mediarouter.app.MediaRouteButton
-                android:id="@+id/cast_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:mediaRouteButtonTint="@color/exo_white"
-                app:layout_constraintBottom_toBottomOf="@+id/share"
-                app:layout_constraintEnd_toStartOf="@+id/share"
-                app:layout_constraintTop_toTopOf="@+id/share" />
+<!--            <androidx.mediarouter.app.MediaRouteButton-->
+<!--                android:id="@+id/cast_button"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:visibility="gone"-->
+<!--                app:mediaRouteButtonTint="@color/exo_white"-->
+<!--                app:layout_constraintBottom_toBottomOf="@+id/share"-->
+<!--                app:layout_constraintEnd_toStartOf="@+id/share"-->
+<!--                app:layout_constraintTop_toTopOf="@+id/share" />-->
 
             <com.mikhaellopez.circularprogressbar.CircularProgressBar
                 android:id="@+id/autoplayProgress"

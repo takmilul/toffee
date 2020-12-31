@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.graphics.Bitmap.CompressFormat.JPEG
 import android.graphics.BitmapFactory
 import android.graphics.BitmapFactory.Options
+import android.graphics.Point
 import android.graphics.drawable.Drawable
 import android.media.MediaMetadataRetriever
 import android.net.Uri
@@ -137,6 +138,16 @@ object UtilsKt {
 
     fun getScreenWidth(): Int = Resources.getSystem().displayMetrics.widthPixels
     fun getScreenHeight(): Int = Resources.getSystem().displayMetrics.heightPixels
+    fun getRealScreenSize(ctx: Context): Point {
+        return if (ctx is Activity) {
+            val display = ctx.windowManager.defaultDisplay
+            val pt = Point()
+            display.getRealSize(pt)
+            pt
+        } else {
+            Point(getScreenWidth(), getScreenHeight())
+        }
+    }
 }
 
 
