@@ -108,7 +108,7 @@
                             android:autofillHints="Enter your address"
                             android:layout_marginVertical="8dp"
                             android:text="@={profileForm.address}"
-                            android:inputType="textCapCharacters"/>
+                            android:inputType="textPostalAddress"/>
 
                     <LinearLayout
                         android:layout_width="match_parent"

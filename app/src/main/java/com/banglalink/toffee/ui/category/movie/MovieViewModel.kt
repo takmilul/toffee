@@ -46,6 +46,7 @@ class MovieViewModel @ViewModelInject constructor(
     val telefilms = telefilmsResponse.toLiveData()
     private val comingSoonResponse = MutableLiveData<List<ComingSoonContent>>()
     val comingSoonContents = comingSoonResponse.toLiveData()
+    private var isContinueWatchingDbInitialized = false
     private var continueWatchingCount = 0
     
     val loadMovieCategoryDetail by lazy{
@@ -56,7 +57,7 @@ class MovieViewModel @ViewModelInject constructor(
                 null
             }
             moviesContentCardsResponse.value = response?.cards?.let { card ->
-                card.continueWatching = if (continueWatchingCount == 0) 0 else card.continueWatching
+                card.continueWatching = if (isContinueWatchingDbInitialized) continueWatchingCount else card.continueWatching
                 card.moviePreviews = moviePreviewsResponse.value?.let{ if (it.isEmpty()) 0 else card.moviePreviews } ?: 0 
                 card.trendingNow = trendingNowMoviesResponse.value?.let{ if (it.isEmpty()) 0 else card.trendingNow } ?: 0 
                 card.telefilm = telefilmsResponse.value?.let{ if (it.isEmpty()) 0 else card.telefilm } ?: 0 
@@ -222,6 +223,7 @@ class MovieViewModel @ViewModelInject constructor(
 
     fun getContinueWatchingFlow(catId: Int): Flow<List<ChannelInfo>> {
         return continueWatchingRepo.getAllItemsByCategory(catId).map {
+            isContinueWatchingDbInitialized = true
             continueWatchingCount = it.size
             it.mapNotNull { item ->
                 item.channelInfo

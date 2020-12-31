@@ -64,13 +64,13 @@ class MostPopularFragment: HomeBaseFragment(), ContentReactionCallback<ChannelIn
     
     override fun onReactionClicked(view: View, reactionCountView: View, item: ChannelInfo) {
         super.onReactionClicked(view, reactionCountView, item)
-        requireActivity().supportFragmentManager.beginTransaction().add(ReactionFragment.newInstance(view, reactionCountView, item, true), ReactionFragment.TAG).commit()
+        ReactionFragment.newInstance(view.id, reactionCountView.id, item).show(requireActivity().supportFragmentManager, ReactionFragment.TAG)
     }
 
-    override fun onReactionLongPressed(view: View, reactionCountView: View, item: ChannelInfo) {
+    /*override fun onReactionLongPressed(view: View, reactionCountView: View, item: ChannelInfo) {
         super.onReactionLongPressed(view, reactionCountView, item)
         requireActivity().supportFragmentManager.beginTransaction().add(ReactionFragment.newInstance(view, reactionCountView, item), ReactionFragment.TAG).commit()
-    }
+    }*/
 
     override fun onProviderIconClicked(item: ChannelInfo) {
         super.onProviderIconClicked(item)

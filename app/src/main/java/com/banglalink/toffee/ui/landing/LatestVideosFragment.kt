@@ -42,7 +42,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 
 class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelInfo> {
-    private var checkedChipId: Int = 0
+    
     private lateinit var mAdapter: PopularVideoListAdapter
 
     private val viewModel by activityViewModels<LandingPageViewModel>()
@@ -68,7 +68,7 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
         mAdapter = PopularVideoListAdapter(this)
 
         with(binding.latestVideosList) {
-            addItemDecoration(MarginItemDecoration(16))
+            addItemDecoration(MarginItemDecoration(12))
 
             mAdapter.addLoadStateListener {
                 binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
@@ -194,14 +194,9 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
 
     override fun onReactionClicked(view: View, reactionCountView: View, item: ChannelInfo) {
         super.onReactionClicked(view, reactionCountView, item)
-        requireActivity().supportFragmentManager.beginTransaction().add(ReactionFragment.newInstance(view, reactionCountView, item, true), ReactionFragment.TAG).commit()
+        ReactionFragment.newInstance(view.id, reactionCountView.id, item).show(requireActivity().supportFragmentManager, ReactionFragment.TAG)
     }
 
-    override fun onReactionLongPressed(view: View, reactionCountView: View, item: ChannelInfo) {
-        super.onReactionLongPressed(view, reactionCountView, item)
-        requireActivity().supportFragmentManager.beginTransaction().add(ReactionFragment.newInstance(view, reactionCountView, item), ReactionFragment.TAG).commit()
-    }
-    
     override fun onShareClicked(view: View, item: ChannelInfo) {
         super.onShareClicked(view, item)
         homeViewModel.shareContentLiveData.postValue(item)
@@ -259,7 +254,7 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
     }
 
     private fun addChip(subCategory: UgcSubCategory): Chip {
-        val intColor = ContextCompat.getColor(requireContext(), R.color.colorButtonSecondary)
+        val intColor = ContextCompat.getColor(requireContext(), R.color.colorSecondaryDark)
 
         val chipColor = createStateColor(intColor)
         val chip = layoutInflater.inflate(R.layout.category_chip_layout, categoryChipGroup, false) as Chip

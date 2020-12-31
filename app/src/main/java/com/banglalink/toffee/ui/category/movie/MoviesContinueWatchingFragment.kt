@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 class MoviesContinueWatchingFragment : MovieBaseFragment<ChannelInfo>() {
     override val cardTitle: String = "Continue Watching"
-    override val isCategory: Boolean = false
+    
     companion object {
         @JvmStatic
         fun newInstance() = MoviesContinueWatchingFragment()

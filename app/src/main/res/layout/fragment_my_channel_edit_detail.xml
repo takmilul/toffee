@@ -16,7 +16,7 @@
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -28,14 +28,12 @@
                 android:layout_height="wrap_content"
                 android:background="@color/screen_bg_white">
 
-                <com.banglalink.toffee.ui.widget.CustomImageView
+                <ImageView
                     android:id="@+id/bannerImageView"
                     loadImageFromUrl="@{viewModel.myChannelDetail.bannerUrl}"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:minHeight="200dp"
-                    android:scaleType="fitXY"
+                    android:layout_height="160dp"
+                    android:scaleType="centerCrop"
                     app:layout_constraintDimensionRatio="W,16:9"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -44,8 +42,8 @@
 
                 <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/bannerEditButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_marginEnd="12dp"
                     android:layout_marginBottom="12dp"
                     android:background="?selectableItemBackgroundBorderless"
@@ -59,9 +57,8 @@
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/profileImageView"
                     loadImageFromUrlRounded="@{viewModel.myChannelDetail.profileUrl}"
-                    android:layout_width="104dp"
-                    android:layout_height="104dp"
-                    android:layout_margin="8dp"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
                     android:elevation="2dp"
                     app:layout_constraintBottom_toBottomOf="@+id/bannerImageView"
                     app:layout_constraintDimensionRatio="W,16:9"
@@ -72,8 +69,8 @@
 
                 <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/profileImageEditButton"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:background="?selectableItemBackgroundBorderless"
                     android:elevation="4dp"
                     android:padding="4dp"

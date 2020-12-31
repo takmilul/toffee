@@ -19,7 +19,6 @@ import com.banglalink.toffee.ui.common.ContentReactionCallback
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.common.ReactionFragment
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
-import com.banglalink.toffee.ui.widget.MyPopupWindow
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_catchup.*
 import kotlinx.coroutines.flow.collectLatest
@@ -120,13 +119,13 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
 
     override fun onReactionClicked(view: View, reactionCountView: View, item: ChannelInfo) {
         super.onReactionClicked(view, reactionCountView, item)
-        requireActivity().supportFragmentManager.beginTransaction().add(ReactionFragment.newInstance(view, reactionCountView, item, true), ReactionFragment.TAG).commit()
+        ReactionFragment.newInstance(view.id, reactionCountView.id, item).show(requireActivity().supportFragmentManager, ReactionFragment.TAG)
     }
 
-    override fun onReactionLongPressed(view: View, reactionCountView: View, item: ChannelInfo) {
+    /*override fun onReactionLongPressed(view: View, reactionCountView: View, item: ChannelInfo) {
         super.onReactionLongPressed(view, reactionCountView, item)
         requireActivity().supportFragmentManager.beginTransaction().add(ReactionFragment.newInstance(view, reactionCountView, item), ReactionFragment.TAG).commit()
-    }
+    }*/
     
     override fun onProviderIconClicked(item: ChannelInfo) {
         super.onProviderIconClicked(item)

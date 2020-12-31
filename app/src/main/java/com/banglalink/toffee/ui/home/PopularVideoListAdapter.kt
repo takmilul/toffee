@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.home
 
-import android.widget.TextView
 import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
@@ -10,7 +9,6 @@ import com.banglalink.toffee.common.paging.ItemComparator
 import com.banglalink.toffee.databinding.ListItemVideosBinding
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.ContentReactionCallback
-import kotlinx.android.synthetic.main.list_item_videos.view.*
 
 class PopularVideoListAdapter(
     val cb: ContentReactionCallback<ChannelInfo>
@@ -29,10 +27,10 @@ class PopularVideoListAdapter(
 //            holder.itemView.setOnClickListener(null)
 //        }
         holder.binding.setVariable(BR.isMyChannel, false)
-        holder.itemView.findViewById<TextView>(R.id.reactionButton)?.setOnLongClickListener {
+        /*holder.itemView.findViewById<TextView>(R.id.reactionButton)?.setOnLongClickListener {
             cb.onReactionLongPressed(it, holder.itemView.reactionCount, getItem(position)!!)
             true
-        }
+        }*/
     }
 
     override fun onViewRecycled(holder: BaseViewHolder) {
