@@ -540,10 +540,17 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
         val channelInfo = mediaItem?.playbackProperties?.tag
         if(channelInfo is ChannelInfo) {
             isVideoPortrait = channelInfo.is_horizontal != 1
-            resizeView(Point(UtilsKt.getScreenWidth(), UtilsKt.getScreenHeight()))
-            if(isVideoPortrait && simpleExoPlayer is SimpleExoPlayer) {
-                (simpleExoPlayer as SimpleExoPlayer).videoScalingMode = Renderer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
+
+            if(isFullScreenPortrait()) {
+                onPlayerControllerChangedListeners.forEach {
+                    it.onFullScreenButtonPressed()
+                }
             }
+            resizeView(UtilsKt.getRealScreenSize(context))
+//            if(isVideoPortrait && simpleExoPlayer is SimpleExoPlayer) {
+//                (simpleExoPlayer as SimpleExoPlayer).videoScalingMode = Renderer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
+//            }
+            binding.rotation.visibility = if(isVideoPortrait) View.GONE else View.VISIBLE
         }
     }
 
@@ -569,12 +576,12 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
         timer?.cancel()
     }
 
-    fun resizeView(size: Point) {
+    fun resizeView(size: Point, forceFullScreen: Boolean = false) {
         val playerWidth: Int = size.x
         val playerHeight: Int = if (size.x > size.y) { //landscape
             size.y
         } else {
-            maxBound
+            if(!forceFullScreen) maxBound else size.y
         }
 
         layoutParams = layoutParams.apply {
@@ -596,6 +603,8 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
         return layoutParams.height >= if(isVideoPortrait) maxBound else minBound
     }
 
+    fun isFullScreenPortrait() = layoutParams.height >= UtilsKt.getScreenHeight()
+
     val minBound = screenWidth * 9 / 16
     val maxBound: Int
         get() = if(isVideoPortrait) screenWidth * 16 / 11 else minBound
@@ -609,7 +618,7 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
     private var startY: Float = 0f
 
     fun clampOrFullHeight() {
-        if(isClamped() || isFullHeight()) return
+        if(layoutParams.height <= minBound || layoutParams.height >= maxBound) return
         val isInTop = layoutParams.height in minBound .. (minBound + ((maxBound - minBound) / 2))
 
         heightAnim = ValueAnimator.ofInt(layoutParams.height, if(isInTop) minBound else maxBound)
@@ -618,9 +627,9 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
             layoutParams = layoutParams.apply {
                 height = it.animatedValue as Int
 
-                binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.also {
-                    it.height = height
-                }
+//                binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.also {
+//                    it.height = height
+//                }
             }
         }
         heightAnim?.start()
@@ -701,9 +710,9 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
 
                 layoutParams = layoutParams.apply {
                     height = min(max(height + distanceY.toInt(), minBound), maxBound)
-                    binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.also {
-                        it.height = height
-                    }
+//                    binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.also {
+//                        it.height = height
+//                    }
                 }
 
                 invalidate()

@@ -447,11 +447,14 @@ class HomeActivity :
 
     private fun updateFullScreenState() {
         val state =
-            resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-        Utils.setFullScreen(this, state)
-        toggleNavigations(state)
-        binding.playerView.resizeView(calculateScreenWidth())
+            resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE ||
+                    (binding.playerView.isVideoPortrait &&
+                            !binding.playerView.isFullScreenPortrait())
+
         binding.playerView.onFullScreen(state)
+        toggleNavigations(state)
+        binding.playerView.resizeView(calculateScreenWidth(), state)
+        Utils.setFullScreen(this, state)
     }
 
     private fun toggleNavigations(state: Boolean) {
@@ -847,7 +850,8 @@ class HomeActivity :
     }
 
     override fun onViewMaximize() {
-        requestedOrientation = if(binding.playerView.isAutoRotationEnabled)
+        requestedOrientation = if(binding.playerView.isAutoRotationEnabled
+            && !binding.playerView.isVideoPortrait)
             ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
         else{
             ActivityInfo.SCREEN_ORIENTATION_LOCKED
@@ -855,7 +859,7 @@ class HomeActivity :
     }
 
     override fun onRotationLock(isAutoRotationEnabled: Boolean) {
-       if(isAutoRotationEnabled){
+       if(isAutoRotationEnabled && !binding.playerView.isVideoPortrait){
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
             showToast(getString(R.string.auto_rotation_on))
         } else{
@@ -907,7 +911,9 @@ class HomeActivity :
         super.onFullScreenButtonPressed()
         if(!binding.playerView.isAutoRotationEnabled)
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED;
-
+        if(binding.playerView.isVideoPortrait) {
+            updateFullScreenState()
+        }
         return true
     }
 
