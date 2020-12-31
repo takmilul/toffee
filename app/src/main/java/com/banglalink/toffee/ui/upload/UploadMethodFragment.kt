@@ -171,7 +171,7 @@ class UploadMethodFragment : DialogFragment() {
         when (requestCode) {
             REQUEST_PICK_VIDEO -> {
                 if (resultCode == Activity.RESULT_OK && data != null && data.dataString != null) {
-                    openEditUpload(data.dataString!!)
+                    openEditUpload(data.dataString!!,"")
 
                 }
                 else {
@@ -183,8 +183,10 @@ class UploadMethodFragment : DialogFragment() {
                     println("CaptureAbsolutePath${videoFile!!.absolutePath}")
                     println("CapturePath${videoFile!!.path}")
                     try {
-                        openEditUpload(data?.dataString!!)
+                        openEditUpload(data?.dataString!!,"")
+
                     } catch (e: Exception) {
+                        openEditUpload(videoFile!!.absolutePath,"Exception")
                     }
                 }
                 else {
@@ -203,9 +205,10 @@ class UploadMethodFragment : DialogFragment() {
         }*/
     }
 
-    private fun openEditUpload(uri: String) {
+    private fun openEditUpload(uri: String,exception:String) {
         activity?.findNavController(R.id.home_nav_host)?.navigate(R.id.action_uploadMethodFragment_to_editUploadInfoFragment, Bundle().apply {
             putString(EditUploadInfoFragment.UPLOAD_FILE_URI, uri)
+            putString(MinimizeUploadFragment.EXCEPTION, exception)
         })
     }
 

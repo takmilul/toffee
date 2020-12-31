@@ -4,6 +4,7 @@ package com.banglalink.toffee.ui.upload
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.media.MediaMetadataRetriever
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
@@ -52,6 +53,7 @@ import io.tus.java.client.TusUpload
 import kotlinx.coroutines.*
 import java.net.URL
 import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -75,10 +77,12 @@ class EditUploadInfoFragment : BaseFragment() {
     lateinit var appScope: CoroutineScope
 
     private lateinit var uploadFileUri: String
+    private lateinit var exception: String
 
     private var preference: Preference? = null
 
     private var bool:Boolean?=false
+    private var seconds:String?=""
 
     private val viewModel: EditUploadInfoViewModel by viewModels {
         EditUploadInfoViewModel.provideFactory(editUploadViewModelFactory, uploadFileUri)
@@ -88,6 +92,7 @@ class EditUploadInfoFragment : BaseFragment() {
 
     companion object {
         const val UPLOAD_FILE_URI = "UPLOAD_FILE_URI"
+        const val EXCEPTION = "EXCEPTION"
 
 
         fun newInstance(): EditUploadInfoFragment {
@@ -99,6 +104,7 @@ class EditUploadInfoFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         uploadFileUri = requireArguments().getString(UPLOAD_FILE_URI, "")
+        exception = requireArguments().getString(EXCEPTION, "")
 
     }
 
@@ -110,6 +116,16 @@ class EditUploadInfoFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View? {
         preference=Preference.getInstance()
+
+        try {
+            val retriever = MediaMetadataRetriever()
+            retriever.setDataSource(context, Uri.parse(uploadFileUri))
+            val duration = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+            val second: Long = TimeUnit.MILLISECONDS
+                    .toSeconds(duration.toLong())
+            seconds=second.toString()
+        } catch (e: Exception) {
+        }
         binding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_edit_upload_info,
@@ -285,6 +301,7 @@ class EditUploadInfoFragment : BaseFragment() {
                             putString(MinimizeUploadFragment.FILE_NAME, fileName)
                             putString(MinimizeUploadFragment.UPLOAD_URI, uploadFileUri)
                             putLong(MinimizeUploadFragment.CONTENT_ID, it.data.second)
+                            putString(MinimizeUploadFragment.EXCEPTION, exception)
                         })
                     }
                 }
@@ -295,6 +312,7 @@ class EditUploadInfoFragment : BaseFragment() {
                         putString(MinimizeUploadFragment.UPLOAD_URI, uploadFileUri)
                         putString(MinimizeUploadFragment.FILE_NAME, fileName)
                         putLong(MinimizeUploadFragment.CONTENT_ID, 0)
+                        putString(MinimizeUploadFragment.EXCEPTION, exception)
                     })
                     //context?.showToast("Unable to submit the video.")
                 }
@@ -367,7 +385,8 @@ class EditUploadInfoFragment : BaseFragment() {
             else ""
 //
             fileName = preference?.customerId.toString() + "_" + UUID.randomUUID().toString() + ext
-            viewModel.saveUploadInfo(tags, categoryId, subcategoryId,fileName)
+
+            viewModel.saveUploadInfo(tags, categoryId, subcategoryId,fileName,seconds!!.toString())
         }
     }
     @SuppressLint("NewApi")

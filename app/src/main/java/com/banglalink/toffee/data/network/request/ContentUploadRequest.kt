@@ -12,4 +12,5 @@ data class ContentUploadRequest(
     val videoTags: String? = null,
     val keywords: String? = null,
     val contentBanner: String? = null,
+    val duration: String? = null,
 ):BaseRequest("ugcContentUpload")

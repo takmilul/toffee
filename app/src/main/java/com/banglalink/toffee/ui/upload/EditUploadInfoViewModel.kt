@@ -195,7 +195,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
         uploadSize.value = Utils.readableFileSize(size)
     }
 
-    suspend fun saveUploadInfo(tags: String?, categoryId: Long, subcategoryId: Long,fileNameFor: String?) {
+    suspend fun saveUploadInfo(tags: String?, categoryId: Long, subcategoryId: Long,fileNameFor: String?,duration: String?) {
         progressDialog.value = true
         val ageGroupId = ageGroupPosition.value ?: -1
 
@@ -208,7 +208,8 @@ class EditUploadInfoViewModel @AssistedInject constructor(
                 ageGroupId.toString(),
                 categoryId,
                 subcategoryId,
-                thumbnailData.value
+                thumbnailData.value,
+                    duration
             )
             Log.e("RESP", resp.toString())
 //            if (resp.contentId > 0L) {

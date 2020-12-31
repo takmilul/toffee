@@ -22,7 +22,8 @@ class UgcContentUpload @Inject constructor(
         ageGroup: String?,
         categoryId: Long,
         subcategoryId: Long,
-        base64Image: String? = null
+        base64Image: String? = null,
+        duration: String?,
     ): UgcContentUploadResponseBean {
         val response = tryIO2 {
             toffeeApi.uploadContent(
@@ -36,7 +37,8 @@ class UgcContentUpload @Inject constructor(
                     subCategoryId = subcategoryId.toInt(),
                     ageRestriction = ageGroup,
                     videoTags = tags,
-                    contentBanner = base64Image,
+                    contentBanner = base64Image, duration = duration,
+
                 )
             )
         }
