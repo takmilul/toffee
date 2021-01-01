@@ -6,11 +6,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     
     <com.banglalink.toffee.ui.widget.NestedCoordinatorLayout
+        android:id="@+id/landing_coordinator"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/home_mini_progress_container">
 
         <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/landing_appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             
@@ -56,6 +58,7 @@
         </com.google.android.material.appbar.AppBarLayout>
         
         <androidx.core.widget.NestedScrollView
+            android:id="@+id/latestVideoScroller"
             android:fillViewport="true"
             android:layout_gravity="fill_vertical"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"

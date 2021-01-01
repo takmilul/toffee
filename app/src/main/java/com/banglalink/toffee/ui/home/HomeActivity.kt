@@ -662,6 +662,10 @@ class HomeActivity :
 
     override fun playNext() {
         super.playNext()
+        if(playlistManager.playlistId == -1L) {
+            viewModel.fragmentDetailsMutableLiveData.postValue(playlistManager.getCurrentChannel())
+            return
+        }
         loadDetailFragment(
             PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
         )
@@ -936,12 +940,14 @@ class HomeActivity :
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         } else if (binding.draggableView.isMaximized() && binding.draggableView.visibility == View.VISIBLE) {
             minimizePlayer()
-        } else if (supportFragmentManager.findFragmentById(R.id.content_viewer) is LandingPageFragment) {
-            val landingPageFragment =
-                supportFragmentManager.findFragmentById(R.id.content_viewer) as LandingPageFragment
-            if (!landingPageFragment.onBackPressed())
-                finish()
-        } else {
+        }
+//        else if (supportFragmentManager.findFragmentById(R.id.content_viewer) is LandingPageFragment) {
+//            val landingPageFragment =
+//                supportFragmentManager.findFragmentById(R.id.content_viewer) as LandingPageFragment
+//            if (!landingPageFragment.onBackPressed())
+//                finish()
+//        }
+        else {
             super.onBackPressed()
         }
     }

@@ -302,7 +302,7 @@ abstract class PlayerPageActivity :
             is EpisodeListFragment -> {
                 fragment.isAutoplayEnabled()
             }
-            else -> false
+            else -> true
         }
     }
 
