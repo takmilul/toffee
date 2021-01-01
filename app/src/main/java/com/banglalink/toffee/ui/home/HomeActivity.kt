@@ -662,6 +662,10 @@ class HomeActivity :
 
     override fun playNext() {
         super.playNext()
+        if(playlistManager.playlistId == -1L) {
+            viewModel.fragmentDetailsMutableLiveData.postValue(playlistManager.getCurrentChannel())
+            return
+        }
         loadDetailFragment(
             PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
         )
