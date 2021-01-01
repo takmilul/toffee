@@ -936,12 +936,14 @@ class HomeActivity :
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         } else if (binding.draggableView.isMaximized() && binding.draggableView.visibility == View.VISIBLE) {
             minimizePlayer()
-        } else if (supportFragmentManager.findFragmentById(R.id.content_viewer) is LandingPageFragment) {
-            val landingPageFragment =
-                supportFragmentManager.findFragmentById(R.id.content_viewer) as LandingPageFragment
-            if (!landingPageFragment.onBackPressed())
-                finish()
-        } else {
+        }
+//        else if (supportFragmentManager.findFragmentById(R.id.content_viewer) is LandingPageFragment) {
+//            val landingPageFragment =
+//                supportFragmentManager.findFragmentById(R.id.content_viewer) as LandingPageFragment
+//            if (!landingPageFragment.onBackPressed())
+//                finish()
+//        }
+        else {
             super.onBackPressed()
         }
     }
