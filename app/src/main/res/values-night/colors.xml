@@ -30,4 +30,5 @@
     <color name="statusTextBgColor">#525252</color>
     <color name="colorSettingsDivider">#212121</color>
     <color name="searchBarBgColor">#29466B</color>
+    <color name="cardBgColor">#111F31</color>
 </resources>

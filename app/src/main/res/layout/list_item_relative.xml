@@ -135,17 +135,17 @@
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="@id/name"
             app:layout_constraintTop_toBottomOf="@id/ownerPicture"
-            tools:text="18K" />
+            tools:text="18K views" />
 
         <TextView
             android:id="@+id/eyeIV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:fontFamily="@font/roboto_regular"
-            android:text="@{`\u2022 ` + data.formattedCreateTime()}"
+            android:text="@{` \u2022 ` + data.formattedCreateTime()}"
             android:textColor="@color/second_text_color"
             android:textSize="@dimen/default_text_size"
+            tools:text=" &#8226; 14h"
             app:layout_constraintBottom_toBottomOf="@+id/number_of_views"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toEndOf="@+id/number_of_views"

@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.mychannel
 
+import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.common.paging.BasePagingDataAdapter
@@ -10,9 +11,10 @@ import com.banglalink.toffee.model.ChannelInfo
 class MyChannelPlaylistVideosAdapter(
     callback: BaseListItemCallback<ChannelInfo>?,
     private var selectedItem: ChannelInfo? = null
-)
-    :BasePagingDataAdapter<ChannelInfo>(callback, ItemComparator()) {
+):BasePagingDataAdapter<ChannelInfo>(callback, ItemComparator()) {
 
+    var isOwner: Int = 0
+    
     override fun getItemViewType(position: Int): Int {
         return R.layout.list_item_my_channel_playlist_videos
     }
@@ -20,6 +22,7 @@ class MyChannelPlaylistVideosAdapter(
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         val obj = getItem(position)
         obj?.let {
+            holder.binding.setVariable(BR.isOwner, isOwner)
             holder.bind(obj, callback, position, selectedItem)
         }
     }

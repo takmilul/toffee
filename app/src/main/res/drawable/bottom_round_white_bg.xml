@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape android:shape="rectangle" xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <solid android:color="@color/home_screen_curve_bg_color"/>
+    <solid android:color="@color/cardBgColor"/>
     <corners android:bottomLeftRadius="16dp"
         android:bottomRightRadius="16dp"/>
 

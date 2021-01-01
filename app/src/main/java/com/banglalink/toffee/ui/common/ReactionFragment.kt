@@ -42,21 +42,22 @@ class ReactionFragment: DialogFragment() {
         const val CHANNEL_INFO = "channelInfo"
         const val TAG = "reaction_fragment"
         
-        @JvmStatic fun newInstance(reactionIconViewId: Int, reactionCountViewId: Int, channelInfo: ChannelInfo): ReactionFragment {
+        @JvmStatic fun newInstance(channelInfo: ChannelInfo): ReactionFragment {
             return ReactionFragment().apply {
                 arguments = Bundle().apply { 
-                    putInt(REACTION_ICON_VIEW_ID, reactionIconViewId)
-                    putInt(REACTION_COUNT_VIEW_ID, reactionCountViewId)
                     putParcelable(CHANNEL_INFO, channelInfo)
                 }
             }
         }
     }
 
+    fun setView(iconView: View, countView: View) {
+        reactionIconView = iconView as TextView
+        reactionCountView = countView as TextView
+    }
+    
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         
-        reactionIconView = requireActivity().findViewById(requireArguments().getInt(REACTION_ICON_VIEW_ID))
-        reactionCountView = requireActivity().findViewById(requireArguments().getInt(REACTION_COUNT_VIEW_ID))
         channelInfo = requireArguments().getParcelable(CHANNEL_INFO)
 
         binding = AlertDialogReactionsBinding.inflate(this.layoutInflater)
@@ -149,6 +150,8 @@ class ReactionFragment: DialogFragment() {
     }
 
     override fun onDestroy() {
+        reactionIconView = null
+        reactionCountView = null
         alertDialog.dismiss()
         super.onDestroy()
     }

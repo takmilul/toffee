@@ -160,7 +160,7 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
 
     override fun onReactionClicked(view: View, reactionCountView: View, item: ChannelInfo) {
         super.onReactionClicked(view, reactionCountView, item)
-        ReactionFragment.newInstance(view.id, reactionCountView.id, item).show(requireActivity().supportFragmentManager, ReactionFragment.TAG)
+        ReactionFragment.newInstance(item).apply { setView(view, reactionCountView) }.show(requireActivity().supportFragmentManager, ReactionFragment.TAG)
     }
 
     /*override fun onReactionLongPressed(view: View, reactionCountView: View, item: ChannelInfo) {
