@@ -8,6 +8,9 @@
     <data>
         <import type="android.view.View"/>
         <variable
+            name="isOwner"
+            type="Integer" />
+        <variable
             name="data"
             type="com.banglalink.toffee.model.ChannelInfo" />
         <variable
@@ -64,7 +67,7 @@
             bindViewProgress="@{data}"
             app:layout_constraintBottom_toBottomOf="@+id/poster"
             app:layout_constraintEnd_toEndOf="@+id/duration"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="@id/poster" />
     
         <TextView
             android:id="@+id/duration"
@@ -100,26 +103,41 @@
             android:id="@+id/viewCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:drawableStart="@drawable/ic_view"
-            android:drawablePadding="8dp"
-            android:gravity="left"
-            android:text="@{data.formatted_view_count}"
-            android:textColor="#829AB8"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/title"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toStartOf="@+id/title"
-            app:layout_constraintTop_toBottomOf="@+id/title"
-            app:layout_constraintVertical_bias="0"
-            tools:text="10K" />
+            android:layout_marginTop="6dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/roboto_regular"
+            android:textStyle="bold"
+            android:textColor="@color/second_text_color"
+            android:textSize="@dimen/default_text_size"
+            android:text="@{data.formatted_view_count() + ` views`}"
+            app:layout_constraintEnd_toStartOf="@+id/uploadTime"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="@id/title"
+            app:layout_constraintTop_toBottomOf="@id/title"
+            tools:text="18K views" />
+
+        <TextView
+            android:id="@+id/uploadTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_regular"
+            android:text="@{` \u2022 ` + data.formattedCreateTime()}"
+            android:textColor="@color/second_text_color"
+            android:textSize="@dimen/default_text_size"
+            tools:text=" &#8226; 14h"
+            app:layout_constraintBottom_toBottomOf="@+id/viewCount"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toEndOf="@+id/viewCount"
+            app:layout_constraintTop_toTopOf="@+id/viewCount" />
 
         <ImageView
             android:id="@+id/options"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginEnd="12dp"
             android:padding="4dp"
+            android:visibility="@{isOwner == 1 ? View.VISIBLE : View.GONE}"
             android:onClick="@{(v) -> callback.onOpenMenu(v, data)}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/title"

@@ -85,7 +85,8 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 //        binding.topPanel.root.visibility = View.VISIBLE
 //        binding.topPanel.statusText.text = "${args.playlistInfo.playlistName} (${args.playlistInfo.playlistItemCount})"
-        
+
+        mAdapter.isOwner = requestParams.isOwner
         observe(playerViewModel.channelSubscriberCount) {
             currentItem?.isSubscribed = if (playerViewModel.isChannelSubscribed.value!!) 1 else 0
             currentItem?.subscriberCount = it
@@ -100,7 +101,7 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
             }
 
             override fun onReactionClicked(view: View, reactionCountView: View, item: ChannelInfo) {
-                ReactionFragment.newInstance(view.id, reactionCountView.id, item).show(requireActivity().supportFragmentManager, ReactionFragment.TAG)
+                ReactionFragment.newInstance(item).apply { setView(view, reactionCountView) }.show(requireActivity().supportFragmentManager, ReactionFragment.TAG)
             }
 
             /*override fun onReactionLongPressed(view: View, reactionCountView: View, item: ChannelInfo) {

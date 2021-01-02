@@ -115,8 +115,8 @@
             android:layout_marginTop="2dp"
             android:ellipsize="end"
             android:maxLines="1"
-            tools:text="HBO - 14h"
-            android:text='@{data.content_provider_name + " - " + data.formattedCreateTime}'
+            tools:text="HBO &#8226; 14h"
+            android:text="@{data.content_provider_name + ` \u2022 ` + data.formattedCreateTime}"
             android:textColor="@color/second_text_color"
             app:layout_constraintEnd_toEndOf="@id/name"
             app:layout_constraintStart_toStartOf="@+id/name"

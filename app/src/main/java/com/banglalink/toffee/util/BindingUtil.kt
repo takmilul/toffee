@@ -25,6 +25,7 @@ import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.enums.Reaction.*
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Package
+import com.banglalink.toffee.model.ReactionStatus
 import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.ui.widget.MultiTextButton
 
@@ -274,7 +275,7 @@ fun loadReactionEmo(view: View, reaction: Int) {
     val reactionIcon = when (reaction) {
         Like.value -> {
             reactionTitle = Like.name
-            R.drawable.ic_reaction_like
+            R.drawable.ic_reaction_like_no_shadow
         }
         Love.value -> {
             reactionTitle = Love.name
@@ -283,19 +284,19 @@ fun loadReactionEmo(view: View, reaction: Int) {
         }
         HaHa.value -> {
             reactionTitle = HaHa.name
-            R.drawable.ic_reaction_haha
+            R.drawable.ic_reaction_haha_no_shadow
         }
         Wow.value -> {
             reactionTitle = Wow.name
-            R.drawable.ic_reaction_wow
+            R.drawable.ic_reaction_wow_no_shadow
         }
         Sad.value -> {
             reactionTitle = Sad.name
-            R.drawable.ic_reaction_sad
+            R.drawable.ic_reaction_sad_no_shadow
         }
         Angry.value -> {
             reactionTitle = Angry.name
-            R.drawable.ic_reaction_angry
+            R.drawable.ic_reaction_angry_no_shadow
         }
         Add.value -> R.drawable.ic_playlist
         Delete.value -> R.drawable.ic_playlist
@@ -317,6 +318,29 @@ fun bindEmoCount(view: TextView, item: ChannelInfo) {
     } ?: 0L
     if (item.myReaction > 0) react++
     view.text = Utils.getFormattedViewsText(react.toString())
+}
+
+@BindingAdapter(value = ["emoIcon", "iconPosition"], requireAll = true)
+fun bindEmoIcon(view: ImageView, item: ChannelInfo, iconPosition: Int){
+    val reactionCountList = listOf(item.reaction?.like, item.reaction?.love, item.reaction?.haha, item.reaction?.wow, item.reaction?.sad, item.reaction?.angry).sortedByDescending { it }
+    var icon = when(reactionCountList[iconPosition - 1]){
+        item.reaction?.like -> R.drawable.ic_reaction_like_no_shadow
+        item.reaction?.love -> R.drawable.ic_reaction_love_no_shadow
+        item.reaction?.haha -> R.drawable.ic_reaction_haha_no_shadow
+        item.reaction?.wow -> R.drawable.ic_reaction_wow_no_shadow
+        item.reaction?.sad -> R.drawable.ic_reaction_sad_no_shadow
+        item.reaction?.angry -> R.drawable.ic_reaction_angry_no_shadow
+        else -> R.drawable.ic_reactions_emo
+    }
+    if (reactionCountList.first() == null || reactionCountList.first() == 0L){
+        icon = when(iconPosition){
+            1 -> R.drawable.ic_reaction_like_no_shadow
+            2 -> R.drawable.ic_reaction_love_no_shadow
+            3 -> R.drawable.ic_reaction_haha_no_shadow
+            else -> R.drawable.ic_reactions_emo
+        }
+    }
+    view.setImageResource(icon)
 }
 
 @BindingAdapter("loadMyReactionBg")
