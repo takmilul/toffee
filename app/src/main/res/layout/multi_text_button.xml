@@ -16,7 +16,7 @@
         android:textStyle="bold"
         android:gravity="center"
         android:textColor="@color/button_text_color"
-        android:layout_width="104dp"
+        android:layout_width="116dp"
         android:layout_height="wrap_content" />
     
     <TextView
