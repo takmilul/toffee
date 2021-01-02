@@ -15,8 +15,9 @@
         android:background="@drawable/subscribe_bg_round"
         android:textStyle="bold"
         android:gravity="center"
+        android:textSize="@dimen/default_text_size"
         android:textColor="@color/button_text_color"
-        android:layout_width="116dp"
+        android:layout_width="96dp"
         android:layout_height="wrap_content" />
     
     <TextView

@@ -78,4 +78,5 @@
 }
 #********************************End rules for gson****************************************#
 
--keep public class * extends androidx.fragment.app.Fragment
+-keepnames public class * extends androidx.fragment.app.Fragment
+-keep class androidx.navigation** { *; }
