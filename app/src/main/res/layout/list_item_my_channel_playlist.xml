@@ -103,8 +103,10 @@
         
         <ImageView
             android:id="@+id/imageView11"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingVertical="4dp"
+            android:paddingHorizontal="8dp"
             android:visibility="@{isOwner == 1 ? View.VISIBLE : View.GONE}"
             android:onClick="@{(view)->callback.onOpenMenu(view, data)}"
             app:layout_constraintBottom_toBottomOf="@+id/textView18"

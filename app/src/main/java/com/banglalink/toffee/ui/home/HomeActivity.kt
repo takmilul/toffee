@@ -24,6 +24,7 @@ import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -1041,6 +1042,15 @@ class HomeActivity :
             )
             background =
                 ContextCompat.getDrawable(this@HomeActivity, R.drawable.searchview_input_bg)
+            hint = null
+            setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_menu_search, 0)
+
+            addTextChangedListener { text->
+                val rightIcon = if(text?.length ?: 0 <= 0) R.drawable.ic_menu_search else 0
+                if(compoundPaddingRight != rightIcon) {
+                    setCompoundDrawablesWithIntrinsicBounds(0, 0, rightIcon, 0)
+                }
+            }
         }
 
         val notificationActionView = menu.findItem(R.id.action_notification)?.actionView
