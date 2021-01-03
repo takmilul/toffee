@@ -110,7 +110,7 @@
             android:textStyle="bold"
             android:textColor="@color/second_text_color"
             android:textSize="@dimen/default_text_size"
-            android:text="@{data.formatted_view_count() + ` views`}"
+            android:text="@{data.formatted_view_count() + ` Views`}"
             app:layout_constraintEnd_toStartOf="@+id/uploadTime"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="@id/title"

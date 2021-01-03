@@ -25,7 +25,6 @@ import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.enums.Reaction.*
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Package
-import com.banglalink.toffee.model.ReactionStatus
 import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.ui.widget.MultiTextButton
 
@@ -271,6 +270,19 @@ fun bindViewProgress(view: ProgressBar, item: ChannelInfo) {
 
 @BindingAdapter("loadReactionEmo")
 fun loadReactionEmo(view: View, reaction: Int) {
+    val generatedReaction = getReactionIcon(view, reaction)
+    val reactionTitle = generatedReaction.first
+    val reactionIcon = generatedReaction.second
+    when (view) {
+        is ImageView -> view.setImageResource(reactionIcon)
+        is TextView -> {
+            view.text = reactionTitle
+            view.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
+        }
+    }
+}
+
+fun getReactionIcon(view: View, reaction: Int): Pair<String, Int> {
     var reactionTitle = "React"
     val reactionIcon = when (reaction) {
         Like.value -> {
@@ -302,13 +314,7 @@ fun loadReactionEmo(view: View, reaction: Int) {
         Delete.value -> R.drawable.ic_playlist
         else -> R.drawable.ic_reaction_love_empty
     }
-    when (view) {
-        is ImageView -> view.setImageResource(reactionIcon)
-        is TextView -> {
-            view.text = reactionTitle
-            view.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
-        }
-    }
+    return Pair(reactionTitle, reactionIcon)
 }
 
 @BindingAdapter("bindEmoCount")

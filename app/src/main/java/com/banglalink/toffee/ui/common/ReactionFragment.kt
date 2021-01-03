@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
@@ -21,6 +20,7 @@ import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.enums.Reaction.*
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.util.Utils
+import com.banglalink.toffee.util.getReactionIcon
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -102,8 +102,9 @@ class ReactionFragment: DialogFragment() {
                 val previousReactionInfo = reactionDao.getReactionByContentId(preference.customerId, channelInfo!!.id)
                 val newReactionInfo = ReactionInfo(null, preference.customerId, channelInfo!!.id, reaction.value)
                 var reactionCount = 0L
-                var reactionText = reaction.name
-                var reactionIcon = reactButton?.let { (reactButton as ImageView).drawable }
+                val generatedReaction = getReactionIcon(reactionIconView!!, reaction.value)
+                var reactionText = generatedReaction.first
+                var reactionIcon = generatedReaction.second
                 reactionIconView!!.setTextColor(ContextCompat.getColor(requireContext(), R.color.fixed_second_text_color))
 
                 channelInfo!!.myReaction = previousReactionInfo?.let {
@@ -113,15 +114,11 @@ class ReactionFragment: DialogFragment() {
                         reactionCount = channelInfo!!.reaction?.run {
                             like + love + haha + wow + sad + angry
                         } ?: 0L
-                        reactionIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_reaction_love_empty)
+                        reactionIcon = R.drawable.ic_reaction_love_empty
                         None.value
                     }
                     else {
                         mViewModel.updateReaction(newReactionInfo)
-                        if (reaction == Love) {
-                            reactionIconView!!.setTextColor(Color.RED)
-                            reactionIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_reaction_love_filled)
-                        }
                         reactionCount = channelInfo!!.reaction?.run {
                             like + love + haha + wow + sad + angry + 1
                         } ?: 1L
@@ -133,17 +130,13 @@ class ReactionFragment: DialogFragment() {
                     reactionCount = channelInfo!!.reaction?.run {
                         like + love + haha + wow + sad + angry + 1
                     } ?: 1L
-                    if (reaction == Love) {
-                        reactionIconView!!.setTextColor(Color.RED)
-                        reactionIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_reaction_love_filled)
-                    }
                     reaction.value
                 }
 
                 reactionCountView!!.text = Utils.getFormattedViewsText(reactionCount.toString())
                 reactButton.let {
                     reactionIconView!!.text = reactionText
-                    reactionIconView!!.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, null, null, null)
+                    reactionIconView!!.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
                 }
             }
         }

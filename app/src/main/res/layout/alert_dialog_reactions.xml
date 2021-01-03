@@ -32,7 +32,9 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="16dp">
+                    android:paddingHorizontal="20dp"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="12dp">
 
                     <!--<RadioGroup
                         android:id="@+id/radioGroup"
@@ -54,15 +56,15 @@
                             android:button="@drawable/reaction_bg_selector" />
     
                     </RadioGroup>-->
+<!--                loadMyReactionBg="@{data.myReaction == Reaction.Like.value}"       -->
 
                     <ImageView
                         android:id="@+id/likeButton"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"
                         loadMyReactionBg="@{data.myReaction == Reaction.Like.value}"
-                        android:scaleType="fitCenter"
                         android:src="@drawable/ic_reaction_like"
-                        app:layout_constraintHorizontal_chainStyle="packed"
+                        app:layout_constraintHorizontal_chainStyle="spread_inside"
                         app:layout_constraintEnd_toStartOf="@+id/loveButton"
                         app:layout_constraintHorizontal_bias="0.5"
                         app:layout_constraintStart_toStartOf="parent"
@@ -83,8 +85,8 @@
 
                     <ImageView
                         android:id="@+id/loveButton"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"
                         android:layout_marginStart="8dp"
                         loadMyReactionBg="@{data.myReaction == Reaction.Love.value}"
                         android:scaleType="fitCenter"
@@ -109,8 +111,8 @@
 
                     <ImageView
                         android:id="@+id/hahaButton"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"
                         android:layout_marginStart="8dp"
                         loadMyReactionBg="@{data.myReaction == Reaction.HaHa.value}"
                         android:scaleType="fitCenter"
@@ -135,8 +137,8 @@
 
                     <ImageView
                         android:id="@+id/wowButton"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"
                         android:layout_marginStart="8dp"
                         loadMyReactionBg="@{data.myReaction == Reaction.Wow.value}"
                         android:scaleType="fitCenter"
@@ -161,8 +163,8 @@
 
                     <ImageView
                         android:id="@+id/sadButton"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"
                         android:layout_marginStart="8dp"
                         loadMyReactionBg="@{data.myReaction == Reaction.Sad.value}"
                         android:scaleType="fitCenter"
@@ -187,8 +189,8 @@
 
                     <ImageView
                         android:id="@+id/angryButton"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"
                         android:layout_marginStart="8dp"
                         loadMyReactionBg="@{data.myReaction == Reaction.Angry.value}"
                         android:scaleType="fitCenter"
