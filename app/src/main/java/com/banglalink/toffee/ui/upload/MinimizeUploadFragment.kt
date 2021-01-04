@@ -83,12 +83,16 @@ class MinimizeUploadFragment: BaseFragment() {
                             uploadPercent.text = "100%"
                             progressBar.progress = 100
                             uploadSize.text = "of ${Utils.readableFileSize(uploadInfo.fileSize)}"
+                            findNavController().popBackStack(R.id.menu_feed, false)
                         }
                         UploadStatus.ADDED.value,
                         UploadStatus.STARTED.value -> {
                             uploadPercent.text = "${uploadInfo.completedPercent}%"
                             progressBar.progress = uploadInfo.completedPercent
                             uploadSize.text = "of ${Utils.readableFileSize(uploadInfo.fileSize)}"
+                        }
+                        UploadStatus.ERROR.value -> {
+                            findNavController().popBackStack(R.id.menu_feed, false)
                         }
                     }
                 }
