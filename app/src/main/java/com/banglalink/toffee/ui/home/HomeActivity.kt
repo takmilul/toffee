@@ -78,6 +78,7 @@ import kotlinx.android.synthetic.main.player_bottom_sheet_layout.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import net.gotev.uploadservice.UploadService
 import java.util.*
 import javax.inject.Inject
 
@@ -892,6 +893,7 @@ class HomeActivity :
             .setCancelable(false)
             .setPositiveButton("Yes") { _, _ ->
                 mPref.clear()
+                UploadService.stopAllUploads()
                 launchActivity<SplashScreenActivity>()
                 finish()
             }
@@ -911,6 +913,8 @@ class HomeActivity :
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         return true
     }
+
+    override fun isVideoPortrait() = binding.playerView.isVideoPortrait
 
     override fun onFullScreenButtonPressed(): Boolean {
         super.onFullScreenButtonPressed()
@@ -939,6 +943,8 @@ class HomeActivity :
             binding.drawerLayout.closeDrawer(GravityCompat.END)
         } else if (resources.configuration.orientation != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        } else if(binding.playerView.isVideoPortrait && binding.playerView.isFullScreenPortrait()) {
+            updateFullScreenState()
         } else if (binding.draggableView.isMaximized() && binding.draggableView.visibility == View.VISIBLE) {
             minimizePlayer()
         }
@@ -1088,7 +1094,9 @@ class HomeActivity :
 
     private fun observeUpload2() {
         add_upload_info_button.setOnClickListener {
-            navController.navigate(R.id.myChannelHomeFragment)
+            if(navController.currentDestination?.id != R.id.myChannelHomeFragment) {
+                navController.navigate(R.id.myChannelHomeFragment)
+            }
         }
 
         close_button.setOnClickListener {
