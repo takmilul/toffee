@@ -23,6 +23,7 @@ import kotlinx.coroutines.SupervisorJob
 import com.banglalink.toffee.ui.upload.UploadObserver
 import dagger.hilt.android.HiltAndroidApp
 import net.gotev.uploadservice.UploadServiceConfig
+import net.gotev.uploadservice.okhttp.OkHttpStack
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 
@@ -85,6 +86,7 @@ class ToffeeApplication : Application() {
         createNotificationChannel()
 
         UploadServiceConfig.initialize(this, notificationChannelID, BuildConfig.DEBUG)
+        UploadServiceConfig.httpStack = OkHttpStack()
         mUploadObserver.start()
     }
 
