@@ -2,19 +2,15 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+    
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     
         <TextView
             android:id="@+id/latestVideosHeader"
-            style="@style/CategoryTextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
+            style="@style/SectionTitleTextStyle"
+            android:layout_marginTop="16dp"
             android:text="@string/latest_video"
             app:layout_constraintEnd_toStartOf="@+id/filterButton"
             app:layout_constraintStart_toStartOf="parent"
@@ -37,7 +33,7 @@
             android:layout_height="wrap_content"
             android:scrollbars="none"
             android:visibility="gone"
-            tools:minHeight="32dp"
+            android:layout_marginTop="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/latestVideosHeader"
@@ -46,19 +42,20 @@
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/subCategoryChipGroup"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 app:selectionRequired="true"
                 app:singleLine="true"
                 app:singleSelection="true" />
+            
         </HorizontalScrollView>
     
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/latestVideosList"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             android:clipToPadding="false"
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
@@ -104,6 +101,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
                 android:layout_marginTop="24dp"/>
+            
         </LinearLayout>
         
     </androidx.constraintlayout.widget.ConstraintLayout>

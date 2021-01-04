@@ -30,7 +30,7 @@ import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosViewModel.AssistedFactory
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.MyPopupWindow
-import com.google.android.material.switchmaterial.SwitchMaterial
+import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.catchup_details_list_header_new.*
 import kotlinx.coroutines.flow.collect
@@ -71,7 +71,7 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
     fun getPlaylistId(): Long  = args.playlistInfo.getPlaylistIdLong()
 
     fun isAutoplayEnabled(): Boolean {
-        return binding.root.findViewById<SwitchMaterial>(R.id.autoplay_switch).isChecked
+        return binding.root.findViewById<SwitchButton>(R.id.autoPlaySwitch).isChecked
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

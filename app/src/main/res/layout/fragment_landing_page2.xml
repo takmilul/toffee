@@ -37,7 +37,6 @@
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/categoriesFragment"
                     android:name="com.banglalink.toffee.ui.landing.LandingCategoriesFragment"
-                    android:layout_marginTop="8dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
@@ -50,7 +49,6 @@
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/userChannelList"
                     android:name="com.banglalink.toffee.ui.landing.LandingUserChannelsFragment"
-                    android:layout_marginTop="8dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
@@ -68,7 +66,6 @@
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/latestVideosFragment"
                 android:name="com.banglalink.toffee.ui.landing.LatestVideosFragment"
-                android:layout_marginTop="8dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
             

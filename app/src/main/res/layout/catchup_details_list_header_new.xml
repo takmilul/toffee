@@ -37,12 +37,12 @@
             android:maxLines="2"
             android:text="@{data.program_name}"
             android:textColor="@color/main_text_color"
-            android:textSize="18sp"
+            android:textSize="16sp"
             app:layout_constraintEnd_toStartOf="@+id/options"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/circleImageView"
             app:layout_constraintTop_toBottomOf="@+id/seriesInfo"
-            app:layout_goneMarginTop="8dp"
+            app:layout_goneMarginTop="12dp"
             tools:text="NOW: ICC Women's World Cup 2019
 Day 21 - AUS vs IND" />
 
@@ -65,8 +65,8 @@ Day 21 - AUS vs IND" />
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/circleImageView"
             loadImageFromUrlRounded="@{data.channelProfileUrl}"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:onClick="@{()-> callback.onProviderIconClicked(data)}"
@@ -90,82 +90,112 @@ Day 21 - AUS vs IND" />
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/shareCount"
+            android:id="@+id/viewCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:drawablePadding="4dp"
+            android:textSize="@dimen/default_text_size"
+            android:text="@{data.formatted_view_count() + ` Views`}"
+            android:fontFamily="@font/roboto_medium"
             app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="@+id/circleImageView"
+            app:layout_constraintEnd_toStartOf="@id/shareCount"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="352.5K views" />
+
+        <TextView
+            android:id="@+id/shareCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="4dp"
+            android:textSize="@dimen/default_text_size"
+            android:fontFamily="@font/roboto_medium"
             android:onClick="@{(v)-> callback.onShareClicked(v, data)}"
             android:text="@{data.formatedShareCount()}"
             app:drawableLeftCompat="@drawable/ic_share"
-            app:layout_constraintEnd_toStartOf="@id/firstIcon"
-            app:layout_constraintStart_toStartOf="@+id/circleImageView"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/reactionCountLayout"
+            app:layout_constraintStart_toEndOf="@id/viewCount"
+            app:layout_constraintTop_toTopOf="@id/viewCount"
+            app:layout_constraintBottom_toBottomOf="@id/viewCount"
             tools:text="10.1K" />
 
-        <ImageView
-            android:id="@+id/thirdIcon"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:layout_marginEnd="2dp"
-            android:background="@drawable/round_emo_player_bg"
-            android:padding="2dp"
-            android:src="@drawable/ic_reaction_wow_no_shadow"
-            app:layout_constraintBottom_toBottomOf="@id/reactionCount"
-            app:layout_constraintEnd_toStartOf="@id/reactionCount"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="@id/secondIcon"
-            app:layout_constraintTop_toTopOf="@id/reactionCount"
-            bind:emoIcon="@{data}"
-            bind:iconPosition="@{3}" />
-
-        <ImageView
-            android:id="@+id/secondIcon"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/round_emo_player_bg"
-            android:padding="2dp"
-            android:src="@drawable/ic_reaction_love_no_shadow"
-            app:layout_constraintBottom_toBottomOf="@id/reactionCount"
-            app:layout_constraintEnd_toEndOf="@id/thirdIcon"
-            app:layout_constraintTop_toTopOf="@id/reactionCount"
-            bind:emoIcon="@{data}"
-            bind:iconPosition="@{2}" />
-
-        <ImageView
-            android:id="@+id/firstIcon"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/round_emo_player_bg"
-            android:padding="2dp"
-            android:src="@drawable/ic_reaction_like_no_shadow"
-            app:layout_constraintBottom_toBottomOf="@id/reactionCount"
-            app:layout_constraintEnd_toEndOf="@id/secondIcon"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintTop_toTopOf="@id/reactionCount"
-            bind:emoIcon="@{data}"
-            bind:iconPosition="@{1}" />
-
-        <TextView
-            android:id="@+id/reactionCount"
-            bindEmoCount="@{data}"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/reactionCountLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="80dp"
-            app:layout_constraintBottom_toBottomOf="@+id/shareCount"
-            app:layout_constraintEnd_toStartOf="@+id/guideline"
-            app:layout_constraintStart_toEndOf="@+id/thirdIcon"
-            app:layout_constraintTop_toTopOf="@+id/shareCount"
-            tools:text="21K" />
+            app:layout_constraintTop_toTopOf="@id/viewCount"
+            app:layout_constraintBottom_toBottomOf="@id/viewCount"
+            app:layout_constraintStart_toEndOf="@id/shareCount"
+            app:layout_constraintEnd_toStartOf="@id/view">
 
-        <androidx.constraintlayout.widget.Group
-            android:layout_width="wrap_content"
+            <ImageView
+                android:id="@+id/thirdIcon"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginEnd="2dp"
+                android:background="@drawable/round_emo_player_bg"
+                android:padding="2dp"
+                android:src="@drawable/ic_reaction_wow_no_shadow"
+                app:layout_constraintBottom_toBottomOf="@id/reactionCount"
+                app:layout_constraintEnd_toStartOf="@id/reactionCount"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="@id/secondIcon"
+                app:layout_constraintTop_toTopOf="@id/reactionCount"
+                bind:emoIcon="@{data}"
+                bind:iconPosition="@{3}" />
+
+            <ImageView
+                android:id="@+id/secondIcon"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/round_emo_player_bg"
+                android:padding="2dp"
+                android:src="@drawable/ic_reaction_love_no_shadow"
+                app:layout_constraintBottom_toBottomOf="@id/reactionCount"
+                app:layout_constraintEnd_toEndOf="@id/thirdIcon"
+                app:layout_constraintTop_toTopOf="@id/reactionCount"
+                bind:emoIcon="@{data}"
+                bind:iconPosition="@{2}" />
+
+            <ImageView
+                android:id="@+id/firstIcon"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/round_emo_player_bg"
+                android:padding="2dp"
+                android:src="@drawable/ic_reaction_like_no_shadow"
+                app:layout_constraintBottom_toBottomOf="@id/reactionCount"
+                app:layout_constraintEnd_toEndOf="@id/secondIcon"
+                app:layout_constraintTop_toTopOf="@id/reactionCount"
+                bind:emoIcon="@{data}"
+                bind:iconPosition="@{1}" />
+
+            <TextView
+                android:id="@+id/reactionCount"
+                bindEmoCount="@{data}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/default_text_size"
+                android:fontFamily="@font/roboto_medium"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/thirdIcon"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="21K" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        
+        <View
+            android:id="@+id/view"
+            android:layout_width="0.1dp"
             android:layout_height="wrap_content"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:constraint_referenced_ids="firstIcon,secondIcon,thirdIcon,reactionCount" />
+            app:layout_constraintTop_toTopOf="@id/viewCount"
+            app:layout_constraintBottom_toBottomOf="@id/viewCount"
+            app:layout_constraintStart_toEndOf="@id/reactionCountLayout"
+            app:layout_constraintEnd_toStartOf="@id/guideline" />
         
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"
@@ -183,6 +213,8 @@ Day 21 - AUS vs IND" />
             android:gravity="center_vertical"
             android:onClick="@{(v) -> callback.onReactionClicked(v, reactionCount, data)}"
             android:text="Reaction"
+            android:textSize="@dimen/default_text_size"
+            android:fontFamily="@font/roboto_medium"
             app:drawableLeftCompat="@drawable/ic_reaction_love_empty"
             app:layout_constraintBottom_toBottomOf="@+id/shareCount"
             app:layout_constraintEnd_toEndOf="@+id/subscribe_button"
@@ -259,28 +291,21 @@ Day 21 - AUS vs IND" />
             android:id="@+id/channelDetailsGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="program_name,circleImageView,reactionCount,reactionButton,providerName,shareCount" />
+            app:constraint_referenced_ids="program_name,circleImageView,reactionCountLayout,reactionButton,providerName,shareCount,viewCount" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/group2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="visible"
-            app:constraint_referenced_ids="shareCount,reactionCount,reactionButton" />
-
-        <!--        <androidx.constraintlayout.widget.Group-->
-        <!--            android:id="@+id/playlistGroup"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            app:constraint_referenced_ids="autoplay_switch,bottom_panel_status"-->
-        <!--            />-->
+            app:constraint_referenced_ids="shareCount,reactionCountLayout,reactionButton,viewCount" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/tvExcludeList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="@{data.live ? View.GONE : View.VISIBLE}"
-            app:constraint_referenced_ids="options,program_name,reactionButton,reactionCount,shareCount,channelSubCount,subscribe_button,video_description,viewCount,uploadTime"
+            app:constraint_referenced_ids="options,program_name,reactionButton,reactionCountLayout,shareCount,channelSubCount,subscribe_button,video_description,uploadTime,viewCount"
             tools:visibility="visible" />
 
 
@@ -293,57 +318,71 @@ Day 21 - AUS vs IND" />
             android:text="@{data.descriptionDecoded}"
             app:layout_constraintEnd_toEndOf="@+id/subscribe_button"
             app:layout_constraintStart_toStartOf="@+id/program_name"
-            app:layout_constraintTop_toBottomOf="@+id/viewCount"
+            app:layout_constraintTop_toBottomOf="@+id/uploadTime"
             app:layout_goneMarginBottom="8dp"
             tools:text="Hello world!"
             tools:visibility="visible" />
 
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/autoplay_switch"
+        <TextView
+            android:id="@+id/autoPlayText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:checked="true"
+            android:layout_marginEnd="2dp"
             android:text="Autoplay"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:fontFamily="@font/roboto_medium"
+            android:textColor="@color/fixed_second_text_color"
+            android:textSize="@dimen/default_text_size"
+            app:layout_constraintTop_toTopOf="@id/autoPlaySwitch"
+            app:layout_constraintBottom_toBottomOf="@id/autoPlaySwitch"
+            app:layout_constraintEnd_toStartOf="@id/autoPlaySwitch" />
+        
+        <com.suke.widget.SwitchButton
+            android:id="@+id/autoPlaySwitch"
+            android:layout_width="36dp"
+            android:layout_height="22dp"
+            android:layout_marginTop="16dp"
+            app:sb_checked="true"
+            app:sb_background="@color/switchUnCheckedColor"
+            app:sb_checked_color="@color/colorAccent"
+            app:sb_show_indicator="false"
+            app:sb_uncheck_color="@color/switchUnCheckedColor"
+            app:sb_uncheckcircle_width="8dp"
             app:layout_constraintEnd_toEndOf="@+id/subscribe_button"
             app:layout_constraintTop_toBottomOf="@+id/video_description"
             tools:visibility="visible" />
 
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/autoplay_switch_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:constraint_referenced_ids="autoPlayText,autoPlaySwitch" />
+        
         <TextView
             android:id="@+id/bottom_panel_status"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
+            android:text="Recommended"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/autoplay_switch"
-            app:layout_constraintEnd_toStartOf="@+id/autoplay_switch"
+            style="@style/TitleBoldTextStyle"
+            app:layout_constraintBottom_toBottomOf="@+id/autoPlayText"
+            app:layout_constraintEnd_toStartOf="@+id/autoPlayText"
             app:layout_constraintStart_toStartOf="@+id/circleImageView"
-            app:layout_constraintTop_toTopOf="@+id/autoplay_switch"
-            tools:text="TextView"
-            tools:visibility="visible" />
-
-        <TextView
-            android:id="@+id/viewCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="@{data.formatted_view_count() + ` views`}"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@+id/circleImageView"
-            app:layout_constraintTop_toBottomOf="@+id/program_name"
-            tools:text="352.5K views" />
+            app:layout_constraintTop_toTopOf="@+id/autoPlayText"
+            tools:text="Recommended"
+            tools:visibility="visible"/>
 
         <TextView
             android:id="@+id/uploadTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{` \u2022 ` + data.formattedCreateTime()}"
-            app:layout_constraintBottom_toBottomOf="@+id/viewCount"
-            app:layout_constraintStart_toEndOf="@+id/viewCount"
-            app:layout_constraintTop_toTopOf="@+id/viewCount"
-            tools:text=" \u2022 14 hour" />
+            android:layout_marginTop="4dp"
+            android:text="@{data.formattedCreateTime()}"
+            app:layout_constraintStart_toStartOf="@+id/circleImageView"
+            app:layout_constraintTop_toBottomOf="@+id/program_name"
+            tools:text="14h" />
 
         <RelativeLayout
             android:id="@+id/seasonSpinnerWrap"
@@ -351,11 +390,11 @@ Day 21 - AUS vs IND" />
             android:layout_height="wrap_content"
             android:background="@drawable/spinner_bg_season"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/autoplay_switch"
-            app:layout_constraintEnd_toStartOf="@+id/autoplay_switch"
+            app:layout_constraintBottom_toBottomOf="@+id/autoPlayText"
+            app:layout_constraintEnd_toStartOf="@+id/autoPlayText"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/circleImageView"
-            app:layout_constraintTop_toTopOf="@+id/autoplay_switch"
+            app:layout_constraintTop_toTopOf="@+id/autoPlayText"
             tools:visibility="visible">
 
             <Spinner

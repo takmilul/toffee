@@ -62,8 +62,8 @@
 
                 <com.suke.widget.SwitchButton
                     android:id="@+id/notificationSwitch"
-                    android:layout_width="40dp"
-                    android:layout_height="24dp"
+                    android:layout_width="36dp"
+                    android:layout_height="22dp"
                     android:layout_gravity="center_vertical"
                     android:checked="@{enableNotification}"
                     android:minWidth="0dp"
@@ -109,8 +109,8 @@
 
                 <com.suke.widget.SwitchButton
                     android:id="@+id/dataQualityToggleBtn"
-                    android:layout_width="40dp"
-                    android:layout_height="24dp"
+                    android:layout_width="36dp"
+                    android:layout_height="22dp"
                     android:minWidth="0dp"
                     android:minHeight="0dp"
                     app:sb_show_indicator="false"
@@ -190,8 +190,8 @@
 
                 <com.suke.widget.SwitchButton
                     android:id="@+id/watchOnlyWifiToggleBtn"
-                    android:layout_width="40dp"
-                    android:layout_height="24dp"
+                    android:layout_width="36dp"
+                    android:layout_height="22dp"
                     android:minWidth="0dp"
                     android:minHeight="0dp"
                     app:sb_show_indicator="false"

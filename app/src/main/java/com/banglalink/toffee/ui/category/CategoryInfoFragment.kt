@@ -128,19 +128,15 @@ class CategoryInfoFragment: HomeBaseFragment() {
 
     private fun addChip(subCategory: UgcSubCategory): Chip {
         val intColor = ContextCompat.getColor(requireContext(), R.color.colorSecondaryDark)
-//        val foregroundColor = ContextCompat.getColor(requireContext(), R.color.colorSecondaryAccent)
-
         val chipColor = createStateColor(intColor)
         val chip = layoutInflater.inflate(R.layout.category_chip_layout, categoryChipGroup, false) as Chip
         chip.text = subCategory.name
         chip.typeface = Typeface.DEFAULT_BOLD
         chip.id = View.generateViewId()
-
         chip.chipBackgroundColor = chipColor
         chip.chipStrokeColor = ColorStateList.valueOf(intColor)
         chip.rippleColor = chipColor
         chip.setTextColor(createStateColor(Color.WHITE, intColor))
-
         return chip
     }
 
@@ -150,19 +146,6 @@ class CategoryInfoFragment: HomeBaseFragment() {
             bindCategoryImage(categoryIcon, categoryInfo)
             categoryIcon.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.colorAccent2))
         }
-    }
-
-    private fun createHashtagStateColor(selectedColor: Int, unSelectedColor: Int = Color.TRANSPARENT): ColorStateList {
-        return ColorStateList(
-            arrayOf(
-                intArrayOf(android.R.attr.state_checked),
-                intArrayOf()
-            ),
-            intArrayOf(
-                selectedColor,
-                unSelectedColor
-            )
-        )
     }
 
     private fun createStateColor(selectedColor: Int, unSelectedColor: Int = Color.TRANSPARENT): ColorStateList {

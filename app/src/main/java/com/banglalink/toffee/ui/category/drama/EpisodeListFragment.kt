@@ -25,7 +25,7 @@ import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.ui.widget.MyPopupWindow
-import com.google.android.material.switchmaterial.SwitchMaterial
+import com.suke.widget.SwitchButton
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
@@ -102,7 +102,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
     fun getPlaylistId() = seriesInfo.playlistId()
 
     fun isAutoplayEnabled(): Boolean {
-        return binding.root.findViewById<SwitchMaterial>(R.id.autoplay_switch).isChecked
+        return binding.root.findViewById<SwitchButton>(R.id.autoPlaySwitch).isChecked
     }
 
     private fun observeListState() {
