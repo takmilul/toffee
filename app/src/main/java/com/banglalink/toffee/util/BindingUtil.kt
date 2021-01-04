@@ -6,7 +6,6 @@ import android.text.SpannableStringBuilder
 import android.text.TextUtils
 import android.text.style.StrikethroughSpan
 import android.view.View
-import android.view.ViewGroup.MarginLayoutParams
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -270,19 +269,6 @@ fun bindViewProgress(view: ProgressBar, item: ChannelInfo) {
 
 @BindingAdapter("loadReactionEmo")
 fun loadReactionEmo(view: View, reaction: Int) {
-    val generatedReaction = getReactionIcon(view, reaction)
-    val reactionTitle = generatedReaction.first
-    val reactionIcon = generatedReaction.second
-    when (view) {
-        is ImageView -> view.setImageResource(reactionIcon)
-        is TextView -> {
-            view.text = reactionTitle
-            view.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
-        }
-    }
-}
-
-fun getReactionIcon(view: View, reaction: Int): Pair<String, Int> {
     var reactionTitle = "React"
     val reactionIcon = when (reaction) {
         Like.value -> {
@@ -291,7 +277,6 @@ fun getReactionIcon(view: View, reaction: Int): Pair<String, Int> {
         }
         Love.value -> {
             reactionTitle = Love.name
-            if(view is TextView) view.setTextColor(Color.RED)
             R.drawable.ic_reaction_love_filled
         }
         HaHa.value -> {
@@ -314,7 +299,16 @@ fun getReactionIcon(view: View, reaction: Int): Pair<String, Int> {
         Delete.value -> R.drawable.ic_playlist
         else -> R.drawable.ic_reaction_love_empty
     }
-    return Pair(reactionTitle, reactionIcon)
+    when (view) {
+        is ImageView -> view.setImageResource(reactionIcon)
+        is TextView -> {
+            view.text = reactionTitle
+            view.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
+            if (reaction == Love.value){
+                view.setTextColor(Color.RED)
+            }
+        }
+    }
 }
 
 @BindingAdapter("bindEmoCount")
@@ -360,15 +354,5 @@ fun loadMyReactionBg(view: ImageView, isSetBg: Boolean){
 fun loadUnseenBgColor(view: CardView, isSeen: Boolean){
     if (!isSeen){
         view.setCardBackgroundColor(ContextCompat.getColor(view.context, R.color.unseenCardColor))
-    }
-}
-
-@BindingAdapter("contentNameMargin")
-fun setContentMargin(view: TextView, isMyChannel: Boolean){
-    if (isMyChannel){
-        (view.layoutParams as MarginLayoutParams).marginStart = Utils.dpToPx(16)
-    }
-    else{
-        (view.layoutParams as MarginLayoutParams).marginStart = Utils.dpToPx(8)
     }
 }

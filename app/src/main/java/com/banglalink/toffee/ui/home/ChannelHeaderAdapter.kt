@@ -7,6 +7,7 @@ import android.widget.AdapterView
 import android.widget.RelativeLayout
 import android.widget.Spinner
 import android.widget.TextView
+import androidx.constraintlayout.widget.Group
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
@@ -18,7 +19,6 @@ import com.banglalink.toffee.model.SeriesPlaybackInfo
 import com.banglalink.toffee.ui.category.drama.EpisodeListViewModel
 import com.banglalink.toffee.ui.common.ContentReactionCallback
 import com.banglalink.toffee.ui.common.SeriesHeaderCallback
-import com.google.android.material.switchmaterial.SwitchMaterial
 
 class ChannelHeaderAdapter(private val headerData: Any? = null,
                            private val cb: ContentReactionCallback<ChannelInfo>? = null,
@@ -54,16 +54,16 @@ class ChannelHeaderAdapter(private val headerData: Any? = null,
         channelInfo?.let {
             holder.bind(it, cb, position, viewModel)
         }
+        holder.autoplaySwitch.visibility = View.VISIBLE
+        holder.bottomPanelStatus.visibility = View.VISIBLE
+        
         when (headerData) {
             is PlaylistPlaybackInfo -> {
-                holder.autoplaySwitch.visibility = View.VISIBLE
                 holder.seasonInfoHeader.visibility = View.GONE
-                holder.bottomPanelStatus.visibility = View.VISIBLE
                 holder.bottomPanelStatus.text = "${headerData.playlistName} (${headerData.playlistItemCount})"
                 holder.seasonSpinnerWrap.visibility = View.GONE
             }
             is SeriesPlaybackInfo -> {
-                holder.autoplaySwitch.visibility = View.VISIBLE
                 holder.seasonInfoHeader.visibility = View.VISIBLE
                 holder.seasonInfoHeader.text = "${"S%02d \u2022 E%02d".format(channelInfo?.seasonNo, channelInfo?.episodeNo)}"
                 holder.seasonSpinnerWrap.visibility = View.VISIBLE
@@ -86,8 +86,6 @@ class ChannelHeaderAdapter(private val headerData: Any? = null,
                 }
             }
             else -> {
-                holder.autoplaySwitch.visibility = View.GONE
-                holder.bottomPanelStatus.visibility = View.GONE
                 holder.seasonInfoHeader.visibility = View.GONE
                 holder.seasonSpinnerWrap.visibility = View.GONE
             }
@@ -108,7 +106,7 @@ class ChannelHeaderAdapter(private val headerData: Any? = null,
     }
 
     class HeaderViewHolder(private val binding: ViewDataBinding): RecyclerView.ViewHolder(binding.root) {
-        val autoplaySwitch: SwitchMaterial = binding.root.findViewById(R.id.autoplay_switch)
+        val autoplaySwitch: Group = binding.root.findViewById(R.id.autoplay_switch_group)
         val bottomPanelStatus: TextView = binding.root.findViewById(R.id.bottom_panel_status)
         val seasonInfoHeader: TextView = binding.root.findViewById(R.id.seriesInfo)
         val seasonSpinner: Spinner = binding.root.findViewById(R.id.seasonSpinner)

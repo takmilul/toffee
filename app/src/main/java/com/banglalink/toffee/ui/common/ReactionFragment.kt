@@ -20,7 +20,6 @@ import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.enums.Reaction.*
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.util.Utils
-import com.banglalink.toffee.util.getReactionIcon
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -68,75 +67,70 @@ class ReactionFragment: DialogFragment() {
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }
         with(binding) {
-            likeButton.setOnClickListener { reactionButton ->
-                react(Like, reactionButton)
+            likeButton.setOnClickListener {
+                react(Like, R.drawable.ic_reaction_like_no_shadow)
                 alertDialog.dismiss()
             }
-            loveButton.setOnClickListener { reactionButton ->
-                react(Love, reactionButton)
+            loveButton.setOnClickListener {
+                react(Love, R.drawable.ic_reaction_love_no_shadow)
                 alertDialog.dismiss()
             }
-            hahaButton.setOnClickListener { reactionButton ->
-                react(HaHa, reactionButton)
+            hahaButton.setOnClickListener {
+                react(HaHa, R.drawable.ic_reaction_haha_no_shadow)
                 alertDialog.dismiss()
             }
-            wowButton.setOnClickListener { reactionButton ->
-                react(Wow, reactionButton)
+            wowButton.setOnClickListener {
+                react(Wow, R.drawable.ic_reaction_wow_no_shadow)
                 alertDialog.dismiss()
             }
-            sadButton.setOnClickListener { reactionButton ->
-                react(Sad, reactionButton)
+            sadButton.setOnClickListener {
+                react(Sad, R.drawable.ic_reaction_sad_no_shadow)
                 alertDialog.dismiss()
             }
-            angryButton.setOnClickListener { reactionButton ->
-                react(Angry, reactionButton)
+            angryButton.setOnClickListener {
+                react(Angry, R.drawable.ic_reaction_angry_no_shadow)
                 alertDialog.dismiss()
             }
         }
         return alertDialog
     }
     
-    private fun react(reaction: Reaction, reactButton: View? = null) {
+    private fun react(reaction: Reaction, reactIcon: Int) {
         if (channelInfo != null && reactionIconView != null && reactionCountView != null) {
             lifecycleScope.launchWhenStarted {
                 val previousReactionInfo = reactionDao.getReactionByContentId(preference.customerId, channelInfo!!.id)
                 val newReactionInfo = ReactionInfo(null, preference.customerId, channelInfo!!.id, reaction.value)
-                var reactionCount = 0L
-                val generatedReaction = getReactionIcon(reactionIconView!!, reaction.value)
-                var reactionText = generatedReaction.first
-                var reactionIcon = generatedReaction.second
-                reactionIconView!!.setTextColor(ContextCompat.getColor(requireContext(), R.color.fixed_second_text_color))
+                var reactionCount = channelInfo!!.reaction?.run {
+                    like + love + haha + wow + sad + angry
+                } ?: 0L
+                var reactionText = reaction.name
+                var reactionIcon = reactIcon
 
                 channelInfo!!.myReaction = previousReactionInfo?.let {
                     if (previousReactionInfo.reaction == newReactionInfo.reaction) {
                         mViewModel.removeReaction(previousReactionInfo)
                         reactionText = "React"
-                        reactionCount = channelInfo!!.reaction?.run {
-                            like + love + haha + wow + sad + angry
-                        } ?: 0L
                         reactionIcon = R.drawable.ic_reaction_love_empty
                         None.value
                     }
                     else {
                         mViewModel.updateReaction(newReactionInfo)
-                        reactionCount = channelInfo!!.reaction?.run {
-                            like + love + haha + wow + sad + angry + 1
-                        } ?: 1L
+                        reactionCount++
                         reaction.value
                     }
                 } ?: let {
                     mViewModel.insertReaction(newReactionInfo)
                     mViewModel.insertActivity(preference.customerId, channelInfo!!, reaction.value)
-                    reactionCount = channelInfo!!.reaction?.run {
-                        like + love + haha + wow + sad + angry + 1
-                    } ?: 1L
+                    reactionCount++
                     reaction.value
                 }
 
                 reactionCountView!!.text = Utils.getFormattedViewsText(reactionCount.toString())
-                reactButton.let {
-                    reactionIconView!!.text = reactionText
-                    reactionIconView!!.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
+                reactionIconView!!.text = reactionText
+                reactionIconView!!.setTextColor(ContextCompat.getColor(requireContext(), R.color.fixed_second_text_color))
+                reactionIconView!!.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
+                if (reactionText == Love.name) {
+                    reactionIconView!!.setTextColor(Color.RED)
                 }
             }
         }
