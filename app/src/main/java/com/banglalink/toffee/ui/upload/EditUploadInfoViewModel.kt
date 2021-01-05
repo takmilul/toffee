@@ -2,6 +2,7 @@ package com.banglalink.toffee.ui.upload
 
 import android.content.Context
 import android.net.Uri
+import android.util.Base64
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -246,6 +247,28 @@ class EditUploadInfoViewModel @AssistedInject constructor(
     }
 
     private suspend fun startUpload(serverContentId: Long): String {
+        val upInfo = UploadInfo(
+            serverContentId = serverContentId,
+            fileUri = uploadFileUri,
+            fileName = fileName,
+        )
+        val upId = uploadRepo.insertUploadInfo(upInfo)
+        val metadata = Base64.encodeToString(fileName.toByteArray(), Base64.NO_WRAP)
+        val uploadIdStr =
+            withContext(Dispatchers.IO + Job()) {
+                TusUploadRequest(
+                    appContext,
+                    "https://ugc-upload.toffeelive.com/upload",
+                )
+                    .setMetadata("filename $metadata")
+                    .setUploadID(UtilsKt.uploadIdToString(upId))
+                    .setFileToUpload(uploadFileUri)
+                    .startUpload()
+            }
+        return uploadIdStr
+    }
+
+    private suspend fun startUpload2(serverContentId: Long): String {
         val accessToken = withContext(Dispatchers.IO) {
             val credential = GoogleCredential.fromStream(
                 appContext.assets.open("toffee-261507-60ca3e5405df.json")
