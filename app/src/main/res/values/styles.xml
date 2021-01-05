@@ -120,6 +120,7 @@
         <item name="android:textColor">@color/view_all_text_color</item>
         <item name="android:textSize">@dimen/default_text_size</item>
         <item name="android:fontFamily">@font/roboto_bold</item>
+        <item name="android:layout_marginEnd">16dp</item>
     </style>
     
     
@@ -162,8 +163,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:textColor">@color/main_text_color</item>
         <item name="android:background">@android:color/transparent</item>
-        <item name="android:textAppearance">@android:style/TextAppearance.Small</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">@dimen/default_text_size</item>
         <item name="android:fontFamily">@font/roboto_medium</item>
     
     </style>

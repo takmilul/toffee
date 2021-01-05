@@ -16,14 +16,7 @@
 
     <TextView
         android:id="@+id/userChannelsHeader"
-        style="@style/CategoryTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_weight="1"
+        style="@style/SectionTitleTextStyle"
         android:text="User Channels"
         app:layout_constraintEnd_toStartOf="@+id/viewAllButton"
         app:layout_constraintStart_toStartOf="parent"
@@ -32,14 +25,8 @@
     <TextView
         android:id="@+id/viewAllButton"
         style="@style/ViewAllTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:drawablePadding="4dp"
-        android:gravity="center"
         android:visibility="gone"
         android:text="@string/view_all"
-        android:textColor="@color/view_all_text_color"
         app:drawableRightCompat="@drawable/ic_right_arrow_accent_2"
         app:layout_constraintBottom_toBottomOf="@+id/userChannelsHeader"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -48,14 +35,14 @@
         android:id="@+id/userChannelList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clipToPadding="false"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
+        android:paddingHorizontal="8dp"
+        android:layout_marginTop="4dp"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/userChannelsHeader"
-        app:reverseLayout="false" />
+        app:reverseLayout="false"
+        tools:listitem="@layout/list_item_user_channels"/>
 
 
     <androidx.constraintlayout.widget.Guideline

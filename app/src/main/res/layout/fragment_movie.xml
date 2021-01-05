@@ -20,19 +20,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="vertical"
                     app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/featuredFragment"
                         android:name="com.banglalink.toffee.ui.landing.FeaturedContentFragment"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:layout_height="wrap_content" />
 
                     <LinearLayout
                         android:id="@+id/categoryContainer"
@@ -40,137 +38,105 @@
                         android:background="@drawable/fragment_bg_bottom"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/featuredFragment"
                         android:orientation="horizontal">
+
                         <ImageView
                             android:id="@+id/categoryIcon"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
+                            android:layout_width="30dp"
+                            android:layout_height="28dp"
                             android:layout_marginStart="16dp"
+                            android:layout_marginTop="16dp"
                             tools:src="@drawable/ic_profile_default" />
 
                         <TextView
                             android:id="@+id/categoryName"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
-                            android:layout_gravity="center_vertical"
-                            android:textSize="@dimen/default_text_size"
+                            android:layout_marginStart="12dp"
+                            android:layout_marginTop="8dp"
+                            android:textSize="16sp"
                             tools:text="Movies"
+                            android:layout_gravity="center_vertical"
+                            android:fontFamily="@font/roboto_medium"
                             android:textColor="@color/main_text_color"/>
+
                     </LinearLayout>
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/continueWatchingFragment"
                         android:name="com.banglalink.toffee.ui.category.movie.MoviesContinueWatchingFragment"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/categoryContainer" />
+                        android:layout_height="wrap_content" />
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/editorsChoiceFragment"
                         android:name="com.banglalink.toffee.ui.landing.EditorsChoiceFragment"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/continueWatchingFragment" />
+                        android:paddingTop="8dp"
+                        android:background="@color/home_screen_curve_bg_color" />
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/moviePreviewFragment"
                         android:name="com.banglalink.toffee.ui.category.movie.MoviesPreviewFragment"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/editorsChoiceFragment" />
+                        android:layout_height="wrap_content" />
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/trendingNowMoviesFragment"
                         android:name="com.banglalink.toffee.ui.category.movie.MoviesTrendingNowFragment"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/moviePreviewFragment" />
+                        android:layout_height="wrap_content" />
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/thrillerMoviesFragment"
                         android:name="com.banglalink.toffee.ui.category.movie.MoviesThrillerFragment"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/trendingNowMoviesFragment" />
+                        android:layout_height="wrap_content" />
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/actionMoviesFragment"
                         android:name="com.banglalink.toffee.ui.category.movie.MoviesActionFragment"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/thrillerMoviesFragment" />
+                        android:layout_height="wrap_content" />
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/romanticMoviesFragment"
                         android:name="com.banglalink.toffee.ui.category.movie.MoviesRomanticFragment"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/actionMoviesFragment" />
+                        android:layout_height="wrap_content" />
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/banglaMoviesFragment"
                         android:name="com.banglalink.toffee.ui.category.movie.MoviesBanglaFragment"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/romanticMoviesFragment" />
+                        android:layout_height="wrap_content" />
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/englishMoviesFragment"
                         android:name="com.banglalink.toffee.ui.category.movie.MoviesEnglishFragment"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/banglaMoviesFragment" />
+                        android:layout_height="wrap_content" />
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/comingSoonFragment"
                         android:name="com.banglalink.toffee.ui.category.movie.MoviesComingSoonFragment"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/englishMoviesFragment" />
+                        android:layout_height="wrap_content" />
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/telefilmFragment"
                         android:name="com.banglalink.toffee.ui.category.movie.MoviesTelefilmFragment"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/comingSoonFragment" />
+                        android:layout_height="wrap_content" />
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/topMovieChannelsFragment"
                         android:name="com.banglalink.toffee.ui.category.movie.PopularMovieChannelFragment"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/telefilmFragment" />
+                        android:layout_height="wrap_content" />
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
             </com.google.android.material.appbar.AppBarLayout>
 
             <androidx.core.widget.NestedScrollView

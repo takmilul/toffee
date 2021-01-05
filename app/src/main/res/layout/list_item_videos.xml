@@ -6,7 +6,6 @@
     
     <data>
         <import type="android.view.View" />
-        <import type="com.banglalink.toffee.util.Utils"/>
         
         <variable
             name="isMyChannel"
@@ -100,17 +99,17 @@
             style="@style/programNameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="12dp"
+            app:layout_goneMarginStart="16dp"
             app:layout_constrainedWidth="true"
             android:ellipsize="end"
             android:maxLines="2"
+            android:lines="2"
+            android:gravity="center_vertical"
             android:text="@{data.program_name}"
-            android:textSize="@dimen/default_text_size"
             android:onClick="@{()->callback.onItemClicked(data)}"
-            android:fontFamily="@font/roboto_regular"
-            android:textColor="@color/main_text_color"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintEnd_toStartOf="@+id/options"
             app:layout_constraintStart_toEndOf="@+id/ownerPicture"
@@ -136,12 +135,12 @@
             app:layout_constraintBottom_toBottomOf="@id/name"
             app:srcCompat="@drawable/ic_menu_more" />
         
-        <androidx.constraintlayout.widget.Barrier
+        <!--<androidx.constraintlayout.widget.Barrier
             android:id="@+id/titleBarrier"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:barrierDirection="bottom"
-            app:constraint_referenced_ids="name,options"/>
+            app:constraint_referenced_ids="name,options"/>-->
         
         <TextView
             android:id="@+id/owner"
@@ -154,7 +153,7 @@
             android:text="@{isMyChannel ? `` : data.content_provider_name}"
             android:textColor="@color/fixed_second_text_color"
             app:layout_constraintStart_toStartOf="@+id/name"
-            app:layout_constraintTop_toBottomOf="@+id/titleBarrier"
+            app:layout_constraintTop_toBottomOf="@+id/name"
             tools:text="Banglalink" />
         
         <TextView
@@ -177,7 +176,7 @@
             android:id="@+id/thirdIcon"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_marginEnd="2dp"
+            android:layout_marginStart="10dp"
             android:padding="2dp"
             bind:emoIcon="@{data}"
             bind:iconPosition="@{3}"
@@ -185,13 +184,13 @@
             android:src="@drawable/ic_reaction_wow_no_shadow"
             app:layout_constraintTop_toTopOf="@id/reactionCount"
             app:layout_constraintBottom_toBottomOf="@id/reactionCount"
-            app:layout_constraintEnd_toStartOf="@id/reactionCount" />
+            app:layout_constraintStart_toStartOf="@id/secondIcon"/>
 
         <ImageView
             android:id="@+id/secondIcon"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
             android:padding="2dp"
             bind:emoIcon="@{data}"
             bind:iconPosition="@{2}"
@@ -199,7 +198,7 @@
             android:src="@drawable/ic_reaction_love_no_shadow"
             app:layout_constraintTop_toTopOf="@id/reactionCount"
             app:layout_constraintBottom_toBottomOf="@id/reactionCount"
-            app:layout_constraintEnd_toEndOf="@id/thirdIcon"/>
+            app:layout_constraintStart_toStartOf="@id/firstIcon"/>
 
         <ImageView
             android:id="@+id/firstIcon"
@@ -213,8 +212,7 @@
             android:src="@drawable/ic_reaction_like_no_shadow"
             app:layout_constraintStart_toStartOf="@id/guideline3"
             app:layout_constraintTop_toTopOf="@id/reactionCount"
-            app:layout_constraintBottom_toBottomOf="@id/reactionCount"
-            app:layout_constraintEnd_toEndOf="@id/secondIcon"/>
+            app:layout_constraintBottom_toBottomOf="@id/reactionCount"/>
 
         <TextView
             android:id="@+id/reactionCount"
@@ -222,13 +220,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
+            android:layout_marginStart="2dp"
             android:maxLines="1"
             android:gravity="center_vertical"
             android:textSize="@dimen/default_text_size"
             android:textColor="@color/fixed_second_text_color"
             android:fontFamily="@font/roboto_medium"
             app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toStartOf="@id/thirdIcon"
+            app:layout_constraintStart_toEndOf="@id/thirdIcon"
             app:layout_constraintBottom_toBottomOf="@+id/owner"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/owner"
@@ -246,7 +245,7 @@
             android:textColor="@color/fixed_second_text_color"
             app:layout_constraintVertical_bias="0"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/owner"
+            app:layout_constraintStart_toStartOf="@+id/name"
             app:layout_constraintTop_toBottomOf="@+id/owner"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             tools:text="10K" />
@@ -292,7 +291,7 @@
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintBottom_toBottomOf="@+id/viewCount"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@id/firstIcon"
+            app:layout_constraintStart_toStartOf="@id/guideline3"
             app:layout_constraintTop_toTopOf="@+id/viewCount"
             tools:text="React" />
         
@@ -316,7 +315,7 @@
             android:visibility="@{reactionGroup.visibility == View.GONE ? View.VISIBLE : View.GONE}"
             app:layout_constraintVertical_bias="0"
             app:layout_constraintStart_toStartOf="@+id/name"
-            app:layout_constraintTop_toBottomOf="@+id/titleBarrier"
+            app:layout_constraintTop_toBottomOf="@+id/name"
             app:layout_constraintBottom_toBottomOf="parent"/>
         
     </androidx.constraintlayout.widget.ConstraintLayout>

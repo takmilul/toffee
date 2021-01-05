@@ -11,8 +11,8 @@
     <dimen name="catchup_width">192dp</dimen>
     <dimen name="catchup_height">108dp</dimen>
 
-    <dimen name="channel_width">92dp</dimen>
-    <dimen name="channel_height">92dp</dimen>
+    <dimen name="channel_width">80dp</dimen>
+    <dimen name="channel_height">80dp</dimen>
 
 <!--    <dimen name="design_bottom_navigation_height" tools:override="true">62dp</dimen>-->
     <dimen name="design_fab_image_size" tools:override="true">13dp</dimen>

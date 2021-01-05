@@ -19,7 +19,7 @@
             <LinearLayout
                 app:layout_scrollFlags="scroll|exitUntilCollapsed"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
                 
                 <androidx.fragment.app.FragmentContainerView
@@ -38,13 +38,16 @@
                     android:id="@+id/categoriesFragment"
                     android:name="com.banglalink.toffee.ui.landing.LandingCategoriesFragment"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"/>
 
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/trendingNowFragment"
                     android:name="com.banglalink.toffee.ui.landing.EditorsChoiceFragment"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:paddingTop="8dp"
+                    android:background="@color/home_screen_curve_bg_color"/>
 
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/userChannelList"
@@ -67,7 +70,8 @@
                 android:id="@+id/latestVideosFragment"
                 android:name="com.banglalink.toffee.ui.landing.LatestVideosFragment"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent" 
+                android:layout_marginTop="8dp"/>
             
         </androidx.core.widget.NestedScrollView>
     </com.banglalink.toffee.ui.widget.NestedCoordinatorLayout>
