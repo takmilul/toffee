@@ -11,6 +11,7 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -22,6 +23,7 @@ import com.banglalink.toffee.R.string
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.databinding.FragmentLandingLatestVideosBinding
 import com.banglalink.toffee.enums.FilterContentType.*
+import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource.Failure
@@ -32,6 +34,8 @@ import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.ContentReactionCallback
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.common.ReactionFragment
+import com.banglalink.toffee.ui.common.ReactionFragment.Companion.TAG
+import com.banglalink.toffee.ui.common.ReactionIconCallback
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.home.PopularVideoListAdapter
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
@@ -194,7 +198,20 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
 
     override fun onReactionClicked(view: View, reactionCountView: View, item: ChannelInfo) {
         super.onReactionClicked(view, reactionCountView, item)
-        ReactionFragment.newInstance(item).apply { setView(view, reactionCountView) }.show(requireActivity().supportFragmentManager, ReactionFragment.TAG)
+        ReactionFragment.newInstance(item).apply { setCallback(object : ReactionIconCallback {
+            override fun onReactionChange(reactionCount: String, reactionText: String, reactionIcon: Int) {
+                (reactionCountView as TextView).text = reactionCount
+                (view as TextView).text = reactionText
+                view.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
+                if (reactionText == Love.name) {
+                    view.setTextColor(Color.RED)
+                }
+                else{
+                    view.setTextColor(ContextCompat.getColor(requireContext(), R.color.fixed_second_text_color))
+                }
+                Log.e(TAG, "setReaction: icon", )
+            }
+        }) }.show(requireActivity().supportFragmentManager, ReactionFragment.TAG)
     }
 
     override fun onShareClicked(view: View, item: ChannelInfo) {

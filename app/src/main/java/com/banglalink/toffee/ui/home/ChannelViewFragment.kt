@@ -1,9 +1,11 @@
 package com.banglalink.toffee.ui.home
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
@@ -13,6 +15,7 @@ import androidx.lifecycle.Observer
 import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.CatchupDetailsListHeaderNewBinding
+import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
@@ -20,6 +23,7 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.channels.ChannelFragment
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.common.ContentReactionCallback
+import com.banglalink.toffee.ui.common.ReactionIconCallback
 import com.banglalink.toffee.ui.common.ReactionFragment
 import com.banglalink.toffee.ui.landing.UserChannelViewModel
 import com.banglalink.toffee.ui.widget.MyPopupWindow
@@ -84,9 +88,18 @@ class ChannelViewFragment: BaseFragment(), ContentReactionCallback<ChannelInfo> 
 
     override fun onReactionClicked(view: View, reactionCountView: View, item: ChannelInfo) {
         super.onReactionClicked(view, reactionCountView, item)
-        ReactionFragment.newInstance(item).apply { setView(view, reactionCountView) }.show(requireActivity().supportFragmentManager, ReactionFragment.TAG)
+        ReactionFragment.newInstance(item).apply { setCallback(object : ReactionIconCallback {
+            override fun onReactionChange(reactionCount: String, reactionText: String, reactionIcon: Int) {
+                (reactionCountView as TextView).text = reactionCount
+                (view as TextView).text = reactionText
+                view.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
+                if (reactionText == Love.name){
+                    view.setTextColor(Color.RED)
+                }
+            }
+        }) }.show(requireActivity().supportFragmentManager, ReactionFragment.TAG)
     }
-    
+
     override fun onOpenMenu(view: View, item: ChannelInfo) {
         super.onOpenMenu(view, item)
         openMenu(view, item)

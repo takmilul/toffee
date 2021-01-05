@@ -4,10 +4,7 @@ import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.View
-import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -26,8 +23,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ReactionFragment: DialogFragment() {
 
-    private var reactionCountView: TextView? = null
-    private var reactionIconView: TextView? = null
+    private var reactionIconCallback: ReactionIconCallback? = null
     private var channelInfo: ChannelInfo? = null
     private lateinit var alertDialog: AlertDialog
     @Inject lateinit var preference: Preference
@@ -36,8 +32,6 @@ class ReactionFragment: DialogFragment() {
     private lateinit var binding: AlertDialogReactionsBinding
 
     companion object {
-        const val REACTION_ICON_VIEW_ID = "reactionIconViewId"
-        const val REACTION_COUNT_VIEW_ID = "reactionCountViewId"
         const val CHANNEL_INFO = "channelInfo"
         const val TAG = "reaction_fragment"
         
@@ -50,9 +44,8 @@ class ReactionFragment: DialogFragment() {
         }
     }
 
-    fun setView(iconView: View, countView: View) {
-        reactionIconView = iconView as TextView
-        reactionCountView = countView as TextView
+    fun setCallback(reactionIconCallback: ReactionIconCallback) {
+        this.reactionIconCallback = reactionIconCallback
     }
     
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -72,7 +65,7 @@ class ReactionFragment: DialogFragment() {
                 alertDialog.dismiss()
             }
             loveButton.setOnClickListener {
-                react(Love, R.drawable.ic_reaction_love_no_shadow)
+                react(Love, R.drawable.ic_reaction_love_filled)
                 alertDialog.dismiss()
             }
             hahaButton.setOnClickListener {
@@ -96,7 +89,7 @@ class ReactionFragment: DialogFragment() {
     }
     
     private fun react(reaction: Reaction, reactIcon: Int) {
-        if (channelInfo != null && reactionIconView != null && reactionCountView != null) {
+        channelInfo?.let {
             lifecycleScope.launchWhenStarted {
                 val previousReactionInfo = reactionDao.getReactionByContentId(preference.customerId, channelInfo!!.id)
                 val newReactionInfo = ReactionInfo(null, preference.customerId, channelInfo!!.id, reaction.value)
@@ -107,8 +100,8 @@ class ReactionFragment: DialogFragment() {
                 var reactionIcon = reactIcon
 
                 channelInfo!!.myReaction = previousReactionInfo?.let {
-                    if (previousReactionInfo.reaction == newReactionInfo.reaction) {
-                        mViewModel.removeReaction(previousReactionInfo)
+                    if (it.reaction == newReactionInfo.reaction) {
+                        mViewModel.removeReaction(it)
                         reactionText = "React"
                         reactionIcon = R.drawable.ic_reaction_love_empty
                         None.value
@@ -118,27 +111,20 @@ class ReactionFragment: DialogFragment() {
                         reactionCount++
                         reaction.value
                     }
-                } ?: let {
+                } ?: run {
                     mViewModel.insertReaction(newReactionInfo)
                     mViewModel.insertActivity(preference.customerId, channelInfo!!, reaction.value)
                     reactionCount++
                     reaction.value
                 }
 
-                reactionCountView!!.text = Utils.getFormattedViewsText(reactionCount.toString())
-                reactionIconView!!.text = reactionText
-                reactionIconView!!.setTextColor(ContextCompat.getColor(requireContext(), R.color.fixed_second_text_color))
-                reactionIconView!!.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
-                if (reactionText == Love.name) {
-                    reactionIconView!!.setTextColor(Color.RED)
-                }
+                reactionIconCallback?.onReactionChange(Utils.getFormattedViewsText(reactionCount.toString()), reactionText, reactionIcon)
             }
         }
     }
 
     override fun onDestroy() {
-        reactionIconView = null
-        reactionCountView = null
+        reactionIconCallback = null
         alertDialog.dismiss()
         super.onDestroy()
     }

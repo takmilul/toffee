@@ -276,6 +276,7 @@ fun loadReactionEmo(view: View, reaction: Int) {
             R.drawable.ic_reaction_like_no_shadow
         }
         Love.value -> {
+            if (view is TextView) view.setTextColor(Color.RED)
             reactionTitle = Love.name
             R.drawable.ic_reaction_love_filled
         }
@@ -304,9 +305,6 @@ fun loadReactionEmo(view: View, reaction: Int) {
         is TextView -> {
             view.text = reactionTitle
             view.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
-            if (reaction == Love.value){
-                view.setTextColor(Color.RED)
-            }
         }
     }
 }

@@ -6,6 +6,7 @@
 
     <data>
         <import type="com.banglalink.toffee.enums.Reaction"/>
+        <import type="com.banglalink.toffee.util.Utils"/>
         <variable
             name="data"
             type="com.banglalink.toffee.model.ChannelInfo" />
@@ -76,7 +77,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="@{data.myReaction == Reaction.Like.value ? String.valueOf(data.reaction.like + 1) : String.valueOf(data.reaction.like)}"
+                        android:text="@{data.myReaction == Reaction.Like.value ? Utils.getFormattedViewsText(String.valueOf(data.reaction.like + 1)) : Utils.getFormattedViewsText(String.valueOf(data.reaction.like))}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="@+id/likeButton"
                         app:layout_constraintStart_toStartOf="@+id/likeButton"
@@ -102,7 +103,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="@{data.myReaction == Reaction.Love.value ? String.valueOf(data.reaction.love + 1) : String.valueOf(data.reaction.love)}"
+                        android:text="@{data.myReaction == Reaction.Love.value ? Utils.getFormattedViewsText(String.valueOf(data.reaction.love + 1)) : Utils.getFormattedViewsText(String.valueOf(data.reaction.love))}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="@+id/loveButton"
                         app:layout_constraintStart_toStartOf="@+id/loveButton"
@@ -128,7 +129,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="@{data.myReaction == Reaction.HaHa.value ? String.valueOf(data.reaction.haha + 1) : String.valueOf(data.reaction.haha)}"
+                        android:text="@{data.myReaction == Reaction.HaHa.value ? Utils.getFormattedViewsText(String.valueOf(data.reaction.haha + 1)) : Utils.getFormattedViewsText(String.valueOf(data.reaction.haha))}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="@+id/hahaButton"
                         app:layout_constraintStart_toStartOf="@+id/hahaButton"
@@ -154,7 +155,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="@{data.myReaction == Reaction.Wow.value ? String.valueOf(data.reaction.wow + 1) : String.valueOf(data.reaction.wow)}"
+                        android:text="@{data.myReaction == Reaction.Wow.value ? Utils.getFormattedViewsText(String.valueOf(data.reaction.wow + 1)) : Utils.getFormattedViewsText(String.valueOf(data.reaction.wow))}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="@+id/wowButton"
                         app:layout_constraintStart_toStartOf="@+id/wowButton"
@@ -180,7 +181,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="@{data.myReaction == Reaction.Sad.value ? String.valueOf(data.reaction.sad + 1) : String.valueOf(data.reaction.sad)}"
+                        android:text="@{data.myReaction == Reaction.Sad.value ? Utils.getFormattedViewsText(String.valueOf(data.reaction.sad + 1)) : Utils.getFormattedViewsText(String.valueOf(data.reaction.sad))}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="@+id/sadButton"
                         app:layout_constraintStart_toStartOf="@+id/sadButton"
@@ -206,7 +207,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="@{data.myReaction == Reaction.Angry.value ? String.valueOf(data.reaction.angry + 1) : String.valueOf(data.reaction.angry)}"
+                        android:text="@{data.myReaction == Reaction.Angry.value ? Utils.getFormattedViewsText(String.valueOf(data.reaction.angry + 1)) : Utils.getFormattedViewsText(String.valueOf(data.reaction.angry))}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="@+id/angryButton"
                         app:layout_constraintStart_toStartOf="@+id/angryButton"
