@@ -43,7 +43,7 @@
         android:textSize="16sp"
         tools:text="Category Name"
         android:fontFamily="@font/roboto_medium"
-        android:textColor="@color/main_text_color"
+        android:textColor="@color/categoryNameColor"
         app:layout_constraintStart_toEndOf="@+id/categoryIcon"
         app:layout_constraintTop_toTopOf="@+id/categoryIcon"
         app:layout_constraintBottom_toBottomOf="@id/categoryIcon"/>

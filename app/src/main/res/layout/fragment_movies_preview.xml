@@ -14,12 +14,8 @@
 
         <TextView
             android:id="@+id/titleTextView"
-            style="@style/CategoryTextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
+            style="@style/SectionTitleTextStyle"
+            android:layout_marginTop="16dp"
             android:text="Header"
             app:layout_constraintEnd_toStartOf="@+id/viewAllButton"
             app:layout_constraintStart_toStartOf="parent"
@@ -28,14 +24,8 @@
         <TextView
             android:id="@+id/viewAllButton"
             style="@style/ViewAllTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:drawablePadding="4dp"
             android:visibility="gone"
-            android:gravity="center"
             android:text="@string/view_all"
-            android:textColor="@color/view_all_text_color"
             app:drawableRightCompat="@drawable/ic_right_arrow_accent_2"
             app:layout_constraintBottom_toBottomOf="@+id/titleTextView"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -44,6 +34,7 @@
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:paddingStart="24dp"
             android:paddingEnd="24dp"
             android:clipChildren="false"

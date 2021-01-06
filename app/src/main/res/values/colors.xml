@@ -37,6 +37,7 @@
     <color name="window_background">#F3F3F3</color>
 
     <color name="main_text_color">#29466B</color>
+    <color name="fixed_second_main_text_color">#6781A1</color>
     <color name="view_all_text_color">@color/colorButtonSecondary</color>
     <color name="second_text_color">#829AB8</color>
     <color name="fixed_second_text_color">#829AB8</color>
@@ -89,5 +90,6 @@
     <color name="statusTextBgColor">#E1E1E1</color>
     <color name="switchUnCheckedColor">#829AB8</color>
     <color name="cardBgColor">#FFFFFF</color>
-    <color name="sectionBgColor">#29466B</color>
+    <color name="cardTitleColor">#29466B</color>
+    <color name="categoryNameColor">#6781A1</color>
 </resources>

@@ -26,6 +26,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
+                    android:background="@color/screen_bg"
                     app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
                     <androidx.fragment.app.FragmentContainerView
@@ -60,7 +61,7 @@
                             tools:text="Movies"
                             android:layout_gravity="center_vertical"
                             android:fontFamily="@font/roboto_medium"
-                            android:textColor="@color/main_text_color"/>
+                            android:textColor="@color/categoryNameColor"/>
 
                     </LinearLayout>
 
@@ -68,69 +69,86 @@
                         android:id="@+id/continueWatchingFragment"
                         android:name="com.banglalink.toffee.ui.category.movie.MoviesContinueWatchingFragment"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/top_round_bg_with_top_space" />
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/editorsChoiceFragment"
                         android:name="com.banglalink.toffee.ui.landing.EditorsChoiceFragment"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingTop="8dp"
                         android:background="@color/home_screen_curve_bg_color" />
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/moviePreviewFragment"
                         android:name="com.banglalink.toffee.ui.category.movie.MoviesPreviewFragment"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:background="@drawable/top_round_bg_with_top_long_space" />
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/trendingNowMoviesFragment"
                         android:name="com.banglalink.toffee.ui.category.movie.MoviesTrendingNowFragment"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:paddingTop="16dp"
+                        android:background="@drawable/fragment_bg_bottom" />
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/thrillerMoviesFragment"
                         android:name="com.banglalink.toffee.ui.category.movie.MoviesThrillerFragment"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:background="@drawable/all_round_bg_with_top_space" />
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/actionMoviesFragment"
                         android:name="com.banglalink.toffee.ui.category.movie.MoviesActionFragment"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:background="@drawable/all_round_bg_with_top_space" />
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/romanticMoviesFragment"
                         android:name="com.banglalink.toffee.ui.category.movie.MoviesRomanticFragment"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:background="@drawable/all_round_bg_with_top_space" />
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/banglaMoviesFragment"
                         android:name="com.banglalink.toffee.ui.category.movie.MoviesBanglaFragment"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:background="@drawable/all_round_bg_with_top_space" />
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/englishMoviesFragment"
                         android:name="com.banglalink.toffee.ui.category.movie.MoviesEnglishFragment"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:background="@drawable/all_round_bg_with_top_space" />
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/comingSoonFragment"
                         android:name="com.banglalink.toffee.ui.category.movie.MoviesComingSoonFragment"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:background="@drawable/top_round_bg_with_top_space" />
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/telefilmFragment"
                         android:name="com.banglalink.toffee.ui.category.movie.MoviesTelefilmFragment"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:background="@color/home_screen_curve_bg_color" />
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/topMovieChannelsFragment"

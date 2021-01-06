@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.category.movie
 
-import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -47,7 +46,7 @@ class MovieViewModel @ViewModelInject constructor(
     val telefilms = telefilmsResponse.toLiveData()
     private val comingSoonResponse = MutableLiveData<List<ComingSoonContent>>()
     val comingSoonContents = comingSoonResponse.toLiveData()
-    private var continueWatchingFlag = 0
+    private var originalCards = MoviesContentVisibilityCards()
     
     val loadMovieCategoryDetail by lazy{
         viewModelScope.launch {
@@ -57,8 +56,14 @@ class MovieViewModel @ViewModelInject constructor(
                 null
             }
             
-            moviesContentCardsResponse.value = response?.cards ?: MoviesContentVisibilityCards()
-            continueWatchingFlag = response?.cards?.continueWatching ?: 0
+            originalCards = response?.cards ?: MoviesContentVisibilityCards()
+            
+            moviesContentCardsResponse.value = originalCards.copy(
+                moviePreviews = moviePreviewsResponse.value?.let { if(it.isEmpty()) 0 else originalCards.moviePreviews } ?: originalCards.moviePreviews,
+                trendingNow = trendingNowMoviesResponse.value?.let { if(it.isEmpty()) 0 else originalCards.trendingNow } ?: originalCards.trendingNow,
+                telefilm = telefilmsResponse.value?.let { if(it.isEmpty()) 0 else originalCards.telefilm } ?: originalCards.telefilm,
+                comingSoon = comingSoonResponse.value?.let { if(it.isEmpty()) 0 else originalCards.comingSoon } ?: originalCards.comingSoon,
+            )
 
             thrillerMoviesResponse.value = response?.subCategoryWiseContent?.find { it.subCategoryName == "Thriller" }?.let {
                 it.channels?.map { cinfo->
@@ -136,7 +141,7 @@ class MovieViewModel @ViewModelInject constructor(
                     it
                 }.run { 
                     moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply {
-                        moviePreviews = if (isEmpty()) 0 else moviePreviews
+                        moviePreviews = if (isEmpty()) 0 else originalCards.moviePreviews
                     }
                     this
                 }
@@ -159,7 +164,7 @@ class MovieViewModel @ViewModelInject constructor(
                     it
                 }.run {
                     moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply {
-                        trendingNow = if(isEmpty()) 0 else trendingNow
+                        trendingNow = if(isEmpty()) 0 else originalCards.trendingNow
                     }
                     this
                 }
@@ -184,7 +189,7 @@ class MovieViewModel @ViewModelInject constructor(
                     it
                 }.run {
                     moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply {
-                        telefilm = if(isEmpty()) 0 else telefilm
+                        telefilm = if(isEmpty()) 0 else originalCards.telefilm
                     }
                     this
                 }
@@ -202,7 +207,7 @@ class MovieViewModel @ViewModelInject constructor(
             comingSoonResponse.value = try{
                 comingSoonApiService.loadData("VOD", 1, 0, 10, 0).run { 
                     moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply { 
-                        comingSoon = if(isEmpty()) 0 else comingSoon
+                        comingSoon = if(isEmpty()) 0 else originalCards.comingSoon
                     }
                     this
                 }
@@ -221,7 +226,7 @@ class MovieViewModel @ViewModelInject constructor(
                 item.channelInfo
             }.apply {
                 moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply { 
-                    continueWatching = if (isEmpty()) 0 else continueWatchingFlag
+                    continueWatching = if (isEmpty()) 0 else originalCards.continueWatching
                 }
             }
         }

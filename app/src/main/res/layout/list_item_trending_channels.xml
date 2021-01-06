@@ -47,15 +47,14 @@
             android:layout_marginTop="4dp"
             android:layout_marginEnd="4dp"
             android:ellipsize="end"
-            android:fontFamily="sans-serif-medium"
             android:gravity="center"
             android:maxLines="1"
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
-            android:text="@{data.contentProviderName}"
-            android:textColor="#7990AC"
+            android:fontFamily="@font/roboto_medium"
             android:textSize="14sp"
-            android:textStyle="normal"
+            android:text="@{data.contentProviderName}"
+            android:textColor="@color/fixed_second_main_text_color"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/iconHolder"
@@ -85,11 +84,15 @@
             android:layout_marginBottom="8dp"
             android:maxLines="1"
             android:ellipsize="end"
+            android:fontFamily="@font/roboto_regular"
+            android:textSize="@dimen/default_text_size"
+            android:textColor="@color/fixed_second_text_color"
             android:text="@{String.valueOf(data.subscriberCount)}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/multiTextButton" />
+            app:layout_constraintTop_toBottomOf="@+id/multiTextButton"
+            tools:text="16K"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

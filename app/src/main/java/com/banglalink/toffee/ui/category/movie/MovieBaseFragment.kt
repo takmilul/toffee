@@ -16,8 +16,7 @@ import com.banglalink.toffee.ui.home.LandingPageViewModel
 
 abstract class MovieBaseFragment<T: Any>: HomeBaseFragment(), ProviderIconCallback<T> {
     protected abstract val cardTitle: String
-    protected open val isCategory: Boolean = true
-    protected open val adapter: MyBaseAdapterV2<T> by lazy { MoviesAdapter(this, isCategory) }
+    protected open val adapter: MyBaseAdapterV2<T> by lazy { MoviesAdapter(this) }
     private lateinit var binding: LayoutHorizontalContentContainerBinding
     protected val viewModel by activityViewModels<MovieViewModel>()
     private val landingPageViewModel by activityViewModels<LandingPageViewModel>()

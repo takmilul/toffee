@@ -152,6 +152,7 @@
             android:textSize="@dimen/default_text_size"
             android:text="@{isMyChannel ? `` : data.content_provider_name}"
             android:textColor="@color/fixed_second_text_color"
+            android:fontFamily="@font/roboto_regular"
             app:layout_constraintStart_toStartOf="@+id/name"
             app:layout_constraintTop_toBottomOf="@+id/name"
             tools:text="Banglalink" />
@@ -163,6 +164,7 @@
             android:maxLines="1"
             android:layout_marginEnd="8dp"
             android:text="@{isMyChannel ? data.formattedCreateTime : ` \u2022 ` + data.formattedCreateTime}"
+            android:fontFamily="@font/roboto_regular"
             android:textSize="@dimen/default_text_size"
             android:textColor="@color/fixed_second_text_color"
             app:layout_constraintHorizontal_bias="0"
