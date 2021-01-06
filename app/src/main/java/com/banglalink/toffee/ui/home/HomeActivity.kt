@@ -54,6 +54,7 @@ import com.banglalink.toffee.ui.landing.AllCategoriesFragment
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
 import com.banglalink.toffee.ui.player.PlayerPageActivity
 import com.banglalink.toffee.ui.player.PlaylistItem
+import com.banglalink.toffee.ui.player.PlaylistManager
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.splash.SplashScreenActivity
 import com.banglalink.toffee.ui.subscription.PackageListActivity
@@ -122,6 +123,9 @@ class HomeActivity :
     private val viewModel: HomeViewModel by viewModels()
     private val allChannelViewModel by viewModels<AllChannelsViewModel>()
     private val uploadViewModel by viewModels<UploadProgressViewModel>()
+
+    override val playlistManager: PlaylistManager
+        get() = viewModel.getPlaylistManager()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

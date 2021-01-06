@@ -24,6 +24,7 @@ import com.banglalink.toffee.ui.common.ReactionIconCallback
 import com.banglalink.toffee.ui.common.ReactionFragment
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
+import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_catchup.*
 import kotlinx.coroutines.flow.collect
@@ -91,6 +92,10 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
 
         observeList()
         observeListState()
+    }
+
+    fun isAutoplayEnabled(): Boolean {
+        return view?.findViewById<SwitchButton>(R.id.autoPlaySwitch)?.isChecked == true
     }
 
     override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {

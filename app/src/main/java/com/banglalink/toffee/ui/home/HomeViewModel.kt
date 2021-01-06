@@ -17,6 +17,7 @@ import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
+import com.banglalink.toffee.ui.player.PlaylistManager
 import com.banglalink.toffee.util.getError
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
@@ -52,6 +53,10 @@ class HomeViewModel @ViewModelInject constructor(
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val viewAllVideoLiveData = MutableLiveData<Boolean>()
     val viewAllCategories = MutableLiveData<Boolean>()
+
+    private var _playlistManager = PlaylistManager()
+
+    fun getPlaylistManager() = _playlistManager
 
     private val getContentFromShareableUrl by unsafeLazy{
         GetContentFromShareableUrl(Preference.getInstance(),RetrofitApiClient.toffeeApi)
