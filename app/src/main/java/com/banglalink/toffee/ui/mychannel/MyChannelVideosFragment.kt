@@ -1,7 +1,9 @@
 package com.banglalink.toffee.ui.mychannel
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -10,10 +12,12 @@ import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.data.database.dao.ReactionDao
+import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.ContentReactionCallback
+import com.banglalink.toffee.ui.common.ReactionIconCallback
 import com.banglalink.toffee.ui.common.ReactionFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -160,7 +164,16 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
 
     override fun onReactionClicked(view: View, reactionCountView: View, item: ChannelInfo) {
         super.onReactionClicked(view, reactionCountView, item)
-        ReactionFragment.newInstance(item).apply { setView(view, reactionCountView) }.show(requireActivity().supportFragmentManager, ReactionFragment.TAG)
+        ReactionFragment.newInstance(item).apply { setCallback(object : ReactionIconCallback {
+            override fun onReactionChange(reactionCount: String, reactionText: String, reactionIcon: Int) {
+                (reactionCountView as TextView).text = reactionCount
+                (view as TextView).text = reactionText
+                view.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
+                if (reactionText == Love.name){
+                    view.setTextColor(Color.RED)
+                }
+            }
+        }) }.show(requireActivity().supportFragmentManager, ReactionFragment.TAG)
     }
 
     /*override fun onReactionLongPressed(view: View, reactionCountView: View, item: ChannelInfo) {

@@ -47,13 +47,13 @@ class FeaturedContentFragment : HomeBaseFragment() {
         })
 
         featured_viewpager.adapter = mAdapter
-        featured_viewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        /*featured_viewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 mAdapter.getItem(position).let {
                     featureDescription.text = it?.program_name
                 }
             }
-        })
+        })*/
 
         TabLayoutMediator(featured_indicator, featured_viewpager, true) { tab_, position -> }.attach()
 

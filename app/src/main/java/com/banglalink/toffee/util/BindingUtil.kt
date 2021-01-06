@@ -6,7 +6,6 @@ import android.text.SpannableStringBuilder
 import android.text.TextUtils
 import android.text.style.StrikethroughSpan
 import android.view.View
-import android.view.ViewGroup.MarginLayoutParams
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -25,9 +24,9 @@ import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.enums.Reaction.*
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Package
-import com.banglalink.toffee.model.ReactionStatus
 import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.ui.widget.MultiTextButton
+import dagger.hilt.android.qualifiers.ApplicationContext
 
 const val crossFadeDurationInMills = 500
 
@@ -279,7 +278,6 @@ fun loadReactionEmo(view: View, reaction: Int) {
         }
         Love.value -> {
             reactionTitle = Love.name
-            if(view is TextView) view.setTextColor(Color.RED)
             R.drawable.ic_reaction_love_filled
         }
         HaHa.value -> {
@@ -306,6 +304,7 @@ fun loadReactionEmo(view: View, reaction: Int) {
         is ImageView -> view.setImageResource(reactionIcon)
         is TextView -> {
             view.text = reactionTitle
+            if (reaction == Love.value) view.setTextColor(Color.RED) else view.setTextColor(Color.parseColor("#829AB8"))
             view.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
         }
     }
@@ -354,15 +353,5 @@ fun loadMyReactionBg(view: ImageView, isSetBg: Boolean){
 fun loadUnseenBgColor(view: CardView, isSeen: Boolean){
     if (!isSeen){
         view.setCardBackgroundColor(ContextCompat.getColor(view.context, R.color.unseenCardColor))
-    }
-}
-
-@BindingAdapter("contentNameMargin")
-fun setContentMargin(view: TextView, isMyChannel: Boolean){
-    if (isMyChannel){
-        (view.layoutParams as MarginLayoutParams).marginStart = Utils.dpToPx(16)
-    }
-    else{
-        (view.layoutParams as MarginLayoutParams).marginStart = Utils.dpToPx(8)
     }
 }

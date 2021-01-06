@@ -1,9 +1,11 @@
 package com.banglalink.toffee.ui.category.drama
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -15,6 +17,7 @@ import com.banglalink.toffee.apiservice.DramaSeasonRequestParam
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.databinding.FragmentEpisodeListBinding
+import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.SeriesPlaybackInfo
@@ -25,7 +28,7 @@ import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.ui.widget.MyPopupWindow
-import com.google.android.material.switchmaterial.SwitchMaterial
+import com.suke.widget.SwitchButton
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
@@ -102,7 +105,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
     fun getPlaylistId() = seriesInfo.playlistId()
 
     fun isAutoplayEnabled(): Boolean {
-        return binding.root.findViewById<SwitchMaterial>(R.id.autoplay_switch).isChecked
+        return binding.root.findViewById<SwitchButton>(R.id.autoPlaySwitch).isChecked
     }
 
     private fun observeListState() {
@@ -128,7 +131,17 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
             }
 
             override fun onReactionClicked(view: View, reactionCountView: View, item: ChannelInfo) {
-                ReactionFragment.newInstance(item).apply { setView(view, reactionCountView) }.show(requireActivity().supportFragmentManager, ReactionFragment.TAG)
+                super.onReactionClicked(view, reactionCountView, item)
+                ReactionFragment.newInstance(item).apply { setCallback(object : ReactionIconCallback {
+                    override fun onReactionChange(reactionCount: String, reactionText: String, reactionIcon: Int) {
+                        (reactionCountView as TextView).text = reactionCount
+                        (view as TextView).text = reactionText
+                        view.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
+                        if (reactionText == Love.name){
+                            view.setTextColor(Color.RED)
+                        }
+                    }
+                }) }.show(requireActivity().supportFragmentManager, ReactionFragment.TAG)
             }
 
             /*override fun onReactionLongPressed(view: View, reactionCountView: View, item: ChannelInfo) {

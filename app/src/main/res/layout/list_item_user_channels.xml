@@ -92,7 +92,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/multiTextButton" />
+            app:layout_constraintTop_toBottomOf="@+id/multiTextButton"
+            tools:text="15K"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

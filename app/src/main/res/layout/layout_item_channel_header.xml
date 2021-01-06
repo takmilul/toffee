@@ -11,14 +11,14 @@
     <TextView
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
         android:id="@+id/text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textColor="@color/title_color"
-        android:textStyle="bold"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="16sp"
+        android:fontFamily="@font/roboto_medium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

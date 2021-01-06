@@ -11,19 +11,15 @@
         android:layout_height="0dp"
         android:background="@drawable/fragment_bg_top"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline15" />
+        app:layout_constraintTop_toTopOf="@+id/guideline15"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <TextView
         android:id="@+id/categoriesHeader"
-        style="@style/CategoryTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_weight="1"
+        style="@style/SectionTitleTextStyle"
         android:text="@string/categories"
+        android:layout_marginTop="14dp"
         app:layout_constraintEnd_toStartOf="@+id/viewAllButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -31,14 +27,9 @@
     <TextView
         android:id="@+id/viewAllButton"
         style="@style/ViewAllTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:drawablePadding="4dp"
-        android:gravity="center"
         android:text="@string/view_all"
-        android:textColor="@color/view_all_text_color"
-        app:drawableRightCompat="@drawable/ic_right_arrow_accent_2"
+        app:drawableEndCompat="@drawable/ic_right_arrow_accent_2"
+        app:layout_constraintTop_toTopOf="@id/categoriesHeader"
         app:layout_constraintBottom_toBottomOf="@+id/categoriesHeader"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -47,13 +38,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipToPadding="false"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
+        android:paddingHorizontal="8dp"
+        android:layout_marginTop="4dp"
         android:nestedScrollingEnabled="false"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/categoriesHeader"
-        app:reverseLayout="false" />
+        app:reverseLayout="false"
+        tools:listitem="@layout/list_item_categories_v3"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline15"

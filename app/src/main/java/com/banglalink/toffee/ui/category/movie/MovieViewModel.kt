@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.category.movie
 
+import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -46,7 +47,6 @@ class MovieViewModel @ViewModelInject constructor(
     val telefilms = telefilmsResponse.toLiveData()
     private val comingSoonResponse = MutableLiveData<List<ComingSoonContent>>()
     val comingSoonContents = comingSoonResponse.toLiveData()
-    private var isContinueWatchingDbInitialized = false
     private var continueWatchingFlag = 0
     
     val loadMovieCategoryDetail by lazy{
@@ -56,15 +56,9 @@ class MovieViewModel @ViewModelInject constructor(
             } catch (ex: Exception) {
                 null
             }
-            moviesContentCardsResponse.value = response?.cards?.let { card ->
-                card.continueWatching = if (isContinueWatchingDbInitialized) continueWatchingFlag else card.continueWatching
-                card.moviePreviews = moviePreviewsResponse.value?.let{ if (it.isEmpty()) 0 else card.moviePreviews } ?: 0 
-                card.trendingNow = trendingNowMoviesResponse.value?.let{ if (it.isEmpty()) 0 else card.trendingNow } ?: 0 
-                card.telefilm = telefilmsResponse.value?.let{ if (it.isEmpty()) 0 else card.telefilm } ?: 0 
-                card.comingSoon = comingSoonResponse.value?.let{ if (it.isEmpty()) 0 else card.comingSoon } ?: 0 
-                
-                card
-            } ?: MoviesContentVisibilityCards()
+            
+            moviesContentCardsResponse.value = response?.cards ?: MoviesContentVisibilityCards()
+            continueWatchingFlag = response?.cards?.continueWatching ?: 0
 
             thrillerMoviesResponse.value = response?.subCategoryWiseContent?.find { it.subCategoryName == "Thriller" }?.let {
                 it.channels?.map { cinfo->
@@ -223,13 +217,11 @@ class MovieViewModel @ViewModelInject constructor(
 
     fun getContinueWatchingFlow(catId: Int): Flow<List<ChannelInfo>> {
         return continueWatchingRepo.getAllItemsByCategory(catId).map {
-            isContinueWatchingDbInitialized = true
-            continueWatchingFlag = if(it.isEmpty()) 0 else 1
             it.mapNotNull { item ->
                 item.channelInfo
             }.apply {
-                moviesContentCardsResponse.value = moviesContentCardsResponse.value?.also { cardList ->
-                    cardList.continueWatching = if (isEmpty()) 0 else cardList.continueWatching
+                moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply { 
+                    continueWatching = if (isEmpty()) 0 else continueWatchingFlag
                 }
             }
         }
