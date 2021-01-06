@@ -13,6 +13,10 @@ import com.google.android.material.appbar.AppBarLayout;
 
 import java.lang.reflect.Field;
 
+/**
+ * https://github.com/yangchong211/YCBlogs/blob/master/android/%E5%A4%8D%E6%9D%82%E6%8E%A7%E4%BB%B6/14.%E8%87%AA%E5%AE%9A%E4%B9%89Behavior.md
+ */
+
 public class AppBarLayoutBehavior extends AppBarLayout.Behavior {
 
     private static final String TAG = "AppbarLayoutBehavior";
