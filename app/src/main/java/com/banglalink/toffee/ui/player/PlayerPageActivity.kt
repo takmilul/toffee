@@ -25,6 +25,7 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.TOFFEE_HEADER
 import com.banglalink.toffee.ui.category.drama.EpisodeListFragment
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
+import com.banglalink.toffee.ui.home.CatchupDetailsFragment
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.Player.*
@@ -74,7 +75,7 @@ abstract class PlayerPageActivity :
     private var defaultTrackSelector: DefaultTrackSelector? = null
     private var trackSelectorParameters: Parameters? = null
     private var lastSeenTrackGroupArray: TrackGroupArray? = null
-    protected var playlistManager = PlaylistManager()
+
     private var startAutoPlay = false
     private var startWindow = 0
     private var startPosition: Long = 0
@@ -132,6 +133,8 @@ abstract class PlayerPageActivity :
         })
     }
 
+    abstract val playlistManager: PlaylistManager
+
     protected open fun onContentExpired() {
         //hook for subclass
     }
@@ -168,6 +171,9 @@ abstract class PlayerPageActivity :
         super.onSaveInstanceState(outState)
         updateTrackSelectorParameters()
         updateStartPosition()
+        if(player?.isPlaying == true) {
+            playlistManager.getCurrentChannel()?.viewProgress = player?.currentPosition ?: 0
+        }
         outState.putParcelable(KEY_TRACK_SELECTOR_PARAMETERS, trackSelectorParameters)
         outState.putBoolean(KEY_AUTO_PLAY, startAutoPlay)
         outState.putInt(KEY_WINDOW, startWindow)
@@ -302,7 +308,10 @@ abstract class PlayerPageActivity :
             is EpisodeListFragment -> {
                 fragment.isAutoplayEnabled()
             }
-            else -> true
+            is CatchupDetailsFragment -> {
+                fragment.isAutoplayEnabled()
+            }
+            else -> false
         }
     }
 

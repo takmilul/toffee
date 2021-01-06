@@ -7,11 +7,16 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.OverScroller;
 
+import androidx.annotation.NonNull;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.google.android.material.appbar.AppBarLayout;
 
 import java.lang.reflect.Field;
+
+/**
+ * https://github.com/yangchong211/YCBlogs/blob/master/android/%E5%A4%8D%E6%9D%82%E6%8E%A7%E4%BB%B6/14.%E8%87%AA%E5%AE%9A%E4%B9%89Behavior.md
+ */
 
 public class AppBarLayoutBehavior extends AppBarLayout.Behavior {
 
@@ -50,19 +55,19 @@ public class AppBarLayoutBehavior extends AppBarLayout.Behavior {
             // Support design 27 and the following version
             Class<?> headerBehaviorType = null;
             if (superclass != null) {
-                headerBehaviorType = superclass.getSuperclass();
+                headerBehaviorType = superclass.getSuperclass().getSuperclass();
             }
             if (headerBehaviorType != null) {
-                return headerBehaviorType.getDeclaredField("mFlingRunnable");
+                return headerBehaviorType.getDeclaredField("flingRunnable");
             }else {
                 return null;
             }
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
             // Possibly 28 or more versions
-            Class<?> headerBehaviorType = superclass.getSuperclass().getSuperclass();
+            Class<?> headerBehaviorType = superclass.getSuperclass();
             if (headerBehaviorType != null) {
-                return headerBehaviorType.getDeclaredField("flingRunnable");
+                return headerBehaviorType.getDeclaredField("mFlingRunnable");
             } else {
                 return null;
             }
@@ -80,19 +85,19 @@ public class AppBarLayoutBehavior extends AppBarLayout.Behavior {
             // Support design 27 and the following version
             Class<?> headerBehaviorType = null;
             if (superclass != null) {
-                headerBehaviorType = superclass.getSuperclass();
+                headerBehaviorType = superclass.getSuperclass().getSuperclass();
             }
             if (headerBehaviorType != null) {
-                return headerBehaviorType.getDeclaredField("mScroller");
+                return headerBehaviorType.getDeclaredField("scroller");
             }else {
                 return null;
             }
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
             // Possibly 28 or more versions
-            Class<?> headerBehaviorType = superclass.getSuperclass().getSuperclass();
+            Class<?> headerBehaviorType = superclass.getSuperclass();
             if (headerBehaviorType != null) {
-                return headerBehaviorType.getDeclaredField("scroller");
+                return headerBehaviorType.getDeclaredField("mScroller");
             }else {
                 return null;
             }
@@ -163,17 +168,26 @@ public class AppBarLayoutBehavior extends AppBarLayout.Behavior {
     }
 
     @Override
-    public void onNestedScroll(CoordinatorLayout coordinatorLayout, AppBarLayout child,
-                               View target, int dxConsumed, int dyConsumed, int
-            dxUnconsumed, int dyUnconsumed, int type) {
-        LogUtil.d(TAG, "onNestedScroll: target:" + target.getClass() + " ,"
-                + child.getTotalScrollRange() + " ,dxConsumed:"
-                + dxConsumed + " ,dyConsumed:" + dyConsumed + " " + ",type:" + type);
-        if (!shouldBlockNestedScroll) {
-            super.onNestedScroll(coordinatorLayout, child, target, dxConsumed,
-                    dyConsumed, dxUnconsumed, dyUnconsumed, type);
+    public void onNestedScroll(CoordinatorLayout coordinatorLayout, @NonNull AppBarLayout child,
+                               View target, int dxConsumed, int dyConsumed, int dxUnconsumed,
+                               int dyUnconsumed, int type, int[] consumed) {
+        if(!shouldBlockNestedScroll) {
+            super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type, consumed);
         }
     }
+//
+//    @Override
+//    public void onNestedScroll(CoordinatorLayout coordinatorLayout, AppBarLayout child,
+//                               View target, int dxConsumed, int dyConsumed, int
+//            dxUnconsumed, int dyUnconsumed, int type) {
+//        LogUtil.d(TAG, "onNestedScroll: target:" + target.getClass() + " ,"
+//                + child.getTotalScrollRange() + " ,dxConsumed:"
+//                + dxConsumed + " ,dyConsumed:" + dyConsumed + " " + ",type:" + type);
+//        if (!shouldBlockNestedScroll) {
+//            super.onNestedScroll(coordinatorLayout, child, target, dxConsumed,
+//                    dyConsumed, dxUnconsumed, dyUnconsumed, type);
+//        }
+//    }
 
     @Override
     public void onStopNestedScroll(CoordinatorLayout coordinatorLayout, AppBarLayout abl,
@@ -186,7 +200,7 @@ public class AppBarLayoutBehavior extends AppBarLayout.Behavior {
 
     private static class LogUtil{
         static void d(String tag, String string){
-            Log.d(tag,string);
+//            Log.d(tag,string);
         }
     }
 
