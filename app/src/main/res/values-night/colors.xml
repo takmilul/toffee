@@ -28,9 +28,11 @@
     <color name="durationBgColor">#88000000</color>
     <color name="placeholderBgColor">#E1E1E1</color>
     <color name="statusTextBgColor">#525252</color>
-    <color name="colorSettingsDivider">#212121</color>
+    <color name="colorSettingsDivider">#29466B</color>
     <color name="searchBarBgColor">#29466B</color>
     <color name="cardBgColor">#111F31</color>
     <color name="cardTitleColor">#BED6F3</color>
     <color name="categoryNameColor">#BED6F3</color>
+    <color name="tvChannelTitleColor">#BED6F3</color>
+    <color name="ratingButtonActiveColor">#29466B</color>
 </resources>

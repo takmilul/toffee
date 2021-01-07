@@ -52,7 +52,7 @@
             android:gravity="center"
             android:maxLines="1"
             android:text="@{data.program_name}"
-            android:textColor="@color/main_text_color"
+            android:textColor="@color/fixed_second_main_text_color"
             android:textSize="14sp"
             android:fontFamily="@font/roboto_medium"
             app:layout_constraintEnd_toEndOf="@+id/iconHolder"

@@ -9,15 +9,15 @@
                     <corners android:radius="30dp" />
                     <padding
                         android:bottom="6dp"
-                        android:left="10dp"
-                        android:right="10dp"
+                        android:left="6dp"
+                        android:right="6dp"
                         android:top="6dp" />
                 </shape>
             </item>
             <item
                 android:drawable="@drawable/ic_rating"
-                android:left="12dp"
-                android:right="12dp"
+                android:left="6dp"
+                android:right="6dp"
                 android:gravity="center"/>
         </layer-list>
     </item>
@@ -29,15 +29,15 @@
                     <corners android:radius="30dp" />
                     <padding
                         android:bottom="6dp"
-                        android:left="10dp"
-                        android:right="10dp"
+                        android:left="6dp"
+                        android:right="6dp"
                         android:top="6dp" />
                 </shape>
             </item>
             <item
                 android:drawable="@drawable/ic_rating"
-                android:left="12dp"
-                android:right="12dp"
+                android:left="6dp"
+                android:right="6dp"
                 android:gravity="center"/>
         </layer-list>
     </item>
@@ -47,19 +47,19 @@
                 <shape>
                     <stroke
                         android:width="1dp"
-                        android:color="@color/ratingIconColor" />
+                        android:color="@color/main_text_color" />
                     <corners android:radius="1000dp" />
                     <padding
                         android:bottom="6dp"
-                        android:left="10dp"
-                        android:right="10dp"
+                        android:left="6dp"
+                        android:right="6dp"
                         android:top="6dp" />
                 </shape>
             </item>
             <item
                 android:drawable="@drawable/ic_rating"
-                android:left="12dp"
-                android:right="12dp"
+                android:left="8dp"
+                android:right="8dp"
                 android:gravity="center"/>
         </layer-list>
     </item>

@@ -26,7 +26,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/screen_bg_white">
+        android:background="@color/cardBgColor">
         
         <ImageView
             android:id="@+id/posterView"
@@ -62,8 +62,9 @@
             android:layout_marginEnd="16dp"
             android:text='@{(data.myChannelDetail.channelName == null || data.myChannelDetail.channelName.empty) ? "Channel Name" : data.myChannelDetail.channelName}'
             tools:text="National Geographic"
-            android:textColor="@color/main_text_color"
-            android:textSize="28sp"
+            android:textColor="@color/cardTitleColor"
+            android:textSize="18sp"
+            android:fontFamily="@font/roboto_medium"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/channelLogoImageView" />
@@ -94,7 +95,8 @@
             android:text="@{data.myChannelDetail.description}"
             tools:text="I'm nice, cute and beautiful. I love to dance to music all day long. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s \n#cutiepie    #attentionseeker    #love \n#hashtag    #morehashtag"
             android:textColor="@color/main_text_color"
-            android:textSize="16sp"
+            android:textSize="@dimen/default_text_size"
+            android:fontFamily="@font/roboto_regular"
             app:animation_duration="300"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -157,7 +159,8 @@
             android:layout_marginStart="8dp"
             android:text="@{String.valueOf(data.ratingCount)}"
             tools:text="4.7"
-            android:textColor="@color/title_text_color_light"
+            android:fontFamily="@font/roboto_regular"
+            android:textColor="@color/fixed_second_text_color"
             app:layout_constraintBottom_toBottomOf="@id/ratingButton"
             app:layout_constraintStart_toEndOf="@id/ratingButton"
             app:layout_constraintTop_toTopOf="@id/ratingButton" />
@@ -168,8 +171,9 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:text="@{String.valueOf(data.subscriberCount)}"
-            android:textColor="@color/title_text_color_light"
+            android:textColor="@color/fixed_second_text_color"
             tools:text="565K"
+            android:fontFamily="@font/roboto_regular"
             app:layout_constraintBottom_toBottomOf="@+id/subscriptionButton"
             app:layout_constraintEnd_toStartOf="@+id/subscriptionButton"
             app:layout_constraintHorizontal_bias="1"
@@ -204,7 +208,7 @@
             android:layout_marginVertical="8dp"
             android:text="Edit Channel"
             android:textAllCaps="false"
-            style="@style/ButtonStyleRingPurple"
+            style="@style/EditChannelStyle"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/analyticsButton"
             app:layout_constraintHorizontal_chainStyle="spread_inside"

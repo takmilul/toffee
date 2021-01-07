@@ -92,4 +92,5 @@
     <color name="cardBgColor">#FFFFFF</color>
     <color name="cardTitleColor">#29466B</color>
     <color name="categoryNameColor">#6781A1</color>
+    <color name="tvChannelTitleColor">#111F31</color>
 </resources>

@@ -18,20 +18,11 @@
             name="callback"
             type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
     </data>
-    <!--<androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginVertical="8dp"
-        app:cardCornerRadius="0dp"
-        android:foreground="?attr/selectableItemBackground"
-        android:onClick="@{()-> callback.onItemClicked(data)}"
-        android:layout_marginBottom="8dp">-->
-        
+    
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="16dp"
+        android:paddingStart="16dp"
         android:paddingVertical="8dp"
         android:background="@color/screen_bg"
         android:onClick="@{()-> callback.onItemClicked(data)}">
@@ -61,33 +52,84 @@
             app:layout_constraintEnd_toEndOf="@id/poster"
             app:layout_constraintBottom_toBottomOf="@id/poster"/>
         
-        <ImageView
-            android:id="@+id/folderImageView"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_playlist"
-            app:tint="@android:color/white"
-            app:layout_constraintVertical_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="@id/overlayView"
-            app:layout_constraintTop_toTopOf="@id/overlayView"
-            app:layout_constraintEnd_toEndOf="@id/overlayView"
-            app:layout_constraintBottom_toTopOf="@id/videoCountTextView"/>
-        
         <TextView
             android:id="@+id/videoCountTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:text='@{String.valueOf(data.totalContent).concat(data.totalContent > 1 ? " Videos" : " Video")}'
             tools:text="5 Videos"
-            android:textColor="@android:color/white"
             android:gravity="center_horizontal"
+            android:drawablePadding="6dp"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/default_text_size"
+            android:fontFamily="@font/roboto_regular"
+            android:drawableTop="@drawable/ic_playlist"
             app:layout_constraintStart_toStartOf="@id/overlayView"
-            app:layout_constraintTop_toBottomOf="@id/folderImageView"
+            app:layout_constraintTop_toTopOf="@id/overlayView"
             app:layout_constraintEnd_toEndOf="@id/overlayView"
             app:layout_constraintBottom_toBottomOf="parent"/>
-        
+
         <TextView
+            android:id="@+id/name"
+            style="@style/programNameTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="4dp"
+            android:ellipsize="end"
+            android:minLines="2"
+            android:maxLines="2"
+            android:text="@{data.name}"
+            app:layout_constraintEnd_toStartOf="@+id/options"
+            app:layout_constraintStart_toEndOf="@+id/poster"
+            app:layout_constraintTop_toTopOf="@+id/poster"
+            tools:text="Title" />
+
+        <ImageView
+            android:id="@+id/options"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:paddingHorizontal="8dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{(v)->callback.onOpenMenu(v, data)}"
+            android:padding="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/name"
+            app:srcCompat="@drawable/ic_menu_more" />
+
+        <TextView
+            android:id="@+id/number_of_views"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:visibility="gone"
+            android:fontFamily="@font/roboto_medium"
+            android:textColor="@color/fixed_second_text_color"
+            android:textSize="@dimen/default_text_size"
+            app:layout_constraintEnd_toStartOf="@+id/uploadTimeTextView"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="@id/name"
+            app:layout_constraintTop_toBottomOf="@id/name"
+            tools:text="18K views" />
+
+        <TextView
+            android:id="@+id/uploadTimeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_regular"
+            android:textColor="@color/fixed_second_text_color"
+            android:textSize="@dimen/default_text_size"
+            tools:text=" &#8226; 14h"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/number_of_views"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toEndOf="@+id/number_of_views"
+            app:layout_constraintTop_toTopOf="@+id/number_of_views" />
+
+        <!--<TextView
             android:id="@+id/textView18"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -99,9 +141,9 @@
             app:layout_constraintEnd_toStartOf="@+id/imageView11"
             app:layout_constraintStart_toEndOf="@+id/poster"
             app:layout_constraintTop_toTopOf="@+id/poster"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.0" />-->
         
-        <ImageView
+        <!--<ImageView
             android:id="@+id/imageView11"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -114,7 +156,7 @@
             app:layout_constraintStart_toEndOf="@+id/textView18"
             app:layout_constraintTop_toTopOf="@+id/textView18"
             app:layout_constraintVertical_bias="0.0"
-            app:srcCompat="@drawable/ic_menu_more" />
+            app:srcCompat="@drawable/ic_menu_more" />-->
     
     </androidx.constraintlayout.widget.ConstraintLayout>
     <!--</androidx.cardview.widget.CardView>-->

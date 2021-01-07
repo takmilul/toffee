@@ -119,13 +119,13 @@
             android:textColor="@color/second_text_color"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/eyeIV"
+            app:layout_constraintEnd_toStartOf="@+id/uploadTimeTextView"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toEndOf="@+id/duration"
             tools:text="18K" />
 
         <TextView
-            android:id="@+id/eyeIV"
+            android:id="@+id/uploadTimeTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"

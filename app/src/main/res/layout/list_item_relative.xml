@@ -125,14 +125,14 @@
             android:textColor="@color/fixed_second_text_color"
             android:textSize="@dimen/default_text_size"
             android:text="@{data.formatted_view_count() + ` Views`}"
-            app:layout_constraintEnd_toStartOf="@+id/eyeIV"
+            app:layout_constraintEnd_toStartOf="@+id/uploadTimeTextView"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="@id/name"
             app:layout_constraintTop_toBottomOf="@id/ownerPicture"
             tools:text="18K views" />
 
         <TextView
-            android:id="@+id/eyeIV"
+            android:id="@+id/uploadTimeTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto_regular"

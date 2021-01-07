@@ -47,6 +47,7 @@ class MovieViewModel @ViewModelInject constructor(
     private val comingSoonResponse = MutableLiveData<List<ComingSoonContent>>()
     val comingSoonContents = comingSoonResponse.toLiveData()
     private var originalCards = MoviesContentVisibilityCards()
+    private var continueWatchingFlag: Boolean = false
     
     val loadMovieCategoryDetail by lazy{
         viewModelScope.launch {
@@ -59,6 +60,7 @@ class MovieViewModel @ViewModelInject constructor(
             originalCards = response?.cards ?: MoviesContentVisibilityCards()
             
             moviesContentCardsResponse.value = originalCards.copy(
+                continueWatching = if(continueWatchingFlag) originalCards.continueWatching else 0,
                 moviePreviews = moviePreviewsResponse.value?.let { if(it.isEmpty()) 0 else originalCards.moviePreviews } ?: originalCards.moviePreviews,
                 trendingNow = trendingNowMoviesResponse.value?.let { if(it.isEmpty()) 0 else originalCards.trendingNow } ?: originalCards.trendingNow,
                 telefilm = telefilmsResponse.value?.let { if(it.isEmpty()) 0 else originalCards.telefilm } ?: originalCards.telefilm,
@@ -225,6 +227,7 @@ class MovieViewModel @ViewModelInject constructor(
             it.mapNotNull { item ->
                 item.channelInfo
             }.apply {
+                continueWatchingFlag = isNotEmpty()
                 moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply { 
                     continueWatching = if (isEmpty()) 0 else originalCards.continueWatching
                 }
