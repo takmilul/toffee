@@ -64,12 +64,13 @@ class TusUploadTask: UploadTask(), HttpRequest.RequestBodyDelegate,
 
         UploadServiceLogger.debug(javaClass.simpleName, params.id) { "Tus upload created with url - $uploadUrl" }
 
-        return params.serverUrl.toHttpUrl().resolve(uploadUrl).toString().apply {
-            Log.e("UPLOAD", "Url resolved - $this")
-        }
         // Received upload url from server //TODO: Save url and fingerprint to localstore
 
-//        return uploadUrl
+        return params.serverUrl.toHttpUrl().resolve(uploadUrl).toString().also {
+            tusParams.uploadUrl = uploadUrl
+            params.files.first().properties[TusUploadTaskParameters.FINGERPRINT] = tusParams.fingerprint
+            params.files.first().properties[TusUploadTaskParameters.TUS_UPLOAD_URL] = it
+        }
     }
 
     @Throws(Exception::class)

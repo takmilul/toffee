@@ -42,8 +42,9 @@ class UploadInfoRepositoryImpl(private val uploadDao: UploadDao): UploadInfoRepo
         uploadId: Long,
         completedSize: Long,
         completedPercent: Int,
-        totalSize: Long
+        totalSize: Long,
+        uploadUri: String?
     ) {
-        uploadDao.updateProgressById(uploadId, completedSize, completedPercent, totalSize)
+        uploadDao.updateProgressById(uploadId, completedSize, completedPercent, totalSize, uploadUri)
     }
 }

@@ -48,8 +48,8 @@ class DrawerHelper(private val activity: HomeActivity,
 
         toggle.toolbarNavigationClickListener = View.OnClickListener {
             if(activity.getNavController().currentDestination?.id != R.id.menu_feed) {
-                activity.getNavController().popBackStack(R.id.menu_feed, true)
-                activity.getNavController().navigate(R.id.menu_feed)
+                activity.getNavController().popBackStack(R.id.menu_feed, false)
+//                activity.getNavController().navigate(R.id.menu_feed)
             }
         }
 

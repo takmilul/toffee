@@ -15,7 +15,7 @@ class TusUploadRequest(context: Context, serverUrl: String)
     override val taskClass: Class<out UploadTask>
         get() = TusUploadTask::class.java
 
-    private val tusUploadParams = TusUploadTaskParameters()
+    private lateinit var tusUploadParams: TusUploadTaskParameters
 
     /**
      * Sets the file used as raw body of the upload request.
@@ -32,9 +32,8 @@ class TusUploadRequest(context: Context, serverUrl: String)
     }
 
     fun setResumeInfo(fingerprint: String,
-                      uploadUrl: String): TusUploadRequest {
-        tusUploadParams.fingerprint = fingerprint
-        tusUploadParams.uploadUrl = uploadUrl
+                      uploadUrl: String?): TusUploadRequest {
+        tusUploadParams = TusUploadTaskParameters(fingerprint, uploadUrl)
         return this
     }
 
