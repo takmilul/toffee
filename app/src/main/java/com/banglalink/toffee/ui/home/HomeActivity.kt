@@ -10,7 +10,9 @@ import android.graphics.Point
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.AttributeSet
 import android.util.Log
+import android.util.Xml
 import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
@@ -20,10 +22,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
-import androidx.core.view.GravityCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.isInvisible
-import androidx.core.view.isVisible
+import androidx.core.view.*
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -36,6 +35,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.banglalink.toffee.R
+import com.banglalink.toffee.R.xml
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
@@ -70,6 +70,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
+import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main_menu.*
 import kotlinx.android.synthetic.main.home_mini_upload_progress.*
@@ -79,8 +80,10 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import net.gotev.uploadservice.UploadService
+import org.xmlpull.v1.XmlPullParser
 import java.util.*
 import javax.inject.Inject
+
 
 const val ID_SUBSCRIPTIONS = 15
 const val ID_SUB_VIDEO = 16
@@ -206,8 +209,8 @@ class HomeActivity :
         observe(viewModel.switchBottomTab) {
 //            drawerHelper.onMenuClick(NavigationMenu(ID_CHANNEL, "All Videos", 0, listOf(), false))
             when(it) {
-                1-> binding.tabNavigator.selectedItemId = R.id.menu_tv
-                3-> binding.tabNavigator.selectedItemId = R.id.menu_explore
+                1 -> binding.tabNavigator.selectedItemId = R.id.menu_tv
+                3 -> binding.tabNavigator.selectedItemId = R.id.menu_explore
             }
 //            binding.homeTabPager.currentItem = 1
         }
@@ -286,9 +289,9 @@ class HomeActivity :
     private fun configureBottomSheet() {
         bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet)
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-        bottomSheetBehavior.addBottomSheetCallback(object: BottomSheetBehavior.BottomSheetCallback() {
+        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                if(newState == BottomSheetBehavior.STATE_COLLAPSED && binding.playerView.isControllerHidden) {
+                if (newState == BottomSheetBehavior.STATE_COLLAPSED && binding.playerView.isControllerHidden) {
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 }
             }
@@ -704,8 +707,8 @@ class HomeActivity :
                 if (fragment !is ChannelFragment) {
                     loadFragmentById(
                         R.id.details_viewer, ChannelFragment.createInstance(
-                            getString(R.string.menu_channel_text), showSelected = true
-                        )
+                        getString(R.string.menu_channel_text), showSelected = true
+                    )
                     )
                 }
             } else {
@@ -719,8 +722,8 @@ class HomeActivity :
             if (fragment !is MyChannelPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) {
                 loadFragmentById(
                     R.id.details_viewer, MyChannelPlaylistVideosFragment.newInstance(
-                        info
-                    )
+                    info
+                )
                 )
             } else {
                 fragment.setCurrentChannel(info.currentItem)
@@ -738,8 +741,8 @@ class HomeActivity :
                 || fragment.getSeriesId() != info.seriesId) {
                 loadFragmentById(
                     R.id.details_viewer, EpisodeListFragment.newInstance(
-                        info
-                    )
+                    info
+                )
                 )
             } else {
                 fragment.setCurrentChannel(info.currentItem)
@@ -792,15 +795,39 @@ class HomeActivity :
         val sideNav = binding.sideNavigation.menu.findItem(R.id.menu_change_theme)
         sideNav?.let { themeMenu ->
             val isDarkEnabled = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
-
-            themeMenu.title = if(isDarkEnabled) "Light Mode" else "Dark Mode"
-
-            if(themeMenu.actionView is SwitchMaterial) {
-                (themeMenu.actionView as SwitchMaterial).let {
-                    it.isChecked = isDarkEnabled
-                    it.setOnCheckedChangeListener { _, isChecked ->
-                        themeMenu.title = if(isChecked) "Light Mode" else "Dark Mode"
-                        changeAppTheme(isChecked)
+            
+            val parser: XmlPullParser = resources.getXml(xml.custom_switch)
+            var attr: AttributeSet? = null
+            var switch: View? = null
+            try {
+                parser.next()
+                parser.nextTag()
+                attr = Xml.asAttributeSet(parser)
+                switch = SwitchButton(this, attr)
+            }
+            catch (e: java.lang.Exception) {
+                e.printStackTrace()
+                switch = SwitchMaterial(this)
+            }
+            finally {
+                themeMenu.actionView = switch
+                if(themeMenu.actionView is SwitchButton) {
+                    (themeMenu.actionView as SwitchButton).let {
+                        val param = LinearLayout.LayoutParams(Utils.dpToPx(36), Utils.dpToPx(22))
+                        param.topMargin = 30
+                        it.layoutParams = param
+                        it.isChecked = isDarkEnabled
+                        it.setOnCheckedChangeListener { _, isChecked ->
+                            changeAppTheme(isChecked)
+                        }
+                    }
+                }
+                else if(themeMenu.actionView is SwitchMaterial){
+                    (themeMenu.actionView as SwitchMaterial).let {
+                        it.isChecked = isDarkEnabled
+                        it.setOnCheckedChangeListener { _, isChecked ->
+                            changeAppTheme(isChecked)
+                        }
                     }
                 }
             }

@@ -1,11 +1,11 @@
 package com.banglalink.toffee.ui.category.drama
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -137,8 +137,11 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
                         (reactionCountView as TextView).text = reactionCount
                         (view as TextView).text = reactionText
                         view.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
-                        if (reactionText == Love.name){
-                            view.setTextColor(Color.RED)
+                        if (reactionText == Love.name) {
+                            view.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorAccent))
+                        }
+                        else{
+                            view.setTextColor(ContextCompat.getColor(requireContext(), R.color.fixed_second_text_color))
                         }
                     }
                 }) }.show(requireActivity().supportFragmentManager, ReactionFragment.TAG)

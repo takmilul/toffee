@@ -65,7 +65,7 @@ class ReactionFragment: DialogFragment() {
                 alertDialog.dismiss()
             }
             loveButton.setOnClickListener {
-                react(Love, R.drawable.ic_reaction_love_filled)
+                react(Love, R.drawable.ic_reaction_love_no_shadow)
                 alertDialog.dismiss()
             }
             hahaButton.setOnClickListener {

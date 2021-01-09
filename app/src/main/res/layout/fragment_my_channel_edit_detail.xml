@@ -87,8 +87,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="24dp"
+                    android:layout_marginTop="16dp"
                     android:text="Channel Name"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textSize="@dimen/default_text_size"
+                    android:textColor="@color/cardTitleColor"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/profileImageEditButton" />
 
@@ -99,9 +102,10 @@
                     android:layout_marginTop="4dp"
                     android:layout_marginHorizontal="16dp"
                     android:background="@drawable/single_line_input_text_bg"
-                    android:ems="10"
                     android:hint="Channel name"
                     android:inputType="textPersonName"
+                    android:fontFamily="@font/roboto_medium"
+                    android:textColor="@color/cardTitleColor"
                     android:text="@{viewModel.myChannelDetail.channelName}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -114,6 +118,9 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="24dp"
                     android:text="Description"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textSize="@dimen/default_text_size"
+                    android:textColor="@color/cardTitleColor"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/channelName" />
 
@@ -131,6 +138,8 @@
                     android:lines="4"
                     android:maxLength="150"
                     android:maxLines="8"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textColor="@color/cardTitleColor"
                     android:text="@{viewModel.myChannelDetail.description}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -150,6 +159,9 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="24dp"
                     android:text="Category"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textSize="@dimen/default_text_size"
+                    android:textColor="@color/cardTitleColor"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/description" />
 

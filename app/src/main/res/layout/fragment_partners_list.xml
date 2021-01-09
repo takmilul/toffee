@@ -42,6 +42,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/contentHeader"
             app:reverseLayout="false"
+            android:layout_gravity="center_horizontal"
             tools:listitem="@layout/list_item_partners"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

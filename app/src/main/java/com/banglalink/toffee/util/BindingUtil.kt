@@ -26,7 +26,6 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Package
 import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.ui.widget.MultiTextButton
-import dagger.hilt.android.qualifiers.ApplicationContext
 
 const val crossFadeDurationInMills = 500
 
@@ -278,7 +277,7 @@ fun loadReactionEmo(view: View, reaction: Int) {
         }
         Love.value -> {
             reactionTitle = Love.name
-            R.drawable.ic_reaction_love_filled
+            R.drawable.ic_reaction_love_no_shadow
         }
         HaHa.value -> {
             reactionTitle = HaHa.name
@@ -304,7 +303,7 @@ fun loadReactionEmo(view: View, reaction: Int) {
         is ImageView -> view.setImageResource(reactionIcon)
         is TextView -> {
             view.text = reactionTitle
-            if (reaction == Love.value) view.setTextColor(Color.RED) else view.setTextColor(Color.parseColor("#829AB8"))
+            if (reaction == Love.value) view.setTextColor(Color.parseColor("#829AB8")) else view.setTextColor(Color.parseColor("#829AB8"))
             view.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
         }
     }
@@ -345,7 +344,7 @@ fun bindEmoIcon(view: ImageView, item: ChannelInfo, iconPosition: Int){
 @BindingAdapter("loadMyReactionBg")
 fun loadMyReactionBg(view: ImageView, isSetBg: Boolean){
     if (isSetBg){
-        view.setBackgroundResource(R.drawable.teal_round_bg)
+        view.setBackgroundResource(R.drawable.reaction_round_bg)
     }
 }
 

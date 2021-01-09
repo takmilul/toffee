@@ -1,12 +1,12 @@
 package com.banglalink.toffee.ui.mychannel
 
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -25,8 +25,8 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.ContentReactionCallback
-import com.banglalink.toffee.ui.common.ReactionIconCallback
 import com.banglalink.toffee.ui.common.ReactionFragment
+import com.banglalink.toffee.ui.common.ReactionIconCallback
 import com.banglalink.toffee.ui.home.CatchupDetailsViewModel
 import com.banglalink.toffee.ui.home.ChannelHeaderAdapter
 import com.banglalink.toffee.ui.home.HomeViewModel
@@ -111,8 +111,11 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
                         (reactionCountView as TextView).text = reactionCount
                         (view as TextView).text = reactionText
                         view.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
-                        if (reactionText == Love.name){
-                            view.setTextColor(Color.RED)
+                        if (reactionText == Love.name) {
+                            view.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorAccent))
+                        }
+                        else{
+                            view.setTextColor(ContextCompat.getColor(requireContext(), R.color.fixed_second_text_color))
                         }
                     }
                 }) }.show(requireActivity().supportFragmentManager, ReactionFragment.TAG)

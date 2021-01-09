@@ -1,11 +1,11 @@
 package com.banglalink.toffee.ui.home
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
@@ -23,8 +23,8 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.channels.ChannelFragment
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.common.ContentReactionCallback
-import com.banglalink.toffee.ui.common.ReactionIconCallback
 import com.banglalink.toffee.ui.common.ReactionFragment
+import com.banglalink.toffee.ui.common.ReactionIconCallback
 import com.banglalink.toffee.ui.landing.UserChannelViewModel
 import com.banglalink.toffee.ui.widget.MyPopupWindow
 import dagger.hilt.android.AndroidEntryPoint
@@ -93,8 +93,11 @@ class ChannelViewFragment: BaseFragment(), ContentReactionCallback<ChannelInfo> 
                 (reactionCountView as TextView).text = reactionCount
                 (view as TextView).text = reactionText
                 view.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
-                if (reactionText == Love.name){
-                    view.setTextColor(Color.RED)
+                if (reactionText == Love.name) {
+                    view.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorAccent))
+                }
+                else{
+                    view.setTextColor(ContextCompat.getColor(requireContext(), R.color.fixed_second_text_color))
                 }
             }
         }) }.show(requireActivity().supportFragmentManager, ReactionFragment.TAG)

@@ -21,6 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
+            app:cardBackgroundColor="@color/cardBgColor"
             app:cardCornerRadius="24dp">
 
             <HorizontalScrollView
@@ -63,6 +64,8 @@
                         android:id="@+id/likeButton"
                         android:layout_width="42dp"
                         android:layout_height="42dp"
+                        android:paddingTop="4dp"
+                        android:paddingHorizontal="6dp"
                         loadMyReactionBg="@{data.myReaction == Reaction.Like.value}"
                         android:src="@drawable/ic_reaction_like"
                         app:layout_constraintHorizontal_chainStyle="spread_inside"
@@ -88,6 +91,8 @@
                         android:id="@+id/loveButton"
                         android:layout_width="42dp"
                         android:layout_height="42dp"
+                        android:paddingTop="4dp"
+                        android:paddingHorizontal="6dp"
                         android:layout_marginStart="8dp"
                         loadMyReactionBg="@{data.myReaction == Reaction.Love.value}"
                         android:scaleType="fitCenter"
