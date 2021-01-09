@@ -941,6 +941,10 @@ class HomeActivity :
         }
     }
 
+    fun closeSearchBar() {
+        searchView?.onActionViewCollapsed()
+    }
+
     override fun onBackPressed() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.END)) {
             binding.drawerLayout.closeDrawer(GravityCompat.END)
@@ -950,6 +954,8 @@ class HomeActivity :
             updateFullScreenState()
         } else if (binding.draggableView.isMaximized() && binding.draggableView.visibility == View.VISIBLE) {
             minimizePlayer()
+        } else if(searchView?.isIconified == false) {
+            closeSearchBar()
         }
 //        else if (supportFragmentManager.findFragmentById(R.id.content_viewer) is LandingPageFragment) {
 //            val landingPageFragment =

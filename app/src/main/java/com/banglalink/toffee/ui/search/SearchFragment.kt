@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.CommonSingleListFragment
+import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.util.unsafeLazy
 
 class SearchFragment:CommonSingleListFragment() {
@@ -40,5 +41,14 @@ class SearchFragment:CommonSingleListFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         activity?.title = "Search"
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        activity?.let {
+            if(it is HomeActivity){
+                it.closeSearchBar()
+            }
+        }
     }
 }
