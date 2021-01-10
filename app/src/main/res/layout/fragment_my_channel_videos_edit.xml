@@ -214,6 +214,7 @@
                     android:id="@+id/category_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:spinnerMode="dialog"
                     android:entries="@{viewmodel.categories}"
                     android:onItemSelected="@{(parent,view,pos,id)-> viewmodel.categoryIndexChanged(pos)}"
                     android:selectedItemPosition="@={viewmodel.categoryPosition}" />
@@ -247,6 +248,7 @@
                     android:id="@+id/age_group_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:spinnerMode="dialog"
                     android:entries="@{viewmodel.ageGroup}"
                     android:selectedItemPosition="@={viewmodel.ageGroupPosition}" />
             </RelativeLayout>
@@ -281,6 +283,7 @@
                     android:id="@+id/subCategorySpinner"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:spinnerMode="dialog"
                     android:entries="@{viewmodel.subCategories}"
                     android:selectedItemPosition="@={viewmodel.subCategoryPosition}"/>
             </RelativeLayout>

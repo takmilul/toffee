@@ -797,12 +797,11 @@ class HomeActivity :
             val isDarkEnabled = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
             
             val parser: XmlPullParser = resources.getXml(xml.custom_switch)
-            var attr: AttributeSet? = null
             var switch: View? = null
             try {
                 parser.next()
                 parser.nextTag()
-                attr = Xml.asAttributeSet(parser)
+                val attr: AttributeSet = Xml.asAttributeSet(parser)
                 switch = SwitchButton(this, attr)
             }
             catch (e: java.lang.Exception) {
@@ -811,22 +810,24 @@ class HomeActivity :
             }
             finally {
                 themeMenu.actionView = switch
-                if(themeMenu.actionView is SwitchButton) {
-                    (themeMenu.actionView as SwitchButton).let {
-                        val param = LinearLayout.LayoutParams(Utils.dpToPx(36), Utils.dpToPx(22))
-                        param.topMargin = 30
-                        it.layoutParams = param
-                        it.isChecked = isDarkEnabled
-                        it.setOnCheckedChangeListener { _, isChecked ->
-                            changeAppTheme(isChecked)
+                when(themeMenu.actionView){
+                    is SwitchButton -> {
+                        (themeMenu.actionView as SwitchButton).let {
+                            val param = LinearLayout.LayoutParams(Utils.dpToPx(36), Utils.dpToPx(22))
+                            param.topMargin = 30
+                            it.layoutParams = param
+                            it.isChecked = isDarkEnabled
+                            it.setOnCheckedChangeListener { _, isChecked ->
+                                changeAppTheme(isChecked)
+                            }
                         }
                     }
-                }
-                else if(themeMenu.actionView is SwitchMaterial){
-                    (themeMenu.actionView as SwitchMaterial).let {
-                        it.isChecked = isDarkEnabled
-                        it.setOnCheckedChangeListener { _, isChecked ->
-                            changeAppTheme(isChecked)
+                    is SwitchMaterial -> {
+                        (themeMenu.actionView as SwitchMaterial).let {
+                            it.isChecked = isDarkEnabled
+                            it.setOnCheckedChangeListener { _, isChecked ->
+                                changeAppTheme(isChecked)
+                            }
                         }
                     }
                 }

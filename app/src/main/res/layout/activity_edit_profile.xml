@@ -71,7 +71,7 @@
                         android:id="@+id/mobile_tv"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/single_line_input_text_height"
-                        android:background="@drawable/single_line_input_text_disabled_bg"
+                        android:background="@drawable/single_line_input_text_bg"
                         app:drawableStartCompat="@mipmap/ic_phone"
                         android:drawablePadding="10dp"
                         android:fontFamily="@font/roboto_regular"

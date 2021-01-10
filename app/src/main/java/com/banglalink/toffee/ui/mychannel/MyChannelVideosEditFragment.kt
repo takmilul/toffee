@@ -84,7 +84,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
                 val subCategoryIndex = subCategories.indexOf(selectedSubCategory).takeIf { it > 0 } ?: 0
 
                 viewModel.title.value = channelInfo?.program_name
-                viewModel.description.value = channelInfo?.description
+                viewModel.description.value = channelInfo?.getDescriptionDecoded().toString()
                 viewModel.tags.value = channelInfo?.video_tags
                 viewModel.thumbnailUrl.value = channelInfo?.landscape_ratio_1280_720
                 viewModel.subCategories.value = subCategories
@@ -92,6 +92,9 @@ class MyChannelVideosEditFragment : BaseFragment() {
                 viewModel.categoryPosition.value = categoryIndex
                 viewModel.subCategoryPosition.value = subCategoryIndex
                 viewModel.ageGroupPosition.value = channelInfo?.age_restriction?.toInt()?:0
+                
+//                val adapter = ArrayAdapter(requireContext(), R.layout.list_item_spinner, R.id.spinnerText, categoryList)
+//                binding.categorySpinner.adapter = adapter
             }
         }
     }
