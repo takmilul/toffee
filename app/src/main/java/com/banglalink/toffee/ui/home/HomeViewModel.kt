@@ -25,6 +25,7 @@ import com.google.firebase.iid.InstanceIdResult
 import kotlinx.coroutines.launch
 import java.lang.Exception
 import com.banglalink.toffee.usecase.*
+import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging
@@ -46,7 +47,7 @@ class HomeViewModel @ViewModelInject constructor(
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val fragmentDetailsMutableLiveData = MutableLiveData<Any>()
     val addToPlayListMutableLiveData = MutableLiveData<AddToPlaylistData>()
-    val shareContentLiveData = MutableLiveData<ChannelInfo>()
+    val shareContentLiveData = SingleLiveEvent<ChannelInfo>()
     val userChannelMutableLiveData = MutableLiveData<ChannelInfo>()
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val switchBottomTab = MutableLiveData<Int>()
