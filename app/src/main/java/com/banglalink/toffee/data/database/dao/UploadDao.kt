@@ -30,6 +30,6 @@ interface UploadDao {
     @Query("SELECT * from UploadInfo WHERE uploadId=:uploadId")
     suspend fun getUploadById(uploadId: Long): UploadInfo?
 
-    @Query("UPDATE UploadInfo SET completedPercent=:completed, completedPercent=:percent, fileSize=:totalSize WHERE uploadId=:uploadId")
-    suspend fun updateProgressById(uploadId: Long, completed: Long, percent: Int, totalSize: Long)
+    @Query("UPDATE UploadInfo SET completedPercent=:completed, completedPercent=:percent, fileSize=:totalSize, tusUploadUri=:uploadUri WHERE uploadId=:uploadId")
+    suspend fun updateProgressById(uploadId: Long, completed: Long, percent: Int, totalSize: Long, uploadUri: String?)
 }

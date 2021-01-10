@@ -37,8 +37,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesGlobalUploadObserver(app: Application, pref: Preference, uploadConfApi: UgcUploadConfirmation, repo: UploadInfoRepository): UploadObserver {
-        return UploadObserver(app, pref, uploadConfApi, repo)
+    fun providesGlobalUploadObserver(app: Application, uploadConfApi: UgcUploadConfirmation, repo: UploadInfoRepository): UploadObserver {
+        return UploadObserver(app, uploadConfApi, repo)
     }
 
     @Provides

@@ -6,12 +6,10 @@ import android.util.Log
 import com.banglalink.toffee.apiservice.UgcUploadConfirmation
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.model.TUS_UPLOAD_SERVER_URL
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.util.UtilsKt
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import net.gotev.uploadservice.data.UploadInfo
 import net.gotev.uploadservice.exceptions.UserCancelledUploadException
 import net.gotev.uploadservice.network.ServerResponse
@@ -19,7 +17,6 @@ import net.gotev.uploadservice.observer.request.GlobalRequestObserver
 import net.gotev.uploadservice.observer.request.RequestObserverDelegate
 
 class UploadObserver(private val app: Application,
-                     private val mPref: Preference,
                      private val uploadConfirmApi: UgcUploadConfirmation,
                      private val uploadRepo: UploadInfoRepository) {
 
@@ -42,6 +39,10 @@ class UploadObserver(private val app: Application,
             if(uploads.isNotEmpty()) {
                 uploads.forEach {
                     when (it.status) {
+                        UploadStatus.CANCELED.value,
+                        UploadStatus.RETRY_FAILED.value -> {
+                            sendStatusToServer(it, false)
+                        }
                         UploadStatus.CLEARED.value,
                         UploadStatus.SUBMITTED.value,
                         UploadStatus.SUBMITTED_ERROR.value-> {
@@ -56,11 +57,13 @@ class UploadObserver(private val app: Application,
                         in listOf(
                             UploadStatus.ADDED.value,
                             UploadStatus.STARTED.value,
-                            UploadStatus.CANCELED.value,
                             UploadStatus.ERROR.value,
-                            UploadStatus.RETRY_FAILED.value,
                         ) -> {
-                            sendStatusToServer(it, false)
+                            if(it.fileUri.startsWith("content://")) {
+                                sendStatusToServer(it, false)
+                            } else {
+                                restartUploadTask(it)
+                            }
                         }
                     }
                 }
@@ -98,12 +101,15 @@ class UploadObserver(private val app: Application,
 
             override fun onProgress(context: Context,
                                     uploadInfo: UploadInfo) {
-                Log.e("UPLOAD", "Uploading -===>>> ${uploadInfo.progressPercent}")
                 coroutineScope.launch {
+                    val tusUploadUri = uploadInfo.files.first().properties[TusUploadTaskParameters.TUS_UPLOAD_URL]
+                    Log.e("UPLOAD", "Uploading -===>>> ${uploadInfo.progressPercent}, Uri ->>> $tusUploadUri")
                     uploadRepo.updateProgressById(UtilsKt.stringToUploadId(uploadInfo.uploadId),
                         uploadInfo.uploadedBytes,
                         uploadInfo.progressPercent,
-                        uploadInfo.totalBytes)
+                        uploadInfo.totalBytes,
+                        tusUploadUri
+                    )
                 }
             }
 
@@ -157,5 +163,19 @@ class UploadObserver(private val app: Application,
         uploadRepo.updateUploadInfo(item.apply {
             this.status = newStatus
         })
+    }
+
+    private suspend fun restartUploadTask(info: com.banglalink.toffee.data.database.entities.UploadInfo) {
+        withContext(Dispatchers.IO + Job()) {
+            TusUploadRequest(
+                app,
+                TUS_UPLOAD_SERVER_URL,
+            )
+                .setResumeInfo(info.getFingerprint()!!, info.tusUploadUri)
+                .setMetadata(info.getFileNameMetadata())
+                .setUploadID(info.getUploadIdStr()!!)
+                .setFileToUpload(info.fileUri)
+                .startUpload()
+        }
     }
 }

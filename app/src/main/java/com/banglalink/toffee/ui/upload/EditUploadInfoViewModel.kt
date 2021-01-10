@@ -11,14 +11,11 @@ import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.apiservice.GetUgcCategories
 import com.banglalink.toffee.apiservice.UgcContentUpload
 import com.banglalink.toffee.data.database.entities.UploadInfo
-import com.banglalink.toffee.data.network.response.UgcContentUploadResponseBean
-import com.banglalink.toffee.data.network.response.UgcResponseBean
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.exception.Error
-import com.banglalink.toffee.extension.snack
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.model.SubCategory
+import com.banglalink.toffee.model.TUS_UPLOAD_SERVER_URL
 import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.model.UgcSubCategory
 import com.banglalink.toffee.util.Utils
@@ -247,25 +244,25 @@ class EditUploadInfoViewModel @AssistedInject constructor(
     }
 
     private suspend fun startUpload(serverContentId: Long): String {
-        val upInfo = UploadInfo(
+        var upInfo = UploadInfo(
             serverContentId = serverContentId,
             fileUri = uploadFileUri,
             fileName = fileName,
         )
         val upId = uploadRepo.insertUploadInfo(upInfo)
-        val metadata = Base64.encodeToString(fileName.toByteArray(), Base64.NO_WRAP)
-        val uploadIdStr =
-            withContext(Dispatchers.IO + Job()) {
-                TusUploadRequest(
-                    appContext,
-                    "https://ugc-upload.toffeelive.com/upload",
-                )
-                    .setMetadata("filename $metadata")
-                    .setUploadID(UtilsKt.uploadIdToString(upId))
-                    .setFileToUpload(uploadFileUri)
-                    .startUpload()
-            }
-        return uploadIdStr
+        upInfo = upInfo.copy(uploadId = upId)
+
+        return withContext(Dispatchers.IO + Job()) {
+            TusUploadRequest(
+                appContext,
+                TUS_UPLOAD_SERVER_URL,
+            )
+                .setResumeInfo(upInfo.getFingerprint()!!, null)
+                .setMetadata(upInfo.getFileNameMetadata())
+                .setUploadID(upInfo.getUploadIdStr()!!)
+                .setFileToUpload(uploadFileUri)
+                .startUpload()
+        }
     }
 
     private suspend fun startUpload2(serverContentId: Long): String {
