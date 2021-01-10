@@ -12,6 +12,9 @@ class UserActivitiesListAdapter(callback: ProviderIconCallback<UserActivities>):
     BasePagingDataAdapter<UserActivities>(callback, ItemComparator()) {
 
     override fun getItemViewType(position: Int): Int {
+        if(getItem(position)?.channelInfo?.isLive == true){
+            return R.layout.list_item_recent_live_new
+        }
         return R.layout.tab_activities_list_item_layout_2
     }
 
@@ -20,6 +23,13 @@ class UserActivitiesListAdapter(callback: ProviderIconCallback<UserActivities>):
         if(holder.binding is TabActivitiesListItemLayout2Binding) {
             holder.binding.videoThumb.setImageDrawable(null)
             holder.binding.ownerThumb.setImageDrawable(null)
+        }
+    }
+
+    override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
+        val obj = getItem(position)
+        obj?.channelInfo?.let {
+            holder.bind(obj, callback, position)
         }
     }
 }

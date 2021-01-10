@@ -12,7 +12,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
-import com.banglalink.toffee.data.repository.HistoryRepository
+import com.banglalink.toffee.data.repository.UserActivitiesRepository
 import com.banglalink.toffee.databinding.ActivitySettingsBinding
 import com.banglalink.toffee.ui.about.AboutActivity
 import com.banglalink.toffee.ui.common.BaseFragment
@@ -27,7 +27,7 @@ import javax.inject.Inject
 class SettingsFragment : BaseFragment() {
 
     @Inject
-    lateinit var historyRepository: HistoryRepository
+    lateinit var userActivitiesRepository: UserActivitiesRepository
 
     var wifiProfileDesc = arrayOf("160p", "240p", "320p", "576p", "720p", "Auto")
     var wifiProfileRes = arrayOf("240x160", "320x240", "480x320", "720x576", "1280x720", "Auto")
@@ -141,12 +141,12 @@ class SettingsFragment : BaseFragment() {
 
     private fun onClickClearWatchHistory() {
         VelBoxAlertDialogBuilder(requireContext()).apply {
-            setTitle("Clear Watch History")
-            setText("Are you sure that you want to clear watch history?")
+            setTitle("Clear Activities")
+            setText("Are you sure that you want to clear Activities?")
             setPositiveButtonListener("Clear") {
                 lifecycleScope.launch {
-                    historyRepository.deleteAll()
-                    Toast.makeText(requireContext(), "Watch history cleared", Toast.LENGTH_SHORT).show()
+                    userActivitiesRepository.deleteAll()
+                    Toast.makeText(requireContext(), "Activities cleared", Toast.LENGTH_SHORT).show()
                     it?.dismiss()
                 }
             }
