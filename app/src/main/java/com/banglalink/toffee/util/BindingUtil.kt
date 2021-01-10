@@ -247,7 +247,7 @@ fun bindPremiumIcon(imageView: ImageView, channelInfo: ChannelInfo) {
 fun bindActivityType(view: TextView, item: UserActivities) {
     view.text = when (item.activityType) {
         ActivityType.REACT.value -> "Reacted"
-        ActivityType.VIEW.value -> "Viewed"
+        ActivityType.VIEW.value -> "Watched"
         ActivityType.PLAYLIST.value -> {
             when(item.activitySubType) {
                 Reaction.Add.value -> "Added to PlayList"

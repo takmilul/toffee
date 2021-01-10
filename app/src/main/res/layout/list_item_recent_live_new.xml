@@ -36,10 +36,9 @@
             android:layout_marginStart="12dp"
             android:layout_marginEnd="12dp"
             app:cardCornerRadius="0dp"
-
             android:foreground="?attr/selectableItemBackground"
             android:onClick="@{()-> callback.onItemClicked(data)}"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="3dp"
             >
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -73,6 +72,19 @@
 
                 </FrameLayout>
 
+                <ImageView
+                    android:id="@+id/reactIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:background="@color/backgroundAlpha"
+                    android:scaleType="center"
+                    app:layout_constraintBottom_toBottomOf="@+id/poster_container"
+                    app:layout_constraintEnd_toEndOf="@+id/poster_container"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0"
+                    app:srcCompat="@drawable/ic_view" />
 
                 <ImageView
                     android:id="@+id/options"
@@ -83,8 +95,22 @@
                     android:onClick="@{(v)->callback.onOpenMenu(v, data)}"
                     android:padding="4dp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/name"
                     app:srcCompat="@drawable/ic_menu_more" />
+
+
+                <TextView
+                    android:id="@+id/reactStatus"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="8dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="Watched"
+                    app:layout_constraintEnd_toStartOf="@+id/options"
+                    app:layout_constraintStart_toEndOf="@+id/poster_container"
+                    app:layout_constraintTop_toTopOf="@+id/poster_container" />
 
                 <TextView
                     android:id="@+id/name"
@@ -96,18 +122,31 @@
                     android:ellipsize="end"
                     android:maxLines="2"
                     android:lines="2"
-
                     android:text="@{data.channelInfo.program_name}"
                     app:layout_constraintEnd_toStartOf="@+id/options"
                     app:layout_constraintStart_toEndOf="@+id/poster_container"
-                    app:layout_constraintTop_toTopOf="@+id/poster_container"
+                    app:layout_constraintTop_toBottomOf="@id/reactStatus"
                     tools:text="Title" />
+
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/ownerThumb"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginBottom="8dp"
+                    loadImageFromUrlRounded="@{data.channelInfo.channelProfileUrl}"
+                    android:src="@drawable/ic_profile_default"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/poster_container" />
+
 
                 <TextView
                     android:id="@+id/provider_name"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp"
                     android:ellipsize="end"
                     android:fontFamily="@font/roboto_regular"
@@ -116,8 +155,8 @@
                     android:textColor="@color/second_text_color"
                     android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/name"
-                    app:layout_constraintTop_toBottomOf="@+id/name"
+                    app:layout_constraintStart_toEndOf="@+id/ownerThumb"
+                    app:layout_constraintTop_toTopOf="@+id/ownerThumb"
                     tools:text="Content Provider" />
 
                 <TextView
@@ -151,7 +190,6 @@
                     app:layout_constraintEnd_toStartOf="@+id/eyeIV"
                     app:layout_constraintHorizontal_chainStyle="packed"
                     app:layout_constraintStart_toEndOf="@+id/duration"
-                    tools:visibility="visible"
                     tools:text="18K" />
 
                 <TextView
@@ -168,7 +206,7 @@
                     app:layout_constraintHorizontal_chainStyle="packed"
                     app:layout_constraintStart_toEndOf="@+id/number_of_views"
                     app:layout_constraintTop_toTopOf="@+id/number_of_views"
-                    tools:visibility="visible"/>
+                  />
 
                 <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/guideline12"
