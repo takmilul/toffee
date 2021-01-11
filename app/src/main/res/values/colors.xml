@@ -93,4 +93,5 @@
     <color name="cardTitleColor">#29466B</color>
     <color name="categoryNameColor">#6781A1</color>
     <color name="tvChannelTitleColor">#111F31</color>
+    <color name="round_bg_tv_color">#f8f9f9</color>
 </resources>

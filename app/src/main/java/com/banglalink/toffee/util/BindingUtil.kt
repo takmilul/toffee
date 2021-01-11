@@ -246,6 +246,7 @@ fun bindPremiumIcon(imageView: ImageView, channelInfo: ChannelInfo) {
 fun bindActivityType(view: TextView, item: UserActivities) {
     view.text = when (item.activityType) {
         ActivityType.REACT.value -> "Reacted"
+        ActivityType.VIEW.value -> "Watched"
         ActivityType.PLAYLIST.value -> {
             when(item.activitySubType) {
                 Reaction.Add.value -> "Added to PlayList"
@@ -297,6 +298,7 @@ fun loadReactionEmo(view: View, reaction: Int) {
         }
         Add.value -> R.drawable.ic_playlist
         Delete.value -> R.drawable.ic_playlist
+        Viewed.value -> R.drawable.ic_view
         else -> R.drawable.ic_reaction_love_empty
     }
     when (view) {

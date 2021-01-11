@@ -35,4 +35,5 @@
     <color name="categoryNameColor">#BED6F3</color>
     <color name="tvChannelTitleColor">#BED6F3</color>
     <color name="ratingButtonActiveColor">#29466B</color>
+    <color name="round_bg_tv_color">#616c72</color>
 </resources>
