@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <import type="android.view.View" />
         <variable
@@ -43,22 +42,26 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
+            
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/empty_view_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
                 android:maxWidth="144dp"
-                app:srcCompat="@drawable/ic_activities_empty"
-                />
+                app:srcCompat="@drawable/ic_activities_empty" />
 
             <TextView
                 android:id="@+id/empty_view_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
+                android:textSize="16sp"
+                android:fontFamily="@font/roboto_regular"
+                android:textColor="@color/fixed_second_text_color"
                 android:layout_marginTop="24dp"/>
+            
         </LinearLayout>
+        
         <pl.droidsonroids.gif.GifImageView
             android:id="@+id/progress_bar"
             android:layout_width="40dp"
@@ -71,5 +74,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/listview" />
+        
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

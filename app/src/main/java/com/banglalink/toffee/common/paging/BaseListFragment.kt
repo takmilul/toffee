@@ -6,17 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentBaseSingleListBinding
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 abstract class BaseListFragment<T: Any>: BaseFragment() {
     protected abstract val mAdapter: BasePagingDataAdapter<T>
@@ -42,7 +39,7 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
             activity?.title = it
         }
 
-        setupEmptyView()
+        setEmptyView()
 
         setupListView()
 
@@ -53,6 +50,10 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
         return LinearLayoutManager(context)
     }
 
+    protected open fun setEmptyView(){
+        setupEmptyView()
+    }
+    
     protected open fun getEmptyViewInfo(): Pair<Int, String?> {
         return Pair(0, "No item found")
     }

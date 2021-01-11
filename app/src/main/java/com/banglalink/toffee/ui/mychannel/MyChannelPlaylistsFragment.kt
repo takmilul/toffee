@@ -3,6 +3,7 @@ package com.banglalink.toffee.ui.mychannel
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -21,6 +22,7 @@ import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.alert_dialog_decision.view.*
+import kotlinx.android.synthetic.main.layout_my_channel_playlist_empty_view.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -29,6 +31,7 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
     private var enableToolbar: Boolean = false
 
     private var isOwner: Int = 0
+    private var channelId: Int = 0
     private var channelOwnerId: Int = 0
     override val mAdapter by lazy { MyChannelPlaylistAdapter(this) }
 
@@ -37,21 +40,22 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
     private val deletePlaylistViewModel by viewModels<MyChannelPlaylistDeleteViewModel>()
     private val editPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
     private val playlistReloadViewModel by activityViewModels<MyChannelPlaylistReloadViewModel>()
+    private val createPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
 
     companion object {
-        const val SHOW_TOOLBAR = "enableToolbar"
+        private const val SHOW_TOOLBAR = "enableToolbar"
         const val IS_OWNER = "isOwner"
-
-        //        const val IS_PUBLIC = "isPublic"
         const val CHANNEL_OWNER_ID = "channelOwnerId"
+        const val CHANNEL_ID = "channelId"
         const val PLAYLIST_INFO = "playlistInfo"
 
-        fun newInstance(enableToolbar: Boolean, isOwner: Int, channelOwnerId: Int): MyChannelPlaylistsFragment {
+        fun newInstance(enableToolbar: Boolean, isOwner: Int, channelOwnerId: Int, channelId: Int): MyChannelPlaylistsFragment {
             val instance = MyChannelPlaylistsFragment()
             val bundle = Bundle()
             bundle.putBoolean(SHOW_TOOLBAR, enableToolbar)
             bundle.putInt(IS_OWNER, isOwner)
             bundle.putInt(CHANNEL_OWNER_ID, channelOwnerId)
+            bundle.putInt(CHANNEL_ID, channelId)
             instance.arguments = bundle
             return instance
         }
@@ -61,8 +65,31 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
         super.onCreate(savedInstanceState)
         isOwner = arguments?.getInt(IS_OWNER) ?: 1
         channelOwnerId = arguments?.getInt(CHANNEL_OWNER_ID) ?: 0
+        channelId = arguments?.getInt(MyChannelHomeFragment.CHANNEL_ID) ?: 0
         mAdapter.isOwner = isOwner
         observeReloadPlaylist()
+    }
+    
+    override fun setEmptyView() {
+        val customView = layoutInflater.inflate(R.layout.layout_my_channel_playlist_empty_view, null)
+        with(binding.emptyView) {
+            removeAllViews()
+            addView(customView)
+            gravity = Gravity.CENTER_HORIZONTAL
+            visibility = View.VISIBLE
+            if (isOwner == 1){
+                empty_view_label.text = "You haven't created any playlist yet"
+                uploadVideoButton.setOnClickListener { 
+                    if(parentFragment is MyChannelHomeFragment){
+                        (parentFragment as MyChannelHomeFragment).showCreatePlaylistDialog()
+                    }
+                }
+            }
+            else{
+                uploadVideoButton.visibility = View.GONE
+                empty_view_label.text = "This channel has no playlist yet"
+            }
+        }
     }
 
     private fun observeReloadPlaylist() {
@@ -84,12 +111,6 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
                 putParcelable(PLAYLIST_INFO, PlaylistPlaybackInfo(item.id, channelOwnerId, isOwner, item.name, item.totalContent))
             })
         }
-    }
-
-    override fun getEmptyViewInfo(): Pair<Int, String?> {
-        return Pair(R.drawable.ic_playlists_empty, 
-            if(isOwner == 1) "You haven't created any playlist yet" else "This channel has no playlist yet"
-        )
     }
 
     override fun onOpenMenu(view: View, item: MyChannelPlaylist) {
@@ -119,6 +140,7 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
             when (it) {
                 is Success -> {
                     mAdapter.refresh()
+                    mAdapter
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
                 }
                 is Failure -> {

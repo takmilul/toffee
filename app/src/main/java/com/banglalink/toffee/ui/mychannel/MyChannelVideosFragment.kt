@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.mychannel
 
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
@@ -19,10 +20,11 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.ContentReactionCallback
 import com.banglalink.toffee.ui.common.ReactionFragment
 import com.banglalink.toffee.ui.common.ReactionIconCallback
+import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.layout_my_channel_videos_empty_view.*
 import javax.inject.Inject
-
 
 @AndroidEntryPoint
 class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReactionCallback<ChannelInfo> {
@@ -45,6 +47,7 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
         private const val IS_OWNER = "isOwner"
         private const val CHANNEL_OWNER_ID = "channelOwnerId"
         private const val IS_PUBLIC = "isPublic"
+        
         fun newInstance(enableToolbar: Boolean, isOwner: Int, channelOwnerId: Int, isPublic: Int): MyChannelVideosFragment {
             val instance = MyChannelVideosFragment()
             val bundle = Bundle()
@@ -65,12 +68,28 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
         isPublic = arguments?.getInt(IS_PUBLIC) ?: 0
     }
 
-    override fun getEmptyViewInfo(): Pair<Int, String?> {
-        return Pair(R.drawable.ic_videos_empty, 
-            if(isOwner == 1) "You haven't uploaded any video yet" else "This channel has no video yet"
-        )
+    override fun setEmptyView() {
+        val customView = layoutInflater.inflate(R.layout.layout_my_channel_videos_empty_view, null)
+        with(binding.emptyView) {
+            removeAllViews()
+            addView(customView)
+            gravity = Gravity.CENTER_HORIZONTAL
+            visibility = View.VISIBLE
+            if (isOwner == 1){
+                empty_view_label.text = "You haven't uploaded any video yet"
+                uploadVideoButton.setOnClickListener { 
+                    if(requireActivity() is HomeActivity){
+                        (requireActivity() as HomeActivity).showUploadDialog()
+                    }
+                }
+            }
+            else{
+                uploadVideoButton.visibility = View.GONE
+                empty_view_label.text = "This channel has no video yet"
+            }
+        }
     }
-
+    
     override fun onOpenMenu(view: View, item: ChannelInfo) {
         super.onOpenMenu(view, item)
         PopupMenu(requireContext(), view).apply {
