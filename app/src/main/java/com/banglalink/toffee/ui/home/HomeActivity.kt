@@ -95,6 +95,7 @@ const val ID_REDEEM_CODE = 24
 
 const val PLAY_IN_WEB_VIEW = 1
 const val OPEN_IN_EXTERNAL_BROWSER = 2
+
 @AndroidEntryPoint
 class HomeActivity :
     PlayerPageActivity(),

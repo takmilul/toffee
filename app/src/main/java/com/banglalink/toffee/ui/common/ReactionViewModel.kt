@@ -7,7 +7,6 @@ import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.ReactionInfo
 import com.banglalink.toffee.data.database.entities.UserActivities
 import com.banglalink.toffee.data.repository.UserActivitiesRepository
-import com.banglalink.toffee.enums.ActivityType.REACT
 import com.banglalink.toffee.model.ChannelInfo
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
@@ -32,7 +31,7 @@ class ReactionViewModel @ViewModelInject constructor(private val reactionDao: Re
         }
     }
     
-    fun insertActivity(customerId: Int, channelInfo: ChannelInfo, reactStatus: Int) {
+    fun insertActivity(customerId: Int, channelInfo: ChannelInfo, reactStatus: Int, reaction: Int) {
         viewModelScope.launch {
             val item = UserActivities(
                 customerId,
@@ -40,8 +39,8 @@ class ReactionViewModel @ViewModelInject constructor(private val reactionDao: Re
                 "activity",
                 channelInfo.type ?: "VOD",
                 Gson().toJson(channelInfo),
-                REACT.value,
-                reactStatus
+                reactStatus,
+                reaction
             )
             activitiesRepo.insert(item)
         }

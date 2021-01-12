@@ -53,7 +53,7 @@
 
     <item android:id="@+id/menu_logout"
         android:title="Logout"
-        android:icon="@mipmap/ic_menu_exit" />
+        android:icon="@drawable/ic_menu_exit" />
 
     <item android:id="@+id/menu_change_theme"
         android:icon="@drawable/ic_menu_dark_mode"

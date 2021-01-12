@@ -139,9 +139,8 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
         observe(editPlaylistViewModel.editPlaylistLiveData) {
             when (it) {
                 is Success -> {
-                    mAdapter.refresh()
-                    mAdapter
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
+                    mAdapter.refresh()
                 }
                 is Failure -> {
                     Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
@@ -195,8 +194,8 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
         observe(deletePlaylistViewModel.liveData) {
             when (it) {
                 is Success -> {
-                    mAdapter.refresh()
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
+                    mAdapter.refresh()
                 }
                 is Failure -> {
                     Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()

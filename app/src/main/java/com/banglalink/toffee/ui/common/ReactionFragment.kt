@@ -13,6 +13,7 @@ import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.ReactionInfo
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.AlertDialogReactionsBinding
+import com.banglalink.toffee.enums.ActivityType.*
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.enums.Reaction.*
 import com.banglalink.toffee.model.ChannelInfo
@@ -101,19 +102,21 @@ class ReactionFragment: DialogFragment() {
 
                 channelInfo!!.myReaction = previousReactionInfo?.let {
                     if (it.reaction == newReactionInfo.reaction) {
-                        mViewModel.removeReaction(it)
                         reactionText = "React"
                         reactionIcon = R.drawable.ic_reaction_love_empty
+                        mViewModel.removeReaction(it)
+                        mViewModel.insertActivity(preference.customerId, channelInfo!!, REACTION_REMOVED.value, reaction.value)
                         None.value
                     }
                     else {
-                        mViewModel.updateReaction(newReactionInfo)
                         reactionCount++
+                        mViewModel.updateReaction(newReactionInfo)
+                        mViewModel.insertActivity(preference.customerId, channelInfo!!, REACTION_CHANGED.value, reaction.value)
                         reaction.value
                     }
                 } ?: run {
                     mViewModel.insertReaction(newReactionInfo)
-                    mViewModel.insertActivity(preference.customerId, channelInfo!!, reaction.value)
+                    mViewModel.insertActivity(preference.customerId, channelInfo!!, REACTED.value, reaction.value)
                     reactionCount++
                     reaction.value
                 }
