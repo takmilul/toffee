@@ -25,7 +25,6 @@ import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.gms.auth.api.phone.SmsRetriever
-import com.google.android.material.snackbar.Snackbar
 
 class VerifySignInFragment : Fragment() {
     
@@ -99,7 +98,7 @@ class VerifySignInFragment : Fragment() {
     private fun verifyCode(code: String) {
         progressDialog.show()
 
-        val signInMotionLayout = parentFragment?.parentFragmentManager?.fragments?.get(0)?.parentFragment?.view
+        val signInMotionLayout = parentFragment?.parentFragment?.view
         
         observe(viewModel.verifyCode(code, regSessionToken, referralCode)) {
             progressDialog.dismiss()

@@ -32,7 +32,6 @@ import com.banglalink.toffee.model.INVALID_REFERRAL_ERROR_CODE
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.TERMS_AND_CONDITION_URL
 import com.banglalink.toffee.ui.common.HtmlPageViewActivity
-import com.banglalink.toffee.ui.verify.VerifySignInFragment
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.ui.widget.showAlertDialog
 import com.banglalink.toffee.util.unsafeLazy
@@ -53,6 +52,7 @@ class SignInContentFragment : Fragment() {
     }
     lateinit var binding: FragmentSigninContentBinding
     private val viewModel by viewModels<SignInViewModel>()
+    private var isNumberShown:Boolean=false
 
     
 
@@ -79,7 +79,7 @@ class SignInContentFragment : Fragment() {
             binding.loginBtn.isEnabled = binding.termsAndConditionsCheckbox.isChecked
         }
         
-        val signinMotionLayout = parentFragment?.parentFragmentManager?.fragments?.get(0)?.parentFragment?.view
+        val signinMotionLayout = parentFragment?.parentFragment?.view
         
         signinMotionLayout?.let { 
             if (it is MotionLayout){
@@ -93,7 +93,10 @@ class SignInContentFragment : Fragment() {
                     }
 
                     override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
-                        getHintPhoneNumber()
+                        if (!isNumberShown) {
+                            isNumberShown = true
+                            getHintPhoneNumber()
+                        }
                     }
 
                     override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {
