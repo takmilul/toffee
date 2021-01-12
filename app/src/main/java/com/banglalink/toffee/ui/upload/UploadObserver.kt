@@ -95,7 +95,7 @@ class UploadObserver(private val app: Application,
                                     UploadStatus.ERROR.value
                     })
 
-                    sendStatusToServer(item, false)
+                    //sendStatusToServer(item, false)
                 }
             }
 
@@ -103,7 +103,7 @@ class UploadObserver(private val app: Application,
                                     uploadInfo: UploadInfo) {
                 coroutineScope.launch {
                     val tusUploadUri = uploadInfo.files.first().properties[TusUploadTaskParameters.TUS_UPLOAD_URL]
-                    Log.e("UPLOAD", "Uploading -===>>> ${uploadInfo.progressPercent}, Uri ->>> $tusUploadUri")
+                    Log.e("UPLOAD", "Uploading -===>>> ${uploadInfo.progressPercent}, Info ->>> $uploadInfo")
                     uploadRepo.updateProgressById(UtilsKt.stringToUploadId(uploadInfo.uploadId),
                         uploadInfo.uploadedBytes,
                         uploadInfo.progressPercent,

@@ -33,11 +33,11 @@ class TusUploadTask: UploadTask(), HttpRequest.RequestBodyDelegate,
     private val bodyLength: Long
         get() = file.size(context)
 
-    private var resumeOffset: Long = 0L
+    private var resumeOffset: Long = -1L
 
     @Throws(Exception::class)
     private fun createUpload(httpStack: HttpStack): String {
-        UploadServiceLogger.debug(javaClass.simpleName, params.id) { "Trying to create Tus Upload with metadata ->>> ${tusParams.metadata}" }
+        UploadServiceLogger.error(javaClass.simpleName, params.id) { "Trying to create Tus Upload with metadata ->>> ${tusParams.metadata}" }
         val createHeaders =
             listOf(
                 NameValue(tusResumeableHeader, tusVersion),
@@ -62,12 +62,10 @@ class TusUploadTask: UploadTask(), HttpRequest.RequestBodyDelegate,
             throw ProtocolException("missing upload URL in response for creating upload")
         }
 
-        UploadServiceLogger.debug(javaClass.simpleName, params.id) { "Tus upload created with url - $uploadUrl" }
-
-        // Received upload url from server //TODO: Save url and fingerprint to localstore
+        UploadServiceLogger.error(javaClass.simpleName, params.id) { "Tus upload created with url - $uploadUrl" }
 
         return params.serverUrl.toHttpUrl().resolve(uploadUrl).toString().also {
-            tusParams.uploadUrl = uploadUrl
+            tusParams.uploadUrl = it
             params.files.first().properties[TusUploadTaskParameters.FINGERPRINT] = tusParams.fingerprint
             params.files.first().properties[TusUploadTaskParameters.TUS_UPLOAD_URL] = it
         }
@@ -75,7 +73,7 @@ class TusUploadTask: UploadTask(), HttpRequest.RequestBodyDelegate,
 
     @Throws(Exception::class)
     private fun getResumeOffset(httpStack: HttpStack, uploadUrl: String): Long {
-        UploadServiceLogger.debug(javaClass.simpleName, params.id) { "Trying to get resume offset" }
+        UploadServiceLogger.error(javaClass.simpleName, params.id) { "Trying to get resume offset from api" }
 
         val offsetRequestHeaders = listOf(
             NameValue(tusResumeableHeader, tusVersion),
@@ -91,23 +89,30 @@ class TusUploadTask: UploadTask(), HttpRequest.RequestBodyDelegate,
             throw ProtocolException("Unexpected status code ${resp.code} while resuming upload")
         }
 
-        val uploadOffset = resp.headers["Upload-Offset"]
+        val uploadOffset = resp.headers[tusUploadOffsetHeader]
         if(uploadOffset.isNullOrEmpty()) {
             throw ProtocolException("missing upload offset in response for resuming upload")
         }
 
-        UploadServiceLogger.debug(javaClass.simpleName, params.id) { "Got resume offset - $uploadOffset" }
+        UploadServiceLogger.error(javaClass.simpleName, params.id) { "Got resume offset from api - $uploadOffset" }
 
         return uploadOffset.toLong()
     }
 
     @Throws(Exception::class)
-    private fun resumeUpload(httpStack: HttpStack, uploadUrl: String) {
-        UploadServiceLogger.debug(javaClass.simpleName, params.id) { "Starting upload task" }
+    private fun resumeUpload(httpStack: HttpStack, uploadUrl: String, offset: Long = -1L) {
+        UploadServiceLogger.error(javaClass.simpleName, params.id) { "Starting upload task with offset ->> $offset" }
 
         setAllFilesHaveBeenSuccessfullyUploaded(false)
-        resumeOffset = getResumeOffset(httpStack, uploadUrl)
-        totalBytes = bodyLength - resumeOffset
+        resumeOffset = if(offset >= 0) offset else getResumeOffset(httpStack, uploadUrl)
+//        resetUploadedBytes()
+
+        if(resumeOffset < 0) throw IllegalStateException("Resume offset should be positive")
+
+        tusParams.resumeOffset = resumeOffset
+        Log.e("Upload", "Resume offset ->>> $resumeOffset")
+        totalBytes = bodyLength// - resumeOffset
+        onProgress(resumeOffset)
 
         shouldWriteBody = true
 
@@ -116,14 +121,15 @@ class TusUploadTask: UploadTask(), HttpRequest.RequestBodyDelegate,
                 NameValue(tusResumeableHeader, tusVersion),
                 NameValue(tusUploadOffsetHeader, resumeOffset.toString()),
                 NameValue("Content-Type", "application/offset+octet-stream"),
+                NameValue("Expect", "100-continue"),
             )
 
         val response = httpStack.newRequest(params.id, "PATCH", uploadUrl)
             .setHeaders(resumeHeaders)
-            .setTotalBodyBytes(totalBytes, true)
+            .setTotalBodyBytes(totalBytes - resumeOffset, false)
             .getResponse(this, this)
 
-        UploadServiceLogger.debug(javaClass.simpleName, params.id) {
+        UploadServiceLogger.error(javaClass.simpleName, params.id) {
             "Server response: code ${response.code}, header - ${response.headers}, body ${response.bodyString}"
         }
 
@@ -137,10 +143,17 @@ class TusUploadTask: UploadTask(), HttpRequest.RequestBodyDelegate,
 
     @Throws(Exception::class)
     override fun upload(httpStack: HttpStack) {
+        shouldWriteBody = false
+        resumeOffset = -1L
+        var savedOffset = tusParams.resumeOffset
+        Log.e("UPload", "Saved offset ->>> $savedOffset")
         val uploadUrl = if(tusParams.uploadUrl != null) {
             tusParams.uploadUrl!!
-        } else createUpload(httpStack)
-        resumeUpload(httpStack, uploadUrl)
+        } else {
+            savedOffset = 0L
+            createUpload(httpStack)
+        }
+        resumeUpload(httpStack, uploadUrl, savedOffset)
     }
 
     override fun onWriteRequestBody(bodyWriter: BodyWriter) {
@@ -154,6 +167,7 @@ class TusUploadTask: UploadTask(), HttpRequest.RequestBodyDelegate,
     private var shouldWriteBody = false
 
     override fun onBytesWritten(bytesWritten: Int) {
+        tusParams.resumeOffset += bytesWritten
         onProgress(bytesWritten.toLong())
     }
 
