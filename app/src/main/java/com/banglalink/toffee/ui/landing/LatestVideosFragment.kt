@@ -204,7 +204,7 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
                 (view as TextView).text = reactionText
                 view.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
                 if (reactionText == Love.name) {
-                    view.setTextColor(Color.RED)
+                    view.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorAccent))
                 }
                 else{
                     view.setTextColor(ContextCompat.getColor(requireContext(), R.color.fixed_second_text_color))

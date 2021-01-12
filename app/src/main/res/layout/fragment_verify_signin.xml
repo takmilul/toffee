@@ -78,5 +78,14 @@
             app:layout_constraintTop_toBottomOf="@+id/confirm_btn"
             tools:text="Resend will be enable after 30 secs" />
 
+        <!--<TextView
+            android:id="@+id/viewAllButton"
+            style="@style/ViewAllTextView"
+            android:text="@string/view_all"
+            app:drawableEndCompat="@drawable/ic_right_arrow_accent_2"
+            app:layout_constraintTop_toTopOf="@id/channel_tv"
+            app:layout_constraintBottom_toBottomOf="@+id/channel_tv"
+            app:layout_constraintEnd_toEndOf="parent" />-->
+
     </androidx.constraintlayout.motion.widget.MotionLayout>
 </layout>

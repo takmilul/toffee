@@ -2,20 +2,20 @@
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    >
+    xmlns:tools="http://schemas.android.com/tools">
+    
     <data>
         <import type="com.banglalink.toffee.util.Utils" />
+        
         <variable
             name="data"
             type="com.banglalink.toffee.data.database.entities.UserActivities" />
+        
         <variable
             name="callback"
             type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
     </data>
-
-
-
+    
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -24,22 +24,25 @@
         <TextView
             android:layout_marginStart="12dp"
             android:layout_marginEnd="12dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/roboto_regular"
+            android:textSize="@dimen/default_text_size"
+            android:textColor="@color/fixed_second_text_color"
             android:text="@{Utils.getDateDiffInDayOrHourOrMinute(data.createTime)}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-
-
+        
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_marginEnd="12dp"
-            app:cardCornerRadius="0dp"
+            android:layout_marginBottom="4dp"
+            app:cardCornerRadius="5dp"
+            app:cardBackgroundColor="@color/cardBgColor"
             android:foreground="?attr/selectableItemBackground"
-            android:onClick="@{()-> callback.onItemClicked(data)}"
-            android:layout_marginBottom="3dp"
-            >
+            android:onClick="@{()-> callback.onItemClicked(data)}" >
+            
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -49,14 +52,13 @@
                     android:id="@+id/poster_container"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
+                    android:scaleType="centerCrop"
                     android:background="@drawable/round_white_bg_tv"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintDimensionRatio="16:9"
                     app:layout_constraintEnd_toStartOf="@+id/guideline12"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
-
-
+                    
                     <ImageView
                         android:id="@+id/channel"
                         loadChannelImage="@{data.channelInfo}"
@@ -68,16 +70,16 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         tools:src="@mipmap/ic_menu_channel" />
-
-
+                    
                 </FrameLayout>
 
                 <ImageView
                     android:id="@+id/reactIcon"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:background="@color/backgroundAlpha"
                     android:scaleType="center"
+                    android:padding="6dp"
+                    android:background="@color/backgroundAlpha"
                     app:layout_constraintBottom_toBottomOf="@+id/poster_container"
                     app:layout_constraintEnd_toEndOf="@+id/poster_container"
                     app:layout_constraintHorizontal_bias="1.0"
@@ -88,75 +90,76 @@
 
                 <ImageView
                     android:id="@+id/options"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:clickable="true"
-                    android:focusable="true"
+                    style="@style/OptionMenuStyle"
+                    android:padding="6dp"
                     android:onClick="@{(v)->callback.onOpenMenu(v, data)}"
-                    android:padding="4dp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:srcCompat="@drawable/ic_menu_more" />
-
-
+                    app:srcCompat="@drawable/ic_menu_more"
+                    app:layout_constraintStart_toEndOf="@id/reactStatus"
+                    app:layout_constraintTop_toTopOf="parent"/>
+                
                 <TextView
                     android:id="@+id/reactStatus"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="6dp"
+                    android:layout_marginTop="6dp"
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:text="Watched"
+                    android:textSize="@dimen/default_text_size"
+                    android:textColor="@color/fixed_second_text_color"
+                    android:fontFamily="@font/roboto_regular"
                     app:layout_constraintEnd_toStartOf="@+id/options"
                     app:layout_constraintStart_toEndOf="@+id/poster_container"
-                    app:layout_constraintTop_toTopOf="@+id/poster_container" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/name"
-                    style="@style/programNameTextView"
                     android:layout_width="0dp"
-                    android:layout_marginTop="4dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginEnd="8dp"
                     android:ellipsize="end"
                     android:maxLines="2"
                     android:lines="2"
+                    android:fontFamily="@font/roboto_medium"
+                    android:textSize="@dimen/default_text_size"
+                    android:textColor="@color/main_text_color"
                     android:text="@{data.channelInfo.program_name}"
-                    app:layout_constraintEnd_toStartOf="@+id/options"
-                    app:layout_constraintStart_toEndOf="@+id/poster_container"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/reactStatus"
                     app:layout_constraintTop_toBottomOf="@id/reactStatus"
                     tools:text="Title" />
-
-
+                
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/ownerThumb"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginVertical="6dp"
                     loadImageFromUrlRounded="@{data.channelInfo.channelProfileUrl}"
                     android:src="@drawable/ic_profile_default"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/poster_container" />
+                    app:layout_constraintTop_toBottomOf="@id/name"
+                    app:layout_constraintStart_toStartOf="@+id/reactStatus"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
 
 
                 <TextView
                     android:id="@+id/provider_name"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp"
                     android:ellipsize="end"
-                    android:fontFamily="@font/roboto_regular"
                     android:maxLines="1"
+                    android:fontFamily="@font/roboto_medium"
+                    android:textColor="@color/fixed_second_text_color"
+                    android:textSize="@dimen/default_text_size"
                     android:text="@{data.channelInfo.content_provider_name}"
-                    android:textColor="@color/second_text_color"
-                    android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/ownerThumb"
                     app:layout_constraintTop_toTopOf="@+id/ownerThumb"
+                    app:layout_constraintBottom_toBottomOf="@id/ownerThumb"
                     tools:text="Content Provider" />
 
                 <TextView
@@ -171,7 +174,7 @@
                     android:text="00:00"
                     android:textColor="@android:color/white"
                     android:textSize="14sp"
-                    android:visibility="invisible"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="@+id/poster_container"
                     app:layout_constraintEnd_toEndOf="@+id/poster_container" />
 
@@ -205,8 +208,7 @@
                     app:layout_constraintBottom_toBottomOf="@+id/number_of_views"
                     app:layout_constraintHorizontal_chainStyle="packed"
                     app:layout_constraintStart_toEndOf="@+id/number_of_views"
-                    app:layout_constraintTop_toTopOf="@+id/number_of_views"
-                  />
+                    app:layout_constraintTop_toTopOf="@+id/number_of_views" />
 
                 <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/guideline12"
@@ -214,17 +216,8 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     app:layout_constraintGuide_percent="0.5" />
-
-
+                
             </androidx.constraintlayout.widget.ConstraintLayout>
-
         </androidx.cardview.widget.CardView>
-
-
-
     </LinearLayout>
-
-
-
-
 </layout>

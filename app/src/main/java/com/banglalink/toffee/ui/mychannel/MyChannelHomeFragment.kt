@@ -190,7 +190,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         bindButtonState(binding.channelDetailView.ratingButton, myRating > 0)
     }
     
-    private fun showCreatePlaylistDialog() {
+    fun showCreatePlaylistDialog() {
         val playlistBinding = AlertDialogMyChannelPlaylistCreateBinding.inflate(this.layoutInflater)
         val dialogBuilder = android.app.AlertDialog.Builder(requireContext()).setView(playlistBinding.root)
         val alertDialog: android.app.AlertDialog = dialogBuilder.create().apply {
@@ -262,7 +262,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             fragmentTitleList.add("Playlists")
 
             fragmentList.add(MyChannelVideosFragment.newInstance(true, isOwner, channelOwnerId, isPublic))
-            fragmentList.add(MyChannelPlaylistsFragment.newInstance(true, isOwner, channelOwnerId))
+            fragmentList.add(MyChannelPlaylistsFragment.newInstance(true, isOwner, channelOwnerId, channelId))
         }
 
         observeRatingChannel()

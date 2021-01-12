@@ -1,8 +1,8 @@
 <vector
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="16dp"
+    android:width="24dp"
     android:height="20dp"
-    android:viewportWidth="61.998"
+    android:viewportWidth="80"
     android:viewportHeight="80">
     <path
         android:fillColor="@color/menuColorSecondaryDark"

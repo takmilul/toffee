@@ -26,7 +26,6 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Package
 import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.ui.widget.MultiTextButton
-import dagger.hilt.android.qualifiers.ApplicationContext
 
 const val crossFadeDurationInMills = 500
 
@@ -246,8 +245,10 @@ fun bindPremiumIcon(imageView: ImageView, channelInfo: ChannelInfo) {
 @BindingAdapter("bindActivityType")
 fun bindActivityType(view: TextView, item: UserActivities) {
     view.text = when (item.activityType) {
-        ActivityType.REACT.value -> "Reacted"
-        ActivityType.VIEW.value -> "Watched"
+        ActivityType.REACTED.value -> "Reacted"
+        ActivityType.REACTION_CHANGED.value -> "Reaction Changed"
+        ActivityType.REACTION_REMOVED.value -> "Reaction Removed"
+        ActivityType.WATCHED.value -> "Watched"
         ActivityType.PLAYLIST.value -> {
             when(item.activitySubType) {
                 Reaction.Add.value -> "Added to PlayList"
@@ -279,7 +280,7 @@ fun loadReactionEmo(view: View, reaction: Int) {
         }
         Love.value -> {
             reactionTitle = Love.name
-            R.drawable.ic_reaction_love_filled
+            R.drawable.ic_reaction_love_no_shadow
         }
         HaHa.value -> {
             reactionTitle = HaHa.name
@@ -299,14 +300,14 @@ fun loadReactionEmo(view: View, reaction: Int) {
         }
         Add.value -> R.drawable.ic_playlist
         Delete.value -> R.drawable.ic_playlist
-        Viewed.value -> R.drawable.ic_view
+        Watched.value -> R.drawable.ic_view
         else -> R.drawable.ic_reaction_love_empty
     }
     when (view) {
         is ImageView -> view.setImageResource(reactionIcon)
         is TextView -> {
             view.text = reactionTitle
-            if (reaction == Love.value) view.setTextColor(Color.RED) else view.setTextColor(Color.parseColor("#829AB8"))
+            if (reaction == Love.value) view.setTextColor(Color.parseColor("#829AB8")) else view.setTextColor(Color.parseColor("#829AB8"))
             view.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
         }
     }
@@ -347,7 +348,7 @@ fun bindEmoIcon(view: ImageView, item: ChannelInfo, iconPosition: Int){
 @BindingAdapter("loadMyReactionBg")
 fun loadMyReactionBg(view: ImageView, isSetBg: Boolean){
     if (isSetBg){
-        view.setBackgroundResource(R.drawable.teal_round_bg)
+        view.setBackgroundResource(R.drawable.reaction_round_bg)
     }
 }
 

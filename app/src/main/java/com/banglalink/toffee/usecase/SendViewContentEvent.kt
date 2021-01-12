@@ -43,8 +43,8 @@ class SendViewContentEvent @Inject constructor(
             "history",
             channel.type ?: "",
             gson.toJson(channel),
-            ActivityType.VIEW.value,
-            Reaction.Viewed.value
+            ActivityType.WATCHED.value,
+            Reaction.Watched.value
         )
         activityRepo.insert(channelDataModel)
     }

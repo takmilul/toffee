@@ -27,6 +27,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:scrollbars="none"
         android:fillViewport="true"
         android:fitsSystemWindows="true">
 
@@ -160,9 +161,8 @@
                     android:paddingEnd="6dp"
                     android:minHeight="4dp"
                     android:maxHeight="4dp"
-                    android:progressBackgroundTint="@color/switchUnCheckedColor"
-                    android:progressTint="@color/colorAccent"
-                    android:thumbTint="@color/colorAccent"
+                    android:progressDrawable="@drawable/seek_bar_track"
+                    android:thumb="@drawable/seek_bar_thumb"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/wifi_profile_status_tv" />
@@ -246,9 +246,8 @@
                     android:paddingEnd="6dp"
                     android:minHeight="4dp"
                     android:maxHeight="4dp"
-                    android:progressBackgroundTint="@color/switchUnCheckedColor"
-                    android:progressTint="@color/colorAccent"
-                    android:thumbTint="@color/colorAccent"
+                    android:progressDrawable="@drawable/seek_bar_track"
+                    android:thumb="@drawable/seek_bar_thumb"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/cellular_profile_status_tv" />
@@ -266,32 +265,7 @@
                     app:layout_constraintEnd_toEndOf="@id/cellular_profile_state_bar"
                     app:layout_constraintStart_toStartOf="@id/cellular_profile_state_bar"
                     app:layout_constraintTop_toBottomOf="@id/cellular_profile_state_bar" />
-
-                <!--                <TextView-->
-                <!--                    android:id="@+id/themeLabelTextView"-->
-                <!--                    android:layout_width="0dp"-->
-                <!--                    android:layout_height="wrap_content"-->
-                <!--                    android:layout_marginTop="16dp"-->
-                <!--                    android:fontFamily="@font/roboto_regular"-->
-                <!--                    android:gravity="center_vertical"-->
-                <!--                    android:text="Dark Theme"-->
-                <!--                    android:textSize="16sp"-->
-                <!--                    android:textColor="@color/main_text_color"-->
-                <!--                    app:layout_constraintEnd_toStartOf="@id/darkThemeToggleBtn"-->
-                <!--                    app:layout_constraintStart_toStartOf="parent"-->
-                <!--                    app:layout_constraintTop_toBottomOf="@id/allowTransitionAnimationCheckBox" />-->
-
-                <!--                <com.google.android.material.switchmaterial.SwitchMaterial-->
-                <!--                    android:id="@+id/darkThemeToggleBtn"-->
-                <!--                    android:layout_width="wrap_content"-->
-                <!--                    android:layout_height="wrap_content"-->
-                <!--                    app:layout_constraintBottom_toBottomOf="@id/themeLabelTextView"-->
-                <!--                    app:layout_constraintEnd_toEndOf="parent"-->
-                <!--                    app:layout_constraintStart_toEndOf="@id/themeLabelTextView"-->
-                <!--                    app:layout_constraintTop_toTopOf="@id/themeLabelTextView"-->
-                <!--                    app:thumbTint="@color/switch_thumb_color"-->
-                <!--                    app:trackTint="@color/switch_track_color"/>-->
-
+                
                 <androidx.constraintlayout.widget.Group
                     android:id="@+id/profile_layout"
                     android:layout_width="wrap_content"
@@ -332,14 +306,15 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Play From Background" />
+                    android:text="Floating Player" />
 
-                <com.google.android.material.checkbox.MaterialCheckBox
+                <androidx.appcompat.widget.AppCompatCheckBox
                     android:id="@+id/checkBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:buttonTint="@color/colorAccent"
+                    android:background="@null"
+                    android:button="@drawable/custom_checkbox"
                     android:checked="true"
                     android:minWidth="0dp"
                     android:minHeight="0dp" />
@@ -349,39 +324,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"
                 android:background="@color/colorSettingsDivider" />
-
-            <androidx.appcompat.widget.LinearLayoutCompat
-                style="@style/PrefItemStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp">
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_gravity="center_vertical"
-                    app:srcCompat="@drawable/ic_transition_anim" />
-
-                <TextView
-                    style="@style/PrefItemTextStyle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Allow Animation Transition" />
-
-                <com.google.android.material.checkbox.MaterialCheckBox
-                    android:id="@+id/allowTransitionAnimationCheckBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:buttonTint="@color/colorAccent"
-                    android:checked="true"
-                    android:minWidth="0dp"
-                    android:minHeight="0dp" />
-            </androidx.appcompat.widget.LinearLayoutCompat>
-
+            
             <View
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"
@@ -411,6 +354,7 @@
             <View
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"
+                android:visibility="gone"
                 android:background="@color/colorSettingsDivider" />
 
             <androidx.appcompat.widget.LinearLayoutCompat

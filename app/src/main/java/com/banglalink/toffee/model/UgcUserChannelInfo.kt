@@ -13,7 +13,7 @@ data class UgcUserChannelInfo(
     val categoryId: Long,
 
     @SerializedName("subscriber_count")
-    val subscriberCount: Long,
+    var subscriberCount: Long,
 
     @SerializedName("is_active")
     val isActive: Int,
@@ -33,7 +33,7 @@ data class UgcUserChannelInfo(
     @SerializedName("banner_url")
     val bannerUrl: String?,
 
-    val isSubscribed: Int,
+    var isSubscribed: Int,
     
     @SerializedName("user_id")
     val userId: Int,

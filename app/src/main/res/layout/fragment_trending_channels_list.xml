@@ -42,9 +42,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/userChannelsHeader"
         app:reverseLayout="false"
+        android:layout_gravity="center_horizontal"
         tools:listitem="@layout/list_item_user_channels"/>
-
-
+    
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline15"
         android:layout_width="wrap_content"

@@ -76,7 +76,8 @@
                         android:id="@+id/editorsChoiceFragment"
                         android:name="com.banglalink.toffee.ui.landing.EditorsChoiceFragment"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:background="@color/home_screen_curve_bg_color" />
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/moviePreviewFragment"

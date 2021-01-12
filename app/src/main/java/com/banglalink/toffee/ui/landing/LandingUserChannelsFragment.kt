@@ -10,6 +10,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
+import com.banglalink.toffee.R.drawable
+import com.banglalink.toffee.R.string
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
@@ -29,6 +31,7 @@ import kotlinx.coroutines.flow.collectLatest
 class LandingUserChannelsFragment : HomeBaseFragment() {
     private lateinit var mAdapter: UserChannelsListAdapter
     private var categoryInfo: UgcCategory? = null
+    private var channelInfo: UgcUserChannelInfo? = null
     private val viewModel by activityViewModels<LandingPageViewModel>()
     private val subscriptionViewModel by viewModels<UserChannelViewModel>()
 
@@ -55,15 +58,23 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
             override fun onSubscribeButtonClicked(view: View, info: UgcUserChannelInfo) {
 
                 if (info.isSubscribed == 0) {
+                    channelInfo = info.also { userChannelInfo ->
+                        userChannelInfo.isSubscribed = 1
+                        userChannelInfo.subscriberCount++
+                    }
                     subscriptionViewModel.setSubscriptionStatus(info.id, 1, info.channelOwnerId)
                 }
                 else {
                     VelBoxAlertDialogBuilder(
                         requireContext(),
-                        text = getString(R.string.text_unsubscribe_title),
-                        icon = R.drawable.ic_unsubscribe_alert,
+                        text = getString(string.text_unsubscribe_title),
+                        icon = drawable.ic_unsubscribe_alert,
                         positiveButtonTitle = "Unsubscribe",
                         positiveButtonListener = {
+                            channelInfo = info.also { userChannelInfo ->
+                                userChannelInfo.isSubscribed = 0
+                                userChannelInfo.subscriberCount--
+                            }
                             subscriptionViewModel.setSubscriptionStatus(info.id, 0, info.channelOwnerId)
                             it?.dismiss()
                         }
@@ -97,7 +108,9 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
         }
 
         observe(subscriptionViewModel.subscriptionResponse) {
-            if(it is Resource.Success) mAdapter.refresh()
+            if(it is Resource.Success) {
+                mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, channelInfo)
+            }
             else requireContext().showToast("Failed to subscribe channel")
         }
     }

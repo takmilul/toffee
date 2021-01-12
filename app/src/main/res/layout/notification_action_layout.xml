@@ -25,6 +25,7 @@
         android:background="@drawable/ic_live_red"
         android:gravity="center"
         android:padding="3dp"
+        android:visibility="gone"
         android:textColor="@android:color/white"
         android:textSize="14sp"/>
 
