@@ -19,6 +19,10 @@
         <variable
             name="enableNotification"
             type="boolean" />
+        
+        <variable
+            name="enableFloatingWindow"
+            type="boolean" />
         <!--<variable
             name="viewModel"
             type="com.banglalink.toffee.ui.settings.SettingsViewModel" />-->
@@ -309,13 +313,13 @@
                     android:text="Floating Player" />
 
                 <androidx.appcompat.widget.AppCompatCheckBox
-                    android:id="@+id/checkBox"
+                    android:id="@+id/prefFloatingWindow"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:background="@null"
                     android:button="@drawable/custom_checkbox"
-                    android:checked="true"
+                    android:checked="@{enableFloatingWindow}"
                     android:minWidth="0dp"
                     android:minHeight="0dp" />
             </androidx.appcompat.widget.LinearLayoutCompat>

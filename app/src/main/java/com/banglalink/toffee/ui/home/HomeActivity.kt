@@ -988,7 +988,12 @@ class HomeActivity :
         } else if(binding.playerView.isVideoPortrait && binding.playerView.isFullScreenPortrait()) {
             updateFullScreenState()
         } else if (binding.draggableView.isMaximized() && binding.draggableView.visibility == View.VISIBLE) {
-            minimizePlayer()
+            if(mPref.isEnableFloatingWindow) {
+                minimizePlayer()
+            }
+            else {
+                destroyPlayer()
+            }
         } else if(searchView?.isIconified == false) {
             closeSearchBar()
         }
@@ -1005,6 +1010,11 @@ class HomeActivity :
 
     fun minimizePlayer() {
         binding.draggableView.minimize()
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+    }
+
+    fun destroyPlayer() {
+        binding.draggableView.destroyView()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
 

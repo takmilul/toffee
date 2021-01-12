@@ -82,6 +82,7 @@ class SettingsFragment : BaseFragment() {
         binding.dataQualityToggleBtn.setOnCheckedChangeListener { _, _ -> handleDefaultDataQualityToggleBtn() }
         binding.watchOnlyWifiToggleBtn.setOnCheckedChangeListener { _, _ -> handleWatchOnlyWifiToggleBtn() }
         binding.notificationSwitch.setOnCheckedChangeListener { _, _ -> handleNotificationChange() }
+        binding.prefFloatingWindow.setOnCheckedChangeListener { _, _ -> handleFloatingWindowPrefChange() }
 //        binding.darkThemeToggleBtn.setOnCheckedChangeListener { switch, isChecked -> changeAppTheme(isChecked) }
         initializeSettings()
 
@@ -92,6 +93,7 @@ class SettingsFragment : BaseFragment() {
         binding.defaultDataQuality = mPref.defaultDataQuality()
         binding.watchWifiOnly = mPref.watchOnlyWifi()
         binding.enableNotification = mPref.isNotificationEnabled()
+        binding.enableFloatingWindow = mPref.isEnableFloatingWindow
         binding.cellularProfileDescTxt.text =
             getString(cellularProfileBWRequiredTxt[mPref.cellularProfileStatus - 1])
         binding.cellularProfileStatusTv.text =getString(R.string.txt_video_resolution, cellularProfileRes[mPref.cellularProfileStatus - 1])
@@ -107,6 +109,11 @@ class SettingsFragment : BaseFragment() {
     private fun handleNotificationChange() {
         mPref.setNotificationEnabled(binding.notificationSwitch.isChecked)
         binding.enableNotification = mPref.isNotificationEnabled()
+    }
+
+    private fun handleFloatingWindowPrefChange() {
+        mPref.isEnableFloatingWindow = binding.prefFloatingWindow.isChecked
+        binding.enableFloatingWindow = mPref.isEnableFloatingWindow
     }
 
     private fun handleDefaultDataQualityToggleBtn() {

@@ -14,11 +14,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics.logException
+import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.util.Utils
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
+import javax.inject.Inject
 import kotlin.math.max
 import kotlin.math.min
 
+@AndroidEntryPoint
 class DraggerLayout @JvmOverloads constructor(context: Context?,
                     attrs: AttributeSet? = null,
                     defStyle: Int = 0
@@ -37,6 +41,8 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
     private var mLeft = 0
     private var isClamped = 0
     private val onPositionChangedListenerList: MutableList<OnPositionChangedListener> = ArrayList()
+    @Inject
+    lateinit var mPref: Preference
 
     init {
         initializeAttributes(attrs)
@@ -156,7 +162,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
 
         if(bottomHit) return false
 
-        if (viewDragHelper.shouldInterceptTouchEvent(ev) || isMinimize() && isViewHit(
+        if (mPref.isEnableFloatingWindow && viewDragHelper.shouldInterceptTouchEvent(ev) || isMinimize() && isViewHit(
                 dragView, ev.x
                     .toInt(), ev.y.toInt()
             )
@@ -259,6 +265,24 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
         if (viewDragHelper.continueSettling(true)) {
             ViewCompat.postInvalidateOnAnimation(this)
         }
+    }
+
+    fun destroyView() {
+        if (viewDragHelper.smoothSlideViewTo(
+                dragView,
+                0 - (right - paddingRight),
+                0
+            )
+        ) {
+            parent?.let {
+                if(it is View) ViewCompat.postInvalidateOnAnimation(it)
+            }
+        }
+        onPositionChangedListenerList.forEach {
+            it.onViewDestroy()
+        }
+        dragView.scaleX = getMaxScale()
+        dragView.scaleY = getMaxScale()
     }
 
     inner class DraggableViewCallback constructor(private val parent: View) :

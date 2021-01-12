@@ -278,6 +278,10 @@ class Preference(private val pref: SharedPreferences,
         get() = pref.getInt("toffee-upload-status", -1)
         set(value) = pref.edit { putInt("toffee-upload-status", value) }
 
+    var isEnableFloatingWindow: Boolean
+        get() = pref.getBoolean("enable-floating-window", true)
+        set(value) = pref.edit { putBoolean("enable-floating-window", value) }
+
 //    var uploadUri: String?
 //        get() = pref.getString("toffee-upload-uri", null)
 //        set(value) = pref.edit { putString("toffee-upload-uri", value) }
