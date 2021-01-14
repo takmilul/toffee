@@ -2,7 +2,6 @@ package com.banglalink.toffee.di
 
 import android.content.Context
 import androidx.room.Room
-import com.banglalink.toffee.data.database.MigrationProvider
 import com.banglalink.toffee.data.database.ToffeeDatabase
 import com.banglalink.toffee.data.database.dao.*
 import com.banglalink.toffee.data.repository.*
@@ -12,11 +11,11 @@ import com.banglalink.toffee.data.storage.ViewCountDAO
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module
 object DatabaseModule {
 

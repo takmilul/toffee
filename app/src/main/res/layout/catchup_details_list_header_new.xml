@@ -313,16 +313,17 @@ Day 21 - AUS vs IND" />
             app:constraint_referenced_ids="options,program_name,reactionButton,reactionCountLayout,shareCount,channelSubCount,subscribe_button,video_description,uploadTime,viewCount"
             tools:visibility="visible" />
         
-        <com.banglalink.toffee.ui.widget.ExpandableTextView
+        <com.banglalink.toffee.ui.widget.ReadMoreTextView
             android:id="@+id/video_description"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:maxLines="2"
+            android:text="@{data.descriptionDecoded}"
             android:textSize="@dimen/default_text_size"
             android:textColor="@color/fixed_second_text_color"
             android:fontFamily="@font/roboto_regular"
-            android:text="@{data.descriptionDecoded}"
+            app:readMoreFontFamily="@font/roboto_medium"
+            app:readMoreColorClickableText="@color/colorButtonSecondary"
             app:layout_constraintEnd_toEndOf="@+id/subscribe_button"
             app:layout_constraintStart_toStartOf="@+id/program_name"
             app:layout_constraintTop_toBottomOf="@+id/uploadTime"

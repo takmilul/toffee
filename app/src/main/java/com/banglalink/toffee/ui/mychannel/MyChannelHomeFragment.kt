@@ -3,21 +3,13 @@ package com.banglalink.toffee.ui.mychannel
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.text.Html
 import android.text.Spannable
-import android.text.SpannableStringBuilder
 import android.text.Spanned
-import android.text.method.LinkMovementMethod
-import android.text.style.ClickableSpan
 import android.text.style.ForegroundColorSpan
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
-import android.view.ViewTreeObserver.OnGlobalLayoutListener
-import android.widget.TextView
-import android.widget.TextView.BufferType.SPANNABLE
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.text.toSpannable
@@ -26,6 +18,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
+import com.banglalink.toffee.R.color
 import com.banglalink.toffee.R.layout
 import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBinding
 import com.banglalink.toffee.databinding.FragmentMyChannelHomeBinding
@@ -35,7 +28,6 @@ import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.common.ViewPagerAdapter
-import com.banglalink.toffee.ui.widget.ExpandableTextView
 import com.banglalink.toffee.util.bindButtonState
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,7 +36,6 @@ import kotlinx.android.synthetic.main.layout_my_channel_detail.*
 import java.util.*
 import java.util.regex.Pattern
 import javax.inject.Inject
-
 
 @AndroidEntryPoint
 class MyChannelHomeFragment : BaseFragment(), OnClickListener {
@@ -223,7 +214,6 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                         myRating = it.data.myRating
                         binding.myRating = myRating
                         binding.channelDetailView.subscriptionCountTextView.text = it.data.subscriberCount.toString()
-                        Log.i("UGC_Home", "Detail Response Success -- isSubscribed: ${isSubscribed}, subscribeCount: ${it.data.subscriberCount}")
                         isOwner = it.data.isOwner
                         channelId = myChannelDetail?.id?.toInt() ?: 0
                         binding.data = it.data
@@ -236,7 +226,6 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                 is Failure -> {
                     myChannelDetail = null
                     isSubscribed = 0
-                    Log.i("UGC_Home", "Response Failed -- isSubscribed: ${isSubscribed}")
                     binding.data = null
                     binding.isSubscribed = 0
 
@@ -277,92 +266,15 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             tab.text = fragmentTitleList[position]
         }.attach()
 
-        // toggle the Expand button
-        binding.channelDetailView.expandButton.setOnClickListener {
-            val resource = if (binding.channelDetailView.channelDescriptionTextView.isExpanded) R.drawable.ic_down_arrow else R.drawable.ic_up_arrow
-            binding.channelDetailView.expandButton.setImageResource(resource)
-            binding.channelDetailView.channelDescriptionTextView.toggle()
-        }
-
-        binding.channelDetailView.channelDescriptionTextView.addOnExpandListener(object : ExpandableTextView.SimpleOnExpandListener(){
-            override fun onControllerVisibility(view: ExpandableTextView, show: Boolean) {
-                binding.channelDetailView.expandButton.visibility = if(show) View.VISIBLE else View.GONE
-            }
-        })
-
         myChannelDetail?.description?.let {
             val spannable: Spannable = it.toSpannable()
             val matcher = Pattern.compile("(#\\w+)").matcher(spannable)
             while (matcher.find()) {
-                spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(requireContext(), R.color.colorAccent2)), matcher.start(), matcher.end(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(requireContext(), color.colorAccent2)), matcher.start(), matcher.end(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
             binding.channelDetailView.channelDescriptionTextView.text = spannable
         }
-        
-//        makeTextViewResizable(binding.channelDetailView.channelDescriptionTextView, 2, "View More", true)
     }
-
-
-    fun makeTextViewResizable(tv: TextView, maxLine: Int, expandText: String, viewMore: Boolean) {
-        if (tv.tag == null) {
-            tv.tag = tv.text
-        }
-        val vto = tv.viewTreeObserver
-        vto.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                val text: String
-                val lineEndIndex: Int
-                val obs = tv.viewTreeObserver
-                obs.removeGlobalOnLayoutListener(this)
-                if (maxLine == 0) {
-                    lineEndIndex = tv.layout.getLineEnd(0)
-                    text = tv.text.subSequence(0, lineEndIndex - expandText.length + 1).toString() + " " + expandText
-                }
-                else if (maxLine > 0 && tv.lineCount >= maxLine) {
-                    lineEndIndex = tv.layout.getLineEnd(maxLine - 1)
-                    text = tv.text.subSequence(0, lineEndIndex - expandText.length + 1).toString() + " " + expandText
-                }
-                else {
-                    lineEndIndex = tv.layout.getLineEnd(tv.layout.lineCount - 1)
-                    text = tv.text.subSequence(0, lineEndIndex).toString() + " " + expandText
-                }
-                tv.text = text
-                tv.movementMethod = LinkMovementMethod.getInstance()
-                tv.setText(
-                    addClickablePartTextViewResizable(
-                        Html.fromHtml(tv.text.toString()), tv, lineEndIndex, expandText,
-                        viewMore
-                    ), SPANNABLE
-                )
-            }
-        })
-    }
-
-    private fun addClickablePartTextViewResizable(
-        strSpanned: Spanned, tv: TextView,
-        maxLine: Int, spanableText: String, viewMore: Boolean
-    ): SpannableStringBuilder? {
-        val str = strSpanned.toString()
-        val ssb = SpannableStringBuilder(strSpanned)
-        if (str.contains(spanableText)) {
-            ssb.setSpan(object : ClickableSpan() {
-                override fun onClick(widget: View) {
-                    tv.layoutParams = tv.layoutParams
-                    tv.setText(tv.tag.toString(), SPANNABLE)
-                    tv.invalidate()
-                    if (viewMore) {
-                        makeTextViewResizable(tv, -1, "View Less", false)
-                    }
-                    else {
-                        makeTextViewResizable(tv, 3, "View More", true)
-                    }
-                }
-            }, str.indexOf(spanableText), str.indexOf(spanableText) + spanableText.length, 0)
-        }
-        return ssb
-    }
-    
-    
     
     private fun observeSubscribeChannel() {
         observe(subscribeChannelViewModel.liveData) {
@@ -370,7 +282,6 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                 is Success -> {
                     isSubscribed = it.data.isSubscribed
                     binding.channelDetailView.subscriptionCountTextView.text = it.data.subscriberCount.toString()
-                    Log.i("UGC_Home", "Sucbscribe response -- isSubscribed: ${isSubscribed}, subscribeCount: ${it.data.subscriberCount}")
                     binding.isSubscribed = isSubscribed
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
                 }

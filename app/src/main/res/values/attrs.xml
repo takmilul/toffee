@@ -60,4 +60,19 @@
         </attr>
 
     </declare-styleable>
+
+    <declare-styleable name="ReadMoreTextView">
+        <attr name="readMoreExpandedText" format="string" />
+        <attr name="readMoreCollapsedText" format="string" />
+        <attr name="readMoreLength" format="integer" />
+        <attr name="showReadMoreExpandedText" format="boolean" />
+        <attr name="readMoreColorClickableText" format="color" />
+        <attr name="readMoreTextLines" format="integer" />
+        <attr name="readMoreTextSize" format="dimension" />
+        <attr name="readMoreFontFamily" format="reference" />
+        <attr name="readMoreMode">
+            <enum name="readMoreModeLine" value="0"/>
+            <enum name="readMoreModeLength" value="1"/>
+        </attr>
+    </declare-styleable>
 </resources>
