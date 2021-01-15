@@ -7,7 +7,7 @@
         motion:constraintSetStart="@id/start"
         motion:constraintSetEnd="@+id/end"
         motion:autoTransition="animateToEnd"
-        motion:duration="700">
+        motion:duration="500">
 
         <KeyFrameSet >
             <KeyPosition
@@ -35,6 +35,11 @@
                 motion:framePosition="75"
                 motion:keyPositionType="deltaRelative"
                 motion:percentX="1.05" />
+            <KeyPosition
+                motion:motionTarget="@+id/backButton"
+                motion:framePosition="75"
+                motion:keyPositionType="deltaRelative"
+                motion:percentX="1.05" />
         </KeyFrameSet>
     </Transition>
 
@@ -57,7 +62,7 @@
 
         <Constraint
             android:id="@+id/text_tv"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="80dp"
             motion:layout_constraintVertical_bias="0.3"
@@ -67,14 +72,12 @@
 
         <Constraint
             android:id="@+id/code_number"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="56dp"
-            android:layout_marginEnd="56dp"
             android:layout_marginTop="24dp"
             motion:layout_constraintTop_toBottomOf="@+id/text_tv"
-            motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintEnd_toEndOf="parent" />
+            motion:layout_constraintStart_toStartOf="@id/text_tv"
+            motion:layout_constraintEnd_toEndOf="@id/text_tv" />
 
         <Constraint
             android:id="@+id/resend"
@@ -83,8 +86,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             motion:layout_constraintTop_toBottomOf="@id/code_number"
-            motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintEnd_toEndOf="parent" >
+            motion:layout_constraintStart_toStartOf="@id/text_tv"
+            motion:layout_constraintEnd_toEndOf="@id/text_tv" >
             <PropertySet
                 android:visibility="gone"
                 motion:visibilityMode="ignore"/>
@@ -95,23 +98,28 @@
             style="@style/ButtonStyleSolidPink"
             android:layout_width="@dimen/button_accent_width"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:layout_marginTop="16dp"
             motion:layout_constraintTop_toBottomOf="@+id/resend"
-            motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintEnd_toEndOf="parent" />
+            motion:layout_constraintStart_toStartOf="@id/text_tv"
+            motion:layout_constraintEnd_toEndOf="@id/text_tv" />
 
         <Constraint
             android:id="@+id/countdown_tv"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
             android:layout_marginTop="16dp"
-            android:layout_marginBottom="32dp"
-            motion:layout_constraintEnd_toEndOf="parent"
-            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintStart_toStartOf="@id/text_tv"
+            motion:layout_constraintEnd_toEndOf="@id/text_tv"
             motion:layout_constraintTop_toBottomOf="@+id/confirm_btn"/>
+
+        <Constraint
+            android:id="@+id/backButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            motion:layout_constraintTop_toBottomOf="@id/countdown_tv"
+            motion:layout_constraintStart_toStartOf="@id/text_tv"
+            motion:layout_constraintEnd_toEndOf="@id/text_tv" />
 
     </ConstraintSet>
 </MotionScene>

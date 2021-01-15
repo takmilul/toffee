@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import com.banglalink.toffee.ui.common.BaseViewModel
@@ -40,4 +41,24 @@ inline fun <reified T: BaseViewModel> FragmentActivity.getViewModel():T{
 
 fun View.setVisibility(isVisible: Boolean){
     this.visibility = if(isVisible) View.VISIBLE else View.GONE
+}
+
+fun MotionLayout.onTransitionCompletedListener(onCompleted:(transitionId: Int) -> Unit){
+    this.addTransitionListener(object : MotionLayout.TransitionListener{
+        override fun onTransitionStarted(motion: MotionLayout?, startId: Int, endId: Int) {
+
+        }
+
+        override fun onTransitionChange(motion: MotionLayout?, startId: Int, endId: Int, progress: Float) {
+
+        }
+
+        override fun onTransitionCompleted(motion: MotionLayout?, transitionId: Int) {
+            onCompleted(transitionId)
+        }
+
+        override fun onTransitionTrigger(motion: MotionLayout?, startId: Int, endId: Boolean, progress: Float) {
+
+        }
+    })
 }

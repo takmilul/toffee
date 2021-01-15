@@ -27,6 +27,7 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.databinding.FragmentSigninContentBinding
 import com.banglalink.toffee.extension.action
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.onTransitionCompletedListener
 import com.banglalink.toffee.extension.snack
 import com.banglalink.toffee.model.INVALID_REFERRAL_ERROR_CODE
 import com.banglalink.toffee.model.Resource
@@ -46,16 +47,11 @@ class SignInContentFragment : Fragment() {
     private var phoneNumber: String = ""
     private var referralCode: String = ""
     private var regSessionToken: String = ""
-
-    private val progressDialog by unsafeLazy {
-        VelBoxProgressDialog(requireContext())
-    }
+    private var isNumberShown:Boolean=false
     lateinit var binding: FragmentSigninContentBinding
     private val viewModel by viewModels<SignInViewModel>()
-    private var isNumberShown:Boolean=false
-
+    private val progressDialog by unsafeLazy { VelBoxProgressDialog(requireContext()) }
     
-
     companion object {
         @JvmStatic
         fun newInstance() =
@@ -83,26 +79,12 @@ class SignInContentFragment : Fragment() {
         
         signinMotionLayout?.let { 
             if (it is MotionLayout){
-                it.addTransitionListener(object : MotionLayout.TransitionListener{
-                    override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
-                        println("Transition started")
+                it.onTransitionCompletedListener {
+                    if (!isNumberShown) {
+                        isNumberShown = true
+                        getHintPhoneNumber()
                     }
-
-                    override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
-                        println("Transition changed")
-                    }
-
-                    override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
-                        if (!isNumberShown) {
-                            isNumberShown = true
-                            getHintPhoneNumber()
-                        }
-                    }
-
-                    override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {
-                        println("Transition triggered")
-                    }
-                })
+                }
             }
         }
     }
@@ -135,7 +117,11 @@ class SignInContentFragment : Fragment() {
                     referralCode = binding.refCodeEt.text.toString()
                     regSessionToken = it.data
 
-                    signinContentAnimationListener()
+                    binding.signInContentMotionLayout.onTransitionCompletedListener {
+                        findNavController().navigate(
+                            SignInContentFragmentDirections.actionSignInContentFragmentToVerifySignInFragment(phoneNumber, referralCode, regSessionToken)
+                        )
+                    }
                     binding.signInContentMotionLayout.transitionToEnd()
                 }
                 is Resource.Failure -> {
@@ -154,28 +140,6 @@ class SignInContentFragment : Fragment() {
                 }
             }
         }
-    }
-
-    private fun signinContentAnimationListener() {
-        binding.signInContentMotionLayout.addTransitionListener(object : MotionLayout.TransitionListener {
-            override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
-
-            }
-
-            override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
-
-            }
-
-            override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
-                findNavController().navigate(
-                    SignInContentFragmentDirections.actionSignInContentFragmentToVerifySignInFragment(phoneNumber, referralCode, regSessionToken)
-                )
-            }
-
-            override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {
-
-            }
-        })
     }
 
     private fun showInvalidReferralCodeDialog(referralStatusMessage: String, referralStatus: String, ) {
@@ -209,7 +173,7 @@ class SignInContentFragment : Fragment() {
         alertDialog.show()
     }
 
-    fun handleHaveReferralOption() {
+    private fun handleHaveReferralOption() {
         binding.haveRefTv.isClickable = false
         binding.refCodeEt.visibility = View.VISIBLE
         binding.groupHaveRef.visibility = View.INVISIBLE

@@ -6,7 +6,7 @@
         motion:constraintSetEnd="@+id/firstEndAnim"
         motion:constraintSetStart="@id/start"
         motion:autoTransition="animateToEnd"
-        motion:duration="1000">
+        motion:duration="800">
 
         <KeyFrameSet >
             <KeyPosition
@@ -161,6 +161,18 @@
                 motion:framePosition="0"
                 android:alpha="0.8" />
             
+            <KeyAttribute
+                motion:motionTarget="@+id/splashLogoImageView"
+                motion:framePosition="75"
+                android:scaleX="1.5"
+                android:scaleY="1.5" />
+            
+            <KeyAttribute
+                motion:motionTarget="@+id/splashLogoImageView"
+                motion:framePosition="100"
+                android:scaleX="1.5"
+                android:scaleY="1.5" />
+            
         </KeyFrameSet>
         
     </Transition>
@@ -205,8 +217,8 @@
         
         <Constraint
             android:id="@id/splashLogoImageView"
-            android:layout_width="108dp"
-            android:layout_height="80dp"
+            android:layout_width="80dp"
+            android:layout_height="56dp"
             motion:layout_constraintTop_toTopOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
