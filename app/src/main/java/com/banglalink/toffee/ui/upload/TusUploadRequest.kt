@@ -25,7 +25,7 @@ class TusUploadRequest(context: Context, serverUrl: String)
      * @return [BinaryUploadRequest]
      */
     @Throws(IOException::class)
-    fun setFileToUpload(path: String, offset: Long = -1L): TusUploadRequest {
+    fun setFileToUpload(path: String): TusUploadRequest {
         files.clear()
         files.add(UploadFile(path))
         files.first().properties.apply {
@@ -34,7 +34,6 @@ class TusUploadRequest(context: Context, serverUrl: String)
                 put(TusUploadTaskParameters.TUS_UPLOAD_URL, tusUploadParams.uploadUrl!!)
             }
         }
-        tusUploadParams.resumeOffset = offset
         return this
     }
 

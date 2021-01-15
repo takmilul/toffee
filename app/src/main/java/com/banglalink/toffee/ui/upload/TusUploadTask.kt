@@ -48,7 +48,7 @@ class TusUploadTask: UploadTask(), HttpRequest.RequestBodyDelegate,
         val resp = httpStack
             .newRequest(params.id, "POST", params.serverUrl)
             .setHeaders(createHeaders)
-            .setTotalBodyBytes(0, true)
+            .setTotalBodyBytes(0, false)
             .getResponse(this, this)
 
         Log.e("UPLOAD", "${resp.code}, ${resp.bodyString}")
@@ -82,7 +82,7 @@ class TusUploadTask: UploadTask(), HttpRequest.RequestBodyDelegate,
         val resp = httpStack
             .newRequest(params.id, "HEAD", uploadUrl)
             .setHeaders(offsetRequestHeaders)
-            .setTotalBodyBytes(0, true)
+            .setTotalBodyBytes(0, false)
             .getResponse(this, this)
 
         if(resp.code !in 200..299) {
@@ -109,7 +109,6 @@ class TusUploadTask: UploadTask(), HttpRequest.RequestBodyDelegate,
 
         if(resumeOffset < 0) throw IllegalStateException("Resume offset should be positive")
 
-        tusParams.resumeOffset = resumeOffset
         Log.e("Upload", "Resume offset ->>> $resumeOffset")
         totalBytes = bodyLength// - resumeOffset
         onProgress(resumeOffset)
@@ -145,7 +144,7 @@ class TusUploadTask: UploadTask(), HttpRequest.RequestBodyDelegate,
     override fun upload(httpStack: HttpStack) {
         shouldWriteBody = false
         resumeOffset = -1L
-        var savedOffset = tusParams.resumeOffset
+        var savedOffset = -1L
         Log.e("UPload", "Saved offset ->>> $savedOffset")
         val uploadUrl = if(tusParams.uploadUrl != null) {
             tusParams.uploadUrl!!
@@ -167,7 +166,6 @@ class TusUploadTask: UploadTask(), HttpRequest.RequestBodyDelegate,
     private var shouldWriteBody = false
 
     override fun onBytesWritten(bytesWritten: Int) {
-        tusParams.resumeOffset += bytesWritten
         onProgress(bytesWritten.toLong())
     }
 
