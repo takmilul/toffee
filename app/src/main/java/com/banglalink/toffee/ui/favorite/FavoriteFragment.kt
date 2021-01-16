@@ -7,28 +7,34 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListFragment
-import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.home.HomeViewModel
+import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.widget.MyPopupWindow
 
-class FavoriteFragment : BaseListFragment<ChannelInfo>(), BaseListItemCallback<ChannelInfo> {
+class FavoriteFragment : BaseListFragment<ChannelInfo>(), ProviderIconCallback<ChannelInfo> {
 
     override val mAdapter by lazy { FavoriteAdapter(this) }
     override val mViewModel by viewModels<FavoriteViewModel>()
 
     private val homeViewModel by activityViewModels<HomeViewModel>()
+    private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.title = "Favorites"
-
     }
 
     override fun onItemClicked(item: ChannelInfo) {
         homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+    }
+
+    override fun onProviderIconClicked(item: ChannelInfo) {
+        super.onProviderIconClicked(item)
+        landingPageViewModel.navigateToMyChannel(this, item.id.toInt(), item.channel_owner_id, item.isSubscribed)
     }
 
     override fun onOpenMenu(view: View, item: ChannelInfo) {

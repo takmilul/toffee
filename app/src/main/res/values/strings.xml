@@ -136,7 +136,6 @@
     <string name="auto_rotation_on">Auto rotation on</string>
     <string name="auto_rotation_off">Auto rotation off</string>
     <string name="refer_policy">Refer toffee to a friend and enjoy up to 1GB of free internet</string>
-    <string name="read_more">Read More</string>
     <string name="menu_internet_pack">Buy Internet Packs</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -153,4 +152,7 @@
     <string name="minimize_panel_description">Your video will be submitted for approval before being published in your channel, usually it takes less than 12 hours.</string>
     <string name="latestVideos">Latest Videos</string>
     <string name="trendingVideos">Trending Videos</string>
+
+    <string name="read_more">Show More</string>
+    <string name="read_less">Show Less</string>
 </resources>
