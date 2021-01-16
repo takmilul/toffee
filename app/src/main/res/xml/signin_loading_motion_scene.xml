@@ -164,14 +164,14 @@
             <KeyAttribute
                 motion:motionTarget="@+id/splashLogoImageView"
                 motion:framePosition="75"
-                android:scaleX="1.5"
-                android:scaleY="1.5" />
+                android:scaleX="1.8"
+                android:scaleY="1.8" />
             
             <KeyAttribute
                 motion:motionTarget="@+id/splashLogoImageView"
                 motion:framePosition="100"
-                android:scaleX="1.5"
-                android:scaleY="1.5" />
+                android:scaleX="1.8"
+                android:scaleY="1.8" />
             
         </KeyFrameSet>
         
@@ -217,8 +217,8 @@
         
         <Constraint
             android:id="@id/splashLogoImageView"
-            android:layout_width="80dp"
-            android:layout_height="56dp"
+            android:layout_width="56dp"
+            android:layout_height="40dp"
             motion:layout_constraintTop_toTopOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"

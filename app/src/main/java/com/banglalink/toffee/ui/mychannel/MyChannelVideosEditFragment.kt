@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.setPadding
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -33,6 +34,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
     private var channelInfo: ChannelInfo? = null
     private lateinit var binding: FragmentMyChannelVideosEditBinding
     private val viewModel: MyChannelVideosEditViewModel by viewModels()
+    private val videosReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
 
     companion object {
         const val CHANNEL_INFO = "channelInfo"
@@ -92,9 +94,6 @@ class MyChannelVideosEditFragment : BaseFragment() {
                 viewModel.categoryPosition.value = categoryIndex
                 viewModel.subCategoryPosition.value = subCategoryIndex
                 viewModel.ageGroupPosition.value = channelInfo?.age_restriction?.toInt()?:0
-                
-//                val adapter = ArrayAdapter(requireContext(), R.layout.list_item_spinner, R.id.spinnerText, categoryList)
-//                binding.categorySpinner.adapter = adapter
             }
         }
     }
@@ -164,6 +163,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
                 is Resource.Success -> {
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
                     findNavController().navigateUp()
+                    videosReloadViewModel.reloadVideos.value = true
                 }
                 is Resource.Failure -> {
                     Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()

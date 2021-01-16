@@ -39,8 +39,7 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
     override val mViewModel by viewModels<MyChannelPlaylistViewModel> { MyChannelPlaylistViewModel.provideFactory(viewModelAssistedFactory, isOwner, channelOwnerId) }
     private val deletePlaylistViewModel by viewModels<MyChannelPlaylistDeleteViewModel>()
     private val editPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
-    private val playlistReloadViewModel by activityViewModels<MyChannelPlaylistReloadViewModel>()
-    private val createPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
+    private val playlistReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
 
     companion object {
         private const val SHOW_TOOLBAR = "enableToolbar"

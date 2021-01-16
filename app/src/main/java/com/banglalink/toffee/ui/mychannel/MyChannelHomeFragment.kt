@@ -58,7 +58,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
 
     private val createPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
     private val subscribeChannelViewModel by viewModels<MyChannelSubscribeViewModel>()
-    private val playlistReloadViewModel by activityViewModels<MyChannelPlaylistReloadViewModel>()
+    private val playlistReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
 
     companion object {
         const val IS_OWNER = "isOwner"
@@ -322,5 +322,4 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             }
         }
     }
-
 }

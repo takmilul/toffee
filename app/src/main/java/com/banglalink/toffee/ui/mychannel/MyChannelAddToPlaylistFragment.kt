@@ -42,7 +42,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
     private val playlistViewModel by viewModels<MyChannelPlaylistViewModel>{
         MyChannelPlaylistViewModel.provideFactory(viewModelAssistedFactory, isOwner, channelId)
     }
-    private val playlistReloadViewModel by activityViewModels<MyChannelPlaylistReloadViewModel>()
+    private val playlistReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
 
     private lateinit var alertDialog: AlertDialog
 

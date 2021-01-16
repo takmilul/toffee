@@ -220,8 +220,7 @@ public class Utils {
             retValue = "00:00";
             return retValue;
         }
-
-        if (duration.startsWith("00:")) {
+        if (duration.length() > 5 &&duration.startsWith("00:")) {
             retValue = duration.substring(3);
         } else {
             retValue = duration;

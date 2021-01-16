@@ -14,6 +14,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.enums.Reaction.Love
+import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
@@ -39,6 +40,7 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
     @Inject lateinit var reactionDao: ReactionDao
     override val mAdapter by lazy { MyChannelVideosAdapter(this) }
     private val homeViewModel by activityViewModels<HomeViewModel>()
+    private val videosReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
     @Inject lateinit var viewModelAssistedFactory: MyChannelVideosViewModel.AssistedFactory
     override val mViewModel by viewModels<MyChannelVideosViewModel> { MyChannelVideosViewModel.provideFactory(viewModelAssistedFactory, isOwner, channelOwnerId, isPublic) }
 
@@ -66,6 +68,7 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
         isOwner = arguments?.getInt(IS_OWNER) ?: 0
         channelOwnerId = arguments?.getInt(CHANNEL_OWNER_ID) ?: 0
         isPublic = arguments?.getInt(IS_PUBLIC) ?: 0
+        observeReloadVideos()
     }
 
     override fun setEmptyView() {
@@ -173,12 +176,7 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
 
     override fun onItemClicked(item: ChannelInfo) {
         super.onItemClicked(item)
-//        if (item.isApproved == 0) {
-//            Toast.makeText(requireContext(), "Your video has not approved yet. Once it's approved, you can play the video", Toast.LENGTH_SHORT).show()
-//        }
-//        else {
-            homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
-//        }
+        homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
     }
 
     override fun onReactionClicked(view: View, reactionCountView: View, item: ChannelInfo) {
@@ -198,13 +196,16 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
         }) }.show(requireActivity().supportFragmentManager, ReactionFragment.TAG)
     }
 
-    /*override fun onReactionLongPressed(view: View, reactionCountView: View, item: ChannelInfo) {
-        super.onReactionLongPressed(view, reactionCountView, item)
-        requireActivity().supportFragmentManager.beginTransaction().add(ReactionFragment.newInstance(view, reactionCountView, item), ReactionFragment.TAG).commit()
-    }*/
-    
     override fun onShareClicked(view: View, item: ChannelInfo) {
         super.onShareClicked(view, item)
         homeViewModel.shareContentLiveData.postValue(item)
+    }
+
+    private fun observeReloadVideos() {
+        observe(videosReloadViewModel.reloadPlaylist) {
+            if (it) {
+                mAdapter.refresh()
+            }
+        }
     }
 }
