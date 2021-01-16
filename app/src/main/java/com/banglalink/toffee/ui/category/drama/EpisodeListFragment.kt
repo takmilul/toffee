@@ -196,6 +196,11 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
             override fun onOpenMenu(view: View, item: ChannelInfo) {
                 openMenu(view, item)
             }
+            
+            override fun onProviderIconClicked(item: ChannelInfo) {
+                super.onProviderIconClicked(item)
+                landingViewModel.navigateToMyChannel(this@EpisodeListFragment, item.id.toInt(), item.channel_owner_id, item.isSubscribed)
+            }
         }, currentItem)
 
         with(binding.listview) {

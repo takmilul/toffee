@@ -19,6 +19,8 @@ import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.ui.profile.ViewProfileActivity
 import com.banglalink.toffee.ui.subscription.MySubscriptionActivity
 import com.banglalink.toffee.ui.subscription.PackageListActivity
+import com.google.android.material.switchmaterial.SwitchMaterial
+import com.suke.widget.SwitchButton
 
 class DrawerHelper(private val activity: HomeActivity,
                    private val mPref: Preference,
@@ -280,6 +282,16 @@ class DrawerHelper(private val activity: HomeActivity,
             R.id.menu_logout->{
                 activity.handleExitApp()
                 return true
+            }
+            R.id.menu_change_theme -> {
+                when (val switch = item.actionView) {
+                    is SwitchButton -> {
+                        switch.isChecked = !switch.isChecked
+                    }
+                    is SwitchMaterial -> {
+                        switch.isChecked = !switch.isChecked
+                    }
+                }
             }
 //            ID_INVITE_FRIEND->{
 //                activity.launchActivity<ReferAFriendActivity>()
