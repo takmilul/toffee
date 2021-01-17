@@ -105,7 +105,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
     fun getPlaylistId() = seriesInfo.playlistId()
 
     fun isAutoplayEnabled(): Boolean {
-        return binding.root.findViewById<SwitchButton>(R.id.autoPlaySwitch).isChecked
+        return view?.findViewById<SwitchButton>(R.id.autoPlaySwitch)?.isChecked == true
     }
 
     private fun observeListState() {

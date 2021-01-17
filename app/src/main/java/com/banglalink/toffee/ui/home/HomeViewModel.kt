@@ -45,7 +45,7 @@ class HomeViewModel @ViewModelInject constructor(
 ):BaseViewModel(),OnCompleteListener<InstanceIdResult> {
 
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
-    val fragmentDetailsMutableLiveData = MutableLiveData<Any>()
+    val fragmentDetailsMutableLiveData = SingleLiveEvent<Any>()
     val addToPlayListMutableLiveData = MutableLiveData<AddToPlaylistData>()
     val shareContentLiveData = SingleLiveEvent<ChannelInfo>()
     val userChannelMutableLiveData = MutableLiveData<ChannelInfo>()
