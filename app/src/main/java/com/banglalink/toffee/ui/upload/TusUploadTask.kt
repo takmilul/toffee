@@ -13,6 +13,8 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 import java.io.IOException
 import java.io.InputStream
 import java.net.ProtocolException
+import kotlin.math.max
+import kotlin.math.min
 
 class TusUploadTask: UploadTask(), HttpRequest.RequestBodyDelegate,
     BodyWriter.OnStreamWriteListener {
@@ -22,7 +24,7 @@ class TusUploadTask: UploadTask(), HttpRequest.RequestBodyDelegate,
     private val tusUploadLengthHeader = "Upload-Length"
     private val tusUploadOffsetHeader = "Upload-Offset"
     private val tusUploadMetadataHeader = "Upload-Metadata"
-    private val uploadChunkSize = UploadServiceConfig.bufferSizeBytes * 1024
+    private val uploadChunkSize: Long = max(min(UploadServiceConfig.bufferSizeBytes * 1024L, 4 * 1024 * 1024L), 1024 * 1024L)
     private var uploadCompleted = false
 
     private val tusParams: TusUploadTaskParameters
@@ -157,7 +159,10 @@ class TusUploadTask: UploadTask(), HttpRequest.RequestBodyDelegate,
         }
         var serverResponse: ServerResponse? = null
         while(!uploadCompleted) {
-            serverResponse = resumeUpload(httpStack, uploadUrl, resumeOffset)
+            if(shouldContinue) {
+                resetUploadedBytes()
+                serverResponse = resumeUpload(httpStack, uploadUrl, resumeOffset)
+            }
         }
         if (shouldContinue) {
             serverResponse?.let {
@@ -180,10 +185,11 @@ class TusUploadTask: UploadTask(), HttpRequest.RequestBodyDelegate,
     @Throws(IOException::class)
     fun writeStream(stream: InputStream, bodyWriter: BodyWriter) {
         val buffer = ByteArray(UploadServiceConfig.bufferSizeBytes)
-        val currentBodyLength = 0L
+        var currentBodyLength = 0L
         stream.use {
             while (shouldContinueWriting()) {
                 val bytesRead = it.read(buffer, 0, buffer.size)
+                currentBodyLength += bytesRead
                 if (bytesRead <= 0 || currentBodyLength > uploadChunkSize) break
 
                 bodyWriter.write(buffer, bytesRead)
