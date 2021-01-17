@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:paddingEnd="12dp"
-        app:titleTextColor="@color/main_text_color"
+        app:titleTextColor="@color/cardTitleColor"
         android:background="@color/tool_bar_color"
         android:theme="@style/ToolBarStyle"
         app:contentInsetStartWithNavigation="0dp"
