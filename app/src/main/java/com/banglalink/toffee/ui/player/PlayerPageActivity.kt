@@ -187,7 +187,8 @@ abstract class PlayerPageActivity :
 
         //we are checking whether there is already channelInfo exist. If not null then play it
         if (playlistManager.getCurrentChannel() != null) {
-            playChannel(false)
+            player?.playWhenReady = true
+            playChannel(true)
         }
     }
 

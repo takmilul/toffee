@@ -59,6 +59,7 @@ import com.banglalink.toffee.ui.player.PlaylistManager
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.splash.SplashScreenActivity
 import com.banglalink.toffee.ui.subscription.PackageListActivity
+import com.banglalink.toffee.ui.upload.TusUploadRequest
 import com.banglalink.toffee.ui.upload.UploadProgressViewModel
 import com.banglalink.toffee.ui.upload.UploadStatus
 import com.banglalink.toffee.ui.widget.DraggerLayout
@@ -412,6 +413,16 @@ class HomeActivity :
         binding.playerView.clearListeners()
         if (Util.SDK_INT <= 23) {
             binding.playerView.setPlayer(null)
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if(playlistManager.getCurrentChannel() != null) {
+            maximizePlayer()
+            loadDetailFragment(
+                PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
+            )
         }
     }
 

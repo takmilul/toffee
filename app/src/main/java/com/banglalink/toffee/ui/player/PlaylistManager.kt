@@ -27,7 +27,8 @@ class PlaylistManager {
         }
         if(pdata.playlistId == playlistId) {
             Log.e("PLAYLIST_DEBUG", "Playlist ID ${pdata.playlistId} is same, prev size - ${playList.size}, loading size - ${pdata.items.size}")
-            if(pdata.items.size != playList.size) {
+            if(pdata.items.size != playList.size && pdata.items.isNotEmpty()) {
+                val currentChannel = getCurrentChannel()
                 if(!pdata.append) {
                     Log.e("PLAYLIST_DEBUG", "Reloading data with size - ${pdata.items.size}")
                     playList.clear()
@@ -35,6 +36,9 @@ class PlaylistManager {
                     Log.e("PLAYLIST_DEBUG", "Appending data with size - ${pdata.items.size}")
                 }
                 playList.addAll(pdata.items)
+                currentChannel?.let {
+                    setChannelId(it.id.toInt())
+                }
             }
         } else {
             Log.e("PLAYLIST_DEBUG", "Playlist ID is NOT same")

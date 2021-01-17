@@ -75,7 +75,7 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
     fun getPlaylistId(): Long  = args.playlistInfo.getPlaylistIdLong()
 
     fun isAutoplayEnabled(): Boolean {
-        return binding.root.findViewById<SwitchButton>(R.id.autoPlaySwitch).isChecked
+        return view?.findViewById<SwitchButton>(R.id.autoPlaySwitch)?.isChecked == true
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
