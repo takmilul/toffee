@@ -36,20 +36,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
         
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="12dp"
-            android:layout_marginBottom="4dp"
-            app:cardCornerRadius="5dp"
-            app:cardBackgroundColor="@color/cardBgColor"
-            android:foreground="?attr/selectableItemBackground"
-            android:onClick="@{()-> callback.onItemClicked(data)}" >
-            
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:elevation="1dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginBottom="4dp"
+                android:background="@drawable/round_activities_item"
+                android:foreground="?attr/selectableItemBackground"
+                android:onClick="@{()-> callback.onItemClicked(data)}"
+                >
     
                 <ImageView
                     android:id="@+id/video_thumb"
@@ -81,63 +79,66 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     app:layout_constraintGuide_percent="0.5" />
-    
+
                 <TextView
                     android:id="@+id/reactStatus"
+                    bindActivityType="@{data}"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
                     android:layout_marginTop="6dp"
                     android:ellipsize="end"
-                    android:maxLines="1"
-                    android:textSize="@dimen/default_text_size"
-                    android:textColor="@color/fixed_second_text_color"
                     android:fontFamily="@font/roboto_regular"
-                    bindActivityType="@{data}"
-                    tools:text="Reacted"
+                    android:maxLines="1"
+                    android:layout_marginStart="6dp"
+                    android:textColor="@color/fixed_second_text_color"
+                    android:textSize="@dimen/default_text_size"
+                    app:layout_constraintBottom_toBottomOf="@+id/reactIcon"
                     app:layout_constraintEnd_toStartOf="@+id/videoMenuIcon"
-                    app:layout_constraintStart_toStartOf="@+id/guideline6"
-                    app:layout_constraintTop_toTopOf="parent" />
-    
+                    app:layout_constraintStart_toEndOf="@+id/reactIcon"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Reacted" />
+
                 <TextView
                     android:id="@+id/videoTitle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
-                    android:layout_marginEnd="8dp"
+                    android:layout_marginEnd="3dp"
                     android:ellipsize="end"
+                    android:fontFamily="@font/roboto_medium"
+                    android:gravity="center_vertical"
                     android:lines="2"
                     android:maxLines="2"
-                    android:gravity="center_vertical"
-                    android:fontFamily="@font/roboto_medium"
-                    android:textSize="@dimen/default_text_size"
-                    android:textColor="@color/main_text_color"
                     android:text="@{data.channelInfo.program_name}"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/reactStatus"
+                    android:textColor="@color/main_text_color"
+                    android:textSize="@dimen/default_text_size"
+                    app:layout_constraintEnd_toEndOf="@+id/reactStatus"
+                    app:layout_constraintStart_toStartOf="@+id/reactIcon"
                     app:layout_constraintTop_toBottomOf="@+id/reactStatus"
                     tools:text="Somebody that I used to know (feat Kimbra.) Video uploaded by somebody." />
-    
+
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/ownerThumb"
+                    loadImageFromUrlRounded="@{data.channelInfo.channelProfileUrl}"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginVertical="6dp"
-                    loadImageFromUrlRounded="@{data.channelInfo.channelProfileUrl}"
                     android:onClick="@{()-> callback.onProviderIconClicked(data)}"
                     android:src="@drawable/ic_profile_default"
-                    app:layout_constraintStart_toStartOf="@id/reactStatus"
-                    app:layout_constraintTop_toBottomOf="@id/videoTitle"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/videoTitle"
+                    app:layout_constraintTop_toBottomOf="@id/videoTitle" />
     
                 <ImageView
                     android:id="@+id/reactIcon"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:background="@color/backgroundAlpha"
                     loadReactionEmo="@{data.activitySubType}"
                     android:scaleType="center"
-                    app:layout_constraintEnd_toStartOf="@+id/guideline6"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginStart="6dp"
+                    app:layout_constraintStart_toStartOf="@id/guideline6"
                     app:layout_constraintTop_toTopOf="@+id/video_thumb"
                     app:srcCompat="@drawable/lb_ic_thumb_up" />
     
@@ -172,19 +173,19 @@
                     app:layout_constraintStart_toEndOf="@+id/ownerThumb"
                     app:layout_constraintTop_toTopOf="@+id/ownerThumb"
                     tools:text="BBC One HD" />
-    
+
                 <ImageView
                     android:id="@+id/videoMenuIcon"
                     style="@style/OptionMenuStyle"
+                    android:onClick="@{(v)->callback.onOpenMenu(v, data)}"
                     android:paddingHorizontal="8dp"
                     android:paddingVertical="8dp"
-                    android:onClick="@{(v)->callback.onOpenMenu(v, data)}"
-                    app:layout_constraintStart_toEndOf="@id/reactStatus"
+                    app:layout_constraintBottom_toTopOf="@+id/videoTitle"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/reactStatus"
+                    app:layout_constraintTop_toBottomOf="@+id/reactStatus"
                     app:srcCompat="@drawable/ic_menu_more" />
     
             </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
     </LinearLayout>
 </layout>

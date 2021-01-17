@@ -12,6 +12,7 @@
     <color name="disabled_color">#525252</color>
     <color name="disabled_text_color">#757575</color>
     <color name="bottom_navbar_disabled_color">#829AB8</color>
+    <color name="colorButtonActivated">#57112D</color>
     <color name="tool_bar_color">#111F31</color>
     <color name="tab_background_color">#111F31</color>
     <color name="window_background">#000000</color>
@@ -36,4 +37,6 @@
     <color name="tvChannelTitleColor">#BED6F3</color>
     <color name="ratingButtonActiveColor">#29466B</color>
     <color name="round_bg_tv_color">#616c72</color>
+    <color name="hashtag_chip_color">#111F31</color>
+
 </resources>
