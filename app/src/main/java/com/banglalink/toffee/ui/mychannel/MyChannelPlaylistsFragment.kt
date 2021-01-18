@@ -39,8 +39,7 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
     override val mViewModel by viewModels<MyChannelPlaylistViewModel> { MyChannelPlaylistViewModel.provideFactory(viewModelAssistedFactory, isOwner, channelOwnerId) }
     private val deletePlaylistViewModel by viewModels<MyChannelPlaylistDeleteViewModel>()
     private val editPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
-    private val playlistReloadViewModel by activityViewModels<MyChannelPlaylistReloadViewModel>()
-    private val createPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
+    private val playlistReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
 
     companion object {
         private const val SHOW_TOOLBAR = "enableToolbar"
@@ -102,6 +101,14 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
 
     override fun onItemClicked(item: MyChannelPlaylist) {
         super.onItemClicked(item)
+        /*val adapter = parentFragment?.view?.findViewById<ViewPager2>(R.id.viewPager)?.adapter
+        val frg = parentFragmentManager.fragments
+        if(adapter is ViewPagerAdapter){
+            adapter.replaceFragment(MyChannelPlaylistVideosFragment.newInstance(PlaylistPlaybackInfo(item.id, channelOwnerId, isOwner, item.name, item.totalContent)), 1)
+            adapter.createFragment(1)
+            adapter.notifyItemChanged(1)
+        }*/
+        
         if (findNavController().currentDestination?.id == R.id.myChannelHomeFragment){
             val action = MyChannelHomeFragmentDirections.actionMyChannelHomeFragmentToMyChannelPlaylistVideosFragment(PlaylistPlaybackInfo(item.id, channelOwnerId, isOwner, item.name, item.totalContent))
             parentFragment?.findNavController()?.navigate(action)

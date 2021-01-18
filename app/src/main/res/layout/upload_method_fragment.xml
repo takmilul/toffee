@@ -22,13 +22,12 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/upload_method_card"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
-            android:layout_marginStart="72dp"
-            android:layout_marginEnd="72dp"
+            android:layout_marginBottom="8dp"
             android:elevation="4dp"
             app:cardCornerRadius="24dp"
+            app:cardBackgroundColor="@color/cardBgColor"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">

@@ -6,7 +6,7 @@
     <Transition
         motion:constraintSetStart="@id/start"
         motion:constraintSetEnd="@+id/end"
-        motion:duration="600">
+        motion:duration="500">
         
     </Transition>
 

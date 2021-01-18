@@ -1,16 +1,7 @@
 package com.banglalink.toffee.ui.home
 
-import android.os.Bundle
-import android.view.View
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModelProviders
-import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.ui.common.CommonSingleListFragment
-import com.banglalink.toffee.util.unsafeLazy
-
-class CatchupFragment : CommonSingleListFragment() {
-    private val viewModel by unsafeLazy {
+class CatchupFragment {
+    /*private val viewModel by unsafeLazy {
         ViewModelProviders.of(this).get(CatchupViewModel::class.java)
     }
 
@@ -64,6 +55,6 @@ class CatchupFragment : CommonSingleListFragment() {
         binding.progressBar.visibility = View.VISIBLE
         mAdapter?.removeAll()
         viewModel.updateInfo(category, categoryId, subCategory, subCategoryID, type)
-    }
+    }*/
 
 }

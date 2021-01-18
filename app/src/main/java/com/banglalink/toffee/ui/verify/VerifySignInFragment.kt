@@ -11,13 +11,11 @@ import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentVerifySigninBinding
-import com.banglalink.toffee.extension.action
-import com.banglalink.toffee.extension.launchActivity
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.snack
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.CustomerInfoSignIn
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.receiver.SMSBroadcastReceiver
@@ -33,14 +31,11 @@ class VerifySignInFragment : Fragment() {
     private var regSessionToken: String = ""
     private var resendBtnPressCount: Int = 0
     private var resendCodeTimer: ResendCodeTimer? = null
-
-    private val progressDialog by unsafeLazy {
-        VelBoxProgressDialog(requireContext())
-    }
-    
+    private var verifiedUserData: CustomerInfoSignIn? = null
     private val viewModel by viewModels<VerifyCodeViewModel>()
     private lateinit var binding: FragmentVerifySigninBinding
     private lateinit var mSmsBroadcastReceiver: SMSBroadcastReceiver
+    private val progressDialog by unsafeLazy { VelBoxProgressDialog(requireContext()) }
 
     companion object {
         @JvmStatic
@@ -71,12 +66,19 @@ class VerifySignInFragment : Fragment() {
         binding.confirmBtn.setOnClickListener {
             verifyCode(binding.codeNumber.text.toString())
         }
+        binding.backButton.setOnClickListener {
+            binding.signInVerifyMotionLayout.onTransitionCompletedListener {
+                if (it == R.id.start){
+                    findNavController().popBackStack()
+                }
+            }
+            binding.signInVerifyMotionLayout.transitionToStart()
+        }
 
         startCountDown(if (resendBtnPressCount <= 1) 1 else 30)
 
         initSmsBroadcastReceiver()
     }
-
 
     private fun initSmsBroadcastReceiver() {
         // init broadcast receiver
@@ -104,9 +106,10 @@ class VerifySignInFragment : Fragment() {
             progressDialog.dismiss()
             when (it) {
                 is Resource.Success -> {
+                    verifiedUserData = it.data
                     signInMotionLayout?.let { view ->
                         if (view is MotionLayout){
-                            homeAnimationListener(view, it.data)
+                            view.onTransitionCompletedListener { onLoginSuccessAnimationCompletion() }
                             view.setTransition(R.id.firstEndAnim, R.id.secondEndAmin)
                             view.transitionToEnd()
                         }
@@ -123,34 +126,20 @@ class VerifySignInFragment : Fragment() {
         }
     }
 
-    private fun homeAnimationListener(view: MotionLayout, data: CustomerInfoSignIn) {
-        view.addTransitionListener(object : MotionLayout.TransitionListener {
-            override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
-
-            }
-
-            override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
-
-            }
-
-            override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
-                requireActivity().launchActivity<HomeActivity>() {
-                    if (data.referralStatus == "Valid") {
-                        putExtra(
-                            HomeActivity.INTENT_REFERRAL_REDEEM_MSG,
-                            data.referralStatusMessage
-                        )
-                    }
+    private fun onLoginSuccessAnimationCompletion(){
+        verifiedUserData?.let {
+            requireActivity().launchActivity<HomeActivity>() {
+                if (it.referralStatus == "Valid") {
+                    putExtra(
+                        HomeActivity.INTENT_REFERRAL_REDEEM_MSG,
+                        it.referralStatusMessage
+                    )
                 }
-                requireActivity().finish()
             }
-
-            override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {
-
-            }
-        })
+            requireActivity().finish()
+        }
     }
-
+    
     private fun handleResendButton() {
         progressDialog.show()
         observe(viewModel.resendCode(phoneNumber, referralCode)) {

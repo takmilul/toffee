@@ -75,6 +75,9 @@ fun loadImageFromResource(view: ImageView, image: Int) {
 fun bindCategoryBackground(view: ImageView, category: UgcCategory) {
     view.load(category.thumbnailUrl) {
         crossfade(false)
+        fallback(R.drawable.placeholder)
+        placeholder(R.drawable.placeholder)
+        error(R.drawable.placeholder)
 //            memoryCachePolicy(CachePolicy.ENABLED)
         diskCachePolicy(CachePolicy.ENABLED)
         size(624, 320)

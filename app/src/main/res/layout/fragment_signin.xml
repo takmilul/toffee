@@ -72,7 +72,7 @@
             app:layout_constraintStart_toStartOf="@id/splashLogoImageView"
             app:layout_constraintTop_toBottomOf="@id/splashLogoImageView" />
 
-        <androidx.core.widget.NestedScrollView
+        <ScrollView
             android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
             android:layout_height="524dp"
@@ -90,12 +90,6 @@
                 app:defaultNavHost="false"
                 app:navGraph="@navigation/signin_navigation" />
 
-            <!--<androidx.fragment.app.FragmentContainerView
-                android:id="@+id/signInFragmentContainerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:name="com.banglalink.toffee.ui.login.SignInContentFragment" />-->
-
-        </androidx.core.widget.NestedScrollView>
+        </ScrollView>
     </androidx.constraintlayout.motion.widget.MotionLayout>
 </layout>

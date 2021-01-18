@@ -58,7 +58,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
 
     private val createPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
     private val subscribeChannelViewModel by viewModels<MyChannelSubscribeViewModel>()
-    private val playlistReloadViewModel by activityViewModels<MyChannelPlaylistReloadViewModel>()
+    private val playlistReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
 
     companion object {
         const val IS_OWNER = "isOwner"
@@ -245,20 +245,22 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         binding.progressBar.visibility = View.GONE
         binding.contentBody.visibility = View.VISIBLE
 
+        observeRatingChannel()
+        observeSubscribeChannel()
+
+        binding.viewPager.offscreenPageLimit = 1
+        viewPagerAdapter = ViewPagerAdapter(childFragmentManager, lifecycle)
+
         if (fragmentList.isEmpty()) {
 
             fragmentTitleList.add("Videos")
             fragmentTitleList.add("Playlists")
 
-            fragmentList.add(MyChannelVideosFragment.newInstance(true, isOwner, channelOwnerId, isPublic))
-            fragmentList.add(MyChannelPlaylistsFragment.newInstance(true, isOwner, channelOwnerId, channelId))
+            viewPagerAdapter.addFragment(MyChannelVideosFragment.newInstance(true, isOwner, channelOwnerId, isPublic))
+            viewPagerAdapter.addFragment(MyChannelPlaylistsFragment.newInstance(true, isOwner, channelOwnerId, channelId))
+            
         }
-
-        observeRatingChannel()
-        observeSubscribeChannel()
-
-        binding.viewPager.offscreenPageLimit = 1
-        viewPagerAdapter = ViewPagerAdapter(this, fragmentList)
+        
         binding.viewPager.adapter = viewPagerAdapter
         binding.viewPager.isUserInputEnabled = false
 
@@ -322,5 +324,4 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             }
         }
     }
-
 }

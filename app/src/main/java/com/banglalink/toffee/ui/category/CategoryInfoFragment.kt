@@ -109,10 +109,11 @@ class CategoryInfoFragment: HomeBaseFragment() {
     }
 
     private fun addHashtagChip(hashtag: String): Chip {
-        val intColor = ContextCompat.getColor(requireContext(), R.color.colorButtonSecondary)
-        val foregroundColor = ContextCompat.getColor(requireContext(), R.color.colorSecondaryAccent)
+        val intColor = ContextCompat.getColor(requireContext(), R.color.colorSecondaryDark)
+        val textColor = ContextCompat.getColor(requireContext(), R.color.main_text_color)
+        val foregroundColor = ContextCompat.getColor(requireContext(), R.color.hashtag_chip_color)
 
-        val chipColor = createStateColor(intColor, foregroundColor)
+        val chipColor = createStateColor(intColor,foregroundColor)
         val chip = layoutInflater.inflate(R.layout.hashtag_chip_layout, hashTagChipGroup, false) as Chip
         chip.text = hashtag
 //        chip.typeface = Typeface.DEFAULT_BOLD
@@ -121,22 +122,23 @@ class CategoryInfoFragment: HomeBaseFragment() {
         chip.chipBackgroundColor = chipColor
 //        chip.chipStrokeColor = ColorStateList.valueOf(intColor)
         chip.rippleColor = chipColor
-        chip.setTextColor(createStateColor(Color.WHITE, intColor))
+        chip.setTextColor(createStateColor(Color.WHITE, textColor))
 
         return chip
     }
 
     private fun addChip(subCategory: UgcSubCategory): Chip {
         val intColor = ContextCompat.getColor(requireContext(), R.color.colorSecondaryDark)
+        val textColor = ContextCompat.getColor(requireContext(), R.color.main_text_color)
         val chipColor = createStateColor(intColor)
         val chip = layoutInflater.inflate(R.layout.category_chip_layout, categoryChipGroup, false) as Chip
         chip.text = subCategory.name
         chip.typeface = Typeface.DEFAULT_BOLD
         chip.id = View.generateViewId()
         chip.chipBackgroundColor = chipColor
-        chip.chipStrokeColor = ColorStateList.valueOf(intColor)
+        chip.chipStrokeColor = ColorStateList.valueOf(textColor)
         chip.rippleColor = chipColor
-        chip.setTextColor(createStateColor(Color.WHITE, intColor))
+        chip.setTextColor(createStateColor(Color.WHITE, textColor))
         return chip
     }
 

@@ -11,12 +11,10 @@
 
         <TextView
             android:id="@+id/text_tv"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="80dp"
             android:fontFamily="@font/roboto_medium"
-            android:gravity="center"
-            android:paddingHorizontal="30dp"
             android:text="@string/enter_code"
             android:textColor="@color/main_text_color"
             android:textSize="26sp"
@@ -26,16 +24,16 @@
 
         <EditText
             android:id="@+id/code_number"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="56dp"
             android:layout_marginTop="24dp"
             android:background="@drawable/single_line_input_text_bg"
             android:ems="10"
             android:gravity="center"
             android:hint="@string/otp_hint"
             android:inputType="phone"
-            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/text_tv"
+            app:layout_constraintEnd_toEndOf="@id/text_tv"
             app:layout_constraintTop_toBottomOf="@+id/text_tv" />
 
         <Button
@@ -56,36 +54,44 @@
             style="@style/ButtonStyleSolidPink"
             android:layout_width="@dimen/button_accent_width"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:layout_marginTop="16dp"
             android:text="@string/sign_in_text"
             android:textAllCaps="true"
-            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/text_tv"
+            app:layout_constraintEnd_toEndOf="@id/text_tv"
             app:layout_constraintTop_toBottomOf="@+id/resend" />
 
         <TextView
             android:id="@+id/countdown_tv"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
             android:layout_marginTop="16dp"
-            android:layout_marginBottom="32dp"
             android:fontFamily="@font/roboto_medium"
-            android:gravity="center"
+            android:text="Resend option will be activated after 01:00"
             android:textColor="@color/main_text_color"
             android:visibility="visible"
-            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/text_tv"
+            app:layout_constraintEnd_toEndOf="@id/text_tv"
             app:layout_constraintTop_toBottomOf="@+id/confirm_btn"
             tools:text="Resend will be enable after 30 secs" />
 
-        <!--<TextView
-            android:id="@+id/viewAllButton"
+        <TextView
+            android:id="@+id/backButton"
             style="@style/ViewAllTextView"
-            android:text="@string/view_all"
-            app:drawableEndCompat="@drawable/ic_right_arrow_accent_2"
-            app:layout_constraintTop_toTopOf="@id/channel_tv"
-            app:layout_constraintBottom_toBottomOf="@+id/channel_tv"
-            app:layout_constraintEnd_toEndOf="parent" />-->
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
+            android:text="Back"
+            android:textAllCaps="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/roboto_bold"
+            app:drawableStartCompat="@drawable/ic_left_arrow"
+            app:layout_constraintTop_toBottomOf="@id/countdown_tv"
+            app:layout_constraintStart_toStartOf="@id/text_tv"
+            app:layout_constraintEnd_toEndOf="@id/text_tv" />
 
     </androidx.constraintlayout.motion.widget.MotionLayout>
 </layout>

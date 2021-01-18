@@ -115,7 +115,7 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
     private fun displayableText() = getTrimmedText(mainText)
 
     override fun setText(text: CharSequence, type: BufferType) {
-        this.mainText = text.toString().replace("\n".toRegex(), "")
+        this.mainText = text.toString().replace("\n".toRegex(), " ")
         bufferType = type
         setText()
     }

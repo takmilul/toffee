@@ -28,6 +28,7 @@ import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.ui.mychannel.MyChannelHomeFragment
+import com.banglalink.toffee.util.unsafeLazy
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -42,6 +43,7 @@ class LandingPageViewModel @ViewModelInject constructor(
     private val editorsChoiceAssistedFactory: GetUgcTrendingNowContents.AssistedFactory,
     private val featuredAssistedFactory: FeatureContentService,
     private val getContentAssistedFactory: GetContents.AssistedFactory,
+    private val getContentsAssistedFactory: com.banglalink.toffee.usecase.GetContents.AssistedFactory,
     private val relativeContentsFactory: GetRelativeContents.AssistedFactory
 ):BaseViewModel() {
     
@@ -60,8 +62,15 @@ class LandingPageViewModel @ViewModelInject constructor(
     val hashtagList = hashtagData.toLiveData()
     val selectedHashTag = MutableLiveData<String>()
 
+    private val channelMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
+    val channelLiveData = channelMutableLiveData.toLiveData()
+    
     val loadChannels by lazy {
         channelRepo.getList().cachedIn(viewModelScope)
+    }
+
+    private val getChannels by unsafeLazy {
+        getContentsAssistedFactory.create(ChannelRequestParams("",0,"",0,"LIVE"))
     }
 
     /*val loadLatestVideos by lazy {
@@ -133,6 +142,13 @@ class LandingPageViewModel @ViewModelInject constructor(
                 )
             )
         }).getList()
+    }
+
+    fun loadChannels(){
+        viewModelScope.launch {
+            val response = resultFromResponse { getChannels.execute() }
+            channelMutableLiveData.postValue(response)
+        }
     }
 
     private val channelRepo by lazy {

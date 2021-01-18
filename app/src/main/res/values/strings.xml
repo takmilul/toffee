@@ -7,7 +7,7 @@
     <!-- Strings related to login -->
     <string name="action_sign_in">Sign In</string>
     <string name="action_subscribe">SUBSCRIBE</string>
-    <string name="sign_in_text"><u>Sign In</u></string>
+    <string name="sign_in_text">Sign In</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

@@ -272,6 +272,7 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
 
     private fun addChip(subCategory: UgcSubCategory): Chip {
         val intColor = ContextCompat.getColor(requireContext(), R.color.colorSecondaryDark)
+        val textColor = ContextCompat.getColor(requireContext(), R.color.main_text_color)
 
         val chipColor = createStateColor(intColor)
         val chip = layoutInflater.inflate(R.layout.category_chip_layout, categoryChipGroup, false) as Chip
@@ -280,9 +281,9 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
         chip.id = View.generateViewId()
 
         chip.chipBackgroundColor = chipColor
-        chip.chipStrokeColor = ColorStateList.valueOf(intColor)
+        chip.chipStrokeColor = ColorStateList.valueOf(textColor)
         chip.rippleColor = chipColor
-        chip.setTextColor(createStateColor(Color.WHITE, intColor))
+        chip.setTextColor(createStateColor(Color.WHITE, textColor))
 
         return chip
     }
