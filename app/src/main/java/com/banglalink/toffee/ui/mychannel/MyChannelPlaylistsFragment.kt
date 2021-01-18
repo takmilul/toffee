@@ -101,6 +101,14 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
 
     override fun onItemClicked(item: MyChannelPlaylist) {
         super.onItemClicked(item)
+        /*val adapter = parentFragment?.view?.findViewById<ViewPager2>(R.id.viewPager)?.adapter
+        val frg = parentFragmentManager.fragments
+        if(adapter is ViewPagerAdapter){
+            adapter.replaceFragment(MyChannelPlaylistVideosFragment.newInstance(PlaylistPlaybackInfo(item.id, channelOwnerId, isOwner, item.name, item.totalContent)), 1)
+            adapter.createFragment(1)
+            adapter.notifyItemChanged(1)
+        }*/
+        
         if (findNavController().currentDestination?.id == R.id.myChannelHomeFragment){
             val action = MyChannelHomeFragmentDirections.actionMyChannelHomeFragmentToMyChannelPlaylistVideosFragment(PlaylistPlaybackInfo(item.id, channelOwnerId, isOwner, item.name, item.totalContent))
             parentFragment?.findNavController()?.navigate(action)

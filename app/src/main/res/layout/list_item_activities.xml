@@ -133,7 +133,6 @@
                     android:id="@+id/reactIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@color/backgroundAlpha"
                     loadReactionEmo="@{data.activitySubType}"
                     android:scaleType="center"
                     android:layout_marginTop="6dp"

@@ -59,7 +59,7 @@ class EarningsFragment : Fragment() {
         viewModel.getEarningInfo()
         
         binding.viewPager.offscreenPageLimit = 1
-        viewPagerAdapter = ViewPagerAdapter(this, fragmentList)
+//        viewPagerAdapter = ViewPagerAdapter(this, fragmentList)
         binding.viewPager.adapter = viewPagerAdapter
 
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->

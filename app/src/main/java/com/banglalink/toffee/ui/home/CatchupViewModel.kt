@@ -1,22 +1,10 @@
 package com.banglalink.toffee.ui.home
 
-import android.os.Bundle
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.viewModelScope
-import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
-import com.banglalink.toffee.data.network.util.resultLiveData
-import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseViewModel
-import com.banglalink.toffee.usecase.GetContents
-import com.banglalink.toffee.util.unsafeLazy
-import kotlinx.coroutines.cancelChildren
-import java.util.concurrent.CancellationException
 
 class CatchupViewModel:BaseViewModel() {
 
-    private var category: String? = null
+    /*private var category: String? = null
     private var categoryId: Int = 0
     private var subCategory: String? = null
     private var subCategoryID: Int = 0
@@ -54,5 +42,5 @@ class CatchupViewModel:BaseViewModel() {
         this.categoryId = categoryId
         this.type = type
         getContent()
-    }
+    }*/
 }

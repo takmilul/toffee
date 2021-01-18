@@ -1,9 +1,12 @@
 package com.banglalink.toffee.ui.common
 
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 
-class ViewPagerAdapter(fragment: Fragment?, private val fragmentList: ArrayList<Fragment>) : FragmentStateAdapter(fragment !!) {
+class ViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) : FragmentStateAdapter(fragmentManager, lifecycle) {
+    private val fragmentList: MutableList<Fragment> = mutableListOf()
     
     override fun getItemCount(): Int {
         return fragmentList.size
@@ -11,5 +14,14 @@ class ViewPagerAdapter(fragment: Fragment?, private val fragmentList: ArrayList<
     
     override fun createFragment(position: Int): Fragment {
         return fragmentList[position]
+    }
+
+    fun addFragment(fragment: Fragment) {
+        fragmentList.add(fragment)
+    }
+    
+    fun replaceFragment(fragment: Fragment, position: Int){
+        fragmentList[position] = fragment
+        this.notifyItemChanged(position)
     }
 }
