@@ -23,6 +23,7 @@ import kotlinx.coroutines.SupervisorJob
 import com.banglalink.toffee.ui.upload.UploadObserver
 import dagger.hilt.android.HiltAndroidApp
 import net.gotev.uploadservice.UploadServiceConfig
+import net.gotev.uploadservice.data.RetryPolicyConfig
 import net.gotev.uploadservice.okhttp.OkHttpStack
 import okhttp3.OkHttpClient
 import javax.inject.Inject
@@ -87,6 +88,12 @@ class ToffeeApplication : Application() {
 
         UploadServiceConfig.initialize(this, notificationChannelID, BuildConfig.DEBUG)
         UploadServiceConfig.httpStack = OkHttpStack()
+        UploadServiceConfig.retryPolicy = RetryPolicyConfig(
+            initialWaitTimeSeconds = 5,
+            maxWaitTimeSeconds = 30,
+            multiplier = 1,
+            defaultMaxRetries = 6
+        )
         mUploadObserver.start()
     }
 

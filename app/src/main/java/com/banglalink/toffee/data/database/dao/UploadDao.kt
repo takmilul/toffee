@@ -2,6 +2,7 @@ package com.banglalink.toffee.data.database.dao
 
 import androidx.room.*
 import com.banglalink.toffee.data.database.entities.UploadInfo
+import com.banglalink.toffee.ui.upload.UploadStatus
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -30,6 +31,21 @@ interface UploadDao {
     @Query("SELECT * from UploadInfo WHERE uploadId=:uploadId")
     suspend fun getUploadById(uploadId: Long): UploadInfo?
 
-    @Query("UPDATE UploadInfo SET completedSize=:completed, completedPercent=:percent, fileSize=:totalSize, tusUploadUri=:uploadUri WHERE uploadId=:uploadId")
-    suspend fun updateProgressById(uploadId: Long, completed: Long, percent: Int, totalSize: Long, uploadUri: String?)
+    @Query("SELECT * from UploadInfo WHERE uploadId=:uploadId")
+    fun getUploadFlowById(uploadId: Long): Flow<UploadInfo?>
+
+    @Query("UPDATE UploadInfo " +
+            "SET completedSize=:completed, " +
+            "completedPercent=:percent, " +
+            "fileSize=:totalSize, " +
+            "status=:state, " +
+            "tusUploadUri=:uploadUri " +
+            "WHERE uploadId=:uploadId")
+    suspend fun updateProgressById(
+        uploadId: Long,
+        completed: Long,
+        percent: Int,
+        totalSize: Long,
+        uploadUri: String?,
+        state: Int = UploadStatus.STARTED.value)
 }

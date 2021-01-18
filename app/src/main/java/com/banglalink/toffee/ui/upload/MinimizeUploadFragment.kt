@@ -11,6 +11,7 @@ import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.util.Utils
+import com.banglalink.toffee.util.UtilsKt
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_minimize_upload.*
 import kotlinx.coroutines.flow.collectLatest
@@ -21,6 +22,7 @@ import javax.inject.Inject
 class MinimizeUploadFragment: BaseFragment() {
     private lateinit var uploadId: String
     private var contentId: Long = -1
+    private var uploadIdLong = -1L
 
     @Inject
     lateinit var uploadRepo: UploadInfoRepository
@@ -34,6 +36,7 @@ class MinimizeUploadFragment: BaseFragment() {
         super.onCreate(savedInstanceState)
 
         uploadId = requireArguments().getString(UPLOAD_ID)!!
+        uploadIdLong = UtilsKt.stringToUploadId(uploadId)
         contentId = requireArguments().getLong(CONTENT_ID)
     }
 
@@ -73,27 +76,25 @@ class MinimizeUploadFragment: BaseFragment() {
 
     private fun observeUpload() {
         lifecycleScope.launchWhenStarted {
-            uploadRepo.getActiveUploads().collectLatest { uploadList->
-                if(uploadList.isNotEmpty()) {
-                    val uploadInfo = uploadList[0]
-                    when(uploadInfo.status) {
-                        UploadStatus.SUCCESS.value,
-                        UploadStatus.SUBMITTED.value,
-                        -> {
-                            uploadPercent.text = "100%"
-                            progressBar.progress = 100
-                            uploadSize.text = "of ${Utils.readableFileSize(uploadInfo.fileSize)}"
-                            findNavController().popBackStack(R.id.menu_feed, false)
-                        }
-                        UploadStatus.ADDED.value,
-                        UploadStatus.STARTED.value -> {
-                            uploadPercent.text = "${uploadInfo.completedPercent}%"
-                            progressBar.progress = uploadInfo.completedPercent
-                            uploadSize.text = "of ${Utils.readableFileSize(uploadInfo.fileSize)}"
-                        }
-                        UploadStatus.ERROR.value -> {
-                            findNavController().popBackStack(R.id.menu_feed, false)
-                        }
+            uploadRepo.getUploadFlowById(uploadIdLong).collectLatest { uploadInfo ->
+                when(uploadInfo?.status) {
+                    UploadStatus.SUCCESS.value,
+                    UploadStatus.SUBMITTED.value,
+                    -> {
+                        uploadPercent.text = "100%"
+                        progressBar.progress = 100
+                        uploadSize.text = "of ${Utils.readableFileSize(uploadInfo.fileSize)}"
+                        findNavController().popBackStack(R.id.menu_feed, false)
+                    }
+                    UploadStatus.ADDED.value,
+                    UploadStatus.STARTED.value -> {
+                        uploadPercent.text = "${uploadInfo.completedPercent}%"
+                        progressBar.progress = uploadInfo.completedPercent
+                        uploadSize.text = "of ${Utils.readableFileSize(uploadInfo.fileSize)}"
+                    }
+                    UploadStatus.CANCELED.value,
+                    UploadStatus.ERROR_CONFIRMED.value -> {
+                        findNavController().popBackStack(R.id.menu_feed, false)
                     }
                 }
             }
