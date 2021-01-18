@@ -158,8 +158,8 @@ class MovieViewModel @ViewModelInject constructor(
     
     val loadTrendingNowMovies by lazy {
         viewModelScope.launch {
-            val response = trendingNowService.create(TrendingNowRequestParam("VOD", 1, 0, false)).loadData(0, 10)
             trendingNowMoviesResponse.value = try {
+                val response = trendingNowService.create(TrendingNowRequestParam("VOD", 1, 0, false)).loadData(0, 10)
                 response.map {
                     it.categoryId = 1
                     it.viewProgress = viewProgressRepo.getProgressByContent(it.id.toLong())?.progress ?: 0L
