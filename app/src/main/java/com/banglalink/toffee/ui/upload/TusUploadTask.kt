@@ -1,19 +1,20 @@
 package com.banglalink.toffee.ui.upload
 
 import android.util.Log
+import net.gotev.uploadservice.UploadServiceConfig
 import net.gotev.uploadservice.UploadTask
 import net.gotev.uploadservice.data.NameValue
 import net.gotev.uploadservice.logger.UploadServiceLogger
 import net.gotev.uploadservice.network.BodyWriter
 import net.gotev.uploadservice.network.HttpRequest
 import net.gotev.uploadservice.network.HttpStack
-import net.gotev.uploadservice.network.hurl.HurlStack
-import okhttp3.HttpUrl
+import net.gotev.uploadservice.network.ServerResponse
 import okhttp3.HttpUrl.Companion.toHttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import java.io.IOException
+import java.io.InputStream
 import java.net.ProtocolException
-import java.net.URL
+import kotlin.math.max
+import kotlin.math.min
 
 class TusUploadTask: UploadTask(), HttpRequest.RequestBodyDelegate,
     BodyWriter.OnStreamWriteListener {
@@ -23,6 +24,8 @@ class TusUploadTask: UploadTask(), HttpRequest.RequestBodyDelegate,
     private val tusUploadLengthHeader = "Upload-Length"
     private val tusUploadOffsetHeader = "Upload-Offset"
     private val tusUploadMetadataHeader = "Upload-Metadata"
+    private val uploadChunkSize: Long = max(min(UploadServiceConfig.bufferSizeBytes * 1024L, 4 * 1024 * 1024L), 1024 * 1024L)
+    private var uploadCompleted = false
 
     private val tusParams: TusUploadTaskParameters
         get() = params.additionalParameters as TusUploadTaskParameters
@@ -100,7 +103,7 @@ class TusUploadTask: UploadTask(), HttpRequest.RequestBodyDelegate,
     }
 
     @Throws(Exception::class)
-    private fun resumeUpload(httpStack: HttpStack, uploadUrl: String, offset: Long = -1L) {
+    private fun resumeUpload(httpStack: HttpStack, uploadUrl: String, offset: Long = -1L): ServerResponse {
         UploadServiceLogger.error(javaClass.simpleName, params.id) { "Starting upload task with offset ->> $offset" }
 
         setAllFilesHaveBeenSuccessfullyUploaded(false)
@@ -132,34 +135,65 @@ class TusUploadTask: UploadTask(), HttpRequest.RequestBodyDelegate,
             "Server response: code ${response.code}, header - ${response.headers}, body ${response.bodyString}"
         }
 
-        if (shouldContinue) {
-            if (response.isSuccessful) {
-                setAllFilesHaveBeenSuccessfullyUploaded()
-            }
-            onResponseReceived(response)
+        val uploadedOffset = response.headers[tusUploadOffsetHeader]?.toLongOrNull()
+            ?: throw ProtocolException("missing upload offset in response for resuming upload")
+
+        if(uploadedOffset == bodyLength) {
+            uploadCompleted = true
         }
+
+        resumeOffset = uploadedOffset
+        return response
     }
 
     @Throws(Exception::class)
     override fun upload(httpStack: HttpStack) {
         shouldWriteBody = false
         resumeOffset = -1L
-        var savedOffset = -1L
-        Log.e("UPload", "Saved offset ->>> $savedOffset")
+        Log.e("UPload", "Resume Offset ->>> $resumeOffset")
         val uploadUrl = if(tusParams.uploadUrl != null) {
             tusParams.uploadUrl!!
         } else {
-            savedOffset = 0L
+            resumeOffset = 0L
             createUpload(httpStack)
         }
-        resumeUpload(httpStack, uploadUrl, savedOffset)
+        var serverResponse: ServerResponse? = null
+        while(!uploadCompleted) {
+            if(shouldContinue) {
+                resetUploadedBytes()
+                serverResponse = resumeUpload(httpStack, uploadUrl, resumeOffset)
+            }
+        }
+        if (shouldContinue) {
+            serverResponse?.let {
+                if(it.isSuccessful) {
+                    setAllFilesHaveBeenSuccessfullyUploaded()
+                }
+                onResponseReceived(it)
+            }
+        }
     }
 
     override fun onWriteRequestBody(bodyWriter: BodyWriter) {
         if(shouldWriteBody) {
             val body = file.stream(context)
             body.skip(resumeOffset)
-            bodyWriter.writeStream(body)
+            writeStream(body, bodyWriter)
+        }
+    }
+
+    @Throws(IOException::class)
+    fun writeStream(stream: InputStream, bodyWriter: BodyWriter) {
+        val buffer = ByteArray(UploadServiceConfig.bufferSizeBytes)
+        var currentBodyLength = 0L
+        stream.use {
+            while (shouldContinueWriting()) {
+                val bytesRead = it.read(buffer, 0, buffer.size)
+                currentBodyLength += bytesRead
+                if (bytesRead <= 0 || currentBodyLength > uploadChunkSize) break
+
+                bodyWriter.write(buffer, bytesRead)
+            }
         }
     }
 

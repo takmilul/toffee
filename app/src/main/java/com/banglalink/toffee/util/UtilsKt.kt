@@ -99,7 +99,7 @@ object UtilsKt {
     }
 
 
-    fun generateThumbnail(context: Context, filePath: String): String? {
+    fun generateThumbnail(context: Context, filePath: String): Pair<String?, Int>? {
         return try {
             val mmr = MediaMetadataRetriever()
             if(filePath.startsWith("content://")) {
@@ -108,15 +108,48 @@ object UtilsKt {
                 mmr.setDataSource(filePath)
             }
             val bmp = mmr.frameAtTime
+            val isHorizontal = if(bmp.width >= bmp.height) 1 else 0
 
             val scaledBmp = resizeBitmap(bmp, 1280, 720)
             val byteArrayOutputStream = ByteArrayOutputStream()
             scaledBmp?.compress(JPEG, 70, byteArrayOutputStream)
             val byteArray = byteArrayOutputStream.toByteArray()
-            Base64.encodeToString(byteArray, Base64.NO_WRAP)
+            Pair(Base64.encodeToString(byteArray, Base64.NO_WRAP), isHorizontal)
         } catch (ex: Exception) {
             ex.printStackTrace()
             null
+        }
+    }
+
+    fun getVideoDuration(context: Context, filePath: String): Long {
+        return try{
+            val mmr = MediaMetadataRetriever()
+            if(filePath.startsWith("content://")) {
+                mmr.setDataSource(context, Uri.parse(filePath))
+            } else {
+                mmr.setDataSource(filePath)
+            }
+            val duration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+//            TimeUnit.MILLISECONDS
+//                .toSeconds(
+            duration.toLong()
+//                )
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            0L
+        }
+    }
+
+    fun getDurationLongToString(timeMs: Long): String {
+        val totalSeconds = timeMs / 1000
+        val seconds = (totalSeconds % 60).toInt()
+        val minutes = (totalSeconds / 60 % 60).toInt()
+        val hours = (totalSeconds / 3600).toInt()
+        return if (hours > 0) {
+            String.format("%d:%02d:%02d", hours, minutes, seconds)
+        }
+        else {
+            String.format("%02d:%02d", minutes, seconds)
         }
     }
 
