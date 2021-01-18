@@ -47,6 +47,7 @@ import com.banglalink.toffee.extension.loadProfileImage
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.*
+import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.category.drama.EpisodeListFragment
 import com.banglalink.toffee.ui.channels.AllChannelsViewModel
 import com.banglalink.toffee.ui.channels.ChannelFragment
@@ -61,6 +62,7 @@ import com.banglalink.toffee.ui.splash.SplashScreenActivity
 import com.banglalink.toffee.ui.subscription.PackageListActivity
 import com.banglalink.toffee.ui.upload.TusUploadRequest
 import com.banglalink.toffee.ui.upload.UploadProgressViewModel
+import com.banglalink.toffee.ui.upload.UploadStateManager
 import com.banglalink.toffee.ui.upload.UploadStatus
 import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
@@ -78,6 +80,7 @@ import kotlinx.android.synthetic.main.activity_main_menu.*
 import kotlinx.android.synthetic.main.home_mini_upload_progress.*
 import kotlinx.android.synthetic.main.layout_appbar.view.*
 import kotlinx.android.synthetic.main.player_bottom_sheet_layout.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -110,6 +113,12 @@ class HomeActivity :
 
     @Inject
     lateinit var notificationRepo: NotificationInfoRepository
+
+    @Inject
+    lateinit var connectionWatcher: ConnectionWatcher
+
+    @Inject
+    lateinit var uploadManager: UploadStateManager
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private var notificationBadge: View? = null
@@ -254,6 +263,7 @@ class HomeActivity :
         handleSharedUrl(intent)
         configureBottomSheet()
         observeUpload2()
+        watchConnectionChange()
     }
 
     fun showUploadDialog(): Boolean {
@@ -292,6 +302,20 @@ class HomeActivity :
             navController.navigate(id.uploadMethodFragment)
         }
         return false
+    }
+
+    @ExperimentalCoroutinesApi
+    private fun watchConnectionChange() {
+        lifecycleScope.launch {
+            uploadManager.checkUploadStatus(false)
+        }
+        lifecycleScope.launch {
+            connectionWatcher.watchNetwork().collect {
+                if(it) {
+                    uploadManager.checkUploadStatus(true)
+                }
+            }
+        }
     }
 
     private fun configureBottomSheet() {

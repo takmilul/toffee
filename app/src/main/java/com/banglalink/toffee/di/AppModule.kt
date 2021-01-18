@@ -7,6 +7,7 @@ import com.banglalink.toffee.apiservice.UgcUploadConfirmation
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.ui.upload.UploadObserver
+import com.banglalink.toffee.ui.upload.UploadStateManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -37,8 +38,14 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesGlobalUploadObserver(app: Application, uploadConfApi: UgcUploadConfirmation, repo: UploadInfoRepository): UploadObserver {
-        return UploadObserver(app, uploadConfApi, repo)
+    fun providesUploadStateManager(app: Application, repo: UploadInfoRepository, uploadConfApi: UgcUploadConfirmation): UploadStateManager {
+        return UploadStateManager(app, repo, uploadConfApi)
+    }
+
+    @Provides
+    @Singleton
+    fun providesGlobalUploadObserver(app: Application, manager: UploadStateManager): UploadObserver {
+        return UploadObserver(app, manager)
     }
 
     @Provides

@@ -158,11 +158,9 @@ class TusUploadTask: UploadTask(), HttpRequest.RequestBodyDelegate,
             createUpload(httpStack)
         }
         var serverResponse: ServerResponse? = null
-        while(!uploadCompleted) {
-            if(shouldContinue) {
-                resetUploadedBytes()
-                serverResponse = resumeUpload(httpStack, uploadUrl, resumeOffset)
-            }
+        while(!uploadCompleted && shouldContinue) {
+            resetUploadedBytes()
+            serverResponse = resumeUpload(httpStack, uploadUrl, resumeOffset)
         }
         if (shouldContinue) {
             serverResponse?.let {

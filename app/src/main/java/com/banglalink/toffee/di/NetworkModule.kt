@@ -1,16 +1,19 @@
 package com.banglalink.toffee.di
 
+import android.app.Application
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.data.network.interceptor.AuthInterceptor
 import com.banglalink.toffee.data.network.interceptor.GetTracker
 import com.banglalink.toffee.data.network.retrofit.AuthApi
 import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
+import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.facebook.FacebookSdk
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -71,5 +74,12 @@ object NetworkModule {
     fun providesAuthApi(retrofit: Retrofit): AuthApi {
 //        return retrofit.create(AuthApi::class.java)
         return RetrofitApiClient.authApi
+    }
+
+    @ExperimentalCoroutinesApi
+    @Singleton
+    @Provides
+    fun providesConnectionWatcher(app: Application): ConnectionWatcher {
+        return ConnectionWatcher(app)
     }
 }

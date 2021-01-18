@@ -11,4 +11,5 @@ enum class UploadStatus(val value: Int) {
     RETRY_SUCCESS(7),
     RETRY_FAILED(8),
     CLEARED(9),
+    ERROR_CONFIRMED(10)
 }
