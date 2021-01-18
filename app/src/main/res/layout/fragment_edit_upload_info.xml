@@ -45,6 +45,20 @@
                 app:layout_constraintTop_toTopOf="@+id/video_thumb"
                 app:srcCompat="@drawable/ic_edit_btn" />
 
+            <TextView
+                android:id="@+id/duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#88000000"
+                android:paddingVertical="@dimen/duration_vertical_padding"
+                android:paddingHorizontal="@dimen/duration_horizontal_padding"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/duration_text_size"
+                android:text="00:00"
+                app:layout_constraintEnd_toEndOf="@+id/video_thumb"
+                app:layout_constraintBottom_toBottomOf="@+id/video_thumb"
+                tools:text="00:00" />
+
 <!--            <ProgressBar-->
 <!--                android:id="@+id/progressBar"-->
 <!--                style="?android:attr/progressBarStyleHorizontal"-->

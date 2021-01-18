@@ -148,6 +148,7 @@ class EditUploadInfoFragment: BaseFragment() {
         observeProgressDialog()
         observeThumbnailLoad()
         observeThumbnailChange()
+        observeVideoDuration()
 
         binding.uploadTitle.requestFocus()
     }
@@ -157,6 +158,12 @@ class EditUploadInfoFragment: BaseFragment() {
             it?.let { thumb ->
                 binding.videoThumb.loadBase64(thumb)
             }
+        }
+    }
+
+    private fun observeVideoDuration() {
+        observe(viewModel.durationData) {
+            binding.duration.text = UtilsKt.getDurationLongToString(it)
         }
     }
 
@@ -299,7 +306,11 @@ class EditUploadInfoFragment: BaseFragment() {
     private fun submitVideo() {
         val title = binding.uploadTitle.text.toString()
         val description = binding.uploadDescription.text.toString()
-        if(title.isBlank() || description.isBlank()) {
+        if(title.isBlank()
+            || description.isBlank()
+            || viewModel.thumbnailData.value.isNullOrBlank()
+            || viewModel.orientationData.value == null
+        ) {
             context?.showToast("Missing required field", Toast.LENGTH_SHORT)
             return
         }
@@ -315,7 +326,13 @@ class EditUploadInfoFragment: BaseFragment() {
             } else -1
 
             val tags = binding.uploadTags.selectedChipList.joinToString(" | ") { it.label }
-            viewModel.saveUploadInfo(tags, categoryId, subcategoryId)
+
+            viewModel.saveUploadInfo(
+                tags,
+                categoryId,
+                subcategoryId,
+                viewModel.durationData.value ?: 0L,
+                viewModel.orientationData.value ?: 1)
         }
     }
 }

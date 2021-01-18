@@ -70,6 +70,9 @@ class EditUploadInfoViewModel @AssistedInject constructor(
 
     val uploadStatusText = MutableLiveData<String>()
 
+    val durationData = MutableLiveData<Long>()
+    val orientationData = MutableLiveData<Int>()
+
     private var fileName: String = ""
     private var actualFileName: String? = null
 
@@ -78,7 +81,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
 
     init {
         categoryPosition.value = 0
-
+        durationData.value = 0
         load()
 
         ageGroup.value = listOf("For All", "3+", "9+", "13+", "18+")
@@ -117,6 +120,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
             initUpload()
 //            initUploadInfo(info)
             loadThumbnail()
+            loadVideoDuration()
             progressDialog.value = false
         }
     }
@@ -125,7 +129,22 @@ class EditUploadInfoViewModel @AssistedInject constructor(
         viewModelScope.launch {
             withContext(Dispatchers.Default + Job()) {
                 UtilsKt.generateThumbnail(appContext, uploadFileUri)
-            }?.let { saveThumbnailToDb(it) }
+            }?.let {
+                it.first?.let { thumb->
+                    saveThumbnailToDb(thumb)
+                }
+                orientationData.value = it.second
+            }
+        }
+    }
+
+    private fun loadVideoDuration() {
+        viewModelScope.launch {
+            withContext(Dispatchers.Default + Job()) {
+                UtilsKt.getVideoDuration(appContext, uploadFileUri)
+            }.let {
+                durationData.value = it
+            }
         }
     }
 
@@ -193,7 +212,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
         uploadSize.value = Utils.readableFileSize(size)
     }
 
-    suspend fun saveUploadInfo(tags: String?, categoryId: Long, subcategoryId: Long) {
+    suspend fun saveUploadInfo(tags: String?, categoryId: Long, subcategoryId: Long, duration: Long, isHorizontal: Int) {
         progressDialog.value = true
         val ageGroupId = ageGroupPosition.value ?: -1
 
@@ -206,7 +225,9 @@ class EditUploadInfoViewModel @AssistedInject constructor(
                 ageGroupId.toString(),
                 categoryId,
                 subcategoryId,
-                thumbnailData.value
+                thumbnailData.value,
+                (duration / 1000).toString(),
+                isHorizontal
             )
             Log.e("RESP", resp.toString())
             if (resp.contentId > 0L) {
