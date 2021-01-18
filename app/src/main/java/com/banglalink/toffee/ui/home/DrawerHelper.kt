@@ -17,6 +17,8 @@ import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.ui.profile.ViewProfileActivity
+import com.banglalink.toffee.ui.redeem.RedeemCodeActivity
+import com.banglalink.toffee.ui.refer.ReferAFriendActivity
 import com.banglalink.toffee.ui.subscription.MySubscriptionActivity
 import com.banglalink.toffee.ui.subscription.PackageListActivity
 import com.google.android.material.switchmaterial.SwitchMaterial
@@ -293,14 +295,14 @@ class DrawerHelper(private val activity: HomeActivity,
                     }
                 }
             }
-//            ID_INVITE_FRIEND->{
-//                activity.launchActivity<ReferAFriendActivity>()
-//                binding.drawerLayout.closeDrawers()
-//            }
-//            ID_REDEEM_CODE->{
-//                activity.launchActivity<RedeemCodeActivity> ()
-//                binding.drawerLayout.closeDrawers()
-//            }
+            R.id.menu_invite->{
+                activity.launchActivity<ReferAFriendActivity>()
+                binding.drawerLayout.closeDrawers()
+            }
+            R.id.menu_redeem->{
+                activity.launchActivity<RedeemCodeActivity> ()
+                binding.drawerLayout.closeDrawers()
+            }
         }
         return run {
             if(NavigationUI.onNavDestinationSelected(item, activity.getNavController())) {

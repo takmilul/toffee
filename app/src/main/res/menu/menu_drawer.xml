@@ -31,13 +31,13 @@
         android:title="Subscriptions"
         android:icon="@drawable/ic_menu_subscriptions" />
 
-<!--    <item android:id="@+id/menu_invite"-->
-<!--        android:title="@string/invite_friends_txt"-->
-<!--        android:icon="@mipmap/ic_menu_invite" />-->
+    <item android:id="@+id/menu_invite"
+        android:title="@string/invite_friends_txt"
+        android:icon="@mipmap/ic_menu_invite" />
 
-<!--    <item android:id="@+id/menu_redeem"-->
-<!--        android:title="@string/redeem_code_txt"-->
-<!--        android:icon="@mipmap/ic_menu_redeem" />-->
+    <item android:id="@+id/menu_redeem"
+        android:title="@string/redeem_code_txt"
+        android:icon="@mipmap/ic_menu_redeem" />
 
     <item android:id="@+id/menu_settings"
         android:title="Settings"
