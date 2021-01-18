@@ -273,8 +273,9 @@
         <item name="android:paddingTop">8dp</item>
         <item name="android:paddingRight">32dp</item>
         <item name="android:paddingBottom">8dp</item>
-        <item name="android:minWidth">110dp</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:minWidth">170dp</item>
+        <item name="android:textSize">@dimen/default_text_size</item>
+        <item name="fontFamily">@font/roboto_bold</item>
         <item name="iconPadding">8dp</item>
         <item name="textAllCaps">true</item>
         <item name="iconTint">#ffffff</item>
@@ -290,8 +291,9 @@
         <item name="android:paddingTop">8dp</item>
         <item name="android:paddingRight">32dp</item>
         <item name="android:paddingBottom">8dp</item>
-        <item name="android:minWidth">110dp</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:minWidth">170dp</item>
+        <item name="android:textSize">@dimen/default_text_size</item>
+        <item name="fontFamily">@font/roboto_bold</item>
         <item name="iconPadding">8dp</item>
         <item name="textAllCaps">true</item>
         <item name="iconTint">@color/colorAccent</item>
@@ -382,10 +384,11 @@
     <style name="PositiveButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
         <item name="android:textColor">@color/colorAccent</item>
     </style>
-    
+
     <style name="AlertDialogTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
         <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
         <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+        <item name="android:colorBackground">@color/cardBgColor</item>
     </style>
     
     
@@ -456,5 +459,5 @@
         <item name="android:focusable">true</item>
         <item name="android:scaleType">fitXY</item>
     </style>
-    
+
 </resources>
