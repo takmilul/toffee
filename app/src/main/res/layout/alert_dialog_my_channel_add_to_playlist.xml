@@ -89,12 +89,13 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@id/addButton"
-                            style="@style/ButtonStyleSolidPurple"
+                            style="@style/EditChannelStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:minWidth="0dp"
                             android:text=""
                             app:icon="@drawable/ic_upload_add"
+                            app:iconTint="#829AB8"
                             app:iconSize="16dp"
                             android:layout_alignParentStart="true"/>
 
