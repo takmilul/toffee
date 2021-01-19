@@ -85,14 +85,13 @@
             loadImageFromUrlRounded="@{data.channelProfileUrl}"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="12dp"
             android:layout_marginStart="16dp"
             android:visibility="@{isMyChannel ? View.GONE : View.VISIBLE}"
             android:onClick="@{()-> callback.onProviderIconClicked(data)}"
             android:src="@drawable/ic_profile_default"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/poster"
-            app:layout_constraintBottom_toBottomOf="@id/name"/>
+            app:layout_constraintTop_toBottomOf="@id/poster"/>
         
         <TextView
             android:id="@+id/name"
@@ -100,7 +99,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="8dp"
             app:layout_goneMarginStart="16dp"
             app:layout_constrainedWidth="true"
             android:ellipsize="end"
@@ -112,7 +111,6 @@
             app:layout_constraintEnd_toStartOf="@+id/options"
             app:layout_constraintStart_toEndOf="@+id/ownerPicture"
             app:layout_constraintTop_toBottomOf="@id/poster"
-            app:layout_constraintBottom_toBottomOf="@id/ownerPicture"
             tools:text="This Makeup Tutorial By Kylie Jenner Is All You Need For Summer" />
         
         <ImageView
@@ -140,6 +138,7 @@
             android:layout_height="wrap_content"
             app:layout_constrainedWidth="true"
             android:maxLines="1"
+            android:layout_marginTop="9dp"
             android:ellipsize="end"
             android:textSize="@dimen/default_text_size"
             android:text="@{isMyChannel ? `` : data.content_provider_name}"
@@ -168,13 +167,11 @@
         
         <ImageView
             android:id="@+id/thirdIcon"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:layout_marginStart="12dp"
-            android:padding="2dp"
+            android:layout_width="17dp"
+            android:layout_height="17dp"
+            android:layout_marginStart="13dp"
             bind:emoIcon="@{data}"
             bind:iconPosition="@{3}"
-            android:background="@drawable/round_emo_bg"
             android:src="@drawable/ic_reaction_wow_no_shadow"
             app:layout_constraintTop_toTopOf="@id/reactionCount"
             app:layout_constraintBottom_toBottomOf="@id/reactionCount"
@@ -182,13 +179,11 @@
 
         <ImageView
             android:id="@+id/secondIcon"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:layout_marginStart="12dp"
-            android:padding="2dp"
+            android:layout_width="17dp"
+            android:layout_height="17dp"
+            android:layout_marginStart="13dp"
             bind:emoIcon="@{data}"
             bind:iconPosition="@{2}"
-            android:background="@drawable/round_emo_bg"
             android:src="@drawable/ic_reaction_love_no_shadow"
             app:layout_constraintTop_toTopOf="@id/reactionCount"
             app:layout_constraintBottom_toBottomOf="@id/reactionCount"
@@ -196,12 +191,10 @@
 
         <ImageView
             android:id="@+id/firstIcon"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:padding="2dp"
+            android:layout_width="17dp"
+            android:layout_height="17dp"
             bind:emoIcon="@{data}"
             bind:iconPosition="@{1}"
-            android:background="@drawable/round_emo_bg"
             android:src="@drawable/ic_reaction_like_no_shadow"
             app:layout_constraintStart_toStartOf="@id/guideline3"
             app:layout_constraintTop_toTopOf="@id/reactionCount"
@@ -230,7 +223,7 @@
             android:id="@+id/viewCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="9dp"
             android:layout_marginBottom="14dp"
             android:text="@{data.formatted_view_count + ` Views`}"
             android:textSize="@dimen/default_text_size"
@@ -266,7 +259,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.76" />
+            app:layout_constraintGuide_percent="0.75" />
 
         <TextView
             android:id="@+id/reactionButton"
@@ -302,7 +295,7 @@
             android:layout_height="20dp"
             android:layout_marginBottom="12dp"
             android:paddingHorizontal="12dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="9dp"
             android:gravity="center"
             android:text="Approval Pending"
             android:textColor="@color/main_text_color"

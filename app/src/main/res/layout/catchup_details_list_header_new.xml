@@ -25,6 +25,15 @@
         android:focusable="true"
         android:paddingBottom="8dp">
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@drawable/fragment_bg_bottom"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/video_description" />
+
         <TextView
             android:id="@+id/program_name"
             android:layout_width="0dp"
@@ -64,7 +73,7 @@ Day 21 - AUS vs IND" />
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="15dp"
             android:onClick="@{()-> callback.onProviderIconClicked(data)}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/shareCount"
@@ -89,7 +98,7 @@ Day 21 - AUS vs IND" />
             android:id="@+id/viewCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="12dp"
             android:textSize="@dimen/default_text_size"
             android:textColor="@color/fixed_second_text_color"
             android:fontFamily="@font/roboto_medium"
@@ -130,11 +139,9 @@ Day 21 - AUS vs IND" />
 
             <ImageView
                 android:id="@+id/thirdIcon"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
+                android:layout_width="17dp"
+                android:layout_height="17dp"
                 android:layout_marginEnd="2dp"
-                android:background="@drawable/round_emo_player_bg"
-                android:padding="2dp"
                 android:src="@drawable/ic_reaction_wow_no_shadow"
                 app:layout_constraintBottom_toBottomOf="@id/reactionCount"
                 app:layout_constraintEnd_toStartOf="@id/reactionCount"
@@ -146,11 +153,9 @@ Day 21 - AUS vs IND" />
 
             <ImageView
                 android:id="@+id/secondIcon"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:layout_marginEnd="12dp"
-                android:background="@drawable/round_emo_player_bg"
-                android:padding="2dp"
+                android:layout_width="17dp"
+                android:layout_height="17dp"
+                android:layout_marginEnd="13dp"
                 android:src="@drawable/ic_reaction_love_no_shadow"
                 app:layout_constraintBottom_toBottomOf="@id/reactionCount"
                 app:layout_constraintEnd_toEndOf="@id/thirdIcon"
@@ -160,11 +165,9 @@ Day 21 - AUS vs IND" />
 
             <ImageView
                 android:id="@+id/firstIcon"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:layout_marginEnd="12dp"
-                android:background="@drawable/round_emo_player_bg"
-                android:padding="2dp"
+                android:layout_width="17dp"
+                android:layout_height="17dp"
+                android:layout_marginEnd="13dp"
                 android:src="@drawable/ic_reaction_like_no_shadow"
                 app:layout_constraintBottom_toBottomOf="@id/reactionCount"
                 app:layout_constraintEnd_toEndOf="@id/secondIcon"
@@ -248,11 +251,11 @@ Day 21 - AUS vs IND" />
             android:id="@+id/seriesInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="@+id/circleImageView"
             app:layout_constraintTop_toBottomOf="@+id/circleImageView"
-            tools:visibility="gone" />
+            tools:visibility="visible" />
 
         <com.banglalink.toffee.ui.widget.MultiTextButton
             android:id="@+id/subscribe_button"
@@ -318,6 +321,7 @@ Day 21 - AUS vs IND" />
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
+            android:paddingBottom="16dp"
             android:text="@{data.descriptionDecoded}"
             android:textSize="@dimen/default_text_size"
             android:textColor="@color/fixed_second_text_color"
@@ -398,6 +402,7 @@ Day 21 - AUS vs IND" />
             android:id="@+id/seasonSpinnerWrap"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
             android:background="@drawable/spinner_bg_season"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/autoPlayText"

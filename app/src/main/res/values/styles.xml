@@ -11,7 +11,7 @@
     </style>
     
     <style name="PopupMenu" parent="@android:style/Widget.PopupMenu">
-        <item name="android:popupBackground">@color/cardBgColor</item>
+        <item name="android:popupBackground">@color/optionMenuColor</item>
     </style>
     
     <style name="AppTheme.NoActionBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
@@ -22,7 +22,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowBackground">@color/window_background</item>
-<!--        <item name="popupMenuStyle">@style/PopupMenu</item>-->
+        <item name="popupMenuStyle">@style/PopupMenu</item>
     </style>
     
     <style name="TabTheme">

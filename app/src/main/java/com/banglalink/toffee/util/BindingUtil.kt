@@ -307,7 +307,12 @@ fun loadReactionEmo(view: View, reaction: Int) {
         else -> R.drawable.ic_reaction_love_empty
     }
     when (view) {
-        is ImageView -> view.setImageResource(reactionIcon)
+        is ImageView -> {
+            view.setImageResource(reactionIcon)
+            if (reaction == Add.value || reaction == Delete.value) {
+                view.setColorFilter(Color.parseColor("#829AB8"))
+            }
+        }
         is TextView -> {
             view.text = reactionTitle
             if (reaction == Love.value) view.setTextColor(Color.parseColor("#829AB8")) else view.setTextColor(Color.parseColor("#829AB8"))

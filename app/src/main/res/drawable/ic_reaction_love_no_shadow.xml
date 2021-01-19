@@ -1,10 +1,12 @@
 <vector
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="17dp"
-    android:height="15.79dp"
-    android:viewportWidth="56"
-    android:viewportHeight="52">
+    android:height="14.896816dp"
+    android:viewportWidth="60"
+    android:viewportHeight="52.577">
     <path
         android:fillColor="#ff3988"
-        android:pathData="M40.59,0c-8.876,0 -8.934,7.227 -12.59,7.227s-3.714,-7.227 -12.59,-7.227h0C6.332,0 0,7.843 0,17.857c0,11.767 15.512,25.838 23.158,32.059 2.45,2.005 4.154,2.083 4.893,2.083a7.122,7.122 0,0 0,4.493 -1.767c0.14,-0.111 0.277,-0.218 0.418,-0.332l0.02,-0.016C42.977,41.865 56,28.603 56,17.864 56,7.843 49.667,0 40.59,0Z" />
+        android:pathData="M42.59,2c-8.876,0 -8.934,6.751 -12.59,6.751s-3.714,-6.751 -12.59,-6.751h0C8.332,2 2,9.326 2,18.682c0,10.993 15.512,24.137 23.158,29.949a7.712,7.712 0,0 0,4.893 1.946,7.409 7.409,0 0,0 4.493,-1.65c0.14,-0.1 0.277,-0.2 0.418,-0.31l0.02,-0.015C44.977,41.109 58,28.72 58,18.688 58,9.326 51.667,2 42.59,2Z"
+        android:strokeWidth="4"
+        android:strokeColor="@color/cardBgColor" />
 </vector>

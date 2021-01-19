@@ -38,5 +38,6 @@
     <color name="ratingButtonActiveColor">#29466B</color>
     <color name="round_bg_tv_color">#616c72</color>
     <color name="hashtag_chip_color">#111F31</color>
-
+    <color name="spinnerSeasonColor">#29466B</color>
+    <color name="optionMenuColor">#29466B</color>
 </resources>

@@ -1,33 +1,10 @@
 <vector
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:aapt="http://schemas.android.com/aapt"
-    android:width="30dp"
-    android:height="35.53dp"
-    android:viewportWidth="120"
-    android:viewportHeight="142.102">
-    <path
-        android:fillAlpha="0.5"
-        android:pathData="M60,82.102m-60,0a60,60 0,1 1,120 0a60,60 0,1 1,-120 0"
-        android:strokeAlpha="0.5">
-        <aapt:attr name="android:fillColor">
-            <gradient
-                android:centerX="58.44"
-                android:centerY="81.26199"
-                android:gradientRadius="52.08"
-                android:type="radial">
-                <item
-                    android:color="#FF000000"
-                    android:offset="0" />
-                <item
-                    android:color="#00000000"
-                    android:offset="1" />
-            </gradient>
-        </aapt:attr>
-    </path>
+    android:width="27.185093dp"
+    android:height="30dp"
+    android:viewportWidth="108.744"
+    android:viewportHeight="120.004">
     <path
         android:fillColor="#1db2fd"
-        android:pathData="M28.125,103.871c0,11.453 8.029,10.9 15.563,10.9h34.3c17.265,0 20,-3.673 32.584,-27.924 6,-11.55 9.427,-15.75 9.427,-25.935 0,-16.894 -2.891,-21 -18,-21.283 -10.757,-0.2 -29.394,0 -29.394,0 7.108,-25.028 10.329,-34.125 4,-38.482 -6.266,-4.313 -13.8,4.937 -13.8,4.937S40.91,27.608 33.257,35.569C27.81,41.234 28.095,52.054 28.095,52.054 28.095,60.606 28.125,103.871 28.125,103.871Z" />
-    <path
-        android:fillColor="#1db2fd"
-        android:pathData="M4.798,40.455L13.193,40.455A4.798,4.798 0,0 1,17.991 45.253L17.991,109.976A4.798,4.798 0,0 1,13.193 114.774L4.798,114.774A4.798,4.798 0,0 1,-0 109.976L-0,45.253A4.798,4.798 0,0 1,4.798 40.455z" />
+        android:pathData="M16.004,120a16,16 0,0 1,-16 -16v-46.749a16,16 0,0 1,15.289 -15.981,15.474 15.474,0 0,1 2.754,-4.078c8,-8.325 30.889,-30.832 30.889,-30.832s7.885,-9.672 14.434,-5.162c6.623,4.555 3.254,14.066 -4.178,40.234 0,0 19.488,-0.207 30.734,0 15.8,0.3 18.822,4.589 18.822,22.254 0,10.651 -3.586,15.04 -9.859,27.119 -13.15,25.354 -16.016,29.192 -34.07,29.192h-27.068q-0.214,0.006 -0.428,0.006Z" />
 </vector>

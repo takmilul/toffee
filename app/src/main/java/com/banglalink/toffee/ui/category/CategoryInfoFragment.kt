@@ -131,12 +131,13 @@ class CategoryInfoFragment: HomeBaseFragment() {
         val intColor = ContextCompat.getColor(requireContext(), R.color.colorSecondaryDark)
         val textColor = ContextCompat.getColor(requireContext(), R.color.main_text_color)
         val chipColor = createStateColor(intColor)
+        val strokeColor = createStateColor(intColor, textColor)
         val chip = layoutInflater.inflate(R.layout.category_chip_layout, categoryChipGroup, false) as Chip
         chip.text = subCategory.name
         chip.typeface = Typeface.DEFAULT_BOLD
         chip.id = View.generateViewId()
         chip.chipBackgroundColor = chipColor
-        chip.chipStrokeColor = ColorStateList.valueOf(textColor)
+        chip.chipStrokeColor = strokeColor
         chip.rippleColor = chipColor
         chip.setTextColor(createStateColor(Color.WHITE, textColor))
         return chip
