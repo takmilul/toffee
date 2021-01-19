@@ -180,7 +180,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
     var duration: Long = 0
     override fun onTouchEvent(ev: MotionEvent): Boolean {
         try {
-            if(isBottomHit(ev)) {
+            if(isBottomHit(ev) && (isMinimize() || isMaximized() || !isHorizontalDragged())) {
 //                if(ev.actionMasked == MotionEvent.ACTION_UP) Log.e("SCROLL", "ACTION_UP2")
                 return dragView.handleTouchEvent(ev)
             }
