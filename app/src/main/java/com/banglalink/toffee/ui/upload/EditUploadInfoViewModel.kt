@@ -2,7 +2,6 @@ package com.banglalink.toffee.ui.upload
 
 import android.content.Context
 import android.net.Uri
-import android.util.Base64
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -22,17 +21,13 @@ import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.UtilsKt
 import com.banglalink.toffee.util.getError
 import com.banglalink.toffee.util.imagePathToBase64
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.android.synthetic.main.upload_method_fragment.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import net.gotev.uploadservice.protocols.binary.BinaryUploadRequest
-import java.lang.Exception
 import java.util.*
 
 class EditUploadInfoViewModel @AssistedInject constructor(
@@ -284,51 +279,5 @@ class EditUploadInfoViewModel @AssistedInject constructor(
                 .setFileToUpload(uploadFileUri)
                 .startUpload()
         }
-    }
-
-    private suspend fun startUpload2(serverContentId: Long): String {
-        val accessToken = withContext(Dispatchers.IO) {
-            val credential = GoogleCredential.fromStream(
-                appContext.assets.open("toffee-261507-60ca3e5405df.json")
-            ).createScoped(listOf("https://www.googleapis.com/auth/devstorage.read_write"))
-            credential.refreshToken()
-            credential.accessToken
-        }
-
-        if (accessToken.isNullOrEmpty()) {
-            throw RuntimeException("Error uploading file. Please try again later.")
-        }
-
-//        val fn = withContext(Dispatchers.IO + Job()) {
-//            UtilsKt.fileNameFromContentUri(appContext, Uri.parse(uri))
-//        }
-        val idx = actualFileName?.lastIndexOf(".") ?: -1
-        val ext = if (idx >= 0) {
-            actualFileName!!.substring(idx)
-        }
-        else ""
-
-//        val fileName = preference.customerId.toString() + "_" + UUID.randomUUID().toString() + ext
-        val upInfo = UploadInfo(serverContentId = serverContentId, fileUri = uploadFileUri, fileName = fileName)
-
-        val contentType = withContext(Dispatchers.IO + Job()) {
-            UtilsKt.contentTypeFromContentUri(appContext, Uri.parse(uploadFileUri))
-        }
-
-        Log.e("UPLOAD", "$fileName, $contentType")
-
-        val upId = uploadRepo.insertUploadInfo(upInfo)
-        return withContext(Dispatchers.IO + Job()) {
-                BinaryUploadRequest(
-                    appContext,
-                    "https://storage.googleapis.com/upload/storage/v1/b/ugc-content-storage/o?uploadType=media&name=${fileName}"
-                )
-                    .setUploadID(UtilsKt.uploadIdToString(upId))
-                    .setMethod("POST")
-                    .addHeader("Content-Type", contentType)
-                    .setFileToUpload(uploadFileUri)
-                    .setBearerAuth(accessToken)
-                    .startUpload()
-            }
     }
 }

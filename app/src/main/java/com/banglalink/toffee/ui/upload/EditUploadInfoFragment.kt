@@ -223,10 +223,17 @@ class EditUploadInfoFragment: BaseFragment() {
         observe(viewModel.progressDialog) {
             when(it) {
                 true -> {
+                    if(progressDialog != null) {
+                        progressDialog?.dismiss()
+                        progressDialog = null
+                    }
                     progressDialog = VelBoxProgressDialog(requireContext())
                     progressDialog?.show()
                 }
-                false -> progressDialog?.dismiss()
+                false -> {
+                    progressDialog?.dismiss()
+                    progressDialog = null
+                }
             }
         }
     }
@@ -252,6 +259,7 @@ class EditUploadInfoFragment: BaseFragment() {
 //                            uploadRepo.updateUploadInfo(info)
 //                        }
                         progressDialog?.dismiss()
+                        progressDialog = null
 //                        val dialog = VelBoxAlertDialogBuilder(
 //                            requireContext(),
 //                            text = it.data.message,
