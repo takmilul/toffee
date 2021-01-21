@@ -16,6 +16,7 @@ import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.model.MyChannelEditBean
 import com.banglalink.toffee.model.MyChannelDetail
 import com.banglalink.toffee.ui.common.BaseViewModel
+import com.banglalink.toffee.util.SingleLiveEvent
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.launch
@@ -29,10 +30,21 @@ class MyChannelEditDetailViewModel @AssistedInject constructor(private val myCha
     private var _categories = MutableLiveData<List<String>>()
     val categories = _categories.toLiveData()
     var selectedCategory: UgcCategory? = null
+    val exitFragment = SingleLiveEvent<Boolean>()
 
     init {
         viewModelScope.launch {
-            categoryList = categoryApiService.loadData(0, 0)
+            categoryList = try {
+                categoryApiService.loadData(0, 0)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                emptyList()
+            }
+
+            if(categoryList.isNullOrEmpty()) {
+                exitFragment.value = true
+            }
+
             selectedCategory = categoryList.find { it.id == myChannelDetail?.categoryId }
             _categories.postValue(categoryList.map { it.categoryName })
         }

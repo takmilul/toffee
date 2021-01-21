@@ -43,12 +43,12 @@ class SearchFragment:CommonSingleListFragment() {
         activity?.title = "Search"
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        activity?.let {
-            if(it is HomeActivity){
-                it.closeSearchBar()
-            }
-        }
-    }
+//    override fun onDestroy() {
+//        super.onDestroy()
+//        activity?.let {
+//            if(it is HomeActivity){
+//                it.closeSearchBarIfOpen()
+//            }
+//        }
+//    }
 }

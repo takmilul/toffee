@@ -35,8 +35,6 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.banglalink.toffee.R
-import com.banglalink.toffee.R.id
-import com.banglalink.toffee.R.xml
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
@@ -267,7 +265,7 @@ class HomeActivity :
     }
 
     fun showUploadDialog(): Boolean {
-        if (navController.currentDestination?.id == id.uploadMethodFragment) {
+        if (navController.currentDestination?.id == R.id.uploadMethodFragment) {
             navController.popBackStack()
             return true
         }
@@ -299,7 +297,7 @@ class HomeActivity :
     //                    }
     //                    return@launch
     //                }
-            navController.navigate(id.uploadMethodFragment)
+            navController.navigate(R.id.uploadMethodFragment)
         }
         return false
     }
@@ -405,6 +403,7 @@ class HomeActivity :
             if(binding.draggableView.isMaximized()) {
                 minimizePlayer()
             }
+            closeSearchBarIfOpen()
             binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
         }
 
@@ -837,7 +836,7 @@ class HomeActivity :
         sideNav?.let { themeMenu ->
             val isDarkEnabled = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
             
-            val parser: XmlPullParser = resources.getXml(xml.custom_switch)
+            val parser: XmlPullParser = resources.getXml(R.xml.custom_switch)
             var switch: View? = null
             try {
                 parser.next()
@@ -1004,14 +1003,14 @@ class HomeActivity :
             drawerHelper.toggle.isDrawerIndicatorEnabled = true
         }
         else if (supportFragmentManager.backStackEntryCount == 1) { //home
-            if (searchView != null && !searchView?.isIconified!!) {
-                searchView?.onActionViewCollapsed()
-            }
+            closeSearchBarIfOpen()
         }
     }
 
-    fun closeSearchBar() {
-        searchView?.onActionViewCollapsed()
+    fun closeSearchBarIfOpen() {
+        if(searchView?.isIconified == false) {
+            searchView?.onActionViewCollapsed()
+        }
     }
 
     override fun onBackPressed() {
@@ -1029,7 +1028,7 @@ class HomeActivity :
                 destroyPlayer()
             }
         } else if(searchView?.isIconified == false) {
-            closeSearchBar()
+            closeSearchBarIfOpen()
         }
 //        else if (supportFragmentManager.findFragmentById(R.id.content_viewer) is LandingPageFragment) {
 //            val landingPageFragment =

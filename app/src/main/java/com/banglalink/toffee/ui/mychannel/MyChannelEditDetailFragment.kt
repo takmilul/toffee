@@ -100,6 +100,10 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     }
     
     private fun observeEditChannel() {
+        observe(viewModel.exitFragment) {
+            Toast.makeText(requireContext(), "Unable to load data!", Toast.LENGTH_SHORT).show()
+            findNavController().popBackStack()
+        }
         observe(viewModel.liveData) {
             when (it) {
                 is Success -> {
