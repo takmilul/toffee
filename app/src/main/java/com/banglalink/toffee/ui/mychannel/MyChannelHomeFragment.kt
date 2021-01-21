@@ -111,6 +111,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
 
         observeChannelDetail()
         viewModel.getChannelDetail()
+        binding.channelDetailView.subscriptionButton.isEnabled = true
 
         binding.channelDetailView.addBioButton.safeClick(this)
         binding.channelDetailView.editButton.safeClick(this)
@@ -152,10 +153,14 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             }
             subscriptionButton -> {
                 if (isSubscribed == 0) {
+                    subscribeChannelViewModel.isButtonEnabled.value = false
+                    binding.channelDetailView.subscriptionButton.isEnabled = false
                     subscribeChannelViewModel.subscribe(channelId, 1, channelOwnerId)
                 }
                 else{
                     UnSubscribeDialog.show(requireContext()){
+                        subscribeChannelViewModel.isButtonEnabled.value = false
+                        binding.channelDetailView.subscriptionButton.isEnabled = false
                         subscribeChannelViewModel.subscribe(channelId, 0, channelOwnerId)
                     }
                 }
@@ -291,6 +296,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     
     private fun observeSubscribeChannel() {
         observe(subscribeChannelViewModel.liveData) {
+            binding.channelDetailView.subscriptionButton.isEnabled = true
             when (it) {
                 is Success -> {
                     isSubscribed = it.data.isSubscribed

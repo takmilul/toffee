@@ -4,24 +4,20 @@ package com.banglalink.toffee.ui.upload
 
 import android.os.Bundle
 import android.text.InputType
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.view.isVisible
 import androidx.core.view.setPadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
-import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.FragmentEditUploadInfoBinding
 import com.banglalink.toffee.di.AppCoroutineScope
@@ -38,9 +34,8 @@ import com.banglalink.toffee.util.UtilsKt
 import com.pchmn.materialchips.ChipsInput
 import com.pchmn.materialchips.model.ChipInterface
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collectLatest
-import net.gotev.uploadservice.UploadService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -323,8 +318,8 @@ class EditUploadInfoFragment: BaseFragment() {
 //    }
 
     private fun submitVideo() {
-        val title = binding.uploadTitle.text.toString()
-        val description = binding.uploadDescription.text.toString()
+        val title = binding.uploadTitle.text.toString().trim()
+        val description = binding.uploadDescription.text.toString().trim()
         if(title.isBlank()
             || description.isBlank()
             || viewModel.thumbnailData.value.isNullOrBlank()

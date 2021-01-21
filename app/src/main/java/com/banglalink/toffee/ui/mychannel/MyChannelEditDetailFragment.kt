@@ -17,6 +17,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.data.network.request.MyChannelEditRequest
 import com.banglalink.toffee.databinding.FragmentMyChannelEditDetailBinding
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.model.MyChannelDetail
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
@@ -61,10 +62,10 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         observeEditChannel()
         observeThumbnailChange()
 
-        binding.bannerEditButton.setOnClickListener(this)
-        binding.profileImageEditButton.setOnClickListener(this)
-        binding.cancelButton.setOnClickListener(this)
-        binding.saveButton.setOnClickListener(this)
+        binding.bannerEditButton.safeClick(this)
+        binding.profileImageEditButton.safeClick(this)
+        binding.cancelButton.safeClick(this)
+        binding.saveButton.safeClick(this)
     }
 
     private fun observeThumbnailChange() {
@@ -183,8 +184,8 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                     "",
                     0,
                     viewModel.selectedCategory?.id!!,
-                    binding.channelName.text.toString(),
-                    binding.description.text.toString(),
+                    binding.channelName.text.toString().trim(),
+                    binding.description.text.toString().trim(),
                     myChannelDetail?.bannerUrl ?: "NULL",
                     bannerBase64,
                     myChannelDetail?.profileUrl ?: "NULL",

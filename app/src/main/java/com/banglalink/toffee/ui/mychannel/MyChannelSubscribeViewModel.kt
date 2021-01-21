@@ -15,6 +15,8 @@ class MyChannelSubscribeViewModel @ViewModelInject constructor(private val apiSe
     private val _data = MutableLiveData<Resource<MyChannelSubscribeBean>>()
     val liveData = _data.toLiveData()
     
+    var isButtonEnabled = MutableLiveData<Boolean>()
+    
     fun subscribe(channelId: Int, subStatus: Int, channelOwnerId: Int){
         viewModelScope.launch { 
             _data.postValue(resultFromResponse { apiService.invoke(channelId, subStatus, channelOwnerId) })

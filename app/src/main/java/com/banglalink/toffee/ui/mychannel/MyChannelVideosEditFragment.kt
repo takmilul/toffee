@@ -145,8 +145,8 @@ class MyChannelVideosEditFragment : BaseFragment() {
     private fun submitVideo() {
         observeEditResponse()
         
-        val title = binding.uploadTitle.text.toString()
-        val description = binding.uploadDescription.text.toString()
+        val title = binding.uploadTitle.text.toString().trim()
+        val description = binding.uploadDescription.text.toString().trim()
         if (title.isBlank() || description.isBlank()) {
             context?.showToast("Missing required field", Toast.LENGTH_SHORT)
             return
