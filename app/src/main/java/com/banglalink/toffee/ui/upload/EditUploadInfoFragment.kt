@@ -150,7 +150,18 @@ class EditUploadInfoFragment: BaseFragment() {
         observeThumbnailChange()
         observeVideoDuration()
 
+        observeExitFragment()
+
         binding.uploadTitle.requestFocus()
+    }
+
+    private fun observeExitFragment() {
+        observe(viewModel.exitFragment) {
+            if(it) {
+                Toast.makeText(requireContext(), "Unable to load data.", Toast.LENGTH_SHORT).show()
+                findNavController().popBackStack()
+            }
+        }
     }
 
     private fun observeThumbnailLoad() {

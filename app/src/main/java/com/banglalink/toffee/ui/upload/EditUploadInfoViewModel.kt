@@ -17,10 +17,7 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.TUS_UPLOAD_SERVER_URL
 import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.model.UgcSubCategory
-import com.banglalink.toffee.util.Utils
-import com.banglalink.toffee.util.UtilsKt
-import com.banglalink.toffee.util.getError
-import com.banglalink.toffee.util.imagePathToBase64
+import com.banglalink.toffee.util.*
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -68,6 +65,8 @@ class EditUploadInfoViewModel @AssistedInject constructor(
     val durationData = MutableLiveData<Long>()
     val orientationData = MutableLiveData<Int>()
 
+    val exitFragment = SingleLiveEvent<Boolean>()
+
     private var fileName: String = ""
     private var actualFileName: String? = null
 
@@ -104,7 +103,17 @@ class EditUploadInfoViewModel @AssistedInject constructor(
         viewModelScope.launch {
             progressDialog.value = true
 
-            categories.value = categoryApi.loadData(0, 0)
+            categories.value = try {
+                categoryApi.loadData(0, 0)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                null
+            }
+            if(categories.value.isNullOrEmpty()) {
+                progressDialog.value = false
+                exitFragment.value = true
+                return@launch
+            }
 //            subCategories.value = subCategoryApi.loadData(0,0)
 
 //            val uploadId = preference.uploadId ?: ""

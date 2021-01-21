@@ -34,7 +34,11 @@ class AllChannelsViewModel @ViewModelInject constructor(
 
     operator fun invoke(subcategoryId: Int): Flow<List<TVChannelItem>> {
         viewModelScope.launch {
-            allChannelService(subcategoryId)
+            try {
+                allChannelService(subcategoryId)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
         }
         return tvChannelsRepo.getAllItems()
     }
