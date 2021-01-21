@@ -12,6 +12,8 @@
     
     <style name="PopupMenu" parent="@android:style/Widget.PopupMenu">
         <item name="android:popupBackground">@color/optionMenuColor</item>
+        <item name="android:popupElevation">2dp</item>
+        <item name="android:textColor">@color/cardTitleColor</item>
     </style>
     
     <style name="AppTheme.NoActionBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
@@ -22,7 +24,8 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowBackground">@color/window_background</item>
-<!--        <item name="popupMenuStyle">@style/PopupMenu</item>-->
+        <item name="popupMenuStyle">@style/PopupMenu</item>
+        <item name="android:textColor">@color/cardTitleColor</item>
     </style>
     
     <style name="TabTheme">
@@ -56,6 +59,8 @@
     
     
     <style name="toffeeButton" parent="@android:style/Widget.Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">30dp</item>
         <item name="android:background">@drawable/button_selector</item>
         <item name="android:textColor">@drawable/button1_text_selector</item>
         <item name="android:textStyle">bold</item>
@@ -63,6 +68,8 @@
     
     
     <style name="Button1Style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">30dp</item>
         <item name="android:layout_marginStart">8dp</item>
         <item name="android:background">@drawable/button_selector</item>
         <item name="android:gravity">center</item>
@@ -76,6 +83,8 @@
     </style>
     
     <style name="Button2Style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">30dp</item>
         <item name="android:layout_marginStart">8dp</item>
         <item name="android:background">@drawable/button2_selector</item>
         <item name="android:gravity">center</item>
@@ -260,22 +269,23 @@
     </style>
     
     <style name="ToffeeButtonStyle" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:textSize">@dimen/default_text_size</item>
         <item name="android:fontFamily">@font/roboto_bold</item>
         <item name="android:letterSpacing">0</item>
         <item name="cornerRadius">30dp</item>
         <item name="iconGravity">textStart</item>
         <item name="android:gravity">center</item>
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:paddingRight">12dp</item>
     </style>
     
     <style name="UploadButtonStyleV2" parent="ToffeeButtonStyle">
         <item name="backgroundTint">@color/colorAccent2</item>
-        <item name="android:paddingLeft">32dp</item>
         <item name="android:paddingTop">8dp</item>
-        <item name="android:paddingRight">32dp</item>
         <item name="android:paddingBottom">8dp</item>
         <item name="android:minWidth">170dp</item>
-        <item name="android:textSize">@dimen/default_text_size</item>
-        <item name="fontFamily">@font/roboto_bold</item>
         <item name="iconPadding">8dp</item>
         <item name="textAllCaps">true</item>
         <item name="iconTint">#ffffff</item>
@@ -284,16 +294,11 @@
     </style>
 
     <style name="UploadButtonStyleV2Ring" parent="ToffeeButtonStyle">
-<!--        <item name="backgroundTint">@color/screen_bg_white</item>-->
         <item name="strokeWidth">1dp</item>
         <item name="strokeColor">@color/button_bgcolor_pink</item>
-        <item name="android:paddingLeft">32dp</item>
         <item name="android:paddingTop">8dp</item>
-        <item name="android:paddingRight">32dp</item>
         <item name="android:paddingBottom">8dp</item>
         <item name="android:minWidth">170dp</item>
-        <item name="android:textSize">@dimen/default_text_size</item>
-        <item name="fontFamily">@font/roboto_bold</item>
         <item name="iconPadding">8dp</item>
         <item name="textAllCaps">true</item>
         <item name="iconTint">@color/colorAccent</item>
@@ -303,17 +308,11 @@
     
     <style name="ButtonStyleSolidPink" parent="ToffeeButtonStyle">
         <item name="backgroundTint">@color/button_bgcolor_pink</item>
-        <item name="android:paddingLeft">32dp</item>
-        <item name="android:paddingRight">32dp</item>
-        <item name="android:minWidth">110dp</item>
         <item name="android:textColor">#ffffff</item>
     </style>
     
     <style name="ButtonStyleSolidPurple" parent="ToffeeButtonStyle">
         <item name="backgroundTint">@color/button_bgcolor_purple</item>
-        <item name="android:paddingLeft">32dp</item>
-        <item name="android:paddingRight">32dp</item>
-        <item name="android:minWidth">110dp</item>
         <item name="android:textColor">#ffffff</item>
     </style>
     
@@ -321,9 +320,6 @@
         <item name="strokeWidth">1dp</item>
         <item name="rippleColor">@color/colorButtonSecondary</item>
         <item name="strokeColor">@color/button_bgcolor_purple</item>
-        <item name="android:paddingLeft">32dp</item>
-        <item name="android:paddingRight">32dp</item>
-        <item name="android:minWidth">110dp</item>
         <item name="android:textColor">@color/colorButtonSecondary</item>
     </style>
     
@@ -337,9 +333,6 @@
         <item name="strokeWidth">1dp</item>
         <item name="rippleColor">@color/colorAccent2</item>
         <item name="strokeColor">@color/button_bgcolor_pink</item>
-        <item name="android:paddingLeft">32dp</item>
-        <item name="android:paddingRight">32dp</item>
-        <item name="android:minWidth">110dp</item>
         <item name="android:textColor">@color/colorAccent</item>
     </style>
 
@@ -347,9 +340,6 @@
         <item name="strokeWidth">1dp</item>
         <item name="rippleColor">@color/colorAccent2</item>
         <item name="strokeColor">@android:color/white</item>
-        <item name="android:paddingLeft">32dp</item>
-        <item name="android:paddingRight">32dp</item>
-        <item name="android:minWidth">110dp</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
     
@@ -357,9 +347,6 @@
         <item name="strokeWidth">1dp</item>
         <item name="rippleColor">@color/darker_gray</item>
         <item name="strokeColor">@color/button_bgcolor_accent</item>
-        <item name="android:paddingLeft">32dp</item>
-        <item name="android:paddingRight">32dp</item>
-        <item name="android:minWidth">110dp</item>
         <item name="android:textColor">@color/colorButtonSecondary</item>
     </style>
     
@@ -396,17 +383,11 @@
         <item name="backgroundTint">@color/pink_to_white_color</item>
         <item name="strokeWidth">1dp</item>
         <item name="strokeColor">@color/pink_to_accent_color</item>
-        <item name="android:paddingLeft">32dp</item>
-        <item name="android:paddingRight">32dp</item>
-        <item name="android:minWidth">110dp</item>
     </style>
 
     <style name="BgToggleButtonStyleRingAccent" parent="ToffeeButtonStyle">
         <item name="strokeWidth">1dp</item>
         <item name="strokeColor">@color/accent_to_pink_color</item>
-        <item name="android:paddingLeft">32dp</item>
-        <item name="android:paddingRight">32dp</item>
-        <item name="android:minWidth">110dp</item>
     </style>
 
     <style name="ScrollBarStyle">

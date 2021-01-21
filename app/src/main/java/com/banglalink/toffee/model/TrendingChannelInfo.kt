@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class TrendingChannelInfo(
     val id: Long,
-    val subscriberCount: Long,
+    var subscriberCount: Long,
 
     @SerializedName("category_id")
     val categoryId: Long,
@@ -28,7 +28,7 @@ data class TrendingChannelInfo(
     @SerializedName("banner_url")
     val bannerUrl: String?,
 
-    val isSubscribed: Int,
+    var isSubscribed: Int,
     
     @SerializedName("user_id")
     val userId: Int,

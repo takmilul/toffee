@@ -8,7 +8,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,25 +18,14 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.extension.showToast
-import com.banglalink.toffee.extension.snack
-import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeActivity
-import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
-import com.banglalink.toffee.util.UtilsKt
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.upload_method_fragment.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import net.gotev.uploadservice.protocols.binary.BinaryUploadRequest
-import net.gotev.uploadservice.protocols.multipart.MultipartUploadRequest
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -109,7 +97,7 @@ class UploadMethodFragment : DialogFragment() {
                         Intent(
                             Intent.ACTION_PICK,
                             MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-                        ),
+                        ).setType("video/*"),
                         REQUEST_PICK_VIDEO
                     )
                 }

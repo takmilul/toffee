@@ -22,6 +22,7 @@ import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.enums.ActivityType
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.enums.Reaction.*
+import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Package
 import com.banglalink.toffee.model.UgcCategory
@@ -365,4 +366,9 @@ fun loadUnseenBgColor(view: CardView, isSeen: Boolean){
     if (!isSeen){
         view.setCardBackgroundColor(ContextCompat.getColor(view.context, R.color.unseenCardColor))
     }
+}
+
+@BindingAdapter("app:onSafeClick")
+fun  onSafeClick(view: View, listener: View.OnClickListener){
+    view.safeClick(listener)
 }

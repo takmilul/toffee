@@ -105,7 +105,7 @@ public class VelBoxFieldTextWatcher implements View.OnFocusChangeListener {
 
     private boolean isValid() {
         if (fieldType == FieldType.NAME_FIELD) {
-            return editText.getText().length() > validLength ? true : false;
+            return editText.getText().length() > validLength;
         } else return true;
     }
 }

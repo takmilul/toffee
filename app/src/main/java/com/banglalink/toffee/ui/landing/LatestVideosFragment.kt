@@ -281,7 +281,7 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
         chip.id = View.generateViewId()
 
         chip.chipBackgroundColor = chipColor
-        chip.chipStrokeColor = ColorStateList.valueOf(textColor)
+        chip.chipStrokeColor = createStateColor(intColor, textColor)
         chip.rippleColor = chipColor
         chip.setTextColor(createStateColor(Color.WHITE, textColor))
 

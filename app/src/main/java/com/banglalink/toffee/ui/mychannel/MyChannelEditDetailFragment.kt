@@ -3,6 +3,7 @@ package com.banglalink.toffee.ui.mychannel
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.Toast
@@ -164,10 +165,12 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         }
 
         when {
-            binding.channelName.text.isNullOrEmpty() -> {
+            binding.channelName.text.isNullOrBlank() -> {
+                binding.progressBar.visibility = GONE
                 Toast.makeText(requireContext(), "Please give a channel name", Toast.LENGTH_SHORT).show()
             }
             viewModel.selectedCategory?.id == null -> {
+                binding.progressBar.visibility = GONE
                 Toast.makeText(requireContext(), "Category is not selected", Toast.LENGTH_SHORT).show()
             }
             else -> {

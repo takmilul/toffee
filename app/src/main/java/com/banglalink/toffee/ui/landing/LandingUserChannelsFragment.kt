@@ -10,8 +10,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
-import com.banglalink.toffee.R.drawable
-import com.banglalink.toffee.R.string
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
@@ -20,9 +18,9 @@ import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.model.UgcUserChannelInfo
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
+import com.banglalink.toffee.ui.common.UnSubscribeDialog
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.home.UserChannelsListAdapter
-import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_landing_user_channels.*
 import kotlinx.coroutines.flow.collectLatest
@@ -65,20 +63,13 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
                     subscriptionViewModel.setSubscriptionStatus(info.id, 1, info.channelOwnerId)
                 }
                 else {
-                    VelBoxAlertDialogBuilder(
-                        requireContext(),
-                        text = getString(string.text_unsubscribe_title),
-                        icon = drawable.ic_unsubscribe_alert,
-                        positiveButtonTitle = "Unsubscribe",
-                        positiveButtonListener = {
-                            channelInfo = info.also { userChannelInfo ->
-                                userChannelInfo.isSubscribed = 0
-                                userChannelInfo.subscriberCount--
-                            }
-                            subscriptionViewModel.setSubscriptionStatus(info.id, 0, info.channelOwnerId)
-                            it?.dismiss()
+                    UnSubscribeDialog.show(requireContext()){
+                        channelInfo = info.also { userChannelInfo ->
+                            userChannelInfo.isSubscribed = 0
+                            userChannelInfo.subscriberCount--
                         }
-                    ).create().show()
+                        subscriptionViewModel.setSubscriptionStatus(info.id, 0, info.channelOwnerId)
+                    }
                 }
             }
         })

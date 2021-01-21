@@ -134,7 +134,7 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
         if (trimMode == TRIM_MODE_LINES) {
             if (text != null && lineEndIndex > 0) {
                 if (readMore) {
-                    val line = layout.lineCount
+                    val line = lineCount
                     if (line >= trimLines) {
                         return updateCollapsedText()
                     }

@@ -46,7 +46,7 @@
     <fragment
         android:id="@+id/menu_feed"
         android:name="com.banglalink.toffee.ui.home.LandingPageFragment"
-        android:label="Home">
+        android:label="Toffee">
 <!--        <action-->
 <!--            android:id="@+id/action_landingPageFragment_to_allCategoriesFragment"-->
 <!--            app:destination="@id/allCategoriesFragment" />-->
@@ -210,7 +210,7 @@
     <fragment
         android:id="@+id/earningsFragment"
         android:name="com.banglalink.toffee.ui.earnings.EarningsFragment"
-        android:label="EarningsFragment" >
+        android:label="Earnings" >
         <action
             android:id="@+id/action_earningsFragment_to_addNewPaymentMethodFragment"
             app:destination="@id/addNewPaymentMethodFragment" />
@@ -221,7 +221,7 @@
     <fragment
         android:id="@+id/addNewPaymentMethodFragment"
         android:name="com.banglalink.toffee.ui.earnings.AddNewPaymentMethodFragment"
-        android:label="fragment_add_new_payment_method"
+        android:label="Add Payment Method"
         tools:layout="@layout/fragment_add_new_payment_method" />
     <fragment
         android:id="@+id/reviewWithdrawalFragment"
@@ -328,7 +328,7 @@
     <fragment
         android:id="@+id/dramaSeriesFragment"
         android:name="com.banglalink.toffee.ui.category.drama.DramaSeriesFragment"
-        android:label="DramaSeriesFragment" >
+        android:label="{title}" >
         <argument
             android:name="title"
             app:argType="string"

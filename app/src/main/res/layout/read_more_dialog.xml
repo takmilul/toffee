@@ -8,13 +8,16 @@
     android:padding="10dp"
     android:layout_height="match_parent">
 
-
     <WebView
         android:id="@+id/webview"
         android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:isScrollContainer="true"
+        android:nestedScrollingEnabled="true"
+        android:overScrollMode="always"
+        android:scrollbars="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView8" />
@@ -40,6 +43,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/close_iv" />
-
-
+    
 </androidx.constraintlayout.widget.ConstraintLayout>

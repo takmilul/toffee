@@ -14,10 +14,10 @@ import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
+import com.banglalink.toffee.ui.common.UnSubscribeDialog
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.landing.LandingPopularChannelCallback
 import com.banglalink.toffee.ui.landing.UserChannelViewModel
-import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_landing_categories.*
 import kotlinx.android.synthetic.main.fragment_landing_user_channels.*
@@ -30,6 +30,7 @@ class TrendingChannelsListFragment : HomeBaseFragment() {
     private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
     private val viewModel by viewModels<TrendingChannelsListViewModel>()
     private val subscriptionViewModel by viewModels<UserChannelViewModel>()
+    private var trendingChannelInfo: TrendingChannelInfo? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,24 +49,25 @@ class TrendingChannelsListFragment : HomeBaseFragment() {
 
         mAdapter = TrendingChannelsListAdapter(object : LandingPopularChannelCallback<TrendingChannelInfo> {
             override fun onItemClicked(item: TrendingChannelInfo) {
-                landingPageViewModel.navigateToMyChannel(this@TrendingChannelsListFragment, item.id.toInt(), item.channelOwnerId, item.isSubscribed?:0)
+                landingPageViewModel.navigateToMyChannel(this@TrendingChannelsListFragment, item.id.toInt(), item.channelOwnerId, item.isSubscribed)
             }
 
             override fun onSubscribeButtonClicked(view: View, info: TrendingChannelInfo) {
-
                 if (info.isSubscribed == 0) {
+                    trendingChannelInfo = info.also {
+                        it.isSubscribed = 1
+                        it.subscriberCount++
+                    }
                     subscriptionViewModel.setSubscriptionStatus(info.id, 1, info.channelOwnerId)
                 }
                 else {
-                    VelBoxAlertDialogBuilder(
-                        requireContext(),
-                        text = getString(R.string.text_unsubscribe_title),
-                        positiveButtonTitle = "Unsubscribe",
-                        positiveButtonListener = {
-                            subscriptionViewModel.setSubscriptionStatus(info.id, 0, info.channelOwnerId)
-                            it?.dismiss()
+                    UnSubscribeDialog.show(requireContext()) {
+                        trendingChannelInfo = info.also {
+                            it.isSubscribed = 0
+                            it.subscriberCount--
                         }
-                    ).create().show()
+                        subscriptionViewModel.setSubscriptionStatus(info.id, 0, info.channelOwnerId)
+                    }
                 }
             }
         })
@@ -86,7 +88,7 @@ class TrendingChannelsListFragment : HomeBaseFragment() {
         }
 
         observe(subscriptionViewModel.subscriptionResponse) {
-            if(it is Resource.Success) mAdapter.refresh()
+            if(it is Resource.Success) mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, trendingChannelInfo)
             else requireContext().showToast("Failed to subscribe channel")
         }
     }

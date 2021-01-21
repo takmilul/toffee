@@ -103,7 +103,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
     }
 
     private fun createPlaylist() {
-        if (!createPlaylistViewModel.playlistName.isNullOrEmpty()) {
+        if (!createPlaylistViewModel.playlistName.isNullOrBlank()) {
             observeCreatePlaylist()
             createPlaylistViewModel.createPlaylist(isOwner, channelId)
         } else {

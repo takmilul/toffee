@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
@@ -171,19 +172,40 @@ class EditProfileActivity : BaseAppCompatActivity() {
     }
 
     private fun handleSaveButton(){
+        
+        /*val isValid = binding.profileForm?.fullName?.isValid(TITLE)
+        println("VALIDATION: $isValid")
+        Log.e("VALIDATION", "handleSaveButton: $isValid")
+        return*/
+        
         progressDialog.show()
-        observe(viewModel.updateProfile(binding.profileForm!!)){
-            progressDialog.dismiss()
-            when(it){
-                is Resource.Success->{
-                    showToast("Profile updated successfully")
-                    val intent = intent
-                    intent.putExtra(PROFILE_INFO,binding.profileForm)
-                    setResult(RESULT_OK, intent)
-                    finish()
+        binding.profileForm?.let {
+           
+            if (it.fullName.isBlank() && it.email.isBlank() && it.address.isBlank()){
+                progressDialog.hide()
+                Toast.makeText(this, "All fields are blank", Toast.LENGTH_SHORT).show()
+            }
+            else {
+                it.apply{
+                    fullName = fullName.trim()
+                    email = email.trim()
+                    address = address.trim()
                 }
-                is Resource.Failure->{
-                    showToast(it.error.msg)
+
+                observe(viewModel.updateProfile(it)) {
+                    progressDialog.dismiss()
+                    when (it) {
+                        is Resource.Success -> {
+                            showToast("Profile updated successfully")
+                            val intent = intent
+                            intent.putExtra(PROFILE_INFO, binding.profileForm)
+                            setResult(RESULT_OK, intent)
+                            finish()
+                        }
+                        is Resource.Failure -> {
+                            showToast(it.error.msg)
+                        }
+                    }
                 }
             }
         }

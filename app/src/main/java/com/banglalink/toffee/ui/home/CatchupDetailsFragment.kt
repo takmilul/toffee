@@ -14,14 +14,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.common.paging.ProviderIconCallback
-import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.ui.common.ContentReactionCallback
-import com.banglalink.toffee.ui.common.HomeBaseFragment
-import com.banglalink.toffee.ui.common.ReactionFragment
-import com.banglalink.toffee.ui.common.ReactionIconCallback
+import com.banglalink.toffee.ui.common.*
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.suke.widget.SwitchButton
@@ -78,7 +74,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
             detailsAdapter.notifyDataSetChanged()
         }
 
-        val customerId = Preference.getInstance().customerId
+        val customerId = mPref.customerId
         val isOwner = if (currentItem.channel_owner_id == customerId) 1 else 0
         val isPublic = if (currentItem.channel_owner_id == customerId) 0 else 1
         val channelId = currentItem.channel_owner_id.toLong()
@@ -100,7 +96,14 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
 
     override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
         super.onSubscribeButtonClicked(view, item)
-        viewModel.toggleSubscriptionStatus(item.id.toInt(), item.channel_owner_id)
+        if (viewModel.isChannelSubscribed.value == false) {
+            viewModel.toggleSubscriptionStatus(item.id.toInt(), item.channel_owner_id)
+        }
+        else{
+            UnSubscribeDialog.show(requireContext()){
+                viewModel.toggleSubscriptionStatus(item.id.toInt(), item.channel_owner_id)
+            }
+        }
     }
     
     private fun initAdapter() {
@@ -185,6 +188,10 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
         onOptionClicked(view, item)
     }
 
+    override fun hideShareMenuItem(hide: Boolean): Boolean {
+        return true
+    }
+    
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
 
     }

@@ -23,10 +23,12 @@ import com.banglalink.toffee.R.layout
 import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBinding
 import com.banglalink.toffee.databinding.FragmentMyChannelHomeBinding
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.model.MyChannelDetail
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
+import com.banglalink.toffee.ui.common.UnSubscribeDialog
 import com.banglalink.toffee.ui.common.ViewPagerAdapter
 import com.banglalink.toffee.util.bindButtonState
 import com.google.android.material.tabs.TabLayoutMediator
@@ -110,11 +112,11 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         observeChannelDetail()
         viewModel.getChannelDetail()
 
-        binding.channelDetailView.addBioButton.setOnClickListener(this)
-        binding.channelDetailView.editButton.setOnClickListener(this)
-        binding.channelDetailView.analyticsButton.setOnClickListener(this)
-        binding.channelDetailView.ratingButton.setOnClickListener(this)
-        binding.channelDetailView.subscriptionButton.setOnClickListener(this)
+        binding.channelDetailView.addBioButton.safeClick(this)
+        binding.channelDetailView.editButton.safeClick(this)
+        binding.channelDetailView.analyticsButton.safeClick(this)
+        binding.channelDetailView.ratingButton.safeClick(this)
+        binding.channelDetailView.subscriptionButton.safeClick(this)
     }
 
     override fun onClick(v: View?) {
@@ -148,7 +150,16 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                     Toast.makeText(requireContext(), "Please create channel first", Toast.LENGTH_SHORT).show()
                 }
             }
-            subscriptionButton -> subscribeChannelViewModel.subscribe(channelId, if (isSubscribed == 0) 1 else 0, channelOwnerId)
+            subscriptionButton -> {
+                if (isSubscribed == 0) {
+                    subscribeChannelViewModel.subscribe(channelId, 1, channelOwnerId)
+                }
+                else{
+                    UnSubscribeDialog.show(requireContext()){
+                        subscribeChannelViewModel.subscribe(channelId, 0, channelOwnerId)
+                    }
+                }
+            }
         }
     }
 
@@ -190,7 +201,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         }
         playlistBinding.viewModel = createPlaylistViewModel
         playlistBinding.createButton.setOnClickListener {
-            if (!createPlaylistViewModel.playlistName.isNullOrEmpty()) {
+            if (!createPlaylistViewModel.playlistName.isNullOrBlank()) {
                 observeCreatePlaylist()
                 createPlaylistViewModel.createPlaylist(isOwner, channelId)
                 createPlaylistViewModel.playlistName = null
@@ -285,13 +296,11 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                     isSubscribed = it.data.isSubscribed
                     binding.channelDetailView.subscriptionCountTextView.text = it.data.subscriberCount.toString()
                     binding.isSubscribed = isSubscribed
-                    Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
                 }
                 is Failure -> {
                     Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
                 }
             }
-
         }
     }
 
@@ -302,7 +311,6 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                     binding.myRating = myRating
                     bindButtonState(binding.channelDetailView.ratingButton, myRating > 0)
                     binding.channelDetailView.ratingCountTextView.text = it.data.ratingCount.toString()
-                    Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
                 }
                 is Failure -> {
                     Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()

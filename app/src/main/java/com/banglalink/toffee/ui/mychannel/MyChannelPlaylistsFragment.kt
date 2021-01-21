@@ -168,7 +168,7 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
         playlistBinding.dialogTitleTextView.text = "Edit Playlist"
         playlistBinding.createButton.text = "Save"
         playlistBinding.createButton.setOnClickListener {
-            if (!editPlaylistViewModel.playlistName.isNullOrEmpty()) {
+            if (!editPlaylistViewModel.playlistName.isNullOrBlank()) {
                 observeEditPlaylist()
                 editPlaylistViewModel.editPlaylist(playlistId, channelOwnerId, isOwner)
                 alertDialog.dismiss()

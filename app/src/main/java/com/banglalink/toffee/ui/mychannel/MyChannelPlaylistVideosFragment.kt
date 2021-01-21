@@ -182,9 +182,9 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
         if(item == currentItem || item.id == currentItem?.id) {
             return
         }
-        if (item.isApproved == 0) {
-            Toast.makeText(requireContext(), "Your video has not approved yet. Once it's approved, you can play the video", Toast.LENGTH_SHORT).show()
-        } else {
+//        if (item.isApproved == 0) {
+//            Toast.makeText(requireContext(), "Your video has not approved yet. Once it's approved, you can play the video", Toast.LENGTH_SHORT).show()
+//        } else {
             homeViewModel.addToPlayListMutableLiveData.postValue(
                 AddToPlaylistData(getPlaylistId(), mAdapter.snapshot().items)
             )
@@ -192,7 +192,7 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
                 playIndex = position
                 currentItem = item
             })
-        }
+//        }
     }
 
     override fun onOpenMenu(view: View, item: ChannelInfo) {
@@ -202,6 +202,9 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
                 inflate(R.menu.menu_delete_playlist_video)
                 setOnMenuItemClickListener {
                     when (it.itemId) {
+                        R.id.menu_share->{
+                            homeViewModel.shareContentLiveData.postValue(item)
+                        }
                         R.id.menu_delete_playlist_video -> {
                             observeDeletePlaylistVideo()
                             mViewModel.deletePlaylistVideo(requestParams.channelOwnerId, item.playlistContentId, requestParams.playlistId)
@@ -242,7 +245,7 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
             popupMenu.menu.getItem(0).title = "Remove from Favorites"
         }
 
-        popupMenu.menu.findItem(R.id.menu_share).isVisible = false
+        popupMenu.menu.findItem(R.id.menu_share).isVisible = true
         popupMenu.setOnMenuItemClickListener{
             when(it?.itemId){
                 R.id.menu_share->{

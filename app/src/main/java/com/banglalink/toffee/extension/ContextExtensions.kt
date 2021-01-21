@@ -3,6 +3,7 @@ package com.banglalink.toffee.extension
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.SystemClock
 import android.view.View
 import android.widget.Toast
 import androidx.constraintlayout.motion.widget.MotionLayout
@@ -59,6 +60,21 @@ fun MotionLayout.onTransitionCompletedListener(onCompleted:(transitionId: Int) -
 
         override fun onTransitionTrigger(motion: MotionLayout?, startId: Int, endId: Boolean, progress: Float) {
 
+        }
+    })
+}
+
+fun View.safeClick(action: View.OnClickListener, debounceTime: Long = 1000L) {
+    this.setOnClickListener(object : View.OnClickListener {
+        private var lastClickTime: Long = 0
+
+        override fun onClick(v: View) {
+            if (SystemClock.elapsedRealtime() - lastClickTime < debounceTime) {
+                return
+            }
+            else action.onClick(v)
+
+            lastClickTime = SystemClock.elapsedRealtime()
         }
     })
 }
