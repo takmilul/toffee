@@ -9,8 +9,9 @@ fun Snackbar.action(action: String, color: Int? = null, listener: (View) -> Unit
     color?.let { setActionTextColor(it) }
 }
 
-inline fun View.snack(message: String, length: Int = Snackbar.LENGTH_INDEFINITE, f: Snackbar.() -> Unit) {
-    val snack = Snackbar.make(this, message, length)
-    snack.f()
-    snack.show()
+inline fun View.snack(message: String, length: Int = Snackbar.LENGTH_INDEFINITE, f: Snackbar.() -> Unit): Snackbar {
+    return Snackbar.make(this, message, length).apply {
+        f()
+        show()
+    }
 }

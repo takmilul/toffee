@@ -36,7 +36,7 @@ suspend fun <T : BaseResponse> tryIO(block: suspend () -> Response<T>): T {
                it.status == 1 ->{//server suffered a serious error
 //                   ToffeeAnalytics.logApiError(it.apiName,it.errorMsg)
                    throw ApiException(
-                       it.status,
+                       it.errorCode,
                        it.errorMsg ?:"Something went wrong. Please try again later"
                    )
                }
@@ -71,7 +71,7 @@ suspend fun <T : BaseResponse> tryIO2(block: suspend () -> T): T {
         response.status == 1 ->{//server suffered a serious error
 //            ToffeeAnalytics.logApiError(response.apiName,response.errorMsg)
             throw ApiException(
-                response.status,
+                response.errorCode,
                 response.errorMsg ?:"Something went wrong. Please try again later"
             )
         }

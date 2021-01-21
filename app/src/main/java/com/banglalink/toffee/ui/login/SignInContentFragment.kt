@@ -30,15 +30,18 @@ import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.onTransitionCompletedListener
 import com.banglalink.toffee.extension.snack
 import com.banglalink.toffee.model.INVALID_REFERRAL_ERROR_CODE
+import com.banglalink.toffee.model.LOGIN_ERROR
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.TERMS_AND_CONDITION_URL
 import com.banglalink.toffee.ui.common.HtmlPageViewActivity
+import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.ui.widget.showAlertDialog
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.Credentials
 import com.google.android.gms.auth.api.credentials.HintRequest
+import com.google.android.material.snackbar.Snackbar
 
 private const val RESOLVE_HINT = 2
 
@@ -93,7 +96,12 @@ class SignInContentFragment : Fragment() {
         var phoneNo = binding.phoneNumberEt.text.toString()
 
         if (TextUtils.isEmpty(phoneNo)) {
-            showAlertDialog(requireContext(), getString(R.string.phone_no_required_title), "")
+            VelBoxAlertDialogBuilder(requireContext()).apply {
+                setText(R.string.phone_no_required_title)
+                setPositiveButtonListener("OK") {
+                    it?.dismiss()
+                }
+            }.create().show()
             return
         }
 
@@ -128,6 +136,9 @@ class SignInContentFragment : Fragment() {
                     when (it.error.code) {
                         INVALID_REFERRAL_ERROR_CODE -> {
                             showInvalidReferralCodeDialog(it.error.msg, it.error.additionalMsg)
+                        }
+                        LOGIN_ERROR -> {
+                            binding.root.snack(it.error.msg, Snackbar.LENGTH_LONG) {}
                         }
                         else -> {
                             binding.root.snack(it.error.msg) {
