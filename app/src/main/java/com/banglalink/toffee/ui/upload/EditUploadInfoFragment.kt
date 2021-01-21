@@ -150,7 +150,18 @@ class EditUploadInfoFragment: BaseFragment() {
         observeThumbnailChange()
         observeVideoDuration()
 
+        observeExitFragment()
+
         binding.uploadTitle.requestFocus()
+    }
+
+    private fun observeExitFragment() {
+        observe(viewModel.exitFragment) {
+            if(it) {
+                Toast.makeText(requireContext(), "Unable to load data.", Toast.LENGTH_SHORT).show()
+                findNavController().popBackStack()
+            }
+        }
     }
 
     private fun observeThumbnailLoad() {
@@ -223,10 +234,17 @@ class EditUploadInfoFragment: BaseFragment() {
         observe(viewModel.progressDialog) {
             when(it) {
                 true -> {
+                    if(progressDialog != null) {
+                        progressDialog?.dismiss()
+                        progressDialog = null
+                    }
                     progressDialog = VelBoxProgressDialog(requireContext())
                     progressDialog?.show()
                 }
-                false -> progressDialog?.dismiss()
+                false -> {
+                    progressDialog?.dismiss()
+                    progressDialog = null
+                }
             }
         }
     }
@@ -252,6 +270,7 @@ class EditUploadInfoFragment: BaseFragment() {
 //                            uploadRepo.updateUploadInfo(info)
 //                        }
                         progressDialog?.dismiss()
+                        progressDialog = null
 //                        val dialog = VelBoxAlertDialogBuilder(
 //                            requireContext(),
 //                            text = it.data.message,

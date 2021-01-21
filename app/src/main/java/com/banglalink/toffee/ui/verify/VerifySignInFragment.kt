@@ -23,6 +23,7 @@ import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.gms.auth.api.phone.SmsRetriever
+import com.google.android.material.snackbar.Snackbar
 
 class VerifySignInFragment : Fragment() {
     
@@ -116,11 +117,12 @@ class VerifySignInFragment : Fragment() {
                     }
                 }
                 is Resource.Failure -> {
-                    binding.root.snack(it.error.msg) {
-                        action("Retry") {
-                            verifyCode(binding.codeNumber.text.toString())
-                        }
-                    }
+                    binding.root.snack(it.error.msg, Snackbar.LENGTH_LONG){}
+//                    {
+//                        action("Retry") {
+//                            verifyCode(binding.codeNumber.text.toString())
+//                        }
+//                    }
                 }
             }
         }
