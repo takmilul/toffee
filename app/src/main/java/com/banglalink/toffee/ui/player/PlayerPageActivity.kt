@@ -23,6 +23,7 @@ import com.banglalink.toffee.listeners.PlaylistListener
 import com.banglalink.toffee.model.Channel
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.TOFFEE_HEADER
+import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.category.drama.EpisodeListFragment
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.home.CatchupDetailsFragment
@@ -92,6 +93,9 @@ abstract class PlayerPageActivity :
 
     @Inject
     lateinit var continueWatchingRepo: ContinueWatchingRepository
+
+    @Inject
+    lateinit var connectionWatcher: ConnectionWatcher
 
     init {
         defaultCookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER)
@@ -341,7 +345,7 @@ abstract class PlayerPageActivity :
     protected fun playChannel(isReload: Boolean) {
         val channelInfo = playlistManager.getCurrentChannel() ?: return
         val uri = if(channelInfo.isApproved == 1){
-            Channel.createChannel(channelInfo).getContentUri(this, mPref)
+            Channel.createChannel(channelInfo).getContentUri(this, mPref, connectionWatcher)
         }else{
             channelInfo.getHlsLink()
         }
@@ -416,7 +420,7 @@ abstract class PlayerPageActivity :
         mediaMetadata.putString( MediaMetadata.KEY_TITLE , info.program_name)
         mediaMetadata.addImage(WebImage(Uri.parse(info.landscape_ratio_1280_720)))
 
-        val channelUrl = Channel.createChannel(info).getContentUri(this, mPref)
+        val channelUrl = Channel.createChannel(info).getContentUri(this, mPref, connectionWatcher)
 
         val mediaInfo = if (info.isLive) {
             MediaInfo.Builder(channelUrl).apply {

@@ -289,7 +289,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
 
     protected void playChannel(boolean isReload) {
         ChannelInfo channelInfo = playlistManager.getCurrentChannel();
-        String uri = Channel.createChannel(channelInfo).getContentUri(this, mPref);
+        String uri = null;//Channel.createChannel(channelInfo).getContentUri(this, mPref);
         if(uri == null){//in this case settings does not allow us to play content. So stop player and trigger event viewing stop
             if(player!=null)
                 player.stop(true);

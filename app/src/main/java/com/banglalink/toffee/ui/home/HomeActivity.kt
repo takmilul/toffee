@@ -113,9 +113,6 @@ class HomeActivity :
     lateinit var notificationRepo: NotificationInfoRepository
 
     @Inject
-    lateinit var connectionWatcher: ConnectionWatcher
-
-    @Inject
     lateinit var uploadManager: UploadStateManager
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
