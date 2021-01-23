@@ -145,10 +145,7 @@ class HomeViewModel(application: Application):BaseViewModel(application),OnCompl
     fun sendViewContentEvent(channelInfo: ChannelInfo){
         viewModelScope.launch {
             try {
-                CoroutineScope(Dispatchers.IO).launch {
-                    sendViewContentEvent.execute(channelInfo)
-                }
-
+                sendViewContentEvent.execute(channelInfo)
             }catch (e:Exception){
                 e.printStackTrace()
             }

@@ -3,7 +3,6 @@ package com.banglalink.toffee.usecase
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.data.network.request.ViewingContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
-import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.ChannelDAO
 import com.banglalink.toffee.data.storage.ChannelDataModel
@@ -14,6 +13,10 @@ import com.banglalink.toffee.notification.VIEWCONTENT_TOPIC
 import com.banglalink.toffee.util.Utils
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import java.io.IOException
 
 class SendViewContentEvent(private val preference: Preference, private val toffeeApi: ToffeeApi,private val channelDAO: ChannelDAO) {
 
@@ -28,15 +31,17 @@ class SendViewContentEvent(private val preference: Preference, private val toffe
         saveToLocalDb(channel)
     }
 
-    private fun saveToLocalDb(channel: ChannelInfo){
-        val channelDataModel = ChannelDataModel().apply {
-            payLoad =  gson.toJson(channel)
-            channelId = channel.id.toInt()
-            type = channel.type
-            category = "history"
-        }
+    private suspend fun saveToLocalDb(channel: ChannelInfo) = coroutineScope{
+        launch (Dispatchers.IO){
+            val channelDataModel = ChannelDataModel().apply {
+                payLoad =  gson.toJson(channel)
+                channelId = channel.id.toInt()
+                type = channel.type
+                category = "history"
+            }
 
-        channelDAO.saveChannel(channelDataModel)
+            channelDAO.saveChannel(channelDataModel)
+        }
     }
 
     private fun sendToPubSub(contentId: Int,contentType: String){
