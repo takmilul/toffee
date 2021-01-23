@@ -135,7 +135,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
                 UtilsKt.generateThumbnail(appContext, uploadFileUri)
             }?.let {
                 it.first?.let { thumb->
-                    saveThumbnailToDb(thumb)
+                    thumbnailData.value = thumb
                 }
                 orientationData.value = it.second
             }
@@ -207,7 +207,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
     fun categoryIndexChanged(idx: Int) {
         categories.value?.getOrNull(idx)?.let {
             subCategories.value = it.subcategories
-            subCategoryPosition.value = 0
+//            subCategoryPosition.value = 1
         }
     }
 
@@ -253,19 +253,8 @@ class EditUploadInfoViewModel @AssistedInject constructor(
             val imageData = withContext(Dispatchers.Default + Job()) {
                 imagePathToBase64(appContext, uri)
             }
-            saveThumbnailToDb(imageData)
+            thumbnailData.value = imageData
         }
-    }
-
-    private fun saveThumbnailToDb(imageData: String) {
-//        val uploadId = preference.uploadId ?: ""
-//        uploadRepo.getUploadById(UtilsKt.stringToUploadId(uploadId))?.apply {
-//            thumbUri = imageData
-//        }?.also { info->
-//            uploadRepo.updateUploadInfo(info)
-//        }
-        Log.e("Thumbnail", imageData)
-        thumbnailData.value = imageData
     }
 
     private suspend fun startUpload(serverContentId: Long): String {

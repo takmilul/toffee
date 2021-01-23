@@ -4,10 +4,12 @@ package com.banglalink.toffee.ui.upload
 
 import android.os.Bundle
 import android.text.InputType
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.Toast
 import androidx.core.view.setPadding
 import androidx.databinding.DataBindingUtil
@@ -28,6 +30,7 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.model.UgcSubCategory
 import com.banglalink.toffee.ui.common.BaseFragment
+import com.banglalink.toffee.ui.widget.ToffeeSpinnerAdapter
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.UtilsKt
@@ -62,6 +65,8 @@ class EditUploadInfoFragment: BaseFragment() {
     }
 
     private val uploadProgressViewModel by activityViewModels<UploadProgressViewModel>()
+
+    private lateinit var mSubCategoryAdapter: ToffeeSpinnerAdapter<UgcSubCategory>
 
     companion object {
         const val UPLOAD_FILE_URI = "UPLOAD_FILE_URI"
@@ -102,18 +107,6 @@ class EditUploadInfoFragment: BaseFragment() {
         }
 
         binding.cancelButton.setOnClickListener {
-//            lifecycleScope.launch {
-//                if(UploadService.taskList.isNotEmpty()) {
-//                    UploadService.stopAllUploads()
-//                }
-//                getUploadInfo()?.apply {
-//                    status = UploadStatus.CANCELED.value
-//                }?.also {
-//                    uploadRepo.updateUploadInfo(it)
-//                }
-//                mPref.uploadId = null
-//                findNavController().popBackStack()
-//            }
             VelBoxAlertDialogBuilder(requireContext()).apply {
                 setTitle("Cancel Uploading")
                 setText("Are you sure that you want to\n" +
@@ -136,6 +129,8 @@ class EditUploadInfoFragment: BaseFragment() {
             val action = EditUploadInfoFragmentDirections.actionEditUploadInfoFragmentToThumbnailSelectionMethodFragment("Set Video Cover Photo")
             findNavController().navigate(action)
         }
+
+        setupSubcategorySpinner()
 
         setupTagView()
         observeStatus()
@@ -183,6 +178,39 @@ class EditUploadInfoFragment: BaseFragment() {
             })
     }
 
+    private fun setupSubcategorySpinner() {
+        mSubCategoryAdapter = ToffeeSpinnerAdapter(requireContext(), "Select Sub Category")
+        binding.subCategorySpinner.setPopupBackgroundResource(R.drawable.round_white_bg)
+        binding.subCategorySpinner.adapter = mSubCategoryAdapter
+        binding.subCategorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                if(position != 0 && viewModel.subCategoryPosition.value != position) {
+                    viewModel.subCategoryPosition.value = position
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+        }
+
+        observe(viewModel.subCategories) {
+            mSubCategoryAdapter.setData(it)
+            viewModel.subCategoryPosition.value = 1
+        }
+
+        observe(viewModel.subCategoryPosition) {
+            Log.e("SUBCATEGORY", "Subcategory position - >>>> $it")
+            mSubCategoryAdapter.selectedItemPosition = it
+            binding.subCategorySpinner.setSelection(it)
+        }
+    }
+
     private fun setupTagView() {
         with(binding.uploadTags.editText) {
             gravity = Gravity.START or Gravity.TOP
@@ -213,17 +241,6 @@ class EditUploadInfoFragment: BaseFragment() {
             }
         })
     }
-
-
-
-//    override fun onDestroy() {
-//        if(mPref.uploadId != null) {
-//            appScope.launch {
-//                saveInfo()
-//            }
-//        }
-//        super.onDestroy()
-//    }
 
     private fun observeProgressDialog() {
         observe(viewModel.progressDialog) {
@@ -287,35 +304,6 @@ class EditUploadInfoFragment: BaseFragment() {
             }
         }
     }
-
-//    private suspend fun getUploadInfo(): UploadInfo? {
-//        return mPref.uploadId?.let {
-//            uploadRepo.getUploadById(UtilsKt.stringToUploadId(it))
-//        }
-//    }
-
-//    private suspend fun saveInfo(): UploadInfo? {
-//        return getUploadInfo()?.apply {
-//            title = binding.uploadTitle.text.toString()
-//            description = binding.uploadDescription.text.toString()
-//
-//            tags = binding.uploadTags.selectedChipList.joinToString(" | ") { it.label }
-//            Log.e("TAG", "TAG - $tags, === ${binding.uploadTags.selectedChipList}")
-//
-//            ageGroupIndex = binding.ageGroupSpinner.selectedItemPosition
-//            ageGroup = binding.ageGroupSpinner.selectedItem.toString()
-//
-//            categoryIndex = binding.categorySpinner.selectedItemPosition
-//            category = binding.categorySpinner.selectedItem.toString()
-//
-////                submitToChallengeIndex = binding.challengeSelectionSpinner.selectedItemPosition
-////                submitToChallenge = binding.challengeSelectionSpinner.selectedItem.toString()
-//
-//            Log.e("UploadInfo", "$this")
-//        }?.also {
-//            uploadRepo.updateUploadInfo(it)
-//        }
-//    }
 
     private fun submitVideo() {
         val title = binding.uploadTitle.text.toString().trim()
