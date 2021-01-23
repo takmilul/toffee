@@ -15,7 +15,6 @@ import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.ChannelInfo
-import com.foxrentacar.foxpress.ui.common.MyBaseAdapter
 
 abstract class CommonSingleListFragment : HomeBaseFragment() {
 

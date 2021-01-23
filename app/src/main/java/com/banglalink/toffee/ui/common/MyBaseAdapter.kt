@@ -1,10 +1,11 @@
-package com.foxrentacar.foxpress.ui.common
+package com.banglalink.toffee.ui.common
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import android.view.LayoutInflater
+import com.foxrentacar.foxpress.ui.common.MyViewHolder
 
 
 abstract class MyBaseAdapter<T: Any>(val callback:(T)->Unit={}) : RecyclerView.Adapter<MyViewHolder>() {
