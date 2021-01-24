@@ -19,7 +19,7 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
+            android:layout_margin="8dp"
             app:cardCornerRadius="24dp"
             app:cardBackgroundColor="@color/cardBgColor">
 
@@ -90,22 +90,20 @@
                         <com.google.android.material.button.MaterialButton
                             android:id="@id/addButton"
                             style="@style/EditChannelStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
                             android:minWidth="0dp"
                             android:text=""
                             app:icon="@drawable/ic_upload_add"
                             app:iconTint="#829AB8"
                             app:iconSize="16dp"
+                            android:paddingStart="16dp"
                             android:layout_alignParentStart="true"/>
 
                         <Button
                             android:id="@+id/doneButton"
                             style="@style/ButtonStyleSolidPink"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
                             android:layout_marginStart="24dp"
                             android:text="Done"
+                            android:minWidth="64dp"
                             android:layout_alignParentEnd="true"/>
                     </RelativeLayout>
 

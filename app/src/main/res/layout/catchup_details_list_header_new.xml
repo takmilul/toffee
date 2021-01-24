@@ -296,6 +296,19 @@ Day 21 - AUS vs IND" />
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/program_name" />
 
+        <TextView
+            android:id="@+id/uploadTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textSize="@dimen/default_text_size"
+            android:textColor="@color/fixed_second_text_color"
+            android:text="@{data.formattedCreateTime()}"
+            android:fontFamily="@font/roboto_medium"
+            app:layout_constraintStart_toStartOf="@+id/circleImageView"
+            app:layout_constraintTop_toBottomOf="@+id/program_name"
+            tools:text="14h" />
+
         <androidx.constraintlayout.widget.Group
             android:id="@+id/channelDetailsGroup"
             android:layout_width="wrap_content"
@@ -336,6 +349,53 @@ Day 21 - AUS vs IND" />
             tools:text="Hello world!"
             tools:visibility="visible" />
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/relativeStatus"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintTop_toBottomOf="@id/cardView"
+            app:layout_constraintStart_toStartOf="@id/circleImageView"
+            app:layout_constraintEnd_toStartOf="@id/autoPlayText">
+
+            <TextView
+                android:id="@+id/bottom_panel_status"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Recommended"
+                android:visibility="gone"
+                style="@style/TitleBoldTextStyle"
+                app:layout_constraintVertical_bias="0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:text="Recommended"
+                tools:visibility="visible"/>
+
+            <RelativeLayout
+                android:id="@+id/seasonSpinnerWrap"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/single_line_input_text_height"
+                android:background="@drawable/spinner_bg_season"
+                android:visibility="gone"
+                android:gravity="center_vertical"
+                app:layout_constraintVertical_bias="0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:visibility="visible">
+
+                <Spinner
+                    android:id="@+id/seasonSpinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:entries='@{viewmodel != null ? viewmodel.seasonList : null}'
+                    android:selectedItemPosition="@{viewmodel != null ? viewmodel.selectedSeason : 0}" />
+
+            </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+            
         <TextView
             android:id="@+id/autoPlayText"
             android:layout_width="wrap_content"
@@ -345,22 +405,22 @@ Day 21 - AUS vs IND" />
             android:fontFamily="@font/roboto_medium"
             android:textColor="@color/fixed_second_text_color"
             android:textSize="@dimen/default_text_size"
-            app:layout_constraintTop_toTopOf="@id/autoPlaySwitch"
-            app:layout_constraintBottom_toBottomOf="@id/autoPlaySwitch"
+            app:layout_constraintTop_toTopOf="@id/relativeStatus"
+            app:layout_constraintBottom_toBottomOf="@id/relativeStatus"
             app:layout_constraintEnd_toStartOf="@id/autoPlaySwitch" />
-        
+
         <com.suke.widget.SwitchButton
             android:id="@+id/autoPlaySwitch"
             android:layout_width="36dp"
             android:layout_height="22dp"
-            android:layout_marginTop="16dp"
             app:sb_checked="true"
             app:sb_background="@color/switchUnCheckedColor"
             app:sb_checked_color="@color/colorAccent"
             app:sb_show_indicator="false"
             app:sb_uncheck_color="@color/switchUnCheckedColor"
             app:layout_constraintEnd_toEndOf="@+id/subscribe_button"
-            app:layout_constraintTop_toBottomOf="@+id/video_description"
+            app:layout_constraintTop_toTopOf="@id/autoPlayText"
+            app:layout_constraintBottom_toBottomOf="@id/autoPlayText"
             tools:visibility="visible" />
 
         <androidx.constraintlayout.widget.Group
@@ -370,56 +430,6 @@ Day 21 - AUS vs IND" />
             android:visibility="gone"
             tools:visibility="visible"
             app:constraint_referenced_ids="autoPlayText,autoPlaySwitch" />
-        
-        <TextView
-            android:id="@+id/bottom_panel_status"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:text="Recommended"
-            android:visibility="gone"
-            style="@style/TitleBoldTextStyle"
-            app:layout_constraintBottom_toBottomOf="@+id/autoPlayText"
-            app:layout_constraintEnd_toStartOf="@+id/autoPlayText"
-            app:layout_constraintStart_toStartOf="@+id/circleImageView"
-            app:layout_constraintTop_toTopOf="@+id/autoPlayText"
-            tools:text="Recommended"
-            tools:visibility="visible"/>
 
-        <TextView
-            android:id="@+id/uploadTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textSize="@dimen/default_text_size"
-            android:textColor="@color/fixed_second_text_color"
-            android:text="@{data.formattedCreateTime()}"
-            android:fontFamily="@font/roboto_medium"
-            app:layout_constraintStart_toStartOf="@+id/circleImageView"
-            app:layout_constraintTop_toBottomOf="@+id/program_name"
-            tools:text="14h" />
-
-        <RelativeLayout
-            android:id="@+id/seasonSpinnerWrap"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/spinner_bg_season"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/autoPlayText"
-            app:layout_constraintEnd_toStartOf="@+id/autoPlayText"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/circleImageView"
-            app:layout_constraintTop_toTopOf="@+id/autoPlayText"
-            tools:visibility="visible">
-
-            <Spinner
-                android:id="@+id/seasonSpinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:entries='@{viewmodel != null ? viewmodel.seasonList : null}'
-                android:selectedItemPosition="@{viewmodel != null ? viewmodel.selectedSeason : 0}" />
-        </RelativeLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </layout>

@@ -1,5 +1,6 @@
 package com.banglalink.toffee.extension
 
+import android.view.View
 import com.banglalink.toffee.enums.InputType
 import com.banglalink.toffee.enums.InputType.*
 
@@ -15,4 +16,12 @@ fun String.isValid(type: InputType): Boolean{
         ADDRESS -> ADDRESS_PATTERN.toRegex().matches(this)
         DESCRIPTION -> DESCRIPTION_PATTERN.toRegex().matches(this)
     }
+}
+
+fun View.show(){
+    this.visibility = View.VISIBLE
+}
+
+fun View.hide(){
+    this.visibility = View.GONE
 }

@@ -13,7 +13,6 @@ import android.widget.AdapterView
 import android.widget.Toast
 import androidx.core.view.setPadding
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -63,10 +62,6 @@ class EditUploadInfoFragment: BaseFragment() {
     private val viewModel: EditUploadInfoViewModel by viewModels {
         EditUploadInfoViewModel.provideFactory(editUploadViewModelFactory, uploadFileUri)
     }
-
-    private val uploadProgressViewModel by activityViewModels<UploadProgressViewModel>()
-
-    private lateinit var mSubCategoryAdapter: ToffeeSpinnerAdapter<UgcSubCategory>
 
     companion object {
         const val UPLOAD_FILE_URI = "UPLOAD_FILE_URI"
@@ -179,16 +174,10 @@ class EditUploadInfoFragment: BaseFragment() {
     }
 
     private fun setupSubcategorySpinner() {
-        mSubCategoryAdapter = ToffeeSpinnerAdapter(requireContext(), "Select Sub Category")
-        binding.subCategorySpinner.setPopupBackgroundResource(R.drawable.round_white_bg)
+        val mSubCategoryAdapter = ToffeeSpinnerAdapter<UgcSubCategory>(requireContext(), "Select Sub Category")
         binding.subCategorySpinner.adapter = mSubCategoryAdapter
         binding.subCategorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 if(position != 0 && viewModel.subCategoryPosition.value != position) {
                     viewModel.subCategoryPosition.value = position
                 }

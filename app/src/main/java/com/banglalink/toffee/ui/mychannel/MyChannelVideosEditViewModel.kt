@@ -57,7 +57,7 @@ class MyChannelVideosEditViewModel @ViewModelInject constructor(
     
     private val responseLiveData = MutableLiveData<Resource<UgcResponseBean>>()
     val editResponse = responseLiveData.toLiveData()
-    var isFirstLoad = true
+//    var isFirstLoad = true
 //    val challengeSelectionList = MutableLiveData<List<String>>()
 //    val challengeSelectionPosition = MutableLiveData<Int>()
 
@@ -104,12 +104,12 @@ class MyChannelVideosEditViewModel @ViewModelInject constructor(
     }
 
     fun categoryIndexChanged(idx: Int) {
-        if (!isFirstLoad) {
+//        if (!isFirstLoad) {
             categories.value?.getOrNull(idx)?.let {
                 subCategories.value = it.subcategories
-                subCategoryPosition.value = 0
+//                subCategoryPosition.value = 0
             }
-        }
-        isFirstLoad = false
+//        }
+//        isFirstLoad = false
     }
 }

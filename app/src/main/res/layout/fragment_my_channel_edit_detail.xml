@@ -192,6 +192,7 @@
                         android:id="@+id/categorySpinner"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:spinnerMode="dialog"
                         android:entries="@{viewModel.categories}"
                         android:onItemSelected="@{viewModel::onItemSelected}"
                         android:selectedItemPosition="@{viewModel.categories.indexOf(viewModel.selectedCategory.categoryName)}" />
@@ -224,7 +225,6 @@
                     android:layout_marginHorizontal="8dp"
                     android:layout_marginVertical="32dp"
                     android:text="Cancel"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/saveButton"
                     app:layout_constraintHorizontal_chainStyle="packed"
                     app:layout_constraintStart_toStartOf="parent"
