@@ -138,7 +138,7 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
                 super.onProviderIconClicked(item)
                 landingViewModel.navigateToMyChannel(this@MyChannelPlaylistVideosFragment, item.id.toInt(), item.channel_owner_id, item.isSubscribed)
             }
-        })
+        }, mPref)
         super.onViewCreated(view, savedInstanceState)
 
         observeListState()

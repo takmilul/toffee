@@ -122,7 +122,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
                 landingViewModel.navigateToMyChannel(this@CatchupDetailsFragment, item.id.toInt(), item.channel_owner_id, item.isSubscribed)
             }
         })
-        detailsAdapter = ChannelHeaderAdapter(currentItem, this)
+        detailsAdapter = ChannelHeaderAdapter(currentItem, this, mPref)
         mAdapter = ConcatAdapter(detailsAdapter, catchupAdapter.withLoadStateFooter(ListLoadStateAdapter{catchupAdapter.retry()}))
     }
 

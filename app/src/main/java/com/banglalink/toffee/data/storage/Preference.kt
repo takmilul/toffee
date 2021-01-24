@@ -282,6 +282,10 @@ class Preference(private val pref: SharedPreferences,
         get() = pref.getBoolean("enable-floating-window", true)
         set(value) = pref.edit { putBoolean("enable-floating-window", value) }
 
+    var isAutoplayForRecommendedVideos: Boolean
+        get() = pref.getBoolean("autoplay-for-recommended", true)
+        set(value) = pref.edit { putBoolean("autoplay-for-recommended", value) }
+
 //    var uploadUri: String?
 //        get() = pref.getString("toffee-upload-uri", null)
 //        set(value) = pref.edit { putString("toffee-upload-uri", value) }

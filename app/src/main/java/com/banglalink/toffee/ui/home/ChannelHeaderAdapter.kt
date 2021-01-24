@@ -13,16 +13,19 @@ import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
+import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.model.SeriesPlaybackInfo
 import com.banglalink.toffee.ui.category.drama.EpisodeListViewModel
 import com.banglalink.toffee.ui.common.ContentReactionCallback
 import com.banglalink.toffee.ui.common.SeriesHeaderCallback
+import com.suke.widget.SwitchButton
 
 class ChannelHeaderAdapter(private val headerData: Any? = null,
                            private val cb: ContentReactionCallback<ChannelInfo>? = null,
-                           private val viewModel: EpisodeListViewModel? = null
+                           private val mPref: Preference,
+                           private val viewModel: EpisodeListViewModel? = null,
 )
     :RecyclerView.Adapter<ChannelHeaderAdapter.HeaderViewHolder>() {
 
@@ -54,7 +57,7 @@ class ChannelHeaderAdapter(private val headerData: Any? = null,
         channelInfo?.let {
             holder.bind(it, cb, position, viewModel)
         }
-        holder.autoplaySwitch.visibility = View.VISIBLE
+        holder.autoplaySwitchGroup.visibility = View.VISIBLE
         holder.bottomPanelStatus.visibility = View.VISIBLE
         
         when (headerData) {
@@ -88,6 +91,10 @@ class ChannelHeaderAdapter(private val headerData: Any? = null,
             else -> {
                 holder.seasonInfoHeader.visibility = View.GONE
                 holder.seasonSpinnerWrap.visibility = View.GONE
+                holder.autoplaySwitch.isChecked = mPref.isAutoplayForRecommendedVideos
+                holder.autoplaySwitch.setOnCheckedChangeListener { _, isChecked ->
+                    mPref.isAutoplayForRecommendedVideos = isChecked
+                }
             }
         }
         /*holder.itemView.findViewById<TextView>(R.id.reactionButton)?.setOnLongClickListener {
@@ -106,7 +113,8 @@ class ChannelHeaderAdapter(private val headerData: Any? = null,
     }
 
     class HeaderViewHolder(private val binding: ViewDataBinding): RecyclerView.ViewHolder(binding.root) {
-        val autoplaySwitch: Group = binding.root.findViewById(R.id.autoplay_switch_group)
+        val autoplaySwitchGroup: Group = binding.root.findViewById(R.id.autoplay_switch_group)
+        val autoplaySwitch: SwitchButton = binding.root.findViewById(R.id.autoPlaySwitch)
         val bottomPanelStatus: TextView = binding.root.findViewById(R.id.bottom_panel_status)
         val seasonInfoHeader: TextView = binding.root.findViewById(R.id.seriesInfo)
         val seasonSpinner: Spinner = binding.root.findViewById(R.id.seasonSpinner)

@@ -171,7 +171,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
                     observeList(newSeason)
                 }
             }
-        }, mViewModel)
+        }, mPref, mViewModel)
     }
 
     private fun setupList() {
