@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.category
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,11 +16,13 @@ class CategoryDetailsFragment : BaseFragment() {
     companion object {
         const val ARG_CATEGORY_ITEM = "ARG_CATEGORY_ITEM"
         const val ARG_SUBCATEGORY_ITEM = "ARG_CATEGORY_ITEM"
+        const val ARG_TITLE = "title"
 
         fun newInstance(category: UgcCategory): CategoryDetailsFragment {
             return CategoryDetailsFragment().apply {
                 arguments = Bundle().also {
                     it.putParcelable(ARG_CATEGORY_ITEM, category)
+                    it.putString(ARG_TITLE, category.categoryName)
                 }
             }
         }
@@ -37,10 +40,5 @@ class CategoryDetailsFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         category = requireArguments().getParcelable(ARG_CATEGORY_ITEM)!!
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        activity?.title = category.categoryName
     }
 }

@@ -42,6 +42,7 @@ class LandingCategoriesFragment: BaseFragment() {
             override fun onItemClicked(item: UgcCategory) {
                 val args = Bundle().apply {
                     putParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM, item)
+                    putString(CategoryDetailsFragment.ARG_TITLE, item.categoryName)
                 }
                 when(item.id.toInt()) {
                     1 -> {

@@ -55,6 +55,7 @@ class UploadMethodFragment : DialogFragment() {
             STYLE_NORMAL,
             R.style.FullScreenDialogStyle
         )
+        activity?.title = "Upload"
     }
 
     override fun onCreateView(
