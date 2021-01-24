@@ -99,6 +99,11 @@ class EditUploadInfoFragment: BaseFragment() {
         return binding.root
     }
 
+    override fun onDestroyView() {
+        viewModel.tags.value = binding.uploadTags.selectedChipList.joinToString(" | ") { it.label }
+        super.onDestroyView()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -205,7 +210,6 @@ class EditUploadInfoFragment: BaseFragment() {
         }
 
         observe(viewModel.subCategoryPosition) {
-            Log.e("SUBCATEGORY", "Subcategory position - >>>> $it")
             mSubCategoryAdapter.selectedItemPosition = it
             binding.subCategorySpinner.setSelection(it)
         }
@@ -235,7 +239,9 @@ class EditUploadInfoFragment: BaseFragment() {
                 if (text?.endsWith(" ") == true) {
                     text.let {
                         val chipText = it.toString().trim().capitalize()
-                        binding.uploadTags.addChip(chipText, null)
+                        if(chipText.isNotEmpty()) {
+                            binding.uploadTags.addChip(chipText, null)
+                        }
                     }
                 }
             }
