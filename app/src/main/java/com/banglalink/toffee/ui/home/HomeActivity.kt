@@ -469,7 +469,9 @@ class HomeActivity :
          */
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             bottom_sheet.visibility = View.VISIBLE
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            if(playlistManager.getCurrentChannel()?.isLive == true) {
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            }
             binding.playerView.scaleX = 1f
             binding.playerView.scaleY = 1f
         } else {
