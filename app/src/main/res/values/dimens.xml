@@ -18,7 +18,7 @@
     <dimen name="design_fab_image_size" tools:override="true">13dp</dimen>
     //256 : 144
 
-    <dimen name="button_accent_width">120dp</dimen>
+    <dimen name="button_accent_width">140dp</dimen>
     <dimen name="button_accent_height">40dp</dimen>
     <dimen name="header_shadow_size">5dp</dimen>
     <dimen name="check_dimen">48dp</dimen>

@@ -12,10 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
-import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.model.UgcCategory
-import com.banglalink.toffee.model.UgcUserChannelInfo
+import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.common.UnSubscribeDialog
@@ -50,7 +47,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
 
         mAdapter = UserChannelsListAdapter(object : LandingPopularChannelCallback<UgcUserChannelInfo> {
             override fun onItemClicked(item: UgcUserChannelInfo) {
-                viewModel.navigateToMyChannel(this@LandingUserChannelsFragment, item.id.toInt(), item.channelOwnerId, item.isSubscribed?:0)
+                homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.id.toInt(), item.channelOwnerId, item.isSubscribed)
             }
 
             override fun onSubscribeButtonClicked(view: View, info: UgcUserChannelInfo) {

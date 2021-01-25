@@ -20,6 +20,7 @@ import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.Resource.Failure
@@ -136,7 +137,7 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
             
             override fun onProviderIconClicked(item: ChannelInfo) {
                 super.onProviderIconClicked(item)
-                landingViewModel.navigateToMyChannel(this@MyChannelPlaylistVideosFragment, item.id.toInt(), item.channel_owner_id, item.isSubscribed)
+                homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.id.toInt(), item.channel_owner_id, item.isSubscribed)
             }
         }, mPref)
         super.onViewCreated(view, savedInstanceState)
@@ -175,7 +176,7 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
 
     override fun onProviderIconClicked(item: ChannelInfo) {
         super.onProviderIconClicked(item)
-        landingViewModel.navigateToMyChannel(this, item.id.toInt(), item.channel_owner_id, item.isSubscribed)
+        homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.id.toInt(), item.channel_owner_id, item.isSubscribed)
     }
 
     override fun onItemClickAtPosition(position: Int, item: ChannelInfo) {

@@ -171,10 +171,12 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
 
         when {
             binding.channelName.text.isNullOrBlank() -> {
+                binding.saveButton.isClickable = true
                 binding.progressBar.visibility = GONE
                 Toast.makeText(requireContext(), "Please give a channel name", Toast.LENGTH_SHORT).show()
             }
             viewModel.selectedCategory?.id == null -> {
+                binding.saveButton.isClickable = true
                 binding.progressBar.visibility = GONE
                 Toast.makeText(requireContext(), "Category is not selected", Toast.LENGTH_SHORT).show()
             }

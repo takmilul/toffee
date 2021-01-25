@@ -6,9 +6,9 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.Toast
 import androidx.core.view.setPadding
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -22,8 +22,10 @@ import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.UgcSubCategory
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
+import com.banglalink.toffee.ui.widget.ToffeeSpinnerAdapter
 import com.pchmn.materialchips.ChipsInput
 import com.pchmn.materialchips.model.ChipInterface
 import dagger.hilt.android.AndroidEntryPoint
@@ -48,7 +50,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_my_channel_videos_edit, container, false)
+        binding = FragmentMyChannelVideosEditBinding.inflate(inflater)
         binding.setVariable(BR.viewmodel, viewModel)
         binding.lifecycleOwner = this
         return binding.root
@@ -58,6 +60,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         channelInfo = MyChannelVideosEditFragmentArgs.fromBundle(requireArguments()).channelInfo
         
+        setupSubcategorySpinner()
         setupTagView()
         observeThumbnailChange()
         observeCategory()
@@ -81,20 +84,46 @@ class MyChannelVideosEditFragment : BaseFragment() {
             if(categoryList.isNotEmpty()){
                 val selectedCategory = categoryList.find { it.id.toInt() == channelInfo?.categoryId }
                 val categoryIndex = categoryList.indexOf(selectedCategory).takeIf { it > 0 } ?: 0
-                val subCategories = categoryList[categoryIndex].subcategories
-                val selectedSubCategory = subCategories.find { it.id.toInt() == channelInfo?.subCategoryId }
-                val subCategoryIndex = subCategories.indexOf(selectedSubCategory).takeIf { it > 0 } ?: 0
+//                val subCategories = categoryList[categoryIndex].subcategories
+//                val selectedSubCategory = subCategories.find { it.id.toInt() == channelInfo?.subCategoryId }
+//                val subCategoryIndex = subCategories.indexOf(selectedSubCategory).takeIf { it > 0 } ?: 0
 
                 viewModel.title.value = channelInfo?.program_name
                 viewModel.description.value = channelInfo?.getDescriptionDecoded().toString()
                 viewModel.tags.value = channelInfo?.video_tags
                 viewModel.thumbnailUrl.value = channelInfo?.landscape_ratio_1280_720
-                viewModel.subCategories.value = subCategories
+//                viewModel.subCategories.value = subCategories
 
                 viewModel.categoryPosition.value = categoryIndex
-                viewModel.subCategoryPosition.value = subCategoryIndex
+//                viewModel.subCategoryPosition.value = subCategoryIndex
                 viewModel.ageGroupPosition.value = channelInfo?.age_restriction?.toInt()?:0
             }
+        }
+    }
+
+    private fun setupSubcategorySpinner() {
+        val mSubCategoryAdapter = ToffeeSpinnerAdapter<UgcSubCategory>(requireContext(), "Select Sub Category")
+        binding.subCategorySpinner.adapter = mSubCategoryAdapter
+        binding.subCategorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                if(position != 0 && viewModel.subCategoryPosition.value != position) {
+                    viewModel.subCategoryPosition.value = position
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+        }
+
+        observe(viewModel.subCategories) { subCategories ->
+            mSubCategoryAdapter.setData(subCategories)
+            viewModel.subCategoryPosition.value = subCategories.indexOf(subCategories.find { it.id.toInt() == channelInfo?.subCategoryId }).takeIf { it > 0 } ?: 1
+        }
+
+        observe(viewModel.subCategoryPosition) {
+            mSubCategoryAdapter.selectedItemPosition = it
+            binding.subCategorySpinner.setSelection(it)
         }
     }
 

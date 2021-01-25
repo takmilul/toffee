@@ -1,25 +1,19 @@
 package com.banglalink.toffee.ui.home
 
 import android.content.Context
-import android.os.Bundle
-import android.util.Log
 import android.util.Pair
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.banglalink.toffee.R
 import com.banglalink.toffee.apiservice.*
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
 import com.banglalink.toffee.data.network.request.ChannelRequestParams
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.repository.TVChannelRepository
-import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.enums.PageType.Landing
 import com.banglalink.toffee.extension.toLiveData
@@ -27,7 +21,6 @@ import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseViewModel
-import com.banglalink.toffee.ui.mychannel.MyChannelHomeFragment
 import com.banglalink.toffee.util.unsafeLazy
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -238,20 +231,6 @@ class LandingPageViewModel @ViewModelInject constructor(
                     CatchupParams("null", selectedHashTag.value)
                 )
             )
-        })
-    }
-    
-    fun navigateToMyChannel(fragment: Fragment, channelId: Int, channelOwnerId: Int, isSubscribed: Int){
-        val customerId = Preference.getInstance().customerId
-        val isOwner = if (channelOwnerId == customerId) 1 else 0
-        val isPublic = if (channelOwnerId == customerId) 0 else 1
-        findNavController(fragment).navigate(R.id.myChannelHomeFragment, Bundle().apply {
-            putInt(MyChannelHomeFragment.IS_SUBSCRIBED, isSubscribed)
-            Log.i("UGC_Home", "onItemClicked: $isSubscribed")
-            putInt(MyChannelHomeFragment.IS_OWNER, isOwner)
-            putInt(MyChannelHomeFragment.CHANNEL_ID, channelId)
-            putInt(MyChannelHomeFragment.IS_PUBLIC, isPublic)
-            putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, channelOwnerId)
         })
     }
 }

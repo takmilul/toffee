@@ -19,7 +19,6 @@ import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.landing.LandingPopularChannelCallback
 import com.banglalink.toffee.ui.landing.UserChannelViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_landing_categories.*
 import kotlinx.android.synthetic.main.fragment_landing_user_channels.*
 import kotlinx.coroutines.flow.collectLatest
 
@@ -49,7 +48,7 @@ class TrendingChannelsListFragment : HomeBaseFragment() {
 
         mAdapter = TrendingChannelsListAdapter(object : LandingPopularChannelCallback<TrendingChannelInfo> {
             override fun onItemClicked(item: TrendingChannelInfo) {
-                landingPageViewModel.navigateToMyChannel(this@TrendingChannelsListFragment, item.id.toInt(), item.channelOwnerId, item.isSubscribed)
+                homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.id.toInt(), item.channelOwnerId, item.isSubscribed)
             }
 
             override fun onSubscribeButtonClicked(view: View, info: TrendingChannelInfo) {

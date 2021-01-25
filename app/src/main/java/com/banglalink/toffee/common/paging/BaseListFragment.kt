@@ -11,6 +11,8 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.databinding.FragmentBaseSingleListBinding
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import kotlinx.coroutines.flow.collectLatest
@@ -40,9 +42,7 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
         }
 
         setEmptyView()
-
         setupListView()
-
         observeList()
     }
 
@@ -64,7 +64,7 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
             binding.emptyViewIcon.setImageResource(info.first)
         }
         else {
-            binding.emptyViewIcon.visibility = View.GONE
+            binding.emptyViewIcon.hide()
         }
 
         info.second?.let {
@@ -84,9 +84,9 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
 
             mAdapter.addLoadStateListener {
                 if(it.source.refresh is LoadState.Loading) {
-                    binding.progressBar.visibility = View.VISIBLE
+                    binding.progressBar.show()
                 } else {
-                    binding.progressBar.visibility = View.GONE
+                    binding.progressBar.hide()
                 }
 
                 mAdapter.apply {

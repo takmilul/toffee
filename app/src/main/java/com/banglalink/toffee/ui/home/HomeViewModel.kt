@@ -14,25 +14,29 @@ import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.data.storage.ViewCountDAO
 import com.banglalink.toffee.di.AppCoroutineScope
-import com.banglalink.toffee.model.*
+import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.MyChannelNavParams
+import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.player.PlaylistManager
+import com.banglalink.toffee.usecase.DownloadViewCountDb
+import com.banglalink.toffee.usecase.GetContentFromShareableUrl
+import com.banglalink.toffee.usecase.SendViewContentEvent
+import com.banglalink.toffee.usecase.SetFcmToken
+import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.getError
+import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
-import com.google.firebase.iid.InstanceIdResult
-import kotlinx.coroutines.launch
-import java.lang.Exception
-import com.banglalink.toffee.usecase.*
-import com.banglalink.toffee.util.SingleLiveEvent
-import com.banglalink.toffee.util.unsafeLazy
 import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.iid.InstanceIdResult
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class HomeViewModel @ViewModelInject constructor(
@@ -54,6 +58,7 @@ class HomeViewModel @ViewModelInject constructor(
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val viewAllVideoLiveData = MutableLiveData<Boolean>()
     val viewAllCategories = MutableLiveData<Boolean>()
+    val myChannelNavLiveData = MutableLiveData<MyChannelNavParams>()
 
     private var _playlistManager = PlaylistManager()
 

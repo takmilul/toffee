@@ -283,9 +283,7 @@
                     android:id="@+id/subCategorySpinner"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:spinnerMode="dialog"
-                    android:entries="@{viewmodel.subCategories}"
-                    android:selectedItemPosition="@={viewmodel.subCategoryPosition}"/>
+                    android:spinnerMode="dialog"/>
             </RelativeLayout>
 <!--
 

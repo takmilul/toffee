@@ -46,7 +46,7 @@
     <ConstraintSet android:id="@+id/start">
         <Constraint
             android:id="@+id/resend"
-            android:layout_width="200dp"
+            android:layout_width="@dimen/button_accent_width"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             motion:layout_constraintEnd_toEndOf="parent"
@@ -64,7 +64,7 @@
             android:id="@+id/text_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="80dp"
+            android:layout_marginTop="32dp"
             motion:layout_constraintVertical_bias="0.3"
             motion:layout_constraintTop_toTopOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
@@ -80,9 +80,18 @@
             motion:layout_constraintEnd_toEndOf="@id/text_tv" />
 
         <Constraint
+            android:id="@+id/countdown_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            motion:layout_constraintStart_toStartOf="@id/text_tv"
+            motion:layout_constraintEnd_toEndOf="@id/text_tv"
+            motion:layout_constraintTop_toBottomOf="@+id/code_number"/>
+
+        <Constraint
             android:id="@+id/resend"
             style="@style/BgToggleButtonStyleRingAccent"
-            android:layout_width="200dp"
+            android:layout_width="@dimen/button_accent_width"
             android:layout_marginTop="16dp"
             motion:layout_constraintTop_toBottomOf="@id/code_number"
             motion:layout_constraintStart_toStartOf="@id/text_tv"
@@ -97,25 +106,16 @@
             style="@style/ButtonStyleSolidPink"
             android:layout_width="@dimen/button_accent_width"
             android:layout_marginTop="16dp"
-            motion:layout_constraintTop_toBottomOf="@+id/resend"
+            motion:layout_constraintTop_toBottomOf="@+id/countdown_tv"
             motion:layout_constraintStart_toStartOf="@id/text_tv"
             motion:layout_constraintEnd_toEndOf="@id/text_tv" />
-
-        <Constraint
-            android:id="@+id/countdown_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            motion:layout_constraintStart_toStartOf="@id/text_tv"
-            motion:layout_constraintEnd_toEndOf="@id/text_tv"
-            motion:layout_constraintTop_toBottomOf="@+id/confirm_btn"/>
 
         <Constraint
             android:id="@+id/backButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            motion:layout_constraintTop_toBottomOf="@id/countdown_tv"
+            motion:layout_constraintTop_toBottomOf="@id/confirm_btn"
             motion:layout_constraintStart_toStartOf="@id/text_tv"
             motion:layout_constraintEnd_toEndOf="@id/text_tv" />
 

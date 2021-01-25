@@ -45,12 +45,12 @@ import com.banglalink.toffee.extension.loadProfileImage
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.*
-import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.category.drama.EpisodeListFragment
 import com.banglalink.toffee.ui.channels.AllChannelsViewModel
 import com.banglalink.toffee.ui.channels.ChannelFragment
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.ui.landing.AllCategoriesFragment
+import com.banglalink.toffee.ui.mychannel.MyChannelHomeFragment
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
 import com.banglalink.toffee.ui.player.PlayerPageActivity
 import com.banglalink.toffee.ui.player.PlaylistItem
@@ -58,7 +58,6 @@ import com.banglalink.toffee.ui.player.PlaylistManager
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.splash.SplashScreenActivity
 import com.banglalink.toffee.ui.subscription.PackageListActivity
-import com.banglalink.toffee.ui.upload.TusUploadRequest
 import com.banglalink.toffee.ui.upload.UploadProgressViewModel
 import com.banglalink.toffee.ui.upload.UploadStateManager
 import com.banglalink.toffee.ui.upload.UploadStatus
@@ -115,6 +114,7 @@ class HomeActivity :
     @Inject
     lateinit var uploadManager: UploadStateManager
 
+    private var channelId: Int = 0
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private var notificationBadge: View? = null
     private var searchView: SearchView? = null
@@ -259,6 +259,7 @@ class HomeActivity :
         configureBottomSheet()
         observeUpload2()
         watchConnectionChange()
+        observeMyChannelNavigation()
     }
 
     fun showUploadDialog(): Boolean {
@@ -1224,6 +1225,26 @@ class HomeActivity :
                 } else {
                     home_mini_progress_container.isVisible = false
                 }
+            }
+        }
+    }
+    
+    private fun observeMyChannelNavigation(){
+        observe(viewModel.myChannelNavLiveData) {
+            val customerId = mPref.customerId
+            val isOwner = if (it.channelOwnerId == customerId) 1 else 0
+            val isPublic = if (it.channelOwnerId == customerId) 0 else 1
+
+            if (navController.currentDestination?.id != R.id.myChannelHomeFragment || channelId != it.channelId) {
+                channelId = it.channelId
+                navController.navigate(R.id.myChannelHomeFragment, Bundle().apply {
+                    putInt(MyChannelHomeFragment.IS_SUBSCRIBED, it.isSubscribed)
+                    putInt(MyChannelHomeFragment.IS_OWNER, isOwner)
+                    putInt(MyChannelHomeFragment.CHANNEL_ID, it.channelId)
+                    putInt(MyChannelHomeFragment.IS_PUBLIC, isPublic)
+                    putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, it.channelOwnerId)
+                    putString(MyChannelHomeFragment.PAGE_TITLE, it.pageTitle)
+                })
             }
         }
     }
