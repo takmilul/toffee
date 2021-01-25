@@ -63,6 +63,7 @@
             android:gravity="center"
             android:ems="10"
             android:maxLines="1"
+            android:singleLine="true"
             android:textSize="@dimen/default_text_size"
             android:hint="@string/redeem_code_txt"
             android:textColor="@color/cardTitleColor"

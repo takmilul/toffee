@@ -72,7 +72,7 @@
     <color name="dark_green">#58DC3F</color>
     <color name="light_green">#8BC34A</color>
     <color name="accent_green">#C5E1A5</color>
-    <color name="overlay_dark_color">#231F20</color>
+    <color name="overlay_dark_color">#80231F20</color>
     <color name="purple">#34C9B5</color>
     <color name="scrollbarTrackColor">#33000000</color>
     <color name="cardOverlayColor">#FFFFFFFF</color>

@@ -36,7 +36,6 @@ import com.banglalink.toffee.model.TERMS_AND_CONDITION_URL
 import com.banglalink.toffee.ui.common.HtmlPageViewActivity
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
-import com.banglalink.toffee.ui.widget.showAlertDialog
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.Credentials
@@ -93,7 +92,7 @@ class SignInContentFragment : Fragment() {
     }
 
     private fun handleLogin() {
-        var phoneNo = binding.phoneNumberEt.text.toString()
+        var phoneNo = binding.phoneNumberEt.text.toString().trim()
 
         if (TextUtils.isEmpty(phoneNo)) {
             VelBoxAlertDialogBuilder(requireContext()).apply {
@@ -117,12 +116,12 @@ class SignInContentFragment : Fragment() {
         binding.phoneNumberEt.setText(phoneNo)
         binding.phoneNumberEt.setSelection(phoneNo.length)
         
-        observe(viewModel.signIn(phoneNo, binding.refCodeEt.text.toString())) {
+        observe(viewModel.signIn(phoneNo, binding.refCodeEt.text.toString().trim())) {
             progressDialog.dismiss()
             when (it) {
                 is Resource.Success -> {
-                    phoneNumber = binding.phoneNumberEt.text.toString()
-                    referralCode = binding.refCodeEt.text.toString()
+                    phoneNumber = binding.phoneNumberEt.text.toString().trim()
+                    referralCode = binding.refCodeEt.text.toString().trim()
                     regSessionToken = it.data
 
                     binding.signInContentMotionLayout.onTransitionCompletedListener {
@@ -164,8 +163,7 @@ class SignInContentFragment : Fragment() {
             ?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         alertDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-
+        
         if ("USED".equals(referralStatus, ignoreCase = true)) {
             alertView.findViewById<View>(R.id.retry_btn).visibility = View.GONE
             (alertView.findViewById<View>(R.id.continue_btn) as Button).text =
@@ -215,7 +213,6 @@ class SignInContentFragment : Fragment() {
 
         binding.termsAndConditionsTv.text = ss
         binding.termsAndConditionsTv.movementMethod = LinkMovementMethod.getInstance()
-
     }
 
     private fun getHintPhoneNumber() {
@@ -229,7 +226,6 @@ class SignInContentFragment : Fragment() {
             ToffeeAnalytics.logException(e)
             ToffeeAnalytics.logBreadCrumb("Could not retrieve phone number")
         }
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

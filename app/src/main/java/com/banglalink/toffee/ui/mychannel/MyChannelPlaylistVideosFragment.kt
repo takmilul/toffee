@@ -208,7 +208,7 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
                         }
                         R.id.menu_delete_playlist_video -> {
                             observeDeletePlaylistVideo()
-                            mViewModel.deletePlaylistVideo(requestParams.channelOwnerId, item.playlistContentId, requestParams.playlistId)
+                            mViewModel.deletePlaylistVideo(requestParams.channelOwnerId, item.id.toInt(), requestParams.playlistId)
                             mViewModel.insertActivity(item, Reaction.Delete.value)
                         }
                     }
