@@ -541,11 +541,12 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
         if(channelInfo is ChannelInfo) {
             isVideoPortrait = channelInfo.is_horizontal != 1
 
-            if(isFullScreenPortrait()) {
-                onPlayerControllerChangedListeners.forEach {
-                    it.onFullScreenButtonPressed()
-                }
-            }
+//            if(isFullScreenPortrait()) {
+//                Log.e("ORIENTATION", "fullScreen from mediatransition")
+//                onPlayerControllerChangedListeners.forEach {
+//                    it.onFullScreenButtonPressed()
+//                }
+//            }
             resizeView(UtilsKt.getRealScreenSize(context))
 //            if(isVideoPortrait && simpleExoPlayer is SimpleExoPlayer) {
 //                (simpleExoPlayer as SimpleExoPlayer).videoScalingMode = Renderer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
