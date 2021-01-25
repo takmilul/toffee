@@ -541,7 +541,7 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
         if(channelInfo is ChannelInfo) {
             isVideoPortrait = channelInfo.is_horizontal != 1
 
-            if(isFullScreenPortrait()) {
+            if(isVideoPortrait && isFullScreenPortrait()) {
                 onPlayerControllerChangedListeners.forEach {
                     it.onFullScreenButtonPressed()
                 }
