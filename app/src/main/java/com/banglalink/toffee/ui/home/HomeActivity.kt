@@ -469,6 +469,7 @@ class HomeActivity :
          */
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             bottom_sheet.visibility = View.VISIBLE
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             binding.playerView.scaleX = 1f
             binding.playerView.scaleY = 1f
         } else {
@@ -919,7 +920,12 @@ class HomeActivity :
     }
 
     override fun onControllerInVisible() {
-        if(bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
+        if(bottomSheetBehavior.state == BottomSheetBehavior.STATE_DRAGGING ||
+            bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED
+                ) {
+
+        }
+        else if(bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
     }
