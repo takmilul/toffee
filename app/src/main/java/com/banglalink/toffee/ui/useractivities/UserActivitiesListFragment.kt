@@ -12,6 +12,7 @@ import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.data.database.entities.UserActivities
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -59,12 +60,12 @@ class UserActivitiesListFragment: BaseListFragment<UserActivities>(),
 
     override fun onProviderIconClicked(item: UserActivities) {
         super.onProviderIconClicked(item)
-        landingPageViewModel.navigateToMyChannel(this, item.id.toInt(), item.channelInfo?.channel_owner_id?:0, item.channelInfo?.isSubscribed?:0)
+        homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.id.toInt(), item.channelInfo?.channel_owner_id?:0, item.channelInfo?.isSubscribed?:0)
     }
 
     private fun observeChannelDetail() {
         observe(mViewModel.myChannelDetail){
-            landingPageViewModel.navigateToMyChannel(this, it.myChannelDetail?.id?.toInt()?:0, it.channelOwnerId, it.isSubscribed)
+            homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(it.myChannelDetail?.id?.toInt()?:0, it.channelOwnerId, it.isSubscribed)
         }
     }
 

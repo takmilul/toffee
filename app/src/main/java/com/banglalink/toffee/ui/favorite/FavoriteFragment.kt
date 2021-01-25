@@ -10,6 +10,7 @@ import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.home.LandingPageViewModel
@@ -34,7 +35,7 @@ class FavoriteFragment : BaseListFragment<ChannelInfo>(), ProviderIconCallback<C
 
     override fun onProviderIconClicked(item: ChannelInfo) {
         super.onProviderIconClicked(item)
-        landingPageViewModel.navigateToMyChannel(this, item.id.toInt(), item.channel_owner_id, item.isSubscribed)
+        homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.id.toInt(), item.channel_owner_id, item.isSubscribed)
     }
 
     override fun onOpenMenu(view: View, item: ChannelInfo) {

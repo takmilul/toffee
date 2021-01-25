@@ -26,6 +26,7 @@ import com.banglalink.toffee.enums.FilterContentType.*
 import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.model.UgcCategory
@@ -221,7 +222,7 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
 
     override fun onProviderIconClicked(item: ChannelInfo) {
         super.onProviderIconClicked(item)
-        viewModel.navigateToMyChannel(this, item.id.toInt(), item.channel_owner_id, item.isSubscribed)
+        homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.id.toInt(), item.channel_owner_id, item.isSubscribed)
     }
     
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {

@@ -68,6 +68,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         const val CHANNEL_ID = "channelId"
         const val IS_PUBLIC = "isPublic"
         const val CHANNEL_OWNER_ID = "channelOwnerId"
+        const val PAGE_TITLE = "title"
 
         fun newInstance(isSubscribed: Int, isOwner: Int, channelId: Int, channelOwnerId: Int, isPublic: Int): MyChannelHomeFragment {
             val instance = MyChannelHomeFragment()

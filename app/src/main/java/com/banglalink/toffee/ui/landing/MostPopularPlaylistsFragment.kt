@@ -11,6 +11,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.MyChannelPlaylist
 import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.ui.category.CategoryDetailsFragmentDirections
@@ -65,7 +66,7 @@ class MostPopularPlaylistsFragment: HomeBaseFragment(), ProviderIconCallback<MyC
 
     override fun onProviderIconClicked(item: MyChannelPlaylist) {
         super.onProviderIconClicked(item)
-        viewModel.navigateToMyChannel(this, item.id, item.channelCreatorId, 0)
+        homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.id, item.channelCreatorId, 0)
     }
     
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {

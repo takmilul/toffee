@@ -390,6 +390,7 @@ Day 21 - AUS vs IND" />
                     android:id="@+id/seasonSpinner"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:spinnerMode="dialog"
                     android:entries='@{viewmodel != null ? viewmodel.seasonList : null}'
                     android:selectedItemPosition="@{viewmodel != null ? viewmodel.selectedSeason : 0}" />
 

@@ -180,7 +180,11 @@
     <fragment
         android:id="@+id/myChannelHomeFragment"
         android:name="com.banglalink.toffee.ui.mychannel.MyChannelHomeFragment"
-        android:label="My Channel" >
+        android:label="{title}" >
+        <argument
+            android:name="title"
+            app:argType="string"
+            android:defaultValue="Channel" />
         <action
             android:id="@+id/action_myChannelHomeFragment_to_MyChannelEditDetailFragment"
             app:destination="@id/MyChannelEditDetailFragment" />
