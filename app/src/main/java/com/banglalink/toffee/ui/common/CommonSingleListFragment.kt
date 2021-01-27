@@ -10,17 +10,15 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.R
-import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.databinding.FragmentCatchupBinding
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.foxrentacar.foxpress.ui.common.MyBaseAdapter
 
-abstract class CommonSingleListFragment : HomeBaseFragment(), ProviderIconCallback<ChannelInfo> {
+abstract class CommonSingleListFragment : HomeBaseFragment() {
 
     lateinit var mAdapter: MyBaseAdapter<ChannelInfo>
     private lateinit var scrollListener: EndlessRecyclerViewScrollListener
@@ -100,11 +98,6 @@ abstract class CommonSingleListFragment : HomeBaseFragment(), ProviderIconCallba
     private fun hideProgress() {
         binding.progressBar.visibility = View.GONE
         binding.progress.visibility = View.GONE
-    }
-
-    override fun onProviderIconClicked(item: ChannelInfo) {
-        super.onProviderIconClicked(item)
-        homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.id.toInt(), item.channel_owner_id, item.isSubscribed)
     }
 
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {

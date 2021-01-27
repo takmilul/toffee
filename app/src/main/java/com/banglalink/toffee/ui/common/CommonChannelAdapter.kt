@@ -1,17 +1,17 @@
 package com.banglalink.toffee.ui.common
 
 import com.banglalink.toffee.R
-import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.ui.home.OptionCallBack
 import com.foxrentacar.foxpress.ui.common.MyBaseAdapter
 import com.foxrentacar.foxpress.ui.common.MyViewHolder
 
-class CommonChannelAdapter(private val optionCallBack: ProviderIconCallback<ChannelInfo>, channelCallback:(ChannelInfo)->Unit={}): MyBaseAdapter<ChannelInfo>(channelCallback) {
+class CommonChannelAdapter(private val optionCallBack: OptionCallBack, channelCallback:(ChannelInfo)->Unit={}): MyBaseAdapter<ChannelInfo>(channelCallback) {
     override fun getLayoutIdForPosition(position: Int): Int {
         if(getItem(position)!!.isLive){
-            return R.layout.list_item_live_new
+            return R.layout.list_item_live
         }
-        return R.layout.list_item_relative
+        return R.layout.list_item_catchup
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
