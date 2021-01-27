@@ -23,6 +23,7 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
     
     lateinit var searchKey: String
     override val itemMargin: Int = 12
+    override val verticalPadding = Pair(12, 12)
     @Inject lateinit var factory: SearchViewModel.AssistedFactory
     private val homeViewModel by activityViewModels<HomeViewModel> ()
     override val mAdapter by lazy { SearchAdapter(this) }

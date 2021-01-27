@@ -13,16 +13,15 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.home.HomeViewModel
-import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.widget.MyPopupWindow
 
 class FavoriteFragment : BaseListFragment<ChannelInfo>(), ProviderIconCallback<ChannelInfo> {
 
+    override val itemMargin: Int = 12
+    override val verticalPadding = Pair(12, 12)
     override val mAdapter by lazy { FavoriteAdapter(this) }
     override val mViewModel by viewModels<FavoriteViewModel>()
-
     private val homeViewModel by activityViewModels<HomeViewModel>()
-    private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

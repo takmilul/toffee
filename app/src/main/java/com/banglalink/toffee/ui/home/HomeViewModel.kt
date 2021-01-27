@@ -58,7 +58,7 @@ class HomeViewModel @ViewModelInject constructor(
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val viewAllVideoLiveData = MutableLiveData<Boolean>()
     val viewAllCategories = MutableLiveData<Boolean>()
-    val myChannelNavLiveData = MutableLiveData<MyChannelNavParams>()
+    val myChannelNavLiveData = SingleLiveEvent<MyChannelNavParams>()
 
     private var _playlistManager = PlaylistManager()
 

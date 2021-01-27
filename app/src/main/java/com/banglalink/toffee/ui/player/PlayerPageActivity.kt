@@ -331,9 +331,9 @@ abstract class PlayerPageActivity :
     }
 
     protected fun addChannelToPlayList(info: ChannelInfo) {
-        val cinfo = playlistManager.getCurrentChannel()
+        val cInfo = playlistManager.getCurrentChannel()
         var isReload = false
-        if (cinfo?.id.equals(info.id, ignoreCase = true)) {
+        if (cInfo?.id.equals(info.id, ignoreCase = true)) {
             isReload = true
         }
         else {
@@ -342,13 +342,10 @@ abstract class PlayerPageActivity :
         playChannel(isReload)
     }
 
-    protected fun playChannel(isReload: Boolean) {
+    private fun playChannel(isReload: Boolean) {
         val channelInfo = playlistManager.getCurrentChannel() ?: return
-        val uri = if(channelInfo.isApproved == 1){
-            Channel.createChannel(channelInfo).getContentUri(this, mPref, connectionWatcher)
-        }else{
-            channelInfo.getHlsLink()
-        }
+        val uri = Channel.createChannel(channelInfo).getContentUri(this, mPref, connectionWatcher)
+        
         if (uri == null) { //in this case settings does not allow us to play content. So stop player and trigger event viewing stop
             player?.stop(true)
             channelCannotBePlayedDueToSettings() //notify hook/subclass

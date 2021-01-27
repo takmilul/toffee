@@ -82,7 +82,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
         viewModel.getChannelInfo(isOwner, isPublic, channelId, channelId.toInt())
         
         with(listview) {
-            addItemDecoration(MarginItemDecoration(8))
+            addItemDecoration(MarginItemDecoration(12))
             layoutManager = LinearLayoutManager(context)
             adapter = mAdapter
         }

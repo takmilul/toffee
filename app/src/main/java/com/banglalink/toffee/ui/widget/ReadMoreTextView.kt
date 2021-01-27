@@ -21,7 +21,7 @@ import androidx.core.content.res.ResourcesCompat
 import com.banglalink.toffee.R
 
 class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : AppCompatTextView(context, attrs) {
-    private var mainText: CharSequence? = null
+    private var mainText: CharSequence = ""
     private var bufferType: BufferType? = null
     private var readMore = true
     private var trimLength: Int
@@ -48,9 +48,10 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
 
     init {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.ReadMoreTextView)
-        trimLength = typedArray.getInt(R.styleable.ReadMoreTextView_readMoreLength, DEFAULT_TRIM_LENGTH)
+        val fontId = typedArray.getResourceId(R.styleable.ReadMoreTextView_readMoreFontFamily, 0)
         val resourceIdTrimCollapsedText = typedArray.getResourceId(R.styleable.ReadMoreTextView_readMoreCollapsedText, R.string.read_more)
         val resourceIdTrimExpandedText = typedArray.getResourceId(R.styleable.ReadMoreTextView_readMoreExpandedText, R.string.read_less)
+        trimLength = typedArray.getInt(R.styleable.ReadMoreTextView_readMoreLength, DEFAULT_TRIM_LENGTH)
         trimCollapsedText = resources.getString(resourceIdTrimCollapsedText)
         trimExpandedText = resources.getString(resourceIdTrimExpandedText)
         trimLines = typedArray.getInt(R.styleable.ReadMoreTextView_readMoreTextLines, DEFAULT_TRIM_LINES)
@@ -58,7 +59,6 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
         trimTextSize = typedArray.getDimension(R.styleable.ReadMoreTextView_readMoreTextSize, resources.getDimension(R.dimen.default_text_size))
         showTrimExpandedText = typedArray.getBoolean(R.styleable.ReadMoreTextView_readMoreExpandedText, DEFAULT_SHOW_TRIM_EXPANDED_TEXT)
         trimMode = typedArray.getInt(R.styleable.ReadMoreTextView_readMoreMode, TRIM_MODE_LINES)
-        val fontId = typedArray.getResourceId(R.styleable.ReadMoreTextView_readMoreFontFamily, 0)
         trimFont = try {
             ResourcesCompat.getFont(context, fontId)
         }
@@ -68,7 +68,6 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
         typedArray.recycle()
         viewMoreSpan = ReadMoreClickableSpan()
         onGlobalLayoutLineEndIndex()
-        setText()
     }
 
     private fun onGlobalLayoutLineEndIndex() {
@@ -106,23 +105,21 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
     }
 
     private fun setText() {
-        val text = displayableText()
-        super.setText(text, bufferType)
+        super.setText(getTrimmedText(), bufferType)
         movementMethod = LinkMovementMethod.getInstance()
-        highlightColor = Color.TRANSPARENT
+        highlightColor = Color.RED
     }
 
-    private fun displayableText() = getTrimmedText(mainText)
-
     override fun setText(text: CharSequence, type: BufferType) {
+//        this.mainText = text
         this.mainText = text.toString().replace("\n".toRegex(), " ")
         bufferType = type
         setText()
     }
 
-    private fun getTrimmedText(text: CharSequence?): CharSequence? {
+    private fun getTrimmedText(): CharSequence {
         if (trimMode == TRIM_MODE_LENGTH) {
-            if (text != null && text.length > trimLength) {
+            if (mainText.isNotBlank() && mainText.length > trimLength) {
                 return if (readMore) {
                     updateCollapsedText()
                 }
@@ -132,7 +129,7 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
             }
         }
         if (trimMode == TRIM_MODE_LINES) {
-            if (text != null && lineEndIndex > 0) {
+            if (mainText.isNotBlank() && lineEndIndex > 0) {
                 if (readMore) {
                     val line = lineCount
                     if (line >= trimLines) {
@@ -144,11 +141,11 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
                 }
             }
         }
-        return text
+        return mainText
     }
 
     private fun updateCollapsedText(): CharSequence {
-        var trimEndIndex = mainText!!.length
+        var trimEndIndex = mainText.length
         when (trimMode) {
             TRIM_MODE_LINES -> {
                 trimEndIndex = lineEndIndex - (ELLIPSIZE.length + trimCollapsedText.length + 1)
@@ -158,25 +155,26 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
             }
             TRIM_MODE_LENGTH -> trimEndIndex = trimLength + 1
         }
-        val s = SpannableStringBuilder(mainText, 0, trimEndIndex)
+        val spannableText = SpannableStringBuilder(mainText, 0, trimEndIndex)
             .append(ELLIPSIZE)
             .append(trimCollapsedText)
-        return addClickableSpan(s, trimCollapsedText)
+        return addClickableSpan(spannableText, trimCollapsedText)
     }
 
-    private fun updateExpandedText(): CharSequence? {
+    private fun updateExpandedText(): CharSequence {
         if (showTrimExpandedText) {
-            val s = SpannableStringBuilder(mainText, 0, mainText!!.length).append("\n").append(trimExpandedText.toString())
+            val s = SpannableStringBuilder(mainText, 0, mainText.length).append("\n").append(trimExpandedText.toString())
             return addClickableSpan(s, trimExpandedText)
         }
         return mainText
     }
 
-    private fun addClickableSpan(s: SpannableStringBuilder, trimText: CharSequence): CharSequence {
-        s.setSpan(Standard(ALIGN_CENTER), s.length - trimText.length, s.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        s.setSpan(CustomTypefaceSpan(trimFont), s.length - trimText.length, s.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        s.setSpan(viewMoreSpan, s.length - trimText.length, s.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        return s
+    private fun addClickableSpan(spannableText: SpannableStringBuilder, trimText: CharSequence): CharSequence {
+        val startIndex = spannableText.length - trimText.length
+        spannableText.setSpan(Standard(ALIGN_CENTER), startIndex, spannableText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannableText.setSpan(CustomTypefaceSpan(trimFont), startIndex, spannableText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannableText.setSpan(viewMoreSpan, startIndex, spannableText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        return spannableText
     }
 
     private inner class ReadMoreClickableSpan : ClickableSpan() {

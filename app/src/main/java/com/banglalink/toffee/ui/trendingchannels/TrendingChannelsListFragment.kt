@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -15,18 +14,16 @@ import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.common.UnSubscribeDialog
-import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.landing.LandingPopularChannelCallback
 import com.banglalink.toffee.ui.landing.UserChannelViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_landing_user_channels.*
+import kotlinx.android.synthetic.main.fragment_trending_channels_list.*
 import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
 class TrendingChannelsListFragment : HomeBaseFragment() {
     private lateinit var mAdapter: TrendingChannelsListAdapter
     private var categoryInfo: UgcCategory? = null
-    private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
     private val viewModel by viewModels<TrendingChannelsListViewModel>()
     private val subscriptionViewModel by viewModels<UserChannelViewModel>()
     private var trendingChannelInfo: TrendingChannelInfo? = null

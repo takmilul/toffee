@@ -6,12 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.databinding.FragmentBaseSingleListBinding
 import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
@@ -24,6 +26,8 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
     protected lateinit var binding: FragmentBaseSingleListBinding
 
     open val itemMargin = 0
+    open val verticalPadding = Pair(0,0)
+    open val horizontalPadding = Pair(0,0)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -81,7 +85,10 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
             if(itemMargin > 0) {
                 addItemDecoration(MarginItemDecoration(itemMargin))
             }
-
+            
+            updatePadding(top = verticalPadding.first.px, bottom = verticalPadding.second.px)
+            updatePadding(left = horizontalPadding.first.px, right = horizontalPadding.second.px)
+            
             mAdapter.addLoadStateListener {
                 if(it.source.refresh is LoadState.Loading) {
                     binding.progressBar.show()

@@ -9,7 +9,7 @@
     
     <TextView
         android:id="@+id/subscription_status"
-        android:layout_width="96dp"
+        android:layout_width="104dp"
         android:layout_height="wrap_content"
         android:text="SUBSCRIBED"
         android:duplicateParentState="true"
