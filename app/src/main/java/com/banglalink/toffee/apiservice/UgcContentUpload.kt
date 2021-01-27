@@ -40,7 +40,8 @@ class UgcContentUpload @Inject constructor(
                     videoTags = tags,
                     contentBanner = base64Image,
                     duration = duration,
-                    isHorizontal = isHorizontal
+                    isHorizontal = isHorizontal,
+                    msisdn = mPref.phoneNumber
                 )
             )
         }
