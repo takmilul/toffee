@@ -10,6 +10,11 @@ import com.banglalink.toffee.ui.common.BaseFragment
 class ChannelFragmentNew: BaseFragment() {
     private lateinit var binding: FragmentAllTvChannelsBinding
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        childFragmentManager.fragmentFactory = ChannelFragmentFractory(arguments)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

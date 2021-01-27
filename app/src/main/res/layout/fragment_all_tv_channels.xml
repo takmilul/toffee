@@ -30,7 +30,7 @@
                     app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
                     <androidx.fragment.app.FragmentContainerView
-                        android:id="@+id/featuredFragment"
+                        android:id="@+id/recentTvChannelsFragment"
                         android:name="com.banglalink.toffee.ui.channels.RecentChannelsFragment"
                         app:layout_constraintTop_toTopOf="parent"
                         android:layout_width="match_parent"
@@ -47,7 +47,7 @@
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
                 <androidx.fragment.app.FragmentContainerView
-                    android:id="@+id/latestVideosFragment"
+                    android:id="@+id/allTvChannelsFragment"
                     android:name="com.banglalink.toffee.ui.channels.ChannelFragment"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
