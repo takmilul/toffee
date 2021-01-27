@@ -8,6 +8,7 @@ interface TVChannelRepository {
     suspend fun insertNewItems(vararg items: TVChannelItem)
     suspend fun insertRecentItems(item: TVChannelItem)
     fun getAllItems(): Flow<List<TVChannelItem>>
+    fun getRecentItems(): Flow<List<TVChannelItem>>
     fun getAllChannels(): PagingSource<Int, TVChannelItem>
     fun getPopularMovieChannels(): PagingSource<Int, TVChannelItem>
 }

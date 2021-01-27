@@ -40,14 +40,12 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
-import com.banglalink.toffee.extension.launchActivity
-import com.banglalink.toffee.extension.loadProfileImage
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.category.drama.EpisodeListFragment
 import com.banglalink.toffee.ui.channels.AllChannelsViewModel
 import com.banglalink.toffee.ui.channels.ChannelFragment
+import com.banglalink.toffee.ui.channels.ChannelFragmentNew
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.ui.landing.AllCategoriesFragment
 import com.banglalink.toffee.ui.mychannel.MyChannelHomeFragment
@@ -745,11 +743,9 @@ class HomeActivity :
         if(info is ChannelInfo) {
             if (info.isLive) {
                 val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
-                if (fragment !is ChannelFragment) {
+                if (fragment !is ChannelFragmentNew) {
                     loadFragmentById(
-                        R.id.details_viewer, ChannelFragment.createInstance(
-                        getString(R.string.menu_channel_text), showSelected = true
-                    )
+                        R.id.details_viewer, ChannelFragmentNew()
                     )
                 }
             } else {

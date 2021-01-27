@@ -86,7 +86,7 @@
     </fragment>
     <fragment
         android:id="@+id/menu_tv"
-        android:name="com.banglalink.toffee.ui.channels.ChannelFragment"
+        android:name="com.banglalink.toffee.ui.channels.ChannelFragmentNew"
         android:label="{title}" >
         <argument
             android:name="title"
