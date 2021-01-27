@@ -53,6 +53,7 @@
             android:background="@drawable/single_line_input_text_bg"
             android:ems="10"
             android:maxLines="1"
+            android:singleLine="true"
             android:gravity="center"
             android:hint="@string/referral_code"
             android:letterSpacing="0.1"
