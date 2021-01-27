@@ -46,4 +46,8 @@ class AllChannelsViewModel @ViewModelInject constructor(
     fun loadAllChannels(): Flow<PagingData<TVChannelItem>> {
         return repo.getList()
     }
+
+    fun loadRecentTvChannels(): Flow<List<TVChannelItem>> {
+        return tvChannelsRepo.getRecentItems()
+    }
 }

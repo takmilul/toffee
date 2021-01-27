@@ -19,6 +19,10 @@ class TVChannelRepositoryImpl(private val dao: TVChannelDao): TVChannelRepositor
         return dao.getAllItems()
     }
 
+    override fun getRecentItems(): Flow<List<TVChannelItem>> {
+        return dao.getRecentItemsFlow()
+    }
+
     override fun getAllChannels(): PagingSource<Int, TVChannelItem> {
         return dao.getAllChannels()
     }

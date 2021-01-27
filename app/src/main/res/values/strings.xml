@@ -45,6 +45,7 @@
 
     //Landing Screen Category Titles
     <string name="channel">Popular TV Channels</string>
+    <string name="recent_channels">Recently Viewed</string>
     <string name="most_popular">Most Popular</string>
     <string name="most_popular_playlists">Most Popular Playlists</string>
     <string name="categories">Categories</string>
