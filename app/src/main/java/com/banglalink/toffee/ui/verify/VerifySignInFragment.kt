@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -19,13 +18,14 @@ import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.CustomerInfoSignIn
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.receiver.SMSBroadcastReceiver
+import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.material.snackbar.Snackbar
 
-class VerifySignInFragment : Fragment() {
+class VerifySignInFragment : BaseFragment() {
     
     private var phoneNumber: String = ""
     private var referralCode: String = ""
