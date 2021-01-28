@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
+import android.view.View.OnClickListener
 import android.widget.RadioButton
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -15,8 +16,11 @@ import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.databinding.AlertDialogMyChannelAddToPlaylistBinding
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelPlaylist
+import com.banglalink.toffee.model.MyChannelPlaylistContentId
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.CheckedChangeListener
@@ -25,16 +29,16 @@ import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<MyChannelPlaylist> {
+class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<MyChannelPlaylist>, OnClickListener {
 
     private var contentId: Int = 0
     private var isOwner: Int = 0
     private var channelId: Int = 0
     private var playlistId: Int = 0
     private lateinit var channelInfo: ChannelInfo
+    private lateinit var binding: AlertDialogMyChannelAddToPlaylistBinding
     private val mAdapter: MyChannelAddToPlaylistAdapter by lazy { MyChannelAddToPlaylistAdapter(this) }
     private val viewModel by viewModels<MyChannelAddToPlaylistViewModel>()
-
     private val createPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
 
     @Inject
@@ -83,7 +87,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         contentId = arguments?.getInt(CONTENT_ID) ?: 0
-        val binding = AlertDialogMyChannelAddToPlaylistBinding.inflate(this.layoutInflater)
+        binding = AlertDialogMyChannelAddToPlaylistBinding.inflate(this.layoutInflater)
         val dialogBuilder = AlertDialog.Builder(requireContext()).setView(binding.root)
         alertDialog = dialogBuilder.create().apply {
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -91,15 +95,25 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
         binding.listview.adapter = mAdapter
         binding.viewModel = createPlaylistViewModel
         observePlaylist()
-        binding.addButton.setOnClickListener {
-            binding.addToPlaylistGroup.visibility = View.GONE
-            binding.createPlaylistGroup.visibility = View.VISIBLE
-        }
-        binding.doneButton.setOnClickListener { addToPlaylist() }
-        binding.cancelButton.setOnClickListener { alertDialog.dismiss() }
-        binding.createButton.setOnClickListener { createPlaylist() }
-        binding.closeIv.setOnClickListener { alertDialog.dismiss() }
+        binding.addButton.safeClick(this)
+        binding.doneButton.safeClick(this)
+        binding.cancelButton.safeClick(this)
+        binding.createButton.safeClick(this)
+        binding.closeIv.safeClick(this)
         return alertDialog
+    }
+
+    override fun onClick(v: View?) {
+        when(v){
+            binding.addButton -> {
+                binding.addToPlaylistGroup.visibility = View.GONE
+                binding.createPlaylistGroup.visibility = View.VISIBLE
+            }
+            binding.doneButton -> addToPlaylist()
+            binding.cancelButton -> alertDialog.dismiss()
+            binding.createButton -> createPlaylist()
+            binding.closeIv -> alertDialog.dismiss()
+        }
     }
 
     private fun createPlaylist() {
@@ -130,13 +144,20 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
         if (mAdapter.selectedPosition < 0 && playlistId == 0) {
             Toast.makeText(requireContext(), "Please select a playlist", Toast.LENGTH_SHORT).show()
         } else {
+            var isAlreadyAdded = false
             if (mAdapter.selectedPosition >= 0) {
                 val selectedItem = mAdapter.getItemByIndex(mAdapter.selectedPosition)
                 playlistId = selectedItem!!.id
+                isAlreadyAdded = selectedItem.playlistContentIdList?.contains(MyChannelPlaylistContentId(contentId.toString())) ?: false
             }
-            observeAddToPlaylist()
-            viewModel.addToPlaylist(playlistId, contentId, channelId, isOwner)
-            viewModel.insertActivity(channelInfo, Reaction.Add.value)
+            if (isAlreadyAdded) {
+                requireContext().showToast("This content is already added in this playlist")
+            }
+            else {
+                observeAddToPlaylist()
+                viewModel.addToPlaylist(playlistId, contentId, channelId, isOwner)
+                viewModel.insertActivity(channelInfo, Reaction.Add.value)
+            }
         }
     }
 
@@ -144,13 +165,13 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
         observe(viewModel.liveData) {
             when (it) {
                 is Success -> {
+                    alertDialog.dismiss()
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
                     playlistReloadViewModel.reloadPlaylist.postValue(true)
-                    alertDialog.dismiss()
                 }
                 is Failure -> {
-                    Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
                     alertDialog.dismiss()
+                    Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
                 }
             }
         }

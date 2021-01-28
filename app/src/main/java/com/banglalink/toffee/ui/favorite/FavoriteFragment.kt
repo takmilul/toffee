@@ -18,7 +18,7 @@ import com.banglalink.toffee.ui.widget.MyPopupWindow
 class FavoriteFragment : BaseListFragment<ChannelInfo>(), ProviderIconCallback<ChannelInfo> {
 
     override val itemMargin: Int = 12
-    override val verticalPadding = Pair(12, 12)
+    override val verticalPadding = Pair(16, 16)
     override val mAdapter by lazy { FavoriteAdapter(this) }
     override val mViewModel by viewModels<FavoriteViewModel>()
     private val homeViewModel by activityViewModels<HomeViewModel>()

@@ -5,7 +5,6 @@ import android.os.Environment
 import android.util.Log
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.network.retrofit.DbApi
-import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.data.storage.ViewCountDAO
 import com.banglalink.toffee.data.storage.ViewCountDataModel
 import com.google.common.io.Files
@@ -14,7 +13,6 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
-import java.lang.Exception
 import java.nio.ByteBuffer
 import java.util.zip.CRC32
 
@@ -49,8 +47,6 @@ class DownloadViewCountDb(
             }catch (e:Exception){
                 ToffeeAnalytics.logException(e)
             }
-
-
         }
 
     private fun processFile(file: File?):Boolean {
@@ -65,11 +61,11 @@ class DownloadViewCountDb(
 
         viewCountList.clear()
         while (byteBuffer.remaining() > 0) {
-            val contentId = byteBuffer.long
+            val contentId = byteBuffer.int
             val viewCount = byteBuffer.long
             Log.i(TAG, "content id $contentId and viewcount $viewCount remaining ${byteBuffer.remaining()}")
             viewCountList.add(ViewCountDataModel().apply {
-                this.channelId = contentId
+                this.channelId = contentId.toLong()
                 this.viewCount = viewCount
             })
         }

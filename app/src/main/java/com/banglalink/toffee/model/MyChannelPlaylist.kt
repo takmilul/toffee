@@ -27,9 +27,16 @@ data class MyChannelPlaylist (
     val totalContent: Int,
     @SerializedName("channel_name")
     val channelName: String?,
+    @SerializedName("added_content_in_playlist")
+    val playlistContentIdList: List<MyChannelPlaylistContentId>?,
     @SerializedName("create_time")
     val createTime: String? = null,
     var formattedCreateTime: String? = null,
     val landscape_ratio_1280_720: String? = null,
     val created_at: String? = null,
+)
+
+data class MyChannelPlaylistContentId(
+    @SerializedName("content_id")
+    val contentId: String? = null,
 )
