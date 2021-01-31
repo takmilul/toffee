@@ -94,8 +94,8 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
         binding = DataBindingUtil.inflate(inflater, R.layout.media_control_layout3, this, true);
         binding.minimize.setOnClickListener(this);
         binding.play.setOnClickListener(this);
-        binding.forward.setOnClickListener(this);
-        binding.backward.setOnClickListener(this);
+//        binding.forward.setOnClickListener(this);
+//        binding.backward.setOnClickListener(this);
         binding.drawer.setOnClickListener(this);
         binding.rotation.setOnClickListener(this);
         binding.playPrev.setOnClickListener(this);
@@ -422,10 +422,10 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
             } else {
                 hideControls(0);
             }
-        } else if(v == binding.forward){
-            forward();
-        } else if(v == binding.backward){
-            backward();
+//        } else if(v == binding.forward){
+//            forward();
+//        } else if(v == binding.backward){
+//            backward();
         } else if(v == binding.playPrev) {
             if(mPlayListListener != null) mPlayListListener.playPrevious();
         } else if(v == binding.playNext) {
@@ -453,8 +453,8 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
                 binding.preview.setOnClickListener(this);
                 binding.preview.setImageResource(android.R.color.black);
                 binding.play.setVisibility(GONE);
-                binding.forward.setVisibility(INVISIBLE);
-                binding.backward.setVisibility(INVISIBLE);
+//                binding.forward.setVisibility(INVISIBLE);
+//                binding.backward.setVisibility(INVISIBLE);
                 binding.playPrev.setVisibility(GONE);
                 binding.playNext.setVisibility(GONE);
                 binding.autoplayProgress.setVisibility(GONE);
@@ -468,8 +468,8 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
                 binding.play.setImageResource(R.drawable.ic_player_replay);
                 binding.buffering.setVisibility(GONE);
                 binding.play.setVisibility(VISIBLE);
-                binding.forward.setVisibility(INVISIBLE);
-                binding.backward.setVisibility(INVISIBLE);
+//                binding.forward.setVisibility(INVISIBLE);
+//                binding.backward.setVisibility(INVISIBLE);
                 if(mPlayListListener != null &&
                         mPlayListListener.isAutoplayEnabled() &&
                         mPlayListListener.hasNext()) {
@@ -495,8 +495,8 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
                 binding.play.setImageResource(R.drawable.ic_player_play);
                 binding.buffering.setVisibility(GONE);
                 binding.play.setVisibility(VISIBLE);
-                binding.forward.setVisibility(INVISIBLE);
-                binding.backward.setVisibility(INVISIBLE);
+//                binding.forward.setVisibility(INVISIBLE);
+//                binding.backward.setVisibility(INVISIBLE);
                 binding.autoplayProgress.setVisibility(GONE);
                 stopAutoplayTimer();
                 showControls();
@@ -517,12 +517,12 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
                     binding.buffering.setVisibility(GONE);
                     binding.play.setVisibility(VISIBLE);
                     if(simpleExoPlayer!=null && simpleExoPlayer.isCurrentWindowLive()){
-                        binding.forward.setVisibility(INVISIBLE);
-                        binding.backward.setVisibility(INVISIBLE);
+//                        binding.forward.setVisibility(INVISIBLE);
+//                        binding.backward.setVisibility(INVISIBLE);
                     }
                     else {
-                        binding.forward.setVisibility(VISIBLE);
-                        binding.backward.setVisibility(VISIBLE);
+//                        binding.forward.setVisibility(VISIBLE);
+//                        binding.backward.setVisibility(VISIBLE);
                     }
                     showControls();//it is necessary since we don't have preparing state of player
                     hideControls(3000);
@@ -531,12 +531,12 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
                     binding.buffering.setVisibility(GONE);
                     binding.play.setVisibility(VISIBLE);
                     if(simpleExoPlayer!=null && simpleExoPlayer.isCurrentWindowLive()){
-                        binding.forward.setVisibility(INVISIBLE);
-                        binding.backward.setVisibility(INVISIBLE);
+//                        binding.forward.setVisibility(INVISIBLE);
+//                        binding.backward.setVisibility(INVISIBLE);
                     }
                     else {
-                        binding.forward.setVisibility(VISIBLE);
-                        binding.backward.setVisibility(VISIBLE);
+//                        binding.forward.setVisibility(VISIBLE);
+//                        binding.backward.setVisibility(VISIBLE);
                     }
                     showControls();
                 }
