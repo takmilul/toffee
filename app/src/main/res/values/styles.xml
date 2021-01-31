@@ -442,5 +442,8 @@
         <item name="android:focusable">true</item>
         <item name="android:scaleType">fitXY</item>
     </style>
-
+    <style name="YTOSecondsTextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
 </resources>

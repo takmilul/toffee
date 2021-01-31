@@ -29,4 +29,6 @@
     <dimen name="duration_text_size">12sp</dimen>
     <dimen name="duration_vertical_padding">0dp</dimen>
     <dimen name="duration_horizontal_padding">4dp</dimen>
+
+    <dimen name="player_seek_arc_size">40dp</dimen>
 </resources>

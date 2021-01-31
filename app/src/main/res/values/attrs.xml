@@ -75,4 +75,17 @@
             <enum name="readMoreModeLength" value="1"/>
         </attr>
     </declare-styleable>
+
+    <declare-styleable name="PlayerOverlayView">
+        <attr name="playerView" format="reference" />
+        <attr name="seekSeconds" format="integer" />
+        <attr name="animationDuration" format="integer" />
+        <attr name="iconAnimationDuration" format="integer" />
+        <attr name="arcSize" format="dimension" />
+        <attr name="tapCircleColor" format="color" />
+        <attr name="backgroundCircleColor" format="color" />
+
+        <attr name="textAppearance" format="reference" />
+        <attr name="icon" format="reference" />
+    </declare-styleable>
 </resources>
