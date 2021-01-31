@@ -7,7 +7,7 @@ import com.banglalink.toffee.data.database.dao.*
 import com.banglalink.toffee.data.repository.*
 import com.banglalink.toffee.data.repository.impl.*
 import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.data.storage.ViewCountDAO
+import com.banglalink.toffee.data.database.dao.ViewCountDAO
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -135,5 +135,11 @@ object DatabaseModule {
     @Singleton
     fun providesContinueWatchingRepository(dao: ContinueWatchingDao, pref: Preference): ContinueWatchingRepository {
         return ContinueWatchingRepositoryImpl(dao, pref)
+    }
+
+    @Provides
+    @Singleton
+    fun providesViewCountRepository(dao: ViewCountDAO): ViewCountRepository {
+        return ViewCountRepositoryImpl(dao)
     }
  }
