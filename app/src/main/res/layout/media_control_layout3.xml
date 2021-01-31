@@ -114,25 +114,25 @@
                 android:padding="2dp"
                 android:src="@drawable/ic_player_pause"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/forward"
+                app:layout_constraintEnd_toStartOf="@+id/play_next"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/backward"
+                app:layout_constraintStart_toEndOf="@+id/play_prev"
                 app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/forward"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:adjustViewBounds="true"
-            android:clickable="true"
-            android:focusable="true"
-            android:padding="2dp"
-            android:src="@drawable/ic_player_next"
-            app:layout_constraintBottom_toBottomOf="@+id/play"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/play"
-            app:layout_constraintTop_toTopOf="@+id/play" />
+<!--        <ImageView-->
+<!--            android:id="@+id/forward"-->
+<!--            android:layout_width="64dp"-->
+<!--            android:layout_height="64dp"-->
+<!--            android:adjustViewBounds="true"-->
+<!--            android:clickable="true"-->
+<!--            android:focusable="true"-->
+<!--            android:padding="2dp"-->
+<!--            android:src="@drawable/ic_player_next"-->
+<!--            app:layout_constraintBottom_toBottomOf="@+id/play"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintHorizontal_bias="0.5"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/play"-->
+<!--            app:layout_constraintTop_toTopOf="@+id/play" />-->
 
         <ImageView
             android:id="@+id/play_next"
@@ -142,28 +142,28 @@
             android:clickable="true"
             android:focusable="true"
             android:padding="2dp"
-            android:visibility="gone"
             android:src="@drawable/ic_player_control_next"
-            app:layout_constraintBottom_toBottomOf="@+id/forward"
-            app:layout_constraintEnd_toEndOf="@+id/forward"
-            app:layout_constraintStart_toStartOf="@+id/forward"
-            app:layout_constraintTop_toTopOf="@+id/forward" />
-
-        <ImageView
-            android:id="@+id/backward"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:adjustViewBounds="true"
-            android:clickable="true"
-            android:focusable="true"
-            android:padding="2dp"
-            android:src="@drawable/ic_player_prev"
             app:layout_constraintBottom_toBottomOf="@+id/play"
-            app:layout_constraintEnd_toStartOf="@+id/play"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/play"
             app:layout_constraintTop_toTopOf="@+id/play" />
+
+<!--        <ImageView-->
+<!--            android:id="@+id/backward"-->
+<!--            android:layout_width="64dp"-->
+<!--            android:layout_height="64dp"-->
+<!--            android:adjustViewBounds="true"-->
+<!--            android:clickable="true"-->
+<!--            android:focusable="true"-->
+<!--            android:padding="2dp"-->
+<!--            android:src="@drawable/ic_player_prev"-->
+<!--            app:layout_constraintBottom_toBottomOf="@+id/play"-->
+<!--            app:layout_constraintEnd_toStartOf="@+id/play"-->
+<!--            app:layout_constraintHorizontal_bias="0.5"-->
+<!--            app:layout_constraintHorizontal_chainStyle="packed"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="@+id/play" />-->
 
         <ImageView
             android:id="@+id/play_prev"
@@ -173,12 +173,13 @@
             android:clickable="true"
             android:focusable="true"
             android:padding="2dp"
-            android:visibility="gone"
             android:src="@drawable/ic_player_previous"
-            app:layout_constraintBottom_toBottomOf="@+id/backward"
-            app:layout_constraintEnd_toEndOf="@+id/backward"
-            app:layout_constraintStart_toStartOf="@+id/backward"
-            app:layout_constraintTop_toTopOf="@+id/backward" />
+            app:layout_constraintBottom_toBottomOf="@+id/play"
+            app:layout_constraintEnd_toStartOf="@+id/play"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/play" />
 
         <Chronometer
             android:id="@+id/current_time"
@@ -187,6 +188,7 @@
             android:layout_marginStart="16dp"
             android:textColor="@android:color/white"
             android:format="HH:MM:SS"
+            android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@+id/progress"
             app:layout_constraintStart_toStartOf="parent"
             tools:text="00:00" />
@@ -199,6 +201,7 @@
             android:paddingStart="4dp"
             android:paddingEnd="4dp"
             android:text="/"
+            android:visibility="invisible"
             android:textColor="@android:color/white"
             app:layout_constraintBottom_toBottomOf="@+id/current_time"
             app:layout_constraintStart_toEndOf="@+id/current_time"
@@ -209,6 +212,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:format="HH:MM:SS"
+            android:visibility="invisible"
             android:textColor="@android:color/white"
             app:layout_constraintBottom_toBottomOf="@+id/current_time"
             app:layout_constraintStart_toEndOf="@+id/time_seperator"

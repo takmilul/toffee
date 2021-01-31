@@ -92,8 +92,8 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         binding = DataBindingUtil.inflate(inflater, layout.media_control_layout3, this, true)
         binding.minimize.setOnClickListener(this)
         binding.play.setOnClickListener(this)
-        binding.forward.setOnClickListener(this)
-        binding.backward.setOnClickListener(this)
+//        binding.forward.setOnClickListener(this)
+//        binding.backward.setOnClickListener(this)
         binding.drawer.setOnClickListener(this)
         binding.rotation.setOnClickListener(this)
         binding.playPrev.setOnClickListener(this)
@@ -201,6 +201,9 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
 //            for (onPlayerControllerChangedListener in onPlayerControllerChangedListeners) {
 //                onPlayerControllerChangedListener.onControllerVisible()
 //            }
+//            nextButtonVisibility(true)
+//            prevButtonVisibility(true)
+
             status = true
         }
         updateSeekBar()
@@ -358,6 +361,24 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         }
     }
 
+    private fun nextButtonVisibility(visible: Boolean) {
+        if(!visible) {
+            binding.playNext.visibility = View.INVISIBLE
+        } else {
+            binding.playNext.visibility = if(mPlayListListener?.hasNext() == true) View.VISIBLE else View.INVISIBLE
+//            binding.playNext.isEnabled = mPlayListListener?.hasNext() == true
+        }
+    }
+
+    private fun prevButtonVisibility(visible: Boolean) {
+        if(!visible) {
+            binding.playPrev.visibility = View.INVISIBLE
+        } else {
+            binding.playPrev.visibility = if(mPlayListListener?.hasPrevious() == true) View.VISIBLE else View.INVISIBLE
+//            binding.playPrev.isEnabled = mPlayListListener?.hasPrevious() == true
+        }
+    }
+
     override fun onClick(v: View) {
         when(v) {
             binding.play-> {
@@ -421,12 +442,12 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
                     hideControls(0)
                 }
             }
-            binding.forward -> {
-                forward()
-            }
-            binding.backward -> {
-                backward()
-            }
+//            binding.forward -> {
+//                forward()
+//            }
+//            binding.backward -> {
+//                backward()
+//            }
             binding.playPrev -> {
                 mPlayListListener?.playPrevious()
             }
@@ -455,10 +476,12 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
                 binding.preview.setOnClickListener(this)
                 binding.preview.setImageResource(color.black)
                 binding.play.visibility = GONE
-                binding.forward.visibility = INVISIBLE
-                binding.backward.visibility = INVISIBLE
-                binding.playPrev.visibility = GONE
-                binding.playNext.visibility = GONE
+//                binding.forward.visibility = INVISIBLE
+//                binding.backward.visibility = INVISIBLE
+//                binding.playPrev.visibility = INVISIBLE
+//                binding.playNext.visibility = INVISIBLE
+                nextButtonVisibility(false)
+                prevButtonVisibility(false)
                 binding.autoplayProgress.visibility = GONE
                 binding.buffering.visibility = VISIBLE
                 binding.videoOption.isEnabled = false
@@ -470,8 +493,8 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
                 binding.play.setImageResource(drawable.ic_player_replay)
                 binding.buffering.visibility = GONE
                 binding.play.visibility = VISIBLE
-                binding.forward.visibility = INVISIBLE
-                binding.backward.visibility = INVISIBLE
+//                binding.forward.visibility = INVISIBLE
+//                binding.backward.visibility = INVISIBLE
                 if (mPlayListListener?.isAutoplayEnabled() == true &&
                     mPlayListListener?.hasNext() == true
                 ) {
@@ -500,8 +523,12 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
                 binding.play.setImageResource(drawable.ic_player_play)
                 binding.buffering.visibility = GONE
                 binding.play.visibility = VISIBLE
-                binding.forward.visibility = INVISIBLE
-                binding.backward.visibility = INVISIBLE
+//                binding.forward.visibility = INVISIBLE
+//                binding.backward.visibility = INVISIBLE
+//                binding.playNext.visibility = INVISIBLE
+//                binding.playPrev.visibility = INVISIBLE
+                nextButtonVisibility(false)
+                prevButtonVisibility(false)
                 binding.autoplayProgress.visibility = GONE
                 stopAutoplayTimer()
                 showControls()
@@ -515,19 +542,27 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
                 binding.preview.setImageResource(0)
                 binding.share.isEnabled = true
                 binding.autoplayProgress.visibility = GONE
-                binding.playNext.visibility = GONE
-                binding.playPrev.visibility = GONE
+//                binding.playNext.visibility = GONE
+//                binding.playPrev.visibility = GONE
                 if (playWhenReady) {
                     binding.play.setImageResource(drawable.ic_player_pause)
                     binding.buffering.visibility = GONE
                     binding.play.visibility = VISIBLE
                     if (simpleExoPlayer?.isCurrentWindowLive == true) {
-                        binding.forward.visibility = INVISIBLE
-                        binding.backward.visibility = INVISIBLE
+//                        binding.forward.visibility = INVISIBLE
+//                        binding.backward.visibility = INVISIBLE
+//                        binding.playNext.visibility = INVISIBLE
+//                        binding.playPrev.visibility = INVISIBLE
+                        nextButtonVisibility(false)
+                        prevButtonVisibility(false)
                     }
                     else {
-                        binding.forward.visibility = VISIBLE
-                        binding.backward.visibility = VISIBLE
+//                        binding.forward.visibility = VISIBLE
+//                        binding.backward.visibility = VISIBLE
+//                        binding.playNext.visibility = VISIBLE
+//                        binding.playPrev.visibility = VISIBLE
+                        nextButtonVisibility(true)
+                        prevButtonVisibility(true)
                     }
                     showControls() //it is necessary since we don't have preparing state of player
                     hideControls(3000)
@@ -537,12 +572,20 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
                     binding.buffering.visibility = GONE
                     binding.play.visibility = VISIBLE
                     if (simpleExoPlayer?.isCurrentWindowLive == true) {
-                        binding.forward.visibility = INVISIBLE
-                        binding.backward.visibility = INVISIBLE
+//                        binding.playNext.visibility = INVISIBLE
+//                        binding.playPrev.visibility = INVISIBLE
+//                        binding.forward.visibility = INVISIBLE
+//                        binding.backward.visibility = INVISIBLE
+                        nextButtonVisibility(false)
+                        prevButtonVisibility(false)
                     }
                     else {
-                        binding.forward.visibility = VISIBLE
-                        binding.backward.visibility = VISIBLE
+//                        binding.forward.visibility = VISIBLE
+//                        binding.backward.visibility = VISIBLE
+//                        binding.playNext.visibility = VISIBLE
+//                        binding.playPrev.visibility = VISIBLE
+                        nextButtonVisibility(true)
+                        prevButtonVisibility(true)
                     }
                     showControls()
                 }

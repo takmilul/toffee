@@ -13,6 +13,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.widget.TextViewCompat
 import com.banglalink.toffee.R
+import com.banglalink.toffee.model.ChannelInfo
 import com.google.android.exoplayer2.Player
 import kotlinx.android.synthetic.main.player_overlay_layout.view.*
 
@@ -307,9 +308,16 @@ class PlayerOverlayView(context: Context, private val attrs: AttributeSet?) :
     val secondsTextView: TextView
         get() = seconds_view.textView
 
+    private fun getCurrentChannel(): ChannelInfo? {
+        player?.currentMediaItem?.playbackProperties?.tag?.let {
+            if(it is ChannelInfo) return it
+        }
+        return null
+    }
+
     override fun onDoubleTapProgressUp(posX: Float, posY: Float) {
-        Log.e("PlayerOverlay", "onDoubleTapProgressUp")
         // Check first whether forwarding/rewinding is "valid"
+        if(getCurrentChannel()?.isLive == true) return
         if (player?.currentPosition == null || playerView?.width == null) return
         player?.currentPosition?.let { current ->
             // Rewind and start of the video (+ 0.5 sec tolerance)
