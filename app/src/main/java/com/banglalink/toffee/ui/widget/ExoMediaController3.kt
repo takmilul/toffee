@@ -26,6 +26,7 @@ import com.banglalink.toffee.databinding.MediaControlLayout3Binding
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener
 import com.banglalink.toffee.listeners.PlaylistListener
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.ui.player.PlayerOverlayView
 import com.banglalink.toffee.ui.widget.DraggerLayout.OnPositionChangedListener
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.UtilsKt
@@ -44,7 +45,7 @@ import kotlin.math.min
 /**
  * Created by shantanu on 5/4/16.
  */
-class ExoMediaController3 @JvmOverloads constructor(context: Context,
+open class ExoMediaController3 @JvmOverloads constructor(context: Context,
                           attrs: AttributeSet? = null,
                           defStyleAttr: Int = 0
 ):FrameLayout(context, attrs, defStyleAttr),
@@ -65,7 +66,7 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
     private var mPlayListListener: PlaylistListener? = null
     private val videoWidth = 1920
     private val videoHeight = 1080
-    private lateinit var binding: MediaControlLayout3Binding
+    protected lateinit var binding: MediaControlLayout3Binding
     private val screenWidth = UtilsKt.getScreenWidth()
     var isVideoPortrait = false
 
@@ -112,6 +113,21 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
         mFormatBuilder = StringBuilder()
         mFormatter = Formatter(mFormatBuilder, Locale.getDefault())
         setupCastButton()
+        setupOverlay()
+    }
+
+    private fun setupOverlay() {
+        binding.playerOverlay.performListener(object : PlayerOverlayView.PerformListener {
+            override fun onAnimationStart() {
+                // Do UI changes when circle scaling animation starts (e.g. hide controller views)
+                binding.playerOverlay.visibility = View.VISIBLE
+            }
+
+            override fun onAnimationEnd() {
+                // Do UI changes when circle scaling animation starts (e.g. show controller views)
+                binding.playerOverlay.visibility = View.GONE
+            }
+        })
     }
 
     private fun setupCastButton() {
@@ -123,6 +139,7 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
         if (this.simpleExoPlayer === newPlayer) {
             return
         }
+        binding.playerOverlay.player(newPlayer)
         binding.textureView.surfaceTextureListener = this
         if (binding.textureView.isAvailable) {
             binding.preview.setImageBitmap(binding.textureView.bitmap)

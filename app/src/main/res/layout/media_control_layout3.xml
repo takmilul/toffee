@@ -24,13 +24,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
-            <ImageView
+            <com.banglalink.toffee.ui.player.PlayerPreview
                 android:id="@+id/preview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@null" />
 
         </FrameLayout>
+
+        <com.banglalink.toffee.ui.player.PlayerOverlayView
+            android:id="@+id/playerOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/controller"
