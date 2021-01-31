@@ -53,4 +53,7 @@ abstract class MovieBaseFragment<T: Any>: HomeBaseFragment(), ProviderIconCallba
     }
 
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {}
+    override fun hideShareMenuItem(hide: Boolean): Boolean {
+        return true
+    }
 }

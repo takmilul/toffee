@@ -258,7 +258,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
             popupMenu.menu.getItem(0).title = "Remove from Favorites"
         }
 
-        popupMenu.menu.findItem(R.id.menu_share).isVisible = false
+        popupMenu.menu.findItem(R.id.menu_share).isVisible = true
         popupMenu.setOnMenuItemClickListener{
             when(it?.itemId){
                 R.id.menu_share->{

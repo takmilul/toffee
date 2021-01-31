@@ -118,7 +118,7 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
     
     override fun onOpenMenu(view: View, item: ChannelInfo) {
         super.onOptionClicked(view, item)
-        onOptionClicked(view, item)
+        //onOptionClicked(view, item)
     }
 
     override fun onProviderIconClicked(item: ChannelInfo) {
@@ -128,5 +128,9 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
 
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
         
+    }
+
+    override fun hideShareMenuItem(hide: Boolean): Boolean {
+        return true
     }
 }
