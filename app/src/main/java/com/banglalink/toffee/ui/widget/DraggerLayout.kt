@@ -68,9 +68,10 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
     }
 
     fun minimize() {
-        smoothSlideTo(1f)
-        onPositionChangedListenerList.forEach {
-            it.onViewMinimize()
+        if(smoothSlideTo(1f)) {
+            onPositionChangedListenerList.forEach {
+                it.onViewMinimize()
+            }
         }
     }
 
@@ -81,9 +82,10 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
     }
 
     fun maximize() {
-        smoothSlideTo(0f)
-        onPositionChangedListenerList.forEach {
-            it.onViewMaximize()
+        if(smoothSlideTo(0f)) {
+            onPositionChangedListenerList.forEach {
+                it.onViewMaximize()
+            }
         }
     }
 
