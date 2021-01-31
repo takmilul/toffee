@@ -7,6 +7,7 @@ import android.view.Gravity
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -124,7 +125,7 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
         super.onOpenMenu(view, item)
 
         if (isOwner == 1) {
-            android.widget.PopupMenu(requireContext(), view).apply {
+            PopupMenu(requireContext(), view).apply {
                 inflate(R.menu.menu_channel_playlist)
                 setOnMenuItemClickListener {
                     when (it.itemId) {
