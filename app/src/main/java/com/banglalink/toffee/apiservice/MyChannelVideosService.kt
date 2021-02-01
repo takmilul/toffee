@@ -2,6 +2,7 @@ package com.banglalink.toffee.apiservice
 
 import com.banglalink.toffee.common.paging.BaseApiService
 import com.banglalink.toffee.data.database.dao.ReactionDao
+import com.banglalink.toffee.data.database.dao.ViewCountDAO
 import com.banglalink.toffee.data.network.request.MyChannelVideosRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
@@ -22,11 +23,12 @@ data class MyChannelVideosRequestParams(
 )
 
 class MyChannelVideosService @AssistedInject constructor(
-    private val preference: Preference,
-    private val toffeeApi: ToffeeApi,
-    private val reactionDao: ReactionDao,
-    private val viewProgressRepo: ContentViewPorgressRepsitory,
-    @Assisted private val requestParams: MyChannelVideosRequestParams
+        private val preference: Preference,
+        private val toffeeApi: ToffeeApi,
+        private val reactionDao: ReactionDao,
+        private val viewCountDAO: ViewCountDAO,
+        private val viewProgressRepo: ContentViewPorgressRepsitory,
+        @Assisted private val requestParams: MyChannelVideosRequestParams
 ) :
     BaseApiService<ChannelInfo> {
 
@@ -46,6 +48,10 @@ class MyChannelVideosService @AssistedInject constructor(
 
         if (response.response.channels != null) {
             return response.response.channels.map {
+                val viewCount = viewCountDAO.getViewCountByChannelId(it.id.toInt())
+                if(viewCount!=null){
+                    it.view_count= viewCount.toString()
+                }
                 val reactionInfo = reactionDao.getReactionByContentId(preference.customerId, it.id)
                 it.myReaction = reactionInfo?.reaction ?: Reaction.None.value
                 it.viewProgress = viewProgressRepo.getProgressByContent(it.id.toLong())?.progress ?: 0L
