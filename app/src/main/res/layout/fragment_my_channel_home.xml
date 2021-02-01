@@ -87,7 +87,7 @@
                     android:layout_height="?attr/actionBarSize"
                     android:fontFamily="@font/roboto_medium"
                     app:tabGravity="fill"
-                    app:tabIndicatorColor="@color/colorButtonSecondary"
+                    app:tabIndicatorColor="@color/colorAccent"
                     app:tabIndicatorGravity="bottom"
                     app:tabInlineLabel="true"
                     app:tabMode="fixed"

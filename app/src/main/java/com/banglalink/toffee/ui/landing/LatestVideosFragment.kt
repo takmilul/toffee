@@ -4,13 +4,16 @@ import android.R.attr
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
+import android.view.View.MeasureSpec
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
@@ -21,6 +24,7 @@ import androidx.paging.LoadState
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.string
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
+import com.banglalink.toffee.databinding.AlertDialogReactionsBinding
 import com.banglalink.toffee.databinding.FragmentLandingLatestVideosBinding
 import com.banglalink.toffee.enums.FilterContentType.*
 import com.banglalink.toffee.enums.Reaction.Love
@@ -212,7 +216,51 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
                 }
                 Log.e(TAG, "setReaction: icon", )
             }
-        }) }.show(requireActivity().supportFragmentManager, ReactionFragment.TAG)
+        }) }.show(requireActivity().supportFragmentManager, TAG)
+        
+//        val location = IntArray(2)
+//        view.getLocationOnScreen(location)
+        /*val obj = ReactionPopup.newInstance(item, location).apply { setCallback(object : ReactionIconCallback {
+            override fun onReactionChange(reactionCount: String, reactionText: String, reactionIcon: Int) {
+                (reactionCountView as TextView).text = reactionCount
+                (view as TextView).text = reactionText
+                view.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
+                if (reactionText == Love.name) {
+                    view.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorAccent))
+                }
+                else{
+                    view.setTextColor(ContextCompat.getColor(requireContext(), R.color.fixed_second_text_color))
+                }
+                Log.e(TAG, "setReaction: icon", )
+            }
+        }) 
+        }
+        parentFragmentManager.commit { add(obj, TAG) }*/
+//        requireActivity().supportFragmentManager.beginTransaction().add(obj, TAG).commit()
+//        Log.e("LOC_", "onReactionClicked: X=${location[0]}, Y=${location[1]}")
+//        showPopup(item, location, view)
+    }
+
+    fun showPopup(channelInfo: ChannelInfo, location: IntArray?, reactionView: View){
+        val binding = AlertDialogReactionsBinding.inflate(this.layoutInflater)
+        binding.data = channelInfo
+        binding.root.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec. UNSPECIFIED), MeasureSpec.makeMeasureSpec(0, MeasureSpec. UNSPECIFIED))
+        val reactionPopupWindow = PopupWindow(requireContext(), )
+        with(reactionPopupWindow){
+            contentView = binding.root
+            isTouchable = true
+            isFocusable = true
+            isOutsideTouchable = true
+            elevation = 48F
+            val x = view?.width?.minus(binding.root.measuredWidth)?.div(2)?: 50
+            val y = location?.get(1)?.minus(binding.root.measuredHeight + 10)?:0
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            
+//            showAtLocation(view, Gravity.NO_GRAVITY, x, y)
+        }
+        with(binding){
+            likeButton.setOnClickListener { reactionPopupWindow.dismiss() }
+        }
     }
 
     override fun onShareClicked(view: View, item: ChannelInfo) {
