@@ -1,6 +1,7 @@
 package com.banglalink.toffee.apiservice
 
 import com.banglalink.toffee.common.paging.BaseApiService
+import com.banglalink.toffee.data.database.dao.ViewCountDAO
 import com.banglalink.toffee.data.network.request.ChannelRequestParams
 import com.banglalink.toffee.data.network.request.DramaEpisodesBySeasonRequest
 import com.banglalink.toffee.data.network.request.DramaSeriesContentRequest
@@ -19,10 +20,11 @@ data class DramaSeasonRequestParam(
 )
 
 class GetDramaEpisodesBySeason @AssistedInject constructor(
-    private val preference: Preference,
-    private val toffeeApi: ToffeeApi,
-    private val viewProgressRepo: ContentViewPorgressRepsitory,
-    @Assisted private val requestParams: DramaSeasonRequestParam
+        private val preference: Preference,
+        private val toffeeApi: ToffeeApi,
+        private val viewCountDAO: ViewCountDAO,
+        private val viewProgressRepo: ContentViewPorgressRepsitory,
+        @Assisted private val requestParams: DramaSeasonRequestParam
 ): BaseApiService<ChannelInfo> {
 
     override suspend fun loadData(offset: Int, limit: Int): List<ChannelInfo> {
@@ -43,6 +45,10 @@ class GetDramaEpisodesBySeason @AssistedInject constructor(
 
         return if (response.response.channels != null) {
             response.response.channels.map {
+                val viewCount = viewCountDAO.getViewCountByChannelId(it.id.toInt())
+                if(viewCount!=null){
+                    it.view_count= viewCount.toString()
+                }
                 it.viewProgress = viewProgressRepo.getProgressByContent(it.id.toLong())?.progress ?: 0L
                 it
             }

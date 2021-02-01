@@ -2,6 +2,7 @@ package com.banglalink.toffee.apiservice
 
 import com.banglalink.toffee.common.paging.BaseApiService
 import com.banglalink.toffee.data.database.dao.ReactionDao
+import com.banglalink.toffee.data.database.dao.ViewCountDAO
 import com.banglalink.toffee.data.network.request.ChannelRequestParams
 import com.banglalink.toffee.data.network.request.ContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
@@ -18,7 +19,7 @@ class GetContents @AssistedInject constructor(
     private val toffeeApi: ToffeeApi,
     private val reactionDao: ReactionDao,
     private val viewProgressRepo: ContentViewPorgressRepsitory,
-//    private val favoriteDao: FavoriteItemDao,
+    private val viewCountDAO: ViewCountDAO,
     @Assisted private val requestParams: ChannelRequestParams
 ): BaseApiService<ChannelInfo> {
 
@@ -48,6 +49,10 @@ class GetContents @AssistedInject constructor(
                 it.category = requestParams.category
                 it.categoryId = requestParams.categoryId
                 it.subCategoryId = requestParams.subcategoryId
+                val viewCount = viewCountDAO.getViewCountByChannelId(it.id.toInt())
+                if(viewCount!=null){
+                    it.view_count= viewCount.toString()
+                }
                 it.subCategory = requestParams.subcategory
                 val reactionInfo = reactionDao.getReactionByContentId(preference.customerId, it.id)
                 it.myReaction = reactionInfo?.reaction ?: Reaction.None.value
