@@ -2,7 +2,7 @@ package com.banglalink.toffee.usecase
 
 
 import android.util.Log
-import com.banglalink.toffee.data.storage.ViewCountDAO
+import com.banglalink.toffee.data.database.dao.ViewCountDAO
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.util.getFormattedViewsText
 

@@ -12,7 +12,7 @@ import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
 import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.data.storage.ViewCountDAO
+import com.banglalink.toffee.data.database.dao.ViewCountDAO
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
@@ -40,12 +40,12 @@ import kotlinx.coroutines.launch
 
 
 class HomeViewModel @ViewModelInject constructor(
-    @AppCoroutineScope private val appScope: CoroutineScope,
-    private val profileApi: GetProfile,
-    private val viewCountDAO: ViewCountDAO,
-    private val sendViewContentEvent: SendViewContentEvent,
-    @ApplicationContext private val mContext: Context,
-    private val tvChannelRepo: TVChannelRepository
+        @AppCoroutineScope private val appScope: CoroutineScope,
+        private val profileApi: GetProfile,
+        private val viewCountDAO: ViewCountDAO,
+        private val sendViewContentEvent: SendViewContentEvent,
+        @ApplicationContext private val mContext: Context,
+        private val tvChannelRepo: TVChannelRepository
 ):BaseViewModel(),OnCompleteListener<InstanceIdResult> {
 
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
