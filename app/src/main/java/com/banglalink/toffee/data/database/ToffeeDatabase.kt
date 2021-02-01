@@ -4,13 +4,13 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.banglalink.toffee.data.database.dao.*
 import com.banglalink.toffee.data.database.entities.*
-import com.banglalink.toffee.data.storage.ViewCountDAO
-import com.banglalink.toffee.data.storage.ViewCountDataModel
+import com.banglalink.toffee.data.database.dao.ViewCountDAO
+import com.banglalink.toffee.data.database.entities.ViewCount
 
 @Database(
     entities = [
         UploadInfo::class,
-        ViewCountDataModel::class,
+        ViewCount::class,
         NotificationInfo::class,
         ReactionInfo::class,
         HistoryItem::class,

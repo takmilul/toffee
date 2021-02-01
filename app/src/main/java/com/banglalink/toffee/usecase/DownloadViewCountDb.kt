@@ -5,8 +5,8 @@ import android.os.Environment
 import android.util.Log
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.network.retrofit.DbApi
-import com.banglalink.toffee.data.storage.ViewCountDAO
-import com.banglalink.toffee.data.storage.ViewCountDataModel
+import com.banglalink.toffee.data.database.dao.ViewCountDAO
+import com.banglalink.toffee.data.database.entities.ViewCount
 import com.google.common.io.Files
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -23,7 +23,7 @@ class DownloadViewCountDb(
     private val viewCountDAO: ViewCountDAO
 )
 {
-    private val viewCountList = mutableListOf<ViewCountDataModel>()
+    private val viewCountList = mutableListOf<ViewCount>()
 
     suspend fun execute(context: Context, url: String) =
         withContext(Dispatchers.IO) {
@@ -64,7 +64,7 @@ class DownloadViewCountDb(
             val contentId = byteBuffer.int
             val viewCount = byteBuffer.long
             Log.i(TAG, "content id $contentId and viewcount $viewCount remaining ${byteBuffer.remaining()}")
-            viewCountList.add(ViewCountDataModel().apply {
+            viewCountList.add(ViewCount().apply {
                 this.channelId = contentId.toLong()
                 this.viewCount = viewCount
             })
@@ -72,7 +72,7 @@ class DownloadViewCountDb(
         return true
     }
 
-    private fun updateDb() {
+    private suspend fun updateDb() {
         ToffeeAnalytics.logBreadCrumb("Updating view count db")
         viewCountDAO.insertAll(*viewCountList.toTypedArray())
         ToffeeAnalytics.logBreadCrumb("View count db updated")

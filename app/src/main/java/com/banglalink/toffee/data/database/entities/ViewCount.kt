@@ -1,11 +1,11 @@
-package com.banglalink.toffee.data.storage
+package com.banglalink.toffee.data.database.entities
 
 import androidx.room.*
 
 @Entity(
     tableName = "channel_view_count"
 )
-class ViewCountDataModel{
+class ViewCount{
 
     @PrimaryKey
     @ColumnInfo(name = "channel_id")
