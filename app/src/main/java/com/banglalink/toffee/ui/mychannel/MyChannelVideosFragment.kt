@@ -1,12 +1,14 @@
 package com.banglalink.toffee.ui.mychannel
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -19,8 +21,8 @@ import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.ContentReactionCallback
-import com.banglalink.toffee.ui.common.ReactionFragment
 import com.banglalink.toffee.ui.common.ReactionIconCallback
+import com.banglalink.toffee.ui.common.ReactionPopup
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -181,7 +183,9 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
 
     override fun onReactionClicked(view: View, reactionCountView: View, item: ChannelInfo) {
         super.onReactionClicked(view, reactionCountView, item)
-        ReactionFragment.newInstance(item).apply { setCallback(object : ReactionIconCallback {
+        val iconLocation = IntArray(2)
+        view.getLocationOnScreen(iconLocation)
+        val reactionPopupFragment = ReactionPopup.newInstance(item, iconLocation, view.height).apply { setCallback(object : ReactionIconCallback {
             override fun onReactionChange(reactionCount: String, reactionText: String, reactionIcon: Int) {
                 (reactionCountView as TextView).text = reactionCount
                 (view as TextView).text = reactionText
@@ -192,8 +196,11 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
                 else{
                     view.setTextColor(ContextCompat.getColor(requireContext(), R.color.fixed_second_text_color))
                 }
+                Log.e(ReactionPopup.TAG, "setReaction: icon", )
             }
-        }) }.show(requireActivity().supportFragmentManager, ReactionFragment.TAG)
+        })
+        }
+        childFragmentManager.commit { add(reactionPopupFragment, ReactionPopup.TAG) }
     }
 
     override fun onShareClicked(view: View, item: ChannelInfo) {

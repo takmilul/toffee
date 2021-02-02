@@ -16,7 +16,7 @@ import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.AlertDialogReactionsBinding
 import com.banglalink.toffee.enums.ActivityType.*
 import com.banglalink.toffee.enums.Reaction
-import com.banglalink.toffee.enums.Reaction.None
+import com.banglalink.toffee.enums.Reaction.*
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.util.Utils
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,20 +29,23 @@ class ReactionPopup: Fragment() {
     private var channelInfo: ChannelInfo? = null
     @Inject lateinit var preference: Preference
     @Inject lateinit var reactionDao: ReactionDao
-    private var location: IntArray? = null
     private val mViewModel by viewModels<ReactionViewModel>()
-    private lateinit var binding: AlertDialogReactionsBinding
+    private var reactionPopupWindow: PopupWindow? = null
 
     companion object {
         const val CHANNEL_INFO = "channelInfo"
-        const val LOCATION = "location"
+        const val ICON_LOCATION = "icon_location"
+        const val ICON_HEIGHT = "icon_height"
+        const val SHOW_BELOW = "show_below"
         const val TAG = "reaction_fragment"
         
-        @JvmStatic fun newInstance(channelInfo: ChannelInfo, location: IntArray?): ReactionPopup {
+        @JvmStatic fun newInstance(channelInfo: ChannelInfo, iconLocation: IntArray, iconHeight: Int, showPopupBelow: Boolean = false): ReactionPopup {
             return ReactionPopup().apply {
                 arguments = Bundle().apply { 
                     putParcelable(CHANNEL_INFO, channelInfo)
-                    putIntArray(LOCATION, location)
+                    putIntArray(ICON_LOCATION, iconLocation)
+                    putInt(ICON_HEIGHT, iconHeight)
+                    putBoolean(SHOW_BELOW, showPopupBelow)
                 }
             }
         }
@@ -55,40 +58,38 @@ class ReactionPopup: Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         channelInfo = requireArguments().getParcelable(CHANNEL_INFO)
-        location = requireArguments().getIntArray(LOCATION)
+        val iconLocation: IntArray = requireArguments().getIntArray(ICON_LOCATION) ?: intArrayOf(0, 0)
+        val iconHeight = requireArguments().getInt(ICON_HEIGHT)
+        val isShowPopupBelow = requireArguments().getBoolean(SHOW_BELOW)
         
         val binding = AlertDialogReactionsBinding.inflate(this.layoutInflater)
         binding.data = channelInfo
         binding.root.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec. UNSPECIFIED), MeasureSpec.makeMeasureSpec(0, MeasureSpec. UNSPECIFIED))
-        val reactionPopupWindow = PopupWindow(requireContext())
-        with(reactionPopupWindow){
+        reactionPopupWindow = PopupWindow(requireContext())
+        with(reactionPopupWindow!!){
             contentView = binding.root
             isTouchable = true
             isFocusable = true
             isOutsideTouchable = true
             elevation = 48F
-            val x = parentFragment?.view?.width?.minus(binding.root.measuredWidth)?.div(2)?: 50
-            val y = location?.get(1)?.minus(binding.root.measuredHeight + 10)?:0
+            
+            val topLocation = iconLocation[1].minus(binding.root.measuredHeight + 10)
+            val bottomLocation = iconLocation[1].plus(iconHeight + 8)
+            
+            val x = parentFragment?.view?.width?.minus(binding.root.measuredWidth)?.div(2) ?: 0
+            val y = if ((isShowPopupBelow && bottomLocation + binding.root.measuredHeight < parentFragment?.view?.height?:0) || topLocation < binding.root.measuredHeight) {
+                bottomLocation
+            } else {
+                topLocation
+            }
+            
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             parentFragment?.view?.let {
                 showAtLocation(it, Gravity.NO_GRAVITY, x, y)
+//                showAsDropDown(it, 10, 10)
             }
         }
         with(binding){
-            likeButton.setOnClickListener { reactionPopupWindow.dismiss() }
-        }
-    }
-
-    /*override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = AlertDialogReactionsBinding.inflate(this.layoutInflater)
-        binding.data = channelInfo
-        return binding.root
-    }*/
-
-    /*override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-//        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        with(binding) {
             likeButton.setOnClickListener { react(Like, R.drawable.ic_reaction_like_no_shadow) }
             loveButton.setOnClickListener { react(Love, R.drawable.ic_reaction_love_no_shadow) }
             hahaButton.setOnClickListener { react(HaHa, R.drawable.ic_reaction_haha_no_shadow) }
@@ -96,10 +97,10 @@ class ReactionPopup: Fragment() {
             sadButton.setOnClickListener { react(Sad, R.drawable.ic_reaction_sad_no_shadow) }
             angryButton.setOnClickListener { react(Angry, R.drawable.ic_reaction_angry_no_shadow) }
         }
-    }*/
-    
+    }
+
     private fun react(reaction: Reaction, reactIcon: Int) {
-//        dialog?.dismiss()
+        reactionPopupWindow?.dismiss()
         channelInfo?.let {
             lifecycleScope.launchWhenStarted {
                 val previousReactionInfo = reactionDao.getReactionByContentId(preference.customerId, channelInfo!!.id)
@@ -139,6 +140,7 @@ class ReactionPopup: Fragment() {
     override fun onDestroy() {
         reactionIconCallback = null
 //        dialog?.dismiss()
+        reactionPopupWindow?.dismiss()
         super.onDestroy()
     }
 }
