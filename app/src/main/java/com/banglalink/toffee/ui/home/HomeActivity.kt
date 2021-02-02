@@ -44,7 +44,6 @@ import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.category.drama.EpisodeListFragment
 import com.banglalink.toffee.ui.channels.AllChannelsViewModel
-import com.banglalink.toffee.ui.channels.ChannelFragment
 import com.banglalink.toffee.ui.channels.ChannelFragmentNew
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.ui.landing.AllCategoriesFragment
@@ -1183,9 +1182,10 @@ class HomeActivity :
 
     private fun observeUpload2() {
         add_upload_info_button.setOnClickListener {
-            if(navController.currentDestination?.id != R.id.myChannelHomeFragment) {
+            viewModel.myChannelNavLiveData.value = MyChannelNavParams(mPref.channelId, mPref.customerId, 0)
+            /*if(navController.currentDestination?.id != R.id.myChannelHomeFragment) {
                 navController.navigate(R.id.myChannelHomeFragment)
-            }
+            }*/
         }
 
         close_button.setOnClickListener {

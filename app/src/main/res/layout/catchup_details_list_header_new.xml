@@ -210,7 +210,6 @@ Day 21 - AUS vs IND" />
 
         <TextView
             android:id="@+id/reactionButton"
-            loadReactionEmo="@{data.myReaction}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawablePadding="4dp"
@@ -221,12 +220,11 @@ Day 21 - AUS vs IND" />
             android:textColor="@color/fixed_second_text_color"
             android:fontFamily="@font/roboto_medium"
             app:drawableLeftCompat="@drawable/ic_reaction_love_empty"
+            loadReactionEmo="@{data.myReaction}"
             app:layout_constraintBottom_toBottomOf="@+id/shareCount"
             app:layout_constraintEnd_toEndOf="@+id/subscribe_button"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/guideline"
             app:layout_constraintTop_toTopOf="@+id/shareCount"
-            app:layout_constraintVertical_bias="0.0"
             tools:text="320.5K" />
 
         <TextView

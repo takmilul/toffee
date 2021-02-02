@@ -1,11 +1,12 @@
 package com.banglalink.toffee.ui.common
 
-import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.DialogFragment
+import android.view.Gravity
+import android.view.View.MeasureSpec
+import android.widget.PopupWindow
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
@@ -22,24 +23,29 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ReactionFragment: DialogFragment() {
+class ReactionPopup: Fragment() {
 
     private var reactionIconCallback: ReactionIconCallback? = null
     private var channelInfo: ChannelInfo? = null
-    private lateinit var alertDialog: AlertDialog
     @Inject lateinit var preference: Preference
     @Inject lateinit var reactionDao: ReactionDao
     private val mViewModel by viewModels<ReactionViewModel>()
-    private lateinit var binding: AlertDialogReactionsBinding
+    private var reactionPopupWindow: PopupWindow? = null
 
     companion object {
         const val CHANNEL_INFO = "channelInfo"
+        const val ICON_LOCATION = "icon_location"
+        const val ICON_HEIGHT = "icon_height"
+        const val SHOW_BELOW = "show_below"
         const val TAG = "reaction_fragment"
         
-        @JvmStatic fun newInstance(channelInfo: ChannelInfo): ReactionFragment {
-            return ReactionFragment().apply {
+        @JvmStatic fun newInstance(channelInfo: ChannelInfo, iconLocation: IntArray, iconHeight: Int, showPopupBelow: Boolean = false): ReactionPopup {
+            return ReactionPopup().apply {
                 arguments = Bundle().apply { 
                     putParcelable(CHANNEL_INFO, channelInfo)
+                    putIntArray(ICON_LOCATION, iconLocation)
+                    putInt(ICON_HEIGHT, iconHeight)
+                    putBoolean(SHOW_BELOW, showPopupBelow)
                 }
             }
         }
@@ -48,48 +54,53 @@ class ReactionFragment: DialogFragment() {
     fun setCallback(reactionIconCallback: ReactionIconCallback) {
         this.reactionIconCallback = reactionIconCallback
     }
-    
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         channelInfo = requireArguments().getParcelable(CHANNEL_INFO)
-
-        binding = AlertDialogReactionsBinding.inflate(this.layoutInflater)
+        val iconLocation: IntArray = requireArguments().getIntArray(ICON_LOCATION) ?: intArrayOf(0, 0)
+        val iconHeight = requireArguments().getInt(ICON_HEIGHT)
+        val isShowPopupBelow = requireArguments().getBoolean(SHOW_BELOW)
+        
+        val binding = AlertDialogReactionsBinding.inflate(this.layoutInflater)
         binding.data = channelInfo
-
-        val dialogBuilder = AlertDialog.Builder(requireContext()).setView(binding.root)
-        alertDialog = dialogBuilder.create().apply {
-            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        }
-        with(binding) {
-            likeButton.setOnClickListener {
-                react(Like, R.drawable.ic_reaction_like_no_shadow)
-                alertDialog.dismiss()
+        binding.root.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec. UNSPECIFIED), MeasureSpec.makeMeasureSpec(0, MeasureSpec. UNSPECIFIED))
+        reactionPopupWindow = PopupWindow(requireContext())
+        with(reactionPopupWindow!!){
+            contentView = binding.root
+            isTouchable = true
+            isFocusable = true
+            isOutsideTouchable = true
+            elevation = 48F
+            
+            val topLocation = iconLocation[1].minus(binding.root.measuredHeight + 10)
+            val bottomLocation = iconLocation[1].plus(iconHeight + 8)
+            
+            val x = parentFragment?.view?.width?.minus(binding.root.measuredWidth)?.div(2) ?: 0
+            val y = if ((isShowPopupBelow && bottomLocation + binding.root.measuredHeight < parentFragment?.view?.height?:0) || topLocation < binding.root.measuredHeight) {
+                bottomLocation
+            } else {
+                topLocation
             }
-            loveButton.setOnClickListener {
-                react(Love, R.drawable.ic_reaction_love_no_shadow)
-                alertDialog.dismiss()
-            }
-            hahaButton.setOnClickListener {
-                react(HaHa, R.drawable.ic_reaction_haha_no_shadow)
-                alertDialog.dismiss()
-            }
-            wowButton.setOnClickListener {
-                react(Wow, R.drawable.ic_reaction_wow_no_shadow)
-                alertDialog.dismiss()
-            }
-            sadButton.setOnClickListener {
-                react(Sad, R.drawable.ic_reaction_sad_no_shadow)
-                alertDialog.dismiss()
-            }
-            angryButton.setOnClickListener {
-                react(Angry, R.drawable.ic_reaction_angry_no_shadow)
-                alertDialog.dismiss()
+            
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            parentFragment?.view?.let {
+                showAtLocation(it, Gravity.NO_GRAVITY, x, y)
+//                showAsDropDown(it, 10, 10)
             }
         }
-        return alertDialog
+        with(binding){
+            likeButton.setOnClickListener { react(Like, R.drawable.ic_reaction_like_no_shadow) }
+            loveButton.setOnClickListener { react(Love, R.drawable.ic_reaction_love_no_shadow) }
+            hahaButton.setOnClickListener { react(HaHa, R.drawable.ic_reaction_haha_no_shadow) }
+            wowButton.setOnClickListener { react(Wow, R.drawable.ic_reaction_wow_no_shadow) }
+            sadButton.setOnClickListener { react(Sad, R.drawable.ic_reaction_sad_no_shadow) }
+            angryButton.setOnClickListener { react(Angry, R.drawable.ic_reaction_angry_no_shadow) }
+        }
     }
-    
+
     private fun react(reaction: Reaction, reactIcon: Int) {
+        reactionPopupWindow?.dismiss()
         channelInfo?.let {
             lifecycleScope.launchWhenStarted {
                 val previousReactionInfo = reactionDao.getReactionByContentId(preference.customerId, channelInfo!!.id)
@@ -128,7 +139,8 @@ class ReactionFragment: DialogFragment() {
 
     override fun onDestroy() {
         reactionIconCallback = null
-        alertDialog.dismiss()
+//        dialog?.dismiss()
+        reactionPopupWindow?.dismiss()
         super.onDestroy()
     }
 }

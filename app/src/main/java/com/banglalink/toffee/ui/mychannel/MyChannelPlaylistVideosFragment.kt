@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ConcatAdapter
@@ -26,8 +27,8 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.ContentReactionCallback
-import com.banglalink.toffee.ui.common.ReactionFragment
 import com.banglalink.toffee.ui.common.ReactionIconCallback
+import com.banglalink.toffee.ui.common.ReactionPopup
 import com.banglalink.toffee.ui.home.CatchupDetailsViewModel
 import com.banglalink.toffee.ui.home.ChannelHeaderAdapter
 import com.banglalink.toffee.ui.home.HomeViewModel
@@ -107,7 +108,9 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
 
             override fun onReactionClicked(view: View, reactionCountView: View, item: ChannelInfo) {
                 super.onReactionClicked(view, reactionCountView, item)
-                ReactionFragment.newInstance(item).apply { setCallback(object : ReactionIconCallback {
+                val iconLocation = IntArray(2)
+                view.getLocationOnScreen(iconLocation)
+                val reactionPopupFragment = ReactionPopup.newInstance(item, iconLocation, view.height, true).apply { setCallback(object : ReactionIconCallback {
                     override fun onReactionChange(reactionCount: String, reactionText: String, reactionIcon: Int) {
                         (reactionCountView as TextView).text = reactionCount
                         (view as TextView).text = reactionText
@@ -118,15 +121,13 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
                         else{
                             view.setTextColor(ContextCompat.getColor(requireContext(), R.color.fixed_second_text_color))
                         }
+                        Log.e(ReactionPopup.TAG, "setReaction: icon", )
                     }
-                }) }.show(requireActivity().supportFragmentManager, ReactionFragment.TAG)
+                })
+                }
+                childFragmentManager.commit { add(reactionPopupFragment, ReactionPopup.TAG) }
             }
 
-            /*override fun onReactionLongPressed(view: View, reactionCountView: View, item: ChannelInfo) {
-                super.onReactionLongPressed(view, reactionCountView, item)
-                requireActivity().supportFragmentManager.beginTransaction().add(ReactionFragment.newInstance(view, reactionCountView, item), ReactionFragment.TAG).commit()
-            }*/
-            
             override fun onShareClicked(view: View, item: ChannelInfo) {
                 homeViewModel.shareContentLiveData.postValue(item)
             }

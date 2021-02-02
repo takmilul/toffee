@@ -316,7 +316,7 @@ fun loadReactionEmo(view: View, reaction: Int) {
         }
         is TextView -> {
             view.text = reactionTitle
-            if (reaction == Love.value) view.setTextColor(Color.parseColor("#829AB8")) else view.setTextColor(Color.parseColor("#829AB8"))
+            if (reaction == Love.value) view.setTextColor(Color.parseColor("#ff3988")) else view.setTextColor(Color.parseColor("#829AB8"))
             view.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
         }
     }

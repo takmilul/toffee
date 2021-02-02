@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.category.drama
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
@@ -133,7 +135,9 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
 
             override fun onReactionClicked(view: View, reactionCountView: View, item: ChannelInfo) {
                 super.onReactionClicked(view, reactionCountView, item)
-                ReactionFragment.newInstance(item).apply { setCallback(object : ReactionIconCallback {
+                val iconLocation = IntArray(2)
+                view.getLocationOnScreen(iconLocation)
+                val reactionPopupFragment = ReactionPopup.newInstance(item, iconLocation, view.height, true).apply { setCallback(object : ReactionIconCallback {
                     override fun onReactionChange(reactionCount: String, reactionText: String, reactionIcon: Int) {
                         (reactionCountView as TextView).text = reactionCount
                         (view as TextView).text = reactionText
@@ -144,14 +148,12 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
                         else{
                             view.setTextColor(ContextCompat.getColor(requireContext(), R.color.fixed_second_text_color))
                         }
+                        Log.e(ReactionPopup.TAG, "setReaction: icon", )
                     }
-                }) }.show(requireActivity().supportFragmentManager, ReactionFragment.TAG)
+                })
+                }
+                childFragmentManager.commit { add(reactionPopupFragment, ReactionPopup.TAG) }
             }
-
-            /*override fun onReactionLongPressed(view: View, reactionCountView: View, item: ChannelInfo) {
-                super.onReactionLongPressed(view, reactionCountView, item)
-                requireActivity().supportFragmentManager.beginTransaction().add(ReactionFragment.newInstance(view, reactionCountView, item), ReactionFragment.TAG).commit()
-            }*/
 
             override fun onShareClicked(view: View, item: ChannelInfo) {
                 homeViewModel.shareContentLiveData.postValue(item)
@@ -258,7 +260,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
             popupMenu.menu.getItem(0).title = "Remove from Favorites"
         }
 
-        popupMenu.menu.findItem(R.id.menu_share).isVisible = false
+        popupMenu.menu.findItem(R.id.menu_share).isVisible = true
         popupMenu.setOnMenuItemClickListener{
             when(it?.itemId){
                 R.id.menu_share->{
