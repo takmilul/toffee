@@ -313,6 +313,11 @@ class HomeActivity :
 
     private fun configureBottomSheet() {
         bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet)
+        if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+            bottom_sheet.hide()
+        } else {
+            bottom_sheet.show()
+        }
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -326,6 +331,10 @@ class HomeActivity :
                 binding.playerView.moveController(slideOffset)
             }
         })
+
+        window.decorView.setOnSystemUiVisibilityChangeListener {
+            toggleNavigations(it and View.SYSTEM_UI_FLAG_FULLSCREEN == View.SYSTEM_UI_FLAG_FULLSCREEN)
+        }
     }
 
     private fun observeNotification() {
@@ -465,14 +474,18 @@ class HomeActivity :
         so player can't reset scale completely. Manually resetting player scale value
          */
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            bottom_sheet.visibility = View.VISIBLE
             if(playlistManager.getCurrentChannel()?.isLive == true) {
+                bottom_sheet.visibility = View.VISIBLE
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            } else {
+                bottom_sheet.visibility = View.GONE
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             }
             binding.playerView.scaleX = 1f
             binding.playerView.scaleY = 1f
         } else {
             bottom_sheet.visibility = View.GONE
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             binding.playerView.moveController(-1.0f)
         }
         updateFullScreenState()
@@ -498,7 +511,7 @@ class HomeActivity :
                             !binding.playerView.isFullScreenPortrait())
 
         binding.playerView.onFullScreen(state)
-        toggleNavigations(state)
+//        toggleNavigations(state)
         binding.playerView.resizeView(calculateScreenWidth(), state)
         Utils.setFullScreen(this, state)
     }
@@ -506,11 +519,11 @@ class HomeActivity :
     private fun toggleNavigations(state: Boolean) {
         if(state) {
             supportActionBar?.hide()
-            binding.bottomAppBar.performHide()
+            binding.bottomAppBar.hide()
             binding.uploadButton.hide()
         } else {
             supportActionBar?.show()
-            binding.bottomAppBar.performShow()
+            binding.bottomAppBar.show()
             binding.uploadButton.show()
         }
     }
@@ -913,6 +926,8 @@ class HomeActivity :
         if(playlistManager.getCurrentChannel()?.isLive == true &&
             resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        } else {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
     }
 
