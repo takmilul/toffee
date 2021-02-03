@@ -686,7 +686,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         heightAnim?.addUpdateListener {
             layoutParams = layoutParams.apply {
                 height = it.animatedValue as Int
-
+                centerPlayerInView()
 //                binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.also {
 //                    it.height = height
 //                }
@@ -770,8 +770,9 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
 
                 layoutParams = layoutParams.apply {
                     height = min(max(height + distanceY.toInt(), minBound), maxBound)
-//                    binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.also {
-//                        it.height = height
+                    centerPlayerInView()
+//                    layoutParams = binding.playerContainer.layoutParams.also {
+//                        it.top
 //                    }
                 }
 
@@ -806,6 +807,15 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         }
 
         return true
+    }
+
+    private fun centerPlayerInView() {
+        val viewportHeight = layoutParams.height
+        val playerHeight = binding.playerContainer.layoutParams.height
+        if(viewportHeight < playerHeight) {
+            val halfTop = (playerHeight - viewportHeight) / 2f
+            binding.playerContainer.y = -halfTop
+        }
     }
 
     companion object {
