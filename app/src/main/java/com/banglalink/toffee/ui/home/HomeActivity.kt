@@ -331,6 +331,10 @@ class HomeActivity :
                 binding.playerView.moveController(slideOffset)
             }
         })
+
+        window.decorView.setOnSystemUiVisibilityChangeListener {
+            toggleNavigations(it and View.SYSTEM_UI_FLAG_FULLSCREEN == View.SYSTEM_UI_FLAG_FULLSCREEN)
+        }
     }
 
     private fun observeNotification() {
@@ -507,7 +511,7 @@ class HomeActivity :
                             !binding.playerView.isFullScreenPortrait())
 
         binding.playerView.onFullScreen(state)
-        toggleNavigations(state)
+//        toggleNavigations(state)
         binding.playerView.resizeView(calculateScreenWidth(), state)
         Utils.setFullScreen(this, state)
     }
