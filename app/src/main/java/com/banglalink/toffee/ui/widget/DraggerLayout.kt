@@ -3,6 +3,7 @@ package com.banglalink.toffee.ui.widget
 import android.content.Context
 import android.graphics.Color
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
@@ -358,8 +359,8 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
                         dragView.setBackgroundColor(Color.BLACK)
                     }
 
-                    val initX = 2 * dragView.minBound - dragView.layoutParams.height
-                    val heightDiff2 = initX + scale * (dragView.layoutParams.height - initX)
+                    val initX = 2 * dragView.minBound - capturedHeight
+                    val heightDiff2 = initX + scale * (capturedHeight - initX)
                     if(heightDiff2 > 0) {
 //                        val heightMoved = heightDiff2 - dragView.layoutParams.height
                         dragView.setLayoutHeight(heightDiff2.toInt())
@@ -399,7 +400,14 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
         override fun tryCaptureView(child: View, pointerId: Int): Boolean {
             return child == dragView
         }
+
+        override fun onViewCaptured(capturedChild: View, activePointerId: Int) {
+            super.onViewCaptured(capturedChild, activePointerId)
+            capturedHeight = capturedChild.layoutParams.height
+        }
     }
+
+    private var capturedHeight: Int = -1
 
     fun onScaleToBoundary(bscale: Float) {
         if(dragView.isVideoPortrait
