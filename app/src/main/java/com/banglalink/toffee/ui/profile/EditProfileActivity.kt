@@ -161,7 +161,8 @@ class EditProfileActivity : BaseAppCompatActivity() {
 
         val options = UCrop.Options().apply {
             setHideBottomControls(true)
-            setFreeStyleCropEnabled(true)
+            setFreeStyleCropEnabled(false)
+            setCircleDimmedLayer(true)
         }
 
         uCrop = uCrop.withOptions(options)

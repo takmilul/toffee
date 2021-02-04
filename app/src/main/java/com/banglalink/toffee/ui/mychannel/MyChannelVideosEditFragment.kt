@@ -67,7 +67,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
         binding.cancelButton.setOnClickListener { findNavController().popBackStack() }
         binding.submitButton.setOnClickListener { submitVideo() }
         binding.thumbEditButton.setOnClickListener { 
-            val action = MyChannelVideosEditFragmentDirections.actionMyChannelVideosEditFragmentToThumbnailSelectionMethodFragment("Set Video Cover Photo")
+            val action = MyChannelVideosEditFragmentDirections.actionMyChannelVideosEditFragmentToThumbnailSelectionMethodFragment("Set Video Cover Photo",false)
             findNavController().navigate(action) 
         }
         
