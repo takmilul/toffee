@@ -3,7 +3,6 @@ package com.banglalink.toffee.ui.widget
 import android.content.Context
 import android.graphics.Color
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
@@ -246,7 +245,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        mVerticalDragRange = height - dragView.height
+        mVerticalDragRange = height - dragView.minBound
         mHorizontalDragRange = width - dragView.width
         //        super.onLayout(changed,l,t,r,b);
         dragView.layout(
@@ -358,8 +357,20 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
                     } else {
                         dragView.setBackgroundColor(Color.BLACK)
                     }
+
+                    val initX = 2 * dragView.minBound - dragView.layoutParams.height
+                    val heightDiff2 = initX + scale * (dragView.layoutParams.height - initX)
+                    if(heightDiff2 > 0) {
+//                        val heightMoved = heightDiff2 - dragView.layoutParams.height
+                        dragView.setLayoutHeight(heightDiff2.toInt())
+//                        dragView.y += heightDiff2
+//                        Log.e("Y", "Scale ->> $scale, Y ->> ${dragView.y}, $heightMoved")
+                    }
                     dragView.scaleX = scale
                     dragView.scaleY = scale
+                    if(scale == getMaxScale() || scale == getMinScale()) {
+                        onScaleToBoundary(scale)
+                    }
                 }
             }
             requestLayout()
@@ -387,6 +398,16 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
 
         override fun tryCaptureView(child: View, pointerId: Int): Boolean {
             return child == dragView
+        }
+    }
+
+    fun onScaleToBoundary(bscale: Float) {
+        if(dragView.isVideoPortrait
+            && bscale == getMaxScale()
+            && dragView.layoutParams.height != dragView.maxBound
+        ) {
+//            dragView.setLayoutHeight(dragView.maxBound)
+            dragView.setHeightWithAnim(dragView.maxBound, 100)
         }
     }
 
