@@ -1,7 +1,5 @@
 package com.banglalink.toffee.ui.mychannel
 
-import android.view.View
-import android.widget.AdapterView
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -11,10 +9,10 @@ import com.banglalink.toffee.apiservice.MyChannelEditDetailService
 import com.banglalink.toffee.data.network.request.MyChannelEditRequest
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.extension.toLiveData
+import com.banglalink.toffee.model.MyChannelDetail
+import com.banglalink.toffee.model.MyChannelEditBean
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.UgcCategory
-import com.banglalink.toffee.model.MyChannelEditBean
-import com.banglalink.toffee.model.MyChannelDetail
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.squareup.inject.assisted.Assisted
@@ -26,27 +24,25 @@ class MyChannelEditDetailViewModel @AssistedInject constructor(private val myCha
 
     private val _data = MutableLiveData<Resource<MyChannelEditBean>>()
     val liveData = _data.toLiveData()
-    var categoryList = listOf<UgcCategory>()
+    var categoryList = MutableLiveData<List<UgcCategory>>()
     private var _categories = MutableLiveData<List<String>>()
-    val categories = _categories.toLiveData()
+//    val categories = _categories.toLiveData()
     var selectedCategory: UgcCategory? = null
+    val selectedCategoryPosition = MutableLiveData<Int>()
     val exitFragment = SingleLiveEvent<Boolean>()
 
     init {
         viewModelScope.launch {
-            categoryList = try {
+            categoryList.value = try {
                 categoryApiService.loadData(0, 0)
             } catch (ex: Exception) {
                 ex.printStackTrace()
                 emptyList()
             }
 
-            if(categoryList.isNullOrEmpty()) {
+            if(categoryList.value.isNullOrEmpty()) {
                 exitFragment.value = true
             }
-
-            selectedCategory = categoryList.find { it.id == myChannelDetail?.categoryId }
-            _categories.postValue(categoryList.map { it.categoryName })
         }
     }
 
@@ -72,7 +68,7 @@ class MyChannelEditDetailViewModel @AssistedInject constructor(private val myCha
         }
     }
 
-    fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
+    /*fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
         selectedCategory = categoryList.find { it.categoryName == parent?.adapter?.getItem(pos) }
-    }
+    }*/
 }

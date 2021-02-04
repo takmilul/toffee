@@ -6,6 +6,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.OnClickListener
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -21,7 +22,9 @@ import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.model.MyChannelDetail
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
+import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
+import com.banglalink.toffee.ui.widget.ToffeeSpinnerAdapter
 import com.banglalink.toffee.util.imagePathToBase64
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -61,11 +64,43 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         super.onViewCreated(view, savedInstanceState)
         observeEditChannel()
         observeThumbnailChange()
-
+        setupCategorySpinner()
+        
         binding.bannerEditButton.safeClick(this)
         binding.profileImageEditButton.safeClick(this)
         binding.cancelButton.safeClick(this)
         binding.saveButton.safeClick(this)
+    }
+
+    private fun setupCategorySpinner() {
+        val categoryAdapter = ToffeeSpinnerAdapter<UgcCategory>(requireContext(), "Select Category")
+        binding.categorySpinner.adapter = categoryAdapter
+        binding.categorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                if(position != 0 && viewModel.selectedCategoryPosition.value != position) {
+                    viewModel.selectedCategory = viewModel.categoryList.value?.get(position)
+                    viewModel.selectedCategoryPosition.value = position
+                }
+                else {
+                    binding.categorySpinner.setSelection(viewModel.selectedCategoryPosition.value ?: 1)
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+        }
+
+        observe(viewModel.categoryList) { categories ->
+            categoryAdapter.setData(categories)
+            viewModel.selectedCategory = categories?.find { it.id == myChannelDetail?.categoryId }
+            viewModel.selectedCategoryPosition.value = categories.indexOf(categories.find { it.id == myChannelDetail?.categoryId }).takeIf { it > 0 } ?: 1
+        }
+
+        observe(viewModel.selectedCategoryPosition) {
+            categoryAdapter.selectedItemPosition = it
+            binding.categorySpinner.setSelection(it)
+        }
     }
 
     private fun observeThumbnailChange() {
@@ -175,7 +210,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                 binding.progressBar.visibility = GONE
                 Toast.makeText(requireContext(), "Please give a channel name", Toast.LENGTH_SHORT).show()
             }
-            viewModel.selectedCategory?.id == null -> {
+            viewModel.selectedCategoryPosition.value == 0 -> {
                 binding.saveButton.isClickable = true
                 binding.progressBar.visibility = GONE
                 Toast.makeText(requireContext(), "Category is not selected", Toast.LENGTH_SHORT).show()

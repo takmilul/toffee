@@ -67,6 +67,8 @@
                     android:visibility="gone"
                     android:max="100"
                     android:progress="50"
+                    bindViewProgress="@{data.channelInfo}"
+                    android:progressBackgroundTint="#000000"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/guideline6"
                     app:layout_constraintStart_toStartOf="parent" />
@@ -149,7 +151,7 @@
                     android:paddingVertical="@dimen/duration_vertical_padding"
                     android:paddingHorizontal="@dimen/duration_horizontal_padding"
                     bindDuration="@{data.channelInfo}"
-                    app:layout_constraintBottom_toBottomOf="@+id/video_thumb"
+                    app:layout_constraintBottom_toTopOf="@id/progress"
                     app:layout_constraintEnd_toEndOf="@+id/video_thumb"
                     tools:text="00:25" />
     

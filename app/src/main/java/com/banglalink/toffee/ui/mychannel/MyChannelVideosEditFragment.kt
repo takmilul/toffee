@@ -109,6 +109,9 @@ class MyChannelVideosEditFragment : BaseFragment() {
                 if(position != 0 && viewModel.subCategoryPosition.value != position) {
                     viewModel.subCategoryPosition.value = position
                 }
+                else {
+                    binding.subCategorySpinner.setSelection(viewModel.subCategoryPosition.value ?: 1)
+                }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
