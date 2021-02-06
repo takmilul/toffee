@@ -246,7 +246,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        mVerticalDragRange = height - dragView.height
+        mVerticalDragRange = height - dragView.minBound
         mHorizontalDragRange = width - dragView.width
         //        super.onLayout(changed,l,t,r,b);
         dragView.layout(
@@ -358,8 +358,17 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
                     } else {
                         dragView.setBackgroundColor(Color.BLACK)
                     }
+
+                    val initX = 2 * dragView.minBound - capturedHeight
+                    val heightDiff2 = initX + scale * (capturedHeight - initX)
+                    if(heightDiff2 > 0) {
+                        dragView.setLayoutHeight(heightDiff2.toInt())
+                    }
                     dragView.scaleX = scale
                     dragView.scaleY = scale
+                    if(scale == getMaxScale() || scale == getMinScale()) {
+                        onScaleToBoundary(scale)
+                    }
                 }
             }
             requestLayout()
@@ -387,6 +396,23 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
 
         override fun tryCaptureView(child: View, pointerId: Int): Boolean {
             return child == dragView
+        }
+
+        override fun onViewCaptured(capturedChild: View, activePointerId: Int) {
+            super.onViewCaptured(capturedChild, activePointerId)
+            capturedHeight = capturedChild.layoutParams.height
+        }
+    }
+
+    private var capturedHeight: Int = -1
+
+    fun onScaleToBoundary(bscale: Float) {
+        if(dragView.isVideoPortrait
+            && bscale == getMaxScale()
+            && dragView.layoutParams.height != dragView.maxBound
+        ) {
+//            dragView.setLayoutHeight(dragView.maxBound)
+            dragView.setHeightWithAnim(dragView.maxBound, 100)
         }
     }
 
