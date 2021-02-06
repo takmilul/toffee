@@ -22,7 +22,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:padding="8dp" >
-    <TextView
+    <!--<TextView
         android:id="@+id/error_msg"
         android:textColor="?android:textColorPrimary"
         android:textSize="16dp"
@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:textAlignment="center"
-        tools:text="Timeout"/>
+        tools:text="Timeout"/>-->
     <pl.droidsonroids.gif.GifImageView
         android:id="@+id/progress_bar"
         android:background="@drawable/gif_round_border"
@@ -38,11 +38,11 @@
         android:layout_gravity="center"
         android:layout_width="40dp"
         android:layout_height="40dp"/>
-    <Button
+    <!--<Button
         android:id="@+id/retry_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="@string/retry"/>
+        android:text="@string/retry"/>-->
 </LinearLayout>
 </layout>

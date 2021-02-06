@@ -13,17 +13,17 @@ class ListLoadStateViewHolder(
         retry: () -> Unit
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    init {
+    /*init {
         binding.retryButton.setOnClickListener { retry.invoke() }
-    }
+    }*/
 
     fun bind(loadState: LoadState) {
-        if (loadState is LoadState.Error) {
+        binding.progressBar.isVisible = loadState is LoadState.Loading
+        /*if (loadState is LoadState.Error) {
             binding.errorMsg.text = loadState.error.localizedMessage
         }
-        binding.progressBar.isVisible = loadState is LoadState.Loading
         binding.retryButton.isVisible = loadState !is LoadState.Loading
-        binding.errorMsg.isVisible = loadState !is LoadState.Loading
+        binding.errorMsg.isVisible = loadState !is LoadState.Loading*/
     }
 
     companion object {
