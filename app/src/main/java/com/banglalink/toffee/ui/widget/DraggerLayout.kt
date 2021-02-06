@@ -362,10 +362,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
                     val initX = 2 * dragView.minBound - capturedHeight
                     val heightDiff2 = initX + scale * (capturedHeight - initX)
                     if(heightDiff2 > 0) {
-//                        val heightMoved = heightDiff2 - dragView.layoutParams.height
                         dragView.setLayoutHeight(heightDiff2.toInt())
-//                        dragView.y += heightDiff2
-//                        Log.e("Y", "Scale ->> $scale, Y ->> ${dragView.y}, $heightMoved")
                     }
                     dragView.scaleX = scale
                     dragView.scaleY = scale

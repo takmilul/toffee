@@ -37,6 +37,7 @@ import java.util.*
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 /**
  * Created by shantanu on 5/4/16.
@@ -61,8 +62,8 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     private var lastPlayerPosition: Long = 0
     var isAutoRotationEnabled = true
     private var mPlayListListener: PlaylistListener? = null
-    private var videoWidth = 1920
-    private var videoHeight = 1080
+    private var videoWidth = -1
+    private var videoHeight = -1
     protected lateinit var binding: MediaControlLayout3Binding
     private val screenWidth = UtilsKt.getScreenWidth()
     var isVideoPortrait = false
@@ -600,6 +601,8 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
 
     override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
         super.onMediaItemTransition(mediaItem, reason)
+        videoWidth = -1
+        videoHeight = -1
         val channelInfo = mediaItem?.playbackProperties?.tag
         if(channelInfo is ChannelInfo) {
             isVideoPortrait = channelInfo.is_horizontal != 1
@@ -651,6 +654,19 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
             width = playerWidth
             height = playerHeight
         }
+        if(videoWidth > 0 && videoHeight > 0) {
+            binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.apply {
+                width = videoWidth
+                height = videoHeight
+            }
+            adjustVideoBoundWithRatio(if(isVideoPortrait && !isFullScreenPortrait()) CENTER_CROP else SCALE_TO_FIT)
+        } else {
+            binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.apply {
+                width = playerWidth
+                height = playerHeight
+            }
+            adjustVideoBoundWithRatio(if(isVideoPortrait && !isFullScreenPortrait()) CENTER_CROP else SCALE_TO_FIT)
+        }
     }
 
     fun isClamped(): Boolean {
@@ -661,7 +677,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         return layoutParams.height >= if(isVideoPortrait) maxBound else minBound
     }
 
-    fun isFullScreenPortrait() = layoutParams.height >= UtilsKt.getScreenHeight()
+    fun isFullScreenPortrait() = isVideoPortrait && layoutParams.height >= UtilsKt.getScreenHeight()
 
     val minBound = screenWidth * 9 / 16
     val maxBound: Int
@@ -808,10 +824,15 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     private fun centerPlayerInView() {
         val viewportHeight = layoutParams.height
         val playerHeight = binding.playerContainer.layoutParams.height
-        if(viewportHeight < playerHeight) {
-            val halfTop = (playerHeight - viewportHeight) / 2f
-            binding.playerContainer.y = -halfTop
-        }
+
+        val halfTop = (playerHeight - viewportHeight) / 2f
+        binding.playerContainer.y = -halfTop
+
+        val viewportWidgh = layoutParams.width
+        val playerWidth = binding.playerContainer.layoutParams.width
+
+        val halfLeft = (playerWidth - viewportWidgh) / 2f
+        binding.playerContainer.x = -halfLeft
     }
 
     override fun onVideoSizeChanged(
@@ -821,21 +842,35 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         pixelWidthHeightRatio: Float
     ) {
         super.onVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio)
-//        Log.e("VIDEO_SIZE", "Video size -> $width x $height")
         videoWidth = width
         videoHeight = height
-        if(isVideoPortrait) { // portrait mode
-            val containerHeight = (videoWidth / screenWidth) * videoHeight
-            binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.also {
-                it.width = screenWidth
-                it.height = containerHeight
-            }
-        } else {
-            binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.also {
-                it.width = screenWidth
-                it.height = minBound
-            }
+
+        binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.also {
+            it.width = videoWidth
+            it.height = videoHeight
         }
+        adjustVideoBoundWithRatio(if(isVideoPortrait && !isFullScreenPortrait()) CENTER_CROP else SCALE_TO_FIT)
+    }
+
+    private val ADJUST_RATIO = 1
+    private val CENTER_CROP = 2
+    private val SCALE_TO_FIT = 3
+
+    private fun adjustVideoBoundWithRatio(mode: Int) {
+        val r1 = layoutParams.height / binding.playerContainer.layoutParams.height.toDouble()
+        val r2 = layoutParams.width / binding.playerContainer.layoutParams.width.toDouble()
+        val sc = when(mode) {
+            ADJUST_RATIO ->  min(r1, r2)
+            else -> max(r1, r2)
+        }
+//        Log.e("ADJUST_T", "Centercrop ->> $mode, $sc")
+//        Log.e("ADJUST_T", "video ->> $videoWidth x $videoHeight, container -> ${layoutParams.width} x ${layoutParams.height}")
+        binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.also {
+            it.width = if(mode == SCALE_TO_FIT) layoutParams.width else (it.width * sc).roundToInt()
+            it.height = if(mode == SCALE_TO_FIT) layoutParams.height else (it.height * sc).roundToInt()
+        }
+//        Log.e("ADJUST_T", "Final video -> ${binding.playerContainer.layoutParams.width} x ${binding.playerContainer.layoutParams.height}")
+        centerPlayerInView()
     }
 
     companion object {
