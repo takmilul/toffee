@@ -8,6 +8,7 @@ import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -165,12 +166,12 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             binding.saveButton -> editChannel()
             binding.bannerEditButton -> {
                 isPosterClicked = true
-                val action = MyChannelEditDetailFragmentDirections.actionMyChannelEditFragmentToThumbnailSelectionMethodFragment("Set Channel Cover Photo")
+                val action = MyChannelEditDetailFragmentDirections.actionMyChannelEditFragmentToThumbnailSelectionMethodFragment("Set Channel Cover Photo",false)
                 findNavController().navigate(action)
             }
             binding.profileImageEditButton -> {
                 isPosterClicked = false
-                val action = MyChannelEditDetailFragmentDirections.actionMyChannelEditFragmentToThumbnailSelectionMethodFragment("Set Channel Photo")
+                val action = MyChannelEditDetailFragmentDirections.actionMyChannelEditFragmentToThumbnailSelectionMethodFragment("Set Channel Photo",true)
                 findNavController().navigate(action)
             }
         }

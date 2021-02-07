@@ -126,7 +126,7 @@ class EditUploadInfoFragment: BaseFragment() {
         }
 
         binding.thumbEditButton.setOnClickListener {
-            val action = EditUploadInfoFragmentDirections.actionEditUploadInfoFragmentToThumbnailSelectionMethodFragment("Set Video Cover Photo")
+            val action = EditUploadInfoFragmentDirections.actionEditUploadInfoFragmentToThumbnailSelectionMethodFragment("Set Video Cover Photo",false)
             findNavController().navigate(action)
         }
 
