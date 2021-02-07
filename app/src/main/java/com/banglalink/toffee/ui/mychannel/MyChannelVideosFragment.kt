@@ -20,6 +20,8 @@ import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.Resource.Failure
+import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.ContentReactionCallback
 import com.banglalink.toffee.ui.common.ReactionIconCallback
 import com.banglalink.toffee.ui.common.ReactionPopup
@@ -71,6 +73,7 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
         channelOwnerId = arguments?.getInt(CHANNEL_OWNER_ID) ?: 0
         isPublic = arguments?.getInt(IS_PUBLIC) ?: 0
         observeReloadVideos()
+        observeDeleteVideo()
     }
 
     override fun setEmptyView() {
@@ -100,9 +103,6 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
         PopupMenu(requireContext(), view).apply {
             if (isOwner == 1) {
                 inflate(R.menu.menu_channel_owner_videos)
-                if (item.isApproved == 1) {
-                    this.menu.removeItem(R.id.menu_edit_content)
-                }
             }
             else {
                 inflate(R.menu.menu_channel_videos)
@@ -131,10 +131,9 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
                             handleFavoriteResponse(it)
                         })
                     }
-                    /*R.id.menu_not_interested -> {
-                        removeItemNotInterestedItem(item)
-                        return@setOnMenuItemClickListener true
-                    }*/
+                    R.id.menu_delete_content -> {
+                        mViewModel.deleteVideo(item.id.toInt())
+                    }
                 }
                 return@setOnMenuItemClickListener true
             }
@@ -212,6 +211,18 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
         observe(videosReloadViewModel.reloadPlaylist) {
             if (it) {
                 mAdapter.refresh()
+            }
+        }
+    }
+    
+    private fun observeDeleteVideo(){
+        observe(mViewModel.deleteVideoLiveData){
+            when(it){
+                is Success -> {
+                    requireContext().showToast(it.data.message)
+                    mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount)
+                }
+                is Failure -> requireContext().showToast(it.error.msg)
             }
         }
     }

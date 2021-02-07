@@ -84,7 +84,6 @@
                         <com.banglalink.toffee.ui.player.ExoMediaController4
                             android:background="@android:color/black"
                             android:id="@+id/player_view"
-                            android:keepScreenOn="true"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
 
