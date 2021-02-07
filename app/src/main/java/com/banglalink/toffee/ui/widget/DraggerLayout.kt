@@ -359,8 +359,8 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
                         dragView.setBackgroundColor(Color.BLACK)
                     }
 
-                    val initX = 2 * dragView.minBound - capturedEnd
-                    val heightDiff2 = initX + scale * (capturedEnd - initX)
+//                    val initX = 2 * dragView.minBound - capturedEnd
+                    val heightDiff2 = (scale - getMaxScale()) * (dragView.minBound - dragView.maxBound) / (getMinScale() - getMaxScale()) + dragView.maxBound//initX + scale * (capturedEnd - initX)
                     if(heightDiff2 > 0) {
                         dragView.setLayoutHeight(heightDiff2.toInt())
                     }
