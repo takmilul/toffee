@@ -172,10 +172,27 @@ class ThumbnailSelectionMethodFragment: Fragment() {
             else if(requestCode == UCrop.REQUEST_CROP && data != null) {
                 val uri = UCrop.getOutput(data)
                 if(uri != null) {
-                    findNavController().let {
-                        it.previousBackStackEntry?.savedStateHandle?.set(THUMB_URI, uri.toString())
-                        it.popBackStack()
+                    if (title.equals("Set Your Channel Logo")){
+
+                        findNavController().apply {
+
+                            popBackStack()
+                        }.navigate( R.id.bottomSheetUploadFragment,
+                            Bundle().apply {
+                                putString(BottomSheetUploadFragment.UPLOAD_FILE_URI, uri.toString())
+                            })
+
+                    } else {
+
+                        findNavController().let {
+
+                            it.previousBackStackEntry?.savedStateHandle?.set(THUMB_URI, uri.toString())
+                            it.popBackStack()
+                        }
+
+
                     }
+
                 }
             }
         }

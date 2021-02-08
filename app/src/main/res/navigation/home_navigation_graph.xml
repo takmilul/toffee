@@ -38,6 +38,11 @@
         android:label="Upload Video"
         />
     <fragment
+        android:id="@+id/upload_bottom"
+        android:name="com.banglalink.toffee.ui.upload.MinimizeUploadFragment"
+        android:label="Upload Video"
+        />
+    <fragment
         android:id="@+id/menu_settings"
         android:name="com.banglalink.toffee.ui.settings.SettingsFragment"
         android:label="Settings"
@@ -135,11 +140,14 @@
         android:name="com.banglalink.toffee.ui.upload.BottomSheetUploadFragment"
         android:label="BottomUpload" >
         <action
-            android:id="@+id/action_bottomSheetUploadFragment_to_editUploadInfoFragment"
-            app:destination="@id/editUploadInfoFragment"
+            android:id="@+id/action_bottomSheetUploadFragment_to_uploadMethodFragment"
+            app:destination="@id/uploadMethodFragment"
             app:popUpTo="@id/bottomSheetUploadFragment"
             app:popUpToInclusive="true"
             />
+        <action
+            android:id="@+id/action_bottomSheetUploadFragment_to_thumbnailSelectionMethodFragment"
+            app:destination="@id/thumbnailSelectionMethodFragment" />
     </dialog>
     <fragment
         android:id="@+id/editUploadInfoFragment"
