@@ -220,7 +220,7 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
             when(it){
                 is Success -> {
                     requireContext().showToast(it.data.message)
-                    mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount)
+                    mAdapter.refresh()
                 }
                 is Failure -> requireContext().showToast(it.error.msg)
             }

@@ -30,6 +30,7 @@ import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.common.UnSubscribeDialog
 import com.banglalink.toffee.ui.common.ViewPagerAdapter
+import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.bindButtonState
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
@@ -50,6 +51,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     private var isSubscribed: Int = 0
     private var isPublic: Int = 0
     private var myChannelDetail: MyChannelDetail? = null
+    private lateinit var progressDialog: VelBoxProgressDialog
     private lateinit var binding: FragmentMyChannelHomeBinding
     private lateinit var viewPagerAdapter: ViewPagerAdapter
     private var fragmentList: ArrayList<androidx.fragment.app.Fragment> = arrayListOf()
@@ -85,6 +87,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        progressDialog = VelBoxProgressDialog(requireContext())
         val args = arguments
         isSubscribed = args?.getInt(IS_SUBSCRIBED) ?: 0
         isOwner = args?.getInt(IS_OWNER) ?: 1
@@ -108,7 +111,8 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         super.onViewCreated(view, savedInstanceState)
         
         binding.contentBody.visibility = View.GONE
-        binding.progressBar.visibility = View.VISIBLE
+//        binding.progressBar.visibility = View.VISIBLE
+        progressDialog.show()
 
         observeChannelDetail()
         viewModel.getChannelDetail()
@@ -259,7 +263,8 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         else {
             activity?.title = "My Channel"
         }
-        binding.progressBar.visibility = View.GONE
+        progressDialog.dismiss()
+//        binding.progressBar.visibility = View.GONE
         binding.contentBody.visibility = View.VISIBLE
 
         observeRatingChannel()
