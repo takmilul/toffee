@@ -8,6 +8,7 @@
     <string name="action_sign_in">Sign In</string>
     <string name="action_subscribe">SUBSCRIBE</string>
     <string name="sign_in_text">Sign In</string>
+    <string name="sign_in_top_text">To get started, please provide the following information</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

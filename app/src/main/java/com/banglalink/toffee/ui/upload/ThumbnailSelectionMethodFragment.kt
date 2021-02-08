@@ -30,6 +30,7 @@ import java.util.*
 class ThumbnailSelectionMethodFragment: Fragment() {
     private var imageUri: Uri? = null
     private lateinit var title: String
+    private var isProfile:Boolean = false
 
     companion object {
         private const val REQUEST_IMAGE = 0x225
@@ -54,8 +55,9 @@ class ThumbnailSelectionMethodFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
         
         title = ThumbnailSelectionMethodFragmentArgs.fromBundle(requireArguments()).title
+        isProfile = ThumbnailSelectionMethodFragmentArgs.fromBundle(requireArguments()).isProfile
         heading.text = title
-        
+
         open_gallery_button.setOnClickListener {
             checkFileSystemPermission()
         }
@@ -138,9 +140,14 @@ class ThumbnailSelectionMethodFragment: Fragment() {
 
         val options = UCrop.Options().apply {
             setHideBottomControls(true)
-            withAspectRatio(16f, 9f)
+            if (isProfile){
+                withAspectRatio(4f, 4f)
+                setCircleDimmedLayer(true)
+            } else {
+                withAspectRatio(16f, 9f)
+            }
             withMaxResultSize(1280, 720)
-            setFreeStyleCropEnabled(true)
+            setFreeStyleCropEnabled(false)
         }
 
         uCrop = uCrop.withOptions(options)

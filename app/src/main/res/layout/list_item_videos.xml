@@ -27,17 +27,16 @@
         
         <com.banglalink.toffee.ui.widget.CustomImageView
             android:id="@+id/poster"
-            loadChannelImage="@{data}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
-            android:minHeight="200dp"
             android:scaleType="centerCrop"
+            loadChannelImage="@{data}"
             android:onClick="@{()->callback.onItemClicked(data)}"
-            app:layout_constraintDimensionRatio="W,16:9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/name"
             tools:src="@drawable/placeholder" />
         
         <TextView
@@ -76,6 +75,7 @@
             android:layout_height="4dp"
             android:max="1000"
             bindViewProgress="@{data}"
+            android:progressBackgroundTint="#000000"
             app:layout_constraintBottom_toBottomOf="@+id/poster"
             app:layout_constraintEnd_toEndOf="@+id/duration"
             app:layout_constraintStart_toStartOf="parent" />

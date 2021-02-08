@@ -192,10 +192,7 @@
                         android:id="@+id/categorySpinner"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:spinnerMode="dialog"
-                        android:entries="@{viewModel.categories}"
-                        android:onItemSelected="@{viewModel::onItemSelected}"
-                        android:selectedItemPosition="@{viewModel.categories.indexOf(viewModel.selectedCategory.categoryName)}" />
+                        android:spinnerMode="dialog" />
 
                 </RelativeLayout>
 

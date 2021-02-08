@@ -145,6 +145,7 @@
             android:layout_height="4dp"
             android:max="1000"
             bindViewProgress="@{data}"
+            android:progressBackgroundTint="#000000"
             app:layout_constraintBottom_toBottomOf="@+id/poster_container"
             app:layout_constraintEnd_toEndOf="@+id/duration"
             app:layout_constraintStart_toStartOf="parent" />

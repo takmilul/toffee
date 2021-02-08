@@ -67,7 +67,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
         binding.cancelButton.setOnClickListener { findNavController().popBackStack() }
         binding.submitButton.setOnClickListener { submitVideo() }
         binding.thumbEditButton.setOnClickListener { 
-            val action = MyChannelVideosEditFragmentDirections.actionMyChannelVideosEditFragmentToThumbnailSelectionMethodFragment("Set Video Cover Photo")
+            val action = MyChannelVideosEditFragmentDirections.actionMyChannelVideosEditFragmentToThumbnailSelectionMethodFragment("Set Video Cover Photo",false)
             findNavController().navigate(action) 
         }
         
@@ -108,6 +108,9 @@ class MyChannelVideosEditFragment : BaseFragment() {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 if(position != 0 && viewModel.subCategoryPosition.value != position) {
                     viewModel.subCategoryPosition.value = position
+                }
+                else {
+                    binding.subCategorySpinner.setSelection(viewModel.subCategoryPosition.value ?: 1)
                 }
             }
 
