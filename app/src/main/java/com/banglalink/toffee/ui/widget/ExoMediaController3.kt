@@ -65,6 +65,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     private var videoHeight = -1
     protected lateinit var binding: MediaControlLayout3Binding
     private val screenWidth = UtilsKt.getScreenWidth()
+    private val screenHeight = UtilsKt.getScreenHeight()
     var isVideoPortrait = false
 
     init {
@@ -682,9 +683,12 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
 
     fun isFullScreenPortrait() = isVideoPortrait && layoutParams.height >= UtilsKt.getScreenHeight()
 
-    val minBound = screenWidth * 9 / 16
+    private val minVideoHeight: Int = screenWidth * 9 / 16
+    private val maxVideoHeight: Int = screenHeight * 2 / 3
+
+    val minBound = minVideoHeight
     val maxBound: Int
-        get() = if(isVideoPortrait) screenWidth * 16 / 11 else minBound
+        get() = if(isVideoPortrait) maxVideoHeight else minBound
 
     private var mActivePointerId = MotionEvent.INVALID_POINTER_ID
     private var mLastTouchX: Float = 0f
