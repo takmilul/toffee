@@ -246,7 +246,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        mVerticalDragRange = height - dragView.height
+        mVerticalDragRange = height - dragView.minBound
         mHorizontalDragRange = width - dragView.width
         //        super.onLayout(changed,l,t,r,b);
         dragView.layout(
@@ -337,7 +337,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
             mTop = top
             mLeft = left
             if (!isHorizontalDragged()) {
-                val bottomBound = parent.height - dragView.height - parent.paddingBottom
+                val bottomBound = parent.height - dragView.minBound //dragView.height - parent.paddingBottom
                 if (bottomBound != 0) {
                     val colorValue = 256 - top * 256 / bottomBound
                     parent.setBackgroundColor(
@@ -348,7 +348,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
                             colorValue
                         )
                     )
-                    val scale = getMaxScale() - (1 - getMinScale()) * (top * 100f / bottomBound) / 100.0f
+                    val scale = (top * (getMinScale() - getMaxScale())) / bottomBound + getMaxScale()
                     dragView.pivotX = (dragView.width - 38).toFloat()
                     dragView.pivotY = (dragView.height - bottomMargin).toFloat()
                     val padding = (20 - 20 * scale).toInt()
@@ -358,8 +358,17 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
                     } else {
                         dragView.setBackgroundColor(Color.BLACK)
                     }
+
+//                    val initX = 2 * dragView.minBound - capturedEnd
+                    val heightDiff2 = (scale - getMaxScale()) * (dragView.minBound - dragView.maxBound) / (getMinScale() - getMaxScale()) + dragView.maxBound//initX + scale * (capturedEnd - initX)
+                    if(heightDiff2 > 0) {
+                        dragView.setLayoutHeight(heightDiff2.toInt())
+                    }
                     dragView.scaleX = scale
                     dragView.scaleY = scale
+                    if(scale == getMaxScale() || scale == getMinScale()) {
+                        onScaleToBoundary(scale)
+                    }
                 }
             }
             requestLayout()
@@ -387,6 +396,24 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
 
         override fun tryCaptureView(child: View, pointerId: Int): Boolean {
             return child == dragView
+        }
+
+        override fun onViewCaptured(capturedChild: View, activePointerId: Int) {
+            super.onViewCaptured(capturedChild, activePointerId)
+            capturedEnd = capturedChild.layoutParams.height
+        }
+    }
+
+    private var capturedEnd: Int = -1
+    private var captureStart: Int = -1
+
+    fun onScaleToBoundary(bscale: Float) {
+        if(dragView.isVideoPortrait
+            && bscale == getMaxScale()
+            && dragView.layoutParams.height != dragView.maxBound
+        ) {
+//            dragView.setLayoutHeight(dragView.maxBound)
+            dragView.setHeightWithAnim(dragView.maxBound, 100)
         }
     }
 
