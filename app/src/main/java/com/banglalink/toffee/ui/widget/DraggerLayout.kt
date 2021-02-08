@@ -337,7 +337,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
             mTop = top
             mLeft = left
             if (!isHorizontalDragged()) {
-                val bottomBound = parent.height - dragView.height - parent.paddingBottom
+                val bottomBound = parent.height - dragView.minBound //dragView.height - parent.paddingBottom
                 if (bottomBound != 0) {
                     val colorValue = 256 - top * 256 / bottomBound
                     parent.setBackgroundColor(
@@ -348,7 +348,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
                             colorValue
                         )
                     )
-                    val scale = getMaxScale() - (1 - getMinScale()) * (top * 100f / bottomBound) / 100.0f
+                    val scale = (top * (getMinScale() - getMaxScale())) / bottomBound + getMaxScale()
                     dragView.pivotX = (dragView.width - 38).toFloat()
                     dragView.pivotY = (dragView.height - bottomMargin).toFloat()
                     val padding = (20 - 20 * scale).toInt()
@@ -359,8 +359,8 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
                         dragView.setBackgroundColor(Color.BLACK)
                     }
 
-                    val initX = 2 * dragView.minBound - capturedHeight
-                    val heightDiff2 = initX + scale * (capturedHeight - initX)
+//                    val initX = 2 * dragView.minBound - capturedEnd
+                    val heightDiff2 = (scale - getMaxScale()) * (dragView.minBound - capturedEnd) / (getMinScale() - getMaxScale()) + capturedEnd//initX + scale * (capturedEnd - initX)
                     if(heightDiff2 > 0) {
                         dragView.setLayoutHeight(heightDiff2.toInt())
                     }
@@ -400,11 +400,16 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
 
         override fun onViewCaptured(capturedChild: View, activePointerId: Int) {
             super.onViewCaptured(capturedChild, activePointerId)
-            capturedHeight = capturedChild.layoutParams.height
+            capturedEnd = if(dragView.scaleX == 0.5f) {
+                dragView.maxBound
+            } else {
+                dragView.layoutParams.height
+            }
         }
     }
 
-    private var capturedHeight: Int = -1
+    private var capturedEnd: Int = -1
+    private var captureStart: Int = -1
 
     fun onScaleToBoundary(bscale: Float) {
         if(dragView.isVideoPortrait
