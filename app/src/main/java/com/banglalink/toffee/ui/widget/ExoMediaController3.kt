@@ -616,6 +616,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
 //                (simpleExoPlayer as SimpleExoPlayer).videoScalingMode = Renderer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
 //            }
             binding.rotation.visibility = if(isVideoPortrait) View.GONE else View.VISIBLE
+            binding.share.visibility = if(channelInfo.isApproved == 1) View.VISIBLE else View.GONE
         }
         onPlayerControllerChangedListeners.forEach {
             it.onMediaItemChanged()
