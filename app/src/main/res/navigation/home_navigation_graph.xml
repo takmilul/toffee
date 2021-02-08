@@ -130,6 +130,17 @@
             app:popUpToInclusive="true"
             />
     </dialog>
+    <dialog
+        android:id="@+id/bottomSheetUploadFragment"
+        android:name="com.banglalink.toffee.ui.upload.BottomSheetUploadFragment"
+        android:label="BottomUpload" >
+        <action
+            android:id="@+id/action_bottomSheetUploadFragment_to_editUploadInfoFragment"
+            app:destination="@id/editUploadInfoFragment"
+            app:popUpTo="@id/bottomSheetUploadFragment"
+            app:popUpToInclusive="true"
+            />
+    </dialog>
     <fragment
         android:id="@+id/editUploadInfoFragment"
         android:name="com.banglalink.toffee.ui.upload.EditUploadInfoFragment"

@@ -260,7 +260,7 @@ class HomeActivity :
     }
 
     fun showUploadDialog(): Boolean {
-        if (navController.currentDestination?.id == R.id.uploadMethodFragment) {
+        if (navController.currentDestination?.id == R.id.bottomSheetUploadFragment) {
             navController.popBackStack()
             return true
         }
@@ -292,7 +292,7 @@ class HomeActivity :
     //                    }
     //                    return@launch
     //                }
-            navController.navigate(R.id.uploadMethodFragment)
+            navController.navigate(R.id.bottomSheetUploadFragment)
         }
         return false
     }
