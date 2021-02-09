@@ -696,7 +696,7 @@ class HomeActivity :
                     )
                 }
                 (it.isPurchased || it.isPaidSubscribed) && !it.isExpired(Date())->{
-                    maximizePlayer()
+//                    maximizePlayer()
                     when (detailsInfo) {
                         is PlaylistPlaybackInfo -> {
                             loadPlayListItem(detailsInfo)
@@ -1201,6 +1201,7 @@ class HomeActivity :
 
     override fun onMediaItemChanged() {
         super.onMediaItemChanged()
+        maximizePlayer()
         onViewMaximize()
     }
 
