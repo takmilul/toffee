@@ -142,12 +142,22 @@
         <action
             android:id="@+id/action_bottomSheetUploadFragment_to_uploadMethodFragment"
             app:destination="@id/uploadMethodFragment"
-            app:popUpTo="@id/bottomSheetUploadFragment"
-            app:popUpToInclusive="true"
             />
         <action
-            android:id="@+id/action_bottomSheetUploadFragment_to_thumbnailSelectionMethodFragment"
-            app:destination="@id/thumbnailSelectionMethodFragment" />
+            android:id="@+id/action_bottomSheetUploadFragment_to_updateChannelLogoDialogFragment"
+            app:destination="@id/updateChannelLogoDialogFragment" />
+    </dialog>
+    <dialog
+        android:id="@+id/updateChannelLogoDialogFragment"
+        android:name="com.banglalink.toffee.ui.upload.UpdateChannelLogoDialogFragment"
+        android:label="Update Logo Channel" >
+        <argument
+            android:name="title"
+            app:argType="string" />
+        <argument
+            android:name="isProfile"
+            app:argType="boolean"
+            />
     </dialog>
     <fragment
         android:id="@+id/editUploadInfoFragment"

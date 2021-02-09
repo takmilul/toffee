@@ -43,7 +43,6 @@ class UploadMethodFragment : DialogFragment() {
     companion object {
         private const val REQUEST_CAPTURE_VIDEO = 0x220
         private const val REQUEST_PICK_VIDEO = 0x230
-        const val UPLOAD_FILE_URI = "UPLOAD_FILE_URI"
         fun newInstance(): UploadMethodFragment {
             return UploadMethodFragment()
         }
