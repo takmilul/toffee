@@ -2,16 +2,17 @@ package com.banglalink.toffee.ui.upload
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.core.content.FileProvider
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
@@ -20,17 +21,18 @@ import com.banglalink.toffee.extension.showToast
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
 import com.yalantis.ucrop.UCrop
-import kotlinx.android.synthetic.main.fragment_thumb_selection_method.*
+import kotlinx.android.synthetic.main.fragment_thumb_selection_method.view.*
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ThumbnailSelectionMethodFragment: Fragment() {
+class ThumbnailSelectionMethodFragment: DialogFragment() {
     private var imageUri: Uri? = null
     private lateinit var title: String
-    private var isProfile:Boolean = false
+    private var isProfileImage:Boolean = false
+    private var alertDialog: AlertDialog? = null
 
     companion object {
         private const val REQUEST_IMAGE = 0x225
@@ -43,19 +45,19 @@ class ThumbnailSelectionMethodFragment: Fragment() {
         }
     }
 
-    override fun onCreateView(
+    /*override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_thumb_selection_method, container, false)
-    }
+    }*/
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    /*override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
         title = ThumbnailSelectionMethodFragmentArgs.fromBundle(requireArguments()).title
-        isProfile = ThumbnailSelectionMethodFragmentArgs.fromBundle(requireArguments()).isProfile
+        isProfileImage = ThumbnailSelectionMethodFragmentArgs.fromBundle(requireArguments()).isProfileImage
         heading.text = title
 
         open_gallery_button.setOnClickListener {
@@ -65,8 +67,33 @@ class ThumbnailSelectionMethodFragment: Fragment() {
         open_camera_button.setOnClickListener {
             checkCameraPermissions()
         }
-    }
+    }*/
 
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        title = ThumbnailSelectionMethodFragmentArgs.fromBundle(requireArguments()).title
+        isProfileImage = ThumbnailSelectionMethodFragmentArgs.fromBundle(requireArguments()).isProfileImage
+
+        val dialogView = layoutInflater.inflate(R.layout.fragment_thumb_selection_method, null, false)
+        
+        with(dialogView){
+            heading.text = title
+            open_gallery_button.setOnClickListener {
+                checkFileSystemPermission()
+            }
+            open_camera_button.setOnClickListener {
+                checkCameraPermissions()
+            }
+        }
+        
+        alertDialog = AlertDialog
+            .Builder(requireContext())
+            .setView(dialogView).create()
+            .apply {
+                window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            }
+        return alertDialog!!
+    }
+    
     private fun checkFileSystemPermission() {
         lifecycleScope.launch {
             try{
@@ -118,7 +145,6 @@ class ThumbnailSelectionMethodFragment: Fragment() {
             imageIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
             startActivityForResult(imageIntent, REQUEST_IMAGE)
             ToffeeAnalytics.logBreadCrumb("Camera activity started")
-
         }
     }
 
@@ -140,7 +166,7 @@ class ThumbnailSelectionMethodFragment: Fragment() {
 
         val options = UCrop.Options().apply {
             setHideBottomControls(true)
-            if (isProfile){
+            if (isProfileImage){
                 withAspectRatio(4f, 4f)
                 setCircleDimmedLayer(true)
             } else {
@@ -174,7 +200,8 @@ class ThumbnailSelectionMethodFragment: Fragment() {
                 if(uri != null) {
                     findNavController().let {
                         it.previousBackStackEntry?.savedStateHandle?.set(THUMB_URI, uri.toString())
-                        it.popBackStack()
+                        alertDialog?.dismiss()
+//                        it.popBackStack()
                     }
                 }
             }

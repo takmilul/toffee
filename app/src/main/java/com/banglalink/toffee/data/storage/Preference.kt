@@ -153,6 +153,22 @@ class Preference(private val pref: SharedPreferences,
         get() = pref.getInt(PREF_CHANNEL_ID, 0)
         set(channelId) = pref.edit().putInt(PREF_CHANNEL_ID, channelId).apply()
 
+    var channelLogo: String
+        get() = pref.getString(PREF_CHANNEL_LOGO, "") ?: ""
+        set(channelLogoUrl) = pref.edit().putString(PREF_CHANNEL_LOGO, channelLogoUrl).apply()
+    
+    var channelName: String
+        get() = pref.getString(PREF_CHANNEL_NAME, "") ?: ""
+        set(channelName) = pref.edit().putString(PREF_CHANNEL_NAME, channelName).apply()
+    
+    fun hasChannelLogo(): Boolean{
+        return channelLogo.isNotBlank()
+    }
+    
+    fun hasChannelName(): Boolean{
+        return channelName.isNotBlank()
+    }
+    
     fun setSystemTime(systemTime: String) {
         pref.edit().putString(PREF_SYSTEM_TIME, systemTime).apply()
     }
@@ -351,6 +367,8 @@ class Preference(private val pref: SharedPreferences,
         private const val PREF_TOFFEE_UPLOAD_STATUS= "toffee-upload-status"
         private const val PREF_ENABLE_FLOATING_WINDOW= "enable-floating-window"
         private const val PREF_AUTO_PLAY_RECOMMENDED= "autoplay-for-recommended"
+        private const val PREF_CHANNEL_LOGO = "channel_logo"
+        private const val PREF_CHANNEL_NAME = "channel_name"
 
         private const val PREF_NAME_IP_TV= "IP_TV"
 

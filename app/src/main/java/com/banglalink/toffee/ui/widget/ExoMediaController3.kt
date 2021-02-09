@@ -9,7 +9,6 @@ import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Message
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.TextureView.SurfaceTextureListener
@@ -617,6 +616,10 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
 //                (simpleExoPlayer as SimpleExoPlayer).videoScalingMode = Renderer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
 //            }
             binding.rotation.visibility = if(isVideoPortrait) View.GONE else View.VISIBLE
+            binding.share.visibility = if(channelInfo.isApproved == 1) View.VISIBLE else View.GONE
+        }
+        onPlayerControllerChangedListeners.forEach {
+            it.onMediaItemChanged()
         }
     }
 
@@ -659,13 +662,13 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
                 width = videoWidth
                 height = videoHeight
             }
-            adjustVideoBoundWithRatio(if(isVideoPortrait && !isFullScreenPortrait()) CENTER_CROP else SCALE_TO_FIT)
+            adjustVideoBoundWithRatio(if(isVideoPortrait && !isFullScreenPortrait()) SCALE_TYPE_CENTER_CROP else SCALE_TYPE_SCALE_TO_FIT)
         } else {
             binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.apply {
                 width = playerWidth
                 height = playerHeight
             }
-            adjustVideoBoundWithRatio(if(isVideoPortrait && !isFullScreenPortrait()) CENTER_CROP else SCALE_TO_FIT)
+            adjustVideoBoundWithRatio(if(isVideoPortrait && !isFullScreenPortrait()) SCALE_TYPE_CENTER_CROP else SCALE_TYPE_SCALE_TO_FIT)
         }
     }
 
@@ -685,7 +688,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
 
     private var mActivePointerId = MotionEvent.INVALID_POINTER_ID
     private var mLastTouchX: Float = 0f
-    var mLastTouchY: Float = 0f
+    private var mLastTouchY: Float = 0f
     private var mPosX: Float = 0f
     private var mPosY: Float = 0f
     private var startX: Float = 0f
@@ -708,7 +711,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
 
     private var heightAnim: ValueAnimator? = null
 
-    fun handleTouchDown(ev: MotionEvent) {
+    private fun handleTouchDown(ev: MotionEvent) {
         heightAnim?.cancel()
         heightAnim = null
         mLastTouchY = ev.y
@@ -849,27 +852,20 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
             it.width = videoWidth
             it.height = videoHeight
         }
-        adjustVideoBoundWithRatio(if(isVideoPortrait && !isFullScreenPortrait()) CENTER_CROP else SCALE_TO_FIT)
+        adjustVideoBoundWithRatio(if(isVideoPortrait && !isFullScreenPortrait()) SCALE_TYPE_CENTER_CROP else SCALE_TYPE_SCALE_TO_FIT)
     }
-
-    private val ADJUST_RATIO = 1
-    private val CENTER_CROP = 2
-    private val SCALE_TO_FIT = 3
 
     private fun adjustVideoBoundWithRatio(mode: Int) {
         val r1 = layoutParams.height / binding.playerContainer.layoutParams.height.toDouble()
         val r2 = layoutParams.width / binding.playerContainer.layoutParams.width.toDouble()
         val sc = when(mode) {
-            ADJUST_RATIO ->  min(r1, r2)
+            SCALE_TYPE_ADJUST_RATIO ->  min(r1, r2)
             else -> max(r1, r2)
         }
-//        Log.e("ADJUST_T", "Centercrop ->> $mode, $sc")
-//        Log.e("ADJUST_T", "video ->> $videoWidth x $videoHeight, container -> ${layoutParams.width} x ${layoutParams.height}")
         binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.also {
-            it.width = if(mode == SCALE_TO_FIT) layoutParams.width else (it.width * sc).roundToInt()
-            it.height = if(mode == SCALE_TO_FIT) layoutParams.height else (it.height * sc).roundToInt()
+            it.width = if(mode == SCALE_TYPE_SCALE_TO_FIT) layoutParams.width else (it.width * sc).roundToInt()
+            it.height = if(mode == SCALE_TYPE_SCALE_TO_FIT) layoutParams.height else (it.height * sc).roundToInt()
         }
-//        Log.e("ADJUST_T", "Final video -> ${binding.playerContainer.layoutParams.width} x ${binding.playerContainer.layoutParams.height}")
         centerPlayerInView()
     }
 
@@ -877,5 +873,9 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         private const val UPDATE_PROGRESS = 21
         private const val FORWARD_BACKWARD_DURATION_IN_MILLIS = 10000
         private const val AUTOPLAY_INTERVAL = 5000L
+
+        private const val SCALE_TYPE_ADJUST_RATIO = 1
+        private const val SCALE_TYPE_CENTER_CROP = 2
+        private const val SCALE_TYPE_SCALE_TO_FIT = 3
     }
 }
