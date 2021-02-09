@@ -7,21 +7,26 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
 import android.provider.MediaStore
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.FileProvider
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.repository.UploadInfoRepository
+import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.ui.home.HomeActivity
+import com.banglalink.toffee.ui.home.HomeViewModel
+import com.banglalink.toffee.ui.mychannel.MyChannelHomeFragment
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,10 +40,11 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class NewUploadMethodFragment : DialogFragment() {
-
+    @Inject
+    lateinit  var mpref: Preference
     @Inject
     lateinit var mUploadInfoRepository: UploadInfoRepository
-
+    private val homeViewModel by activityViewModels<HomeViewModel>()
     private var videoUri: Uri? = null
 
     companion object {
@@ -61,14 +67,18 @@ class NewUploadMethodFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         view.setOnClickListener {
-            findNavController().popBackStack()
+            findNavController().popBackStack(R.id.bottomSheetUploadFragment, true)
         }
 
-        upload_method_card.setOnClickListener {
+        myChannelButton.setOnClickListener {
 
+            openMyChannelFragment()
+           //
         }
 
-
+        imageView11?.setOnClickListener {
+            findNavController().popBackStack(R.id.bottomSheetUploadFragment, true)
+        }
 
         open_camera_button.setOnClickListener {
             checkCameraPermissions()
@@ -177,12 +187,16 @@ class NewUploadMethodFragment : DialogFragment() {
             ToffeeAnalytics.logBreadCrumb("Camera/video picker returned without any data")
         }*/
     }
-
+    private fun openMyChannelFragment() {
+        homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(mpref.channelId, mpref.customerId, 0)
+    }
     private fun openEditUpload(uri: String) {
         dismiss()
-       findNavController()?.navigate(R.id.action_bottomSheetUploadFragment_to_editUploadInfoFragment, Bundle().apply {
-            putString(EditUploadInfoFragment.UPLOAD_FILE_URI, uri)
-        })
+        findNavController()?.navigate(
+           R.id.action_bottomSheetUploadFragment_to_editUploadInfoFragment,
+           Bundle().apply {
+               putString(EditUploadInfoFragment.UPLOAD_FILE_URI, uri)
+           })
 
 }
 //    private fun uploadUri3(uri: String) {

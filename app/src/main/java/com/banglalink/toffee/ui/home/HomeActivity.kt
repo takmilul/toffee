@@ -39,6 +39,7 @@ import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.repository.UploadInfoRepository
+import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.*
@@ -101,7 +102,8 @@ class HomeActivity :
     DraggerLayout.OnPositionChangedListener ,
     SearchView.OnQueryTextListener
 {
-
+    @Inject
+    lateinit  var mpref: Preference
     @Inject
     lateinit var uploadRepo: UploadInfoRepository
 
@@ -264,40 +266,79 @@ class HomeActivity :
     }
 
     fun showUploadDialog(): Boolean {
-        if (navController.currentDestination?.id == R.id.bottomSheetUploadFragment) {
-            navController.popBackStack()
-            return true
-        }
-        lifecycleScope.launch {
-
-            if (uploadRepo.getActiveUploadsList().isNotEmpty()) {
-                return@launch
+        if (mpref.hasChannelLogo() && mpref.hasChannelName()){
+            if (navController.currentDestination?.id == R.id.uploadMethodFragment) {
+                navController.popBackStack()
+                return true
             }
-    
-    //                mPref.uploadId?.let {
-    //                    val uploads = uploadRepo.getUploadById(UtilsKt.stringToUploadId(it))
-    //                    if(uploads == null || uploads.status !in listOf(0, 1, 2, 3)) {
-    //                        mPref.uploadId = null
-    //                        navController.navigate(R.id.uploadMethodFragment)
-    //                        return@launch
-    //                    }
-    ////                    if(uploads.status in listOf(0, 1, 2, 3) && UploadService.taskList.isEmpty()) {
-    ////                        uploads.apply {
-    ////                            status = UploadStatus.ERROR.value
-    ////                            statusMessage = "Process killed"
-    ////                        }.also { info ->
-    ////                            uploadRepo.updateUploadInfo(info)
-    ////                        }
-    ////                        mPref.uploadId = null
-    ////                        navController.navigate(R.id.uploadMethodFragment)
-    ////                    }
-    //                    if(navController.currentDestination?.id != R.id.editUploadInfoFragment) {
-    //                        navController.navigate(R.id.editUploadInfoFragment)
-    //                    }
-    //                    return@launch
-    //                }
-            navController.navigate(R.id.bottomSheetUploadFragment)
+            lifecycleScope.launch {
+
+                if (uploadRepo.getActiveUploadsList().isNotEmpty()) {
+                    return@launch
+                }
+
+                //                mPref.uploadId?.let {
+                //                    val uploads = uploadRepo.getUploadById(UtilsKt.stringToUploadId(it))
+                //                    if(uploads == null || uploads.status !in listOf(0, 1, 2, 3)) {
+                //                        mPref.uploadId = null
+                //                        navController.navigate(R.id.uploadMethodFragment)
+                //                        return@launch
+                //                    }
+                ////                    if(uploads.status in listOf(0, 1, 2, 3) && UploadService.taskList.isEmpty()) {
+                ////                        uploads.apply {
+                ////                            status = UploadStatus.ERROR.value
+                ////                            statusMessage = "Process killed"
+                ////                        }.also { info ->
+                ////                            uploadRepo.updateUploadInfo(info)
+                ////                        }
+                ////                        mPref.uploadId = null
+                ////                        navController.navigate(R.id.uploadMethodFragment)
+                ////                    }
+                //                    if(navController.currentDestination?.id != R.id.editUploadInfoFragment) {
+                //                        navController.navigate(R.id.editUploadInfoFragment)
+                //                    }
+                //                    return@launch
+                //                }
+                navController.navigate(R.id.bottomSheetUploadFragment)
+            }
         }
+        else{
+            if (navController.currentDestination?.id == R.id.bottomSheetUploadFragment) {
+                navController.popBackStack()
+                return true
+            }
+            lifecycleScope.launch {
+
+                if (uploadRepo.getActiveUploadsList().isNotEmpty()) {
+                    return@launch
+                }
+
+                //                mPref.uploadId?.let {
+                //                    val uploads = uploadRepo.getUploadById(UtilsKt.stringToUploadId(it))
+                //                    if(uploads == null || uploads.status !in listOf(0, 1, 2, 3)) {
+                //                        mPref.uploadId = null
+                //                        navController.navigate(R.id.uploadMethodFragment)
+                //                        return@launch
+                //                    }
+                ////                    if(uploads.status in listOf(0, 1, 2, 3) && UploadService.taskList.isEmpty()) {
+                ////                        uploads.apply {
+                ////                            status = UploadStatus.ERROR.value
+                ////                            statusMessage = "Process killed"
+                ////                        }.also { info ->
+                ////                            uploadRepo.updateUploadInfo(info)
+                ////                        }
+                ////                        mPref.uploadId = null
+                ////                        navController.navigate(R.id.uploadMethodFragment)
+                ////                    }
+                //                    if(navController.currentDestination?.id != R.id.editUploadInfoFragment) {
+                //                        navController.navigate(R.id.editUploadInfoFragment)
+                //                    }
+                //                    return@launch
+                //                }
+                navController.navigate(R.id.bottomSheetUploadFragment)
+            }
+        }
+
         return false
     }
 

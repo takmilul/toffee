@@ -153,6 +153,10 @@
             android:id="@+id/action_bottomSheetUploadFragment_to_editUploadInfoFragment"
             app:destination="@id/editUploadInfoFragment"
             />
+        <action
+            android:id="@+id/action_bottomSheetUploadFragment_to_myChannelHomeFragment"
+            app:destination="@id/myChannelHomeFragment"
+            />
     </dialog>
     <dialog
         android:id="@+id/newUploadMethodFragment"
@@ -161,6 +165,10 @@
         <action
             android:id="@+id/action_newUploadMethodFragment_to_editUploadInfoFragment"
             app:destination="@id/editUploadInfoFragment"
+            />
+        <action
+            android:id="@+id/action_newUploadMethodFragment_to_myChannelHomeFragment"
+            app:destination="@id/myChannelHomeFragment"
             />
     </dialog>
     <dialog
