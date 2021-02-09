@@ -7,16 +7,21 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.GetProfile
+import com.banglalink.toffee.apiservice.MyChannelGetDetailService
+import com.banglalink.toffee.data.database.dao.ViewCountDAO
 import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
+import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.data.database.dao.ViewCountDAO
 import com.banglalink.toffee.di.AppCoroutineScope
+import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.MyChannelDetailBean
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.player.PlaylistManager
@@ -36,6 +41,7 @@ import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -43,9 +49,11 @@ class HomeViewModel @ViewModelInject constructor(
         @AppCoroutineScope private val appScope: CoroutineScope,
         private val profileApi: GetProfile,
         private val viewCountDAO: ViewCountDAO,
+        private val apiService: MyChannelGetDetailService,
         private val sendViewContentEvent: SendViewContentEvent,
         @ApplicationContext private val mContext: Context,
-        private val tvChannelRepo: TVChannelRepository
+        private val tvChannelRepo: TVChannelRepository,
+        private val mPref: Preference
 ):BaseViewModel(),OnCompleteListener<InstanceIdResult> {
 
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
@@ -60,6 +68,8 @@ class HomeViewModel @ViewModelInject constructor(
     val viewAllCategories = MutableLiveData<Boolean>()
     val myChannelNavLiveData = SingleLiveEvent<MyChannelNavParams>()
 
+    private val _channelDetail = MutableLiveData<Resource<MyChannelDetailBean?>>()
+    val channelDetail = _channelDetail.toLiveData()
     private var _playlistManager = PlaylistManager()
 
     fun getPlaylistManager() = _playlistManager
@@ -148,6 +158,23 @@ class HomeViewModel @ViewModelInject constructor(
                     it.view_count?.toLong() ?: 0L
                 )
             )
+        }
+    }
+
+    fun getChannelDetail(isOwner: Int, isPublic:Int, channelId: Int, channelOwnerId: Int) {
+        viewModelScope.launch {
+            delay(4000).let {
+                val result = resultFromResponse { apiService.execute(isOwner, isPublic, channelId, channelOwnerId) }
+                
+                if (result is Success) {
+                    val myChannelDetail = result.data.myChannelDetail
+                    myChannelDetail?.let {
+                        mPref.channelId = myChannelDetail.id.toInt()
+                        myChannelDetail.profileUrl?.let { mPref.channelLogo = it }
+                        myChannelDetail.channelName?.let { mPref.channelName = it }
+                    }
+                }
+            }
         }
     }
 }

@@ -72,7 +72,9 @@ class UserActivitiesListFragment: BaseListFragment<UserActivities>(),
     override fun onOpenMenu(view: View, item: UserActivities) {
         PopupMenu(requireContext(), view).apply {
             menu.add(0, 0x112, 0, "Delete")
-            menu.add(0, 0x113, 0, "Share")
+            if(item.channelInfo?.isApproved == 1) {
+                menu.add(0, 0x113, 0, "Share")
+            }
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     0x112 -> {

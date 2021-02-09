@@ -28,7 +28,7 @@ abstract class HomeBaseFragment:BaseFragment(), OptionCallBack {
         if(hideNotInterestedMenuItem(channelInfo)){//we are checking if that could be shown or not
             popupMenu.menu.getItem(2).isVisible = false
         }
-        popupMenu.menu.findItem(R.id.menu_share).isVisible = hideShareMenuItem()
+        popupMenu.menu.findItem(R.id.menu_share).isVisible = hideShareMenuItem() && channelInfo.isApproved == 1
         
         popupMenu.setOnMenuItemClickListener{
             when(it?.itemId){

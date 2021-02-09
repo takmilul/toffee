@@ -244,7 +244,11 @@ class HomeActivity :
             )
             startActivity(Intent.createChooser(sharingIntent, "Share via"))
         }
-
+        
+        if (!mPref.hasChannelName() && !mPref.hasChannelLogo()) {
+            viewModel.getChannelDetail(1, 0, 0, mPref.customerId)
+        }
+        
         if(intent.hasExtra(INTENT_PACKAGE_SUBSCRIBED)){
             handlePackageSubscribe()
         }

@@ -29,7 +29,7 @@ class MyChannelPlaylistVideosViewModel @AssistedInject constructor(
     private val preference: Preference,
     private val activitiesRepo: UserActivitiesRepository,
     private val playlistVideoDeleteApiService: MyChannelPlaylistVideoDeleteService,
-    apiService: MyChannelPlaylistVideosService.AssistedFactory,
+    private val apiService: MyChannelPlaylistVideosService.AssistedFactory,
     @Assisted var requestParams: MyChannelPlaylistContentParam
 ) :
     BasePagingViewModel<ChannelInfo>() {

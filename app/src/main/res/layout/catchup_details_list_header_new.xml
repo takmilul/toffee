@@ -314,20 +314,20 @@ Day 21 - AUS vs IND" />
             app:constraint_referenced_ids="program_name,circleImageView,reactionCountLayout,reactionButton,providerName,shareCount,viewCount" />
 
         <androidx.constraintlayout.widget.Group
-            android:id="@+id/group2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="visible"
-            app:constraint_referenced_ids="shareCount,reactionCountLayout,reactionButton,viewCount" />
-
-        <androidx.constraintlayout.widget.Group
             android:id="@+id/tvExcludeList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="@{data.live ? View.GONE : View.VISIBLE}"
             app:constraint_referenced_ids="options,program_name,reactionButton,reactionCountLayout,shareCount,channelSubCount,subscribe_button,video_description,uploadTime,viewCount,cardView"
             tools:visibility="visible" />
-        
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/viewShareReactionGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="@{data.isApproved == 1 &amp;&amp; !data.live ? View.VISIBLE : View.GONE}"
+            app:constraint_referenced_ids="shareCount,reactionCountLayout,reactionButton,viewCount" />
+
         <com.banglalink.toffee.ui.widget.ReadMoreTextView
             android:id="@+id/video_description"
             android:layout_width="0dp"

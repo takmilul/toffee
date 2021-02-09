@@ -202,6 +202,7 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
         if (requestParams.isOwner == 1) {
             PopupMenu(requireContext(), view).apply {
                 inflate(R.menu.menu_delete_playlist_video)
+                menu.findItem(R.id.menu_share).isVisible = item.isApproved == 1
                 setOnMenuItemClickListener {
                     when (it.itemId) {
                         R.id.menu_share->{
@@ -247,7 +248,7 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
             popupMenu.menu.getItem(0).title = "Remove from Favorites"
         }
 
-        popupMenu.menu.findItem(R.id.menu_share).isVisible = true
+        popupMenu.menu.findItem(R.id.menu_share).isVisible = channelInfo.isApproved == 1
         popupMenu.setOnMenuItemClickListener{
             when(it?.itemId){
                 R.id.menu_share->{
