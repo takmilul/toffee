@@ -91,11 +91,12 @@ class ChannelHeaderAdapter(private val headerData: Any? = null,
             else -> {
                 holder.seasonInfoHeader.visibility = View.GONE
                 holder.seasonSpinnerWrap.visibility = View.GONE
-                holder.autoplaySwitch.isChecked = mPref.isAutoplayForRecommendedVideos
-                holder.autoplaySwitch.setOnCheckedChangeListener { _, isChecked ->
-                    mPref.isAutoplayForRecommendedVideos = isChecked
-                }
             }
+        }
+
+        holder.autoplaySwitch.isChecked = mPref.isAutoplayForRecommendedVideos
+        holder.autoplaySwitch.setOnCheckedChangeListener { _, isChecked ->
+            mPref.isAutoplayForRecommendedVideos = isChecked
         }
         /*holder.itemView.findViewById<TextView>(R.id.reactionButton)?.setOnLongClickListener {
             cb?.onReactionLongPressed(it, holder.itemView.reactionCount, channelInfo!!)

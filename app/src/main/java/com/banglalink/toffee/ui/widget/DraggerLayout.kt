@@ -360,7 +360,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
                     }
 
 //                    val initX = 2 * dragView.minBound - capturedEnd
-                    val heightDiff2 = (scale - getMaxScale()) * (dragView.minBound - dragView.maxBound) / (getMinScale() - getMaxScale()) + dragView.maxBound//initX + scale * (capturedEnd - initX)
+                    val heightDiff2 = (scale - getMaxScale()) * (dragView.minBound - capturedEnd) / (getMinScale() - getMaxScale()) + capturedEnd//initX + scale * (capturedEnd - initX)
                     if(heightDiff2 > 0) {
                         dragView.setLayoutHeight(heightDiff2.toInt())
                     }
@@ -400,7 +400,11 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
 
         override fun onViewCaptured(capturedChild: View, activePointerId: Int) {
             super.onViewCaptured(capturedChild, activePointerId)
-            capturedEnd = capturedChild.layoutParams.height
+            capturedEnd = if(dragView.scaleX == 0.5f) {
+                dragView.maxBound
+            } else {
+                dragView.layoutParams.height
+            }
         }
     }
 

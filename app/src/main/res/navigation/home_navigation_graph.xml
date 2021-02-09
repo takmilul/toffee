@@ -146,6 +146,22 @@
         <action
             android:id="@+id/action_bottomSheetUploadFragment_to_updateChannelLogoDialogFragment"
             app:destination="@id/updateChannelLogoDialogFragment" />
+        <action
+            android:id="@+id/action_bottomSheetUploadFragment_to_newUploadMethodFragment"
+            app:destination="@id/newUploadMethodFragment" />
+        <action
+            android:id="@+id/action_bottomSheetUploadFragment_to_editUploadInfoFragment"
+            app:destination="@id/editUploadInfoFragment"
+            />
+    </dialog>
+    <dialog
+        android:id="@+id/newUploadMethodFragment"
+        android:name="com.banglalink.toffee.ui.upload.NewUploadMethodFragment"
+        android:label="Update Logo Channel" >
+        <action
+            android:id="@+id/action_newUploadMethodFragment_to_editUploadInfoFragment"
+            app:destination="@id/editUploadInfoFragment"
+            />
     </dialog>
     <dialog
         android:id="@+id/updateChannelLogoDialogFragment"
@@ -232,7 +248,7 @@
             android:name="playlistInfo"
             app:argType="com.banglalink.toffee.model.PlaylistPlaybackInfo" />
     </fragment>
-    <fragment
+    <dialog
         android:id="@+id/thumbnailSelectionMethodFragment"
         android:name="com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment"
         android:label="Thumbnail" >
@@ -240,10 +256,10 @@
             android:name="title"
             app:argType="string" />
         <argument
-            android:name="isProfile"
+            android:name="isProfileImage"
             app:argType="boolean"
             />
-    </fragment>
+    </dialog>
     <fragment
         android:id="@+id/earningsFragment"
         android:name="com.banglalink.toffee.ui.earnings.EarningsFragment"

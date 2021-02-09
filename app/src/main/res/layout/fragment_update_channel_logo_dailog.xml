@@ -26,68 +26,67 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:elevation="4dp"
+
             app:cardBackgroundColor="@color/cardBgColor"
             app:cardCornerRadius="24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
+            <ImageView
+                android:id="@+id/close_iv"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingStart="24dp"
-                android:paddingTop="18dp"
-                android:paddingEnd="24dp"
-                android:paddingBottom="18dp">
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:padding="5dp"
+                android:layout_gravity="right"
+                app:tint="@color/colorSecondaryAccent"
+                app:srcCompat="@drawable/ic_close" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_marginTop="15dp"
+                android:layout_gravity="center"
+                android:layout_width="370dp"
+                android:layout_height="wrap_content"
+                android:paddingBottom="20dp"
+
+
+               >
+
 
                 <TextView
-                    android:id="@+id/upload_heading"
+                    android:id="@+id/heading"
                     style="@style/UploadHeadingStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="10dp"
                     android:gravity="center_horizontal"
-                    android:text="@string/upload_selection_heading"
-                    android:visibility="gone"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/roboto_medium"
+                    android:text="@string/thumb_selection_heading"
+                    android:textColor="@color/main_text_color"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/learn_more_button"
-                    style="@style/ViewAllTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="?selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:gravity="center_vertical"
-                    android:text="@string/txt_learn_more"
-                    android:textColor="@color/colorAccent"
-                    android:visibility="gone"
-                    app:drawableEndCompat="@drawable/ic_arrow_forward"
-                    app:drawableTint="@color/colorAccent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/upload_heading" />
-
                 <Button
                     android:id="@+id/open_camera_button"
                     style="@style/UploadButtonStyleV2"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:text="@string/btn_open_camera"
                     app:icon="@drawable/ic_photo_camera"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.497"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/learn_more_button" />
+                    app:layout_constraintTop_toBottomOf="@+id/heading" />
 
                 <Button
                     android:id="@+id/open_gallery_button"
                     style="@style/UploadButtonStyleV2Ring"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="5dp"
                     android:text="@string/btn_open_gallery"
                     app:icon="@drawable/ic_photo_holder"
                     app:layout_constraintEnd_toEndOf="@+id/open_camera_button"

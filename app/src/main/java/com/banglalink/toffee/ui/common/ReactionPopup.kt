@@ -31,7 +31,8 @@ class ReactionPopup: Fragment() {
     @Inject lateinit var reactionDao: ReactionDao
     private val mViewModel by viewModels<ReactionViewModel>()
     private var reactionPopupWindow: PopupWindow? = null
-
+    private lateinit var binding :AlertDialogReactionsBinding
+    
     companion object {
         const val CHANNEL_INFO = "channelInfo"
         const val ICON_LOCATION = "icon_location"
@@ -62,33 +63,36 @@ class ReactionPopup: Fragment() {
         val iconHeight = requireArguments().getInt(ICON_HEIGHT)
         val isShowPopupBelow = requireArguments().getBoolean(SHOW_BELOW)
         
-        val binding = AlertDialogReactionsBinding.inflate(this.layoutInflater)
+        binding = AlertDialogReactionsBinding.inflate(this.layoutInflater)
         binding.data = channelInfo
+//        binding.root.animation = AnimationUtils.loadAnimation(requireContext(), R.anim.zoom_in_animation)
         binding.root.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec. UNSPECIFIED), MeasureSpec.makeMeasureSpec(0, MeasureSpec. UNSPECIFIED))
+        
+        val topLocation = iconLocation[1].minus(binding.root.measuredHeight + 10)
+        val bottomLocation = iconLocation[1].plus(iconHeight + 8)
+        
+        val x = parentFragment?.view?.width?.minus(binding.root.measuredWidth)?.div(2) ?: 0
+        val y = if ((isShowPopupBelow && bottomLocation + binding.root.measuredHeight < parentFragment?.view?.height?:0) || topLocation < binding.root.measuredHeight) {
+            bottomLocation
+        } else {
+            topLocation
+        }
+        
         reactionPopupWindow = PopupWindow(requireContext())
+        
         with(reactionPopupWindow!!){
             contentView = binding.root
             isTouchable = true
             isFocusable = true
             isOutsideTouchable = true
             elevation = 48F
-            
-            val topLocation = iconLocation[1].minus(binding.root.measuredHeight + 10)
-            val bottomLocation = iconLocation[1].plus(iconHeight + 8)
-            
-            val x = parentFragment?.view?.width?.minus(binding.root.measuredWidth)?.div(2) ?: 0
-            val y = if ((isShowPopupBelow && bottomLocation + binding.root.measuredHeight < parentFragment?.view?.height?:0) || topLocation < binding.root.measuredHeight) {
-                bottomLocation
-            } else {
-                topLocation
-            }
-            
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             parentFragment?.view?.let {
+                animationStyle = R.style.ZoomAnimation
                 showAtLocation(it, Gravity.NO_GRAVITY, x, y)
-//                showAsDropDown(it, 10, 10)
             }
         }
+        
         with(binding){
             likeButton.setOnClickListener { react(Like, R.drawable.ic_reaction_like_no_shadow) }
             loveButton.setOnClickListener { react(Love, R.drawable.ic_reaction_love_no_shadow) }
@@ -139,7 +143,6 @@ class ReactionPopup: Fragment() {
 
     override fun onDestroy() {
         reactionIconCallback = null
-//        dialog?.dismiss()
         reactionPopupWindow?.dismiss()
         super.onDestroy()
     }

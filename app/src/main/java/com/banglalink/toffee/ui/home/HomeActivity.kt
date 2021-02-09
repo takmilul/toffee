@@ -1195,6 +1195,11 @@ class HomeActivity :
         return false
     }
 
+    override fun onMediaItemChanged() {
+        super.onMediaItemChanged()
+        onViewMaximize()
+    }
+
     private fun observeUpload2() {
         add_upload_info_button.setOnClickListener {
             viewModel.myChannelNavLiveData.value = MyChannelNavParams(mPref.channelId, mPref.customerId, 0)

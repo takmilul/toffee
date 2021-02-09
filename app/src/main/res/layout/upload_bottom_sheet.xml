@@ -83,7 +83,7 @@
             android:fontFamily="@font/roboto_italic"
             android:hint="Set Your Channel Name"
             android:drawablePadding="10dp"
-            android:inputType="phone"
+            android:inputType="text"
             android:maxLines="1"
             android:textColor="@color/second_text_color"
             android:textColorHint="@color/second_text_color"
@@ -124,8 +124,15 @@
                 android:textSize="14sp"
                 android:textStyle="normal"
                 app:drawableStartCompat="@drawable/ic_bd_flag" />
-
+            <ImageView
+                android:layout_marginTop="3dp"
+                android:layout_marginStart="5dp"
+                android:layout_width="14dp"
+                android:layout_height="12dp"
+                android:src="@drawable/ic_path_down_arrow" />
             <TextView
+                android:drawablePadding="10dp"
+                app:drawableEndCompat="@drawable/ic_verified"
                 android:id="@+id/mobile_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -194,7 +201,26 @@
             android:text="Cancel"
             app:layout_constraintStart_toStartOf="@+id/terms_and_conditions_checkbox"
             app:layout_constraintTop_toBottomOf="@+id/terms_and_conditions_checkbox" />
-
+        <TextView
+            android:visibility="invisible"
+            android:id="@+id/text_view_fill_up"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:fontFamily="@font/roboto_regular"
+            android:text="*Please fill up all fields to continue"
+            android:textColor="@color/main_text_color"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cancelButton" />
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="7dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cancelButton" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -17,10 +17,10 @@
         android:title="@string/menu_share"
         app:showAsAction="never" />
     
-    <!--<item
+    <item
         android:id="@+id/menu_delete_content"
         android:title="Delete Video"
-        app:showAsAction="never" />-->
+        app:showAsAction="never" />
     
     <!--<item
         android:id="@+id/menu_not_interested"

@@ -306,18 +306,19 @@ abstract class PlayerPageActivity :
     }
 
     override fun isAutoplayEnabled(): Boolean {
-        return when (val fragment = supportFragmentManager.findFragmentById(id.details_viewer)) {
-            is MyChannelPlaylistVideosFragment -> {
-                fragment.isAutoplayEnabled()
-            }
-            is EpisodeListFragment -> {
-                fragment.isAutoplayEnabled()
-            }
-            is CatchupDetailsFragment -> {
-                fragment.isAutoplayEnabled()
-            }
-            else -> false
-        }
+        return mPref.isAutoplayForRecommendedVideos
+//        return when (val fragment = supportFragmentManager.findFragmentById(id.details_viewer)) {
+//            is MyChannelPlaylistVideosFragment -> {
+//                fragment.isAutoplayEnabled()
+//            }
+//            is EpisodeListFragment -> {
+//                fragment.isAutoplayEnabled()
+//            }
+//            is CatchupDetailsFragment -> {
+//                fragment.isAutoplayEnabled()
+//            }
+//            else -> false
+//        }
     }
 
     override fun playNext() {

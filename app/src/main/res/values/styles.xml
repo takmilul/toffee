@@ -442,6 +442,7 @@
         <item name="android:focusable">true</item>
         <item name="android:scaleType">fitXY</item>
     </style>
+    
     <style name="YTOSecondsTextAppearance" parent="TextAppearance.AppCompat">
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@android:color/white</item>
@@ -451,8 +452,11 @@
         <item name="cornerSizeTopLeft">26dp</item>
         <item name="cornerSizeTopRight">26dp</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-
     </style>
-
     <style name="BottomSheetMenuTheme" parent="@style/BaseBottomSheetMenu" />
+
+    <style name="ZoomAnimation">
+        <item name="android:windowEnterAnimation">@anim/zoom_in_animation</item>
+        <item name="android:windowExitAnimation">@anim/zoom_out_animation</item>
+    </style>
 </resources>

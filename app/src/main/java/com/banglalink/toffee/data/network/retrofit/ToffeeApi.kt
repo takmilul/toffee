@@ -214,7 +214,10 @@ interface ToffeeApi {
         @Path("dbVersion") dbVersion: Int,
         @Body channelVideosRequest: MyChannelVideosRequest
     ): MyChannelVideosResponse
-    
+
+    @POST("ugc-content-delete")
+    suspend fun deleteMyChannelVideo(@Body myChannelVideoDeleteRequest: MyChannelVideoDeleteRequest): MyChannelVideoDeleteResponse
+
     @POST("ugc-playlist-names/1/{isOwner}/{channelOwnerId}/{limit}/{offset}/{dbVersion}")
     suspend fun getMyChannelPlaylist(
         @Path("isOwner") isOwner: Int,

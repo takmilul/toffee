@@ -54,13 +54,16 @@ class UpdateChannelLogoDialogFragment : DialogFragment() {
 
         title = UpdateChannelLogoDialogFragmentArgs.fromBundle(requireArguments()).title
         isProfile = UpdateChannelLogoDialogFragmentArgs.fromBundle(requireArguments()).isProfile
-      //  heading.text = title
+        heading.text = title
         open_gallery_button.setOnClickListener {
             checkFileSystemPermission()
         }
 
         open_camera_button.setOnClickListener {
             checkCameraPermissions()
+        }
+        close_iv?.setOnClickListener {
+            dismiss()
         }
     }
 
