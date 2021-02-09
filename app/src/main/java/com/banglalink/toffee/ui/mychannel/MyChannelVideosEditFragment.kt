@@ -26,6 +26,7 @@ import com.banglalink.toffee.model.UgcSubCategory
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
 import com.banglalink.toffee.ui.widget.ToffeeSpinnerAdapter
+import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.pchmn.materialchips.ChipsInput
 import com.pchmn.materialchips.model.ChipInterface
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,6 +35,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MyChannelVideosEditFragment : BaseFragment() {
 
     private var channelInfo: ChannelInfo? = null
+    private lateinit var progressDialog: VelBoxProgressDialog
     private lateinit var binding: FragmentMyChannelVideosEditBinding
     private val viewModel: MyChannelVideosEditViewModel by viewModels()
     private val videosReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
@@ -49,6 +51,11 @@ class MyChannelVideosEditFragment : BaseFragment() {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        progressDialog = VelBoxProgressDialog(requireContext())
+    }
+    
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentMyChannelVideosEditBinding.inflate(inflater)
         binding.setVariable(BR.viewmodel, viewModel)
@@ -175,11 +182,13 @@ class MyChannelVideosEditFragment : BaseFragment() {
     }
 
     private fun submitVideo() {
+        progressDialog.show()
         observeEditResponse()
         
         val title = binding.uploadTitle.text.toString().trim()
         val description = binding.uploadDescription.text.toString().trim()
         if (title.isBlank() || description.isBlank()) {
+            progressDialog.dismiss()
             context?.showToast("Missing required field", Toast.LENGTH_SHORT)
             return
         }
@@ -193,11 +202,13 @@ class MyChannelVideosEditFragment : BaseFragment() {
         observe(viewModel.editResponse){
             when(it){
                 is Resource.Success -> {
+                    progressDialog.dismiss()
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
                     findNavController().navigateUp()
                     videosReloadViewModel.reloadVideos.value = true
                 }
                 is Resource.Failure -> {
+                    progressDialog.dismiss()
                     Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
                 }
             }
