@@ -688,7 +688,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
 
     private var mActivePointerId = MotionEvent.INVALID_POINTER_ID
     private var mLastTouchX: Float = 0f
-    var mLastTouchY: Float = 0f
+    private var mLastTouchY: Float = 0f
     private var mPosX: Float = 0f
     private var mPosY: Float = 0f
     private var startX: Float = 0f
@@ -711,7 +711,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
 
     private var heightAnim: ValueAnimator? = null
 
-    fun handleTouchDown(ev: MotionEvent) {
+    private fun handleTouchDown(ev: MotionEvent) {
         heightAnim?.cancel()
         heightAnim = null
         mLastTouchY = ev.y
