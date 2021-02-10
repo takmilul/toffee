@@ -299,7 +299,7 @@ class HomeActivity :
                 //                    }
                 //                    return@launch
                 //                }
-                navController.navigate(R.id.bottomSheetUploadFragment)
+                navController.navigate(R.id.uploadMethodFragment)
             }
         }
         else{
