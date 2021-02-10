@@ -107,8 +107,8 @@ class ReactionPopup: Fragment() {
         reactionPopupWindow?.dismiss()
         channelInfo?.let {
             lifecycleScope.launchWhenStarted {
-                val previousReactionInfo = reactionDao.getReactionByContentId(preference.customerId, channelInfo!!.id)
-                val newReactionInfo = ReactionInfo(null, preference.customerId, channelInfo!!.id, reaction.value)
+                val previousReactionInfo = reactionDao.getReactionByContentId(preference.customerId, channelInfo!!.id.toLong())
+                val newReactionInfo = ReactionInfo(null, preference.customerId, channelInfo!!.id.toLong(), reaction.value)
                 var reactionCount = channelInfo!!.reaction?.run {
                     like + love + haha + wow + sad + angry
                 } ?: 0L
@@ -116,7 +116,7 @@ class ReactionPopup: Fragment() {
                 var reactionIcon = reactIcon
 
                 channelInfo!!.myReaction = previousReactionInfo?.let {
-                    if (it.reaction == newReactionInfo.reaction) {
+                    if (it.reactionType == newReactionInfo.reactionType) {
                         reactionText = "React"
                         reactionIcon = R.drawable.ic_reaction_love_empty
                         mViewModel.removeReaction(it)
@@ -125,7 +125,7 @@ class ReactionPopup: Fragment() {
                     }
                     else {
                         reactionCount++
-                        mViewModel.updateReaction(newReactionInfo)
+                        mViewModel.updateReaction(newReactionInfo, previousReactionInfo)
                         mViewModel.insertActivity(preference.customerId, channelInfo!!, REACTION_CHANGED.value, reaction.value)
                         reaction.value
                     }

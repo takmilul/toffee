@@ -4,6 +4,8 @@ import android.content.res.Resources
 import android.view.View
 import com.banglalink.toffee.enums.InputType
 import com.banglalink.toffee.enums.InputType.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 private const val TITLE_PATTERN = ""
 private const val EMAIL_PATTERN = "[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+\\.[a-zA-Z.]{2,18}"
@@ -33,4 +35,13 @@ val Int.dp: Int get() {
 
 val Int.px: Int get() {
     return (this * Resources.getSystem().displayMetrics.density).toInt()
+}
+
+fun Long.toFormattedDate(): String{
+    TimeZone.setDefault(TimeZone.getTimeZone("Asia/Dhaka"))
+    val cal = Calendar.getInstance(TimeZone.getDefault())
+    cal.timeInMillis = this
+    val dateGMT = cal.time
+    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
+    return sdf.format(dateGMT)
 }

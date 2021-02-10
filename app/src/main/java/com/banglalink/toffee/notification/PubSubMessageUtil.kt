@@ -32,6 +32,7 @@ object PubSubMessageUtil {
     private val notificationTopic = "projects/$PROJECTID/topics/$TOPIC_ID"
     private val heartBeatTopic = "projects/$PROJECTID/topics/current_viewers_heartbeat"
     private val viewContentTopic = "projects/$PROJECTID/topics/current_viewers"
+    private val reactionTopic = "projects/$PROJECTID/topics/ugc_reaction"
 
     private lateinit var client:Pubsub
 
@@ -45,6 +46,7 @@ object PubSubMessageUtil {
             Pubsub.Builder(httpTransport, json, credential).setApplicationName("PubSubClient")
         client = builder.build()
     }
+    
     fun sendNotificationStatus(notificationId: String?, messageStatus: PUBSUBMessageStatus) {
         coroutineScope.launch {
             sendMessage(getPubSubMessage(notificationId, messageStatus), notificationTopic)
@@ -60,6 +62,12 @@ object PubSubMessageUtil {
     fun sendViewContentToPubSub(jsonStringRequest:String){
         coroutineScope.launch {
             sendMessage(jsonStringRequest, viewContentTopic)
+        }
+    }
+
+    fun sendReactionToPubSub(jsonStringRequest:String){
+        coroutineScope.launch {
+            sendMessage(jsonStringRequest, reactionTopic)
         }
     }
 
