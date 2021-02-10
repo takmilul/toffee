@@ -248,6 +248,13 @@ interface ToffeeApi {
     @POST("/ugc-channel-edit")
     suspend fun editMyChannelDetail(@Body createPlaylistEditRequest: MyChannelEditRequest): MyChannelEditResponse
 
+    @POST("ugc-terms-and-conditions/1/{dbVersion}")
+    suspend fun getVideoTermsAndCondition(
+        @Path("dbVersion") dbVersion: Int,
+        @Body termsConditionRequest: TermsConditionRequest
+    ): TermsAndConditionResponse
+
+
     @POST("/ugc-rating-on-channel")
     suspend fun rateMyChannel(@Body myChannelRatingRequest: MyChannelRatingRequest): MyChannelRatingResponse
     

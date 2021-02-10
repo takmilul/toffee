@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.profile
 
+import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,16 +10,20 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.apiservice.GetProfile
 import com.banglalink.toffee.apiservice.MyChannelEditDetailService
+import com.banglalink.toffee.apiservice.TermsConditionService
 import com.banglalink.toffee.data.network.request.MyChannelEditRequest
+import com.banglalink.toffee.data.network.request.TermsConditionRequest
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.MyChannelEditBean
+import com.banglalink.toffee.model.TermsAndCondition
 import kotlinx.coroutines.launch
 
-class ViewProfileViewModel @ViewModelInject constructor(private val myChannelDetailApiService: MyChannelEditDetailService,
+class ViewProfileViewModel @ViewModelInject constructor(private val myChannelDetailApiService: MyChannelEditDetailService,private val termsConditionService: TermsConditionService,
                                                         private val profileApi: GetProfile
 ) :BaseViewModel(){
     private val _data = MutableLiveData<Resource<MyChannelEditBean>>()
+    val _data_condition = MutableLiveData<Resource<TermsAndCondition>>()
     val liveData = _data.toLiveData()
     fun loadCustomerProfile():LiveData<Resource<EditProfileForm>>{
         return resultLiveData {
@@ -28,6 +33,21 @@ class ViewProfileViewModel @ViewModelInject constructor(private val myChannelDet
     fun editChannel(myChannelEditRequest: MyChannelEditRequest) {
         viewModelScope.launch {
             _data.postValue(resultFromResponse { myChannelDetailApiService.execute(myChannelEditRequest) })
+        }
+    }
+
+
+    fun terms() {
+        val termsConditionRequest = TermsConditionRequest(
+            0,
+            ""
+        )
+        viewModelScope.launch {
+            _data_condition.postValue(resultFromResponse {
+                termsConditionService.execute(
+                    termsConditionRequest
+                )
+            })
         }
     }
 }

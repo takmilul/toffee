@@ -3,12 +3,13 @@ package com.banglalink.toffee.ui.upload
 import android.Manifest
 import android.app.Activity
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.os.Handler
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +17,6 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
@@ -26,7 +26,6 @@ import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
-import com.banglalink.toffee.ui.mychannel.MyChannelHomeFragment
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
 import dagger.hilt.android.AndroidEntryPoint
@@ -37,6 +36,7 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class NewUploadMethodFragment : DialogFragment() {
@@ -56,19 +56,15 @@ class NewUploadMethodFragment : DialogFragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_new_upload_method, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        view.setOnClickListener {
-            findNavController().popBackStack(R.id.bottomSheetUploadFragment, true)
-        }
 
         myChannelButton.setOnClickListener {
 
@@ -89,16 +85,22 @@ class NewUploadMethodFragment : DialogFragment() {
         }
     }
 
+
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        findNavController().popBackStack(R.id.bottomSheetUploadFragment, true)
+    }
+
     private fun checkFileSystemPermission() {
         lifecycleScope.launch {
             try {
                 if (askPermission(Manifest.permission.READ_EXTERNAL_STORAGE).isAccepted) {
                     startActivityForResult(
-                        Intent(
-                            Intent.ACTION_PICK,
-                            MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-                        ).setType("video/mp4"),
-                        REQUEST_PICK_VIDEO
+                            Intent(
+                                    Intent.ACTION_PICK,
+                                    MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+                            ).setType("video/mp4"),
+                            REQUEST_PICK_VIDEO
                     )
                 }
             } catch (e: PermissionException) {
@@ -136,9 +138,9 @@ class NewUploadMethodFragment : DialogFragment() {
             }
 
             videoUri = FileProvider.getUriForFile(
-                requireContext(),
-                "${requireContext().packageName}.provider",
-                videoFile!!
+                    requireContext(),
+                    "${requireContext().packageName}.provider",
+                    videoFile!!
             )
             ToffeeAnalytics.logBreadCrumb("Video uri set")
             videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, videoUri)
@@ -191,12 +193,11 @@ class NewUploadMethodFragment : DialogFragment() {
         homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(mpref.channelId, mpref.customerId, 0)
     }
     private fun openEditUpload(uri: String) {
-        dismiss()
         findNavController()?.navigate(
-           R.id.action_bottomSheetUploadFragment_to_editUploadInfoFragment,
-           Bundle().apply {
-               putString(EditUploadInfoFragment.UPLOAD_FILE_URI, uri)
-           })
+                R.id.action_newUploadMethodFragment_to_editUploadInfoFragment,
+                Bundle().apply {
+                    putString(EditUploadInfoFragment.UPLOAD_FILE_URI, uri)
+                })
 
 }
 //    private fun uploadUri3(uri: String) {

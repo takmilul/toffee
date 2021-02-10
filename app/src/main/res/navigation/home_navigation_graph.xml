@@ -136,6 +136,12 @@
             />
     </dialog>
     <dialog
+        android:id="@+id/termsConditionFragment"
+        android:name="com.banglalink.toffee.ui.upload.TermsConditionFragment"
+        android:label="Terms" >
+
+    </dialog>
+    <dialog
         android:id="@+id/bottomSheetUploadFragment"
         android:name="com.banglalink.toffee.ui.upload.BottomSheetUploadFragment"
         android:label="BottomUpload" >
@@ -156,6 +162,10 @@
         <action
             android:id="@+id/action_bottomSheetUploadFragment_to_myChannelHomeFragment"
             app:destination="@id/myChannelHomeFragment"
+            />
+        <action
+            android:id="@+id/action_bottomSheetUploadFragment_to_termsConditionFragment"
+            app:destination="@id/termsConditionFragment"
             />
     </dialog>
     <dialog

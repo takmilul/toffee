@@ -447,7 +447,7 @@
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
-    <style name="BaseBottomSheetMenu" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
+    <style name="BaseBottomSheetMenu" parent="Theme.MaterialComponents.BottomSheetDialog">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSizeTopLeft">26dp</item>
         <item name="cornerSizeTopRight">26dp</item>

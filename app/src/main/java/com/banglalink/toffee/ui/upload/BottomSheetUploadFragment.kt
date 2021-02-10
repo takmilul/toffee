@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.upload
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
 import android.text.Editable
@@ -8,25 +9,25 @@ import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
 import android.widget.*
-import androidx.activity.viewModels
+import androidx.annotation.NonNull
 import androidx.appcompat.widget.AppCompatCheckBox
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import coil.load
 import coil.request.CachePolicy
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.network.request.MyChannelEditRequest
+import com.banglalink.toffee.data.network.request.TermsConditionRequest
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.mychannel.MyChannelEditDetailViewModel
 import com.banglalink.toffee.ui.profile.ViewProfileViewModel
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.imagePathToBase64
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,6 +40,7 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment() {
     private var channel_logo_iv: ImageView? = null
     private var mobile_tv: TextView? = null
     private var text_view_fill_up: TextView? = null
+    private var terms_and_conditions_tv: TextView? = null
     private var edit_iv: ImageView? = null
     private var channel_name_et: EditText? = null
     private var save_btn: Button? = null
@@ -49,12 +51,14 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment() {
 
     @Inject
     lateinit var mpref: Preference
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog
+    {
         val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
         val view = View.inflate(context, R.layout.upload_bottom_sheet, null)
         cancelButton = view?.findViewById(R.id.cancelButton)
         channel_logo_iv = view?.findViewById(R.id.channel_logo_iv)
         text_view_fill_up = view?.findViewById(R.id.text_view_fill_up)
+        terms_and_conditions_tv = view?.findViewById(R.id.terms_and_conditions_tv)
         edit_iv = view?.findViewById(R.id.edit_iv)
         mobile_tv = view?.findViewById(R.id.mobile_tv)
         progressDialog = VelBoxProgressDialog(requireContext())
@@ -64,6 +68,22 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment() {
         dialog.setContentView(view)
         val parent = view.parent as View
         bottomSheetBehavior = BottomSheetBehavior.from(parent)
+        bottomSheetBehavior.addBottomSheetCallback (object : BottomSheetCallback() {
+            @SuppressLint("ResourceAsColor")
+            override fun onStateChanged(@NonNull bottomSheet: View, newState: Int) {
+                // React to state change
+
+                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+                    view.background = ContextCompat.getDrawable(context!!, R.drawable.bottom_sheet_background);
+                }
+                else{
+                    view.background = ContextCompat.getDrawable(context!!, R.drawable.bottom_round_bg);
+                }
+            }
+
+            override fun onSlide(@NonNull bottomSheet: View, slideOffset: Float) {
+            }
+        })
         val displayMetrics = DisplayMetrics()
         activity?.windowManager?.defaultDisplay?.getMetrics(displayMetrics)
         val height = displayMetrics.heightPixels
@@ -71,14 +91,22 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment() {
         bottomSheetBehavior.peekHeight = Utils.pxToDp(value)
         channel_logo_iv?.setOnClickListener {
             val action =
-                BottomSheetUploadFragmentDirections.actionBottomSheetUploadFragmentToUpdateChannelLogoDialogFragment(
-                    "Update Your Channel Logo",
-                    true
-                )
+                    BottomSheetUploadFragmentDirections.actionBottomSheetUploadFragmentToUpdateChannelLogoDialogFragment(
+                        "Update Your Channel Logo",
+                        true
+                    )
             findNavController().navigate(action)
         }
         cancelButton?.setOnClickListener {
-            dismiss()
+           dismiss()
+
+        }
+        terms_and_conditions_tv?.setOnClickListener {
+
+            val action =
+                BottomSheetUploadFragmentDirections.actionBottomSheetUploadFragmentToTermsConditionFragment(
+                )
+            findNavController().navigate(action)
         }
         observeEditChannel()
         save_btn?.setOnClickListener {
@@ -122,23 +150,26 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment() {
 
             override fun afterTextChanged(s: Editable) {
 
-                save_btn?.isEnabled = s.toString() != ""
+
                 if (s.toString() == "") {
                     text_view_fill_up?.visibility = View.VISIBLE
+                    save_btn?.isEnabled = false
                 } else {
                     text_view_fill_up?.visibility = View.INVISIBLE
+                    if (UPLOAD_FILE_URI != "UPLOAD_FILE_URI") {
+                        save_btn?.isEnabled = true
+                    }
                 }
 
             }
         })
+
         return dialog
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
-
     private fun observeEditChannel() {
 
         observe(viewModel.liveData) {
@@ -146,7 +177,6 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment() {
                 is Resource.Success -> {
                     mpref.channelLogo = profileImageBase64
                     mpref.channelName = channel_name_et?.text.toString().trim()
-                    dismiss()
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
                     val action =
                         BottomSheetUploadFragmentDirections.actionBottomSheetUploadFragmentToNewUploadMethodFragment()
@@ -169,14 +199,11 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment() {
         super.onResume()
         loadImage()
         loadNumber()
-        Log.e("onResume", "onResume")
+        loadSaveButton()
     }
-
-    override fun onPause() {
-        super.onPause()
-        Log.e("onResume", "onResume")
+    private fun loadSaveButton() {
+        save_btn?.isEnabled = !(channel_name_et?.text.toString().trim() == "" || (UPLOAD_FILE_URI == "UPLOAD_FILE_URI"))
     }
-
     private fun loadNumber() {
         if (mpref.phoneNumber.length > 13) {
             val mobile = mpref.phoneNumber.substring(3, 14)
@@ -209,6 +236,5 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment() {
             return BottomSheetUploadFragment()
         }
     }
-
     override fun getTheme(): Int = R.style.BottomSheetMenuTheme
 }

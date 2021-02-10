@@ -312,29 +312,6 @@ class HomeActivity :
                 if (uploadRepo.getActiveUploadsList().isNotEmpty()) {
                     return@launch
                 }
-
-                //                mPref.uploadId?.let {
-                //                    val uploads = uploadRepo.getUploadById(UtilsKt.stringToUploadId(it))
-                //                    if(uploads == null || uploads.status !in listOf(0, 1, 2, 3)) {
-                //                        mPref.uploadId = null
-                //                        navController.navigate(R.id.uploadMethodFragment)
-                //                        return@launch
-                //                    }
-                ////                    if(uploads.status in listOf(0, 1, 2, 3) && UploadService.taskList.isEmpty()) {
-                ////                        uploads.apply {
-                ////                            status = UploadStatus.ERROR.value
-                ////                            statusMessage = "Process killed"
-                ////                        }.also { info ->
-                ////                            uploadRepo.updateUploadInfo(info)
-                ////                        }
-                ////                        mPref.uploadId = null
-                ////                        navController.navigate(R.id.uploadMethodFragment)
-                ////                    }
-                //                    if(navController.currentDestination?.id != R.id.editUploadInfoFragment) {
-                //                        navController.navigate(R.id.editUploadInfoFragment)
-                //                    }
-                //                    return@launch
-                //                }
                 navController.navigate(R.id.bottomSheetUploadFragment)
             }
         }
