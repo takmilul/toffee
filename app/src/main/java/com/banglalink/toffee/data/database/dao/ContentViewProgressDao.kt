@@ -16,4 +16,7 @@ interface ContentViewProgressDao {
     
     @Query("SELECT * FROM ContentViewProgress WHERE customerId == :customerId AND contentId == :contentId ORDER BY id DESC")
     suspend fun getProgressByContent(customerId: Int, contentId: Long): ContentViewProgress?
+
+    @Query("DELETE FROM ContentViewProgress WHERE customerId == :customerId AND contentId == :contentId")
+    suspend fun deleteByContentId(customerId: Int, contentId: Long)
 }

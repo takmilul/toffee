@@ -22,4 +22,7 @@ interface ReactionDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg reactionInfoList: ReactionInfo): LongArray
+    
+    @Query("DELETE FROM ReactionInfo WHERE customerId == :customerId AND contentId == :contentId")
+    suspend fun deleteByContentId(customerId: Int, contentId: Long)
 }
