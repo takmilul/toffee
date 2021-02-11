@@ -22,8 +22,8 @@ import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
 import com.yalantis.ucrop.UCrop
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_thumb_selection_method.view.*
-import kotlinx.android.synthetic.main.fragment_update_channel_logo_dailog.*
+import kotlinx.android.synthetic.main.fragment_update_channel_logo_dailog.view.*
+
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
@@ -51,7 +51,6 @@ class UpdateChannelLogoDialogFragment : DialogFragment() {
         isProfile = UpdateChannelLogoDialogFragmentArgs.fromBundle(requireArguments()).isProfile
         val dialogView = layoutInflater.inflate(R.layout.fragment_update_channel_logo_dailog, null, false)
         with(dialogView){
-            heading.text = title
             open_gallery_button.setOnClickListener {
                 checkFileSystemPermission()
             }

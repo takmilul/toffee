@@ -101,4 +101,6 @@
     <color name="spinnerSeasonColor">#F3F3F3</color>
     <color name="fixedStrokeColor">#29466B</color>
     <color name="optionMenuColor">#FFFFFF</color>
+    <color name="upload_number_color">#29466B</color>
+    <color name="upload_button_color">#E1E1E1</color>
 </resources>

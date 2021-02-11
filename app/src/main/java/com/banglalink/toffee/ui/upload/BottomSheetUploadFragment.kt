@@ -17,7 +17,10 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.data.network.request.MyChannelEditRequest
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.ui.common.UnSubscribeDialog
+import com.banglalink.toffee.ui.mychannel.MyChannelHomeFragmentDirections
 import com.banglalink.toffee.ui.profile.ViewProfileViewModel
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.Utils
@@ -26,10 +29,11 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.layout_my_channel_detail.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class BottomSheetUploadFragment : BottomSheetDialogFragment() {
+class BottomSheetUploadFragment : BottomSheetDialogFragment(), View.OnClickListener {
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
     var cancelButton: Button? = null
     private var channel_logo_iv: ImageView? = null
@@ -68,16 +72,10 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment() {
         val height = displayMetrics.heightPixels
         val value = height - parent.layoutParams.height + 80
         bottomSheetBehavior.peekHeight = Utils.pxToDp(value)
-        channel_logo_iv?.setOnClickListener {
-            val action =
-                    BottomSheetUploadFragmentDirections.actionBottomSheetUploadFragmentToUpdateChannelLogoDialogFragment(
-                        "Update Your Channel Logo",
-                        true
-                    )
-            findNavController().navigate(action)
-        }
+        channel_logo_iv?.safeClick(this)
         cancelButton?.setOnClickListener {
-          dismiss()
+            dismiss()
+            UPLOAD_FILE_URI = "UPLOAD_FILE_URI"
         }
         terms_and_conditions_tv?.setOnClickListener {
 
@@ -129,7 +127,7 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment() {
             override fun afterTextChanged(s: Editable) {
 
 
-                if (s.toString() == "") {
+                if (s.toString().isBlank() ) {
                     text_view_fill_up?.visibility = View.VISIBLE
                     save_btn?.isEnabled = false
                 } else {
@@ -143,6 +141,20 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment() {
         })
 
         return dialog
+    }
+    override fun onClick(v: View?) {
+        when (v) {
+            channel_logo_iv -> {
+                val action =
+                    BottomSheetUploadFragmentDirections.actionBottomSheetUploadFragmentToUpdateChannelLogoDialogFragment(
+                        "Update Your Channel Logo",
+                        true
+                    )
+                findNavController().navigate(action)
+            }
+
+
+        }
     }
     private fun observeEditChannel() {
 
