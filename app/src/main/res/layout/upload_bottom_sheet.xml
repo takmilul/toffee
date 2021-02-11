@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/bottom_sheet_top_image"
+            android:layout_width="40dp"
+            android:layout_height="8dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/ic_bottom_sheet_topicon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView28"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="38dp"
+            android:fontFamily="@font/roboto_regular"
+            android:text="Lets fill in some basics to start off..."
+            android:textColor="@color/main_text_color"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/bottom_sheet_top_image" />
+
+        <TextView
+            android:id="@+id/textView29"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="19dp"
+            android:text="Set Your Channel Logo"
+            android:textColor="@color/main_text_color"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView28" />
+
+        <ImageView
+            android:id="@+id/channel_logo_iv"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="6dp"
+            android:src="@drawable/ic_channel_logo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView29" />
+
+        <ImageView
+            android:id="@+id/edit_iv"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:elevation="2dp"
+            android:padding="4dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_edit_btn"
+            app:layout_constraintBottom_toBottomOf="@+id/channel_logo_iv"
+            app:layout_constraintEnd_toEndOf="@+id/channel_logo_iv"
+            app:layout_constraintStart_toStartOf="@+id/channel_logo_iv"
+            app:layout_constraintTop_toBottomOf="@+id/channel_logo_iv" />
+
+
+        <EditText
+            android:id="@+id/channel_name_et"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/single_line_input_text_height"
+            android:layout_marginHorizontal="56dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/single_line_input_text_bg"
+            android:drawableStart="@drawable/ic_channel_name_logo"
+            android:ems="10"
+            android:fontFamily="@font/roboto_italic"
+            android:hint="Set Your Channel Name"
+            android:drawablePadding="10dp"
+            android:inputType="phone"
+            android:maxLines="1"
+            android:textColor="@color/second_text_color"
+            android:textColorHint="@color/second_text_color"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/edit_iv" />
+
+
+        <LinearLayout
+            android:id="@+id/phone_number_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="56dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/single_line_input_text_bg"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/channel_name_et">
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_phone" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:background="@android:color/transparent"
+                android:drawablePadding="3dp"
+                android:fontFamily="@font/roboto_italic"
+                android:gravity="center_vertical"
+                android:text="+88"
+                android:textColor="@color/second_text_color"
+                android:textSize="14sp"
+                android:textStyle="normal"
+                app:drawableStartCompat="@drawable/ic_bd_flag" />
+
+            <TextView
+                android:id="@+id/mobile_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/roboto_italic"
+                android:gravity="center_vertical"
+                android:text="Your Phone Number"
+                android:textColor="@color/second_text_color"
+                android:textSize="14sp"
+                android:textStyle="normal" />
+        </LinearLayout>
+
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/terms_and_conditions_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="37dp"
+            android:background="@null"
+            android:button="@drawable/custom_checkbox"
+            android:checked="true"
+            android:gravity="center_vertical"
+            android:text="  I agree to the "
+            android:textColor="@color/main_text_color"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="@+id/terms_and_conditions_tv"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/phone_number_layout" />
+
+        <TextView
+            android:id="@+id/terms_and_conditions_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="@string/terms_and_conditions"
+            android:textColor="@color/colorAccent"
+            android:textColorLink="@drawable/text_selector2"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/terms_and_conditions_checkbox"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@id/terms_and_conditions_checkbox"
+            app:layout_constraintTop_toTopOf="@+id/terms_and_conditions_checkbox" />
+
+        <Button
+            android:id="@+id/login_btn"
+            style="@style/ButtonStyleSolidPink"
+            android:layout_width="@dimen/button_accent_width"
+            android:text="Save"
+            android:textAllCaps="true"
+            android:enabled="false"
+            app:layout_constraintBottom_toBottomOf="@+id/cancelButton"
+            app:layout_constraintEnd_toEndOf="@+id/terms_and_conditions_tv"
+            app:layout_constraintHorizontal_bias="0.75"
+            app:layout_constraintStart_toEndOf="@id/cancelButton"
+            app:layout_constraintTop_toTopOf="@+id/cancelButton" />
+
+        <Button
+            android:id="@+id/cancelButton"
+            style="@style/ButtonStyleRingPurple"
+            android:layout_marginTop="37dp"
+            android:text="Cancel"
+            app:layout_constraintStart_toStartOf="@+id/terms_and_conditions_checkbox"
+            app:layout_constraintTop_toBottomOf="@+id/terms_and_conditions_checkbox" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
+
+

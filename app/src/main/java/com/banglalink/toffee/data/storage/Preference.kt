@@ -312,6 +312,10 @@ class Preference(private val pref: SharedPreferences, private val context: Conte
         get() = pref.getBoolean(PREF_AUTO_PLAY_RECOMMENDED, true)
         set(value) = pref.edit { putBoolean(PREF_AUTO_PLAY_RECOMMENDED, value) }
 
+    var isPreviousDbDeleted: Boolean
+        get() = pref.getBoolean(PREF_IS_PREVIOUS_DB_DELETED, false)
+        set(value) = pref.edit { putBoolean(PREF_IS_PREVIOUS_DB_DELETED, value) }
+
 //    var uploadUri: String?
 //        get() = pref.getString("toffee-upload-uri", null)
 //        set(value) = pref.edit { putString("toffee-upload-uri", value) }
@@ -381,6 +385,7 @@ class Preference(private val pref: SharedPreferences, private val context: Conte
         private const val PREF_AUTO_PLAY_RECOMMENDED= "autoplay-for-recommended"
         private const val PREF_CHANNEL_LOGO = "channel_logo"
         private const val PREF_CHANNEL_NAME = "channel_name"
+        private const val PREF_IS_PREVIOUS_DB_DELETED= "isPreviousDBDELETE"
 
         private const val PREF_NAME_IP_TV= "IP_TV"
 
