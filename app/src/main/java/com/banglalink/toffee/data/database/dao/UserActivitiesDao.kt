@@ -20,4 +20,7 @@ interface UserActivitiesDao {
 
     @Query("SELECT * from UserActivities WHERE customerId == :customerId ORDER BY id DESC")
     fun getAllItems(customerId: Int): PagingSource<Int, UserActivities>
+    
+    @Query("DELETE FROM UserActivities WHERE customerId == :customerId AND channelId == :contentId")
+    suspend fun deleteByContentId(customerId: Int, contentId: Long)
 }

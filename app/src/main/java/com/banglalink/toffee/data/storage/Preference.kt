@@ -13,10 +13,10 @@ import com.banglalink.toffee.util.Utils
 import java.text.ParseException
 import java.util.*
 
-class Preference(private val pref: SharedPreferences,
-                                     private val context: Context) {
+class Preference(private val pref: SharedPreferences, private val context: Context) {
 
     val viewCountDbUrlLiveData = MutableLiveData<String>()
+    val reactionDbUrlLiveData = MutableLiveData<String>()
     val sessionTokenLiveData = MutableLiveData<String>()
     val profileImageUrlLiveData = MutableLiveData<String>()
     val customerNameLiveData = MutableLiveData<String>()
@@ -290,6 +290,16 @@ class Preference(private val pref: SharedPreferences,
             }
         }
 
+    var reactionDbUrl: String
+        get() = pref.getString(PREF_REACTION_DB_URL, "") ?: ""
+        set(reactionDbUrl) {
+            val storedUrl = pref.getString(PREF_REACTION_DB_URL, "") ?: ""//get stored url
+            pref.edit().putString(PREF_REACTION_DB_URL, reactionDbUrl).apply()//save new url
+            if (storedUrl.isEmpty() || !reactionDbUrl.equals(storedUrl, true)) {
+                reactionDbUrlLiveData.postValue(reactionDbUrl)//post if there is mismatch of url
+            }
+        }
+
     var uploadStatus: Int
         get() = pref.getInt(PREF_TOFFEE_UPLOAD_STATUS, -1)
         set(value) = pref.edit { putInt(PREF_TOFFEE_UPLOAD_STATUS, value) }
@@ -331,6 +341,7 @@ class Preference(private val pref: SharedPreferences,
         longitude = customerInfoSignIn.long?:""
         isSubscriptionActive = customerInfoSignIn.isSubscriptionActive?:"true"
         viewCountDbUrl = (customerInfoSignIn.viewCountDbUrl?:"")
+        reactionDbUrl = (customerInfoSignIn.reactionDbUrl?:"")
     }
 
     companion object {
@@ -368,6 +379,7 @@ class Preference(private val pref: SharedPreferences,
         private const val PREF_DEVICE_TIME_IN_MILLISECONDS= "deviceTimeInMillis"
         private const val PREF_TOKEN_LIFE_SPAN= "tokenLifeSpan"
         private const val PREF_VIEW_COUNT_DB_URL= "viewCountDbUrl"
+        private const val PREF_REACTION_DB_URL= "reactionDbUrl"
         private const val PREF_TOFFEE_UPLOAD_STATUS= "toffee-upload-status"
         private const val PREF_ENABLE_FLOATING_WINDOW= "enable-floating-window"
         private const val PREF_AUTO_PLAY_RECOMMENDED= "autoplay-for-recommended"

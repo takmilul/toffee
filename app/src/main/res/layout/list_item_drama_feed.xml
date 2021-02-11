@@ -112,6 +112,7 @@
             android:layout_height="28dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="12dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:onClick="@{()-> callback.onProviderIconClicked(data)}"
             android:src="@drawable/ic_profile_default"
             app:layout_constraintStart_toStartOf="parent"

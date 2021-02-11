@@ -3,12 +3,10 @@ package com.banglalink.toffee.ui.mychannel
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
 import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.Toast
-import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -26,10 +24,10 @@ import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
 import com.banglalink.toffee.ui.widget.ToffeeSpinnerAdapter
+import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.imagePathToBase64
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-
 
 @AndroidEntryPoint
 class MyChannelEditDetailFragment : Fragment(), OnClickListener {
@@ -37,6 +35,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     private var myChannelDetail: MyChannelDetail? = null
     private var newBannerUrl: String? = null
     private var newProfileImageUrl: String? = null
+    private lateinit var progressDialog: VelBoxProgressDialog
     private lateinit var binding: FragmentMyChannelEditDetailBinding
 
     @Inject lateinit var viewModelAssistedFactory: MyChannelEditDetailViewModel.AssistedFactory
@@ -50,6 +49,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        progressDialog = VelBoxProgressDialog(requireContext())
         val args = MyChannelEditDetailFragmentArgs.fromBundle(requireArguments())
         myChannelDetail = args.myChannelDetail
     }
@@ -142,17 +142,17 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             Toast.makeText(requireContext(), "Unable to load data!", Toast.LENGTH_SHORT).show()
             findNavController().popBackStack()
         }
-        observe(viewModel.liveData) {
+        observe(viewModel.editDetailLiveData) {
             when (it) {
                 is Success -> {
                     binding.saveButton.isClickable = true
-                    binding.progressBar.visibility = View.GONE
+                    progressDialog.dismiss()
                     findNavController().navigateUp()
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
                 }
                 is Failure -> {
                     binding.saveButton.isClickable = true
-                    binding.progressBar.visibility = View.GONE
+                    progressDialog.dismiss()
                     println(it.error)
                     Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
                 }
@@ -179,7 +179,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
 
     private fun editChannel() {
         binding.saveButton.isClickable = false
-        binding.progressBar.visibility = View.VISIBLE
+        progressDialog.show()
         
         var bannerBase64 = "NULL"
         try {
@@ -208,12 +208,12 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         when {
             binding.channelName.text.isNullOrBlank() -> {
                 binding.saveButton.isClickable = true
-                binding.progressBar.visibility = GONE
+                progressDialog.dismiss()
                 Toast.makeText(requireContext(), "Please give a channel name", Toast.LENGTH_SHORT).show()
             }
             viewModel.selectedCategoryPosition.value == 0 -> {
                 binding.saveButton.isClickable = true
-                binding.progressBar.visibility = GONE
+                progressDialog.dismiss()
                 Toast.makeText(requireContext(), "Category is not selected", Toast.LENGTH_SHORT).show()
             }
             else -> {

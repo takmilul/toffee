@@ -43,6 +43,8 @@ class CustomerInfoSignIn:BodyResponse() {
 
     @SerializedName("real_db_01_url")
     var viewCountDbUrl:String?=null
+    @SerializedName("reaction_db_01_url")
+    var reactionDbUrl:String?=null
     @SerializedName("real_db_01_crc32")
     var viewCountDBVersion:String?=null
 }

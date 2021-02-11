@@ -53,8 +53,8 @@ class GetContents @AssistedInject constructor(
                 it.categoryId = requestParams.categoryId
                 it.subCategoryId = requestParams.subcategoryId
                 it.subCategory = requestParams.subcategory
-                val reactionInfo = reactionDao.getReactionByContentId(preference.customerId, it.id)
-                it.myReaction = reactionInfo?.reaction ?: Reaction.None.value
+                val reactionInfo = reactionDao.getReactionByContentId(preference.customerId, it.id.toLong())
+                it.myReaction = reactionInfo?.reactionType ?: Reaction.None.value
                 it.viewProgress = viewProgressRepo.getProgressByContent(it.id.toLong())?.progress ?: 0L
                 it
             }

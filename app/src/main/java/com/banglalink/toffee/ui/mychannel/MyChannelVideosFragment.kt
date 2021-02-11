@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.mychannel
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -16,13 +17,16 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.enums.Reaction.Love
+import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
+import com.banglalink.toffee.ui.about.AboutActivity
 import com.banglalink.toffee.ui.common.ContentReactionCallback
+import com.banglalink.toffee.ui.common.HtmlPageViewActivity
 import com.banglalink.toffee.ui.common.ReactionIconCallback
 import com.banglalink.toffee.ui.common.ReactionPopup
 import com.banglalink.toffee.ui.home.HomeActivity
@@ -90,9 +94,17 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
                         (requireActivity() as HomeActivity).showUploadDialog()
                     }
                 }
+                creatorsPolicyButton.setOnClickListener {
+                    val intent = Intent(requireActivity(), HtmlPageViewActivity::class.java).apply {
+                        putExtra(HtmlPageViewActivity.CONTENT_KEY, AboutActivity.PRIVACY_POLICY_URL)
+                        putExtra(HtmlPageViewActivity.TITLE_KEY, "Creators Policy")
+                    }
+                    requireActivity().startActivity(intent)
+                }
             }
             else{
-                uploadVideoButton.visibility = View.GONE
+                uploadVideoButton.hide()
+                creatorsPolicyButton.hide()
                 empty_view_label.text = "This channel has no video yet"
             }
         }

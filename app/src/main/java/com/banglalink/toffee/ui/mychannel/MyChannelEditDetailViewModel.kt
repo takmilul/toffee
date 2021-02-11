@@ -23,7 +23,7 @@ class MyChannelEditDetailViewModel @AssistedInject constructor(private val myCha
     BaseViewModel() {
 
     private val _data = MutableLiveData<Resource<MyChannelEditBean>>()
-    val liveData = _data.toLiveData()
+    val editDetailLiveData = _data.toLiveData()
     var categoryList = MutableLiveData<List<UgcCategory>>()
     private var _categories = MutableLiveData<List<String>>()
 //    val categories = _categories.toLiveData()

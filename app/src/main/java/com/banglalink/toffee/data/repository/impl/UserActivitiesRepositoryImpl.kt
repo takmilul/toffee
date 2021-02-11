@@ -10,8 +10,6 @@ class UserActivitiesRepositoryImpl(private val dao: UserActivitiesDao) : UserAct
     override suspend fun delete(item: UserActivities) = dao.delete(item)
     override suspend fun update(item: UserActivities) = dao.update(item)
     override suspend fun deleteAll() =dao.deleteAll()
+    override suspend fun deleteByContentId(customerId: Int, contentId: Long) = dao.deleteByContentId(customerId, contentId)
     override fun getAllItems(customerId: Int): PagingSource<Int, UserActivities> = dao.getAllItems(customerId)
-
-
-
 }

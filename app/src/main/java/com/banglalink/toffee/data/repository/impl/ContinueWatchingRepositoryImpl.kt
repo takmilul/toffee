@@ -10,6 +10,7 @@ class ContinueWatchingRepositoryImpl(
     private val dao: ContinueWatchingDao,
     private val pref: Preference)
 : ContinueWatchingRepository {
+    
     override suspend fun insertItem(item: ContinueWatchingItem) {
         dao.insertItem(item)
     }
@@ -17,4 +18,6 @@ class ContinueWatchingRepositoryImpl(
     override fun getAllItemsByCategory(catId: Int): Flow<List<ContinueWatchingItem>> {
         return dao.getAllItemsByCategory(catId, pref.customerId)
     }
+
+    override suspend fun deleteByContentId(customerId: Int, contentId: Long) = dao.deleteByContentId(customerId, contentId)
 }

@@ -3,7 +3,6 @@ package com.banglalink.toffee.ui.widget
 import android.content.Context
 import android.graphics.Color
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
@@ -135,7 +134,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
                 if(scrollDiff > mTouchSlop) {
                     scrollDir = 1
                 }
-                if(scrollDiff < mTouchSlop) {
+                if(scrollDiff < -mTouchSlop) {
                     scrollDir = -1
                 }
 //                Log.e("SCROLL", "ScrollDir ->> $scrollDir, ---->>> ${canScrollBottomPanel()}")

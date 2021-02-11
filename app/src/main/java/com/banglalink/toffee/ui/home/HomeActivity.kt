@@ -224,6 +224,12 @@ class HomeActivity :
             }
         }
 
+        observe(mPref.reactionDbUrlLiveData){
+            if(it.isNotEmpty()){
+                viewModel.populateReactionDb(it)
+            }
+        }
+
         observe(viewModel.addToPlayListMutableLiveData) { item ->
 //            val playListItems = item.filter {
 //                !it.isLive
@@ -244,7 +250,11 @@ class HomeActivity :
             )
             startActivity(Intent.createChooser(sharingIntent, "Share via"))
         }
-
+        
+        if (!mPref.hasChannelName() && !mPref.hasChannelLogo()) {
+            viewModel.getChannelDetail(1, 0, 0, mPref.customerId)
+        }
+        
         if(intent.hasExtra(INTENT_PACKAGE_SUBSCRIBED)){
             handlePackageSubscribe()
         }
