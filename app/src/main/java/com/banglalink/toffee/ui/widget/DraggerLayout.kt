@@ -360,9 +360,14 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
                     }
 
 //                    val initX = 2 * dragView.minBound - capturedEnd
-                    val heightDiff2 = (scale - getMaxScale()) * (dragView.minBound - capturedEnd) / (getMinScale() - getMaxScale()) + capturedEnd//initX + scale * (capturedEnd - initX)
-                    if(heightDiff2 > 0) {
-                        dragView.setLayoutHeight(heightDiff2.toInt())
+                    if(dragView.isVideoPortrait) {
+                        val heightDiff2 =
+                            (scale - getMaxScale()) * (dragView.minBound - (capturedEnd
+                                ?: dragView.minBound)) / (getMinScale() - getMaxScale()) + (capturedEnd
+                                ?: dragView.minBound)//initX + scale * (capturedEnd - initX)
+                        if (heightDiff2 > 0) {
+                            dragView.setLayoutHeight(heightDiff2.toInt())
+                        }
                     }
                     dragView.scaleX = scale
                     dragView.scaleY = scale
@@ -408,8 +413,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
         }
     }
 
-    private var capturedEnd: Int = -1
-    private var captureStart: Int = -1
+    private var capturedEnd: Int? = null
 
     fun onScaleToBoundary(bscale: Float) {
         if(dragView.isVideoPortrait

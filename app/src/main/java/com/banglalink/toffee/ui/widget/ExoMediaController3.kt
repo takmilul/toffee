@@ -160,6 +160,14 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
                 this.simpleExoPlayer?.videoComponent?.setVideoTextureView(binding.textureView)
             }
         }
+
+        simpleExoPlayer?.currentMediaItem?.playbackProperties?.tag?.let {
+            if(it is ChannelInfo) {
+                isVideoPortrait = it.is_horizontal != 1
+                binding.rotation.visibility = if(isVideoPortrait) View.GONE else View.VISIBLE
+                binding.share.visibility = if(it.isApproved == 1) View.VISIBLE else View.GONE
+            }
+        }
     }
 
     private fun forward() {
@@ -659,17 +667,27 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
             height = playerHeight
         }
         if(videoWidth > 0 && videoHeight > 0) {
-            binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.apply {
-                width = videoWidth
-                height = videoHeight
+            binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.also {
+                it.width = videoWidth
+                it.height = videoHeight
             }
-            adjustVideoBoundWithRatio(if(isVideoPortrait && !isFullScreenPortrait()) SCALE_TYPE_CENTER_CROP else SCALE_TYPE_SCALE_TO_FIT)
+            adjustVideoBoundWithRatio(
+                if(isVideoPortrait && !isFullScreenPortrait())
+                    SCALE_TYPE_CENTER_CROP
+                else
+                    SCALE_TYPE_SCALE_TO_FIT
+            )
         } else {
-            binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.apply {
-                width = playerWidth
-                height = playerHeight
+            binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.also {
+                it.width = playerWidth
+                it.height = playerHeight
             }
-            adjustVideoBoundWithRatio(if(isVideoPortrait && !isFullScreenPortrait()) SCALE_TYPE_CENTER_CROP else SCALE_TYPE_SCALE_TO_FIT)
+            adjustVideoBoundWithRatio(
+                if(isVideoPortrait && !isFullScreenPortrait())
+                    SCALE_TYPE_CENTER_CROP
+                else
+                    SCALE_TYPE_SCALE_TO_FIT
+            )
         }
     }
 
