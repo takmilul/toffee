@@ -14,14 +14,8 @@ import javax.inject.Inject
 class TermsConditionService @Inject constructor( private val preference: Preference,private val toffeeApi: ToffeeApi) {
 
     suspend fun execute(termsConditionRequest:TermsConditionRequest): TermsAndCondition {
-//        val response = tryIO2 {
-//            val termsConditionRequest:TermsConditionRequest(0,"10")
-//            toffeeApi.getVideoTermsAndCondition(0,termsConditionRequest)
-//        }
-//        Log.e("api TAG", Gson().toJson(response))
-//        Log.e("api TAG", Gson().toJson(termsConditionRequest))
         val response = tryIO2 {
-            toffeeApi.getVideoTermsAndCondition(0,
+            toffeeApi.getVideoTermsAndCondition(preference.getDBVersionByApiName("getUgcContentByPlaylist"),
                 termsConditionRequest.apply {
                     customerId = preference.customerId
                     password = preference.password

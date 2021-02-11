@@ -6,24 +6,18 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebView
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProviders
 import com.banglalink.toffee.R
-import com.banglalink.toffee.data.network.request.TermsConditionRequest
 import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.extension.action
 import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.snack
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.profile.ViewProfileViewModel
-import com.banglalink.toffee.ui.refer.ReferAFriendViewModel
-import com.banglalink.toffee.util.unsafeLazy
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_terms_condition.*
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class TermsConditionFragment : DialogFragment() {
@@ -34,7 +28,6 @@ class TermsConditionFragment : DialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_terms_condition, container, false)
 
     }
@@ -42,6 +35,19 @@ class TermsConditionFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel.terms()
         observeTermCondition()
+        close_iv?.setOnClickListener {
+            dismiss()
+        }
+        constraintLayout?.setOnClickListener {
+            dismiss()
+        }
+    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setStyle(
+            STYLE_NORMAL,
+            R.style.FullScreenDialogStyle
+        )
     }
     private fun observeTermCondition() {
 
@@ -63,7 +69,7 @@ class TermsConditionFragment : DialogFragment() {
     }
 
     private fun data(msg: String){
-        webview.loadData(msg, "text/html", "UTF-8")
+        webview.loadDataWithBaseURL(null, msg, "text/html", "UTF-8", null)
         webview.computeScroll()
         webview.isVerticalScrollBarEnabled = true
         webview.isHorizontalScrollBarEnabled = true

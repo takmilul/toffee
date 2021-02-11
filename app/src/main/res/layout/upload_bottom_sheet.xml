@@ -225,6 +225,5 @@
             app:layout_constraintTop_toBottomOf="@id/cancelButton" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </layout>
 

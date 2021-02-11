@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.upload
 
-import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
 import android.text.Editable
@@ -9,16 +8,13 @@ import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
 import android.widget.*
-import androidx.annotation.NonNull
 import androidx.appcompat.widget.AppCompatCheckBox
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import coil.load
 import coil.request.CachePolicy
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.network.request.MyChannelEditRequest
-import com.banglalink.toffee.data.network.request.TermsConditionRequest
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.Resource
@@ -27,7 +23,6 @@ import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.imagePathToBase64
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -68,22 +63,6 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment() {
         dialog.setContentView(view)
         val parent = view.parent as View
         bottomSheetBehavior = BottomSheetBehavior.from(parent)
-        bottomSheetBehavior.addBottomSheetCallback (object : BottomSheetCallback() {
-            @SuppressLint("ResourceAsColor")
-            override fun onStateChanged(@NonNull bottomSheet: View, newState: Int) {
-                // React to state change
-
-                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
-                    view.background = ContextCompat.getDrawable(context!!, R.drawable.bottom_sheet_background);
-                }
-                else{
-                    view.background = ContextCompat.getDrawable(context!!, R.drawable.bottom_round_bg);
-                }
-            }
-
-            override fun onSlide(@NonNull bottomSheet: View, slideOffset: Float) {
-            }
-        })
         val displayMetrics = DisplayMetrics()
         activity?.windowManager?.defaultDisplay?.getMetrics(displayMetrics)
         val height = displayMetrics.heightPixels
@@ -98,8 +77,7 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment() {
             findNavController().navigate(action)
         }
         cancelButton?.setOnClickListener {
-           dismiss()
-
+          dismiss()
         }
         terms_and_conditions_tv?.setOnClickListener {
 
@@ -165,10 +143,6 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment() {
         })
 
         return dialog
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
     }
     private fun observeEditChannel() {
 
@@ -236,5 +210,5 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment() {
             return BottomSheetUploadFragment()
         }
     }
-    override fun getTheme(): Int = R.style.BottomSheetMenuTheme
+    override fun getTheme(): Int = R.style.SheetDialog
 }

@@ -12,7 +12,6 @@
         android:id="@+id/upload_method_overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#aa000000"
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -20,11 +19,12 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.cardview.widget.CardView
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:id="@+id/upload_method_card"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:minWidth="380dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:elevation="4dp"
             app:cardCornerRadius="24dp"
             app:cardBackgroundColor="@color/cardBgColor"
@@ -33,9 +33,9 @@
             app:layout_constraintStart_toStartOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:background="@drawable/round_white_bg"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:background="@drawable/round_white_bg">
 
 
                 <ImageView
@@ -68,8 +68,8 @@
                     android:id="@+id/tv2id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="You can upload your video now"
                     android:layout_marginTop="15sp"
+                    android:text="You can upload your video now"
                     android:textColor="@color/main_text_color"
                     android:textSize="12sp"
                     app:layout_constraintEnd_toEndOf="@+id/textView55"
@@ -83,8 +83,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="84dp"
-                    android:layout_marginEnd="84dp"
                     android:layout_marginTop="20dp"
+                    android:layout_marginEnd="84dp"
                     android:text="@string/btn_open_camera"
                     app:icon="@drawable/ic_photo_camera"
                     app:layout_constraintEnd_toEndOf="@+id/textView55"
@@ -96,8 +96,8 @@
                     style="@style/UploadButtonStyleV2Ring"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
                     android:layout_marginStart="84dp"
+                    android:layout_marginTop="8dp"
                     android:layout_marginEnd="84dp"
                     android:text="@string/btn_open_gallery"
                     app:icon="@drawable/ic_photo_holder"
@@ -112,8 +112,8 @@
                     android:layout_marginTop="40dp"
                     android:fontFamily="@font/roboto_regular"
                     android:text="You can always go to"
-                    android:textSize="12sp"
                     android:textColor="@color/main_text_color"
+                    android:textSize="12sp"
                     app:layout_constraintEnd_toEndOf="@+id/textView55"
                     app:layout_constraintStart_toStartOf="@+id/textView55"
                     app:layout_constraintTop_toBottomOf="@+id/open_gallery_button" />
@@ -121,8 +121,8 @@
                 <Button
                     android:id="@+id/myChannelButton"
                     style="@style/ButtonStyleRingPurple"
-                    android:text="MY CHANNEL"
                     android:layout_marginTop="6dp"
+                    android:text="MY CHANNEL"
                     app:layout_constraintEnd_toEndOf="@+id/textView55"
                     app:layout_constraintStart_toStartOf="@+id/textView55"
                     app:layout_constraintTop_toBottomOf="@+id/textView57" />
@@ -142,11 +142,11 @@
                     app:layout_constraintVertical_bias="0.0" />
 
                 <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/guideline"
-                    app:layout_constraintGuide_end="30dp"
-                    android:orientation="horizontal"/>
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_end="30dp" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>

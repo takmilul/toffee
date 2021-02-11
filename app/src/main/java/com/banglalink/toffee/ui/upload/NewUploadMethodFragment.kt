@@ -2,17 +2,17 @@ package com.banglalink.toffee.ui.upload
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.core.content.FileProvider
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
@@ -29,7 +29,7 @@ import com.banglalink.toffee.ui.home.HomeViewModel
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_new_upload_method.*
+import kotlinx.android.synthetic.main.fragment_new_upload_method.view.*
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
@@ -41,11 +41,13 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class NewUploadMethodFragment : DialogFragment() {
     @Inject
-    lateinit  var mpref: Preference
+    lateinit var mpref: Preference
+
     @Inject
     lateinit var mUploadInfoRepository: UploadInfoRepository
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private var videoUri: Uri? = null
+    private var alertDialog: AlertDialog? = null
 
     companion object {
         private const val REQUEST_CAPTURE_VIDEO = 0x220
@@ -55,34 +57,29 @@ class NewUploadMethodFragment : DialogFragment() {
         }
     }
 
-    override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_new_upload_method, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        myChannelButton.setOnClickListener {
-
-            openMyChannelFragment()
-           //
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialogView = layoutInflater.inflate(R.layout.fragment_new_upload_method, null, false)
+        with(dialogView) {
+            myChannelButton.setOnClickListener {
+                openMyChannelFragment()
+            }
+            imageView11?.setOnClickListener {
+                findNavController().popBackStack(R.id.bottomSheetUploadFragment, true)
+            }
+            open_camera_button.setOnClickListener {
+                checkCameraPermissions()
+            }
+            open_gallery_button.setOnClickListener {
+                checkFileSystemPermission()
+            }
         }
-
-        imageView11?.setOnClickListener {
-            findNavController().popBackStack(R.id.bottomSheetUploadFragment, true)
-        }
-
-        open_camera_button.setOnClickListener {
-            checkCameraPermissions()
-        }
-
-        open_gallery_button.setOnClickListener {
-            checkFileSystemPermission()
-        }
+        alertDialog = AlertDialog
+            .Builder(requireContext())
+            .setView(dialogView).create()
+            .apply {
+                window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            }
+        return alertDialog!!
     }
 
 
@@ -96,11 +93,11 @@ class NewUploadMethodFragment : DialogFragment() {
             try {
                 if (askPermission(Manifest.permission.READ_EXTERNAL_STORAGE).isAccepted) {
                     startActivityForResult(
-                            Intent(
-                                    Intent.ACTION_PICK,
-                                    MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-                            ).setType("video/mp4"),
-                            REQUEST_PICK_VIDEO
+                        Intent(
+                            Intent.ACTION_PICK,
+                            MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+                        ).setType("video/mp4"),
+                        REQUEST_PICK_VIDEO
                     )
                 }
             } catch (e: PermissionException) {
@@ -127,8 +124,6 @@ class NewUploadMethodFragment : DialogFragment() {
     private fun openCameraIntent() {
         val videoIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
         if (videoIntent.resolveActivity(requireActivity().packageManager) != null) {
-
-//            val videoFile: File?
             try {
                 videoFile = createVideoFile()
                 ToffeeAnalytics.logBreadCrumb("Video file created")
@@ -138,9 +133,9 @@ class NewUploadMethodFragment : DialogFragment() {
             }
 
             videoUri = FileProvider.getUriForFile(
-                    requireContext(),
-                    "${requireContext().packageName}.provider",
-                    videoFile!!
+                requireContext(),
+                "${requireContext().packageName}.provider",
+                videoFile!!
             )
             ToffeeAnalytics.logBreadCrumb("Video uri set")
             videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, videoUri)
@@ -179,117 +174,34 @@ class NewUploadMethodFragment : DialogFragment() {
                 }
             }
         }
-        /*if(resultCode == Activity.RESULT_OK
-            && requestCode == REQUEST_CAPTURE_VIDEO
-            && data != null) {
-            data.dataString?.let {
-                uploadUri(it)
-            }
-        } else {
-            ToffeeAnalytics.logBreadCrumb("Camera/video picker returned without any data")
-        }*/
+
     }
+
     private fun openMyChannelFragment() {
-        homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(mpref.channelId, mpref.customerId, 0)
+        homeViewModel.myChannelNavLiveData.value =
+            MyChannelNavParams(mpref.channelId, mpref.customerId, 0)
     }
+
     private fun openEditUpload(uri: String) {
         findNavController()?.navigate(
-                R.id.action_newUploadMethodFragment_to_editUploadInfoFragment,
-                Bundle().apply {
-                    putString(EditUploadInfoFragment.UPLOAD_FILE_URI, uri)
-                })
+            R.id.action_newUploadMethodFragment_to_editUploadInfoFragment,
+            Bundle().apply {
+                putString(EditUploadInfoFragment.UPLOAD_FILE_URI, uri)
+            })
 
-}
-//    private fun uploadUri3(uri: String) {
-//
-//        lifecycleScope.launch {
-//            val dialog = VelBoxProgressDialog(requireContext())
-//            dialog.show()
-//
-//            val accessToken = withContext(Dispatchers.IO) {
-//                val credential = GoogleCredential.fromStream(
-//                    requireContext().assets.open("toffee-261507-60ca3e5405df.json")
-//                ).createScoped(listOf("https://www.googleapis.com/auth/devstorage.read_write"))
-//                credential.refreshToken()
-//                credential.accessToken
-//            }
-//
-//            if (accessToken.isNullOrEmpty()) {
-//                open_gallery_button.snack("Error uploading file. Please try again later.") {}
-//                return@launch
-//            }
-//
-//            val fn = withContext(Dispatchers.IO + Job()) {
-//                UtilsKt.fileNameFromContentUri(requireContext(), Uri.parse(uri))
-//            }
-//            val idx = fn.lastIndexOf(".")
-//            val ext = if (idx >= 0) {
-//                fn.substring(idx)
-//            }
-//            else ""
-//
-//            val fileName = mPref.customerId.toString() + "_" + UUID.randomUUID().toString() + ext
-//            val upInfo = UploadInfo(serverContentId = 0L, fileUri = uri, fileName = fileName)
-//
-//            val contentType = withContext(Dispatchers.IO + Job()) {
-//                UtilsKt.contentTypeFromContentUri(requireContext(), Uri.parse(uri))
-//            }
-//
-//            Log.e("UPLOAD", "$fileName, $contentType")
-//
-//            val upId = mUploadInfoRepository.insertUploadInfo(upInfo)
-//            val uploadIdStr =
-//                withContext(Dispatchers.IO + Job()) {
-//                    BinaryUploadRequest(
-//                        requireContext(),
-//                        "https://storage.googleapis.com/upload/storage/v1/b/ugc-content-storage/o?uploadType=media&name=${fileName}"
-//                    )
-//                        .setUploadID(UtilsKt.uploadIdToString(upId))
-//                        .setMethod("POST")
-//                        .addHeader("Content-Type", contentType)
-//                        .setFileToUpload(uri)
-//                        .setBearerAuth(accessToken)
-//                        .startUpload()
-//                }
-//
-////            mPref.uploadId = uploadIdStr
-//            dialog.dismiss()
-//        }
-//    }
-//
-//    private fun uploadUri2(uri: String) {
-//
-//        lifecycleScope.launch {
-//            val upInfo = UploadInfo(serverContentId = 0L, fileUri = uri, fileName = "fileName")
-//            val upId = mUploadInfoRepository.insertUploadInfo(upInfo)
-//            val uploadIdStr =
-//                withContext(Dispatchers.IO + Job()) {
-//                    MultipartUploadRequest(
-//                        requireContext(),
-//                        "http://23.94.70.184:25478/upload?token=1148123456789"
-//                    )
-//                        .setUploadID(UtilsKt.uploadIdToString(upId))
-//                        .setMethod("POST")
-//                        .addFileToUpload(uri, "file")
-//                        .startUpload()
-//                }
-//
-////            mPref.uploadId = uploadIdStr
-//            activity?.findNavController(R.id.home_nav_host)?.navigate(R.id.action_uploadMethodFragment_to_editUploadInfoFragment)
-//        }
-//    }
-
-                    override fun onAttach(context: Context) {
-                super.onAttach(context)
-                if (context is HomeActivity) {
-                    context.rotateFab(true)
-                }
-            }
-
-                    override fun onDetach() {
-                requireActivity().let {
-                    if (it is HomeActivity) it.rotateFab(false)
-                }
-                super.onDetach()
-            }
     }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is HomeActivity) {
+            context.rotateFab(true)
+        }
+    }
+
+    override fun onDetach() {
+        requireActivity().let {
+            if (it is HomeActivity) it.rotateFab(false)
+        }
+        super.onDetach()
+    }
+}

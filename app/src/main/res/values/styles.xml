@@ -429,7 +429,7 @@
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowIsFloating">false</item>
     </style>
-    
+
     <style name="OptionMenuStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -447,16 +447,19 @@
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
-    <style name="BaseBottomSheetMenu" parent="Theme.MaterialComponents.BottomSheetDialog">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSizeTopLeft">26dp</item>
-        <item name="cornerSizeTopRight">26dp</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-    </style>
-    <style name="BottomSheetMenuTheme" parent="@style/BaseBottomSheetMenu" />
 
     <style name="ZoomAnimation">
         <item name="android:windowEnterAnimation">@anim/zoom_in_animation</item>
         <item name="android:windowExitAnimation">@anim/zoom_out_animation</item>
+    </style>
+    <style name="SheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:colorBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.3</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="behavior_peekHeight">300dp</item>
+        <item name="android:windowIsFloating">true</item>
     </style>
 </resources>
