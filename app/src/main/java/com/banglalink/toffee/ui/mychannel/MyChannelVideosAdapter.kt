@@ -12,7 +12,7 @@ import com.banglalink.toffee.ui.common.ContentReactionCallback
 class MyChannelVideosAdapter(listener: ContentReactionCallback<ChannelInfo>?): BasePagingDataAdapter<ChannelInfo>(listener as BaseListItemCallback<ChannelInfo>, ItemComparator()) {
 
     override fun getItemViewType(position: Int): Int {
-        return R.layout.list_item_videos
+        return R.layout.list_item_my_channel_videos
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
