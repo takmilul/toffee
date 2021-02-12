@@ -39,7 +39,6 @@ import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -169,16 +168,14 @@ class HomeViewModel @ViewModelInject constructor(
 
     fun getChannelDetail(isOwner: Int, isPublic:Int, channelId: Int, channelOwnerId: Int) {
         viewModelScope.launch {
-            delay(4000).let {
-                val result = resultFromResponse { apiService.execute(isOwner, isPublic, channelId, channelOwnerId) }
-                
-                if (result is Success) {
-                    val myChannelDetail = result.data.myChannelDetail
-                    myChannelDetail?.let {
-                        mPref.channelId = myChannelDetail.id.toInt()
-                        myChannelDetail.profileUrl?.let { mPref.channelLogo = it }
-                        myChannelDetail.channelName?.let { mPref.channelName = it }
-                    }
+            val result = resultFromResponse { apiService.execute(isOwner, isPublic, channelId, channelOwnerId) }
+
+            if (result is Success) {
+                val myChannelDetail = result.data.myChannelDetail
+                myChannelDetail?.let {
+                    mPref.channelId = myChannelDetail.id.toInt()
+                    myChannelDetail.profileUrl?.let { mPref.channelLogo = it }
+                    myChannelDetail.channelName?.let { mPref.channelName = it }
                 }
             }
         }

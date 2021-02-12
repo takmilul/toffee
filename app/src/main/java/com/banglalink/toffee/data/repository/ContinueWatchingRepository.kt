@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 interface ContinueWatchingRepository {
     suspend fun insertItem(item: ContinueWatchingItem)
     fun getAllItemsByCategory(catId: Int): Flow<List<ContinueWatchingItem>>
+    suspend fun deleteByContentId(customerId: Int, contentId: Long)
 }

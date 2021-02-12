@@ -31,15 +31,15 @@
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
+            app:onSafeClick="@{()->callback.onItemClicked(data)}"
             loadChannelImage="@{data}"
-            android:onClick="@{()->callback.onItemClicked(data)}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/name"
             tools:src="@drawable/placeholder" />
         
-        <TextView
+        <!--<TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
@@ -52,7 +52,7 @@
             android:textSize="@dimen/default_text_size"
             android:background="@drawable/new_tag_bg"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" />-->
 
         <TextView
             android:id="@+id/duration"
@@ -62,8 +62,8 @@
             android:paddingVertical="@dimen/duration_vertical_padding"
             android:paddingHorizontal="@dimen/duration_horizontal_padding"
             android:text="@{data.formattedDuration}"
-            android:textColor="@android:color/white"
             android:textSize="@dimen/duration_text_size"
+            android:textColor="@android:color/white"
             app:layout_constraintBottom_toTopOf="@+id/progress"
             app:layout_constraintEnd_toEndOf="@+id/poster"
             tools:text="00:00" />
@@ -82,15 +82,13 @@
         
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/ownerPicture"
-            loadImageFromUrlRounded="@{data.channelProfileUrl}"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginTop="12dp"
             android:layout_marginStart="16dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:visibility="@{isMyChannel ? View.GONE : View.VISIBLE}"
-            android:onClick="@{()-> callback.onProviderIconClicked(data)}"
+            app:onSafeClick="@{()-> callback.onProviderIconClicked(data)}"
             android:src="@drawable/ic_profile_default"
+            loadImageFromUrlRounded="@{data.channelProfileUrl}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/poster"/>
         
@@ -101,13 +99,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            app:layout_goneMarginStart="16dp"
             app:layout_constrainedWidth="true"
             android:ellipsize="end"
             android:maxLines="2"
             android:gravity="center_vertical"
             android:text="@{data.program_name}"
-            android:onClick="@{()->callback.onItemClicked(data)}"
+            app:onSafeClick="@{()->callback.onItemClicked(data)}"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintEnd_toStartOf="@+id/options"
             app:layout_constraintStart_toEndOf="@+id/ownerPicture"
@@ -138,42 +135,45 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constrainedWidth="true"
-            android:maxLines="1"
             android:layout_marginTop="9dp"
+            android:text="@{data.content_provider_name + ` \u2022 `}"
             android:ellipsize="end"
+            android:maxLines="1"
             android:textSize="@dimen/default_text_size"
-            android:text="@{isMyChannel ? `` : data.content_provider_name}"
             android:textColor="@color/fixed_second_text_color"
             android:fontFamily="@font/roboto_regular"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="@+id/name"
             app:layout_constraintTop_toBottomOf="@+id/name"
-            tools:text="Banglalink" />
+            app:layout_constraintEnd_toStartOf="@id/uploadDuration"
+            tools:text="Banglalink &#8226; " />
         
         <TextView
             android:id="@+id/uploadDuration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxLines="1"
             android:layout_marginEnd="8dp"
-            android:text="@{isMyChannel ? data.formattedCreateTime : ` \u2022 ` + data.formattedCreateTime}"
-            android:fontFamily="@font/roboto_regular"
+            android:text="@{data.formattedCreateTime}"
+            android:maxLines="1"
             android:textSize="@dimen/default_text_size"
             android:textColor="@color/fixed_second_text_color"
+            android:fontFamily="@font/roboto_regular"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toEndOf="@id/owner"
             app:layout_constraintEnd_toStartOf="@id/guideline3"
             app:layout_constraintTop_toTopOf="@id/owner"
             app:layout_constraintBottom_toBottomOf="@id/owner"
-            tools:text=" &#8226; 14h" />
+            tools:text="14h" />
         
         <ImageView
             android:id="@+id/thirdIcon"
             android:layout_width="17dp"
             android:layout_height="17dp"
             android:layout_marginStart="13dp"
+            android:src="@drawable/ic_reaction_wow_no_shadow"
             bind:emoIcon="@{data}"
             bind:iconPosition="@{3}"
-            android:src="@drawable/ic_reaction_wow_no_shadow"
             app:layout_constraintTop_toTopOf="@id/reactionCount"
             app:layout_constraintBottom_toBottomOf="@id/reactionCount"
             app:layout_constraintStart_toStartOf="@id/secondIcon"/>
@@ -183,9 +183,9 @@
             android:layout_width="17dp"
             android:layout_height="17dp"
             android:layout_marginStart="13dp"
+            android:src="@drawable/ic_reaction_love_no_shadow"
             bind:emoIcon="@{data}"
             bind:iconPosition="@{2}"
-            android:src="@drawable/ic_reaction_love_no_shadow"
             app:layout_constraintTop_toTopOf="@id/reactionCount"
             app:layout_constraintBottom_toBottomOf="@id/reactionCount"
             app:layout_constraintStart_toStartOf="@id/firstIcon"/>
@@ -194,22 +194,22 @@
             android:id="@+id/firstIcon"
             android:layout_width="17dp"
             android:layout_height="17dp"
+            android:src="@drawable/ic_reaction_like_no_shadow"
             bind:emoIcon="@{data}"
             bind:iconPosition="@{1}"
-            android:src="@drawable/ic_reaction_like_no_shadow"
             app:layout_constraintStart_toStartOf="@id/guideline3"
             app:layout_constraintTop_toTopOf="@id/reactionCount"
             app:layout_constraintBottom_toBottomOf="@id/reactionCount"/>
 
         <TextView
             android:id="@+id/reactionCount"
-            bindEmoCount="@{data}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="2dp"
-            android:maxLines="1"
             android:gravity="center_vertical"
+            bindEmoCount="@{data}"
+            android:maxLines="1"
             android:textSize="@dimen/default_text_size"
             android:textColor="@color/fixed_second_text_color"
             android:fontFamily="@font/roboto_medium"
@@ -229,9 +229,8 @@
             android:paddingVertical="4dp"
             android:text="@{data.formatted_view_count + ` Views`}"
             android:textSize="@dimen/default_text_size"
-            android:fontFamily="@font/roboto_medium"
             android:textColor="@color/fixed_second_text_color"
-            app:layout_constraintVertical_bias="0"
+            android:fontFamily="@font/roboto_medium"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/name"
             app:layout_constraintTop_toBottomOf="@+id/owner"
@@ -267,21 +266,21 @@
 
         <TextView
             android:id="@+id/reactionButton"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="2dp"
             android:layout_marginEnd="16dp"
-            android:drawablePadding="4dp"
             android:paddingVertical="4dp"
             android:gravity="center_vertical"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:text="React"
             android:textSize="@dimen/default_text_size"
-            android:fontFamily="@font/roboto_medium"
-            app:onSafeClick="@{(v) -> callback.onReactionClicked(v, reactionCount, data)}"
             android:textColor="@color/fixed_second_text_color"
+            android:fontFamily="@font/roboto_medium"
+            android:drawablePadding="4dp"
             app:drawableStartCompat="@drawable/ic_reaction_love_empty"
             loadReactionEmo="@{data.myReaction}"
+            app:onSafeClick="@{(v) -> callback.onReactionClicked(v, reactionCount, data)}"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintBottom_toBottomOf="@+id/viewCount"
             app:layout_constraintEnd_toEndOf="parent"
@@ -289,14 +288,14 @@
             app:layout_constraintTop_toTopOf="@+id/viewCount"
             tools:text="React" />
         
-        <androidx.constraintlayout.widget.Group
+        <!--<androidx.constraintlayout.widget.Group
             android:id="@+id/reactionGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="@{data.isApproved == null || data.isApproved == 1 ? View.VISIBLE : View.GONE}"
-            app:constraint_referenced_ids="owner,uploadDuration,firstIcon,secondIcon,thirdIcon,reactionCount,viewCount,shareCount,reactionButton" />
+            app:constraint_referenced_ids="owner,uploadDuration,firstIcon,secondIcon,thirdIcon,reactionCount,viewCount,shareCount,reactionButton" />-->
         
-        <TextView
+        <!--<TextView
             android:layout_width="wrap_content"
             android:layout_height="20dp"
             android:layout_marginBottom="12dp"
@@ -311,7 +310,7 @@
             app:layout_constraintVertical_bias="0"
             app:layout_constraintStart_toStartOf="@+id/name"
             app:layout_constraintTop_toBottomOf="@+id/name"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintBottom_toBottomOf="parent"/>-->
         
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

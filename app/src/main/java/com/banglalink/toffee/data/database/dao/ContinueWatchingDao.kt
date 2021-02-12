@@ -22,4 +22,7 @@ abstract class ContinueWatchingDao {
 
     @Query("SELECT * FROM ContinueWatchingItem WHERE categoryId=:catId AND customerId=:customerId ORDER BY updateTime DESC LIMIT 10")
     abstract fun getAllItemsByCategory(catId: Int, customerId: Int): Flow<List<ContinueWatchingItem>>
+
+    @Query("DELETE FROM ContinueWatchingItem WHERE customerId == :customerId AND channelId == :contentId")
+    abstract suspend fun deleteByContentId(customerId: Int, contentId: Long)
 }

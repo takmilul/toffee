@@ -33,6 +33,7 @@ import com.banglalink.toffee.model.INVALID_REFERRAL_ERROR_CODE
 import com.banglalink.toffee.model.LOGIN_ERROR
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.TERMS_AND_CONDITION_URL
+import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.common.HtmlPageViewActivity
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
@@ -44,7 +45,7 @@ import com.google.android.material.snackbar.Snackbar
 
 private const val RESOLVE_HINT = 2
 
-class SignInContentFragment : Fragment() {
+class SignInContentFragment : BaseFragment() {
 
     private var phoneNumber: String = ""
     private var referralCode: String = ""
@@ -88,6 +89,9 @@ class SignInContentFragment : Fragment() {
                     }
                 }
             }
+        }
+        if (!mPref.isPreviousDbDeleted){
+            viewModel.deletePreviousDatabase()
         }
     }
 
