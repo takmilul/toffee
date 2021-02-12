@@ -52,9 +52,6 @@ class TermsConditionFragment : DialogFragment() {
             return alertDialog!!
         }
     }
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-    }
     private fun observeTermCondition() {
 
         observe(viewModel._data_condition) {
