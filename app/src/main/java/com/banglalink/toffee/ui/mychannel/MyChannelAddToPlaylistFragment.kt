@@ -109,7 +109,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
                 binding.addToPlaylistGroup.visibility = View.GONE
                 binding.createPlaylistGroup.visibility = View.VISIBLE
             }
-            binding.doneButton -> addToPlaylist()
+            binding.doneButton -> addToPlaylist(false)
             binding.cancelButton -> alertDialog.dismiss()
             binding.createButton -> createPlaylist()
             binding.closeIv -> alertDialog.dismiss()
@@ -130,7 +130,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
             when (it) {
                 is Success -> {
                     playlistId = it.data.playlistNameId
-                    addToPlaylist()
+                    addToPlaylist(true)
                     //Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
                 }
                 is Failure -> {
@@ -140,12 +140,12 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
         }
     }
 
-    private fun addToPlaylist() {
+    private fun addToPlaylist(isCreate: Boolean) {
         if (mAdapter.selectedPosition < 0 && playlistId == 0) {
             Toast.makeText(requireContext(), "Please select a playlist", Toast.LENGTH_SHORT).show()
         } else {
             var isAlreadyAdded = false
-            if (mAdapter.selectedPosition >= 0) {
+            if (mAdapter.selectedPosition >= 0 && !isCreate) {
                 val selectedItem = mAdapter.getItemByIndex(mAdapter.selectedPosition)
                 playlistId = selectedItem!!.id
                 isAlreadyAdded = selectedItem.playlistContentIdList?.contains(MyChannelPlaylistContentId(contentId.toString())) ?: false

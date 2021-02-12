@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.home
 
+import android.content.Intent
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
@@ -15,7 +16,9 @@ import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.extension.loadProfileImage
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.*
+import com.banglalink.toffee.ui.about.AboutActivity
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
+import com.banglalink.toffee.ui.common.HtmlPageViewActivity
 import com.banglalink.toffee.ui.profile.ViewProfileActivity
 import com.banglalink.toffee.ui.redeem.RedeemCodeActivity
 import com.banglalink.toffee.ui.refer.ReferAFriendActivity
@@ -262,6 +265,13 @@ class DrawerHelper(private val activity: HomeActivity,
                     )
                 }
                 return true
+            }
+            R.id.menu_creators_policy ->{
+                val intent = Intent(activity, HtmlPageViewActivity::class.java).apply {
+                    putExtra(HtmlPageViewActivity.CONTENT_KEY, AboutActivity.PRIVACY_POLICY_URL)
+                    putExtra(HtmlPageViewActivity.TITLE_KEY, "Creators Policy")
+                }
+                activity.startActivity(intent)
             }
 //            R.id.menu_settings -> {
 //                activity.launchActivity<SettingsActivity>()

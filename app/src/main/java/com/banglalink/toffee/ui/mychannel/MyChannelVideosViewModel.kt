@@ -11,11 +11,17 @@ import com.banglalink.toffee.common.paging.BaseListRepository
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
 import com.banglalink.toffee.common.paging.BasePagingViewModel
+import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.network.util.resultFromResponse
+import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
+import com.banglalink.toffee.data.repository.ContinueWatchingRepository
+import com.banglalink.toffee.data.repository.UserActivitiesRepository
+import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelDeleteVideoBean
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.Resource.Success
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.launch
@@ -23,6 +29,11 @@ import kotlinx.coroutines.launch
 class MyChannelVideosViewModel @AssistedInject constructor(
     private val getMyChannelAssistedFactory: MyChannelVideosService.AssistedFactory,
     private val myChannelVideoDeleteApiService: MyChannelVideoDeleteService,
+    private val mPref: Preference,
+    private val reactionDao: ReactionDao,
+    private val activitiesRepo: UserActivitiesRepository,
+    private val continueWatchingRepo: ContinueWatchingRepository,
+    private val viewProgressRepo: ContentViewPorgressRepsitory,
     @Assisted private val isOwner: Int, 
     @Assisted private val channelOwnerId: Int,
     @Assisted private val isPublic: Int) : BasePagingViewModel<ChannelInfo>() {
@@ -52,7 +63,14 @@ class MyChannelVideosViewModel @AssistedInject constructor(
 
     fun deleteVideo(contentId: Int){
         viewModelScope.launch { 
-            _data.postValue(resultFromResponse { myChannelVideoDeleteApiService.invoke(contentId) })
+            val response = resultFromResponse { myChannelVideoDeleteApiService.invoke(contentId) }
+            _data.postValue(response)
+            if (response is Success){
+                reactionDao.deleteByContentId(mPref.customerId, contentId.toLong())
+                activitiesRepo.deleteByContentId(mPref.customerId, contentId.toLong())
+                continueWatchingRepo.deleteByContentId(mPref.customerId, contentId.toLong())
+                viewProgressRepo.deleteByContentId(mPref.customerId, contentId.toLong())
+            }
         }
     }
     

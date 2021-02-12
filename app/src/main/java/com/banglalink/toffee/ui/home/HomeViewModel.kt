@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.GetProfile
 import com.banglalink.toffee.apiservice.MyChannelGetDetailService
+import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.dao.ViewCountDAO
 import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
@@ -25,10 +26,7 @@ import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.player.PlaylistManager
-import com.banglalink.toffee.usecase.DownloadViewCountDb
-import com.banglalink.toffee.usecase.GetContentFromShareableUrl
-import com.banglalink.toffee.usecase.SendViewContentEvent
-import com.banglalink.toffee.usecase.SetFcmToken
+import com.banglalink.toffee.usecase.*
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.getError
 import com.banglalink.toffee.util.unsafeLazy
@@ -41,7 +39,6 @@ import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -49,6 +46,7 @@ class HomeViewModel @ViewModelInject constructor(
         @AppCoroutineScope private val appScope: CoroutineScope,
         private val profileApi: GetProfile,
         private val viewCountDAO: ViewCountDAO,
+        private val reactionDao: ReactionDao,
         private val apiService: MyChannelGetDetailService,
         private val sendViewContentEvent: SendViewContentEvent,
         @ApplicationContext private val mContext: Context,
@@ -117,6 +115,13 @@ class HomeViewModel @ViewModelInject constructor(
         }
     }
 
+    fun populateReactionDb(url:String){
+        appScope.launch {
+            DownloadReactionDb(RetrofitApiClient.dbApi, reactionDao)
+                .execute(mContext, url)
+        }
+    }
+
     private fun getProfile(){
         viewModelScope.launch {
             try{
@@ -163,16 +168,14 @@ class HomeViewModel @ViewModelInject constructor(
 
     fun getChannelDetail(isOwner: Int, isPublic:Int, channelId: Int, channelOwnerId: Int) {
         viewModelScope.launch {
-            delay(4000).let {
-                val result = resultFromResponse { apiService.execute(isOwner, isPublic, channelId, channelOwnerId) }
-                
-                if (result is Success) {
-                    val myChannelDetail = result.data.myChannelDetail
-                    myChannelDetail?.let {
-                        mPref.channelId = myChannelDetail.id.toInt()
-                        myChannelDetail.profileUrl?.let { mPref.channelLogo = it }
-                        myChannelDetail.channelName?.let { mPref.channelName = it }
-                    }
+            val result = resultFromResponse { apiService.execute(isOwner, isPublic, channelId, channelOwnerId) }
+
+            if (result is Success) {
+                val myChannelDetail = result.data.myChannelDetail
+                myChannelDetail?.let {
+                    mPref.channelId = myChannelDetail.id.toInt()
+                    myChannelDetail.profileUrl?.let { mPref.channelLogo = it }
+                    myChannelDetail.channelName?.let { mPref.channelName = it }
                 }
             }
         }
