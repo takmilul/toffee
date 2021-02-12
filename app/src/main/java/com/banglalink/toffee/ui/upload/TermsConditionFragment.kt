@@ -38,12 +38,9 @@ class TermsConditionFragment : DialogFragment() {
         val dialogView = layoutInflater.inflate(R.layout.fragment_terms_condition, null, false)
         webview=dialogView?.findViewById(R.id.webview)
         with(dialogView) {
-
-
             close_iv?.setOnClickListener {
                 dismiss()
             }
-
             alertDialog = AlertDialog
                 .Builder(requireContext())
                 .setView(dialogView).create()
@@ -57,8 +54,6 @@ class TermsConditionFragment : DialogFragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        Log.e("data", "data" + mpref.appThemeMode)
     }
     private fun observeTermCondition() {
 
