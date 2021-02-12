@@ -517,13 +517,13 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
                     binding.autoplayProgress.visibility = GONE
                 }
                 if (mPlayListListener?.hasNext() == false) {
-                    binding.playNext.visibility = GONE
+                    binding.playNext.visibility = INVISIBLE
                 }
                 else {
                     binding.playNext.visibility = VISIBLE
                 }
                 if (mPlayListListener?.hasPrevious() == false) {
-                    binding.playPrev.visibility = GONE
+                    binding.playPrev.visibility = INVISIBLE
                 }
                 else {
                     binding.playPrev.visibility = VISIBLE
