@@ -346,4 +346,9 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             }
         }
     }
+
+    override fun onDestroy() {
+        progressDialog.dismiss()
+        super.onDestroy()
+    }
 }

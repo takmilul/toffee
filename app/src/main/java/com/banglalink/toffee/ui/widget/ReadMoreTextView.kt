@@ -21,7 +21,7 @@ import androidx.core.content.res.ResourcesCompat
 import com.banglalink.toffee.R
 
 class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : AppCompatTextView(context, attrs) {
-    private var mainText: CharSequence = ""
+    private var mainText: CharSequence? = null
     private var bufferType: BufferType? = null
     private var readMore = true
     private var trimLength: Int
@@ -117,9 +117,9 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
         setText()
     }
 
-    private fun getTrimmedText(): CharSequence {
+    private fun getTrimmedText(): CharSequence? {
         if (trimMode == TRIM_MODE_LENGTH) {
-            if (mainText.isNotBlank() && mainText.length > trimLength) {
+            if (!mainText.isNullOrBlank() && mainText?.length?:0 > trimLength) {
                 return if (readMore) {
                     updateCollapsedText()
                 }
@@ -129,7 +129,7 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
             }
         }
         if (trimMode == TRIM_MODE_LINES) {
-            if (mainText.isNotBlank() && lineEndIndex > 0) {
+            if (!mainText.isNullOrBlank() && lineEndIndex > 0) {
                 if (readMore) {
                     val line = lineCount
                     if (line >= trimLines) {
@@ -145,7 +145,7 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
     }
 
     private fun updateCollapsedText(): CharSequence {
-        var trimEndIndex = mainText.length
+        var trimEndIndex = mainText?.length?:0
         when (trimMode) {
             TRIM_MODE_LINES -> {
                 trimEndIndex = lineEndIndex - (ELLIPSIZE.length + trimCollapsedText.length + 1)
@@ -161,9 +161,9 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
         return addClickableSpan(spannableText, trimCollapsedText)
     }
 
-    private fun updateExpandedText(): CharSequence {
+    private fun updateExpandedText(): CharSequence? {
         if (showTrimExpandedText) {
-            val s = SpannableStringBuilder(mainText, 0, mainText.length).append("\n").append(trimExpandedText.toString())
+            val s = SpannableStringBuilder(mainText, 0, mainText?.length?:0).append("\n").append(trimExpandedText.toString())
             return addClickableSpan(s, trimExpandedText)
         }
         return mainText

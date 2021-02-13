@@ -2,8 +2,6 @@ package com.banglalink.toffee.ui.widget
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -42,7 +40,7 @@ class MultiTextButton @JvmOverloads constructor(mContext: Context, attrs: Attrib
                 subAmountView.setBackgroundResource(R.drawable.subscribe_bg_right)
             }
         }
-        subStatusView.setTextColor(ContextCompat.getColorStateList(context, R.color.colorAccent2))
+        subStatusView.setTextColor(ContextCompat.getColorStateList(context, R.color.button_text_color))
         isActivated = status
     }
 }

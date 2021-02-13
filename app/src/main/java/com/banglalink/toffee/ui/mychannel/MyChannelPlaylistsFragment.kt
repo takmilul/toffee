@@ -21,6 +21,7 @@ import com.banglalink.toffee.model.MyChannelPlaylist
 import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
+import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.alert_dialog_decision.view.*
 import kotlinx.android.synthetic.main.layout_my_channel_playlist_empty_view.*
@@ -67,6 +68,12 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
         channelOwnerId = arguments?.getInt(CHANNEL_OWNER_ID) ?: 0
         channelId = arguments?.getInt(MyChannelHomeFragment.CHANNEL_ID) ?: 0
         mAdapter.isOwner = isOwner
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        observeEditPlaylist()
+        observeDeletePlaylist()
         observeReloadPlaylist()
     }
     
@@ -170,7 +177,6 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
         playlistBinding.createButton.text = "Save"
         playlistBinding.createButton.setOnClickListener {
             if (!editPlaylistViewModel.playlistName.isNullOrBlank()) {
-                observeEditPlaylist()
                 editPlaylistViewModel.editPlaylist(playlistId, channelOwnerId, isOwner)
                 alertDialog.dismiss()
             }
@@ -182,20 +188,17 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
     }
 
     private fun showDeletePlaylistDialog(playlistId: Int) {
-        val dialogView: View = this.layoutInflater.inflate(layout.alert_dialog_decision, null)
-        val dialogBuilder = AlertDialog.Builder(requireContext()).setView(dialogView)
-        val alertDialog: AlertDialog = dialogBuilder.create().apply {
-            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            show()
-        }
-        observeDeletePlaylist()
-        with(dialogView) {
-            noButton.setOnClickListener { alertDialog.dismiss() }
-            deleteButton.setOnClickListener {
+        VelBoxAlertDialogBuilder(
+            requireContext(),
+            text = "Are you sure to delete?",
+            positiveButtonTitle = "No",
+            negativeButtonTitle = "Delete",
+            positiveButtonListener = { it?.dismiss() },
+            negativeButtonListener = { 
                 deletePlaylistViewModel.deletePlaylistName(playlistId)
-                alertDialog.dismiss()
+                it?.dismiss()
             }
-        }
+        ).create().show()
     }
 
     private fun observeDeletePlaylist() {

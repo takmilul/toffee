@@ -1,88 +1,69 @@
 package com.banglalink.toffee.ui.home
 
-import android.animation.LayoutTransition
-import android.app.SearchManager
-import android.content.Intent
-import android.content.pm.ActivityInfo
-import android.content.res.ColorStateList
-import android.content.res.Configuration
-import android.graphics.Point
-import android.net.Uri
-import android.os.Bundle
-import android.text.TextUtils
-import android.util.AttributeSet
+import android.animation.*
+import android.app.*
+import android.content.*
+import android.content.pm.*
+import android.content.res.*
+import android.graphics.*
+import android.net.*
+import android.os.*
+import android.text.*
+import android.util.*
 import android.util.Log
-import android.util.Xml
 import android.view.*
-import android.view.animation.AccelerateInterpolator
-import android.view.animation.AnimationUtils
+import android.view.animation.*
 import android.widget.*
-import androidx.activity.viewModels
+import androidx.activity.*
+import androidx.appcompat.app.*
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
-import androidx.core.content.ContextCompat
+import androidx.core.content.*
 import androidx.core.view.*
-import androidx.core.widget.addTextChangedListener
-import androidx.databinding.DataBindingUtil
+import androidx.core.widget.*
+import androidx.databinding.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupWithNavController
+import androidx.fragment.app.FragmentManager.*
+import androidx.lifecycle.*
+import androidx.navigation.*
+import androidx.navigation.fragment.*
+import androidx.navigation.ui.*
 import com.banglalink.toffee.R
-import com.banglalink.toffee.analytics.HeartBeatManager
-import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.data.repository.NotificationInfoRepository
-import com.banglalink.toffee.data.repository.UploadInfoRepository
-import com.banglalink.toffee.databinding.ActivityMainMenuBinding
+import com.banglalink.toffee.analytics.*
+import com.banglalink.toffee.data.repository.*
+import com.banglalink.toffee.databinding.*
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.*
-import com.banglalink.toffee.ui.category.drama.EpisodeListFragment
-import com.banglalink.toffee.ui.channels.AllChannelsViewModel
-import com.banglalink.toffee.ui.channels.ChannelFragmentNew
-import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
-import com.banglalink.toffee.ui.landing.AllCategoriesFragment
-import com.banglalink.toffee.ui.mychannel.MyChannelHomeFragment
-import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
-import com.banglalink.toffee.ui.player.PlayerPageActivity
-import com.banglalink.toffee.ui.player.PlaylistItem
-import com.banglalink.toffee.ui.player.PlaylistManager
-import com.banglalink.toffee.ui.search.SearchFragment
-import com.banglalink.toffee.ui.splash.SplashScreenActivity
-import com.banglalink.toffee.ui.subscription.PackageListActivity
-import com.banglalink.toffee.ui.upload.UploadProgressViewModel
-import com.banglalink.toffee.ui.upload.UploadStateManager
-import com.banglalink.toffee.ui.upload.UploadStatus
-import com.banglalink.toffee.ui.widget.DraggerLayout
-import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
-import com.banglalink.toffee.ui.widget.showSubscriptionDialog
-import com.banglalink.toffee.util.InAppMessageParser
-import com.banglalink.toffee.util.Utils
-import com.google.android.exoplayer2.util.Util
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.switchmaterial.SwitchMaterial
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.inappmessaging.FirebaseInAppMessaging
-import com.suke.widget.SwitchButton
-import dagger.hilt.android.AndroidEntryPoint
+import com.banglalink.toffee.ui.category.drama.*
+import com.banglalink.toffee.ui.channels.*
+import com.banglalink.toffee.ui.common.*
+import com.banglalink.toffee.ui.landing.*
+import com.banglalink.toffee.ui.mychannel.*
+import com.banglalink.toffee.ui.player.*
+import com.banglalink.toffee.ui.search.*
+import com.banglalink.toffee.ui.splash.*
+import com.banglalink.toffee.ui.subscription.*
+import com.banglalink.toffee.ui.upload.*
+import com.banglalink.toffee.ui.widget.*
+import com.banglalink.toffee.util.*
+import com.google.android.exoplayer2.util.*
+import com.google.android.material.bottomsheet.*
+import com.google.android.material.switchmaterial.*
+import com.google.firebase.analytics.*
+import com.google.firebase.inappmessaging.*
+import com.suke.widget.*
+import dagger.hilt.android.*
 import kotlinx.android.synthetic.main.activity_main_menu.*
 import kotlinx.android.synthetic.main.home_mini_upload_progress.*
 import kotlinx.android.synthetic.main.layout_appbar.view.*
 import kotlinx.android.synthetic.main.player_bottom_sheet_layout.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import net.gotev.uploadservice.UploadService
-import org.xmlpull.v1.XmlPullParser
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
+import net.gotev.uploadservice.*
+import org.xmlpull.v1.*
 import java.util.*
-import javax.inject.Inject
-
+import javax.inject.*
 
 const val ID_SUBSCRIPTIONS = 15
 const val ID_SUB_VIDEO = 16
@@ -90,7 +71,6 @@ const val ID_SETTINGS = 17
 const val ID_FAQ = 22
 const val ID_INVITE_FRIEND = 23
 const val ID_REDEEM_CODE = 24
-
 const val PLAY_IN_WEB_VIEW = 1
 const val OPEN_IN_EXTERNAL_BROWSER = 2
 
@@ -98,7 +78,7 @@ const val OPEN_IN_EXTERNAL_BROWSER = 2
 class HomeActivity :
     PlayerPageActivity(),
     FragmentManager.OnBackStackChangedListener,
-    DraggerLayout.OnPositionChangedListener ,
+    DraggerLayout.OnPositionChangedListener,
     SearchView.OnQueryTextListener
 {
 
@@ -251,7 +231,7 @@ class HomeActivity :
             startActivity(Intent.createChooser(sharingIntent, "Share via"))
         }
         
-        if (!mPref.hasChannelName() && !mPref.hasChannelLogo()) {
+        if (!mPref.hasChannelName() && !mPref.hasChannelLogo() && !mPref.isChannelDetailChecked) {
             viewModel.getChannelDetail(1, 0, 0, mPref.customerId)
         }
         

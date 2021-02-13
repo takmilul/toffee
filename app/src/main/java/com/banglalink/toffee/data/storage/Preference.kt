@@ -161,11 +161,17 @@ class Preference(private val pref: SharedPreferences, private val context: Conte
         get() = pref.getString(PREF_CHANNEL_NAME, "") ?: ""
         set(channelName) = pref.edit().putString(PREF_CHANNEL_NAME, channelName).apply()
     
+    var isChannelDetailChecked: Boolean
+        get() = pref.getBoolean(PREF_IS_CHANNEL_DETAIL_CHECKED, false)
+        set(value) = pref.edit().putBoolean(PREF_IS_CHANNEL_DETAIL_CHECKED, value).apply()
+    
     fun hasChannelLogo(): Boolean{
+        isChannelDetailChecked = true
         return channelLogo.isNotBlank()
     }
     
     fun hasChannelName(): Boolean{
+        isChannelDetailChecked = true
         return channelName.isNotBlank()
     }
     
@@ -385,7 +391,8 @@ class Preference(private val pref: SharedPreferences, private val context: Conte
         private const val PREF_AUTO_PLAY_RECOMMENDED= "autoplay-for-recommended"
         private const val PREF_CHANNEL_LOGO = "channel_logo"
         private const val PREF_CHANNEL_NAME = "channel_name"
-        private const val PREF_IS_PREVIOUS_DB_DELETED= "isPreviousDBDELETE"
+        private const val PREF_IS_PREVIOUS_DB_DELETED = "isPreviousDBDELETE"
+        private const val PREF_IS_CHANNEL_DETAIL_CHECKED = "isChannelDetailChecked"
 
         private const val PREF_NAME_IP_TV= "IP_TV"
 

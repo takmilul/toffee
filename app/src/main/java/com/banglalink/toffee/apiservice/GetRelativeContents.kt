@@ -1,12 +1,14 @@
 package com.banglalink.toffee.apiservice
 
 import com.banglalink.toffee.common.paging.BaseApiService
+import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.dao.ViewCountDAO
 import com.banglalink.toffee.data.network.request.RelativeContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
 import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.model.ChannelInfo
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
@@ -20,6 +22,7 @@ class GetRelativeContents @AssistedInject constructor(
         private val preference: Preference,
         private val toffeeApi: ToffeeApi,
         private val viewCountDAO: ViewCountDAO,
+        private val reactionDao: ReactionDao,
         private val viewProgressRepo: ContentViewPorgressRepsitory,
         @Assisted private val catchupParams: CatchupParams
 ): BaseApiService<ChannelInfo>{
@@ -44,6 +47,8 @@ class GetRelativeContents @AssistedInject constructor(
                     it.view_count= viewCount.toString()
                 }
                 it.viewProgress = viewProgressRepo.getProgressByContent(it.id.toLong())?.progress ?: 0L
+                val reactionInfo = reactionDao.getReactionByContentId(preference.customerId, it.id.toLong())
+                it.myReaction = reactionInfo?.reactionType ?: Reaction.None.value
                 it
             }
         } else emptyList()
