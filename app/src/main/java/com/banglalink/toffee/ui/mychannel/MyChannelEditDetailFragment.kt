@@ -79,7 +79,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         binding.categorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 if(position != 0 && viewModel.selectedCategoryPosition.value != position) {
-                    viewModel.selectedCategory = viewModel.categoryList.value?.get(position)
+                    viewModel.selectedCategory = viewModel.categoryList.value?.get(position-1)
                     viewModel.selectedCategoryPosition.value = position
                 }
                 else {

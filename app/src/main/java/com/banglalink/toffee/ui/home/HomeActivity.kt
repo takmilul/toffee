@@ -249,6 +249,7 @@ class HomeActivity :
                 channelInfo.video_share_url
             )
             startActivity(Intent.createChooser(sharingIntent, "Share via"))
+            viewModel.sendShareLog(channelInfo)
         }
         
         if (!mPref.hasChannelName() && !mPref.hasChannelLogo() && !mPref.isChannelDetailChecked) {

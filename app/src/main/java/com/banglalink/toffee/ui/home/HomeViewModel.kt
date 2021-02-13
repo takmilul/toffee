@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.home
 
 import android.content.Context
+import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.GetProfile
 import com.banglalink.toffee.apiservice.MyChannelGetDetailService
+import com.banglalink.toffee.apiservice.SendShareLogApiService
 import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.dao.ViewCountDAO
 import com.banglalink.toffee.data.database.entities.TVChannelItem
@@ -43,15 +45,16 @@ import kotlinx.coroutines.launch
 
 
 class HomeViewModel @ViewModelInject constructor(
-        @AppCoroutineScope private val appScope: CoroutineScope,
-        private val profileApi: GetProfile,
-        private val viewCountDAO: ViewCountDAO,
-        private val reactionDao: ReactionDao,
-        private val apiService: MyChannelGetDetailService,
-        private val sendViewContentEvent: SendViewContentEvent,
-        @ApplicationContext private val mContext: Context,
-        private val tvChannelRepo: TVChannelRepository,
-        private val mPref: Preference
+    @AppCoroutineScope private val appScope: CoroutineScope,
+    private val profileApi: GetProfile,
+    private val viewCountDAO: ViewCountDAO,
+    private val reactionDao: ReactionDao,
+    private val myChannelDetailApiService: MyChannelGetDetailService,
+    private val shareLogApiService: SendShareLogApiService,
+    private val sendViewContentEvent: SendViewContentEvent,
+    @ApplicationContext private val mContext: Context,
+    private val tvChannelRepo: TVChannelRepository,
+    private val mPref: Preference
 ):BaseViewModel(),OnCompleteListener<InstanceIdResult> {
 
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
@@ -168,7 +171,7 @@ class HomeViewModel @ViewModelInject constructor(
 
     fun getChannelDetail(isOwner: Int, isPublic:Int, channelId: Int, channelOwnerId: Int) {
         viewModelScope.launch {
-            val result = resultFromResponse { apiService.execute(isOwner, isPublic, channelId, channelOwnerId) }
+            val result = resultFromResponse { myChannelDetailApiService.execute(isOwner, isPublic, channelId, channelOwnerId) }
 
             if (result is Success) {
                 val myChannelDetail = result.data.myChannelDetail
@@ -177,6 +180,16 @@ class HomeViewModel @ViewModelInject constructor(
                     myChannelDetail.profileUrl?.let { mPref.channelLogo = it }
                     myChannelDetail.channelName?.let { mPref.channelName = it }
                 }
+            }
+        }
+    }
+    
+    fun sendShareLog(channelInfo: ChannelInfo){
+        viewModelScope.launch { 
+            val result = resultFromResponse { shareLogApiService.execute(channelInfo.id.toInt(), channelInfo.video_share_url) }
+            when(result){
+                is Success -> Log.e(TAG, "sendShareLog: ${result.data.message}")
+                is Resource.Failure -> Log.e(TAG, "sendShareLog: ${result.error.msg}")
             }
         }
     }

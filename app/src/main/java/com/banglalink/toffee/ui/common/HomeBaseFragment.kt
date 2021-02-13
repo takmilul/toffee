@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.common
 
-import android.content.Intent
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -33,13 +32,7 @@ abstract class HomeBaseFragment:BaseFragment(), OptionCallBack {
         popupMenu.setOnMenuItemClickListener{
             when(it?.itemId){
                 R.id.menu_share->{
-                    val sharingIntent = Intent(Intent.ACTION_SEND)
-                    sharingIntent.type = "text/plain"
-                    sharingIntent.putExtra(
-                        Intent.EXTRA_TEXT,
-                        channelInfo.video_share_url
-                    )
-                    activity?.startActivity(Intent.createChooser(sharingIntent, "Share via"))
+                    homeViewModel.shareContentLiveData.value = channelInfo
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_fav->{
