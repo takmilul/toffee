@@ -450,6 +450,9 @@ class HomeActivity :
         binding.playerView.addPlayerControllerChangeListener(this)
         resetPlayer()
         binding.playerView.resizeView(calculateScreenWidth())
+        if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            updateFullScreenState()
+        }
     }
 
     override fun resetPlayer() {
