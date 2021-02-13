@@ -3,8 +3,6 @@ package com.banglalink.toffee.ui.common
 import com.banglalink.toffee.R
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.home.OptionCallBack
-import com.foxrentacar.foxpress.ui.common.MyBaseAdapter
-import com.foxrentacar.foxpress.ui.common.MyViewHolder
 
 class CommonChannelAdapter(private val optionCallBack: OptionCallBack, channelCallback:(ChannelInfo)->Unit={}): MyBaseAdapter<ChannelInfo>(channelCallback) {
     override fun getLayoutIdForPosition(position: Int): Int {

@@ -2,10 +2,11 @@ package com.banglalink.toffee.ui.subscription
 
 import com.banglalink.toffee.R
 import com.banglalink.toffee.model.Package
-import com.foxrentacar.foxpress.ui.common.MyBaseAdapter
-import com.foxrentacar.foxpress.ui.common.MyViewHolder
+import com.banglalink.toffee.ui.common.MyBaseAdapter
+import com.banglalink.toffee.ui.common.MyViewHolder
 
-class PackageListAdapter(private val packageCallBack: PackageCallBack,channelCallback:(Package)->Unit):MyBaseAdapter<Package>(channelCallback){
+class PackageListAdapter(private val packageCallBack: PackageCallBack,channelCallback:(Package)->Unit):
+    MyBaseAdapter<Package>(channelCallback){
     override fun getLayoutIdForPosition(position: Int): Int {
        val mPackage = values[position]
         return when {
