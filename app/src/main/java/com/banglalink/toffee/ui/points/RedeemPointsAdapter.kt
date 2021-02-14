@@ -5,8 +5,8 @@ import android.view.View
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.ListItemRedeemPointsBinding
 import com.banglalink.toffee.model.RedeemPoints
-import com.foxrentacar.foxpress.ui.common.MyBaseAdapter
-import com.foxrentacar.foxpress.ui.common.MyViewHolder
+import com.banglalink.toffee.ui.common.MyBaseAdapter
+import com.banglalink.toffee.ui.common.MyViewHolder
 
 class RedeemPointsAdapter(val context: Activity, redeemCallBack: (RedeemPoints) -> Unit, val getViews: (View, View) -> Unit) : MyBaseAdapter<RedeemPoints>(redeemCallBack) {
     

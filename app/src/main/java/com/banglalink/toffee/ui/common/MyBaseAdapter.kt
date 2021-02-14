@@ -1,4 +1,4 @@
-package com.foxrentacar.foxpress.ui.common
+package com.banglalink.toffee.ui.common
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
