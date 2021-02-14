@@ -39,6 +39,7 @@ import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.repository.UploadInfoRepository
+import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.*
@@ -83,14 +84,12 @@ import org.xmlpull.v1.XmlPullParser
 import java.util.*
 import javax.inject.Inject
 
-
 const val ID_SUBSCRIPTIONS = 15
 const val ID_SUB_VIDEO = 16
 const val ID_SETTINGS = 17
 const val ID_FAQ = 22
 const val ID_INVITE_FRIEND = 23
 const val ID_REDEEM_CODE = 24
-
 const val PLAY_IN_WEB_VIEW = 1
 const val OPEN_IN_EXTERNAL_BROWSER = 2
 
@@ -98,10 +97,11 @@ const val OPEN_IN_EXTERNAL_BROWSER = 2
 class HomeActivity :
     PlayerPageActivity(),
     FragmentManager.OnBackStackChangedListener,
-    DraggerLayout.OnPositionChangedListener ,
+    DraggerLayout.OnPositionChangedListener,
     SearchView.OnQueryTextListener
 {
-
+    @Inject
+    lateinit  var mpref: Preference
     @Inject
     lateinit var uploadRepo: UploadInfoRepository
 
@@ -249,9 +249,10 @@ class HomeActivity :
                 channelInfo.video_share_url
             )
             startActivity(Intent.createChooser(sharingIntent, "Share via"))
+            viewModel.sendShareLog(channelInfo)
         }
         
-        if (!mPref.hasChannelName() && !mPref.hasChannelLogo()) {
+        if (!mPref.hasChannelName() && !mPref.hasChannelLogo() && !mPref.isChannelDetailChecked) {
             viewModel.getChannelDetail(1, 0, 0, mPref.customerId)
         }
         
@@ -270,40 +271,56 @@ class HomeActivity :
     }
 
     fun showUploadDialog(): Boolean {
-        if (navController.currentDestination?.id == R.id.uploadMethodFragment) {
-            navController.popBackStack()
-            return true
-        }
-        lifecycleScope.launch {
-
-            if (uploadRepo.getActiveUploadsList().isNotEmpty()) {
-                return@launch
+        if (mpref.hasChannelLogo() && mpref.hasChannelName()){
+            if (navController.currentDestination?.id == R.id.uploadMethodFragment) {
+                navController.popBackStack()
+                return true
             }
-    
-    //                mPref.uploadId?.let {
-    //                    val uploads = uploadRepo.getUploadById(UtilsKt.stringToUploadId(it))
-    //                    if(uploads == null || uploads.status !in listOf(0, 1, 2, 3)) {
-    //                        mPref.uploadId = null
-    //                        navController.navigate(R.id.uploadMethodFragment)
-    //                        return@launch
-    //                    }
-    ////                    if(uploads.status in listOf(0, 1, 2, 3) && UploadService.taskList.isEmpty()) {
-    ////                        uploads.apply {
-    ////                            status = UploadStatus.ERROR.value
-    ////                            statusMessage = "Process killed"
-    ////                        }.also { info ->
-    ////                            uploadRepo.updateUploadInfo(info)
-    ////                        }
-    ////                        mPref.uploadId = null
-    ////                        navController.navigate(R.id.uploadMethodFragment)
-    ////                    }
-    //                    if(navController.currentDestination?.id != R.id.editUploadInfoFragment) {
-    //                        navController.navigate(R.id.editUploadInfoFragment)
-    //                    }
-    //                    return@launch
-    //                }
-            navController.navigate(R.id.uploadMethodFragment)
+            lifecycleScope.launch {
+
+                if (uploadRepo.getActiveUploadsList().isNotEmpty()) {
+                    return@launch
+                }
+
+                //                mPref.uploadId?.let {
+                //                    val uploads = uploadRepo.getUploadById(UtilsKt.stringToUploadId(it))
+                //                    if(uploads == null || uploads.status !in listOf(0, 1, 2, 3)) {
+                //                        mPref.uploadId = null
+                //                        navController.navigate(R.id.uploadMethodFragment)
+                //                        return@launch
+                //                    }
+                ////                    if(uploads.status in listOf(0, 1, 2, 3) && UploadService.taskList.isEmpty()) {
+                ////                        uploads.apply {
+                ////                            status = UploadStatus.ERROR.value
+                ////                            statusMessage = "Process killed"
+                ////                        }.also { info ->
+                ////                            uploadRepo.updateUploadInfo(info)
+                ////                        }
+                ////                        mPref.uploadId = null
+                ////                        navController.navigate(R.id.uploadMethodFragment)
+                ////                    }
+                //                    if(navController.currentDestination?.id != R.id.editUploadInfoFragment) {
+                //                        navController.navigate(R.id.editUploadInfoFragment)
+                //                    }
+                //                    return@launch
+                //                }
+                navController.navigate(R.id.uploadMethodFragment)
+            }
         }
+        else{
+            if (navController.currentDestination?.id == R.id.bottomSheetUploadFragment) {
+                navController.popBackStack()
+                return true
+            }
+            lifecycleScope.launch {
+
+                if (uploadRepo.getActiveUploadsList().isNotEmpty()) {
+                    return@launch
+                }
+                navController.navigate(R.id.bottomSheetUploadFragment)
+            }
+        }
+
         return false
     }
 

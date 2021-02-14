@@ -31,6 +31,7 @@ import com.banglalink.toffee.ui.common.ReactionIconCallback
 import com.banglalink.toffee.ui.common.ReactionPopup
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
+import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.layout_my_channel_videos_empty_view.*
 import javax.inject.Inject
@@ -144,7 +145,7 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
                         })
                     }
                     R.id.menu_delete_content -> {
-                        mViewModel.deleteVideo(item.id.toInt())
+                        showDeleteVideoDialog(item.id.toInt())
                     }
                 }
                 return@setOnMenuItemClickListener true
@@ -154,6 +155,20 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
 
     }
 
+    fun showDeleteVideoDialog(contentId: Int){
+        VelBoxAlertDialogBuilder(
+            requireContext(),
+            text = "Are you sure to delete?",
+            positiveButtonTitle = "No",
+            negativeButtonTitle = "Delete",
+            positiveButtonListener = { it?.dismiss() },
+            negativeButtonListener = { 
+                mViewModel.deleteVideo(contentId)
+                it?.dismiss()
+            }
+        ).create().show()
+    }
+    
     fun handleFavoriteResponse(it: Resource<ChannelInfo>) {
         when (it) {
             is Resource.Success -> {

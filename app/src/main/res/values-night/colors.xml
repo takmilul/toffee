@@ -40,4 +40,6 @@
     <color name="hashtag_chip_color">#111F31</color>
     <color name="spinnerSeasonColor">#29466B</color>
     <color name="optionMenuColor">#29466B</color>
+    <color name="upload_number_color">#FFFFFF</color>
+    <color name="upload_button_color">#29466B</color>
 </resources>

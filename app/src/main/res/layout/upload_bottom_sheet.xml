@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <layout
+
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-
+        android:id="@+id/views"
+        android:background="@drawable/bottom_round_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -45,7 +47,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView28" />
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/channel_logo_iv"
             android:layout_width="80dp"
             android:layout_height="80dp"
@@ -56,6 +58,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textView29" />
 
         <ImageView
+            android:visibility="gone"
             android:id="@+id/edit_iv"
             android:layout_width="30dp"
             android:layout_height="30dp"
@@ -74,7 +77,7 @@
             android:id="@+id/channel_name_et"
             android:layout_width="0dp"
             android:layout_height="@dimen/single_line_input_text_height"
-            android:layout_marginHorizontal="56dp"
+            android:layout_marginHorizontal="16dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/single_line_input_text_bg"
             android:drawableStart="@drawable/ic_channel_name_logo"
@@ -82,10 +85,10 @@
             android:fontFamily="@font/roboto_italic"
             android:hint="Set Your Channel Name"
             android:drawablePadding="10dp"
-            android:inputType="phone"
+            android:inputType="text"
             android:maxLines="1"
-            android:textColor="@color/second_text_color"
-            android:textColorHint="@color/second_text_color"
+            android:textColor="@color/upload_number_color"
+            android:textColorHint="@color/switchUnCheckedColor"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -96,7 +99,7 @@
             android:id="@+id/phone_number_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="56dp"
+            android:layout_marginHorizontal="16dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/single_line_input_text_bg"
             android:orientation="horizontal"
@@ -119,12 +122,19 @@
                 android:fontFamily="@font/roboto_italic"
                 android:gravity="center_vertical"
                 android:text="+88"
-                android:textColor="@color/second_text_color"
+                android:textColor="@color/switchUnCheckedColor"
                 android:textSize="14sp"
                 android:textStyle="normal"
                 app:drawableStartCompat="@drawable/ic_bd_flag" />
-
+            <ImageView
+                android:layout_marginTop="3dp"
+                android:layout_marginStart="5dp"
+                android:layout_width="14dp"
+                android:layout_height="12dp"
+                android:src="@drawable/ic_path_down_arrow" />
             <TextView
+                android:drawablePadding="10dp"
+                app:drawableEndCompat="@drawable/ic_verified"
                 android:id="@+id/mobile_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -133,7 +143,7 @@
                 android:fontFamily="@font/roboto_italic"
                 android:gravity="center_vertical"
                 android:text="Your Phone Number"
-                android:textColor="@color/second_text_color"
+                android:textColor="@color/upload_number_color"
                 android:textSize="14sp"
                 android:textStyle="normal" />
         </LinearLayout>
@@ -149,7 +159,7 @@
             android:button="@drawable/custom_checkbox"
             android:checked="true"
             android:gravity="center_vertical"
-            android:text="  I agree to the "
+            android:text=" I agree to the "
             android:textColor="@color/main_text_color"
             android:textSize="16sp"
             app:layout_constraintEnd_toStartOf="@+id/terms_and_conditions_tv"
@@ -173,10 +183,11 @@
             app:layout_constraintTop_toTopOf="@+id/terms_and_conditions_checkbox" />
 
         <Button
-            android:id="@+id/login_btn"
-            style="@style/ButtonStyleSolidPink"
+            android:id="@+id/save_btn"
+            style="@style/ButtonStyleSolidSave"
             android:layout_width="@dimen/button_accent_width"
             android:text="Save"
+
             android:textAllCaps="true"
             android:enabled="false"
             app:layout_constraintBottom_toBottomOf="@+id/cancelButton"
@@ -187,15 +198,32 @@
 
         <Button
             android:id="@+id/cancelButton"
-            style="@style/ButtonStyleRingPurple"
+            style="@style/EditChannelStyle"
             android:layout_marginTop="37dp"
             android:text="Cancel"
             app:layout_constraintStart_toStartOf="@+id/terms_and_conditions_checkbox"
             app:layout_constraintTop_toBottomOf="@+id/terms_and_conditions_checkbox" />
-
+        <TextView
+            android:visibility="invisible"
+            android:id="@+id/text_view_fill_up"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:fontFamily="@font/roboto_regular"
+            android:text="*Please fill up all fields to continue"
+            android:textColor="@color/main_text_color"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cancelButton" />
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cancelButton" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </layout>
-
 

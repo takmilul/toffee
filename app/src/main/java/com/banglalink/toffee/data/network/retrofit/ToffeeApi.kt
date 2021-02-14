@@ -7,8 +7,7 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface ToffeeApi {
-
-
+    
     @POST("re-registration")
     suspend fun signinByPhone(@Body signinByPhoneRequest: SigninByPhoneRequest): SigninByPhoneResponse
 
@@ -76,6 +75,9 @@ interface ToffeeApi {
 
     @POST("contents-shareable")
     suspend fun getContentFromShareableUrl(@Body shareableRequest: ContentShareableRequest):ContentShareableResponse
+
+    @POST("content-share-log")
+    suspend fun sendShareLog(@Body shareableRequest: ContentShareLogRequest):ContentShareLogResponse
 
     @POST("heart-beat")
     suspend fun sendHeartBeat(@Body heartBeatRequest: HeartBeatRequest):HeartBeatResponse
@@ -247,6 +249,13 @@ interface ToffeeApi {
 
     @POST("/ugc-channel-edit")
     suspend fun editMyChannelDetail(@Body createPlaylistEditRequest: MyChannelEditRequest): MyChannelEditResponse
+
+    @POST("ugc-terms-and-conditions/1/{dbVersion}")
+    suspend fun getVideoTermsAndCondition(
+        @Path("dbVersion") dbVersion: Int,
+        @Body termsConditionRequest: TermsConditionRequest
+    ): TermsAndConditionResponse
+
 
     @POST("/ugc-rating-on-channel")
     suspend fun rateMyChannel(@Body myChannelRatingRequest: MyChannelRatingRequest): MyChannelRatingResponse

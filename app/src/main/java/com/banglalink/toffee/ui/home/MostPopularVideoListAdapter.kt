@@ -14,7 +14,7 @@ class MostPopularVideoListAdapter(
 ): BasePagingDataAdapter<ChannelInfo>(cb, ItemComparator()) {
 
     override fun getItemViewType(position: Int): Int {
-        return R.layout.list_item_videos
+        return R.layout.list_item_videos2
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {

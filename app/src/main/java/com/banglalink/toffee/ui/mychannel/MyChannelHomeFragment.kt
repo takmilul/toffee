@@ -240,9 +240,10 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                         binding.data = it.data
                         binding.isSubscribed = isSubscribed
                         mPref.channelId = channelId
-                        myChannelDetail?.profileUrl?.let { channelLogo -> mPref.channelLogo = channelLogo }
-                        myChannelDetail?.channelName?.let { channelName -> mPref.channelName = channelName }
-
+                        if (isOwner == 1) {
+                            myChannelDetail?.profileUrl?.let { channelLogo -> mPref.channelLogo = channelLogo }
+                            myChannelDetail?.channelName?.let { channelName -> mPref.channelName = channelName }
+                        }
                         loadBody()
                     }
                 }
@@ -345,5 +346,10 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        progressDialog.dismiss()
+        super.onDestroy()
     }
 }

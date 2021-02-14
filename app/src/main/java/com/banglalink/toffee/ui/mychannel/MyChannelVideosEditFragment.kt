@@ -72,7 +72,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
         observeThumbnailChange()
         observeCategory()
         binding.cancelButton.setOnClickListener { findNavController().popBackStack() }
-        binding.submitButton.setOnClickListener { submitVideo() }
+        binding.submitButton.setOnClickListener { updateVideoInfo() }
         binding.thumbEditButton.setOnClickListener { 
             val action = MyChannelVideosEditFragmentDirections.actionMyChannelVideosEditFragmentToThumbnailSelectionMethodFragment("Set Video Cover Photo",false)
             findNavController().navigate(action) 
@@ -128,7 +128,8 @@ class MyChannelVideosEditFragment : BaseFragment() {
 
         observe(viewModel.subCategories) { subCategories ->
             mSubCategoryAdapter.setData(subCategories)
-            viewModel.subCategoryPosition.value = subCategories.indexOf(subCategories.find { it.id.toInt() == channelInfo?.subCategoryId }).takeIf { it > 0 } ?: 1
+            viewModel.subCategoryPosition.value = (subCategories.indexOf(subCategories.find { it.id.toInt() == channelInfo?.subCategoryId }).takeIf { it > 0 }
+                ?: 0) + 1
         }
 
         observe(viewModel.subCategoryPosition) {
@@ -181,7 +182,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
         })
     }
 
-    private fun submitVideo() {
+    private fun updateVideoInfo() {
         progressDialog.show()
         observeEditResponse()
         
@@ -194,7 +195,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
         }
         val tags = binding.uploadTags.selectedChipList.joinToString(" | ") { it.label }
         val categoryId = viewModel.categories.value?.getOrNull(viewModel.categoryPosition.value ?: 0)?.id ?: 0
-        val subCategoryId = viewModel.subCategories.value?.getOrNull(viewModel.subCategoryPosition.value ?: 0)?.id ?: 0
+        val subCategoryId = viewModel.subCategories.value?.getOrNull(viewModel.subCategoryPosition.value?.minus(1) ?: 0)?.id ?: 0
         viewModel.saveUploadInfo(channelInfo?.id?.toInt()?:0, "",tags, categoryId, subCategoryId.toInt())
     }
 

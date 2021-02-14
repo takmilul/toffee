@@ -3,10 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-    
+
     <data>
         <import type="android.text.TextUtils"/>
-        
+
         <variable
             name="data"
             type="com.banglalink.toffee.ui.profile.EditProfileForm" />
@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-            
+
             <com.google.android.material.appbar.AppBarLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -31,9 +31,9 @@
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar"
                     style="@style/CustomToolBarStyle"/>
-                
+
             </com.google.android.material.appbar.AppBarLayout>
-            
+
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -56,7 +56,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         android:src="@drawable/ic_profile_default"/>
-                    
+
                     <TextView
                         android:id="@+id/name_tv"
                         android:layout_width="match_parent"
@@ -91,7 +91,7 @@
                         android:textSize="14sp"
                         android:textStyle="normal"
                         tools:text="+8801776198791"/>
-                    
+
                     <TextView
                         android:id="@+id/email_tv"
                         android:layout_width="match_parent"
@@ -125,7 +125,7 @@
                         android:textSize="14sp"
                         android:textStyle="normal"
                         tools:text="176 Mazar Road, Mirpur-1, Dhaka-1217"/>
-                    
+
                     <Button
                         android:id="@+id/save_button"
                         style="@style/EditChannelStyle"

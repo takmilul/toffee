@@ -21,70 +21,46 @@ import com.banglalink.toffee.extension.showToast
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
 import com.yalantis.ucrop.UCrop
-import kotlinx.android.synthetic.main.fragment_thumb_selection_method.view.*
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.fragment_update_channel_logo_dailog.view.*
+
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ThumbnailSelectionMethodFragment: DialogFragment() {
+@AndroidEntryPoint
+class UpdateChannelLogoDialogFragment : DialogFragment() {
     private var imageUri: Uri? = null
+    private var isProfile:Boolean = false
     private lateinit var title: String
-    private var isProfileImage:Boolean = false
     private var alertDialog: AlertDialog? = null
-
     companion object {
         private const val REQUEST_IMAGE = 0x225
         private const val REQUEST_IMAGE_FROM_FILE = 0x226
         const val THUMB_URI = "thumb-uri"
         const val TITLE_ARG = "thumb_arg_key"
-
-        fun newInstance(): ThumbnailSelectionMethodFragment {
-            return ThumbnailSelectionMethodFragment()
+        fun newInstance(): UpdateChannelLogoDialogFragment {
+            return UpdateChannelLogoDialogFragment()
         }
     }
-
-    /*override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_thumb_selection_method, container, false)
-    }*/
-
-    /*override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        
-        title = ThumbnailSelectionMethodFragmentArgs.fromBundle(requireArguments()).title
-        isProfileImage = ThumbnailSelectionMethodFragmentArgs.fromBundle(requireArguments()).isProfileImage
-        heading.text = title
-
-        open_gallery_button.setOnClickListener {
-            checkFileSystemPermission()
-        }
-
-        open_camera_button.setOnClickListener {
-            checkCameraPermissions()
-        }
-    }*/
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        title = ThumbnailSelectionMethodFragmentArgs.fromBundle(requireArguments()).title
-        isProfileImage = ThumbnailSelectionMethodFragmentArgs.fromBundle(requireArguments()).isProfileImage
 
-        val dialogView = layoutInflater.inflate(R.layout.fragment_thumb_selection_method, null, false)
-
+        title = UpdateChannelLogoDialogFragmentArgs.fromBundle(requireArguments()).title
+        isProfile = UpdateChannelLogoDialogFragmentArgs.fromBundle(requireArguments()).isProfile
+        val dialogView = layoutInflater.inflate(R.layout.fragment_update_channel_logo_dailog, null, false)
         with(dialogView){
-            heading.text = title
             open_gallery_button.setOnClickListener {
                 checkFileSystemPermission()
             }
             open_camera_button.setOnClickListener {
                 checkCameraPermissions()
             }
+            close_iv?.setOnClickListener {
+                dismiss()
+            }
         }
-
         alertDialog = AlertDialog
             .Builder(requireContext())
             .setView(dialogView).create()
@@ -99,10 +75,10 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
             try{
                 if(askPermission(Manifest.permission.READ_EXTERNAL_STORAGE).isAccepted) {
                     startActivityForResult(
-                        Intent(
-                            Intent.ACTION_PICK,
-                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI),
-                        REQUEST_IMAGE_FROM_FILE
+                            Intent(
+                                    Intent.ACTION_PICK,
+                                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI),
+                            REQUEST_IMAGE_FROM_FILE
                     )
                 }
             }
@@ -145,28 +121,27 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
             imageIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
             startActivityForResult(imageIntent, REQUEST_IMAGE)
             ToffeeAnalytics.logBreadCrumb("Camera activity started")
+
         }
     }
 
     @Throws(IOException::class)
     fun createImageFile(): File {
-
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val imageFileName = "IMAGE_" + timeStamp + "_"
         val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-
         return File.createTempFile(imageFileName, ".jpg", storageDir)
     }
 
     private fun startCrop(uri: Uri) {
         var uCrop = UCrop.of(
-            uri,
-            Uri.fromFile(createImageFile())
+                uri,
+                Uri.fromFile(createImageFile())
         )
 
         val options = UCrop.Options().apply {
             setHideBottomControls(true)
-            if (isProfileImage){
+            if (isProfile){
                 withAspectRatio(4f, 4f)
                 setCircleDimmedLayer(true)
             } else {
@@ -198,11 +173,13 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
             else if(requestCode == UCrop.REQUEST_CROP && data != null) {
                 val uri = UCrop.getOutput(data)
                 if(uri != null) {
+                    BottomSheetUploadFragment.UPLOAD_FILE_URI =uri.toString()
                     findNavController().let {
-                        it.previousBackStackEntry?.savedStateHandle?.set(THUMB_URI, uri.toString())
-                        alertDialog?.dismiss()
-//                        it.popBackStack()
+                        it.previousBackStackEntry?.savedStateHandle?.set(
+                            THUMB_URI, uri.toString())
+                        it.popBackStack()
                     }
+
                 }
             }
         }
