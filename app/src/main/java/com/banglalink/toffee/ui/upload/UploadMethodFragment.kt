@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +22,8 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.ui.home.HomeActivity
+import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
+import com.banglalink.toffee.util.UtilsKt
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
 import dagger.hilt.android.AndroidEntryPoint
@@ -164,8 +167,9 @@ class UploadMethodFragment : DialogFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
             REQUEST_PICK_VIDEO -> {
-                if (resultCode == Activity.RESULT_OK && data != null && data.dataString != null) {
-                    openEditUpload(data.dataString!!)
+                if (resultCode == Activity.RESULT_OK && data != null && data.data != null) {
+//                    openEditUpload(data.dataString!!)
+                    checkAndOpenUpload(data.data!!)
                 }
                 else {
                     ToffeeAnalytics.logBreadCrumb("Camera/video picker returned without any data")
@@ -191,6 +195,27 @@ class UploadMethodFragment : DialogFragment() {
         } else {
             ToffeeAnalytics.logBreadCrumb("Camera/video picker returned without any data")
         }*/
+    }
+
+    private fun checkAndOpenUpload(videoUri: Uri) {
+        lifecycleScope.launch {
+            val contentType = UtilsKt.contentTypeFromContentUri(requireContext(), videoUri)
+            val fileName = UtilsKt.fileNameFromContentUri(requireContext(), videoUri)
+
+            Log.e("UPLOAD_T", "Type ->> $contentType, Name ->> $fileName")
+
+            if(contentType == "video/mp4" || fileName.substringAfterLast(".", "") == "mp4") {
+                openEditUpload(videoUri.toString())
+            } else {
+                VelBoxAlertDialogBuilder(requireContext()).apply {
+                    setTitle("Select mp4 file")
+                    setText("Only mp4 file uploading is supported.")
+                    setPositiveButtonListener("Got It!") {
+                        it?.dismiss()
+                    }
+                }.create().show()
+            }
+        }
     }
 
     private fun openEditUpload(uri: String) {

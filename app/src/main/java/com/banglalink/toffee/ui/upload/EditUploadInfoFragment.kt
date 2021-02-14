@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.setPadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
@@ -74,6 +75,26 @@ class EditUploadInfoFragment: BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         uploadFileUri = requireArguments().getString(UPLOAD_FILE_URI, "")
+
+        requireActivity().onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if(isEnabled) {
+                    VelBoxAlertDialogBuilder(requireContext()).apply {
+                        setTitle("Cancel Uploading")
+                        setText("Are you sure that you want to\n" +
+                                "cancel uploading video?")
+                        setPositiveButtonListener("NO") {
+                            it?.dismiss()
+                        }
+                        setNegativeButtonListener("YES") {
+                            isEnabled = false
+                            requireActivity().onBackPressed()
+                            it?.dismiss()
+                        }
+                    }.create().show()
+                }
+            }
+        })
     }
 
     override fun onCreateView(
