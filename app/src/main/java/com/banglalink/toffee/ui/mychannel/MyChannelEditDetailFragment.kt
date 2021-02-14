@@ -15,6 +15,7 @@ import coil.load
 import coil.request.CachePolicy
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.network.request.MyChannelEditRequest
+import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.FragmentMyChannelEditDetailBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
@@ -31,6 +32,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MyChannelEditDetailFragment : Fragment(), OnClickListener {
+    @Inject lateinit var mPref: Preference
     private var isPosterClicked = false
     private var myChannelDetail: MyChannelDetail? = null
     private var newBannerUrl: String? = null
@@ -63,6 +65,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        progressDialog.show()
         observeEditChannel()
         observeThumbnailChange()
         setupCategorySpinner()
@@ -94,8 +97,9 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
 
         observe(viewModel.categoryList) { categories ->
             categoryAdapter.setData(categories)
+            progressDialog.dismiss()
             viewModel.selectedCategory = categories?.find { it.id == myChannelDetail?.categoryId }
-            viewModel.selectedCategoryPosition.value = categories.indexOf(categories.find { it.id == myChannelDetail?.categoryId }).takeIf { it > 0 } ?: 1
+            viewModel.selectedCategoryPosition.value = (categories.indexOf(categories.find { it.id == myChannelDetail?.categoryId }).takeIf { it > 0 } ?: 0) + 1
         }
 
         observe(viewModel.selectedCategoryPosition) {
@@ -163,7 +167,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     override fun onClick(v: View?) {
         when (v) {
             binding.cancelButton -> findNavController().navigateUp()
-            binding.saveButton -> editChannel()
+            binding.saveButton -> updateChannelInfo()
             binding.bannerEditButton -> {
                 isPosterClicked = true
                 val action = MyChannelEditDetailFragmentDirections.actionMyChannelEditFragmentToThumbnailSelectionMethodFragment("Set Channel Cover Photo",false)
@@ -177,32 +181,28 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         }
     }
 
-    private fun editChannel() {
+    private fun updateChannelInfo() {
         binding.saveButton.isClickable = false
         progressDialog.show()
         
-        var bannerBase64 = "NULL"
+        var bannerBase64: String? = null
         try {
             if (!newBannerUrl.isNullOrEmpty()) {
-                /*val image = File(newBannerUrl!!.substringAfter("file:"))
-                bannerBase64 = convertImageFileToBase64(image)*/
                 bannerBase64 = imagePathToBase64(requireContext(), newBannerUrl!!)
             }
         }
         catch (e: Exception) {
-            bannerBase64 = "NULL"
+            bannerBase64 = null
         }
         
-        var profileImageBase64 = "NULL"
+        var profileImageBase64: String? = null
         try {
             if (!newProfileImageUrl.isNullOrEmpty()) {
-                /*val image = File(newProfileImageUrl!!.substringAfter("file:"))
-                profileImageBase64 = convertImageFileToBase64(image)*/
                 profileImageBase64 = imagePathToBase64(requireContext(), newProfileImageUrl!!)
             }
         }
         catch (e: Exception) {
-            profileImageBase64 = "NULL"
+            profileImageBase64 = null
         }
 
         when {
@@ -218,16 +218,16 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             }
             else -> {
                 val ugcEditMyChannelRequest = MyChannelEditRequest(
-                    0,
-                    "",
-                    0,
+                    mPref.customerId,
+                    mPref.password,
+                    mPref.channelId,
                     viewModel.selectedCategory?.id!!,
                     binding.channelName.text.toString().trim(),
                     binding.description.text.toString().trim(),
                     myChannelDetail?.bannerUrl ?: "NULL",
-                    bannerBase64,
+                    bannerBase64 ?: "NULL",
                     myChannelDetail?.profileUrl ?: "NULL",
-                    profileImageBase64
+                    profileImageBase64 ?: "NULL"
                 )
 
                 viewModel.editChannel(ugcEditMyChannelRequest)

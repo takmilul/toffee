@@ -66,7 +66,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         channelInfo = MyChannelVideosEditFragmentArgs.fromBundle(requireArguments()).channelInfo
-        
+        progressDialog.show()
         setupSubcategorySpinner()
         setupTagView()
         observeThumbnailChange()
@@ -82,6 +82,10 @@ class MyChannelVideosEditFragment : BaseFragment() {
             info.video_tags?.split(" | ")?.filter { it.isNotBlank() }?.forEach {
                 binding.uploadTags.addChip(it, null)
             }
+            viewModel.title.value = channelInfo?.program_name
+            viewModel.description.value = channelInfo?.getDescriptionDecoded().toString()
+            viewModel.tags.value = channelInfo?.video_tags
+            viewModel.thumbnailUrl.value = channelInfo?.landscape_ratio_1280_720
             binding.uploadTitle.requestFocus()
         }
     }
@@ -91,20 +95,10 @@ class MyChannelVideosEditFragment : BaseFragment() {
             if(categoryList.isNotEmpty()){
                 val selectedCategory = categoryList.find { it.id.toInt() == channelInfo?.categoryId }
                 val categoryIndex = categoryList.indexOf(selectedCategory).takeIf { it > 0 } ?: 0
-//                val subCategories = categoryList[categoryIndex].subcategories
-//                val selectedSubCategory = subCategories.find { it.id.toInt() == channelInfo?.subCategoryId }
-//                val subCategoryIndex = subCategories.indexOf(selectedSubCategory).takeIf { it > 0 } ?: 0
-
-                viewModel.title.value = channelInfo?.program_name
-                viewModel.description.value = channelInfo?.getDescriptionDecoded().toString()
-                viewModel.tags.value = channelInfo?.video_tags
-                viewModel.thumbnailUrl.value = channelInfo?.landscape_ratio_1280_720
-//                viewModel.subCategories.value = subCategories
-
                 viewModel.categoryPosition.value = categoryIndex
-//                viewModel.subCategoryPosition.value = subCategoryIndex
                 viewModel.ageGroupPosition.value = channelInfo?.age_restriction?.toInt()?:0
             }
+            progressDialog.dismiss()
         }
     }
 
