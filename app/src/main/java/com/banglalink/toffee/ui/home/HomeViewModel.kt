@@ -176,6 +176,7 @@ class HomeViewModel @ViewModelInject constructor(
             if (result is Success) {
                 val myChannelDetail = result.data.myChannelDetail
                 myChannelDetail?.let {
+                    mPref.isChannelDetailChecked = true
                     mPref.channelId = myChannelDetail.id.toInt()
                     myChannelDetail.profileUrl?.let { mPref.channelLogo = it }
                     myChannelDetail.channelName?.let { mPref.channelName = it }

@@ -166,12 +166,10 @@ class Preference(private val pref: SharedPreferences, private val context: Conte
         set(value) = pref.edit().putBoolean(PREF_IS_CHANNEL_DETAIL_CHECKED, value).apply()
     
     fun hasChannelLogo(): Boolean{
-        isChannelDetailChecked = true
         return channelLogo.isNotBlank()
     }
     
     fun hasChannelName(): Boolean{
-        isChannelDetailChecked = true
         return channelName.isNotBlank()
     }
     

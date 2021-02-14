@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.profile
 
-import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -23,7 +22,7 @@ class ViewProfileViewModel @ViewModelInject constructor(private val myChannelDet
                                                         private val profileApi: GetProfile
 ) :BaseViewModel(){
     private val _data = MutableLiveData<Resource<MyChannelEditBean>>()
-    val _data_condition = MutableLiveData<Resource<TermsAndCondition>>()
+    val termsAndConditionResult = MutableLiveData<Resource<TermsAndCondition>>()
     val liveData = _data.toLiveData()
     fun loadCustomerProfile():LiveData<Resource<EditProfileForm>>{
         return resultLiveData {
@@ -43,7 +42,7 @@ class ViewProfileViewModel @ViewModelInject constructor(private val myChannelDet
             ""
         )
         viewModelScope.launch {
-            _data_condition.postValue(resultFromResponse {
+            termsAndConditionResult.postValue(resultFromResponse {
                 termsConditionService.execute(
                     termsConditionRequest
                 )

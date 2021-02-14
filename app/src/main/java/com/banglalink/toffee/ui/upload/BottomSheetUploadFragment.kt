@@ -6,9 +6,10 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.DisplayMetrics
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
-import androidx.appcompat.widget.AppCompatCheckBox
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import coil.load
@@ -16,11 +17,11 @@ import coil.request.CachePolicy
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.network.request.MyChannelEditRequest
 import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.databinding.UploadBottomSheetBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.common.UnSubscribeDialog
-import com.banglalink.toffee.ui.mychannel.MyChannelHomeFragmentDirections
 import com.banglalink.toffee.ui.profile.ViewProfileViewModel
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.Utils
@@ -29,41 +30,59 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.layout_my_channel_detail.*
+import kotlinx.android.synthetic.main.list_item_live.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class BottomSheetUploadFragment : BottomSheetDialogFragment(), View.OnClickListener {
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
-    var cancelButton: Button? = null
-    private var channel_logo_iv: ImageView? = null
-    private var mobile_tv: TextView? = null
-    private var text_view_fill_up: TextView? = null
-    private var terms_and_conditions_tv: TextView? = null
-    private var edit_iv: ImageView? = null
-    private var channel_name_et: EditText? = null
-    private var save_btn: Button? = null
-    private lateinit var progressDialog: VelBoxProgressDialog
-    private var terms_and_conditions_checkbox: AppCompatCheckBox? = null
-    var profileImageBase64 = "NULL"
-    private val viewModel by viewModels<ViewProfileViewModel>()
+class BottomSheetUploadFragment : BottomSheetDialogFragment(), TextWatcher {
 
-    @Inject
-    lateinit var mpref: Preference
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog
-    {
+    @Inject lateinit var mPref: Preference
+    private var channelName: String = ""
+    private var channelLogoUrl: String = ""
+    private var profileImageBase64: String? = null
+    private lateinit var binding: UploadBottomSheetBinding
+    private lateinit var progressDialog: VelBoxProgressDialog
+    private val viewModel by viewModels<ViewProfileViewModel>()
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
+
+    companion object {
+        const val TAG = "BottomSheetDialog"
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        binding = UploadBottomSheetBinding.inflate(layoutInflater)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        progressDialog = VelBoxProgressDialog(requireContext())
+        observeEditChannel()
+
+        channelName = mPref.channelName
+        channelLogoUrl = mPref.channelLogo
+        if (channelName.isNotBlank()) {
+            binding.channelNameEt.setText(channelName)
+        }
+        if (channelLogoUrl.isNotBlank()) {
+            loadImage()
+        }
+
+        with(binding) {
+            editIv.safeClick({ showImagePickerDialog() })
+            saveBtn.safeClick({ saveChannelInfo() })
+            cancelButton.safeClick({ dialog?.dismiss() })
+            channelLogoIv.safeClick({ showImagePickerDialog() })
+            termsAndConditionsTv.safeClick({ showTermsAndConditionDialog() })
+            channelNameEt.addTextChangedListener(this@BottomSheetUploadFragment)
+            termsAndConditionsCheckbox.setOnCheckedChangeListener { _, _ -> saveButtonStateChange() }
+        }
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
         val view = View.inflate(context, R.layout.upload_bottom_sheet, null)
-        cancelButton = view?.findViewById(R.id.cancelButton)
-        channel_logo_iv = view?.findViewById(R.id.channel_logo_iv)
-        text_view_fill_up = view?.findViewById(R.id.text_view_fill_up)
-        terms_and_conditions_tv = view?.findViewById(R.id.terms_and_conditions_tv)
-        edit_iv = view?.findViewById(R.id.edit_iv)
-        mobile_tv = view?.findViewById(R.id.mobile_tv)
-        progressDialog = VelBoxProgressDialog(requireContext())
-        channel_name_et = view?.findViewById(R.id.channel_name_et)
-        terms_and_conditions_checkbox = view?.findViewById(R.id.terms_and_conditions_checkbox)
-        save_btn = view?.findViewById(R.id.save_btn)
+
         dialog.setContentView(view)
         val parent = view.parent as View
         bottomSheetBehavior = BottomSheetBehavior.from(parent)
@@ -72,107 +91,60 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment(), View.OnClickListe
         val height = displayMetrics.heightPixels
         val value = height - parent.layoutParams.height + 80
         bottomSheetBehavior.peekHeight = Utils.pxToDp(value)
-        channel_logo_iv?.safeClick(this)
-        cancelButton?.setOnClickListener {
-            dismiss()
-            UPLOAD_FILE_URI = "UPLOAD_FILE_URI"
-        }
-        terms_and_conditions_tv?.setOnClickListener {
-
-            val action =
-                BottomSheetUploadFragmentDirections.actionBottomSheetUploadFragmentToTermsConditionFragment(
-                )
-            findNavController().navigate(action)
-        }
-        observeEditChannel()
-        save_btn?.setOnClickListener {
-            if (terms_and_conditions_checkbox?.isChecked!! && UPLOAD_FILE_URI != "UPLOAD_FILE_URI") {
-                text_view_fill_up?.visibility = View.INVISIBLE
-                progressDialog.show()
-                try {
-                    if (!UPLOAD_FILE_URI.isNullOrEmpty()) {
-                        profileImageBase64 = imagePathToBase64(requireContext(), UPLOAD_FILE_URI!!)
-                    }
-                } catch (e: Exception) {
-                    profileImageBase64 = "NULL"
-                }
-                val ugcEditMyChannelRequest = MyChannelEditRequest(
-                    0,
-                    "",
-                    0,
-                    1,
-                    channel_name_et?.text.toString().trim(),
-                    "",
-                    "NULL",
-                    "NULL",
-                    "NULL",
-
-                    profileImageBase64
-                )
-
-                viewModel.editChannel(ugcEditMyChannelRequest)
-            } else {
-                text_view_fill_up?.visibility = View.VISIBLE
-            }
-        }
-        channel_name_et?.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-
-            }
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-
-            }
-
-            override fun afterTextChanged(s: Editable) {
-
-
-                if (s.toString().isBlank() ) {
-                    text_view_fill_up?.visibility = View.VISIBLE
-                    save_btn?.isEnabled = false
-                } else {
-                    text_view_fill_up?.visibility = View.INVISIBLE
-                    if (UPLOAD_FILE_URI != "UPLOAD_FILE_URI") {
-                        save_btn?.isEnabled = true
-                    }
-                }
-
-            }
-        })
 
         return dialog
     }
-    override fun onClick(v: View?) {
-        when (v) {
-            channel_logo_iv -> {
-                val action =
-                    BottomSheetUploadFragmentDirections.actionBottomSheetUploadFragmentToUpdateChannelLogoDialogFragment(
-                        "Update Your Channel Logo",
-                        true
-                    )
-                findNavController().navigate(action)
-            }
 
+    private fun showTermsAndConditionDialog() {
+        val action = BottomSheetUploadFragmentDirections.actionBottomSheetUploadFragmentToTermsConditionFragment()
+        findNavController().navigate(action)
+    }
 
+    private fun showImagePickerDialog() {
+        val action = BottomSheetUploadFragmentDirections.actionBottomSheetUploadFragmentToThumbnailSelectionMethodFragment(
+            "Update Your Channel Logo",
+            true
+        )
+        findNavController().navigate(action)
+    }
+
+    private fun saveChannelInfo() {
+        binding.textViewFillUp.visibility = View.INVISIBLE
+        progressDialog.show()
+        try {
+            profileImageBase64 = imagePathToBase64(requireContext(), channelLogoUrl)
+            val ugcEditMyChannelRequest = MyChannelEditRequest(
+                mPref.customerId,
+                mPref.password,
+                mPref.channelId,
+                1,
+                channelName,
+                "",
+                "NULL",
+                "NULL",
+                "NULL",
+                profileImageBase64 ?: "NULL"
+            )
+
+            viewModel.editChannel(ugcEditMyChannelRequest)
+        }
+        catch (e: Exception) {
+            Log.e(TAG, "saveChannelInfo: ${e.message}")
         }
     }
-    private fun observeEditChannel() {
 
+    private fun observeEditChannel() {
         observe(viewModel.liveData) {
             when (it) {
                 is Resource.Success -> {
-                    mpref.channelLogo = profileImageBase64
-                    mpref.channelName = channel_name_et?.text.toString().trim()
+                    mPref.channelLogo = channelLogoUrl
+                    mPref.channelName = channelName
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
-                    val action =
-                        BottomSheetUploadFragmentDirections.actionBottomSheetUploadFragmentToNewUploadMethodFragment()
+                    val action = BottomSheetUploadFragmentDirections.actionBottomSheetUploadFragmentToNewUploadMethodFragment()
                     findNavController().navigate(action)
                     progressDialog.dismiss()
                 }
                 is Resource.Failure -> {
-                    println(it.error)
-                    Log.e("data", "data" + it.error.additionalMsg)
-                    Log.e("data", "data" + it.error.code)
                     Log.e("data", "data" + it.error.msg)
                     Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
                     progressDialog.dismiss()
@@ -183,44 +155,61 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment(), View.OnClickListe
 
     override fun onResume() {
         super.onResume()
-        loadImage()
         loadNumber()
-        loadSaveButton()
+        observeLogoChange()
+        saveButtonStateChange()
     }
-    private fun loadSaveButton() {
-        save_btn?.isEnabled = !(channel_name_et?.text.toString().trim() == "" || (UPLOAD_FILE_URI == "UPLOAD_FILE_URI"))
+
+    private fun saveButtonStateChange() {
+        binding.saveBtn.isEnabled = channelLogoUrl.isNotBlank() && binding.termsAndConditionsCheckbox.isChecked && channelName.isNotBlank()
     }
+
     private fun loadNumber() {
-        if (mpref.phoneNumber.length > 13) {
-            val mobile = mpref.phoneNumber.substring(3, 14)
-            mobile_tv?.text = mobile
-        } else {
-            mobile_tv?.text = mpref.phoneNumber
+        if (mPref.phoneNumber.length > 13) {
+            val mobile = mPref.phoneNumber.substring(3, 14)
+            binding.mobileTv.text = mobile
         }
+        else {
+            binding.mobileTv.text = mPref.phoneNumber
+        }
+    }
+
+    private fun observeLogoChange() {
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String?>(ThumbnailSelectionMethodFragment.THUMB_URI)
+            ?.observe(viewLifecycleOwner, {
+                it?.let {
+                    channelLogoUrl = it
+                    loadImage()
+                    saveButtonStateChange()
+                }
+            })
     }
 
     private fun loadImage() {
-        UPLOAD_FILE_URI.let {
-            channel_logo_iv?.load(it) {
-                memoryCachePolicy(CachePolicy.DISABLED)
-                diskCachePolicy(CachePolicy.ENABLED)
-                crossfade(false)
-                error(R.drawable.ic_channel_logo)
-            }
+        binding.channelLogoIv.load(channelLogoUrl) {
+            memoryCachePolicy(CachePolicy.DISABLED)
+            diskCachePolicy(CachePolicy.ENABLED)
+            crossfade(false)
+            error(R.drawable.ic_channel_logo)
         }
-        if (UPLOAD_FILE_URI == "UPLOAD_FILE_URI") {
-            edit_iv?.visibility = View.GONE
-        } else {
-            edit_iv?.visibility = View.VISIBLE
-        }
+        binding.editIv.show()
+        binding.channelLogoIv.isClickable = false
     }
 
-    companion object {
-        const val TAG = "CustomBottomSheetDialogFragment"
-        var UPLOAD_FILE_URI = "UPLOAD_FILE_URI"
-        fun newInstance(): BottomSheetUploadFragment {
-            return BottomSheetUploadFragment()
-        }
-    }
     override fun getTheme(): Int = R.style.SheetDialog
+
+    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+    override fun afterTextChanged(s: Editable?) {
+        channelName = s.toString().trim()
+        if (channelName.isBlank()) {
+            binding.textViewFillUp.show()
+        }
+        else {
+            binding.textViewFillUp.visibility = View.INVISIBLE
+        }
+        saveButtonStateChange()
+    }
 }

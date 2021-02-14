@@ -150,9 +150,6 @@
             app:destination="@id/uploadMethodFragment"
             />
         <action
-            android:id="@+id/action_bottomSheetUploadFragment_to_updateChannelLogoDialogFragment"
-            app:destination="@id/updateChannelLogoDialogFragment" />
-        <action
             android:id="@+id/action_bottomSheetUploadFragment_to_newUploadMethodFragment"
             app:destination="@id/newUploadMethodFragment" />
         <action
@@ -167,6 +164,9 @@
             android:id="@+id/action_bottomSheetUploadFragment_to_termsConditionFragment"
             app:destination="@id/termsConditionFragment"
             />
+        <action
+            android:id="@+id/action_bottomSheetUploadFragment_to_thumbnailSelectionMethodFragment"
+            app:destination="@id/thumbnailSelectionMethodFragment" />
     </dialog>
     <dialog
         android:id="@+id/newUploadMethodFragment"
@@ -179,18 +179,6 @@
         <action
             android:id="@+id/action_newUploadMethodFragment_to_myChannelHomeFragment"
             app:destination="@id/myChannelHomeFragment"
-            />
-    </dialog>
-    <dialog
-        android:id="@+id/updateChannelLogoDialogFragment"
-        android:name="com.banglalink.toffee.ui.upload.UpdateChannelLogoDialogFragment"
-        android:label="Update Logo Channel" >
-        <argument
-            android:name="title"
-            app:argType="string" />
-        <argument
-            android:name="isProfile"
-            app:argType="boolean"
             />
     </dialog>
     <fragment

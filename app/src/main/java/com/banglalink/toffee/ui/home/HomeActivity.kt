@@ -39,7 +39,6 @@ import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.repository.UploadInfoRepository
-import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.*
@@ -100,8 +99,6 @@ class HomeActivity :
     DraggerLayout.OnPositionChangedListener,
     SearchView.OnQueryTextListener
 {
-    @Inject
-    lateinit  var mpref: Preference
     @Inject
     lateinit var uploadRepo: UploadInfoRepository
 
@@ -271,7 +268,7 @@ class HomeActivity :
     }
 
     fun showUploadDialog(): Boolean {
-        if (mpref.hasChannelLogo() && mpref.hasChannelName()){
+        if (mPref.hasChannelLogo() && mPref.hasChannelName()){
             if (navController.currentDestination?.id == R.id.uploadMethodFragment) {
                 navController.popBackStack()
                 return true
