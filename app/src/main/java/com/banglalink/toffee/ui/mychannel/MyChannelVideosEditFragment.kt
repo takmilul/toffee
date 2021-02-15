@@ -188,7 +188,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
             return
         }
         val tags = binding.uploadTags.selectedChipList.joinToString(" | ") { it.label }
-        val categoryId = viewModel.categories.value?.getOrNull(viewModel.categoryPosition.value ?: 0)?.id ?: 0
+        val categoryId = viewModel.categories.value?.getOrNull(viewModel.categoryPosition.value ?: 0)?.id ?: 1
         val subCategoryId = viewModel.subCategories.value?.getOrNull(viewModel.subCategoryPosition.value?.minus(1) ?: 0)?.id ?: 0
         viewModel.saveUploadInfo(channelInfo?.id?.toInt()?:0, "",tags, categoryId, subCategoryId.toInt())
     }
