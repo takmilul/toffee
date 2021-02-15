@@ -116,7 +116,7 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment(), TextWatcher {
             val ugcEditMyChannelRequest = MyChannelEditRequest(
                 mPref.customerId,
                 mPref.password,
-                mPref.channelId,
+                mPref.customerId,
                 1,
                 channelName,
                 "",
@@ -134,7 +134,7 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment(), TextWatcher {
     }
 
     private fun observeEditChannel() {
-        observe(viewModel.liveData) {
+        observe(viewModel.editChannelResult) {
             when (it) {
                 is Resource.Success -> {
                     mPref.channelLogo = channelLogoUrl

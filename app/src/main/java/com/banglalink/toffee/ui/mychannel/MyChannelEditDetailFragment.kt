@@ -98,7 +98,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         observe(viewModel.categoryList) { categories ->
             categoryAdapter.setData(categories)
             progressDialog.dismiss()
-            viewModel.selectedCategory = categories?.find { it.id == myChannelDetail?.categoryId }
+            viewModel.selectedCategory = categories?.find { it.id == myChannelDetail?.categoryId } ?: categories?.first()
             viewModel.selectedCategoryPosition.value = (categories.indexOf(categories.find { it.id == myChannelDetail?.categoryId }).takeIf { it > 0 } ?: 0) + 1
         }
 
@@ -211,7 +211,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                 progressDialog.dismiss()
                 Toast.makeText(requireContext(), "Please give a channel name", Toast.LENGTH_SHORT).show()
             }
-            viewModel.selectedCategoryPosition.value == 0 -> {
+            viewModel.selectedCategory == null -> {
                 binding.saveButton.isClickable = true
                 progressDialog.dismiss()
                 Toast.makeText(requireContext(), "Category is not selected", Toast.LENGTH_SHORT).show()
@@ -220,8 +220,8 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                 val ugcEditMyChannelRequest = MyChannelEditRequest(
                     mPref.customerId,
                     mPref.password,
-                    mPref.channelId,
-                    viewModel.selectedCategory?.id!!,
+                    mPref.customerId,
+                    viewModel.selectedCategory?.id ?: 1,
                     binding.channelName.text.toString().trim(),
                     binding.description.text.toString().trim(),
                     myChannelDetail?.bannerUrl ?: "NULL",
