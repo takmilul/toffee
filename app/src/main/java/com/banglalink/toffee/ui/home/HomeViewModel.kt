@@ -17,6 +17,7 @@ import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.data.repository.TVChannelRepository
+import com.banglalink.toffee.data.repository.ViewCountRepository
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.extension.toLiveData
@@ -47,13 +48,13 @@ import kotlinx.coroutines.launch
 class HomeViewModel @ViewModelInject constructor(
     @AppCoroutineScope private val appScope: CoroutineScope,
     private val profileApi: GetProfile,
-    private val viewCountDAO: ViewCountDAO,
     private val reactionDao: ReactionDao,
     private val myChannelDetailApiService: MyChannelGetDetailService,
     private val shareLogApiService: SendShareLogApiService,
     private val sendViewContentEvent: SendViewContentEvent,
     @ApplicationContext private val mContext: Context,
     private val tvChannelRepo: TVChannelRepository,
+    private val viewCountRepository: ViewCountRepository,
     private val mPref: Preference
 ):BaseViewModel(),OnCompleteListener<InstanceIdResult> {
 
@@ -113,7 +114,7 @@ class HomeViewModel @ViewModelInject constructor(
 
     fun populateViewCountDb(url:String){
         appScope.launch {
-            DownloadViewCountDb(RetrofitApiClient.dbApi, viewCountDAO)
+            DownloadViewCountDb(RetrofitApiClient.dbApi,viewCountRepository)
                 .execute(mContext, url)
         }
     }
