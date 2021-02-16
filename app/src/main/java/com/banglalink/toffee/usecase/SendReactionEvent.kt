@@ -31,7 +31,7 @@ class SendReactionEvent @Inject constructor(
             id = reactionInfo.id?.toInt()?:0,
             customerId = reactionInfo.customerId,
             contentId = reactionInfo.contentId,
-            reaction = reactionInfo.reactionType,
+            reactionType = reactionInfo.reactionType,
             reactionStatus = reactionCount,
             reactionTime = reactionInfo.getReactionDate(),
         )
@@ -61,7 +61,7 @@ class SendReactionEvent @Inject constructor(
         @SerializedName("content_id")
         val contentId: Long,
         @SerializedName("reaction_type")
-        val reaction: Int,
+        val reactionType: Int,
         @SerializedName("reaction_status")
         val reactionStatus: Int,
         @SerializedName("reaction_time")

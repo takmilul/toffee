@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <layout
-
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -76,8 +75,7 @@
             app:layout_constraintEnd_toEndOf="@+id/channel_logo_iv"
             app:layout_constraintStart_toStartOf="@+id/channel_logo_iv"
             app:layout_constraintTop_toBottomOf="@+id/channel_logo_iv" />
-
-
+        
         <EditText
             android:id="@+id/channel_name_et"
             android:layout_width="0dp"
@@ -99,8 +97,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/channel_logo_iv" />
-
-
+        
         <LinearLayout
             android:id="@+id/phone_number_layout"
             android:layout_width="0dp"
@@ -133,12 +130,14 @@
                 android:textSize="14sp"
                 android:textStyle="normal"
                 app:drawableStartCompat="@drawable/ic_bd_flag" />
+            
             <ImageView
                 android:layout_marginTop="3dp"
                 android:layout_marginStart="5dp"
                 android:layout_width="14dp"
                 android:layout_height="12dp"
                 android:src="@drawable/ic_path_down_arrow" />
+            
             <TextView
                 android:drawablePadding="10dp"
                 app:drawableEndCompat="@drawable/ic_verified"
@@ -180,6 +179,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
+            android:paddingVertical="4dp"
+            android:gravity="center_vertical"
             android:text="@string/terms_and_conditions"
             android:textColor="@color/colorAccent"
             android:textColorLink="@drawable/text_selector2"
@@ -189,13 +190,13 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@id/terms_and_conditions_checkbox"
             app:layout_constraintTop_toTopOf="@+id/terms_and_conditions_checkbox" />
-
-
-
+        
         <Button
             android:id="@+id/save_btn"
             style="@style/ButtonStyleSolidSave"
             android:text="Save"
+            android:paddingStart="32dp"
+            android:paddingEnd="32dp"
             android:textAllCaps="true"
             android:enabled="false"
             android:layout_marginStart="12dp"
@@ -212,6 +213,7 @@
             app:layout_constraintEnd_toStartOf="@+id/save_btn"
             app:layout_constraintStart_toStartOf="@+id/terms_and_conditions_checkbox"
             app:layout_constraintTop_toBottomOf="@+id/terms_and_conditions_checkbox" />
+        
         <TextView
             android:visibility="invisible"
             android:id="@+id/text_view_fill_up"
@@ -226,14 +228,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/cancelButton" />
-        <View
-            android:id="@+id/view"
-            android:layout_width="match_parent"
-            android:layout_height="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintEnd_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cancelButton" />
-
+        
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
 
