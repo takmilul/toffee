@@ -9,4 +9,5 @@ interface ViewCountRepository {
     suspend fun delete(item: ViewCount)
     suspend fun update(item: ViewCount)
     suspend fun getViewCountByChannelId(channelId: Int): Long?
+    suspend fun insertAll(vararg viewCount: ViewCount): LongArray
 }
