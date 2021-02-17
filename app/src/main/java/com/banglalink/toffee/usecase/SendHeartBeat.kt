@@ -6,10 +6,13 @@ import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.notification.HEARTBEAT_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.util.Utils
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class SendHeartBeat(
     private val preference: Preference,
@@ -23,12 +26,13 @@ class SendHeartBeat(
         isNetworkSwitch: Boolean = false,
         sendToPubSub: Boolean = true
     ) {
-        if (sendToPubSub) {
-            sendToPubSub(contentId, contentType)
-        } else {
-            sendToToffeeServer(contentId, contentType, isNetworkSwitch)
+        withContext(Dispatchers.IO){
+            if (sendToPubSub) {
+                sendToPubSub(contentId, contentType)
+            } else {
+                sendToToffeeServer(contentId, contentType, isNetworkSwitch)
+            }
         }
-
     }
 
     private fun sendToPubSub(contentId: Int, contentType: String) {
@@ -42,7 +46,7 @@ class SendHeartBeat(
             netType = preference.netType,
             sessionToken = preference.getHeaderSessionToken()?:""
         )
-        PubSubMessageUtil.sendMessage(gson.toJson(heartBeatData), PubSubMessageUtil.heartBeatTopic)
+        PubSubMessageUtil.sendMessage(gson.toJson(heartBeatData), HEARTBEAT_TOPIC)
     }
 
     private suspend fun sendToToffeeServer(
