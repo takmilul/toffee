@@ -18,7 +18,12 @@ object RetrofitApiClient {
     private val retrofit: Retrofit
     private val dbRetrofit: Retrofit
 
+    val cache: Cache
+
     init {
+        val cacheSize = 25 * 1024 * 1024 // 25 MB
+        cache = Cache(getCacheDir(), cacheSize.toLong())
+
         //retrofit instance for api
         retrofit = Retrofit.Builder()
             .client(buildApiHttpClient())
@@ -37,9 +42,6 @@ object RetrofitApiClient {
     }
 
     private fun buildApiHttpClient():OkHttpClient{
-        val cacheSize = 25 * 1024 * 1024 // 25 MB
-
-        val cache = Cache(getCacheDir(), cacheSize.toLong())
 
         val clientBuilder = OkHttpClient.Builder()
 
