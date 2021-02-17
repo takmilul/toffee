@@ -3,6 +3,7 @@ package com.banglalink.toffee.ui.splash
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import com.banglalink.toffee.BuildConfig
+import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.network.retrofit.AuthApi
 import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.data.storage.Preference
@@ -15,6 +16,7 @@ import com.banglalink.toffee.usecase.CheckUpdate
 import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.lang.Exception
 
 class SplashViewModel @ViewModelInject constructor(
     val mPref:Preference,
@@ -52,8 +54,14 @@ class SplashViewModel @ViewModelInject constructor(
         }
     }
 
-    private fun reportAppLaunch(){
-        reportAppLaunch.execute()
+    fun reportAppLaunch(){
+        appScope.launch {
+            try {
+                reportAppLaunch.execute()
+            } catch (e: Exception) {
+                ToffeeAnalytics.logBreadCrumb("Exception in ReportAppLaunch")
+            }
+        }
     }
 
     fun isCustomerLoggedIn()=mPref.customerId != 0

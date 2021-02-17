@@ -39,6 +39,7 @@ class SplashScreenFragment:BaseFragment() {
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?, ): View {
+        viewModel.reportAppLaunch()
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_splash_screen, container, false)
         return binding.root
     }
