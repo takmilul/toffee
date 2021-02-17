@@ -5,10 +5,12 @@ import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R.string
 import com.banglalink.toffee.analytics.HeartBeatManager
+import com.banglalink.toffee.analytics.ToffeeAnalytics.logBreadCrumb
 import com.banglalink.toffee.analytics.ToffeeAnalytics.logException
 import com.banglalink.toffee.analytics.ToffeeAnalytics.logForcePlay
 import com.banglalink.toffee.data.database.entities.ContentViewProgress
@@ -26,6 +28,7 @@ import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.Player.*
 import com.google.android.exoplayer2.SimpleExoPlayer.Builder
 import com.google.android.exoplayer2.analytics.AnalyticsListener
+import com.google.android.exoplayer2.analytics.AnalyticsListener.EventTime
 import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.ext.cast.SessionAvailabilityListener
 import com.google.android.exoplayer2.source.*
@@ -57,6 +60,7 @@ import java.net.CookiePolicy
 import javax.inject.Inject
 import kotlin.math.max
 
+
 @AndroidEntryPoint
 abstract class PlayerPageActivity :
     BaseAppCompatActivity(),
@@ -71,10 +75,13 @@ abstract class PlayerPageActivity :
     private var trackSelectorParameters: Parameters? = null
     private var lastSeenTrackGroupArray: TrackGroupArray? = null
 
+    private val playerViewModel by viewModels<PlayerViewModel>()
+
     private var startAutoPlay = false
     private var startWindow = 0
     private var startPosition: Long = 0
     private val playerEventListener: PlayerEventListener = PlayerEventListener()
+    private var playerAnalyticsListener: PlayerAnalyticsListener? = null
     private var defaultCookieManager = CookieManager()
 
     private var castContext: CastContext? = null
@@ -124,13 +131,24 @@ abstract class PlayerPageActivity :
             trackSelectorParameters = builder.build()
             clearStartPosition()
         }
-        heartBeatManager.heartBeatEventLiveData.observe(this, {    //In each heartbeat we are checking channel's expire date. Seriously??
-            val cinfo = playlistManager.getCurrentChannel()
-            if (cinfo?.isExpired(mPref.getSystemTime()) == true) {
-                player?.stop(true)
-                onContentExpired() //content is expired. Notify the subclass
+        heartBeatManager.heartBeatEventLiveData.observe(this) {
+                //In each heartbeat we are checking channel's expire date. Seriously??
+                val cinfo = playlistManager.getCurrentChannel()
+                if (cinfo?.isExpired(mPref.getSystemTime()) == true) {
+                    player?.stop(true)
+                    onContentExpired() //content is expired. Notify the subclass
+                }
+                playerAnalyticsListener?.let {
+                    //In every heartbeat event we are sending bandwitdh data to Pubsub
+                    Log.e("PLAYER BYTES", "Flushing to pubsub")
+                    playerViewModel.reportBandWidthFromPlayerPref(
+                        it.durationInSeconds,
+                        it.getTotalBytesInMB()
+                    )
+                    playerAnalyticsListener?.resetData()
+
+                }
             }
-        })
     }
 
     abstract val playlistManager: PlaylistManager
@@ -199,10 +217,12 @@ abstract class PlayerPageActivity :
                 parameters = trackSelectorParameters!!
             }
             lastSeenTrackGroupArray = null
+            playerAnalyticsListener = PlayerAnalyticsListener()
+
             exoPlayer = Builder(this)
                 .setTrackSelector(defaultTrackSelector!!)
                 .build().apply {
-                    addAnalyticsListener(this@PlayerPageActivity)
+                    addAnalyticsListener(playerAnalyticsListener!!)
                     addListener(playerEventListener)
                     playWhenReady = false
                     if (BuildConfig.DEBUG) {
@@ -236,6 +256,9 @@ abstract class PlayerPageActivity :
             updateStartPosition()
             it.release()
             defaultTrackSelector = null
+            playerAnalyticsListener?.let { pal ->
+                mPref.savePlayerSessionBandWidth(pal.durationInSeconds, pal.getTotalBytesInMB())
+            }
         }
         exoPlayer = null
     }
@@ -622,4 +645,45 @@ abstract class PlayerPageActivity :
         resetPlayer()
         playChannel(true)
     }
+
+    private class PlayerAnalyticsListener : AnalyticsListener {
+        private var totalBytesInMB: Long = 0
+        private var initialTimeStamp: Long = 0
+        private var durationInMillis: Long = 0
+
+        override fun onLoadCompleted(
+            eventTime: EventTime,
+            loadEventInfo: LoadEventInfo,
+            mediaLoadData: MediaLoadData
+        ) {
+            try {
+                totalBytesInMB += loadEventInfo.bytesLoaded
+                if (initialTimeStamp == 0L) {
+                    initialTimeStamp = System.currentTimeMillis()
+                } else {
+                    durationInMillis = System.currentTimeMillis() - initialTimeStamp
+                }
+                Log.e(
+                    "PLAYER BYTES",
+                    "Event time " + durationInMillis / 1000 + " Bytes " + totalBytesInMB * 0.000001 + " MB"
+                )
+            } catch (e: Exception) {
+                logBreadCrumb("Exception in PlayerAnalyticsListener")
+            }
+        }
+
+        fun getTotalBytesInMB(): Double {
+            return totalBytesInMB * 0.000001
+        }
+
+        val durationInSeconds: Long
+            get() = durationInMillis / 1000
+
+        fun resetData() {
+            totalBytesInMB = 0
+            durationInMillis = 0
+            initialTimeStamp = 0
+        }
+    }
+
 }
