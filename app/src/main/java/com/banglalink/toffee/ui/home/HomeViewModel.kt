@@ -147,10 +147,7 @@ class HomeViewModel @ViewModelInject constructor(
     fun sendViewContentEvent(channelInfo: ChannelInfo){
         viewModelScope.launch {
             try {
-                CoroutineScope(Dispatchers.IO).launch {
-                    sendViewContentEvent.execute(channelInfo)
-                }
-
+                sendViewContentEvent.execute(channelInfo)
             }catch (e:Exception){
                 e.printStackTrace()
             }
