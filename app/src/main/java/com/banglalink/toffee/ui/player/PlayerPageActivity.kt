@@ -7,11 +7,8 @@ import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.BuildConfig
-import com.banglalink.toffee.R.id
 import com.banglalink.toffee.R.string
-import com.banglalink.toffee.analytics.HeartBeatManager.heartBeatEventLiveData
-import com.banglalink.toffee.analytics.HeartBeatManager.triggerEventViewingContentStart
-import com.banglalink.toffee.analytics.HeartBeatManager.triggerEventViewingContentStop
+import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics.logException
 import com.banglalink.toffee.analytics.ToffeeAnalytics.logForcePlay
 import com.banglalink.toffee.data.database.entities.ContentViewProgress
@@ -24,10 +21,7 @@ import com.banglalink.toffee.model.Channel
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.TOFFEE_HEADER
 import com.banglalink.toffee.receiver.ConnectionWatcher
-import com.banglalink.toffee.ui.category.drama.EpisodeListFragment
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
-import com.banglalink.toffee.ui.home.CatchupDetailsFragment
-import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.Player.*
 import com.google.android.exoplayer2.SimpleExoPlayer.Builder
@@ -96,6 +90,8 @@ abstract class PlayerPageActivity :
 
     @Inject
     lateinit var connectionWatcher: ConnectionWatcher
+    
+    @Inject lateinit var heartBeatManager: HeartBeatManager
 
     init {
         defaultCookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER)
@@ -128,7 +124,7 @@ abstract class PlayerPageActivity :
             trackSelectorParameters = builder.build()
             clearStartPosition()
         }
-        heartBeatEventLiveData.observe(this, {    //In each heartbeat we are checking channel's expire date. Seriously??
+        heartBeatManager.heartBeatEventLiveData.observe(this, {    //In each heartbeat we are checking channel's expire date. Seriously??
             val cinfo = playlistManager.getCurrentChannel()
             if (cinfo?.isExpired(mPref.getSystemTime()) == true) {
                 player?.stop(true)
@@ -350,7 +346,7 @@ abstract class PlayerPageActivity :
         if (uri == null) { //in this case settings does not allow us to play content. So stop player and trigger event viewing stop
             player?.stop(true)
             channelCannotBePlayedDueToSettings() //notify hook/subclass
-            triggerEventViewingContentStop()
+            heartBeatManager.triggerEventViewingContentStop()
             return
         }
         //Checking whether we need to reload or not. Reload happens because of network switch or re-initialization of player
@@ -368,7 +364,7 @@ abstract class PlayerPageActivity :
                 }
             }
 
-            triggerEventViewingContentStart(channelInfo.id.toInt(), channelInfo.type ?: "VOD")
+            heartBeatManager.triggerEventViewingContentStart(channelInfo.id.toInt(), channelInfo.type ?: "VOD")
             it.playWhenReady = !isReload || it.playWhenReady
             val mediaItem = MediaItem.Builder().setUri(uri).setTag(channelInfo).build()
             val mediaSource = prepareMedia(mediaItem)

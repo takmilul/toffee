@@ -20,6 +20,7 @@ import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.color
 import com.banglalink.toffee.R.layout
+import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBinding
 import com.banglalink.toffee.databinding.FragmentMyChannelHomeBinding
 import com.banglalink.toffee.extension.observe
@@ -56,10 +57,10 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     private lateinit var viewPagerAdapter: ViewPagerAdapter
     private var fragmentList: ArrayList<androidx.fragment.app.Fragment> = arrayListOf()
     private var fragmentTitleList: ArrayList<String> = arrayListOf()
-
+    @Inject lateinit var cacheManager: CacheManager
     @Inject lateinit var myChannelHomeViewModelAssistedFactory: MyChannelHomeViewModel.AssistedFactory
     private val viewModel by viewModels<MyChannelHomeViewModel> { MyChannelHomeViewModel.provideFactory(myChannelHomeViewModelAssistedFactory, isOwner, isPublic, channelId, channelOwnerId) }
-
+//    @Inject @DefaultCache lateinit var retrofitCache: Cache
     private val createPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
     private val subscribeChannelViewModel by viewModels<MyChannelSubscribeViewModel>()
     private val playlistReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
@@ -311,6 +312,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                     isSubscribed = it.data.isSubscribed
                     binding.channelDetailView.subscriptionCountTextView.text = it.data.subscriberCount.toString()
                     binding.isSubscribed = isSubscribed
+                    cacheManager.clearSubscriptionCache()
                 }
                 is Failure -> {
                     Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
@@ -338,7 +340,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         observe(createPlaylistViewModel.createPlaylistLiveData) {
             when (it) {
                 is Success -> {
-                    playlistReloadViewModel.reloadPlaylist.value = true
+                    playlistReloadViewModel.reloadPlaylist.postValue(true)
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
                 }
                 is Failure -> {

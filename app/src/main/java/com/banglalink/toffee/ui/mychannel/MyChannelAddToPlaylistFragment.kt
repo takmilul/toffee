@@ -40,9 +40,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
     private val mAdapter: MyChannelAddToPlaylistAdapter by lazy { MyChannelAddToPlaylistAdapter(this) }
     private val viewModel by viewModels<MyChannelAddToPlaylistViewModel>()
     private val createPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
-
-    @Inject
-    lateinit var viewModelAssistedFactory: MyChannelPlaylistViewModel.AssistedFactory
+    @Inject lateinit var viewModelAssistedFactory: MyChannelPlaylistViewModel.AssistedFactory
     private val playlistViewModel by viewModels<MyChannelPlaylistViewModel>{
         MyChannelPlaylistViewModel.provideFactory(viewModelAssistedFactory, isOwner, channelId)
     }

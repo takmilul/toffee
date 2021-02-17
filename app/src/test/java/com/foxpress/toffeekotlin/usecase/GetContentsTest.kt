@@ -2,16 +2,13 @@ package com.foxpress.toffeekotlin.usecase
 
 import com.banglalink.toffee.data.network.request.ContentRequest
 import com.banglalink.toffee.data.network.response.ContentResponse
-import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.ContentBean
 import com.banglalink.toffee.usecase.GetContents
 import com.nhaarman.mockitokotlin2.*
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking
-import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
-import org.mockito.Mock
 import org.mockito.Mockito
 import retrofit2.Response
 
@@ -41,7 +38,7 @@ class GetContentsTest :BaseUseCaseTest(){
             //test method
             val resultChannelInfoList = getContents.execute("",0,"",0,"VOD")
             //verify it
-            assertEquals(resultChannelInfoList[0].formatted_view_count,"1T")
+            assertEquals(resultChannelInfoList[0].formattedViewCount,"1T")
             assertEquals(resultChannelInfoList[0].formattedDuration,"04:05")
             assertEquals(resultChannelInfoList[0].program_name,"Hello BD")
             assertEquals(resultChannelInfoList[0].content_provider_name,"GSeries")

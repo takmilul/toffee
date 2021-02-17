@@ -39,7 +39,7 @@ class GetFavoriteContentsTest :BaseUseCaseTest(){
             //test method
             val resultChannelInfoList = getContents.execute()
             //verify it
-            assertEquals(resultChannelInfoList[0].formatted_view_count,"1T")
+            assertEquals(resultChannelInfoList[0].formattedViewCount,"1T")
             assertEquals(resultChannelInfoList[0].formattedDuration,"04:05")
             assertEquals(resultChannelInfoList[0].program_name,"Hello BD")
             assertEquals(resultChannelInfoList[0].content_provider_name,"GSeries")

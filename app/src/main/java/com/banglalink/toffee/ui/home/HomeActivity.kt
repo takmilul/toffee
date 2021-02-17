@@ -35,7 +35,6 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.banglalink.toffee.R
-import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.repository.UploadInfoRepository
@@ -258,7 +257,7 @@ class HomeActivity :
         }
 
         initSideNav()
-        lifecycle.addObserver(HeartBeatManager)
+        lifecycle.addObserver(heartBeatManager)
         observeInAppMessage()
         handleSharedUrl(intent)
         configureBottomSheet()
@@ -701,7 +700,7 @@ class HomeActivity :
         channelInfo?.let {
             when{
                 it.urlType == PLAY_IN_WEB_VIEW->{
-                    HeartBeatManager.triggerEventViewingContentStart(it.id.toInt(), it.type ?: "VOD")
+                    heartBeatManager.triggerEventViewingContentStart(it.id.toInt(), it.type ?: "VOD")
                     viewModel.sendViewContentEvent(it)
                     launchActivity<Html5PlayerViewActivity> {
                         putExtra(
@@ -991,7 +990,7 @@ class HomeActivity :
     override fun onViewDestroy() {
         allChannelViewModel.selectedChannel.postValue(null)
         clearChannel()
-        HeartBeatManager.triggerEventViewingContentStop()
+        heartBeatManager.triggerEventViewingContentStop()
         binding.draggableView.animation = AnimationUtils.loadAnimation(
             this,
             android.R.anim.fade_out

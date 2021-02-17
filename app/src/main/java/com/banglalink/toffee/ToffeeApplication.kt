@@ -4,11 +4,9 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.content.res.Configuration
 import android.net.ConnectivityManager
 import android.net.NetworkRequest
 import android.os.Build
-import androidx.appcompat.app.AppCompatDelegate
 import coil.Coil
 import coil.ImageLoader
 import coil.imageLoader
@@ -17,10 +15,8 @@ import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.notification.PubSubMessageUtil
-import com.google.firebase.crashlytics.FirebaseCrashlytics
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
 import com.banglalink.toffee.ui.upload.UploadObserver
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.HiltAndroidApp
 import net.gotev.uploadservice.UploadServiceConfig
 import net.gotev.uploadservice.data.RetryPolicyConfig
@@ -32,6 +28,7 @@ import javax.inject.Inject
 class ToffeeApplication : Application() {
 
     @Inject lateinit var mUploadObserver: UploadObserver
+    @Inject lateinit var heartBeatManager: HeartBeatManager
 
     override fun onCreate() {
         super.onCreate()
@@ -46,7 +43,7 @@ class ToffeeApplication : Application() {
         initCoil()
 
         val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), HeartBeatManager)
+        connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), heartBeatManager)
 
 
         initUploader()
@@ -69,7 +66,7 @@ class ToffeeApplication : Application() {
 
     override fun onTerminate() {
         val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        connectivityManager.unregisterNetworkCallback(HeartBeatManager)
+        connectivityManager.unregisterNetworkCallback(heartBeatManager)
         super.onTerminate()
     }
 

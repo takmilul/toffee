@@ -213,6 +213,11 @@ class Preference(private val pref: SharedPreferences, private val context: Conte
         return pref.getInt(apiName,0)
     }
 
+    fun updateDbVersionByApiName(apiName: String){
+        val dbVersion = getDBVersionByApiName(apiName) + 1
+        pref.edit().putInt(apiName, dbVersion).apply()
+    }
+    
     fun clear() {
         pref.edit().clear().apply()
     }

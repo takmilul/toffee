@@ -1,10 +1,11 @@
 package com.banglalink.toffee.ui.subscription
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
+import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.setError
@@ -18,16 +19,16 @@ import com.banglalink.toffee.util.getError
 import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.coroutines.launch
 
-class PackageListViewModel: ViewModel() {
+class PackageListViewModel @ViewModelInject constructor(private val toffeeApi: ToffeeApi): ViewModel() {
     private val packageListMutableLiveData = MutableLiveData<Resource<List<Package>>>()
     val packageLiveData = packageListMutableLiveData.toLiveData()
 
     private val getPackageList by unsafeLazy {
-        GetPackageList(Preference.getInstance(),RetrofitApiClient.toffeeApi)
+        GetPackageList(Preference.getInstance(), toffeeApi)
     }
 
     private val setAutoRenew by unsafeLazy {
-        SetAutoRenew(Preference.getInstance(),RetrofitApiClient.toffeeApi)
+        SetAutoRenew(Preference.getInstance(), toffeeApi)
     }
 
     init {
