@@ -11,4 +11,7 @@ class ViewCountRepositoryImpl (private val dao: ViewCountDAO) : ViewCountReposit
     override suspend fun getViewCountByChannelId(channelId: Int): Long? {
         return dao.getViewCountByChannelId(channelId)
     }
+    override suspend fun insertAll(vararg viewCount: ViewCount): LongArray {
+        return dao.insertAll(*viewCount)
+    }
 }
