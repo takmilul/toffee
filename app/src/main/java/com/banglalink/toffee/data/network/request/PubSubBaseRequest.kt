@@ -22,6 +22,6 @@ open class PubSubBaseRequest {
     @SerializedName("msisdn")
     val phoneNumber: String = Preference.getInstance().phoneNumber
 
-    @SerializedName("initialTime")
-    val reportTime = Utils.getDateTime()
+    @SerializedName("reportingTime")
+    val reportingTime = Utils.getDateTime()
 }

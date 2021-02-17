@@ -660,6 +660,7 @@ abstract class PlayerPageActivity :
             try {
                 totalBytesInMB += loadEventInfo.bytesLoaded
                 if (initialTimeStamp == 0L) {
+                    PlayerPreference.getInstance().setInitialTime()
                     initialTimeStamp = System.currentTimeMillis()
                 } else {
                     durationInMillis = System.currentTimeMillis() - initialTimeStamp
