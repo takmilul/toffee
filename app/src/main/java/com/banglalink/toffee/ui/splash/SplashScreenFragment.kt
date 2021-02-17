@@ -89,7 +89,8 @@ class SplashScreenFragment:BaseFragment() {
                             showUpdateDialog(it.error.title,it.error.updateMsg,it.error.forceUpdate)
                         }
                         else->{
-                            ToffeeAnalytics.apiLoginFailed(it.error.msg)
+//                            ToffeeAnalytics.apiLoginFailed(it.error.msg)
+                            ToffeeAnalytics.logApiError("apiLogin",it.error.msg)
                             binding.root.snack(it.error.msg){
                                 action("Retry") {
                                     initApp(skipUpdate)
