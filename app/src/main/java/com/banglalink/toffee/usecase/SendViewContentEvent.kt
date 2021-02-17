@@ -60,7 +60,7 @@ class SendViewContentEvent @Inject constructor(
             netType = preference.netType,
             sessionToken = preference.getHeaderSessionToken()?:""
         )
-        PubSubMessageUtil.sendViewContentToPubSub(gson.toJson(viewContentData))
+        PubSubMessageUtil.sendMessage(gson.toJson(viewContentData), PubSubMessageUtil.viewContentTopic)
     }
 
     private suspend fun sendToToffeeServer(contentId: Int,contentType: String){

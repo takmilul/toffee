@@ -25,11 +25,10 @@ import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.Player.*
 import com.google.android.exoplayer2.SimpleExoPlayer.Builder
+import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.ext.cast.SessionAvailabilityListener
-import com.google.android.exoplayer2.source.BehindLiveWindowException
-import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.source.TrackGroupArray
+import com.google.android.exoplayer2.source.*
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
@@ -64,6 +63,7 @@ abstract class PlayerPageActivity :
     OnPlayerControllerChangedListener,
     EventListener,
     PlaylistListener,
+    AnalyticsListener,
     SessionAvailabilityListener
 {
     protected var player: Player? = null
@@ -202,6 +202,7 @@ abstract class PlayerPageActivity :
             exoPlayer = Builder(this)
                 .setTrackSelector(defaultTrackSelector!!)
                 .build().apply {
+                    addAnalyticsListener(this@PlayerPageActivity)
                     addListener(playerEventListener)
                     playWhenReady = false
                     if (BuildConfig.DEBUG) {
@@ -249,6 +250,16 @@ abstract class PlayerPageActivity :
         if (defaultTrackSelector != null) {
             trackSelectorParameters = defaultTrackSelector?.parameters
         }
+    }
+
+    private var totalBytes = 0L
+    override fun onLoadCompleted(
+        eventTime: AnalyticsListener.EventTime,
+        loadEventInfo: LoadEventInfo,
+        mediaLoadData: MediaLoadData
+    ) {
+        totalBytes += loadEventInfo.bytesLoaded
+        Log.e("PLAYER BYTES",""+totalBytes/1024+" KB")
     }
 
     protected fun updateStartPosition() {

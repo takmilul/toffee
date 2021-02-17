@@ -35,7 +35,7 @@ class SendReactionEvent @Inject constructor(
             reactionStatus = reactionCount,
             reactionTime = reactionInfo.getReactionDate(),
         )
-        PubSubMessageUtil.sendReactionToPubSub(gson.toJson(reactionData))
+        PubSubMessageUtil.sendMessage(gson.toJson(reactionData), PubSubMessageUtil.reactionTopic)
     }
 
     private suspend fun sendToToffeeServer(reactionInfo: ReactionInfo, reactionCount: Int){

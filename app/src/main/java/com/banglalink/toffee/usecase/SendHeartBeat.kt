@@ -42,7 +42,7 @@ class SendHeartBeat(
             netType = preference.netType,
             sessionToken = preference.getHeaderSessionToken()?:""
         )
-        PubSubMessageUtil.sendHeartBeatToPubSub(gson.toJson(heartBeatData))
+        PubSubMessageUtil.sendMessage(gson.toJson(heartBeatData), PubSubMessageUtil.heartBeatTopic)
     }
 
     private suspend fun sendToToffeeServer(
