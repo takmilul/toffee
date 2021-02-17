@@ -14,6 +14,9 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import com.banglalink.toffee.R;
 
 public class HTML5WebView extends WebView {
@@ -27,15 +30,14 @@ public class HTML5WebView extends WebView {
     private FrameLayout                         mLayout;
 
     static final String LOGTAG = "HTML5WebView";
-    private VelBoxProgressDialog progressDialog;
+
+    private final MutableLiveData<Boolean> _showProgressMutableLiveData = new MutableLiveData<Boolean>();
+
+    public LiveData<Boolean>  showProgressLiveData = _showProgressMutableLiveData;
 
     private void init(Context context) {
         mContext = context;
-        progressDialog = new VelBoxProgressDialog(context);
-        progressDialog.setCancelable(true);
-        progressDialog.show();
         Activity a = (Activity) mContext;
-
         mLayout = new FrameLayout(context);
 
         FrameLayout mBrowserFrameLayout = (FrameLayout) LayoutInflater.from(a).inflate(R.layout.custom_screen, null);
@@ -57,6 +59,8 @@ public class HTML5WebView extends WebView {
         s.setDomStorageEnabled(true);
 
         mContentView.addView(this);
+
+        _showProgressMutableLiveData.postValue(true);
     }
 
     public HTML5WebView(Context context) {
@@ -144,7 +148,7 @@ public class HTML5WebView extends WebView {
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
            if(newProgress > 30){
-               progressDialog.dismiss();
+               _showProgressMutableLiveData.postValue(false);
            }
         }
 
