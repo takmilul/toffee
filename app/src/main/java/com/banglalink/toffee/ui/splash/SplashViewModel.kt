@@ -29,10 +29,10 @@ class SplashViewModel @ViewModelInject constructor(
         }
     }
 
-    private val checkUpdate by unsafeLazy {
+    private val checkUpdate by lazy {
         CheckUpdate(mPref,authApi)
     }
-    private val apiLogin by unsafeLazy {
+    private val apiLogin by lazy {
         ApiLogin(mPref, authApi)
     }
 

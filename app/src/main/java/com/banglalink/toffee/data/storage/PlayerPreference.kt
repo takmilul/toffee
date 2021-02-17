@@ -20,15 +20,6 @@ class PlayerPreference private constructor(val context: Context) {
             .apply()
     }
 
-    fun setInitialTime(){
-        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Dhaka"))
-        val cal = Calendar.getInstance(TimeZone.getDefault())
-        val dateGMT = cal.time
-
-       pref.edit().putString("Initial Time",sdf.format(dateGMT)).apply()
-
-    }
-
     fun getPlayerSessionDetails(): List<PlayerSessionDetails> {
         val keys: Map<String, *> = pref.all
 
