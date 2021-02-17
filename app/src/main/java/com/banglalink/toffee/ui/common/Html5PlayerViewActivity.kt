@@ -5,10 +5,14 @@ import android.os.Bundle
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.ui.widget.HTML5WebView
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class Html5PlayerViewActivity : BaseAppCompatActivity() {
 
+    @Inject lateinit var heartBeatManager: HeartBeatManager
+    
     companion object {
         const val CONTENT_URL = "content_url"
     }
@@ -34,12 +38,11 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
         }
 
         setContentView(mWebView.layout);
-
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        HeartBeatManager.triggerEventViewingContentStop()
+        heartBeatManager.triggerEventViewingContentStop()
     }
 
     //For Android 5.0.0 webkit UI bug fix

@@ -1,26 +1,24 @@
 package com.banglalink.toffee.ui.refer
 
-import android.app.Application
-import androidx.annotation.NonNull
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
-import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
+import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.model.ReferralCodeBean
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.usecase.GetMyReferralCode
 import com.banglalink.toffee.usecase.GetReferrerPolicy
 import com.banglalink.toffee.util.unsafeLazy
 
-class ReferAFriendViewModel : BaseViewModel() {
+class ReferAFriendViewModel @ViewModelInject constructor(private val toffeeApi: ToffeeApi) : BaseViewModel() {
 
     private val getMyReferralCode by unsafeLazy {
-        GetMyReferralCode(Preference.getInstance(),RetrofitApiClient.toffeeApi)
+        GetMyReferralCode(Preference.getInstance(), toffeeApi)
     }
 
     private val getReferralPolicy by unsafeLazy {
-        GetReferrerPolicy(Preference.getInstance(),RetrofitApiClient.toffeeApi)
+        GetReferrerPolicy(Preference.getInstance(), toffeeApi)
     }
 
     fun getMyReferralCode():LiveData<Resource<ReferralForm>>{

@@ -54,4 +54,10 @@ object AppModule {
     fun providesApplicationCoroutineScope(): CoroutineScope {
         return CoroutineScope(SupervisorJob())
     }
+    
+    /*@Provides
+    @Singleton
+    fun heartBeatManager(): HeartBeatManager{
+        return HeartBeatManager()
+    }*/
 }

@@ -57,6 +57,7 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment(), TextWatcher {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         progressDialog = VelBoxProgressDialog(requireContext())
+        binding.channelLogoIv.isClickable = true
         observeEditChannel()
 
         channelName = mPref.channelName
@@ -139,10 +140,11 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment(), TextWatcher {
                 is Resource.Success -> {
                     mPref.channelLogo = channelLogoUrl
                     mPref.channelName = channelName
+                    progressDialog.dismiss()
+                    dialog?.hide()
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
                     val action = BottomSheetUploadFragmentDirections.actionBottomSheetUploadFragmentToNewUploadMethodFragment()
                     findNavController().navigate(action)
-                    progressDialog.dismiss()
                 }
                 is Resource.Failure -> {
                     Log.e("data", "data" + it.error.msg)

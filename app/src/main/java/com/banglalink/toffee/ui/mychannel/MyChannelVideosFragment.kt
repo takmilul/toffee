@@ -14,8 +14,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
+import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_VIDEOS_URL
 import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.data.database.dao.ReactionDao
+import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
@@ -47,6 +49,7 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
     override val itemMargin: Int = 16
 
     @Inject lateinit var reactionDao: ReactionDao
+    @Inject lateinit var cacheManager: CacheManager
     override val mAdapter by lazy { MyChannelVideosAdapter(this) }
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private val videosReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
@@ -155,7 +158,7 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
 
     }
 
-    fun showDeleteVideoDialog(contentId: Int){
+    private fun showDeleteVideoDialog(contentId: Int){
         VelBoxAlertDialogBuilder(
             requireContext(),
             text = "Are you sure to delete?",
@@ -169,7 +172,7 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
         ).create().show()
     }
     
-    fun handleFavoriteResponse(it: Resource<ChannelInfo>) {
+    private fun handleFavoriteResponse(it: Resource<ChannelInfo>) {
         when (it) {
             is Resource.Success -> {
                 val channelInfo = it.data
@@ -190,11 +193,11 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
         }
     }
 
-    fun handleFavoriteAddedSuccessfully(channelInfo: ChannelInfo) {
+    private fun handleFavoriteAddedSuccessfully(channelInfo: ChannelInfo) {
         //subclass can hook here
     }
 
-    fun handleFavoriteRemovedSuccessFully(channelInfo: ChannelInfo) {
+    private fun handleFavoriteRemovedSuccessFully(channelInfo: ChannelInfo) {
         //subclass can hook here
     }
 
@@ -237,7 +240,7 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
     private fun observeReloadVideos() {
         observe(videosReloadViewModel.reloadPlaylist) {
             if (it) {
-                mAdapter.refresh()
+                reloadVideosList()
             }
         }
     }
@@ -247,10 +250,15 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
             when(it){
                 is Success -> {
                     requireContext().showToast(it.data.message)
-                    mAdapter.refresh()
+                    reloadVideosList()
                 }
                 is Failure -> requireContext().showToast(it.error.msg)
             }
         }
+    }
+    
+    private fun reloadVideosList(){
+        cacheManager.clearCacheByUrl(GET_MY_CHANNEL_VIDEOS_URL)
+        mAdapter.refresh()
     }
 }

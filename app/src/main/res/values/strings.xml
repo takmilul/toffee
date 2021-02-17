@@ -158,4 +158,6 @@
     <string name="read_more">Show More</string>
     <string name="read_less">Show Less</string>
     <string name="terms">Terms &amp; Conditions</string>
+    <string name="phone_number_hint"><i>Your Phone Number</i></string>
+    <string name="channel_name_hint"><i>Set Your Channel Name</i></string>
 </resources>

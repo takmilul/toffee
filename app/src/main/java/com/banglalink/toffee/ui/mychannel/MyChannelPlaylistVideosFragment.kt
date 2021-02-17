@@ -14,8 +14,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.R
+import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_PLAYLIST_VIDEOS_URL
 import com.banglalink.toffee.apiservice.MyChannelPlaylistContentParam
 import com.banglalink.toffee.common.paging.BaseListFragment
+import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.extension.observe
@@ -53,6 +55,7 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
     private var detailsAdapter: ChannelHeaderAdapter? = null
     private lateinit var args: MyChannelPlaylistVideosFragmentArgs
     override val mAdapter by lazy { MyChannelPlaylistVideosAdapter(this , currentItem) }
+    @Inject lateinit var cacheManager: CacheManager
     @Inject lateinit var viewModelAssistedFactory: AssistedFactory
     override val mViewModel by viewModels<MyChannelPlaylistVideosViewModel>{MyChannelPlaylistVideosViewModel.provideAssisted(viewModelAssistedFactory, requestParams)}
     private val playerViewModel by viewModels<CatchupDetailsViewModel>()
@@ -76,7 +79,7 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
 
     fun getPlaylistId(): Long  = args.playlistInfo.getPlaylistIdLong()
 
-    fun isAutoplayEnabled(): Boolean {
+    fun isAutoPlayEnabled(): Boolean {
         return view?.findViewById<SwitchButton>(R.id.autoPlaySwitch)?.isChecked == true
     }
 
@@ -227,6 +230,7 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
         observe(mViewModel.deletePlaylistVideoLiveData){
             when(it){
                 is Success -> {
+                    cacheManager.clearCacheByUrl(GET_MY_CHANNEL_PLAYLIST_VIDEOS_URL)
                     mAdapter.refresh()
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
                 }

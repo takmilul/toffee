@@ -11,9 +11,9 @@ import com.banglalink.toffee.apiservice.GetProfile
 import com.banglalink.toffee.apiservice.MyChannelGetDetailService
 import com.banglalink.toffee.apiservice.SendShareLogApiService
 import com.banglalink.toffee.data.database.dao.ReactionDao
-import com.banglalink.toffee.data.database.dao.ViewCountDAO
 import com.banglalink.toffee.data.database.entities.TVChannelItem
-import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
+import com.banglalink.toffee.data.network.retrofit.DbApi
+import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.data.repository.TVChannelRepository
@@ -55,7 +55,9 @@ class HomeViewModel @ViewModelInject constructor(
     @ApplicationContext private val mContext: Context,
     private val tvChannelRepo: TVChannelRepository,
     private val viewCountRepository: ViewCountRepository,
-    private val mPref: Preference
+    private val mPref: Preference,
+    private val toffeeApi: ToffeeApi,
+    private val dbApi: DbApi
 ):BaseViewModel(),OnCompleteListener<InstanceIdResult> {
 
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
@@ -77,11 +79,11 @@ class HomeViewModel @ViewModelInject constructor(
     fun getPlaylistManager() = _playlistManager
 
     private val getContentFromShareableUrl by unsafeLazy{
-        GetContentFromShareableUrl(Preference.getInstance(),RetrofitApiClient.toffeeApi)
+        GetContentFromShareableUrl(Preference.getInstance(), toffeeApi)
     }
 
     private val setFcmToken by unsafeLazy {
-        SetFcmToken(Preference.getInstance(),RetrofitApiClient.toffeeApi)
+        SetFcmToken(Preference.getInstance(), toffeeApi)
     }
 
     init {
@@ -114,14 +116,14 @@ class HomeViewModel @ViewModelInject constructor(
 
     fun populateViewCountDb(url:String){
         appScope.launch {
-            DownloadViewCountDb(RetrofitApiClient.dbApi,viewCountRepository)
+            DownloadViewCountDb(dbApi,viewCountRepository)
                 .execute(mContext, url)
         }
     }
 
     fun populateReactionDb(url:String){
         appScope.launch {
-            DownloadReactionDb(RetrofitApiClient.dbApi, reactionDao)
+            DownloadReactionDb(dbApi, reactionDao)
                 .execute(mContext, url)
         }
     }
@@ -193,6 +195,17 @@ class HomeViewModel @ViewModelInject constructor(
                 is Success -> Log.e(TAG, "sendShareLog: ${result.data.message}")
                 is Resource.Failure -> Log.e(TAG, "sendShareLog: ${result.error.msg}")
             }
+        }
+    }
+
+    private val updateFavorite by unsafeLazy {
+        UpdateFavorite(Preference.getInstance(), toffeeApi)
+    }
+
+    fun updateFavorite(channelInfo: ChannelInfo):LiveData<Resource<ChannelInfo>>{
+        return resultLiveData {
+            val favorite= channelInfo.favorite == null || channelInfo.favorite == "0"
+            updateFavorite.execute(channelInfo,favorite)
         }
     }
 }
