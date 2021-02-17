@@ -20,6 +20,7 @@ import com.banglalink.toffee.data.database.entities.ViewCount
         TVChannelItem::class,
         ContentViewProgress::class,
         ContinueWatchingItem::class,
+        ReactionStatusItem::class,
     ],
     version = 1,
     exportSchema = false)
@@ -35,6 +36,7 @@ abstract class ToffeeDatabase: RoomDatabase() {
     abstract fun getTVChannelsDao(): TVChannelDao
     abstract fun getContentViewProgressDao(): ContentViewProgressDao
     abstract fun getContinueWatchingDao(): ContinueWatchingDao
+    abstract fun getReactionStatusDao(): ReactionStatusDao
 
     companion object {
         const val DB_NAME = "toffee-db"
