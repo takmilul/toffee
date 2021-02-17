@@ -72,3 +72,5 @@ val FAQ_URL = "https://portal.toffeelive.com/faq.html"
 val INTERNET_PACK_URL = "https://www.banglalink.net/en/apps-and-services/other-details/53"
 
 const val TUS_UPLOAD_SERVER_URL = "https://ugc-upload.toffeelive.com/upload"
+
+const val USER_ACTIVITIES_LIMIT = 150

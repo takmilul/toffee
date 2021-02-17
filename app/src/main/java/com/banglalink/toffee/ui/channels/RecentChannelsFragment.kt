@@ -49,9 +49,7 @@ class RecentChannelsFragment: BaseFragment() {
         lifecycleScope.launchWhenStarted {
             viewModel.loadRecentTvChannels().collectLatest {
                 val newList = if(it.isNotEmpty()) it.subList(1, it.size) else it
-                if(newList.isEmpty()) {
-                    binding.channelTv.visibility = View.GONE
-                }
+                binding.channelTv.visibility = if(newList.isEmpty()) View.GONE else View.VISIBLE
                 mAdapter.setItems(newList)
             }
         }

@@ -7,6 +7,7 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.network.retrofit.DbApi
 import com.banglalink.toffee.data.database.dao.ViewCountDAO
 import com.banglalink.toffee.data.database.entities.ViewCount
+import com.banglalink.toffee.data.repository.ViewCountRepository
 import com.google.common.io.Files
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -20,7 +21,7 @@ const val TAG = "File"
 
 class DownloadViewCountDb(
     private val dbApi: DbApi,
-    private val viewCountDAO: ViewCountDAO
+    private val viewCountRepository: ViewCountRepository
 )
 {
     private val viewCountList = mutableListOf<ViewCount>()
@@ -74,7 +75,7 @@ class DownloadViewCountDb(
 
     private suspend fun updateDb() {
         ToffeeAnalytics.logBreadCrumb("Updating view count db")
-        viewCountDAO.insertAll(*viewCountList.toTypedArray())
+        viewCountRepository.insertAll(*viewCountList.toTypedArray())
         ToffeeAnalytics.logBreadCrumb("View count db updated")
     }
 
