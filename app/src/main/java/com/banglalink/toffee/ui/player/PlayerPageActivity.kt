@@ -17,6 +17,7 @@ import com.banglalink.toffee.data.database.entities.ContentViewProgress
 import com.banglalink.toffee.data.database.entities.ContinueWatchingItem
 import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
 import com.banglalink.toffee.data.repository.ContinueWatchingRepository
+import com.banglalink.toffee.data.storage.PlayerPreference
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener
 import com.banglalink.toffee.listeners.PlaylistListener
 import com.banglalink.toffee.model.Channel
@@ -257,7 +258,7 @@ abstract class PlayerPageActivity :
             it.release()
             defaultTrackSelector = null
             playerAnalyticsListener?.let { pal ->
-                mPref.savePlayerSessionBandWidth(pal.durationInSeconds, pal.getTotalBytesInMB())
+                PlayerPreference.getInstance().savePlayerSessionBandWidth(pal.durationInSeconds, pal.getTotalBytesInMB())
             }
         }
         exoPlayer = null

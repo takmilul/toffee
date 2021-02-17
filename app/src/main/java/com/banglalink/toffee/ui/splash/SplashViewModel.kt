@@ -6,6 +6,7 @@ import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.network.retrofit.AuthApi
 import com.banglalink.toffee.data.network.util.resultLiveData
+import com.banglalink.toffee.data.storage.PlayerPreference
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.model.CustomerInfoSignIn
@@ -13,6 +14,8 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.usecase.ApiLogin
 import com.banglalink.toffee.usecase.CheckUpdate
+import com.banglalink.toffee.usecase.ReportAppLaunch
+import com.banglalink.toffee.usecase.ReportLastPlayerSession
 import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
