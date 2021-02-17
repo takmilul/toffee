@@ -29,6 +29,7 @@ const val BANDWIDTH_TRACK_TOPIC = "projects/$PROJECTID/topics/player_bandwidth"
 const val API_ERROR_TRACK_TOPIC = "projects/$PROJECTID/topics/api_error"
 const val FIREBASE_ERROR_TRACK_TOPIC = "projects/$PROJECTID/topics/firebase_connection_error"
 const val APP_LAUNCH_TOPIC = "projects/$PROJECTID/topics/app_launch"
+const val REACTION_TOPIC = "projects/$PROJECTID/topics/ugc_reaction"
 
 object PubSubMessageUtil {
 

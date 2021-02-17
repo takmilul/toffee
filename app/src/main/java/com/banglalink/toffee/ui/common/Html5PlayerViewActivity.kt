@@ -57,7 +57,7 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
 
     override fun onDestroy() {
         progressDialog.dismiss()
-        HeartBeatManager.triggerEventViewingContentStop()
+        heartBeatManager.triggerEventViewingContentStop()
         super.onDestroy()
     }
 
