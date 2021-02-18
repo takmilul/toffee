@@ -23,7 +23,7 @@ interface ToffeeApi {
         @Body navCategoryRequest: NavCategoryRequest
     ):NavCategoryResponse
 
-    @POST("contents-v5/1/{type}/1/{categoryId}/{subcategoryId}/{limit}/{offset}/{dbVersion}")//https://staging.toffee-cms.com/contents-v5/deviceType/type/telcoId/categoryId/subCategoryId/limit/offset/dbVersion
+    @POST("ugc-contents-v5/1/{type}/1/{categoryId}/{subcategoryId}/{limit}/{offset}/{dbVersion}")//https://staging.toffee-cms.com/contents-v5/deviceType/type/telcoId/categoryId/subCategoryId/limit/offset/dbVersion
     suspend fun getContents(
         @Path("type") type: String,
         @Path("categoryId") categoryId: Int,
@@ -46,22 +46,22 @@ interface ToffeeApi {
     @POST("history-contents")
     suspend fun getHistoryContents(@Body historyContentRequest: HistoryContentRequest):HistoryContentResponse
 
-    @POST("favorite-contents")
+    @POST("ugc-favorite-contents")
     suspend fun getFavoriteContents(@Body favoriteContentRequest: FavoriteContentRequest):FavoriteContentResponse
 
-    @POST("app-home-page-content-toffee-v2/1/0/1/200/{dbVersion}")//https://staging.toffee-cms.com/app-home-page-content-toffee-v2/deviceType/subCategoryId/telc oId/limit/dbVesion
+    @POST("ugc-app-home-page-content-toffee-v2/1/0/1/200/{dbVersion}")//https://staging.toffee-cms.com/app-home-page-content-toffee-v2/deviceType/subCategoryId/telc oId/limit/dbVesion
     suspend fun getChannels(
         @Path("dbVersion") dbVersion: Int,
         @Body allChannelRequest: AllChannelRequest
     ):AllChannelResponse
 
-    @POST("relative-contents-ext")
+    @POST("ugc-relative-contents-ext")
     suspend fun getRelativeContents(@Body relativeContentRequest: RelativeContentRequest):RelativeContentResponse
 
     @POST("viewing-content")
     suspend fun sendViewingContent(@Body viewingContentRequest: ViewingContentRequest):ViewingContentResponse
 
-    @POST("set-favorites")
+    @POST("ugc-set-favorites")
     suspend fun updateFavorite(@Body favoriteRequest: FavoriteRequest):FavoriteResponse
 
     @POST("subscriber-profile-update")
@@ -70,7 +70,7 @@ interface ToffeeApi {
     @POST("subscriber-profile-photo")
     suspend fun uploadPhoto(@Body updateProfilePhotoRequest: UploadProfileImageRequest):UploadProfileImageResponse
 
-    @POST("search-contents")
+    @POST("ugc-search-contents")
     suspend fun searchContent(@Body searchContentRequest: SearchContentRequest):SearchContentResponse
 
     @POST("contents-shareable")
