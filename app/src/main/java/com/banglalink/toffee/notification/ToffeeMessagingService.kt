@@ -138,6 +138,9 @@ class ToffeeMessagingService : FirebaseMessagingService() {
 
         builder.setContentIntent(pendingIntent)
         showNotification(builder.build())
+
+        val notificationInfo = NotificationInfo(null, "DefaultNotificationType", "DefaultNotificationId", 0, 0, title, content, null, null, null, null, null, null)
+        notificationInfoRepository.insert(notificationInfo)
     }
 
     private suspend fun handleSmallImage(data: Map<String, String>) {
