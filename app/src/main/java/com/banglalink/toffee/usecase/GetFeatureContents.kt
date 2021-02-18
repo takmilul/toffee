@@ -1,14 +1,11 @@
 package com.banglalink.toffee.usecase
 
-import com.banglalink.toffee.data.network.request.FeatureContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
-import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.model.ChannelInfo
 
 class GetFeatureContents(private val preference: Preference,private val toffeeApi: ToffeeApi) {
 
-    var mOffset: Int = 0
+    /*var mOffset: Int = 0
         private set
     private val limit = 100
 
@@ -45,5 +42,5 @@ class GetFeatureContents(private val preference: Preference,private val toffeeAp
         }
 
         return listOf()
-    }
+    }*/
 }

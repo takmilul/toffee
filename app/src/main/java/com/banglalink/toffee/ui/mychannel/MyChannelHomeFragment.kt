@@ -20,6 +20,7 @@ import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.color
 import com.banglalink.toffee.R.layout
+import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_DETAILS_URL
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBinding
 import com.banglalink.toffee.databinding.FragmentMyChannelHomeBinding
@@ -328,6 +329,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                     binding.myRating = myRating
                     bindButtonState(binding.channelDetailView.ratingButton, myRating > 0)
                     binding.channelDetailView.ratingCountTextView.text = it.data.ratingCount.toString()
+                    cacheManager.clearCacheByUrl(GET_MY_CHANNEL_DETAILS_URL)
                 }
                 is Failure -> {
                     Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()

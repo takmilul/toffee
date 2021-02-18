@@ -34,14 +34,14 @@ interface ToffeeApi {
         @Body contentRequest: ContentRequest
     ): ContentResponse
 
-    @POST("feature-contents")
+    /*@POST("feature-contents")
     suspend fun getFeatureContents(@Body featureContentRequest: FeatureContentRequest):FeatureContentResponse
 
     @POST("feature-contents-v2/1/VOD/1/0/100/0/{dbVersion}")//https://staging.toffee-cms.com/feature-contents-v2/deviceType/type/telcoId/subCategoryId/li mit/offset/dbVersion
     suspend fun getFeatureContentsV2(
         @Path("dbVersion") dbVersion: Int,
         @Body featureContentRequest: FeatureContentRequest
-    ):FeatureContentResponse
+    ):FeatureContentResponse*/
 
     @POST("history-contents")
     suspend fun getHistoryContents(@Body historyContentRequest: HistoryContentRequest):HistoryContentResponse
@@ -61,7 +61,7 @@ interface ToffeeApi {
     @POST("viewing-content")
     suspend fun sendViewingContent(@Body viewingContentRequest: ViewingContentRequest):ViewingContentResponse
 
-    @POST("ugc-set-favorites")
+    @POST("set-ugc-favorites")
     suspend fun updateFavorite(@Body favoriteRequest: FavoriteRequest):FavoriteResponse
 
     @POST("subscriber-profile-update")

@@ -6,4 +6,4 @@ data class AllChannelRequest(
     val password:String,
     val telcoId: Int = 1,
     val limit:Int=200
-) : BaseRequest("getAppHomePageContentTofeeV2")
+) : BaseRequest("getUgcAppHomePageContentTofeeV2")

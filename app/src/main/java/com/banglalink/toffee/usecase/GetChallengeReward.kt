@@ -20,7 +20,7 @@ class GetChallengeReward @Inject constructor(private val preference: Preference,
                 "VOD",
                 0, 0,
                 mOffset, 30,
-                preference.getDBVersionByApiName("getContentsV5"),
+                preference.getDBVersionByApiName("getUgcContentsV5"),
                 ContentRequest(
                     0,
                     0,
