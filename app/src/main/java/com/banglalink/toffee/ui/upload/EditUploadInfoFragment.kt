@@ -324,14 +324,18 @@ class EditUploadInfoFragment: BaseFragment() {
     private fun submitVideo() {
         val title = binding.uploadTitle.text.toString().trim()
         val description = binding.uploadDescription.text.toString().trim()
-        if(title.isBlank()
-            || description.isBlank()
-            || viewModel.thumbnailData.value.isNullOrBlank()
-            || viewModel.orientationData.value == null
-        ) {
-            context?.showToast("Missing required field", Toast.LENGTH_SHORT)
+        val orientation = viewModel.orientationData.value ?: 1
+        if(title.isBlank()){
+            context?.showToast("Missing title field", Toast.LENGTH_SHORT)
+            return
+        }else if(description.isBlank()){
+            context?.showToast("Missing description field",Toast.LENGTH_SHORT)
+            return
+        }else if (viewModel.thumbnailData.value.isNullOrBlank()){
+            context?.showToast("Missing thumbnail field")
             return
         }
+        
         lifecycleScope.launch {
             val categoryObj = binding.categorySpinner.selectedItem
             val categoryId = if(categoryObj is UgcCategory) {
@@ -350,7 +354,7 @@ class EditUploadInfoFragment: BaseFragment() {
                 categoryId,
                 subcategoryId,
                 viewModel.durationData.value ?: 0L,
-                viewModel.orientationData.value ?: 1)
+                orientation)
         }
     }
 }
