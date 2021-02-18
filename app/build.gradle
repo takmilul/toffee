@@ -15,7 +15,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 8
-        versionName "0.0.12-alpha"
+        versionName "1.1.23"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     
@@ -94,9 +94,9 @@ dependencies {
     implementation 'io.coil-kt:coil:1.1.0'
 
     //Firebase Push Notification
-    implementation 'com.google.firebase:firebase-messaging:20.3.0'
+    implementation 'com.google.firebase:firebase-messaging:21.0.1'
     //Firebase in app messaging
-    implementation 'com.google.firebase:firebase-inappmessaging-display:19.1.0'
+    implementation 'com.google.firebase:firebase-inappmessaging-display:19.1.4'
     //Firebase core
     implementation 'com.google.firebase:firebase-core:18.0.2'
     // Recommended: Add the Firebase SDK for Google Analytics.

@@ -4,15 +4,24 @@ import android.content.res.AssetManager
 import android.os.Bundle
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.ui.widget.HTML5WebView
+import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class Html5PlayerViewActivity : BaseAppCompatActivity() {
 
+    @Inject lateinit var heartBeatManager: HeartBeatManager
+    
     companion object {
         const val CONTENT_URL = "content_url"
     }
 
+    private val progressDialog by lazy {
+        VelBoxProgressDialog(this)
+    }
     lateinit var mWebView: HTML5WebView
     private var htmlUrl: String? = ""
 
@@ -34,12 +43,22 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
         }
 
         setContentView(mWebView.layout);
+        observe(mWebView.showProgressLiveData){
+            when(it){
+                true->progressDialog.show()
+                false->{
+                    if(progressDialog.isShowing)
+                        progressDialog.dismiss()
+                }
+            }
+        }
 
     }
 
     override fun onDestroy() {
+        progressDialog.dismiss()
+        heartBeatManager.triggerEventViewingContentStop()
         super.onDestroy()
-        HeartBeatManager.triggerEventViewingContentStop()
     }
 
     //For Android 5.0.0 webkit UI bug fix

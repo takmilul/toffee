@@ -9,6 +9,7 @@ import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Message
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.TextureView.SurfaceTextureListener
@@ -163,7 +164,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
 
         simpleExoPlayer?.currentMediaItem?.playbackProperties?.tag?.let {
             if(it is ChannelInfo) {
-                isVideoPortrait = it.is_horizontal != 1
+                isVideoPortrait = it.isHorizontal != 1
                 binding.rotation.visibility = if(isVideoPortrait) View.GONE else View.VISIBLE
                 binding.share.visibility = if(it.isApproved == 1) View.VISIBLE else View.GONE
             }
@@ -613,7 +614,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         videoHeight = -1
         val channelInfo = mediaItem?.playbackProperties?.tag
         if(channelInfo is ChannelInfo) {
-            isVideoPortrait = channelInfo.is_horizontal != 1
+            isVideoPortrait = channelInfo.isHorizontal != 1
 
             if(isVideoPortrait && isFullScreenPortrait()) {
                 onPlayerControllerChangedListeners.forEach {
@@ -675,7 +676,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
                 if(isVideoPortrait && !isFullScreenPortrait())
                     SCALE_TYPE_CENTER_CROP
                 else
-                    SCALE_TYPE_SCALE_TO_FIT
+                    SCALE_TYPE_ADJUST_RATIO
             )
         } else {
             binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.also {
@@ -686,7 +687,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
                 if(isVideoPortrait && !isFullScreenPortrait())
                     SCALE_TYPE_CENTER_CROP
                 else
-                    SCALE_TYPE_SCALE_TO_FIT
+                    SCALE_TYPE_ADJUST_RATIO
             )
         }
     }
@@ -874,7 +875,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
             it.width = videoWidth
             it.height = videoHeight
         }
-        adjustVideoBoundWithRatio(if(isVideoPortrait && !isFullScreenPortrait()) SCALE_TYPE_CENTER_CROP else SCALE_TYPE_SCALE_TO_FIT)
+        adjustVideoBoundWithRatio(if(isVideoPortrait && !isFullScreenPortrait()) SCALE_TYPE_CENTER_CROP else SCALE_TYPE_ADJUST_RATIO)
     }
 
     private fun adjustVideoBoundWithRatio(mode: Int) {

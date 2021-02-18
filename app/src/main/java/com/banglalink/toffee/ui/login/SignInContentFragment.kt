@@ -144,6 +144,7 @@ class SignInContentFragment : BaseFragment() {
                             binding.root.snack(it.error.msg, Snackbar.LENGTH_LONG) {}
                         }
                         else -> {
+                            ToffeeAnalytics.logApiError("reRegistration",it.error.msg,phoneNo)
                             binding.root.snack(it.error.msg) {
                                 action("Retry") {
                                     handleLogin()

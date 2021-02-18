@@ -8,6 +8,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.banglalink.toffee.R
+import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.*
@@ -19,11 +20,13 @@ import com.banglalink.toffee.ui.landing.UserChannelViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_trending_channels_list.*
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class TrendingChannelsListFragment : HomeBaseFragment() {
     private lateinit var mAdapter: TrendingChannelsListAdapter
     private var categoryInfo: UgcCategory? = null
+    @Inject lateinit var cacheManager: CacheManager
     private val viewModel by viewModels<TrendingChannelsListViewModel>()
     private val subscriptionViewModel by viewModels<UserChannelViewModel>()
     private var trendingChannelInfo: TrendingChannelInfo? = null
@@ -84,7 +87,10 @@ class TrendingChannelsListFragment : HomeBaseFragment() {
         }
 
         observe(subscriptionViewModel.subscriptionResponse) {
-            if(it is Resource.Success) mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, trendingChannelInfo)
+            if(it is Resource.Success) {
+                cacheManager.clearSubscriptionCache()
+                mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, trendingChannelInfo)
+            }
             else requireContext().showToast("Failed to subscribe channel")
         }
     }

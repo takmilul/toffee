@@ -13,6 +13,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.databinding.FragmentVerifySigninBinding
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.CustomerInfoSignIn
@@ -117,6 +118,7 @@ class VerifySignInFragment : BaseFragment() {
                     }
                 }
                 is Resource.Failure -> {
+                    ToffeeAnalytics.logApiError("confirmCode",it.error.msg)
                     binding.root.snack(it.error.msg, Snackbar.LENGTH_LONG){}
 //                    {
 //                        action("Retry") {

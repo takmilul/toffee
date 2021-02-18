@@ -5,6 +5,7 @@ import com.banglalink.toffee.data.database.entities.ReactionInfo
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.notification.PubSubMessageUtil
+import com.banglalink.toffee.notification.REACTION_TOPIC
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import javax.inject.Inject
@@ -35,7 +36,7 @@ class SendReactionEvent @Inject constructor(
             reactionStatus = reactionCount,
             reactionTime = reactionInfo.getReactionDate(),
         )
-        PubSubMessageUtil.sendReactionToPubSub(gson.toJson(reactionData))
+        PubSubMessageUtil.sendMessage(gson.toJson(reactionData), REACTION_TOPIC)
     }
 
     private suspend fun sendToToffeeServer(reactionInfo: ReactionInfo, reactionCount: Int){

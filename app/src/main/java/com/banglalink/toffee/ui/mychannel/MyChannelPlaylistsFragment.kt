@@ -12,9 +12,10 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
-import com.banglalink.toffee.R.layout
+import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_PLAYLISTS_URL
 import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.MyChannelPlaylist
@@ -37,6 +38,7 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
     private var channelOwnerId: Int = 0
     override val mAdapter by lazy { MyChannelPlaylistAdapter(this) }
 
+    @Inject lateinit var cacheManager: CacheManager
     @Inject lateinit var viewModelAssistedFactory: MyChannelPlaylistViewModel.AssistedFactory
     override val mViewModel by viewModels<MyChannelPlaylistViewModel> { MyChannelPlaylistViewModel.provideFactory(viewModelAssistedFactory, isOwner, channelOwnerId) }
     private val deletePlaylistViewModel by viewModels<MyChannelPlaylistDeleteViewModel>()
@@ -75,6 +77,7 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
         observeEditPlaylist()
         observeDeletePlaylist()
         observeReloadPlaylist()
+//        retrofitCache.urls().forEach { Log.e("RETROFIT_URL", "\n\n\n First Load: $it") }
     }
     
     override fun setEmptyView() {
@@ -102,7 +105,7 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
     private fun observeReloadPlaylist() {
         observe(playlistReloadViewModel.reloadPlaylist) {
             if (it) {
-                mAdapter.refresh()
+                reloadPlaylist()
             }
         }
     }
@@ -155,7 +158,7 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
             when (it) {
                 is Success -> {
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
-                    mAdapter.refresh()
+                    reloadPlaylist()
                 }
                 is Failure -> {
                     Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
@@ -206,12 +209,17 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
             when (it) {
                 is Success -> {
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
-                    mAdapter.refresh()
+                    reloadPlaylist()
                 }
                 is Failure -> {
                     Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
                 }
             }
         }
+    }
+    
+    private fun reloadPlaylist(){
+        cacheManager.clearCacheByUrl(GET_MY_CHANNEL_PLAYLISTS_URL)
+        mAdapter.refresh()
     }
 }

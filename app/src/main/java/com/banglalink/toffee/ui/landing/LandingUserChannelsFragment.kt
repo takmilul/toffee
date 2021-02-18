@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
+import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.*
@@ -21,9 +22,11 @@ import com.banglalink.toffee.ui.home.UserChannelsListAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_landing_user_channels.*
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LandingUserChannelsFragment : HomeBaseFragment() {
+    @Inject lateinit var cacheManager: CacheManager
     private lateinit var mAdapter: UserChannelsListAdapter
     private var categoryInfo: UgcCategory? = null
     private var channelInfo: UgcUserChannelInfo? = null
@@ -97,6 +100,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
 
         observe(subscriptionViewModel.subscriptionResponse) {
             if(it is Resource.Success) {
+                cacheManager.clearSubscriptionCache()
                 mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, channelInfo)
             }
             else requireContext().showToast("Failed to subscribe channel")

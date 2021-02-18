@@ -227,7 +227,7 @@
             android:layout_marginTop="5dp"
             android:layout_marginBottom="10dp"
             android:paddingVertical="4dp"
-            android:text="@{data.formatted_view_count + ` Views`}"
+            android:text="@{data.formattedViewCount + ` Views`}"
             android:textSize="@dimen/default_text_size"
             android:fontFamily="@font/roboto_medium"
             android:textColor="@color/fixed_second_text_color"
@@ -246,7 +246,7 @@
             android:paddingVertical="4dp"
             android:gravity="center_vertical"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:text="@{data.formatedShareCount}"
+            android:text="@{data.formattedShareCount}"
             android:textSize="@dimen/default_text_size"
             android:textColor="@color/fixed_second_text_color"
             android:fontFamily="@font/roboto_medium"
@@ -293,7 +293,7 @@
             android:id="@+id/reactionGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="@{data.isApproved == null || data.isApproved == 1 ? View.VISIBLE : View.GONE}"
+            android:visibility="@{data.isApproved == 1 ? View.VISIBLE : View.GONE}"
             app:constraint_referenced_ids="owner,uploadDuration,firstIcon,secondIcon,thirdIcon,reactionCount,viewCount,shareCount,reactionButton" />
         
         <TextView

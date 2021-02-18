@@ -163,7 +163,7 @@ fun bindSubscriptionStatus(view: MultiTextButton, isSubscribed: Boolean, channel
 
 @BindingAdapter("bindViewCount")
 fun bindViewCount(view: TextView, channelInfo: ChannelInfo) {
-    view.text = channelInfo.formatted_view_count()
+    view.text = channelInfo.formattedViewCount()
 }
 
 @BindingAdapter("packageExpiryText")

@@ -4,7 +4,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.os.Environment
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
-import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
+import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.Resource
@@ -14,15 +14,14 @@ import com.banglalink.toffee.usecase.SigninByPhone
 import com.banglalink.toffee.util.unsafeLazy
 import java.io.File
 
-class SignInViewModel @ViewModelInject constructor(private var pref:Preference): BaseViewModel() {
-
-
+class SignInViewModel @ViewModelInject constructor(private val pref:Preference, private val toffeeApi: ToffeeApi): BaseViewModel() {
+    
     private val signingByPhone by unsafeLazy {
-        SigninByPhone(Preference.getInstance(), RetrofitApiClient.toffeeApi)
+        SigninByPhone(Preference.getInstance(), toffeeApi)
     }
 
     private val checkReferralCodeStatus by unsafeLazy {
-        CheckReferralCodeStatus(RetrofitApiClient.toffeeApi)
+        CheckReferralCodeStatus(toffeeApi)
     }
 
     fun signIn(phoneNumber: String, referralCode: String):LiveData<Resource<String>> {
