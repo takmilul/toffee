@@ -1,6 +1,7 @@
 package com.banglalink.toffee.apiservice
 
 import com.banglalink.toffee.common.paging.BaseApiService
+import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.network.request.SearchContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
@@ -12,6 +13,7 @@ import com.squareup.inject.assisted.AssistedInject
 class SearchContentService @AssistedInject constructor(
     private val preference: Preference,
     private val toffeeApi: ToffeeApi,
+    private val localSync: LocalSync,
     @Assisted private val keyword: String
 ) : BaseApiService<ChannelInfo> {
 
@@ -28,7 +30,10 @@ class SearchContentService @AssistedInject constructor(
             )
         }
 
-        return response.response.channels ?: emptyList()
+        return response.response.channels?.map {
+            localSync.syncData(it)
+            it
+        } ?: emptyList()
     }
 
     @AssistedInject.Factory

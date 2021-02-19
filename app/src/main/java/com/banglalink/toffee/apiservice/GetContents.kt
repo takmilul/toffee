@@ -1,6 +1,7 @@
 package com.banglalink.toffee.apiservice
 
 import com.banglalink.toffee.common.paging.BaseApiService
+import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.dao.ViewCountDAO
 import com.banglalink.toffee.data.network.request.ChannelRequestParams
@@ -17,9 +18,10 @@ import com.squareup.inject.assisted.AssistedInject
 class GetContents @AssistedInject constructor(
     private val preference: Preference,
     private val toffeeApi: ToffeeApi,
-    private val reactionDao: ReactionDao,
-    private val viewProgressRepo: ContentViewPorgressRepsitory,
-    private val viewCountDAO: ViewCountDAO,
+    private val localSync: LocalSync,
+//    private val reactionDao: ReactionDao,
+//    private val viewProgressRepo: ContentViewPorgressRepsitory,
+//    private val viewCountDAO: ViewCountDAO,
     @Assisted private val requestParams: ChannelRequestParams
 ): BaseApiService<ChannelInfo> {
 
@@ -49,14 +51,15 @@ class GetContents @AssistedInject constructor(
                 it.category = requestParams.category
                 it.categoryId = requestParams.categoryId
                 it.subCategoryId = requestParams.subcategoryId
-                val viewCount = viewCountDAO.getViewCountByChannelId(it.id.toInt())
-                if(viewCount!=null){
-                    it.view_count= viewCount.toString()
-                }
                 it.subCategory = requestParams.subcategory
-                val reactionInfo = reactionDao.getReactionByContentId(preference.customerId, it.id.toLong())
-                it.myReaction = reactionInfo?.reactionType ?: Reaction.None.value
-                it.viewProgress = viewProgressRepo.getProgressByContent(it.id.toLong())?.progress ?: 0L
+//                val viewCount = viewCountDAO.getViewCountByChannelId(it.id.toInt())
+//                if(viewCount!=null){
+//                    it.view_count= viewCount.toString()
+//                }
+//                val reactionInfo = reactionDao.getReactionByContentId(preference.customerId, it.id.toLong())
+//                it.myReaction = reactionInfo?.reactionType ?: Reaction.None.value
+//                it.viewProgress = viewProgressRepo.getProgressByContent(it.id.toLong())?.progress ?: 0L
+                localSync.syncData(it)
                 it
             }
         }

@@ -7,6 +7,7 @@ import com.banglalink.toffee.data.network.retrofit.DbApi
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
+import java.util.*
 
 class DownloaderGeneric(private val context: Context, private val dbApi: DbApi) {
 
@@ -37,7 +38,7 @@ class DownloaderGeneric(private val context: Context, private val dbApi: DbApi) 
 
     private fun createFile(context: Context): File? {
         val storageDir = context.cacheDir
-        val fileName = "temp_${System.currentTimeMillis()}"
+        val fileName = "temp_${UUID.randomUUID()}"
         return File.createTempFile(fileName, ".db", storageDir)
     }
 

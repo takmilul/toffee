@@ -1,6 +1,7 @@
 package com.banglalink.toffee.apiservice
 
 import com.banglalink.toffee.common.paging.BaseApiService
+import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.network.request.UgcFeatureContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
@@ -13,6 +14,7 @@ import com.squareup.inject.assisted.AssistedInject
 class GetFeatureContents @AssistedInject constructor(
     private val preference: Preference,
     private val toffeeApi: ToffeeApi,
+    private val localSync: LocalSync,
     @Assisted private val requestParams: EditorsChoiceFeaturedRequestParams
 ): BaseApiService<ChannelInfo> {
 
@@ -33,7 +35,10 @@ class GetFeatureContents @AssistedInject constructor(
             )
         }
 
-        return response.response.channels ?: emptyList()
+        return response.response.channels?.map {
+            localSync.syncData(it)
+            it
+        } ?: emptyList()
     }
 
     @AssistedInject.Factory
