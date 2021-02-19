@@ -1,5 +1,5 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name">Toffee UGC</string>
+    <string name="app_name">Toffee</string>
     <string name="app_name_short">Toffee</string>
 
     <string name="retry">Retry</string>

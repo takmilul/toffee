@@ -26,7 +26,6 @@ const val HEARTBEAT_TOPIC = "projects/$PROJECTID/topics/current_viewers_heartbea
 
 const val VIEWCONTENT_TOPIC = "projects/$PROJECTID/topics/current_viewers"
 const val BANDWIDTH_TRACK_TOPIC = "projects/$PROJECTID/topics/player_bandwidth"
-//const val BANDWIDTH_TRACK_TOPIC = "projects/$PROJECTID/topics/player_bandwidth_test"
 const val API_ERROR_TRACK_TOPIC = "projects/$PROJECTID/topics/api_error"
 const val FIREBASE_ERROR_TRACK_TOPIC = "projects/$PROJECTID/topics/firebase_connection_error"
 const val APP_LAUNCH_TOPIC = "projects/$PROJECTID/topics/app_launch"
@@ -81,7 +80,7 @@ object PubSubMessageUtil {
              withContext(Dispatchers.IO){
                  try {
                      val batch = client.batch()
-                     Log.d("PUBSUB",  jsonMessage)
+                     Log.d("PUBSUB - $topic",  jsonMessage)
                      val pubsubMessage = PubsubMessage()
                      pubsubMessage.encodeData(jsonMessage.toByteArray(charset("UTF-8")))
                      val publishRequest = PublishRequest()
@@ -93,7 +92,7 @@ object PubSubMessageUtil {
                 batch?.execute()
 
             } catch (ex: Exception) {
-                Log.e(TAG, ex.message, ex)
+                Log.e("PUBSUB - $topic", ex.message, ex)
             }
         }
 
@@ -111,7 +110,7 @@ object PubSubMessageUtil {
                 responseHeaders: HttpHeaders
             ) {
                 // ERROR!
-                Log.d("PUBSUB", "error Message: " + e.message)
+                Log.e("PUBSUB", "error Message: " + e.message)
             }
         }
 
