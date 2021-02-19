@@ -142,4 +142,16 @@ object DatabaseModule {
     fun providesViewCountRepository(dao: ViewCountDAO): ViewCountRepository {
         return ViewCountRepositoryImpl(dao)
     }
+
+    @Provides
+    @Singleton
+    fun providesReactionStatusDao(db: ToffeeDatabase): ReactionStatusDao {
+        return db.getReactionStatusDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providesReactionStatusRepository(dao: ReactionStatusDao): ReactionStatusRepository {
+        return ReactionStatusRepositoryImpl(dao)
+    }
  }

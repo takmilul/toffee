@@ -1,5 +1,6 @@
 package com.banglalink.toffee.apiservice
 
+import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.dao.ViewCountDAO
 import com.banglalink.toffee.data.network.request.UgcFeatureContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
@@ -12,7 +13,7 @@ import javax.inject.Inject
 class FeatureContentService @Inject constructor(
         private val preference: Preference,
         private val toffeeApi: ToffeeApi,
-        private val viewCountDAO: ViewCountDAO,
+        private val localSync: LocalSync,
 ) {
     suspend fun loadData(type: String, pageType: PageType, categoryId: Int): FeatureContentBean {
         
@@ -32,11 +33,13 @@ class FeatureContentService @Inject constructor(
         }
         return response.response.apply {
             channels?.map {
-                val viewCount = viewCountDAO.getViewCountByChannelId(it.id.toInt())
-                if(viewCount!=null){
-                    it.view_count= viewCount.toString()
-                }
-                it.categoryId = categoryId
+                localSync.syncData(it)
+//                val viewCount = viewCountDAO.getViewCountByChannelId(it.id.toInt())
+//                if(viewCount!=null){
+//                    it.view_count= viewCount.toString()
+//                }
+//                it.categoryId = categoryId
+                it
             }
         }
     }
