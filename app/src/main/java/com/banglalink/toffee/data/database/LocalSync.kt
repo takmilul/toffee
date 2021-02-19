@@ -26,14 +26,12 @@ class LocalSync @Inject constructor(
         val viewCount = viewCountRepo.getViewCountByChannelId(channelInfo.id.toInt())
         channelInfo.view_count= viewCount?.toString() ?: channelInfo.view_count
         channelInfo.viewProgress = viewProgressRepo.getProgressByContent(channelInfo.id.toLong())?.progress ?: 0L
-        val reactionList = reactionStatusRepo.getReactionStatusByChannelId(channelInfo.id.toLong())
-        if(reactionList.isNotEmpty()) {
-            channelInfo.reaction = getReactionStatus(channelInfo, reactionList)
-        }
+//        val reactionList = reactionStatusRepo.getReactionStatusByChannelId(channelInfo.id.toLong())
+//        if(reactionList.isNotEmpty()) {
+//            channelInfo.reaction = getReactionStatus(channelInfo, reactionList)
+//        }
         val reactionInfo = reactionDao.getReactionByContentId(preference.customerId, channelInfo.id.toLong())
         channelInfo.myReaction = reactionInfo?.reactionType ?: Reaction.None.value
-
-        Log.e("LOCAL_SYNC", "Loaded data from cache")
     }
 
     private fun getReactionStatus(channelInfo: ChannelInfo, rl: List<ReactionStatusItem>): ReactionStatus? {
