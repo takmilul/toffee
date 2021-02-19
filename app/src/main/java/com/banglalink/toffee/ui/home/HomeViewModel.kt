@@ -123,7 +123,7 @@ class HomeViewModel @ViewModelInject constructor(
 
     fun populateReactionDb(url:String){
         appScope.launch {
-            DownloadReactionDb(dbApi, reactionDao)
+            DownloadReactionDb(dbApi, reactionDao, mPref)
                 .execute(mContext, url)
         }
     }

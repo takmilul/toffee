@@ -218,11 +218,11 @@ class HomeActivity :
             }
         }
 
-        observe(mPref.reactionDbUrlLiveData){
-            if(it.isNotEmpty()){
-                viewModel.populateReactionDb(it)
-            }
+//        observe(mPref.reactionDbUrlLiveData){
+        if(!mPref.hasReactionDb){
+            viewModel.populateReactionDb("url")
         }
+//        }
 
         observe(viewModel.addToPlayListMutableLiveData) { item ->
 //            val playListItems = item.filter {

@@ -6,8 +6,11 @@ import android.util.Log
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.ReactionInfo
+import com.banglalink.toffee.data.database.entities.ReactionStatusItem
 import com.banglalink.toffee.data.network.retrofit.DbApi
+import com.banglalink.toffee.data.repository.ReactionStatusRepository
 import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.model.ReactionStatus
 import com.google.common.io.Files
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -18,15 +21,14 @@ import java.nio.ByteBuffer
 import java.util.zip.CRC32
 
 
-class DownloadReactionDb(
+class DownloadReactionStatusDb(
     private val dbApi: DbApi,
-    private val reactionDao: ReactionDao,
-    private val mPref: Preference
+    private val reactionStatusRepository: ReactionStatusRepository
 ) {
-    private val reactionList = mutableListOf<ReactionInfo>()
+    private val reactionList = mutableListOf<ReactionStatusItem>()
 
     companion object {
-        const val TAG = "Reaction_db"
+        const val TAG = "Reaction_Status_db"
     }
 
     suspend fun execute(context: Context, url: String) {
@@ -42,7 +44,7 @@ class DownloadReactionDb(
         if (file == null) {
             return false
         }
-        ToffeeAnalytics.logBreadCrumb("Processing user reaction file")
+        ToffeeAnalytics.logBreadCrumb("Processing reaction status file")
         val fileBytes = Files.toByteArray(file)
         val byteBuffer = ByteBuffer.wrap(fileBytes)
         val checksum = CRC32()
@@ -50,19 +52,17 @@ class DownloadReactionDb(
 
         reactionList.clear()
         while (byteBuffer.remaining() > 0) {
-            val customerId = byteBuffer.int
             val contentId = byteBuffer.long
-            val reaction = byteBuffer.int
-            val reactionTime = System.nanoTime()
-            reactionList.add(ReactionInfo(null, customerId, contentId, reaction, reactionTime))
+            val reactionType = byteBuffer.int
+            val reactionCount = byteBuffer.long
+            reactionList.add(ReactionStatusItem(contentId, reactionType, reactionCount))
         }
         return true
     }
 
     private suspend fun updateDb() {
-        ToffeeAnalytics.logBreadCrumb("Updating user reaction db")
-        reactionDao.insertAll(*reactionList.toTypedArray())
-        mPref.hasReactionDb = true
-        ToffeeAnalytics.logBreadCrumb("User Reaction db updated")
+        ToffeeAnalytics.logBreadCrumb("Updating reaction status db")
+        reactionStatusRepository.insert(*reactionList.toTypedArray())
+        ToffeeAnalytics.logBreadCrumb("Reaction status db updated")
     }
 }
