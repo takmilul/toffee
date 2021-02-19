@@ -219,9 +219,9 @@ class HomeActivity :
         }
 
 //        observe(mPref.reactionDbUrlLiveData){
-        if(!mPref.hasReactionDb){
-            viewModel.populateReactionDb("url")
-        }
+//        if(!mPref.hasReactionDb){
+//            viewModel.populateReactionDb("url")
+//        }
 //        }
 
         observe(viewModel.addToPlayListMutableLiveData) { item ->
