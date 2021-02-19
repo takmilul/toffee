@@ -31,7 +31,7 @@ class GetContents @AssistedInject constructor(
                 requestParams.subcategoryId,
                 offset,
                 limit,
-                preference.getDBVersionByApiName("getContentsV5"),
+                preference.getDBVersionByApiName("getUgcContentsV5"),
                 ContentRequest(
                     requestParams.categoryId,
                     requestParams.subcategoryId,

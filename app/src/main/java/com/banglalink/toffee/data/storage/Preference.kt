@@ -315,6 +315,10 @@ class Preference(private val pref: SharedPreferences, private val context: Conte
             }
         }
 
+    var keepVideoAspectRatio: Boolean
+        get() = pref.getBoolean(PREF_KEEP_ASPECT_RATIO, false)
+        set(value) = pref.edit{ putBoolean(PREF_KEEP_ASPECT_RATIO, value) }
+
     var uploadStatus: Int
         get() = pref.getInt(PREF_TOFFEE_UPLOAD_STATUS, -1)
         set(value) = pref.edit { putInt(PREF_TOFFEE_UPLOAD_STATUS, value) }
@@ -402,6 +406,7 @@ class Preference(private val pref: SharedPreferences, private val context: Conte
         private const val PREF_CHANNEL_NAME = "channel_name"
         private const val PREF_IS_PREVIOUS_DB_DELETED = "isPreviousDBDELETE"
         private const val PREF_IS_CHANNEL_DETAIL_CHECKED = "isChannelDetailChecked"
+        private const val PREF_KEEP_ASPECT_RATIO = "pref_keep_aspect_ratio"
 
         private const val PREF_NAME_IP_TV= "IP_TV"
 

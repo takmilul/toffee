@@ -1,0 +1,77 @@
+{
+  "project_info": {
+    "project_number": "612187698253",
+    "firebase_url": "https://toffee-261507.firebaseio.com",
+    "project_id": "toffee-261507",
+    "storage_bucket": "toffee-261507.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:612187698253:android:59dc3ee3a39d0722e55804",
+        "android_client_info": {
+          "package_name": "com.banglalink.toffee"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "612187698253-195po5k4l5ld0vaqp5utn55luflvlv5p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAypG25sNQZjgU5To_znozOgvb5DkgfQhI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "612187698253-195po5k4l5ld0vaqp5utn55luflvlv5p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:612187698253:android:4e86f3c0a5864eb2e55804",
+        "android_client_info": {
+          "package_name": "com.banglalink.toffee.ugc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "612187698253-o13d5f4v9mc9hov0jh4tpk934hdnpq80.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.banglalink.toffee.ugc",
+            "certificate_hash": "83b24204a7558c30acb0076e2cf8642732665b82"
+          }
+        },
+        {
+          "client_id": "612187698253-195po5k4l5ld0vaqp5utn55luflvlv5p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAypG25sNQZjgU5To_znozOgvb5DkgfQhI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "612187698253-195po5k4l5ld0vaqp5utn55luflvlv5p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -6,7 +6,6 @@ import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.model.ChannelCategory
 import com.google.gson.Gson
 import javax.inject.Inject
 
@@ -18,7 +17,7 @@ class GetChannelWithCategory @Inject constructor(
     suspend operator fun invoke(subcategoryId: Int) {
         val response = tryIO2 {
             toffeeApi.getChannels(
-                preference.getDBVersionByApiName("getAppHomePageContentTofeeV2"),
+                preference.getDBVersionByApiName("getUgcAppHomePageContentTofeeV2"),
                 AllChannelRequest(
                     subcategoryId,
                     preference.customerId,

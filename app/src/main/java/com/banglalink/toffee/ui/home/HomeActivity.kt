@@ -34,8 +34,11 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
+import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_VIDEOS_URL
+import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
@@ -98,15 +101,10 @@ class HomeActivity :
     DraggerLayout.OnPositionChangedListener,
     SearchView.OnQueryTextListener
 {
-    @Inject
-    lateinit var uploadRepo: UploadInfoRepository
-
-    @Inject
-    lateinit var notificationRepo: NotificationInfoRepository
-
-    @Inject
-    lateinit var uploadManager: UploadStateManager
-
+    @Inject lateinit var uploadRepo: UploadInfoRepository
+    @Inject lateinit var notificationRepo: NotificationInfoRepository
+    @Inject lateinit var uploadManager: UploadStateManager
+    @Inject lateinit var cacheManager: CacheManager
     private var channelId: Int = 0
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private var notificationBadge: View? = null
@@ -133,21 +131,21 @@ class HomeActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //disable screen capture
-        /*if (!BuildConfig.DEBUG) {
+        if (! BuildConfig.DEBUG) {
             window.setFlags(
                 WindowManager.LayoutParams.FLAG_SECURE,
                 WindowManager.LayoutParams.FLAG_SECURE
             )
-        }*/
+        }
 //        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main_menu)
         setSupportActionBar(binding.tbar.toolbar)
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        if(savedInstanceState == null) {
+//        if(savedInstanceState == null) {
             setupNavController()
-        }
+//        }
 
         initializeDraggableView()
         initDrawer()
@@ -457,7 +455,7 @@ class HomeActivity :
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        setupNavController()
+//        setupNavController()
     }
 
     override fun onPause() {
@@ -1262,6 +1260,7 @@ class HomeActivity :
                             upload_size_text.isInvisible = true
                             mini_upload_progress_text.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_upload_done, 0, 0, 0)
                             mini_upload_progress_text.text = "Upload complete"
+                            cacheManager.clearCacheByUrl(GET_MY_CHANNEL_VIDEOS_URL)
                         }
                         UploadStatus.ADDED.value,
                         UploadStatus.STARTED.value -> {

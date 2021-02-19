@@ -5,4 +5,4 @@ data class FavoriteRequest(
     val isFavorite: Int,
     val customerId: Int,
     val password: String
-):BaseRequest("setFavorites")
+):BaseRequest("setUgcFavorites")

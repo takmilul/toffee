@@ -20,6 +20,7 @@ import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.databinding.DataBindingUtil
 import com.banglalink.toffee.R.*
+import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.MediaControlLayout3Binding
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener
 import com.banglalink.toffee.listeners.PlaylistListener
@@ -33,7 +34,9 @@ import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.Player.EventListener
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.video.VideoListener
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
+import javax.inject.Inject
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -42,6 +45,8 @@ import kotlin.math.roundToInt
 /**
  * Created by shantanu on 5/4/16.
  */
+
+@AndroidEntryPoint
 open class ExoMediaController3 @JvmOverloads constructor(context: Context,
                           attrs: AttributeSet? = null,
                           defStyleAttr: Int = 0
@@ -68,6 +73,9 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     private val screenWidth = UtilsKt.getScreenWidth()
     private val screenHeight = UtilsKt.getScreenHeight()
     var isVideoPortrait = false
+
+    @Inject
+    lateinit var mPref: Preference
 
     init {
         handler = MessageHandler()
@@ -672,23 +680,13 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
                 it.width = videoWidth
                 it.height = videoHeight
             }
-            adjustVideoBoundWithRatio(
-                if(isVideoPortrait && !isFullScreenPortrait())
-                    SCALE_TYPE_CENTER_CROP
-                else
-                    SCALE_TYPE_ADJUST_RATIO
-            )
+            adjustVideoBoundWithRatio(scaleType)
         } else {
             binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.also {
                 it.width = playerWidth
                 it.height = playerHeight
             }
-            adjustVideoBoundWithRatio(
-                if(isVideoPortrait && !isFullScreenPortrait())
-                    SCALE_TYPE_CENTER_CROP
-                else
-                    SCALE_TYPE_ADJUST_RATIO
-            )
+            adjustVideoBoundWithRatio(scaleType)
         }
     }
 
@@ -701,6 +699,19 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     }
 
     fun isFullScreenPortrait() = isVideoPortrait && layoutParams.height >= UtilsKt.getScreenHeight()
+
+    private val scaleType: Int
+        get() {
+            return if (isVideoPortrait && !isFullScreenPortrait()) {
+                SCALE_TYPE_CENTER_CROP
+            } else {
+                if (mPref.keepVideoAspectRatio) {
+                    SCALE_TYPE_ADJUST_RATIO
+                } else {
+                    SCALE_TYPE_SCALE_TO_FIT
+                }
+            }
+        }
 
     private val minVideoHeight: Int = screenWidth * 9 / 16
     private val maxVideoHeight: Int = screenHeight * 2 / 3
@@ -875,7 +886,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
             it.width = videoWidth
             it.height = videoHeight
         }
-        adjustVideoBoundWithRatio(if(isVideoPortrait && !isFullScreenPortrait()) SCALE_TYPE_CENTER_CROP else SCALE_TYPE_ADJUST_RATIO)
+        adjustVideoBoundWithRatio(scaleType)
     }
 
     private fun adjustVideoBoundWithRatio(mode: Int) {

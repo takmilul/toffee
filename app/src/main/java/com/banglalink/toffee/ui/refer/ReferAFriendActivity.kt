@@ -18,6 +18,7 @@ import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.webkit.WebView
+import androidx.activity.viewModels
 import androidx.core.app.ShareCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -37,9 +38,7 @@ import com.banglalink.toffee.util.unsafeLazy
 class ReferAFriendActivity : BaseAppCompatActivity() {
 
     private lateinit var binding: ActivityReferAFriendLayoutBinding
-    private val viewModel by unsafeLazy {
-        ViewModelProviders.of(this).get(ReferAFriendViewModel::class.java)
-    }
+    private val viewModel by viewModels<ReferAFriendViewModel>()
     private val progressDialog by unsafeLazy {
         VelBoxProgressDialog(this)
     }

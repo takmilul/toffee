@@ -80,7 +80,7 @@ object PubSubMessageUtil {
              withContext(Dispatchers.IO){
                  try {
                      val batch = client.batch()
-                     Log.d("PUBSUB",  jsonMessage)
+                     Log.d("PUBSUB - $topic",  jsonMessage)
                      val pubsubMessage = PubsubMessage()
                      pubsubMessage.encodeData(jsonMessage.toByteArray(charset("UTF-8")))
                      val publishRequest = PublishRequest()
@@ -92,7 +92,7 @@ object PubSubMessageUtil {
                 batch?.execute()
 
             } catch (ex: Exception) {
-                Log.e(TAG, ex.message, ex)
+                Log.e("PUBSUB - $topic", ex.message, ex)
             }
         }
 
@@ -110,7 +110,7 @@ object PubSubMessageUtil {
                 responseHeaders: HttpHeaders
             ) {
                 // ERROR!
-                Log.d("PUBSUB", "error Message: " + e.message)
+                Log.e("PUBSUB", "error Message: " + e.message)
             }
         }
 

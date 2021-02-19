@@ -16,7 +16,7 @@ class GetNotifications @Inject constructor(private val preference: Preference, p
                 "VOD",
                 0, 0,
                 offset, 30,
-                preference.getDBVersionByApiName("getContentsV5"),
+                preference.getDBVersionByApiName("getUgcContentsV5"),
                 ContentRequest(
                     0,
                     0,

@@ -5,4 +5,4 @@ data class FavoriteContentRequest(
     val password:String,
     override val offset:Int,
     override val limit:Int=10
-) : BasePagingRequest("getFavoriteContents")
+) : BasePagingRequest("getUgcFavoriteContents")

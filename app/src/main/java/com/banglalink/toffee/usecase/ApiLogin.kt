@@ -1,5 +1,6 @@
 package com.banglalink.toffee.usecase
 
+import android.util.Log
 import com.banglalink.toffee.data.network.request.ApiLoginRequest
 import com.banglalink.toffee.data.network.retrofit.AuthApi
 import com.banglalink.toffee.data.network.util.tryIO2
@@ -16,13 +17,14 @@ class ApiLogin(private val pref: Preference, private val authApi: AuthApi) {
         }
         return response.customerInfoSignIn!!
     }
-    private fun getApiLoginRequest() =
-        ApiLoginRequest(
+    private fun getApiLoginRequest(): ApiLoginRequest {
+        Log.d("FCM_", "getApiLoginRequest: ${pref.fcmToken}", )
+        return ApiLoginRequest(
             pref.customerId,
             pref.password,
             pref.latitude,
             pref.longitude,
             fcmToken = pref.fcmToken
         )
-
+    }
 }
