@@ -13,6 +13,7 @@ import com.banglalink.toffee.data.database.entities.NotificationInfo
 class NotificationDropdownFragment : BaseListFragment<NotificationInfo>(), BaseListItemCallback<NotificationInfo> {
 
     private var enableToolbar: Boolean = false
+    override val verticalPadding = Pair(16, 16)
     override val mAdapter by lazy { NotificationDropdownAdapter(this) }
     override val mViewModel by viewModels<NotificationDropdownViewModel>()
     
@@ -51,13 +52,13 @@ class NotificationDropdownFragment : BaseListFragment<NotificationInfo>(), BaseL
         PopupMenu(requireContext(), view).apply {
             inflate(R.menu.menu_notification_item)
             val menu = this.menu
-            if (!item.isSeen){
-                menu.removeItem(R.id.menu_seen_notification)
+            if (item.isSeen){
+                menu.findItem(R.id.menu_seen_notification).isVisible = false
             }
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_seen_notification -> {
-                        mViewModel.setSeenStatus(item.id!!, false, System.currentTimeMillis())
+                        mViewModel.setSeenStatus(item.id!!, true, System.currentTimeMillis())
 //                        mAdapter.notifyDataSetChanged()
                     }
                     R.id.menu_delete_notification -> {

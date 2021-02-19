@@ -71,12 +71,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:adjustViewBounds="true"
-            android:minHeight="200dp"
-            android:scaleType="centerCrop"
+            android:scaleType="centerInside"
             android:src="@drawable/placeholder"
             loadImageFromUrl="@{data.imageUrl}"
             android:visibility="@{data.imageUrl == null || data.imageUrl.isEmpty() ? View.GONE : View.VISIBLE}"
-            app:layout_constraintDimensionRatio="W,16:9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/title" />
