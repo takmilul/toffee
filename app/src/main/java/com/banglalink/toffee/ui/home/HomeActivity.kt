@@ -143,9 +143,9 @@ class HomeActivity :
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        if(savedInstanceState == null) {
+//        if(savedInstanceState == null) {
             setupNavController()
-        }
+//        }
 
         initializeDraggableView()
         initDrawer()
@@ -455,7 +455,7 @@ class HomeActivity :
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        setupNavController()
+//        setupNavController()
     }
 
     override fun onPause() {
