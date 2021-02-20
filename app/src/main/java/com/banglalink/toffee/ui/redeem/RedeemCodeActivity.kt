@@ -15,7 +15,9 @@ import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.util.unsafeLazy
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class RedeemCodeActivity : BaseAppCompatActivity() {
 
     private lateinit var binding: ActivityRedeemCodeLayoutBinding
