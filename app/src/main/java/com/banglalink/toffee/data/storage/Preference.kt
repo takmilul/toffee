@@ -335,6 +335,10 @@ class Preference(private val pref: SharedPreferences, private val context: Conte
         get() = pref.getBoolean(PREF_IS_PREVIOUS_DB_DELETED, false)
         set(value) = pref.edit { putBoolean(PREF_IS_PREVIOUS_DB_DELETED, value) }
 
+    var hasReactionDb: Boolean
+        get() = pref.getBoolean(PREF_HAS_REACTION_DB, false)
+        set(value) = pref.edit { putBoolean(PREF_HAS_REACTION_DB, value) }
+
 //    var uploadUri: String?
 //        get() = pref.getString("toffee-upload-uri", null)
 //        set(value) = pref.edit { putString("toffee-upload-uri", value) }
@@ -407,6 +411,7 @@ class Preference(private val pref: SharedPreferences, private val context: Conte
         private const val PREF_IS_PREVIOUS_DB_DELETED = "isPreviousDBDELETE"
         private const val PREF_IS_CHANNEL_DETAIL_CHECKED = "isChannelDetailChecked"
         private const val PREF_KEEP_ASPECT_RATIO = "pref_keep_aspect_ratio"
+        private const val PREF_HAS_REACTION_DB = "pref_has_reaction_db"
 
         private const val PREF_NAME_IP_TV= "IP_TV"
 

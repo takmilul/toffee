@@ -13,6 +13,8 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_PLAYLIST_VIDEOS_URL
+import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.AlertDialogMyChannelAddToPlaylistBinding
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.extension.observe
@@ -36,6 +38,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
     private var channelId: Int = 0
     private var playlistId: Int = 0
     private lateinit var channelInfo: ChannelInfo
+    @Inject lateinit var cacheManager: CacheManager
     private lateinit var binding: AlertDialogMyChannelAddToPlaylistBinding
     private val mAdapter: MyChannelAddToPlaylistAdapter by lazy { MyChannelAddToPlaylistAdapter(this) }
     private val viewModel by viewModels<MyChannelAddToPlaylistViewModel>()
@@ -164,12 +167,13 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
             when (it) {
                 is Success -> {
                     alertDialog.dismiss()
-                    Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
-                    playlistReloadViewModel.reloadPlaylist.postValue(true)
+                    requireContext().showToast(it.data.message)
+                    cacheManager.clearCacheByUrl(GET_MY_CHANNEL_PLAYLIST_VIDEOS_URL)
+                    playlistReloadViewModel.reloadPlaylist.value = true
                 }
                 is Failure -> {
                     alertDialog.dismiss()
-                    Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
+                    requireContext().showToast(it.error.msg)
                 }
             }
         }

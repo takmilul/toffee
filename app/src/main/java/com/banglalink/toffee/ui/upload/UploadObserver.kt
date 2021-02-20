@@ -2,23 +2,21 @@ package com.banglalink.toffee.ui.upload
 
 import android.app.Application
 import android.content.Context
-import android.util.Log
-import com.banglalink.toffee.apiservice.UgcUploadConfirmation
-import com.banglalink.toffee.data.repository.UploadInfoRepository
-import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.model.TUS_UPLOAD_SERVER_URL
-import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
-import com.banglalink.toffee.util.UtilsKt
-import kotlinx.coroutines.*
+import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_VIDEOS_URL
+import com.banglalink.toffee.data.network.retrofit.CacheManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import net.gotev.uploadservice.data.UploadInfo
-import net.gotev.uploadservice.exceptions.UserCancelledUploadException
 import net.gotev.uploadservice.network.ServerResponse
 import net.gotev.uploadservice.observer.request.GlobalRequestObserver
 import net.gotev.uploadservice.observer.request.RequestObserverDelegate
 
 class UploadObserver(
     private val app: Application,
-    private val uploadManager: UploadStateManager
+    private val uploadManager: UploadStateManager,
+    private val cacheManager: CacheManager
 ) {
     val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
@@ -60,6 +58,7 @@ class UploadObserver(
                 serverResponse: ServerResponse
             ) {
                 coroutineScope.launch {
+                    cacheManager.clearCacheByUrl(GET_MY_CHANNEL_VIDEOS_URL)
                     uploadManager.handleSuccess(uploadInfo.uploadId, serverResponse)
                 }
             }

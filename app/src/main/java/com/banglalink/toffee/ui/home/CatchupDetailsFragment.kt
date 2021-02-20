@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.common.paging.ProviderIconCallback
-import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
@@ -31,7 +30,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<ChannelInfo> {
@@ -39,7 +37,6 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
     private lateinit var catchupAdapter: CatchUpDetailsAdapter
     private lateinit var detailsAdapter: ChannelHeaderAdapter
     private lateinit var currentItem: ChannelInfo
-    @Inject lateinit var cacheManager: CacheManager
     private val viewModel by viewModels<CatchupDetailsViewModel>()
     private val landingViewModel by activityViewModels<LandingPageViewModel>()
 
@@ -109,7 +106,6 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
                 viewModel.toggleSubscriptionStatus(item.id.toInt(), item.channel_owner_id)
             }
         }
-        cacheManager.clearSubscriptionCache()
     }
     
     private fun initAdapter() {
