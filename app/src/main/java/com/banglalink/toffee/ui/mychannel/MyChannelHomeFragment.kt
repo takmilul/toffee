@@ -26,6 +26,7 @@ import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBindi
 import com.banglalink.toffee.databinding.FragmentMyChannelHomeBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.MyChannelDetail
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
@@ -342,11 +343,11 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         observe(createPlaylistViewModel.createPlaylistLiveData) {
             when (it) {
                 is Success -> {
-                    playlistReloadViewModel.reloadPlaylist.postValue(true)
-                    Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
+                    requireContext().showToast(it.data.message?:"")
+                    playlistReloadViewModel.reloadPlaylist.value = true
                 }
                 is Failure -> {
-                    Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
+                    requireContext().showToast(it.error.msg)
                 }
             }
         }

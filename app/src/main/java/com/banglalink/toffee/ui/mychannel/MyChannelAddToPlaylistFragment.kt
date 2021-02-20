@@ -167,13 +167,13 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
             when (it) {
                 is Success -> {
                     alertDialog.dismiss()
-                    Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
+                    requireContext().showToast(it.data.message)
                     cacheManager.clearCacheByUrl(GET_MY_CHANNEL_PLAYLIST_VIDEOS_URL)
-                    playlistReloadViewModel.reloadPlaylist.postValue(true)
+                    playlistReloadViewModel.reloadPlaylist.value = true
                 }
                 is Failure -> {
                     alertDialog.dismiss()
-                    Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
+                    requireContext().showToast(it.error.msg)
                 }
             }
         }
