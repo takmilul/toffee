@@ -238,7 +238,7 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
     }
 
     private fun observeReloadVideos() {
-        observe(videosReloadViewModel.reloadPlaylist) {
+        observe(videosReloadViewModel.reloadVideos) {
             if (it) {
                 reloadVideosList()
             }

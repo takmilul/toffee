@@ -89,14 +89,19 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
             visibility = View.VISIBLE
             if (isOwner == 1){
                 empty_view_label.text = "You haven't created any playlist yet"
-                uploadVideoButton.setOnClickListener { 
-                    if(parentFragment is MyChannelHomeFragment){
-                        (parentFragment as MyChannelHomeFragment).showCreatePlaylistDialog()
+                createPlaylistButton.setOnClickListener {
+                    if (channelId > 0) {
+                        if(parentFragment is MyChannelHomeFragment){
+                            (parentFragment as MyChannelHomeFragment).showCreatePlaylistDialog()
+                        }
+                    }
+                    else {
+                        Toast.makeText(requireContext(), "Please create channel first", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
             else{
-                uploadVideoButton.visibility = View.GONE
+                createPlaylistButton.visibility = View.GONE
                 empty_view_label.text = "This channel has no playlist yet"
             }
         }

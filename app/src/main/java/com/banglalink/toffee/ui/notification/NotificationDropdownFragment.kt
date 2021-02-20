@@ -13,6 +13,7 @@ import com.banglalink.toffee.data.database.entities.NotificationInfo
 class NotificationDropdownFragment : BaseListFragment<NotificationInfo>(), BaseListItemCallback<NotificationInfo> {
 
     private var enableToolbar: Boolean = false
+    override val itemMargin: Int = 12
     override val verticalPadding = Pair(16, 16)
     override val mAdapter by lazy { NotificationDropdownAdapter(this) }
     override val mViewModel by viewModels<NotificationDropdownViewModel>()

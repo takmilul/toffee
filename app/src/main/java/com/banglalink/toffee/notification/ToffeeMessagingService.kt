@@ -74,13 +74,15 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                     }
                 }
                 notificationType.equals("LARGE", ignoreCase = true) -> {
-                    val imageUrl = data["image"]
-                    if (imageUrl.isNullOrBlank())
-                        return
                     imageCoroutineScope.launch {
-                        handleNotificationWithImage(data)
+                        val imageUrl = data["image"]
+                        if (imageUrl.isNullOrBlank()) {
+                            handleNotificationWithOutImage(data)
+                        }
+                        else {
+                            handleNotificationWithImage(data)
+                        }
                     }
-
                 }
 //                notificationType.equals("LOGOUT", ignoreCase = true) -> EventBus.getDefault()
 //                    .post(MessageEvent(content, MessageEvent.NOTIFICATION_LOGOUT_EVENT))
@@ -94,7 +96,6 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         } catch (e: Exception) {
             Log.e(TAG, e.message, e)
         }
-
     }
 
 
@@ -113,10 +114,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             .setSound(sound)
             .setContentTitle(title)
             .setContentText(content)
-            .setStyle(
-                NotificationCompat.BigTextStyle()
-                    .bigText(content)
-            )
+            .setStyle(NotificationCompat.BigTextStyle().bigText(content))
 
         val drawable = imageUrl?.let { UtilsKt.coilExecuteGet(this, it) }
         if (drawable != null)
@@ -304,6 +302,97 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         showNotification(builder.build())
         
         val notificationInfo = NotificationInfo(null, data["notificationType"], pubSubId, 0, 0, title, content, null, thumbnailUrl, imageUrl, resourceUrl, playNowUrl, watchLaterUrl)
+        notificationInfoRepository.insert(notificationInfo)
+    }
+
+    private suspend fun handleNotificationWithOutImage(data: Map<String, String>) {
+        val title = data["notificationHeader"]
+        val content = data["notificationText"]
+        val resourceUrl = data["resourceUrl"]
+        val thumbnailUrl = data["thumbnail"]
+        val playNowUrl = data["playNowUrl"]
+        val watchLaterUrl = data["watchLaterUrl"]
+        val button = data["button"]
+        val pubSubId = data["notificationId"]
+        val sound = Uri.parse("android.resource://" + packageName + "/" + R.raw.velbox_notificaiton)
+
+        val intent = Intent("com.toffee.notification_receiver")
+        intent.setClass(this, NotificationActionReceiver::class.java)
+        intent.putExtra(NotificationActionReceiver.NOTIFICATION_ID, notificationId)
+        intent.putExtra(NotificationActionReceiver.PUB_SUB_ID, pubSubId)
+        intent.putExtra(NotificationActionReceiver.RESOURCE_URL, resourceUrl)
+        intent.putExtra(
+            NotificationActionReceiver.ACTION_NAME,
+            NotificationActionReceiver.CONTENT_VIEW
+        )
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            0,
+            intent,
+            PendingIntent.FLAG_CANCEL_CURRENT
+        )
+
+        val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_NAME)
+
+        builder.setSmallIcon(R.drawable.ic_notification)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+            .setSound(sound)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(content))
+            .setContentTitle(title)
+            .setContentText(content)
+            .priority = NotificationCompat.PRIORITY_MAX
+        builder.color = ContextCompat.getColor(applicationContext, R.color.colorAccent2)
+
+        if (button == "true") {
+            val watchNowIntent = Intent("com.toffee.notification_receiver")
+            watchNowIntent.setClass(this, NotificationActionReceiver::class.java)
+            watchNowIntent.putExtra(NotificationActionReceiver.NOTIFICATION_ID, notificationId)
+            watchNowIntent.putExtra(NotificationActionReceiver.PUB_SUB_ID, pubSubId)
+            watchNowIntent.putExtra(
+                NotificationActionReceiver.ACTION_NAME,
+                NotificationActionReceiver.WATCH_NOW
+            )
+            watchNowIntent.putExtra(NotificationActionReceiver.RESOURCE_URL, playNowUrl)
+            val watchNowPendingIntent = PendingIntent.getBroadcast(
+                this,
+                1,
+                watchNowIntent,
+                PendingIntent.FLAG_CANCEL_CURRENT
+            )
+            builder.addAction(
+                android.R.drawable.ic_media_play,
+                "Watch Now",
+                watchNowPendingIntent
+            )
+
+            val watchLaterIntent = Intent("com.toffee.notification_receiver")
+            watchLaterIntent.setClass(this, NotificationActionReceiver::class.java)
+            watchLaterIntent.putExtra(
+                NotificationActionReceiver.NOTIFICATION_ID,
+                notificationId
+            )
+            watchLaterIntent.putExtra(NotificationActionReceiver.PUB_SUB_ID, pubSubId)
+            watchLaterIntent.putExtra(
+                NotificationActionReceiver.ACTION_NAME,
+                NotificationActionReceiver.WATCH_LATER
+            )
+            val watchLaterPendingIntent = PendingIntent.getBroadcast(
+                applicationContext,
+                2,
+                watchLaterIntent,
+                PendingIntent.FLAG_CANCEL_CURRENT
+            )
+            builder.addAction(
+                android.R.drawable.ic_delete,
+                "Watch Later",
+                watchLaterPendingIntent
+            )
+        }
+        showNotification(builder.build())
+        
+        val notificationInfo = NotificationInfo(null, data["notificationType"], pubSubId, 0, 0, title, content, null, thumbnailUrl, null, resourceUrl, 
+            playNowUrl, watchLaterUrl)
         notificationInfoRepository.insert(notificationInfo)
     }
 

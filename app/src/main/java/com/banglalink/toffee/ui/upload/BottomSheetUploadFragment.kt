@@ -15,7 +15,9 @@ import androidx.navigation.fragment.findNavController
 import coil.load
 import coil.request.CachePolicy
 import com.banglalink.toffee.R
+import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_DETAILS_URL
 import com.banglalink.toffee.data.network.request.MyChannelEditRequest
+import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.UploadBottomSheetBinding
 import com.banglalink.toffee.extension.observe
@@ -37,6 +39,7 @@ import javax.inject.Inject
 class BottomSheetUploadFragment : BottomSheetDialogFragment(), TextWatcher {
 
     @Inject lateinit var mPref: Preference
+    @Inject lateinit var cacheManager: CacheManager
     private var channelName: String = ""
     private var channelLogoUrl: String = ""
     private var profileImageBase64: String? = null
@@ -143,6 +146,7 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment(), TextWatcher {
                     progressDialog.dismiss()
                     dialog?.hide()
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
+                    cacheManager.clearCacheByUrl(GET_MY_CHANNEL_DETAILS_URL)
                     val action = BottomSheetUploadFragmentDirections.actionBottomSheetUploadFragmentToNewUploadMethodFragment()
                     findNavController().navigate(action)
                 }

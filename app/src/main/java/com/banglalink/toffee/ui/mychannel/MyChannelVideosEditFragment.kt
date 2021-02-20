@@ -200,7 +200,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
                     progressDialog.dismiss()
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
                     findNavController().navigateUp()
-                    videosReloadViewModel.reloadVideos.value = true
+                    videosReloadViewModel.reloadVideos.postValue(true)
                 }
                 is Resource.Failure -> {
                     progressDialog.dismiss()

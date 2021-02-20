@@ -307,12 +307,12 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     
     private fun observeSubscribeChannel() {
         observe(subscribeChannelViewModel.liveData) {
-            binding.channelDetailView.subscriptionButton.isEnabled = true
             when (it) {
                 is Success -> {
                     isSubscribed = it.data.isSubscribed
                     binding.channelDetailView.subscriptionCountTextView.text = it.data.subscriberCount.toString()
                     binding.isSubscribed = isSubscribed
+                    binding.channelDetailView.subscriptionButton.isEnabled = true
                     cacheManager.clearSubscriptionCache()
                 }
                 is Failure -> {

@@ -10,6 +10,7 @@ import com.banglalink.toffee.apiservice.MyChannelGetDetailService
 import com.banglalink.toffee.apiservice.MyChannelSubscribeService
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
+import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelSubscribeBean
 import com.banglalink.toffee.model.Resource
@@ -21,6 +22,7 @@ import kotlinx.coroutines.launch
 class CatchupDetailsViewModel @ViewModelInject constructor(
     private val subscribeApi: MyChannelSubscribeService,
     private val channelInfoApi: MyChannelGetDetailService,
+    private val cacheManager: CacheManager,
     private val relativeContentsFactory: GetRelativeContents.AssistedFactory
 ):BaseViewModel() {
     val subscriptionResponse = MutableLiveData<Resource<MyChannelSubscribeBean>>()
@@ -43,6 +45,7 @@ class CatchupDetailsViewModel @ViewModelInject constructor(
         viewModelScope.launch {
             try {
                 val ret = channelInfoApi.execute(isOwner, isPublic, channelId.toInt(), channelOwnerId)
+                cacheManager.clearSubscriptionCache()
                 isChannelSubscribed.value = ret.isSubscribed == 1
                 channelSubscriberCount.value = ret.subscriberCount
             } catch (ex: Exception) {

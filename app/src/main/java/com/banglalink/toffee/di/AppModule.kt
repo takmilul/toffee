@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import com.banglalink.toffee.apiservice.UgcUploadConfirmation
+import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.ui.upload.UploadObserver
@@ -44,8 +45,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesGlobalUploadObserver(app: Application, manager: UploadStateManager): UploadObserver {
-        return UploadObserver(app, manager)
+    fun providesGlobalUploadObserver(app: Application, manager: UploadStateManager, cacheManager: CacheManager): UploadObserver {
+        return UploadObserver(app, manager, cacheManager)
     }
 
     @Provides
