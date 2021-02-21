@@ -24,7 +24,7 @@ class NotificationInfoRepositoryImpl(
     }
 
     override fun getUnseenNotificationCount(): Flow<Int> {
-        return notificationDao.getUnseenNotificationCount()
+        return notificationDao.getUnseenNotificationCount(mPref.customerId)
     }
 
     /*override suspend fun getNotificationByDate(date: Long): PagingSource<Int, NotificationInfo> {

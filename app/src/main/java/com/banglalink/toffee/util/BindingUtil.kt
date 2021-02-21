@@ -363,9 +363,7 @@ fun loadMyReactionBg(view: ImageView, isSetBg: Boolean){
 
 @BindingAdapter("loadUnseenCardBgColor")
 fun loadUnseenBgColor(view: CardView, isSeen: Boolean){
-    if (!isSeen){
-        view.setCardBackgroundColor(ContextCompat.getColor(view.context, R.color.unseenCardColor))
-    }
+    view.setCardBackgroundColor(ContextCompat.getColor(view.context, if(isSeen) R.color.cardBgColor else R.color.unseenCardColor))
 }
 
 @BindingAdapter("app:onSafeClick")
