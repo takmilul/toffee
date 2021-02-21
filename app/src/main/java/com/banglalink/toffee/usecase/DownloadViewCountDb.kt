@@ -49,7 +49,7 @@ class DownloadViewCountDb(
         while (byteBuffer.remaining() > 0) {
             val contentId = byteBuffer.int
             val viewCount = byteBuffer.long
-            Log.i(TAG, "content id $contentId and viewcount $viewCount remaining ${byteBuffer.remaining()}")
+//            Log.i(TAG, "content id $contentId and viewcount $viewCount remaining ${byteBuffer.remaining()}")
             viewCountList.add(ViewCount().apply {
                 this.channelId = contentId.toLong()
                 this.viewCount = viewCount

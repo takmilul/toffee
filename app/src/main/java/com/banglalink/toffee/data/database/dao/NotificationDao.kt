@@ -16,8 +16,8 @@ interface NotificationDao {
     @Delete
     suspend fun delete(notificationInfo: NotificationInfo)
     
-    @Query("SELECT * FROM NotificationInfo ORDER BY receiveTime DESC")
-    fun getAllNotification(): PagingSource<Int, NotificationInfo>
+    @Query("SELECT * FROM NotificationInfo WHERE userId=:userId OR userId=0 ORDER BY receiveTime DESC")
+    fun getAllNotification(userId: Int): PagingSource<Int, NotificationInfo>
 
     @Query("SELECT COUNT(id) FROM NotificationInfo WHERE isSeen=:isSeen")
     fun getUnseenNotificationCount(isSeen: Boolean = false): Flow<Int>
