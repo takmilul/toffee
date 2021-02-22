@@ -943,6 +943,7 @@ class HomeActivity :
     }
 
     override fun onViewMinimize() {
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
 
@@ -973,6 +974,7 @@ class HomeActivity :
         else{
             ActivityInfo.SCREEN_ORIENTATION_LOCKED
         }
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
     override fun onRotationLock(isAutoRotationEnabled: Boolean) {
@@ -993,6 +995,7 @@ class HomeActivity :
             this,
             android.R.anim.fade_out
         )
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         binding.draggableView.visibility = View.GONE
         binding.draggableView.resetImmediately()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
