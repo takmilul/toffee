@@ -25,7 +25,7 @@ object DatabaseModule {
         return Room.databaseBuilder(app,
             ToffeeDatabase::class.java, ToffeeDatabase.DB_NAME)
 //            .addMigrations(*MigrationProvider.getMigrationList().toTypedArray())
-            .fallbackToDestructiveMigration()
+//            .fallbackToDestructiveMigration()
             .build()
     }
 
@@ -79,8 +79,8 @@ object DatabaseModule {
     
     @Provides
     @Singleton
-    fun provideNotificationInfoRepository(notificationDao: NotificationDao): NotificationInfoRepository {
-        return NotificationInfoRepositoryImpl(notificationDao)
+    fun provideNotificationInfoRepository(notificationDao: NotificationDao, pref: Preference): NotificationInfoRepository {
+        return NotificationInfoRepositoryImpl(notificationDao, pref)
     }
 
     @Provides

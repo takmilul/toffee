@@ -137,7 +137,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         builder.setContentIntent(pendingIntent)
         showNotification(builder.build())
 
-        val notificationInfo = NotificationInfo(null, "DefaultNotificationType", "DefaultNotificationId", 0, 0, title, content, null, null, null, null, null, null)
+        val notificationInfo = NotificationInfo(null, 0,  "DefaultNotificationType", "DefaultNotificationId", 0, 0, title, content, null, null, null, null, null, null)
         notificationInfoRepository.insert(notificationInfo)
     }
 
@@ -146,6 +146,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         val content = data["notificationText"]
         val resourceUrl = data["resourceUrl"]
         val thumbnailUrl = data["thumbnail"]
+        val customerId: Int = data["customerId"]?.toInt() ?: 0
 
         val sound =
             Uri.parse("android.resource://" + packageName + "/" + R.raw.velbox_notificaiton)
@@ -184,7 +185,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
 
         showNotification(builder.build())
 
-        val notificationInfo = NotificationInfo(null, data["notificationType"], data["notificationId"], 0, 0, title, content, null, thumbnailUrl, null, resourceUrl)
+        val notificationInfo = NotificationInfo(null, customerId, data["notificationType"], data["notificationId"], 0, 0, title, content, null, thumbnailUrl, null, resourceUrl)
         notificationInfoRepository.insert(notificationInfo)
     }
 
@@ -198,7 +199,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         val watchLaterUrl = data["watchLaterUrl"]
         val button = data["button"]
         val pubSubId = data["notificationId"]
-
+        val customerId: Int = data["customerId"]?.toInt() ?: 0
 
         val drawable = try {
             UtilsKt.coilExecuteGet(this, imageUrl)
@@ -301,7 +302,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         }
         showNotification(builder.build())
         
-        val notificationInfo = NotificationInfo(null, data["notificationType"], pubSubId, 0, 0, title, content, null, thumbnailUrl, imageUrl, resourceUrl, playNowUrl, watchLaterUrl)
+        val notificationInfo = NotificationInfo(null, customerId, data["notificationType"], pubSubId, 0, 0, title, content, null, thumbnailUrl, imageUrl, resourceUrl, playNowUrl, watchLaterUrl)
         notificationInfoRepository.insert(notificationInfo)
     }
 
@@ -315,6 +316,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         val button = data["button"]
         val pubSubId = data["notificationId"]
         val sound = Uri.parse("android.resource://" + packageName + "/" + R.raw.velbox_notificaiton)
+        val customerId: Int = data["customerId"]?.toInt() ?: 0
 
         val intent = Intent("com.toffee.notification_receiver")
         intent.setClass(this, NotificationActionReceiver::class.java)
@@ -391,7 +393,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         }
         showNotification(builder.build())
         
-        val notificationInfo = NotificationInfo(null, data["notificationType"], pubSubId, 0, 0, title, content, null, thumbnailUrl, null, resourceUrl, 
+        val notificationInfo = NotificationInfo(null, customerId, data["notificationType"], pubSubId, 0, 0, title, content, null, thumbnailUrl, null, resourceUrl,
             playNowUrl, watchLaterUrl)
         notificationInfoRepository.insert(notificationInfo)
     }

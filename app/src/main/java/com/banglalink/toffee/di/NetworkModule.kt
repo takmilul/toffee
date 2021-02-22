@@ -8,6 +8,7 @@ import com.banglalink.toffee.data.network.retrofit.AuthApi
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.network.retrofit.DbApi
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
+import com.banglalink.toffee.model.TOFFEE_BASE_URL
 import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.facebook.FacebookSdk
 import dagger.Module
@@ -62,7 +63,7 @@ object NetworkModule {
     @Singleton
     @DefaultCache
     fun getCacheIterator(): Cache{
-        val cacheSize = 10 * 1024 * 1024 // 10 MB
+        val cacheSize = 25 * 1024 * 1024 // 25 MB
         return Cache(FacebookSdk.getCacheDir(), cacheSize.toLong())
     }
     
@@ -72,7 +73,7 @@ object NetworkModule {
         return Retrofit.Builder()
             .client(httpClient)
 //            .baseUrl("https://mapi.toffeelive.com/")
-            .baseUrl("https://ugc-staging.toffeelive.com/")
+            .baseUrl(TOFFEE_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

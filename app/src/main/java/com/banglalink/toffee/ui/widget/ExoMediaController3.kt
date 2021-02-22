@@ -31,6 +31,7 @@ import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.UtilsKt
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.Player.*
 import com.google.android.exoplayer2.Player.EventListener
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.video.VideoListener
@@ -256,8 +257,12 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
                 binding.duration.visibility = VISIBLE
                 binding.timeSeperator.visibility = VISIBLE
                 binding.currentTime.visibility = VISIBLE
+                nextButtonVisibility(simpleExoPlayer?.playbackState == STATE_READY)
+                prevButtonVisibility(simpleExoPlayer?.playbackState == STATE_READY)
             }
             else {
+                nextButtonVisibility(false)
+                prevButtonVisibility(false)
                 binding.progress.isEnabled = false
                 binding.progress.visibility = GONE
                 binding.duration.visibility = INVISIBLE
