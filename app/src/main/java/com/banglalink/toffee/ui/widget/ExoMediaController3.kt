@@ -321,14 +321,14 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     }
 
     override fun onViewMinimize() {
-        binding.root.keepScreenOn = true
+//        binding.root.keepScreenOn = true
         isMinimize = true
         binding.textureView.setOnClickListener(null)
         hideControls(0)
     }
 
     override fun onViewMaximize() {
-        binding.root.keepScreenOn = true
+//        binding.root.keepScreenOn = true
         isMinimize = false
         binding.textureView.setOnClickListener(this)
         if (simpleExoPlayer?.isPlaying == true) {
@@ -340,7 +340,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     }
 
     override fun onViewDestroy() {
-        binding.root.keepScreenOn = false
+//        binding.root.keepScreenOn = false
         simpleExoPlayer?.stop()
     }
 

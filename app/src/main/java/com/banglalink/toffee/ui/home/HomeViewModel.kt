@@ -44,13 +44,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-
 class HomeViewModel @ViewModelInject constructor(
     @AppCoroutineScope private val appScope: CoroutineScope,
     private val profileApi: GetProfile,
     private val reactionDao: ReactionDao,
     private val myChannelDetailApiService: MyChannelGetDetailService,
-    private val shareLogApiService: SendShareLogApiService,
+    private val sendShareCountEvent: SendShareCountEvent,
     private val sendViewContentEvent: SendViewContentEvent,
     @ApplicationContext private val mContext: Context,
     private val tvChannelRepo: TVChannelRepository,
@@ -187,11 +186,7 @@ class HomeViewModel @ViewModelInject constructor(
     
     fun sendShareLog(channelInfo: ChannelInfo){
         viewModelScope.launch { 
-            val result = resultFromResponse { shareLogApiService.execute(channelInfo.id.toInt(), channelInfo.video_share_url) }
-            when(result){
-                is Success -> Log.e(TAG, "sendShareLog: ${result.data.message}")
-                is Resource.Failure -> Log.e(TAG, "sendShareLog: ${result.error.msg}")
-            }
+            sendShareCountEvent.execute(channelInfo)
         }
     }
 
