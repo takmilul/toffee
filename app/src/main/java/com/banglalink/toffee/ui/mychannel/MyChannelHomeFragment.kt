@@ -244,8 +244,14 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                         binding.isSubscribed = isSubscribed
                         mPref.channelId = channelId
                         if (isOwner == 1) {
-                            myChannelDetail?.profileUrl?.let { channelLogo -> mPref.channelLogo = channelLogo }
-                            myChannelDetail?.channelName?.let { channelName -> mPref.channelName = channelName }
+                            myChannelDetail?.let { detail ->
+                                if(!detail.profileUrl.isNullOrBlank()){
+                                    mPref.channelLogo = detail.profileUrl
+                                }
+                                if (!detail.channelName.isNullOrBlank()) {
+                                    mPref.channelName = detail.channelName
+                                }
+                            }
                         }
                         loadBody()
                     }

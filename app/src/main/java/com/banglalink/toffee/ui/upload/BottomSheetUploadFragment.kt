@@ -100,16 +100,20 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment(), TextWatcher {
     }
 
     private fun showTermsAndConditionDialog() {
-        val action = BottomSheetUploadFragmentDirections.actionBottomSheetUploadFragmentToTermsConditionFragment()
-        findNavController().navigate(action)
+        if (findNavController().currentDestination?.id != R.id.termsConditionFragment) {
+            val action = BottomSheetUploadFragmentDirections.actionBottomSheetUploadFragmentToTermsConditionFragment()
+            findNavController().navigate(action)
+        }
     }
 
     private fun showImagePickerDialog() {
-        val action = BottomSheetUploadFragmentDirections.actionBottomSheetUploadFragmentToThumbnailSelectionMethodFragment(
-            "Update Your Channel Logo",
-            true
-        )
-        findNavController().navigate(action)
+        if (findNavController().currentDestination?.id != R.id.thumbnailSelectionMethodFragment) {
+            val action = BottomSheetUploadFragmentDirections.actionBottomSheetUploadFragmentToThumbnailSelectionMethodFragment(
+                "Update Your Channel Logo",
+                true
+            )
+            findNavController().navigate(action)
+        }
     }
 
     private fun saveChannelInfo() {
@@ -141,8 +145,12 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment(), TextWatcher {
         observe(viewModel.editChannelResult) {
             when (it) {
                 is Resource.Success -> {
-                    mPref.channelLogo = channelLogoUrl
-                    mPref.channelName = channelName
+                    if (channelLogoUrl.isNotBlank()) {
+                        mPref.channelLogo = channelLogoUrl
+                    }
+                    if (channelName.isNotBlank()) {
+                        mPref.channelName = channelName
+                    }
                     progressDialog.dismiss()
                     dialog?.hide()
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
