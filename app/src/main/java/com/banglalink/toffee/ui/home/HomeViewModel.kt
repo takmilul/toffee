@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.home
 
 import android.content.Context
-import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.GetProfile
 import com.banglalink.toffee.apiservice.MyChannelGetDetailService
-import com.banglalink.toffee.apiservice.SendShareLogApiService
 import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.data.network.retrofit.DbApi
@@ -41,7 +39,6 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class HomeViewModel @ViewModelInject constructor(
@@ -176,9 +173,13 @@ class HomeViewModel @ViewModelInject constructor(
                 val myChannelDetail = result.data.myChannelDetail
                 myChannelDetail?.let {
                     mPref.isChannelDetailChecked = true
-                    mPref.channelId = myChannelDetail.id.toInt()
-                    myChannelDetail.profileUrl?.let { mPref.channelLogo = it }
-                    myChannelDetail.channelName?.let { mPref.channelName = it }
+                    mPref.channelId = it.id.toInt()
+                    if(!it.profileUrl.isNullOrBlank()){
+                        mPref.channelLogo = it.profileUrl
+                    }
+                    if (!it.channelName.isNullOrBlank()) {
+                        mPref.channelName = it.channelName
+                    }
                 }
             }
         }
