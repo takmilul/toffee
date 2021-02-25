@@ -35,12 +35,12 @@ class RecentChannelsFragment: BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val _10dp = Utils.dpToPx(10)
+        val channelsPadding = resources.getDimension(R.dimen.tv_channels_padding)
         val channelItemWidth = resources.getDimension(R.dimen.channel_width)
-        val horizontalGap = (UtilsKt.getScreenWidth() - (_10dp * 2) - (3 * channelItemWidth)) / 6
+        val horizontalGap = (UtilsKt.getScreenWidth() - (channelsPadding * 2) - (3 * channelItemWidth)) / 6
 
         val recentsMargin = resources.getDimension(R.dimen.recent_channels_margin)
-        val leftPadding = horizontalGap - recentsMargin + _10dp
+        val leftPadding = horizontalGap - recentsMargin + channelsPadding
 
         mAdapter = RecentChannelsAdapter(object : BaseListItemCallback<TVChannelItem> {
             override fun onItemClicked(item: TVChannelItem) {
