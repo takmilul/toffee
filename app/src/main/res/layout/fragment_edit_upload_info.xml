@@ -79,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:text="Title"
+                android:text="Title*"
                 android:fontFamily="@font/roboto_regular"
                 android:textSize="@dimen/default_text_size"
                 android:textColor="@color/cardTitleColor"
@@ -106,17 +106,33 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView15" />
 
             <TextView
+                android:id="@+id/error_title_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="*Title required"
+                android:textColor="@color/pink_to_accent_color"
+                android:textSize="12sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@+id/upload_title"
+                app:layout_constraintHorizontal_bias="0.05"
+                app:layout_constraintStart_toStartOf="@+id/upload_title"
+                app:layout_constraintTop_toBottomOf="@+id/upload_title"
+                tools:visibility="visible" />
+
+
+            <TextView
                 android:id="@+id/textView17"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:text="Description"
+                android:text="Description*"
                 android:fontFamily="@font/roboto_regular"
                 android:textSize="@dimen/default_text_size"
                 android:textColor="@color/cardTitleColor"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/upload_title" />
+                app:layout_constraintTop_toBottomOf="@+id/error_title_tv" />
 
             <com.banglalink.toffee.ui.widget.HashTagEditText
                 android:id="@+id/upload_description"
@@ -140,6 +156,21 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView17" />
 
+            <TextView
+                android:id="@+id/error_description_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="*Description required"
+                android:textColor="@color/pink_to_accent_color"
+                android:textSize="12sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@+id/upload_description"
+                app:layout_constraintHorizontal_bias="0.05"
+                app:layout_constraintStart_toStartOf="@+id/upload_description"
+                app:layout_constraintTop_toBottomOf="@+id/upload_description"
+                tools:visibility="visible" />
+
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline9"
                 android:layout_width="wrap_content"
@@ -158,7 +189,7 @@
                 android:textSize="@dimen/default_text_size"
                 android:textColor="@color/cardTitleColor"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/upload_description" />
+                app:layout_constraintTop_toBottomOf="@+id/error_description_tv" />
 
             <com.pchmn.materialchips.ChipsInput
                 android:id="@+id/upload_tags"
@@ -182,6 +213,23 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView19"
                 app:maxRows="2" />
+
+            <TextView
+                android:id="@+id/error_tags_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="*Tag is not valid"
+                android:textColor="@color/pink_to_accent_color"
+                android:textSize="12sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@+id/upload_tags"
+                app:layout_constraintHorizontal_bias="0.05"
+                app:layout_constraintStart_toStartOf="@+id/upload_tags"
+                app:layout_constraintTop_toBottomOf="@+id/upload_tags"
+                tools:visibility="visible" />
+
+
 
             <!--            <com.banglalink.toffee.ui.widget.ChipEditText-->
             <!--                android:id="@+id/upload_tags"-->
@@ -211,7 +259,7 @@
                 android:textSize="@dimen/default_text_size"
                 android:textColor="@color/cardTitleColor"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/upload_tags" />
+                app:layout_constraintTop_toBottomOf="@+id/error_tags_tv" />
 
             <TextView
                 android:id="@+id/textView21"
@@ -280,7 +328,7 @@
                 android:textSize="@dimen/default_text_size"
                 android:textColor="@color/cardTitleColor"
                 app:layout_constraintStart_toStartOf="@+id/guideline9"
-                app:layout_constraintTop_toBottomOf="@+id/upload_tags" />
+                app:layout_constraintTop_toBottomOf="@+id/error_tags_tv" />
 
             <RelativeLayout
                 android:id="@+id/subCategorySpinnerWrap"

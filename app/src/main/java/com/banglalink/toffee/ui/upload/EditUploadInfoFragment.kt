@@ -23,9 +23,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.FragmentEditUploadInfoBinding
 import com.banglalink.toffee.di.AppCoroutineScope
-import com.banglalink.toffee.extension.loadBase64
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.model.UgcSubCategory
@@ -326,10 +324,18 @@ class EditUploadInfoFragment: BaseFragment() {
         val description = binding.uploadDescription.text.toString().trim()
         val orientation = viewModel.orientationData.value ?: 1
         if(title.isBlank()){
-            context?.showToast("Missing title field", Toast.LENGTH_SHORT)
+           // context?.showToast("Missing title field", Toast.LENGTH_SHORT)
+            binding.uploadTitle.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
+            binding.uploadDescription.setBackgroundResource(R.drawable.multiline_input_text_bg)
+            binding.errorTitleTv.show()
+            binding.errorDescriptionTv.hide()
             return
         }else if(description.isBlank()){
-            context?.showToast("Missing description field",Toast.LENGTH_SHORT)
+           // context?.showToast("Missing description field",Toast.LENGTH_SHORT)
+               binding.uploadDescription.setBackgroundResource(R.drawable.error_multiline_input_text_bg)
+               binding.uploadTitle.setBackgroundResource(R.drawable.single_line_input_text_bg)
+               binding.errorDescriptionTv.show()
+               binding.errorTitleTv.hide()
             return
         }else if (viewModel.thumbnailData.value.isNullOrBlank()){
             context?.showToast("Missing thumbnail field")

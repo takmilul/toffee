@@ -112,6 +112,22 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView15" />
 
+
+                <TextView
+                    android:id="@+id/error_channel_name_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="*Channel name required"
+                    android:textColor="@color/pink_to_accent_color"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/channelName"
+                    app:layout_constraintHorizontal_bias="0.05"
+                    app:layout_constraintStart_toStartOf="@+id/channelName"
+                    app:layout_constraintTop_toBottomOf="@+id/channelName"
+                    tools:visibility="visible" />
+
                 <TextView
                     android:id="@+id/textView17"
                     android:layout_width="wrap_content"
@@ -123,7 +139,7 @@
                     android:textSize="@dimen/default_text_size"
                     android:textColor="@color/cardTitleColor"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/channelName" />
+                    app:layout_constraintTop_toBottomOf="@+id/error_channel_name_tv" />
 
                 <com.banglalink.toffee.ui.widget.HashTagEditText
                     android:id="@+id/description"
@@ -146,6 +162,21 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView17" />
 
+                <TextView
+                    android:id="@+id/error_description_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="*Channel name is not valid"
+                    android:textColor="@color/pink_to_accent_color"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/description"
+                    app:layout_constraintHorizontal_bias="0.05"
+                    app:layout_constraintStart_toStartOf="@+id/description"
+                    app:layout_constraintTop_toBottomOf="@+id/description"
+                    tools:visibility="visible" />
+
                 <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/guideline9"
                     android:layout_width="wrap_content"
@@ -164,7 +195,7 @@
                     android:textSize="@dimen/default_text_size"
                     android:textColor="@color/cardTitleColor"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/description" />
+                    app:layout_constraintTop_toBottomOf="@+id/error_description_tv" />
 
                 <TextView
                     android:id="@+id/textView21"
