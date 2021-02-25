@@ -119,6 +119,8 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
     private var isScrollCaptured = false
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+        if(dragView.isFullScreenPortrait()) return false
+
         val bottomHit = isBottomHit(ev)
         when(ev.actionMasked) {
             MotionEvent.ACTION_DOWN-> {
@@ -180,6 +182,8 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
 
     var duration: Long = 0
     override fun onTouchEvent(ev: MotionEvent): Boolean {
+        if(dragView.isFullScreenPortrait()) return false
+        
         try {
             if(isBottomHit(ev) && (isMinimize() || isMaximized()) && !isHorizontalDragged()) {
 //                if(ev.actionMasked == MotionEvent.ACTION_UP) Log.e("SCROLL", "ACTION_UP2")

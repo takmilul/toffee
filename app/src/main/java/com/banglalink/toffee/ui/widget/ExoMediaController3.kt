@@ -74,6 +74,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     private val screenWidth = UtilsKt.getScreenWidth()
     private val screenHeight = UtilsKt.getScreenHeight()
     var isVideoPortrait = false
+    var channelType: String? = null
 
     @Inject
     lateinit var mPref: Preference
@@ -628,6 +629,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         val channelInfo = mediaItem?.playbackProperties?.tag
         if(channelInfo is ChannelInfo) {
             isVideoPortrait = channelInfo.isHorizontal != 1
+            channelType = channelInfo.type
 
             if(isVideoPortrait && isFullScreenPortrait()) {
                 onPlayerControllerChangedListeners.forEach {
@@ -710,7 +712,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
             return if (isVideoPortrait && !isFullScreenPortrait()) {
                 SCALE_TYPE_CENTER_CROP
             } else {
-                if (mPref.keepVideoAspectRatio) {
+                if (mPref.keepVideoAspectRatio && isVideoPortrait) {// || channelType != "LIVE")) {
                     SCALE_TYPE_ADJUST_RATIO
                 } else {
                     SCALE_TYPE_SCALE_TO_FIT

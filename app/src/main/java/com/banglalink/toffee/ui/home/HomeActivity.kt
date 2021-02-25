@@ -418,6 +418,11 @@ class HomeActivity :
         binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
         binding.sideNavigation.setupWithNavController(navController)
         binding.tabNavigator.setupWithNavController(navController)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.bottomAppBar) { _, insets ->
+            insets.consumeSystemWindowInsets()
+        }
+
         binding.sideNavigation.setNavigationItemSelectedListener {
             drawerHelper.handleMenuItemById(it)
         }
@@ -537,7 +542,7 @@ class HomeActivity :
         binding.playerView.onFullScreen(state)
 //        toggleNavigations(state)
         binding.playerView.resizeView(calculateScreenWidth(), state)
-        Utils.setFullScreen(this, state)
+        Utils.setFullScreen(this, state, binding.playerView.isVideoPortrait)// || binding.playerView.channelType != "LIVE")
     }
 
     private fun toggleNavigations(state: Boolean) {

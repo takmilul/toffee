@@ -316,7 +316,7 @@ class Preference(private val pref: SharedPreferences, private val context: Conte
         }
 
     var keepVideoAspectRatio: Boolean
-        get() = pref.getBoolean(PREF_KEEP_ASPECT_RATIO, false)
+        get() = pref.getBoolean(PREF_KEEP_ASPECT_RATIO, true)
         set(value) = pref.edit{ putBoolean(PREF_KEEP_ASPECT_RATIO, value) }
 
     var uploadStatus: Int

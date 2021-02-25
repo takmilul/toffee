@@ -189,12 +189,12 @@ public class Utils {
         return "";
     }
 
-    public static void setFullScreen(AppCompatActivity activity, boolean visible) {
+    public static void setFullScreen(AppCompatActivity activity, boolean visible, boolean portrait) {
         int uiOptions = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                 // Set the content to appear under the system bars so that the
                 // content doesn't resize when the system bars hide and show.
-//                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 // Hide the nav bar and status bar
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
@@ -202,9 +202,19 @@ public class Utils {
 
         if (!visible) {
 //            activity.getSupportActionBar().show();
+            if(portrait) {
+                WindowManager.LayoutParams windowLayoutParams = activity.getWindow().getAttributes();
+                windowLayoutParams.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT;
+                activity.getWindow().setAttributes(windowLayoutParams);
+            }
             activity.getWindow().getDecorView().setSystemUiVisibility(0);
         } else {
 //            activity.getSupportActionBar().hide();
+            if(portrait) {
+                WindowManager.LayoutParams windowLayoutParams = activity.getWindow().getAttributes();
+                windowLayoutParams.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+                activity.getWindow().setAttributes(windowLayoutParams);
+            }
             activity.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
         }
     }
