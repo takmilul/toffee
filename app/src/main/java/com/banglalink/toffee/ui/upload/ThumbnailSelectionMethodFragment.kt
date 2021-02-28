@@ -11,6 +11,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
@@ -35,39 +36,8 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
     private var alertDialog: AlertDialog? = null
 
     companion object {
-        private const val REQUEST_IMAGE = 0x225
-        private const val REQUEST_IMAGE_FROM_FILE = 0x226
         const val THUMB_URI = "thumb-uri"
-        const val TITLE_ARG = "thumb_arg_key"
-
-        fun newInstance(): ThumbnailSelectionMethodFragment {
-            return ThumbnailSelectionMethodFragment()
-        }
     }
-
-    /*override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_thumb_selection_method, container, false)
-    }*/
-
-    /*override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        
-        title = ThumbnailSelectionMethodFragmentArgs.fromBundle(requireArguments()).title
-        isProfileImage = ThumbnailSelectionMethodFragmentArgs.fromBundle(requireArguments()).isProfileImage
-        heading.text = title
-
-        open_gallery_button.setOnClickListener {
-            checkFileSystemPermission()
-        }
-
-        open_camera_button.setOnClickListener {
-            checkCameraPermissions()
-        }
-    }*/
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         title = ThumbnailSelectionMethodFragmentArgs.fromBundle(requireArguments()).title
@@ -98,12 +68,7 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
         lifecycleScope.launch {
             try{
                 if(askPermission(Manifest.permission.READ_EXTERNAL_STORAGE).isAccepted) {
-                    startActivityForResult(
-                        Intent(
-                            Intent.ACTION_PICK,
-                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI),
-                        REQUEST_IMAGE_FROM_FILE
-                    )
+                    galleryResultLauncher.launch(Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI))
                 }
             }
             catch(e: PermissionException) {
@@ -143,18 +108,16 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
             imageUri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.provider", imageFile)
             ToffeeAnalytics.logBreadCrumb("Thumbnail uri set")
             imageIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
-            startActivityForResult(imageIntent, REQUEST_IMAGE)
+            cameraResultLauncher.launch(imageIntent)
             ToffeeAnalytics.logBreadCrumb("Camera activity started")
         }
     }
 
     @Throws(IOException::class)
     fun createImageFile(): File {
-
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val imageFileName = "IMAGE_" + timeStamp + "_"
         val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-
         return File.createTempFile(imageFileName, ".jpg", storageDir)
     }
 
@@ -177,31 +140,35 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
         }
 
         uCrop = uCrop.withOptions(options)
-
         uCrop.start(requireContext(), this)
         ToffeeAnalytics.logBreadCrumb("Crop started")
     }
 
+    private val galleryResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        if (it.resultCode == Activity.RESULT_OK && it.data != null && it.data?.data != null) {
+            startCrop(it.data!!.data!!)
+        } else {
+            ToffeeAnalytics.logBreadCrumb("Camera/video picker returned without any data")
+        }
+    }
+
+    private val cameraResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        if (it.resultCode == Activity.RESULT_OK && imageUri != null) {
+            ToffeeAnalytics.logBreadCrumb("Got result from camera")
+            startCrop(imageUri!!)
+        } else {
+            ToffeeAnalytics.logBreadCrumb("Camera/video capture result not returned")
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if(resultCode == Activity.RESULT_OK){
-            if(requestCode == REQUEST_IMAGE) {
-                ToffeeAnalytics.logBreadCrumb("Got result from camera")
-                imageUri?.let {
-                    startCrop(it)
-                }
-            }
-            else if(requestCode == REQUEST_IMAGE_FROM_FILE) {
-                data?.data?.let {
-                    startCrop(it)
-                }
-            }
-            else if(requestCode == UCrop.REQUEST_CROP && data != null) {
+            if(requestCode == UCrop.REQUEST_CROP && data != null) {
                 val uri = UCrop.getOutput(data)
                 if(uri != null) {
                     findNavController().let {
                         it.previousBackStackEntry?.savedStateHandle?.set(THUMB_URI, uri.toString())
                         alertDialog?.dismiss()
-//                        it.popBackStack()
                     }
                 }
             }

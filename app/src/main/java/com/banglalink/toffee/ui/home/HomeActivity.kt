@@ -218,6 +218,12 @@ class HomeActivity :
             }
         }
 
+        observe(mPref.reactionStatusDbUrlLiveData){
+            if(it.isNotEmpty()){
+                viewModel.populateReactionStatusDb("url")
+            }
+        }
+        
 //        observe(mPref.reactionDbUrlLiveData){
 //        if(!mPref.hasReactionDb){
 //            viewModel.populateReactionDb("url")

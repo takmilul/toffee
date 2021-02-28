@@ -1,22 +1,14 @@
 package com.banglalink.toffee.usecase
 
 import android.content.Context
-import android.os.Environment
-import android.util.Log
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.data.database.dao.ReactionDao
-import com.banglalink.toffee.data.database.entities.ReactionInfo
 import com.banglalink.toffee.data.database.entities.ReactionStatusItem
 import com.banglalink.toffee.data.network.retrofit.DbApi
 import com.banglalink.toffee.data.repository.ReactionStatusRepository
-import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.model.ReactionStatus
 import com.google.common.io.Files
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.io.FileOutputStream
-import java.io.InputStream
 import java.nio.ByteBuffer
 import java.util.zip.CRC32
 
@@ -52,7 +44,7 @@ class DownloadReactionStatusDb(
 
         reactionList.clear()
         while (byteBuffer.remaining() > 0) {
-            val contentId = byteBuffer.long
+            val contentId = byteBuffer.int
             val reactionType = byteBuffer.int
             val reactionCount = byteBuffer.long
             reactionList.add(ReactionStatusItem(contentId, reactionType, reactionCount))

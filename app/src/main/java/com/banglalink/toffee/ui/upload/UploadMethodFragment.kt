@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
@@ -38,18 +39,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class UploadMethodFragment : DialogFragment() {
 
-    @Inject
-    lateinit var mUploadInfoRepository: UploadInfoRepository
-
     private var videoUri: Uri? = null
-
-    companion object {
-        private const val REQUEST_CAPTURE_VIDEO = 0x220
-        private const val REQUEST_PICK_VIDEO = 0x230
-        fun newInstance(): UploadMethodFragment {
-            return UploadMethodFragment()
-        }
-    }
+    @Inject lateinit var mUploadInfoRepository: UploadInfoRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,35 +65,21 @@ class UploadMethodFragment : DialogFragment() {
         view.setOnClickListener {
             findNavController().popBackStack()
         }
-
-        upload_method_card.setOnClickListener {
-            
-        }
-
-        learn_more_button.setOnClickListener {
-
-        }
-
         open_camera_button.setOnClickListener {
             checkCameraPermissions()
         }
-
         open_gallery_button.setOnClickListener {
             checkFileSystemPermission()
         }
+        upload_method_card.setOnClickListener { }
+        learn_more_button.setOnClickListener { }
     }
 
     private fun checkFileSystemPermission() {
         lifecycleScope.launch {
             try {
                 if (askPermission(Manifest.permission.READ_EXTERNAL_STORAGE).isAccepted) {
-                    startActivityForResult(
-                        Intent(
-                            Intent.ACTION_PICK,
-                            MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-                        ).setType("video/mp4"),
-                        REQUEST_PICK_VIDEO
-                    )
+                    galleryResultLauncher.launch(Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI).setType("video/mp4"),)
                 }
             }
             catch (e: PermissionException) {
@@ -127,11 +104,10 @@ class UploadMethodFragment : DialogFragment() {
     }
 
     private var videoFile: File? = null
+    
     private fun openCameraIntent() {
         val videoIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
         if (videoIntent.resolveActivity(requireActivity().packageManager) != null) {
-
-//            val videoFile: File?
             try {
                 videoFile = createVideoFile()
                 ToffeeAnalytics.logBreadCrumb("Video file created")
@@ -148,55 +124,37 @@ class UploadMethodFragment : DialogFragment() {
             )
             ToffeeAnalytics.logBreadCrumb("Video uri set")
             videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, videoUri)
-            startActivityForResult(videoIntent, REQUEST_CAPTURE_VIDEO)
+            cameraResultLauncher.launch(videoIntent)
             ToffeeAnalytics.logBreadCrumb("Camera activity started")
-
         }
     }
 
     @Throws(IOException::class)
     fun createVideoFile(): File {
-
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val videoFileName = "VIDEO_" + timeStamp + "_"
         val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_MOVIES)
-
         return File.createTempFile(videoFileName, ".mp4", storageDir)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        when (requestCode) {
-            REQUEST_PICK_VIDEO -> {
-                if (resultCode == Activity.RESULT_OK && data != null && data.data != null) {
-//                    openEditUpload(data.dataString!!)
-                    checkAndOpenUpload(data.data!!)
-                }
-                else {
-                    ToffeeAnalytics.logBreadCrumb("Camera/video picker returned without any data")
-                }
-            }
-            REQUEST_CAPTURE_VIDEO -> {
-                if (resultCode == Activity.RESULT_OK && videoFile != null) {
-                    println("CaptureAbsolutePath${videoFile!!.absolutePath}")
-                    println("CapturePath${videoFile!!.path}")
-                    openEditUpload(videoFile!!.absolutePath)
-                }
-                else {
-                    ToffeeAnalytics.logBreadCrumb("Camera/video capture result not returned")
-                }
-            }
-        }
-        /*if(resultCode == Activity.RESULT_OK
-            && requestCode == REQUEST_CAPTURE_VIDEO
-            && data != null) {
-            data.dataString?.let {
-                uploadUri(it)
-            }
+    private val galleryResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        if (it.resultCode == Activity.RESULT_OK && it.data != null && it.data?.data != null) {
+            checkAndOpenUpload(it.data!!.data!!)
         } else {
             ToffeeAnalytics.logBreadCrumb("Camera/video picker returned without any data")
-        }*/
+        }
     }
-
+    
+    private val cameraResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        if (it.resultCode == Activity.RESULT_OK && videoFile != null) {
+            println("CaptureAbsolutePath${videoFile!!.absolutePath}")
+            println("CapturePath${videoFile!!.path}")
+            openEditUpload(videoFile!!.absolutePath)
+        } else {
+            ToffeeAnalytics.logBreadCrumb("Camera/video capture result not returned")
+        }
+    }
+    
     private fun checkAndOpenUpload(videoUri: Uri) {
         lifecycleScope.launch {
             val contentType = UtilsKt.contentTypeFromContentUri(requireContext(), videoUri)
