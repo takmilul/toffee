@@ -18,8 +18,7 @@ import coil.request.CachePolicy
 import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentMyChannelVideosEditBinding
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.UgcSubCategory
@@ -182,15 +181,36 @@ class MyChannelVideosEditFragment : BaseFragment() {
         
         val title = binding.uploadTitle.text.toString().trim()
         val description = binding.uploadDescription.text.toString().trim()
-        if (title.isBlank() || description.isBlank()) {
+        if (title.isBlank()) {
             progressDialog.dismiss()
-            context?.showToast("Missing required field", Toast.LENGTH_SHORT)
-            return
+         //   context?.showToast("Missing required field", Toast.LENGTH_SHORT)
+            binding.uploadTitle.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
+            binding.errorTitleTv.show()
+
         }
+        else {
+            progressDialog.dismiss()
+            //   context?.showToast("Missing required field", Toast.LENGTH_SHORT)
+            binding.uploadTitle.setBackgroundResource(R.drawable.single_line_input_text_bg)
+            binding.errorTitleTv.hide()
+        }
+         if(description.isBlank())
+        {
+            progressDialog.dismiss()
+            binding.uploadDescription.setBackgroundResource(R.drawable.error_multiline_input_text_bg)
+            binding.errorDescriptionTv.show()
+        }
+        else{
+             progressDialog.dismiss()
+             binding.uploadDescription.setBackgroundResource(R.drawable.multiline_input_text_bg)
+             binding.errorDescriptionTv.hide()
+        }
+
+        if (!(title.isBlank() or description.isBlank())) {
         val tags = binding.uploadTags.selectedChipList.joinToString(" | ") { it.label }
         val categoryId = viewModel.categories.value?.getOrNull(viewModel.categoryPosition.value ?: 0)?.id ?: 1
         val subCategoryId = viewModel.subCategories.value?.getOrNull(viewModel.subCategoryPosition.value?.minus(1) ?: 0)?.id ?: 0
-        viewModel.saveUploadInfo(channelInfo?.id?.toInt()?:0, "",tags, categoryId, subCategoryId.toInt())
+        viewModel.saveUploadInfo(channelInfo?.id?.toInt()?:0, "",tags, categoryId, subCategoryId.toInt())}
     }
 
     private fun observeEditResponse() {

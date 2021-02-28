@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.content.FileProvider
@@ -18,9 +19,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.EditProfileViewModel
 import com.banglalink.toffee.databinding.ActivityEditProfileBinding
-import com.banglalink.toffee.extension.loadProfileImage
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.widget.VelBoxFieldTextWatcher
@@ -29,6 +28,7 @@ import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
 import com.yalantis.ucrop.UCrop
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.activity_edit_profile.*
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
@@ -88,6 +88,9 @@ class EditProfileActivity : BaseAppCompatActivity() {
             binding.profileEditLayout.profileIv.loadProfileImage(it)
         }
     }
+
+    fun String.isValidEmail() =
+        isNotEmpty() && android.util.Patterns.EMAIL_ADDRESS.matcher(this).matches()
 
     private fun checkCameraPermissions() {
         lifecycleScope.launch{
@@ -178,15 +181,33 @@ class EditProfileActivity : BaseAppCompatActivity() {
         println("VALIDATION: $isValid")
         Log.e("VALIDATION", "handleSaveButton: $isValid")
         return*/
-        
+
         progressDialog.show()
         binding.profileForm?.let {
-           
-            if (it.fullName.isBlank() && it.email.isBlank() && it.address.isBlank()){
+
+            if (it.fullName.isBlank()){
                 progressDialog.hide()
-                Toast.makeText(this, "All fields are blank", Toast.LENGTH_SHORT).show()
+               // Toast.makeText(this, "All fields are blank", Toast.LENGTH_SHORT).show()
+                binding.nameEt.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
+                binding.errorNameTv.show()
+
             }
-            else {
+            else{
+                binding.nameEt.setBackgroundResource(R.drawable.single_line_input_text_bg)
+                binding.errorNameTv.hide()
+            }
+            val validEmail=!it.email.isBlank() and !it.email.isValidEmail()
+             if(validEmail){
+                progressDialog.hide()
+                binding.emailEt.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
+                binding.errorEmailTv.show()
+            }
+            else{
+                 binding.emailEt.setBackgroundResource(R.drawable.single_line_input_text_bg)
+                 binding.errorEmailTv.hide()
+            }
+
+            if(!it.fullName.isBlank()) {
                 it.apply{
                     fullName = fullName.trim()
                     email = email.trim()

@@ -23,9 +23,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.FragmentEditUploadInfoBinding
 import com.banglalink.toffee.di.AppCoroutineScope
-import com.banglalink.toffee.extension.loadBase64
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.model.UgcSubCategory
@@ -326,35 +324,54 @@ class EditUploadInfoFragment: BaseFragment() {
         val description = binding.uploadDescription.text.toString().trim()
         val orientation = viewModel.orientationData.value ?: 1
         if(title.isBlank()){
-            context?.showToast("Missing title field", Toast.LENGTH_SHORT)
-            return
-        }else if(description.isBlank()){
-            context?.showToast("Missing description field",Toast.LENGTH_SHORT)
-            return
-        }else if (viewModel.thumbnailData.value.isNullOrBlank()){
+           // context?.showToast("Missing title field", Toast.LENGTH_SHORT)
+            binding.uploadTitle.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
+            binding.errorTitleTv.show()
+
+
+        }
+        else{
+            binding.uploadTitle.setBackgroundResource(R.drawable.single_line_input_text_bg)
+            binding.errorTitleTv.hide()
+        }
+         if(description.isBlank()){
+           // context?.showToast("Missing description field",Toast.LENGTH_SHORT)
+               binding.uploadDescription.setBackgroundResource(R.drawable.error_multiline_input_text_bg)
+               binding.errorDescriptionTv.show()
+
+        }
+         else{
+             binding.uploadDescription.setBackgroundResource(R.drawable.multiline_input_text_bg)
+             binding.errorDescriptionTv.hide()
+         }
+
+        if (viewModel.thumbnailData.value.isNullOrBlank()){
             context?.showToast("Missing thumbnail field")
             return
         }
-        
-        lifecycleScope.launch {
-            val categoryObj = binding.categorySpinner.selectedItem
-            val categoryId = if(categoryObj is UgcCategory) {
-                categoryObj.id
-            } else -1
 
-            val subCategoryObj = binding.subCategorySpinner.selectedItem
-            val subcategoryId = if(subCategoryObj is UgcSubCategory) {
-                subCategoryObj.id
-            } else -1
+      if (!(title.isBlank() or description.isBlank())) {
+          lifecycleScope.launch {
+              val categoryObj = binding.categorySpinner.selectedItem
+              val categoryId = if (categoryObj is UgcCategory) {
+                  categoryObj.id
+              } else -1
 
-            val tags = binding.uploadTags.selectedChipList.joinToString(" | ") { it.label }
+              val subCategoryObj = binding.subCategorySpinner.selectedItem
+              val subcategoryId = if (subCategoryObj is UgcSubCategory) {
+                  subCategoryObj.id
+              } else -1
 
-            viewModel.saveUploadInfo(
-                tags,
-                categoryId,
-                subcategoryId,
-                viewModel.durationData.value ?: 0L,
-                orientation)
-        }
+              val tags = binding.uploadTags.selectedChipList.joinToString(" | ") { it.label }
+
+              viewModel.saveUploadInfo(
+                  tags,
+                  categoryId,
+                  subcategoryId,
+                  viewModel.durationData.value ?: 0L,
+                  orientation
+              )
+          }
+      }
     }
 }
