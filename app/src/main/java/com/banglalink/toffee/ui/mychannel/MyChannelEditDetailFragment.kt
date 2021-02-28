@@ -44,6 +44,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     private var newProfileImageUrl: String? = null
     private lateinit var progressDialog: VelBoxProgressDialog
     private lateinit var binding: FragmentMyChannelEditDetailBinding
+    var isNullfield=false
 
     @Inject lateinit var viewModelAssistedFactory: MyChannelEditDetailViewModel.AssistedFactory
     private val viewModel by viewModels<MyChannelEditDetailViewModel> { MyChannelEditDetailViewModel.provideFactory(viewModelAssistedFactory, myChannelDetail) }
@@ -210,43 +211,102 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         catch (e: Exception) {
             profileImageBase64 = null
         }
+        binding.channelName.text.isNullOrBlank()
 
-        when {
-            binding.channelName.text.isNullOrBlank() -> {
-                binding.saveButton.isClickable = true
-                progressDialog.dismiss()
+        val isChannelLogoNotAvailable= myChannelDetail?.profileUrl.isNullOrEmpty() and profileImageBase64.isNullOrEmpty()
+        val isChannelNameBlank= binding.channelName.text.isNullOrBlank()
+        if(isChannelNameBlank)
+        {
+            binding.saveButton.isClickable = true
+            progressDialog.dismiss()
 //                Toast.makeText(requireContext(), "Please give a channel name", Toast.LENGTH_SHORT).show()
-                binding.channelName.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
-                binding.description.setBackgroundResource(R.drawable.multiline_input_text_bg)
-                binding.errorChannelNameTv.show()
-                binding.errorDescriptionTv.hide()
-            }
-            viewModel.selectedCategory == null -> {
-                binding.saveButton.isClickable = true
-                progressDialog.dismiss()
-                Toast.makeText(requireContext(), "Category is not selected", Toast.LENGTH_SHORT).show()
-            }
-            myChannelDetail?.profileUrl.isNullOrEmpty() and profileImageBase64.isNullOrEmpty()->{
-                Toast.makeText(requireContext(), "Profile photo required", Toast.LENGTH_SHORT).show()
-                return
-            }
-            else -> {
-                val ugcEditMyChannelRequest = MyChannelEditRequest(
-                    mPref.customerId,
-                    mPref.password,
-                    mPref.customerId,
-                    viewModel.selectedCategory?.id ?: 1,
-                    binding.channelName.text.toString().trim(),
-                    binding.description.text.toString().trim(),
-                    myChannelDetail?.bannerUrl ?: "NULL",
-                    bannerBase64 ?: "NULL",
-                    myChannelDetail?.profileUrl ?: "NULL",
-                    profileImageBase64 ?: "NULL"
-                )
-
-                viewModel.editChannel(ugcEditMyChannelRequest)
-            }
+            binding.channelName.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
+            //binding.description.setBackgroundResource(R.drawable.multiline_input_text_bg)
+            binding.errorChannelNameTv.show()
+            //   binding.errorDescriptionTv.hide()
         }
+        else{
+
+            binding.saveButton.isClickable = true
+            progressDialog.dismiss()
+//                Toast.makeText(requireContext(), "Please give a channel name", Toast.LENGTH_SHORT).show()
+            binding.channelName.setBackgroundResource(R.drawable.single_line_input_text_bg)
+            //binding.description.setBackgroundResource(R.drawable.multiline_input_text_bg)
+            binding.errorChannelNameTv.hide()
+        }
+        if (isChannelLogoNotAvailable)
+        {
+            binding.saveButton.isClickable = true
+            progressDialog.dismiss()
+            binding.errorThumTv.show()
+        }
+        else{
+            binding.saveButton.isClickable = true
+            progressDialog.dismiss()
+            binding.errorThumTv.hide()
+        }
+
+        if(!(isChannelNameBlank and !isChannelLogoNotAvailable)){
+            val ugcEditMyChannelRequest = MyChannelEditRequest(
+                mPref.customerId,
+                mPref.password,
+                mPref.customerId,
+                viewModel.selectedCategory?.id ?: 1,
+                binding.channelName.text.toString().trim(),
+                binding.description.text.toString().trim(),
+                myChannelDetail?.bannerUrl ?: "NULL",
+                bannerBase64 ?: "NULL",
+                myChannelDetail?.profileUrl ?: "NULL",
+                profileImageBase64 ?: "NULL"
+            )
+
+            viewModel.editChannel(ugcEditMyChannelRequest)
+        }
+
+//        when {
+//            binding.channelName.text.isNullOrBlank() -> {
+//                binding.saveButton.isClickable = true
+//                progressDialog.dismiss()
+////                Toast.makeText(requireContext(), "Please give a channel name", Toast.LENGTH_SHORT).show()
+//                binding.channelName.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
+//                //binding.description.setBackgroundResource(R.drawable.multiline_input_text_bg)
+//                binding.errorChannelNameTv.show()
+//             //   binding.errorDescriptionTv.hide()
+//            }
+//            viewModel.selectedCategory == null -> {
+//                binding.saveButton.isClickable = true
+//                progressDialog.dismiss()
+//                Toast.makeText(requireContext(), "Category is not selected", Toast.LENGTH_SHORT).show()
+//            }
+//            myChannelDetail?.profileUrl.isNullOrEmpty() and profileImageBase64.isNullOrEmpty()->{
+//                Toast.makeText(requireContext(), "Profile photo required", Toast.LENGTH_SHORT).show()
+//                return
+//            }
+//            binding.description.text.isNullOrBlank() -> {
+//                binding.saveButton.isClickable = true
+//                progressDialog.dismiss()
+////                Toast.makeText(requireContext(), "Please give a channel name", Toast.LENGTH_SHORT).show()
+//                binding.description.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
+//                binding.errorDescriptionTv.show()
+//
+//            }
+//            else -> {
+//                val ugcEditMyChannelRequest = MyChannelEditRequest(
+//                    mPref.customerId,
+//                    mPref.password,
+//                    mPref.customerId,
+//                    viewModel.selectedCategory?.id ?: 1,
+//                    binding.channelName.text.toString().trim(),
+//                    binding.description.text.toString().trim(),
+//                    myChannelDetail?.bannerUrl ?: "NULL",
+//                    bannerBase64 ?: "NULL",
+//                    myChannelDetail?.profileUrl ?: "NULL",
+//                    profileImageBase64 ?: "NULL"
+//                )
+//
+//                viewModel.editChannel(ugcEditMyChannelRequest)
+//            }
+//        }
     }
     
     /*private fun convertImageFileToBase64(imageFile: File): String {

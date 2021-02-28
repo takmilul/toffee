@@ -185,24 +185,32 @@ class MyChannelVideosEditFragment : BaseFragment() {
             progressDialog.dismiss()
          //   context?.showToast("Missing required field", Toast.LENGTH_SHORT)
             binding.uploadTitle.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
-            binding.uploadDescription.setBackgroundResource(R.drawable.multiline_input_text_bg)
             binding.errorTitleTv.show()
-            binding.errorDescriptionTv.hide()
-            return
+
         }
-        else if(description.isBlank())
+        else {
+            progressDialog.dismiss()
+            //   context?.showToast("Missing required field", Toast.LENGTH_SHORT)
+            binding.uploadTitle.setBackgroundResource(R.drawable.single_line_input_text_bg)
+            binding.errorTitleTv.hide()
+        }
+         if(description.isBlank())
         {
             progressDialog.dismiss()
             binding.uploadDescription.setBackgroundResource(R.drawable.error_multiline_input_text_bg)
-            binding.uploadTitle.setBackgroundResource(R.drawable.single_line_input_text_bg)
-            binding.errorTitleTv.hide()
             binding.errorDescriptionTv.show()
-            return
         }
+        else{
+             progressDialog.dismiss()
+             binding.uploadDescription.setBackgroundResource(R.drawable.multiline_input_text_bg)
+             binding.errorDescriptionTv.hide()
+        }
+
+        if (!(title.isBlank() or description.isBlank())) {
         val tags = binding.uploadTags.selectedChipList.joinToString(" | ") { it.label }
         val categoryId = viewModel.categories.value?.getOrNull(viewModel.categoryPosition.value ?: 0)?.id ?: 1
         val subCategoryId = viewModel.subCategories.value?.getOrNull(viewModel.subCategoryPosition.value?.minus(1) ?: 0)?.id ?: 0
-        viewModel.saveUploadInfo(channelInfo?.id?.toInt()?:0, "",tags, categoryId, subCategoryId.toInt())
+        viewModel.saveUploadInfo(channelInfo?.id?.toInt()?:0, "",tags, categoryId, subCategoryId.toInt())}
     }
 
     private fun observeEditResponse() {

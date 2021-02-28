@@ -83,6 +83,20 @@
 
 
                 <TextView
+                    android:id="@+id/error_thum_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="*Channel Logo is required"
+                    android:textColor="@color/pink_to_accent_color"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/profileImageView"
+                    app:layout_constraintStart_toStartOf="@+id/profileImageView"
+                    app:layout_constraintTop_toBottomOf="@+id/profileImageEditButton"
+                    tools:visibility="visible" />
+
+
+                <TextView
                     android:id="@+id/textView15"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -93,7 +107,7 @@
                     android:textSize="@dimen/default_text_size"
                     android:textColor="@color/cardTitleColor"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/profileImageEditButton" />
+                    app:layout_constraintTop_toBottomOf="@+id/error_thum_tv" />
 
                 <EditText
                     android:id="@+id/channelName"
@@ -167,7 +181,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="*Channel name is not valid"
+                    android:text="*Channel Description is not valid"
                     android:textColor="@color/pink_to_accent_color"
                     android:textSize="12sp"
                     android:visibility="gone"

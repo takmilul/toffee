@@ -189,18 +189,25 @@ class EditProfileActivity : BaseAppCompatActivity() {
                 progressDialog.hide()
                // Toast.makeText(this, "All fields are blank", Toast.LENGTH_SHORT).show()
                 binding.nameEt.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
-                binding.emailEt.setBackgroundResource(R.drawable.single_line_input_text_bg)
                 binding.errorNameTv.show()
-                binding.errorEmailTv.hide()
+
             }
-            else if(!it.email.isValidEmail()){
-                progressDialog.hide()
-                binding.emailEt.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
+            else{
                 binding.nameEt.setBackgroundResource(R.drawable.single_line_input_text_bg)
                 binding.errorNameTv.hide()
+            }
+            val validEmail=!it.email.isBlank() and !it.email.isValidEmail()
+             if(validEmail){
+                progressDialog.hide()
+                binding.emailEt.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
                 binding.errorEmailTv.show()
             }
-            else {
+            else{
+                 binding.emailEt.setBackgroundResource(R.drawable.single_line_input_text_bg)
+                 binding.errorEmailTv.hide()
+            }
+
+            if(!it.fullName.isBlank()) {
                 it.apply{
                     fullName = fullName.trim()
                     email = email.trim()
