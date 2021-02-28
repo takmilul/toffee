@@ -18,6 +18,7 @@ class Preference(private val pref: SharedPreferences, private val context: Conte
 
     val viewCountDbUrlLiveData = MutableLiveData<String>()
     val reactionDbUrlLiveData = MutableLiveData<String>()
+    val reactionStatusDbUrlLiveData = MutableLiveData<String>()
     val sessionTokenLiveData = MutableLiveData<String>()
     val profileImageUrlLiveData = MutableLiveData<String>()
     val customerNameLiveData = MutableLiveData<String>()
@@ -315,6 +316,16 @@ class Preference(private val pref: SharedPreferences, private val context: Conte
             }
         }
 
+    var reactionStatusDbUrl: String
+        get() = pref.getString(PREF_REACTION_STATUS_DB_URL, "") ?: ""
+        set(reactionStatusDbUrl) {
+            val storedUrl = pref.getString(PREF_REACTION_STATUS_DB_URL, "") ?: ""//get stored url
+            pref.edit().putString(PREF_REACTION_STATUS_DB_URL, reactionStatusDbUrl).apply()//save new url
+            if (storedUrl.isEmpty() || !reactionStatusDbUrl.equals(storedUrl, true)) {
+                reactionStatusDbUrlLiveData.postValue(reactionStatusDbUrl)//post if there is mismatch of url
+            }
+        }
+
     var keepVideoAspectRatio: Boolean
         get() = pref.getBoolean(PREF_KEEP_ASPECT_RATIO, true)
         set(value) = pref.edit{ putBoolean(PREF_KEEP_ASPECT_RATIO, value) }
@@ -365,6 +376,7 @@ class Preference(private val pref: SharedPreferences, private val context: Conte
         isSubscriptionActive = customerInfoSignIn.isSubscriptionActive?:"true"
         viewCountDbUrl = (customerInfoSignIn.viewCountDbUrl?:"")
         reactionDbUrl = (customerInfoSignIn.reactionDbUrl?:"")
+        reactionStatusDbUrl = (customerInfoSignIn.reactionStatusDbUrl?:"")
     }
 
     companion object {
@@ -403,6 +415,7 @@ class Preference(private val pref: SharedPreferences, private val context: Conte
         private const val PREF_TOKEN_LIFE_SPAN= "tokenLifeSpan"
         private const val PREF_VIEW_COUNT_DB_URL= "viewCountDbUrl"
         private const val PREF_REACTION_DB_URL= "reactionDbUrl"
+        private const val PREF_REACTION_STATUS_DB_URL= "reactionStatusDbUrl"
         private const val PREF_TOFFEE_UPLOAD_STATUS= "toffee-upload-status"
         private const val PREF_ENABLE_FLOATING_WINDOW= "enable-floating-window"
         private const val PREF_AUTO_PLAY_RECOMMENDED= "autoplay-for-recommended"

@@ -6,11 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.databinding.FragmentRecentTvChannelsBinding
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
+import com.banglalink.toffee.util.Utils
+import com.banglalink.toffee.util.UtilsKt
 import kotlinx.coroutines.flow.collectLatest
 
 class RecentChannelsFragment: BaseFragment() {
@@ -32,6 +35,13 @@ class RecentChannelsFragment: BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val channelsPadding = resources.getDimension(R.dimen.tv_channels_padding)
+        val channelItemWidth = resources.getDimension(R.dimen.channel_width)
+        val horizontalGap = (UtilsKt.getScreenWidth() - (channelsPadding * 2) - (3 * channelItemWidth)) / 6
+
+        val recentsMargin = resources.getDimension(R.dimen.recent_channels_margin)
+        val leftPadding = horizontalGap - recentsMargin + channelsPadding
+
         mAdapter = RecentChannelsAdapter(object : BaseListItemCallback<TVChannelItem> {
             override fun onItemClicked(item: TVChannelItem) {
                 homeViewModel.fragmentDetailsMutableLiveData.postValue(item.channelInfo)
@@ -39,6 +49,7 @@ class RecentChannelsFragment: BaseFragment() {
         })
 
         with(binding.channelList) {
+            setPadding(leftPadding.toInt(), 0, leftPadding.toInt(), 0)
             adapter = mAdapter
         }
 

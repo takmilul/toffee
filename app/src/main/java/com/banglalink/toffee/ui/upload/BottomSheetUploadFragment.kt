@@ -152,11 +152,11 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment(), TextWatcher {
                         mPref.channelName = channelName
                     }
                     progressDialog.dismiss()
-                    dialog?.hide()
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
                     cacheManager.clearCacheByUrl(GET_MY_CHANNEL_DETAILS_URL)
-                    val action = BottomSheetUploadFragmentDirections.actionBottomSheetUploadFragmentToNewUploadMethodFragment()
-                    findNavController().navigate(action)
+                    findNavController().popBackStack().let { 
+                        findNavController().navigate(R.id.newUploadMethodFragment)
+                    }
                 }
                 is Resource.Failure -> {
                     Log.e("data", "data" + it.error.msg)

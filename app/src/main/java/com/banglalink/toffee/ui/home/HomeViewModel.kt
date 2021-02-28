@@ -14,6 +14,7 @@ import com.banglalink.toffee.data.network.retrofit.DbApi
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.network.util.resultLiveData
+import com.banglalink.toffee.data.repository.ReactionStatusRepository
 import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.data.repository.ViewCountRepository
 import com.banglalink.toffee.data.storage.Preference
@@ -53,7 +54,8 @@ class HomeViewModel @ViewModelInject constructor(
     private val viewCountRepository: ViewCountRepository,
     private val mPref: Preference,
     private val toffeeApi: ToffeeApi,
-    private val dbApi: DbApi
+    private val dbApi: DbApi,
+    private val reactionStatusRepository: ReactionStatusRepository
 ):BaseViewModel(),OnCompleteListener<InstanceIdResult> {
 
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
@@ -120,6 +122,13 @@ class HomeViewModel @ViewModelInject constructor(
     fun populateReactionDb(url:String){
         appScope.launch {
             DownloadReactionDb(dbApi, reactionDao, mPref)
+                .execute(mContext, url)
+        }
+    }
+
+    fun populateReactionStatusDb(url:String){
+        appScope.launch {
+            DownloadReactionStatusDb(dbApi, reactionStatusRepository)
                 .execute(mContext, url)
         }
     }

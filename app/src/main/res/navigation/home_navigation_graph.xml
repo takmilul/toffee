@@ -141,46 +141,34 @@
         android:label="Terms" >
 
     </dialog>
+    
     <dialog
         android:id="@+id/bottomSheetUploadFragment"
         android:name="com.banglalink.toffee.ui.upload.BottomSheetUploadFragment"
         android:label="BottomUpload" >
         <action
-            android:id="@+id/action_bottomSheetUploadFragment_to_uploadMethodFragment"
-            app:destination="@id/uploadMethodFragment"
-            />
-        <action
             android:id="@+id/action_bottomSheetUploadFragment_to_newUploadMethodFragment"
             app:destination="@id/newUploadMethodFragment" />
         <action
-            android:id="@+id/action_bottomSheetUploadFragment_to_editUploadInfoFragment"
-            app:destination="@id/editUploadInfoFragment"
-            />
-        <action
-            android:id="@+id/action_bottomSheetUploadFragment_to_myChannelHomeFragment"
-            app:destination="@id/myChannelHomeFragment"
-            />
-        <action
             android:id="@+id/action_bottomSheetUploadFragment_to_termsConditionFragment"
-            app:destination="@id/termsConditionFragment"
-            />
+            app:destination="@id/termsConditionFragment" />
         <action
             android:id="@+id/action_bottomSheetUploadFragment_to_thumbnailSelectionMethodFragment"
             app:destination="@id/thumbnailSelectionMethodFragment" />
     </dialog>
+    
     <dialog
         android:id="@+id/newUploadMethodFragment"
         android:name="com.banglalink.toffee.ui.upload.NewUploadMethodFragment"
         android:label="Update Logo Channel" >
         <action
             android:id="@+id/action_newUploadMethodFragment_to_editUploadInfoFragment"
-            app:destination="@id/editUploadInfoFragment"
-            />
+            app:destination="@id/editUploadInfoFragment" />
         <action
             android:id="@+id/action_newUploadMethodFragment_to_myChannelHomeFragment"
-            app:destination="@id/myChannelHomeFragment"
-            />
+            app:destination="@id/myChannelHomeFragment" />
     </dialog>
+    
     <fragment
         android:id="@+id/editUploadInfoFragment"
         android:name="com.banglalink.toffee.ui.upload.EditUploadInfoFragment"

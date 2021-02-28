@@ -10,8 +10,7 @@
         android:layout_height="match_parent">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
+            android:paddingHorizontal="@dimen/tv_channels_padding"
             android:paddingBottom="20dp"
             android:clipToPadding="false"
             android:id="@+id/gridView"
