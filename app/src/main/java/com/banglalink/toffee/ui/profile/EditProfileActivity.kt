@@ -1,14 +1,14 @@
 package com.banglalink.toffee.ui.profile
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import android.view.View
-import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
@@ -19,6 +19,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.EditProfileViewModel
 import com.banglalink.toffee.databinding.ActivityEditProfileBinding
+import com.banglalink.toffee.enums.InputType
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
@@ -28,7 +29,6 @@ import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
 import com.yalantis.ucrop.UCrop
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_edit_profile.*
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
@@ -89,9 +89,6 @@ class EditProfileActivity : BaseAppCompatActivity() {
         }
     }
 
-    fun String.isValidEmail() =
-        isNotEmpty() && android.util.Patterns.EMAIL_ADDRESS.matcher(this).matches()
-
     private fun checkCameraPermissions() {
         lifecycleScope.launch{
             try {
@@ -122,25 +119,26 @@ class EditProfileActivity : BaseAppCompatActivity() {
             photoUri = FileProvider.getUriForFile(this, "$packageName.provider", photoFile)
             ToffeeAnalytics.logBreadCrumb("Photo uri set")
             pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
-            startActivityForResult(pictureIntent, REQUEST_IMAGE)
+            cameraResultLauncher.launch(pictureIntent)
             ToffeeAnalytics.logBreadCrumb("Camera activity started")
+        }
+    }
 
+    private val cameraResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        if (it.resultCode == Activity.RESULT_OK) {
+            photoUri?.let { uri ->
+                startCrop(uri)
+            }
+            ToffeeAnalytics.logBreadCrumb("Got result from camera")
+        } else {
+            showToast("You cancelled the operation")
+            ToffeeAnalytics.logBreadCrumb("Camera/video capture result not returned")
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode,data)
-
-        if (requestCode == REQUEST_IMAGE) {
-            if (resultCode == RESULT_OK) {
-                ToffeeAnalytics.logBreadCrumb("Got result from camera")
-                photoUri?.let {
-                    startCrop(it)
-                }
-            } else if (resultCode == RESULT_CANCELED) {
-               showToast("You cancelled the operation")
-            }
-        } else if (requestCode == UCrop.REQUEST_CROP && resultCode == RESULT_OK) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == UCrop.REQUEST_CROP && resultCode == RESULT_OK) {
             ToffeeAnalytics.logBreadCrumb("Got result from crop lib")
             data?.let { intent ->
                 val uri = UCrop.getOutput(intent)
@@ -156,7 +154,6 @@ class EditProfileActivity : BaseAppCompatActivity() {
     }
 
     private fun startCrop(uri: Uri) {
-
         var uCrop = UCrop.of(
             uri,
             Uri.fromFile(createImageFile())
@@ -169,35 +166,27 @@ class EditProfileActivity : BaseAppCompatActivity() {
         }
 
         uCrop = uCrop.withOptions(options)
-
         uCrop.start(this)
         ToffeeAnalytics.logBreadCrumb("Crop started")
-
     }
 
     private fun handleSaveButton(){
-        
-        /*val isValid = binding.profileForm?.fullName?.isValid(TITLE)
-        println("VALIDATION: $isValid")
-        Log.e("VALIDATION", "handleSaveButton: $isValid")
-        return*/
-
         progressDialog.show()
         binding.profileForm?.let {
 
             if (it.fullName.isBlank()){
                 progressDialog.hide()
-               // Toast.makeText(this, "All fields are blank", Toast.LENGTH_SHORT).show()
                 binding.nameEt.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
                 binding.errorNameTv.show()
-
             }
             else{
                 binding.nameEt.setBackgroundResource(R.drawable.single_line_input_text_bg)
                 binding.errorNameTv.hide()
             }
-            val validEmail=!it.email.isBlank() and !it.email.isValidEmail()
-             if(validEmail){
+            
+            val notValidEmail= it.email.isNotBlank() and !it.email.isValid(InputType.EMAIL)
+            
+            if(notValidEmail){
                 progressDialog.hide()
                 binding.emailEt.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
                 binding.errorEmailTv.show()
@@ -207,7 +196,7 @@ class EditProfileActivity : BaseAppCompatActivity() {
                  binding.errorEmailTv.hide()
             }
 
-            if(!it.fullName.isBlank()) {
+            if(it.fullName.isNotBlank()) {
                 it.apply{
                     fullName = fullName.trim()
                     email = email.trim()
@@ -259,12 +248,9 @@ class EditProfileActivity : BaseAppCompatActivity() {
 
     @Throws(IOException::class)
     fun createImageFile(): File {
-
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val imageFileName = "IMG_" + timeStamp + "_"
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-
         return File.createTempFile(imageFileName, ".jpg", storageDir)
     }
-
 }

@@ -16,11 +16,11 @@ private const val PHONE_PATTERN = "^(?:\\+8801|01)(?:\\d{9})$"
 
 fun String.isValid(type: InputType): Boolean{
     return when(type){
-        TITLE -> TITLE_PATTERN.toRegex().matches(this)
-        EMAIL -> Patterns.EMAIL_ADDRESS.toRegex().matches(this)
-        ADDRESS -> ADDRESS_PATTERN.toRegex().matches(this)
-        DESCRIPTION -> DESCRIPTION_PATTERN.toRegex().matches(this)
-        PHONE -> PHONE_PATTERN.toRegex().matches(this)
+        TITLE -> this.isNotBlank() and TITLE_PATTERN.toRegex().matches(this)
+        EMAIL -> this.isNotBlank() and Patterns.EMAIL_ADDRESS.toRegex().matches(this)
+        ADDRESS -> this.isNotBlank() and ADDRESS_PATTERN.toRegex().matches(this)
+        DESCRIPTION -> this.isNotBlank() and DESCRIPTION_PATTERN.toRegex().matches(this)
+        PHONE -> this.isNotBlank() and PHONE_PATTERN.toRegex().matches(this)
     }
 }
 
