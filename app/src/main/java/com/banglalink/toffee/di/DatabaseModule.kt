@@ -7,7 +7,6 @@ import com.banglalink.toffee.data.database.dao.*
 import com.banglalink.toffee.data.repository.*
 import com.banglalink.toffee.data.repository.impl.*
 import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.data.database.dao.ViewCountDAO
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -154,4 +153,15 @@ object DatabaseModule {
     fun providesReactionStatusRepository(dao: ReactionStatusDao): ReactionStatusRepository {
         return ReactionStatusRepositoryImpl(dao)
     }
- }
+
+    @Provides
+    @Singleton
+    fun providesSubscribeInfo(dao: SubscriptionInfoDao): SubscriptionInfoRepository {
+        return SubscriptionInfoRepositoryImpl(dao)
+    }
+    @Provides
+    @Singleton
+    fun providesSubscriptionInfoDao(db: ToffeeDatabase): SubscriptionInfoDao {
+        return db.getSubscriptionDao()
+    }
+}

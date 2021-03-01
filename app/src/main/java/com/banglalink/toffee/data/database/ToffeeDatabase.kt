@@ -4,8 +4,6 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.banglalink.toffee.data.database.dao.*
 import com.banglalink.toffee.data.database.entities.*
-import com.banglalink.toffee.data.database.dao.ViewCountDAO
-import com.banglalink.toffee.data.database.entities.ViewCount
 
 @Database(
     entities = [
@@ -21,6 +19,7 @@ import com.banglalink.toffee.data.database.entities.ViewCount
         ContentViewProgress::class,
         ContinueWatchingItem::class,
         ReactionStatusItem::class,
+        SubscriptionInfo::class
     ],
     version = 1,
     exportSchema = false)
@@ -37,6 +36,7 @@ abstract class ToffeeDatabase: RoomDatabase() {
     abstract fun getContentViewProgressDao(): ContentViewProgressDao
     abstract fun getContinueWatchingDao(): ContinueWatchingDao
     abstract fun getReactionStatusDao(): ReactionStatusDao
+    abstract fun getSubscriptionDao(): SubscriptionInfoDao
 
     companion object {
         const val DB_NAME = "toffee-db"
