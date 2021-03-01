@@ -360,7 +360,10 @@ class HomeActivity :
         })
 
         window.decorView.setOnSystemUiVisibilityChangeListener {
-            toggleNavigations(it and View.SYSTEM_UI_FLAG_FULLSCREEN == View.SYSTEM_UI_FLAG_FULLSCREEN)
+//            toggleNavigations(it and View.SYSTEM_UI_FLAG_FULLSCREEN == View.SYSTEM_UI_FLAG_FULLSCREEN)
+            if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                updateFullScreenState()
+            }
         }
     }
 
@@ -546,9 +549,9 @@ class HomeActivity :
                             !binding.playerView.isFullScreenPortrait())
 
         binding.playerView.onFullScreen(state)
-//        toggleNavigations(state)
         binding.playerView.resizeView(calculateScreenWidth(), state)
         Utils.setFullScreen(this, state, binding.playerView.isVideoPortrait)// || binding.playerView.channelType != "LIVE")
+        toggleNavigations(state)
     }
 
     private fun toggleNavigations(state: Boolean) {
