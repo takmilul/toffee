@@ -75,6 +75,6 @@ const val TUS_UPLOAD_SERVER_URL = "https://ugc-upload.toffeelive.com/upload"
 
 const val USER_ACTIVITIES_LIMIT = 150
 
-const val TOFFEE_BASE_URL = "https://mapi.toffeelive.com/"
+//const val TOFFEE_BASE_URL = "https://mapi.toffeelive.com/"
 //const val TOFFEE_BASE_URL = "https://ugc-staging.toffeelive.com/"
-//const val TOFFEE_BASE_URL = "https://staging.toffee-cms.com/"
+const val TOFFEE_BASE_URL = "https://staging.toffee-cms.com/"

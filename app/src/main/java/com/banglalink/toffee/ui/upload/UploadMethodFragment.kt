@@ -62,6 +62,10 @@ class UploadMethodFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if (activity is HomeActivity) {
+            (activity as HomeActivity).rotateFab(true)
+        }
+
         view.setOnClickListener {
             findNavController().popBackStack()
         }
@@ -261,17 +265,11 @@ class UploadMethodFragment : DialogFragment() {
 //        }
 //    }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is HomeActivity) {
-            context.rotateFab(true)
-        }
-    }
 
-    override fun onDetach() {
+    override fun onDestroyView() {
         requireActivity().let {
             if (it is HomeActivity) it.rotateFab(false)
         }
-        super.onDetach()
+        super.onDestroyView()
     }
 }

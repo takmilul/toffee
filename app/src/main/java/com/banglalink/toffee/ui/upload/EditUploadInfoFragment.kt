@@ -1,10 +1,7 @@
 package com.banglalink.toffee.ui.upload
 
-//import com.bumptech.glide.Glide
-
 import android.os.Bundle
 import android.text.InputType
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -39,35 +36,21 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
 class EditUploadInfoFragment: BaseFragment() {
+    
     private lateinit var binding: FragmentEditUploadInfoBinding
-
     private var progressDialog: VelBoxProgressDialog? = null
-
-    @Inject
-    lateinit var editUploadViewModelFactory: EditUploadInfoViewModel.AssistedFactory
-
-    @Inject
-    lateinit var uploadRepo: UploadInfoRepository
-
-    @AppCoroutineScope
-    @Inject
-    lateinit var appScope: CoroutineScope
-
+    @Inject lateinit var editUploadViewModelFactory: EditUploadInfoViewModel.AssistedFactory
+    @Inject lateinit var uploadRepo: UploadInfoRepository
+    @AppCoroutineScope @Inject lateinit var appScope: CoroutineScope
     private lateinit var uploadFileUri: String
-
     private val viewModel: EditUploadInfoViewModel by viewModels {
         EditUploadInfoViewModel.provideFactory(editUploadViewModelFactory, uploadFileUri)
     }
 
     companion object {
         const val UPLOAD_FILE_URI = "UPLOAD_FILE_URI"
-
-        fun newInstance(): EditUploadInfoFragment {
-            return EditUploadInfoFragment()
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -99,7 +82,7 @@ class EditUploadInfoFragment: BaseFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_edit_upload_info,
@@ -323,55 +306,51 @@ class EditUploadInfoFragment: BaseFragment() {
         val title = binding.uploadTitle.text.toString().trim()
         val description = binding.uploadDescription.text.toString().trim()
         val orientation = viewModel.orientationData.value ?: 1
+        
         if(title.isBlank()){
-           // context?.showToast("Missing title field", Toast.LENGTH_SHORT)
             binding.uploadTitle.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
             binding.errorTitleTv.show()
-
-
         }
         else{
             binding.uploadTitle.setBackgroundResource(R.drawable.single_line_input_text_bg)
             binding.errorTitleTv.hide()
         }
-         if(description.isBlank()){
-           // context?.showToast("Missing description field",Toast.LENGTH_SHORT)
-               binding.uploadDescription.setBackgroundResource(R.drawable.error_multiline_input_text_bg)
-               binding.errorDescriptionTv.show()
-
+        if(description.isBlank()){
+            binding.uploadDescription.setBackgroundResource(R.drawable.error_multiline_input_text_bg)
+            binding.errorDescriptionTv.show()
         }
-         else{
-             binding.uploadDescription.setBackgroundResource(R.drawable.multiline_input_text_bg)
-             binding.errorDescriptionTv.hide()
-         }
+        else{
+            binding.uploadDescription.setBackgroundResource(R.drawable.multiline_input_text_bg)
+            binding.errorDescriptionTv.hide()
+        }
 
         if (viewModel.thumbnailData.value.isNullOrBlank()){
             context?.showToast("Missing thumbnail field")
             return
         }
 
-      if (!(title.isBlank() or description.isBlank())) {
-          lifecycleScope.launch {
-              val categoryObj = binding.categorySpinner.selectedItem
-              val categoryId = if (categoryObj is UgcCategory) {
-                  categoryObj.id
-              } else -1
+        if (title.isNotBlank() and description.isNotBlank()) {
+            lifecycleScope.launch {
+                val categoryObj = binding.categorySpinner.selectedItem
+                val categoryId = if (categoryObj is UgcCategory) {
+                    categoryObj.id
+                } else -1
 
-              val subCategoryObj = binding.subCategorySpinner.selectedItem
-              val subcategoryId = if (subCategoryObj is UgcSubCategory) {
-                  subCategoryObj.id
-              } else -1
+                val subCategoryObj = binding.subCategorySpinner.selectedItem
+                val subcategoryId = if (subCategoryObj is UgcSubCategory) {
+                    subCategoryObj.id
+                } else -1
 
-              val tags = binding.uploadTags.selectedChipList.joinToString(" | ") { it.label }
+                val tags = binding.uploadTags.selectedChipList.joinToString(" | ") { it.label }
 
-              viewModel.saveUploadInfo(
-                  tags,
-                  categoryId,
-                  subcategoryId,
-                  viewModel.durationData.value ?: 0L,
-                  orientation
-              )
-          }
-      }
+                viewModel.saveUploadInfo(
+                    tags,
+                    categoryId,
+                    subcategoryId,
+                    viewModel.durationData.value ?: 0L,
+                    orientation
+                )
+            }
+        }
     }
 }

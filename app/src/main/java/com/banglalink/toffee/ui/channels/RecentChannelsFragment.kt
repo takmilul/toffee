@@ -21,7 +21,26 @@ class RecentChannelsFragment: BaseFragment() {
     val viewModel by activityViewModels<AllChannelsViewModel>()
     val homeViewModel by activityViewModels<HomeViewModel>()
 
+    private var showSelected = false
+
     private lateinit var binding: FragmentRecentTvChannelsBinding
+
+    companion object {
+        const val SHOW_SELECTED = "SHOW_SELECTED"
+
+        fun newInstance(showSelected: Boolean): RecentChannelsFragment {
+            val args = Bundle()
+            args.putBoolean(SHOW_SELECTED, showSelected)
+            val fragment = RecentChannelsFragment()
+            fragment.arguments = args
+            return fragment
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        showSelected = arguments?.getBoolean(SHOW_SELECTED, false) ?: false
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -59,7 +78,9 @@ class RecentChannelsFragment: BaseFragment() {
     private fun observeList() {
         lifecycleScope.launchWhenStarted {
             viewModel.loadRecentTvChannels().collectLatest {
-                val newList = if(it.isNotEmpty()) it.subList(1, it.size) else it
+                val newList = if(it.isNotEmpty()) {
+                    if(showSelected) it.subList(1, it.size) else it.subList(0, it.size - 1)
+                } else it
                 binding.channelTv.visibility = if(newList.isEmpty()) View.GONE else View.VISIBLE
                 mAdapter.setItems(newList)
             }

@@ -19,6 +19,9 @@ class ChannelFragmentFractory(private val args: Bundle?): FragmentFactory() {
                     )
                 }
             }
+            RecentChannelsFragment::class.java.name -> {
+                RecentChannelsFragment.newInstance(args?.getBoolean("show_selected", false) ?: true)
+            }
             else -> super.instantiate(classLoader, className)
         }
     }
