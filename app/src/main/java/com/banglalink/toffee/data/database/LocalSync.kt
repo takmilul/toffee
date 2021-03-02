@@ -1,7 +1,5 @@
 package com.banglalink.toffee.data.database
 
-import android.util.Log
-import com.banglalink.toffee.R
 import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.ReactionStatusItem
 import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
@@ -26,16 +24,16 @@ class LocalSync @Inject constructor(
         val viewCount = viewCountRepo.getViewCountByChannelId(channelInfo.id.toInt())
         channelInfo.view_count= viewCount?.toString() ?: channelInfo.view_count
         channelInfo.viewProgress = viewProgressRepo.getProgressByContent(channelInfo.id.toLong())?.progress ?: 0L
-//        val reactionList = reactionStatusRepo.getReactionStatusByChannelId(channelInfo.id.toLong())
-//        if(reactionList.isNotEmpty()) {
-//            channelInfo.reaction = getReactionStatus(channelInfo, reactionList)
-//        }
+        val reactionList = reactionStatusRepo.getReactionStatusByChannelId(channelInfo.id.toLong())
+        if(reactionList.isNotEmpty()) {
+            channelInfo.reaction = getReactionStatus(channelInfo, reactionList)
+        }
         val reactionInfo = reactionDao.getReactionByContentId(preference.customerId, channelInfo.id.toLong())
         channelInfo.myReaction = reactionInfo?.reactionType ?: Reaction.None.value
     }
 
     private fun getReactionStatus(channelInfo: ChannelInfo, rl: List<ReactionStatusItem>): ReactionStatus? {
-        val reactionStatus = channelInfo.reaction ?: ReactionStatus(0, channelInfo.id.toLong())
+        val reactionStatus = /*channelInfo.reaction ?:*/ ReactionStatus(0, channelInfo.id.toLong())
         rl.forEach {
             when(it.reactionType) {
                 Reaction.Like.value -> {

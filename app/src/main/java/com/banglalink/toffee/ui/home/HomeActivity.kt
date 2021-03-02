@@ -220,7 +220,7 @@ class HomeActivity :
 
         observe(mPref.reactionStatusDbUrlLiveData){
             if(it.isNotEmpty()){
-                viewModel.populateReactionStatusDb("url")
+                viewModel.populateReactionStatusDb(it)
             }
         }
         
