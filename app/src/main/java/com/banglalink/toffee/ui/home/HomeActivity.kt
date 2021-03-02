@@ -241,6 +241,10 @@ class HomeActivity :
             setPlayList(item)
         }
 
+        observe(viewModel.notificationUrlLiveData){
+            handleDeepLink(it)
+        }
+        
         observe(viewModel.shareContentLiveData) { channelInfo ->
             val sharingIntent = Intent(Intent.ACTION_SEND)
             sharingIntent.type = "text/plain"
