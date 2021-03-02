@@ -19,6 +19,8 @@ class Preference(private val pref: SharedPreferences, private val context: Conte
     val viewCountDbUrlLiveData = MutableLiveData<String>()
     val reactionDbUrlLiveData = MutableLiveData<String>()
     val reactionStatusDbUrlLiveData = MutableLiveData<String>()
+    val subscribeDbUrlLiveData = MutableLiveData<String>()
+    val subscriberStatusDbUrlLiveData = MutableLiveData<String>()
     val sessionTokenLiveData = MutableLiveData<String>()
     val profileImageUrlLiveData = MutableLiveData<String>()
     val customerNameLiveData = MutableLiveData<String>()
@@ -326,6 +328,26 @@ class Preference(private val pref: SharedPreferences, private val context: Conte
             }
         }
 
+    var subscribeDbUrl: String
+        get() = pref.getString(PREF_SUBSCRIBE_DB_URL, "") ?: ""
+        set(subscribeDbUrl) {
+            val storedUrl = pref.getString(PREF_SUBSCRIBE_DB_URL, "") ?: ""//get stored url
+            pref.edit().putString(PREF_SUBSCRIBE_DB_URL, subscribeDbUrl).apply()//save new url
+            if (storedUrl.isEmpty() || !subscribeDbUrl.equals(storedUrl, true)) {
+                subscribeDbUrlLiveData.postValue(subscribeDbUrl)//post if there is mismatch of url
+            }
+        }
+
+    var subscriberStatusDbUrl: String
+        get() = pref.getString(PREF_SUBSCRIBER_STATUS_DB_URL, "") ?: ""
+        set(subscriberStatusDbUrl) {
+            val storedUrl = pref.getString(PREF_SUBSCRIBER_STATUS_DB_URL, "") ?: ""//get stored url
+            pref.edit().putString(PREF_SUBSCRIBER_STATUS_DB_URL, subscriberStatusDbUrl).apply()//save new url
+            if (storedUrl.isEmpty() || !subscriberStatusDbUrl.equals(storedUrl, true)) {
+                subscriberStatusDbUrlLiveData.postValue(subscriberStatusDbUrl)//post if there is mismatch of url
+            }
+        }
+    
     var keepVideoAspectRatio: Boolean
         get() = pref.getBoolean(PREF_KEEP_ASPECT_RATIO, true)
         set(value) = pref.edit{ putBoolean(PREF_KEEP_ASPECT_RATIO, value) }
@@ -377,6 +399,8 @@ class Preference(private val pref: SharedPreferences, private val context: Conte
         viewCountDbUrl = (customerInfoSignIn.viewCountDbUrl?:"")
         reactionDbUrl = (customerInfoSignIn.reactionDbUrl?:"")
         reactionStatusDbUrl = (customerInfoSignIn.reactionStatusDbUrl?:"")
+        subscribeDbUrl = (customerInfoSignIn.subscribeDbUrl ?: "")
+        subscriberStatusDbUrl = (customerInfoSignIn.subscriberStatusDbUrl ?: "")
     }
 
     companion object {
@@ -416,6 +440,8 @@ class Preference(private val pref: SharedPreferences, private val context: Conte
         private const val PREF_VIEW_COUNT_DB_URL= "viewCountDbUrl"
         private const val PREF_REACTION_DB_URL= "reactionDbUrl"
         private const val PREF_REACTION_STATUS_DB_URL= "reactionStatusDbUrl"
+        private const val PREF_SUBSCRIBE_DB_URL= "subscribeDbUrl"
+        private const val PREF_SUBSCRIBER_STATUS_DB_URL= "subscriberStatusDbUrl"
         private const val PREF_TOFFEE_UPLOAD_STATUS= "toffee-upload-status"
         private const val PREF_ENABLE_FLOATING_WINDOW= "enable-floating-window"
         private const val PREF_AUTO_PLAY_RECOMMENDED= "autoplay-for-recommended"
