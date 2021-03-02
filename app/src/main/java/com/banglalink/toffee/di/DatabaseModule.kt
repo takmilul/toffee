@@ -154,4 +154,16 @@ object DatabaseModule {
     fun providesReactionStatusRepository(dao: ReactionStatusDao): ReactionStatusRepository {
         return ReactionStatusRepositoryImpl(dao)
     }
+    
+    @Provides
+    @Singleton
+    fun providesShareCountDao(db: ToffeeDatabase): ShareCountDao {
+        return db.getShareCountDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providesShareCountRepository(dao: ShareCountDao): ShareCountRepository {
+        return ShareCountRepositoryImpl(dao)
+    }
  }

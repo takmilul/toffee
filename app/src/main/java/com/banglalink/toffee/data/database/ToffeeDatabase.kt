@@ -21,6 +21,7 @@ import com.banglalink.toffee.data.database.entities.ViewCount
         ContentViewProgress::class,
         ContinueWatchingItem::class,
         ReactionStatusItem::class,
+        ShareCount::class,
     ],
     version = 1,
     exportSchema = false)
@@ -37,6 +38,7 @@ abstract class ToffeeDatabase: RoomDatabase() {
     abstract fun getContentViewProgressDao(): ContentViewProgressDao
     abstract fun getContinueWatchingDao(): ContinueWatchingDao
     abstract fun getReactionStatusDao(): ReactionStatusDao
+    abstract fun getShareCountDao(): ShareCountDao
 
     companion object {
         const val DB_NAME = "toffee-db"

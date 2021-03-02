@@ -4,6 +4,7 @@ import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.ReactionStatusItem
 import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
 import com.banglalink.toffee.data.repository.ReactionStatusRepository
+import com.banglalink.toffee.data.repository.ShareCountRepository
 import com.banglalink.toffee.data.repository.ViewCountRepository
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.enums.Reaction
@@ -17,6 +18,7 @@ class LocalSync @Inject constructor(
     private val viewCountRepo: ViewCountRepository,
     private val viewProgressRepo: ContentViewPorgressRepsitory,
     private val reactionStatusRepo: ReactionStatusRepository,
+    private val shareCountRepository: ShareCountRepository,
     private val reactionDao: ReactionDao,
     private val preference: Preference
 ) {
@@ -24,6 +26,7 @@ class LocalSync @Inject constructor(
         val viewCount = viewCountRepo.getViewCountByChannelId(channelInfo.id.toInt())
         channelInfo.view_count= viewCount?.toString() ?: channelInfo.view_count
         channelInfo.viewProgress = viewProgressRepo.getProgressByContent(channelInfo.id.toLong())?.progress ?: 0L
+        channelInfo.shareCount = shareCountRepository.getShareCountByContentId(channelInfo.id.toInt())
         val reactionList = reactionStatusRepo.getReactionStatusByChannelId(channelInfo.id.toLong())
         if(reactionList.isNotEmpty()) {
             channelInfo.reaction = getReactionStatus(channelInfo, reactionList)

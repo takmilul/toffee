@@ -224,6 +224,12 @@ class HomeActivity :
             }
         }
         
+        /*observe(mPref.shareLogDbUrlLiveData){
+            if(it.isNotEmpty()){
+                viewModel.populateShareCountDb(it)
+            }
+        }*/
+        
 //        observe(mPref.reactionDbUrlLiveData){
 //        if(!mPref.hasReactionDb){
 //            viewModel.populateReactionDb("url")
