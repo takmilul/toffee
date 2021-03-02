@@ -156,12 +156,23 @@ object DatabaseModule {
 
     @Provides
     @Singleton
+    fun providesSubscribeCount(dao: SubscriptionCountDao): SubscriptionCountRepository {
+        return SubscriptionCountRepositoryImpl(dao)
+    }
+    @Provides
+    @Singleton
+    fun providesSubscriptionCountao(db: ToffeeDatabase): SubscriptionCountDao {
+        return db.getSubscriptionDao()
+    }
+
+    @Provides
+    @Singleton
     fun providesSubscribeInfo(dao: SubscriptionInfoDao): SubscriptionInfoRepository {
         return SubscriptionInfoRepositoryImpl(dao)
     }
     @Provides
     @Singleton
     fun providesSubscriptionInfoDao(db: ToffeeDatabase): SubscriptionInfoDao {
-        return db.getSubscriptionDao()
+        return db.getSubscriptionInfoDao()
     }
 }

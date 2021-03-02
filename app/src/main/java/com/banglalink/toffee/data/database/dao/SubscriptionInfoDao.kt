@@ -11,13 +11,12 @@ interface SubscriptionInfoDao {
     @Delete
     suspend fun delete(subscriptionInfo: SubscriptionInfo): Int
 
-    @Query("SELECT * FROM SubscriptionInfo")
+    @Query("SELECT * FROM subscription_info")
     suspend fun getAllSubscription(): List<SubscriptionInfo>
 
-    @Query("UPDATE SubscriptionInfo SET status = :status WHERE channelId == :channelId AND subscriberId == :subscriberId")
+    @Query("UPDATE subscription_info SET status = :status WHERE channelId == :channelId AND customerId == :subscriberId")
     suspend fun updateSubscription(status: Int, channelId: Int, subscriberId: Int): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg SubscriptionInfoList: SubscriptionInfo): LongArray
-
 }

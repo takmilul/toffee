@@ -10,7 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
-import com.banglalink.toffee.data.database.entities.SubscriptionInfo
+import com.banglalink.toffee.data.database.entities.SubscriptionCount
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
@@ -62,7 +62,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
                         userChannelInfo.subscriberCount++
                     }
                     subscriptionViewModel.setSubscriptionStatus(info.id, 1, info.channelOwnerId)
-                    viewModel.insertSubscribe(SubscriptionInfo(null,info.channelOwnerId,0,1))
+                    viewModel.insertSubscribe(SubscriptionCount(null,info.channelOwnerId,0,1))
                 }
                 else {
                     UnSubscribeDialog.show(requireContext()){
@@ -71,7 +71,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
                             userChannelInfo.subscriberCount--
                         }
                         subscriptionViewModel.setSubscriptionStatus(info.id, 0, info.channelOwnerId)
-                        viewModel.insertSubscribe(SubscriptionInfo(null,info.channelOwnerId,0,1))
+                        viewModel.insertSubscribe(SubscriptionCount(null,info.channelOwnerId,0,-1))
                     }
                 }
             }

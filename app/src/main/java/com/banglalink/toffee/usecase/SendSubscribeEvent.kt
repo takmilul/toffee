@@ -1,8 +1,9 @@
 package com.banglalink.toffee.usecase
 
 
-import com.banglalink.toffee.data.database.dao.SubscriptionInfoDao
-import com.banglalink.toffee.data.database.entities.SubscriptionInfo
+import android.util.Log
+import com.banglalink.toffee.data.database.dao.SubscriptionCountDao
+import com.banglalink.toffee.data.database.entities.SubscriptionCount
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.notification.PubSubMessageUtil
@@ -14,30 +15,31 @@ import javax.inject.Inject
 class SendSubscribeEvent @Inject constructor(
         private val preference: Preference,
         private val toffeeApi: ToffeeApi,
-        private val subscriptionDao: SubscriptionInfoDao
+        private val subscriptionDao: SubscriptionCountDao
 ) {
 
-    suspend fun execute(subscriptionInfo: SubscriptionInfo, subscriptionCount: Int, sendToPubSub:Boolean = true){
+    suspend fun execute(subscriptionICount: SubscriptionCount, subscriptionCount: Int, sendToPubSub:Boolean = true){
         if(sendToPubSub){
-            sendToPubSub(subscriptionInfo, subscriptionCount)
+            sendToPubSub(subscriptionICount, subscriptionCount)
         }
         else{
 
-            sendToPubSub(subscriptionInfo,subscriptionCount)
+            sendToPubSub(subscriptionICount,subscriptionCount)
         }
     }
 
-    private fun sendToPubSub(SubscriptionInfo: SubscriptionInfo, subscriptionCount: Int){
+    private fun sendToPubSub(SubscriptionCount: SubscriptionCount, subscriptionCount: Int){
         val subscriptionCountData = subscriptionCountData(
-                channelId = SubscriptionInfo.channelId,
-                subscriberId = SubscriptionInfo.subscriberId,
-                status = SubscriptionInfo.status,
-                date_time=SubscriptionInfo.getDate()
+                channelId = SubscriptionCount.channelId,
+                subscriberId = SubscriptionCount.subscriberId,
+                status = SubscriptionCount.status,
+                date_time=SubscriptionCount.getDate()
         )
         PubSubMessageUtil.sendMessage(Gson().toJson(subscriptionCountData), SUBSCRIBER)
+        Log.e("Pubsub","data"+Gson().toJson(subscriptionCountData))
     }
 
-    private suspend fun sendToToffeeServer(SubscriptionInfo: SubscriptionInfo, subscriptionCount: Int){
+    private suspend fun sendToToffeeServer(SubscriptionCount: SubscriptionCount, subscriptionCount: Int){
         /*tryIO2 {
             toffeeApi.sendViewingContent(
                 ViewingContentRequest(

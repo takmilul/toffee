@@ -19,6 +19,7 @@ import com.banglalink.toffee.data.database.entities.*
         ContentViewProgress::class,
         ContinueWatchingItem::class,
         ReactionStatusItem::class,
+        SubscriptionCount::class,
         SubscriptionInfo::class
     ],
     version = 1,
@@ -36,7 +37,8 @@ abstract class ToffeeDatabase: RoomDatabase() {
     abstract fun getContentViewProgressDao(): ContentViewProgressDao
     abstract fun getContinueWatchingDao(): ContinueWatchingDao
     abstract fun getReactionStatusDao(): ReactionStatusDao
-    abstract fun getSubscriptionDao(): SubscriptionInfoDao
+    abstract fun getSubscriptionDao(): SubscriptionCountDao
+    abstract fun getSubscriptionInfoDao(): SubscriptionInfoDao
 
     companion object {
         const val DB_NAME = "toffee-db"

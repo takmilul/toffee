@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.common.paging.ProviderIconCallback
+import com.banglalink.toffee.data.database.entities.SubscriptionCount
 import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
@@ -100,10 +101,12 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
         super.onSubscribeButtonClicked(view, item)
         if (viewModel.isChannelSubscribed.value == false) {
             viewModel.toggleSubscriptionStatus(item.id.toInt(), item.channel_owner_id)
+            landingViewModel.insertSubscribe(SubscriptionCount(null,item.channel_owner_id,0,1))
         }
         else{
             UnSubscribeDialog.show(requireContext()){
                 viewModel.toggleSubscriptionStatus(item.id.toInt(), item.channel_owner_id)
+                landingViewModel.insertSubscribe(SubscriptionCount(null,item.channel_owner_id,0,-1))
             }
         }
     }

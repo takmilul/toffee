@@ -8,6 +8,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.banglalink.toffee.R
+import com.banglalink.toffee.data.database.entities.SubscriptionCount
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
@@ -15,6 +16,7 @@ import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.common.UnSubscribeDialog
+import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.landing.LandingPopularChannelCallback
 import com.banglalink.toffee.ui.landing.UserChannelViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,6 +31,7 @@ class TrendingChannelsListFragment : HomeBaseFragment() {
     @Inject lateinit var cacheManager: CacheManager
     private val viewModel by viewModels<TrendingChannelsListViewModel>()
     private val subscriptionViewModel by viewModels<UserChannelViewModel>()
+    private val landingViewModel by viewModels<LandingPageViewModel>()
     private var trendingChannelInfo: TrendingChannelInfo? = null
 
     override fun onCreateView(
@@ -58,6 +61,7 @@ class TrendingChannelsListFragment : HomeBaseFragment() {
                         it.subscriberCount++
                     }
                     subscriptionViewModel.setSubscriptionStatus(info.id, 1, info.channelOwnerId)
+                    landingViewModel.insertSubscribe(SubscriptionCount(null,info.channelOwnerId,0,1))
                 }
                 else {
                     UnSubscribeDialog.show(requireContext()) {
@@ -66,6 +70,7 @@ class TrendingChannelsListFragment : HomeBaseFragment() {
                             it.subscriberCount--
                         }
                         subscriptionViewModel.setSubscriptionStatus(info.id, 0, info.channelOwnerId)
+                        landingViewModel.insertSubscribe(SubscriptionCount(null,info.channelOwnerId,0,-1))
                     }
                 }
             }

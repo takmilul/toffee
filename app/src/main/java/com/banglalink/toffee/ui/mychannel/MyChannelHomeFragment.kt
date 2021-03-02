@@ -21,6 +21,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.R.color
 import com.banglalink.toffee.R.layout
 import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_DETAILS_URL
+import com.banglalink.toffee.data.database.entities.SubscriptionCount
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBinding
 import com.banglalink.toffee.databinding.FragmentMyChannelHomeBinding
@@ -33,6 +34,7 @@ import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.common.UnSubscribeDialog
 import com.banglalink.toffee.ui.common.ViewPagerAdapter
+import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.bindButtonState
 import com.google.android.material.tabs.TabLayoutMediator
@@ -66,6 +68,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     private val createPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
     private val subscribeChannelViewModel by viewModels<MyChannelSubscribeViewModel>()
     private val playlistReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
+    private val landingViewModel by viewModels<LandingPageViewModel>()
 
     companion object {
         const val IS_OWNER = "isOwner"
@@ -164,12 +167,14 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                     subscribeChannelViewModel.isButtonEnabled.value = false
                     binding.channelDetailView.subscriptionButton.isEnabled = false
                     subscribeChannelViewModel.subscribe(channelId, 1, channelOwnerId)
+                    landingViewModel.insertSubscribe(SubscriptionCount(null,channelOwnerId,0,1))
                 }
                 else{
                     UnSubscribeDialog.show(requireContext()){
                         subscribeChannelViewModel.isButtonEnabled.value = false
                         binding.channelDetailView.subscriptionButton.isEnabled = false
                         subscribeChannelViewModel.subscribe(channelId, 0, channelOwnerId)
+                        landingViewModel.insertSubscribe(SubscriptionCount(null,channelOwnerId,0,1))
                     }
                 }
             }
