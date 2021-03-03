@@ -4,7 +4,6 @@ import android.os.Build
 import com.banglalink.toffee.BuildConfig
 import com.google.android.exoplayer2.ExoPlayerLibraryInfo
 
-
 const val MULTI_DEVICE_LOGIN_ERROR_CODE = 109
 const val LOGIN_ERROR = 103
 const val INVALID_REFERRAL_ERROR_CODE = -100
@@ -51,21 +50,14 @@ val TOFFEE_KEY = object : Any() {
     }
 }.toString()
 
-val TOFFEE_HEADER=("Toffee" + "/" + BuildConfig.VERSION_NAME + " (Linux;Android " + Build.VERSION.RELEASE
-        + ") " + ExoPlayerLibraryInfo.VERSION_SLASHY)
-
-val PRIVACY_POLICY_URL =
-    "https://www.banglalink.net/en/personal/digital-services/toffee-privacy-policy"
+val TOFFEE_HEADER=("Toffee" + "/" + BuildConfig.VERSION_NAME + " (Linux;Android " + Build.VERSION.RELEASE + ") " + ExoPlayerLibraryInfo.VERSION_SLASHY)
+val PRIVACY_POLICY_URL = "https://www.banglalink.net/en/personal/digital-services/toffee-privacy-policy"
 val TERMS_AND_CONDITION_URL = "https://www.banglalink.net/en/toffee-privacy-policy"
 val TERMS_AND_CONDITION_URL_OLD = "https://www.banglalink.net/en/personal/digital-services/toffee-privacy-policy"
 val MICRO_SITE_URL = "https://portal.toffeelive.com"
-
-val SERVER_URL = ""
-val NO_INTERNET_MSG =
-    "No internet found. Please check your internet settings" // Need to change the message later.
+val NO_INTERNET_MSG = "No internet found. Please check your internet settings" // Need to change the message later.
 val TIME_OUT_MSG = "Time out occurred. Please try later" // Need to change the message later.
-val SERVER_ERROR_MSG =
-    "Server not responding right now. Please try later." // Need to change the message later.
+val SERVER_ERROR_MSG = "Server not responding right now. Please try later." // Need to change the message later.
 val EXIT_FROM_APP_MSG = "Are you sure to logout from the %s app?"
 val URL_ALL_CHANNEL_LIST = "http://test.viewersent.com.bd/channelList.php"
 val FAQ_URL = "https://portal.toffeelive.com/faq.html"
@@ -75,6 +67,6 @@ const val TUS_UPLOAD_SERVER_URL = "https://ugc-upload.toffeelive.com/upload"
 
 const val USER_ACTIVITIES_LIMIT = 150
 
-//const val TOFFEE_BASE_URL = "https://mapi.toffeelive.com/"
+const val TOFFEE_BASE_URL = "https://mapi.toffeelive.com/"
 //const val TOFFEE_BASE_URL = "https://ugc-staging.toffeelive.com/"
-const val TOFFEE_BASE_URL = "https://staging.toffee-cms.com/"
+//const val TOFFEE_BASE_URL = "https://staging.toffee-cms.com/"

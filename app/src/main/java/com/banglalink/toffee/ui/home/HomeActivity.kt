@@ -230,11 +230,11 @@ class HomeActivity :
             }
         }
         
-        /*observe(mPref.shareLogDbUrlLiveData){
+        observe(mPref.shareCountDbUrlLiveData){
             if(it.isNotEmpty()){
                 viewModel.populateShareCountDb(it)
             }
-        }*/
+        }
         
 //        observe(mPref.reactionDbUrlLiveData){
 //        if(!mPref.hasReactionDb){

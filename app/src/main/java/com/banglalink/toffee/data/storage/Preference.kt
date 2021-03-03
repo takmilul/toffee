@@ -21,6 +21,7 @@ class Preference(private val pref: SharedPreferences, private val context: Conte
     val reactionStatusDbUrlLiveData = MutableLiveData<String>()
     val subscribeDbUrlLiveData = MutableLiveData<String>()
     val subscriberStatusDbUrlLiveData = MutableLiveData<String>()
+    val shareCountDbUrlLiveData = MutableLiveData<String>()
     val sessionTokenLiveData = MutableLiveData<String>()
     val profileImageUrlLiveData = MutableLiveData<String>()
     val customerNameLiveData = MutableLiveData<String>()
@@ -348,6 +349,16 @@ class Preference(private val pref: SharedPreferences, private val context: Conte
             }
         }
     
+    var shareCountDbUrl: String
+        get() = pref.getString(PREF_SHARE_COUNT_DB_URL, "") ?: ""
+        set(shareCountDbUrl) {
+            val storedUrl = pref.getString(PREF_SHARE_COUNT_DB_URL, "") ?: ""//get stored url
+            pref.edit().putString(PREF_SHARE_COUNT_DB_URL, shareCountDbUrl).apply()//save new url
+            if (storedUrl.isEmpty() || !shareCountDbUrl.equals(storedUrl, true)) {
+                shareCountDbUrlLiveData.postValue(shareCountDbUrl)//post if there is mismatch of url
+            }
+        }
+    
     var keepVideoAspectRatio: Boolean
         get() = pref.getBoolean(PREF_KEEP_ASPECT_RATIO, true)
         set(value) = pref.edit{ putBoolean(PREF_KEEP_ASPECT_RATIO, value) }
@@ -401,6 +412,7 @@ class Preference(private val pref: SharedPreferences, private val context: Conte
         reactionStatusDbUrl = (customerInfoSignIn.reactionStatusDbUrl?:"")
         subscribeDbUrl = (customerInfoSignIn.subscribeDbUrl ?: "")
         subscriberStatusDbUrl = (customerInfoSignIn.subscriberStatusDbUrl ?: "")
+        shareCountDbUrl = (customerInfoSignIn.shareCountDbUrl ?: "")
     }
 
     companion object {
@@ -442,6 +454,7 @@ class Preference(private val pref: SharedPreferences, private val context: Conte
         private const val PREF_REACTION_STATUS_DB_URL= "reactionStatusDbUrl"
         private const val PREF_SUBSCRIBE_DB_URL= "subscribeDbUrl"
         private const val PREF_SUBSCRIBER_STATUS_DB_URL= "subscriberStatusDbUrl"
+        private const val PREF_SHARE_COUNT_DB_URL= "shareCountDbUrl"
         private const val PREF_TOFFEE_UPLOAD_STATUS= "toffee-upload-status"
         private const val PREF_ENABLE_FLOATING_WINDOW= "enable-floating-window"
         private const val PREF_AUTO_PLAY_RECOMMENDED= "autoplay-for-recommended"

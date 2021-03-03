@@ -48,7 +48,7 @@ class CustomerInfoSignIn:BodyResponse() {
     @SerializedName("reaction_db")
     var reactionStatusDbUrl:String? = null
     @SerializedName("share_log_db")
-    var shareLogDb: String? = null
+    var shareCountDbUrl: String? = null
     @SerializedName("subscribe_count_db")
     var subscriberStatusDbUrl: String? = null
     @SerializedName("subscribe__db")

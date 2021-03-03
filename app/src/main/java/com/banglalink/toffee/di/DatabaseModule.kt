@@ -171,12 +171,12 @@ object DatabaseModule {
     fun providesSubscribeInfo(dao: SubscriptionInfoDao): SubscriptionInfoRepository {
         return SubscriptionInfoRepositoryImpl(dao)
     }
+    
     @Provides
     @Singleton
     fun providesSubscriptionInfoDao(db: ToffeeDatabase): SubscriptionInfoDao {
         return db.getSubscriptionInfoDao()
     }
-}
     
     @Provides
     @Singleton
@@ -189,4 +189,4 @@ object DatabaseModule {
     fun providesShareCountRepository(dao: ShareCountDao): ShareCountRepository {
         return ShareCountRepositoryImpl(dao)
     }
- }
+}

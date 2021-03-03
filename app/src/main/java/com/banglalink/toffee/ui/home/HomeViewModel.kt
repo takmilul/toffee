@@ -15,11 +15,7 @@ import com.banglalink.toffee.data.network.retrofit.DbApi
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.network.util.resultLiveData
-import com.banglalink.toffee.data.repository.ReactionStatusRepository
-import com.banglalink.toffee.data.repository.SubscriptionCountRepository
-import com.banglalink.toffee.data.repository.ShareCountRepository
-import com.banglalink.toffee.data.repository.TVChannelRepository
-import com.banglalink.toffee.data.repository.ViewCountRepository
+import com.banglalink.toffee.data.repository.*
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.extension.toLiveData
@@ -61,8 +57,7 @@ class HomeViewModel @ViewModelInject constructor(
     private val toffeeApi: ToffeeApi,
     private val dbApi: DbApi,
     private val reactionStatusRepository: ReactionStatusRepository,
-    private val subscriptionCountRepository: SubscriptionCountRepository
-    private val reactionStatusRepository: ReactionStatusRepository,
+    private val subscriptionCountRepository: SubscriptionCountRepository,
     private val shareCountRepository: ShareCountRepository
 ):BaseViewModel(),OnCompleteListener<InstanceIdResult> {
 

@@ -20,11 +20,12 @@ import com.banglalink.toffee.data.database.entities.*
         ContinueWatchingItem::class,
         ReactionStatusItem::class,
         SubscriptionCount::class,
-        SubscriptionInfo::class
+        SubscriptionInfo::class,
         ShareCount::class,
     ],
     version = 2,
     exportSchema = false)
+
 abstract class ToffeeDatabase: RoomDatabase() {
     abstract fun getUploadDao(): UploadDao
     abstract fun getViewCountDao(): ViewCountDAO

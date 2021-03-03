@@ -12,7 +12,6 @@ import java.io.File
 import java.nio.ByteBuffer
 import java.util.zip.CRC32
 
-
 class DownloadShareCountDb(
     private val dbApi: DbApi,
     private val shareCountRepository: ShareCountRepository
