@@ -27,17 +27,17 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class LandingPageViewModel @ViewModelInject constructor(
-    @ApplicationContext private val context: Context,
-    private val mostPopularApi: GetMostPopularContents.AssistedFactory,
-    private val mostPopularPlaylists: GetMostPopularPlaylists,
-    private val categoryListApi: GetUgcCategories,
-    private val tvChannelRepo: TVChannelRepository,
-    private val popularChannelAssistedFactory: GetUgcPopularUserChannels.AssistedFactory,
-    private val editorsChoiceAssistedFactory: GetUgcTrendingNowContents.AssistedFactory,
-    private val featuredAssistedFactory: FeatureContentService,
-    private val getContentAssistedFactory: GetContents.AssistedFactory,
-    private val getContentsAssistedFactory: com.banglalink.toffee.usecase.GetContents.AssistedFactory,
-    private val relativeContentsFactory: GetRelativeContents.AssistedFactory
+        @ApplicationContext private val context: Context,
+        private val mostPopularApi: GetMostPopularContents.AssistedFactory,
+        private val mostPopularPlaylists: GetMostPopularPlaylists,
+        private val categoryListApi: GetUgcCategories,
+        private val tvChannelRepo: TVChannelRepository,
+        private val popularChannelAssistedFactory: GetUgcPopularUserChannels.AssistedFactory,
+        private val editorsChoiceAssistedFactory: GetUgcTrendingNowContents.AssistedFactory,
+        private val featuredAssistedFactory: FeatureContentService,
+        private val getContentAssistedFactory: GetContents.AssistedFactory,
+        private val getContentsAssistedFactory: com.banglalink.toffee.usecase.GetContents.AssistedFactory,
+        private val relativeContentsFactory: GetRelativeContents.AssistedFactory,
 ):BaseViewModel() {
     
     val latestVideoLiveData = MutableLiveData<Pair<Int, Int>>()

@@ -333,23 +333,23 @@ fun bindEmoCount(view: TextView, item: ChannelInfo) {
 
 @BindingAdapter(value = ["emoIcon", "iconPosition"], requireAll = true)
 fun bindEmoIcon(view: ImageView, item: ChannelInfo, iconPosition: Int){
-    val reactionCountList = listOf(item.reaction?.like, item.reaction?.love, item.reaction?.haha, item.reaction?.wow, item.reaction?.sad, item.reaction?.angry).sortedByDescending { it }
-    var icon = when(reactionCountList[iconPosition - 1]){
-        item.reaction?.like -> R.drawable.ic_reaction_like_no_shadow
-        item.reaction?.love -> R.drawable.ic_reaction_love_no_shadow
-        item.reaction?.haha -> R.drawable.ic_reaction_haha_no_shadow
-        item.reaction?.wow -> R.drawable.ic_reaction_wow_no_shadow
-        item.reaction?.sad -> R.drawable.ic_reaction_sad_no_shadow
-        item.reaction?.angry -> R.drawable.ic_reaction_angry_no_shadow
+    val reactionCountList = listOf(
+        Like to item.reaction?.like,
+        Love to item.reaction?.love,
+        Wow to item.reaction?.wow,
+        HaHa to item.reaction?.haha,
+        Sad to item.reaction?.sad,
+        Angry to item.reaction?.angry
+    ).sortedByDescending { (_, v) -> v }
+
+    val icon = when(reactionCountList[iconPosition - 1].first){
+        Like -> R.drawable.ic_reaction_like_no_shadow
+        Love -> R.drawable.ic_reaction_love_no_shadow
+        Wow -> R.drawable.ic_reaction_wow_no_shadow
+        HaHa -> R.drawable.ic_reaction_haha_no_shadow
+        Sad -> R.drawable.ic_reaction_sad_no_shadow
+        Angry -> R.drawable.ic_reaction_angry_no_shadow
         else -> R.drawable.ic_reactions_emo
-    }
-    if (reactionCountList.first() == null || reactionCountList.first() == 0L){
-        icon = when(iconPosition){
-            1 -> R.drawable.ic_reaction_like_no_shadow
-            2 -> R.drawable.ic_reaction_love_no_shadow
-            3 -> R.drawable.ic_reaction_haha_no_shadow
-            else -> R.drawable.ic_reactions_emo
-        }
     }
     view.setImageResource(icon)
 }

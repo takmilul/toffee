@@ -10,6 +10,7 @@
     <TextView
         android:id="@+id/userChannelsHeader"
         style="@style/SectionTitleTextStyle"
+        android:layout_marginTop="16dp"
         android:text="User Channels"
         app:layout_constraintEnd_toStartOf="@+id/viewAllButton"
         app:layout_constraintStart_toStartOf="parent"

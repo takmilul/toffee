@@ -8,15 +8,16 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.banglalink.toffee.R
+import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.showToast
-import com.banglalink.toffee.model.*
+import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.MyChannelNavParams
+import com.banglalink.toffee.model.TrendingChannelInfo
+import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.common.UnSubscribeDialog
 import com.banglalink.toffee.ui.landing.LandingPopularChannelCallback
-import com.banglalink.toffee.ui.landing.UserChannelViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_trending_channels_list.*
 import kotlinx.coroutines.flow.collectLatest
@@ -24,12 +25,12 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class TrendingChannelsListFragment : HomeBaseFragment() {
-    private lateinit var mAdapter: TrendingChannelsListAdapter
+    
     private var categoryInfo: UgcCategory? = null
     @Inject lateinit var cacheManager: CacheManager
-    private val viewModel by viewModels<TrendingChannelsListViewModel>()
-    private val subscriptionViewModel by viewModels<UserChannelViewModel>()
+    private lateinit var mAdapter: TrendingChannelsListAdapter
     private var trendingChannelInfo: TrendingChannelInfo? = null
+    private val viewModel by viewModels<TrendingChannelsListViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,7 +58,9 @@ class TrendingChannelsListFragment : HomeBaseFragment() {
                         it.isSubscribed = 1
                         it.subscriberCount++
                     }
-                    subscriptionViewModel.setSubscriptionStatus(info.id, 1, info.channelOwnerId)
+//                    subscriptionViewModel.setSubscriptionStatus(info.id, 1, info.channelOwnerId)
+                    homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId) ,1)
+                    mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, trendingChannelInfo)
                 }
                 else {
                     UnSubscribeDialog.show(requireContext()) {
@@ -65,7 +68,9 @@ class TrendingChannelsListFragment : HomeBaseFragment() {
                             it.isSubscribed = 0
                             it.subscriberCount--
                         }
-                        subscriptionViewModel.setSubscriptionStatus(info.id, 0, info.channelOwnerId)
+//                        subscriptionViewModel.setSubscriptionStatus(info.id, 0, info.channelOwnerId)
+                        homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId) ,-1)
+                        mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, trendingChannelInfo)
                     }
                 }
             }
@@ -86,13 +91,13 @@ class TrendingChannelsListFragment : HomeBaseFragment() {
             }
         }
 
-        observe(subscriptionViewModel.subscriptionResponse) {
+        /*observe(subscriptionViewModel.subscriptionResponse) {
             if(it is Resource.Success) {
                 cacheManager.clearSubscriptionCache()
                 mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, trendingChannelInfo)
             }
             else requireContext().showToast("Failed to subscribe channel")
-        }
+        }*/
     }
 
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
