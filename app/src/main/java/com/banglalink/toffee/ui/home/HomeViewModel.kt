@@ -9,12 +9,14 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.GetProfile
 import com.banglalink.toffee.apiservice.MyChannelGetDetailService
 import com.banglalink.toffee.data.database.dao.ReactionDao
+import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.data.network.retrofit.DbApi
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.data.repository.ReactionStatusRepository
+import com.banglalink.toffee.data.repository.SubscriptionCountRepository
 import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.data.repository.ViewCountRepository
 import com.banglalink.toffee.data.storage.Preference
@@ -40,6 +42,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class HomeViewModel @ViewModelInject constructor(
@@ -49,13 +52,15 @@ class HomeViewModel @ViewModelInject constructor(
     private val myChannelDetailApiService: MyChannelGetDetailService,
     private val sendShareCountEvent: SendShareCountEvent,
     private val sendViewContentEvent: SendViewContentEvent,
+    private val sendSubscribeEvent: SendSubscribeEvent,
     @ApplicationContext private val mContext: Context,
     private val tvChannelRepo: TVChannelRepository,
     private val viewCountRepository: ViewCountRepository,
     private val mPref: Preference,
     private val toffeeApi: ToffeeApi,
     private val dbApi: DbApi,
-    private val reactionStatusRepository: ReactionStatusRepository
+    private val reactionStatusRepository: ReactionStatusRepository,
+    private val subscriptionCountRepository: SubscriptionCountRepository
 ):BaseViewModel(),OnCompleteListener<InstanceIdResult> {
 
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
@@ -133,6 +138,13 @@ class HomeViewModel @ViewModelInject constructor(
         }
     }
 
+    fun populateSubscriptionCountDb(url:String){
+        appScope.launch {
+            DownloadSubscriptionCountDb(dbApi, subscriptionCountRepository)
+                .execute(mContext, url)
+        }
+    }
+
     private fun getProfile(){
         viewModelScope.launch {
             try{
@@ -200,6 +212,11 @@ class HomeViewModel @ViewModelInject constructor(
         }
     }
 
+    fun sendSubscriptionStatus(subscriptionInfo: SubscriptionInfo, status: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            sendSubscribeEvent.execute(subscriptionInfo, status,true)
+        }
+    }
     private val updateFavorite by unsafeLazy {
         UpdateFavorite(Preference.getInstance(), toffeeApi)
     }

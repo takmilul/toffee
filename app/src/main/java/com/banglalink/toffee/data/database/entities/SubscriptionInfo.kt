@@ -2,13 +2,11 @@ package com.banglalink.toffee.data.database.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.banglalink.toffee.extension.toFormattedDate
 import com.google.gson.annotations.SerializedName
 
-@Entity(
-        tableName = "subscription_info"
-)
+@Entity
 data class SubscriptionInfo(
-
      @PrimaryKey(autoGenerate = true)
      @SerializedName("id")
      val id: Long? = null,
@@ -16,6 +14,10 @@ data class SubscriptionInfo(
      val channelId: Int,
      @SerializedName("customer_id")
      val customerId: Int,
-     @SerializedName("status")
-     val status: Int
-)
+     @SerializedName("date_time")
+     val dateTime: Long = System.currentTimeMillis()
+){
+     fun getDate(): String {
+          return dateTime.toFormattedDate()
+     }
+}

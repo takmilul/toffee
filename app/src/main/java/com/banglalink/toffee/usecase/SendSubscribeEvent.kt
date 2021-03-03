@@ -1,46 +1,53 @@
 package com.banglalink.toffee.usecase
 
-
 import android.util.Log
-import com.banglalink.toffee.data.database.dao.SubscriptionCountDao
-import com.banglalink.toffee.data.database.entities.SubscriptionCount
-import com.banglalink.toffee.data.network.retrofit.ToffeeApi
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.database.entities.SubscriptionInfo
+import com.banglalink.toffee.data.repository.SubscriptionCountRepository
+import com.banglalink.toffee.data.repository.SubscriptionInfoRepository
 import com.banglalink.toffee.notification.PubSubMessageUtil
-import com.banglalink.toffee.notification.SUBSCRIBER
+import com.banglalink.toffee.notification.SUBSCRIPTION_TOPIC
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import javax.inject.Inject
 
 class SendSubscribeEvent @Inject constructor(
-        private val preference: Preference,
-        private val toffeeApi: ToffeeApi,
-        private val subscriptionDao: SubscriptionCountDao
-) {
+    private val subscriptionInfoRepository: SubscriptionInfoRepository, 
+    private val subscriptionCountRepository: SubscriptionCountRepository
+    ) {
 
-    suspend fun execute(subscriptionICount: SubscriptionCount, subscriptionCount: Int, sendToPubSub:Boolean = true){
+    suspend fun execute(subscriptionInfo: SubscriptionInfo, status: Int, sendToPubSub:Boolean = true){
         if(sendToPubSub){
-            sendToPubSub(subscriptionICount, subscriptionCount)
+            sendToPubSub(subscriptionInfo, status)
+            updateSubscriptionInfoDb(subscriptionInfo, status)
         }
         else{
-
-            sendToPubSub(subscriptionICount,subscriptionCount)
+//            sendToToffeeServer(subscriptionInfo, status)
         }
     }
 
-    private fun sendToPubSub(SubscriptionCount: SubscriptionCount, subscriptionCount: Int){
-        val subscriptionCountData = subscriptionCountData(
-                channelId = SubscriptionCount.channelId,
-                subscriberId = SubscriptionCount.subscriberId,
-                status = SubscriptionCount.status,
-                date_time=SubscriptionCount.getDate()
+    private fun sendToPubSub(subscriptionInfo: SubscriptionInfo, status: Int){
+        val subscriptionCountData = SubscriptionCountData(
+            channelId = subscriptionInfo.channelId,
+            subscriberId = subscriptionInfo.customerId,
+            status = status,
+            date_time=subscriptionInfo.getDate()
         )
-        PubSubMessageUtil.sendMessage(Gson().toJson(subscriptionCountData), SUBSCRIBER)
+        PubSubMessageUtil.sendMessage(Gson().toJson(subscriptionCountData), SUBSCRIPTION_TOPIC)
         Log.e("Pubsub","data"+Gson().toJson(subscriptionCountData))
     }
 
-    private suspend fun sendToToffeeServer(SubscriptionCount: SubscriptionCount, subscriptionCount: Int){
-        /*tryIO2 {
+    private suspend fun updateSubscriptionInfoDb(subscriptionInfo: SubscriptionInfo, status: Int){
+        if (status == 1){
+            subscriptionInfoRepository.insert(subscriptionInfo)
+        }
+        else{
+            subscriptionInfoRepository.deleteSubscriptionInfo(subscriptionInfo.channelId, subscriptionInfo.customerId)
+        }
+        subscriptionCountRepository.updateSubscriptionCount(subscriptionInfo.channelId, status)
+    }
+
+    /*private suspend fun sendToToffeeServer(SubscriptionCount: SubscriptionCount, subscriptionCount: Int){
+        *//*tryIO2 {
             toffeeApi.sendViewingContent(
                 ViewingContentRequest(
                     contentType,
@@ -51,10 +58,10 @@ class SendSubscribeEvent @Inject constructor(
                     preference.longitude
                 )
             )
-        }*/
-    }
+        }*//*
+    }*/
 
-    private data class subscriptionCountData(
+    private data class SubscriptionCountData(
         @SerializedName("channel_id")
         val channelId: Int,
         @SerializedName("subscriber_id")

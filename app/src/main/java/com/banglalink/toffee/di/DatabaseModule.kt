@@ -2,6 +2,7 @@ package com.banglalink.toffee.di
 
 import android.content.Context
 import androidx.room.Room
+import com.banglalink.toffee.data.database.MigrationProvider
 import com.banglalink.toffee.data.database.ToffeeDatabase
 import com.banglalink.toffee.data.database.dao.*
 import com.banglalink.toffee.data.repository.*
@@ -23,7 +24,7 @@ object DatabaseModule {
     fun providesDatabase(@ApplicationContext app: Context): ToffeeDatabase {
         return Room.databaseBuilder(app,
             ToffeeDatabase::class.java, ToffeeDatabase.DB_NAME)
-//            .addMigrations(*MigrationProvider.getMigrationList().toTypedArray())
+            .addMigrations(*MigrationProvider.getMigrationList().toTypedArray())
 //            .fallbackToDestructiveMigration()
             .build()
     }
@@ -161,7 +162,7 @@ object DatabaseModule {
     }
     @Provides
     @Singleton
-    fun providesSubscriptionCountao(db: ToffeeDatabase): SubscriptionCountDao {
+    fun providesSubscriptionCountDao(db: ToffeeDatabase): SubscriptionCountDao {
         return db.getSubscriptionDao()
     }
 

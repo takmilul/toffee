@@ -5,16 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
-import com.banglalink.toffee.data.database.entities.SubscriptionCount
+import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.showToast
-import com.banglalink.toffee.model.*
+import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.MyChannelNavParams
+import com.banglalink.toffee.model.UgcCategory
+import com.banglalink.toffee.model.UgcUserChannelInfo
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.common.UnSubscribeDialog
@@ -32,7 +32,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
     private var categoryInfo: UgcCategory? = null
     private var channelInfo: UgcUserChannelInfo? = null
     private val viewModel by activityViewModels<LandingPageViewModel>()
-    private val subscriptionViewModel by viewModels<UserChannelViewModel>()
+//    private val subscriptionViewModel by viewModels<UserChannelViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -61,8 +61,9 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
                         userChannelInfo.isSubscribed = 1
                         userChannelInfo.subscriberCount++
                     }
-                    subscriptionViewModel.setSubscriptionStatus(info.id, 1, info.channelOwnerId)
-                    viewModel.insertSubscribe(SubscriptionCount(null,info.channelOwnerId,0,1))
+//                    subscriptionViewModel.setSubscriptionStatus(info.id, 1, info.channelOwnerId)
+                    homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId), 1)
+                    mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, channelInfo)
                 }
                 else {
                     UnSubscribeDialog.show(requireContext()){
@@ -70,8 +71,9 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
                             userChannelInfo.isSubscribed = 0
                             userChannelInfo.subscriberCount--
                         }
-                        subscriptionViewModel.setSubscriptionStatus(info.id, 0, info.channelOwnerId)
-                        viewModel.insertSubscribe(SubscriptionCount(null,info.channelOwnerId,0,-1))
+//                        subscriptionViewModel.setSubscriptionStatus(info.id, 0, info.channelOwnerId)
+                        homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId), -1)
+                        mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, channelInfo)
                     }
                 }
             }
@@ -101,13 +103,13 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
             }
         }
 
-        observe(subscriptionViewModel.subscriptionResponse) {
+        /*observe(subscriptionViewModel.subscriptionResponse) {
             if(it is Resource.Success) {
                 cacheManager.clearSubscriptionCache()
                 mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, channelInfo)
             }
             else requireContext().showToast("Failed to subscribe channel")
-        }
+        }*/
     }
 
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {

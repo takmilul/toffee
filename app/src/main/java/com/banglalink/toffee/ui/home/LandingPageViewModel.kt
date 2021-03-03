@@ -11,12 +11,9 @@ import androidx.paging.cachedIn
 import com.banglalink.toffee.apiservice.*
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
-import com.banglalink.toffee.data.database.dao.SubscriptionCountDao
-import com.banglalink.toffee.data.database.entities.SubscriptionCount
 import com.banglalink.toffee.data.network.request.ChannelRequestParams
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.repository.TVChannelRepository
-import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.enums.PageType.Landing
 import com.banglalink.toffee.extension.toLiveData
@@ -24,10 +21,8 @@ import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseViewModel
-import com.banglalink.toffee.usecase.SendSubscribeEvent
 import com.banglalink.toffee.util.unsafeLazy
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
@@ -43,9 +38,6 @@ class LandingPageViewModel @ViewModelInject constructor(
         private val getContentAssistedFactory: GetContents.AssistedFactory,
         private val getContentsAssistedFactory: com.banglalink.toffee.usecase.GetContents.AssistedFactory,
         private val relativeContentsFactory: GetRelativeContents.AssistedFactory,
-        private val sendSubscribeEvent: SendSubscribeEvent,
-        private val subscriptionCountDao: SubscriptionCountDao,
-        private val preference: Preference,
 ):BaseViewModel() {
     
     val latestVideoLiveData = MutableLiveData<Pair<Int, Int>>()
@@ -74,12 +66,6 @@ class LandingPageViewModel @ViewModelInject constructor(
         getContentsAssistedFactory.create(ChannelRequestParams("",0,"",0,"LIVE"))
     }
 
-    fun insertSubscribe(subscriptionCount: SubscriptionCount) {
-        viewModelScope.launch(Dispatchers.IO) {
-            //subscriptionInfoDao.insert(subscriptionInfo)
-            sendSubscribeEvent.execute(subscriptionCount.copy(subscriberId=preference.customerId), subscriptionCount.status,true)
-        }
-    }
     /*val loadLatestVideos by lazy {
         latestVideosRepo.getList().cachedIn(viewModelScope)
     }*/

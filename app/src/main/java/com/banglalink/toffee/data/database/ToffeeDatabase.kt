@@ -22,7 +22,7 @@ import com.banglalink.toffee.data.database.entities.*
         SubscriptionCount::class,
         SubscriptionInfo::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false)
 abstract class ToffeeDatabase: RoomDatabase() {
     abstract fun getUploadDao(): UploadDao

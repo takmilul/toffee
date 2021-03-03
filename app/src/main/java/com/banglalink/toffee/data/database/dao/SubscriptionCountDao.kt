@@ -11,11 +11,14 @@ interface SubscriptionCountDao {
     @Delete
     suspend fun delete(subscriptionCount: SubscriptionCount): Int
 
-    @Query("SELECT * FROM subscription_count")
+    @Query("SELECT * FROM SubscriptionCount")
     suspend fun getAllSubscription(): List<SubscriptionCount>
 
-    @Query("UPDATE subscription_count SET status = :status WHERE channelId == :channelId AND subscriberId == :subscriberId")
-    suspend fun updateSubscription(status: Int, channelId: Int, subscriberId: Int): Int
+    @Query("SELECT status FROM SubscriptionCount WHERE channelId == :channelId")
+    suspend fun getSubscriberCount(channelId: Int): Long?
+    
+    @Query("UPDATE SubscriptionCount SET status = :count WHERE channelId == :channelId")
+    suspend fun updateSubscription(channelId: Int, count: Long): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg subscriptionCountList: SubscriptionCount): LongArray

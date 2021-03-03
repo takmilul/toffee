@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.Spannable
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
@@ -16,13 +17,16 @@ import androidx.core.text.toSpannable
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.color
 import com.banglalink.toffee.R.layout
 import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_DETAILS_URL
-import com.banglalink.toffee.data.database.entities.SubscriptionCount
+import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
+import com.banglalink.toffee.data.repository.SubscriptionCountRepository
+import com.banglalink.toffee.data.repository.SubscriptionInfoRepository
 import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBinding
 import com.banglalink.toffee.databinding.FragmentMyChannelHomeBinding
 import com.banglalink.toffee.extension.observe
@@ -34,13 +38,14 @@ import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.common.UnSubscribeDialog
 import com.banglalink.toffee.ui.common.ViewPagerAdapter
-import com.banglalink.toffee.ui.home.LandingPageViewModel
+import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.bindButtonState
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.alert_dialog_my_channel_rating.view.*
 import kotlinx.android.synthetic.main.layout_my_channel_detail.*
+import kotlinx.coroutines.launch
 import java.util.*
 import java.util.regex.Pattern
 import javax.inject.Inject
@@ -54,6 +59,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     private var rating: Float = 0.0f
     private var myRating: Int = 0
     private var isSubscribed: Int = 0
+    private var subscriberCount: Long = 0
     private var isPublic: Int = 0
     private var myChannelDetail: MyChannelDetail? = null
     private lateinit var progressDialog: VelBoxProgressDialog
@@ -62,13 +68,15 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     private var fragmentList: ArrayList<androidx.fragment.app.Fragment> = arrayListOf()
     private var fragmentTitleList: ArrayList<String> = arrayListOf()
     @Inject lateinit var cacheManager: CacheManager
+    @Inject lateinit var subscriptionInfoRepository: SubscriptionInfoRepository
+    @Inject lateinit var subscriptionCountRepository: SubscriptionCountRepository
     @Inject lateinit var myChannelHomeViewModelAssistedFactory: MyChannelHomeViewModel.AssistedFactory
     private val viewModel by viewModels<MyChannelHomeViewModel> { MyChannelHomeViewModel.provideFactory(myChannelHomeViewModelAssistedFactory, isOwner, isPublic, channelId, channelOwnerId) }
 //    @Inject @DefaultCache lateinit var retrofitCache: Cache
     private val createPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
     private val subscribeChannelViewModel by viewModels<MyChannelSubscribeViewModel>()
     private val playlistReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
-    private val landingViewModel by viewModels<LandingPageViewModel>()
+    val homeViewModel by activityViewModels<HomeViewModel>()
 
     companion object {
         const val IS_OWNER = "isOwner"
@@ -108,7 +116,6 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_my_channel_home, container, false)
         binding.lifecycleOwner = this
         binding.isOwner = isOwner
-        binding.isSubscribed = isSubscribed
         binding.viewModel = viewModel
         return binding.root
     }
@@ -120,10 +127,18 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
 //        binding.progressBar.visibility = View.VISIBLE
         progressDialog.show()
 
+        lifecycleScope.launch { 
+            isSubscribed = if(subscriptionInfoRepository.getSubscriptionInfoByChannelId(channelOwnerId, mPref.customerId) != null) 1 else 0
+            subscriberCount = subscriptionCountRepository.getSubscriberCount(channelOwnerId)
+            Log.i("Subsc_", "onViewCreated: $subscriberCount")
+            binding.isSubscribed = isSubscribed
+            binding.subscriberCount = subscriberCount
+        }
+        
         observeChannelDetail()
         viewModel.getChannelDetail()
-        binding.channelDetailView.subscriptionButton.isEnabled = true
 
+        binding.channelDetailView.subscriptionButton.isEnabled = true
         binding.channelDetailView.addBioButton.safeClick(this)
         binding.channelDetailView.editButton.safeClick(this)
         binding.channelDetailView.analyticsButton.safeClick(this)
@@ -166,15 +181,23 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                 if (isSubscribed == 0) {
                     subscribeChannelViewModel.isButtonEnabled.value = false
                     binding.channelDetailView.subscriptionButton.isEnabled = false
-                    subscribeChannelViewModel.subscribe(channelId, 1, channelOwnerId)
-                    landingViewModel.insertSubscribe(SubscriptionCount(null,channelOwnerId,0,1))
+//                    subscribeChannelViewModel.subscribe(channelId, 1, channelOwnerId)
+                    homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, channelOwnerId, mPref.customerId) ,1)
+                    isSubscribed = 1
+                    binding.isSubscribed = isSubscribed
+                    binding.subscriberCount = ++subscriberCount
+                    binding.channelDetailView.subscriptionButton.isEnabled = true
                 }
                 else{
                     UnSubscribeDialog.show(requireContext()){
                         subscribeChannelViewModel.isButtonEnabled.value = false
                         binding.channelDetailView.subscriptionButton.isEnabled = false
-                        subscribeChannelViewModel.subscribe(channelId, 0, channelOwnerId)
-                        landingViewModel.insertSubscribe(SubscriptionCount(null,channelOwnerId,0,1))
+//                        subscribeChannelViewModel.subscribe(channelId, 0, channelOwnerId)
+                        homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, channelOwnerId, mPref.customerId) ,-1)
+                        isSubscribed = 0
+                        binding.subscriberCount = --subscriberCount
+                        binding.isSubscribed = isSubscribed
+                        binding.channelDetailView.subscriptionButton.isEnabled = true
                     }
                 }
             }
@@ -238,15 +261,14 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                 is Success -> {
                     if (it.data != null) {
                         myChannelDetail = it.data.myChannelDetail
-                        isSubscribed = it.data.isSubscribed
                         rating = it.data.ratingCount
                         myRating = it.data.myRating
                         binding.myRating = myRating
-                        binding.channelDetailView.subscriptionCountTextView.text = it.data.subscriberCount.toString()
+//                        binding.channelDetailView.subscriptionCountTextView.text = subscriberCount.toString()
                         isOwner = it.data.isOwner
                         channelId = myChannelDetail?.id?.toInt() ?: 0
                         binding.data = it.data
-                        binding.isSubscribed = isSubscribed
+//                        binding.isSubscribed = isSubscribed
                         mPref.channelId = channelId
                         if (isOwner == 1) {
                             myChannelDetail?.let { detail ->
@@ -285,7 +307,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         binding.contentBody.visibility = View.VISIBLE
 
         observeRatingChannel()
-        observeSubscribeChannel()
+//        observeSubscribeChannel()
 
         binding.viewPager.offscreenPageLimit = 1
         viewPagerAdapter = ViewPagerAdapter(childFragmentManager, lifecycle)
@@ -317,7 +339,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         }
     }
     
-    private fun observeSubscribeChannel() {
+    /*private fun observeSubscribeChannel() {
         observe(subscribeChannelViewModel.liveData) {
             when (it) {
                 is Success -> {
@@ -332,7 +354,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                 }
             }
         }
-    }
+    }*/
 
     private fun observeRatingChannel() {
         observe(viewModel.ratingLiveData) {
