@@ -177,3 +177,16 @@ object DatabaseModule {
         return db.getSubscriptionInfoDao()
     }
 }
+    
+    @Provides
+    @Singleton
+    fun providesShareCountDao(db: ToffeeDatabase): ShareCountDao {
+        return db.getShareCountDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providesShareCountRepository(dao: ShareCountDao): ShareCountRepository {
+        return ShareCountRepositoryImpl(dao)
+    }
+ }

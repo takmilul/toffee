@@ -21,6 +21,7 @@ import com.banglalink.toffee.data.database.entities.*
         ReactionStatusItem::class,
         SubscriptionCount::class,
         SubscriptionInfo::class
+        ShareCount::class,
     ],
     version = 2,
     exportSchema = false)
@@ -39,6 +40,7 @@ abstract class ToffeeDatabase: RoomDatabase() {
     abstract fun getReactionStatusDao(): ReactionStatusDao
     abstract fun getSubscriptionDao(): SubscriptionCountDao
     abstract fun getSubscriptionInfoDao(): SubscriptionInfoDao
+    abstract fun getShareCountDao(): ShareCountDao
 
     companion object {
         const val DB_NAME = "toffee-db"

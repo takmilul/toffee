@@ -3,6 +3,10 @@ package com.banglalink.toffee.data.database
 import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.ReactionStatusItem
 import com.banglalink.toffee.data.repository.*
+import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
+import com.banglalink.toffee.data.repository.ReactionStatusRepository
+import com.banglalink.toffee.data.repository.ShareCountRepository
+import com.banglalink.toffee.data.repository.ViewCountRepository
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.model.ChannelInfo
@@ -17,6 +21,7 @@ class LocalSync @Inject constructor(
     private val viewCountRepo: ViewCountRepository,
     private val viewProgressRepo: ContentViewPorgressRepsitory,
     private val reactionStatusRepo: ReactionStatusRepository,
+    private val shareCountRepository: ShareCountRepository,
     private val reactionDao: ReactionDao,
     private val subscriptionInfoRepository: SubscriptionInfoRepository,
     private val subscriptionCountRepository: SubscriptionCountRepository,
@@ -28,6 +33,7 @@ class LocalSync @Inject constructor(
         channelInfo.viewProgress = viewProgressRepo.getProgressByContent(channelInfo.id.toLong())?.progress ?: 0L
         channelInfo.isSubscribed = if(subscriptionInfoRepository.getSubscriptionInfoByChannelId(channelInfo.channel_owner_id, preference.customerId) != null) 1 else 0
         channelInfo.subscriberCount = subscriptionCountRepository.getSubscriberCount(channelInfo.channel_owner_id).toInt()
+        channelInfo.shareCount = shareCountRepository.getShareCountByContentId(channelInfo.id.toInt())
         val reactionList = reactionStatusRepo.getReactionStatusByChannelId(channelInfo.id.toLong())
         if(reactionList.isNotEmpty()) {
             channelInfo.reaction = getReactionStatus(channelInfo, reactionList)

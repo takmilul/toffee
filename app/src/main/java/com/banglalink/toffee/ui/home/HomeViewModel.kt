@@ -17,6 +17,7 @@ import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.data.repository.ReactionStatusRepository
 import com.banglalink.toffee.data.repository.SubscriptionCountRepository
+import com.banglalink.toffee.data.repository.ShareCountRepository
 import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.data.repository.ViewCountRepository
 import com.banglalink.toffee.data.storage.Preference
@@ -61,6 +62,8 @@ class HomeViewModel @ViewModelInject constructor(
     private val dbApi: DbApi,
     private val reactionStatusRepository: ReactionStatusRepository,
     private val subscriptionCountRepository: SubscriptionCountRepository
+    private val reactionStatusRepository: ReactionStatusRepository,
+    private val shareCountRepository: ShareCountRepository
 ):BaseViewModel(),OnCompleteListener<InstanceIdResult> {
 
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
@@ -74,6 +77,7 @@ class HomeViewModel @ViewModelInject constructor(
     val viewAllVideoLiveData = MutableLiveData<Boolean>()
     val viewAllCategories = MutableLiveData<Boolean>()
     val myChannelNavLiveData = SingleLiveEvent<MyChannelNavParams>()
+    val notificationUrlLiveData = MutableLiveData<String>()
 
     private val _channelDetail = MutableLiveData<Resource<MyChannelDetailBean?>>()
     val channelDetail = _channelDetail.toLiveData()
@@ -141,6 +145,13 @@ class HomeViewModel @ViewModelInject constructor(
     fun populateSubscriptionCountDb(url:String){
         appScope.launch {
             DownloadSubscriptionCountDb(dbApi, subscriptionCountRepository)
+                .execute(mContext, url)
+        }
+    }
+
+    fun populateShareCountDb(url:String){
+        appScope.launch {
+            DownloadShareCountDb(dbApi, shareCountRepository)
                 .execute(mContext, url)
         }
     }
