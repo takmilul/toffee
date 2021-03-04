@@ -1,6 +1,7 @@
 package com.banglalink.toffee.apiservice
 
 import com.banglalink.toffee.common.paging.BaseApiService
+import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.network.request.UgcPopularChannelsRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
@@ -12,6 +13,7 @@ import com.squareup.inject.assisted.AssistedInject
 class GetUgcPopularUserChannels @AssistedInject constructor(
     private val preference: Preference,
     private val toffeeApi: ToffeeApi,
+    private val localSync: LocalSync,
     @Assisted private val requestParams: ApiCategoryRequestParams
 ): BaseApiService<UgcUserChannelInfo> {
 
@@ -33,11 +35,12 @@ class GetUgcPopularUserChannels @AssistedInject constructor(
             )
         }
 
-        if (response.response.channels != null) {
-            return response.response.channels
-        }
-
-        return emptyList()
+        return if (response.response.channels != null) {
+            response.response.channels.map {
+                localSync.syncUserChannel(it)
+                it
+            }
+        } else emptyList()
     }
 
     @AssistedInject.Factory

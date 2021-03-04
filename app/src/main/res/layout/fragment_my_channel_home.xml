@@ -13,6 +13,10 @@
         <variable
             name="isSubscribed"
             type="Integer" />
+        
+        <variable
+            name="subscriberCount"
+            type="Long" />
 
         <variable
             name="myRating"
@@ -49,6 +53,7 @@
                     app:data="@{data}"
                     app:isOwner="@{isOwner}"
                     app:isSubscribed="@{isSubscribed}"
+                    app:subscriberCount="@{subscriberCount}"
                     app:myRating="@{myRating}"
                     app:layout_collapseMode="parallax"
                     app:layout_collapseParallaxMultiplier="1"

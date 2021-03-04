@@ -2,12 +2,12 @@ package com.banglalink.toffee.di
 
 import android.content.Context
 import androidx.room.Room
+import com.banglalink.toffee.data.database.MigrationProvider
 import com.banglalink.toffee.data.database.ToffeeDatabase
 import com.banglalink.toffee.data.database.dao.*
 import com.banglalink.toffee.data.repository.*
 import com.banglalink.toffee.data.repository.impl.*
 import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.data.database.dao.ViewCountDAO
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,7 +24,7 @@ object DatabaseModule {
     fun providesDatabase(@ApplicationContext app: Context): ToffeeDatabase {
         return Room.databaseBuilder(app,
             ToffeeDatabase::class.java, ToffeeDatabase.DB_NAME)
-//            .addMigrations(*MigrationProvider.getMigrationList().toTypedArray())
+            .addMigrations(*MigrationProvider.getMigrationList().toTypedArray())
 //            .fallbackToDestructiveMigration()
             .build()
     }
@@ -154,4 +154,39 @@ object DatabaseModule {
     fun providesReactionStatusRepository(dao: ReactionStatusDao): ReactionStatusRepository {
         return ReactionStatusRepositoryImpl(dao)
     }
- }
+
+    @Provides
+    @Singleton
+    fun providesSubscribeCount(dao: SubscriptionCountDao): SubscriptionCountRepository {
+        return SubscriptionCountRepositoryImpl(dao)
+    }
+    @Provides
+    @Singleton
+    fun providesSubscriptionCountDao(db: ToffeeDatabase): SubscriptionCountDao {
+        return db.getSubscriptionDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providesSubscribeInfo(dao: SubscriptionInfoDao): SubscriptionInfoRepository {
+        return SubscriptionInfoRepositoryImpl(dao)
+    }
+    
+    @Provides
+    @Singleton
+    fun providesSubscriptionInfoDao(db: ToffeeDatabase): SubscriptionInfoDao {
+        return db.getSubscriptionInfoDao()
+    }
+    
+    @Provides
+    @Singleton
+    fun providesShareCountDao(db: ToffeeDatabase): ShareCountDao {
+        return db.getShareCountDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providesShareCountRepository(dao: ShareCountDao): ShareCountRepository {
+        return ShareCountRepositoryImpl(dao)
+    }
+}

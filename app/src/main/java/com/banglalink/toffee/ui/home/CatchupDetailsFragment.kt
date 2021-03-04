@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -16,8 +15,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.common.paging.ProviderIconCallback
+import com.banglalink.toffee.data.database.entities.SubscriptionInfo
+import com.banglalink.toffee.data.repository.SubscriptionCountRepository
+import com.banglalink.toffee.data.repository.SubscriptionInfoRepository
 import com.banglalink.toffee.enums.Reaction.Love
-import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.ui.common.*
@@ -30,15 +31,19 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<ChannelInfo> {
+    private var isSubscribed: Int = 0
+    private var subscriberCount: Long = 0
     private lateinit var mAdapter: ConcatAdapter
     private lateinit var catchupAdapter: CatchUpDetailsAdapter
     private lateinit var detailsAdapter: ChannelHeaderAdapter
     private lateinit var currentItem: ChannelInfo
     private val viewModel by viewModels<CatchupDetailsViewModel>()
-    private val landingViewModel by activityViewModels<LandingPageViewModel>()
+    @Inject lateinit var subscriptionInfoRepository: SubscriptionInfoRepository
+    @Inject lateinit var subscriptionCountRepository: SubscriptionCountRepository
 
     companion object{
         const val CHANNEL_INFO = "channel_info_"
@@ -68,19 +73,27 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
         
         initAdapter()
 
-        viewModel.isChannelSubscribed.value = currentItem.isSubscribed == 1
+        /*viewModel.isChannelSubscribed.value = currentItem.isSubscribed == 1
         
         observe(viewModel.channelSubscriberCount) {
             currentItem.isSubscribed = if(viewModel.isChannelSubscribed.value!!) 1 else 0
             currentItem.subscriberCount = it
             detailsAdapter.notifyDataSetChanged()
-        }
+        }*/
 
         val customerId = mPref.customerId
         val isOwner = if (currentItem.channel_owner_id == customerId) 1 else 0
         val isPublic = if (currentItem.channel_owner_id == customerId) 0 else 1
-        val channelId = currentItem.channel_owner_id.toLong()
-        viewModel.getChannelInfo(isOwner, isPublic, channelId, channelId.toInt())
+        val channelId = currentItem.channel_owner_id
+
+        lifecycleScope.launch {
+            isSubscribed = if(subscriptionInfoRepository.getSubscriptionInfoByChannelId(channelId, mPref.customerId) != null) 1 else 0
+            subscriberCount = subscriptionCountRepository.getSubscriberCount(channelId)
+            currentItem.isSubscribed = isSubscribed
+            currentItem.subscriberCount = subscriberCount.toInt()
+            detailsAdapter.notifyDataSetChanged()
+        }
+//        viewModel.getChannelInfo(isOwner, isPublic, channelId, channelId.toInt())
         
         with(listview) {
             addItemDecoration(MarginItemDecoration(12))
@@ -98,12 +111,22 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
 
     override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
         super.onSubscribeButtonClicked(view, item)
-        if (viewModel.isChannelSubscribed.value == false) {
-            viewModel.toggleSubscriptionStatus(item.id.toInt(), item.channel_owner_id)
+        if (isSubscribed == 0) {
+//            viewModel.toggleSubscriptionStatus(item.id.toInt(), item.channel_owner_id)
+            homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), 1)
+            isSubscribed = 1
+            currentItem.isSubscribed = isSubscribed
+            currentItem.subscriberCount = (++subscriberCount).toInt()
+            detailsAdapter.notifyDataSetChanged()
         }
         else{
             UnSubscribeDialog.show(requireContext()){
-                viewModel.toggleSubscriptionStatus(item.id.toInt(), item.channel_owner_id)
+//                viewModel.toggleSubscriptionStatus(item.id.toInt(), item.channel_owner_id)
+                homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), -1)
+                isSubscribed = 0
+                currentItem.isSubscribed = isSubscribed
+                currentItem.subscriberCount = (--subscriberCount).toInt()
+                detailsAdapter.notifyDataSetChanged()
             }
         }
     }

@@ -220,7 +220,19 @@ class HomeActivity :
 
         observe(mPref.reactionStatusDbUrlLiveData){
             if(it.isNotEmpty()){
-                viewModel.populateReactionStatusDb("url")
+                viewModel.populateReactionStatusDb(it)
+            }
+        }
+        
+        observe(mPref.subscriberStatusDbUrlLiveData){
+            if(it.isNotEmpty()){
+                viewModel.populateSubscriptionCountDb(it)
+            }
+        }
+        
+        observe(mPref.shareCountDbUrlLiveData){
+            if(it.isNotEmpty()){
+                viewModel.populateShareCountDb(it)
             }
         }
         
@@ -241,6 +253,10 @@ class HomeActivity :
             setPlayList(item)
         }
 
+        observe(viewModel.notificationUrlLiveData){
+            handleDeepLink(it)
+        }
+        
         observe(viewModel.shareContentLiveData) { channelInfo ->
             val sharingIntent = Intent(Intent.ACTION_SEND)
             sharingIntent.type = "text/plain"

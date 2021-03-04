@@ -176,6 +176,7 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment(), TextWatcher {
 
     private fun saveButtonStateChange() {
         binding.saveBtn.isEnabled = channelLogoUrl.isNotBlank() && binding.termsAndConditionsCheckbox.isChecked && channelName.isNotBlank()
+        binding.textViewFillUp.visibility = if(binding.saveBtn.isEnabled) View.INVISIBLE else View.VISIBLE
     }
 
     private fun loadNumber() {
@@ -218,12 +219,6 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment(), TextWatcher {
 
     override fun afterTextChanged(s: Editable?) {
         channelName = s.toString().trim()
-        if (channelName.isBlank()) {
-            binding.textViewFillUp.show()
-        }
-        else {
-            binding.textViewFillUp.visibility = View.INVISIBLE
-        }
         saveButtonStateChange()
     }
 }
