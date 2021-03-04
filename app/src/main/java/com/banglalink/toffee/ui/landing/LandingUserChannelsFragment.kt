@@ -11,15 +11,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
+import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
-import com.banglalink.toffee.model.UgcCategory
-import com.banglalink.toffee.model.UgcUserChannelInfo
+import com.banglalink.toffee.model.UserChannelInfo
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.common.UnSubscribeDialog
 import com.banglalink.toffee.ui.home.LandingPageViewModel
-import com.banglalink.toffee.ui.home.UserChannelsListAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_landing_user_channels.*
 import kotlinx.coroutines.flow.collectLatest
@@ -28,11 +27,10 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class LandingUserChannelsFragment : HomeBaseFragment() {
     @Inject lateinit var cacheManager: CacheManager
-    private lateinit var mAdapter: UserChannelsListAdapter
-    private var categoryInfo: UgcCategory? = null
-    private var channelInfo: UgcUserChannelInfo? = null
+    private lateinit var mAdapterLanding: LandingUserChannelsListAdapter
+    private var categoryInfo: Category? = null
+    private var channelInfo: UserChannelInfo? = null
     private val viewModel by activityViewModels<LandingPageViewModel>()
-//    private val subscriptionViewModel by viewModels<UserChannelViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,12 +47,12 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
             CategoryDetailsFragment.ARG_CATEGORY_ITEM
         )
 
-        mAdapter = UserChannelsListAdapter(object : LandingPopularChannelCallback<UgcUserChannelInfo> {
-            override fun onItemClicked(item: UgcUserChannelInfo) {
+        mAdapterLanding = LandingUserChannelsListAdapter(object : LandingPopularChannelCallback<UserChannelInfo> {
+            override fun onItemClicked(item: UserChannelInfo) {
                 homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.id.toInt(), item.channelOwnerId, item.isSubscribed)
             }
 
-            override fun onSubscribeButtonClicked(view: View, info: UgcUserChannelInfo) {
+            override fun onSubscribeButtonClicked(view: View, info: UserChannelInfo) {
 
                 if (info.isSubscribed == 0) {
                     channelInfo = info.also { userChannelInfo ->
@@ -63,7 +61,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
                     }
 //                    subscriptionViewModel.setSubscriptionStatus(info.id, 1, info.channelOwnerId)
                     homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId), 1)
-                    mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, channelInfo)
+                    mAdapterLanding.notifyItemRangeChanged(0, mAdapterLanding.itemCount, channelInfo)
                 }
                 else {
                     UnSubscribeDialog.show(requireContext()){
@@ -73,7 +71,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
                         }
 //                        subscriptionViewModel.setSubscriptionStatus(info.id, 0, info.channelOwnerId)
                         homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId), -1)
-                        mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, channelInfo)
+                        mAdapterLanding.notifyItemRangeChanged(0, mAdapterLanding.itemCount, channelInfo)
                     }
                 }
             }
@@ -85,7 +83,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
 
         with(userChannelList) {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            adapter = mAdapter
+            adapter = mAdapterLanding
         }
         observeList()
     }
@@ -99,7 +97,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
                 viewModel.loadUserChannelsByCategory(categoryInfo!!)
             }
             content.collectLatest {
-                mAdapter.submitData(it)
+                mAdapterLanding.submitData(it)
             }
         }
 

@@ -4,7 +4,6 @@ import com.banglalink.toffee.data.network.request.ContentRequest
 import com.banglalink.toffee.data.network.response.ContentResponse
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.ContentBean
-import com.banglalink.toffee.usecase.GetContents
 import com.nhaarman.mockitokotlin2.*
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking

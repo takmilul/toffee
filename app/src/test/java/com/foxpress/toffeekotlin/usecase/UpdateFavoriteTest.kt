@@ -4,7 +4,7 @@ import com.banglalink.toffee.data.network.request.FavoriteRequest
 import com.banglalink.toffee.data.network.response.FavoriteResponse
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.usecase.UpdateFavorite
+import com.banglalink.toffee.apiservice.UpdateFavorite
 import com.nhaarman.mockitokotlin2.*
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking

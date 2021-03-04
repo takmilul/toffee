@@ -30,12 +30,12 @@ import com.banglalink.toffee.databinding.FragmentLandingLatestVideosBinding
 import com.banglalink.toffee.enums.FilterContentType.*
 import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
-import com.banglalink.toffee.model.UgcCategory
-import com.banglalink.toffee.model.UgcSubCategory
+import com.banglalink.toffee.model.SubCategory
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.ContentReactionCallback
 import com.banglalink.toffee.ui.common.HomeBaseFragment
@@ -56,7 +56,7 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
     private lateinit var mAdapter: PopularVideoListAdapter
 
     private val viewModel by activityViewModels<LandingPageViewModel>()
-    private var category: UgcCategory? = null
+    private var category: Category? = null
     private var listJob: Job? = null
     private var selectedFilter: Int = FEED.value
     private lateinit var binding: FragmentLandingLatestVideosBinding
@@ -73,7 +73,7 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        category = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM) as UgcCategory?
+        category = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM) as Category?
         setupEmptyView()
         mAdapter = PopularVideoListAdapter(this)
 
@@ -293,7 +293,7 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
 //                        viewModel.checkedSubCategoryChipId.value = checkedId
                         val selectedChip = group.findViewById<Chip>(checkedId)
                         if(selectedChip != null) {
-                            val selectedSub = selectedChip.tag as UgcSubCategory
+                            val selectedSub = selectedChip.tag as SubCategory
                             viewModel.categoryId.value = selectedSub.categoryId.toInt()
                             viewModel.subCategoryId.value = selectedSub.id.toInt()
                             viewModel.isDramaSeries.value = selectedSub.categoryId.toInt() == 9
@@ -306,7 +306,7 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
         }
     }
 
-    private fun addChip(subCategory: UgcSubCategory): Chip {
+    private fun addChip(subCategory: SubCategory): Chip {
         val intColor = ContextCompat.getColor(requireContext(), R.color.colorSecondaryDark)
         val textColor = ContextCompat.getColor(requireContext(), R.color.main_text_color)
 

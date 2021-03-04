@@ -2,10 +2,9 @@ package com.banglalink.toffee.apiservice
 
 import com.banglalink.toffee.common.paging.BaseApiService
 import com.banglalink.toffee.data.database.LocalSync
-import com.banglalink.toffee.data.network.request.UgcTrendingNowRequest
+import com.banglalink.toffee.data.network.request.AllUserChannelsEditorsChoiceRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
-import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.EditorsChoiceFeaturedRequestParams
@@ -28,7 +27,7 @@ class GetUgcTrendingNowContents @AssistedInject constructor(
 
     override suspend fun loadData(offset: Int, limit: Int): List<ChannelInfo> {
         if(offset > 0) return emptyList()
-        val request =  UgcTrendingNowRequest(
+        val request =  AllUserChannelsEditorsChoiceRequest(
             preference.customerId,
             preference.password
         )

@@ -2,7 +2,7 @@ package com.banglalink.toffee.apiservice
 
 import com.banglalink.toffee.common.paging.BaseApiService
 import com.banglalink.toffee.data.database.LocalSync
-import com.banglalink.toffee.data.network.request.UgcFeatureContentRequest
+import com.banglalink.toffee.data.network.request.FeatureContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.Preference
@@ -20,7 +20,7 @@ class GetFeatureContents @AssistedInject constructor(
 
     override suspend fun loadData(offset: Int, limit: Int): List<ChannelInfo> {
         if(offset > 0) return emptyList()
-        val request =  UgcFeatureContentRequest(
+        val request =  FeatureContentRequest(
             preference.customerId,
             preference.password
         )

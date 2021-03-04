@@ -6,13 +6,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.apiservice.GetProfile
-import com.banglalink.toffee.apiservice.MyChannelGetDetailService
+import com.banglalink.toffee.apiservice.*
 import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.data.network.retrofit.DbApi
-import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.data.repository.*
@@ -30,7 +28,6 @@ import com.banglalink.toffee.ui.player.PlaylistManager
 import com.banglalink.toffee.usecase.*
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.getError
-import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.iid.FirebaseInstanceId
@@ -54,8 +51,10 @@ class HomeViewModel @ViewModelInject constructor(
     private val tvChannelRepo: TVChannelRepository,
     private val viewCountRepository: ViewCountRepository,
     private val mPref: Preference,
-    private val toffeeApi: ToffeeApi,
     private val dbApi: DbApi,
+    private val setFcmToken: SetFcmToken,
+    private val updateFavorite: UpdateFavorite,
+    private val contentFromShareableUrl: GetContentFromShareableUrl,
     private val reactionStatusRepository: ReactionStatusRepository,
     private val subscriptionCountRepository: SubscriptionCountRepository,
     private val shareCountRepository: ShareCountRepository
@@ -79,14 +78,6 @@ class HomeViewModel @ViewModelInject constructor(
     private var _playlistManager = PlaylistManager()
 
     fun getPlaylistManager() = _playlistManager
-
-    private val getContentFromShareableUrl by unsafeLazy{
-        GetContentFromShareableUrl(Preference.getInstance(), toffeeApi)
-    }
-
-    private val setFcmToken by unsafeLazy {
-        SetFcmToken(Preference.getInstance(), toffeeApi)
-    }
 
     init {
         getProfile()
@@ -163,7 +154,7 @@ class HomeViewModel @ViewModelInject constructor(
 
     fun getShareableContent(shareUrl :String):LiveData<Resource<ChannelInfo?>>{
        return resultLiveData{
-           getContentFromShareableUrl.execute(shareUrl)
+           contentFromShareableUrl.execute(shareUrl)
        }
     }
 
@@ -223,10 +214,7 @@ class HomeViewModel @ViewModelInject constructor(
             sendSubscribeEvent.execute(subscriptionInfo, status,true)
         }
     }
-    private val updateFavorite by unsafeLazy {
-        UpdateFavorite(Preference.getInstance(), toffeeApi)
-    }
-
+    
     fun updateFavorite(channelInfo: ChannelInfo):LiveData<Resource<ChannelInfo>>{
         return resultLiveData {
             val favorite= channelInfo.favorite == null || channelInfo.favorite == "0"

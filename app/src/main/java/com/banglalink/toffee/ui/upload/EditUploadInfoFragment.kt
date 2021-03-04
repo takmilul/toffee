@@ -22,8 +22,8 @@ import com.banglalink.toffee.databinding.FragmentEditUploadInfoBinding
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.model.UgcCategory
-import com.banglalink.toffee.model.UgcSubCategory
+import com.banglalink.toffee.model.Category
+import com.banglalink.toffee.model.SubCategory
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.ToffeeSpinnerAdapter
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
@@ -181,7 +181,7 @@ class EditUploadInfoFragment: BaseFragment() {
     }
 
     private fun setupSubcategorySpinner() {
-        val mSubCategoryAdapter = ToffeeSpinnerAdapter<UgcSubCategory>(requireContext(), "Select Sub Category")
+        val mSubCategoryAdapter = ToffeeSpinnerAdapter<SubCategory>(requireContext(), "Select Sub Category")
         binding.subCategorySpinner.adapter = mSubCategoryAdapter
         binding.subCategorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -332,12 +332,12 @@ class EditUploadInfoFragment: BaseFragment() {
         if (title.isNotBlank() and description.isNotBlank()) {
             lifecycleScope.launch {
                 val categoryObj = binding.categorySpinner.selectedItem
-                val categoryId = if (categoryObj is UgcCategory) {
+                val categoryId = if (categoryObj is Category) {
                     categoryObj.id
                 } else -1
 
                 val subCategoryObj = binding.subCategorySpinner.selectedItem
-                val subcategoryId = if (subCategoryObj is UgcSubCategory) {
+                val subcategoryId = if (subCategoryObj is SubCategory) {
                     subCategoryObj.id
                 } else -1
 

@@ -5,7 +5,7 @@ import com.banglalink.toffee.data.network.response.ReferralCodeStatusResponse
 import com.banglalink.toffee.exception.ApiException
 import com.banglalink.toffee.model.INVALID_REFERRAL_ERROR_CODE
 import com.banglalink.toffee.model.ReferralCodeStatusBean
-import com.banglalink.toffee.usecase.CheckReferralCodeStatus
+import com.banglalink.toffee.apiservice.CheckReferralCodeStatus
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.whenever
 import junit.framework.Assert.assertEquals

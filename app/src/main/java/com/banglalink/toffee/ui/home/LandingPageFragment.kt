@@ -13,6 +13,7 @@ import com.banglalink.toffee.enums.PageType.Landing
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.google.android.material.appbar.AppBarLayout
+import dagger.hilt.android.AndroidEntryPoint
 
 class LandingPageFragment : HomeBaseFragment(){
     private val landingViewModel by activityViewModels<LandingPageViewModel>()

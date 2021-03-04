@@ -7,16 +7,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.banglalink.toffee.apiservice.GetUgcCategories
-import com.banglalink.toffee.apiservice.UgcContentUpload
+import com.banglalink.toffee.apiservice.ContentUpload
+import com.banglalink.toffee.apiservice.GetCategories
 import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.exception.Error
+import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.SubCategory
 import com.banglalink.toffee.model.TUS_UPLOAD_SERVER_URL
-import com.banglalink.toffee.model.UgcCategory
-import com.banglalink.toffee.model.UgcSubCategory
 import com.banglalink.toffee.util.*
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
@@ -30,12 +30,12 @@ import java.util.*
 class EditUploadInfoViewModel @AssistedInject constructor(
     @ApplicationContext private val appContext: Context,
     private val uploadRepo: UploadInfoRepository,
-    private val contentUploadApi: UgcContentUpload,
+    private val contentUploadApi: ContentUpload,
     private val preference: Preference,
-    private val categoryApi: GetUgcCategories,
-    @Assisted private val uploadFileUri: String,
-//    private val subCategoryApi: SubCategoryService
+    private val categoryApi: GetCategories,
+    @Assisted private val uploadFileUri: String
 ): ViewModel() {
+    
     val progressDialog = MutableLiveData<Boolean>()
 
     val submitButtonStatus = MutableLiveData<Boolean>()
@@ -49,10 +49,10 @@ class EditUploadInfoViewModel @AssistedInject constructor(
     val uploadProgress = MutableLiveData<Int>()
     val uploadSize = MutableLiveData<String>()
 
-    val categories = MutableLiveData<List<UgcCategory>>()
+    val categories = MutableLiveData<List<Category>>()
     val categoryPosition = MutableLiveData<Int>()
     
-    val subCategories = MutableLiveData<List<UgcSubCategory>>()
+    val subCategories = MutableLiveData<List<SubCategory>>()
     val subCategoryPosition = MutableLiveData<Int>()
 
     val ageGroup = MutableLiveData<List<String>>()

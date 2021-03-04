@@ -5,21 +5,22 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.apiservice.ApiCategoryRequestParams
+import com.banglalink.toffee.apiservice.FollowCategory
 import com.banglalink.toffee.apiservice.GetCategoryFeatureContents
-import com.banglalink.toffee.apiservice.UgcFollowCategory
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.FollowCategoryBean
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.model.UgcSubCategory
+import com.banglalink.toffee.model.SubCategory
 import com.banglalink.toffee.util.getError
 import kotlinx.coroutines.launch
 
 class CategoryInfoViewModel @ViewModelInject constructor(
-    private val followCategory: UgcFollowCategory,
+    private val followCategory: FollowCategory,
     private val featureContentFactory: GetCategoryFeatureContents.AssistedFactory
 ): ViewModel() {
+    
     val featuredList = MutableLiveData<List<ChannelInfo>>()
-    val subcategoryList = MutableLiveData<List<UgcSubCategory>>()
+    val subcategoryList = MutableLiveData<List<SubCategory>>()
     val followerCount = MutableLiveData<Long>()
     val isCategoryFollowing = MutableLiveData<Int>()
     val followCategoryResponse = MutableLiveData<Resource<FollowCategoryBean>>()

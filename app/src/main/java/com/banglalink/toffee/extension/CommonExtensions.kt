@@ -32,6 +32,10 @@ fun View.hide(){
     this.visibility = View.GONE
 }
 
+fun View.invisible(){
+    this.visibility = View.INVISIBLE
+}
+
 val Int.dp: Int get() {
     return (this/Resources.getSystem().displayMetrics.density).toInt()
 }
