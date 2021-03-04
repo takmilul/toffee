@@ -13,7 +13,7 @@ import com.banglalink.toffee.databinding.FragmentMovieBinding
 import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.setVisibility
-import com.banglalink.toffee.model.UgcCategory
+import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
@@ -21,7 +21,7 @@ import com.banglalink.toffee.util.bindCategoryImage
 import kotlinx.android.synthetic.main.fragment_category_info.*
 
 class MovieFragment : BaseFragment() {
-    private lateinit var category: UgcCategory
+    private lateinit var category: Category
     private lateinit var binding: FragmentMovieBinding
     private val landingViewModel by activityViewModels<LandingPageViewModel>()
     private val viewModel by activityViewModels<MovieViewModel>()

@@ -4,30 +4,33 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.banglalink.toffee.apiservice.GetUgcCategories
+import com.banglalink.toffee.apiservice.GetCategories
 import com.banglalink.toffee.apiservice.MyChannelEditDetailService
 import com.banglalink.toffee.data.network.request.MyChannelEditRequest
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.extension.toLiveData
+import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.MyChannelDetail
 import com.banglalink.toffee.model.MyChannelEditBean
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.launch
 
-class MyChannelEditDetailViewModel @AssistedInject constructor(private val myChannelDetailApiService: MyChannelEditDetailService, private val categoryApiService: GetUgcCategories, @Assisted val myChannelDetail: MyChannelDetail?) :
-    BaseViewModel() {
+class MyChannelEditDetailViewModel @AssistedInject constructor(
+    private val myChannelDetailApiService: MyChannelEditDetailService,
+    private val categoryApiService: GetCategories,
+    @Assisted val myChannelDetail: MyChannelDetail?
+) : BaseViewModel() {
 
     private val _data = MutableLiveData<Resource<MyChannelEditBean>>()
     val editDetailLiveData = _data.toLiveData()
-    var categoryList = MutableLiveData<List<UgcCategory>>()
+    var categoryList = MutableLiveData<List<Category>>()
     private var _categories = MutableLiveData<List<String>>()
 //    val categories = _categories.toLiveData()
-    var selectedCategory: UgcCategory? = null
+    var selectedCategory: Category? = null
     val selectedCategoryPosition = MutableLiveData<Int>()
     val exitFragment = SingleLiveEvent<Boolean>()
 

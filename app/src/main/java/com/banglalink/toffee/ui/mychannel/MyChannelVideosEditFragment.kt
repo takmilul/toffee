@@ -23,7 +23,7 @@ import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.model.UgcSubCategory
+import com.banglalink.toffee.model.SubCategory
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
 import com.banglalink.toffee.ui.widget.ToffeeSpinnerAdapter
@@ -104,7 +104,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
     }
 
     private fun setupSubcategorySpinner() {
-        val mSubCategoryAdapter = ToffeeSpinnerAdapter<UgcSubCategory>(requireContext(), "Select Sub Category")
+        val mSubCategoryAdapter = ToffeeSpinnerAdapter<SubCategory>(requireContext(), "Select Sub Category")
         binding.subCategorySpinner.adapter = mSubCategoryAdapter
         binding.subCategorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {

@@ -1,6 +1,6 @@
 package com.banglalink.toffee.apiservice
 
-import com.banglalink.toffee.data.network.request.UgcFeatureContentRequest
+import com.banglalink.toffee.data.network.request.FeatureContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.Preference
@@ -15,7 +15,7 @@ class GetCategoryFeatureContents @AssistedInject constructor(
 ) {
 
     suspend operator fun invoke(): FeatureContentBean {
-        val request =  UgcFeatureContentRequest(
+        val request =  FeatureContentRequest(
             preference.customerId,
             preference.password
         )

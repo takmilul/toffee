@@ -2,16 +2,14 @@ package com.foxpress.toffeekotlin.usecase
 
 import com.banglalink.toffee.data.network.request.VerifyCodeRequest
 import com.banglalink.toffee.data.network.response.VerifyCodeResponse
-import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.exception.ApiException
 import com.banglalink.toffee.model.CustomerInfoSignIn
-import com.banglalink.toffee.usecase.VerifyCode
+import com.banglalink.toffee.apiservice.VerifyCode
 import com.nhaarman.mockitokotlin2.*
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
-import org.mockito.Mock
 import org.mockito.Mockito
 import retrofit2.Response
 

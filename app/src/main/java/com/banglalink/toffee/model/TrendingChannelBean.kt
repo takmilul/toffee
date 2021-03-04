@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class TrendingChannelBean(
     @SerializedName("channels")
-    val channels: List<TrendingChannelInfo>?,
+    val channels: List<UserChannelInfo>?,
     var code: Int = 0,
     val count: Int,
     val totalCount: Int = 0,

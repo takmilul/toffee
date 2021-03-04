@@ -27,17 +27,16 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class LandingPageViewModel @ViewModelInject constructor(
-        @ApplicationContext private val context: Context,
-        private val mostPopularApi: GetMostPopularContents.AssistedFactory,
-        private val mostPopularPlaylists: GetMostPopularPlaylists,
-        private val categoryListApi: GetUgcCategories,
-        private val tvChannelRepo: TVChannelRepository,
-        private val popularChannelAssistedFactory: GetUgcPopularUserChannels.AssistedFactory,
-        private val editorsChoiceAssistedFactory: GetUgcTrendingNowContents.AssistedFactory,
-        private val featuredAssistedFactory: FeatureContentService,
-        private val getContentAssistedFactory: GetContents.AssistedFactory,
-        private val getContentsAssistedFactory: com.banglalink.toffee.usecase.GetContents.AssistedFactory,
-        private val relativeContentsFactory: GetRelativeContents.AssistedFactory,
+    @ApplicationContext private val context: Context,
+    private val mostPopularApi: GetMostPopularContents.AssistedFactory,
+    private val mostPopularPlaylists: GetMostPopularPlaylists,
+    private val categoryListApi: GetCategories,
+    private val tvChannelRepo: TVChannelRepository,
+    private val popularChannelAssistedFactory: GetPopularUserChannels.AssistedFactory,
+    private val editorsChoiceAssistedFactory: GetUgcTrendingNowContents.AssistedFactory,
+    private val featuredAssistedFactory: FeatureContentService,
+    private val getContentAssistedFactory: GetContents.AssistedFactory,
+    private val relativeContentsFactory: GetRelativeContents.AssistedFactory,
 ):BaseViewModel() {
     
     val latestVideoLiveData = MutableLiveData<Pair<Int, Int>>()
@@ -48,7 +47,7 @@ class LandingPageViewModel @ViewModelInject constructor(
     val isDramaSeries: MutableLiveData<Boolean> = MutableLiveData()
     private val featuredContentList: MutableLiveData<Resource<List<ChannelInfo>?>> = MutableLiveData()
     val featuredContents = featuredContentList.toLiveData()
-    private val subCategoryList: MutableLiveData<Resource<List<UgcSubCategory>>> = MutableLiveData()
+    private val subCategoryList: MutableLiveData<Resource<List<SubCategory>>> = MutableLiveData()
     val subCategories = subCategoryList.toLiveData()
 
     private val hashtagData = MutableLiveData<List<String>>()
@@ -63,7 +62,7 @@ class LandingPageViewModel @ViewModelInject constructor(
     }
 
     private val getChannels by unsafeLazy {
-        getContentsAssistedFactory.create(ChannelRequestParams("",0,"",0,"LIVE"))
+        getContentAssistedFactory.create(ChannelRequestParams("",0,"",0,"LIVE"))
     }
 
     /*val loadLatestVideos by lazy {
@@ -127,7 +126,7 @@ class LandingPageViewModel @ViewModelInject constructor(
         })
     }
 
-    fun loadUserChannelsByCategory(category: UgcCategory): Flow<PagingData<UgcUserChannelInfo>> {
+    fun loadUserChannelsByCategory(category: Category): Flow<PagingData<UserChannelInfo>> {
         return BaseListRepositoryImpl({
             BaseNetworkPagingSource(
                 popularChannelAssistedFactory.create(
@@ -135,13 +134,6 @@ class LandingPageViewModel @ViewModelInject constructor(
                 )
             )
         }).getList()
-    }
-
-    fun loadChannels(){
-        viewModelScope.launch {
-            val response = resultFromResponse { getChannels.execute() }
-            channelMutableLiveData.postValue(response)
-        }
     }
 
     private val channelRepo by lazy {

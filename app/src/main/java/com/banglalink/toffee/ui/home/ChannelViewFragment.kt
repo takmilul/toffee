@@ -1,36 +1,9 @@
 package com.banglalink.toffee.ui.home
 
-import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
-import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
-import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.commit
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import com.banglalink.toffee.BR
-import com.banglalink.toffee.R
-import com.banglalink.toffee.databinding.CatchupDetailsListHeaderNewBinding
-import com.banglalink.toffee.enums.Reaction.Love
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.showToast
-import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.channels.ChannelFragment
-import com.banglalink.toffee.ui.common.*
-import com.banglalink.toffee.ui.landing.UserChannelViewModel
-import com.banglalink.toffee.ui.widget.MyPopupWindow
-import dagger.hilt.android.AndroidEntryPoint
-
-@AndroidEntryPoint
-class ChannelViewFragment: BaseFragment(), ContentReactionCallback<ChannelInfo> {
-    private lateinit var binding: CatchupDetailsListHeaderNewBinding
-    private val viewModel by viewModels<UserChannelViewModel>()
+//@AndroidEntryPoint
+class ChannelViewFragment {
+    /*private lateinit var binding: CatchupDetailsListHeaderNewBinding
+    private val viewModel by viewModels<TrendingUserChannelsViewModel>()
 
     private val homeViewModel by activityViewModels<HomeViewModel>()
 
@@ -174,7 +147,7 @@ class ChannelViewFragment: BaseFragment(), ContentReactionCallback<ChannelInfo> 
         }
     }
 
-    /*open fun handleFavoriteAddedSuccessfully(channelInfo: ChannelInfo){
+    *//*open fun handleFavoriteAddedSuccessfully(channelInfo: ChannelInfo){
         //subclass can hook here
     }
 
@@ -182,7 +155,7 @@ class ChannelViewFragment: BaseFragment(), ContentReactionCallback<ChannelInfo> 
         //subclass can hook here
     }
 
-    abstract fun removeItemNotInterestedItem(channelInfo: ChannelInfo)*/
+    abstract fun removeItemNotInterestedItem(channelInfo: ChannelInfo)*//*
     companion object {
         const val ARG_CHANNEL_INFO = "arg-channel-info"
 
@@ -193,5 +166,5 @@ class ChannelViewFragment: BaseFragment(), ContentReactionCallback<ChannelInfo> 
             fragment.arguments = args
             return fragment
         }
-    }
+    }*/
 }

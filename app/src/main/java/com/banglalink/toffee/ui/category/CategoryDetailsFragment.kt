@@ -1,24 +1,22 @@
 package com.banglalink.toffee.ui.category
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.banglalink.toffee.R
-import com.banglalink.toffee.model.UgcCategory
+import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.ui.common.BaseFragment
-import dagger.hilt.android.AndroidEntryPoint
 
 class CategoryDetailsFragment : BaseFragment() {
-    lateinit var category: UgcCategory
+    lateinit var category: Category
 
     companion object {
         const val ARG_CATEGORY_ITEM = "ARG_CATEGORY_ITEM"
         const val ARG_SUBCATEGORY_ITEM = "ARG_CATEGORY_ITEM"
         const val ARG_TITLE = "title"
 
-        fun newInstance(category: UgcCategory): CategoryDetailsFragment {
+        fun newInstance(category: Category): CategoryDetailsFragment {
             return CategoryDetailsFragment().apply {
                 arguments = Bundle().also {
                     it.putParcelable(ARG_CATEGORY_ITEM, category)

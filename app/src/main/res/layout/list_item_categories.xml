@@ -7,7 +7,7 @@
     <data>
         <variable
             name="data"
-            type="com.banglalink.toffee.model.UgcCategory" />
+            type="com.banglalink.toffee.model.Category" />
 
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout

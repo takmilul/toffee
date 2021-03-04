@@ -199,7 +199,7 @@
     </fragment>
     <fragment
         android:id="@+id/trendingChannelsFragment"
-        android:name="com.banglalink.toffee.ui.trendingchannels.TrendingChannelsFragment"
+        android:name="com.banglalink.toffee.ui.userchannels.AllUserChannelsFragment"
         android:label="Trending Channels"/>
     <fragment
         android:id="@+id/MyChannelEditDetailFragment"

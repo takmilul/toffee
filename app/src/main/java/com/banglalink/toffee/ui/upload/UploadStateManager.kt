@@ -1,8 +1,7 @@
 package com.banglalink.toffee.ui.upload
 
 import android.app.Application
-import android.util.Log
-import com.banglalink.toffee.apiservice.UgcUploadConfirmation
+import com.banglalink.toffee.apiservice.UploadConfirmation
 import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.model.TUS_UPLOAD_SERVER_URL
@@ -18,8 +17,9 @@ import net.gotev.uploadservice.network.ServerResponse
 class UploadStateManager(
     private val app: Application,
     private val uploadRepo: UploadInfoRepository,
-    private val uploadConfirmApi: UgcUploadConfirmation
+    private val uploadConfirmApi: UploadConfirmation
 ) {
+    
     private var retryUploadId: Long = -1L
     private var networkRetryCount: Int = MAX_RETRY_COUNT
 

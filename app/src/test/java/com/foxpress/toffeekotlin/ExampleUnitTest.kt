@@ -5,7 +5,7 @@ import com.banglalink.toffee.data.network.response.CheckUpdateResponse
 import com.banglalink.toffee.data.network.retrofit.AuthApi
 import com.banglalink.toffee.exception.UpdateRequiredException
 import com.banglalink.toffee.model.CheckUpdateBean
-import com.banglalink.toffee.usecase.CheckUpdate
+import com.banglalink.toffee.apiservice.CheckUpdate
 import com.nhaarman.mockitokotlin2.*
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
