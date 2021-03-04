@@ -361,7 +361,8 @@ class HomeActivity :
 
         window.decorView.setOnSystemUiVisibilityChangeListener {
 //            toggleNavigations(it and View.SYSTEM_UI_FLAG_FULLSCREEN == View.SYSTEM_UI_FLAG_FULLSCREEN)
-            if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            val isFullScreen = it and View.SYSTEM_UI_FLAG_FULLSCREEN == View.SYSTEM_UI_FLAG_FULLSCREEN
+            if(!isFullScreen) {
                 updateFullScreenState()
             }
         }
@@ -458,9 +459,7 @@ class HomeActivity :
         binding.playerView.addPlayerControllerChangeListener(this)
         resetPlayer()
         binding.playerView.resizeView(calculateScreenWidth())
-        if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            updateFullScreenState()
-        }
+        updateFullScreenState()
     }
 
     override fun resetPlayer() {
@@ -519,9 +518,11 @@ class HomeActivity :
                 bottom_sheet.visibility = View.GONE
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             }
+            binding.playerView.isFullScreen = true
             binding.playerView.scaleX = 1f
             binding.playerView.scaleY = 1f
         } else {
+            binding.playerView.isFullScreen = false
             bottom_sheet.visibility = View.GONE
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             binding.playerView.moveController(-1.0f)
@@ -545,12 +546,11 @@ class HomeActivity :
     private fun updateFullScreenState() {
         val state =
             resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE ||
-                    (binding.playerView.isVideoPortrait &&
-                            !binding.playerView.isFullScreenPortrait())
+                    binding.playerView.isFullScreen
 
         binding.playerView.onFullScreen(state)
         binding.playerView.resizeView(calculateScreenWidth(), state)
-        Utils.setFullScreen(this, state, binding.playerView.isVideoPortrait)// || binding.playerView.channelType != "LIVE")
+        Utils.setFullScreen(this, state)// || binding.playerView.channelType != "LIVE")
         toggleNavigations(state)
     }
 
@@ -1048,11 +1048,10 @@ class HomeActivity :
 
     override fun onFullScreenButtonPressed(): Boolean {
         super.onFullScreenButtonPressed()
-        if(!binding.playerView.isAutoRotationEnabled)
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED;
-        if(binding.playerView.isVideoPortrait) {
-            updateFullScreenState()
+        if(!binding.playerView.isAutoRotationEnabled) {
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED
         }
+        updateFullScreenState()
         return true
     }
 
@@ -1078,6 +1077,7 @@ class HomeActivity :
         } else if (resources.configuration.orientation != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         } else if(binding.playerView.isVideoPortrait && binding.playerView.isFullScreenPortrait()) {
+            binding.playerView.isFullScreen = false
             updateFullScreenState()
         } else if (binding.draggableView.isMaximized() && binding.draggableView.visibility == View.VISIBLE) {
             if(mPref.isEnableFloatingWindow) {
@@ -1242,6 +1242,8 @@ class HomeActivity :
         super.onMediaItemChanged()
         maximizePlayer()
         onViewMaximize()
+
+        updateFullScreenState()
     }
 
     private fun observeUpload2() {
