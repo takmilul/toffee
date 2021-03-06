@@ -1,4 +1,4 @@
-package com.banglalink.toffee.ui.home
+package com.banglalink.toffee.ui.landing
 
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding

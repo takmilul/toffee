@@ -18,10 +18,10 @@ import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.databinding.FragmentDramaSeriesContentBinding
 import com.banglalink.toffee.enums.FilterContentType.*
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.SeriesPlaybackInfo
-import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
@@ -159,7 +159,7 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
 
     override fun onProviderIconClicked(item: ChannelInfo) {
         super.onProviderIconClicked(item)
-        homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.id.toInt(), item.channel_owner_id, item.isSubscribed)
+        homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
     }
 
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {

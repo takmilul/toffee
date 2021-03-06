@@ -7,19 +7,19 @@ import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.UserChannelInfo
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 
 class GetPopularUserChannels @AssistedInject constructor(
     private val preference: Preference,
     private val toffeeApi: ToffeeApi,
     private val localSync: LocalSync,
-    @Assisted private val requestParams: ApiCategoryRequestParams
-): BaseApiService<UserChannelInfo> {
+    @Assisted private val requestParams: ApiCategoryRequestParams,
+) : BaseApiService<UserChannelInfo> {
 
     override suspend fun loadData(offset: Int, limit: Int): List<UserChannelInfo> {
-        if(offset > 0) return emptyList()
-        val request =  PopularChannelsRequest(
+        if (offset > 0) return emptyList()
+        val request = PopularChannelsRequest(
             preference.customerId,
             preference.password
         )
@@ -43,7 +43,7 @@ class GetPopularUserChannels @AssistedInject constructor(
         } else emptyList()
     }
 
-    @AssistedInject.Factory
+    @dagger.assisted.AssistedFactory
     interface AssistedFactory {
         fun create(requestParams: ApiCategoryRequestParams): GetPopularUserChannels
     }

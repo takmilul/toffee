@@ -85,20 +85,6 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        /*lifecycleScope.launch {
-            isSubscribed = if(subscriptionInfoRepository.getSubscriptionInfoByChannelId(channelId, mPref.customerId) != null) 1 else 0
-            subscriberCount = subscriptionCountRepository.getSubscriberCount(channelId)
-            currentItem.isSubscribed = isSubscribed
-            currentItem.subscriberCount = subscriberCount.toInt()
-            detailsAdapter.notifyDataSetChanged()
-        }*/
-        /*observe(playerViewModel.channelSubscriberCount) {
-            currentItem?.isSubscribed = if (playerViewModel.isChannelSubscribed.value!!) 1 else 0
-            currentItem?.subscriberCount = it
-            detailsAdapter?.notifyDataSetChanged()
-        }*/
-        
         setSubscriptionStatus()
         setupHeader()
         setupList()
@@ -115,13 +101,6 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
                 detailsAdapter?.notifyDataSetChanged()
             }
         }
-        /*currentItem?.let { channelInfo ->
-            val customerId = mPref.customerId
-            val isOwner = if (channelInfo.channel_owner_id == customerId) 1 else 0
-            val isPublic = if (channelInfo.channel_owner_id == customerId) 0 else 1
-            val channelId = channelInfo.channel_owner_id.toLong()
-            playerViewModel.getChannelInfo(isOwner, isPublic, channelId, channelId.toInt())
-        }*/
     }
 
     fun getSeriesId() = seriesInfo.seriesId
@@ -181,7 +160,6 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
 
             override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
                 if (isSubscribed == 0) {
-//                    subscriptionViewModel.setSubscriptionStatus(info.id, 1, info.channelOwnerId)
                     homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), 1)
                     isSubscribed = 1
                     currentItem?.isSubscribed = isSubscribed
@@ -190,7 +168,6 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
                 }
                 else {
                     UnSubscribeDialog.show(requireContext()){
-//                        subscriptionViewModel.setSubscriptionStatus(info.id, 0, info.channelOwnerId)
                         homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), -1)
                         isSubscribed = 0
                         currentItem?.isSubscribed = isSubscribed
@@ -198,12 +175,11 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
                         detailsAdapter?.notifyDataSetChanged()
                     }
                 }
-//                playerViewModel.toggleSubscriptionStatus(item.id.toInt(), item.channel_owner_id)
             }
 
             override fun onProviderIconClicked(item: ChannelInfo) {
                 super.onProviderIconClicked(item)
-                homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.id.toInt(), item.channel_owner_id, item.isSubscribed)
+                homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
             }
 
             override fun onSeasonChanged(newSeason: Int) {
@@ -240,7 +216,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
             
             override fun onProviderIconClicked(item: ChannelInfo) {
                 super.onProviderIconClicked(item)
-                homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.id.toInt(), item.channel_owner_id, item.isSubscribed)
+                homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
             }
         }, currentItem)
 
@@ -250,15 +226,8 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
 
             mAdapter.addLoadStateListener {
                 binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
-
-//                mAdapter.apply {
-//                    val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached
-//                    binding.emptyView.isGone = !showEmpty
-//                    binding.listview.isVisible = !showEmpty
-//                }
             }
         }
-//        Log.e("PLAYLIST_DEBUG", "SETUP - ${seriesInfo.seasonNo}")
         observeList(seriesInfo.seasonNo)
     }
 
@@ -279,7 +248,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
 
     override fun onProviderIconClicked(item: ChannelInfo) {
         super.onProviderIconClicked(item)
-        homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.id.toInt(), item.channel_owner_id, item.isSubscribed)
+        homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
     }
 
     override fun onOpenMenu(view: View, item: ChannelInfo) {
@@ -312,7 +281,6 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_not_interested->{
-//                    removeItemNotInterestedItem(channelInfo)
                     return@setOnMenuItemClickListener true
                 }
                 else->{

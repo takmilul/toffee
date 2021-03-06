@@ -10,9 +10,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.BaseFragment
-import com.banglalink.toffee.ui.home.ChannelAdapter
 import com.banglalink.toffee.ui.home.HomeViewModel
 import kotlinx.android.synthetic.main.fragment_landing_tv_channels.*
 import kotlinx.coroutines.flow.collectLatest

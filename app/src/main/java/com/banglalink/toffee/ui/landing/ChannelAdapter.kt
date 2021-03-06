@@ -1,4 +1,4 @@
-package com.banglalink.toffee.ui.home
+package com.banglalink.toffee.ui.landing
 
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
@@ -6,10 +6,10 @@ import com.banglalink.toffee.common.paging.BasePagingDataAdapter
 import com.banglalink.toffee.common.paging.ItemComparator
 import com.banglalink.toffee.model.ChannelInfo
 
-class FeaturedListAdapter(cb: BaseListItemCallback<ChannelInfo>)
-    :BasePagingDataAdapter<ChannelInfo>(cb, ItemComparator()){
+class ChannelAdapter(cb: BaseListItemCallback<ChannelInfo>):
+    BasePagingDataAdapter<ChannelInfo>(cb, ItemComparator()) {
 
     override fun getItemViewType(position: Int): Int {
-        return R.layout.landing_featured_item_layout
+        return R.layout.live_tv_item_new
     }
 }

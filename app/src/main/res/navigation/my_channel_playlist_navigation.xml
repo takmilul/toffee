@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/my_channel_playlist_navigation"
+    app:startDestination="@id/myChannelPlaylistsFragment">
+
+    <fragment
+        android:id="@+id/myChannelPlaylistsFragment"
+        android:name="com.banglalink.toffee.ui.mychannel.MyChannelPlaylistsFragment"
+        android:label="MyChannelPlaylistsFragment" >
+        <argument
+            android:name="channelOwnerId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_myChannelPlaylistsFragment_to_myChannelPlaylistVideosFragment"
+            app:destination="@id/myChannelPlaylistVideosFragment" />
+    </fragment>
+    
+    <fragment
+        android:id="@+id/myChannelPlaylistVideosFragment"
+        android:name="com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment"
+        android:label="MyChannelPlaylistVideosFragment" >
+        <argument
+            android:name="playlistInfo"
+            app:argType="com.banglalink.toffee.model.PlaylistPlaybackInfo" />
+    </fragment>
+    
+</navigation>

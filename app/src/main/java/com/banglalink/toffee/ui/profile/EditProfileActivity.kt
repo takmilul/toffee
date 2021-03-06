@@ -17,7 +17,6 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.apiservice.EditProfileViewModel
 import com.banglalink.toffee.databinding.ActivityEditProfileBinding
 import com.banglalink.toffee.enums.InputType
 import com.banglalink.toffee.extension.*

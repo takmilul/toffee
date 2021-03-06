@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
 import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
@@ -26,7 +27,7 @@ import kotlinx.android.synthetic.main.fragment_category_info.*
 
 class CategoryInfoFragment: HomeBaseFragment() {
     private val landingViewModel by activityViewModels<LandingPageViewModel>()
-    private lateinit var categoryInfo: com.banglalink.toffee.model.Category
+    private lateinit var categoryInfo: Category
 
     override fun onCreateView(
         inflater: LayoutInflater,

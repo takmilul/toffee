@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.subscription
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,35 +13,38 @@ import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.Package
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.util.getError
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class PackageListViewModel @ViewModelInject constructor(
+@HiltViewModel
+class PackageListViewModel @Inject constructor(
     private val packageList: GetPackageList,
-    private val setAutoRenew: SetAutoRenew
-): ViewModel() {
-    
+    private val setAutoRenew: SetAutoRenew,
+) : ViewModel() {
+
     private val packageListMutableLiveData = MutableLiveData<Resource<List<Package>>>()
     val packageLiveData = packageListMutableLiveData.toLiveData()
 
     init {
         viewModelScope.launch {
-           getPackageList()
+            getPackageList()
         }
     }
 
-    private fun getPackageList(){
+    private fun getPackageList() {
         viewModelScope.launch {
-            try{
+            try {
                 packageListMutableLiveData.setSuccess(packageList.execute())
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 packageListMutableLiveData.setError(getError(e))
             }
         }
     }
 
-    fun setAutoRenew(mPackage: Package,autoRenew:Boolean):LiveData<Resource<String>>{
+    fun setAutoRenew(mPackage: Package, autoRenew: Boolean): LiveData<Resource<String>> {
         return resultLiveData {
-            setAutoRenew.execute(mPackage.packageId,autoRenew)
+            setAutoRenew.execute(mPackage.packageId, autoRenew)
         }
     }
 }

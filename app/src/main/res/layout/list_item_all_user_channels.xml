@@ -10,7 +10,7 @@
 
         <variable
             name="callback"
-            type="com.banglalink.toffee.ui.landing.LandingPopularChannelCallback" />
+            type="com.banglalink.toffee.listeners.LandingPopularChannelCallback" />
     </data>
     
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -8,13 +8,13 @@ import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
 import com.banglalink.toffee.common.paging.BasePagingViewModel
 import com.banglalink.toffee.model.ChannelInfo
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 
 class SearchViewModel @AssistedInject constructor(
     private val searchApiService: SearchContentService.AssistedFactory,
-    @Assisted private val keyword: String
-) : BasePagingViewModel<ChannelInfo>()  {
+    @Assisted private val keyword: String,
+) : BasePagingViewModel<ChannelInfo>() {
 
     override val repo: BaseListRepository<ChannelInfo> by lazy {
         BaseListRepositoryImpl({
@@ -22,7 +22,7 @@ class SearchViewModel @AssistedInject constructor(
         })
     }
 
-    @AssistedInject.Factory
+    @dagger.assisted.AssistedFactory
     interface AssistedFactory {
         fun create(keyword: String): SearchViewModel
     }

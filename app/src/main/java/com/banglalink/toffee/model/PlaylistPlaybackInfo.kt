@@ -7,7 +7,6 @@ import kotlinx.android.parcel.Parcelize
 data class PlaylistPlaybackInfo(
     val playlistId: Int,
     val channelOwnerId: Int,
-    val isOwner: Int,
     val playlistName: String,
     val playlistItemCount: Int,
     var playIndex: Int = 0,

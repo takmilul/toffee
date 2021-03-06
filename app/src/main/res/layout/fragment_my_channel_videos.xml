@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/screen_bg">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/myChannelVideos"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_goneMarginTop="12dp"
+            app:reverseLayout="false"
+            tools:listitem="@layout/list_item_my_channel_videos" />
+
+        <pl.droidsonroids.gif.GifImageView
+            android:id="@+id/progress_bar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/gif_round_border"
+            android:elevation="2dp"
+            android:src="@drawable/content_loader"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/empty_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/uploadVideoButton"
+                style="@style/ButtonStyleSolidPink"
+                android:layout_marginTop="16dp"
+                android:paddingHorizontal="16dp"
+                android:text="Upload Video"
+                app:icon="@drawable/ic_upload_menu_plus"
+                app:iconPadding="8dp" />
+
+            <TextView
+                android:id="@+id/creatorsPolicyButton"
+                style="@style/ViewAllTextView"
+                android:layout_margin="12dp"
+                android:padding="4dp"
+                android:text="Creators Policy"
+                app:drawableEndCompat="@drawable/ic_right_arrow_accent_2" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/empty_view_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:adjustViewBounds="true"
+                android:maxWidth="144dp"
+                app:srcCompat="@drawable/ic_videos_empty" />
+
+            <TextView
+                android:id="@+id/empty_view_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/roboto_regular"
+                android:text="No item found"
+                android:textColor="@color/fixed_second_text_color"
+                android:textSize="16sp"
+                tools:text="No item found" />
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

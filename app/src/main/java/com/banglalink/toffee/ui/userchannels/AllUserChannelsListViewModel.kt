@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.userchannels
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -9,10 +8,13 @@ import com.banglalink.toffee.apiservice.AllUserChannelsService
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
 import com.banglalink.toffee.model.UserChannelInfo
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class AllUserChannelsListViewModel @ViewModelInject constructor(
-    private val popularChannelApiService: AllUserChannelsService
+@HiltViewModel
+class AllUserChannelsListViewModel @Inject constructor(
+    private val popularChannelApiService: AllUserChannelsService,
 ) : ViewModel() {
 
     fun loadUserChannels(): Flow<PagingData<UserChannelInfo>> {

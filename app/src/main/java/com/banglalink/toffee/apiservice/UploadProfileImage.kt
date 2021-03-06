@@ -17,13 +17,11 @@ import javax.inject.Inject
 
 class UploadProfileImage @Inject constructor(
     private val preference: Preference,
-    private val toffeeApi: ToffeeApi
+    private val toffeeApi: ToffeeApi,
 ) {
 
-    suspend fun execute(
-        photoUri: Uri,context:Context
-    ): SubscriberPhotoBean {
-        return withContext(Dispatchers.Default){
+    suspend fun execute(photoUri: Uri, context: Context): SubscriberPhotoBean {
+        return withContext(Dispatchers.Default) {
             val imageBitmap = decodeSampledBitmap(context, photoUri)
             val bao = ByteArrayOutputStream()
             imageBitmap?.compress(Bitmap.CompressFormat.JPEG, 50, bao)

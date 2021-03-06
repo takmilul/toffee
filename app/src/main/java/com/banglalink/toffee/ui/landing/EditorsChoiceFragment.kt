@@ -11,7 +11,6 @@ import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.ui.common.HomeBaseFragment
-import com.banglalink.toffee.ui.home.EditorsChoiceListAdapter
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import kotlinx.android.synthetic.main.fragment_editors_choice.*
 import kotlinx.coroutines.flow.collectLatest
@@ -63,7 +62,7 @@ class EditorsChoiceFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInf
 
     override fun onProviderIconClicked(item: ChannelInfo) {
         super.onProviderIconClicked(item)
-        homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.id.toInt(), item.channel_owner_id, item.isSubscribed)
+        homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
 //        landingPageViewModel.navigateToMyChannel(this, item.id.toInt(), item.channel_owner_id, item.isSubscribed)
     }
 }

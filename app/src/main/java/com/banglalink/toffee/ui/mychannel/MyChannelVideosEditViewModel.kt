@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.mychannel
 
 import android.content.Context
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,47 +13,34 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.SubCategory
 import com.banglalink.toffee.util.getError
 import com.banglalink.toffee.util.imagePathToBase64
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class MyChannelVideosEditViewModel @ViewModelInject constructor(
-    @ApplicationContext private val appContext: Context,
+@HiltViewModel
+class MyChannelVideosEditViewModel @Inject constructor(
+    private val categoryApi: GetCategories,
     private val contentEditApi: ContentEdit,
-    private val categoryApi: GetCategories
-): ViewModel() {
-//    val progressDialog = MutableLiveData<Boolean>()
-
-//    val submitButtonStatus = MutableLiveData<Boolean>()
-//    val resultLiveData = MutableLiveData<Resource<UgcResponseBean>>()
+    @ApplicationContext private val appContext: Context,
+) : ViewModel() {
 
     val title = MutableLiveData<String>()
     val description = MutableLiveData<String>()
-
     val tags = MutableLiveData<String>()
-
-//    val uploadProgress = MutableLiveData<Int>()
-//    val uploadSize = MutableLiveData<String>()
-
     val categories = MutableLiveData<List<Category>>()
     val categoryPosition = MutableLiveData<Int>()
-    
     val subCategories = MutableLiveData<List<SubCategory>>()
     val subCategoryPosition = MutableLiveData<Int>()
-
     val ageGroup = MutableLiveData<List<String>>()
     val ageGroupPosition = MutableLiveData<Int>()
-
     val thumbnailUrl = MutableLiveData<String?>()
     var bannerBase64: String? = "NULL"
-    
     private val responseLiveData = MutableLiveData<Resource<ResponseBean>>()
     val editResponse = responseLiveData.toLiveData()
-//    var isFirstLoad = true
-//    val challengeSelectionList = MutableLiveData<List<String>>()
-//    val challengeSelectionPosition = MutableLiveData<Int>()
 
     init {
         viewModelScope.launch {
@@ -88,23 +74,18 @@ class MyChannelVideosEditViewModel @ViewModelInject constructor(
     }
 
     fun saveThumbnail(uri: String?) {
-        if(uri == null) return
+        if (uri == null) return
         viewModelScope.launch {
             val imageData = withContext(Dispatchers.Default + Job()) {
                 imagePathToBase64(appContext, uri)
             }
             bannerBase64 = imageData
-//            saveThumbnailToDb(imageData)
         }
     }
 
     fun categoryIndexChanged(idx: Int) {
-//        if (!isFirstLoad) {
-            categories.value?.getOrNull(idx)?.let {
-                subCategories.value = it.subcategories
-//                subCategoryPosition.value = 0
-            }
-//        }
-//        isFirstLoad = false
+        categories.value?.getOrNull(idx)?.let {
+            subCategories.value = it.subcategories
+        }
     }
 }

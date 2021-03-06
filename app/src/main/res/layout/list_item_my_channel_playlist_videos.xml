@@ -8,9 +8,6 @@
     <data>
         <import type="android.view.View"/>
         <variable
-            name="isOwner"
-            type="Integer" />
-        <variable
             name="data"
             type="com.banglalink.toffee.model.ChannelInfo" />
         <variable
@@ -18,7 +15,7 @@
             type="java.lang.Integer" />
         <variable
             name="callback"
-            type="com.banglalink.toffee.ui.mychannel.MyChannelPlaylistItemListener" />
+            type="com.banglalink.toffee.listeners.MyChannelPlaylistItemListener" />
         <variable
             name="selectedItem"
             type="com.banglalink.toffee.model.ChannelInfo" />
@@ -36,8 +33,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
             android:adjustViewBounds="true"
             android:minHeight="180dp"
             android:scaleType="centerCrop"

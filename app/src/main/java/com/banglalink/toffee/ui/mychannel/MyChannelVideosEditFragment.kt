@@ -43,12 +43,13 @@ class MyChannelVideosEditFragment : BaseFragment() {
 
     companion object {
         const val CHANNEL_INFO = "channelInfo"
+        
         fun newInstance(channelInfo: ChannelInfo): MyChannelVideosEditFragment {
-            val instance = MyChannelVideosEditFragment()
-            val bundle = Bundle()
-            bundle.putParcelable(CHANNEL_INFO, channelInfo)
-            instance.arguments = bundle
-            return instance
+            return MyChannelVideosEditFragment().apply { 
+                arguments = Bundle().apply {
+                    putParcelable(CHANNEL_INFO, channelInfo)
+                }
+            }
         }
     }
 
@@ -158,13 +159,9 @@ class MyChannelVideosEditFragment : BaseFragment() {
         chipRecycler.setPadding(0)
 
         binding.uploadTags.addChipsListener(object : ChipsInput.ChipsListener {
-            override fun onChipAdded(chip: ChipInterface?, newSize: Int) {
+            override fun onChipAdded(chip: ChipInterface?, newSize: Int) { }
 
-            }
-
-            override fun onChipRemoved(chip: ChipInterface?, newSize: Int) {
-
-            }
+            override fun onChipRemoved(chip: ChipInterface?, newSize: Int) { }
 
             override fun onTextChanged(text: CharSequence?) {
                 if (text?.endsWith(" ") == true) {
@@ -185,14 +182,12 @@ class MyChannelVideosEditFragment : BaseFragment() {
         val description = binding.uploadDescription.text.toString().trim()
         if (title.isBlank()) {
             progressDialog.dismiss()
-         //   context?.showToast("Missing required field", Toast.LENGTH_SHORT)
             binding.uploadTitle.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
             binding.errorTitleTv.show()
 
         }
         else {
             progressDialog.dismiss()
-            //   context?.showToast("Missing required field", Toast.LENGTH_SHORT)
             binding.uploadTitle.setBackgroundResource(R.drawable.single_line_input_text_bg)
             binding.errorTitleTv.hide()
         }

@@ -105,7 +105,7 @@ class HomeActivity :
     @Inject lateinit var notificationRepo: NotificationInfoRepository
     @Inject lateinit var uploadManager: UploadStateManager
     @Inject lateinit var cacheManager: CacheManager
-    private var channelId: Int = 0
+    private var channelOwnerId: Int = 0
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private var notificationBadge: View? = null
     private var searchView: SearchView? = null
@@ -824,9 +824,7 @@ class HomeActivity :
             val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
             if (fragment !is MyChannelPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) {
                 loadFragmentById(
-                    R.id.details_viewer, MyChannelPlaylistVideosFragment.newInstance(
-                    info
-                )
+                    R.id.details_viewer, MyChannelPlaylistVideosFragment.newInstance(info)
                 )
             } else {
                 fragment.setCurrentChannel(info.currentItem)
@@ -1264,7 +1262,7 @@ class HomeActivity :
 
     private fun observeUpload2() {
         add_upload_info_button.setOnClickListener {
-            viewModel.myChannelNavLiveData.value = MyChannelNavParams(mPref.channelId, mPref.customerId, 0)
+            viewModel.myChannelNavLiveData.value = MyChannelNavParams(mPref.customerId)
             /*if(navController.currentDestination?.id != R.id.myChannelHomeFragment) {
                 navController.navigate(R.id.myChannelHomeFragment)
             }*/
@@ -1318,20 +1316,14 @@ class HomeActivity :
     
     private fun observeMyChannelNavigation(){
         observe(viewModel.myChannelNavLiveData) {
-            val customerId = mPref.customerId
-            val isOwner = if (it.channelOwnerId == customerId) 1 else 0
-            val isPublic = if (it.channelOwnerId == customerId) 0 else 1
-
-            if (navController.currentDestination?.id != R.id.myChannelHomeFragment || channelId != it.channelId) {
-                channelId = it.channelId
+            if (navController.currentDestination?.id != R.id.myChannelHomeFragment || channelOwnerId != it.channelOwnerId) {
+                channelOwnerId = it.channelOwnerId
                 navController.navigate(R.id.myChannelHomeFragment, Bundle().apply {
-                    putInt(MyChannelHomeFragment.IS_SUBSCRIBED, it.isSubscribed)
-                    putInt(MyChannelHomeFragment.IS_OWNER, isOwner)
-                    putInt(MyChannelHomeFragment.CHANNEL_ID, it.channelId)
-                    putInt(MyChannelHomeFragment.IS_PUBLIC, isPublic)
-                    putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, it.channelOwnerId)
                     putString(MyChannelHomeFragment.PAGE_TITLE, it.pageTitle)
+                    putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, it.channelOwnerId)
                 })
+            } else{
+                minimizePlayer()
             }
         }
     }

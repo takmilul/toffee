@@ -33,11 +33,6 @@ class FeatureContentService @Inject constructor(
         return response.response.apply {
             channels?.map {
                 localSync.syncData(it)
-//                val viewCount = viewCountDAO.getViewCountByChannelId(it.id.toInt())
-//                if(viewCount!=null){
-//                    it.view_count= viewCount.toString()
-//                }
-//                it.categoryId = categoryId
                 it
             }
         }

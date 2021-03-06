@@ -34,20 +34,12 @@ class GetChallengeReward @Inject constructor(private val preference: Preference,
         }
 
         if (response.response.channels != null) {
-            /*return response.response.channels.map {
-                it.formatted_view_count = getFormattedViewsText(it.view_count)
-                it.formattedDuration = discardZeroFromDuration(it.duration)
-                it
-            }*/
-
             val rewardList = mutableListOf<ChallengeReward>()
-
             rewardList.add(ChallengeReward("", "1st Prize", "iPhone X", "", "Abir87"))
             rewardList.add(ChallengeReward("", "2nd Prize", "GoPro Hero 5 Bla...", "", "AsianStar..."))
             rewardList.add(ChallengeReward("", "3rd Prize", "iPhone X", "", "SundarPichai"))
             rewardList.add(ChallengeReward("", "4th Prize", "iPhone X", "", "AsianStar..."))
             rewardList.add(ChallengeReward("", "5th Prize", "iPhone X", "", "SundarPichai"))
-
             return rewardList
         }
         return listOf()

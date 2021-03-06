@@ -48,7 +48,7 @@ abstract class MovieBaseFragment<T: Any>: HomeBaseFragment(), ProviderIconCallba
 
     override fun onProviderIconClicked(item: T) {
         if (item is ChannelInfo) {
-            homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.id.toInt(), item.channel_owner_id, item.isSubscribed)
+            homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
         }
     }
 

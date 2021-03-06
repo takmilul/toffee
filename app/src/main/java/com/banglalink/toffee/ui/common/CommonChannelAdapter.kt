@@ -2,7 +2,7 @@ package com.banglalink.toffee.ui.common
 
 import com.banglalink.toffee.R
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.ui.home.OptionCallBack
+import com.banglalink.toffee.listeners.OptionCallBack
 
 class CommonChannelAdapter(private val optionCallBack: OptionCallBack, channelCallback:(ChannelInfo)->Unit={}): MyBaseAdapter<ChannelInfo>(channelCallback) {
     override fun getLayoutIdForPosition(position: Int): Int {
