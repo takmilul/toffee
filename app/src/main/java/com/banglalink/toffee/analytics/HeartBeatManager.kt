@@ -49,6 +49,7 @@ class HeartBeatManager @Inject constructor(
         isAppForeGround = true
         coroutineScope = CoroutineScope(coroutineContext)
         coroutineScope.launch {
+            sendHeartBeat(sendToPubSub = false)
             execute()
         }
     }

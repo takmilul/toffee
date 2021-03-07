@@ -64,7 +64,7 @@
             android:label="@string/profile_edit"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.profile.ViewProfileActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
