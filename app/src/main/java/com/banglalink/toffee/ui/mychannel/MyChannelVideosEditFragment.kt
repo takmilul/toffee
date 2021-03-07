@@ -28,6 +28,7 @@ import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
 import com.banglalink.toffee.ui.widget.ToffeeSpinnerAdapter
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.util.UtilsKt
 import com.pchmn.materialchips.ChipsInput
 import com.pchmn.materialchips.model.ChipInterface
 import dagger.hilt.android.AndroidEntryPoint
@@ -68,13 +69,20 @@ class MyChannelVideosEditFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         channelInfo = MyChannelVideosEditFragmentArgs.fromBundle(requireArguments()).channelInfo
+        binding.container.setOnClickListener { UtilsKt.hideSoftKeyboard(requireActivity()) }
         progressDialog.show()
         setupSubcategorySpinner()
         setupTagView()
         observeThumbnailChange()
         observeCategory()
-        binding.cancelButton.setOnClickListener { findNavController().popBackStack() }
-        binding.submitButton.setOnClickListener { updateVideoInfo() }
+        binding.cancelButton.setOnClickListener {
+            UtilsKt.hideSoftKeyboard(requireActivity())
+            findNavController().popBackStack()
+        }
+        binding.submitButton.setOnClickListener {
+            UtilsKt.hideSoftKeyboard(requireActivity())
+            updateVideoInfo()
+        }
         binding.thumbEditButton.setOnClickListener { 
             val action = MyChannelVideosEditFragmentDirections.actionMyChannelVideosEditFragmentToThumbnailSelectionMethodFragment("Set Video Cover Photo",false)
             findNavController().navigate(action) 

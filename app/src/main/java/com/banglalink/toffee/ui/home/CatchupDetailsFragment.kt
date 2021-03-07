@@ -7,9 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.filter
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
@@ -22,6 +24,7 @@ import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.ui.common.*
+import com.banglalink.toffee.ui.mychannel.MyChannelVideosViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.suke.widget.SwitchButton
@@ -42,6 +45,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
     private lateinit var detailsAdapter: ChannelHeaderAdapter
     private lateinit var currentItem: ChannelInfo
     private val viewModel by viewModels<CatchupDetailsViewModel>()
+    private val myChannelVideosViewModel by activityViewModels<MyChannelVideosViewModel>()
     @Inject lateinit var subscriptionInfoRepository: SubscriptionInfoRepository
     @Inject lateinit var subscriptionCountRepository: SubscriptionCountRepository
 
@@ -88,7 +92,11 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
             adapter = mAdapter
         }
 
-        observeList()
+        if (currentItem.channel_owner_id == mPref.customerId){
+            observeMyChannelVideos()
+        } else {
+            observeList()
+        }
         observeListState()
     }
 
@@ -99,7 +107,6 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
     override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
         super.onSubscribeButtonClicked(view, item)
         if (isSubscribed == 0) {
-//            viewModel.toggleSubscriptionStatus(item.id.toInt(), item.channel_owner_id)
             homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), 1)
             isSubscribed = 1
             currentItem.isSubscribed = isSubscribed
@@ -108,7 +115,6 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
         }
         else{
             UnSubscribeDialog.show(requireContext()){
-//                viewModel.toggleSubscriptionStatus(item.id.toInt(), item.channel_owner_id)
                 homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), -1)
                 isSubscribed = 0
                 currentItem.isSubscribed = isSubscribed
@@ -155,6 +161,14 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
         }
     }
 
+    private fun observeMyChannelVideos() {
+        lifecycleScope.launchWhenStarted {
+            myChannelVideosViewModel.getMyChannelVideos(currentItem.channel_owner_id).collectLatest {
+                catchupAdapter.submitData(it.filter { channelInfo -> channelInfo.id != currentItem.id })
+            }
+        }
+    }
+    
     private fun observeList() {
         lifecycleScope.launchWhenStarted {
             viewModel.loadRelativeContent(currentItem).collectLatest {

@@ -2,7 +2,10 @@ package com.banglalink.toffee.ui.profile
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -24,10 +27,12 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.widget.VelBoxFieldTextWatcher
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.util.UtilsKt
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
 import com.yalantis.ucrop.UCrop
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.fragment_thumb_selection_method.view.*
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
@@ -38,20 +43,24 @@ import java.util.*
 class EditProfileActivity : BaseAppCompatActivity() {
 
     var photoUri: Uri? = null
-    private lateinit var progressDialog: VelBoxProgressDialog
-    lateinit var binding:ActivityEditProfileBinding
-    private val REQUEST_IMAGE = 1729
     private val TAG = "EditProfileActivity"
+    private var alertDialog: AlertDialog? = null
+    lateinit var binding:ActivityEditProfileBinding
+    private lateinit var progressDialog: VelBoxProgressDialog
 
     companion object{
         const val PROFILE_INFO = "Profile"
     }
+    
     private val viewModel by viewModels<EditProfileViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this,R.layout.activity_edit_profile)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_edit_profile)
         binding.profileForm = intent.getSerializableExtra(PROFILE_INFO) as EditProfileForm
+        binding.container.setOnClickListener {
+            UtilsKt.hideSoftKeyboard(this)
+        }
 
         progressDialog = VelBoxProgressDialog(this)
         setSupportActionBar(binding.toolbar)
@@ -72,7 +81,7 @@ class EditProfileActivity : BaseAppCompatActivity() {
         )
 
         binding.profileEditLayout.editIv.setOnClickListener{
-            checkCameraPermissions()
+            openUploadOption()
         }
 
         binding.saveButton.setOnClickListener{
@@ -85,6 +94,114 @@ class EditProfileActivity : BaseAppCompatActivity() {
 
         observe(mPref.profileImageUrlLiveData){
             binding.profileEditLayout.profileIv.loadProfileImage(it)
+        }
+    }
+
+    private fun openUploadOption()
+    {
+        val dialogView = layoutInflater.inflate(R.layout.dialogue_profile_image_selection, null, false)
+
+        alertDialog=  AlertDialog
+            .Builder(this)
+            .setView(dialogView).create()
+            .apply {
+                window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            }
+
+        alertDialog?.show()
+
+        with(dialogView){
+            open_gallery_button.setOnClickListener {
+                checkFileSystemPermission()
+            }
+            open_camera_button.setOnClickListener {
+                checkCameraPermissions()
+            }
+        }
+    }
+
+    private fun checkFileSystemPermission() {
+        lifecycleScope.launch {
+            try{
+                if(askPermission(Manifest.permission.READ_EXTERNAL_STORAGE).isAccepted) {
+                    galleryResultLauncher.launch(
+                        Intent(
+                            Intent.ACTION_PICK,
+                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                        )
+                    )
+                }
+            }
+            catch (e: PermissionException) {
+                ToffeeAnalytics.logBreadCrumb("Storage permission denied")
+                showToast(getString(R.string.grant_storage_permission))
+            }
+        }
+    }
+
+    private val galleryResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        if (it.resultCode == Activity.RESULT_OK && it.data != null && it.data?.data != null) {
+            startCrop(it.data!!.data!!)
+        } else {
+            ToffeeAnalytics.logBreadCrumb("Camera/video picker returned without any data")
+        }
+    }
+
+    private val cameraResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        if (it.resultCode == Activity.RESULT_OK && photoUri != null) {
+            ToffeeAnalytics.logBreadCrumb("Got result from camera")
+            startCrop(photoUri!!)
+        } else {
+            ToffeeAnalytics.logBreadCrumb("Camera/video capture result not returned")
+        }
+    }
+
+    private fun startCrop(uri: Uri) {
+        var uCrop = UCrop.of(
+            uri,
+            Uri.fromFile(createImageFile())
+        )
+
+        val options = UCrop.Options().apply {
+            setHideBottomControls(true)
+            withAspectRatio(4f, 4f)
+            setCircleDimmedLayer(true)
+            withMaxResultSize(1280, 720)
+            setFreeStyleCropEnabled(false)
+        }
+
+        uCrop = uCrop.withOptions(options)
+        uCrop.start(this)
+        ToffeeAnalytics.logBreadCrumb("Crop started")
+    }
+
+    @Throws(IOException::class)
+    fun createImageFile(): File {
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val imageFileName = "IMG_" + timeStamp + "_"
+        val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(imageFileName, ".jpg", storageDir)
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode == Activity.RESULT_OK){
+            if(requestCode == UCrop.REQUEST_CROP && data != null) {
+                val uri = UCrop.getOutput(data)
+                uri?.let {
+                    alertDialog?.dismiss()
+                    ToffeeAnalytics.logBreadCrumb("Got result from crop lib")
+                    ToffeeAnalytics.logBreadCrumb("Handling crop image")
+                    binding.profileEditLayout.profileIv.load(it){
+                        transformations(CircleCropTransformation())
+                    }
+                    handleUploadImage(it)
+                }
+            }
+        }
+        else {
+            ToffeeAnalytics.logBreadCrumb("Camera/image picker returned without any data")
         }
     }
 
@@ -121,52 +238,6 @@ class EditProfileActivity : BaseAppCompatActivity() {
             cameraResultLauncher.launch(pictureIntent)
             ToffeeAnalytics.logBreadCrumb("Camera activity started")
         }
-    }
-
-    private val cameraResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-        if (it.resultCode == Activity.RESULT_OK) {
-            photoUri?.let { uri ->
-                startCrop(uri)
-            }
-            ToffeeAnalytics.logBreadCrumb("Got result from camera")
-        } else {
-            showToast("You cancelled the operation")
-            ToffeeAnalytics.logBreadCrumb("Camera/video capture result not returned")
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == UCrop.REQUEST_CROP && resultCode == RESULT_OK) {
-            ToffeeAnalytics.logBreadCrumb("Got result from crop lib")
-            data?.let { intent ->
-                val uri = UCrop.getOutput(intent)
-                uri?.let {
-                    ToffeeAnalytics.logBreadCrumb("Handling crop image")
-                    binding.profileEditLayout.profileIv.load(it){
-                        transformations(CircleCropTransformation())
-                    }
-                    handleUploadImage(it)
-                }
-            }
-        }
-    }
-
-    private fun startCrop(uri: Uri) {
-        var uCrop = UCrop.of(
-            uri,
-            Uri.fromFile(createImageFile())
-        )
-
-        val options = UCrop.Options().apply {
-            setHideBottomControls(true)
-            setFreeStyleCropEnabled(false)
-            setCircleDimmedLayer(true)
-        }
-
-        uCrop = uCrop.withOptions(options)
-        uCrop.start(this)
-        ToffeeAnalytics.logBreadCrumb("Crop started")
     }
 
     private fun handleSaveButton(){
@@ -221,16 +292,14 @@ class EditProfileActivity : BaseAppCompatActivity() {
         }
     }
 
-    private fun handleUploadImage(photoUri:Uri){
+    private fun handleUploadImage(photoUri: Uri){
         try {
             progressDialog.show()
-            observe( viewModel.uploadProfileImage(photoUri)){
+            observe(viewModel.uploadProfileImage(photoUri)){
                 progressDialog.dismiss()
                 when (it) {
                     is Resource.Success -> {
-                        showToast(
-                            getString(R.string.photo_update_success)
-                        )
+                        showToast(getString(R.string.photo_update_success))
                     }
                     is Resource.Failure -> {
                         showToast(it.error.msg)
@@ -243,13 +312,5 @@ class EditProfileActivity : BaseAppCompatActivity() {
             ToffeeAnalytics.logException(e)
             Log.e(TAG, e.message, e)
         }
-    }
-
-    @Throws(IOException::class)
-    fun createImageFile(): File {
-        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        val imageFileName = "IMG_" + timeStamp + "_"
-        val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        return File.createTempFile(imageFileName, ".jpg", storageDir)
     }
 }

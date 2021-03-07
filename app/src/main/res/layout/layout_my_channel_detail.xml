@@ -7,6 +7,9 @@
     <data>
         <import type="android.view.View"/>
         <variable
+            name="isOwner"
+            type="Boolean" />
+        <variable
             name="isSubscribed"
             type="Integer" />
         <variable
@@ -75,7 +78,7 @@
             android:layout_margin="8dp"
             android:gravity="center"
             android:text="Add Bio"
-            android:visibility="@{data.isOwner == 1 &amp;&amp; (data.myChannelDetail.description == null || data.myChannelDetail.description.empty) ? View.VISIBLE : View.GONE}"
+            android:visibility="@{isOwner &amp;&amp; (data.myChannelDetail.description == null || data.myChannelDetail.description.empty) ? View.VISIBLE : View.GONE}"
             android:textAllCaps="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -161,7 +164,7 @@
             android:id="@+id/ratingChannelGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="@{data.isOwner == 0 ? View.VISIBLE : View.GONE}"
+            android:visibility="@{isOwner ? View.GONE : View.VISIBLE}"
             app:constraint_referenced_ids="ratingButton,ratingCountTextView,subscriptionCountTextView,subscriptionButton" />
 
         <Button

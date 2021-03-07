@@ -41,6 +41,7 @@ import com.banglalink.toffee.ui.common.UnSubscribeDialog
 import com.banglalink.toffee.ui.common.ViewPagerAdapter
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.util.UtilsKt
 import com.banglalink.toffee.util.bindButtonState
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -75,11 +76,13 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     
     companion object {
         const val PAGE_TITLE = "title"
+        const val IS_OWNER = "isOwner"
         const val CHANNEL_OWNER_ID = "channelOwnerId"
         
-        fun newInstance(channelOwnerId: Int): MyChannelHomeFragment {
+        fun newInstance(channelOwnerId: Int, isOwner: Boolean = false): MyChannelHomeFragment {
             return MyChannelHomeFragment().apply {
                 arguments = Bundle().apply {
+                    putBoolean(IS_OWNER, isOwner)
                     putInt(CHANNEL_OWNER_ID, channelOwnerId)
                 }
             }
@@ -89,6 +92,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         progressDialog = VelBoxProgressDialog(requireContext())
+        isOwner = arguments?.getBoolean(IS_OWNER) ?: true
         channelOwnerId = arguments?.getInt(CHANNEL_OWNER_ID) ?: mPref.customerId
     }
     
@@ -235,6 +239,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                         isOwner = it.data.isOwner == 1
                         channelId = myChannelDetail?.id?.toInt() ?: 0
                         binding.data = it.data
+                        binding.isOwner = isOwner
                         mPref.channelId = channelId
                         if (isOwner) {
                             myChannelDetail?.let { detail ->
@@ -254,7 +259,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                     isSubscribed = 0
                     binding.data = null
                     binding.isSubscribed = 0
-        
+                    binding.isOwner = isOwner
                     loadBody()
                 }
             }

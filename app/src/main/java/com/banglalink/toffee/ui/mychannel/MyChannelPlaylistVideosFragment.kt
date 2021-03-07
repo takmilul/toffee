@@ -112,6 +112,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
             binding.myChannelPlaylistVideos.updatePadding(top = 0.dp)
         }
         binding.emptyViewLabel.text = "No item found"
+        binding
         binding.playlistName.text = args.playlistInfo.playlistName
         binding.backButton.safeClick({ findNavController().popBackStack() })
         with(binding.myChannelPlaylistVideos) {

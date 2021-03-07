@@ -6,21 +6,20 @@
 
     <data>
         <variable
+            name="isOwner"
+            type="Boolean" />
+        <variable
             name="isSubscribed"
             type="Integer" />
-        
         <variable
             name="subscriberCount"
             type="Long" />
-
         <variable
             name="myRating"
             type="Integer" />
-
         <variable
             name="data"
             type="com.banglalink.toffee.model.MyChannelDetailBean" />
-
         <variable
             name="viewModel"
             type="com.banglalink.toffee.ui.mychannel.MyChannelHomeViewModel" />
@@ -46,6 +45,7 @@
                     android:clipChildren="false"
                     android:clipToPadding="false"
                     app:data="@{data}"
+                    app:isOwner="@{isOwner}"
                     app:isSubscribed="@{isSubscribed}"
                     app:subscriberCount="@{subscriberCount}"
                     app:myRating="@{myRating}"
