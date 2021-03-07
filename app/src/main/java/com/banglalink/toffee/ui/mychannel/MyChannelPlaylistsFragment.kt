@@ -108,8 +108,8 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
                 emptyViewLabel.text = "You haven't created any playlist yet"
                 createPlaylistButton.setOnClickListener {
                     if (mPref.channelId > 0) {
-                        if (parentFragment is MyChannelHomeFragment) {
-                            (parentFragment as MyChannelHomeFragment).showCreatePlaylistDialog()
+                        if (parentFragment?.parentFragment?.parentFragment is MyChannelHomeFragment) {
+                            (parentFragment?.parentFragment?.parentFragment as? MyChannelHomeFragment)?.showCreatePlaylistDialog()
                         }
                     } else {
                         Toast.makeText(requireContext(), "Please create channel first", Toast.LENGTH_SHORT).show()

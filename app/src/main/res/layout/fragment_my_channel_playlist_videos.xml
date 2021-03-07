@@ -8,96 +8,102 @@
 
     </data>
     
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/screen_bg">
-
-        <ImageView
-            android:id="@+id/backButton"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:background="?selectableItemBackgroundBorderless"
-            android:gravity="center"
-            android:padding="10dp"
-            android:src="@drawable/ic_arrow_back"
-            app:layout_constraintEnd_toStartOf="@id/playlistName"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/playlistName"
-            style="@style/SectionTitleTextStyle"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="0dp"
-            app:layout_constraintBottom_toBottomOf="@id/backButton"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/backButton"
-            app:layout_constraintTop_toTopOf="@id/backButton"
-            tools:text="playlist name" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/myChannelPlaylistVideos"
+        android:fillViewport="true">
+        
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:paddingTop="16dp"
-            android:clipToPadding="false"
-            android:orientation="vertical"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/backButton"
-            app:reverseLayout="false"
-            tools:listitem="@layout/list_item_my_channel_playlist_videos" />
-
-        <pl.droidsonroids.gif.GifImageView
-            android:id="@+id/progress_bar"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@drawable/gif_round_border"
-            android:elevation="2dp"
-            android:src="@drawable/content_loader"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <LinearLayout
-            android:id="@+id/empty_view"
-            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/backButton">
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/empty_view_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
-                android:adjustViewBounds="true"
-                android:maxWidth="144dp"
-                android:visibility="visible"
-                app:srcCompat="@drawable/ic_videos_empty" />
-
+            android:background="@color/screen_bg">
+    
+            <ImageView
+                android:id="@+id/backButton"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:background="?selectableItemBackgroundBorderless"
+                android:gravity="center"
+                android:padding="10dp"
+                android:src="@drawable/ic_arrow_back"
+                app:layout_constraintEnd_toStartOf="@id/playlistName"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+    
             <TextView
-                android:id="@+id/empty_view_label"
-                android:layout_width="wrap_content"
+                android:id="@+id/playlistName"
+                style="@style/SectionTitleTextStyle"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="0dp"
+                app:layout_constraintBottom_toBottomOf="@id/backButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/backButton"
+                app:layout_constraintTop_toTopOf="@id/backButton"
+                tools:text="playlist name" />
+    
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/myChannelPlaylistVideos"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:paddingTop="16dp"
+                android:clipToPadding="false"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/backButton"
+                app:reverseLayout="false"
+                tools:listitem="@layout/list_item_my_channel_playlist_videos" />
+    
+            <pl.droidsonroids.gif.GifImageView
+                android:id="@+id/progress_bar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/gif_round_border"
+                android:elevation="2dp"
+                android:src="@drawable/content_loader"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+    
+            <LinearLayout
+                android:id="@+id/empty_view"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:fontFamily="@font/roboto_regular"
-                android:text="No item found"
-                android:textColor="@color/fixed_second_text_color"
-                android:textSize="16sp"
-                tools:text="No item found" />
-
-        </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/backButton">
+    
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/empty_view_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="40dp"
+                    android:adjustViewBounds="true"
+                    android:maxWidth="144dp"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/ic_videos_empty" />
+    
+                <TextView
+                    android:id="@+id/empty_view_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:text="No item found"
+                    android:textColor="@color/fixed_second_text_color"
+                    android:textSize="16sp"
+                    tools:text="No item found" />
+    
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 </layout>

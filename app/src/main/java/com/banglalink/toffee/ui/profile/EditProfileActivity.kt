@@ -11,19 +11,16 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import android.view.LayoutInflater
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.lifecycleScope
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.databinding.ActivityEditProfileBinding
-import com.banglalink.toffee.databinding.DialogueProfileImageSelectionBinding
 import com.banglalink.toffee.enums.InputType
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource
@@ -36,29 +33,25 @@ import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.ask
 import com.yalantis.ucrop.UCrop
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_thumb_selection_method.view.*
-import kotlinx.android.synthetic.main.video_upload_fragment.*
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 @AndroidEntryPoint
 class EditProfileActivity : BaseAppCompatActivity() {
 
-   // private var imageUri: Uri? = null
     var photoUri: Uri? = null
-    private lateinit var progressDialog: VelBoxProgressDialog
-    lateinit var binding:ActivityEditProfileBinding
-    private val REQUEST_IMAGE = 1729
     private val TAG = "EditProfileActivity"
-    private lateinit var alertBinding:DialogueProfileImageSelectionBinding
     private var alertDialog: AlertDialog? = null
+    lateinit var binding:ActivityEditProfileBinding
+    private lateinit var progressDialog: VelBoxProgressDialog
 
     companion object{
         const val PROFILE_INFO = "Profile"
     }
+    
     private val viewModel by viewModels<EditProfileViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -123,9 +116,7 @@ class EditProfileActivity : BaseAppCompatActivity() {
             }
             open_camera_button.setOnClickListener {
                 checkCameraPermissions()
-
             }
-
         }
     }
 
@@ -198,19 +189,14 @@ class EditProfileActivity : BaseAppCompatActivity() {
         if(resultCode == Activity.RESULT_OK){
             if(requestCode == UCrop.REQUEST_CROP && data != null) {
                 val uri = UCrop.getOutput(data)
-                if(uri != null) {
+                uri?.let {
                     alertDialog?.dismiss()
                     ToffeeAnalytics.logBreadCrumb("Got result from crop lib")
-                    data?.let { intent ->
-                        val uri = UCrop.getOutput(intent)
-                        uri?.let {
-                            ToffeeAnalytics.logBreadCrumb("Handling crop image")
-                            binding.profileEditLayout.profileIv.load(it){
-                                transformations(CircleCropTransformation())
-                            }
-                            handleUploadImage(it)
-                        }
+                    ToffeeAnalytics.logBreadCrumb("Handling crop image")
+                    binding.profileEditLayout.profileIv.load(it){
+                        transformations(CircleCropTransformation())
                     }
+                    handleUploadImage(it)
                 }
             }
         }
@@ -313,9 +299,7 @@ class EditProfileActivity : BaseAppCompatActivity() {
                 progressDialog.dismiss()
                 when (it) {
                     is Resource.Success -> {
-                        showToast(
-                            getString(R.string.photo_update_success)
-                        )
+                        showToast(getString(R.string.photo_update_success))
                     }
                     is Resource.Failure -> {
                         showToast(it.error.msg)
@@ -329,5 +313,4 @@ class EditProfileActivity : BaseAppCompatActivity() {
             Log.e(TAG, e.message, e)
         }
     }
-
 }

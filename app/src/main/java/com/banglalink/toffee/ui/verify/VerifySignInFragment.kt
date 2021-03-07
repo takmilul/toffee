@@ -22,6 +22,7 @@ import com.banglalink.toffee.receiver.SMSBroadcastReceiver
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.util.UtilsKt
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.material.snackbar.Snackbar
@@ -51,7 +52,7 @@ class VerifySignInFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
+        binding.signInVerifyMotionLayout.setOnClickListener { UtilsKt.hideSoftKeyboard(requireActivity()) }
         ViewCompat.setTranslationZ(binding.root, 100f)
         
         val args by navArgs<VerifySignInFragmentArgs>()
@@ -66,6 +67,7 @@ class VerifySignInFragment : BaseFragment() {
             handleResendButton()
         }
         binding.confirmBtn.setOnClickListener {
+            UtilsKt.hideSoftKeyboard(requireActivity())
             verifyCode(binding.codeNumber.text.toString())
         }
         binding.backButton.setOnClickListener {
