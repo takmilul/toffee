@@ -3,7 +3,7 @@ package com.banglalink.toffee.di
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
-import com.banglalink.toffee.apiservice.UgcUploadConfirmation
+import com.banglalink.toffee.apiservice.UploadConfirmation
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.Preference
@@ -39,7 +39,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesUploadStateManager(app: Application, repo: UploadInfoRepository, uploadConfApi: UgcUploadConfirmation): UploadStateManager {
+    fun providesUploadStateManager(app: Application, repo: UploadInfoRepository, uploadConfApi: UploadConfirmation): UploadStateManager {
         return UploadStateManager(app, repo, uploadConfApi)
     }
 

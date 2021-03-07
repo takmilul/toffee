@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.mychannel
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,23 +14,26 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelAddToPlaylistBean
 import com.banglalink.toffee.model.Resource
 import com.google.gson.Gson
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MyChannelAddToPlaylistViewModel @ViewModelInject constructor(
+@HiltViewModel
+class MyChannelAddToPlaylistViewModel @Inject constructor(
     private val preference: Preference,
     private val activitiesRepo: UserActivitiesRepository,
-    private val apiService: MyChannelAddToPlayListService
-): ViewModel() {
+    private val apiService: MyChannelAddToPlayListService,
+) : ViewModel() {
     
     private val _data = MutableLiveData<Resource<MyChannelAddToPlaylistBean>>()
     val liveData = _data.toLiveData()
     
-    fun addToPlaylist(playlistId: Int, contentId: Int, channelId: Int, isOwner: Int){
-        viewModelScope.launch { 
-            _data.postValue(resultFromResponse { apiService.invoke(playlistId, contentId, channelId, isOwner) })
+    fun addToPlaylist(playlistId: Int, contentId: Int, channelOwnerId: Int) {
+        viewModelScope.launch {
+            _data.postValue(resultFromResponse { apiService.invoke(playlistId, contentId, channelOwnerId) })
         }
     }
-
+    
     fun insertActivity(channelInfo: ChannelInfo, activitySubType: Int) {
         viewModelScope.launch {
             val item = UserActivities(

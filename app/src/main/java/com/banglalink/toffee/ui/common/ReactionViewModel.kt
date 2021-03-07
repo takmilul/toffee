@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.common
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.data.database.dao.ReactionDao
@@ -10,10 +9,13 @@ import com.banglalink.toffee.data.repository.UserActivitiesRepository
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.usecase.SendReactionEvent
 import com.google.gson.Gson
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ReactionViewModel @ViewModelInject constructor(
+@HiltViewModel
+class ReactionViewModel @Inject constructor(
     private val reactionDao: ReactionDao, 
     private val activitiesRepo: UserActivitiesRepository,
     private val sendReactionEvent: SendReactionEvent,

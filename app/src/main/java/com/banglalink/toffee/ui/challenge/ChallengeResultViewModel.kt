@@ -3,12 +3,12 @@ package com.banglalink.toffee.ui.challenge
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.banglalink.toffee.apiservice.GetChallengeResult
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.ChallengeResult
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.Resource.Success
-import com.banglalink.toffee.usecase.GetChallengeResult
 import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.coroutines.launch
 

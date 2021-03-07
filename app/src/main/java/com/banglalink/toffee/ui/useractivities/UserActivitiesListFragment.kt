@@ -16,7 +16,6 @@ import com.banglalink.toffee.data.database.entities.UserActivities
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.ui.home.HomeViewModel
-import com.banglalink.toffee.ui.home.LandingPageViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -29,7 +28,6 @@ class UserActivitiesListFragment: BaseListFragment<UserActivities>(),
     override val mViewModel by viewModels<UserActivitiesListViewModel>()
     override val mAdapter by lazy { UserActivitiesListAdapter(this) }
     private val homeViewModel by activityViewModels<HomeViewModel>()
-    private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
 
     companion object {
         fun newInstance(): UserActivitiesListFragment {
@@ -70,12 +68,12 @@ class UserActivitiesListFragment: BaseListFragment<UserActivities>(),
 
     override fun onProviderIconClicked(item: UserActivities) {
         super.onProviderIconClicked(item)
-        homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.id.toInt(), item.channelInfo?.channel_owner_id?:0, item.channelInfo?.isSubscribed?:0)
+        homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channelInfo?.channel_owner_id?:0)
     }
 
     private fun observeChannelDetail() {
         observe(mViewModel.myChannelDetail){
-            homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(it.myChannelDetail?.id?.toInt()?:0, it.channelOwnerId, it.isSubscribed)
+            homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(it.myChannelDetail?.id?.toInt()?:0)
         }
     }
 

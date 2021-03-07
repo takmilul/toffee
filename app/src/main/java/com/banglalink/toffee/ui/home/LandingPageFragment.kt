@@ -14,11 +14,12 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.google.android.material.appbar.AppBarLayout
 
-class LandingPageFragment : HomeBaseFragment(){
-    private val landingViewModel by activityViewModels<LandingPageViewModel>()
+class LandingPageFragment : HomeBaseFragment() {
+    private var appbarOffset = 0
     private lateinit var landingAppbar: AppBarLayout
     private lateinit var landingCoordinator: CoordinatorLayout
     private lateinit var latestVideoScroller: NestedScrollView
+    private val landingViewModel by activityViewModels<LandingPageViewModel>()
 
     companion object {
         fun newInstance(): LandingPageFragment {
@@ -26,17 +27,13 @@ class LandingPageFragment : HomeBaseFragment(){
         }
     }
 
-    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
-//        popularVideoListAdapter.remove(channelInfo)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        requireActivity().onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+        requireActivity().onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if(isEnabled) {
-                    if(appbarOffset != 0) {
+                if (isEnabled) {
+                    if (appbarOffset != 0) {
                         latestVideoScroller.smoothScrollTo(0, 0, 0)
                         landingAppbar.setExpanded(true, true)
                     } else {
@@ -48,16 +45,8 @@ class LandingPageFragment : HomeBaseFragment(){
         })
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_landing_page2, container, false)
-    }
-
-    fun onBackPressed(): Boolean {
-        return false
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -77,5 +66,12 @@ class LandingPageFragment : HomeBaseFragment(){
         })
     }
 
-    private var appbarOffset = 0
+    fun onBackPressed(): Boolean {
+        return false
+    }
+
+    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
+//        popularVideoListAdapter.remove(channelInfo)
+    }
+
 }

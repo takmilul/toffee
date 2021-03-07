@@ -12,13 +12,13 @@ import androidx.core.view.get
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
-import com.banglalink.toffee.enums.PageType.Category
+import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
-import com.banglalink.toffee.model.UgcCategory
-import com.banglalink.toffee.model.UgcSubCategory
+import com.banglalink.toffee.model.SubCategory
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.util.bindCategoryImage
@@ -27,7 +27,7 @@ import kotlinx.android.synthetic.main.fragment_category_info.*
 
 class CategoryInfoFragment: HomeBaseFragment() {
     private val landingViewModel by activityViewModels<LandingPageViewModel>()
-    private lateinit var categoryInfo: UgcCategory
+    private lateinit var categoryInfo: Category
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,7 +40,7 @@ class CategoryInfoFragment: HomeBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         categoryInfo = requireParentFragment().requireArguments().getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)!!
-        landingViewModel.pageType.value = (Category)
+        landingViewModel.pageType.value = (PageType.Category)
         landingViewModel.checkedSubCategoryChipId.value = 0
         landingViewModel.categoryId.value = (categoryInfo.id.toInt())
         landingViewModel.isDramaSeries.value = false
@@ -78,7 +78,7 @@ class CategoryInfoFragment: HomeBaseFragment() {
 //                        landingViewModel.checkedSubCategoryChipId.value = checkedId
                         val selectedChip = group.findViewById<Chip>(checkedId)
                         if(selectedChip != null) {
-                            val selectedSub = selectedChip.tag as UgcSubCategory
+                            val selectedSub = selectedChip.tag as SubCategory
                             landingViewModel.categoryId.value = selectedSub.categoryId.toInt()
                             landingViewModel.subCategoryId.value = selectedSub.id.toInt()
                             landingViewModel.isDramaSeries.value = selectedSub.categoryId.toInt() == 9
@@ -127,7 +127,7 @@ class CategoryInfoFragment: HomeBaseFragment() {
         return chip
     }
 
-    private fun addChip(subCategory: UgcSubCategory): Chip {
+    private fun addChip(subCategory: SubCategory): Chip {
         val intColor = ContextCompat.getColor(requireContext(), R.color.colorSecondaryDark)
         val textColor = ContextCompat.getColor(requireContext(), R.color.main_text_color)
         val chipColor = createStateColor(intColor)

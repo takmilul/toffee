@@ -1,25 +1,22 @@
 package com.banglalink.toffee.ui.subscription
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.banglalink.toffee.data.network.retrofit.ToffeeApi
+import com.banglalink.toffee.apiservice.GetPackageChannels
 import com.banglalink.toffee.data.network.util.resultLiveData
-import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.usecase.GetPackageChannels
-import com.banglalink.toffee.util.unsafeLazy
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class PackageChannelListViewModel @ViewModelInject constructor(private val toffeeApi: ToffeeApi): ViewModel(){
+@HiltViewModel
+class PackageChannelListViewModel @Inject constructor(
+    private val packageChannels: GetPackageChannels,
+) : ViewModel() {
 
-    private val getPackageChannelList by unsafeLazy {
-        GetPackageChannels(Preference.getInstance(), toffeeApi)
-    }
-
-    fun getPackageChannels(packageId:Int):LiveData<Resource<List<ChannelInfo>>>{
+    fun getPackageChannels(packageId: Int): LiveData<Resource<List<ChannelInfo>>> {
         return resultLiveData {
-            getPackageChannelList.execute(packageId)
+            packageChannels.execute(packageId)
         }
     }
 }

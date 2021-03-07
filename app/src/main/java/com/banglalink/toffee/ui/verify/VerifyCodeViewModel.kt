@@ -1,32 +1,22 @@
 package com.banglalink.toffee.ui.verify
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
-import com.banglalink.toffee.data.network.retrofit.ToffeeApi
+import com.banglalink.toffee.apiservice.SignInByPhone
+import com.banglalink.toffee.apiservice.VerifyCode
 import com.banglalink.toffee.data.network.util.resultLiveData
-import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.CustomerInfoSignIn
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseViewModel
-import com.banglalink.toffee.usecase.SigninByPhone
-import com.banglalink.toffee.usecase.VerifyCode
-import com.banglalink.toffee.util.unsafeLazy
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class VerifyCodeViewModel @ViewModelInject constructor(private val mPref:Preference, private val toffeeApi: ToffeeApi):BaseViewModel() {
+@HiltViewModel
+class VerifyCodeViewModel @Inject constructor(
+    private val verifyCode: VerifyCode,
+    private val signInByPhone: SignInByPhone,
+) : BaseViewModel() {
 
-    private val verifyCode by unsafeLazy {
-        VerifyCode(mPref, toffeeApi)
-    }
-
-    private val signingByPhone by unsafeLazy {
-        SigninByPhone(mPref, toffeeApi)
-    }
-
-    fun verifyCode(
-        code: String,
-        regSessionToken: String,
-        referralCode: String
-    ): LiveData<Resource<CustomerInfoSignIn>> {
+    fun verifyCode(code: String, regSessionToken: String, referralCode: String): LiveData<Resource<CustomerInfoSignIn>> {
         return resultLiveData {
             val response = verifyCode.execute(code, regSessionToken, referralCode)
             response
@@ -35,7 +25,7 @@ class VerifyCodeViewModel @ViewModelInject constructor(private val mPref:Prefere
 
     fun resendCode(phoneNumber: String, referralCode: String): LiveData<Resource<String>> {
         return resultLiveData {
-            signingByPhone.execute(phoneNumber, referralCode)
+            signInByPhone.execute(phoneNumber, referralCode)
         }
     }
 }

@@ -1,214 +1,254 @@
 package com.banglalink.toffee.ui.mychannel
 
 import android.os.Bundle
-import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.ConcatAdapter
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
 import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_PLAYLIST_VIDEOS_URL
 import com.banglalink.toffee.apiservice.MyChannelPlaylistContentParam
-import com.banglalink.toffee.common.paging.BaseListFragment
+import com.banglalink.toffee.common.paging.ListLoadStateAdapter
+import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
+import com.banglalink.toffee.data.repository.SubscriptionCountRepository
+import com.banglalink.toffee.data.repository.SubscriptionInfoRepository
+import com.banglalink.toffee.databinding.FragmentMyChannelPlaylistVideosBinding
 import com.banglalink.toffee.enums.Reaction
-import com.banglalink.toffee.enums.Reaction.Love
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.listeners.MyChannelPlaylistItemListener
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
-import com.banglalink.toffee.ui.common.ContentReactionCallback
-import com.banglalink.toffee.ui.common.ReactionIconCallback
-import com.banglalink.toffee.ui.common.ReactionPopup
-import com.banglalink.toffee.ui.home.CatchupDetailsViewModel
+import com.banglalink.toffee.ui.common.*
 import com.banglalink.toffee.ui.home.ChannelHeaderAdapter
 import com.banglalink.toffee.ui.home.HomeViewModel
-import com.banglalink.toffee.ui.home.LandingPageViewModel
-import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosViewModel.AssistedFactory
 import com.banglalink.toffee.ui.player.AddToPlaylistData
+import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.ui.widget.MyPopupWindow
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.catchup_details_list_header_new.*
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
-    MyChannelPlaylistItemListener {
+class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener {
+    
+    private var isSubscribed: Int = 0
+    private var subscriberCount: Long = 0
     private var currentItem: ChannelInfo? = null
-    private var enableToolbar: Boolean = false
-    private lateinit var requestParams: MyChannelPlaylistContentParam
-    private var detailsAdapter: ChannelHeaderAdapter? = null
-    private lateinit var args: MyChannelPlaylistVideosFragmentArgs
-    override val mAdapter by lazy { MyChannelPlaylistVideosAdapter(this , currentItem) }
+    private lateinit var mAdapter: ConcatAdapter
     @Inject lateinit var cacheManager: CacheManager
-    @Inject lateinit var viewModelAssistedFactory: AssistedFactory
-    override val mViewModel by viewModels<MyChannelPlaylistVideosViewModel>{MyChannelPlaylistVideosViewModel.provideAssisted(viewModelAssistedFactory, requestParams)}
-    private val playerViewModel by viewModels<CatchupDetailsViewModel>()
+    private lateinit var detailsAdapter: ChannelHeaderAdapter
+    private lateinit var args: MyChannelPlaylistVideosFragmentArgs
+    val mViewModel by viewModels<MyChannelPlaylistVideosViewModel>()
     private val homeViewModel by activityViewModels<HomeViewModel>()
-    private val landingViewModel by activityViewModels<LandingPageViewModel>()
-
+    private lateinit var requestParams: MyChannelPlaylistContentParam
+    private lateinit var playlistAdapter: MyChannelPlaylistVideosAdapter
+    private lateinit var binding: FragmentMyChannelPlaylistVideosBinding
+    @Inject lateinit var subscriptionInfoRepository: SubscriptionInfoRepository
+    @Inject lateinit var subscriptionCountRepository: SubscriptionCountRepository
+    
     companion object {
-        private const val SHOW_TOOLBAR = "enableToolbar"
-        fun newInstance(
-            info: PlaylistPlaybackInfo,
-            enableToolbar: Boolean = false
-        ): MyChannelPlaylistVideosFragment {
-            val instance = MyChannelPlaylistVideosFragment()
-            val bundle = Bundle()
-            bundle.putParcelable("playlistInfo", info)
-            bundle.putBoolean(SHOW_TOOLBAR, enableToolbar)
-            instance.arguments = bundle
-            return instance
-        } 
+        fun newInstance(info: PlaylistPlaybackInfo): MyChannelPlaylistVideosFragment {
+            return MyChannelPlaylistVideosFragment().apply {
+                arguments = Bundle().apply {
+                    putParcelable("playlistInfo", info)
+                }
+            }
+        }
     }
-
-    fun getPlaylistId(): Long  = args.playlistInfo.getPlaylistIdLong()
-
+    
+    fun getPlaylistId(): Long = args.playlistInfo.getPlaylistIdLong()
+    
     fun isAutoPlayEnabled(): Boolean {
         return view?.findViewById<SwitchButton>(R.id.autoPlaySwitch)?.isChecked == true
     }
-
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         args = MyChannelPlaylistVideosFragmentArgs.fromBundle(requireArguments())
-        requestParams = MyChannelPlaylistContentParam(args.playlistInfo.channelOwnerId, args.playlistInfo.isOwner, args.playlistInfo.playlistId)
-        Log.i("UGC_Owner", "isOwner: ${requestParams.isOwner}")
+        requestParams = MyChannelPlaylistContentParam(args.playlistInfo.channelOwnerId, args.playlistInfo.playlistId)
         currentItem = args.playlistInfo.currentItem
     }
-
+    
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        binding = FragmentMyChannelPlaylistVideosBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        binding.topPanel.root.visibility = View.VISIBLE
-//        binding.topPanel.statusText.text = "${args.playlistInfo.playlistName} (${args.playlistInfo.playlistItemCount})"
-
-        mAdapter.isOwner = requestParams.isOwner
-        observe(playerViewModel.channelSubscriberCount) {
-            currentItem?.isSubscribed = if (playerViewModel.isChannelSubscribed.value!!) 1 else 0
-            currentItem?.subscriberCount = it
-            detailsAdapter?.notifyDataSetChanged()
-        }
+        super.onViewCreated(view, savedInstanceState)
         
+        initAdapter()
+        observeListState()
+        observeVideoList()
         setSubscriptionStatus()
-
-        detailsAdapter = ChannelHeaderAdapter(args.playlistInfo, object: ContentReactionCallback<ChannelInfo> {
+        
+        currentItem?.let { 
+            binding.backButton.hide()
+            binding.playlistName.hide()
+            binding.myChannelPlaylistVideos.updatePadding(top = 0.dp)
+        }
+        binding.emptyViewLabel.text = "No item found"
+        binding.playlistName.text = args.playlistInfo.playlistName
+        binding.backButton.safeClick({ findNavController().popBackStack() })
+        with(binding.myChannelPlaylistVideos) {
+            addItemDecoration(MarginItemDecoration(12))
+            layoutManager = LinearLayoutManager(context)
+            adapter = mAdapter
+        }
+    }
+    
+    private fun initAdapter() {
+        playlistAdapter = MyChannelPlaylistVideosAdapter(this, currentItem)
+        detailsAdapter = ChannelHeaderAdapter(args.playlistInfo, object : ContentReactionCallback<ChannelInfo> {
             override fun onOpenMenu(view: View, item: ChannelInfo) {
                 openMenu(view, item)
             }
-
+    
             override fun onReactionClicked(view: View, reactionCountView: View, item: ChannelInfo) {
                 super.onReactionClicked(view, reactionCountView, item)
                 val iconLocation = IntArray(2)
                 view.getLocationOnScreen(iconLocation)
-                val reactionPopupFragment = ReactionPopup.newInstance(item, iconLocation, view.height, true).apply { setCallback(object : ReactionIconCallback {
-                    override fun onReactionChange(reactionCount: String, reactionText: String, reactionIcon: Int) {
-                        (reactionCountView as TextView).text = reactionCount
-                        (view as TextView).text = reactionText
-                        view.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
-                        if (reactionText == Love.name) {
-                            view.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorAccent))
+                val reactionPopupFragment = ReactionPopup.newInstance(item, iconLocation, view.height, true).apply {
+                    setCallback(object : ReactionIconCallback {
+                        override fun onReactionChange(reactionCount: String, reactionText: String, reactionIcon: Int) {
+                            (reactionCountView as TextView).text = reactionCount
+                            (view as TextView).text = reactionText
+                            view.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
+                            if (reactionText == Reaction.Love.name) {
+                                view.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorAccent))
+                            } else {
+                                view.setTextColor(ContextCompat.getColor(requireContext(), R.color.fixed_second_text_color))
+                            }
                         }
-                        else{
-                            view.setTextColor(ContextCompat.getColor(requireContext(), R.color.fixed_second_text_color))
-                        }
-                        Log.e(ReactionPopup.TAG, "setReaction: icon", )
-                    }
-                })
+                    })
                 }
                 childFragmentManager.commit { add(reactionPopupFragment, ReactionPopup.TAG) }
             }
-
+    
             override fun onShareClicked(view: View, item: ChannelInfo) {
                 homeViewModel.shareContentLiveData.postValue(item)
             }
-
+    
             override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
-                playerViewModel.toggleSubscriptionStatus(item.id.toInt(), item.channel_owner_id)
+                if (isSubscribed == 0) {
+                    homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), 1)
+                    isSubscribed = 1
+                    currentItem?.isSubscribed = isSubscribed
+                    currentItem?.subscriberCount = (++subscriberCount).toInt()
+                    detailsAdapter.notifyDataSetChanged()
+                } else {
+                    UnSubscribeDialog.show(requireContext()) {
+                        homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), -1)
+                        isSubscribed = 0
+                        currentItem?.isSubscribed = isSubscribed
+                        currentItem?.subscriberCount = (--subscriberCount).toInt()
+                        detailsAdapter.notifyDataSetChanged()
+                    }
+                }
             }
-            
+    
             override fun onProviderIconClicked(item: ChannelInfo) {
                 super.onProviderIconClicked(item)
-                homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.id.toInt(), item.channel_owner_id, item.isSubscribed)
+                homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
             }
         }, mPref)
-        super.onViewCreated(view, savedInstanceState)
-
-        observeListState()
+        mAdapter = ConcatAdapter(detailsAdapter, playlistAdapter.withLoadStateFooter(ListLoadStateAdapter { playlistAdapter.retry() }))
     }
-
+    
     private fun setSubscriptionStatus() {
-        currentItem?.let { channelInfo ->
-            val customerId = mPref.customerId
-            val isOwner = if (channelInfo.channel_owner_id == customerId) 1 else 0
-            val isPublic = if (channelInfo.channel_owner_id == customerId) 0 else 1
-            val channelId = channelInfo.channel_owner_id.toLong()
-            playerViewModel.getChannelInfo(isOwner, isPublic, channelId, channelId.toInt())
+        lifecycleScope.launch {
+            currentItem?.let {
+                isSubscribed = if (subscriptionInfoRepository.getSubscriptionInfoByChannelId(it.channel_owner_id, mPref.customerId) != null) 1 else 0
+                subscriberCount = subscriptionCountRepository.getSubscriberCount(it.channel_owner_id)
+                it.isSubscribed = isSubscribed
+                it.subscriberCount = subscriberCount.toInt()
+                detailsAdapter.notifyDataSetChanged()
+            }
         }
     }
-
+    
+    private fun observeVideoList() {
+        lifecycleScope.launchWhenStarted {
+            mViewModel.getMyChannelPlaylistVideos(requestParams).collectLatest {
+                playlistAdapter.submitData(it)
+            }
+        }
+    }
+    
     private fun observeListState() {
         lifecycleScope.launch {
-            mAdapter
+            playlistAdapter.addLoadStateListener {
+                binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
+                playlistAdapter.apply {
+                    val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached
+                    binding.emptyView.isGone = !showEmpty
+                    binding.myChannelPlaylistVideos.isVisible = !showEmpty
+                }
+            }
+            playlistAdapter
                 .loadStateFlow
                 .distinctUntilChangedBy {
                     it.refresh
                 }.collect {
-                    val list = mAdapter.snapshot()
+                    val list = playlistAdapter.snapshot()
                     homeViewModel.addToPlayListMutableLiveData.postValue(
                         AddToPlaylistData(getPlaylistId(), list.items, false)
                     )
                 }
         }
     }
-
-    override fun getRecyclerAdapter(): RecyclerView.Adapter<*> {
-        return ConcatAdapter(detailsAdapter, mAdapter)
-    }
-
+    
     override fun onProviderIconClicked(item: ChannelInfo) {
         super.onProviderIconClicked(item)
-        homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.id.toInt(), item.channel_owner_id, item.isSubscribed)
+        homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
     }
-
+    
     override fun onItemClickAtPosition(position: Int, item: ChannelInfo) {
-        if(item == currentItem || item.id == currentItem?.id) {
+        if (item == currentItem || item.id == currentItem?.id) {
             return
         }
-//        if (item.isApproved == 0) {
-//            Toast.makeText(requireContext(), "Your video has not approved yet. Once it's approved, you can play the video", Toast.LENGTH_SHORT).show()
-//        } else {
-            homeViewModel.addToPlayListMutableLiveData.postValue(
-                AddToPlaylistData(getPlaylistId(), mAdapter.snapshot().items)
-            )
-            homeViewModel.fragmentDetailsMutableLiveData.postValue(args.playlistInfo.copy (
-                playIndex = position,
-                currentItem = item
-            ))
-//        }
+        homeViewModel.addToPlayListMutableLiveData.postValue(
+            AddToPlaylistData(getPlaylistId(), playlistAdapter.snapshot().items)
+        )
+        homeViewModel.fragmentDetailsMutableLiveData.postValue(args.playlistInfo.copy(
+            playIndex = position,
+            currentItem = item
+        ))
     }
-
+    
     override fun onOpenMenu(view: View, item: ChannelInfo) {
         super.onOpenMenu(view, item)
-        if (requestParams.isOwner == 1) {
+        if (requestParams.channelOwnerId == mPref.customerId) {
             PopupMenu(requireContext(), view).apply {
                 inflate(R.menu.menu_delete_playlist_video)
                 menu.findItem(R.id.menu_share).isVisible = item.isApproved == 1
                 setOnMenuItemClickListener {
                     when (it.itemId) {
-                        R.id.menu_share->{
+                        R.id.menu_share -> {
                             homeViewModel.shareContentLiveData.postValue(item)
                         }
                         R.id.menu_delete_playlist_video -> {
@@ -225,13 +265,13 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
             openMenu(view, item)
         }
     }
-
+    
     private fun observeDeletePlaylistVideo() {
-        observe(mViewModel.deletePlaylistVideoLiveData){
-            when(it){
+        observe(mViewModel.deletePlaylistVideoLiveData) {
+            when (it) {
                 is Success -> {
                     cacheManager.clearCacheByUrl(GET_MY_CHANNEL_PLAYLIST_VIDEOS_URL)
-                    mAdapter.refresh()
+                    playlistAdapter.refresh()
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
                 }
                 is Failure -> {
@@ -240,66 +280,64 @@ class MyChannelPlaylistVideosFragment : BaseListFragment<ChannelInfo>(),
             }
         }
     }
-
+    
     private fun openMenu(anchor: View, channelInfo: ChannelInfo) {
         val popupMenu = MyPopupWindow(requireContext(), anchor)
         popupMenu.inflate(R.menu.menu_catchup_item)
-
+        
         if (channelInfo.favorite == null || channelInfo.favorite == "0") {
             popupMenu.menu.getItem(0).title = "Add to Favorites"
-        }
-        else {
+        } else {
             popupMenu.menu.getItem(0).title = "Remove from Favorites"
         }
-
+        
         popupMenu.menu.findItem(R.id.menu_share).isVisible = channelInfo.isApproved == 1
-        popupMenu.setOnMenuItemClickListener{
-            when(it?.itemId){
-                R.id.menu_share->{
+        popupMenu.setOnMenuItemClickListener {
+            when (it?.itemId) {
+                R.id.menu_share -> {
                     homeViewModel.shareContentLiveData.postValue(channelInfo)
                     return@setOnMenuItemClickListener true
                 }
-                R.id.menu_fav->{
-                    homeViewModel.updateFavorite(channelInfo).observe(viewLifecycleOwner, { resp->
+                R.id.menu_fav -> {
+                    homeViewModel.updateFavorite(channelInfo).observe(viewLifecycleOwner, { resp ->
                         handleFavoriteResponse(resp)
                     })
                     return@setOnMenuItemClickListener true
                 }
-                R.id.menu_not_interested->{
-//                    removeItemNotInterestedItem(channelInfo)
+                R.id.menu_not_interested -> {
                     return@setOnMenuItemClickListener true
                 }
-                else->{
+                else -> {
                     return@setOnMenuItemClickListener false
                 }
             }
         }
         popupMenu.show()
     }
-
-    private fun handleFavoriteResponse(it: Resource<ChannelInfo>){
-        when(it){
-            is Success->{
+    
+    private fun handleFavoriteResponse(it: Resource<ChannelInfo>) {
+        when (it) {
+            is Success -> {
                 val channelInfo = it.data
-                when(channelInfo.favorite){
-                    "0"->{
+                when (channelInfo.favorite) {
+                    "0" -> {
                         context?.showToast("Content successfully removed from favorite list")
                     }
-                    "1"->{
+                    "1" -> {
                         context?.showToast("Content successfully added to favorite list")
                     }
                 }
             }
-            is Failure->{
+            is Failure -> {
                 context?.showToast(it.error.msg)
             }
         }
     }
-
+    
     fun setCurrentChannel(channelInfo: ChannelInfo?) {
         currentItem = channelInfo
-        detailsAdapter?.setChannelInfo(channelInfo)
-        mAdapter.setSelectedItem(channelInfo)
+        detailsAdapter.setChannelInfo(channelInfo)
+        playlistAdapter.setSelectedItem(channelInfo)
         setSubscriptionStatus()
     }
 }

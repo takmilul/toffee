@@ -11,13 +11,14 @@ class MyChannelAddToPlayListService @Inject constructor(
     private val mPref: Preference,
     private val toffeeApi: ToffeeApi
 ) {
-    suspend fun invoke(playListId: Int, contentId: Int, channelId: Int, isOwner: Int): MyChannelAddToPlaylistBean {
+    suspend fun invoke(playListId: Int, contentId: Int, channelOwnerId: Int): MyChannelAddToPlaylistBean {
+        val isOwner = if (mPref.customerId == channelOwnerId) 1 else 0
         val response = tryIO2 {
             toffeeApi.addToMyChannelPlayList(
                 MyChannelAddToPlaylistRequest(
                     playListId,
                     contentId,
-                    channelId,
+                    channelOwnerId,
                     isOwner,
                     mPref.customerId,
                     mPref.password

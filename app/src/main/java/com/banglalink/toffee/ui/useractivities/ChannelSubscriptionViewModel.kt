@@ -1,23 +1,25 @@
 package com.banglalink.toffee.ui.useractivities
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.banglalink.toffee.common.paging.BasePagingViewModel
-import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.apiservice.GetChannelSubscriptions
 import com.banglalink.toffee.common.paging.BaseListRepository
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
+import com.banglalink.toffee.common.paging.BasePagingViewModel
+import com.banglalink.toffee.model.ChannelInfo
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ChannelSubscriptionViewModel @ViewModelInject constructor(
-        apiService: GetChannelSubscriptions
-)
-    :BasePagingViewModel<ChannelInfo>() {
+@HiltViewModel
+class ChannelSubscriptionViewModel @Inject constructor(
+    apiService: GetChannelSubscriptions,
+) : BasePagingViewModel<ChannelInfo>() {
+    
     override val repo: BaseListRepository<ChannelInfo> by lazy {
-        BaseListRepositoryImpl({BaseNetworkPagingSource(apiService)})
+        BaseListRepositoryImpl({ BaseNetworkPagingSource(apiService) })
     }
 
     val itemUpdateEvent = MutableLiveData<Int>()

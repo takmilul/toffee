@@ -7,19 +7,19 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.banglalink.toffee.apiservice.GetUgcCategories
-import com.banglalink.toffee.apiservice.UgcContentUpload
+import com.banglalink.toffee.apiservice.ContentUpload
+import com.banglalink.toffee.apiservice.GetCategories
 import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.exception.Error
+import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.SubCategory
 import com.banglalink.toffee.model.TUS_UPLOAD_SERVER_URL
-import com.banglalink.toffee.model.UgcCategory
-import com.banglalink.toffee.model.UgcSubCategory
 import com.banglalink.toffee.util.*
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -30,12 +30,12 @@ import java.util.*
 class EditUploadInfoViewModel @AssistedInject constructor(
     @ApplicationContext private val appContext: Context,
     private val uploadRepo: UploadInfoRepository,
-    private val contentUploadApi: UgcContentUpload,
+    private val contentUploadApi: ContentUpload,
     private val preference: Preference,
-    private val categoryApi: GetUgcCategories,
-    @Assisted private val uploadFileUri: String,
-//    private val subCategoryApi: SubCategoryService
-): ViewModel() {
+    private val categoryApi: GetCategories,
+    @Assisted private val uploadFileUri: String
+) : ViewModel() {
+
     val progressDialog = MutableLiveData<Boolean>()
 
     val submitButtonStatus = MutableLiveData<Boolean>()
@@ -49,10 +49,10 @@ class EditUploadInfoViewModel @AssistedInject constructor(
     val uploadProgress = MutableLiveData<Int>()
     val uploadSize = MutableLiveData<String>()
 
-    val categories = MutableLiveData<List<UgcCategory>>()
+    val categories = MutableLiveData<List<Category>>()
     val categoryPosition = MutableLiveData<Int>()
-    
-    val subCategories = MutableLiveData<List<UgcSubCategory>>()
+
+    val subCategories = MutableLiveData<List<SubCategory>>()
     val subCategoryPosition = MutableLiveData<Int>()
 
     val ageGroup = MutableLiveData<List<String>>()
@@ -85,7 +85,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
 //        challengeSelectionPosition.value = 0
     }
 
-    @AssistedInject.Factory
+    @dagger.assisted.AssistedFactory
     interface AssistedFactory {
         fun create(uploadFileUri: String): EditUploadInfoViewModel
     }
@@ -109,7 +109,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
                 ex.printStackTrace()
                 null
             }
-            if(categories.value.isNullOrEmpty()) {
+            if (categories.value.isNullOrEmpty()) {
                 progressDialog.value = false
                 exitFragment.value = true
                 return@launch
@@ -134,7 +134,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
             withContext(Dispatchers.Default + Job()) {
                 UtilsKt.generateThumbnail(appContext, uploadFileUri)
             }?.let {
-                it.first?.let { thumb->
+                it.first?.let { thumb ->
                     thumbnailData.value = thumb
                 }
                 orientationData.value = it.second
@@ -179,8 +179,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
         val idx = actualFileName?.lastIndexOf(".") ?: -1
         val ext = if (idx >= 0) {
             actualFileName?.substring(idx) ?: ""
-        }
-        else ""
+        } else ""
 //
         fileName = preference.customerId.toString() + "_" + UUID.randomUUID().toString() + ext
 //        val upInfo = UploadInfo(fileUri = uploadFileUri, fileName = fileName)
@@ -248,7 +247,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
     }
 
     fun saveThumbnail(uri: String?) {
-        if(uri == null) return
+        if (uri == null) return
         viewModelScope.launch {
             val imageData = withContext(Dispatchers.Default + Job()) {
                 imagePathToBase64(appContext, uri)

@@ -11,10 +11,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
-import com.banglalink.toffee.model.UgcCategory
+import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.BaseFragment
-import com.banglalink.toffee.ui.home.CategoriesListAdapter
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_landing_categories.*
@@ -40,8 +39,8 @@ class AllCategoriesFragment: BaseFragment() {
 //        categoriesHeader.isVisible = false
         viewAllButton.isVisible = false
 
-        mAdapter = CategoriesListAdapter(object: BaseListItemCallback<UgcCategory> {
-            override fun onItemClicked(item: UgcCategory) {
+        mAdapter = CategoriesListAdapter(object: BaseListItemCallback<Category> {
+            override fun onItemClicked(item: Category) {
                 val args = Bundle().apply {
                     putParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM, item)
                     putString(CategoryDetailsFragment.ARG_TITLE, item.categoryName)

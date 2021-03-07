@@ -2,33 +2,31 @@ package com.banglalink.toffee.apiservice
 
 import com.banglalink.toffee.common.paging.BaseApiService
 import com.banglalink.toffee.data.database.LocalSync
-import com.banglalink.toffee.data.network.request.UgcTrendingNowRequest
+import com.banglalink.toffee.data.network.request.AllUserChannelsEditorsChoiceRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
-import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.EditorsChoiceFeaturedRequestParams
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 
 data class ApiCategoryRequestParams(
     val type: String,
     val isCategory: Int,
-    val categoryId: Int
+    val categoryId: Int,
 )
 
 class GetUgcTrendingNowContents @AssistedInject constructor(
     private val preference: Preference,
     private val toffeeApi: ToffeeApi,
-//    private val viewContentRepo: ContentViewPorgressRepsitory,
     private val localSync: LocalSync,
-    @Assisted private val requestParams: EditorsChoiceFeaturedRequestParams
-): BaseApiService<ChannelInfo> {
+    @Assisted private val requestParams: EditorsChoiceFeaturedRequestParams,
+) : BaseApiService<ChannelInfo> {
 
     override suspend fun loadData(offset: Int, limit: Int): List<ChannelInfo> {
-        if(offset > 0) return emptyList()
-        val request =  UgcTrendingNowRequest(
+        if (offset > 0) return emptyList()
+        val request = AllUserChannelsEditorsChoiceRequest(
             preference.customerId,
             preference.password
         )
@@ -45,14 +43,13 @@ class GetUgcTrendingNowContents @AssistedInject constructor(
         return if (response.response.channels != null) {
             response.response.channels.map {
                 it.categoryId = requestParams.categoryId
-//                it.viewProgress = viewContentRepo.getProgressByContent(it.id.toLong())?.progress ?: 0L
                 localSync.syncData(it)
                 it
             }
         } else emptyList()
     }
 
-    @AssistedInject.Factory
+    @dagger.assisted.AssistedFactory
     interface AssistedFactory {
         fun create(requestParams: EditorsChoiceFeaturedRequestParams): GetUgcTrendingNowContents
     }

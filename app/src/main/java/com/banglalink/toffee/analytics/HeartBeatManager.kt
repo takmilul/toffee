@@ -6,18 +6,18 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.OnLifecycleEvent
-import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.usecase.SendHeartBeat
 import com.banglalink.toffee.util.getError
-import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.coroutines.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class HeartBeatManager @Inject constructor(private val toffeeApi: ToffeeApi) : LifecycleObserver, ConnectivityManager.NetworkCallback() {
+class HeartBeatManager @Inject constructor(
+    private val sendHeartBeat: SendHeartBeat
+) : LifecycleObserver, ConnectivityManager.NetworkCallback() {
     
     private var INITIAL_DELAY = 0L
 
@@ -38,10 +38,6 @@ class HeartBeatManager @Inject constructor(private val toffeeApi: ToffeeApi) : L
         private const val TIMER_PERIOD = 30000// 30 sec
     }
     
-    private val sendHeartBeat by unsafeLazy {
-        SendHeartBeat(Preference.getInstance(), toffeeApi)
-    }
-
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onAppBackGround() {
         isAppForeGround = false

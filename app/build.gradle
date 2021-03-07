@@ -134,8 +134,8 @@ dependencies {
     kapt "androidx.hilt:hilt-compiler:$hilt_ver"
 
     // AssistedInject for Hilt
-    compileOnly 'com.squareup.inject:assisted-inject-annotations-dagger2:0.6.0'
-    kapt 'com.squareup.inject:assisted-inject-processor-dagger2:0.6.0'
+//    compileOnly 'com.squareup.inject:assisted-inject-annotations-dagger2:0.6.0'
+//    kapt 'com.squareup.inject:assisted-inject-processor-dagger2:0.6.0'
 
     // Room database
     def room_version = "2.3.0-beta02"

@@ -3,16 +3,11 @@ package com.banglalink.toffee.data.database
 import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.ReactionStatusItem
 import com.banglalink.toffee.data.repository.*
-import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
-import com.banglalink.toffee.data.repository.ReactionStatusRepository
-import com.banglalink.toffee.data.repository.ShareCountRepository
-import com.banglalink.toffee.data.repository.ViewCountRepository
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.ReactionStatus
-import com.banglalink.toffee.model.TrendingChannelInfo
-import com.banglalink.toffee.model.UgcUserChannelInfo
+import com.banglalink.toffee.model.UserChannelInfo
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -42,15 +37,15 @@ class LocalSync @Inject constructor(
         channelInfo.myReaction = reactionInfo?.reactionType ?: Reaction.None.value
     }
 
-    suspend fun syncUserChannel(userChannel: UgcUserChannelInfo){
+    suspend fun syncUserChannel(userChannel: UserChannelInfo){
         userChannel.isSubscribed = if(subscriptionInfoRepository.getSubscriptionInfoByChannelId(userChannel.channelOwnerId, preference.customerId) != null) 1 else 0
         userChannel.subscriberCount = subscriptionCountRepository.getSubscriberCount(userChannel.channelOwnerId)
     }
     
-    suspend fun syncTrendingChannel(userChannel: TrendingChannelInfo){
+    /*suspend fun syncTrendingChannel(userChannel: TrendingChannelInfo){
         userChannel.isSubscribed = if(subscriptionInfoRepository.getSubscriptionInfoByChannelId(userChannel.channelOwnerId, preference.customerId) != null) 1 else 0
         userChannel.subscriberCount = subscriptionCountRepository.getSubscriberCount(userChannel.channelOwnerId)
-    }
+    }*/
     
     private fun getReactionStatus(channelInfo: ChannelInfo, rl: List<ReactionStatusItem>): ReactionStatus? {
         val reactionStatus = ReactionStatus(0, channelInfo.id.toLong())

@@ -23,10 +23,10 @@ import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.extension.show
+import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.MyChannelDetail
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
-import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
 import com.banglalink.toffee.ui.widget.ToffeeSpinnerAdapter
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
@@ -82,7 +82,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     }
 
     private fun setupCategorySpinner() {
-        val categoryAdapter = ToffeeSpinnerAdapter<UgcCategory>(requireContext(), "Select Category")
+        val categoryAdapter = ToffeeSpinnerAdapter<Category>(requireContext(), "Select Category")
         binding.categorySpinner.adapter = categoryAdapter
         binding.categorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {

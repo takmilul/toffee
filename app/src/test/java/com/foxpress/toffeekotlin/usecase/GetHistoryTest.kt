@@ -5,7 +5,6 @@ import com.banglalink.toffee.data.network.response.HistoryContentResponse
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.ContentBean
-import com.banglalink.toffee.usecase.GetHistory
 import com.nhaarman.mockitokotlin2.*
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking

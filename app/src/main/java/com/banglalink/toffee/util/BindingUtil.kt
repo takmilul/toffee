@@ -23,9 +23,9 @@ import com.banglalink.toffee.enums.ActivityType
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.enums.Reaction.*
 import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Package
-import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.ui.widget.MultiTextButton
 
 const val crossFadeDurationInMills = 500
@@ -73,7 +73,7 @@ fun loadImageFromResource(view: ImageView, image: Int) {
 }
 
 @BindingAdapter("loadCategoryBackground")
-fun bindCategoryBackground(view: ImageView, category: UgcCategory) {
+fun bindCategoryBackground(view: ImageView, category: Category) {
     view.load(category.thumbnailUrl) {
         crossfade(false)
         fallback(R.drawable.placeholder)
@@ -86,7 +86,7 @@ fun bindCategoryBackground(view: ImageView, category: UgcCategory) {
 }
 
 @BindingAdapter("loadCategoryImage")
-fun bindCategoryImage(view: ImageView, category: UgcCategory) {
+fun bindCategoryImage(view: ImageView, category: Category) {
     if (category.categoryIcon.isNullOrBlank()) {
         view.setImageResource(R.drawable.ic_cat_music)
     }

@@ -171,7 +171,7 @@ class NewUploadMethodFragment : DialogFragment() {
     }
 
     private fun openMyChannelFragment() {
-        homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(mpref.channelId, mpref.customerId, 0)
+        homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(mpref.customerId)
     }
 
     private fun openEditUpload(uri: String) {

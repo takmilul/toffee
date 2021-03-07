@@ -3,7 +3,6 @@ package com.banglalink.toffee.usecase
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.data.network.request.HeartBeatRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
-import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.notification.HEARTBEAT_TOPIC
@@ -13,8 +12,9 @@ import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class SendHeartBeat(
+class SendHeartBeat @Inject constructor(
     private val preference: Preference,
     private val toffeeApi: ToffeeApi
 ) {

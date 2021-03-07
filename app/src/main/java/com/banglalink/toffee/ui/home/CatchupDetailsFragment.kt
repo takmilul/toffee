@@ -72,18 +72,6 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         
         initAdapter()
-
-        /*viewModel.isChannelSubscribed.value = currentItem.isSubscribed == 1
-        
-        observe(viewModel.channelSubscriberCount) {
-            currentItem.isSubscribed = if(viewModel.isChannelSubscribed.value!!) 1 else 0
-            currentItem.subscriberCount = it
-            detailsAdapter.notifyDataSetChanged()
-        }*/
-
-        val customerId = mPref.customerId
-        val isOwner = if (currentItem.channel_owner_id == customerId) 1 else 0
-        val isPublic = if (currentItem.channel_owner_id == customerId) 0 else 1
         val channelId = currentItem.channel_owner_id
 
         lifecycleScope.launch {
@@ -93,7 +81,6 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
             currentItem.subscriberCount = subscriberCount.toInt()
             detailsAdapter.notifyDataSetChanged()
         }
-//        viewModel.getChannelInfo(isOwner, isPublic, channelId, channelId.toInt())
         
         with(listview) {
             addItemDecoration(MarginItemDecoration(12))
@@ -144,7 +131,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
 
             override fun onProviderIconClicked(item: ChannelInfo) {
                 super.onProviderIconClicked(item)
-                homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.id.toInt(), item.channel_owner_id, item.isSubscribed)
+                homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
             }
         })
         detailsAdapter = ChannelHeaderAdapter(currentItem, this, mPref)
@@ -200,7 +187,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
 
     override fun onProviderIconClicked(item: ChannelInfo) {
         super.onProviderIconClicked(item)
-        homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.id.toInt(), item.channel_owner_id, item.isSubscribed)
+        homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
     }
 
     override fun onShareClicked(view: View, item: ChannelInfo) {
