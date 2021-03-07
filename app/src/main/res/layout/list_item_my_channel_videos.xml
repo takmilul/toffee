@@ -8,10 +8,6 @@
         <import type="android.view.View" />
         
         <variable
-            name="isMyChannel"
-            type="Boolean" />
-        
-        <variable
             name="data"
             type="com.banglalink.toffee.model.ChannelInfo" />
         
@@ -39,21 +35,6 @@
             app:layout_constraintBottom_toTopOf="@id/name"
             tools:src="@drawable/placeholder" />
         
-        <!--<TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:paddingVertical="4dp"
-            android:paddingHorizontal="8dp"
-            android:text=""
-            tools:text="New"
-            android:visibility="gone"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/default_text_size"
-            android:background="@drawable/new_tag_bg"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />-->
-
         <TextView
             android:id="@+id/duration"
             android:layout_width="wrap_content"
@@ -79,20 +60,6 @@
             app:layout_constraintBottom_toBottomOf="@+id/poster"
             app:layout_constraintEnd_toEndOf="@+id/duration"
             app:layout_constraintStart_toStartOf="parent" />
-        
-        <!--<de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/ownerPicture"
-            loadImageFromUrlRounded="@{data.channelProfileUrl}"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginStart="16dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:visibility="@{isMyChannel ? View.GONE : View.VISIBLE}"
-            android:onClick="@{()-> callback.onProviderIconClicked(data)}"
-            android:src="@drawable/ic_profile_default"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/poster"/>-->
         
         <TextView
             android:id="@+id/name"
@@ -124,29 +91,6 @@
             app:layout_constraintTop_toTopOf="@id/name"
             app:layout_constraintBottom_toBottomOf="@id/name"
             app:srcCompat="@drawable/ic_menu_more" />
-        
-        <!--<androidx.constraintlayout.widget.Barrier
-            android:id="@+id/titleBarrier"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:barrierDirection="bottom"
-            app:constraint_referenced_ids="name,options"/>-->
-        
-        <!--<TextView
-            android:id="@+id/owner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constrainedWidth="true"
-            android:maxLines="1"
-            android:layout_marginTop="9dp"
-            android:ellipsize="end"
-            android:textSize="@dimen/default_text_size"
-            android:text="@{isMyChannel ? `` : data.content_provider_name}"
-            android:textColor="@color/fixed_second_text_color"
-            android:fontFamily="@font/roboto_regular"
-            app:layout_constraintStart_toStartOf="@+id/name"
-            app:layout_constraintTop_toBottomOf="@+id/name"
-            tools:text="Banglalink" />-->
         
         <TextView
             android:id="@+id/uploadDuration"

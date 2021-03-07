@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.mychannel
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,27 +10,31 @@ import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.MyChannelPlaylistCreateBean
 import com.banglalink.toffee.model.MyChannelPlaylistEditBean
 import com.banglalink.toffee.model.Resource
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MyChannelPlaylistCreateViewModel @ViewModelInject constructor(private val createPlaylistApiService: MyChannelPlaylistCreateService, private val editPlaylistApiService: MyChannelPlaylistEditService) : ViewModel() {
-
+@HiltViewModel
+class MyChannelPlaylistCreateViewModel @Inject constructor(
+    private val createPlaylistApiService: MyChannelPlaylistCreateService,
+    private val editPlaylistApiService: MyChannelPlaylistEditService,
+) : ViewModel() {
+    
     var playlistName: String? = null
     private val _createPlaylistData = MutableLiveData<Resource<MyChannelPlaylistCreateBean>>()
     val createPlaylistLiveData = _createPlaylistData.toLiveData()
     private val _editPlaylistData = MutableLiveData<Resource<MyChannelPlaylistEditBean>>()
     val editPlaylistLiveData = _editPlaylistData.toLiveData()
-
-    fun createPlaylist(isOwner: Int, channelId: Int) {
+    
+    fun createPlaylist(channelOwnerId: Int) {
         viewModelScope.launch {
-            val newChannelId = if (isOwner == 0) 0 else channelId
-            _createPlaylistData.postValue(resultFromResponse { createPlaylistApiService.execute(isOwner, newChannelId, playlistName!!.trim()) })
+            _createPlaylistData.postValue(resultFromResponse { createPlaylistApiService.execute(channelOwnerId, playlistName!!.trim()) })
         }
     }
-
-    fun editPlaylist(playlistId: Int, channelId: Int, isOwner: Int) {
+    
+    fun editPlaylist(playlistId: Int, channelOwnerId: Int) {
         viewModelScope.launch {
-            val newChannelId = if (isOwner == 0) 0 else channelId
-            _editPlaylistData.postValue(resultFromResponse { editPlaylistApiService.execute(playlistId, playlistName!!.trim(), newChannelId, isOwner) })
+            _editPlaylistData.postValue(resultFromResponse { editPlaylistApiService.execute(playlistId, playlistName!!.trim(), channelOwnerId) })
         }
     }
 }

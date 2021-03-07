@@ -1,4 +1,4 @@
-package com.banglalink.toffee.ui.mychannel
+package com.banglalink.toffee.listeners
 
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.ContentReactionCallback

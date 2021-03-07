@@ -7,8 +7,10 @@ import com.banglalink.toffee.common.paging.BaseViewHolder
 import com.banglalink.toffee.common.paging.ItemComparator
 import com.banglalink.toffee.model.ChannelInfo
 
-class EpisodeListAdapter(callback: BaseListItemCallback<ChannelInfo>?,
-                         private var selectedChannel: ChannelInfo? = null):
+class EpisodeListAdapter(
+    callback: BaseListItemCallback<ChannelInfo>?,
+    private var selectedChannel: ChannelInfo? = null,
+) :
     BasePagingDataAdapter<ChannelInfo>(callback, ItemComparator()) {
 
     override fun getItemViewType(position: Int): Int {

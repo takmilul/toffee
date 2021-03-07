@@ -1,15 +1,17 @@
 package com.banglalink.toffee.ui.redeem
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.banglalink.toffee.apiservice.RedeemReferralCode
 import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.model.RedeemReferralCodeBean
 import com.banglalink.toffee.model.Resource
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class RedeemCodeViewModel @ViewModelInject constructor(
-    private val redeemReferralCode: RedeemReferralCode
+@HiltViewModel
+class RedeemCodeViewModel @Inject constructor(
+    private val redeemReferralCode: RedeemReferralCode,
 ) : ViewModel() {
 
     fun redeemReferralCode(referralCode: String): LiveData<Resource<RedeemReferralCodeBean>> {

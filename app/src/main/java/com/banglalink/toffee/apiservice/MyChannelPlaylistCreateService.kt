@@ -9,14 +9,15 @@ import javax.inject.Inject
 
 class MyChannelPlaylistCreateService @Inject constructor(private val preference: Preference, private val toffeeApi: ToffeeApi) {
 
-    suspend fun execute(isOwner: Int, channelId: Int, playlistName: String): MyChannelPlaylistCreateBean {
-
+    suspend fun execute(channelOwnerId: Int, playlistName: String): MyChannelPlaylistCreateBean {
+        val isOwner = if (preference.customerId == channelOwnerId) 1 else 0
+        
         val response = tryIO2 {
             toffeeApi.createMyChannelPlaylist(
                 MyChannelPlaylistCreateRequest(
                     preference.customerId,
                     preference.password,
-                    channelId,
+                    channelOwnerId,
                     isOwner,
                     playlistName
                 )

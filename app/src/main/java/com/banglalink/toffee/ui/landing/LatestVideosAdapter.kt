@@ -1,4 +1,4 @@
-package com.banglalink.toffee.ui.mychannel
+package com.banglalink.toffee.ui.landing
 
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
@@ -9,12 +9,12 @@ import com.banglalink.toffee.databinding.ListItemVideosBinding
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.ContentReactionCallback
 
-class MyChannelVideosAdapter(
-    listener: ContentReactionCallback<ChannelInfo>?,
-) : BasePagingDataAdapter<ChannelInfo>(listener as BaseListItemCallback<ChannelInfo>, ItemComparator()) {
+class LatestVideosAdapter(
+    val cb: ContentReactionCallback<ChannelInfo>,
+) : BasePagingDataAdapter<ChannelInfo>(cb as BaseListItemCallback<ChannelInfo>, ItemComparator()) {
 
     override fun getItemViewType(position: Int): Int {
-        return R.layout.list_item_my_channel_videos
+        return R.layout.list_item_videos
     }
 
     override fun onViewRecycled(holder: BaseViewHolder) {

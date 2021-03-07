@@ -1,25 +1,27 @@
 package com.banglalink.toffee.apiservice
 
-import android.util.Log
 import com.banglalink.toffee.common.paging.BaseApiService
 import com.banglalink.toffee.data.network.request.MyChannelPlaylistRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.MyChannelPlaylist
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 
 data class MyChannelPlaylistParams(val isOwner: Int, val channelOwnerId: Int)
 
-class MyChannelPlaylistService @AssistedInject constructor(private val preference: Preference, private val toffeeApi: ToffeeApi, @Assisted private val isOwner: Int, @Assisted private val channelOwnerId: Int):
-    BaseApiService<MyChannelPlaylist> {
-    
+class MyChannelPlaylistService @AssistedInject constructor(
+    private val preference: Preference,
+    private val toffeeApi: ToffeeApi,
+    @Assisted private val channelOwnerId: Int
+) : BaseApiService<MyChannelPlaylist> {
+
     override suspend fun loadData(offset: Int, limit: Int): List<MyChannelPlaylist> {
-        if(offset > 0) return emptyList()
+        if (offset > 0) return emptyList()
+        val isOwner = if (preference.customerId == channelOwnerId) 1 else 0
         val response = tryIO2 {
 
-            Log.i("UGC_Playlist_Service", "UGC_API -- isOwner: ${isOwner}, ownerId: ${channelOwnerId}")
             toffeeApi.getMyChannelPlaylist(
                 isOwner,
                 channelOwnerId,
@@ -37,8 +39,8 @@ class MyChannelPlaylistService @AssistedInject constructor(private val preferenc
         return emptyList()
     }
 
-    @AssistedInject.Factory
+    @dagger.assisted.AssistedFactory
     interface AssistedFactory {
-        fun create(isOwner: Int, channelOwnerId: Int): MyChannelPlaylistService
+        fun create(channelOwnerId: Int): MyChannelPlaylistService
     }
 }

@@ -27,9 +27,10 @@ import com.banglalink.toffee.ui.subscription.PackageListActivity
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.suke.widget.SwitchButton
 
-class DrawerHelper(private val activity: HomeActivity,
-                   private val mPref: Preference,
-                   private val binding:ActivityMainMenuBinding
+class DrawerHelper(
+    private val activity: HomeActivity,
+    private val mPref: Preference,
+    private val binding: ActivityMainMenuBinding,
 ) {
 
     lateinit var toggle: ActionBarDrawerToggle
@@ -44,7 +45,7 @@ class DrawerHelper(private val activity: HomeActivity,
         )
         //After instantiating your ActionBarDrawerToggle
         toggle.isDrawerIndicatorEnabled = false
-        
+
 //        activity.supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_home)
 //        val parentAdapter =
 //            ParentLevelAdapter(activity, generateNavMenu(), this, binding.navMenuList)
@@ -54,7 +55,7 @@ class DrawerHelper(private val activity: HomeActivity,
         binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
 
         toggle.toolbarNavigationClickListener = View.OnClickListener {
-            if(activity.getNavController().currentDestination?.id != R.id.menu_feed) {
+            if (activity.getNavController().currentDestination?.id != R.id.menu_feed) {
                 activity.getNavController().popBackStack(R.id.menu_feed, false)
 //                activity.getNavController().navigate(R.id.menu_feed)
             }
@@ -66,18 +67,18 @@ class DrawerHelper(private val activity: HomeActivity,
     private fun setProfileInfo() {
         val header = binding.sideNavigation.getHeaderView(0)
         val profileName = header.findViewById(R.id.profile_name) as TextView
-        activity.observe(mPref.customerNameLiveData){
-            when{
-                it.isBlank()->profileName.text =
+        activity.observe(mPref.customerNameLiveData) {
+            when {
+                it.isBlank() -> profileName.text =
                     activity.getString(R.string.profile)
-                else->{
-                    profileName.text=mPref.customerName
+                else -> {
+                    profileName.text = mPref.customerName
                 }
             }
         }
         val profilePicture = header.findViewById(R.id.profile_picture) as ImageView
 
-        activity.observe(mPref.profileImageUrlLiveData){
+        activity.observe(mPref.profileImageUrlLiveData) {
             profilePicture.loadProfileImage(it)
         }
 
@@ -246,17 +247,16 @@ class DrawerHelper(private val activity: HomeActivity,
 //                }
 //                binding.drawerLayout.closeDrawers()
 //            }
-            R.id.menu_subscriptions ->{
+            R.id.menu_subscriptions -> {
                 binding.drawerLayout.closeDrawers()
-                if(mPref.isSubscriptionActive == "true"){
+                if (mPref.isSubscriptionActive == "true") {
                     activity.launchActivity<PackageListActivity>()
-                }
-                else{
+                } else {
                     activity.launchActivity<MySubscriptionActivity>()
                 }
                 return true
             }
-            R.id.ic_menu_internet_packs ->{
+            R.id.ic_menu_internet_packs -> {
                 binding.drawerLayout.closeDrawers()
                 activity.launchActivity<Html5PlayerViewActivity> {
                     putExtra(
@@ -266,7 +266,7 @@ class DrawerHelper(private val activity: HomeActivity,
                 }
                 return true
             }
-            R.id.menu_creators_policy ->{
+            R.id.menu_creators_policy -> {
                 val intent = Intent(activity, HtmlPageViewActivity::class.java).apply {
                     putExtra(HtmlPageViewActivity.CONTENT_KEY, AboutActivity.PRIVACY_POLICY_URL)
                     putExtra(HtmlPageViewActivity.TITLE_KEY, "Creators Policy")
@@ -291,7 +291,7 @@ class DrawerHelper(private val activity: HomeActivity,
 //                binding.drawerLayout.closeDrawers()
 //
 //            }
-            R.id.menu_logout->{
+            R.id.menu_logout -> {
                 activity.handleExitApp()
                 return true
             }
@@ -305,17 +305,17 @@ class DrawerHelper(private val activity: HomeActivity,
                     }
                 }
             }
-            R.id.menu_invite->{
+            R.id.menu_invite -> {
                 activity.launchActivity<ReferAFriendActivity>()
                 binding.drawerLayout.closeDrawers()
             }
-            R.id.menu_redeem->{
-                activity.launchActivity<RedeemCodeActivity> ()
+            R.id.menu_redeem -> {
+                activity.launchActivity<RedeemCodeActivity>()
                 binding.drawerLayout.closeDrawers()
             }
         }
         return run {
-            if(NavigationUI.onNavDestinationSelected(item, activity.getNavController())) {
+            if (NavigationUI.onNavDestinationSelected(item, activity.getNavController())) {
                 binding.drawerLayout.closeDrawers()
                 return@run true
             }

@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
+import com.banglalink.toffee.listeners.LandingPopularChannelCallback
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
@@ -17,7 +18,6 @@ import com.banglalink.toffee.model.UserChannelInfo
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.common.UnSubscribeDialog
-import com.banglalink.toffee.ui.landing.LandingPopularChannelCallback
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_all_user_channels_list.*
 import kotlinx.coroutines.flow.collectLatest
@@ -49,7 +49,7 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
 
         mAdapter = AllUserChannelsListAdapter(object : LandingPopularChannelCallback<UserChannelInfo> {
             override fun onItemClicked(item: UserChannelInfo) {
-                homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.id.toInt(), item.channelOwnerId, item.isSubscribed)
+                homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channelOwnerId)
             }
 
             override fun onSubscribeButtonClicked(view: View, info: UserChannelInfo) {

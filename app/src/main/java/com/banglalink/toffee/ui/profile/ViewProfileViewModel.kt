@@ -15,30 +15,33 @@ import com.banglalink.toffee.model.MyChannelEditBean
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.TermsAndCondition
 import com.banglalink.toffee.ui.common.BaseViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ViewProfileViewModel @ViewModelInject constructor(
+@HiltViewModel
+class ViewProfileViewModel @Inject constructor(
     private val myChannelDetailApiService: MyChannelEditDetailService,
     private val termsConditionService: TermsConditionService,
-    private val profileApi: GetProfile
-) :BaseViewModel(){
-    
+    private val profileApi: GetProfile,
+) : BaseViewModel() {
+
     private val _data = MutableLiveData<Resource<MyChannelEditBean>>()
     val termsAndConditionResult = MutableLiveData<Resource<TermsAndCondition>>()
     val editChannelResult = _data.toLiveData()
-    
-    fun loadCustomerProfile():LiveData<Resource<EditProfileForm>>{
+
+    fun loadCustomerProfile(): LiveData<Resource<EditProfileForm>> {
         return resultLiveData {
             profileApi().profile.toProfileForm()
         }
     }
-    
+
     fun editChannel(myChannelEditRequest: MyChannelEditRequest) {
         viewModelScope.launch {
             _data.postValue(resultFromResponse { myChannelDetailApiService.execute(myChannelEditRequest) })
         }
     }
-    
+
     fun terms() {
         viewModelScope.launch {
             termsAndConditionResult.postValue(resultFromResponse { termsConditionService.execute() })

@@ -1,4 +1,4 @@
-package com.banglalink.toffee.ui.home
+package com.banglalink.toffee.listeners
 
 import android.view.View
 import com.banglalink.toffee.model.ChannelInfo

@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.category.movie
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.apiservice.*
@@ -12,11 +11,14 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.ComingSoonContent
 import com.banglalink.toffee.model.MoviesContentVisibilityCards
 import com.banglalink.toffee.ui.common.BaseViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MovieViewModel @ViewModelInject constructor(
+@HiltViewModel
+class MovieViewModel @Inject constructor(
     private val movieApiService: MovieCategoryDetailService,
     private val moviePreviewsService: MoviesPreviewService,
     private val trendingNowService: GetMostPopularContents.AssistedFactory,
@@ -159,7 +161,7 @@ class MovieViewModel @ViewModelInject constructor(
     val loadTrendingNowMovies by lazy {
         viewModelScope.launch {
             trendingNowMoviesResponse.value = try {
-                val response = trendingNowService.create(TrendingNowRequestParam("VOD", 1, 0, false)).loadData(0, 10)
+                val response = trendingNowService.create(LandingUserChannelsRequestParam("VOD", 1, 0, false)).loadData(0, 10)
                 response.map {
                     it.categoryId = 1
                     it.viewProgress = viewProgressRepo.getProgressByContent(it.id.toLong())?.progress ?: 0L

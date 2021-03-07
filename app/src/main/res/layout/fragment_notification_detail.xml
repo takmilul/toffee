@@ -17,36 +17,31 @@
         android:background="@color/screen_bg_white"
         tools:context=".ui.notification.NotificationDetailFragment">
 
-        <com.google.android.material.button.MaterialButton
+        <ImageView
             android:id="@+id/backButton"
-            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
-            android:layout_width="48dp"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:background="?selectableItemBackgroundBorderless"
             android:gravity="center"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            app:icon="@drawable/ic_arrow_back"
-            app:iconSize="32dp"
-            app:iconTint="@color/main_text_color"
-            app:layout_constraintBottom_toBottomOf="@id/title"
+            android:layout_marginStart="8dp"
+            android:padding="10dp"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/ic_arrow_back"
             app:layout_constraintEnd_toStartOf="@id/title"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/title" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            style="@style/SectionTitleTextStyle"
+            android:layout_marginTop="0dp"
+            android:layout_marginStart="8dp"
             android:maxLines="2"
             android:text="@{data.title}"
-            android:textSize="18sp"
-            android:textColor="@color/cardTitleColor"
-            android:fontFamily="@font/roboto_medium"
             app:layout_constraintEnd_toStartOf="@id/options"
             app:layout_constraintStart_toEndOf="@id/backButton"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@id/backButton"
+            app:layout_constraintBottom_toBottomOf="@id/backButton"
             tools:text="Detail Screen Template of Notification Items and a Two Line Example Here" />
 
         <ImageView
@@ -77,7 +72,7 @@
             android:visibility="@{data.imageUrl == null || data.imageUrl.isEmpty() ? View.GONE : View.VISIBLE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/title" />
+            app:layout_constraintTop_toBottomOf="@id/backButton" />
 
         <TextView
             android:id="@+id/detailTextView"

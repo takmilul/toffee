@@ -1,4 +1,4 @@
-package com.banglalink.toffee.ui.home
+package com.banglalink.toffee.ui.landing
 
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BasePagingDataAdapter

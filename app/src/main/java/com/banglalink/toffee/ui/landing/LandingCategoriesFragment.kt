@@ -13,7 +13,6 @@ import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.BaseFragment
-import com.banglalink.toffee.ui.home.CategoriesListAdapter
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import dagger.hilt.android.AndroidEntryPoint

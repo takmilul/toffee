@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
+import com.banglalink.toffee.listeners.LandingPopularChannelCallback
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
@@ -49,7 +50,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
 
         mAdapterLanding = LandingUserChannelsListAdapter(object : LandingPopularChannelCallback<UserChannelInfo> {
             override fun onItemClicked(item: UserChannelInfo) {
-                homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.id.toInt(), item.channelOwnerId, item.isSubscribed)
+                homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channelOwnerId)
             }
 
             override fun onSubscribeButtonClicked(view: View, info: UserChannelInfo) {

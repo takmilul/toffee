@@ -15,25 +15,23 @@ import com.banglalink.toffee.model.MyChannelEditBean
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.util.SingleLiveEvent
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
 
 class MyChannelEditDetailViewModel @AssistedInject constructor(
     private val myChannelDetailApiService: MyChannelEditDetailService,
     private val categoryApiService: GetCategories,
-    @Assisted val myChannelDetail: MyChannelDetail?
+    @Assisted val myChannelDetail: MyChannelDetail?,
 ) : BaseViewModel() {
-
+    
     private val _data = MutableLiveData<Resource<MyChannelEditBean>>()
     val editDetailLiveData = _data.toLiveData()
     var categoryList = MutableLiveData<List<Category>>()
-    private var _categories = MutableLiveData<List<String>>()
-//    val categories = _categories.toLiveData()
     var selectedCategory: Category? = null
     val selectedCategoryPosition = MutableLiveData<Int>()
     val exitFragment = SingleLiveEvent<Boolean>()
-
+    
     init {
         viewModelScope.launch {
             categoryList.value = try {
@@ -42,35 +40,35 @@ class MyChannelEditDetailViewModel @AssistedInject constructor(
                 ex.printStackTrace()
                 emptyList()
             }
-
-            if(categoryList.value.isNullOrEmpty()) {
+            
+            if (categoryList.value.isNullOrEmpty()) {
                 exitFragment.value = true
             }
         }
     }
-
-    @AssistedInject.Factory
+    
+    @dagger.assisted.AssistedFactory
     interface AssistedFactory {
         fun create(myChannelDetail: MyChannelDetail?): MyChannelEditDetailViewModel
     }
-
+    
     companion object {
         fun provideFactory(
             assistedFactory: AssistedFactory,
-            myChannelDetail: MyChannelDetail?
+            myChannelDetail: MyChannelDetail?,
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
                 return assistedFactory.create(myChannelDetail) as T
             }
         }
     }
-
+    
     fun editChannel(myChannelEditRequest: MyChannelEditRequest) {
         viewModelScope.launch {
             _data.postValue(resultFromResponse { myChannelDetailApiService.execute(myChannelEditRequest) })
         }
     }
-
+    
     /*fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
         selectedCategory = categoryList.find { it.categoryName == parent?.adapter?.getItem(pos) }
     }*/

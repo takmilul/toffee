@@ -16,8 +16,8 @@ class ViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) :
         return fragmentList[position]
     }
 
-    fun addFragment(fragment: Fragment) {
-        fragmentList.add(fragment)
+    fun addFragments(fragments: List<Fragment>) {
+        fragmentList.addAll(fragments)
     }
     
     fun replaceFragment(fragment: Fragment, position: Int){

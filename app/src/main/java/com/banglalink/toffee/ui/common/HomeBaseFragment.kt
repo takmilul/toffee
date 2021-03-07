@@ -8,7 +8,7 @@ import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.home.HomeViewModel
-import com.banglalink.toffee.ui.home.OptionCallBack
+import com.banglalink.toffee.listeners.OptionCallBack
 import com.banglalink.toffee.ui.widget.MyPopupWindow
 
 abstract class HomeBaseFragment:BaseFragment(), OptionCallBack {

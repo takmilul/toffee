@@ -6,9 +6,6 @@
     
     <data>
         <import type="android.view.View"/>
-        <variable
-            name="isOwner"
-            type="Integer" />
         
         <variable
             name="data"
@@ -23,8 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:paddingVertical="8dp"
-        android:background="@color/screen_bg"
+        android:background="?selectableItemBackground"
         android:onClick="@{()-> callback.onItemClicked(data)}">
         
         <com.banglalink.toffee.ui.widget.CustomImageView
@@ -88,7 +84,7 @@
         <ImageView
             android:id="@+id/options"
             style="@style/OptionMenuStyle"
-            android:visibility="@{isOwner == 1 ? View.VISIBLE : View.GONE}"
+            android:visibility="@{data.isOwner == 1 ? View.VISIBLE : View.GONE}"
             android:onClick="@{(v)->callback.onOpenMenu(v, data)}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/name"

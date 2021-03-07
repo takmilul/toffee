@@ -1,4 +1,4 @@
-package com.banglalink.toffee.ui.landing
+package com.banglalink.toffee.listeners
 
 import android.view.View
 import com.banglalink.toffee.common.paging.BaseListItemCallback
