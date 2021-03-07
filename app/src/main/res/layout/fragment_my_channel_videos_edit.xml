@@ -14,6 +14,7 @@
         android:layout_height="wrap_content">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/screen_bg_white">
@@ -45,20 +46,6 @@
                 app:layout_constraintEnd_toEndOf="@+id/bannerImageView"
                 app:layout_constraintTop_toTopOf="@+id/bannerImageView"
                 app:srcCompat="@drawable/ic_edit_btn" />
-
-            <!--<ProgressBar
-                android:id="@+id/progressBar"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:max="100"
-                android:progress="@{viewmodel.uploadProgress}"
-                android:progressDrawable="@drawable/upload_progress_bg"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@+id/video_thumb"
-                app:layout_constraintEnd_toEndOf="@+id/video_thumb"
-                app:layout_constraintStart_toStartOf="@+id/video_thumb"
-                app:layout_constraintTop_toTopOf="@+id/video_thumb" />-->
 
             <TextView
                 android:id="@+id/textView15"

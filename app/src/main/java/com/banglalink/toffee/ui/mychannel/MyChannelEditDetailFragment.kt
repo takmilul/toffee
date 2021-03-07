@@ -30,6 +30,7 @@ import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
 import com.banglalink.toffee.ui.widget.ToffeeSpinnerAdapter
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.util.UtilsKt
 import com.banglalink.toffee.util.imagePathToBase64
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -70,11 +71,11 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.container.setOnClickListener(this)
         progressDialog.show()
         observeEditChannel()
         observeThumbnailChange()
         setupCategorySpinner()
-        
         binding.bannerEditButton.safeClick(this)
         binding.profileImageEditButton.safeClick(this)
         binding.cancelButton.safeClick(this)
@@ -172,8 +173,15 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
 
     override fun onClick(v: View?) {
         when (v) {
-            binding.cancelButton -> findNavController().navigateUp()
-            binding.saveButton -> updateChannelInfo()
+            binding.container -> UtilsKt.hideSoftKeyboard(requireActivity())
+            binding.cancelButton -> {
+                UtilsKt.hideSoftKeyboard(requireActivity())
+                findNavController().navigateUp()
+            }
+            binding.saveButton -> {
+                UtilsKt.hideSoftKeyboard(requireActivity())
+                updateChannelInfo()
+            }
             binding.bannerEditButton -> {
                 isPosterClicked = true
                 val action = MyChannelEditDetailFragmentDirections.actionMyChannelEditFragmentToThumbnailSelectionMethodFragment("Set Channel Cover Photo",false)

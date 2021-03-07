@@ -1318,8 +1318,10 @@ class HomeActivity :
         observe(viewModel.myChannelNavLiveData) {
             if (navController.currentDestination?.id != R.id.myChannelHomeFragment || channelOwnerId != it.channelOwnerId) {
                 channelOwnerId = it.channelOwnerId
+                val isOwner = mPref.customerId == channelOwnerId
                 navController.navigate(R.id.myChannelHomeFragment, Bundle().apply {
                     putString(MyChannelHomeFragment.PAGE_TITLE, it.pageTitle)
+                    putBoolean(MyChannelHomeFragment.IS_OWNER, isOwner)
                     putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, it.channelOwnerId)
                 })
             } else{
