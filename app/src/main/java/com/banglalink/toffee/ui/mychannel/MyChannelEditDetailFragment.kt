@@ -183,14 +183,26 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                 updateChannelInfo()
             }
             binding.bannerEditButton -> {
-                isPosterClicked = true
-                val action = MyChannelEditDetailFragmentDirections.actionMyChannelEditFragmentToThumbnailSelectionMethodFragment("Set Channel Cover Photo",false)
-                findNavController().navigate(action)
+                if(findNavController().currentDestination?.id != R.id.thumbnailSelectionMethodFragment && findNavController().currentDestination?.id ==R.id.myChannelEditDetailFragment) {
+                    isPosterClicked = true
+                    val action =
+                        MyChannelEditDetailFragmentDirections.actionMyChannelEditFragmentToThumbnailSelectionMethodFragment(
+                            "Set Channel Cover Photo",
+                            false
+                        )
+                    findNavController().navigate(action)
+                }
             }
             binding.profileImageEditButton -> {
-                isPosterClicked = false
-                val action = MyChannelEditDetailFragmentDirections.actionMyChannelEditFragmentToThumbnailSelectionMethodFragment("Set Channel Photo",true)
-                findNavController().navigate(action)
+                if (findNavController().currentDestination?.id != R.id.thumbnailSelectionMethodFragment && findNavController().currentDestination?.id == R.id.myChannelEditDetailFragment) {
+                    isPosterClicked = false
+                    val action =
+                        MyChannelEditDetailFragmentDirections.actionMyChannelEditFragmentToThumbnailSelectionMethodFragment(
+                            "Set Channel Photo",
+                            true
+                        )
+                    findNavController().navigate(action)
+                }
             }
         }
     }

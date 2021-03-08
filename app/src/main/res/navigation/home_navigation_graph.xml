@@ -113,7 +113,7 @@
         android:label="My Channel">
         <action
             android:id="@+id/action_menu_channel_to_myChannelEditFragment"
-            app:destination="@id/MyChannelEditDetailFragment" />
+            app:destination="@id/myChannelEditDetailFragment" />
         <action
             android:id="@+id/action_menu_channel_to_challengesFragment"
             app:destination="@id/challengesFragment" />
@@ -202,7 +202,7 @@
         android:name="com.banglalink.toffee.ui.userchannels.AllUserChannelsFragment"
         android:label="Trending Channels"/>
     <fragment
-        android:id="@+id/MyChannelEditDetailFragment"
+        android:id="@+id/myChannelEditDetailFragment"
         android:name="com.banglalink.toffee.ui.mychannel.MyChannelEditDetailFragment"
         android:label="Edit Details">
         <argument
@@ -226,7 +226,7 @@
             android:defaultValue="Channel" />
         <action
             android:id="@+id/action_myChannelHomeFragment_to_MyChannelEditDetailFragment"
-            app:destination="@id/MyChannelEditDetailFragment" />
+            app:destination="@id/myChannelEditDetailFragment" />
         <action
             android:id="@+id/action_myChannelHomeFragment_to_myChannelPlaylistVideosFragment"
             app:destination="@id/myChannelPlaylistVideosFragment" />

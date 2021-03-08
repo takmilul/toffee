@@ -83,9 +83,15 @@ class MyChannelVideosEditFragment : BaseFragment() {
             UtilsKt.hideSoftKeyboard(requireActivity())
             updateVideoInfo()
         }
-        binding.thumbEditButton.setOnClickListener { 
-            val action = MyChannelVideosEditFragmentDirections.actionMyChannelVideosEditFragmentToThumbnailSelectionMethodFragment("Set Video Cover Photo",false)
-            findNavController().navigate(action) 
+        binding.thumbEditButton.setOnClickListener {
+            if (findNavController().currentDestination?.id != R.id.thumbnailSelectionMethodFragment &&findNavController().currentDestination?.id == R.id.myChannelVideosEditFragment) {
+                val action =
+                    MyChannelVideosEditFragmentDirections.actionMyChannelVideosEditFragmentToThumbnailSelectionMethodFragment(
+                        "Set Video Cover Photo",
+                        false
+                    )
+                findNavController().navigate(action)
+            }
         }
         
         channelInfo?.let { info ->

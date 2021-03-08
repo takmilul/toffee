@@ -100,14 +100,14 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment(), TextWatcher {
     }
 
     private fun showTermsAndConditionDialog() {
-        if (findNavController().currentDestination?.id != R.id.termsConditionFragment) {
+        if (findNavController().currentDestination?.id != R.id.termsConditionFragment && findNavController().currentDestination?.id == R.id.bottomSheetUploadFragment) {
             val action = BottomSheetUploadFragmentDirections.actionBottomSheetUploadFragmentToTermsConditionFragment()
             findNavController().navigate(action)
         }
     }
 
     private fun showImagePickerDialog() {
-        if (findNavController().currentDestination?.id != R.id.thumbnailSelectionMethodFragment) {
+        if (findNavController().currentDestination?.id != R.id.thumbnailSelectionMethodFragment && findNavController().currentDestination?.id == R.id.bottomSheetUploadFragment) {
             val action = BottomSheetUploadFragmentDirections.actionBottomSheetUploadFragmentToThumbnailSelectionMethodFragment(
                 "Update Your Channel Logo",
                 true
