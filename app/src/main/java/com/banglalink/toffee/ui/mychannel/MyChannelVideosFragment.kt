@@ -151,10 +151,10 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_edit_content -> {
-                        if (findNavController().currentDestination?.id == R.id.myChannelHomeFragment) {
+                        if (findNavController().currentDestination?.id != R.id.myChannelVideosEditFragment && findNavController().currentDestination?.id == R.id.myChannelHomeFragment) {
                             val action = MyChannelHomeFragmentDirections.actionMyChannelHomeFragmentToMyChannelVideosEditFragment(item)
                             parentFragment?.findNavController()?.navigate(action)
-                        } else {
+                        } else if(findNavController().currentDestination?.id != R.id.myChannelVideosEditFragment && findNavController().currentDestination?.id == R.id.menu_channel){
                             this@MyChannelVideosFragment.findNavController().navigate(
                                 R.id.action_menu_channel_to_myChannelVideosEditFragment,
                                 Bundle().apply {

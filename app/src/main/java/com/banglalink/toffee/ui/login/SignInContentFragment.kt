@@ -129,9 +129,15 @@ class SignInContentFragment : BaseFragment() {
                     regSessionToken = it.data
 
                     binding.signInContentMotionLayout.onTransitionCompletedListener {
-                        findNavController().navigate(
-                            SignInContentFragmentDirections.actionSignInContentFragmentToVerifySignInFragment(phoneNumber, referralCode, regSessionToken)
-                        )
+                        if (findNavController().currentDestination?.id != R.id.verifySignInFragment && findNavController().currentDestination?.id ==R.id.signInContentFragment) {
+                            findNavController().navigate(
+                                SignInContentFragmentDirections.actionSignInContentFragmentToVerifySignInFragment(
+                                    phoneNumber,
+                                    referralCode,
+                                    regSessionToken
+                                )
+                            )
+                        }
                     }
                     binding.signInContentMotionLayout.transitionToEnd()
                 }

@@ -73,7 +73,7 @@ class HomeViewModel @Inject constructor(
     val viewAllVideoLiveData = MutableLiveData<Boolean>()
     val viewAllCategories = MutableLiveData<Boolean>()
     val myChannelNavLiveData = SingleLiveEvent<MyChannelNavParams>()
-    val notificationUrlLiveData = MutableLiveData<String>()
+    val notificationUrlLiveData = SingleLiveEvent<String>()
 
     private val _channelDetail = MutableLiveData<Resource<MyChannelDetailBean?>>()
     private var _playlistManager = PlaylistManager()

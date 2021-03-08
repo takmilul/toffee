@@ -43,9 +43,7 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        categoryInfo = parentFragment?.arguments?.getParcelable(
-            CategoryDetailsFragment.ARG_CATEGORY_ITEM
-        )
+        categoryInfo = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)
 
         mAdapter = AllUserChannelsListAdapter(object : LandingPopularChannelCallback<UserChannelInfo> {
             override fun onItemClicked(item: UserChannelInfo) {
@@ -58,7 +56,6 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
                         it.isSubscribed = 1
                         it.subscriberCount++
                     }
-//                    subscriptionViewModel.setSubscriptionStatus(info.id, 1, info.channelOwnerId)
                     homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId) ,1)
                     mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, trendingChannelInfo)
                 }
@@ -68,7 +65,6 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
                             it.isSubscribed = 0
                             it.subscriberCount--
                         }
-//                        subscriptionViewModel.setSubscriptionStatus(info.id, 0, info.channelOwnerId)
                         homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId) ,-1)
                         mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, trendingChannelInfo)
                     }
@@ -90,14 +86,6 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
                 mAdapter.submitData(it)
             }
         }
-
-        /*observe(subscriptionViewModel.subscriptionResponse) {
-            if(it is Resource.Success) {
-                cacheManager.clearSubscriptionCache()
-                mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, trendingChannelInfo)
-            }
-            else requireContext().showToast("Failed to subscribe channel")
-        }*/
     }
 
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
