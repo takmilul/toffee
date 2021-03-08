@@ -128,8 +128,14 @@ class EditUploadInfoFragment: BaseFragment() {
         }
 
         binding.thumbEditButton.setOnClickListener {
-            val action = EditUploadInfoFragmentDirections.actionEditUploadInfoFragmentToThumbnailSelectionMethodFragment("Set Video Cover Photo",false)
-            findNavController().navigate(action)
+            if (findNavController().currentDestination?.id != R.id.thumbnailSelectionMethodFragment && findNavController().currentDestination?.id == R.id.editUploadInfoFragment) {
+                val action =
+                    EditUploadInfoFragmentDirections.actionEditUploadInfoFragmentToThumbnailSelectionMethodFragment(
+                        "Set Video Cover Photo",
+                        false
+                    )
+                findNavController().navigate(action)
+            }
         }
 
         setupSubcategorySpinner()

@@ -41,7 +41,6 @@ import com.banglalink.toffee.ui.common.UnSubscribeDialog
 import com.banglalink.toffee.ui.common.ViewPagerAdapter
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
-import com.banglalink.toffee.util.UtilsKt
 import com.banglalink.toffee.util.bindButtonState
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -130,19 +129,20 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     override fun onClick(v: View?) {
         when (v) {
             addBioButton -> {
-                if (findNavController().currentDestination?.id == R.id.myChannelHomeFragment) {
+                if (findNavController().currentDestination?.id != R.id.myChannelEditDetailFragment && findNavController().currentDestination?.id == R.id.myChannelHomeFragment) {
                     val action = MyChannelHomeFragmentDirections.actionMyChannelHomeFragmentToMyChannelEditDetailFragment(myChannelDetail)
                     findNavController().navigate(action)
-                } else {
+                }  else if (findNavController().currentDestination?.id != R.id.myChannelEditDetailFragment && findNavController().currentDestination?.id == R.id.menu_channel) {
                     findNavController().navigate(R.id.action_menu_channel_to_myChannelEditFragment, Bundle().apply { putParcelable("myChannelDetail", myChannelDetail) })
                 }
             }
     
             editButton -> {
-                if (findNavController().currentDestination?.id == R.id.myChannelHomeFragment) {
+                if (findNavController().currentDestination?.id != R.id.myChannelEditDetailFragment && findNavController().currentDestination?.id == R.id.myChannelHomeFragment) {
                     val action = MyChannelHomeFragmentDirections.actionMyChannelHomeFragmentToMyChannelEditDetailFragment(myChannelDetail)
                     findNavController().navigate(action)
-                } else {
+                }
+                else if (findNavController().currentDestination?.id != R.id.myChannelEditDetailFragment && findNavController().currentDestination?.id == R.id.menu_channel) {
                     findNavController().navigate(R.id.action_menu_channel_to_myChannelEditFragment, Bundle().apply { putParcelable("myChannelDetail", myChannelDetail) })
                 }
             }

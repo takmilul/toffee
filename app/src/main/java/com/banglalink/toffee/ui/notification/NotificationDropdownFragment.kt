@@ -43,8 +43,13 @@ class NotificationDropdownFragment : BaseListFragment<NotificationInfo>(), BaseL
             mViewModel.setSeenStatus(item.id!!, true, System.currentTimeMillis())
         }
 
-        val action = NotificationDropdownFragmentDirections.actionNotificationDropdownFragmentToNotificationDetailFragment(item)
-        findNavController().navigate(action)
+        if (findNavController().currentDestination?.id != R.id.notificationDetailFragment && findNavController().currentDestination?.id ==R.id.notificationDropdownFragment) {
+            val action =
+                NotificationDropdownFragmentDirections.actionNotificationDropdownFragmentToNotificationDetailFragment(
+                    item
+                )
+            findNavController().navigate(action)
+        }
     }
 
     override fun onOpenMenu(view: View, item: NotificationInfo) {

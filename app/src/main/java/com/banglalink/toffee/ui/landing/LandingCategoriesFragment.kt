@@ -45,13 +45,25 @@ class LandingCategoriesFragment: BaseFragment() {
                 }
                 when(item.id.toInt()) {
                     1 -> {
-                        parentFragment?.findNavController()?.navigate(R.id.action_landingCategoriesFragment_to_movieFragment, args)
+                        if (findNavController().currentDestination?.id != R.id.movieFragment && findNavController().currentDestination?.id==
+                                R.id.menu_feed) {
+                            parentFragment?.findNavController()?.navigate(
+                                R.id.action_landingCategoriesFragment_to_movieFragment,
+                                args
+                            )
+                        }
                     }
                     9 -> {
+                        if (findNavController().currentDestination?.id != R.id.dramaSeriesFragment && findNavController().currentDestination?.id==
+                                R.id.menu_feed)
+                        {
                         parentFragment?.findNavController()?.navigate(R.id.action_landingCategoriesFragment_to_dramaSeriesFragment, args)
+                        }
                     }
                     else -> {
-                        parentFragment?.findNavController()?.navigate(R.id.action_landingCategoriesFragment_to_categoryDetailsFragment, args)
+                        if (findNavController().currentDestination?.id != R.id.categoryDetailsFragment && findNavController().currentDestination?.id==
+                                R.id.menu_feed){
+                        parentFragment?.findNavController()?.navigate(R.id.action_landingCategoriesFragment_to_categoryDetailsFragment, args)}
                     }
                 }
             }

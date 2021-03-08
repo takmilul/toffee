@@ -47,7 +47,9 @@ class SplashScreenFragment:BaseFragment() {
                 initApp()
             else {
                 lifecycleScope.launch {
-                    findNavController().navigate(SplashScreenFragmentDirections.actionSplashScreenFragmentToSigninByPhoneFragment())
+                    if(findNavController().currentDestination?.id != R.id.signInFragment && findNavController().currentDestination?.id == R.id.splashScreenFragment) {
+                        findNavController().navigate(SplashScreenFragmentDirections.actionSplashScreenFragmentToSigninByPhoneFragment())
+                    }
                 }
             }
             val appEventsLogger = AppEventsLogger.newLogger(requireContext())
