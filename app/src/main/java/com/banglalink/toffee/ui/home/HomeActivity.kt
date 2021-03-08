@@ -1256,7 +1256,9 @@ class HomeActivity :
         super.onMediaItemChanged()
         maximizePlayer()
         onViewMaximize()
-
+        if(binding.playerView.isVideoPortrait && resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            requestedOrientation = Configuration.ORIENTATION_PORTRAIT
+        }
         updateFullScreenState()
     }
 
