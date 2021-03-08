@@ -67,7 +67,7 @@ class VerifySignInFragment : BaseFragment() {
             handleResendButton()
         }
         binding.confirmBtn.setOnClickListener {
-            UtilsKt.hideSoftKeyboard(requireActivity())
+            binding.codeNumber.clearFocus()
             verifyCode(binding.codeNumber.text.toString())
         }
         binding.backButton.setOnClickListener {

@@ -47,7 +47,7 @@ class LandingCategoriesFragment: BaseFragment() {
                     1 -> {
                         if (findNavController().currentDestination?.id != R.id.movieFragment && findNavController().currentDestination?.id==
                                 R.id.menu_feed) {
-                            parentFragment?.findNavController()?.navigate(
+                            findNavController().navigate(
                                 R.id.action_landingCategoriesFragment_to_movieFragment,
                                 args
                             )
@@ -57,20 +57,19 @@ class LandingCategoriesFragment: BaseFragment() {
                         if (findNavController().currentDestination?.id != R.id.dramaSeriesFragment && findNavController().currentDestination?.id==
                                 R.id.menu_feed)
                         {
-                        parentFragment?.findNavController()?.navigate(R.id.action_landingCategoriesFragment_to_dramaSeriesFragment, args)
+                            findNavController().navigate(R.id.action_landingCategoriesFragment_to_dramaSeriesFragment, args)
                         }
                     }
                     else -> {
                         if (findNavController().currentDestination?.id != R.id.categoryDetailsFragment && findNavController().currentDestination?.id==
                                 R.id.menu_feed){
-                        parentFragment?.findNavController()?.navigate(R.id.action_landingCategoriesFragment_to_categoryDetailsFragment, args)}
+                            findNavController().navigate(R.id.action_landingCategoriesFragment_to_categoryDetailsFragment, args)}
                     }
                 }
             }
         })
 
         viewAllButton.setOnClickListener {
-//            parentFragment?.findNavController()?.navigate(R.id.action_landingPageFragment_to_allCategoriesFragment)
             homeViewModel.switchBottomTab.postValue(3)
         }
 

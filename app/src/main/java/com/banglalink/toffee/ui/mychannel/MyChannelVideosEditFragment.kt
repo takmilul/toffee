@@ -102,6 +102,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
             viewModel.description.value = channelInfo?.getDescriptionDecoded().toString()
             viewModel.tags.value = channelInfo?.video_tags
             viewModel.thumbnailUrl.value = channelInfo?.landscape_ratio_1280_720
+            binding.uploadTags.clearFocus()
             binding.uploadTitle.requestFocus()
         }
     }
