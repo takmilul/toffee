@@ -751,13 +751,6 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
 
     private var heightAnim: ValueAnimator? = null
 
-    private fun handleTouchDown(ev: MotionEvent) {
-        heightAnim?.cancel()
-        heightAnim = null
-        mLastTouchY = ev.y
-        startY = mLastTouchY
-    }
-
     fun handleTouchDown2(ev: MotionEvent) {
         heightAnim?.cancel()
         heightAnim = null
@@ -770,37 +763,6 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         startY = mLastTouchY
         // Save the ID of this pointer (for dragging)
         mActivePointerId = ev.getPointerId(0)
-    }
-
-    fun handleTouchEvent3(ev: MotionEvent): Boolean {
-        when(ev.actionMasked) {
-            MotionEvent.ACTION_DOWN-> {
-//                Log.e("SCROLL","ACTION_DOWN")
-                handleTouchDown(ev)
-            }
-            MotionEvent.ACTION_MOVE-> {
-                mPosY += ev.y - mLastTouchY
-                val distanceY = ev.y - mLastTouchY
-
-//                Log.e("SCROLL", "ACTION_MOVE ->>> $distanceY")
-                layoutParams = layoutParams.apply {
-                    height = min(max(height + distanceY.toInt(), minBound), maxBound)
-                }
-
-                invalidate()
-
-                // Remember this touch position for the next move event
-                mLastTouchY = ev.y
-            }
-            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                val changeY = abs(ev.y - startY)
-                clampOrFullHeight()
-//                if(changeY < 5) {
-//                    return false
-//                }
-            }
-        }
-        return true
     }
 
     fun handleTouchEvent(ev: MotionEvent): Boolean {
