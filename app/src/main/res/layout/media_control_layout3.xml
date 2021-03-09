@@ -32,6 +32,11 @@
 
         </FrameLayout>
 
+        <FrameLayout
+            android:id="@+id/debug_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
         <com.banglalink.toffee.ui.player.PlayerOverlayView
             android:id="@+id/playerOverlay"
             android:layout_width="match_parent"
