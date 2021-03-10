@@ -1,96 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/screen_bg">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <View
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@drawable/bottom_round_white_bg"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/categoryChipGroupHolder" />
+    <data>
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/categoryListPager"
-        android:name="com.banglalink.toffee.ui.landing.FeaturedContentFragment"
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/categoryIcon"
-        android:layout_width="30dp"
-        android:layout_height="28dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        tools:src="@drawable/ic_profile_default"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/categoryListPager" />
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/bottom_round_white_bg"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/subCategoryChipGroupHolder" />
 
-    <TextView
-        android:id="@+id/categoryName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:textSize="16sp"
-        tools:text="Category Name"
-        android:fontFamily="@font/roboto_medium"
-        android:textColor="@color/categoryNameColor"
-        app:layout_constraintStart_toEndOf="@+id/categoryIcon"
-        app:layout_constraintTop_toTopOf="@+id/categoryIcon"
-        app:layout_constraintBottom_toBottomOf="@id/categoryIcon"/>
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/categoryListPager"
+            android:name="com.banglalink.toffee.ui.landing.FeaturedContentFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <HorizontalScrollView
-        android:id="@+id/categoryChipGroupHolder"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="4dp"
-        android:paddingBottom="8dp"
-        android:scrollbars="none"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/categoryIcon">
+        <ImageView
+            android:id="@+id/categoryIcon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            tools:src="@drawable/ic_profile_default"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/categoryListPager" />
 
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/categoryChipGroup"
+        <TextView
+            android:id="@+id/categoryName"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            app:selectionRequired="true"
-            app:singleLine="true"
-            app:singleSelection="true" />
-    </HorizontalScrollView>
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="Movies"
+            android:textColor="@color/main_text_color"
+            app:layout_constraintStart_toEndOf="@+id/categoryIcon"
+            app:layout_constraintTop_toTopOf="@+id/categoryIcon"
+            app:layout_constraintBottom_toBottomOf="@id/categoryIcon" />
 
-    <HorizontalScrollView
-        android:id="@+id/hashTagChipGroupHolder"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="none"
-        android:layout_marginVertical="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/categoryChipGroupHolder"
-        app:layout_constraintBottom_toBottomOf="parent">
+        <HorizontalScrollView
+            android:id="@+id/subCategoryChipGroupHolder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:paddingBottom="4dp"
+            android:scrollbars="none"
+            tools:minHeight="100dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/categoryIcon">
 
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/hashTagChipGroup"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            app:selectionRequired="true"
-            app:singleLine="true"
-            app:singleSelection="true"/>
-        
-    </HorizontalScrollView>
-    
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/subCategoryChipGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                app:selectionRequired="true"
+                app:singleLine="true"
+                app:singleSelection="true" />
+        </HorizontalScrollView>
+
+        <HorizontalScrollView
+            android:id="@+id/hashTagChipGroupHolder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            android:layout_marginTop="4dp"
+            tools:minHeight="100dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/subCategoryChipGroupHolder">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/hashTagChipGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                app:selectionRequired="true"
+                app:singleLine="true"
+                app:singleSelection="true" />
+
+        </HorizontalScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
