@@ -15,7 +15,7 @@ interface NotificationDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertItem(item: NotificationInfo): Long
     
-    @Query("SELECT * FROM NotificationInfo WHERE userId=:userId OR userId=0 ORDER BY receiveTime DESC")
+    @Query("SELECT * FROM NotificationInfo WHERE userId=:userId OR userId=0 ORDER BY receiveTime DESC LIMIT 50")
     fun getAllNotification(userId: Int): PagingSource<Int, NotificationInfo>
 
     @Query("SELECT COUNT(id) FROM NotificationInfo WHERE (userId=:customerId OR userId=0) AND isSeen=:isSeen")
