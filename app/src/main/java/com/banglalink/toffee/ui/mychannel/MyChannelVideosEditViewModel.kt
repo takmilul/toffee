@@ -52,7 +52,7 @@ class MyChannelVideosEditViewModel @Inject constructor(
 
     fun saveUploadInfo(contentId: Int, fileName: String, tags: String?, categoryId: Long, subCategoryId: Int) {
         viewModelScope.launch {
-            val ageGroupId = ageGroupPosition.value ?: -1
+            val ageGroupId = ageGroupPosition.value?: -1
             responseLiveData.value = try {
                 Resource.Success(
                     contentEditApi(

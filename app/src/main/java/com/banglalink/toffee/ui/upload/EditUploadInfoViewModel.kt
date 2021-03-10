@@ -204,10 +204,10 @@ class EditUploadInfoViewModel @AssistedInject constructor(
 //    }
 
     fun categoryIndexChanged(idx: Int) {
-        categories.value?.getOrNull(idx)?.let {
-            subCategories.value = it.subcategories
+            categories.value?.getOrNull(idx)?.let {
+                subCategories.value = it.subcategories
 //            subCategoryPosition.value = 1
-        }
+            }
     }
 
     fun updateProgress(progress: Int, size: Long) {

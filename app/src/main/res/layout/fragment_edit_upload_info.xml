@@ -290,10 +290,7 @@
                     android:id="@+id/category_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:spinnerMode="dialog"
-                    android:entries="@{viewmodel.categories}"
-                    android:onItemSelected="@{(parent,view,pos,id)-> viewmodel.categoryIndexChanged(pos)}"
-                    android:selectedItemPosition="@={viewmodel.categoryPosition}" />
+                    android:spinnerMode="dialog" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -313,8 +310,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:spinnerMode="dialog"
-                    android:entries="@{viewmodel.ageGroup}"
-                    android:selectedItemPosition="@={viewmodel.ageGroupPosition}" />
+                     />
             </RelativeLayout>
 
             <TextView

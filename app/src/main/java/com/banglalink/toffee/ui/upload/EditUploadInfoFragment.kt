@@ -138,7 +138,9 @@ class EditUploadInfoFragment: BaseFragment() {
             }
         }
 
+        setupCategorySpinner()
         setupSubcategorySpinner()
+        setupAgeSpinner()
 
         setupTagView()
         observeStatus()
@@ -186,6 +188,65 @@ class EditUploadInfoFragment: BaseFragment() {
             })
     }
 
+    private fun setupAgeSpinner(){
+        val mAgeAdapter = ToffeeSpinnerAdapter<String>(requireContext(), "Select Age")
+        binding.ageGroupSpinner.adapter = mAgeAdapter
+        binding.ageGroupSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                if(position != 0 && viewModel.ageGroupPosition.value != position) {
+                    viewModel.ageGroupPosition.value = position
+                }else {
+                    binding.ageGroupSpinner.setSelection(viewModel.ageGroupPosition.value ?: 1)
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+        }
+
+        observe(viewModel.ageGroup) {
+            mAgeAdapter.setData(it)
+            viewModel.ageGroupPosition.value = 1
+        }
+
+        observe(viewModel.ageGroupPosition) {
+            mAgeAdapter.selectedItemPosition = it
+            binding.ageGroupSpinner.setSelection(it)
+        }
+    }
+
+    private fun setupCategorySpinner() {
+        val mCategoryAdapter = ToffeeSpinnerAdapter<Category>(requireContext(), "Select Category")
+        binding.categorySpinner.adapter = mCategoryAdapter
+        binding.categorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                if(position != 0 && viewModel.categoryPosition.value != position) {
+                    viewModel.categoryPosition.value = position
+                    viewModel.categoryIndexChanged(position-1)
+                }else {
+                    val previousValue=viewModel.categoryPosition.value ?: 1
+                    binding.categorySpinner.setSelection(previousValue)
+                    viewModel.categoryIndexChanged(previousValue-1)
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+        }
+
+        observe(viewModel.categories) {
+            mCategoryAdapter.setData(it)
+            viewModel.categoryPosition.value = 1
+        }
+
+        observe(viewModel.categoryPosition) {
+                mCategoryAdapter.selectedItemPosition = it
+                binding.categorySpinner.setSelection(it)
+        }
+    }
+
     private fun setupSubcategorySpinner() {
         val mSubCategoryAdapter = ToffeeSpinnerAdapter<SubCategory>(requireContext(), "Select Sub Category")
         binding.subCategorySpinner.adapter = mSubCategoryAdapter
@@ -193,6 +254,8 @@ class EditUploadInfoFragment: BaseFragment() {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 if(position != 0 && viewModel.subCategoryPosition.value != position) {
                     viewModel.subCategoryPosition.value = position
+                }else {
+                    binding.subCategorySpinner.setSelection(viewModel.subCategoryPosition.value ?: 1)
                 }
             }
 
@@ -207,8 +270,8 @@ class EditUploadInfoFragment: BaseFragment() {
         }
 
         observe(viewModel.subCategoryPosition) {
-            mSubCategoryAdapter.selectedItemPosition = it
-            binding.subCategorySpinner.setSelection(it)
+                mSubCategoryAdapter.selectedItemPosition = it
+                binding.subCategorySpinner.setSelection(it)
         }
     }
 
