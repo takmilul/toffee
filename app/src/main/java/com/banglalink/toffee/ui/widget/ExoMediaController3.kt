@@ -25,6 +25,7 @@ import com.banglalink.toffee.databinding.MediaControlLayout3Binding
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener
 import com.banglalink.toffee.listeners.PlaylistListener
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.PlayerOverlayData
 import com.banglalink.toffee.ui.player.PlayerOverlayView
 import com.banglalink.toffee.ui.widget.DraggerLayout.OnPositionChangedListener
 import com.banglalink.toffee.util.Utils
@@ -36,6 +37,8 @@ import com.google.android.exoplayer2.Player.EventListener
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.video.VideoListener
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.*
+import java.lang.Runnable
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.abs
@@ -76,6 +79,9 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     var isVideoPortrait = false
     var channelType: String? = null
     var isFullScreen = false
+
+    private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+    private var debugJob: Job? = null
 
     @Inject
     lateinit var mPref: Preference
@@ -142,6 +148,29 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
 
     private fun setupCastButton() {
 //        CastButtonFactory.setUpMediaRouteButton(context.applicationContext, binding.castButton)
+    }
+
+    fun showDebugOverlay(data: PlayerOverlayData, cid: String) {
+        clearDebugWindow()
+        binding.debugContainer.addView(DebugOverlayView(context).apply {
+            setPlayerOverlayData(data, cid)
+        })
+        debugJob?.cancel()
+        debugJob = coroutineScope.launch {
+            delay(data.params.duration * 1000)
+            clearDebugWindow()
+        }
+    }
+
+    private fun clearDebugWindow() {
+        if(binding.debugContainer.childCount > 0) {
+            binding.debugContainer.removeAllViews()
+        }
+    }
+
+    override fun onDetachedFromWindow() {
+        debugJob?.cancel()
+        super.onDetachedFromWindow()
     }
 
     //Use this method to set and unset the player
@@ -751,13 +780,6 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
 
     private var heightAnim: ValueAnimator? = null
 
-    private fun handleTouchDown(ev: MotionEvent) {
-        heightAnim?.cancel()
-        heightAnim = null
-        mLastTouchY = ev.y
-        startY = mLastTouchY
-    }
-
     fun handleTouchDown2(ev: MotionEvent) {
         heightAnim?.cancel()
         heightAnim = null
@@ -770,37 +792,6 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         startY = mLastTouchY
         // Save the ID of this pointer (for dragging)
         mActivePointerId = ev.getPointerId(0)
-    }
-
-    fun handleTouchEvent3(ev: MotionEvent): Boolean {
-        when(ev.actionMasked) {
-            MotionEvent.ACTION_DOWN-> {
-//                Log.e("SCROLL","ACTION_DOWN")
-                handleTouchDown(ev)
-            }
-            MotionEvent.ACTION_MOVE-> {
-                mPosY += ev.y - mLastTouchY
-                val distanceY = ev.y - mLastTouchY
-
-//                Log.e("SCROLL", "ACTION_MOVE ->>> $distanceY")
-                layoutParams = layoutParams.apply {
-                    height = min(max(height + distanceY.toInt(), minBound), maxBound)
-                }
-
-                invalidate()
-
-                // Remember this touch position for the next move event
-                mLastTouchY = ev.y
-            }
-            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                val changeY = abs(ev.y - startY)
-                clampOrFullHeight()
-//                if(changeY < 5) {
-//                    return false
-//                }
-            }
-        }
-        return true
     }
 
     fun handleTouchEvent(ev: MotionEvent): Boolean {
