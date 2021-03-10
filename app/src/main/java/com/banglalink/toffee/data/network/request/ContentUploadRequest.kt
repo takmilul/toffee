@@ -13,4 +13,6 @@ data class ContentUploadRequest(
     val keywords: String? = null,
     val contentBanner: String? = null,
     val duration: String? = null,
+    val isHorizontal: Int = 1,
+    val msisdn: String? = null,
 ):BaseRequest("ugcContentUpload")

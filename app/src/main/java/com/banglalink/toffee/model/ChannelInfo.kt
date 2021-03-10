@@ -14,10 +14,6 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 import java.util.*
 
-/**
- * Created by MD.TAUFIQUR RAHMAN on 11/22/2016.
- */
-
 @Parcelize
 data class ChannelInfo(
     var id: String,
@@ -79,11 +75,19 @@ data class ChannelInfo(
     @SerializedName("url_type")
     val urlType: Int = 0,
     @SerializedName("is_approved")
-    val isApproved: Int? = null,
+    val is_approved: Int? = null,
     val created_at: String? = null,
-    val is_horizontal: Int = 1
+    @SerializedName("is_horizontal")
+    val is_horizontal: Int? = null,
+    @SerializedName("landscape_feature_1280_720")
+    val ugcFeaturedImage: String? = null
 ) :Parcelable
 {
+    val isApproved: Int
+        get() = if (is_approved == null || is_approved == 1) 1 else 0
+    
+    val isHorizontal: Int
+        get() = if (is_horizontal == null || is_horizontal == 1) 1 else 0
 
     val isLive: Boolean
         get() = "LIVE".equals(type, ignoreCase = true)
@@ -116,9 +120,9 @@ data class ChannelInfo(
         }
     }
 
-    fun getHlsLink() = hlsLinks!![0].hls_url_mobile
+    fun getHlsLink(): String = hlsLinks!![0].hls_url_mobile
 
-    fun formatedShareCount() = Utils.getFormattedViewsText(shareCount.toString())
+    fun formattedShareCount(): String = Utils.getFormattedViewsText(shareCount.toString())
 
     val isPurchased: Boolean
         get() = individual_price?.toInt() ?: 0 > 0 && individual_purchase
@@ -157,8 +161,8 @@ data class ChannelInfo(
         }
     }
     
-    fun formatted_view_count() = getFormattedViewsText(view_count)
-    fun formattedDuration() = discardZeroFromDuration(duration)
-    fun formattedCreateTime() = if(!created_at.isNullOrBlank()) Utils.getDateDiffInDayOrHourOrMinute(Utils.getDate(created_at).time)/*.replace(" ", "")*/ else "0"
-    fun formattedSubscriberCount() = getFormattedViewsText(subscriberCount.toString())
+    fun formattedViewCount(): String = getFormattedViewsText(view_count)
+    fun formattedDuration(): String = discardZeroFromDuration(duration)
+    fun formattedCreateTime(): String = if(!created_at.isNullOrBlank()) Utils.getDateDiffInDayOrHourOrMinute(Utils.getDate(created_at).time) else "0"
+    fun formattedSubscriberCount(): String = getFormattedViewsText(subscriberCount.toString())
 }

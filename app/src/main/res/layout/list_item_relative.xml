@@ -2,8 +2,8 @@
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    >
+    xmlns:tools="http://schemas.android.com/tools">
+    
     <data>
         <variable
             name="data"
@@ -17,6 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginEnd="4dp"
         android:background="?selectableItemBackground"
         android:onClick="@{()->callback.onItemClicked(data)}">
 
@@ -44,15 +45,8 @@
         
         <ImageView
             android:id="@+id/options"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="12dp"
-            android:paddingHorizontal="16dp"
-            android:background="?selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true"
+            style="@style/OptionMenuStyle"
             android:onClick="@{(v)->callback.onOpenMenu(v, data)}"
-            android:padding="4dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/name"
             app:srcCompat="@drawable/ic_menu_more" />
@@ -63,12 +57,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
-            android:layout_marginEnd="4dp"
             android:ellipsize="end"
             android:minLines="2"
             android:maxLines="2"
-            android:fontFamily="@font/roboto_medium"
-            android:textSize="@dimen/default_text_size"
             android:text="@{data.program_name}"
             app:layout_constraintEnd_toStartOf="@+id/options"
             app:layout_constraintStart_toEndOf="@+id/poster_container"
@@ -81,6 +72,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginTop="6dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:onClick="@{()-> callback.onProviderIconClicked(data)}"
             app:layout_constraintStart_toStartOf="@+id/name"
             app:layout_constraintTop_toBottomOf="@+id/name"
@@ -124,22 +116,22 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="7dp"
             android:fontFamily="@font/roboto_medium"
-            android:textColor="@color/second_text_color"
+            android:textColor="@color/fixed_second_text_color"
             android:textSize="@dimen/default_text_size"
-            android:text="@{data.formatted_view_count() + ` Views`}"
-            app:layout_constraintEnd_toStartOf="@+id/eyeIV"
+            android:text="@{data.formattedViewCount() + ` Views`}"
+            app:layout_constraintEnd_toStartOf="@+id/uploadTimeTextView"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="@id/name"
             app:layout_constraintTop_toBottomOf="@id/ownerPicture"
             tools:text="18K views" />
 
         <TextView
-            android:id="@+id/eyeIV"
+            android:id="@+id/uploadTimeTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto_regular"
             android:text="@{` \u2022 ` + data.formattedCreateTime()}"
-            android:textColor="@color/second_text_color"
+            android:textColor="@color/fixed_second_text_color"
             android:textSize="@dimen/default_text_size"
             tools:text=" &#8226; 14h"
             app:layout_constraintBottom_toBottomOf="@+id/number_of_views"
@@ -154,6 +146,7 @@
             android:layout_height="4dp"
             android:max="1000"
             bindViewProgress="@{data}"
+            android:progressBackgroundTint="#000000"
             app:layout_constraintBottom_toBottomOf="@+id/poster_container"
             app:layout_constraintEnd_toEndOf="@+id/duration"
             app:layout_constraintStart_toStartOf="parent" />
@@ -164,7 +157,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.5" />
-
-
+        
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

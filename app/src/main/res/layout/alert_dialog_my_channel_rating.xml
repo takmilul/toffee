@@ -18,6 +18,7 @@
             app:cardCornerRadius="24dp"
             android:padding="16dp"
             android:layout_margin="8dp"
+            app:cardBackgroundColor="@color/cardBgColor"
             android:background="@drawable/round_white_bg"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -37,9 +38,9 @@
                     android:layout_marginTop="48dp"
                     android:gravity="center_horizontal"
                     android:text="Rate This Channel"
-                    android:textAllCaps="false"
-                    android:textSize="20sp"
-                    android:textColor="@color/main_text_color"
+                    android:fontFamily="@font/roboto_medium"
+                    android:textColor="@color/cardTitleColor"
+                    android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
         

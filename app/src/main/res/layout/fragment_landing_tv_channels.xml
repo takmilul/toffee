@@ -1,56 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <View
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="@drawable/fragment_bg_bottom"
-        app:layout_constraintBottom_toTopOf="@+id/guideline14"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/channel_tv"
-        style="@style/SectionTitleTextStyle"
-        android:layout_marginTop="17dp"
-        android:text="@string/channel"
-        app:layout_constraintEnd_toStartOf="@+id/viewAllButton"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@drawable/fragment_bg_bottom"
+            app:layout_constraintBottom_toTopOf="@+id/guideline14"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-    <TextView
-        android:id="@+id/viewAllButton"
-        style="@style/ViewAllTextView"
-        android:layout_marginEnd="8dp"
-        android:gravity="center"
-        android:text="@string/view_all"
-        app:drawableEndCompat="@drawable/ic_right_arrow_accent_2"
-        app:layout_constraintTop_toTopOf="@id/channel_tv"
-        app:layout_constraintBottom_toBottomOf="@+id/channel_tv"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <TextView
+            android:id="@+id/channel_tv"
+            style="@style/SectionTitleTextStyle"
+            android:layout_marginTop="17dp"
+            android:text="@string/channel"
+            app:layout_constraintEnd_toStartOf="@+id/viewAllButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/channel_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clipToPadding="false"
-        android:orientation="horizontal"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        android:layout_marginTop="12dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/channel_tv"
-        app:reverseLayout="false" />
+        <TextView
+            android:id="@+id/viewAllButton"
+            style="@style/ViewAllTextView"
+            android:text="@string/view_all"
+            app:drawableEndCompat="@drawable/ic_right_arrow_accent_2"
+            app:layout_constraintTop_toTopOf="@id/channel_tv"
+            app:layout_constraintBottom_toBottomOf="@+id/channel_tv"
+            app:layout_constraintEnd_toEndOf="parent" />
+<!--
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline14"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.68" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmerPlaceHolder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="8dp"
+            android:layout_marginTop="4dp"
+            app:shimmer_colored="false"
+            app:shimmer_base_alpha="1"
+            app:shimmer_duration="1000"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/channel_tv">
+-->
+
+            <!--<include
+                android:id="@+id/shimmerPlaceHolder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="8dp"
+                android:layout_marginTop="4dp"
+                layout="@layout/placeholder_layout_tv_horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/channel_tv"/>-->
+
+<!--        </com.facebook.shimmer.ShimmerFrameLayout>-->
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/channel_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:orientation="horizontal"
+            android:paddingHorizontal="8dp"
+            android:layout_marginTop="4dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/channel_tv"
+            app:reverseLayout="false"
+            tools:listitem="@layout/live_tv_item_new" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.68" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -58,6 +58,7 @@
         android:text="@string/minimize_panel_description"
         android:textColor="@color/main_text_color"
         android:textSize="16sp"
+        android:fontFamily="@font/roboto_regular"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cancel_button" />
@@ -68,6 +69,7 @@
         android:layout_height="wrap_content"
         tools:text="Uploading"
         android:textSize="14sp"
+        android:fontFamily="@font/roboto_regular"
         android:textColor="@color/text_color_white"
         app:layout_constraintBottom_toTopOf="@+id/uploadPercent"
         app:layout_constraintEnd_toStartOf="@+id/guideline9"
@@ -96,6 +98,7 @@
         android:layout_height="wrap_content"
         tools:text="of 256MB"
         android:textSize="14sp"
+        android:fontFamily="@font/roboto_regular"
         android:textColor="@color/text_color_white"
         app:layout_constraintBottom_toTopOf="@+id/cancel_button"
         app:layout_constraintEnd_toStartOf="@+id/guideline9"

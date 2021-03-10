@@ -8,15 +8,14 @@ import com.banglalink.toffee.data.database.dao.*
 import com.banglalink.toffee.data.repository.*
 import com.banglalink.toffee.data.repository.impl.*
 import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.data.storage.ViewCountDAO
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module
 object DatabaseModule {
 
@@ -25,8 +24,8 @@ object DatabaseModule {
     fun providesDatabase(@ApplicationContext app: Context): ToffeeDatabase {
         return Room.databaseBuilder(app,
             ToffeeDatabase::class.java, ToffeeDatabase.DB_NAME)
-//            .addMigrations(*MigrationProvider.getMigrationList().toTypedArray())
-            .fallbackToDestructiveMigration()
+            .addMigrations(*MigrationProvider.getMigrationList().toTypedArray())
+//            .fallbackToDestructiveMigration()
             .build()
     }
 
@@ -80,8 +79,8 @@ object DatabaseModule {
     
     @Provides
     @Singleton
-    fun provideNotificationInfoRepository(notificationDao: NotificationDao): NotificationInfoRepository {
-        return NotificationInfoRepositoryImpl(notificationDao)
+    fun provideNotificationInfoRepository(notificationDao: NotificationDao, pref: Preference): NotificationInfoRepository {
+        return NotificationInfoRepositoryImpl(notificationDao, pref)
     }
 
     @Provides
@@ -137,4 +136,57 @@ object DatabaseModule {
     fun providesContinueWatchingRepository(dao: ContinueWatchingDao, pref: Preference): ContinueWatchingRepository {
         return ContinueWatchingRepositoryImpl(dao, pref)
     }
- }
+
+    @Provides
+    @Singleton
+    fun providesViewCountRepository(dao: ViewCountDAO): ViewCountRepository {
+        return ViewCountRepositoryImpl(dao)
+    }
+
+    @Provides
+    @Singleton
+    fun providesReactionStatusDao(db: ToffeeDatabase): ReactionStatusDao {
+        return db.getReactionStatusDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providesReactionStatusRepository(dao: ReactionStatusDao): ReactionStatusRepository {
+        return ReactionStatusRepositoryImpl(dao)
+    }
+
+    @Provides
+    @Singleton
+    fun providesSubscribeCount(dao: SubscriptionCountDao): SubscriptionCountRepository {
+        return SubscriptionCountRepositoryImpl(dao)
+    }
+    @Provides
+    @Singleton
+    fun providesSubscriptionCountDao(db: ToffeeDatabase): SubscriptionCountDao {
+        return db.getSubscriptionDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providesSubscribeInfo(dao: SubscriptionInfoDao): SubscriptionInfoRepository {
+        return SubscriptionInfoRepositoryImpl(dao)
+    }
+    
+    @Provides
+    @Singleton
+    fun providesSubscriptionInfoDao(db: ToffeeDatabase): SubscriptionInfoDao {
+        return db.getSubscriptionInfoDao()
+    }
+    
+    @Provides
+    @Singleton
+    fun providesShareCountDao(db: ToffeeDatabase): ShareCountDao {
+        return db.getShareCountDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providesShareCountRepository(dao: ShareCountDao): ShareCountRepository {
+        return ShareCountRepositoryImpl(dao)
+    }
+}

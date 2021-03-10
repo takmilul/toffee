@@ -12,7 +12,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
-import com.banglalink.toffee.data.repository.HistoryRepository
+import com.banglalink.toffee.data.repository.UserActivitiesRepository
 import com.banglalink.toffee.databinding.ActivitySettingsBinding
 import com.banglalink.toffee.ui.about.AboutActivity
 import com.banglalink.toffee.ui.common.BaseFragment
@@ -27,7 +27,7 @@ import javax.inject.Inject
 class SettingsFragment : BaseFragment() {
 
     @Inject
-    lateinit var historyRepository: HistoryRepository
+    lateinit var userActivitiesRepository: UserActivitiesRepository
 
     var wifiProfileDesc = arrayOf("160p", "240p", "320p", "576p", "720p", "Auto")
     var wifiProfileRes = arrayOf("240x160", "320x240", "480x320", "720x576", "1280x720", "Auto")
@@ -82,6 +82,7 @@ class SettingsFragment : BaseFragment() {
         binding.dataQualityToggleBtn.setOnCheckedChangeListener { _, _ -> handleDefaultDataQualityToggleBtn() }
         binding.watchOnlyWifiToggleBtn.setOnCheckedChangeListener { _, _ -> handleWatchOnlyWifiToggleBtn() }
         binding.notificationSwitch.setOnCheckedChangeListener { _, _ -> handleNotificationChange() }
+        binding.prefFloatingWindow.setOnCheckedChangeListener { _, _ -> handleFloatingWindowPrefChange() }
 //        binding.darkThemeToggleBtn.setOnCheckedChangeListener { switch, isChecked -> changeAppTheme(isChecked) }
         initializeSettings()
 
@@ -92,6 +93,7 @@ class SettingsFragment : BaseFragment() {
         binding.defaultDataQuality = mPref.defaultDataQuality()
         binding.watchWifiOnly = mPref.watchOnlyWifi()
         binding.enableNotification = mPref.isNotificationEnabled()
+        binding.enableFloatingWindow = mPref.isEnableFloatingWindow
         binding.cellularProfileDescTxt.text =
             getString(cellularProfileBWRequiredTxt[mPref.cellularProfileStatus - 1])
         binding.cellularProfileStatusTv.text =getString(R.string.txt_video_resolution, cellularProfileRes[mPref.cellularProfileStatus - 1])
@@ -107,6 +109,11 @@ class SettingsFragment : BaseFragment() {
     private fun handleNotificationChange() {
         mPref.setNotificationEnabled(binding.notificationSwitch.isChecked)
         binding.enableNotification = mPref.isNotificationEnabled()
+    }
+
+    private fun handleFloatingWindowPrefChange() {
+        mPref.isEnableFloatingWindow = binding.prefFloatingWindow.isChecked
+        binding.enableFloatingWindow = mPref.isEnableFloatingWindow
     }
 
     private fun handleDefaultDataQualityToggleBtn() {
@@ -141,12 +148,12 @@ class SettingsFragment : BaseFragment() {
 
     private fun onClickClearWatchHistory() {
         VelBoxAlertDialogBuilder(requireContext()).apply {
-            setTitle("Clear Watch History")
-            setText("Are you sure that you want to clear watch history?")
+            setTitle("Clear Activities")
+            setText("Are you sure that you want to clear Activities?")
             setPositiveButtonListener("Clear") {
                 lifecycleScope.launch {
-                    historyRepository.deleteAll()
-                    Toast.makeText(requireContext(), "Watch history cleared", Toast.LENGTH_SHORT).show()
+                    userActivitiesRepository.deleteAll()
+                    Toast.makeText(requireContext(), "Activities cleared", Toast.LENGTH_SHORT).show()
                     it?.dismiss()
                 }
             }

@@ -12,7 +12,9 @@
         android:layout_height="0dp"
         android:background="@drawable/fragment_bg_bottom"
         app:layout_constraintBottom_toBottomOf="@id/guideline15"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <TextView
         android:id="@+id/userChannelsHeader"
@@ -25,8 +27,6 @@
     <TextView
         android:id="@+id/viewAllButton"
         style="@style/ViewAllTextView"
-        android:layout_marginEnd="8dp"
-        android:gravity="center"
         android:text="@string/view_all"
         app:drawableEndCompat="@drawable/ic_right_arrow_accent_2"
         app:layout_constraintTop_toTopOf="@id/userChannelsHeader"
@@ -38,19 +38,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipToPadding="false"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        android:layout_marginTop="12dp"
+        android:paddingHorizontal="8dp"
+        android:layout_marginTop="4dp"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/userChannelsHeader"
-        app:reverseLayout="false" />
-
-
+        app:reverseLayout="false"
+        tools:listitem="@layout/list_item_landing_user_channels"/>
+    
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline15"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.5" />
+        app:layout_constraintGuide_percent="0.48" />
 </androidx.constraintlayout.widget.ConstraintLayout>

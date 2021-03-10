@@ -9,15 +9,15 @@ import com.banglalink.toffee.model.Transaction
 import javax.inject.Inject
 import kotlin.random.Random
 
-class GetTransaction @Inject constructor(private val preference: Preference, private val toffeeApi: ToffeeApi): BaseApiService<Transaction> {
-    
+class GetTransaction @Inject constructor(private val preference: Preference, private val toffeeApi: ToffeeApi) : BaseApiService<Transaction> {
+
     override suspend fun loadData(offset: Int, limit: Int): List<Transaction> {
         val response = tryIO2 {
             toffeeApi.getContents(
                 "VOD",
                 0, 0,
                 offset, 30,
-                preference.getDBVersionByApiName("getContentsV5"),
+                preference.getDBVersionByApiName("getUgcContentsV5"),
                 ContentRequest(
                     0,
                     0,
@@ -29,18 +29,13 @@ class GetTransaction @Inject constructor(private val preference: Preference, pri
                 )
             )
         }
+        
         if (response.response.channels != null) {
-            /*return response.response.channels.map {
-                it.formatted_view_count = getFormattedViewsText(it.view_count)
-                it.formattedDuration = discardZeroFromDuration(it.duration)
-                it
-            }*/
             val transactionList: MutableList<Transaction> = mutableListOf()
-
-            val dateList = List(10){Random.nextInt(1, 28)}
+            val dateList = List(10) { Random.nextInt(1, 28) }
             val monthList = listOf("JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC")
-            val amountList = List(10){Random.nextInt(50000, 1000000)}
-            val remainingList = List(10){ Random.nextInt(60000, 80000)}
+            val amountList = List(10) { Random.nextInt(50000, 1000000) }
+            val remainingList = List(10) { Random.nextInt(60000, 80000) }
             if (offset < limit) {
                 repeat(10) {
                     transactionList.add(Transaction("Deposit", "${dateList[it]} ${monthList.random()}", "+ ৳ ${amountList[it]}", "${remainingList[it]}"))

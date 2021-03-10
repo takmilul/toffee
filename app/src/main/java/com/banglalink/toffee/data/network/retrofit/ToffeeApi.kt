@@ -7,10 +7,9 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface ToffeeApi {
-
-
+    
     @POST("re-registration")
-    suspend fun signinByPhone(@Body signinByPhoneRequest: SigninByPhoneRequest): SigninByPhoneResponse
+    suspend fun signInByPhone(@Body signInByPhoneRequest: SigninByPhoneRequest): SignInByPhoneResponse
 
     @POST("confirm-code")
     suspend fun verifyCode(@Body verifyCodeRequest: VerifyCodeRequest):VerifyCodeResponse
@@ -24,7 +23,7 @@ interface ToffeeApi {
         @Body navCategoryRequest: NavCategoryRequest
     ):NavCategoryResponse
 
-    @POST("contents-v5/1/{type}/1/{categoryId}/{subcategoryId}/{limit}/{offset}/{dbVersion}")//https://staging.toffee-cms.com/contents-v5/deviceType/type/telcoId/categoryId/subCategoryId/limit/offset/dbVersion
+    @POST("ugc-contents-v5/1/{type}/1/{categoryId}/{subcategoryId}/{limit}/{offset}/{dbVersion}")//https://staging.toffee-cms.com/contents-v5/deviceType/type/telcoId/categoryId/subCategoryId/limit/offset/dbVersion
     suspend fun getContents(
         @Path("type") type: String,
         @Path("categoryId") categoryId: Int,
@@ -35,34 +34,25 @@ interface ToffeeApi {
         @Body contentRequest: ContentRequest
     ): ContentResponse
 
-    @POST("feature-contents")
-    suspend fun getFeatureContents(@Body featureContentRequest: FeatureContentRequest):FeatureContentResponse
-
-    @POST("feature-contents-v2/1/VOD/1/0/100/0/{dbVersion}")//https://staging.toffee-cms.com/feature-contents-v2/deviceType/type/telcoId/subCategoryId/li mit/offset/dbVersion
-    suspend fun getFeatureContentsV2(
-        @Path("dbVersion") dbVersion: Int,
-        @Body featureContentRequest: FeatureContentRequest
-    ):FeatureContentResponse
-
     @POST("history-contents")
     suspend fun getHistoryContents(@Body historyContentRequest: HistoryContentRequest):HistoryContentResponse
 
-    @POST("favorite-contents")
+    @POST("ugc-favorite-contents")
     suspend fun getFavoriteContents(@Body favoriteContentRequest: FavoriteContentRequest):FavoriteContentResponse
 
-    @POST("app-home-page-content-toffee-v2/1/0/1/200/{dbVersion}")//https://staging.toffee-cms.com/app-home-page-content-toffee-v2/deviceType/subCategoryId/telc oId/limit/dbVesion
+    @POST("ugc-app-home-page-content-toffee-v2/1/0/1/200/{dbVersion}")//https://staging.toffee-cms.com/app-home-page-content-toffee-v2/deviceType/subCategoryId/telc oId/limit/dbVesion
     suspend fun getChannels(
         @Path("dbVersion") dbVersion: Int,
         @Body allChannelRequest: AllChannelRequest
     ):AllChannelResponse
 
-    @POST("relative-contents-ext")
+    @POST("ugc-relative-contents-ext")
     suspend fun getRelativeContents(@Body relativeContentRequest: RelativeContentRequest):RelativeContentResponse
 
     @POST("viewing-content")
     suspend fun sendViewingContent(@Body viewingContentRequest: ViewingContentRequest):ViewingContentResponse
 
-    @POST("set-favorites")
+    @POST("set-ugc-favorites")
     suspend fun updateFavorite(@Body favoriteRequest: FavoriteRequest):FavoriteResponse
 
     @POST("subscriber-profile-update")
@@ -71,11 +61,14 @@ interface ToffeeApi {
     @POST("subscriber-profile-photo")
     suspend fun uploadPhoto(@Body updateProfilePhotoRequest: UploadProfileImageRequest):UploadProfileImageResponse
 
-    @POST("search-contents")
+    @POST("ugc-search-contents")
     suspend fun searchContent(@Body searchContentRequest: SearchContentRequest):SearchContentResponse
 
     @POST("contents-shareable")
     suspend fun getContentFromShareableUrl(@Body shareableRequest: ContentShareableRequest):ContentShareableResponse
+
+    @POST("content-share-log")
+    suspend fun sendShareLog(@Body shareableRequest: ContentShareLogRequest):ContentShareLogResponse
 
     @POST("heart-beat")
     suspend fun sendHeartBeat(@Body heartBeatRequest: HeartBeatRequest):HeartBeatResponse
@@ -123,8 +116,8 @@ interface ToffeeApi {
     @POST("ugc-categories/1/{dbVersion}")
     suspend fun getUgcCategoryList(
         @Path("dbVersion") dbVersion: Int,
-        @Body ugcCategoryRequest: UgcCategoryRequest
-    ): UgcCategoryResponse
+        @Body categoryRequest: CategoryRequest
+    ): CategoryResponse
 
     @POST("ugc-category-wise-editors-choice/1/{type}/{editorChoiceType}/{categoryId}/{dbVersion}")
     suspend fun getUgcEditorsChoice(
@@ -132,8 +125,8 @@ interface ToffeeApi {
         @Path("editorChoiceType") isCategory: Int = 1,
         @Path("categoryId") categoryId: Int = 0,
         @Path("dbVersion") dbVersion: Int = 0,
-        @Body ugcTrendingNowRequest: UgcTrendingNowRequest
-    ): UgcTrendingNowResponse
+        @Body allUserChannelsEditorsChoiceRequest: AllUserChannelsEditorsChoiceRequest
+    ): AllUserChannelsEditorsChoiceResponse
 
     @POST("ugc-category-featured-contents/1/{type}/{featureType}/{categoryId}/{dbVersion}")
     suspend fun getUgcFeatureContents(
@@ -141,8 +134,8 @@ interface ToffeeApi {
         @Path("featureType") featureType: Int = 1,
         @Path("categoryId") categoryId: Int = 0,
         @Path("dbVersion") dbVersion: Int = 0,
-        @Body ugcFeatureRequest: UgcFeatureContentRequest
-    ): UgcFeatureContentResponse
+        @Body featureRequest: FeatureContentRequest
+    ): FeatureContentResponse
 
     @POST("ugc-popular-channel/1/{isCategory}/{categoryId}/{limit}/{offset}/{dbVersion}")
     suspend fun getUgcPopularChannels(
@@ -151,8 +144,8 @@ interface ToffeeApi {
         @Path("limit") limit: Int = 0,
         @Path("offset") offset: Int = 0,
         @Path("dbVersion") dbVersion: Int,
-        @Body ugcPopularChannelsRequest: UgcPopularChannelsRequest
-    ): UgcPopularChannelsResponse
+        @Body popularChannelsRequest: PopularChannelsRequest
+    ): PopularChannelsResponse
 
     @POST("ugc-content-upload")
     suspend fun uploadContent(
@@ -176,7 +169,7 @@ interface ToffeeApi {
     ): MostPopularPlaylistsResponse
 
     @POST("ugc-follow-on-category")
-    suspend fun followOnCategory(@Body ugcFollowCategoryRequest: UgcFollowCategoryRequest): UgcFollowCategoryResponse
+    suspend fun followOnCategory(@Body followCategoryRequest: FollowCategoryRequest): FollowCategoryResponse
 
     @POST("ugc-subscribe-on-channel")
     suspend fun subscribeOnMyChannel(@Body myChannelSubscribeRequest: MyChannelSubscribeRequest): MyChannelSubscribeResponse
@@ -214,7 +207,10 @@ interface ToffeeApi {
         @Path("dbVersion") dbVersion: Int,
         @Body channelVideosRequest: MyChannelVideosRequest
     ): MyChannelVideosResponse
-    
+
+    @POST("ugc-content-delete")
+    suspend fun deleteMyChannelVideo(@Body myChannelVideoDeleteRequest: MyChannelVideoDeleteRequest): MyChannelVideoDeleteResponse
+
     @POST("ugc-playlist-names/1/{isOwner}/{channelOwnerId}/{limit}/{offset}/{dbVersion}")
     suspend fun getMyChannelPlaylist(
         @Path("isOwner") isOwner: Int,
@@ -245,23 +241,22 @@ interface ToffeeApi {
     @POST("/ugc-channel-edit")
     suspend fun editMyChannelDetail(@Body createPlaylistEditRequest: MyChannelEditRequest): MyChannelEditResponse
 
+    @POST("ugc-terms-and-conditions/1/{dbVersion}")
+    suspend fun getVideoTermsAndCondition(
+        @Path("dbVersion") dbVersion: Int,
+        @Body termsConditionRequest: TermsConditionRequest
+    ): TermsAndConditionResponse
+    
     @POST("/ugc-rating-on-channel")
     suspend fun rateMyChannel(@Body myChannelRatingRequest: MyChannelRatingRequest): MyChannelRatingResponse
     
-    @POST("/ugc-sub-category/1/{categoryId}/{dbVersion}")
-    suspend fun getSubCategory(
-        @Path("categoryId") categoryId: Int,
-        @Path("dbVersion") dbVersion: Int,
-        @Body subCategoryRequest: SubCategoryRequest
-    ): SubCategoryResponse
-    
     @POST("/ugc-all-user-channel/1/{limit}/{offset}/{dbVersion}")
-    suspend fun getTrendingChannels(
+    suspend fun getAllUserChannels(
         @Path("limit") limit: Int,
         @Path("offset") offset: Int,
         @Path("dbVersion") dbVersion: Int,
-        @Body trendingChannelsRequest: TrendingChannelsRequest
-    ): TrendingChannelsResponse
+        @Body allUserChannelsRequest: AllUserChannelsRequest
+    ): AllUserChannelsResponse
     
     @POST("/ugc-movie-category-details/1/{type}/{limit}/{offset}/{dbVersion}")
     suspend fun getMovieCategoryDetail(
@@ -314,7 +309,6 @@ interface ToffeeApi {
         @Path("dbVersion") dbVersion: Int,
         @Body dramaEpisodesBySeasonRequest: DramaEpisodesBySeasonRequest
     ): DramaEpisodesBySeasonResponse
-
     
     @POST("/ugc-partner-list/1/{type}/{limit}/{offset}/{dbVersion}")
     suspend fun getPartnersList(

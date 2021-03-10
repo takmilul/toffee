@@ -2,98 +2,22 @@
 <layout xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    
     <data>
         <variable
             name="data"
             type="com.banglalink.toffee.ui.refer.ReferralForm" />
     </data>
+    
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:background="@color/screen_bg_white"
         android:layout_height="match_parent">
+        
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingBottom="8dp">
-
-        <Button
-            android:id="@+id/shareBtn"
-            android:enabled="false"
-            style="@style/BgToggleButtonStyleSolidPink"
-            android:layout_width="@dimen/button_accent_width"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="32dp"
-            android:text="@string/share_button"
-            android:textColor="@color/white_to_accent_color"
-            android:textAllCaps="true"
-            app:layout_constraintEnd_toEndOf="@+id/referralCode"
-            app:layout_constraintStart_toStartOf="@+id/referralCode"
-            app:layout_constraintTop_toBottomOf="@+id/referralCode" />
-
-
-        <Button
-            android:id="@+id/copyBtn"
-            style="@style/BgToggleButtonStyleRingAccent"
-            android:enabled="false"
-            android:layout_width="@dimen/button_accent_width"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="16dp"
-            android:text="@string/copy_button"
-            android:textColor="@color/accent_to_pink_color"
-            android:textAllCaps="true"
-            app:layout_constraintEnd_toEndOf="@+id/shareBtn"
-            app:layout_constraintStart_toStartOf="@+id/shareBtn"
-            app:layout_constraintTop_toBottomOf="@+id/shareBtn" />
-
-            <TextView
-                android:id="@+id/referralCode"
-                style="@style/editTextOval"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/single_line_input_text_height"
-                android:layout_marginStart="64dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="64dp"
-                android:gravity="center"
-                android:text="@{data.referralCode}"
-                android:textColor="@color/second_text_color"
-                app:layout_constraintEnd_toEndOf="@+id/enter_code_tv"
-                app:layout_constraintStart_toStartOf="@+id/enter_code_tv"
-                app:layout_constraintTop_toBottomOf="@+id/policy_text" />
-
-
-            <ImageView
-                android:id="@+id/logo"
-                android:layout_width="172dp"
-                android:layout_height="140dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="64dp"
-                android:layout_marginEnd="8dp"
-                android:adjustViewBounds="true"
-                android:src="@drawable/refer_friend_icon"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/appBarLayout2" />
-
-
-            <TextView
-                android:id="@+id/title_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="8dp"
-                android:fontFamily="@font/roboto_medium"
-                android:gravity="center"
-                android:paddingLeft="30dp"
-                android:paddingRight="30dp"
-                android:text="@string/refer_a_friend_txt"
-                android:textColor="@color/main_text_color"
-                android:textSize="26sp"
-                app:layout_constraintEnd_toEndOf="@+id/logo"
-                app:layout_constraintStart_toStartOf="@+id/logo"
-                app:layout_constraintTop_toBottomOf="@+id/logo" />
-
 
             <com.google.android.material.appbar.AppBarLayout
                 android:id="@+id/appBarLayout2"
@@ -106,7 +30,38 @@
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar"
                     style="@style/CustomToolBarStyle" />
+
             </com.google.android.material.appbar.AppBarLayout>
+
+            <ImageView
+                android:id="@+id/logo"
+                android:layout_width="172dp"
+                android:layout_height="140dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="8dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/refer_friend_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/appBarLayout2" />
+
+            <TextView
+                android:id="@+id/title_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="30dp"
+                android:fontFamily="@font/roboto_medium"
+                android:gravity="center"
+                android:paddingLeft="30dp"
+                android:paddingRight="30dp"
+                android:text="@string/refer_a_friend_txt"
+                android:textColor="@color/cardTitleColor"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="@+id/logo"
+                app:layout_constraintStart_toStartOf="@+id/logo"
+                app:layout_constraintTop_toBottomOf="@+id/logo" />
 
             <TextView
                 android:id="@+id/policy_text"
@@ -124,7 +79,49 @@
                 app:layout_constraintTop_toBottomOf="@+id/title_tv"
                 tools:text="@string/refer_policy" />
 
+            <TextView
+                android:id="@+id/referralCode"
+                style="@style/editTextOval"
+                android:background="@drawable/single_line_input_text_bg"
+                android:layout_width="200dp"
+                android:layout_height="@dimen/single_line_input_text_height"
+                android:layout_marginStart="64dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="64dp"
+                android:gravity="center"
+                android:textSize="@dimen/default_text_size"
+                android:text="@{data.referralCode}"
+                android:textColor="@color/cardTitleColor"
+                app:layout_constraintStart_toStartOf="@id/policy_text"
+                app:layout_constraintEnd_toEndOf="@id/policy_text"
+                app:layout_constraintTop_toBottomOf="@+id/policy_text" />
 
+            <Button
+                android:id="@+id/shareBtn"
+                android:enabled="false"
+                style="@style/ButtonStyleSolidPink"
+                android:layout_width="@dimen/button_accent_width"
+                android:layout_gravity="center"
+                android:layout_marginTop="12dp"
+                android:text="@string/share_button"
+                android:textAllCaps="true"
+                app:layout_constraintEnd_toEndOf="@+id/referralCode"
+                app:layout_constraintStart_toStartOf="@+id/referralCode"
+                app:layout_constraintTop_toBottomOf="@+id/referralCode" />
+            
+            <Button
+                android:id="@+id/copyBtn"
+                style="@style/EditChannelStyle"
+                android:enabled="false"
+                android:layout_width="@dimen/button_accent_width"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:text="@string/copy_button"
+                android:textAllCaps="true"
+                app:layout_constraintEnd_toEndOf="@+id/shareBtn"
+                app:layout_constraintStart_toStartOf="@+id/shareBtn"
+                app:layout_constraintTop_toBottomOf="@+id/shareBtn" />
+    
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 

@@ -1,39 +1,12 @@
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:aapt="http://schemas.android.com/aapt"
-    android:width="16dp"
-    android:height="16dp"
-    android:viewportWidth="120"
-    android:viewportHeight="120">
-    <path android:pathData="M60,60m-60,0a60,60 0,1 1,120 0a60,60 0,1 1,-120 0">
-        <aapt:attr name="android:fillColor">
-            <gradient
-                android:centerX="60.6"
-                android:centerY="31.44"
-                android:gradientRadius="87.6"
-                android:type="radial">
-                <item
-                    android:color="#FFFFAEAB"
-                    android:offset="0" />
-                <item
-                    android:color="#FFE80048"
-                    android:offset="1" />
-            </gradient>
-        </aapt:attr>
-    </path>
-    <path android:pathData="M74.388,35.77c-10.144,0 -10.21,7.716 -14.388,7.716s-4.245,-7.716 -14.388,-7.716h0C35.237,35.77 28,44.143 28,54.835c0,12.563 17.728,27.585 26.466,34.227 2.8,2.141 4.747,2.224 5.592,2.224a8.468,8.468 0,0 0,5.135 -1.886c0.16,-0.118 0.317,-0.233 0.478,-0.354l0.023,-0.017C77.116,80.466 92,66.307 92,54.842 92,44.143 84.762,35.77 74.388,35.77Z">
-        <aapt:attr name="android:fillColor">
-            <gradient
-                android:centerX="56.46595"
-                android:centerY="46.04046"
-                android:gradientRadius="67.19597"
-                android:type="radial">
-                <item
-                    android:color="#FFFFFFFF"
-                    android:offset="0" />
-                <item
-                    android:color="#FFFFE5E5"
-                    android:offset="1" />
-            </gradient>
-        </aapt:attr>
-    </path>
+<vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="17dp"
+    android:height="14.896816dp"
+    android:viewportWidth="60"
+    android:viewportHeight="52.577">
+    <path
+        android:fillColor="#ff3988"
+        android:pathData="M42.59,2c-8.876,0 -8.934,6.751 -12.59,6.751s-3.714,-6.751 -12.59,-6.751h0C8.332,2 2,9.326 2,18.682c0,10.993 15.512,24.137 23.158,29.949a7.712,7.712 0,0 0,4.893 1.946,7.409 7.409,0 0,0 4.493,-1.65c0.14,-0.1 0.277,-0.2 0.418,-0.31l0.02,-0.015C44.977,41.109 58,28.72 58,18.688 58,9.326 51.667,2 42.59,2Z"
+        android:strokeWidth="4"
+        android:strokeColor="@color/cardBgColor" />
 </vector>

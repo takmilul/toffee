@@ -1,15 +1,17 @@
 package com.banglalink.toffee.usecase
 
 import com.banglalink.toffee.BuildConfig
-import com.banglalink.toffee.data.database.entities.HistoryItem
+import com.banglalink.toffee.data.database.entities.UserActivities
 import com.banglalink.toffee.data.network.request.ViewingContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
-import com.banglalink.toffee.data.network.util.tryIO
 import com.banglalink.toffee.data.network.util.tryIO2
-import com.banglalink.toffee.data.repository.HistoryRepository
+import com.banglalink.toffee.data.repository.UserActivitiesRepository
 import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.enums.ActivityType
+import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.notification.PubSubMessageUtil
+import com.banglalink.toffee.notification.VIEWCONTENT_TOPIC
 import com.banglalink.toffee.util.Utils
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
@@ -18,10 +20,13 @@ import javax.inject.Inject
 class SendViewContentEvent @Inject constructor(
     private val preference: Preference,
     private val toffeeApi: ToffeeApi,
-    private val historyRepo: HistoryRepository
+    private val activityRepo: UserActivitiesRepository
 ) {
 
     private val gson = Gson()
+
+
+
     suspend fun execute(channel: ChannelInfo, sendToPubSub:Boolean = true){
         if(sendToPubSub){
             sendToPubSub(channel.id.toInt(),channel.type ?: "")
@@ -33,14 +38,16 @@ class SendViewContentEvent @Inject constructor(
     }
 
     private suspend fun saveToLocalDb(channel: ChannelInfo){
-        val channelDataModel = HistoryItem(
+        val channelDataModel = UserActivities(
+            preference.customerId,
             channel.id.toLong(),
-            channel.type ?: "",
             "history",
-            gson.toJson(channel)
+            channel.type ?: "",
+            gson.toJson(channel),
+            ActivityType.WATCHED.value,
+            Reaction.Watched.value
         )
-
-        historyRepo.insert(channelDataModel)
+        activityRepo.insert(channelDataModel)
     }
 
     private fun sendToPubSub(contentId: Int,contentType: String){
@@ -54,7 +61,7 @@ class SendViewContentEvent @Inject constructor(
             netType = preference.netType,
             sessionToken = preference.getHeaderSessionToken()?:""
         )
-        PubSubMessageUtil.sendViewContentToPubSub(gson.toJson(viewContentData))
+        PubSubMessageUtil.sendMessage(gson.toJson(viewContentData), VIEWCONTENT_TOPIC)
     }
 
     private suspend fun sendToToffeeServer(contentId: Int,contentType: String){

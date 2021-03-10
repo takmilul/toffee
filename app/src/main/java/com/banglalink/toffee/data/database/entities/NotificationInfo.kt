@@ -10,6 +10,7 @@ import kotlinx.android.parcel.Parcelize
 data class NotificationInfo(
     @PrimaryKey(autoGenerate = true)
     val id: Long? = null,
+    val userId: Int = 0,
     val notificationType: String?,
     val notificationId: String?,
     val topic: Int,

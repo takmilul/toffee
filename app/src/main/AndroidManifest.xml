@@ -16,6 +16,7 @@
     <application
         android:requestLegacyExternalStorage="true"
         android:name=".ToffeeApplication"
+        android:allowAudioPlaybackCapture="false"
         android:allowBackup="false"
         android:fullBackupContent="false"
         android:fullBackupOnly="false"
@@ -23,15 +24,14 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:allowAudioPlaybackCapture="false"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
-        tools:replace="android:allowBackup" >
-        <activity android:name=".ui.subscription.SubscriptionResultActivity"
-            android:screenOrientation="portrait"
+        tools:replace="android:allowBackup">
+        <activity
+            android:name=".ui.subscription.SubscriptionResultActivity"
             android:label="@string/subscriptions"
-            android:theme="@style/AppTheme.NoActionBar"
-            />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.home.ContentPurchaseActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -65,7 +65,7 @@
             android:label="@string/profile_edit"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.profile.ViewProfileActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -77,15 +77,15 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:launchMode="singleTask"
-            android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
             <intent-filter
-                android:label="@string/app_name"
                 android:autoVerify="true"
+                android:label="@string/app_name"
                 tools:targetApi="m">
                 <action android:name="android.intent.action.VIEW" />
 
@@ -120,8 +120,8 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.common.Html5PlayerViewActivity"
-            android:screenOrientation="fullSensor"
             android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="fullSensor"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.about.AboutActivity"
@@ -178,8 +178,6 @@
                 <action android:name="com.toffee.notification_receiver" />
             </intent-filter>
         </receiver>
-
-
     </application>
 
 </manifest>

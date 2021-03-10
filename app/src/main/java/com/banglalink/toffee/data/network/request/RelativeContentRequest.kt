@@ -7,4 +7,4 @@ data class RelativeContentRequest(
     val password: String,
     override val offset: Int,
     override val limit: Int
-):BasePagingRequest("getRelativeContentsExt")
+):BasePagingRequest("getUgcRelativeContentsExt")

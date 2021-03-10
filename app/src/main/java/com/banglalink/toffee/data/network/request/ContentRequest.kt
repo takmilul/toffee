@@ -9,4 +9,4 @@ data class ContentRequest(
     val telcoId: Int = 1,
     override val offset:Int,
     override val limit:Int=10
-) : BasePagingRequest("getContentsV5")
+) : BasePagingRequest("getUgcContentsV5")

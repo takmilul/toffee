@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.channels
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -9,16 +8,14 @@ import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseViewModel
-import com.banglalink.toffee.util.getError
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class AllChannelsViewModel @ViewModelInject constructor(
+@HiltViewModel
+class AllChannelsViewModel @Inject constructor(
     private val allChannelService: GetChannelWithCategory,
     private val tvChannelsRepo: TVChannelRepository
 ): BaseViewModel() {
@@ -34,12 +31,20 @@ class AllChannelsViewModel @ViewModelInject constructor(
 
     operator fun invoke(subcategoryId: Int): Flow<List<TVChannelItem>> {
         viewModelScope.launch {
-            allChannelService(subcategoryId)
+            try {
+                allChannelService(subcategoryId)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
         }
         return tvChannelsRepo.getAllItems()
     }
 
     fun loadAllChannels(): Flow<PagingData<TVChannelItem>> {
         return repo.getList()
+    }
+
+    fun loadRecentTvChannels(): Flow<List<TVChannelItem>> {
+        return tvChannelsRepo.getRecentItems()
     }
 }

@@ -7,7 +7,7 @@ data class FeatureContentBean(
     val channels: List<ChannelInfo>?,
 
     @SerializedName("subcategory")
-    val subcategories: List<UgcSubCategory>?,
+    val subcategories: List<SubCategory>?,
     val hashTags: String? = null,
     val followers: Long,
     val isFollowed: Int = 0,

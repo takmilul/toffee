@@ -1,14 +1,16 @@
 package com.banglalink.toffee.ui.favorite
 
-import androidx.hilt.lifecycle.ViewModelInject
 import com.banglalink.toffee.apiservice.GetFavoriteContents
 import com.banglalink.toffee.common.paging.BaseListRepository
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
 import com.banglalink.toffee.common.paging.BasePagingViewModel
 import com.banglalink.toffee.model.ChannelInfo
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class FavoriteViewModel @ViewModelInject constructor(
+@HiltViewModel
+class FavoriteViewModel @Inject constructor(
     apiService: GetFavoriteContents
 ): BasePagingViewModel<ChannelInfo>() {
 

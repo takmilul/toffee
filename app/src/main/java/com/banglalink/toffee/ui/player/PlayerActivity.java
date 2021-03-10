@@ -18,7 +18,6 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics;
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener;
 import com.banglalink.toffee.listeners.PlaylistListener;
 import com.banglalink.toffee.model.AppSettingsKt;
-import com.banglalink.toffee.model.Channel;
 import com.banglalink.toffee.model.ChannelInfo;
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity;
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment;
@@ -45,14 +44,12 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
-import java.util.ArrayList;
-import java.util.List;
 
+import javax.inject.Inject;
 
-/**
- * Created by shantanu on 5/5/17.
- */
+import dagger.hilt.android.AndroidEntryPoint;
 
+@AndroidEntryPoint
 public abstract class PlayerActivity extends BaseAppCompatActivity implements OnPlayerControllerChangedListener, Player.EventListener, PlaylistListener {
     protected Handler handler;
 
@@ -64,7 +61,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
     private TrackGroupArray lastSeenTrackGroupArray;
 
     protected PlaylistManager playlistManager = new PlaylistManager();
-
+    @Inject HeartBeatManager heartBeatManager;
     private boolean startAutoPlay;
     private int startWindow;
     private long startPosition;
@@ -85,7 +82,6 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
     private static final String KEY_POSITION = "position";
     private static final String KEY_AUTO_PLAY = "auto_play";
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,7 +100,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
             trackSelectorParameters = builder.build();
             clearStartPosition();
         }
-        HeartBeatManager.INSTANCE.getHeartBeatEventLiveData().observe(this, aBoolean -> {//In each heartbeat we are checking channel's expire date. Seriously??
+        heartBeatManager.getHeartBeatEventLiveData().observe(this, aBoolean -> {//In each heartbeat we are checking channel's expire date. Seriously??
             ChannelInfo cinfo = playlistManager.getCurrentChannel();
             if(cinfo != null && cinfo.isExpired(mPref.getSystemTime())){
                 if(player!=null){
@@ -259,7 +255,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
     public boolean isAutoplayEnabled() {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.details_viewer);
         if(fragment instanceof MyChannelPlaylistVideosFragment) {
-            return ((MyChannelPlaylistVideosFragment) fragment).isAutoplayEnabled();
+            return ((MyChannelPlaylistVideosFragment) fragment).isAutoPlayEnabled();
         }
         return false;
     }
@@ -289,12 +285,12 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
 
     protected void playChannel(boolean isReload) {
         ChannelInfo channelInfo = playlistManager.getCurrentChannel();
-        String uri = Channel.createChannel(channelInfo).getContentUri(this, mPref);
+        String uri = null;//Channel.createChannel(channelInfo).getContentUri(this, mPref);
         if(uri == null){//in this case settings does not allow us to play content. So stop player and trigger event viewing stop
             if(player!=null)
                 player.stop(true);
             channelCannotBePlayedDueToSettings();//notify hook/subclass
-            HeartBeatManager.INSTANCE.triggerEventViewingContentStop();
+            heartBeatManager.triggerEventViewingContentStop();
             return;
         }
         //Checking whether we need to reload or not. Reload happens because of network switch or re-initialization of player
@@ -306,7 +302,7 @@ public abstract class PlayerActivity extends BaseAppCompatActivity implements On
 //        }
 
         if(player!=null){
-            HeartBeatManager.INSTANCE.triggerEventViewingContentStart(Integer.parseInt(channelInfo.getId()),channelInfo.getType());
+            heartBeatManager.triggerEventViewingContentStart(Integer.parseInt(channelInfo.getId()),channelInfo.getType());
             player.setPlayWhenReady(!isReload || player.getPlayWhenReady());
             MediaSource mediaSource = prepareMedia(Uri.parse(uri));
             if(isReload){//We need to start where we left off for VODs

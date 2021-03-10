@@ -2,68 +2,82 @@ package com.banglalink.toffee.analytics
 
 import android.content.Context
 import android.os.Bundle
+import android.provider.Settings.Secure.ANDROID_ID
 import android.text.TextUtils
+import com.banglalink.toffee.BuildConfig
+import com.banglalink.toffee.data.network.request.BaseRequest
+import com.banglalink.toffee.data.network.request.PubSubBaseRequest
+import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Package
+import com.banglalink.toffee.notification.API_ERROR_TRACK_TOPIC
+import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.gson.Gson
+import com.google.gson.annotations.SerializedName
 import java.lang.Exception
 
 object ToffeeAnalytics {
 
     private lateinit var firebaseAnalytics: FirebaseAnalytics
+    private val gson = Gson()
 
-    fun initFireBaseAnalytics(context: Context){
+    fun initFireBaseAnalytics(context: Context) {
         firebaseAnalytics = FirebaseAnalytics.getInstance(context)
     }
 
-    fun updateCustomerId(customerId:Int){
+    fun updateCustomerId(customerId: Int) {
         firebaseAnalytics.setUserId(customerId.toString())
         FirebaseCrashlytics.getInstance().setUserId(customerId.toString())
     }
 
-    fun logApiError(apiName:String?, errorMsg: String?){
-        if(TextUtils.isEmpty(apiName) || TextUtils.isEmpty(errorMsg))
+    fun logApiError(apiName: String?, errorMsg: String?,phoneNumber:String = Preference.getInstance().phoneNumber) {
+        if (apiName.isNullOrBlank() || errorMsg.isNullOrBlank())
             return
 
-        val params = Bundle()
-        params.putString("api_name",apiName)
-        params.putString("error_msg",errorMsg)
-        firebaseAnalytics.logEvent("api_error",params)
+        val logMsg = gson.toJson(ApiFailData(apiName,errorMsg))
+        PubSubMessageUtil.sendMessage(logMsg, API_ERROR_TRACK_TOPIC)
+
     }
 
-    fun apiLoginFailed(errorMsg:String){
-        val params = Bundle()
-        params.putString("error_msg", errorMsg)
-        firebaseAnalytics.logEvent("api_login_failed",params)
-    }
+//    fun apiLoginFailed(errorMsg: String) {
+//        logApiError("apiLogin",errorMsg)
+//    }
 
-    fun playerError(channelInfo: ChannelInfo, msg:String){
+    fun playerError(channelInfo: ChannelInfo, msg: String) {
         val params = Bundle()
-        params.putString("channel_name",channelInfo.program_name)
+        params.putString("channel_name", channelInfo.program_name)
         params.putString("error_msg", msg)
-        firebaseAnalytics.logEvent("player_error",params)
+        firebaseAnalytics.logEvent("player_error", params)
     }
 
-    fun logForcePlay(){
+    fun logForcePlay() {
         val params = Bundle()
         params.putString("msg", "force play occurred")
-        firebaseAnalytics.logEvent("player_event",params)
+        firebaseAnalytics.logEvent("player_event", params)
     }
 
-    fun logSubscription(mPackage: Package){
+    fun logSubscription(mPackage: Package) {
         val params = Bundle()
         params.putString("amount", mPackage.price.toString())
         params.putString("package_name", mPackage.packageName)
         params.putString("package_id", mPackage.packageId.toString())
-        firebaseAnalytics.logEvent("subscription",params)
+        firebaseAnalytics.logEvent("subscription", params)
     }
 
     fun logException(e: Exception) {
         FirebaseCrashlytics.getInstance().recordException(e)
     }
 
-    fun logBreadCrumb(msg:String){
+    fun logBreadCrumb(msg: String) {
         FirebaseCrashlytics.getInstance().log(msg)
     }
+
+    class ApiFailData(
+        @SerializedName("apiName")
+        val apiName: String,
+        @SerializedName("errorMsg")
+        val apiError: String
+    ) : PubSubBaseRequest()
 }

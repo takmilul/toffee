@@ -1,0 +1,63 @@
+package com.banglalink.toffee.ui.mychannel
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
+import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import com.banglalink.toffee.R
+
+class MyChannelPlaylistsHostFragment : Fragment() {
+    
+    private var channelOwnerId: Int = 0
+    private var navController: NavController? = null
+    
+    companion object {
+        @JvmStatic
+        fun newInstance(channelOwnerId: Int): MyChannelPlaylistsHostFragment {
+            return MyChannelPlaylistsHostFragment().apply {
+                arguments = Bundle().apply {
+                    putInt(MyChannelPlaylistsFragment.CHANNEL_OWNER_ID, channelOwnerId)
+                }
+            }
+        }
+    }
+    
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            channelOwnerId = arguments?.getInt(MyChannelPlaylistsFragment.CHANNEL_OWNER_ID) ?: 0
+        }
+    }
+    
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_my_channel_playlists_host, container, false)
+    }
+    
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val navHostFragment = childFragmentManager.findFragmentById(R.id.playlistNavHostFragment) as? NavHostFragment
+        navController = navHostFragment?.navController
+        navController?.setGraph(R.navigation.my_channel_playlist_navigation, Bundle().apply { putInt(MyChannelPlaylistsFragment.CHANNEL_OWNER_ID, channelOwnerId) })
+        listenBackStack()
+    }
+    
+    private fun listenBackStack() {
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val currentViewpagerPosition = (parentFragment as? MyChannelHomeFragment)?.getViewPagerPosition()
+                if (navController?.currentDestination?.id == R.id.myChannelPlaylistVideosFragment && currentViewpagerPosition == 1) {
+                    navController?.popBackStack()
+                } else {
+                    OnBackPressedCallback@ this.isEnabled = false
+                    requireActivity().onBackPressed()
+                }
+            }
+        }
+        
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+    }
+}

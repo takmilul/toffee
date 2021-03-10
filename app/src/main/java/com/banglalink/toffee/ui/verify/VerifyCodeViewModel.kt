@@ -1,31 +1,22 @@
 package com.banglalink.toffee.ui.verify
 
 import androidx.lifecycle.LiveData
-import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
+import com.banglalink.toffee.apiservice.SignInByPhone
+import com.banglalink.toffee.apiservice.VerifyCode
 import com.banglalink.toffee.data.network.util.resultLiveData
-import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.CustomerInfoSignIn
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseViewModel
-import com.banglalink.toffee.usecase.SigninByPhone
-import com.banglalink.toffee.usecase.VerifyCode
-import com.banglalink.toffee.util.unsafeLazy
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class VerifyCodeViewModel : BaseViewModel() {
+@HiltViewModel
+class VerifyCodeViewModel @Inject constructor(
+    private val verifyCode: VerifyCode,
+    private val signInByPhone: SignInByPhone,
+) : BaseViewModel() {
 
-    private val verifyCode by unsafeLazy {
-        VerifyCode(Preference.getInstance(), RetrofitApiClient.toffeeApi)
-    }
-
-    private val signingByPhone by unsafeLazy {
-        SigninByPhone(Preference.getInstance(), RetrofitApiClient.toffeeApi)
-    }
-
-    fun verifyCode(
-        code: String,
-        regSessionToken: String,
-        referralCode: String
-    ): LiveData<Resource<CustomerInfoSignIn>> {
+    fun verifyCode(code: String, regSessionToken: String, referralCode: String): LiveData<Resource<CustomerInfoSignIn>> {
         return resultLiveData {
             val response = verifyCode.execute(code, regSessionToken, referralCode)
             response
@@ -34,7 +25,7 @@ class VerifyCodeViewModel : BaseViewModel() {
 
     fun resendCode(phoneNumber: String, referralCode: String): LiveData<Resource<String>> {
         return resultLiveData {
-            signingByPhone.execute(phoneNumber, referralCode)
+            signInByPhone.execute(phoneNumber, referralCode)
         }
     }
 }

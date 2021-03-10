@@ -34,6 +34,10 @@ class UploadInfoRepositoryImpl(private val uploadDao: UploadDao): UploadInfoRepo
         return uploadDao.getActiveUploadsList()
     }
 
+    override fun getUploadFlowById(uploadId: Long): Flow<UploadInfo?> {
+        return uploadDao.getUploadFlowById(uploadId)
+    }
+
     override suspend fun getUploadById(uploadId: Long): UploadInfo? {
         return uploadDao.getUploadById(uploadId)
     }
@@ -42,8 +46,9 @@ class UploadInfoRepositoryImpl(private val uploadDao: UploadDao): UploadInfoRepo
         uploadId: Long,
         completedSize: Long,
         completedPercent: Int,
-        totalSize: Long
+        totalSize: Long,
+        uploadUri: String?
     ) {
-        uploadDao.updateProgressById(uploadId, completedSize, completedPercent, totalSize)
+        uploadDao.updateProgressById(uploadId, completedSize, completedPercent, totalSize, uploadUri)
     }
 }

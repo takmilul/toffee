@@ -81,7 +81,7 @@
                         <!--                    android:layout_width="fill_parent"-->
                         <!--                    android:layout_height="wrap_content"-->
                         <!--                    android:name="com.banglalink.toffee.ui.player.PlayerFragment2"/>-->
-                        <com.banglalink.toffee.ui.widget.ExoMediaController3
+                        <com.banglalink.toffee.ui.player.ExoMediaController4
                             android:background="@android:color/black"
                             android:id="@+id/player_view"
                             android:layout_width="match_parent"
@@ -107,6 +107,7 @@
                         android:id="@+id/tab_navigator"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="@color/fab_icon_bg"
                         app:menu="@menu/menu_bottom_nav"
                         app:labelVisibilityMode="labeled"
                         app:itemIconTint="@color/menuColorSecondaryDark"
@@ -117,7 +118,7 @@
                 </com.google.android.material.bottomappbar.BottomAppBar>
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/upload_button"
-                    android:backgroundTint="@android:color/transparent"
+                    android:backgroundTint="@color/fab_icon_bg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_upload_menu_plus"

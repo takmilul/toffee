@@ -10,14 +10,14 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.databinding.LayoutHorizontalContentContainerBinding
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.common.MyBaseAdapterV2
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 
 abstract class MovieBaseFragment<T: Any>: HomeBaseFragment(), ProviderIconCallback<T> {
     protected abstract val cardTitle: String
-    protected open val isCategory: Boolean = true
-    protected open val adapter: MyBaseAdapterV2<T> by lazy { MoviesAdapter(this, isCategory) }
+    protected open val adapter: MyBaseAdapterV2<T> by lazy { MoviesAdapter(this) }
     private lateinit var binding: LayoutHorizontalContentContainerBinding
     protected val viewModel by activityViewModels<MovieViewModel>()
     private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
@@ -48,9 +48,12 @@ abstract class MovieBaseFragment<T: Any>: HomeBaseFragment(), ProviderIconCallba
 
     override fun onProviderIconClicked(item: T) {
         if (item is ChannelInfo) {
-            landingPageViewModel.navigateToMyChannel(this, item.id.toInt(), item.channel_owner_id, item.isSubscribed)
+            homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
         }
     }
 
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {}
+    override fun hideShareMenuItem(hide: Boolean): Boolean {
+        return true
+    }
 }

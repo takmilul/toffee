@@ -5,35 +5,34 @@ import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.BuildConfig
-import com.banglalink.toffee.R.id
 import com.banglalink.toffee.R.string
-import com.banglalink.toffee.analytics.HeartBeatManager.heartBeatEventLiveData
-import com.banglalink.toffee.analytics.HeartBeatManager.triggerEventViewingContentStart
-import com.banglalink.toffee.analytics.HeartBeatManager.triggerEventViewingContentStop
+import com.banglalink.toffee.analytics.HeartBeatManager
+import com.banglalink.toffee.analytics.ToffeeAnalytics.logBreadCrumb
 import com.banglalink.toffee.analytics.ToffeeAnalytics.logException
 import com.banglalink.toffee.analytics.ToffeeAnalytics.logForcePlay
 import com.banglalink.toffee.data.database.entities.ContentViewProgress
 import com.banglalink.toffee.data.database.entities.ContinueWatchingItem
 import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
 import com.banglalink.toffee.data.repository.ContinueWatchingRepository
+import com.banglalink.toffee.data.storage.PlayerPreference
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener
 import com.banglalink.toffee.listeners.PlaylistListener
 import com.banglalink.toffee.model.Channel
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.TOFFEE_HEADER
-import com.banglalink.toffee.ui.category.drama.EpisodeListFragment
+import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
-import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.Player.*
 import com.google.android.exoplayer2.SimpleExoPlayer.Builder
+import com.google.android.exoplayer2.analytics.AnalyticsListener
+import com.google.android.exoplayer2.analytics.AnalyticsListener.EventTime
 import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.ext.cast.SessionAvailabilityListener
-import com.google.android.exoplayer2.source.BehindLiveWindowException
-import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.source.TrackGroupArray
+import com.google.android.exoplayer2.source.*
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
@@ -62,23 +61,28 @@ import java.net.CookiePolicy
 import javax.inject.Inject
 import kotlin.math.max
 
+
 @AndroidEntryPoint
 abstract class PlayerPageActivity :
     BaseAppCompatActivity(),
     OnPlayerControllerChangedListener,
     EventListener,
     PlaylistListener,
+    AnalyticsListener,
     SessionAvailabilityListener
 {
     protected var player: Player? = null
     private var defaultTrackSelector: DefaultTrackSelector? = null
     private var trackSelectorParameters: Parameters? = null
     private var lastSeenTrackGroupArray: TrackGroupArray? = null
-    protected var playlistManager = PlaylistManager()
+
+    private val playerViewModel by viewModels<PlayerViewModel>()
+
     private var startAutoPlay = false
     private var startWindow = 0
     private var startPosition: Long = 0
     private val playerEventListener: PlayerEventListener = PlayerEventListener()
+    private var playerAnalyticsListener: PlayerAnalyticsListener? = null
     private var defaultCookieManager = CookieManager()
 
     private var castContext: CastContext? = null
@@ -91,6 +95,11 @@ abstract class PlayerPageActivity :
 
     @Inject
     lateinit var continueWatchingRepo: ContinueWatchingRepository
+
+    @Inject
+    lateinit var connectionWatcher: ConnectionWatcher
+    
+    @Inject lateinit var heartBeatManager: HeartBeatManager
 
     init {
         defaultCookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER)
@@ -123,14 +132,27 @@ abstract class PlayerPageActivity :
             trackSelectorParameters = builder.build()
             clearStartPosition()
         }
-        heartBeatEventLiveData.observe(this, {    //In each heartbeat we are checking channel's expire date. Seriously??
-            val cinfo = playlistManager.getCurrentChannel()
-            if (cinfo?.isExpired(mPref.getSystemTime()) == true) {
-                player?.stop(true)
-                onContentExpired() //content is expired. Notify the subclass
+        heartBeatManager.heartBeatEventLiveData.observe(this) {
+                //In each heartbeat we are checking channel's expire date. Seriously??
+                val cinfo = playlistManager.getCurrentChannel()
+                if (cinfo?.isExpired(mPref.getSystemTime()) == true) {
+                    player?.stop(true)
+                    onContentExpired() //content is expired. Notify the subclass
+                }
+                playerAnalyticsListener?.let {
+                    //In every heartbeat event we are sending bandwitdh data to Pubsub
+                    Log.e("PLAYER BYTES", "Flushing to pubsub")
+                    playerViewModel.reportBandWidthFromPlayerPref(
+                        it.durationInSeconds,
+                        it.getTotalBytesInMB()
+                    )
+                    playerAnalyticsListener?.resetData()
+
+                }
             }
-        })
     }
+
+    abstract val playlistManager: PlaylistManager
 
     protected open fun onContentExpired() {
         //hook for subclass
@@ -168,6 +190,9 @@ abstract class PlayerPageActivity :
         super.onSaveInstanceState(outState)
         updateTrackSelectorParameters()
         updateStartPosition()
+        if(player?.isPlaying == true) {
+            playlistManager.getCurrentChannel()?.viewProgress = player?.currentPosition ?: 0
+        }
         outState.putParcelable(KEY_TRACK_SELECTOR_PARAMETERS, trackSelectorParameters)
         outState.putBoolean(KEY_AUTO_PLAY, startAutoPlay)
         outState.putInt(KEY_WINDOW, startWindow)
@@ -181,7 +206,8 @@ abstract class PlayerPageActivity :
 
         //we are checking whether there is already channelInfo exist. If not null then play it
         if (playlistManager.getCurrentChannel() != null) {
-            playChannel(false)
+            player?.playWhenReady = true
+            playChannel(true)
         }
     }
 
@@ -192,9 +218,12 @@ abstract class PlayerPageActivity :
                 parameters = trackSelectorParameters!!
             }
             lastSeenTrackGroupArray = null
+            playerAnalyticsListener = PlayerAnalyticsListener()
+
             exoPlayer = Builder(this)
                 .setTrackSelector(defaultTrackSelector!!)
                 .build().apply {
+                    addAnalyticsListener(playerAnalyticsListener!!)
                     addListener(playerEventListener)
                     playWhenReady = false
                     if (BuildConfig.DEBUG) {
@@ -228,6 +257,9 @@ abstract class PlayerPageActivity :
             updateStartPosition()
             it.release()
             defaultTrackSelector = null
+            playerAnalyticsListener?.let { pal ->
+                PlayerPreference.getInstance().savePlayerSessionBandWidth(pal.durationInSeconds, pal.getTotalBytesInMB())
+            }
         }
         exoPlayer = null
     }
@@ -242,6 +274,16 @@ abstract class PlayerPageActivity :
         if (defaultTrackSelector != null) {
             trackSelectorParameters = defaultTrackSelector?.parameters
         }
+    }
+
+    private var totalBytes = 0L
+    override fun onLoadCompleted(
+        eventTime: AnalyticsListener.EventTime,
+        loadEventInfo: LoadEventInfo,
+        mediaLoadData: MediaLoadData
+    ) {
+        totalBytes += loadEventInfo.bytesLoaded
+        Log.e("PLAYER BYTES",""+totalBytes/1024+" KB")
     }
 
     protected fun updateStartPosition() {
@@ -295,15 +337,19 @@ abstract class PlayerPageActivity :
     }
 
     override fun isAutoplayEnabled(): Boolean {
-        return when (val fragment = supportFragmentManager.findFragmentById(id.details_viewer)) {
-            is MyChannelPlaylistVideosFragment -> {
-                fragment.isAutoplayEnabled()
-            }
-            is EpisodeListFragment -> {
-                fragment.isAutoplayEnabled()
-            }
-            else -> true
-        }
+        return mPref.isAutoplayForRecommendedVideos
+//        return when (val fragment = supportFragmentManager.findFragmentById(id.details_viewer)) {
+//            is MyChannelPlaylistVideosFragment -> {
+//                fragment.isAutoplayEnabled()
+//            }
+//            is EpisodeListFragment -> {
+//                fragment.isAutoplayEnabled()
+//            }
+//            is CatchupDetailsFragment -> {
+//                fragment.isAutoplayEnabled()
+//            }
+//            else -> false
+//        }
     }
 
     override fun playNext() {
@@ -317,9 +363,9 @@ abstract class PlayerPageActivity :
     }
 
     protected fun addChannelToPlayList(info: ChannelInfo) {
-        val cinfo = playlistManager.getCurrentChannel()
+        val cInfo = playlistManager.getCurrentChannel()
         var isReload = false
-        if (cinfo?.id.equals(info.id, ignoreCase = true)) {
+        if (cInfo?.id.equals(info.id, ignoreCase = true)) {
             isReload = true
         }
         else {
@@ -328,17 +374,14 @@ abstract class PlayerPageActivity :
         playChannel(isReload)
     }
 
-    protected fun playChannel(isReload: Boolean) {
+    private fun playChannel(isReload: Boolean) {
         val channelInfo = playlistManager.getCurrentChannel() ?: return
-        val uri = if(channelInfo.isApproved == 1){
-            Channel.createChannel(channelInfo).getContentUri(this, mPref)
-        }else{
-            channelInfo.getHlsLink()
-        }
+        val uri = Channel.createChannel(channelInfo).getContentUri(this, mPref, connectionWatcher)
+        
         if (uri == null) { //in this case settings does not allow us to play content. So stop player and trigger event viewing stop
             player?.stop(true)
             channelCannotBePlayedDueToSettings() //notify hook/subclass
-            triggerEventViewingContentStop()
+            heartBeatManager.triggerEventViewingContentStop()
             return
         }
         //Checking whether we need to reload or not. Reload happens because of network switch or re-initialization of player
@@ -356,7 +399,7 @@ abstract class PlayerPageActivity :
                 }
             }
 
-            triggerEventViewingContentStart(channelInfo.id.toInt(), channelInfo.type ?: "VOD")
+            heartBeatManager.triggerEventViewingContentStart(channelInfo.id.toInt(), channelInfo.type ?: "VOD")
             it.playWhenReady = !isReload || it.playWhenReady
             val mediaItem = MediaItem.Builder().setUri(uri).setTag(channelInfo).build()
             val mediaSource = prepareMedia(mediaItem)
@@ -406,7 +449,7 @@ abstract class PlayerPageActivity :
         mediaMetadata.putString( MediaMetadata.KEY_TITLE , info.program_name)
         mediaMetadata.addImage(WebImage(Uri.parse(info.landscape_ratio_1280_720)))
 
-        val channelUrl = Channel.createChannel(info).getContentUri(this, mPref)
+        val channelUrl = Channel.createChannel(info).getContentUri(this, mPref, connectionWatcher)
 
         val mediaInfo = if (info.isLive) {
             MediaInfo.Builder(channelUrl).apply {
@@ -482,11 +525,11 @@ abstract class PlayerPageActivity :
         return false
     }
 
+    abstract fun isVideoPortrait(): Boolean
+
     override fun onFullScreenButtonPressed(): Boolean {
-        player?.currentMediaItem?.playbackProperties?.tag?.let {
-            if(it is ChannelInfo && it.is_horizontal != 1) {
-                return true
-            }
+        if(isVideoPortrait()) {
+            return true
         }
         val isPortrait = resources.configuration.orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         requestedOrientation = if (isPortrait) ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE else ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -603,4 +646,46 @@ abstract class PlayerPageActivity :
         resetPlayer()
         playChannel(true)
     }
+
+    private class PlayerAnalyticsListener : AnalyticsListener {
+        private var totalBytesInMB: Long = 0
+        private var initialTimeStamp: Long = 0
+        private var durationInMillis: Long = 0
+
+        override fun onLoadCompleted(
+            eventTime: EventTime,
+            loadEventInfo: LoadEventInfo,
+            mediaLoadData: MediaLoadData
+        ) {
+            try {
+                totalBytesInMB += loadEventInfo.bytesLoaded
+                if (initialTimeStamp == 0L) {
+                    PlayerPreference.getInstance().setInitialTime()
+                    initialTimeStamp = System.currentTimeMillis()
+                } else {
+                    durationInMillis = System.currentTimeMillis() - initialTimeStamp
+                }
+                Log.e(
+                    "PLAYER BYTES",
+                    "Event time " + durationInMillis / 1000 + " Bytes " + totalBytesInMB * 0.000001 + " MB"
+                )
+            } catch (e: Exception) {
+                logBreadCrumb("Exception in PlayerAnalyticsListener")
+            }
+        }
+
+        fun getTotalBytesInMB(): Double {
+            return totalBytesInMB * 0.000001
+        }
+
+        val durationInSeconds: Long
+            get() = durationInMillis / 1000
+
+        fun resetData() {
+            totalBytesInMB = 0
+            durationInMillis = 0
+            initialTimeStamp = 0
+        }
+    }
+
 }

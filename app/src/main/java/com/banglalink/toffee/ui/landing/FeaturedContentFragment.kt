@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.viewpager2.widget.ViewPager2
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.extension.observe
@@ -26,7 +25,7 @@ class FeaturedContentFragment : HomeBaseFragment() {
 
     private lateinit var mAdapter: FeaturedContentAdapter
     private var slideJob: Job? = null
-
+    private var isDataLoaded = false
     val viewModel by activityViewModels<LandingPageViewModel>()
 
     override fun onCreateView(
@@ -42,20 +41,24 @@ class FeaturedContentFragment : HomeBaseFragment() {
 
         mAdapter = FeaturedContentAdapter(object : BaseListItemCallback<ChannelInfo> {
             override fun onItemClicked(item: ChannelInfo) {
-                homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
-            }
-        })
-
-        featured_viewpager.adapter = mAdapter
-        featured_viewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                mAdapter.getItem(position).let {
-                    featureDescription.text = it?.program_name
+                if(isDataLoaded) {
+                    homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
                 }
             }
         })
 
+        featured_viewpager.adapter = mAdapter
         TabLayoutMediator(featured_indicator, featured_viewpager, true) { tab_, position -> }.attach()
+        
+        val channelInfoList = listOf(
+            ChannelInfo(""), 
+            ChannelInfo(""), 
+            ChannelInfo(""), 
+            ChannelInfo("")
+        )
+        mAdapter.removeAll()
+        mAdapter.addAll(channelInfoList)
+        startPageScroll()
 
         observeList()
         viewModel.loadFeaturedContentList()
@@ -66,6 +69,7 @@ class FeaturedContentFragment : HomeBaseFragment() {
             observe(viewModel.featuredContents) {
                 when (it) {
                     is Success -> {
+                        isDataLoaded = true
                         it.data?.let { channelInfoList ->
                             startPageScroll()
                             mAdapter.removeAll()

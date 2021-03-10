@@ -10,7 +10,9 @@ import android.graphics.Point
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.AttributeSet
 import android.util.Log
+import android.util.Xml
 import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
@@ -20,10 +22,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
-import androidx.core.view.GravityCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.isInvisible
-import androidx.core.view.isVisible
+import androidx.core.view.*
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -37,28 +36,29 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
-import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_VIDEOS_URL
+import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
-import com.banglalink.toffee.extension.launchActivity
-import com.banglalink.toffee.extension.loadProfileImage
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.category.drama.EpisodeListFragment
 import com.banglalink.toffee.ui.channels.AllChannelsViewModel
-import com.banglalink.toffee.ui.channels.ChannelFragment
+import com.banglalink.toffee.ui.channels.ChannelFragmentNew
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.ui.landing.AllCategoriesFragment
+import com.banglalink.toffee.ui.mychannel.MyChannelHomeFragment
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
 import com.banglalink.toffee.ui.player.PlayerPageActivity
 import com.banglalink.toffee.ui.player.PlaylistItem
+import com.banglalink.toffee.ui.player.PlaylistManager
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.splash.SplashScreenActivity
 import com.banglalink.toffee.ui.subscription.PackageListActivity
 import com.banglalink.toffee.ui.upload.UploadProgressViewModel
+import com.banglalink.toffee.ui.upload.UploadStateManager
 import com.banglalink.toffee.ui.upload.UploadStatus
 import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
@@ -70,14 +70,18 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
+import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main_menu.*
 import kotlinx.android.synthetic.main.home_mini_upload_progress.*
 import kotlinx.android.synthetic.main.layout_appbar.view.*
 import kotlinx.android.synthetic.main.player_bottom_sheet_layout.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import net.gotev.uploadservice.UploadService
+import org.xmlpull.v1.XmlPullParser
 import java.util.*
 import javax.inject.Inject
 
@@ -87,23 +91,21 @@ const val ID_SETTINGS = 17
 const val ID_FAQ = 22
 const val ID_INVITE_FRIEND = 23
 const val ID_REDEEM_CODE = 24
-
 const val PLAY_IN_WEB_VIEW = 1
 const val OPEN_IN_EXTERNAL_BROWSER = 2
+
 @AndroidEntryPoint
 class HomeActivity :
     PlayerPageActivity(),
     FragmentManager.OnBackStackChangedListener,
-    DraggerLayout.OnPositionChangedListener ,
+    DraggerLayout.OnPositionChangedListener,
     SearchView.OnQueryTextListener
 {
-
-    @Inject
-    lateinit var uploadRepo: UploadInfoRepository
-
-    @Inject
-    lateinit var notificationRepo: NotificationInfoRepository
-
+    @Inject lateinit var uploadRepo: UploadInfoRepository
+    @Inject lateinit var notificationRepo: NotificationInfoRepository
+    @Inject lateinit var uploadManager: UploadStateManager
+    @Inject lateinit var cacheManager: CacheManager
+    private var channelOwnerId: Int = 0
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private var notificationBadge: View? = null
     private var searchView: SearchView? = null
@@ -123,10 +125,13 @@ class HomeActivity :
     private val allChannelViewModel by viewModels<AllChannelsViewModel>()
     private val uploadViewModel by viewModels<UploadProgressViewModel>()
 
+    override val playlistManager: PlaylistManager
+        get() = viewModel.getPlaylistManager()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //disable screen capture
-        if (!BuildConfig.DEBUG) {
+        if (! BuildConfig.DEBUG) {
             window.setFlags(
                 WindowManager.LayoutParams.FLAG_SECURE,
                 WindowManager.LayoutParams.FLAG_SECURE
@@ -138,9 +143,9 @@ class HomeActivity :
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        if(savedInstanceState == null) {
+//        if(savedInstanceState == null) {
             setupNavController()
-        }
+//        }
 
         initializeDraggableView()
         initDrawer()
@@ -148,40 +153,7 @@ class HomeActivity :
         showRedeemMessageIfPossible()
 
         binding.uploadButton.setOnClickListener {
-            if(navController.currentDestination?.id == R.id.uploadMethodFragment) {
-                navController.popBackStack()
-                return@setOnClickListener
-            }
-            lifecycleScope.launch {
-
-                if(uploadRepo.getActiveUploadsList().isNotEmpty()) {
-                    return@launch
-                }
-
-//                mPref.uploadId?.let {
-//                    val uploads = uploadRepo.getUploadById(UtilsKt.stringToUploadId(it))
-//                    if(uploads == null || uploads.status !in listOf(0, 1, 2, 3)) {
-//                        mPref.uploadId = null
-//                        navController.navigate(R.id.uploadMethodFragment)
-//                        return@launch
-//                    }
-////                    if(uploads.status in listOf(0, 1, 2, 3) && UploadService.taskList.isEmpty()) {
-////                        uploads.apply {
-////                            status = UploadStatus.ERROR.value
-////                            statusMessage = "Process killed"
-////                        }.also { info ->
-////                            uploadRepo.updateUploadInfo(info)
-////                        }
-////                        mPref.uploadId = null
-////                        navController.navigate(R.id.uploadMethodFragment)
-////                    }
-//                    if(navController.currentDestination?.id != R.id.editUploadInfoFragment) {
-//                        navController.navigate(R.id.editUploadInfoFragment)
-//                    }
-//                    return@launch
-//                }
-                navController.navigate(R.id.uploadMethodFragment)
-            }
+            if (showUploadDialog()) return@setOnClickListener
         }
 
         observe(viewModel.fragmentDetailsMutableLiveData) {
@@ -202,8 +174,8 @@ class HomeActivity :
         observe(viewModel.switchBottomTab) {
 //            drawerHelper.onMenuClick(NavigationMenu(ID_CHANNEL, "All Videos", 0, listOf(), false))
             when(it) {
-                1-> binding.tabNavigator.selectedItemId = R.id.menu_tv
-                3-> binding.tabNavigator.selectedItemId = R.id.menu_explore
+                1 -> binding.tabNavigator.selectedItemId = R.id.menu_tv
+                3 -> binding.tabNavigator.selectedItemId = R.id.menu_explore
             }
 //            binding.homeTabPager.currentItem = 1
         }
@@ -246,6 +218,30 @@ class HomeActivity :
             }
         }
 
+        observe(mPref.reactionStatusDbUrlLiveData){
+            if(it.isNotEmpty()){
+                viewModel.populateReactionStatusDb(it)
+            }
+        }
+        
+        observe(mPref.subscriberStatusDbUrlLiveData){
+            if(it.isNotEmpty()){
+                viewModel.populateSubscriptionCountDb(it)
+            }
+        }
+        
+        observe(mPref.shareCountDbUrlLiveData){
+            if(it.isNotEmpty()){
+                viewModel.populateShareCountDb(it)
+            }
+        }
+        
+//        observe(mPref.reactionDbUrlLiveData){
+//        if(!mPref.hasReactionDb){
+//            viewModel.populateReactionDb("url")
+//        }
+//        }
+
         observe(viewModel.addToPlayListMutableLiveData) { item ->
 //            val playListItems = item.filter {
 //                !it.isLive
@@ -257,6 +253,10 @@ class HomeActivity :
             setPlayList(item)
         }
 
+        observe(viewModel.notificationUrlLiveData){
+            handleDeepLink(it)
+        }
+        
         observe(viewModel.shareContentLiveData) { channelInfo ->
             val sharingIntent = Intent(Intent.ACTION_SEND)
             sharingIntent.type = "text/plain"
@@ -265,26 +265,106 @@ class HomeActivity :
                 channelInfo.video_share_url
             )
             startActivity(Intent.createChooser(sharingIntent, "Share via"))
+            viewModel.sendShareLog(channelInfo)
         }
-
+        
+        if (!mPref.hasChannelName() && !mPref.hasChannelLogo() && !mPref.isChannelDetailChecked) {
+            viewModel.getChannelDetail(1, 0, 0, mPref.customerId)
+        }
+        
         if(intent.hasExtra(INTENT_PACKAGE_SUBSCRIBED)){
             handlePackageSubscribe()
         }
 
         initSideNav()
-        lifecycle.addObserver(HeartBeatManager)
+        lifecycle.addObserver(heartBeatManager)
         observeInAppMessage()
         handleSharedUrl(intent)
         configureBottomSheet()
         observeUpload2()
+        watchConnectionChange()
+        observeMyChannelNavigation()
+    }
+
+    fun showUploadDialog(): Boolean {
+        if (mPref.hasChannelLogo() && mPref.hasChannelName()){
+            if (navController.currentDestination?.id == R.id.uploadMethodFragment) {
+                navController.popBackStack()
+                return true
+            }
+            lifecycleScope.launch {
+
+                if (uploadRepo.getActiveUploadsList().isNotEmpty()) {
+                    return@launch
+                }
+
+                //                mPref.uploadId?.let {
+                //                    val uploads = uploadRepo.getUploadById(UtilsKt.stringToUploadId(it))
+                //                    if(uploads == null || uploads.status !in listOf(0, 1, 2, 3)) {
+                //                        mPref.uploadId = null
+                //                        navController.navigate(R.id.uploadMethodFragment)
+                //                        return@launch
+                //                    }
+                ////                    if(uploads.status in listOf(0, 1, 2, 3) && UploadService.taskList.isEmpty()) {
+                ////                        uploads.apply {
+                ////                            status = UploadStatus.ERROR.value
+                ////                            statusMessage = "Process killed"
+                ////                        }.also { info ->
+                ////                            uploadRepo.updateUploadInfo(info)
+                ////                        }
+                ////                        mPref.uploadId = null
+                ////                        navController.navigate(R.id.uploadMethodFragment)
+                ////                    }
+                //                    if(navController.currentDestination?.id != R.id.editUploadInfoFragment) {
+                //                        navController.navigate(R.id.editUploadInfoFragment)
+                //                    }
+                //                    return@launch
+                //                }
+                navController.navigate(R.id.uploadMethodFragment)
+            }
+        }
+        else{
+            if (navController.currentDestination?.id == R.id.bottomSheetUploadFragment) {
+                navController.popBackStack()
+                return true
+            }
+            lifecycleScope.launch {
+
+                if (uploadRepo.getActiveUploadsList().isNotEmpty()) {
+                    return@launch
+                }
+                navController.navigate(R.id.bottomSheetUploadFragment)
+            }
+        }
+
+        return false
+    }
+
+    @ExperimentalCoroutinesApi
+    private fun watchConnectionChange() {
+        lifecycleScope.launch {
+            uploadManager.checkUploadStatus(false)
+        }
+        lifecycleScope.launch {
+            connectionWatcher.watchNetwork().collect {
+                if(it) {
+                    uploadManager.checkUploadStatus(true)
+                }
+            }
+        }
     }
 
     private fun configureBottomSheet() {
         bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet)
+        if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+            bottom_sheet.hide()
+        } else {
+            bottom_sheet.show()
+        }
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-        bottomSheetBehavior.addBottomSheetCallback(object: BottomSheetBehavior.BottomSheetCallback() {
+        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                if(newState == BottomSheetBehavior.STATE_COLLAPSED && binding.playerView.isControllerHidden) {
+                if (newState == BottomSheetBehavior.STATE_COLLAPSED && binding.playerView.isControllerHidden) {
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 }
             }
@@ -294,6 +374,14 @@ class HomeActivity :
                 binding.playerView.moveController(slideOffset)
             }
         })
+
+        window.decorView.setOnSystemUiVisibilityChangeListener {
+//            toggleNavigations(it and View.SYSTEM_UI_FLAG_FULLSCREEN == View.SYSTEM_UI_FLAG_FULLSCREEN)
+            val isFullScreen = it and View.SYSTEM_UI_FLAG_FULLSCREEN == View.SYSTEM_UI_FLAG_FULLSCREEN
+            if(!isFullScreen) {
+                updateFullScreenState()
+            }
+        }
     }
 
     private fun observeNotification() {
@@ -345,7 +433,6 @@ class HomeActivity :
                 R.id.menu_channel,
 
 //                R.id.menu_all_tv_channel,
-                R.id.menu_activities,
                 R.id.menu_favorites,
                 R.id.menu_settings
             ),
@@ -357,6 +444,11 @@ class HomeActivity :
         binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
         binding.sideNavigation.setupWithNavController(navController)
         binding.tabNavigator.setupWithNavController(navController)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.bottomAppBar) { _, insets ->
+            insets.consumeSystemWindowInsets()
+        }
+
         binding.sideNavigation.setNavigationItemSelectedListener {
             drawerHelper.handleMenuItemById(it)
         }
@@ -367,6 +459,7 @@ class HomeActivity :
             if(binding.draggableView.isMaximized()) {
                 minimizePlayer()
             }
+            closeSearchBarIfOpen()
             binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
         }
 
@@ -382,6 +475,7 @@ class HomeActivity :
         binding.playerView.addPlayerControllerChangeListener(this)
         resetPlayer()
         binding.playerView.resizeView(calculateScreenWidth())
+        updateFullScreenState()
     }
 
     override fun resetPlayer() {
@@ -390,7 +484,7 @@ class HomeActivity :
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        setupNavController()
+//        setupNavController()
     }
 
     override fun onPause() {
@@ -398,6 +492,16 @@ class HomeActivity :
         binding.playerView.clearListeners()
         if (Util.SDK_INT <= 23) {
             binding.playerView.setPlayer(null)
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if(playlistManager.getCurrentChannel() != null) {
+            maximizePlayer()
+            loadDetailFragment(
+                PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
+            )
         }
     }
 
@@ -423,11 +527,20 @@ class HomeActivity :
         so player can't reset scale completely. Manually resetting player scale value
          */
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            bottom_sheet.visibility = View.VISIBLE
+            if(playlistManager.getCurrentChannel()?.isLive == true) {
+                bottom_sheet.visibility = View.VISIBLE
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            } else {
+                bottom_sheet.visibility = View.GONE
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            }
+            binding.playerView.isFullScreen = true
             binding.playerView.scaleX = 1f
             binding.playerView.scaleY = 1f
         } else {
+            binding.playerView.isFullScreen = false
             bottom_sheet.visibility = View.GONE
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             binding.playerView.moveController(-1.0f)
         }
         updateFullScreenState()
@@ -449,23 +562,22 @@ class HomeActivity :
     private fun updateFullScreenState() {
         val state =
             resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE ||
-                    (binding.playerView.isVideoPortrait &&
-                            !binding.playerView.isFullScreenPortrait())
+                    binding.playerView.isFullScreen
 
         binding.playerView.onFullScreen(state)
-        toggleNavigations(state)
         binding.playerView.resizeView(calculateScreenWidth(), state)
-        Utils.setFullScreen(this, state)
+        Utils.setFullScreen(this, state)// || binding.playerView.channelType != "LIVE")
+        toggleNavigations(state)
     }
 
     private fun toggleNavigations(state: Boolean) {
         if(state) {
             supportActionBar?.hide()
-            binding.bottomAppBar.performHide()
+            binding.bottomAppBar.hide()
             binding.uploadButton.hide()
         } else {
             supportActionBar?.show()
-            binding.bottomAppBar.performShow()
+            binding.bottomAppBar.show()
             binding.uploadButton.show()
         }
     }
@@ -616,7 +728,7 @@ class HomeActivity :
         channelInfo?.let {
             when{
                 it.urlType == PLAY_IN_WEB_VIEW->{
-                    HeartBeatManager.triggerEventViewingContentStart(it.id.toInt(), it.type ?: "VOD")
+                    heartBeatManager.triggerEventViewingContentStart(it.id.toInt(), it.type ?: "VOD")
                     viewModel.sendViewContentEvent(it)
                     launchActivity<Html5PlayerViewActivity> {
                         putExtra(
@@ -634,7 +746,7 @@ class HomeActivity :
                     )
                 }
                 (it.isPurchased || it.isPaidSubscribed) && !it.isExpired(Date())->{
-                    maximizePlayer()
+//                    maximizePlayer()
                     when (detailsInfo) {
                         is PlaylistPlaybackInfo -> {
                             loadPlayListItem(detailsInfo)
@@ -697,11 +809,9 @@ class HomeActivity :
         if(info is ChannelInfo) {
             if (info.isLive) {
                 val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
-                if (fragment !is ChannelFragment) {
+                if (fragment !is ChannelFragmentNew) {
                     loadFragmentById(
-                        R.id.details_viewer, ChannelFragment.createInstance(
-                            getString(R.string.menu_channel_text), showSelected = true
-                        )
+                        R.id.details_viewer, ChannelFragmentNew()
                     )
                 }
             } else {
@@ -714,9 +824,7 @@ class HomeActivity :
             val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
             if (fragment !is MyChannelPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) {
                 loadFragmentById(
-                    R.id.details_viewer, MyChannelPlaylistVideosFragment.newInstance(
-                        info
-                    )
+                    R.id.details_viewer, MyChannelPlaylistVideosFragment.newInstance(info)
                 )
             } else {
                 fragment.setCurrentChannel(info.currentItem)
@@ -734,8 +842,8 @@ class HomeActivity :
                 || fragment.getSeriesId() != info.seriesId) {
                 loadFragmentById(
                     R.id.details_viewer, EpisodeListFragment.newInstance(
-                        info
-                    )
+                    info
+                )
                 )
             } else {
                 fragment.setCurrentChannel(info.currentItem)
@@ -788,15 +896,42 @@ class HomeActivity :
         val sideNav = binding.sideNavigation.menu.findItem(R.id.menu_change_theme)
         sideNav?.let { themeMenu ->
             val isDarkEnabled = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
-
-            themeMenu.title = if(isDarkEnabled) "Light Mode" else "Dark Mode"
-
-            if(themeMenu.actionView is SwitchMaterial) {
-                (themeMenu.actionView as SwitchMaterial).let {
-                    it.isChecked = isDarkEnabled
-                    it.setOnCheckedChangeListener { _, isChecked ->
-                        themeMenu.title = if(isChecked) "Light Mode" else "Dark Mode"
-                        changeAppTheme(isChecked)
+            if (mPref.appThemeMode == 0) {
+                mPref.appThemeMode = if (isDarkEnabled) Configuration.UI_MODE_NIGHT_YES else Configuration.UI_MODE_NIGHT_NO 
+            }
+            val parser: XmlPullParser = resources.getXml(R.xml.custom_switch)
+            var switch: View? = null
+            try {
+                parser.next()
+                parser.nextTag()
+                val attr: AttributeSet = Xml.asAttributeSet(parser)
+                switch = SwitchButton(this, attr)
+            }
+            catch (e: java.lang.Exception) {
+                e.printStackTrace()
+                switch = SwitchMaterial(this)
+            }
+            finally {
+                themeMenu.actionView = switch
+                when(themeMenu.actionView){
+                    is SwitchButton -> {
+                        (themeMenu.actionView as SwitchButton).let {
+                            val param = LinearLayout.LayoutParams(Utils.dpToPx(36), Utils.dpToPx(22))
+                            param.topMargin = 30
+                            it.layoutParams = param
+                            it.isChecked = isDarkEnabled
+                            it.setOnCheckedChangeListener { _, isChecked ->
+                                changeAppTheme(isChecked)
+                            }
+                        }
+                    }
+                    is SwitchMaterial -> {
+                        (themeMenu.actionView as SwitchMaterial).let {
+                            it.isChecked = isDarkEnabled
+                            it.setOnCheckedChangeListener { _, isChecked ->
+                                changeAppTheme(isChecked)
+                            }
+                        }
                     }
                 }
             }
@@ -838,6 +973,7 @@ class HomeActivity :
     }
 
     override fun onViewMinimize() {
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
 
@@ -845,11 +981,18 @@ class HomeActivity :
         if(playlistManager.getCurrentChannel()?.isLive == true &&
             resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        } else {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
     }
 
     override fun onControllerInVisible() {
-        if(bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
+        if(bottomSheetBehavior.state == BottomSheetBehavior.STATE_DRAGGING ||
+            bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED
+                ) {
+
+        }
+        else if(bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
     }
@@ -861,6 +1004,7 @@ class HomeActivity :
         else{
             ActivityInfo.SCREEN_ORIENTATION_LOCKED
         }
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
     override fun onRotationLock(isAutoRotationEnabled: Boolean) {
@@ -876,11 +1020,12 @@ class HomeActivity :
     override fun onViewDestroy() {
         allChannelViewModel.selectedChannel.postValue(null)
         clearChannel()
-        HeartBeatManager.triggerEventViewingContentStop()
+        heartBeatManager.triggerEventViewingContentStop()
         binding.draggableView.animation = AnimationUtils.loadAnimation(
             this,
             android.R.anim.fade_out
         )
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         binding.draggableView.visibility = View.GONE
         binding.draggableView.resetImmediately()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -892,6 +1037,7 @@ class HomeActivity :
             .setCancelable(false)
             .setPositiveButton("Yes") { _, _ ->
                 mPref.clear()
+                UploadService.stopAllUploads()
                 launchActivity<SplashScreenActivity>()
                 finish()
             }
@@ -912,13 +1058,14 @@ class HomeActivity :
         return true
     }
 
+    override fun isVideoPortrait() = binding.playerView.isVideoPortrait
+
     override fun onFullScreenButtonPressed(): Boolean {
         super.onFullScreenButtonPressed()
-        if(!binding.playerView.isAutoRotationEnabled)
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED;
-        if(binding.playerView.isVideoPortrait) {
-            updateFullScreenState()
+        if(!binding.playerView.isAutoRotationEnabled) {
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED
         }
+        updateFullScreenState()
         return true
     }
 
@@ -928,9 +1075,13 @@ class HomeActivity :
             drawerHelper.toggle.isDrawerIndicatorEnabled = true
         }
         else if (supportFragmentManager.backStackEntryCount == 1) { //home
-            if (searchView != null && !searchView?.isIconified!!) {
-                searchView?.onActionViewCollapsed()
-            }
+            closeSearchBarIfOpen()
+        }
+    }
+
+    fun closeSearchBarIfOpen() {
+        if(searchView?.isIconified == false) {
+            searchView?.onActionViewCollapsed()
         }
     }
 
@@ -939,8 +1090,18 @@ class HomeActivity :
             binding.drawerLayout.closeDrawer(GravityCompat.END)
         } else if (resources.configuration.orientation != ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        } else if(binding.playerView.isVideoPortrait && binding.playerView.isFullScreenPortrait()) {
+            binding.playerView.isFullScreen = false
+            updateFullScreenState()
         } else if (binding.draggableView.isMaximized() && binding.draggableView.visibility == View.VISIBLE) {
-            minimizePlayer()
+            if(mPref.isEnableFloatingWindow) {
+                minimizePlayer()
+            }
+            else {
+                destroyPlayer()
+            }
+        } else if(searchView?.isIconified == false) {
+            closeSearchBarIfOpen()
         }
 //        else if (supportFragmentManager.findFragmentById(R.id.content_viewer) is LandingPageFragment) {
 //            val landingPageFragment =
@@ -955,6 +1116,11 @@ class HomeActivity :
 
     fun minimizePlayer() {
         binding.draggableView.minimize()
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+    }
+
+    fun destroyPlayer() {
+        binding.draggableView.destroyView()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
 
@@ -1086,9 +1252,22 @@ class HomeActivity :
         return false
     }
 
+    override fun onMediaItemChanged() {
+        super.onMediaItemChanged()
+        maximizePlayer()
+        onViewMaximize()
+        if(binding.playerView.isVideoPortrait && resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            requestedOrientation = Configuration.ORIENTATION_PORTRAIT
+        }
+        updateFullScreenState()
+    }
+
     private fun observeUpload2() {
         add_upload_info_button.setOnClickListener {
-            navController.navigate(R.id.myChannelHomeFragment)
+            viewModel.myChannelNavLiveData.value = MyChannelNavParams(mPref.customerId)
+            /*if(navController.currentDestination?.id != R.id.myChannelHomeFragment) {
+                navController.navigate(R.id.myChannelHomeFragment)
+            }*/
         }
 
         close_button.setOnClickListener {
@@ -1118,6 +1297,7 @@ class HomeActivity :
                             upload_size_text.isInvisible = true
                             mini_upload_progress_text.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_upload_done, 0, 0, 0)
                             mini_upload_progress_text.text = "Upload complete"
+                            cacheManager.clearCacheByUrl(GET_MY_CHANNEL_VIDEOS_URL)
                         }
                         UploadStatus.ADDED.value,
                         UploadStatus.STARTED.value -> {
@@ -1132,6 +1312,22 @@ class HomeActivity :
                 } else {
                     home_mini_progress_container.isVisible = false
                 }
+            }
+        }
+    }
+    
+    private fun observeMyChannelNavigation(){
+        observe(viewModel.myChannelNavLiveData) {
+            if (navController.currentDestination?.id != R.id.myChannelHomeFragment || channelOwnerId != it.channelOwnerId) {
+                channelOwnerId = it.channelOwnerId
+                val isOwner = mPref.customerId == channelOwnerId
+                navController.navigate(R.id.myChannelHomeFragment, Bundle().apply {
+                    putString(MyChannelHomeFragment.PAGE_TITLE, it.pageTitle)
+                    putBoolean(MyChannelHomeFragment.IS_OWNER, isOwner)
+                    putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, it.channelOwnerId)
+                })
+            } else{
+                minimizePlayer()
             }
         }
     }

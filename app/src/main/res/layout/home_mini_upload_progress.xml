@@ -59,9 +59,12 @@
 
     <ImageView
         android:id="@+id/close_button"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginEnd="8dp"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="8dp"
+        android:scaleType="fitCenter"
         app:tint="@android:color/white"
         android:background="?selectableItemBackgroundBorderless"
         app:layout_constraintBottom_toBottomOf="@+id/add_upload_info_button"

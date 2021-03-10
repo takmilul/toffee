@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.banglalink.toffee.ui.widget.NestedCoordinatorLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,6 +7,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/generalCategoryAppBar"
+        app:layout_behavior="com.banglalink.toffee.ui.widget.AppBarLayoutBehavior"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         
@@ -27,6 +29,7 @@
     </com.google.android.material.appbar.AppBarLayout>
     
     <com.banglalink.toffee.ui.widget.SmartNestedScrollView
+        android:id="@+id/generalCategoryNestedScroller"
         android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
@@ -39,4 +42,4 @@
             android:layout_height="match_parent" />
         
     </com.banglalink.toffee.ui.widget.SmartNestedScrollView>
-</com.banglalink.toffee.ui.widget.NestedCoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

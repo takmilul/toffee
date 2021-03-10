@@ -5,19 +5,23 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.string
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.databinding.FragmentDramaSeriesContentBinding
 import com.banglalink.toffee.enums.FilterContentType.*
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.SeriesPlaybackInfo
-import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
@@ -26,7 +30,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<ChannelInfo> {
 
-    private var category: UgcCategory? = null
+    private var category: Category? = null
     private var selectedFilter: Int = FEED.value
     private val viewModel by viewModels<DramaSeriesViewModel>()
     private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
@@ -40,7 +44,8 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        category = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM) as UgcCategory?
+        category = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM) as Category?
+        setupEmptyView()
         mAdapter = DramaSeriesListAdapter(this)
 
         binding.latestVideosList.adapter = mAdapter
@@ -71,6 +76,38 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
                 }
                 true
             }
+        }
+
+        mAdapter.addLoadStateListener {
+            if(it.source.refresh is LoadState.Loading) {
+                binding.progressBar.visibility = View.VISIBLE
+            } else {
+                binding.progressBar.visibility = View.GONE
+            }
+
+            mAdapter.apply {
+                val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached
+                binding.emptyView.isGone = !showEmpty
+                binding.latestVideosList.isVisible = !showEmpty
+            }
+        }
+    }
+
+    private fun getEmptyViewInfo(): Pair<Int, String?> {
+        return Pair(0, "No item found")
+    }
+
+    private fun setupEmptyView() {
+        val info = getEmptyViewInfo()
+        if(info.first > 0) {
+            binding.emptyViewIcon.setImageResource(info.first)
+        }
+        else {
+            binding.emptyViewIcon.visibility = View.GONE
+        }
+
+        info.second?.let {
+            binding.emptyViewLabel.text = it
         }
     }
 
@@ -117,15 +154,19 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
     
     override fun onOpenMenu(view: View, item: ChannelInfo) {
         super.onOptionClicked(view, item)
-        onOptionClicked(view, item)
+        //onOptionClicked(view, item)
     }
 
     override fun onProviderIconClicked(item: ChannelInfo) {
         super.onProviderIconClicked(item)
-        landingPageViewModel.navigateToMyChannel(this, item.id.toInt(), item.channel_owner_id, item.isSubscribed)
+        homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
     }
 
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
         
+    }
+
+    override fun hideShareMenuItem(hide: Boolean): Boolean {
+        return true
     }
 }

@@ -37,20 +37,20 @@ public class VelBoxFieldTextWatcher implements View.OnFocusChangeListener {
     public VelBoxFieldTextWatcher(@NonNull EditText editText, FieldType type) {
         if (type == FieldType.NAME_FIELD) {
             this.validLength = 4;
-            this.leftDrawable = R.mipmap.ic_user;
-            this.leftDrawableSelected = R.mipmap.ic_user;
+            this.leftDrawable = R.drawable.ic_user;
+            this.leftDrawableSelected = R.drawable.ic_user;
             this.rightDrawable = R.mipmap.ic_field_tick;
             this.editText = editText;
             this.fieldType = type;
         } else if (type == FieldType.EMAIL_FIELD) {
-            this.leftDrawable = R.mipmap.ic_email;
-            this.leftDrawableSelected = R.mipmap.ic_email;
+            this.leftDrawable = R.drawable.ic_email;
+            this.leftDrawableSelected = R.drawable.ic_email;
             this.rightDrawable = R.mipmap.ic_field_tick;
             this.editText = editText;
             this.fieldType = type;
         } else if (type == FieldType.ADDRESS_FIELD) {
-            this.leftDrawable = R.mipmap.ic_location;
-            this.leftDrawableSelected = R.mipmap.ic_location;
+            this.leftDrawable = R.drawable.ic_location;
+            this.leftDrawableSelected = R.drawable.ic_location;
             this.rightDrawable = R.mipmap.ic_field_tick;
             this.editText = editText;
             this.fieldType = type;
@@ -105,7 +105,7 @@ public class VelBoxFieldTextWatcher implements View.OnFocusChangeListener {
 
     private boolean isValid() {
         if (fieldType == FieldType.NAME_FIELD) {
-            return editText.getText().length() > validLength ? true : false;
+            return editText.getText().length() > validLength;
         } else return true;
     }
 }

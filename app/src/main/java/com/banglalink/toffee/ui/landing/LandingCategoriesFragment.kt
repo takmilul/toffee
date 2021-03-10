@@ -10,10 +10,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
-import com.banglalink.toffee.model.UgcCategory
+import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.BaseFragment
-import com.banglalink.toffee.ui.home.CategoriesListAdapter
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,27 +37,39 @@ class LandingCategoriesFragment: BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mAdapter = CategoriesListAdapter(object : BaseListItemCallback<UgcCategory>{
-            override fun onItemClicked(item: UgcCategory) {
+        mAdapter = CategoriesListAdapter(object : BaseListItemCallback<Category>{
+            override fun onItemClicked(item: Category) {
                 val args = Bundle().apply {
                     putParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM, item)
+                    putString(CategoryDetailsFragment.ARG_TITLE, item.categoryName)
                 }
                 when(item.id.toInt()) {
                     1 -> {
-                        parentFragment?.findNavController()?.navigate(R.id.action_landingCategoriesFragment_to_movieFragment, args)
+                        if (findNavController().currentDestination?.id != R.id.movieFragment && findNavController().currentDestination?.id==
+                                R.id.menu_feed) {
+                            findNavController().navigate(
+                                R.id.action_landingCategoriesFragment_to_movieFragment,
+                                args
+                            )
+                        }
                     }
                     9 -> {
-                        parentFragment?.findNavController()?.navigate(R.id.action_landingCategoriesFragment_to_dramaSeriesFragment, args)
+                        if (findNavController().currentDestination?.id != R.id.dramaSeriesFragment && findNavController().currentDestination?.id==
+                                R.id.menu_feed)
+                        {
+                            findNavController().navigate(R.id.action_landingCategoriesFragment_to_dramaSeriesFragment, args)
+                        }
                     }
                     else -> {
-                        parentFragment?.findNavController()?.navigate(R.id.action_landingCategoriesFragment_to_categoryDetailsFragment, args)
+                        if (findNavController().currentDestination?.id != R.id.categoryDetailsFragment && findNavController().currentDestination?.id==
+                                R.id.menu_feed){
+                            findNavController().navigate(R.id.action_landingCategoriesFragment_to_categoryDetailsFragment, args)}
                     }
                 }
             }
         })
 
         viewAllButton.setOnClickListener {
-//            parentFragment?.findNavController()?.navigate(R.id.action_landingPageFragment_to_allCategoriesFragment)
             homeViewModel.switchBottomTab.postValue(3)
         }
 

@@ -2,16 +2,17 @@
 <resources>
     <color name="screen_bg">#000000</color>
     <color name="screen_bg_white">#000000</color>
-    <color name="main_text_color">#FFFFFF</color>
+    <color name="main_text_color">#829AB8</color>
     <color name="second_text_color">#FFFFFF</color>
     <color name="switch_color">#91B9EA</color>
     <color name="input_bg_color">#29466B</color>
-    <color name="dialog_input_bg_color">#282828</color>
-    <color name="fab_icon_bg">#424242</color>
+    <color name="dialog_input_bg_color">#29466B</color>
+    <color name="fab_icon_bg">#111F31</color>
     <color name="title_color">#FFFFFF</color>
     <color name="disabled_color">#525252</color>
     <color name="disabled_text_color">#757575</color>
     <color name="bottom_navbar_disabled_color">#829AB8</color>
+    <color name="colorButtonActivated">#57112D</color>
     <color name="tool_bar_color">#111F31</color>
     <color name="tab_background_color">#111F31</color>
     <color name="window_background">#000000</color>
@@ -28,7 +29,18 @@
     <color name="durationBgColor">#88000000</color>
     <color name="placeholderBgColor">#E1E1E1</color>
     <color name="statusTextBgColor">#525252</color>
-    <color name="colorSettingsDivider">#212121</color>
+    <color name="colorSettingsDivider">#29466B</color>
     <color name="searchBarBgColor">#29466B</color>
     <color name="cardBgColor">#111F31</color>
+    <color name="cardTitleColor">#BED6F3</color>
+    <color name="categoryNameColor">#BED6F3</color>
+    <color name="tvChannelTitleColor">#BED6F3</color>
+    <color name="ratingButtonActiveColor">#29466B</color>
+    <color name="round_bg_tv_color">#616c72</color>
+    <color name="hashtag_chip_color">#111F31</color>
+    <color name="spinnerSeasonColor">#29466B</color>
+    <color name="optionMenuColor">#29466B</color>
+    <color name="upload_number_color">#FFFFFF</color>
+    <color name="upload_button_color">#29466B</color>
+    <color name="unseenCardColor">#29466B</color>
 </resources>

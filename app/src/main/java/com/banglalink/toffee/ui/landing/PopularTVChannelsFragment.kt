@@ -5,37 +5,29 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
-import com.banglalink.toffee.extension.showToast
-import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
+import com.banglalink.toffee.databinding.FragmentLandingTvChannelsBinding
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.HomeBaseFragment
-import com.banglalink.toffee.ui.home.ChannelAdapter
 import com.banglalink.toffee.ui.home.LandingPageViewModel
-import com.banglalink.toffee.util.unsafeLazy
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_landing_tv_channels.*
 import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
-class PopularTVChannelsFragment: HomeBaseFragment() {
+class PopularTVChannelsFragment : HomeBaseFragment() {
     private lateinit var mAdapter: ChannelAdapter
-
+    private lateinit var binding: FragmentLandingTvChannelsBinding
     val viewModel by activityViewModels<LandingPageViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_landing_tv_channels, container, false)
+        savedInstanceState: Bundle?,
+    ): View {
+        binding = FragmentLandingTvChannelsBinding.inflate(layoutInflater)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -47,12 +39,12 @@ class PopularTVChannelsFragment: HomeBaseFragment() {
             }
         })
 
-        viewAllButton.setOnClickListener {
-            homeViewModel.switchBottomTab.postValue(1)
+        with(binding.channelList) {
+            adapter = mAdapter
         }
 
-        with(channel_list) {
-            adapter = mAdapter
+        viewAllButton.setOnClickListener {
+            homeViewModel.switchBottomTab.postValue(1)
         }
 
         observeList()

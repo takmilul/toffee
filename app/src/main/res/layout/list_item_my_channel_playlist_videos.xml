@@ -8,9 +8,6 @@
     <data>
         <import type="android.view.View"/>
         <variable
-            name="isOwner"
-            type="Integer" />
-        <variable
             name="data"
             type="com.banglalink.toffee.model.ChannelInfo" />
         <variable
@@ -18,7 +15,7 @@
             type="java.lang.Integer" />
         <variable
             name="callback"
-            type="com.banglalink.toffee.ui.mychannel.MyChannelPlaylistItemListener" />
+            type="com.banglalink.toffee.listeners.MyChannelPlaylistItemListener" />
         <variable
             name="selectedItem"
             type="com.banglalink.toffee.model.ChannelInfo" />
@@ -36,8 +33,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
             android:adjustViewBounds="true"
             android:minHeight="180dp"
             android:scaleType="centerCrop"
@@ -65,6 +60,7 @@
             android:layout_height="4dp"
             android:max="1000"
             bindViewProgress="@{data}"
+            android:progressBackgroundTint="#000000"
             app:layout_constraintBottom_toBottomOf="@+id/poster"
             app:layout_constraintEnd_toEndOf="@+id/duration"
             app:layout_constraintStart_toStartOf="@id/poster" />
@@ -85,12 +81,15 @@
     
         <TextView
             android:id="@+id/title"
+            style="@style/programNameTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:minLines="3"
-            android:maxLines="3"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="4dp"
+            android:ellipsize="end"
+            android:lines="2"
+            android:maxLines="2"
+            tools:text="Program Name"
             android:text="@{data.program_name}"
             app:layout_constraintVertical_chainStyle="packed"
             app:layout_constraintBottom_toTopOf="@id/viewCount"
@@ -103,14 +102,11 @@
             android:id="@+id/viewCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginBottom="8dp"
-            android:fontFamily="@font/roboto_regular"
-            android:textStyle="bold"
-            android:textColor="@color/second_text_color"
+            android:layout_marginTop="7dp"
+            android:fontFamily="@font/roboto_medium"
+            android:textColor="@color/fixed_second_text_color"
             android:textSize="@dimen/default_text_size"
-            android:text="@{data.formatted_view_count() + ` Views`}"
+            android:text="@{data.formattedViewCount() + ` Views`}"
             app:layout_constraintEnd_toStartOf="@+id/uploadTime"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="@id/title"
@@ -123,7 +119,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto_regular"
             android:text="@{` \u2022 ` + data.formattedCreateTime()}"
-            android:textColor="@color/second_text_color"
+            android:textColor="@color/fixed_second_text_color"
             android:textSize="@dimen/default_text_size"
             tools:text=" &#8226; 14h"
             app:layout_constraintBottom_toBottomOf="@+id/viewCount"
@@ -133,11 +129,9 @@
 
         <ImageView
             android:id="@+id/options"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="12dp"
-            android:padding="4dp"
-            android:visibility="@{isOwner == 1 ? View.VISIBLE : View.GONE}"
+            style="@style/OptionMenuStyle"
+            android:paddingStart="12dp"
+            android:paddingEnd="16dp"
             android:onClick="@{(v) -> callback.onOpenMenu(v, data)}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/title"

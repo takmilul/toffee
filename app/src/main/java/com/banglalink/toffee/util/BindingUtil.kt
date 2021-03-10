@@ -22,9 +22,10 @@ import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.enums.ActivityType
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.enums.Reaction.*
+import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Package
-import com.banglalink.toffee.model.UgcCategory
 import com.banglalink.toffee.ui.widget.MultiTextButton
 
 const val crossFadeDurationInMills = 500
@@ -72,9 +73,12 @@ fun loadImageFromResource(view: ImageView, image: Int) {
 }
 
 @BindingAdapter("loadCategoryBackground")
-fun bindCategoryBackground(view: ImageView, category: UgcCategory) {
+fun bindCategoryBackground(view: ImageView, category: Category) {
     view.load(category.thumbnailUrl) {
         crossfade(false)
+        fallback(R.drawable.placeholder)
+        placeholder(R.drawable.placeholder)
+        error(R.drawable.placeholder)
 //            memoryCachePolicy(CachePolicy.ENABLED)
         diskCachePolicy(CachePolicy.ENABLED)
         size(624, 320)
@@ -82,7 +86,7 @@ fun bindCategoryBackground(view: ImageView, category: UgcCategory) {
 }
 
 @BindingAdapter("loadCategoryImage")
-fun bindCategoryImage(view: ImageView, category: UgcCategory) {
+fun bindCategoryImage(view: ImageView, category: Category) {
     if (category.categoryIcon.isNullOrBlank()) {
         view.setImageResource(R.drawable.ic_cat_music)
     }
@@ -159,7 +163,7 @@ fun bindSubscriptionStatus(view: MultiTextButton, isSubscribed: Boolean, channel
 
 @BindingAdapter("bindViewCount")
 fun bindViewCount(view: TextView, channelInfo: ChannelInfo) {
-    view.text = channelInfo.formatted_view_count()
+    view.text = channelInfo.formattedViewCount()
 }
 
 @BindingAdapter("packageExpiryText")
@@ -245,7 +249,10 @@ fun bindPremiumIcon(imageView: ImageView, channelInfo: ChannelInfo) {
 @BindingAdapter("bindActivityType")
 fun bindActivityType(view: TextView, item: UserActivities) {
     view.text = when (item.activityType) {
-        ActivityType.REACT.value -> "Reacted"
+        ActivityType.REACTED.value -> "Reacted"
+        ActivityType.REACTION_CHANGED.value -> "Reaction Changed"
+        ActivityType.REACTION_REMOVED.value -> "Reaction Removed"
+        ActivityType.WATCHED.value -> "Watched"
         ActivityType.PLAYLIST.value -> {
             when(item.activitySubType) {
                 Reaction.Add.value -> "Added to PlayList"
@@ -277,7 +284,7 @@ fun loadReactionEmo(view: View, reaction: Int) {
         }
         Love.value -> {
             reactionTitle = Love.name
-            R.drawable.ic_reaction_love_filled
+            R.drawable.ic_reaction_love_no_shadow
         }
         HaHa.value -> {
             reactionTitle = HaHa.name
@@ -297,16 +304,20 @@ fun loadReactionEmo(view: View, reaction: Int) {
         }
         Add.value -> R.drawable.ic_playlist
         Delete.value -> R.drawable.ic_playlist
+        Watched.value -> R.drawable.ic_view
         else -> R.drawable.ic_reaction_love_empty
     }
     when (view) {
-        is ImageView -> view.setImageResource(reactionIcon)
+        is ImageView -> {
+            view.setImageResource(reactionIcon)
+            if (reaction == Add.value || reaction == Delete.value) {
+                view.setColorFilter(Color.parseColor("#829AB8"))
+            }
+        }
         is TextView -> {
             view.text = reactionTitle
+            if (reaction == Love.value) view.setTextColor(Color.parseColor("#ff3988")) else view.setTextColor(Color.parseColor("#829AB8"))
             view.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
-            if (reaction == Love.value){
-                view.setTextColor(Color.RED)
-            }
         }
     }
 }
@@ -322,23 +333,23 @@ fun bindEmoCount(view: TextView, item: ChannelInfo) {
 
 @BindingAdapter(value = ["emoIcon", "iconPosition"], requireAll = true)
 fun bindEmoIcon(view: ImageView, item: ChannelInfo, iconPosition: Int){
-    val reactionCountList = listOf(item.reaction?.like, item.reaction?.love, item.reaction?.haha, item.reaction?.wow, item.reaction?.sad, item.reaction?.angry).sortedByDescending { it }
-    var icon = when(reactionCountList[iconPosition - 1]){
-        item.reaction?.like -> R.drawable.ic_reaction_like_no_shadow
-        item.reaction?.love -> R.drawable.ic_reaction_love_no_shadow
-        item.reaction?.haha -> R.drawable.ic_reaction_haha_no_shadow
-        item.reaction?.wow -> R.drawable.ic_reaction_wow_no_shadow
-        item.reaction?.sad -> R.drawable.ic_reaction_sad_no_shadow
-        item.reaction?.angry -> R.drawable.ic_reaction_angry_no_shadow
+    val reactionCountList = listOf(
+        Like to item.reaction?.like,
+        Love to item.reaction?.love,
+        Wow to item.reaction?.wow,
+        HaHa to item.reaction?.haha,
+        Sad to item.reaction?.sad,
+        Angry to item.reaction?.angry
+    ).sortedByDescending { (_, v) -> v }
+
+    val icon = when(reactionCountList[iconPosition - 1].first){
+        Like -> R.drawable.ic_reaction_like_no_shadow
+        Love -> R.drawable.ic_reaction_love_no_shadow
+        Wow -> R.drawable.ic_reaction_wow_no_shadow
+        HaHa -> R.drawable.ic_reaction_haha_no_shadow
+        Sad -> R.drawable.ic_reaction_sad_no_shadow
+        Angry -> R.drawable.ic_reaction_angry_no_shadow
         else -> R.drawable.ic_reactions_emo
-    }
-    if (reactionCountList.first() == null || reactionCountList.first() == 0L){
-        icon = when(iconPosition){
-            1 -> R.drawable.ic_reaction_like_no_shadow
-            2 -> R.drawable.ic_reaction_love_no_shadow
-            3 -> R.drawable.ic_reaction_haha_no_shadow
-            else -> R.drawable.ic_reactions_emo
-        }
     }
     view.setImageResource(icon)
 }
@@ -346,13 +357,16 @@ fun bindEmoIcon(view: ImageView, item: ChannelInfo, iconPosition: Int){
 @BindingAdapter("loadMyReactionBg")
 fun loadMyReactionBg(view: ImageView, isSetBg: Boolean){
     if (isSetBg){
-        view.setBackgroundResource(R.drawable.teal_round_bg)
+        view.setBackgroundResource(R.drawable.reaction_round_bg)
     }
 }
 
 @BindingAdapter("loadUnseenCardBgColor")
 fun loadUnseenBgColor(view: CardView, isSeen: Boolean){
-    if (!isSeen){
-        view.setCardBackgroundColor(ContextCompat.getColor(view.context, R.color.unseenCardColor))
-    }
+    view.setCardBackgroundColor(ContextCompat.getColor(view.context, if(isSeen) R.color.cardBgColor else R.color.unseenCardColor))
+}
+
+@BindingAdapter("app:onSafeClick")
+fun  onSafeClick(view: View, listener: View.OnClickListener){
+    view.safeClick(listener)
 }

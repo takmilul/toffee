@@ -8,19 +8,23 @@ import android.content.Intent
 import android.content.res.AssetManager
 import android.graphics.Color
 import android.os.Bundle
+import android.os.SystemClock
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
+import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.webkit.WebView
+import androidx.activity.viewModels
 import androidx.core.app.ShareCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import com.banglalink.toffee.R
+import com.banglalink.toffee.R.color
 import com.banglalink.toffee.databinding.ActivityReferAFriendLayoutBinding
 import com.banglalink.toffee.extension.action
 import com.banglalink.toffee.extension.observe
@@ -34,9 +38,7 @@ import com.banglalink.toffee.util.unsafeLazy
 class ReferAFriendActivity : BaseAppCompatActivity() {
 
     private lateinit var binding: ActivityReferAFriendLayoutBinding
-    private val viewModel by unsafeLazy {
-        ViewModelProviders.of(this).get(ReferAFriendViewModel::class.java)
-    }
+    private val viewModel by viewModels<ReferAFriendViewModel>()
     private val progressDialog by unsafeLazy {
         VelBoxProgressDialog(this)
     }
@@ -86,10 +88,17 @@ class ReferAFriendActivity : BaseAppCompatActivity() {
 
         val ss = SpannableString("$msg more")
         val clickableSpan = object : ClickableSpan() {
+            
+            private var lastClickTime: Long = 0
+
             override fun onClick(textView: View) {
-                binding.data?.let {
+                if (SystemClock.elapsedRealtime() - lastClickTime < 1000L) {
+                    return
+                }
+                else binding.data?.let {
                     showReadMoreDialog(it.readMoreMessage)
                 }
+                lastClickTime = SystemClock.elapsedRealtime()
             }
 
             override fun updateDrawState(ds: TextPaint) {
@@ -99,6 +108,7 @@ class ReferAFriendActivity : BaseAppCompatActivity() {
             }
         }
         ss.setSpan(clickableSpan, msg.length + 1, ss.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        ss.setSpan(ForegroundColorSpan(ContextCompat.getColor(this, color.fixed_second_text_color)), 0, msg.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         binding.policyText.text = ss
         binding.policyText.movementMethod = LinkMovementMethod.getInstance()
     }
@@ -144,6 +154,9 @@ class ReferAFriendActivity : BaseAppCompatActivity() {
         val message = alertView.findViewById<WebView>(R.id.webview)
 
         message.loadData(msg, "text/html", "UTF-8")
+        message.computeScroll()
+        message.isVerticalScrollBarEnabled = true
+        message.isHorizontalScrollBarEnabled = true
         alertDialog.show()
     }
 
@@ -151,5 +164,4 @@ class ReferAFriendActivity : BaseAppCompatActivity() {
     override fun getAssets(): AssetManager {
         return resources.assets
     }
-
 }

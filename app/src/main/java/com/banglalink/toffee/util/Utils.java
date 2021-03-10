@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -191,9 +192,10 @@ public class Utils {
 
     public static void setFullScreen(AppCompatActivity activity, boolean visible) {
         int uiOptions = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                | View.SYSTEM_UI_FLAG_IMMERSIVE
                 // Set the content to appear under the system bars so that the
                 // content doesn't resize when the system bars hide and show.
-//                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 // Hide the nav bar and status bar
@@ -201,10 +203,18 @@ public class Utils {
                 | View.SYSTEM_UI_FLAG_FULLSCREEN;
 
         if (!visible) {
-//            activity.getSupportActionBar().show();
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                WindowManager.LayoutParams windowLayoutParams = activity.getWindow().getAttributes();
+                windowLayoutParams.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT;
+                activity.getWindow().setAttributes(windowLayoutParams);
+            }
             activity.getWindow().getDecorView().setSystemUiVisibility(0);
         } else {
-//            activity.getSupportActionBar().hide();
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                WindowManager.LayoutParams windowLayoutParams = activity.getWindow().getAttributes();
+                windowLayoutParams.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+                activity.getWindow().setAttributes(windowLayoutParams);
+            }
             activity.getWindow().getDecorView().setSystemUiVisibility(uiOptions);
         }
     }
@@ -220,8 +230,7 @@ public class Utils {
             retValue = "00:00";
             return retValue;
         }
-
-        if (duration.startsWith("00:")) {
+        if (duration.length() > 5 &&duration.startsWith("00:")) {
             retValue = duration.substring(3);
         } else {
             retValue = duration;

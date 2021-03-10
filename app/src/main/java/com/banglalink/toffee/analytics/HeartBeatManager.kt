@@ -6,18 +6,19 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.OnLifecycleEvent
-import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.usecase.SendHeartBeat
 import com.banglalink.toffee.util.getError
-import com.banglalink.toffee.util.unsafeLazy
 import kotlinx.coroutines.*
+import javax.inject.Inject
+import javax.inject.Singleton
 
-object HeartBeatManager : LifecycleObserver, ConnectivityManager.NetworkCallback() {
-
-
-    private const val TIMER_PERIOD = 30000// 30 sec
+@Singleton
+class HeartBeatManager @Inject constructor(
+    private val sendHeartBeat: SendHeartBeat
+) : LifecycleObserver, ConnectivityManager.NetworkCallback() {
+    
     private var INITIAL_DELAY = 0L
 
     private val _heartBeatEventLiveData = MutableLiveData<Boolean>()
@@ -30,25 +31,25 @@ object HeartBeatManager : LifecycleObserver, ConnectivityManager.NetworkCallback
 
     private var contentId = 0;
     private var contentType = ""
-
     private lateinit var  coroutineScope :CoroutineScope
     private val coroutineScope2 = CoroutineScope(coroutineContext2)
-    private val sendHeartBeat by unsafeLazy {
-        SendHeartBeat(Preference.getInstance(),RetrofitApiClient.toffeeApi)
+    
+    companion object {
+        private const val TIMER_PERIOD = 30000// 30 sec
     }
-
+    
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onAppBackGround() {
         isAppForeGround = false
         coroutineScope.cancel()
     }
-
-
+    
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onAppForeGround() {
         isAppForeGround = true
         coroutineScope = CoroutineScope(coroutineContext)
         coroutineScope.launch {
+            sendHeartBeat(sendToPubSub = false)
             execute()
         }
     }
@@ -61,7 +62,6 @@ object HeartBeatManager : LifecycleObserver, ConnectivityManager.NetworkCallback
             delay(TIMER_PERIOD.toLong())
             if(isAppForeGround)
                 sendHeartBeat()
-
         }
     }
 
@@ -74,7 +74,6 @@ object HeartBeatManager : LifecycleObserver, ConnectivityManager.NetworkCallback
                 e.printStackTrace()
                 getError(e)
             }
-
         }
     }
 
@@ -96,5 +95,4 @@ object HeartBeatManager : LifecycleObserver, ConnectivityManager.NetworkCallback
             sendHeartBeat(isNetworkSwitch = true, sendToPubSub = false)
         }
     }
-
 }

@@ -1,6 +1,8 @@
 package com.banglalink.toffee.data.network.interceptor
 
 import android.util.Log
+import com.banglalink.toffee.exception.AuthEncodeDecodeException
+import com.banglalink.toffee.exception.AuthInterceptorException
 import com.banglalink.toffee.model.CLIENT_API_HEADER
 import com.banglalink.toffee.model.TOFFEE_HEADER
 import com.banglalink.toffee.util.EncryptionUtil
@@ -11,6 +13,8 @@ import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
 import okio.Buffer
 import java.io.IOException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import java.security.InvalidKeyException
 import java.security.NoSuchAlgorithmException
 import javax.crypto.BadPaddingException
@@ -38,7 +42,14 @@ class AuthInterceptor (private val iGetMethodTracker: IGetMethodTracker): Interc
         if(convertToGet){
             newRequest.addHeader(CLIENT_API_HEADER,string)
         }
-        val response = chain.proceed(newRequest.build())
+
+        val response = try {
+            chain.proceed(newRequest.build())
+        } catch (ex: IOException) {
+            throw ex
+        } catch (ex: Exception) {
+            throw AuthInterceptorException(ex.message, ex.cause)
+        }
         if(!response.isSuccessful){
             if(response.code == 403){
                 val msg = "Attention! Toffee is available only within Bangladesh territory. Please use a Bangladesh IP to access.";
@@ -61,16 +72,8 @@ class AuthInterceptor (private val iGetMethodTracker: IGetMethodTracker): Interc
             val body = jsonString.toResponseBody(contentType)
             return response.newBuilder().body(body).build()
 
-        } catch (e: IllegalBlockSizeException) {
-            e.printStackTrace()
-        } catch (e: InvalidKeyException) {
-            e.printStackTrace()
-        } catch (e: BadPaddingException) {
-            e.printStackTrace()
-        } catch (e: NoSuchAlgorithmException) {
-            e.printStackTrace()
-        } catch (e: NoSuchPaddingException) {
-            e.printStackTrace()
+        } catch (e: Exception) {
+            throw AuthEncodeDecodeException(e.message, e.cause)
         }
 
         return response

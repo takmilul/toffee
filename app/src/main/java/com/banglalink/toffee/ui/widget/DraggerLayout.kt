@@ -3,7 +3,6 @@ package com.banglalink.toffee.ui.widget
 import android.content.Context
 import android.graphics.Color
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
@@ -14,11 +13,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics.logException
+import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.util.Utils
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
+import javax.inject.Inject
 import kotlin.math.max
 import kotlin.math.min
 
+@AndroidEntryPoint
 class DraggerLayout @JvmOverloads constructor(context: Context?,
                     attrs: AttributeSet? = null,
                     defStyle: Int = 0
@@ -37,6 +40,8 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
     private var mLeft = 0
     private var isClamped = 0
     private val onPositionChangedListenerList: MutableList<OnPositionChangedListener> = ArrayList()
+    @Inject
+    lateinit var mPref: Preference
 
     init {
         initializeAttributes(attrs)
@@ -62,9 +67,10 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
     }
 
     fun minimize() {
-        smoothSlideTo(1f)
-        onPositionChangedListenerList.forEach {
-            it.onViewMinimize()
+        if(smoothSlideTo(1f)) {
+            onPositionChangedListenerList.forEach {
+                it.onViewMinimize()
+            }
         }
     }
 
@@ -75,9 +81,10 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
     }
 
     fun maximize() {
-        smoothSlideTo(0f)
-        onPositionChangedListenerList.forEach {
-            it.onViewMaximize()
+        if(smoothSlideTo(0f)) {
+            onPositionChangedListenerList.forEach {
+                it.onViewMaximize()
+            }
         }
     }
 
@@ -112,6 +119,8 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
     private var isScrollCaptured = false
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+        if(dragView.isFullScreenPortrait()) return false
+
         val bottomHit = isBottomHit(ev)
         when(ev.actionMasked) {
             MotionEvent.ACTION_DOWN-> {
@@ -127,7 +136,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
                 if(scrollDiff > mTouchSlop) {
                     scrollDir = 1
                 }
-                if(scrollDiff < mTouchSlop) {
+                if(scrollDiff < -mTouchSlop) {
                     scrollDir = -1
                 }
 //                Log.e("SCROLL", "ScrollDir ->> $scrollDir, ---->>> ${canScrollBottomPanel()}")
@@ -156,7 +165,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
 
         if(bottomHit) return false
 
-        if (viewDragHelper.shouldInterceptTouchEvent(ev) || isMinimize() && isViewHit(
+        if (mPref.isEnableFloatingWindow && viewDragHelper.shouldInterceptTouchEvent(ev) || isMinimize() && isViewHit(
                 dragView, ev.x
                     .toInt(), ev.y.toInt()
             )
@@ -173,8 +182,10 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
 
     var duration: Long = 0
     override fun onTouchEvent(ev: MotionEvent): Boolean {
+        if(dragView.isFullScreenPortrait()) return false
+        
         try {
-            if(isBottomHit(ev)) {
+            if(isBottomHit(ev) && (isMinimize() || isMaximized()) && !isHorizontalDragged()) {
 //                if(ev.actionMasked == MotionEvent.ACTION_UP) Log.e("SCROLL", "ACTION_UP2")
                 return dragView.handleTouchEvent(ev)
             }
@@ -238,7 +249,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        mVerticalDragRange = height - dragView.height
+        mVerticalDragRange = height - dragView.minBound
         mHorizontalDragRange = width - dragView.width
         //        super.onLayout(changed,l,t,r,b);
         dragView.layout(
@@ -259,6 +270,24 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
         if (viewDragHelper.continueSettling(true)) {
             ViewCompat.postInvalidateOnAnimation(this)
         }
+    }
+
+    fun destroyView() {
+        if (viewDragHelper.smoothSlideViewTo(
+                dragView,
+                0 - (right - paddingRight),
+                0
+            )
+        ) {
+            parent?.let {
+                if(it is View) ViewCompat.postInvalidateOnAnimation(it)
+            }
+        }
+        onPositionChangedListenerList.forEach {
+            it.onViewDestroy()
+        }
+        dragView.scaleX = getMaxScale()
+        dragView.scaleY = getMaxScale()
     }
 
     inner class DraggableViewCallback constructor(private val parent: View) :
@@ -311,7 +340,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
             mTop = top
             mLeft = left
             if (!isHorizontalDragged()) {
-                val bottomBound = parent.height - dragView.height - parent.paddingBottom
+                val bottomBound = parent.height - dragView.minBound //dragView.height - parent.paddingBottom
                 if (bottomBound != 0) {
                     val colorValue = 256 - top * 256 / bottomBound
                     parent.setBackgroundColor(
@@ -322,7 +351,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
                             colorValue
                         )
                     )
-                    val scale = getMaxScale() - (1 - getMinScale()) * (top * 100f / bottomBound) / 100.0f
+                    val scale = (top * (getMinScale() - getMaxScale())) / bottomBound + getMaxScale()
                     dragView.pivotX = (dragView.width - 38).toFloat()
                     dragView.pivotY = (dragView.height - bottomMargin).toFloat()
                     val padding = (20 - 20 * scale).toInt()
@@ -332,8 +361,22 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
                     } else {
                         dragView.setBackgroundColor(Color.BLACK)
                     }
+
+//                    val initX = 2 * dragView.minBound - capturedEnd
+                    if(dragView.isVideoPortrait) {
+                        val heightDiff2 =
+                            (scale - getMaxScale()) * (dragView.minBound - (capturedEnd
+                                ?: dragView.minBound)) / (getMinScale() - getMaxScale()) + (capturedEnd
+                                ?: dragView.minBound)//initX + scale * (capturedEnd - initX)
+                        if (heightDiff2 > 0) {
+                            dragView.setLayoutHeight(heightDiff2.toInt())
+                        }
+                    }
                     dragView.scaleX = scale
                     dragView.scaleY = scale
+                    if(scale == getMaxScale() || scale == getMinScale()) {
+                        onScaleToBoundary(scale)
+                    }
                 }
             }
             requestLayout()
@@ -361,6 +404,27 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
 
         override fun tryCaptureView(child: View, pointerId: Int): Boolean {
             return child == dragView
+        }
+
+        override fun onViewCaptured(capturedChild: View, activePointerId: Int) {
+            super.onViewCaptured(capturedChild, activePointerId)
+            capturedEnd = if(dragView.scaleX == 0.5f) {
+                dragView.maxBound
+            } else {
+                dragView.layoutParams.height
+            }
+        }
+    }
+
+    private var capturedEnd: Int? = null
+
+    fun onScaleToBoundary(bscale: Float) {
+        if(dragView.isVideoPortrait
+            && bscale == getMaxScale()
+            && dragView.layoutParams.height != dragView.maxBound
+        ) {
+//            dragView.setLayoutHeight(dragView.maxBound)
+            dragView.setHeightWithAnim(dragView.maxBound, 100)
         }
     }
 

@@ -9,13 +9,13 @@ import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentDramaSeriesBinding
 import com.banglalink.toffee.enums.PageType
-import com.banglalink.toffee.model.UgcCategory
+import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 
 class DramaSeriesFragment: BaseFragment() {
-    private lateinit var category: UgcCategory
+    private lateinit var category: Category
     private lateinit var binding: FragmentDramaSeriesBinding
     private val landingViewModel by activityViewModels<LandingPageViewModel>()
 

@@ -1,98 +1,170 @@
 package com.banglalink.toffee.ui.mychannel
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.content.ContextCompat
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import com.banglalink.toffee.R
-import com.banglalink.toffee.common.paging.BaseListFragment
+import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_VIDEOS_URL
+import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.data.database.dao.ReactionDao
+import com.banglalink.toffee.data.network.retrofit.CacheManager
+import com.banglalink.toffee.databinding.FragmentMyChannelVideosBinding
+import com.banglalink.toffee.enums.Reaction.Love
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.common.ContentReactionCallback
-import com.banglalink.toffee.ui.common.ReactionFragment
+import com.banglalink.toffee.model.Resource.Failure
+import com.banglalink.toffee.model.Resource.Success
+import com.banglalink.toffee.ui.about.AboutActivity
+import com.banglalink.toffee.ui.common.*
+import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
+import com.banglalink.toffee.ui.widget.MarginItemDecoration
+import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
-class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReactionCallback<ChannelInfo> {
-
-    private var isOwner: Int = 0
+class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelInfo> {
+    
+    private var listJob: Job? = null
     private var channelOwnerId: Int = 0
-    private var isPublic: Int = 0
-    private var enableToolbar: Boolean = false
-
-    override val itemMargin: Int = 16
-
+    private var isOwner: Boolean = false
     @Inject lateinit var reactionDao: ReactionDao
-    override val mAdapter by lazy { MyChannelVideosAdapter(this) }
+    @Inject lateinit var cacheManager: CacheManager
+    private lateinit var mAdapter: MyChannelVideosAdapter
+    val mViewModel by viewModels<MyChannelVideosViewModel>()
+    private lateinit var binding: FragmentMyChannelVideosBinding
     private val homeViewModel by activityViewModels<HomeViewModel>()
-    @Inject lateinit var viewModelAssistedFactory: MyChannelVideosViewModel.AssistedFactory
-    override val mViewModel by viewModels<MyChannelVideosViewModel> { MyChannelVideosViewModel.provideFactory(viewModelAssistedFactory, isOwner, channelOwnerId, isPublic) }
-
+    private val videosReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
+    
     companion object {
-        private const val SHOW_TOOLBAR = "enableToolbar"
-        private const val IS_OWNER = "isOwner"
         private const val CHANNEL_OWNER_ID = "channelOwnerId"
-        private const val IS_PUBLIC = "isPublic"
-        fun newInstance(enableToolbar: Boolean, isOwner: Int, channelOwnerId: Int, isPublic: Int): MyChannelVideosFragment {
-            val instance = MyChannelVideosFragment()
-            val bundle = Bundle()
-            bundle.putBoolean(SHOW_TOOLBAR, enableToolbar)
-            bundle.putInt(IS_OWNER, isOwner)
-            bundle.putInt(CHANNEL_OWNER_ID, channelOwnerId)
-            bundle.putInt(IS_PUBLIC, isPublic)
-            instance.arguments = bundle
-            return instance
+        
+        fun newInstance(channelOwnerId: Int): MyChannelVideosFragment {
+            return MyChannelVideosFragment().apply {
+                arguments = Bundle().apply {
+                    putInt(CHANNEL_OWNER_ID, channelOwnerId)
+                }
+            }
         }
     }
-
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        isOwner = arguments?.getInt(IS_OWNER) ?: 0
+        
+        mAdapter = MyChannelVideosAdapter(this)
         channelOwnerId = arguments?.getInt(CHANNEL_OWNER_ID) ?: 0
-        isPublic = arguments?.getInt(IS_PUBLIC) ?: 0
+        isOwner = channelOwnerId == mPref.customerId
     }
-
-    override fun getEmptyViewInfo(): Pair<Int, String?> {
-        return Pair(R.drawable.ic_videos_empty, 
-            if(isOwner == 1) "You haven't uploaded any video yet" else "This channel has no video yet"
-        )
+    
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = FragmentMyChannelVideosBinding.inflate(inflater, container, false)
+        return binding.root
     }
-
+    
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        
+        setEmptyView()
+        
+        with(binding.myChannelVideos) {
+            addItemDecoration(MarginItemDecoration(12))
+            
+            mAdapter.addLoadStateListener {
+                binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
+                mAdapter.apply {
+                    val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached
+                    binding.emptyView.isGone = !showEmpty
+                    binding.myChannelVideos.isVisible = !showEmpty
+                }
+            }
+            adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
+            setHasFixedSize(true)
+        }
+        
+        observeReloadVideos()
+        observeDeleteVideo()
+        observeMyChannelVideos()
+    }
+    
+    private fun observeMyChannelVideos() {
+        listJob?.cancel()
+        listJob = lifecycleScope.launchWhenStarted {
+            mViewModel.getMyChannelVideos(channelOwnerId).collectLatest {
+                mAdapter.submitData(it)
+            }
+        }
+    }
+    
+    private fun setEmptyView() {
+        with(binding) {
+            if (isOwner) {
+                emptyViewLabel.text = "You haven't uploaded any video yet"
+                uploadVideoButton.setOnClickListener {
+                    if (requireActivity() is HomeActivity) {
+                        (requireActivity() as HomeActivity).showUploadDialog()
+                    }
+                }
+                creatorsPolicyButton.setOnClickListener {
+                    val intent = Intent(requireActivity(), HtmlPageViewActivity::class.java).apply {
+                        putExtra(HtmlPageViewActivity.CONTENT_KEY, AboutActivity.PRIVACY_POLICY_URL)
+                        putExtra(HtmlPageViewActivity.TITLE_KEY, "Creators Policy")
+                    }
+                    requireActivity().startActivity(intent)
+                }
+            } else {
+                uploadVideoButton.hide()
+                creatorsPolicyButton.hide()
+                emptyViewLabel.text = "This channel has no video yet"
+            }
+        }
+    }
+    
     override fun onOpenMenu(view: View, item: ChannelInfo) {
         super.onOpenMenu(view, item)
         PopupMenu(requireContext(), view).apply {
-            if (isOwner == 1) {
+            if (isOwner) {
                 inflate(R.menu.menu_channel_owner_videos)
-                if (item.isApproved == 1) {
-                    this.menu.removeItem(R.id.menu_edit_content)
-                }
-            }
-            else {
+            } else {
                 inflate(R.menu.menu_channel_videos)
             }
             this.menu.removeItem(R.id.menu_share)
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_edit_content -> {
-                        if (findNavController().currentDestination?.id == R.id.myChannelHomeFragment) {
+                        if (findNavController().currentDestination?.id != R.id.myChannelVideosEditFragment && findNavController().currentDestination?.id == R.id.myChannelHomeFragment) {
                             val action = MyChannelHomeFragmentDirections.actionMyChannelHomeFragmentToMyChannelVideosEditFragment(item)
                             parentFragment?.findNavController()?.navigate(action)
-                        }
-                        else {
-                            this@MyChannelVideosFragment.findNavController().navigate(R.id.action_menu_channel_to_myChannelVideosEditFragment, Bundle().apply { putParcelable(MyChannelVideosEditFragment.CHANNEL_INFO, item) })
+                        } else if(findNavController().currentDestination?.id != R.id.myChannelVideosEditFragment && findNavController().currentDestination?.id == R.id.menu_channel){
+                            this@MyChannelVideosFragment.findNavController().navigate(
+                                R.id.action_menu_channel_to_myChannelVideosEditFragment,
+                                Bundle().apply {
+                                    putParcelable(MyChannelVideosEditFragment.CHANNEL_INFO, item)
+                                }
+                            )
                         }
                     }
                     R.id.menu_add_to_playlist -> {
-                        val fragment = MyChannelAddToPlaylistFragment.newInstance(item.id.toInt(), isOwner, channelOwnerId, item)
+                        val fragment = MyChannelAddToPlaylistFragment.newInstance(channelOwnerId, item)
                         fragment.show(requireActivity().supportFragmentManager, "add_to_playlist")
                     }
                     R.id.menu_share -> {
@@ -103,21 +175,33 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
                             handleFavoriteResponse(it)
                         })
                     }
-                    /*R.id.menu_not_interested -> {
-                        removeItemNotInterestedItem(item)
-                        return@setOnMenuItemClickListener true
-                    }*/
+                    R.id.menu_delete_content -> {
+                        showDeleteVideoDialog(item.id.toInt())
+                    }
                 }
                 return@setOnMenuItemClickListener true
             }
             show()
         }
-
     }
-
-    fun handleFavoriteResponse(it: Resource<ChannelInfo>) {
+    
+    private fun showDeleteVideoDialog(contentId: Int) {
+        VelBoxAlertDialogBuilder(
+            requireContext(),
+            text = "Are you sure to delete?",
+            positiveButtonTitle = "No",
+            negativeButtonTitle = "Delete",
+            positiveButtonListener = { it?.dismiss() },
+            negativeButtonListener = {
+                mViewModel.deleteVideo(contentId)
+                it?.dismiss()
+            }
+        ).create().show()
+    }
+    
+    private fun handleFavoriteResponse(it: Resource<ChannelInfo>) {
         when (it) {
-            is Resource.Success -> {
+            is Success -> {
                 val channelInfo = it.data
                 when (channelInfo.favorite) {
                     "0" -> {
@@ -130,46 +214,71 @@ class MyChannelVideosFragment : BaseListFragment<ChannelInfo>(), ContentReaction
                     }
                 }
             }
-            is Resource.Failure -> {
+            is Failure -> {
                 context?.showToast(it.error.msg)
             }
         }
     }
-
-    fun handleFavoriteAddedSuccessfully(channelInfo: ChannelInfo) {
-        //subclass can hook here
-    }
-
-    fun handleFavoriteRemovedSuccessFully(channelInfo: ChannelInfo) {
-        //subclass can hook here
-    }
-
-    fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
-
-    }
-
+    
+    private fun handleFavoriteAddedSuccessfully(channelInfo: ChannelInfo) {}
+    
+    private fun handleFavoriteRemovedSuccessFully(channelInfo: ChannelInfo) {}
+    
+    fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {}
+    
     override fun onItemClicked(item: ChannelInfo) {
         super.onItemClicked(item)
-//        if (item.isApproved == 0) {
-//            Toast.makeText(requireContext(), "Your video has not approved yet. Once it's approved, you can play the video", Toast.LENGTH_SHORT).show()
-//        }
-//        else {
-            homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
-//        }
+        homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
     }
-
+    
     override fun onReactionClicked(view: View, reactionCountView: View, item: ChannelInfo) {
         super.onReactionClicked(view, reactionCountView, item)
-        ReactionFragment.newInstance(item).apply { setView(view, reactionCountView) }.show(requireActivity().supportFragmentManager, ReactionFragment.TAG)
+        val iconLocation = IntArray(2)
+        view.getLocationOnScreen(iconLocation)
+        val reactionPopupFragment = ReactionPopup.newInstance(item, iconLocation, view.height).apply {
+            setCallback(object : ReactionIconCallback {
+                override fun onReactionChange(reactionCount: String, reactionText: String, reactionIcon: Int) {
+                    (reactionCountView as TextView).text = reactionCount
+                    (view as TextView).text = reactionText
+                    view.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
+                    if (reactionText == Love.name) {
+                        view.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorAccent))
+                    } else {
+                        view.setTextColor(ContextCompat.getColor(requireContext(), R.color.fixed_second_text_color))
+                    }
+                }
+            })
+        }
+        childFragmentManager.commit { add(reactionPopupFragment, ReactionPopup.TAG) }
     }
-
-    /*override fun onReactionLongPressed(view: View, reactionCountView: View, item: ChannelInfo) {
-        super.onReactionLongPressed(view, reactionCountView, item)
-        requireActivity().supportFragmentManager.beginTransaction().add(ReactionFragment.newInstance(view, reactionCountView, item), ReactionFragment.TAG).commit()
-    }*/
     
     override fun onShareClicked(view: View, item: ChannelInfo) {
         super.onShareClicked(view, item)
         homeViewModel.shareContentLiveData.postValue(item)
+    }
+    
+    private fun observeReloadVideos() {
+        observe(videosReloadViewModel.reloadVideos) {
+            if (it) {
+                reloadVideosList()
+            }
+        }
+    }
+    
+    private fun observeDeleteVideo() {
+        observe(mViewModel.deleteVideoLiveData) {
+            when (it) {
+                is Success -> {
+                    requireContext().showToast(it.data.message)
+                    reloadVideosList()
+                }
+                is Failure -> requireContext().showToast(it.error.msg)
+            }
+        }
+    }
+    
+    private fun reloadVideosList() {
+        cacheManager.clearCacheByUrl(GET_MY_CHANNEL_VIDEOS_URL)
+        mAdapter.refresh()
     }
 }

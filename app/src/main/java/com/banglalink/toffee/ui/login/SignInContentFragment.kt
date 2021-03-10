@@ -19,7 +19,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
@@ -27,35 +26,35 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.databinding.FragmentSigninContentBinding
 import com.banglalink.toffee.extension.action
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.onTransitionCompletedListener
 import com.banglalink.toffee.extension.snack
 import com.banglalink.toffee.model.INVALID_REFERRAL_ERROR_CODE
+import com.banglalink.toffee.model.LOGIN_ERROR
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.TERMS_AND_CONDITION_URL
+import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.common.HtmlPageViewActivity
-import com.banglalink.toffee.ui.verify.VerifySignInFragment
+import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
-import com.banglalink.toffee.ui.widget.showAlertDialog
+import com.banglalink.toffee.util.UtilsKt
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.Credentials
 import com.google.android.gms.auth.api.credentials.HintRequest
+import com.google.android.material.snackbar.Snackbar
 
 private const val RESOLVE_HINT = 2
 
-class SignInContentFragment : Fragment() {
+class SignInContentFragment : BaseFragment() {
 
     private var phoneNumber: String = ""
     private var referralCode: String = ""
     private var regSessionToken: String = ""
-
-    private val progressDialog by unsafeLazy {
-        VelBoxProgressDialog(requireContext())
-    }
+    private var isNumberShown:Boolean=false
     lateinit var binding: FragmentSigninContentBinding
     private val viewModel by viewModels<SignInViewModel>()
-
+    private val progressDialog by unsafeLazy { VelBoxProgressDialog(requireContext()) }
     
-
     companion object {
         @JvmStatic
         fun newInstance() =
@@ -69,7 +68,7 @@ class SignInContentFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        binding.signInContentMotionLayout.setOnClickListener { UtilsKt.hideSoftKeyboard(requireActivity()) }
         setSpannableTermsAndConditions()
         binding.haveRefTv.setOnClickListener { handleHaveReferralOption() }
         binding.loginBtn.setOnClickListener {
@@ -79,36 +78,33 @@ class SignInContentFragment : Fragment() {
             binding.loginBtn.isEnabled = binding.termsAndConditionsCheckbox.isChecked
         }
         
-        val signinMotionLayout = parentFragment?.parentFragmentManager?.fragments?.get(0)?.parentFragment?.view
+        val signinMotionLayout = parentFragment?.parentFragment?.view
         
         signinMotionLayout?.let { 
             if (it is MotionLayout){
-                it.addTransitionListener(object : MotionLayout.TransitionListener{
-                    override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
-                        println("Transition started")
-                    }
-
-                    override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
-                        println("Transition changed")
-                    }
-
-                    override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
+                it.onTransitionCompletedListener {
+                    if (!isNumberShown) {
+                        isNumberShown = true
                         getHintPhoneNumber()
                     }
-
-                    override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {
-                        println("Transition triggered")
-                    }
-                })
+                }
             }
+        }
+        if (!mPref.isPreviousDbDeleted){
+            viewModel.deletePreviousDatabase()
         }
     }
 
     private fun handleLogin() {
-        var phoneNo = binding.phoneNumberEt.text.toString()
+        var phoneNo = binding.phoneNumberEt.text.toString().trim()
 
         if (TextUtils.isEmpty(phoneNo)) {
-            showAlertDialog(requireContext(), getString(R.string.phone_no_required_title), "")
+            VelBoxAlertDialogBuilder(requireContext()).apply {
+                setText(R.string.phone_no_required_title)
+                setPositiveButtonListener("OK") {
+                    it?.dismiss()
+                }
+            }.create().show()
             return
         }
 
@@ -124,15 +120,25 @@ class SignInContentFragment : Fragment() {
         binding.phoneNumberEt.setText(phoneNo)
         binding.phoneNumberEt.setSelection(phoneNo.length)
         
-        observe(viewModel.signIn(phoneNo, binding.refCodeEt.text.toString())) {
+        observe(viewModel.signIn(phoneNo, binding.refCodeEt.text.toString().trim())) {
             progressDialog.dismiss()
             when (it) {
                 is Resource.Success -> {
-                    phoneNumber = binding.phoneNumberEt.text.toString()
-                    referralCode = binding.refCodeEt.text.toString()
+                    phoneNumber = binding.phoneNumberEt.text.toString().trim()
+                    referralCode = binding.refCodeEt.text.toString().trim()
                     regSessionToken = it.data
 
-                    signinContentAnimationListener()
+                    binding.signInContentMotionLayout.onTransitionCompletedListener {
+                        if (findNavController().currentDestination?.id != R.id.verifySignInFragment && findNavController().currentDestination?.id ==R.id.signInContentFragment) {
+                            findNavController().navigate(
+                                SignInContentFragmentDirections.actionSignInContentFragmentToVerifySignInFragment(
+                                    phoneNumber,
+                                    referralCode,
+                                    regSessionToken
+                                )
+                            )
+                        }
+                    }
                     binding.signInContentMotionLayout.transitionToEnd()
                 }
                 is Resource.Failure -> {
@@ -140,7 +146,11 @@ class SignInContentFragment : Fragment() {
                         INVALID_REFERRAL_ERROR_CODE -> {
                             showInvalidReferralCodeDialog(it.error.msg, it.error.additionalMsg)
                         }
+                        LOGIN_ERROR -> {
+                            binding.root.snack(it.error.msg, Snackbar.LENGTH_LONG) {}
+                        }
                         else -> {
+                            ToffeeAnalytics.logApiError("reRegistration",it.error.msg,phoneNo)
                             binding.root.snack(it.error.msg) {
                                 action("Retry") {
                                     handleLogin()
@@ -151,28 +161,6 @@ class SignInContentFragment : Fragment() {
                 }
             }
         }
-    }
-
-    private fun signinContentAnimationListener() {
-        binding.signInContentMotionLayout.addTransitionListener(object : MotionLayout.TransitionListener {
-            override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
-
-            }
-
-            override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
-
-            }
-
-            override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
-                findNavController().navigate(
-                    SignInContentFragmentDirections.actionSignInContentFragmentToVerifySignInFragment(phoneNumber, referralCode, regSessionToken)
-                )
-            }
-
-            override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {
-
-            }
-        })
     }
 
     private fun showInvalidReferralCodeDialog(referralStatusMessage: String, referralStatus: String, ) {
@@ -186,8 +174,7 @@ class SignInContentFragment : Fragment() {
             ?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         alertDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-
+        
         if ("USED".equals(referralStatus, ignoreCase = true)) {
             alertView.findViewById<View>(R.id.retry_btn).visibility = View.GONE
             (alertView.findViewById<View>(R.id.continue_btn) as Button).text =
@@ -206,7 +193,7 @@ class SignInContentFragment : Fragment() {
         alertDialog.show()
     }
 
-    fun handleHaveReferralOption() {
+    private fun handleHaveReferralOption() {
         binding.haveRefTv.isClickable = false
         binding.refCodeEt.visibility = View.VISIBLE
         binding.groupHaveRef.visibility = View.INVISIBLE
@@ -237,7 +224,6 @@ class SignInContentFragment : Fragment() {
 
         binding.termsAndConditionsTv.text = ss
         binding.termsAndConditionsTv.movementMethod = LinkMovementMethod.getInstance()
-
     }
 
     private fun getHintPhoneNumber() {
@@ -251,7 +237,6 @@ class SignInContentFragment : Fragment() {
             ToffeeAnalytics.logException(e)
             ToffeeAnalytics.logBreadCrumb("Could not retrieve phone number")
         }
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

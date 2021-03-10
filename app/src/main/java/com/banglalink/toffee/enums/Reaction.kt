@@ -9,5 +9,6 @@ enum class Reaction(val value: Int) {
     Sad(5),
     Angry(6),
     Add(7),
-    Delete(8)
+    Delete(8),
+    Watched(9)
 }

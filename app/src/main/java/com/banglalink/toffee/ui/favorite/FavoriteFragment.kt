@@ -5,30 +5,46 @@ import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListFragment
-import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.common.paging.ProviderIconCallback
+import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.MyPopupWindow
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class FavoriteFragment : BaseListFragment<ChannelInfo>(), BaseListItemCallback<ChannelInfo> {
+@AndroidEntryPoint
+class FavoriteFragment : BaseListFragment<ChannelInfo>(), ProviderIconCallback<ChannelInfo> {
 
+    override val itemMargin: Int = 12
+    @Inject lateinit var localSync: LocalSync
+    override val verticalPadding = Pair(16, 16)
     override val mAdapter by lazy { FavoriteAdapter(this) }
     override val mViewModel by viewModels<FavoriteViewModel>()
-
     private val homeViewModel by activityViewModels<HomeViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.title = "Favorites"
-
     }
 
     override fun onItemClicked(item: ChannelInfo) {
-        homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+        lifecycleScope.launch {
+            localSync.syncData(item)
+            homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+        }
+    }
+
+    override fun onProviderIconClicked(item: ChannelInfo) {
+        super.onProviderIconClicked(item)
+        homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
     }
 
     override fun onOpenMenu(view: View, item: ChannelInfo) {

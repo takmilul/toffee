@@ -1,5 +1,5 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name">Toffee UGC</string>
+    <string name="app_name">Toffee</string>
     <string name="app_name_short">Toffee</string>
 
     <string name="retry">Retry</string>
@@ -7,7 +7,8 @@
     <!-- Strings related to login -->
     <string name="action_sign_in">Sign In</string>
     <string name="action_subscribe">SUBSCRIBE</string>
-    <string name="sign_in_text"><u>Sign In</u></string>
+    <string name="sign_in_text">Sign In</string>
+    <string name="sign_in_top_text">To get started, please provide the following information</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -25,7 +26,7 @@
 
 
     <string name="menu_add_to_fav">Add to Favorites</string>
-    <string name="menu_share">Share ...</string>
+    <string name="menu_share">Share</string>
     <string name="menu_not_interested">Not Interested</string>
 
 
@@ -45,6 +46,7 @@
 
     //Landing Screen Category Titles
     <string name="channel">Popular TV Channels</string>
+    <string name="recent_channels">Recently Viewed</string>
     <string name="most_popular">Most Popular</string>
     <string name="most_popular_playlists">Most Popular Playlists</string>
     <string name="categories">Categories</string>
@@ -100,7 +102,7 @@
     <string name="menu_faqs_text">FAQs</string>
     <string name="views">views</string>
     <string name="refer_a_friend_txt">Refer a Friend</string>
-    <string name="redeem_code_txt">Redeem Code</string>
+    <string name="redeem_code_txt">Enter Referral Code</string>
     <string name="invite_friends_txt">Refer Friends</string>
     <string name="redeem_button">Redeem</string>
     <string name="share_button">Share</string>
@@ -136,7 +138,6 @@
     <string name="auto_rotation_on">Auto rotation on</string>
     <string name="auto_rotation_off">Auto rotation off</string>
     <string name="refer_policy">Refer toffee to a friend and enjoy up to 1GB of free internet</string>
-    <string name="read_more">Read More</string>
     <string name="menu_internet_pack">Buy Internet Packs</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -153,4 +154,10 @@
     <string name="minimize_panel_description">Your video will be submitted for approval before being published in your channel, usually it takes less than 12 hours.</string>
     <string name="latestVideos">Latest Videos</string>
     <string name="trendingVideos">Trending Videos</string>
+
+    <string name="read_more">Show More</string>
+    <string name="read_less">Show Less</string>
+    <string name="terms">Terms &amp; Conditions</string>
+    <string name="phone_number_hint"><i>Your Phone Number</i></string>
+    <string name="channel_name_hint"><i>Set Your Channel Name</i></string>
 </resources>

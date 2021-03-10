@@ -1,43 +1,40 @@
 package com.banglalink.toffee.apiservice
 
 import com.banglalink.toffee.common.paging.BaseApiService
-import com.banglalink.toffee.data.database.dao.ReactionDao
+import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.network.request.MyChannelVideosRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
-import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
 import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.model.ChannelInfo
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 
 data class MyChannelVideosRequestParams(
     val type: String,
-    val isOwner: Int,
     val channelOwnerId: Int,
     val categoryId: Int,
-    val subcategoryId: Int,
-    val isPublic: Int
+    val subcategoryId: Int
 )
 
 class MyChannelVideosService @AssistedInject constructor(
     private val preference: Preference,
     private val toffeeApi: ToffeeApi,
-    private val reactionDao: ReactionDao,
-    private val viewProgressRepo: ContentViewPorgressRepsitory,
-    @Assisted private val requestParams: MyChannelVideosRequestParams
+    private val localSync: LocalSync,
+    @Assisted private val requestParams: MyChannelVideosRequestParams,
 ) :
     BaseApiService<ChannelInfo> {
 
     override suspend fun loadData(offset: Int, limit: Int): List<ChannelInfo> {
+        val isOwner = if (preference.customerId == requestParams.channelOwnerId) 1 else 0
         val response = tryIO2 {
             toffeeApi.getMyChannelVideos(
                 requestParams.type,
-                requestParams.isOwner, requestParams.channelOwnerId,
+                isOwner,
+                requestParams.channelOwnerId,
                 requestParams.categoryId,
                 requestParams.subcategoryId,
-                requestParams.isPublic,
+                isOwner.xor(1),
                 limit, offset,
                 preference.getDBVersionByApiName("getUgcChannelAllContent"),
                 MyChannelVideosRequest(preference.customerId, preference.password, offset, limit)
@@ -46,16 +43,14 @@ class MyChannelVideosService @AssistedInject constructor(
 
         if (response.response.channels != null) {
             return response.response.channels.map {
-                val reactionInfo = reactionDao.getReactionByContentId(preference.customerId, it.id)
-                it.myReaction = reactionInfo?.reaction ?: Reaction.None.value
-                it.viewProgress = viewProgressRepo.getProgressByContent(it.id.toLong())?.progress ?: 0L
+                localSync.syncData(it)
                 it
             }
         }
         return listOf()
     }
 
-    @AssistedInject.Factory
+    @dagger.assisted.AssistedFactory
     interface AssistedFactory {
         fun create(requestParams: MyChannelVideosRequestParams): MyChannelVideosService
     }

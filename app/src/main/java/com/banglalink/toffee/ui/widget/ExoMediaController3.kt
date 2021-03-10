@@ -10,41 +10,45 @@ import android.os.Handler
 import android.os.Message
 import android.util.AttributeSet
 import android.util.Log
-import android.util.Size
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.TextureView.SurfaceTextureListener
 import android.view.View
 import android.view.View.OnClickListener
-import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.databinding.DataBindingUtil
 import com.banglalink.toffee.R.*
+import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.MediaControlLayout3Binding
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener
 import com.banglalink.toffee.listeners.PlaylistListener
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.ui.player.PlayerOverlayView
 import com.banglalink.toffee.ui.widget.DraggerLayout.OnPositionChangedListener
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.UtilsKt
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.Player.*
 import com.google.android.exoplayer2.Player.EventListener
-import com.google.android.exoplayer2.Renderer
 import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.gms.cast.framework.CastButtonFactory
-import kotlinx.android.synthetic.main.list_item_live.view.*
+import com.google.android.exoplayer2.video.VideoListener
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
+import javax.inject.Inject
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 /**
  * Created by shantanu on 5/4/16.
  */
-class ExoMediaController3 @JvmOverloads constructor(context: Context,
+
+@AndroidEntryPoint
+open class ExoMediaController3 @JvmOverloads constructor(context: Context,
                           attrs: AttributeSet? = null,
                           defStyleAttr: Int = 0
 ):FrameLayout(context, attrs, defStyleAttr),
@@ -52,7 +56,8 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
     OnSeekBarChangeListener,
     EventListener,
     OnPositionChangedListener,
-    SurfaceTextureListener
+    SurfaceTextureListener,
+    VideoListener
 {
     private var handler: MessageHandler
     private val onPlayerControllerChangedListeners = mutableListOf<OnPlayerControllerChangedListener>()
@@ -63,11 +68,17 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
     private var lastPlayerPosition: Long = 0
     var isAutoRotationEnabled = true
     private var mPlayListListener: PlaylistListener? = null
-    private val videoWidth = 1920
-    private val videoHeight = 1080
-    private lateinit var binding: MediaControlLayout3Binding
+    private var videoWidth = -1
+    private var videoHeight = -1
+    protected lateinit var binding: MediaControlLayout3Binding
     private val screenWidth = UtilsKt.getScreenWidth()
+    private val screenHeight = UtilsKt.getScreenHeight()
     var isVideoPortrait = false
+    var channelType: String? = null
+    var isFullScreen = false
+
+    @Inject
+    lateinit var mPref: Preference
 
     init {
         handler = MessageHandler()
@@ -91,8 +102,8 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
         binding = DataBindingUtil.inflate(inflater, layout.media_control_layout3, this, true)
         binding.minimize.setOnClickListener(this)
         binding.play.setOnClickListener(this)
-        binding.forward.setOnClickListener(this)
-        binding.backward.setOnClickListener(this)
+//        binding.forward.setOnClickListener(this)
+//        binding.backward.setOnClickListener(this)
         binding.drawer.setOnClickListener(this)
         binding.rotation.setOnClickListener(this)
         binding.playPrev.setOnClickListener(this)
@@ -112,6 +123,21 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
         mFormatBuilder = StringBuilder()
         mFormatter = Formatter(mFormatBuilder, Locale.getDefault())
         setupCastButton()
+        setupOverlay()
+    }
+
+    private fun setupOverlay() {
+        binding.playerOverlay.performListener(object : PlayerOverlayView.PerformListener {
+            override fun onAnimationStart() {
+                // Do UI changes when circle scaling animation starts (e.g. hide controller views)
+                binding.playerOverlay.visibility = View.VISIBLE
+            }
+
+            override fun onAnimationEnd() {
+                // Do UI changes when circle scaling animation starts (e.g. show controller views)
+                binding.playerOverlay.visibility = View.GONE
+            }
+        })
     }
 
     private fun setupCastButton() {
@@ -123,6 +149,7 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
         if (this.simpleExoPlayer === newPlayer) {
             return
         }
+        binding.playerOverlay.player(newPlayer)
         binding.textureView.surfaceTextureListener = this
         if (binding.textureView.isAvailable) {
             binding.preview.setImageBitmap(binding.textureView.bitmap)
@@ -130,13 +157,27 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
         val oldPlayer = this.simpleExoPlayer //get reference of old player which attached previously
         if (oldPlayer != null) { //if old player not null then clear it
             oldPlayer.removeListener(this)
+            if(oldPlayer is SimpleExoPlayer) {
+                oldPlayer.removeVideoListener(this)
+            }
             oldPlayer.videoComponent?.clearVideoTextureView(binding.textureView)
         }
         this.simpleExoPlayer = newPlayer
         if (this.simpleExoPlayer != null) {
             this.simpleExoPlayer?.addListener(this)
+            this.simpleExoPlayer?.let {
+                if(it is SimpleExoPlayer) it.addVideoListener(this)
+            }
             if (binding.textureView.isAvailable) {
                 this.simpleExoPlayer?.videoComponent?.setVideoTextureView(binding.textureView)
+            }
+        }
+
+        simpleExoPlayer?.currentMediaItem?.playbackProperties?.tag?.let {
+            if(it is ChannelInfo) {
+                isVideoPortrait = it.isHorizontal != 1
+                binding.rotation.visibility = if(isVideoPortrait) View.GONE else View.VISIBLE
+                binding.share.visibility = if(it.isApproved == 1) View.VISIBLE else View.GONE
             }
         }
     }
@@ -184,6 +225,9 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
 //            for (onPlayerControllerChangedListener in onPlayerControllerChangedListeners) {
 //                onPlayerControllerChangedListener.onControllerVisible()
 //            }
+//            nextButtonVisibility(true)
+//            prevButtonVisibility(true)
+
             status = true
         }
         updateSeekBar()
@@ -215,8 +259,12 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
                 binding.duration.visibility = VISIBLE
                 binding.timeSeperator.visibility = VISIBLE
                 binding.currentTime.visibility = VISIBLE
+                nextButtonVisibility(simpleExoPlayer?.playbackState == STATE_READY)
+                prevButtonVisibility(simpleExoPlayer?.playbackState == STATE_READY)
             }
             else {
+                nextButtonVisibility(false)
+                prevButtonVisibility(false)
                 binding.progress.isEnabled = false
                 binding.progress.visibility = GONE
                 binding.duration.visibility = INVISIBLE
@@ -275,14 +323,14 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
     }
 
     override fun onViewMinimize() {
-        binding.root.keepScreenOn = true
+//        binding.root.keepScreenOn = true
         isMinimize = true
         binding.textureView.setOnClickListener(null)
         hideControls(0)
     }
 
     override fun onViewMaximize() {
-        binding.root.keepScreenOn = true
+//        binding.root.keepScreenOn = true
         isMinimize = false
         binding.textureView.setOnClickListener(this)
         if (simpleExoPlayer?.isPlaying == true) {
@@ -294,7 +342,7 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
     }
 
     override fun onViewDestroy() {
-        binding.root.keepScreenOn = false
+//        binding.root.keepScreenOn = false
         simpleExoPlayer?.stop()
     }
 
@@ -341,6 +389,24 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
         }
     }
 
+    private fun nextButtonVisibility(visible: Boolean) {
+        if(!visible) {
+            binding.playNext.visibility = View.INVISIBLE
+        } else {
+            binding.playNext.visibility = if(mPlayListListener?.hasNext() == true) View.VISIBLE else View.INVISIBLE
+//            binding.playNext.isEnabled = mPlayListListener?.hasNext() == true
+        }
+    }
+
+    private fun prevButtonVisibility(visible: Boolean) {
+        if(!visible) {
+            binding.playPrev.visibility = View.INVISIBLE
+        } else {
+            binding.playPrev.visibility = if(mPlayListListener?.hasPrevious() == true) View.VISIBLE else View.INVISIBLE
+//            binding.playPrev.isEnabled = mPlayListListener?.hasPrevious() == true
+        }
+    }
+
     override fun onClick(v: View) {
         when(v) {
             binding.play-> {
@@ -375,6 +441,7 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
                 }
             }
             binding.fullscreen -> {
+                isFullScreen = isFullScreen.not()
                 onPlayerControllerChangedListeners.forEach {
                     it.onFullScreenButtonPressed()
                 }
@@ -404,12 +471,12 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
                     hideControls(0)
                 }
             }
-            binding.forward -> {
-                forward()
-            }
-            binding.backward -> {
-                backward()
-            }
+//            binding.forward -> {
+//                forward()
+//            }
+//            binding.backward -> {
+//                backward()
+//            }
             binding.playPrev -> {
                 mPlayListListener?.playPrevious()
             }
@@ -438,10 +505,12 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
                 binding.preview.setOnClickListener(this)
                 binding.preview.setImageResource(color.black)
                 binding.play.visibility = GONE
-                binding.forward.visibility = INVISIBLE
-                binding.backward.visibility = INVISIBLE
-                binding.playPrev.visibility = GONE
-                binding.playNext.visibility = GONE
+//                binding.forward.visibility = INVISIBLE
+//                binding.backward.visibility = INVISIBLE
+//                binding.playPrev.visibility = INVISIBLE
+//                binding.playNext.visibility = INVISIBLE
+                nextButtonVisibility(false)
+                prevButtonVisibility(false)
                 binding.autoplayProgress.visibility = GONE
                 binding.buffering.visibility = VISIBLE
                 binding.videoOption.isEnabled = false
@@ -453,8 +522,8 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
                 binding.play.setImageResource(drawable.ic_player_replay)
                 binding.buffering.visibility = GONE
                 binding.play.visibility = VISIBLE
-                binding.forward.visibility = INVISIBLE
-                binding.backward.visibility = INVISIBLE
+//                binding.forward.visibility = INVISIBLE
+//                binding.backward.visibility = INVISIBLE
                 if (mPlayListListener?.isAutoplayEnabled() == true &&
                     mPlayListListener?.hasNext() == true
                 ) {
@@ -465,13 +534,13 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
                     binding.autoplayProgress.visibility = GONE
                 }
                 if (mPlayListListener?.hasNext() == false) {
-                    binding.playNext.visibility = GONE
+                    binding.playNext.visibility = INVISIBLE
                 }
                 else {
                     binding.playNext.visibility = VISIBLE
                 }
                 if (mPlayListListener?.hasPrevious() == false) {
-                    binding.playPrev.visibility = GONE
+                    binding.playPrev.visibility = INVISIBLE
                 }
                 else {
                     binding.playPrev.visibility = VISIBLE
@@ -483,8 +552,12 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
                 binding.play.setImageResource(drawable.ic_player_play)
                 binding.buffering.visibility = GONE
                 binding.play.visibility = VISIBLE
-                binding.forward.visibility = INVISIBLE
-                binding.backward.visibility = INVISIBLE
+//                binding.forward.visibility = INVISIBLE
+//                binding.backward.visibility = INVISIBLE
+//                binding.playNext.visibility = INVISIBLE
+//                binding.playPrev.visibility = INVISIBLE
+                nextButtonVisibility(false)
+                prevButtonVisibility(false)
                 binding.autoplayProgress.visibility = GONE
                 stopAutoplayTimer()
                 showControls()
@@ -498,19 +571,27 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
                 binding.preview.setImageResource(0)
                 binding.share.isEnabled = true
                 binding.autoplayProgress.visibility = GONE
-                binding.playNext.visibility = GONE
-                binding.playPrev.visibility = GONE
+//                binding.playNext.visibility = GONE
+//                binding.playPrev.visibility = GONE
                 if (playWhenReady) {
                     binding.play.setImageResource(drawable.ic_player_pause)
                     binding.buffering.visibility = GONE
                     binding.play.visibility = VISIBLE
                     if (simpleExoPlayer?.isCurrentWindowLive == true) {
-                        binding.forward.visibility = INVISIBLE
-                        binding.backward.visibility = INVISIBLE
+//                        binding.forward.visibility = INVISIBLE
+//                        binding.backward.visibility = INVISIBLE
+//                        binding.playNext.visibility = INVISIBLE
+//                        binding.playPrev.visibility = INVISIBLE
+                        nextButtonVisibility(false)
+                        prevButtonVisibility(false)
                     }
                     else {
-                        binding.forward.visibility = VISIBLE
-                        binding.backward.visibility = VISIBLE
+//                        binding.forward.visibility = VISIBLE
+//                        binding.backward.visibility = VISIBLE
+//                        binding.playNext.visibility = VISIBLE
+//                        binding.playPrev.visibility = VISIBLE
+                        nextButtonVisibility(true)
+                        prevButtonVisibility(true)
                     }
                     showControls() //it is necessary since we don't have preparing state of player
                     hideControls(3000)
@@ -520,12 +601,20 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
                     binding.buffering.visibility = GONE
                     binding.play.visibility = VISIBLE
                     if (simpleExoPlayer?.isCurrentWindowLive == true) {
-                        binding.forward.visibility = INVISIBLE
-                        binding.backward.visibility = INVISIBLE
+//                        binding.playNext.visibility = INVISIBLE
+//                        binding.playPrev.visibility = INVISIBLE
+//                        binding.forward.visibility = INVISIBLE
+//                        binding.backward.visibility = INVISIBLE
+                        nextButtonVisibility(false)
+                        prevButtonVisibility(false)
                     }
                     else {
-                        binding.forward.visibility = VISIBLE
-                        binding.backward.visibility = VISIBLE
+//                        binding.forward.visibility = VISIBLE
+//                        binding.backward.visibility = VISIBLE
+//                        binding.playNext.visibility = VISIBLE
+//                        binding.playPrev.visibility = VISIBLE
+                        nextButtonVisibility(true)
+                        prevButtonVisibility(true)
                     }
                     showControls()
                 }
@@ -537,20 +626,24 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
 
     override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
         super.onMediaItemTransition(mediaItem, reason)
+        videoWidth = -1
+        videoHeight = -1
         val channelInfo = mediaItem?.playbackProperties?.tag
         if(channelInfo is ChannelInfo) {
-            isVideoPortrait = channelInfo.is_horizontal != 1
+            val prevState = isVideoPortrait
+            isVideoPortrait = channelInfo.isHorizontal != 1
+            channelType = channelInfo.type
 
-            if(isFullScreenPortrait()) {
-                onPlayerControllerChangedListeners.forEach {
-                    it.onFullScreenButtonPressed()
-                }
-            }
+            if((prevState && !isVideoPortrait) || (!prevState && isVideoPortrait)) isFullScreen = false
             resizeView(UtilsKt.getRealScreenSize(context))
 //            if(isVideoPortrait && simpleExoPlayer is SimpleExoPlayer) {
 //                (simpleExoPlayer as SimpleExoPlayer).videoScalingMode = Renderer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
 //            }
             binding.rotation.visibility = if(isVideoPortrait) View.GONE else View.VISIBLE
+            binding.share.visibility = if(channelInfo.isApproved == 1) View.VISIBLE else View.GONE
+        }
+        onPlayerControllerChangedListeners.forEach {
+            it.onMediaItemChanged()
         }
     }
 
@@ -588,10 +681,18 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
             width = playerWidth
             height = playerHeight
         }
-
-        binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.apply {
-            width = playerWidth
-            height = playerHeight
+        if(videoWidth > 0 && videoHeight > 0) {
+            binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.also {
+                it.width = videoWidth
+                it.height = videoHeight
+            }
+            adjustVideoBoundWithRatio(scaleType)
+        } else {
+            binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.also {
+                it.width = playerWidth
+                it.height = playerHeight
+            }
+            adjustVideoBoundWithRatio(scaleType)
         }
     }
 
@@ -603,15 +704,31 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
         return layoutParams.height >= if(isVideoPortrait) maxBound else minBound
     }
 
-    fun isFullScreenPortrait() = layoutParams.height >= UtilsKt.getScreenHeight()
+    fun isFullScreenPortrait() = isVideoPortrait && layoutParams.height >= UtilsKt.getScreenHeight()
 
-    val minBound = screenWidth * 9 / 16
+    private val scaleType: Int
+        get() {
+            return if (isVideoPortrait && !isFullScreenPortrait()) {
+                SCALE_TYPE_CENTER_CROP
+            } else {
+                if (mPref.keepVideoAspectRatio && isVideoPortrait) {// || channelType != "LIVE")) {
+                    SCALE_TYPE_ADJUST_RATIO
+                } else {
+                    SCALE_TYPE_SCALE_TO_FIT
+                }
+            }
+        }
+
+    private val minVideoHeight: Int = screenWidth * 9 / 16
+    private val maxVideoHeight: Int = screenHeight * 2 / 3
+
+    val minBound = minVideoHeight
     val maxBound: Int
-        get() = if(isVideoPortrait) screenWidth * 16 / 11 else minBound
+        get() = if(isVideoPortrait) maxVideoHeight else minBound
 
     private var mActivePointerId = MotionEvent.INVALID_POINTER_ID
     private var mLastTouchX: Float = 0f
-    var mLastTouchY: Float = 0f
+    private var mLastTouchY: Float = 0f
     private var mPosX: Float = 0f
     private var mPosY: Float = 0f
     private var startX: Float = 0f
@@ -620,24 +737,21 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
     fun clampOrFullHeight() {
         if(layoutParams.height <= minBound || layoutParams.height >= maxBound) return
         val isInTop = layoutParams.height in minBound .. (minBound + ((maxBound - minBound) / 2))
+        setHeightWithAnim(if(isInTop) minBound else maxBound)
+    }
 
-        heightAnim = ValueAnimator.ofInt(layoutParams.height, if(isInTop) minBound else maxBound)
-        heightAnim?.duration = 300
+    fun setHeightWithAnim(height: Int, animDuration: Long = 300L) {
+        heightAnim = ValueAnimator.ofInt(layoutParams.height, height)
+        heightAnim?.duration = animDuration
         heightAnim?.addUpdateListener {
-            layoutParams = layoutParams.apply {
-                height = it.animatedValue as Int
-
-//                binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.also {
-//                    it.height = height
-//                }
-            }
+            setLayoutHeight(it.animatedValue as Int)
         }
         heightAnim?.start()
     }
 
     private var heightAnim: ValueAnimator? = null
 
-    fun handleTouchDown(ev: MotionEvent) {
+    private fun handleTouchDown(ev: MotionEvent) {
         heightAnim?.cancel()
         heightAnim = null
         mLastTouchY = ev.y
@@ -708,12 +822,7 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
                 mPosY += y - mLastTouchY
                 val distanceY = y - mLastTouchY
 
-                layoutParams = layoutParams.apply {
-                    height = min(max(height + distanceY.toInt(), minBound), maxBound)
-//                    binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.also {
-//                        it.height = height
-//                    }
-                }
+                setLayoutHeight(min(max(height + distanceY.toInt(), minBound), maxBound))
 
                 invalidate()
 
@@ -748,9 +857,65 @@ class ExoMediaController3 @JvmOverloads constructor(context: Context,
         return true
     }
 
+    fun setLayoutHeight(h: Int) {
+        layoutParams = layoutParams.also {
+            it.height = h
+        }
+        centerPlayerInView()
+    }
+
+    private fun centerPlayerInView() {
+        val viewportHeight = layoutParams.height
+        val playerHeight = binding.playerContainer.layoutParams.height
+
+        val halfTop = (playerHeight - viewportHeight) / 2f
+        binding.playerContainer.y = -halfTop
+
+        val viewportWidgh = layoutParams.width
+        val playerWidth = binding.playerContainer.layoutParams.width
+
+        val halfLeft = (playerWidth - viewportWidgh) / 2f
+        binding.playerContainer.x = -halfLeft
+    }
+
+    override fun onVideoSizeChanged(
+        width: Int,
+        height: Int,
+        unappliedRotationDegrees: Int,
+        pixelWidthHeightRatio: Float
+    ) {
+        super.onVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio)
+        videoWidth = width
+        videoHeight = height
+
+        binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.also {
+            it.width = videoWidth
+            it.height = videoHeight
+        }
+        adjustVideoBoundWithRatio(scaleType)
+    }
+
+    private fun adjustVideoBoundWithRatio(mode: Int) {
+        val r1 = layoutParams.height / binding.playerContainer.layoutParams.height.toDouble()
+        val r2 = layoutParams.width / binding.playerContainer.layoutParams.width.toDouble()
+        val sc = when(mode) {
+            SCALE_TYPE_ADJUST_RATIO ->  min(r1, r2)
+            else -> max(r1, r2)
+        }
+        binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.also {
+            it.width = if(mode == SCALE_TYPE_SCALE_TO_FIT) layoutParams.width else (it.width * sc).roundToInt()
+            it.height = if(mode == SCALE_TYPE_SCALE_TO_FIT) layoutParams.height else (it.height * sc).roundToInt()
+        }
+        centerPlayerInView()
+    }
+
     companion object {
         private const val UPDATE_PROGRESS = 21
         private const val FORWARD_BACKWARD_DURATION_IN_MILLIS = 10000
         private const val AUTOPLAY_INTERVAL = 5000L
+
+        private const val SCALE_TYPE_ADJUST_RATIO = 1
+        private const val SCALE_TYPE_CENTER_CROP = 2
+        private const val SCALE_TYPE_SCALE_TO_FIT = 3
     }
 }

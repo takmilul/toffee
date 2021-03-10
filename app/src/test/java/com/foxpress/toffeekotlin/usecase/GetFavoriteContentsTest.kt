@@ -5,7 +5,6 @@ import com.banglalink.toffee.data.network.response.FavoriteContentResponse
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.ContentBean
-import com.banglalink.toffee.usecase.GetFavoriteContents
 import com.nhaarman.mockitokotlin2.*
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking
@@ -39,7 +38,7 @@ class GetFavoriteContentsTest :BaseUseCaseTest(){
             //test method
             val resultChannelInfoList = getContents.execute()
             //verify it
-            assertEquals(resultChannelInfoList[0].formatted_view_count,"1T")
+            assertEquals(resultChannelInfoList[0].formattedViewCount,"1T")
             assertEquals(resultChannelInfoList[0].formattedDuration,"04:05")
             assertEquals(resultChannelInfoList[0].program_name,"Hello BD")
             assertEquals(resultChannelInfoList[0].content_provider_name,"GSeries")

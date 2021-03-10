@@ -1,65 +1,84 @@
 package com.banglalink.toffee.ui.home
 
 import android.content.Context
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.apiservice.GetProfile
+import com.banglalink.toffee.apiservice.*
+import com.banglalink.toffee.data.database.dao.ReactionDao
+import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.database.entities.TVChannelItem
-import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
+import com.banglalink.toffee.data.network.retrofit.DbApi
+import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.network.util.resultLiveData
-import com.banglalink.toffee.data.repository.TVChannelRepository
+import com.banglalink.toffee.data.repository.*
 import com.banglalink.toffee.data.storage.Preference
-import com.banglalink.toffee.data.storage.ViewCountDAO
 import com.banglalink.toffee.di.AppCoroutineScope
-import com.banglalink.toffee.model.*
+import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.MyChannelDetailBean
+import com.banglalink.toffee.model.MyChannelNavParams
+import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
+import com.banglalink.toffee.ui.player.PlaylistManager
+import com.banglalink.toffee.usecase.*
+import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.getError
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
-import com.google.firebase.iid.InstanceIdResult
-import kotlinx.coroutines.launch
-import java.lang.Exception
-import com.banglalink.toffee.usecase.*
-import com.banglalink.toffee.util.unsafeLazy
 import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.iid.InstanceIdResult
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-
-class HomeViewModel @ViewModelInject constructor(
-    @AppCoroutineScope private val appScope: CoroutineScope,
+@HiltViewModel
+class HomeViewModel @Inject constructor(
+    private val dbApi: DbApi,
+    private val mPref: Preference,
     private val profileApi: GetProfile,
-    private val viewCountDAO: ViewCountDAO,
-    private val sendViewContentEvent: SendViewContentEvent,
+    private val setFcmToken: SetFcmToken,
+    private val reactionDao: ReactionDao,
+    private val updateFavorite: UpdateFavorite,
+    private val tvChannelRepo: TVChannelRepository,
     @ApplicationContext private val mContext: Context,
-    private val tvChannelRepo: TVChannelRepository
-):BaseViewModel(),OnCompleteListener<InstanceIdResult> {
+    private val sendSubscribeEvent: SendSubscribeEvent,
+    private val viewCountRepository: ViewCountRepository,
+    private val sendShareCountEvent: SendShareCountEvent,
+    private val shareCountRepository: ShareCountRepository,
+    private val sendViewContentEvent: SendViewContentEvent,
+    @AppCoroutineScope private val appScope: CoroutineScope,
+    private val reactionStatusRepository: ReactionStatusRepository,
+    private val contentFromShareableUrl: GetContentFromShareableUrl,
+    private val myChannelDetailApiService: MyChannelGetDetailService,
+    private val subscriptionCountRepository: SubscriptionCountRepository,
+) : BaseViewModel(), OnCompleteListener<InstanceIdResult> {
 
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
-    val fragmentDetailsMutableLiveData = MutableLiveData<Any>()
+    val fragmentDetailsMutableLiveData = SingleLiveEvent<Any>()
     val addToPlayListMutableLiveData = MutableLiveData<AddToPlaylistData>()
-    val shareContentLiveData = MutableLiveData<ChannelInfo>()
-    val userChannelMutableLiveData = MutableLiveData<ChannelInfo>()
+    val shareContentLiveData = SingleLiveEvent<ChannelInfo>()
+
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
-    val switchBottomTab = MutableLiveData<Int>()
+    val switchBottomTab = SingleLiveEvent<Int>()
+
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val viewAllVideoLiveData = MutableLiveData<Boolean>()
     val viewAllCategories = MutableLiveData<Boolean>()
+    val myChannelNavLiveData = SingleLiveEvent<MyChannelNavParams>()
+    val notificationUrlLiveData = SingleLiveEvent<String>()
 
-    private val getContentFromShareableUrl by unsafeLazy{
-        GetContentFromShareableUrl(Preference.getInstance(),RetrofitApiClient.toffeeApi)
-    }
+    private val _channelDetail = MutableLiveData<Resource<MyChannelDetailBean?>>()
+    private var _playlistManager = PlaylistManager()
 
-    private val setFcmToken by unsafeLazy {
-        SetFcmToken(Preference.getInstance(),RetrofitApiClient.toffeeApi)
-    }
+    fun getPlaylistManager() = _playlistManager
 
     init {
         getProfile()
@@ -71,55 +90,79 @@ class HomeViewModel @ViewModelInject constructor(
     override fun onComplete(task: Task<InstanceIdResult>) {
         if (task.isSuccessful) {
             val token = task.result?.token
-            if(token!=null){
+            if (token != null) {
                 setFcmToken(token)
             }
         }
 
     }
 
-    private fun setFcmToken(token:String){
+    private fun setFcmToken(token: String) {
         viewModelScope.launch {
-            try{
+            try {
                 setFcmToken.execute(token)
-            }
-            catch (e:Exception){
+            } catch (e: Exception) {
                 getError(e)
             }
         }
     }
 
-    fun populateViewCountDb(url:String){
+    fun populateViewCountDb(url: String) {
         appScope.launch {
-            DownloadViewCountDb(RetrofitApiClient.dbApi, viewCountDAO)
+            DownloadViewCountDb(dbApi, viewCountRepository)
                 .execute(mContext, url)
         }
     }
 
-    private fun getProfile(){
+    fun populateReactionDb(url: String) {
+        appScope.launch {
+            DownloadReactionDb(dbApi, reactionDao, mPref)
+                .execute(mContext, url)
+        }
+    }
+
+    fun populateReactionStatusDb(url: String) {
+        appScope.launch {
+            DownloadReactionStatusDb(dbApi, reactionStatusRepository)
+                .execute(mContext, url)
+        }
+    }
+
+    fun populateSubscriptionCountDb(url: String) {
+        appScope.launch {
+            DownloadSubscriptionCountDb(dbApi, subscriptionCountRepository)
+                .execute(mContext, url)
+        }
+    }
+
+    fun populateShareCountDb(url: String) {
+        appScope.launch {
+            DownloadShareCountDb(dbApi, shareCountRepository)
+                .execute(mContext, url)
+        }
+    }
+
+    private fun getProfile() {
         viewModelScope.launch {
-            try{
+            try {
                 profileApi()
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 ToffeeAnalytics.logException(e)
             }
         }
     }
 
-    fun getShareableContent(shareUrl :String):LiveData<Resource<ChannelInfo?>>{
-       return resultLiveData{
-           getContentFromShareableUrl.execute(shareUrl)
-       }
+    fun getShareableContent(shareUrl: String): LiveData<Resource<ChannelInfo?>> {
+        return resultLiveData {
+            contentFromShareableUrl.execute(shareUrl)
+        }
     }
 
-    fun sendViewContentEvent(channelInfo: ChannelInfo){
+    fun sendViewContentEvent(channelInfo: ChannelInfo) {
         viewModelScope.launch {
             try {
-                CoroutineScope(Dispatchers.IO).launch {
-                    sendViewContentEvent.execute(channelInfo)
-                }
-
-            }catch (e:Exception){
+                sendViewContentEvent.execute(channelInfo)
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
@@ -137,6 +180,45 @@ class HomeViewModel @ViewModelInject constructor(
                     it.view_count?.toLong() ?: 0L
                 )
             )
+        }
+    }
+
+    fun getChannelDetail(isOwner: Int, isPublic: Int, channelId: Int, channelOwnerId: Int) {
+        viewModelScope.launch {
+            val result = resultFromResponse { myChannelDetailApiService.execute(channelOwnerId) }
+
+            if (result is Success) {
+                val myChannelDetail = result.data.myChannelDetail
+                myChannelDetail?.let {
+                    mPref.isChannelDetailChecked = true
+                    mPref.channelId = it.id.toInt()
+                    if (!it.profileUrl.isNullOrBlank()) {
+                        mPref.channelLogo = it.profileUrl
+                    }
+                    if (!it.channelName.isNullOrBlank()) {
+                        mPref.channelName = it.channelName
+                    }
+                }
+            }
+        }
+    }
+
+    fun sendShareLog(channelInfo: ChannelInfo) {
+        viewModelScope.launch {
+            sendShareCountEvent.execute(channelInfo)
+        }
+    }
+
+    fun sendSubscriptionStatus(subscriptionInfo: SubscriptionInfo, status: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            sendSubscribeEvent.execute(subscriptionInfo, status, true)
+        }
+    }
+
+    fun updateFavorite(channelInfo: ChannelInfo): LiveData<Resource<ChannelInfo>> {
+        return resultLiveData {
+            val favorite = channelInfo.favorite == null || channelInfo.favorite == "0"
+            updateFavorite.execute(channelInfo, favorite)
         }
     }
 }

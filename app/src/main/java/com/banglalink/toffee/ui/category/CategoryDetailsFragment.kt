@@ -5,21 +5,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.banglalink.toffee.R
-import com.banglalink.toffee.model.UgcCategory
+import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.ui.common.BaseFragment
-import dagger.hilt.android.AndroidEntryPoint
 
 class CategoryDetailsFragment : BaseFragment() {
-    lateinit var category: UgcCategory
+    lateinit var category: Category
 
     companion object {
         const val ARG_CATEGORY_ITEM = "ARG_CATEGORY_ITEM"
         const val ARG_SUBCATEGORY_ITEM = "ARG_CATEGORY_ITEM"
+        const val ARG_TITLE = "title"
 
-        fun newInstance(category: UgcCategory): CategoryDetailsFragment {
+        fun newInstance(category: Category): CategoryDetailsFragment {
             return CategoryDetailsFragment().apply {
                 arguments = Bundle().also {
                     it.putParcelable(ARG_CATEGORY_ITEM, category)
+                    it.putString(ARG_TITLE, category.categoryName)
                 }
             }
         }
@@ -37,10 +38,5 @@ class CategoryDetailsFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         category = requireArguments().getParcelable(ARG_CATEGORY_ITEM)!!
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        activity?.title = category.categoryName
     }
 }

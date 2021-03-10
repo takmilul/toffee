@@ -23,6 +23,7 @@
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:minHeight="200dp"
+            android:scaleType="centerCrop"
             android:onClick="@{()->callback.onItemClicked(data)}"
             app:layout_constraintDimensionRatio="W,16:9"
             app:layout_constraintEnd_toEndOf="parent"
@@ -51,26 +52,19 @@
             android:layout_height="4dp"
             android:max="1000"
             bindViewProgress="@{data}"
+            android:progressBackgroundTint="#000000"
             app:layout_constraintBottom_toBottomOf="@+id/poster"
             app:layout_constraintEnd_toEndOf="@+id/duration"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <!--<androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/poster"
-                app:layout_constraintBottom_toBottomOf="parent">-->
-
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/ownerPicture"
             loadImageFromUrlRounded="@{data.channelProfileUrl}"
-            android:layout_width="42dp"
-            android:layout_height="42dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginTop="12dp"
             android:src="@drawable/ic_profile_default"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:onClick="@{()-> callback.onProviderIconClicked(data)}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/poster" />
@@ -80,50 +74,42 @@
             style="@style/programNameTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:maxLines="2"
+            android:layout_marginStart="6dp"
+            android:gravity="center_vertical"
+            android:maxLines="1"
             android:ellipsize="end"
             android:text="@{data.program_name}"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/main_text_color"
+            android:textColor="@color/fixed_second_main_text_color"
             app:layout_constraintVertical_chainStyle="packed"
             app:layout_constraintEnd_toStartOf="@+id/options"
             app:layout_constraintStart_toEndOf="@+id/ownerPicture"
             app:layout_constraintTop_toTopOf="@+id/ownerPicture"
             app:layout_constraintBottom_toTopOf="@id/owner"
-            tools:text="This Makeup Tutorial By Kylie Jenner Is All you Need For Summer" />
+            tools:text="This Makeup Tutorial" />
 
         <ImageView
             android:id="@+id/options"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="8dp"
-            android:paddingVertical="4dp"
-            android:paddingHorizontal="8dp"
-            android:background="?selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true"
+            style="@style/OptionMenuStyle"
             android:onClick="@{(v)->callback.onOpenMenu(v, data)}"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/poster"
+            app:layout_constraintTop_toTopOf="@id/name"
             app:srcCompat="@drawable/ic_menu_more" />
 
         <TextView
             android:id="@+id/owner"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
             android:ellipsize="end"
             android:maxLines="1"
             tools:text="HBO &#8226; 14h"
+            android:textSize="@dimen/default_text_size"
+            android:fontFamily="@font/roboto_regular"
             android:text="@{data.content_provider_name + ` \u2022 ` + data.formattedCreateTime}"
-            android:textColor="@color/second_text_color"
+            android:textColor="@color/fixed_second_text_color"
             app:layout_constraintEnd_toEndOf="@id/name"
             app:layout_constraintStart_toStartOf="@+id/name"
-            app:layout_constraintTop_toBottomOf="@+id/name" />
+            app:layout_constraintTop_toBottomOf="@+id/name"
+            app:layout_constraintBottom_toBottomOf="@id/ownerPicture"/>
 
-        <!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

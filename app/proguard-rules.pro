@@ -79,4 +79,13 @@
 #********************************End rules for gson****************************************#
 
 -keepnames public class * extends androidx.fragment.app.Fragment
+#-keepnames public class * extends com.google.android.material.appbar.AppBarLayout.*
+#-keep class com.banglalink.toffee.ui.widget.AppBarLayoutBehavior {
+#    public <methods>;
+#}
+-keepnames abstract class com.google.android.material.appbar.HeaderBehavior
+-keepclassmembers class com.google.android.material.appbar.HeaderBehavior {
+    private java.lang.Runnable flingRunnable;
+    android.widget.OverScroller scroller;
+}
 -keep class androidx.navigation** { *; }

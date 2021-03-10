@@ -1,132 +1,88 @@
 package com.banglalink.toffee.ui.upload
 
-//import com.bumptech.glide.Glide
-
-import android.annotation.SuppressLint
-import android.content.Context
-import android.media.MediaMetadataRetriever
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.net.Uri
-import android.os.AsyncTask
 import android.os.Bundle
-import android.os.Environment
 import android.text.InputType
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.setPadding
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.repository.UploadInfoRepository
-import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.databinding.FragmentEditUploadInfoBinding
 import com.banglalink.toffee.di.AppCoroutineScope
-import com.banglalink.toffee.extension.loadBase64
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.model.UgcCategory
-import com.banglalink.toffee.model.UgcSubCategory
+import com.banglalink.toffee.model.Category
+import com.banglalink.toffee.model.SubCategory
 import com.banglalink.toffee.ui.common.BaseFragment
+import com.banglalink.toffee.ui.widget.ToffeeSpinnerAdapter
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
-import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.UtilsKt
 import com.pchmn.materialchips.ChipsInput
 import com.pchmn.materialchips.model.ChipInterface
 import dagger.hilt.android.AndroidEntryPoint
-import io.tus.android.client.TusAndroidUpload
-import io.tus.android.client.TusPreferencesURLStore
-import io.tus.java.client.TusClient
-import io.tus.java.client.TusUpload
-import kotlinx.coroutines.*
-import java.net.URL
-import java.util.*
-import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
-class EditUploadInfoFragment : BaseFragment() {
+class EditUploadInfoFragment: BaseFragment() {
+    
     private lateinit var binding: FragmentEditUploadInfoBinding
-
     private var progressDialog: VelBoxProgressDialog? = null
-    private var fileName: String = ""
-    private var size: String = ""
-    private var actualFileName: String? = null
-
-    @Inject
-    lateinit var editUploadViewModelFactory: EditUploadInfoViewModel.AssistedFactory
-
-    @Inject
-    lateinit var uploadRepo: UploadInfoRepository
-
-    @AppCoroutineScope
-    @Inject
-    lateinit var appScope: CoroutineScope
-
+    @Inject lateinit var editUploadViewModelFactory: EditUploadInfoViewModel.AssistedFactory
+    @Inject lateinit var uploadRepo: UploadInfoRepository
+    @AppCoroutineScope @Inject lateinit var appScope: CoroutineScope
     private lateinit var uploadFileUri: String
-    private lateinit var exception: String
-
-    private var preference: Preference? = null
-
-    private var bool:Boolean?=false
-    private var seconds:String?=""
-
     private val viewModel: EditUploadInfoViewModel by viewModels {
         EditUploadInfoViewModel.provideFactory(editUploadViewModelFactory, uploadFileUri)
     }
 
-    private val uploadProgressViewModel by activityViewModels<UploadProgressViewModel>()
-
     companion object {
         const val UPLOAD_FILE_URI = "UPLOAD_FILE_URI"
-        const val EXCEPTION = "EXCEPTION"
-
-
-        fun newInstance(): EditUploadInfoFragment {
-            return EditUploadInfoFragment()
-        }
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         uploadFileUri = requireArguments().getString(UPLOAD_FILE_URI, "")
-        exception = requireArguments().getString(EXCEPTION, "")
 
+        requireActivity().onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if(isEnabled) {
+                    VelBoxAlertDialogBuilder(requireContext()).apply {
+                        setTitle("Cancel Uploading")
+                        setText("Are you sure that you want to\n" +
+                                "cancel uploading video?")
+                        setPositiveButtonListener("NO") {
+                            it?.dismiss()
+                        }
+                        setNegativeButtonListener("YES") {
+                            isEnabled = false
+                            requireActivity().onBackPressed()
+                            it?.dismiss()
+                        }
+                    }.create().show()
+                }
+            }
+        })
     }
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        preference=Preference.getInstance()
-
-        try {
-            val retriever = MediaMetadataRetriever()
-            retriever.setDataSource(context, Uri.parse(uploadFileUri))
-            val duration = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-            val second: Long = TimeUnit.MILLISECONDS
-                    .toSeconds(duration.toLong())
-            seconds=second.toString()
-        } catch (e: Exception) {
-        }
+    ): View {
         binding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_edit_upload_info,
@@ -140,6 +96,11 @@ class EditUploadInfoFragment : BaseFragment() {
         return binding.root
     }
 
+    override fun onDestroyView() {
+        viewModel.tags.value = binding.uploadTags.selectedChipList.joinToString(" | ") { it.label }
+        super.onDestroyView()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -148,24 +109,10 @@ class EditUploadInfoFragment : BaseFragment() {
         }
 
         binding.cancelButton.setOnClickListener {
-//            lifecycleScope.launch {
-//                if(UploadService.taskList.isNotEmpty()) {
-//                    UploadService.stopAllUploads()
-//                }
-//                getUploadInfo()?.apply {
-//                    status = UploadStatus.CANCELED.value
-//                }?.also {
-//                    uploadRepo.updateUploadInfo(it)
-//                }
-//                mPref.uploadId = null
-//                findNavController().popBackStack()
-//            }
             VelBoxAlertDialogBuilder(requireContext()).apply {
                 setTitle("Cancel Uploading")
-                setText(
-                    "Are you sure that you want to\n" +
-                            "cancel uploading video?"
-                )
+                setText("Are you sure that you want to\n" +
+                        "cancel uploading video?")
                 setPositiveButtonListener("NO") {
                     it?.dismiss()
                 }
@@ -181,12 +128,19 @@ class EditUploadInfoFragment : BaseFragment() {
         }
 
         binding.thumbEditButton.setOnClickListener {
-            val action =
-                EditUploadInfoFragmentDirections.actionEditUploadInfoFragmentToThumbnailSelectionMethodFragment(
-                    "Set Video Cover Photo"
-                )
-            findNavController().navigate(action)
+            if (findNavController().currentDestination?.id != R.id.thumbnailSelectionMethodFragment && findNavController().currentDestination?.id == R.id.editUploadInfoFragment) {
+                val action =
+                    EditUploadInfoFragmentDirections.actionEditUploadInfoFragmentToThumbnailSelectionMethodFragment(
+                        "Set Video Cover Photo",
+                        false
+                    )
+                findNavController().navigate(action)
+            }
         }
+
+        setupCategorySpinner()
+        setupSubcategorySpinner()
+        setupAgeSpinner()
 
         setupTagView()
         observeStatus()
@@ -194,8 +148,20 @@ class EditUploadInfoFragment : BaseFragment() {
         observeProgressDialog()
         observeThumbnailLoad()
         observeThumbnailChange()
+        observeVideoDuration()
+
+        observeExitFragment()
 
         binding.uploadTitle.requestFocus()
+    }
+
+    private fun observeExitFragment() {
+        observe(viewModel.exitFragment) {
+            if(it) {
+                Toast.makeText(requireContext(), "Unable to load data.", Toast.LENGTH_SHORT).show()
+                findNavController().popBackStack()
+            }
+        }
     }
 
     private fun observeThumbnailLoad() {
@@ -206,11 +172,106 @@ class EditUploadInfoFragment : BaseFragment() {
         }
     }
 
+    private fun observeVideoDuration() {
+        observe(viewModel.durationData) {
+            binding.duration.text = UtilsKt.getDurationLongToString(it)
+        }
+    }
+
     private fun observeThumbnailChange() {
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String?>(
-            ThumbnailSelectionMethodFragment.THUMB_URI
-        )?.observe(viewLifecycleOwner) {
-            viewModel.saveThumbnail(it)
+        findNavController().
+            currentBackStackEntry?.
+            savedStateHandle?.
+            getLiveData<String?>(ThumbnailSelectionMethodFragment.THUMB_URI)?.
+            observe(viewLifecycleOwner, {
+                viewModel.saveThumbnail(it)
+            })
+    }
+
+    private fun setupAgeSpinner(){
+        val mAgeAdapter = ToffeeSpinnerAdapter<String>(requireContext(), "Select Age")
+        binding.ageGroupSpinner.adapter = mAgeAdapter
+        binding.ageGroupSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                if(position != 0 && viewModel.ageGroupPosition.value != position) {
+                    viewModel.ageGroupPosition.value = position
+                }else {
+                    binding.ageGroupSpinner.setSelection(viewModel.ageGroupPosition.value ?: 1)
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+        }
+
+        observe(viewModel.ageGroup) {
+            mAgeAdapter.setData(it)
+            viewModel.ageGroupPosition.value = 1
+        }
+
+        observe(viewModel.ageGroupPosition) {
+            mAgeAdapter.selectedItemPosition = it
+            binding.ageGroupSpinner.setSelection(it)
+        }
+    }
+
+    private fun setupCategorySpinner() {
+        val mCategoryAdapter = ToffeeSpinnerAdapter<Category>(requireContext(), "Select Category")
+        binding.categorySpinner.adapter = mCategoryAdapter
+        binding.categorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                if(position != 0 && viewModel.categoryPosition.value != position) {
+                    viewModel.categoryPosition.value = position
+                    viewModel.categoryIndexChanged(position-1)
+                }else {
+                    val previousValue=viewModel.categoryPosition.value ?: 1
+                    binding.categorySpinner.setSelection(previousValue)
+                    viewModel.categoryIndexChanged(previousValue-1)
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+        }
+
+        observe(viewModel.categories) {
+            mCategoryAdapter.setData(it)
+            viewModel.categoryPosition.value = 1
+        }
+
+        observe(viewModel.categoryPosition) {
+                mCategoryAdapter.selectedItemPosition = it
+                binding.categorySpinner.setSelection(it)
+        }
+    }
+
+    private fun setupSubcategorySpinner() {
+        val mSubCategoryAdapter = ToffeeSpinnerAdapter<SubCategory>(requireContext(), "Select Sub Category")
+        binding.subCategorySpinner.adapter = mSubCategoryAdapter
+        binding.subCategorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                if(position != 0 && viewModel.subCategoryPosition.value != position) {
+                    viewModel.subCategoryPosition.value = position
+                }else {
+                    binding.subCategorySpinner.setSelection(viewModel.subCategoryPosition.value ?: 1)
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+        }
+
+        observe(viewModel.subCategories) {
+            mSubCategoryAdapter.setData(it)
+            viewModel.subCategoryPosition.value = 1
+        }
+
+        observe(viewModel.subCategoryPosition) {
+                mSubCategoryAdapter.selectedItemPosition = it
+                binding.subCategorySpinner.setSelection(it)
         }
     }
 
@@ -238,31 +299,30 @@ class EditUploadInfoFragment : BaseFragment() {
                 if (text?.endsWith(" ") == true) {
                     text.let {
                         val chipText = it.toString().trim().capitalize()
-                        binding.uploadTags.addChip(chipText, null)
+                        if(chipText.isNotEmpty()) {
+                            binding.uploadTags.addChip(chipText, null)
+                        }
                     }
                 }
             }
         })
     }
 
-
-//    override fun onDestroy() {
-//        if(mPref.uploadId != null) {
-//            appScope.launch {
-//                saveInfo()
-//            }
-//        }
-//        super.onDestroy()
-//    }
-
     private fun observeProgressDialog() {
         observe(viewModel.progressDialog) {
-            when (it) {
+            when(it) {
                 true -> {
+                    if(progressDialog != null) {
+                        progressDialog?.dismiss()
+                        progressDialog = null
+                    }
                     progressDialog = VelBoxProgressDialog(requireContext())
                     progressDialog?.show()
                 }
-                false -> progressDialog?.dismiss()
+                false -> {
+                    progressDialog?.dismiss()
+                    progressDialog = null
+                }
             }
         }
     }
@@ -279,7 +339,7 @@ class EditUploadInfoFragment : BaseFragment() {
         }
 
         observe(viewModel.resultLiveData) {
-            when (it) {
+            when(it){
                 is Resource.Success -> {
                     lifecycleScope.launch {
 //                        getUploadInfo()?.apply {
@@ -288,6 +348,7 @@ class EditUploadInfoFragment : BaseFragment() {
 //                            uploadRepo.updateUploadInfo(info)
 //                        }
                         progressDialog?.dismiss()
+                        progressDialog = null
 //                        val dialog = VelBoxAlertDialogBuilder(
 //                            requireContext(),
 //                            text = it.data.message,
@@ -299,117 +360,66 @@ class EditUploadInfoFragment : BaseFragment() {
 //                        dialog.show()
                         findNavController().navigate(R.id.upload_minimize, Bundle().apply {
                             putString(MinimizeUploadFragment.UPLOAD_ID, it.data.first)
-                            putString(MinimizeUploadFragment.FILE_NAME, fileName)
-                            putString(MinimizeUploadFragment.UPLOAD_URI, uploadFileUri)
                             putLong(MinimizeUploadFragment.CONTENT_ID, it.data.second)
-                            putString(MinimizeUploadFragment.EXCEPTION, exception)
                         })
                     }
                 }
                 else -> {
-                    progressDialog?.dismiss()
-                    findNavController().navigate(R.id.upload_minimize, Bundle().apply {
-                        putString(MinimizeUploadFragment.UPLOAD_ID, "")
-                        putString(MinimizeUploadFragment.UPLOAD_URI, uploadFileUri)
-                        putString(MinimizeUploadFragment.FILE_NAME, fileName)
-                        putLong(MinimizeUploadFragment.CONTENT_ID, 0)
-                        putString(MinimizeUploadFragment.EXCEPTION, exception)
-                    })
-                    //context?.showToast("Unable to submit the video.")
+                    context?.showToast("Unable to submit the video.")
                 }
             }
         }
     }
 
-//    private suspend fun getUploadInfo(): UploadInfo? {
-//        return mPref.uploadId?.let {
-//            uploadRepo.getUploadById(UtilsKt.stringToUploadId(it))
-//        }
-//    }
+    private fun submitVideo() {
+        val title = binding.uploadTitle.text.toString().trim()
+        val description = binding.uploadDescription.text.toString().trim()
+        val orientation = viewModel.orientationData.value ?: 1
+        
+        if(title.isBlank()){
+            binding.uploadTitle.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
+            binding.errorTitleTv.show()
+        }
+        else{
+            binding.uploadTitle.setBackgroundResource(R.drawable.single_line_input_text_bg)
+            binding.errorTitleTv.hide()
+        }
+        if(description.isBlank()){
+            binding.uploadDescription.setBackgroundResource(R.drawable.error_multiline_input_text_bg)
+            binding.errorDescriptionTv.show()
+        }
+        else{
+            binding.uploadDescription.setBackgroundResource(R.drawable.multiline_input_text_bg)
+            binding.errorDescriptionTv.hide()
+        }
 
-//    private suspend fun saveInfo(): UploadInfo? {
-//        return getUploadInfo()?.apply {
-//            title = binding.uploadTitle.text.toString()
-//            description = binding.uploadDescription.text.toString()
-//
-//            tags = binding.uploadTags.selectedChipList.joinToString(" | ") { it.label }
-//            Log.e("TAG", "TAG - $tags, === ${binding.uploadTags.selectedChipList}")
-//
-//            ageGroupIndex = binding.ageGroupSpinner.selectedItemPosition
-//            ageGroup = binding.ageGroupSpinner.selectedItem.toString()
-//
-//            categoryIndex = binding.categorySpinner.selectedItemPosition
-//            category = binding.categorySpinner.selectedItem.toString()
-//
-////                submitToChallengeIndex = binding.challengeSelectionSpinner.selectedItemPosition
-////                submitToChallenge = binding.challengeSelectionSpinner.selectedItem.toString()
-//
-//            Log.e("UploadInfo", "$this")
-//        }?.also {
-//            uploadRepo.updateUploadInfo(it)
-//        }
-//    }
-
-
-      fun submitVideo() {
-
-        val title = binding.uploadTitle.text.toString()
-        val description = binding.uploadDescription.text.toString()
-        if(title.isBlank() || description.isBlank()) {
-            context?.showToast("Missing required field", Toast.LENGTH_SHORT)
+        if (viewModel.thumbnailData.value.isNullOrBlank()){
+            context?.showToast("Missing thumbnail field")
             return
         }
-        lifecycleScope.launch {
-            val categoryObj = binding.categorySpinner.selectedItem
-            val categoryId = if(categoryObj is UgcCategory) {
-                categoryObj.id
-            } else -1
 
-            val subCategoryObj = binding.subCategorySpinner.selectedItem
-            val subcategoryId = if(subCategoryObj is UgcSubCategory) {
-                subCategoryObj.id
-            } else -1
+        if (title.isNotBlank() and description.isNotBlank()) {
+            lifecycleScope.launch {
+                val categoryObj = binding.categorySpinner.selectedItem
+                val categoryId = if (categoryObj is Category) {
+                    categoryObj.id
+                } else -1
 
-            val tags = binding.uploadTags.selectedChipList.joinToString(" | ") { it.label }
-            actualFileName = withContext(Dispatchers.IO + Job()) {
-                UtilsKt.fileNameFromContentUri(context!!, Uri.parse(uploadFileUri))
-            }
-            val fileSize = withContext(Dispatchers.IO + Job()) {
-                UtilsKt.fileSizeFromContentUri(context!!, Uri.parse(uploadFileUri))
-            }
+                val subCategoryObj = binding.subCategorySpinner.selectedItem
+                val subcategoryId = if (subCategoryObj is SubCategory) {
+                    subCategoryObj.id
+                } else -1
 
-            size= Utils.readableFileSize(fileSize)
-            val idx = actualFileName?.lastIndexOf(".") ?: -1
-            val ext = if (idx >= 0) {
-                actualFileName?.substring(idx) ?: ""
-            }
-            else ""
-//
-            fileName = preference?.customerId.toString() + "_" + UUID.randomUUID().toString() + ext
+                val tags = binding.uploadTags.selectedChipList.joinToString(" | ") { it.label }
 
-            viewModel.saveUploadInfo(tags, categoryId, subcategoryId,fileName,seconds!!.toString())
-        }
-    }
-    @SuppressLint("NewApi")
-    fun isOnline(context: Context): Boolean {
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        if (connectivityManager != null) {
-            val capabilities =
-                connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-            if (capabilities != null) {
-                if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_CELLULAR")
-                    return true
-                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_WIFI")
-                    return true
-                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
-                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_ETHERNET")
-                    return true
-                }
+                viewModel.saveUploadInfo(
+                    tags,
+                    categoryId,
+                    subcategoryId,
+                    viewModel.durationData.value ?: 0L,
+                    orientation
+                )
             }
         }
-        return false
     }
 }

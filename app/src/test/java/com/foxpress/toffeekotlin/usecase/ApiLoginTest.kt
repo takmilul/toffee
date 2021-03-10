@@ -6,7 +6,7 @@ import com.banglalink.toffee.data.network.retrofit.AuthApi
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.exception.ApiException
 import com.banglalink.toffee.model.CustomerInfoSignIn
-import com.banglalink.toffee.usecase.ApiLogin
+import com.banglalink.toffee.apiservice.ApiLogin
 import com.nhaarman.mockitokotlin2.*
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking

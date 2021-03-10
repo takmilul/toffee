@@ -24,6 +24,7 @@ class ChannelStickyListAdapter(
     private val onItemClickListener: OnItemClickListener?
 ) :
     StickyHeaderGridAdapter() {
+    private var highlightedChannel: ChannelInfo? = null
     private var selectedChannel: ChannelInfo? = null
     private var values: List<StickyHeaderInfo> = emptyList()
 
@@ -32,7 +33,7 @@ class ChannelStickyListAdapter(
     }
 
     fun setSelected(channel: ChannelInfo?) {
-        selectedChannel = channel
+        highlightedChannel = channel
         notifyAllSectionsDataSetChanged()
     }
     
@@ -120,7 +121,7 @@ class ChannelStickyListAdapter(
         } else {
             val item = getSection(section)
             val headerViewHolder = viewHolder as HeaderViewHolder
-            headerViewHolder.text.text = item.header
+            headerViewHolder.text.text = if(item.header == "Recent") "Recently Viewed" else item.header
         }
     }
 
@@ -144,7 +145,7 @@ class ChannelStickyListAdapter(
 ////            diskCachePolicy(CachePolicy.ENABLED)
 //        }
 
-        if(item.id == selectedChannel?.id.toString() && !getSection(section).header.contains("Recent")) {
+        if(item.id == highlightedChannel?.id.toString() && !getSection(section).header.contains("Recent")) {
             liveTvViewHolder.icon.borderWidth = Utils.dpToPx(4)
         } else {
             liveTvViewHolder.icon.borderWidth = 0

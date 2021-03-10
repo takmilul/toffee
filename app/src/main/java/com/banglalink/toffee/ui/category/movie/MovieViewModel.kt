@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.category.movie
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.apiservice.*
@@ -12,11 +11,14 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.ComingSoonContent
 import com.banglalink.toffee.model.MoviesContentVisibilityCards
 import com.banglalink.toffee.ui.common.BaseViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MovieViewModel @ViewModelInject constructor(
+@HiltViewModel
+class MovieViewModel @Inject constructor(
     private val movieApiService: MovieCategoryDetailService,
     private val moviePreviewsService: MoviesPreviewService,
     private val trendingNowService: GetMostPopularContents.AssistedFactory,
@@ -46,8 +48,8 @@ class MovieViewModel @ViewModelInject constructor(
     val telefilms = telefilmsResponse.toLiveData()
     private val comingSoonResponse = MutableLiveData<List<ComingSoonContent>>()
     val comingSoonContents = comingSoonResponse.toLiveData()
-    private var isContinueWatchingDbInitialized = false
-    private var continueWatchingFlag = 0
+    private var originalCards = MoviesContentVisibilityCards()
+    private var continueWatchingFlag: Boolean = false
     
     val loadMovieCategoryDetail by lazy{
         viewModelScope.launch {
@@ -56,15 +58,16 @@ class MovieViewModel @ViewModelInject constructor(
             } catch (ex: Exception) {
                 null
             }
-            moviesContentCardsResponse.value = response?.cards?.let { card ->
-                card.continueWatching = if (isContinueWatchingDbInitialized) continueWatchingFlag else card.continueWatching
-                card.moviePreviews = moviePreviewsResponse.value?.let{ if (it.isEmpty()) 0 else card.moviePreviews } ?: 0 
-                card.trendingNow = trendingNowMoviesResponse.value?.let{ if (it.isEmpty()) 0 else card.trendingNow } ?: 0 
-                card.telefilm = telefilmsResponse.value?.let{ if (it.isEmpty()) 0 else card.telefilm } ?: 0 
-                card.comingSoon = comingSoonResponse.value?.let{ if (it.isEmpty()) 0 else card.comingSoon } ?: 0 
-                
-                card
-            } ?: MoviesContentVisibilityCards()
+            
+            originalCards = response?.cards ?: MoviesContentVisibilityCards()
+            
+            moviesContentCardsResponse.value = originalCards.copy(
+                continueWatching = if(continueWatchingFlag) originalCards.continueWatching else 0,
+                moviePreviews = moviePreviewsResponse.value?.let { if(it.isEmpty()) 0 else originalCards.moviePreviews } ?: originalCards.moviePreviews,
+                trendingNow = trendingNowMoviesResponse.value?.let { if(it.isEmpty()) 0 else originalCards.trendingNow } ?: originalCards.trendingNow,
+                telefilm = telefilmsResponse.value?.let { if(it.isEmpty()) 0 else originalCards.telefilm } ?: originalCards.telefilm,
+                comingSoon = comingSoonResponse.value?.let { if(it.isEmpty()) 0 else originalCards.comingSoon } ?: originalCards.comingSoon,
+            )
 
             thrillerMoviesResponse.value = response?.subCategoryWiseContent?.find { it.subCategoryName == "Thriller" }?.let {
                 it.channels?.map { cinfo->
@@ -142,7 +145,7 @@ class MovieViewModel @ViewModelInject constructor(
                     it
                 }.run { 
                     moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply {
-                        moviePreviews = if (isEmpty()) 0 else moviePreviews
+                        moviePreviews = if (isEmpty()) 0 else originalCards.moviePreviews
                     }
                     this
                 }
@@ -157,15 +160,15 @@ class MovieViewModel @ViewModelInject constructor(
     
     val loadTrendingNowMovies by lazy {
         viewModelScope.launch {
-            val response = trendingNowService.create(TrendingNowRequestParam("VOD", 1, 0, false)).loadData(0, 10)
             trendingNowMoviesResponse.value = try {
+                val response = trendingNowService.create(LandingUserChannelsRequestParam("VOD", 1, 0, false)).loadData(0, 10)
                 response.map {
                     it.categoryId = 1
                     it.viewProgress = viewProgressRepo.getProgressByContent(it.id.toLong())?.progress ?: 0L
                     it
                 }.run {
                     moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply {
-                        trendingNow = if(isEmpty()) 0 else trendingNow
+                        trendingNow = if(isEmpty()) 0 else originalCards.trendingNow
                     }
                     this
                 }
@@ -190,7 +193,7 @@ class MovieViewModel @ViewModelInject constructor(
                     it
                 }.run {
                     moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply {
-                        telefilm = if(isEmpty()) 0 else telefilm
+                        telefilm = if(isEmpty()) 0 else originalCards.telefilm
                     }
                     this
                 }
@@ -208,7 +211,7 @@ class MovieViewModel @ViewModelInject constructor(
             comingSoonResponse.value = try{
                 comingSoonApiService.loadData("VOD", 1, 0, 10, 0).run { 
                     moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply { 
-                        comingSoon = if(isEmpty()) 0 else comingSoon
+                        comingSoon = if(isEmpty()) 0 else originalCards.comingSoon
                     }
                     this
                 }
@@ -223,13 +226,12 @@ class MovieViewModel @ViewModelInject constructor(
 
     fun getContinueWatchingFlow(catId: Int): Flow<List<ChannelInfo>> {
         return continueWatchingRepo.getAllItemsByCategory(catId).map {
-            isContinueWatchingDbInitialized = true
-            continueWatchingFlag = if(it.isEmpty()) 0 else 1
             it.mapNotNull { item ->
                 item.channelInfo
             }.apply {
-                moviesContentCardsResponse.value = moviesContentCardsResponse.value?.also { cardList ->
-                    cardList.continueWatching = if (isEmpty()) 0 else cardList.continueWatching
+                continueWatchingFlag = isNotEmpty()
+                moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply { 
+                    continueWatching = if (isEmpty()) 0 else originalCards.continueWatching
                 }
             }
         }

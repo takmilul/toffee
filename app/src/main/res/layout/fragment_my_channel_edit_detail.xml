@@ -24,8 +24,11 @@
             android:fillViewport="true">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
                 android:background="@color/screen_bg_white">
 
                 <ImageView
@@ -83,14 +86,31 @@
 
 
                 <TextView
+                    android:id="@+id/error_thum_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="*Channel Logo is required"
+                    android:textColor="@color/pink_to_accent_color"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/profileImageView"
+                    app:layout_constraintStart_toStartOf="@+id/profileImageView"
+                    app:layout_constraintTop_toBottomOf="@+id/profileImageEditButton"
+                    tools:visibility="visible" />
+
+
+                <TextView
                     android:id="@+id/textView15"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="24dp"
-                    android:text="Channel Name"
+                    android:layout_marginTop="16dp"
+                    android:text="Channel Name*"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textSize="@dimen/default_text_size"
+                    android:textColor="@color/cardTitleColor"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/profileImageEditButton" />
+                    app:layout_constraintTop_toBottomOf="@+id/error_thum_tv" />
 
                 <EditText
                     android:id="@+id/channelName"
@@ -99,13 +119,31 @@
                     android:layout_marginTop="4dp"
                     android:layout_marginHorizontal="16dp"
                     android:background="@drawable/single_line_input_text_bg"
-                    android:ems="10"
                     android:hint="Channel name"
+                    android:maxLines="1"
                     android:inputType="textPersonName"
+                    android:fontFamily="@font/roboto_medium"
+                    android:textColor="@color/cardTitleColor"
                     android:text="@{viewModel.myChannelDetail.channelName}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView15" />
+
+
+                <TextView
+                    android:id="@+id/error_channel_name_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="*Channel name required"
+                    android:textColor="@color/pink_to_accent_color"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/channelName"
+                    app:layout_constraintHorizontal_bias="0.05"
+                    app:layout_constraintStart_toStartOf="@+id/channelName"
+                    app:layout_constraintTop_toBottomOf="@+id/channelName"
+                    tools:visibility="visible" />
 
                 <TextView
                     android:id="@+id/textView17"
@@ -114,8 +152,11 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="24dp"
                     android:text="Description"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textSize="@dimen/default_text_size"
+                    android:textColor="@color/cardTitleColor"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/channelName" />
+                    app:layout_constraintTop_toBottomOf="@+id/error_channel_name_tv" />
 
                 <com.banglalink.toffee.ui.widget.HashTagEditText
                     android:id="@+id/description"
@@ -131,10 +172,27 @@
                     android:lines="4"
                     android:maxLength="150"
                     android:maxLines="8"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textColor="@color/cardTitleColor"
                     android:text="@{viewModel.myChannelDetail.description}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView17" />
+
+                <TextView
+                    android:id="@+id/error_description_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="*Channel Description is not valid"
+                    android:textColor="@color/pink_to_accent_color"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/description"
+                    app:layout_constraintHorizontal_bias="0.05"
+                    app:layout_constraintStart_toStartOf="@+id/description"
+                    app:layout_constraintTop_toBottomOf="@+id/description"
+                    tools:visibility="visible" />
 
                 <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/guideline9"
@@ -150,8 +208,11 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="24dp"
                     android:text="Category"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textSize="@dimen/default_text_size"
+                    android:textColor="@color/cardTitleColor"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/description" />
+                    app:layout_constraintTop_toBottomOf="@+id/error_description_tv" />
 
                 <TextView
                     android:id="@+id/textView21"
@@ -179,9 +240,7 @@
                         android:id="@+id/categorySpinner"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:entries="@{viewModel.categories}"
-                        android:onItemSelected="@{viewModel::onItemSelected}"
-                        android:selectedItemPosition="@{viewModel.categories.indexOf(viewModel.selectedCategory.categoryName)}" />
+                        android:spinnerMode="dialog" />
 
                 </RelativeLayout>
 
@@ -208,26 +267,21 @@
                 <Button
                     android:id="@+id/cancelButton"
                     style="@style/ButtonStyleRingPurple"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_marginHorizontal="8dp"
                     android:layout_marginVertical="32dp"
                     android:text="Cancel"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintVertical_bias="0"
                     app:layout_constraintEnd_toStartOf="@id/saveButton"
                     app:layout_constraintHorizontal_chainStyle="packed"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/categorySpinnerWrap" />
+                    app:layout_constraintTop_toBottomOf="@id/categorySpinnerWrap"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
 
                 <Button
                     android:id="@+id/saveButton"
                     style="@style/ButtonStyleSolidPink"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_marginHorizontal="8dp"
                     android:text="Save Changes"
-                    android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="@id/cancelButton"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/cancelButton"

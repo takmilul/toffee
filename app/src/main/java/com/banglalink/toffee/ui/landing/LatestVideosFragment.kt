@@ -11,10 +11,12 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import com.banglalink.toffee.R
@@ -22,18 +24,21 @@ import com.banglalink.toffee.R.string
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.databinding.FragmentLandingLatestVideosBinding
 import com.banglalink.toffee.enums.FilterContentType.*
+import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
-import com.banglalink.toffee.model.UgcCategory
-import com.banglalink.toffee.model.UgcSubCategory
+import com.banglalink.toffee.model.SubCategory
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.ContentReactionCallback
 import com.banglalink.toffee.ui.common.HomeBaseFragment
-import com.banglalink.toffee.ui.common.ReactionFragment
+import com.banglalink.toffee.ui.common.ReactionIconCallback
+import com.banglalink.toffee.ui.common.ReactionPopup
+import com.banglalink.toffee.ui.common.ReactionPopup.Companion.TAG
 import com.banglalink.toffee.ui.home.LandingPageViewModel
-import com.banglalink.toffee.ui.home.PopularVideoListAdapter
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.google.android.material.chip.Chip
 import kotlinx.android.synthetic.main.fragment_category_info.*
@@ -43,10 +48,10 @@ import kotlinx.coroutines.flow.collectLatest
 
 class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelInfo> {
     
-    private lateinit var mAdapter: PopularVideoListAdapter
+    private lateinit var mAdapter: LatestVideosAdapter
 
     private val viewModel by activityViewModels<LandingPageViewModel>()
-    private var category: UgcCategory? = null
+    private var category: Category? = null
     private var listJob: Job? = null
     private var selectedFilter: Int = FEED.value
     private lateinit var binding: FragmentLandingLatestVideosBinding
@@ -63,15 +68,20 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        category = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM) as UgcCategory?
+        category = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM) as Category?
         setupEmptyView()
-        mAdapter = PopularVideoListAdapter(this)
+        mAdapter = LatestVideosAdapter(this)
 
         with(binding.latestVideosList) {
             addItemDecoration(MarginItemDecoration(12))
 
             mAdapter.addLoadStateListener {
                 binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
+                mAdapter.apply {
+                    val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached
+                    binding.emptyView.isGone = !showEmpty
+                    binding.latestVideosList.isVisible = !showEmpty
+                }
             }
             adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter{ mAdapter.retry() })
             setHasFixedSize(true)
@@ -121,20 +131,6 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
                     TRENDING_VIDEOS.value -> viewModel.subCategoryId.value = 0 /*observeTrendingVideosList(*//*category?.id?.toInt() ?: 0*//*)*/
                 }
                 true
-            }
-        }
-        
-        mAdapter.addLoadStateListener {
-            if(it.source.refresh is LoadState.Loading) {
-                binding.progressBar.visibility = View.VISIBLE
-            } else {
-                binding.progressBar.visibility = View.GONE
-            }
-
-            mAdapter.apply {
-                val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached
-                binding.emptyView.isGone = !showEmpty
-                binding.latestVideosList.isVisible = !showEmpty
             }
         }
     }
@@ -194,7 +190,24 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
 
     override fun onReactionClicked(view: View, reactionCountView: View, item: ChannelInfo) {
         super.onReactionClicked(view, reactionCountView, item)
-        ReactionFragment.newInstance(item).apply { setView(view, reactionCountView) }.show(requireActivity().supportFragmentManager, ReactionFragment.TAG)
+        val iconLocation = IntArray(2)
+        view.getLocationOnScreen(iconLocation)
+        val reactionPopupFragment = ReactionPopup.newInstance(item, iconLocation, view.height).apply { setCallback(object : ReactionIconCallback {
+            override fun onReactionChange(reactionCount: String, reactionText: String, reactionIcon: Int) {
+                (reactionCountView as TextView).text = reactionCount
+                (view as TextView).text = reactionText
+                view.setCompoundDrawablesWithIntrinsicBounds(reactionIcon, 0, 0, 0)
+                if (reactionText == Love.name) {
+                    view.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorAccent))
+                }
+                else{
+                    view.setTextColor(ContextCompat.getColor(requireContext(), R.color.fixed_second_text_color))
+                }
+                Log.e(TAG, "setReaction: icon", )
+            }
+        }) 
+        }
+        childFragmentManager.commit { add(reactionPopupFragment, TAG) }
     }
 
     override fun onShareClicked(view: View, item: ChannelInfo) {
@@ -204,7 +217,7 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
 
     override fun onProviderIconClicked(item: ChannelInfo) {
         super.onProviderIconClicked(item)
-        viewModel.navigateToMyChannel(this, item.id.toInt(), item.channel_owner_id, item.isSubscribed)
+        homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
     }
     
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
@@ -237,14 +250,12 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
                     }
                     binding.subCategoryChipGroupHolder.visibility = View.VISIBLE
                     binding.subCategoryChipGroup.setOnCheckedChangeListener { group, checkedId ->
-//                        viewModel.checkedSubCategoryChipId.value = checkedId
                         val selectedChip = group.findViewById<Chip>(checkedId)
                         if(selectedChip != null) {
-                            val selectedSub = selectedChip.tag as UgcSubCategory
+                            val selectedSub = selectedChip.tag as SubCategory
                             viewModel.categoryId.value = selectedSub.categoryId.toInt()
                             viewModel.subCategoryId.value = selectedSub.id.toInt()
                             viewModel.isDramaSeries.value = selectedSub.categoryId.toInt() == 9
-//                            viewModel.loadSubcategoryVideos(selectedSub.categoryId.toInt(), selectedSub.id.toInt())
                         }
                     }
                 }
@@ -253,8 +264,9 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
         }
     }
 
-    private fun addChip(subCategory: UgcSubCategory): Chip {
+    private fun addChip(subCategory: SubCategory): Chip {
         val intColor = ContextCompat.getColor(requireContext(), R.color.colorSecondaryDark)
+        val textColor = ContextCompat.getColor(requireContext(), R.color.main_text_color)
 
         val chipColor = createStateColor(intColor)
         val chip = layoutInflater.inflate(R.layout.category_chip_layout, categoryChipGroup, false) as Chip
@@ -263,9 +275,9 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
         chip.id = View.generateViewId()
 
         chip.chipBackgroundColor = chipColor
-        chip.chipStrokeColor = ColorStateList.valueOf(intColor)
+        chip.chipStrokeColor = createStateColor(intColor, textColor)
         chip.rippleColor = chipColor
-        chip.setTextColor(createStateColor(Color.WHITE, intColor))
+        chip.setTextColor(createStateColor(Color.WHITE, textColor))
 
         return chip
     }

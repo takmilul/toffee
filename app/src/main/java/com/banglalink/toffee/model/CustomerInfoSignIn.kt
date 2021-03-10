@@ -42,7 +42,17 @@ class CustomerInfoSignIn:BodyResponse() {
     var isSubscriptionActive:String? = "true"
 
     @SerializedName("real_db_01_url")
-    var viewCountDbUrl:String?=null
+    var viewCountDbUrl:String? = null
+    @SerializedName("reaction_db_01_url")
+    var reactionDbUrl:String? = null
+    @SerializedName("reaction_db")
+    var reactionStatusDbUrl:String? = null
+    @SerializedName("share_log_db")
+    var shareCountDbUrl: String? = null
+    @SerializedName("subscribe_count_db")
+    var subscriberStatusDbUrl: String? = null
+    @SerializedName("subscribe__db")
+    var subscribeDbUrl: String? = null
     @SerializedName("real_db_01_crc32")
-    var viewCountDBVersion:String?=null
+    var viewCountDBVersion:String? = null
 }

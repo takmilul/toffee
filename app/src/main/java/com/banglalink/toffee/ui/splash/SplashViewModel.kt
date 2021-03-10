@@ -1,36 +1,59 @@
 package com.banglalink.toffee.ui.splash
 
-import android.app.Application
 import androidx.lifecycle.LiveData
 import com.banglalink.toffee.BuildConfig
-import com.banglalink.toffee.data.network.retrofit.RetrofitApiClient
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.apiservice.ApiLogin
+import com.banglalink.toffee.apiservice.CheckUpdate
+import com.banglalink.toffee.apiservice.ReportAppLaunch
 import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.model.CustomerInfoSignIn
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseViewModel
-import com.banglalink.toffee.usecase.ApiLogin
-import com.banglalink.toffee.usecase.CheckUpdate
-import com.banglalink.toffee.util.unsafeLazy
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class SplashViewModel : BaseViewModel() {
+@HiltViewModel
+class SplashViewModel @Inject constructor(
+    val mPref: Preference,
+    private val apiLogin: ApiLogin,
+    private val checkUpdate: CheckUpdate,
+    @AppCoroutineScope private val appScope: CoroutineScope,
+) : BaseViewModel() {
 
-    private val checkUpdate by unsafeLazy {
-        CheckUpdate(Preference.getInstance(),RetrofitApiClient.authApi)
+    init {
+        appScope.launch {
+            reportAppLaunch()
+        }
     }
-    private val apiLogin by unsafeLazy {
-        ApiLogin(Preference.getInstance(), RetrofitApiClient.authApi)
+
+    private val reportAppLaunch by lazy {
+        ReportAppLaunch()
     }
 
-    fun init(skipUpdate:Boolean = false):LiveData<Resource<CustomerInfoSignIn>>{
+    fun init(skipUpdate: Boolean = false): LiveData<Resource<CustomerInfoSignIn>> {
         return resultLiveData {
-            val response  = apiLogin.execute()
-            if(!skipUpdate){
+            val response = apiLogin.execute()
+            if (!skipUpdate) {
                 checkUpdate.execute(BuildConfig.VERSION_CODE.toString())
             }
             response
         }
     }
 
-    fun isCustomerLoggedIn()=Preference.getInstance().customerId != 0
+    fun reportAppLaunch() {
+        appScope.launch {
+            try {
+                reportAppLaunch.execute()
+            } catch (e: Exception) {
+                ToffeeAnalytics.logBreadCrumb("Exception in ReportAppLaunch")
+            }
+        }
+    }
+
+    fun isCustomerLoggedIn() = mPref.customerId != 0
 }

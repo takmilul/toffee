@@ -8,4 +8,9 @@
         android:title="Remove from playlist"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/menu_share"
+        android:title="@string/menu_share"
+        app:showAsAction="never" />
+
 </menu>

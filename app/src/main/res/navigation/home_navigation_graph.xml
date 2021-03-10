@@ -38,6 +38,11 @@
         android:label="Upload Video"
         />
     <fragment
+        android:id="@+id/upload_bottom"
+        android:name="com.banglalink.toffee.ui.upload.MinimizeUploadFragment"
+        android:label="Upload Video"
+        />
+    <fragment
         android:id="@+id/menu_settings"
         android:name="com.banglalink.toffee.ui.settings.SettingsFragment"
         android:label="Settings"
@@ -46,7 +51,7 @@
     <fragment
         android:id="@+id/menu_feed"
         android:name="com.banglalink.toffee.ui.home.LandingPageFragment"
-        android:label="Home">
+        android:label="Toffee">
 <!--        <action-->
 <!--            android:id="@+id/action_landingPageFragment_to_allCategoriesFragment"-->
 <!--            app:destination="@id/allCategoriesFragment" />-->
@@ -86,7 +91,7 @@
     </fragment>
     <fragment
         android:id="@+id/menu_tv"
-        android:name="com.banglalink.toffee.ui.channels.ChannelFragment"
+        android:name="com.banglalink.toffee.ui.channels.ChannelFragmentNew"
         android:label="{title}" >
         <argument
             android:name="title"
@@ -108,7 +113,7 @@
         android:label="My Channel">
         <action
             android:id="@+id/action_menu_channel_to_myChannelEditFragment"
-            app:destination="@id/MyChannelEditDetailFragment" />
+            app:destination="@id/myChannelEditDetailFragment" />
         <action
             android:id="@+id/action_menu_channel_to_challengesFragment"
             app:destination="@id/challengesFragment" />
@@ -130,6 +135,40 @@
             app:popUpToInclusive="true"
             />
     </dialog>
+    <dialog
+        android:id="@+id/termsConditionFragment"
+        android:name="com.banglalink.toffee.ui.upload.TermsConditionFragment"
+        android:label="Terms" >
+
+    </dialog>
+    
+    <dialog
+        android:id="@+id/bottomSheetUploadFragment"
+        android:name="com.banglalink.toffee.ui.upload.BottomSheetUploadFragment"
+        android:label="BottomUpload" >
+        <action
+            android:id="@+id/action_bottomSheetUploadFragment_to_newUploadMethodFragment"
+            app:destination="@id/newUploadMethodFragment" />
+        <action
+            android:id="@+id/action_bottomSheetUploadFragment_to_termsConditionFragment"
+            app:destination="@id/termsConditionFragment" />
+        <action
+            android:id="@+id/action_bottomSheetUploadFragment_to_thumbnailSelectionMethodFragment"
+            app:destination="@id/thumbnailSelectionMethodFragment" />
+    </dialog>
+    
+    <dialog
+        android:id="@+id/newUploadMethodFragment"
+        android:name="com.banglalink.toffee.ui.upload.NewUploadMethodFragment"
+        android:label="Update Logo Channel" >
+        <action
+            android:id="@+id/action_newUploadMethodFragment_to_editUploadInfoFragment"
+            app:destination="@id/editUploadInfoFragment" />
+        <action
+            android:id="@+id/action_newUploadMethodFragment_to_myChannelHomeFragment"
+            app:destination="@id/myChannelHomeFragment" />
+    </dialog>
+    
     <fragment
         android:id="@+id/editUploadInfoFragment"
         android:name="com.banglalink.toffee.ui.upload.EditUploadInfoFragment"
@@ -160,10 +199,10 @@
     </fragment>
     <fragment
         android:id="@+id/trendingChannelsFragment"
-        android:name="com.banglalink.toffee.ui.trendingchannels.TrendingChannelsFragment"
+        android:name="com.banglalink.toffee.ui.userchannels.AllUserChannelsFragment"
         android:label="Trending Channels"/>
     <fragment
-        android:id="@+id/MyChannelEditDetailFragment"
+        android:id="@+id/myChannelEditDetailFragment"
         android:name="com.banglalink.toffee.ui.mychannel.MyChannelEditDetailFragment"
         android:label="Edit Details">
         <argument
@@ -180,10 +219,14 @@
     <fragment
         android:id="@+id/myChannelHomeFragment"
         android:name="com.banglalink.toffee.ui.mychannel.MyChannelHomeFragment"
-        android:label="My Channel" >
+        android:label="{title}" >
+        <argument
+            android:name="title"
+            app:argType="string"
+            android:defaultValue="Channel" />
         <action
             android:id="@+id/action_myChannelHomeFragment_to_MyChannelEditDetailFragment"
-            app:destination="@id/MyChannelEditDetailFragment" />
+            app:destination="@id/myChannelEditDetailFragment" />
         <action
             android:id="@+id/action_myChannelHomeFragment_to_myChannelPlaylistVideosFragment"
             app:destination="@id/myChannelPlaylistVideosFragment" />
@@ -199,18 +242,22 @@
             android:name="playlistInfo"
             app:argType="com.banglalink.toffee.model.PlaylistPlaybackInfo" />
     </fragment>
-    <fragment
+    <dialog
         android:id="@+id/thumbnailSelectionMethodFragment"
         android:name="com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment"
         android:label="Thumbnail" >
         <argument
             android:name="title"
             app:argType="string" />
-    </fragment>
+        <argument
+            android:name="isProfileImage"
+            app:argType="boolean"
+            />
+    </dialog>
     <fragment
         android:id="@+id/earningsFragment"
         android:name="com.banglalink.toffee.ui.earnings.EarningsFragment"
-        android:label="EarningsFragment" >
+        android:label="Earnings" >
         <action
             android:id="@+id/action_earningsFragment_to_addNewPaymentMethodFragment"
             app:destination="@id/addNewPaymentMethodFragment" />
@@ -221,7 +268,7 @@
     <fragment
         android:id="@+id/addNewPaymentMethodFragment"
         android:name="com.banglalink.toffee.ui.earnings.AddNewPaymentMethodFragment"
-        android:label="fragment_add_new_payment_method"
+        android:label="Add Payment Method"
         tools:layout="@layout/fragment_add_new_payment_method" />
     <fragment
         android:id="@+id/reviewWithdrawalFragment"
@@ -328,7 +375,7 @@
     <fragment
         android:id="@+id/dramaSeriesFragment"
         android:name="com.banglalink.toffee.ui.category.drama.DramaSeriesFragment"
-        android:label="DramaSeriesFragment" >
+        android:label="{title}" >
         <argument
             android:name="title"
             app:argType="string"

@@ -5,32 +5,33 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.data.database.entities.SubscriptionInfo
+import com.banglalink.toffee.data.network.retrofit.CacheManager
+import com.banglalink.toffee.listeners.LandingPopularChannelCallback
+import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.model.UgcCategory
-import com.banglalink.toffee.model.UgcUserChannelInfo
+import com.banglalink.toffee.model.MyChannelNavParams
+import com.banglalink.toffee.model.UserChannelInfo
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
+import com.banglalink.toffee.ui.common.UnSubscribeDialog
 import com.banglalink.toffee.ui.home.LandingPageViewModel
-import com.banglalink.toffee.ui.home.UserChannelsListAdapter
-import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_landing_user_channels.*
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LandingUserChannelsFragment : HomeBaseFragment() {
-    private lateinit var mAdapter: UserChannelsListAdapter
-    private var categoryInfo: UgcCategory? = null
+    @Inject lateinit var cacheManager: CacheManager
+    private lateinit var mAdapterLanding: LandingUserChannelsListAdapter
+    private var categoryInfo: Category? = null
+    private var channelInfo: UserChannelInfo? = null
     private val viewModel by activityViewModels<LandingPageViewModel>()
-    private val subscriptionViewModel by viewModels<UserChannelViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,27 +48,32 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
             CategoryDetailsFragment.ARG_CATEGORY_ITEM
         )
 
-        mAdapter = UserChannelsListAdapter(object : LandingPopularChannelCallback<UgcUserChannelInfo> {
-            override fun onItemClicked(item: UgcUserChannelInfo) {
-                viewModel.navigateToMyChannel(this@LandingUserChannelsFragment, item.id.toInt(), item.channelOwnerId, item.isSubscribed?:0)
+        mAdapterLanding = LandingUserChannelsListAdapter(object : LandingPopularChannelCallback<UserChannelInfo> {
+            override fun onItemClicked(item: UserChannelInfo) {
+                homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channelOwnerId)
             }
 
-            override fun onSubscribeButtonClicked(view: View, info: UgcUserChannelInfo) {
+            override fun onSubscribeButtonClicked(view: View, info: UserChannelInfo) {
 
                 if (info.isSubscribed == 0) {
-                    subscriptionViewModel.setSubscriptionStatus(info.id, 1, info.channelOwnerId)
+                    channelInfo = info.also { userChannelInfo ->
+                        userChannelInfo.isSubscribed = 1
+                        userChannelInfo.subscriberCount++
+                    }
+//                    subscriptionViewModel.setSubscriptionStatus(info.id, 1, info.channelOwnerId)
+                    homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId), 1)
+                    mAdapterLanding.notifyItemRangeChanged(0, mAdapterLanding.itemCount, channelInfo)
                 }
                 else {
-                    VelBoxAlertDialogBuilder(
-                        requireContext(),
-                        text = getString(R.string.text_unsubscribe_title),
-                        icon = R.drawable.ic_unsubscribe_alert,
-                        positiveButtonTitle = "Unsubscribe",
-                        positiveButtonListener = {
-                            subscriptionViewModel.setSubscriptionStatus(info.id, 0, info.channelOwnerId)
-                            it?.dismiss()
+                    UnSubscribeDialog.show(requireContext()){
+                        channelInfo = info.also { userChannelInfo ->
+                            userChannelInfo.isSubscribed = 0
+                            userChannelInfo.subscriberCount--
                         }
-                    ).create().show()
+//                        subscriptionViewModel.setSubscriptionStatus(info.id, 0, info.channelOwnerId)
+                        homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId), -1)
+                        mAdapterLanding.notifyItemRangeChanged(0, mAdapterLanding.itemCount, channelInfo)
+                    }
                 }
             }
         })
@@ -78,7 +84,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
 
         with(userChannelList) {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            adapter = mAdapter
+            adapter = mAdapterLanding
         }
         observeList()
     }
@@ -92,14 +98,17 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
                 viewModel.loadUserChannelsByCategory(categoryInfo!!)
             }
             content.collectLatest {
-                mAdapter.submitData(it)
+                mAdapterLanding.submitData(it)
             }
         }
 
-        observe(subscriptionViewModel.subscriptionResponse) {
-            if(it is Resource.Success) mAdapter.refresh()
+        /*observe(subscriptionViewModel.subscriptionResponse) {
+            if(it is Resource.Success) {
+                cacheManager.clearSubscriptionCache()
+                mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, channelInfo)
+            }
             else requireContext().showToast("Failed to subscribe channel")
-        }
+        }*/
     }
 
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {

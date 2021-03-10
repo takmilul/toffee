@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.common
 
-import android.content.Intent
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -9,7 +8,7 @@ import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.home.HomeViewModel
-import com.banglalink.toffee.ui.home.OptionCallBack
+import com.banglalink.toffee.listeners.OptionCallBack
 import com.banglalink.toffee.ui.widget.MyPopupWindow
 
 abstract class HomeBaseFragment:BaseFragment(), OptionCallBack {
@@ -28,18 +27,12 @@ abstract class HomeBaseFragment:BaseFragment(), OptionCallBack {
         if(hideNotInterestedMenuItem(channelInfo)){//we are checking if that could be shown or not
             popupMenu.menu.getItem(2).isVisible = false
         }
-        popupMenu.menu.findItem(R.id.menu_share).isVisible = hideShareMenuItem()
+        popupMenu.menu.findItem(R.id.menu_share).isVisible = hideShareMenuItem() && channelInfo.isApproved == 1
         
         popupMenu.setOnMenuItemClickListener{
             when(it?.itemId){
                 R.id.menu_share->{
-                    val sharingIntent = Intent(Intent.ACTION_SEND)
-                    sharingIntent.type = "text/plain"
-                    sharingIntent.putExtra(
-                        Intent.EXTRA_TEXT,
-                        channelInfo.video_share_url
-                    )
-                    activity?.startActivity(Intent.createChooser(sharingIntent, "Share via"))
+                    homeViewModel.shareContentLiveData.value = channelInfo
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_fav->{

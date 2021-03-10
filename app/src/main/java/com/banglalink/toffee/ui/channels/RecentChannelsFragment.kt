@@ -1,0 +1,89 @@
+package com.banglalink.toffee.ui.channels
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
+import com.banglalink.toffee.R
+import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.data.database.entities.TVChannelItem
+import com.banglalink.toffee.databinding.FragmentRecentTvChannelsBinding
+import com.banglalink.toffee.ui.common.BaseFragment
+import com.banglalink.toffee.ui.home.HomeViewModel
+import com.banglalink.toffee.util.Utils
+import com.banglalink.toffee.util.UtilsKt
+import kotlinx.coroutines.flow.collectLatest
+
+class RecentChannelsFragment: BaseFragment() {
+    private lateinit var mAdapter: RecentChannelsAdapter
+    val viewModel by activityViewModels<AllChannelsViewModel>()
+    val homeViewModel by activityViewModels<HomeViewModel>()
+
+    private var showSelected = false
+
+    private lateinit var binding: FragmentRecentTvChannelsBinding
+
+    companion object {
+        const val SHOW_SELECTED = "SHOW_SELECTED"
+
+        fun newInstance(showSelected: Boolean): RecentChannelsFragment {
+            val args = Bundle()
+            args.putBoolean(SHOW_SELECTED, showSelected)
+            val fragment = RecentChannelsFragment()
+            fragment.arguments = args
+            return fragment
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        showSelected = arguments?.getBoolean(SHOW_SELECTED, false) ?: false
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentRecentTvChannelsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val channelsPadding = resources.getDimension(R.dimen.tv_channels_padding)
+        val channelItemWidth = resources.getDimension(R.dimen.channel_width)
+        val horizontalGap = (UtilsKt.getScreenWidth() - (channelsPadding * 2) - (3 * channelItemWidth)) / 6
+
+        val recentsMargin = resources.getDimension(R.dimen.recent_channels_margin)
+        val leftPadding = horizontalGap - recentsMargin + channelsPadding
+
+        mAdapter = RecentChannelsAdapter(object : BaseListItemCallback<TVChannelItem> {
+            override fun onItemClicked(item: TVChannelItem) {
+                homeViewModel.fragmentDetailsMutableLiveData.postValue(item.channelInfo)
+            }
+        })
+
+        with(binding.channelList) {
+            setPadding(leftPadding.toInt(), 0, leftPadding.toInt(), 0)
+            adapter = mAdapter
+        }
+
+        observeList()
+    }
+
+    private fun observeList() {
+        lifecycleScope.launchWhenStarted {
+            viewModel.loadRecentTvChannels().collectLatest {
+                val newList = if(it.isNotEmpty()) {
+                    if(showSelected) it.subList(1, it.size) else it.subList(0, it.size - 1)
+                } else it
+                binding.channelTv.visibility = if(newList.isEmpty()) View.GONE else View.VISIBLE
+                mAdapter.setItems(newList)
+            }
+        }
+    }
+}

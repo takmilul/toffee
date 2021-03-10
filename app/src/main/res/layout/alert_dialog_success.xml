@@ -7,6 +7,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_margin="8dp"
     android:background="@drawable/round_white_bg"
+    app:cardBackgroundColor="@color/cardBgColor"
     app:cardCornerRadius="8dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout

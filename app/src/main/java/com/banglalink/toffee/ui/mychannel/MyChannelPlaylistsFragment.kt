@@ -3,100 +3,157 @@ package com.banglalink.toffee.ui.mychannel
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.PopupMenu
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import com.banglalink.toffee.R
-import com.banglalink.toffee.R.layout
-import com.banglalink.toffee.common.paging.BaseListFragment
+import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_PLAYLISTS_URL
 import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.common.paging.ListLoadStateAdapter
+import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBinding
+import com.banglalink.toffee.databinding.FragmentMyChannelPlaylistsBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.MyChannelPlaylist
 import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
+import com.banglalink.toffee.ui.common.BaseFragment
+import com.banglalink.toffee.ui.widget.MarginItemDecoration
+import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.alert_dialog_decision.view.*
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseListItemCallback<MyChannelPlaylist> {
-
-    private var enableToolbar: Boolean = false
-
-    private var isOwner: Int = 0
+class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChannelPlaylist> {
+    
+    private var listJob: Job? = null
     private var channelOwnerId: Int = 0
-    override val mAdapter by lazy { MyChannelPlaylistAdapter(this) }
-
-    @Inject lateinit var viewModelAssistedFactory: MyChannelPlaylistViewModel.AssistedFactory
-    override val mViewModel by viewModels<MyChannelPlaylistViewModel> { MyChannelPlaylistViewModel.provideFactory(viewModelAssistedFactory, isOwner, channelOwnerId) }
-    private val deletePlaylistViewModel by viewModels<MyChannelPlaylistDeleteViewModel>()
+    private var isOwner: Boolean = false
+    @Inject lateinit var cacheManager: CacheManager
+    private lateinit var mAdapter: MyChannelPlaylistAdapter
+    val mViewModel by viewModels<MyChannelPlaylistViewModel>()
+    private lateinit var binding: FragmentMyChannelPlaylistsBinding
     private val editPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
-    private val playlistReloadViewModel by activityViewModels<MyChannelPlaylistReloadViewModel>()
-
+    private val deletePlaylistViewModel by viewModels<MyChannelPlaylistDeleteViewModel>()
+    private val playlistReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
+    
     companion object {
-        const val SHOW_TOOLBAR = "enableToolbar"
-        const val IS_OWNER = "isOwner"
-
-        //        const val IS_PUBLIC = "isPublic"
         const val CHANNEL_OWNER_ID = "channelOwnerId"
         const val PLAYLIST_INFO = "playlistInfo"
-
-        fun newInstance(enableToolbar: Boolean, isOwner: Int, channelOwnerId: Int): MyChannelPlaylistsFragment {
-            val instance = MyChannelPlaylistsFragment()
-            val bundle = Bundle()
-            bundle.putBoolean(SHOW_TOOLBAR, enableToolbar)
-            bundle.putInt(IS_OWNER, isOwner)
-            bundle.putInt(CHANNEL_OWNER_ID, channelOwnerId)
-            instance.arguments = bundle
-            return instance
-        }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        isOwner = arguments?.getInt(IS_OWNER) ?: 1
-        channelOwnerId = arguments?.getInt(CHANNEL_OWNER_ID) ?: 0
-        mAdapter.isOwner = isOwner
-        observeReloadPlaylist()
-    }
-
-    private fun observeReloadPlaylist() {
-        observe(playlistReloadViewModel.reloadPlaylist) {
-            if (it) {
-                mAdapter.refresh()
+        
+        fun newInstance(channelOwnerId: Int): MyChannelPlaylistsFragment {
+            return MyChannelPlaylistsFragment().apply {
+                arguments = Bundle().apply {
+                    putInt(CHANNEL_OWNER_ID, channelOwnerId)
+                }
             }
         }
     }
-
+    
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        
+        mAdapter = MyChannelPlaylistAdapter(this)
+        channelOwnerId = arguments?.getInt(CHANNEL_OWNER_ID) ?: 0
+        isOwner = channelOwnerId == mPref.customerId
+    }
+    
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = FragmentMyChannelPlaylistsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+    
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        
+        setEmptyView()
+        
+        with(binding.myChannelPlaylists) {
+            addItemDecoration(MarginItemDecoration(12))
+            
+            mAdapter.addLoadStateListener {
+                binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
+                mAdapter.apply {
+                    val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached
+                    binding.emptyView.isGone = !showEmpty
+                    binding.myChannelPlaylists.isVisible = !showEmpty
+                }
+            }
+            adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
+            setHasFixedSize(true)
+        }
+        
+        observeMyChannelPlaylists()
+        observeEditPlaylist()
+        observeDeletePlaylist()
+        observeReloadPlaylist()
+    }
+    
+    private fun setEmptyView() {
+        with(binding) {
+            if (isOwner) {
+                emptyViewLabel.text = "You haven't created any playlist yet"
+                createPlaylistButton.setOnClickListener {
+                    if (mPref.channelId > 0) {
+                        if (parentFragment?.parentFragment?.parentFragment is MyChannelHomeFragment) {
+                            (parentFragment?.parentFragment?.parentFragment as? MyChannelHomeFragment)?.showCreatePlaylistDialog()
+                        }
+                    } else {
+                        Toast.makeText(requireContext(), "Please create channel first", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } else {
+                createPlaylistButton.visibility = View.GONE
+                emptyViewLabel.text = "This channel has no playlist yet"
+            }
+        }
+    }
+    
+    private fun observeMyChannelPlaylists() {
+        listJob?.cancel()
+        listJob = lifecycleScope.launchWhenStarted {
+            mViewModel.getMyChannelPlaylists(channelOwnerId).collectLatest {
+                mAdapter.submitData(it)
+            }
+        }
+    }
+    
+    private fun observeReloadPlaylist() {
+        observe(playlistReloadViewModel.reloadPlaylist) {
+            if (it) {
+                reloadPlaylist()
+            }
+        }
+    }
+    
     override fun onItemClicked(item: MyChannelPlaylist) {
         super.onItemClicked(item)
-        if (findNavController().currentDestination?.id == R.id.myChannelHomeFragment){
-            val action = MyChannelHomeFragmentDirections.actionMyChannelHomeFragmentToMyChannelPlaylistVideosFragment(PlaylistPlaybackInfo(item.id, channelOwnerId, isOwner, item.name, item.totalContent))
-            parentFragment?.findNavController()?.navigate(action)
-        }
-        else {
-            findNavController().navigate(R.id.action_menu_channel_to_myChannelPlaylistVideosFragment, Bundle().apply {
-                putParcelable(PLAYLIST_INFO, PlaylistPlaybackInfo(item.id, channelOwnerId, isOwner, item.name, item.totalContent))
+        
+        if (findNavController().currentDestination?.id != R.id.myChannelPlaylistVideosFragment && findNavController().currentDestination?.id == R.id.myChannelPlaylistsFragment) {
+            findNavController().navigate(R.id.action_myChannelPlaylistsFragment_to_myChannelPlaylistVideosFragment, Bundle().apply {
+                putParcelable(PLAYLIST_INFO, PlaylistPlaybackInfo(item.id, channelOwnerId, item.name, item.totalContent))
             })
         }
     }
-
-    override fun getEmptyViewInfo(): Pair<Int, String?> {
-        return Pair(R.drawable.ic_playlists_empty, 
-            if(isOwner == 1) "You haven't created any playlist yet" else "This channel has no playlist yet"
-        )
-    }
-
+    
     override fun onOpenMenu(view: View, item: MyChannelPlaylist) {
         super.onOpenMenu(view, item)
-
-        if (isOwner == 1) {
-            android.widget.PopupMenu(requireContext(), view).apply {
+        
+        if (isOwner) {
+            PopupMenu(requireContext(), view).apply {
                 inflate(R.menu.menu_channel_playlist)
                 setOnMenuItemClickListener {
                     when (it.itemId) {
@@ -113,13 +170,13 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
             }
         }
     }
-
+    
     private fun observeEditPlaylist() {
         observe(editPlaylistViewModel.editPlaylistLiveData) {
             when (it) {
                 is Success -> {
-                    mAdapter.refresh()
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
+                    reloadPlaylist()
                 }
                 is Failure -> {
                     Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
@@ -127,7 +184,7 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
             }
         }
     }
-
+    
     private fun showEditPlaylistDialog(playlistId: Int, playlistName: String) {
         val playlistBinding = AlertDialogMyChannelPlaylistCreateBinding.inflate(this.layoutInflater)
         val dialogBuilder = AlertDialog.Builder(requireContext()).setView(playlistBinding.root)
@@ -140,46 +197,46 @@ class MyChannelPlaylistsFragment : BaseListFragment<MyChannelPlaylist>(), BaseLi
         playlistBinding.dialogTitleTextView.text = "Edit Playlist"
         playlistBinding.createButton.text = "Save"
         playlistBinding.createButton.setOnClickListener {
-            if (!editPlaylistViewModel.playlistName.isNullOrEmpty()) {
-                observeEditPlaylist()
-                editPlaylistViewModel.editPlaylist(playlistId, channelOwnerId, isOwner)
+            if (!editPlaylistViewModel.playlistName.isNullOrBlank()) {
+                editPlaylistViewModel.editPlaylist(playlistId, channelOwnerId)
                 alertDialog.dismiss()
-            }
-            else {
+            } else {
                 Toast.makeText(requireContext(), "Please give a playlist name", Toast.LENGTH_SHORT).show()
             }
         }
-        playlistBinding.closeIv.setOnClickListener{ alertDialog.dismiss() }
+        playlistBinding.closeIv.setOnClickListener { alertDialog.dismiss() }
     }
-
+    
     private fun showDeletePlaylistDialog(playlistId: Int) {
-        val dialogView: View = this.layoutInflater.inflate(layout.alert_dialog_decision, null)
-        val dialogBuilder = AlertDialog.Builder(requireContext()).setView(dialogView)
-        val alertDialog: AlertDialog = dialogBuilder.create().apply {
-            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            show()
-        }
-        observeDeletePlaylist()
-        with(dialogView) {
-            noButton.setOnClickListener { alertDialog.dismiss() }
-            deleteButton.setOnClickListener {
+        VelBoxAlertDialogBuilder(
+            requireContext(),
+            text = "Are you sure to delete?",
+            positiveButtonTitle = "No",
+            negativeButtonTitle = "Delete",
+            positiveButtonListener = { it?.dismiss() },
+            negativeButtonListener = {
                 deletePlaylistViewModel.deletePlaylistName(playlistId)
-                alertDialog.dismiss()
+                it?.dismiss()
             }
-        }
+        ).create().show()
     }
-
+    
     private fun observeDeletePlaylist() {
         observe(deletePlaylistViewModel.liveData) {
             when (it) {
                 is Success -> {
-                    mAdapter.refresh()
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
+                    reloadPlaylist()
                 }
                 is Failure -> {
                     Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
                 }
             }
         }
+    }
+    
+    private fun reloadPlaylist() {
+        cacheManager.clearCacheByUrl(GET_MY_CHANNEL_PLAYLISTS_URL)
+        mAdapter.refresh()
     }
 }

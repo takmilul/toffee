@@ -3,13 +3,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:bind="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    >
+    xmlns:tools="http://schemas.android.com/tools">
+    
     <data>
         <variable
             name="profileForm"
             type="com.banglalink.toffee.ui.profile.EditProfileForm" />
     </data>
+    
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -21,8 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-
-
+            
             <com.google.android.material.appbar.AppBarLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -31,14 +31,14 @@
                     android:id="@+id/toolbar"
                     style="@style/CustomToolBarStyle"/>
             </com.google.android.material.appbar.AppBarLayout>
-
-
+            
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fillViewport="true">
                 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
@@ -47,100 +47,181 @@
                     <include
                         bind:profileForm="@{profileForm}"
                         android:id="@+id/profile_edit_layout"
-                        layout="@layout/profile_edit_layout" />
+                        layout="@layout/profile_edit_layout"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
                     
-                        <EditText
-                            android:id="@+id/name_et"
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/single_line_input_text_height"
-                            android:drawableStart="@mipmap/ic_user"
-                            android:drawablePadding="10dp"
-                            android:background="@drawable/single_line_input_text_bg"
-                            android:autofillHints="Name"
-                            android:hint="Name"
-                            style="@style/textInputEditText2"
-                            android:layout_marginTop="32dp"
-                            android:layout_marginBottom="8dp"
-                            android:text="@={profileForm.fullName}"
-                            android:inputType="textCapWords"/>
+                    <EditText
+                        android:id="@+id/name_et"
+                        style="@style/textInputEditText2"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/single_line_input_text_height"
+                        android:drawableStart="@drawable/ic_user"
+                        android:drawablePadding="13dp"
+                        android:background="@drawable/single_line_input_text_bg"
+                        android:autofillHints="Name"
+                        android:hint="Name"
+                        android:maxLines="1"
+                        android:fontFamily="@font/roboto_medium"
+                        android:textSize="@dimen/default_text_size"
+                        android:textColor="@color/cardTitleColor"
+                        android:layout_marginTop="30dp"
+                        android:layout_marginBottom="8dp"
+                        android:text="@={profileForm.fullName}"
+                        android:inputType="textCapWords"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/profile_edit_layout"/>
+
+                    <TextView
+                        android:id="@+id/error_name_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="*Name required"
+                        android:textColor="@color/pink_to_accent_color"
+                        android:textSize="12sp"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="@+id/name_et"
+                        app:layout_constraintHorizontal_bias="0.05"
+                        app:layout_constraintStart_toStartOf="@+id/name_et"
+                        app:layout_constraintTop_toBottomOf="@+id/name_et"
+                        tools:visibility="visible" />
 
                     <TextView
                         android:id="@+id/mobile_tv"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/single_line_input_text_height"
-                        android:background="@drawable/single_line_input_text_disabled_bg"
-                        app:drawableStartCompat="@mipmap/ic_phone"
-                        android:drawablePadding="10dp"
-                        android:fontFamily="sans-serif"
+                        android:layout_marginVertical="16dp"
+                        android:background="@drawable/single_line_input_text_bg"
+                        android:drawablePadding="13dp"
+                        android:enabled="false"
+                        android:fontFamily="@font/roboto_regular"
                         android:gravity="center_vertical"
                         android:paddingHorizontal="16dp"
-                        android:layout_marginVertical="8dp"
-                        android:enabled="false"
-                        android:textColor="@color/main_text_color"
-                        android:textSize="18sp"
-                        android:textStyle="normal"
                         android:text="@={profileForm.phoneNo}"
-                        tools:text="+8801776198791"/>
+                        android:textColor="@color/main_text_color"
+                        android:textSize="@dimen/default_text_size"
+                        android:textStyle="normal"
+                        app:drawableStartCompat="@drawable/ic_phone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/error_name_tv"
+                        tools:text="+8801776198791" />
 
-                        <EditText
-                            android:id="@+id/email_et"
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/single_line_input_text_height"
-                            android:background="@drawable/single_line_input_text_bg"
-                            android:drawableStart="@mipmap/ic_email"
-                            android:drawablePadding="10dp"
-                            style="@style/textInputEditText2"
-                            android:autofillHints="Enter your email"
-                            android:hint="Enter your email"
-                            android:layout_marginVertical="8dp"
-                            android:text="@={profileForm.email}"
-                            android:inputType="textEmailAddress"/>
-
-                        <EditText
-                            android:id="@+id/address_et"
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/single_line_input_text_height"
-                            android:drawableStart="@mipmap/ic_location"
-                            android:drawablePadding="10dp"
-                            style="@style/textInputEditText2"
-                            android:background="@drawable/single_line_input_text_bg"
-                            android:hint="Enter your address"
-                            android:autofillHints="Enter your address"
-                            android:layout_marginVertical="8dp"
-                            android:text="@={profileForm.address}"
-                            android:inputType="textPostalAddress"/>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:id="@+id/error_number_tv"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="56dp"
-                        android:gravity="center"
-                        android:orientation="horizontal">
+                        android:layout_marginTop="5dp"
+                        android:text="*Number is not valid"
+                        android:textColor="@color/pink_to_accent_color"
+                        android:textSize="12sp"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="@+id/mobile_tv"
+                        app:layout_constraintHorizontal_bias="0.05"
+                        app:layout_constraintStart_toStartOf="@+id/mobile_tv"
+                        app:layout_constraintTop_toBottomOf="@+id/mobile_tv"
+                        tools:visibility="visible" />
 
-                        <TextView
-                            android:id="@+id/cancel_btn"
-                            style="@style/Button2Style"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:textAllCaps="true"
-                            android:text="@string/cancel"
-                            android:textSize="16sp">
-                        </TextView>
 
-                        <TextView
-                            android:id="@+id/save_button"
-                            style="@style/Button1Style"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="@string/save_changes"
-                            android:textAllCaps="true"
-                            android:textSize="16sp">
-                        </TextView>
+                    <EditText
+                        android:id="@+id/email_et"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/single_line_input_text_height"
+                        android:background="@drawable/single_line_input_text_bg"
+                        android:drawableStart="@drawable/ic_email"
+                        android:drawablePadding="13dp"
+                        style="@style/textInputEditText2"
+                        android:autofillHints="Enter your email"
+                        android:hint="Enter your email"
+                        android:maxLines="1"
+                        android:textColor="@color/cardTitleColor"
+                        android:textSize="@dimen/default_text_size"
+                        android:fontFamily="@font/roboto_regular"
+                        android:layout_marginVertical="16dp"
+                        android:text="@={profileForm.email}"
+                        android:inputType="textEmailAddress"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/error_number_tv"/>
 
-                    </LinearLayout>
-                </LinearLayout>
+                    <TextView
+                        android:id="@+id/error_email_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="*Email is not valid"
+                        android:textColor="@color/pink_to_accent_color"
+                        android:textSize="12sp"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="@+id/email_et"
+                        app:layout_constraintHorizontal_bias="0.05"
+                        app:layout_constraintStart_toStartOf="@+id/email_et"
+                        app:layout_constraintTop_toBottomOf="@+id/email_et"
+                        tools:visibility="visible" />
+
+                    <EditText
+                        android:id="@+id/address_et"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/single_line_input_text_height"
+                        android:drawableStart="@drawable/ic_location"
+                        android:drawablePadding="13dp"
+                        style="@style/textInputEditText2"
+                        android:background="@drawable/single_line_input_text_bg"
+                        android:hint="Enter your address"
+                        android:maxLines="2"
+                        android:autofillHints="Enter your address"
+                        android:textColor="@color/cardTitleColor"
+                        android:textSize="@dimen/default_text_size"
+                        android:fontFamily="@font/roboto_regular"
+                        android:layout_marginVertical="16dp"
+                        android:text="@={profileForm.address}"
+                        android:inputType="textPostalAddress"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/error_email_tv"/>
+
+                    <TextView
+                        android:id="@+id/error_address_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="*Address is not valid"
+                        android:textColor="@color/pink_to_accent_color"
+                        android:textSize="12sp"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="@+id/address_et"
+                        app:layout_constraintHorizontal_bias="0.05"
+                        app:layout_constraintStart_toStartOf="@+id/address_et"
+                        app:layout_constraintTop_toBottomOf="@+id/address_et"
+                        tools:visibility="visible" />
+
+                    <Button
+                        android:id="@+id/cancel_btn"
+                        style="@style/EditChannelStyle"
+                        android:layout_gravity="center"
+                        android:textAllCaps="true"
+                        android:text="@string/cancel"
+                        android:layout_marginTop="40dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/save_button"
+                        app:layout_constraintTop_toBottomOf="@id/address_et"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+                    <Button
+                        android:id="@+id/save_button"
+                        style="@style/ButtonStyleSolidPink"
+                        android:layout_gravity="center"
+                        android:text="@string/save_changes"
+                        android:textAllCaps="true"
+                        app:layout_constraintStart_toEndOf="@id/cancel_btn"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/cancel_btn"
+                        app:layout_constraintBottom_toBottomOf="@id/cancel_btn"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </ScrollView>
         </LinearLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

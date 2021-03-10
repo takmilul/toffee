@@ -13,9 +13,9 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentCatchupBinding
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
-import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.ChannelInfo
-import com.foxrentacar.foxpress.ui.common.MyBaseAdapter
+import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.ui.widget.MarginItemDecoration
 
 abstract class CommonSingleListFragment : HomeBaseFragment() {
 
@@ -43,6 +43,7 @@ abstract class CommonSingleListFragment : HomeBaseFragment() {
         val linearLayoutManager = LinearLayoutManager(context)
         binding.listview.layoutManager = linearLayoutManager
         binding.listview.adapter = mAdapter
+        binding.listview.addItemDecoration(MarginItemDecoration(12))
         scrollListener = object : EndlessRecyclerViewScrollListener(linearLayoutManager) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
                 loadChannelList()
@@ -97,7 +98,6 @@ abstract class CommonSingleListFragment : HomeBaseFragment() {
         binding.progressBar.visibility = View.GONE
         binding.progress.visibility = View.GONE
     }
-
 
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
         mAdapter.remove(channelInfo)

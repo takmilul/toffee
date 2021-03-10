@@ -3,13 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/home_screen_curve_bg_color"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/editorsChoiceHeader"
         style="@style/SectionTitleTextStyle"
+        android:layout_marginTop="16dp"
         android:text="@string/trending_now"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,11 +20,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipToPadding="false"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="4dp"
         android:nestedScrollingEnabled="false"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editorsChoiceHeader"
-        app:reverseLayout="false" />
+        app:reverseLayout="false"
+        tools:listitem="@layout/list_item_editors_choice"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

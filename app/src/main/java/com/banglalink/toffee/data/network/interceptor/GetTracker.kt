@@ -7,10 +7,10 @@ class GetTracker:IGetMethodTracker {
 
     private val getUrlList = immutableListOf(
         "/categories-v2/1/",
-        "/contents-v5/1/",
+        "/ugc-contents-v5/1/",
         "/feature-contents-v2/1/",
         "/check-for-update-v2/Android/",
-        "/app-home-page-content-toffee-v2/",
+        "/ugc-app-home-page-content-toffee-v2/",
         "/ugc-most-popular-contents/1",
         "/ugc-category-wise-editors-choice/1",
         "/ugc-category-featured-contents/1",
@@ -29,6 +29,7 @@ class GetTracker:IGetMethodTracker {
         "/ugc-latest-drama-serial/1",
         "/ugc-drama-serial-by-season/1",
         "/ugc-partner-list/1",
+        "/ugc-terms-and-conditions/1",
     )
 
     override fun shouldConvertToGetRequest(urlEncodedFragmentString: String):Boolean {

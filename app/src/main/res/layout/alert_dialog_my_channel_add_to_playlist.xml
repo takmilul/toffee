@@ -19,8 +19,9 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
-            app:cardCornerRadius="24dp">
+            android:layout_margin="8dp"
+            app:cardCornerRadius="24dp"
+            app:cardBackgroundColor="@color/cardBgColor">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -33,8 +34,9 @@
                     android:layout_marginHorizontal="24dp"
                     android:layout_marginTop="24dp"
                     android:text="Select Playlist for This Video"
-                    android:textColor="@color/main_text_color"
-                    android:textSize="@dimen/default_text_size"
+                    android:fontFamily="@font/roboto_medium"
+                    android:textColor="@color/cardTitleColor"
+                    android:textSize="16sp"
                     app:layout_constraintBottom_toTopOf="@id/listview"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -87,22 +89,22 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@id/addButton"
-                            style="@style/ButtonStyleSolidPurple"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            style="@style/EditChannelStyle"
                             android:minWidth="0dp"
                             android:text=""
                             app:icon="@drawable/ic_upload_add"
+                            app:iconTint="@color/main_text_color"
                             app:iconSize="16dp"
+                            app:strokeColor="@color/main_text_color"
+                            android:paddingStart="16dp"
                             android:layout_alignParentStart="true"/>
 
                         <Button
                             android:id="@+id/doneButton"
                             style="@style/ButtonStyleSolidPink"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
                             android:layout_marginStart="24dp"
                             android:text="Done"
+                            android:minWidth="64dp"
                             android:layout_alignParentEnd="true"/>
                     </RelativeLayout>
 

@@ -2,6 +2,7 @@ package com.banglalink.toffee.ui.redeem
 
 import android.os.Bundle
 import android.text.TextUtils
+import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import com.banglalink.toffee.R
@@ -14,13 +15,14 @@ import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.util.unsafeLazy
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class RedeemCodeActivity : BaseAppCompatActivity() {
 
     private lateinit var binding: ActivityRedeemCodeLayoutBinding
-    private val viewModel by unsafeLazy {
-        ViewModelProviders.of(this).get(RedeemCodeViewModel::class.java)
-    }
+    private val viewModel by viewModels<RedeemCodeViewModel>()
+
     private val progressDialog by unsafeLazy {
         VelBoxProgressDialog(this)
     }
