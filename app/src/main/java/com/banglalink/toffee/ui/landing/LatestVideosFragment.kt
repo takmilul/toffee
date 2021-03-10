@@ -41,8 +41,6 @@ import com.banglalink.toffee.ui.common.ReactionPopup.Companion.TAG
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.google.android.material.chip.Chip
-import kotlinx.android.synthetic.main.fragment_category_info.*
-import kotlinx.android.synthetic.main.fragment_landing_latest_videos.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 
@@ -117,7 +115,7 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
             Log.e("HASHTAG", "job ended: hashtag")
         }
         
-        filterButton.setOnClickListener {
+        binding.filterButton.setOnClickListener {
             val popupMenu = PopupMenu(requireContext(), it)
             popupMenu.menu.add(Menu.NONE, LATEST_VIDEOS.value, 1, getString(string.latestVideos))
             popupMenu.menu.add(Menu.NONE, TRENDING_VIDEOS.value, 2, getString(string.trendingVideos))
@@ -269,7 +267,7 @@ class LatestVideosFragment: HomeBaseFragment(), ContentReactionCallback<ChannelI
         val textColor = ContextCompat.getColor(requireContext(), R.color.main_text_color)
 
         val chipColor = createStateColor(intColor)
-        val chip = layoutInflater.inflate(R.layout.category_chip_layout, categoryChipGroup, false) as Chip
+        val chip = layoutInflater.inflate(R.layout.category_chip_layout, binding.subCategoryChipGroup, false) as Chip
         chip.text = subCategory.name
         chip.typeface = Typeface.DEFAULT_BOLD
         chip.id = View.generateViewId()

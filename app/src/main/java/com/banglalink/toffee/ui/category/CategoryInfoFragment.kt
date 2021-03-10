@@ -12,6 +12,7 @@ import androidx.core.view.get
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
+import com.banglalink.toffee.databinding.FragmentCategoryInfoBinding
 import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.Category
@@ -23,18 +24,15 @@ import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.util.bindCategoryImage
 import com.google.android.material.chip.Chip
-import kotlinx.android.synthetic.main.fragment_category_info.*
 
 class CategoryInfoFragment: HomeBaseFragment() {
     private val landingViewModel by activityViewModels<LandingPageViewModel>()
     private lateinit var categoryInfo: Category
+    private lateinit var binding: FragmentCategoryInfoBinding
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_category_info, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = FragmentCategoryInfoBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -54,7 +52,7 @@ class CategoryInfoFragment: HomeBaseFragment() {
         lifecycleScope.launchWhenStarted { 
             observe(landingViewModel.checkedSubCategoryChipId){
                 if (it != 0 && landingViewModel.subCategoryId.value == 0 && landingViewModel.categoryId.value != 0)
-                    categoryChipGroup.check(categoryChipGroup[0].id)
+                    binding.subCategoryChipGroup.check(binding.subCategoryChipGroup[0].id)
             }
         }
     }
@@ -64,17 +62,17 @@ class CategoryInfoFragment: HomeBaseFragment() {
             when(it){
                 is Success -> {
                     val subList = it.data.sortedBy { sub -> sub.id }
-                    categoryChipGroup.removeAllViews()
+                    binding.subCategoryChipGroup.removeAllViews()
                     subList.forEachIndexed{ _, subCategory ->
                         val newChip = addChip(subCategory).apply {
                             tag = subCategory
                         }
-                        categoryChipGroup.addView(newChip)
+                        binding.subCategoryChipGroup.addView(newChip)
                         if(subCategory.id == 0L) {
-                            categoryChipGroup.check(newChip.id)
+                            binding.subCategoryChipGroup.check(newChip.id)
                         }
                     }
-                    categoryChipGroup.setOnCheckedChangeListener { group, checkedId ->
+                    binding.subCategoryChipGroup.setOnCheckedChangeListener { group, checkedId ->
 //                        landingViewModel.checkedSubCategoryChipId.value = checkedId
                         val selectedChip = group.findViewById<Chip>(checkedId)
                         if(selectedChip != null) {
@@ -91,14 +89,14 @@ class CategoryInfoFragment: HomeBaseFragment() {
         }
 
         observe(landingViewModel.hashtagList) { hashtagList->
-            hashTagChipGroup.removeAllViews()
+            binding.hashTagChipGroup.removeAllViews()
             hashtagList.forEachIndexed{ _, hashtag ->
                 val newChip = addHashtagChip(hashtag).apply {
                     tag = hashtag
                 }
-                hashTagChipGroup.addView(newChip)
+                binding.hashTagChipGroup.addView(newChip)
             }
-            hashTagChipGroup.setOnCheckedChangeListener{ group, checkedId ->
+            binding.hashTagChipGroup.setOnCheckedChangeListener{ group, checkedId ->
                 val selectedHashtag = group.findViewById<Chip>(checkedId)
                 if(selectedHashtag != null) {
                     val hashtag = selectedHashtag.tag as String
@@ -114,7 +112,7 @@ class CategoryInfoFragment: HomeBaseFragment() {
         val foregroundColor = ContextCompat.getColor(requireContext(), R.color.hashtag_chip_color)
 
         val chipColor = createStateColor(intColor,foregroundColor)
-        val chip = layoutInflater.inflate(R.layout.hashtag_chip_layout, hashTagChipGroup, false) as Chip
+        val chip = layoutInflater.inflate(R.layout.hashtag_chip_layout, binding.hashTagChipGroup, false) as Chip
         chip.text = hashtag
 //        chip.typeface = Typeface.DEFAULT_BOLD
         chip.id = View.generateViewId()
@@ -132,7 +130,7 @@ class CategoryInfoFragment: HomeBaseFragment() {
         val textColor = ContextCompat.getColor(requireContext(), R.color.main_text_color)
         val chipColor = createStateColor(intColor)
         val strokeColor = createStateColor(intColor, textColor)
-        val chip = layoutInflater.inflate(R.layout.category_chip_layout, categoryChipGroup, false) as Chip
+        val chip = layoutInflater.inflate(R.layout.category_chip_layout, binding.subCategoryChipGroup, false) as Chip
         chip.text = subCategory.name
         chip.typeface = Typeface.DEFAULT_BOLD
         chip.id = View.generateViewId()
@@ -145,9 +143,9 @@ class CategoryInfoFragment: HomeBaseFragment() {
 
     private fun observeCategoryData() {
         categoryInfo.let {
-            categoryName.text = it.categoryName
-            bindCategoryImage(categoryIcon, categoryInfo)
-            categoryIcon.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.colorAccent2))
+            binding.categoryName.text = it.categoryName
+            bindCategoryImage(binding.categoryIcon, categoryInfo)
+            binding.categoryIcon.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.colorAccent2))
         }
     }
 
