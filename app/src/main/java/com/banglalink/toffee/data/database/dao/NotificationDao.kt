@@ -31,7 +31,7 @@ interface NotificationDao {
     fun deleteExtraRows(customerId: Int)
 
     @Query("DELETE FROM NotificationInfo WHERE  userId=0 AND id NOT IN ( SELECT id FROM ( SELECT id FROM NotificationInfo ORDER BY id DESC LIMIT 50) X)")
-    fun deleteZeroUserRows(customerId: Int)
+    fun deleteZeroUserRows()
     
     @Query("UPDATE NotificationInfo SET isSeen = :isSeen, seenTime = :seenTime WHERE id == :id")
     suspend fun updateSeenStatus(id: Long, isSeen: Boolean, seenTime: Long): Int
@@ -40,7 +40,7 @@ interface NotificationDao {
      suspend fun insert(item: NotificationInfo): Long {
         val ret = insertItem(item)
         deleteExtraRows(item.userId)
-        deleteZeroUserRows(item.userId)
+        deleteZeroUserRows()
         return ret
     }
 }
