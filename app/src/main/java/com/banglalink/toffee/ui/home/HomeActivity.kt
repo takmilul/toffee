@@ -70,6 +70,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
+import com.google.gson.Gson
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main_menu.*
@@ -77,6 +78,7 @@ import kotlinx.android.synthetic.main.home_mini_upload_progress.*
 import kotlinx.android.synthetic.main.layout_appbar.view.*
 import kotlinx.android.synthetic.main.player_bottom_sheet_layout.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -1005,6 +1007,28 @@ class HomeActivity :
             ActivityInfo.SCREEN_ORIENTATION_LOCKED
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+//        lifecycleScope.launch {
+//            delay(5_000)
+//            val playerOverlayData = Gson().fromJson("""
+//                {
+//                	"id": 234,
+//                	"function": "notification_on_top_of_player",
+//                	"timestamp": "2021-03-08 ",
+//                	"parameters": {
+//                		"show": ["msisdn", "user_name", "device_id", "user_id", "device_type", "content_id", "public_ip", "location"],
+//                		"custom_text": "Hello world!!",
+//                		"bg_color_code": "#77989908",
+//                		"font_color_code": "",
+//                		"font_size": "12px",
+//                		"opacity": "",
+//                		"position": "constant/floating",
+//                		"duration": 30
+//                	}
+//                }
+//            """.trimIndent(), PlayerOverlayData::class.java)
+//
+//            binding.playerView.showDebugOverlay(playerOverlayData, playlistManager.getCurrentChannel()?.id ?: "")
+//        }
     }
 
     override fun onRotationLock(isAutoRotationEnabled: Boolean) {
