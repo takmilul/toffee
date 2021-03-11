@@ -2,14 +2,18 @@ package com.banglalink.toffee.ui.widget
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Rect
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.PlayerOverlayData
+import com.banglalink.toffee.util.Utils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -23,6 +27,9 @@ class DebugOverlayView(private val ctx: Context, val attrs: AttributeSet? = null
     private var customTextView: TextView? = null
     private var debugTextView: TextView? = null
     private var contentId: String? = null
+    private var parentWidth: Int = 0
+    private var parentHeight: Int = 0
+    private var margin: Rect = Rect(Utils.dpToPx(10), Utils.dpToPx(10), Utils.dpToPx(10), Utils.dpToPx(10))
 
     init {
         View.inflate(ctx, R.layout.debug_overlay_layout, this)
@@ -95,14 +102,27 @@ class DebugOverlayView(private val ctx: Context, val attrs: AttributeSet? = null
                 dX = x - event.rawX
                 dY = y - event.rawY
             }
-            MotionEvent.ACTION_MOVE -> animate()
-                .x(event.rawX + dX)
-                .y(event.rawY + dY)
-                .setDuration(0)
-                .start()
+            MotionEvent.ACTION_MOVE -> {
+                val nextX = event.rawX + dX
+                val nextY = event.rawY + dY
+                val isInBoundX = (nextX - margin.left > 0) && (nextX + width + margin.right < parentWidth)
+                val isInBoundY = (nextY - margin.top > 0) && (nextY + height + margin.bottom < parentHeight)
+
+                animate()
+                    .x(if(isInBoundX) nextX else x)
+                    .y(if(isInBoundY) nextY else y)
+                    .setDuration(0)
+                    .start()
+            }
             else -> return false
         }
         return true
+    }
+
+    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+        super.onLayout(changed, l, t, r, b)
+        parentWidth = if(parent is FrameLayout) (parent as FrameLayout).width else 0
+        parentHeight = if(parent is FrameLayout) (parent as FrameLayout).height else 0
     }
 
     companion object {
