@@ -27,10 +27,10 @@ interface NotificationDao {
     @Query("SELECT * FROM NotificationInfo WHERE topic == :topic ORDER BY receiveTime DESC")
     fun getNotificationByTopic(topic: Int): PagingSource<Int, NotificationInfo>*/
 
-    @Query("DELETE FROM NotificationInfo WHERE  userId=:customerId AND id NOT IN ( SELECT id FROM NotificationInfo where userId=:customerId ORDER BY id DESC LIMIT 5)")
+    @Query("DELETE FROM NotificationInfo WHERE  userId=:customerId AND id NOT IN ( SELECT id FROM NotificationInfo where userId=:customerId ORDER BY id DESC LIMIT 50)")
     fun deleteExtraRows(customerId: Int)
 
-    @Query("DELETE FROM NotificationInfo WHERE  userId=0 AND id NOT IN ( SELECT id FROM NotificationInfo  WHERE  userId=0 ORDER BY id DESC LIMIT 5)")
+    @Query("DELETE FROM NotificationInfo WHERE  userId=0 AND id NOT IN ( SELECT id FROM NotificationInfo  WHERE  userId=0 ORDER BY id DESC LIMIT 50)")
     fun deleteZeroUserRows()
     
     @Query("UPDATE NotificationInfo SET isSeen = :isSeen, seenTime = :seenTime WHERE id == :id")
