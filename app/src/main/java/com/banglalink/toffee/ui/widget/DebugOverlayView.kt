@@ -3,6 +3,7 @@ package com.banglalink.toffee.ui.widget
 import android.content.Context
 import android.graphics.Color
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -11,6 +12,7 @@ import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.PlayerOverlayData
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class DebugOverlayView(private val ctx: Context, val attrs: AttributeSet? = null, val defAttrStyle: Int = 0)
@@ -78,6 +80,29 @@ class DebugOverlayView(private val ctx: Context, val attrs: AttributeSet? = null
             }
         }
         return sb.toString()
+    }
+
+    private var dX = 0f
+    private var dY = 0f
+
+    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+        return overlayData?.params?.position == "floating"
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                dX = x - event.rawX
+                dY = y - event.rawY
+            }
+            MotionEvent.ACTION_MOVE -> animate()
+                .x(event.rawX + dX)
+                .y(event.rawY + dY)
+                .setDuration(0)
+                .start()
+            else -> return false
+        }
+        return true
     }
 
     companion object {

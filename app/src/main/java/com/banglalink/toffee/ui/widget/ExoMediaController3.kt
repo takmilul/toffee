@@ -154,7 +154,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         clearDebugWindow()
         binding.debugContainer.addView(DebugOverlayView(context).apply {
             setPlayerOverlayData(data, cid)
-        })
+        }, LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT))
         debugJob?.cancel()
         debugJob = coroutineScope.launch {
             delay(data.params.duration * 1000)
@@ -170,6 +170,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
 
     override fun onDetachedFromWindow() {
         debugJob?.cancel()
+        clearDebugWindow()
         super.onDetachedFromWindow()
     }
 
