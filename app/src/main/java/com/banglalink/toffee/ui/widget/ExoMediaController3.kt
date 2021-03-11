@@ -67,7 +67,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     private var simpleExoPlayer: Player? = null
     private lateinit var mFormatBuilder: StringBuilder
     private lateinit var mFormatter: Formatter
-    private var isMinimize = false
+    protected var isMinimize = false
     private var lastPlayerPosition: Long = 0
     var isAutoRotationEnabled = true
     private var mPlayListListener: PlaylistListener? = null
@@ -152,17 +152,24 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
 
     fun showDebugOverlay(data: PlayerOverlayData, cid: String) {
         clearDebugWindow()
-        binding.debugContainer.addView(DebugOverlayView(context).apply {
-            setPlayerOverlayData(data, cid)
-        }, LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT))
-        debugJob?.cancel()
-        debugJob = coroutineScope.launch {
-            delay(data.params.duration * 1000)
-            clearDebugWindow()
+        if(!isMinimize) {
+            binding.debugContainer.addView(DebugOverlayView(context).apply {
+                setPlayerOverlayData(data, cid)
+            }, LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT))
+
+            debugJob = coroutineScope.launch {
+                delay(data.params.duration * 1000)
+                clearDebugWindow()
+            }
         }
     }
 
-    private fun clearDebugWindow() {
+    fun getDebugOverLay(): View? {
+        if(binding.debugContainer.childCount > 0) return binding.debugContainer.getChildAt(0)
+        return null
+    }
+
+    fun clearDebugWindow() {
         if(binding.debugContainer.childCount > 0) {
             binding.debugContainer.removeAllViews()
         }

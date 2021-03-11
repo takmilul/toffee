@@ -16,6 +16,8 @@ import com.banglalink.toffee.model.PlayerOverlayData
 import com.banglalink.toffee.util.Utils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlin.math.max
+import kotlin.math.min
 
 
 @AndroidEntryPoint
@@ -103,14 +105,12 @@ class DebugOverlayView(private val ctx: Context, val attrs: AttributeSet? = null
                 dY = y - event.rawY
             }
             MotionEvent.ACTION_MOVE -> {
-                val nextX = event.rawX + dX
-                val nextY = event.rawY + dY
-                val isInBoundX = (nextX - margin.left > 0) && (nextX + width + margin.right < parentWidth)
-                val isInBoundY = (nextY - margin.top > 0) && (nextY + height + margin.bottom < parentHeight)
+                val nextX = max(margin.left.toFloat(), min(event.rawX + dX, parentWidth - margin.right - width.toFloat()))
+                val nextY = max(margin.top.toFloat(), min(event.rawY + dY, parentHeight - margin.bottom - height.toFloat()))
 
                 animate()
-                    .x(if(isInBoundX) nextX else x)
-                    .y(if(isInBoundY) nextY else y)
+                    .x(nextX)
+                    .y(nextY)
                     .setDuration(0)
                     .start()
             }
@@ -121,6 +121,8 @@ class DebugOverlayView(private val ctx: Context, val attrs: AttributeSet? = null
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         super.onLayout(changed, l, t, r, b)
+        x = margin.left.toFloat()
+        y = margin.right.toFloat()
         parentWidth = if(parent is FrameLayout) (parent as FrameLayout).width else 0
         parentHeight = if(parent is FrameLayout) (parent as FrameLayout).height else 0
     }
