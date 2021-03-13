@@ -11,11 +11,12 @@
             android:id="@+id/latestVideosHeader"
             style="@style/SectionTitleTextStyle"
             android:layout_marginTop="0dp"
-            android:paddingTop="4dp"
+            android:paddingVertical="12dp"
             android:text="@string/latest_video"
             app:layout_constraintEnd_toStartOf="@+id/filterButton"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/subCategoryChipGroup"/>
     
         <ImageButton
             android:id="@+id/filterButton"
@@ -58,7 +59,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="4dp"
-            app:layout_goneMarginTop="12dp"
+            app:layout_goneMarginTop="0dp"
             android:clipToPadding="false"
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
