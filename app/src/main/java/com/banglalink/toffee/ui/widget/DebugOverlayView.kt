@@ -2,15 +2,23 @@ package com.banglalink.toffee.ui.widget
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Rect
 import android.util.AttributeSet
+import android.util.Log
+import android.view.MotionEvent
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.storage.Preference
 import com.banglalink.toffee.model.PlayerOverlayData
+import com.banglalink.toffee.util.Utils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlin.math.max
+import kotlin.math.min
+
 
 @AndroidEntryPoint
 class DebugOverlayView(private val ctx: Context, val attrs: AttributeSet? = null, val defAttrStyle: Int = 0)
@@ -21,6 +29,9 @@ class DebugOverlayView(private val ctx: Context, val attrs: AttributeSet? = null
     private var customTextView: TextView? = null
     private var debugTextView: TextView? = null
     private var contentId: String? = null
+    private var parentWidth: Int = 0
+    private var parentHeight: Int = 0
+    private var margin: Rect = Rect(Utils.dpToPx(10), Utils.dpToPx(10), Utils.dpToPx(10), Utils.dpToPx(10))
 
     init {
         View.inflate(ctx, R.layout.debug_overlay_layout, this)
@@ -78,6 +89,42 @@ class DebugOverlayView(private val ctx: Context, val attrs: AttributeSet? = null
             }
         }
         return sb.toString()
+    }
+
+    private var dX = 0f
+    private var dY = 0f
+
+    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+        return overlayData?.params?.position == "floating"
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                dX = x - event.rawX
+                dY = y - event.rawY
+            }
+            MotionEvent.ACTION_MOVE -> {
+                val nextX = max(margin.left.toFloat(), min(event.rawX + dX, parentWidth - margin.right - width.toFloat()))
+                val nextY = max(margin.top.toFloat(), min(event.rawY + dY, parentHeight - margin.bottom - height.toFloat()))
+
+                animate()
+                    .x(nextX)
+                    .y(nextY)
+                    .setDuration(0)
+                    .start()
+            }
+            else -> return false
+        }
+        return true
+    }
+
+    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+        super.onLayout(changed, l, t, r, b)
+        x = margin.left.toFloat()
+        y = margin.right.toFloat()
+        parentWidth = if(parent is FrameLayout) (parent as FrameLayout).width else 0
+        parentHeight = if(parent is FrameLayout) (parent as FrameLayout).height else 0
     }
 
     companion object {

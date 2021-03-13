@@ -165,6 +165,10 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
 
         if(bottomHit) return false
 
+        dragView.getDebugOverLay()?.let {
+            if(isViewHit(it, ev.x.toInt(), ev.y.toInt())) return false
+        }
+
         if (mPref.isEnableFloatingWindow && viewDragHelper.shouldInterceptTouchEvent(ev) || isMinimize() && isViewHit(
                 dragView, ev.x
                     .toInt(), ev.y.toInt()
