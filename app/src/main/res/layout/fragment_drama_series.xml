@@ -14,8 +14,7 @@
         
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/home_mini_progress_container">
+            android:layout_height="match_parent">
 
             <com.google.android.material.appbar.AppBarLayout
                 android:id="@+id/dramaAppBar"
@@ -27,6 +26,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
+                    android:background="@color/screen_bg"
                     app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
                     <androidx.fragment.app.FragmentContainerView
@@ -47,8 +47,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-
+                
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/latestVideosFragment"
                     android:name="com.banglalink.toffee.ui.category.drama.DramaSeriesContentFragment"

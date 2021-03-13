@@ -4,36 +4,36 @@ import com.banglalink.toffee.util.Utils
 import com.google.gson.annotations.SerializedName
 
 data class UserChannelInfo(
-    val id: Long,
+    val id: Long = 0L,
 
     @SerializedName("category_id")
-    val categoryId: Long,
+    val categoryId: Long = 0L,
 
     @SerializedName("subscriber_count")
-    var subscriberCount: Long,
+    var subscriberCount: Long = 0L,
 
     @SerializedName("is_active")
-    val isActive: Int,
+    val isActive: Int = 0,
 
     @SerializedName("content_provider_name")
-    val contentProviderName: String,
+    val contentProviderName: String = "",
 
     @SerializedName("content_provider_id")
-    val contentProviderId: Long,
+    val contentProviderId: Long = 0L,
 
     @SerializedName("channel_owner_id")
-    val channelOwnerId: Int,
+    val channelOwnerId: Int = 0,
     
     @SerializedName("profile_url")
-    val profileUrl: String?,
+    val profileUrl: String? = null,
 
     @SerializedName("banner_url")
-    val bannerUrl: String?,
+    val bannerUrl: String? = null,
 
-    var isSubscribed: Int,
+    var isSubscribed: Int = 0,
     
     @SerializedName("user_id")
-    val userId: Int,
+    val userId: Int = 0,
 ) {
     fun getFormatedSubscriberCount() = Utils.getFormattedViewsText(subscriberCount.toString())
 }

@@ -10,7 +10,8 @@
         <TextView
             android:id="@+id/latestVideosHeader"
             style="@style/SectionTitleTextStyle"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="0dp"
+            android:paddingTop="4dp"
             android:text="@string/latest_video"
             app:layout_constraintEnd_toStartOf="@+id/filterButton"
             app:layout_constraintStart_toStartOf="parent"
@@ -18,22 +19,23 @@
     
         <ImageButton
             android:id="@+id/filterButton"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_marginEnd="16dp"
+            android:padding="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_filter"
             app:layout_constraintBottom_toBottomOf="@id/latestVideosHeader"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/latestVideosHeader" />
+            app:layout_constraintTop_toTopOf="@id/latestVideosHeader"
+            android:contentDescription="Filter Button" />
     
         <HorizontalScrollView
             android:id="@+id/subCategoryChipGroupHolder"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:scrollbars="none"
             android:visibility="gone"
-            android:layout_marginTop="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/latestVideosHeader"
@@ -42,7 +44,7 @@
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/subCategoryChipGroup"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
+                android:layout_height="match_parent"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 app:selectionRequired="true"
@@ -83,7 +85,7 @@
         <LinearLayout
             android:id="@+id/empty_view"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:gravity="center"
             android:visibility="gone"
             android:orientation="vertical"
@@ -104,10 +106,12 @@
                 android:id="@+id/empty_view_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
                 android:textSize="18sp"
-                android:layout_marginTop="24dp"/>
+                android:maxLines="2"
+                android:text="No item found"
+                android:textIsSelectable="false" />
             
         </LinearLayout>
-        
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

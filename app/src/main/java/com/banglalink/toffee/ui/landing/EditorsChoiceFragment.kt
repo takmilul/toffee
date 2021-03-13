@@ -40,7 +40,14 @@ class EditorsChoiceFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInf
             isNestedScrollingEnabled = false
             adapter = mAdapter
         }
-
+        /*val channelInfoList = PagingData.from(listOf(
+            ChannelInfo("", program_name = "Program Name", content_provider_name = "Channel", created_at = System.currentTimeMillis().toString()),
+            ChannelInfo("", program_name = "Program Name", content_provider_name = "Channel", created_at = System.currentTimeMillis().toString()),
+            ChannelInfo("", program_name = "Program Name", content_provider_name = "Channel", created_at = System.currentTimeMillis().toString()),
+        ))
+        lifecycleScope.launch {
+            mAdapter.submitData(channelInfoList)
+        }*/
         observeList()
     }
 

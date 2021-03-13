@@ -1,45 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/screen_bg"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
+    android:background="@color/screen_bg">
+    
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/generalCategoryAppBar"
-        app:layout_behavior="com.banglalink.toffee.ui.widget.AppBarLayoutBehavior"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:layout_behavior="com.banglalink.toffee.ui.widget.AppBarLayoutBehavior">
         
-        <LinearLayout
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-        
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/featuredFragment"
                 android:name="com.banglalink.toffee.ui.category.CategoryInfoFragment"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:background="@color/screen_bg"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
         
-        </LinearLayout>
-        
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.appbar.AppBarLayout>
     
-    <com.banglalink.toffee.ui.widget.SmartNestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/generalCategoryNestedScroller"
-        android:fillViewport="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
         
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/latestVideosFragment"
             android:name="com.banglalink.toffee.ui.landing.LatestVideosFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-        
-    </com.banglalink.toffee.ui.widget.SmartNestedScrollView>
+    
+    </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

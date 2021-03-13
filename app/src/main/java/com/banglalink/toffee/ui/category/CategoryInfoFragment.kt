@@ -8,17 +8,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.core.view.get
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentCategoryInfoBinding
-import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.Resource.Failure
-import com.banglalink.toffee.model.Resource.Success
+import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.SubCategory
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
@@ -38,29 +34,16 @@ class CategoryInfoFragment: HomeBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         categoryInfo = requireParentFragment().requireArguments().getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)!!
-        landingViewModel.pageType.value = (PageType.Category)
-        landingViewModel.checkedSubCategoryChipId.value = 0
-        landingViewModel.categoryId.value = (categoryInfo.id.toInt())
-        landingViewModel.isDramaSeries.value = false
-
-        observeList()
+        
         observeCategoryData()
-//        observeChipCheck()
+        observeHashTags()
+        observeSubCategories()
     }
 
-    private fun observeChipCheck() {
-        lifecycleScope.launchWhenStarted { 
-            observe(landingViewModel.checkedSubCategoryChipId){
-                if (it != 0 && landingViewModel.subCategoryId.value == 0 && landingViewModel.categoryId.value != 0)
-                    binding.subCategoryChipGroup.check(binding.subCategoryChipGroup[0].id)
-            }
-        }
-    }
-
-    private fun observeList() {
+    private fun observeSubCategories() {
         observe(landingViewModel.subCategories){
             when(it){
-                is Success -> {
+                is Resource.Success -> {
                     val subList = it.data.sortedBy { sub -> sub.id }
                     binding.subCategoryChipGroup.removeAllViews()
                     subList.forEachIndexed{ _, subCategory ->
@@ -73,55 +56,52 @@ class CategoryInfoFragment: HomeBaseFragment() {
                         }
                     }
                     binding.subCategoryChipGroup.setOnCheckedChangeListener { group, checkedId ->
-//                        landingViewModel.checkedSubCategoryChipId.value = checkedId
                         val selectedChip = group.findViewById<Chip>(checkedId)
                         if(selectedChip != null) {
                             val selectedSub = selectedChip.tag as SubCategory
-                            landingViewModel.categoryId.value = selectedSub.categoryId.toInt()
                             landingViewModel.subCategoryId.value = selectedSub.id.toInt()
                             landingViewModel.isDramaSeries.value = selectedSub.categoryId.toInt() == 9
-//                            landingViewModel.loadSubcategoryVideos(selectedSub.categoryId.toInt(), selectedSub.id.toInt())
                         }
                     }
                 }
-                is Failure -> {}
-            }
-        }
-
-        observe(landingViewModel.hashtagList) { hashtagList->
-            binding.hashTagChipGroup.removeAllViews()
-            hashtagList.forEachIndexed{ _, hashtag ->
-                val newChip = addHashtagChip(hashtag).apply {
-                    tag = hashtag
-                }
-                binding.hashTagChipGroup.addView(newChip)
-            }
-            binding.hashTagChipGroup.setOnCheckedChangeListener{ group, checkedId ->
-                val selectedHashtag = group.findViewById<Chip>(checkedId)
-                if(selectedHashtag != null) {
-                    val hashtag = selectedHashtag.tag as String
-                    landingViewModel.selectedHashTag.value = hashtag.removePrefix("#")
-                }
+                is Resource.Failure -> {}
             }
         }
     }
 
-    private fun addHashtagChip(hashtag: String): Chip {
+    private fun observeHashTags(){
+        observe(landingViewModel.hashtagList) {
+            binding.hashTagChipGroup.removeAllViews()
+            val hashTagList = it
+            hashTagList.forEachIndexed{ _, hashTag ->
+                if(hashTag.isNotBlank()) {
+                    val newChip = addHashTagChip(hashTag).apply {
+                        tag = hashTag
+                    }
+                    binding.hashTagChipGroup.addView(newChip)
+                }
+            }
+            binding.hashTagChipGroup.setOnCheckedChangeListener{ group, checkedId ->
+                val selectedHashTag = group.findViewById<Chip>(checkedId)
+                if(selectedHashTag != null) {
+                    val hashTag = selectedHashTag.tag as String
+                    landingViewModel.selectedHashTag.value = hashTag.removePrefix("#")
+                }
+            }
+        }
+    }
+    
+    private fun addHashTagChip(hashTag: String): Chip {
         val intColor = ContextCompat.getColor(requireContext(), R.color.colorSecondaryDark)
         val textColor = ContextCompat.getColor(requireContext(), R.color.main_text_color)
         val foregroundColor = ContextCompat.getColor(requireContext(), R.color.hashtag_chip_color)
-
         val chipColor = createStateColor(intColor,foregroundColor)
         val chip = layoutInflater.inflate(R.layout.hashtag_chip_layout, binding.hashTagChipGroup, false) as Chip
-        chip.text = hashtag
-//        chip.typeface = Typeface.DEFAULT_BOLD
+        chip.text = hashTag
         chip.id = View.generateViewId()
-
         chip.chipBackgroundColor = chipColor
-//        chip.chipStrokeColor = ColorStateList.valueOf(intColor)
         chip.rippleColor = chipColor
         chip.setTextColor(createStateColor(Color.WHITE, textColor))
-
         return chip
     }
 
@@ -162,7 +142,5 @@ class CategoryInfoFragment: HomeBaseFragment() {
         )
     }
 
-    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
-
-    }
+    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {}
 }

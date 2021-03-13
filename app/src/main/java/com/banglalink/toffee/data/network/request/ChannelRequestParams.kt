@@ -5,5 +5,7 @@ data class ChannelRequestParams(
     val categoryId: Int,
     val subcategory: String,
     val subcategoryId: Int,
-    val type: String
+    val type: String,
+    val isFilter: Int = 0,
+    val hashTag: String = "null"
 )

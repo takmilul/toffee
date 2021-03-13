@@ -3,23 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-
-    </data>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/bottom_round_white_bg"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="@id/subCategoryChipGroupHolder" />
-
+        
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/categoryListPager"
             android:name="com.banglalink.toffee.ui.landing.FeaturedContentFragment"
@@ -28,6 +15,15 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+        
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@drawable/bottom_round_white_bg"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/categoryListPager"
+            app:layout_constraintBottom_toBottomOf="@id/subCategoryChipGroupHolder" />
 
         <ImageView
             android:id="@+id/categoryIcon"
@@ -37,7 +33,7 @@
             android:layout_marginTop="8dp"
             tools:src="@drawable/ic_profile_default"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/categoryListPager" />
+            app:layout_constraintTop_toBottomOf="@id/categoryListPager"/>
 
         <TextView
             android:id="@+id/categoryName"
@@ -55,11 +51,10 @@
         <HorizontalScrollView
             android:id="@+id/subCategoryChipGroupHolder"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="52dp"
             android:paddingTop="8dp"
             android:paddingBottom="4dp"
             android:scrollbars="none"
-            tools:minHeight="100dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/categoryIcon">
@@ -67,7 +62,7 @@
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/subCategoryChipGroup"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
+                android:layout_height="match_parent"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 app:selectionRequired="true"
@@ -78,10 +73,9 @@
         <HorizontalScrollView
             android:id="@+id/hashTagChipGroupHolder"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:scrollbars="none"
             android:layout_marginTop="4dp"
-            tools:minHeight="100dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/subCategoryChipGroupHolder">
@@ -89,7 +83,7 @@
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/hashTagChipGroup"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 app:selectionRequired="true"
@@ -97,6 +91,5 @@
                 app:singleSelection="true" />
 
         </HorizontalScrollView>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

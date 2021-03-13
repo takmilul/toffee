@@ -12,10 +12,10 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
 class DramaSeriesContentService @AssistedInject constructor(
-        private val preference: Preference,
-        private val toffeeApi: ToffeeApi,
-        private val localSync: LocalSync,
-        @Assisted private val requestParams: ChannelRequestParams
+    private val preference: Preference,
+    private val toffeeApi: ToffeeApi,
+    private val localSync: LocalSync,
+    @Assisted private val requestParams: ChannelRequestParams
 ): BaseApiService<ChannelInfo> {
 
     override suspend fun loadData(offset: Int, limit: Int): List<ChannelInfo> {
@@ -23,6 +23,8 @@ class DramaSeriesContentService @AssistedInject constructor(
             toffeeApi.getDramaSeriesContents(
                 requestParams.type,
                 requestParams.subcategoryId,
+                requestParams.isFilter,
+                requestParams.hashTag,
                 limit,
                 offset,
                 preference.getDBVersionByApiName("getUgcLatestDramaSerial"),

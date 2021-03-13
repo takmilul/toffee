@@ -23,9 +23,9 @@ import kotlinx.coroutines.launch
 
 class FeaturedContentFragment : HomeBaseFragment() {
 
-    private lateinit var mAdapter: FeaturedContentAdapter
-    private var slideJob: Job? = null
     private var isDataLoaded = false
+    private var slideJob: Job? = null
+    private lateinit var mAdapter: FeaturedContentAdapter
     val viewModel by activityViewModels<LandingPageViewModel>()
 
     override fun onCreateView(
@@ -38,7 +38,6 @@ class FeaturedContentFragment : HomeBaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         mAdapter = FeaturedContentAdapter(object : BaseListItemCallback<ChannelInfo> {
             override fun onItemClicked(item: ChannelInfo) {
                 if(isDataLoaded) {

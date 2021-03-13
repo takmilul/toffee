@@ -39,7 +39,7 @@ class DramaSeriesFragment: BaseFragment() {
         activity?.title = category.categoryName
         landingViewModel.pageType.value = PageType.Category
         landingViewModel.categoryId.value = category.id.toInt()
-        landingViewModel.subCategoryId.value = 0
+        landingViewModel.checkedSubCategoryChipId.value = 0
         landingViewModel.isDramaSeries.value = true
     }
 

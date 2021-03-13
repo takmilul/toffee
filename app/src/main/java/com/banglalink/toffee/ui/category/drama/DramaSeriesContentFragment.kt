@@ -57,10 +57,16 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
                 observeLatestVideosList(category?.id?.toInt() ?: 9, it)
             }
             else{
-                observeTrendingVideosList(/*category?.id?.toInt() ?: 9, it*/)
+                observeTrendingVideosList(category?.id?.toInt() ?: 9, it)
             }
         }
-
+        
+        observe(landingPageViewModel.selectedHashTag) {
+            lifecycleScope.launchWhenCreated {
+                observeLatestVideosList(category?.id?.toInt() ?: 9, landingPageViewModel.subCategoryId.value ?: 0, 1, it)
+            }
+        }
+        
         binding.filterButton.setOnClickListener {
             val popupMenu = android.widget.PopupMenu(requireContext(), it)
             popupMenu.menu.add(Menu.NONE, LATEST_VIDEOS.value, 1, getString(string.latestVideos))
@@ -71,8 +77,8 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
                 selectedFilter = item.itemId
                 binding.latestVideosHeader.text = item.title
                 when(item.itemId){
-                    LATEST_VIDEOS.value -> landingPageViewModel.subCategoryId.value = 0 /*observeLatestVideosList(category?.id?.toInt() ?: 0)*/
-                    TRENDING_VIDEOS.value -> landingPageViewModel.subCategoryId.value = 0 /*observeTrendingVideosList(*//*category?.id?.toInt() ?: 0*//*)*/
+                    LATEST_VIDEOS.value -> observeLatestVideosList(category?.id?.toInt() ?: 0)
+                    TRENDING_VIDEOS.value -> observeTrendingVideosList(category?.id?.toInt() ?: 0)
                 }
                 true
             }
@@ -111,22 +117,17 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
         }
     }
 
-    private fun observeTrendingVideosList(/*categoryId: Int, subCategoryId: Int = 0*/) {
+    private fun observeTrendingVideosList(categoryId: Int, subCategoryId: Int = 0) {
         lifecycleScope.launchWhenStarted { 
-            /*if (categoryId == 9) {
-                landingPageViewModel.categoryId.value = categoryId
-                landingPageViewModel.subCategoryId.value = subCategoryId
-                landingPageViewModel.isDramaSeries.value = true
-            }*/
-            landingPageViewModel.loadMostPopularVideos().collectLatest {
+            landingPageViewModel.loadMostPopularVideos(categoryId, subCategoryId).collectLatest {
                 mAdapter.submitData(it)
             }
         }
     }
 
-    private fun observeLatestVideosList(categoryId: Int, subCategoryId: Int = 0) {
+    private fun observeLatestVideosList(categoryId: Int, subCategoryId: Int = 0, isFilter: Int = 0, hashTag: String = "null") {
         lifecycleScope.launchWhenStarted {
-            viewModel.loadDramaSeriesContents(categoryId, subCategoryId).collectLatest {
+            viewModel.loadDramaSeriesContents(categoryId, subCategoryId, isFilter, hashTag).collectLatest {
                 mAdapter.submitData(it)
             }
         }

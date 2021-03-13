@@ -52,9 +52,8 @@ class LandingPageFragment : HomeBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.title = getString(R.string.app_name_short)
-        landingViewModel.pageType.value = Landing
         landingViewModel.categoryId.value = 0
-        landingViewModel.subCategoryId.value = 0
+        landingViewModel.pageType.value = Landing
         landingViewModel.isDramaSeries.value = false
 
         landingCoordinator = view.findViewById(R.id.landing_coordinator)

@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.PagingData
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentLandingTvChannelsBinding
 import com.banglalink.toffee.model.ChannelInfo
@@ -14,6 +15,7 @@ import com.banglalink.toffee.ui.home.LandingPageViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_landing_tv_channels.*
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class PopularTVChannelsFragment : HomeBaseFragment() {
@@ -46,7 +48,15 @@ class PopularTVChannelsFragment : HomeBaseFragment() {
         viewAllButton.setOnClickListener {
             homeViewModel.switchBottomTab.postValue(1)
         }
-
+        val channelInfoList = PagingData.from(listOf(
+            ChannelInfo("", type = "LIVE"),
+            ChannelInfo("", type = "LIVE"),
+            ChannelInfo("", type = "LIVE"),
+            ChannelInfo("", type = "LIVE"),
+        ))
+        lifecycleScope.launch { 
+            mAdapter.submitData(channelInfoList)
+        }
         observeList()
     }
 

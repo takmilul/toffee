@@ -16,11 +16,11 @@ class DramaSeriesViewModel @Inject constructor(
     private val dramaAssistedFactory: DramaSeriesContentService.AssistedFactory,
 ) : BaseViewModel() {
 
-    fun loadDramaSeriesContents(categoryId: Int, subCategoryId: Int): Flow<PagingData<ChannelInfo>> {
+    fun loadDramaSeriesContents(categoryId: Int, subCategoryId: Int, isFilter: Int, hashTag: String): Flow<PagingData<ChannelInfo>> {
         return BaseListRepositoryImpl({ 
             BaseNetworkPagingSource(
                 dramaAssistedFactory.create(
-                    ChannelRequestParams("", categoryId, "", subCategoryId, "VOD")
+                    ChannelRequestParams("", categoryId, "", subCategoryId, "VOD", isFilter, hashTag)
                 )
             ) 
         }).getList()

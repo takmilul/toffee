@@ -8,8 +8,7 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/landing_coordinator"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/home_mini_progress_container">
+        android:layout_height="match_parent">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/landing_appbar"
@@ -39,15 +38,13 @@
                     android:id="@+id/categoriesFragment"
                     android:name="com.banglalink.toffee.ui.landing.LandingCategoriesFragment"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"/>
+                    android:layout_height="wrap_content"/>
 
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/trendingNowFragment"
                     android:name="com.banglalink.toffee.ui.landing.EditorsChoiceFragment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="8dp"
                     android:background="@color/home_screen_curve_bg_color"/>
 
                 <androidx.fragment.app.FragmentContainerView
@@ -70,8 +67,7 @@
                 android:id="@+id/latestVideosFragment"
                 android:name="com.banglalink.toffee.ui.landing.LatestVideosFragment"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" 
-                android:layout_marginTop="8dp"/>
+                android:layout_height="match_parent"/>
             
         </androidx.core.widget.NestedScrollView>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

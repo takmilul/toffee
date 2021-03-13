@@ -86,6 +86,15 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter = mAdapterLanding
         }
+        /*val userChannelList = PagingData.from(listOf(
+            UserChannelInfo(contentProviderName = "Channel"),
+            UserChannelInfo(contentProviderName = "Channel"),
+            UserChannelInfo(contentProviderName = "Channel"),
+            UserChannelInfo(contentProviderName = "Channel"),
+        ))
+        lifecycleScope.launch {
+            mAdapterLanding.submitData(userChannelList)
+        }*/
         observeList()
     }
 
