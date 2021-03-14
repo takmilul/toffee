@@ -3,7 +3,6 @@ package com.banglalink.toffee.ui.home
 import android.content.Context
 import android.util.Pair
 import android.widget.Toast
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -25,7 +24,6 @@ import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.unsafeLazy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -48,7 +46,7 @@ class LandingPageViewModel @Inject constructor(
     val checkedSubCategoryChipId = MutableLiveData<Int>()
     val pageType = MutableLiveData<PageType>()
     val categoryId = MutableLiveData<Int>()
-    val subCategoryId = MutableLiveData<Int>()
+    val subCategoryId = SingleLiveEvent<Int>()
     val isDramaSeries = MutableLiveData<Boolean>()
     private val featuredContentList = SingleLiveEvent<Resource<List<ChannelInfo>?>>()
     val featuredContents = featuredContentList.toLiveData()

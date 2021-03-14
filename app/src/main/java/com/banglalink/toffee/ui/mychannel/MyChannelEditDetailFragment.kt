@@ -11,8 +11,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import coil.load
-import coil.request.CachePolicy
 import com.banglalink.toffee.R
 import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_DETAILS_URL
 import com.banglalink.toffee.data.network.request.MyChannelEditRequest
@@ -31,6 +29,8 @@ import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
 import com.banglalink.toffee.ui.widget.ToffeeSpinnerAdapter
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.UtilsKt
+import com.banglalink.toffee.util.bindImageFromUrl
+import com.banglalink.toffee.util.bindRoundImage
 import com.banglalink.toffee.util.imagePathToBase64
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -132,18 +132,10 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
 
     private fun loadImage(){
         newBannerUrl?.let {
-            binding.bannerImageView.load(it){
-                memoryCachePolicy(CachePolicy.DISABLED)
-                diskCachePolicy(CachePolicy.ENABLED)
-                crossfade(false)
-            }
+            bindImageFromUrl(binding.bannerImageView, it)
         }
         newProfileImageUrl?.let {
-            binding.profileImageView.load(it) {
-                memoryCachePolicy(CachePolicy.DISABLED)
-                diskCachePolicy(CachePolicy.ENABLED)
-                crossfade(false)
-            }
+            bindRoundImage(binding.profileImageView, it)
         }
     }
     

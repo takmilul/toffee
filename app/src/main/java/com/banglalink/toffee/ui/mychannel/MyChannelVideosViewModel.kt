@@ -3,7 +3,6 @@ package com.banglalink.toffee.ui.mychannel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import com.banglalink.toffee.apiservice.MyChannelVideoDeleteService
 import com.banglalink.toffee.apiservice.MyChannelVideosRequestParams
 import com.banglalink.toffee.apiservice.MyChannelVideosService
@@ -46,7 +45,7 @@ class MyChannelVideosViewModel @Inject constructor(
                 apiService.create(
                     MyChannelVideosRequestParams("VOD", channelOwnerId, 0, 0))
             )
-        }).getList().cachedIn(viewModelScope)
+        }).getList()
     }
 
     fun deleteVideo(contentId: Int) {
