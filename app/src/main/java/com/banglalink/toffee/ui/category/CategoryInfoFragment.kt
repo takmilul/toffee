@@ -11,7 +11,9 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentCategoryInfoBinding
+import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
@@ -34,7 +36,7 @@ class CategoryInfoFragment: HomeBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         categoryInfo = requireParentFragment().requireArguments().getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)!!
-        
+        binding.hashTagChipGroupHolder.hide()
         observeCategoryData()
         observeHashTags()
         observeSubCategories()
@@ -71,6 +73,7 @@ class CategoryInfoFragment: HomeBaseFragment() {
 
     private fun observeHashTags(){
         observe(landingViewModel.hashtagList) {
+            binding.hashTagChipGroupHolder.show()
             binding.hashTagChipGroup.removeAllViews()
             val hashTagList = it
             hashTagList.forEachIndexed{ _, hashTag ->

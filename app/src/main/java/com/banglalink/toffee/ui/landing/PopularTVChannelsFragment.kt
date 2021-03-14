@@ -53,6 +53,7 @@ class PopularTVChannelsFragment : HomeBaseFragment() {
             ChannelInfo("", type = "LIVE"),
             ChannelInfo("", type = "LIVE"),
             ChannelInfo("", type = "LIVE"),
+            ChannelInfo("", type = "LIVE"),
         ))
         lifecycleScope.launch { 
             mAdapter.submitData(channelInfoList)

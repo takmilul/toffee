@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.core.widget.NestedScrollView
+        <com.banglalink.toffee.ui.widget.SmartNestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -301,6 +301,6 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </androidx.core.widget.NestedScrollView>
+        </com.banglalink.toffee.ui.widget.SmartNestedScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

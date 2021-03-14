@@ -115,8 +115,9 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     
     private fun observeSubCategoryChange() {
         observe(viewModel.subCategoryId) {
-            if (viewModel.checkedSubCategoryChipId.value != 0 && it == 0 && category?.id?.toInt() != 0)
+            if (viewModel.checkedSubCategoryChipId.value != 0 && it == 0 && category?.id?.toInt() != 0 && binding.subCategoryChipGroup.childCount > 0) {
                 binding.subCategoryChipGroup.check(binding.subCategoryChipGroup[0].id)
+            }
 
             if (selectedFilter == LATEST_VIDEOS.value || selectedFilter == FEED.value) {
                 observeLatestVideosList(category?.id?.toInt() ?: 0, it)

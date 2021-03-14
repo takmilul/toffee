@@ -56,7 +56,7 @@
             </LinearLayout>
         </com.google.android.material.appbar.AppBarLayout>
         
-        <androidx.core.widget.NestedScrollView
+        <com.banglalink.toffee.ui.widget.SmartNestedScrollView
             android:id="@+id/latestVideoScroller"
             android:fillViewport="true"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -69,6 +69,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
             
-        </androidx.core.widget.NestedScrollView>
+        </com.banglalink.toffee.ui.widget.SmartNestedScrollView>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </RelativeLayout>

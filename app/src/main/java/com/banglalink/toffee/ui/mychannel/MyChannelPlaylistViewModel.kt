@@ -1,8 +1,6 @@
 package com.banglalink.toffee.ui.mychannel
 
-import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import com.banglalink.toffee.apiservice.MyChannelPlaylistService
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
@@ -22,6 +20,6 @@ class MyChannelPlaylistViewModel @Inject constructor(
             BaseNetworkPagingSource(
                 apiService.create(channelOwnerId)
             )
-        }).getList().cachedIn(viewModelScope)
+        }).getList()
     }
 }
