@@ -78,6 +78,17 @@ class LandingCategoriesFragment: BaseFragment() {
             adapter = mAdapter
         }
 
+        /*val categories = PagingData.from(listOf(
+            Category(),
+            Category(),
+            Category(),
+            Category(),
+            Category(),
+            Category(),
+        ))
+        lifecycleScope.launch { 
+            mAdapter.submitData(categories)
+        }*/
         observeList()
     }
 

@@ -3,7 +3,6 @@ package com.banglalink.toffee.ui.home
 import android.content.Context
 import android.util.Pair
 import android.widget.Toast
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -21,6 +20,7 @@ import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseViewModel
+import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.unsafeLazy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -44,16 +44,16 @@ class LandingPageViewModel @Inject constructor(
     
     val latestVideoLiveData = MutableLiveData<Pair<Int, Int>>()
     val checkedSubCategoryChipId = MutableLiveData<Int>()
-    val pageType: MutableLiveData<PageType> = MutableLiveData()
-    val categoryId: MutableLiveData<Int> = MutableLiveData()
-    val subCategoryId: MutableLiveData<Int> = MutableLiveData()
-    val isDramaSeries: MutableLiveData<Boolean> = MutableLiveData()
-    private val featuredContentList: MutableLiveData<Resource<List<ChannelInfo>?>> = MutableLiveData()
+    val pageType = MutableLiveData<PageType>()
+    val categoryId = MutableLiveData<Int>()
+    val subCategoryId = SingleLiveEvent<Int>()
+    val isDramaSeries = MutableLiveData<Boolean>()
+    private val featuredContentList = SingleLiveEvent<Resource<List<ChannelInfo>?>>()
     val featuredContents = featuredContentList.toLiveData()
-    private val subCategoryList: MutableLiveData<Resource<List<SubCategory>>> = MutableLiveData()
+    private val subCategoryList = SingleLiveEvent<Resource<List<SubCategory>>>()
     val subCategories = subCategoryList.toLiveData()
 
-    private val hashtagData = MutableLiveData<List<String>>()
+    private val hashtagData = SingleLiveEvent<List<String>>()
     val hashtagList = hashtagData.toLiveData()
     val selectedHashTag = MutableLiveData<String>()
 
@@ -95,8 +95,8 @@ class LandingPageViewModel @Inject constructor(
                         }
                     }
                     response.data.hashTags?.let {
-                        if (it.isNotBlank()) {
-                            hashtagData.value = it.split(",").filter { ht -> ht.isNotBlank() }
+                        if (!it.isNullOrEmpty()) {
+                            hashtagData.postValue(it)
                         }
                     }
                 }
@@ -161,17 +161,17 @@ class LandingPageViewModel @Inject constructor(
         return BaseListRepositoryImpl({
             BaseNetworkPagingSource(
                 getContentAssistedFactory.create(
-                    ChannelRequestParams("", categoryId.value ?: 0, "", subCategoryId.value ?: 0, "VOD")
+                    ChannelRequestParams("", 0, "", 0, "VOD")
                 )
             )
-        }).getList()
+        }).getList().cachedIn(viewModelScope)
     }
 
-    fun loadMostPopularVideos(): Flow<PagingData<ChannelInfo>> {
+    fun loadMostPopularVideos(categoryId: Int, subCategoryId: Int): Flow<PagingData<ChannelInfo>> {
         return BaseListRepositoryImpl({
             BaseNetworkPagingSource(
                 mostPopularApi.create(
-                    LandingUserChannelsRequestParam("VOD", categoryId.value ?: 0, subCategoryId.value ?: 0, isDramaSeries.value ?: false)
+                    LandingUserChannelsRequestParam("VOD", categoryId, subCategoryId, isDramaSeries.value ?: false)
                 )
             )
         }).getList()

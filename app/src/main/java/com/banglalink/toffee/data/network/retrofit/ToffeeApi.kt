@@ -289,10 +289,12 @@ interface ToffeeApi {
         @Body moviesComingSoonRequest: MoviesComingSoonRequest
     ): MoviesComingSoonResponse
     
-    @POST("/ugc-latest-drama-serial/1/{type}/{subCategoryId}/{limit}/{offset}/{dbVersion}")
+    @POST("/ugc-latest-drama-serial/1/{type}/{subCategoryId}/{isFilter}/{hashTags}/{limit}/{offset}/{dbVersion}")
     suspend fun getDramaSeriesContents(
         @Path("type") type: String,
         @Path("subCategoryId") subCategoryId: Int,
+        @Path("isFilter") isFilter: Int,
+        @Path("hashTags") hashTag: String?,
         @Path("limit") limit: Int,
         @Path("offset") offset: Int,
         @Path("dbVersion") dbVersion: Int,

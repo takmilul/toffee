@@ -24,11 +24,13 @@
         <com.banglalink.toffee.ui.widget.CustomImageView
             android:id="@+id/poster"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="200dp"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
             app:onSafeClick="@{()->callback.onItemClicked(data)}"
             loadChannelImage="@{data}"
+            app:layout_constraintDimensionRatio="W,16:9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -70,17 +72,17 @@
             app:onSafeClick="@{()-> callback.onProviderIconClicked(data)}"
             android:src="@drawable/ic_profile_default"
             loadImageFromUrlRounded="@{data.channelProfileUrl}"
+            android:background="?attr/selectableItemBackgroundBorderless"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/poster"/>
         
         <TextView
             android:id="@+id/name"
             style="@style/programNameTextView"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            app:layout_constrainedWidth="true"
             android:ellipsize="end"
             android:maxLines="2"
             android:gravity="center_vertical"
@@ -240,7 +242,7 @@
 
         <TextView
             android:id="@+id/reactionButton"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="2dp"
             android:layout_marginEnd="16dp"

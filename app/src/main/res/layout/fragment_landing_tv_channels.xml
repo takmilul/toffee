@@ -10,13 +10,13 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/screen_bg">
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="104dp"
             android:background="@drawable/fragment_bg_bottom"
-            app:layout_constraintBottom_toTopOf="@+id/guideline14"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -70,11 +70,10 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/channel_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:clipToPadding="false"
             android:orientation="horizontal"
             android:paddingHorizontal="8dp"
-            android:layout_marginTop="4dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -82,11 +81,11 @@
             app:reverseLayout="false"
             tools:listitem="@layout/live_tv_item_new" />
 
-        <androidx.constraintlayout.widget.Guideline
+        <!--<androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.68" />
+            app:layout_constraintGuide_percent="0.68" />-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

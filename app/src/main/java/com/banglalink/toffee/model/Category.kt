@@ -6,27 +6,27 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Category(
-    val id: Long,
+    val id: Long = 0L,
 
     @SerializedName("category_name")
-    val categoryName: String,
+    val categoryName: String = "Category",
 
     @SerializedName("thumbnail_url")
-    val thumbnailUrl: String?,
+    val thumbnailUrl: String? = null,
 
     @SerializedName("updated_by")
-    val updatedBy: Int,
+    val updatedBy: Int = 0,
 
     @SerializedName("is_active")
-    val isActive: Int,
+    val isActive: Int = 0,
 
     @SerializedName("color_code")
-    val colorCode: String?,
+    val colorCode: String? = null,
 
     @SerializedName("category_icon")
-    val categoryIcon: String?,
+    val categoryIcon: String? = null,
 
-    val subcategories: List<SubCategory>
+    val subcategories: List<SubCategory>? = null
 ): Parcelable {
     override fun toString(): String = categoryName
 }

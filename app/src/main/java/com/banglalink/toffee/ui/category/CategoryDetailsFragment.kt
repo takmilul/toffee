@@ -4,12 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
+import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.ui.common.BaseFragment
+import com.banglalink.toffee.ui.home.LandingPageViewModel
 
 class CategoryDetailsFragment : BaseFragment() {
+    
     lateinit var category: Category
+    private val landingViewModel by activityViewModels<LandingPageViewModel>()
 
     companion object {
         const val ARG_CATEGORY_ITEM = "ARG_CATEGORY_ITEM"
@@ -26,17 +31,16 @@ class CategoryDetailsFragment : BaseFragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.fragment_category_details, container, false)
     }
-
-
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         category = requireArguments().getParcelable(ARG_CATEGORY_ITEM)!!
+        landingViewModel.pageType.value = (PageType.Category)
+        landingViewModel.checkedSubCategoryChipId.value = 0
+        landingViewModel.categoryId.value = (category.id.toInt())
+        landingViewModel.isDramaSeries.value = false
     }
 }
