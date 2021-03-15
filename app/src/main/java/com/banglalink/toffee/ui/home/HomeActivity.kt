@@ -977,6 +977,7 @@ class HomeActivity :
     override fun onViewMinimize() {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        binding.playerView.clearDebugWindow()
     }
 
     override fun onControllerVisible() {
