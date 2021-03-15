@@ -14,7 +14,6 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.get
-import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
@@ -74,8 +73,8 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
             mAdapter.addLoadStateListener {
                 binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
                 mAdapter.apply {
-                    val showEmpty = itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
-                    binding.emptyView.isGone = ! showEmpty
+                    val showEmpty = itemCount <= 0 && ! it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
+                    binding.emptyView.isVisible = showEmpty
                     binding.latestVideosList.isVisible = ! showEmpty
                 }
             }

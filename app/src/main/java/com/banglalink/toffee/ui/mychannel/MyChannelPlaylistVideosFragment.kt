@@ -5,10 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
-import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.fragment.app.activityViewModels
@@ -205,8 +203,8 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
             playlistAdapter.addLoadStateListener {
                 binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
                 playlistAdapter.apply {
-                    val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached
-                    binding.emptyView.isGone = !showEmpty
+                    val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
+                    binding.emptyView.isVisible = showEmpty
                     binding.myChannelPlaylistVideos.isVisible = !showEmpty
                 }
             }
@@ -273,10 +271,10 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
                 is Success -> {
                     cacheManager.clearCacheByUrl(GET_MY_CHANNEL_PLAYLIST_VIDEOS_URL)
                     playlistAdapter.refresh()
-                    Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
+                    requireContext().showToast(it.data.message)
                 }
                 is Failure -> {
-                    Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
+                    requireContext().showToast(it.error.msg)
                 }
             }
         }
