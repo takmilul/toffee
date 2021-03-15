@@ -8,12 +8,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.repository.UploadInfoRepository
+import com.banglalink.toffee.databinding.FragmentMinimizeUploadBinding
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.UtilsKt
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_minimize_upload.*
 import kotlinx.coroutines.flow.collectLatest
 import net.gotev.uploadservice.UploadService
 import javax.inject.Inject
@@ -23,6 +23,8 @@ class MinimizeUploadFragment: BaseFragment() {
     private lateinit var uploadId: String
     private var contentId: Long = -1
     private var uploadIdLong = -1L
+
+    private lateinit var binding: FragmentMinimizeUploadBinding
 
     @Inject
     lateinit var uploadRepo: UploadInfoRepository
@@ -44,14 +46,15 @@ class MinimizeUploadFragment: BaseFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_minimize_upload, container, false)
+    ): View {
+        binding = FragmentMinimizeUploadBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        cancel_button.setOnClickListener {
+        binding.cancelButton.setOnClickListener {
             VelBoxAlertDialogBuilder(requireContext()).apply {
                 setTitle("Cancel Uploading")
                 setText("Are you sure that you want to\n" +
@@ -67,7 +70,7 @@ class MinimizeUploadFragment: BaseFragment() {
             }.create().show()
         }
 
-        minimize_button.setOnClickListener {
+        binding.minimizeButton.setOnClickListener {
             findNavController().popBackStack(R.id.menu_feed, false)
         }
 
@@ -81,16 +84,16 @@ class MinimizeUploadFragment: BaseFragment() {
                     UploadStatus.SUCCESS.value,
                     UploadStatus.SUBMITTED.value,
                     -> {
-                        uploadPercent.text = "100%"
-                        progressBar.progress = 100
-                        uploadSize.text = "of ${Utils.readableFileSize(uploadInfo.fileSize)}"
+                        binding.uploadPercent.text = "100%"
+                        binding.progressBar.progress = 100
+                        binding.uploadSize.text = "of ${Utils.readableFileSize(uploadInfo.fileSize)}"
                         findNavController().popBackStack(R.id.menu_feed, false)
                     }
                     UploadStatus.ADDED.value,
                     UploadStatus.STARTED.value -> {
-                        uploadPercent.text = "${uploadInfo.completedPercent}%"
-                        progressBar.progress = uploadInfo.completedPercent
-                        uploadSize.text = "of ${Utils.readableFileSize(uploadInfo.fileSize)}"
+                        binding.uploadPercent.text = "${uploadInfo.completedPercent}%"
+                        binding.progressBar.progress = uploadInfo.completedPercent
+                        binding.uploadSize.text = "of ${Utils.readableFileSize(uploadInfo.fileSize)}"
                     }
                     UploadStatus.CANCELED.value,
                     UploadStatus.ERROR_CONFIRMED.value -> {

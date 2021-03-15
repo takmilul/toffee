@@ -21,6 +21,7 @@ import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.repository.UploadInfoRepository
+import com.banglalink.toffee.databinding.UploadMethodFragmentBinding
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
@@ -28,7 +29,6 @@ import com.banglalink.toffee.util.UtilsKt
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.upload_method_fragment.*
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
@@ -41,6 +41,7 @@ class UploadMethodFragment : DialogFragment() {
 
     private var videoUri: Uri? = null
     @Inject lateinit var mUploadInfoRepository: UploadInfoRepository
+    private lateinit var binding: UploadMethodFragmentBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,8 +56,9 @@ class UploadMethodFragment : DialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.upload_method_fragment, container, false)
+    ): View {
+        binding = UploadMethodFragmentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -69,14 +71,14 @@ class UploadMethodFragment : DialogFragment() {
         view.setOnClickListener {
             findNavController().popBackStack()
         }
-        open_camera_button.setOnClickListener {
+        binding.openCameraButton.setOnClickListener {
             checkCameraPermissions()
         }
-        open_gallery_button.setOnClickListener {
+        binding.openGalleryButton.setOnClickListener {
             checkFileSystemPermission()
         }
-        upload_method_card.setOnClickListener { }
-        learn_more_button.setOnClickListener { }
+        binding.uploadMethodCard.setOnClickListener { }
+        binding.learnMoreButton.setOnClickListener { }
     }
 
     private fun checkFileSystemPermission() {
