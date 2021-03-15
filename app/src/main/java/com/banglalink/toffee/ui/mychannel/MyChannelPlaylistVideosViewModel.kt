@@ -19,6 +19,7 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelDeletePlaylistVideoBean
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseViewModel
+import com.banglalink.toffee.util.SingleLiveEvent
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -33,7 +34,7 @@ class MyChannelPlaylistVideosViewModel @Inject constructor(
     private val apiService: MyChannelPlaylistVideosService.AssistedFactory,
 ) : BaseViewModel() {
     
-    private val _data = MutableLiveData<Resource<MyChannelDeletePlaylistVideoBean>>()
+    private val _data = SingleLiveEvent<Resource<MyChannelDeletePlaylistVideoBean>>()
     val deletePlaylistVideoLiveData = _data.toLiveData()
     
     fun getMyChannelPlaylistVideos(requestParams: MyChannelPlaylistContentParam): Flow<PagingData<ChannelInfo>> {

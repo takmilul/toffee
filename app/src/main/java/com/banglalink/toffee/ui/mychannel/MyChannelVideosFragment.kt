@@ -92,8 +92,8 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
             mAdapter.addLoadStateListener {
                 binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
                 mAdapter.apply {
-                    val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached
-                    binding.emptyView.isGone = !showEmpty
+                    val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
+                    binding.emptyView.isVisible = showEmpty
                     binding.myChannelVideos.isVisible = !showEmpty
                 }
             }
