@@ -22,6 +22,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.databinding.FragmentNewUploadMethodBinding
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.ui.home.HomeViewModel
@@ -30,7 +31,6 @@ import com.banglalink.toffee.util.UtilsKt
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_new_upload_method.view.*
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
@@ -46,26 +46,25 @@ class NewUploadMethodFragment : DialogFragment() {
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private var videoUri: Uri? = null
     private var alertDialog: AlertDialog? = null
+    private lateinit var binding: FragmentNewUploadMethodBinding
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialogView = layoutInflater.inflate(R.layout.fragment_new_upload_method, null, false)
-        with(dialogView) {
-            myChannelButton.setOnClickListener {
-                openMyChannelFragment()
-            }
-            imageView11?.setOnClickListener {
-                findNavController().popBackStack()
-            }
-            open_camera_button.setOnClickListener {
-                checkCameraPermissions()
-            }
-            open_gallery_button.setOnClickListener {
-                checkFileSystemPermission()
-            }
+        binding = FragmentNewUploadMethodBinding.inflate(layoutInflater)
+        binding.myChannelButton.setOnClickListener {
+            openMyChannelFragment()
+        }
+        binding.imageView11.setOnClickListener {
+            findNavController().popBackStack()
+        }
+        binding.openCameraButton.setOnClickListener {
+            checkCameraPermissions()
+        }
+        binding.openGalleryButton.setOnClickListener {
+            checkFileSystemPermission()
         }
         alertDialog = AlertDialog
             .Builder(requireContext())
-            .setView(dialogView).create()
+            .setView(binding.root).create()
             .apply {
                 window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             }
