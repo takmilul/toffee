@@ -11,7 +11,7 @@ import com.banglalink.toffee.util.Utils.discardZeroFromDuration
 import com.banglalink.toffee.util.UtilsKt
 import com.banglalink.toffee.util.getFormattedViewsText
 import com.google.gson.annotations.SerializedName
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import java.util.*
 
 @Parcelize
