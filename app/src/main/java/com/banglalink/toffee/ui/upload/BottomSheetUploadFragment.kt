@@ -15,10 +15,10 @@ import androidx.navigation.fragment.findNavController
 import coil.load
 import coil.request.CachePolicy
 import com.banglalink.toffee.R
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_DETAILS_URL
+import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_DETAILS
 import com.banglalink.toffee.data.network.request.MyChannelEditRequest
 import com.banglalink.toffee.data.network.retrofit.CacheManager
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.UploadBottomSheetBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
@@ -37,7 +37,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class BottomSheetUploadFragment : BottomSheetDialogFragment(), TextWatcher {
 
-    @Inject lateinit var mPref: Preference
+    @Inject lateinit var mPref: SessionPreference
     @Inject lateinit var cacheManager: CacheManager
     private var channelName: String = ""
     private var channelLogoUrl: String = ""
@@ -152,7 +152,7 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment(), TextWatcher {
                     }
                     progressDialog.dismiss()
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
-                    cacheManager.clearCacheByUrl(GET_MY_CHANNEL_DETAILS_URL)
+                    cacheManager.clearCacheByUrl(GET_MY_CHANNEL_DETAILS)
                     findNavController().popBackStack().let { 
                         findNavController().navigate(R.id.newUploadMethodFragment)
                     }

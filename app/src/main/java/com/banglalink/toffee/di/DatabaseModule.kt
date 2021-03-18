@@ -7,7 +7,7 @@ import com.banglalink.toffee.data.database.ToffeeDatabase
 import com.banglalink.toffee.data.database.dao.*
 import com.banglalink.toffee.data.repository.*
 import com.banglalink.toffee.data.repository.impl.*
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -79,7 +79,7 @@ object DatabaseModule {
     
     @Provides
     @Singleton
-    fun provideNotificationInfoRepository(notificationDao: NotificationDao, pref: Preference): NotificationInfoRepository {
+    fun provideNotificationInfoRepository(notificationDao: NotificationDao, pref: SessionPreference): NotificationInfoRepository {
         return NotificationInfoRepositoryImpl(notificationDao, pref)
     }
 
@@ -121,7 +121,7 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun providesContentViewProgressRepository(dao: ContentViewProgressDao, pref: Preference): ContentViewPorgressRepsitory {
+    fun providesContentViewProgressRepository(dao: ContentViewProgressDao, pref: SessionPreference): ContentViewPorgressRepsitory {
         return ContentViewPorgressRepsitoryImpl(dao, pref)
     }
 
@@ -133,7 +133,7 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun providesContinueWatchingRepository(dao: ContinueWatchingDao, pref: Preference): ContinueWatchingRepository {
+    fun providesContinueWatchingRepository(dao: ContinueWatchingDao, pref: SessionPreference): ContinueWatchingRepository {
         return ContinueWatchingRepositoryImpl(dao, pref)
     }
 

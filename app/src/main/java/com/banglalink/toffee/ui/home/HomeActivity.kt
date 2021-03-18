@@ -37,7 +37,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_VIDEOS_URL
+import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_VIDEOS
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.repository.UploadInfoRepository
@@ -70,11 +70,9 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
-import com.google.gson.Gson
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -1319,7 +1317,7 @@ class HomeActivity :
                             binding.homeMiniProgressContainer.uploadSizeText.isInvisible = true
                             binding.homeMiniProgressContainer.miniUploadProgressText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_upload_done, 0, 0, 0)
                             binding.homeMiniProgressContainer.miniUploadProgressText.text = "Upload complete"
-                            cacheManager.clearCacheByUrl(GET_MY_CHANNEL_VIDEOS_URL)
+                            cacheManager.clearCacheByUrl(GET_MY_CHANNEL_VIDEOS)
                         }
                         UploadStatus.ADDED.value,
                         UploadStatus.STARTED.value -> {

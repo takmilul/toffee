@@ -6,7 +6,10 @@ import android.content.SharedPreferences
 import com.banglalink.toffee.apiservice.UploadConfirmation
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.UploadInfoRepository
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.COMMON_PREF_NAME
+import com.banglalink.toffee.data.storage.CommonPreference
+import com.banglalink.toffee.data.storage.PREF_NAME_IP_TV
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.ui.upload.UploadObserver
 import com.banglalink.toffee.ui.upload.UploadStateManager
 import dagger.Module
@@ -21,20 +24,31 @@ import javax.inject.Singleton
 
 @Qualifier
 annotation class AppCoroutineScope
+@Qualifier
+annotation class SessionPreference
+@Qualifier
+annotation class CommonPreference
 
 @InstallIn(SingletonComponent::class)
 @Module
 object AppModule {
 
     @Provides
-    fun providesSharedPreference(@ApplicationContext app: Context): SharedPreferences {
-        return app.getSharedPreferences("IP_TV", Context.MODE_PRIVATE)
+    @com.banglalink.toffee.di.SessionPreference
+    fun providesSessionSharedPreference(@ApplicationContext app: Context): SharedPreferences {
+        return app.getSharedPreferences(PREF_NAME_IP_TV, Context.MODE_PRIVATE)
+    }
+
+    @Provides
+    @com.banglalink.toffee.di.CommonPreference
+    fun providesCommonSharedPreference(@ApplicationContext app: Context): SharedPreferences {
+        return app.getSharedPreferences(COMMON_PREF_NAME, Context.MODE_PRIVATE)
     }
 
     @Provides
     @Singleton
-    fun providesPreference(pref: SharedPreferences, @ApplicationContext ctx: Context): Preference {
-        return Preference(pref, ctx)
+    fun providesPreference(@com.banglalink.toffee.di.SessionPreference pref: SharedPreferences, @ApplicationContext ctx: Context): SessionPreference {
+        return SessionPreference(pref, ctx)
     }
 
     @Provides
@@ -56,9 +70,9 @@ object AppModule {
         return CoroutineScope(SupervisorJob())
     }
     
-    /*@Provides
+    @Provides
     @Singleton
-    fun heartBeatManager(): HeartBeatManager{
-        return HeartBeatManager()
-    }*/
+    fun provideCommonPreference(@com.banglalink.toffee.di.CommonPreference pref: SharedPreferences, @ApplicationContext ctx: Context): CommonPreference {
+        return CommonPreference(pref, ctx)
+    }
 }

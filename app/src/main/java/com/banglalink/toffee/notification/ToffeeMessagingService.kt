@@ -16,6 +16,7 @@ import androidx.core.graphics.drawable.toBitmap
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.database.entities.NotificationInfo
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.receiver.NotificationActionReceiver
 import com.banglalink.toffee.util.UtilsKt
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -30,11 +31,11 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ToffeeMessagingService : FirebaseMessagingService() {
 
-    @Inject
-    lateinit var notificationInfoRepository: NotificationInfoRepository
-    private val TAG = "ToffeeMessagingService"
-    private val NOTIFICATION_CHANNEL_NAME = "Toffee Channel"
     private var notificationId = 1
+    private val TAG = "ToffeeMessagingService"
+    @Inject lateinit var mPref: SessionPreference
+    private val NOTIFICATION_CHANNEL_NAME = "Toffee Channel"
+    @Inject lateinit var notificationInfoRepository: NotificationInfoRepository
     private val coroutineContext = Dispatchers.IO + SupervisorJob()
     private val imageCoroutineScope = CoroutineScope(coroutineContext)
 
@@ -399,22 +400,24 @@ class ToffeeMessagingService : FirebaseMessagingService() {
     }
 
     private fun showNotification(notification: Notification) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Generic Notification"
-            val description = "All kinds of generic notification of Toffee"
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(NOTIFICATION_CHANNEL_NAME, name, importance)
-            channel.description = description
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            val notificationManager = getSystemService(NotificationManager::class.java)
-            notificationManager?.createNotificationChannel(channel)
-            notificationManager?.notify(notificationId, notification)
-        } else {
-            val notificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.notify(notificationId, notification)
+        if (mPref.isNotificationEnabled()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val name = "Generic Notification"
+                val description = "All kinds of generic notification of Toffee"
+                val importance = NotificationManager.IMPORTANCE_DEFAULT
+                val channel = NotificationChannel(NOTIFICATION_CHANNEL_NAME, name, importance)
+                channel.description = description
+                // Register the channel with the system; you can't change the importance
+                // or other notification behaviors after this
+                val notificationManager = getSystemService(NotificationManager::class.java)
+                notificationManager?.createNotificationChannel(channel)
+                notificationManager?.notify(notificationId, notification)
+            }
+            else {
+                val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                notificationManager.notify(notificationId, notification)
+            }
         }
-        notificationId++;
+        notificationId ++
     }
 }

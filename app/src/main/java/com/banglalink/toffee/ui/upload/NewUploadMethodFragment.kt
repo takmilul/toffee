@@ -21,7 +21,7 @@ import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.repository.UploadInfoRepository
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.FragmentNewUploadMethodBinding
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.MyChannelNavParams
@@ -41,7 +41,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class NewUploadMethodFragment : DialogFragment() {
     
-    @Inject lateinit var mpref: Preference
+    @Inject lateinit var mpref: SessionPreference
     @Inject lateinit var mUploadInfoRepository: UploadInfoRepository
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private var videoUri: Uri? = null

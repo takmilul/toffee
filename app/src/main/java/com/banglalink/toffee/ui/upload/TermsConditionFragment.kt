@@ -10,7 +10,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.FragmentTermsConditionBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.Resource
@@ -21,7 +21,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class TermsConditionFragment : DialogFragment() {
     
-    @Inject lateinit var mPref: Preference
+    @Inject lateinit var mPref: SessionPreference
     private var alertDialog: AlertDialog? = null
     private val viewModel by viewModels<ViewProfileViewModel>()
     private lateinit var binding: FragmentTermsConditionBinding

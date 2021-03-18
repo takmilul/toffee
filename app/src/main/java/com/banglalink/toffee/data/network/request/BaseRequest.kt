@@ -2,7 +2,7 @@ package com.banglalink.toffee.data.network.request
 
 import android.os.Build
 import com.banglalink.toffee.BuildConfig
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 
 open class BaseRequest(val apiName: String) {
     val product : String = "PLAAS OTT API"
@@ -12,6 +12,6 @@ open class BaseRequest(val apiName: String) {
     val deviceType :Int = 1
     val appVersion : String = BuildConfig.VERSION_NAME
     val osVersion :String = "android "+Build.VERSION.RELEASE
-    val netType:String = Preference.getInstance().netType
-    val isBlNumber = Preference.getInstance().isBanglalinkNumber
+    val netType:String = SessionPreference.getInstance().netType
+    val isBlNumber = SessionPreference.getInstance().isBanglalinkNumber
 }

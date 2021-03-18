@@ -13,8 +13,10 @@ import coil.imageLoader
 import coil.util.CoilUtils
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.data.network.retrofit.CacheManager
+import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.PlayerPreference
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.ui.upload.UploadObserver
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -28,17 +30,26 @@ import javax.inject.Inject
 @HiltAndroidApp
 class ToffeeApplication : Application() {
 
+    @Inject lateinit var cacheManager: CacheManager
     @Inject lateinit var mUploadObserver: UploadObserver
+    @Inject lateinit var commonPreference: CommonPreference
     @Inject lateinit var heartBeatManager: HeartBeatManager
 
     override fun onCreate() {
         super.onCreate()
 
+        if (commonPreference.versionCode < BuildConfig.VERSION_CODE) {
+//            cacheManager.clearCacheByUrl(GET_FEATURED_CONTENT_URL)
+//            cacheManager.clearCacheByUrl(GET_DRAMA_SERIES_CONTENTS_URL)
+            cacheManager.clearAllCache()
+            commonPreference.versionCode = BuildConfig.VERSION_CODE
+        }
+        
         if (BuildConfig.DEBUG) {
             FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(false)
         }
         PubSubMessageUtil.init(this)
-        Preference.init(this)
+        SessionPreference.init(this)
         PlayerPreference.init(this)
         ToffeeAnalytics.initFireBaseAnalytics(this)
         

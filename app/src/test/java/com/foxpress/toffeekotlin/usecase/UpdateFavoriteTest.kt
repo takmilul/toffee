@@ -2,7 +2,7 @@ package com.foxpress.toffeekotlin.usecase
 
 import com.banglalink.toffee.data.network.request.FavoriteRequest
 import com.banglalink.toffee.data.network.response.FavoriteResponse
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.apiservice.UpdateFavorite
 import com.nhaarman.mockitokotlin2.*
@@ -22,7 +22,7 @@ class UpdateFavoriteTest :BaseUseCaseTest(){
             //set up test
             setupPref()
 
-            val updateFavorite = UpdateFavorite(Preference.getInstance(),mockToffeeApi)
+            val updateFavorite = UpdateFavorite(SessionPreference.getInstance(),mockToffeeApi)
             Mockito.`when`(mockToffeeApi.updateFavorite(any<FavoriteRequest>())).thenReturn(
                 Response.success(FavoriteResponse(
                 )))
@@ -56,7 +56,7 @@ class UpdateFavoriteTest :BaseUseCaseTest(){
             //set up test
             setupPref()
 
-            val updateFavorite = UpdateFavorite(Preference.getInstance(),mockToffeeApi)
+            val updateFavorite = UpdateFavorite(SessionPreference.getInstance(),mockToffeeApi)
             Mockito.`when`(mockToffeeApi.updateFavorite(any<FavoriteRequest>())).thenReturn(
                 Response.success(FavoriteResponse(
                 )))
@@ -91,7 +91,7 @@ class UpdateFavoriteTest :BaseUseCaseTest(){
             //set up test
             setupPref()
 
-            val updateFavorite = UpdateFavorite(Preference.getInstance(),mockToffeeApi)
+            val updateFavorite = UpdateFavorite(SessionPreference.getInstance(),mockToffeeApi)
             Mockito.`when`(mockToffeeApi.updateFavorite(any<FavoriteRequest>())).thenReturn(
                 Response.success(FavoriteResponse(
                 )))

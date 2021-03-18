@@ -13,7 +13,7 @@ import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
 import com.banglalink.toffee.data.repository.ContinueWatchingRepository
 import com.banglalink.toffee.data.repository.UserActivitiesRepository
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelDeleteVideoBean
@@ -27,7 +27,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyChannelVideosViewModel @Inject constructor(
-    private val mPref: Preference,
+    private val mPref: SessionPreference,
     private val reactionDao: ReactionDao,
     private val activitiesRepo: UserActivitiesRepository,
     private val viewProgressRepo: ContentViewPorgressRepsitory,

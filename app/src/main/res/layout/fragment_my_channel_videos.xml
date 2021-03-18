@@ -10,7 +10,7 @@
         
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:background="@color/screen_bg">
     
             <androidx.recyclerview.widget.RecyclerView
@@ -48,6 +48,7 @@
                 android:gravity="center"
                 android:orientation="vertical"
                 android:visibility="gone"
+                android:layout_marginTop="32dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">

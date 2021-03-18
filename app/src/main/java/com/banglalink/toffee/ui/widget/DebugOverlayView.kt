@@ -11,7 +11,7 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.banglalink.toffee.R
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.PlayerOverlayData
 import com.banglalink.toffee.util.Utils
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,7 +24,7 @@ import kotlin.math.min
 class DebugOverlayView(ctx: Context, val attrs: AttributeSet? = null, val defAttrStyle: Int = 0)
     :LinearLayout(ctx, attrs, defAttrStyle) {
 
-    @Inject lateinit var mPref: Preference
+    @Inject lateinit var mPref: SessionPreference
 
     private var customTextView: TextView? = null
     private var debugTextView: TextView? = null

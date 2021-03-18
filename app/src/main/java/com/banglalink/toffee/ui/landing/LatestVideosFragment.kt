@@ -88,10 +88,10 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         if (category?.id?.toInt() == 1) {
             createSubCategoryList()
         }
-        if (category?.id?.toInt() != 0) {
-            observeSubCategoryChange()
-            observeHashTagChange()
-        }
+        
+        observeSubCategoryChange()
+        observeHashTagChange()
+        
         binding.filterButton.setOnClickListener { filterButtonClickListener(it) }
     }
     
@@ -131,7 +131,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         observe(viewModel.selectedHashTag) {
             listJob?.cancel()
             listJob = lifecycleScope.launchWhenCreated {
-                viewModel.loadHashTagContents.collectLatest {
+                viewModel.loadHashTagContents(it, category?.id?.toInt() ?: 0, viewModel.subCategoryId.value ?: 0).collectLatest {
                     mAdapter.submitData(it)
                 }
             }

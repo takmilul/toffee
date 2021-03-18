@@ -8,7 +8,7 @@ import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import com.banglalink.toffee.R
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.ActivityProfileBinding
 import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.extension.loadProfileImage

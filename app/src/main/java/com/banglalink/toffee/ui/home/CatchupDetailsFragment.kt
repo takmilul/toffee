@@ -15,6 +15,7 @@ import androidx.paging.filter
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
+import com.banglalink.toffee.apiservice.CatchupParams
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
@@ -41,13 +42,14 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
     private var isSubscribed: Int = 0
     private var subscriberCount: Long = 0
     private lateinit var mAdapter: ConcatAdapter
+    private lateinit var currentItem: ChannelInfo
     private lateinit var catchupAdapter: CatchUpDetailsAdapter
     private lateinit var detailsAdapter: ChannelHeaderAdapter
-    private lateinit var currentItem: ChannelInfo
-    private val viewModel by viewModels<CatchupDetailsViewModel>()
-    private val myChannelVideosViewModel by activityViewModels<MyChannelVideosViewModel>()
     @Inject lateinit var subscriptionInfoRepository: SubscriptionInfoRepository
     @Inject lateinit var subscriptionCountRepository: SubscriptionCountRepository
+    private val viewModel by viewModels<CatchupDetailsViewModel>()
+    private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
+    private val myChannelVideosViewModel by activityViewModels<MyChannelVideosViewModel>()
     private lateinit var binding: FragmentCatchupBinding
     companion object{
         const val CHANNEL_INFO = "channel_info_"
@@ -172,7 +174,9 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
     
     private fun observeList() {
         lifecycleScope.launchWhenStarted {
-            viewModel.loadRelativeContent(currentItem).collectLatest {
+            val catchupParams = CatchupParams(currentItem.id, currentItem.video_tags, landingPageViewModel.categoryId
+                .value ?: 0, landingPageViewModel.subCategoryId.value ?: 0)
+            viewModel.loadRelativeContent(catchupParams).collectLatest {
                 catchupAdapter.submitData(it)
             }
         }

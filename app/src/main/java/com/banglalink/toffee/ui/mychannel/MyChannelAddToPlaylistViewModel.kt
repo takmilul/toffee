@@ -7,7 +7,7 @@ import com.banglalink.toffee.apiservice.MyChannelAddToPlayListService
 import com.banglalink.toffee.data.database.entities.UserActivities
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.repository.UserActivitiesRepository
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.ActivityType.PLAYLIST
 import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.ChannelInfo
@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyChannelAddToPlaylistViewModel @Inject constructor(
-    private val preference: Preference,
+    private val preference: SessionPreference,
     private val activitiesRepo: UserActivitiesRepository,
     private val apiService: MyChannelAddToPlayListService,
 ) : ViewModel() {

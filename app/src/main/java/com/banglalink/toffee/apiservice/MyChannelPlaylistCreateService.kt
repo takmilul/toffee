@@ -3,11 +3,11 @@ package com.banglalink.toffee.apiservice
 import com.banglalink.toffee.data.network.request.MyChannelPlaylistCreateRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.MyChannelPlaylistCreateBean
 import javax.inject.Inject
 
-class MyChannelPlaylistCreateService @Inject constructor(private val preference: Preference, private val toffeeApi: ToffeeApi) {
+class MyChannelPlaylistCreateService @Inject constructor(private val preference: SessionPreference, private val toffeeApi: ToffeeApi) {
 
     suspend fun execute(channelOwnerId: Int, playlistName: String): MyChannelPlaylistCreateBean {
         val isOwner = if (preference.customerId == channelOwnerId) 1 else 0

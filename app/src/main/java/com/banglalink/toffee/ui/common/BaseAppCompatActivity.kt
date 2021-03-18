@@ -5,7 +5,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.exception.CustomerNotFoundException
 import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.extension.observe
@@ -17,7 +17,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 open class BaseAppCompatActivity : AppCompatActivity() {
 
-    @Inject lateinit var mPref: Preference
+    @Inject lateinit var mPref: SessionPreference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -14,7 +14,9 @@ import com.banglalink.toffee.util.Utils
 import java.text.ParseException
 import java.util.*
 
-class Preference(private val pref: SharedPreferences, private val context: Context) {
+const val PREF_NAME_IP_TV= "IP_TV"
+
+class SessionPreference(private val pref: SharedPreferences, private val context: Context) {
 
     val viewCountDbUrlLiveData = MutableLiveData<String>()
     val reactionDbUrlLiveData = MutableLiveData<String>()
@@ -467,19 +469,19 @@ class Preference(private val pref: SharedPreferences, private val context: Conte
 
         private const val PREF_NAME_IP_TV= "IP_TV"
 
-        private var instance: Preference? = null
+        private var instance: SessionPreference? = null
 
         fun init(mContext: Context) {
             if (instance == null) {
-                instance = Preference(mContext.getSharedPreferences(PREF_NAME_IP_TV, Context.MODE_PRIVATE), mContext)
+                instance = SessionPreference(mContext.getSharedPreferences(PREF_NAME_IP_TV, Context.MODE_PRIVATE), mContext)
             }
         }
 
-        fun getInstance(): Preference {
+        fun getInstance(): SessionPreference {
             if (instance == null) {
                 throw InstantiationException("Instance is null...call init() first")
             }
-            return instance as Preference
+            return instance as SessionPreference
         }
     }
 }
