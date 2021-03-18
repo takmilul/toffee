@@ -13,7 +13,6 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_landing_tv_channels.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -45,7 +44,7 @@ class PopularTVChannelsFragment : HomeBaseFragment() {
             adapter = mAdapter
         }
 
-        viewAllButton.setOnClickListener {
+        binding.viewAllButton.setOnClickListener {
             homeViewModel.switchBottomTab.postValue(1)
         }
         val channelInfoList = PagingData.from(listOf(

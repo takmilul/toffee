@@ -8,8 +8,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.motion.widget.MotionLayout
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -36,7 +34,7 @@ class SplashScreenFragment:BaseFragment() {
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?, ): View {
         viewModel.reportAppLaunch()
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_splash_screen, container, false)
+        binding = FragmentSplashScreenBinding.inflate(inflater, container, false)
         return binding.root
     }
 

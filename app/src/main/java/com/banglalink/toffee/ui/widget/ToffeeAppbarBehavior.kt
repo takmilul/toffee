@@ -11,7 +11,6 @@ import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.R
 import com.google.android.material.appbar.AppBarLayout
-import kotlinx.android.synthetic.main.fragment_catchup.view.*
 
 class ToffeeAppbarBehavior @JvmOverloads constructor(ctx: Context, attrib: AttributeSet? = null): AppBarLayout.Behavior(ctx, attrib) {
 

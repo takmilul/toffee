@@ -4,9 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
-import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.databinding.LayoutHorizontalContentContainerBinding
 import com.banglalink.toffee.model.ChannelInfo
@@ -23,7 +21,8 @@ abstract class MovieBaseFragment<T: Any>: HomeBaseFragment(), ProviderIconCallba
     private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.layout_horizontal_content_container, container, false)
+
+        binding = LayoutHorizontalContentContainerBinding.inflate(inflater, container, false)
         return binding.root
     }
 

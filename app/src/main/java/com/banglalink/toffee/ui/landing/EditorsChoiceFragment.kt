@@ -6,25 +6,26 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.ProviderIconCallback
+import com.banglalink.toffee.databinding.FragmentEditorsChoiceBinding
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
-import kotlinx.android.synthetic.main.fragment_editors_choice.*
 import kotlinx.coroutines.flow.collectLatest
 
 class EditorsChoiceFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo> {
     private lateinit var mAdapter: EditorsChoiceListAdapter
     private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
+    private lateinit var binding: FragmentEditorsChoiceBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_editors_choice, container, false)
+    ): View {
+        binding = FragmentEditorsChoiceBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -32,11 +33,11 @@ class EditorsChoiceFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInf
         mAdapter = EditorsChoiceListAdapter(this)
         mAdapter.addLoadStateListener {
             if(mAdapter.itemCount > 0) {
-                editorsChoiceHeader.visibility = View.VISIBLE
+                binding.editorsChoiceHeader.visibility = View.VISIBLE
             }
         }
 
-        with(editorsChoiceList) {
+        with(binding.editorsChoiceList) {
             isNestedScrollingEnabled = false
             adapter = mAdapter
         }

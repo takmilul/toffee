@@ -18,11 +18,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.databinding.FragmentThumbSelectionMethodBinding
 import com.banglalink.toffee.extension.showToast
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
 import com.yalantis.ucrop.UCrop
-import kotlinx.android.synthetic.main.fragment_thumb_selection_method.view.*
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
@@ -34,7 +34,7 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
     private lateinit var title: String
     private var isProfileImage:Boolean = false
     private var alertDialog: AlertDialog? = null
-
+    private lateinit var binding: FragmentThumbSelectionMethodBinding
     companion object {
         const val THUMB_URI = "thumb-uri"
     }
@@ -42,22 +42,18 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         title = ThumbnailSelectionMethodFragmentArgs.fromBundle(requireArguments()).title
         isProfileImage = ThumbnailSelectionMethodFragmentArgs.fromBundle(requireArguments()).isProfileImage
-
-        val dialogView = layoutInflater.inflate(R.layout.fragment_thumb_selection_method, null, false)
-
-        with(dialogView){
-            heading.text = title
-            open_gallery_button.setOnClickListener {
-                checkFileSystemPermission()
-            }
-            open_camera_button.setOnClickListener {
-                checkCameraPermissions()
-            }
+        binding = FragmentThumbSelectionMethodBinding.inflate(layoutInflater)
+        binding.heading.text = title
+        binding.openGalleryButton.setOnClickListener {
+            checkFileSystemPermission()
+        }
+        binding.openCameraButton.setOnClickListener {
+            checkCameraPermissions()
         }
 
         alertDialog = AlertDialog
             .Builder(requireContext())
-            .setView(dialogView).create()
+            .setView(binding.root).create()
             .apply {
                 window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             }

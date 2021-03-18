@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-
     <androidx.constraintlayout.motion.widget.MotionLayout
         android:id="@+id/splashScreenMotionLayout"
         android:layout_width="match_parent"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_height="match_parent"
         android:background="@drawable/splash_gradient_bg"
         app:layoutDescription="@xml/splash_screen_motion_scene">
@@ -76,6 +73,6 @@
             app:layout_constraintTop_toBottomOf="@id/splashLogoImageView" />
 
     </androidx.constraintlayout.motion.widget.MotionLayout>
-</layout>
+
 
 

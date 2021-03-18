@@ -6,12 +6,10 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
-import com.banglalink.toffee.R
 import com.banglalink.toffee.R.string
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.databinding.FragmentDramaSeriesContentBinding
@@ -37,7 +35,7 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
     private lateinit var mAdapter: DramaSeriesListAdapter<ChannelInfo>
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?, ): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_drama_series_content, container, false)
+        binding = FragmentDramaSeriesContentBinding.inflate(inflater, container, false)
         return binding.root
     }
 

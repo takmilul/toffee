@@ -20,6 +20,7 @@ import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.repository.SubscriptionCountRepository
 import com.banglalink.toffee.data.repository.SubscriptionInfoRepository
+import com.banglalink.toffee.databinding.FragmentCatchupBinding
 import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
@@ -29,7 +30,6 @@ import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_catchup.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
@@ -48,7 +48,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
     private val myChannelVideosViewModel by activityViewModels<MyChannelVideosViewModel>()
     @Inject lateinit var subscriptionInfoRepository: SubscriptionInfoRepository
     @Inject lateinit var subscriptionCountRepository: SubscriptionCountRepository
-
+    private lateinit var binding: FragmentCatchupBinding
     companion object{
         const val CHANNEL_INFO = "channel_info_"
         fun createInstance(channelInfo: ChannelInfo): CatchupDetailsFragment {
@@ -69,8 +69,9 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_catchup, container, false)
+    ): View {
+        binding = FragmentCatchupBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -86,7 +87,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
             detailsAdapter.notifyDataSetChanged()
         }
         
-        with(listview) {
+        with(binding.listview) {
             addItemDecoration(MarginItemDecoration(12))
             layoutManager = LinearLayoutManager(context)
             adapter = mAdapter

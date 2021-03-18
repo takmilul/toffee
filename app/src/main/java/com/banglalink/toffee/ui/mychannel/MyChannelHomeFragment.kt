@@ -14,20 +14,19 @@ import android.view.ViewGroup.MarginLayoutParams
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.text.toSpannable
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.color
-import com.banglalink.toffee.R.layout
 import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_DETAILS_URL
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.SubscriptionCountRepository
 import com.banglalink.toffee.data.repository.SubscriptionInfoRepository
 import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBinding
+import com.banglalink.toffee.databinding.AlertDialogMyChannelRatingBinding
 import com.banglalink.toffee.databinding.FragmentMyChannelHomeBinding
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
@@ -45,8 +44,6 @@ import com.banglalink.toffee.util.bindButtonState
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.alert_dialog_my_channel_rating.view.*
-import kotlinx.android.synthetic.main.layout_my_channel_detail.*
 import kotlinx.coroutines.launch
 import java.util.regex.Pattern
 import javax.inject.Inject
@@ -67,6 +64,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     val homeViewModel by activityViewModels<HomeViewModel>()
     private lateinit var progressDialog: VelBoxProgressDialog
     private lateinit var binding: FragmentMyChannelHomeBinding
+    private lateinit var bindingRating: AlertDialogMyChannelRatingBinding
     private val viewModel by viewModels<MyChannelHomeViewModel>()
     @Inject lateinit var subscriptionInfoRepository: SubscriptionInfoRepository
     @Inject lateinit var subscriptionCountRepository: SubscriptionCountRepository
@@ -96,7 +94,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_my_channel_home, container, false)
+        binding = FragmentMyChannelHomeBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
         return binding.root
@@ -128,7 +126,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     
     override fun onClick(v: View?) {
         when (v) {
-            addBioButton -> {
+            binding.channelDetailView.addBioButton -> {
                 if (findNavController().currentDestination?.id != R.id.myChannelEditDetailFragment && findNavController().currentDestination?.id == R.id.myChannelHomeFragment) {
                     val action = MyChannelHomeFragmentDirections.actionMyChannelHomeFragmentToMyChannelEditDetailFragment(myChannelDetail)
                     findNavController().navigate(action)
@@ -136,8 +134,8 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                     findNavController().navigate(R.id.action_menu_channel_to_myChannelEditFragment, Bundle().apply { putParcelable("myChannelDetail", myChannelDetail) })
                 }
             }
-    
-            editButton -> {
+
+            binding.channelDetailView.editButton -> {
                 if (findNavController().currentDestination?.id != R.id.myChannelEditDetailFragment && findNavController().currentDestination?.id == R.id.myChannelHomeFragment) {
                     val action = MyChannelHomeFragmentDirections.actionMyChannelHomeFragmentToMyChannelEditDetailFragment(myChannelDetail)
                     findNavController().navigate(action)
@@ -146,16 +144,16 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                     findNavController().navigate(R.id.action_menu_channel_to_myChannelEditFragment, Bundle().apply { putParcelable("myChannelDetail", myChannelDetail) })
                 }
             }
-    
-            ratingButton -> showRatingDialog()
-            analyticsButton -> {
+
+            binding.channelDetailView.ratingButton -> showRatingDialog()
+            binding.channelDetailView.analyticsButton -> {
                 if (channelId > 0) {
                     showCreatePlaylistDialog()
                 } else {
                     Toast.makeText(requireContext(), "Please create channel first", Toast.LENGTH_SHORT).show()
                 }
             }
-            subscriptionButton -> {
+            binding.channelDetailView.subscriptionButton -> {
                 if (isSubscribed == 0) {
                     binding.channelDetailView.subscriptionButton.isEnabled = false
                     homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, channelOwnerId, mPref.customerId), 1)
@@ -178,20 +176,19 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     }
     
     private fun showRatingDialog() {
+        bindingRating = AlertDialogMyChannelRatingBinding.inflate(layoutInflater)
         val dialogBuilder = android.app.AlertDialog.Builder(requireContext())
-        val inflater = this.layoutInflater
-        val dialogView: View = inflater.inflate(layout.alert_dialog_my_channel_rating, null)
-        dialogBuilder.setView(dialogView)
-        dialogView.ratingBar.rating = myRating.toFloat()
+        dialogBuilder.setView(bindingRating.root)
+        bindingRating.ratingBar.rating = myRating.toFloat()
         var newRating = 0.0f
-        dialogView.ratingBar.setOnRatingBarChangeListener { _, rating, _ ->
+        bindingRating.ratingBar.setOnRatingBarChangeListener { _, rating, _ ->
             newRating = rating
         }
         
         val alertDialog: android.app.AlertDialog = dialogBuilder.create()
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         alertDialog.show()
-        dialogView.submitButton.setOnClickListener {
+        bindingRating.submitButton.setOnClickListener {
             if (newRating > 0 && newRating.toInt() != myRating) {
                 myRating = newRating.toInt()
                 viewModel.rateMyChannel(channelOwnerId, newRating)
