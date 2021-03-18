@@ -2,7 +2,7 @@ package com.banglalink.toffee.notification
 
 import android.content.Context
 import android.util.Log
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.google.api.client.extensions.android.http.AndroidHttp
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
 import com.google.api.client.googleapis.batch.json.JsonBatchCallback
@@ -109,7 +109,7 @@ object PubSubMessageUtil {
     private fun getPubSubMessage(notificationId: String?, messageStatus: PUBSUBMessageStatus): String {
         val jObj = JsonObject();
         jObj.addProperty("notificationId", notificationId);
-        jObj.addProperty("userId", Preference.getInstance().customerId);
+        jObj.addProperty("userId", SessionPreference.getInstance().customerId);
         jObj.addProperty("messageStatus", messageStatus.ordinal);
 
         Log.i(TAG, jObj.toString())

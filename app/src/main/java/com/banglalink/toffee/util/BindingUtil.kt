@@ -18,7 +18,7 @@ import coil.request.CachePolicy
 import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.database.entities.UserActivities
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.ActivityType
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.enums.Reaction.*
@@ -158,7 +158,7 @@ fun bindSubscriptionStatus(view: MultiTextButton, isSubscribed: Boolean, channel
         isSubscribed,
         null
     )
-    view.isEnabled = Preference.getInstance().customerId != channelOwnerId
+    view.isEnabled = SessionPreference.getInstance().customerId != channelOwnerId
 }
 
 @BindingAdapter("bindViewCount")
@@ -235,7 +235,7 @@ fun bindDiscountText(discountTv: TextView, item: Package) {
 
 @BindingAdapter("togglePremiumIcon")
 fun bindPremiumIcon(imageView: ImageView, channelInfo: ChannelInfo) {
-    if (!channelInfo.isExpired(Preference.getInstance().getSystemTime())) {
+    if (!channelInfo.isExpired(SessionPreference.getInstance().getSystemTime())) {
         imageView.visibility = View.INVISIBLE
     }
     else if (channelInfo.isPurchased || channelInfo.subscription) {

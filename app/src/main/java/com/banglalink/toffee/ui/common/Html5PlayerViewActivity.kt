@@ -3,7 +3,7 @@ package com.banglalink.toffee.ui.common
 import android.content.res.AssetManager
 import android.os.Bundle
 import com.banglalink.toffee.analytics.HeartBeatManager
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.ui.widget.HTML5WebView
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
@@ -38,7 +38,7 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
             mWebView.restoreState(savedInstanceState);
         } else {
             val headerMap: MutableMap<String, String> = HashMap()
-            headerMap["MSISDN"] = Preference.getInstance().phoneNumber
+            headerMap["MSISDN"] = SessionPreference.getInstance().phoneNumber
             mWebView.loadUrl(htmlUrl,headerMap);
         }
 

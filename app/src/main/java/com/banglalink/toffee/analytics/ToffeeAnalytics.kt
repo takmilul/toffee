@@ -2,12 +2,8 @@ package com.banglalink.toffee.analytics
 
 import android.content.Context
 import android.os.Bundle
-import android.provider.Settings.Secure.ANDROID_ID
-import android.text.TextUtils
-import com.banglalink.toffee.BuildConfig
-import com.banglalink.toffee.data.network.request.BaseRequest
 import com.banglalink.toffee.data.network.request.PubSubBaseRequest
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Package
 import com.banglalink.toffee.notification.API_ERROR_TRACK_TOPIC
@@ -16,7 +12,6 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
-import java.lang.Exception
 
 object ToffeeAnalytics {
 
@@ -32,7 +27,7 @@ object ToffeeAnalytics {
         FirebaseCrashlytics.getInstance().setUserId(customerId.toString())
     }
 
-    fun logApiError(apiName: String?, errorMsg: String?,phoneNumber:String = Preference.getInstance().phoneNumber) {
+    fun logApiError(apiName: String?, errorMsg: String?,phoneNumber:String = SessionPreference.getInstance().phoneNumber) {
         if (apiName.isNullOrBlank() || errorMsg.isNullOrBlank())
             return
 

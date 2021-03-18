@@ -7,7 +7,7 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.ReactionInfo
 import com.banglalink.toffee.data.network.retrofit.DbApi
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.google.common.io.Files
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -21,7 +21,7 @@ import java.util.zip.CRC32
 class DownloadReactionDb(
     private val dbApi: DbApi,
     private val reactionDao: ReactionDao,
-    private val mPref: Preference
+    private val mPref: SessionPreference
 ) {
     private val reactionList = mutableListOf<ReactionInfo>()
 

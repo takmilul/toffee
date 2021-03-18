@@ -3,7 +3,7 @@ package com.banglalink.toffee.data.database
 import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.ReactionStatusItem
 import com.banglalink.toffee.data.repository.*
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.ReactionStatus
@@ -20,7 +20,7 @@ class LocalSync @Inject constructor(
     private val reactionDao: ReactionDao,
     private val subscriptionInfoRepository: SubscriptionInfoRepository,
     private val subscriptionCountRepository: SubscriptionCountRepository,
-    private val preference: Preference
+    private val preference: SessionPreference
 ) {
     suspend fun syncData(channelInfo: ChannelInfo) {
         val viewCount = viewCountRepo.getViewCountByChannelId(channelInfo.id.toInt())

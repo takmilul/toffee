@@ -13,7 +13,7 @@ import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.model.SeriesPlaybackInfo
@@ -25,7 +25,7 @@ import com.suke.widget.SwitchButton
 class ChannelHeaderAdapter(
     private val headerData: Any? = null,
     private val cb: ContentReactionCallback<ChannelInfo>? = null,
-    private val mPref: Preference,
+    private val mPref: SessionPreference,
     private val viewModel: EpisodeListViewModel? = null,
 ) : RecyclerView.Adapter<ChannelHeaderAdapter.HeaderViewHolder>() {
 

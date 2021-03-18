@@ -1,7 +1,7 @@
 package com.banglalink.toffee.usecase
 
 import com.banglalink.toffee.apiservice.SendShareLogApiService
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.toFormattedDate
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.notification.PubSubMessageUtil
@@ -11,7 +11,7 @@ import com.google.gson.annotations.SerializedName
 import javax.inject.Inject
 
 class SendShareCountEvent @Inject constructor(
-    private val preference: Preference,
+    private val preference: SessionPreference,
     private val shareLogApiService: SendShareLogApiService,
 ) {
 

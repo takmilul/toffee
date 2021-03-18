@@ -20,7 +20,7 @@ import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.databinding.DataBindingUtil
 import com.banglalink.toffee.R.*
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.MediaControlLayout3Binding
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener
 import com.banglalink.toffee.listeners.PlaylistListener
@@ -84,7 +84,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     private var debugJob: Job? = null
 
     @Inject
-    lateinit var mPref: Preference
+    lateinit var mPref: SessionPreference
 
     init {
         handler = MessageHandler()

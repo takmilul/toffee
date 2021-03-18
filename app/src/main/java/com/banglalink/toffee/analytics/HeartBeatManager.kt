@@ -6,7 +6,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.OnLifecycleEvent
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.usecase.SendHeartBeat
 import com.banglalink.toffee.util.getError
@@ -16,7 +16,8 @@ import javax.inject.Singleton
 
 @Singleton
 class HeartBeatManager @Inject constructor(
-    private val sendHeartBeat: SendHeartBeat
+    private val sendHeartBeat: SendHeartBeat,
+    private val sessionPreference: SessionPreference
 ) : LifecycleObserver, ConnectivityManager.NetworkCallback() {
     
     private var INITIAL_DELAY = 0L
@@ -66,7 +67,7 @@ class HeartBeatManager @Inject constructor(
     }
 
     private suspend fun sendHeartBeat(isNetworkSwitch:Boolean = false,sendToPubSub:Boolean = true){
-        if(Preference.getInstance().customerId!=0){
+        if(sessionPreference.customerId!=0){
             try{
                 sendHeartBeat.execute(contentId, contentType,isNetworkSwitch,sendToPubSub)
                 _heartBeatEventLiveData.postValue(true)

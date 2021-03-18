@@ -12,10 +12,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_DETAILS_URL
+import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_DETAILS
 import com.banglalink.toffee.data.network.request.MyChannelEditRequest
 import com.banglalink.toffee.data.network.retrofit.CacheManager
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.FragmentMyChannelEditDetailBinding
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
@@ -37,7 +37,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MyChannelEditDetailFragment : Fragment(), OnClickListener {
-    @Inject lateinit var mPref: Preference
+    @Inject lateinit var mPref: SessionPreference
     @Inject lateinit var cacheManager: CacheManager
     private var isPosterClicked = false
     private var myChannelDetail: MyChannelDetail? = null
@@ -149,7 +149,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                 is Success -> {
                     binding.saveButton.isClickable = true
                     progressDialog.dismiss()
-                    cacheManager.clearCacheByUrl(GET_MY_CHANNEL_DETAILS_URL)
+                    cacheManager.clearCacheByUrl(GET_MY_CHANNEL_DETAILS)
                     findNavController().navigateUp()
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
                 }

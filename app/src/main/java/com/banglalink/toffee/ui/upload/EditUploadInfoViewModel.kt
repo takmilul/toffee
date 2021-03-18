@@ -11,7 +11,7 @@ import com.banglalink.toffee.apiservice.ContentUpload
 import com.banglalink.toffee.apiservice.GetCategories
 import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.repository.UploadInfoRepository
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.exception.Error
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.Resource
@@ -31,7 +31,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
     @ApplicationContext private val appContext: Context,
     private val uploadRepo: UploadInfoRepository,
     private val contentUploadApi: ContentUpload,
-    private val preference: Preference,
+    private val preference: SessionPreference,
     private val categoryApi: GetCategories,
     @Assisted private val uploadFileUri: String
 ) : ViewModel() {

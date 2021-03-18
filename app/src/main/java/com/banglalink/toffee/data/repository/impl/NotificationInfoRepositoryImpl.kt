@@ -4,12 +4,12 @@ import androidx.paging.PagingSource
 import com.banglalink.toffee.data.database.dao.NotificationDao
 import com.banglalink.toffee.data.database.entities.NotificationInfo
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import kotlinx.coroutines.flow.Flow
 
 class NotificationInfoRepositoryImpl(
     private val notificationDao: NotificationDao,
-    private val mPref: Preference
+    private val mPref: SessionPreference
     ): NotificationInfoRepository {
     override suspend fun insert(notificationInfo: NotificationInfo) {
         notificationDao.insert(notificationInfo)

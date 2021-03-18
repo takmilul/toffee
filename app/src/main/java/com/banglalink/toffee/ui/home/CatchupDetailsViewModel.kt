@@ -16,13 +16,9 @@ class CatchupDetailsViewModel @Inject constructor(
     private val relativeContentsFactory: GetRelativeContents.AssistedFactory,
 ) : BaseViewModel() {
     
-    fun loadRelativeContent(channelInfo: ChannelInfo): Flow<PagingData<ChannelInfo>> {
+    fun loadRelativeContent(catchupParams: CatchupParams): Flow<PagingData<ChannelInfo>> {
         return BaseListRepositoryImpl({
-            BaseNetworkPagingSource(
-                relativeContentsFactory.create(
-                    CatchupParams(channelInfo.id, channelInfo.video_tags)
-                )
-            )
+            BaseNetworkPagingSource(relativeContentsFactory.create(catchupParams))
         }).getList()
     }
 }

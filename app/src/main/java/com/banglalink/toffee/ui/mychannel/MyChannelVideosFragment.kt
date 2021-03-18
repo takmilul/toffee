@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
-import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
@@ -18,7 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import com.banglalink.toffee.R
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_VIDEOS_URL
+import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_VIDEOS
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.network.retrofit.CacheManager
@@ -278,7 +277,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
     }
     
     private fun reloadVideosList() {
-        cacheManager.clearCacheByUrl(GET_MY_CHANNEL_VIDEOS_URL)
+        cacheManager.clearCacheByUrl(GET_MY_CHANNEL_VIDEOS)
         mAdapter.refresh()
     }
 }
