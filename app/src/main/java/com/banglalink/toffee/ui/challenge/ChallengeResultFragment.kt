@@ -6,22 +6,19 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.OnClickListener
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentChallengeResultBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
-import com.banglalink.toffee.util.unsafeLazy
-import kotlinx.android.synthetic.main.fragment_challenge_result.*
 
 class ChallengeResultFragment : Fragment(), OnClickListener {
 
     private lateinit var binding: FragmentChallengeResultBinding
-    private val viewModel by unsafeLazy { ViewModelProviders.of(this).get(ChallengeResultViewModel::class.java) }
+    private val viewModel by viewModels<ChallengeResultViewModel>()
     
     companion object {
         @JvmStatic
@@ -30,7 +27,7 @@ class ChallengeResultFragment : Fragment(), OnClickListener {
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_challenge_result, container, false)
+        binding = FragmentChallengeResultBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
         return binding.root
@@ -60,7 +57,7 @@ class ChallengeResultFragment : Fragment(), OnClickListener {
     }
 
     override fun onClick(v: View?) {
-        if (v == joinButton){
+        if (v == binding.joinButton){
             findNavController().navigate(R.id.action_challengeResultFragment_to_challengeDetailFragment)
         }
     }

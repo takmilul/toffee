@@ -5,23 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import com.banglalink.toffee.R
+import androidx.fragment.app.viewModels
 import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.databinding.FragmentChallengeResultRewardWinnerBinding
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChallengeReward
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
-import com.banglalink.toffee.util.unsafeLazy
-import kotlinx.android.synthetic.main.fragment_challenge_result_reward_winner.*
 
 class ChallengeResultRewardWinnerFragment: Fragment(), BaseListItemCallback<ChallengeReward> {
     private lateinit var mAdapter: ChallengeResultRewardWinnerAdapter
-
-    val viewModel by unsafeLazy {
-        ViewModelProvider(this).get(ChallengeResultRewardWinnerViewModel::class.java)
-    }
+    private lateinit var binding: FragmentChallengeResultRewardWinnerBinding
+    val viewModel by viewModels<ChallengeResultRewardWinnerViewModel>()
 
     companion object {
         @JvmStatic
@@ -29,30 +24,31 @@ class ChallengeResultRewardWinnerFragment: Fragment(), BaseListItemCallback<Chal
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_challenge_result_reward_winner, container, false)
+        binding = FragmentChallengeResultRewardWinnerBinding.inflate(inflater, container, false)
+        return binding.root
     }
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         mAdapter = ChallengeResultRewardWinnerAdapter(this)
-        listview.adapter = mAdapter
+        binding.listview.adapter = mAdapter
         observeList()
         viewModel.loadData()
     }
 
     private fun observeList() {
-        viewModel.listData.observe(viewLifecycleOwner, Observer {
+        viewModel.listData.observe(viewLifecycleOwner) {
             when(it) {
                 is Success -> {
                     val itemCount = it.data.size
-                    winnerCountTextView.text = "Reward Winners ($itemCount)"
+                    binding.winnerCountTextView.text = "Reward Winners ($itemCount)"
                     mAdapter.addAll(it.data)
                 }
                 is Failure -> {
                     activity?.showToast(it.error.msg)
                 }
             }
-        })
+        }
     }
 }

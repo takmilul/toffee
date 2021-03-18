@@ -32,7 +32,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.list_item_live.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -85,10 +84,10 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment(), TextWatcher {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
-        val view = View.inflate(context, R.layout.upload_bottom_sheet, null)
+        val dialogBinding = UploadBottomSheetBinding.inflate(layoutInflater)
 
-        dialog.setContentView(view)
-        val parent = view.parent as View
+        dialog.setContentView(dialogBinding.root)
+        val parent = dialogBinding.root.parent as View
         bottomSheetBehavior = BottomSheetBehavior.from(parent)
         val displayMetrics = DisplayMetrics()
         activity?.windowManager?.defaultDisplay?.getMetrics(displayMetrics)

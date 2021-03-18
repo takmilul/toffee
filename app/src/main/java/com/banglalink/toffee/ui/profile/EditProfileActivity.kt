@@ -21,6 +21,7 @@ import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.databinding.ActivityEditProfileBinding
+import com.banglalink.toffee.databinding.DialogueProfileImageSelectionBinding
 import com.banglalink.toffee.enums.InputType
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource
@@ -32,7 +33,6 @@ import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
 import com.yalantis.ucrop.UCrop
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_thumb_selection_method.view.*
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
@@ -99,22 +99,22 @@ class EditProfileActivity : BaseAppCompatActivity() {
 
     private fun openUploadOption()
     {
-        val dialogView = layoutInflater.inflate(R.layout.dialogue_profile_image_selection, null, false)
+        val dialogBinding = DialogueProfileImageSelectionBinding.inflate(layoutInflater, null, false)
 
         alertDialog=  AlertDialog
             .Builder(this)
-            .setView(dialogView).create()
+            .setView(dialogBinding.root).create()
             .apply {
                 window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             }
 
         alertDialog?.show()
 
-        with(dialogView){
-            open_gallery_button.setOnClickListener {
+        with(dialogBinding){
+            openGalleryButton.setOnClickListener {
                 checkFileSystemPermission()
             }
-            open_camera_button.setOnClickListener {
+            openCameraButton.setOnClickListener {
                 checkCameraPermissions()
             }
         }
