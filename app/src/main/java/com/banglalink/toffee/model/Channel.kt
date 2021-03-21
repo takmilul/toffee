@@ -4,7 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.player.Samples
 import com.banglalink.toffee.util.Utils
@@ -35,7 +35,7 @@ class Channel(
         putString("imageurl", imageUrl)
     }
 
-    fun getContentUri(context: Context, pref: Preference, connectionWatcher: ConnectionWatcher): String? {
+    fun getContentUri(context: Context, pref: SessionPreference, connectionWatcher: ConnectionWatcher): String? {
         val isWifiConnected = connectionWatcher.isOverWifi
         if (!isWifiConnected && pref.watchOnlyWifi()) {
             return null

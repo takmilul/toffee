@@ -60,10 +60,11 @@
             app:layout_constraintVertical_bias="0"
             app:srcCompat="@drawable/ic_menu_more" />
 
-        <com.banglalink.toffee.ui.widget.CustomImageView
+        <ImageView
             android:id="@+id/posterView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="200dp"
             android:layout_marginTop="16dp"
             android:adjustViewBounds="true"
             android:scaleType="centerInside"

@@ -8,6 +8,7 @@ import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.MyChannelDeletePlaylistBean
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.util.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,7 +18,7 @@ class MyChannelPlaylistDeleteViewModel @Inject constructor(
     private val apiService: MyChannelPlaylistDeleteService,
 ) : ViewModel() {
     
-    private val _data = MutableLiveData<Resource<MyChannelDeletePlaylistBean>>()
+    private val _data = SingleLiveEvent<Resource<MyChannelDeletePlaylistBean>>()
     val liveData = _data.toLiveData()
     
     fun deletePlaylistName(playlistId: Int) {

@@ -1,0 +1,33 @@
+package com.banglalink.toffee.data.storage
+
+import android.content.Context
+import android.content.SharedPreferences
+import androidx.core.content.edit
+
+const val COMMON_PREF_NAME = "LIFETIME_DATA"
+
+class CommonPreference(private val pref: SharedPreferences, private val context: Context) {
+    
+    companion object {
+        private const val APP_VERSION = "app_version"
+        private var instance: CommonPreference? = null
+        
+        fun init(mContext: Context) {
+            if (instance == null) {
+                instance = CommonPreference(mContext.getSharedPreferences(COMMON_PREF_NAME, Context.MODE_PRIVATE), mContext)
+            }
+        }
+
+        fun getInstance(): CommonPreference {
+            if (instance == null) {
+                throw InstantiationException("Instance is null...call init() first")
+            }
+            return instance as CommonPreference
+        }
+    }
+
+    var versionCode: Int
+        get() = pref.getInt(APP_VERSION, 0)
+        set(value) = pref.edit { putInt(APP_VERSION, value) }
+
+}

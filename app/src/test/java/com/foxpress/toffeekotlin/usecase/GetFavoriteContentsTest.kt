@@ -2,7 +2,7 @@ package com.foxpress.toffeekotlin.usecase
 
 import com.banglalink.toffee.data.network.request.FavoriteContentRequest
 import com.banglalink.toffee.data.network.response.FavoriteContentResponse
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.ContentBean
 import com.nhaarman.mockitokotlin2.*
@@ -29,7 +29,7 @@ class GetFavoriteContentsTest :BaseUseCaseTest(){
                 view_count = "1000000000009"
             })
 
-            val getContents = GetFavoriteContents(Preference.getInstance(),mockToffeeApi)
+            val getContents = GetFavoriteContents(SessionPreference.getInstance(),mockToffeeApi)
             Mockito.`when`(mockToffeeApi.getFavoriteContents(any<FavoriteContentRequest>())).thenReturn(
                 Response.success(FavoriteContentResponse(
                     ContentBean(channelInfoList,1,1)

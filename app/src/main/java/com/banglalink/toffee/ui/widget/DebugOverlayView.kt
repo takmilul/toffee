@@ -11,7 +11,7 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.banglalink.toffee.R
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.PlayerOverlayData
 import com.banglalink.toffee.util.Utils
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,17 +21,18 @@ import kotlin.math.min
 
 
 @AndroidEntryPoint
-class DebugOverlayView(private val ctx: Context, val attrs: AttributeSet? = null, val defAttrStyle: Int = 0)
+class DebugOverlayView(ctx: Context, val attrs: AttributeSet? = null, val defAttrStyle: Int = 0)
     :LinearLayout(ctx, attrs, defAttrStyle) {
 
-    @Inject lateinit var mPref: Preference
+    @Inject lateinit var mPref: SessionPreference
 
     private var customTextView: TextView? = null
     private var debugTextView: TextView? = null
     private var contentId: String? = null
     private var parentWidth: Int = 0
     private var parentHeight: Int = 0
-    private var margin: Rect = Rect(Utils.dpToPx(10), Utils.dpToPx(10), Utils.dpToPx(10), Utils.dpToPx(10))
+    private val marginDp = Utils.dpToPx(10)
+    private var margin: Rect = Rect(marginDp, marginDp, marginDp, marginDp)
 
     init {
         View.inflate(ctx, R.layout.debug_overlay_layout, this)
@@ -98,6 +99,7 @@ class DebugOverlayView(private val ctx: Context, val attrs: AttributeSet? = null
         return overlayData?.params?.position == "floating"
     }
 
+    // https://stackoverflow.com/questions/9398057/android-move-a-view-on-touch-move-action-move
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {

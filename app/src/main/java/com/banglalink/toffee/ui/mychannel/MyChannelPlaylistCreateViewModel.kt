@@ -10,6 +10,7 @@ import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.MyChannelPlaylistCreateBean
 import com.banglalink.toffee.model.MyChannelPlaylistEditBean
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.util.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,9 +22,9 @@ class MyChannelPlaylistCreateViewModel @Inject constructor(
 ) : ViewModel() {
     
     var playlistName: String? = null
-    private val _createPlaylistData = MutableLiveData<Resource<MyChannelPlaylistCreateBean>>()
+    private val _createPlaylistData = SingleLiveEvent<Resource<MyChannelPlaylistCreateBean>>()
     val createPlaylistLiveData = _createPlaylistData.toLiveData()
-    private val _editPlaylistData = MutableLiveData<Resource<MyChannelPlaylistEditBean>>()
+    private val _editPlaylistData = SingleLiveEvent<Resource<MyChannelPlaylistEditBean>>()
     val editPlaylistLiveData = _editPlaylistData.toLiveData()
     
     fun createPlaylist(channelOwnerId: Int) {

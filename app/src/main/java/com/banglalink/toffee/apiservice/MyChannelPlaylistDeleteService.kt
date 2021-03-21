@@ -3,12 +3,12 @@ package com.banglalink.toffee.apiservice
 import com.banglalink.toffee.data.network.request.MyChannelPlaylistDeleteRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.MyChannelDeletePlaylistBean
 import javax.inject.Inject
 
 class MyChannelPlaylistDeleteService @Inject constructor(
-    private val mPref: Preference,
+    private val mPref: SessionPreference,
     private val toffeeApi: ToffeeApi
 ) {
     suspend operator fun invoke(playListId: Int): MyChannelDeletePlaylistBean {

@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
@@ -85,15 +84,10 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
         }
 
         mAdapter.addLoadStateListener {
-            if(it.source.refresh is LoadState.Loading) {
-                binding.progressBar.visibility = View.VISIBLE
-            } else {
-                binding.progressBar.visibility = View.GONE
-            }
-
+            binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
             mAdapter.apply {
-                val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached
-                binding.emptyView.isGone = !showEmpty
+                val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
+                binding.emptyView.isVisible = showEmpty
                 binding.latestVideosList.isVisible = !showEmpty
             }
         }

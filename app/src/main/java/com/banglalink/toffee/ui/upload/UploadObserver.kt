@@ -2,7 +2,7 @@ package com.banglalink.toffee.ui.upload
 
 import android.app.Application
 import android.content.Context
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_VIDEOS_URL
+import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_VIDEOS
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -58,7 +58,7 @@ class UploadObserver(
                 serverResponse: ServerResponse
             ) {
                 coroutineScope.launch {
-                    cacheManager.clearCacheByUrl(GET_MY_CHANNEL_VIDEOS_URL)
+                    cacheManager.clearCacheByUrl(GET_MY_CHANNEL_VIDEOS)
                     uploadManager.handleSuccess(uploadInfo.uploadId, serverResponse)
                 }
             }

@@ -3,7 +3,7 @@ package com.foxpress.toffeekotlin.usecase
 import com.banglalink.toffee.data.network.request.ApiLoginRequest
 import com.banglalink.toffee.data.network.response.ApiLoginResponse
 import com.banglalink.toffee.data.network.retrofit.AuthApi
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.exception.ApiException
 import com.banglalink.toffee.model.CustomerInfoSignIn
 import com.banglalink.toffee.apiservice.ApiLogin
@@ -27,7 +27,7 @@ class ApiLoginTest :BaseUseCaseTest(){
         runBlocking {
             //set up test
             setupPref()
-            val apiLogin = ApiLogin(Preference.getInstance(), mockAuthApi)
+            val apiLogin = ApiLogin(SessionPreference.getInstance(), mockAuthApi)
             Mockito.`when`(mockAuthApi.apiLogin(any<ApiLoginRequest>())).thenReturn(
                 Response.success(ApiLoginResponse(
                     CustomerInfoSignIn().apply {
@@ -64,7 +64,7 @@ class ApiLoginTest :BaseUseCaseTest(){
         runBlocking {
             //set up test
             setupPref()
-            val apiLogin = ApiLogin(Preference.getInstance(), mockAuthApi)
+            val apiLogin = ApiLogin(SessionPreference.getInstance(), mockAuthApi)
             Mockito.`when`(mockAuthApi.apiLogin(any<ApiLoginRequest>())).thenReturn(
                 Response.success(ApiLoginResponse(
                    null
