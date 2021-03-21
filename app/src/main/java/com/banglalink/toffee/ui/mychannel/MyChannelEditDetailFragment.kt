@@ -102,10 +102,15 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         }
 
         observe(viewModel.categoryList) { categories ->
-            categoryAdapter.setData(categories)
             progressDialog.dismiss()
-            viewModel.selectedCategory = categories?.find { it.id == myChannelDetail?.categoryId } ?: categories?.first()
-            viewModel.selectedCategoryPosition.value = (categories.indexOf(categories.find { it.id == myChannelDetail?.categoryId }).takeIf { it > 0 } ?: 0) + 1
+            if(!categories.isNullOrEmpty()) {
+                categoryAdapter.setData(categories)
+                viewModel.selectedCategory =
+                    categories?.find { it.id == myChannelDetail?.categoryId } ?: categories?.first()
+                viewModel.selectedCategoryPosition.value =
+                    (categories.indexOf(categories.find { it.id == myChannelDetail?.categoryId })
+                        .takeIf { it > 0 } ?: 0) + 1
+            }
         }
 
         observe(viewModel.selectedCategoryPosition) {
