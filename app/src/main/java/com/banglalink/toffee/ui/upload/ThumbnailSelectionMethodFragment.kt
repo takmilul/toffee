@@ -34,7 +34,8 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
     private lateinit var title: String
     private var isProfileImage:Boolean = false
     private var alertDialog: AlertDialog? = null
-    private lateinit var binding: FragmentThumbSelectionMethodBinding
+    private var _binding: FragmentThumbSelectionMethodBinding ? = null
+    private val binding get() = _binding!!
     companion object {
         const val THUMB_URI = "thumb-uri"
     }
@@ -42,7 +43,7 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         title = ThumbnailSelectionMethodFragmentArgs.fromBundle(requireArguments()).title
         isProfileImage = ThumbnailSelectionMethodFragmentArgs.fromBundle(requireArguments()).isProfileImage
-        binding = FragmentThumbSelectionMethodBinding.inflate(layoutInflater)
+        _binding = FragmentThumbSelectionMethodBinding.inflate(layoutInflater)
         binding.heading.text = title
         binding.openGalleryButton.setOnClickListener {
             checkFileSystemPermission()
@@ -59,7 +60,10 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
             }
         return alertDialog!!
     }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     private fun checkFileSystemPermission() {
         lifecycleScope.launch {
             try{

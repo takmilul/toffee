@@ -24,10 +24,11 @@ class TermsConditionFragment : DialogFragment() {
     @Inject lateinit var mPref: SessionPreference
     private var alertDialog: AlertDialog? = null
     private val viewModel by viewModels<ViewProfileViewModel>()
-    private lateinit var binding: FragmentTermsConditionBinding
+    private var _binding: FragmentTermsConditionBinding ? = null
+    private val binding get() = _binding!!
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        binding = FragmentTermsConditionBinding.inflate(layoutInflater)
+        _binding = FragmentTermsConditionBinding.inflate(layoutInflater)
         binding.closeIv.setOnClickListener {
             dismiss()
         }
@@ -41,7 +42,10 @@ class TermsConditionFragment : DialogFragment() {
         observeTermCondition()
         return alertDialog!!
     }
-    
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     private fun observeTermCondition() {
         observe(viewModel.termsAndConditionResult) {
             when (it) {
