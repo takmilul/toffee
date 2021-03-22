@@ -29,7 +29,8 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
     private var subCategoryID: Int = 0
     private var category: String? = null
     private var subCategory: String? = null
-    private lateinit var binding: FragmentChannelListBinding
+    private var _binding: FragmentChannelListBinding ? = null
+    private val binding get() = _binding!!
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private val channelViewModel by activityViewModels<AllChannelsViewModel>()
     
@@ -66,8 +67,13 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = FragmentChannelListBinding.inflate(inflater, container, false)
+        _binding = FragmentChannelListBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
