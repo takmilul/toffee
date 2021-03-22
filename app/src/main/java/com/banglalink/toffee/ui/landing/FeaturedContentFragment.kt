@@ -37,6 +37,7 @@ class FeaturedContentFragment : HomeBaseFragment() {
          return binding.root
     }
     override fun onDestroyView() {
+        slideJob?.cancel()
         super.onDestroyView()
         _binding = null
     }
@@ -105,10 +106,5 @@ class FeaturedContentFragment : HomeBaseFragment() {
     override fun onStop() {
         viewModel.featuredContents.removeObservers(this)
         super.onStop()
-    }
-    
-    override fun onDestroy() {
-        slideJob?.cancel()
-        super.onDestroy()
     }
 }

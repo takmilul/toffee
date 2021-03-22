@@ -21,7 +21,8 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
     protected abstract val mAdapter: BasePagingDataAdapter<T>
     protected abstract val mViewModel: BasePagingViewModel<T>
 
-    protected lateinit var binding: FragmentBaseSingleListBinding
+    private var _binding: FragmentBaseSingleListBinding? = null
+    protected val binding get() = _binding!!
 
     open val itemMargin = 0
     open val verticalPadding = Pair(0,0)
@@ -32,7 +33,7 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentBaseSingleListBinding.inflate(inflater, container, false)
+        _binding = FragmentBaseSingleListBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -123,6 +124,7 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
         binding.listview.clearOnScrollListeners()
         binding.unbind()
         super.onDestroyView()
+        _binding = null
     }
 
     companion object {
