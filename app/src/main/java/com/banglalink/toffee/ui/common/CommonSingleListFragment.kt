@@ -4,12 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentCatchupBinding
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
@@ -22,14 +20,15 @@ abstract class CommonSingleListFragment : HomeBaseFragment() {
     lateinit var mAdapter: MyBaseAdapter<ChannelInfo>
     private lateinit var scrollListener: EndlessRecyclerViewScrollListener
 
-    lateinit var binding: FragmentCatchupBinding
+    private var _binding: FragmentCatchupBinding ? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_catchup, container, false)
+        _binding = FragmentCatchupBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -132,5 +131,6 @@ abstract class CommonSingleListFragment : HomeBaseFragment() {
         binding.listview?.clearOnScrollListeners()
         binding.unbind()
         super.onDestroyView()
+        _binding = null
     }
 }

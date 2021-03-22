@@ -16,7 +16,8 @@ import com.google.android.material.appbar.AppBarLayout
 class LandingPageFragment : HomeBaseFragment() {
     private var appbarOffset = 0
     private val landingViewModel by activityViewModels<LandingPageViewModel>()
-    private lateinit var binding: FragmentLandingPage2Binding
+    private var _binding: FragmentLandingPage2Binding ? = null
+    private val binding get() = _binding!!
 
     companion object {
         fun newInstance(): LandingPageFragment {
@@ -25,7 +26,7 @@ class LandingPageFragment : HomeBaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentLandingPage2Binding.inflate(inflater, container, false)
+        _binding = FragmentLandingPage2Binding.inflate(inflater, container, false)
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (isEnabled) {
@@ -40,6 +41,11 @@ class LandingPageFragment : HomeBaseFragment() {
             }
         })
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
