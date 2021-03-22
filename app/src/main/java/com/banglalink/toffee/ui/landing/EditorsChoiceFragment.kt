@@ -17,17 +17,20 @@ import kotlinx.coroutines.flow.collectLatest
 class EditorsChoiceFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo> {
     private lateinit var mAdapter: EditorsChoiceListAdapter
     private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
-    private lateinit var binding: FragmentEditorsChoiceBinding
-
+    private var _binding: FragmentEditorsChoiceBinding?=null
+    private val binding get() = _binding!!
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentEditorsChoiceBinding.inflate(inflater, container, false)
+        _binding = FragmentEditorsChoiceBinding.inflate(inflater, container, false)
         return binding.root
     }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mAdapter = EditorsChoiceListAdapter(this)
