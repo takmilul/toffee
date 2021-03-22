@@ -63,8 +63,10 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     private lateinit var viewPagerAdapter: ViewPagerAdapter
     val homeViewModel by activityViewModels<HomeViewModel>()
     private lateinit var progressDialog: VelBoxProgressDialog
-    private lateinit var binding: FragmentMyChannelHomeBinding
-    private lateinit var bindingRating: AlertDialogMyChannelRatingBinding
+    private var _binding: FragmentMyChannelHomeBinding ? = null
+    private val binding get() = _binding!!
+    private var _bindingRating: AlertDialogMyChannelRatingBinding ? = null
+    private val bindingRating get() = _bindingRating!!
     private val viewModel by viewModels<MyChannelHomeViewModel>()
     @Inject lateinit var subscriptionInfoRepository: SubscriptionInfoRepository
     @Inject lateinit var subscriptionCountRepository: SubscriptionCountRepository
@@ -94,12 +96,15 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = FragmentMyChannelHomeBinding.inflate(inflater, container, false)
+        _binding = FragmentMyChannelHomeBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
         return binding.root
     }
-    
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
@@ -176,7 +181,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     }
     
     private fun showRatingDialog() {
-        bindingRating = AlertDialogMyChannelRatingBinding.inflate(layoutInflater)
+        _bindingRating = AlertDialogMyChannelRatingBinding.inflate(layoutInflater)
         val dialogBuilder = android.app.AlertDialog.Builder(requireContext())
         dialogBuilder.setView(bindingRating.root)
         bindingRating.ratingBar.rating = myRating.toFloat()
@@ -197,7 +202,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         }
         alertDialog.setOnDismissListener { bindButtonState(binding.channelDetailView.ratingButton, myRating > 0) }
     }
-    
+
     override fun onResume() {
         super.onResume()
         bindButtonState(binding.channelDetailView.ratingButton, myRating > 0)
@@ -351,5 +356,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     override fun onDestroy() {
         progressDialog.dismiss()
         super.onDestroy()
+        _binding = null
+        _bindingRating= null
     }
 }

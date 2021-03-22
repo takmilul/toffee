@@ -63,7 +63,8 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private lateinit var requestParams: MyChannelPlaylistContentParam
     private lateinit var playlistAdapter: MyChannelPlaylistVideosAdapter
-    private lateinit var binding: FragmentMyChannelPlaylistVideosBinding
+    private var _binding: FragmentMyChannelPlaylistVideosBinding ? = null
+    private val binding get() = _binding!!
     @Inject lateinit var subscriptionInfoRepository: SubscriptionInfoRepository
     @Inject lateinit var subscriptionCountRepository: SubscriptionCountRepository
     
@@ -91,10 +92,14 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = FragmentMyChannelPlaylistVideosBinding.inflate(inflater, container, false)
+        _binding = FragmentMyChannelPlaylistVideosBinding.inflate(inflater, container, false)
         return binding.root
     }
     
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         

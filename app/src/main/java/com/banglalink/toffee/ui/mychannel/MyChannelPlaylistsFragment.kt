@@ -45,7 +45,8 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
     @Inject lateinit var cacheManager: CacheManager
     private lateinit var mAdapter: MyChannelPlaylistAdapter
     val mViewModel by viewModels<MyChannelPlaylistViewModel>()
-    private lateinit var binding: FragmentMyChannelPlaylistsBinding
+    private var _binding: FragmentMyChannelPlaylistsBinding ? = null
+    private val binding get() = _binding!!
     private val editPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
     private val deletePlaylistViewModel by viewModels<MyChannelPlaylistDeleteViewModel>()
     private val playlistReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
@@ -72,10 +73,13 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentMyChannelPlaylistsBinding.inflate(inflater, container, false)
+        _binding = FragmentMyChannelPlaylistsBinding.inflate(inflater, container, false)
         return binding.root
     }
-    
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
