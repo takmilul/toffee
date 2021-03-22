@@ -2,7 +2,6 @@ package com.banglalink.toffee.ui.upload
 
 import android.Manifest
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -41,7 +40,8 @@ class UploadMethodFragment : DialogFragment() {
 
     private var videoUri: Uri? = null
     @Inject lateinit var mUploadInfoRepository: UploadInfoRepository
-    private lateinit var binding: UploadMethodFragmentBinding
+    private var _binding: UploadMethodFragmentBinding ? = null
+    private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +57,7 @@ class UploadMethodFragment : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = UploadMethodFragmentBinding.inflate(inflater, container, false)
+        _binding = UploadMethodFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -272,6 +272,7 @@ class UploadMethodFragment : DialogFragment() {
         requireActivity().let {
             if (it is HomeActivity) it.rotateFab(false)
         }
+        _binding = null
         super.onDestroyView()
     }
 }

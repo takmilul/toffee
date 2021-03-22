@@ -30,17 +30,21 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
     private lateinit var mAdapter: AllUserChannelsListAdapter
     private var trendingChannelInfo: UserChannelInfo? = null
     private val viewModel by viewModels<AllUserChannelsListViewModel>()
-    private lateinit var binding: FragmentAllUserChannelsListBinding
+    private var _binding: FragmentAllUserChannelsListBinding ? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentAllUserChannelsListBinding.inflate(inflater, container, false)
+        _binding = FragmentAllUserChannelsListBinding.inflate(inflater, container, false)
         return binding.root    
     }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
