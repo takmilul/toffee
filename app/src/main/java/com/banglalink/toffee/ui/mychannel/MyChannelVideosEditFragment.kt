@@ -39,7 +39,8 @@ class MyChannelVideosEditFragment : BaseFragment() {
 
     private var channelInfo: ChannelInfo? = null
     private lateinit var progressDialog: VelBoxProgressDialog
-    private lateinit var binding: FragmentMyChannelVideosEditBinding
+    private var _binding: FragmentMyChannelVideosEditBinding ? = null
+    private val binding get() = _binding!!
     private val viewModel: MyChannelVideosEditViewModel by viewModels()
     private val videosReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
 
@@ -61,11 +62,17 @@ class MyChannelVideosEditFragment : BaseFragment() {
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentMyChannelVideosEditBinding.inflate(inflater)
+        _binding = FragmentMyChannelVideosEditBinding.inflate(inflater)
         binding.setVariable(BR.viewmodel, viewModel)
         binding.lifecycleOwner = this
         return binding.root
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

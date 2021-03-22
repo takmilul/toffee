@@ -5,11 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import com.banglalink.toffee.R
 import com.banglalink.toffee.data.database.entities.NotificationInfo
 import com.banglalink.toffee.databinding.FragmentNotificationDetailBinding
 import com.banglalink.toffee.extension.safeClick
@@ -17,7 +15,8 @@ import com.banglalink.toffee.ui.home.HomeViewModel
 
 class NotificationDetailFragment : Fragment(), OnClickListener {
     private var notificationInfo: NotificationInfo? = null
-    private lateinit var binding: FragmentNotificationDetailBinding
+    private var _binding: FragmentNotificationDetailBinding ? = null
+    private val binding get() = _binding!!
     private val homeViewModel by activityViewModels<HomeViewModel>()
     
     companion object {
@@ -32,10 +31,14 @@ class NotificationDetailFragment : Fragment(), OnClickListener {
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_notification_detail, container, false)
+        _binding = FragmentNotificationDetailBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
         binding.data = notificationInfo
         return binding.root
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
