@@ -42,7 +42,8 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment(), TextWatcher {
     private var channelName: String = ""
     private var channelLogoUrl: String = ""
     private var profileImageBase64: String? = null
-    private lateinit var binding: UploadBottomSheetBinding
+    private var _binding: UploadBottomSheetBinding ? = null
+    private val binding get() = _binding!!
     private lateinit var progressDialog: VelBoxProgressDialog
     private val viewModel by viewModels<ViewProfileViewModel>()
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
@@ -52,10 +53,13 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment(), TextWatcher {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = UploadBottomSheetBinding.inflate(layoutInflater)
+        _binding = UploadBottomSheetBinding.inflate(layoutInflater)
         return binding.root
     }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         progressDialog = VelBoxProgressDialog(requireContext())

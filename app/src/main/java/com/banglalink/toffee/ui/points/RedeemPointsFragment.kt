@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,22 +22,28 @@ import com.banglalink.toffee.util.unsafeLazy
 class RedeemPointsFragment : Fragment() {
     
     private lateinit var mAdapter: RedeemPointsAdapter
-    private lateinit var binding: FragmentRedeemPointsBinding
+    private var _binding: FragmentRedeemPointsBinding ? = null
+    private val binding get() = _binding!!
+
     private lateinit var scrollListener: EndlessRecyclerViewScrollListener
     private val viewModel by unsafeLazy { 
         ViewModelProviders.of(this).get(RedeemPointsViewModel::class.java)
     }
-    
+
     companion object {
         fun createInstance() = RedeemPointsFragment()
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_redeem_points, container, false)
+        _binding = FragmentRedeemPointsBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
         return binding.root
     }
-    
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mAdapter = RedeemPointsAdapter(requireActivity(), {

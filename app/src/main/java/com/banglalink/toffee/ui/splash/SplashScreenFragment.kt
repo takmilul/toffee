@@ -24,7 +24,8 @@ import kotlinx.coroutines.launch
 
 class SplashScreenFragment:BaseFragment() {
 
-    lateinit var binding: FragmentSplashScreenBinding
+    private var _binding: FragmentSplashScreenBinding ? = null
+    private val binding get() = _binding!!
     private val viewModel by viewModels<SplashViewModel>()
 
     companion object {
@@ -34,10 +35,13 @@ class SplashScreenFragment:BaseFragment() {
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?, ): View {
         viewModel.reportAppLaunch()
-        binding = FragmentSplashScreenBinding.inflate(inflater, container, false)
+        _binding = FragmentSplashScreenBinding.inflate(inflater, container, false)
         return binding.root
     }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.splashScreenMotionLayout.onTransitionCompletedListener {
