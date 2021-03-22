@@ -19,7 +19,8 @@ import com.banglalink.toffee.util.unsafeLazy
 class ChallengeDetailFragment : Fragment(), BaseListItemCallback<String> {
 
     private lateinit var mAdapter: ChallengeDetailAdapter
-    private lateinit var binding: FragmentChallengeDetailBinding
+    private var _binding: FragmentChallengeDetailBinding ? = null
+    private val binding get() = _binding!!
     private val viewModel by unsafeLazy { ViewModelProviders.of(this).get(ChallengeDetailViewModel::class.java) }
     
     companion object {
@@ -28,9 +29,12 @@ class ChallengeDetailFragment : Fragment(), BaseListItemCallback<String> {
         fun newInstance() =
             ChallengeDetailFragment()
     }
-    
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_challenge_detail, container, false)
+        _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_challenge_detail, container, false)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
         return binding.root
