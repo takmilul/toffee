@@ -23,15 +23,21 @@ class PopularMovieChannelFragment : BaseFragment() {
 
     val viewModel by activityViewModels<LandingPageViewModel>()
     val homeViewModel by activityViewModels<HomeViewModel>()
-    private lateinit var binding: FragmentLandingTvChannelsBinding
+    private var _binding: FragmentLandingTvChannelsBinding ? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentLandingTvChannelsBinding.inflate(inflater, container, false)
+        _binding = FragmentLandingTvChannelsBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

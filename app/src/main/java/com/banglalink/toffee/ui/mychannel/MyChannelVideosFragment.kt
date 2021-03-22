@@ -51,7 +51,8 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
     @Inject lateinit var cacheManager: CacheManager
     private lateinit var mAdapter: MyChannelVideosAdapter
     val mViewModel by viewModels<MyChannelVideosViewModel>()
-    private lateinit var binding: FragmentMyChannelVideosBinding
+    private var _binding: FragmentMyChannelVideosBinding ? = null
+    private val binding get() = _binding!!
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private val videosReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
     
@@ -76,10 +77,14 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentMyChannelVideosBinding.inflate(inflater, container, false)
+        _binding = FragmentMyChannelVideosBinding.inflate(inflater, container, false)
         return binding.root
     }
-    
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         

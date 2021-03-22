@@ -8,19 +8,17 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.banglalink.toffee.R
-import com.banglalink.toffee.R.layout
 import com.banglalink.toffee.databinding.AlertDialogSuccessBinding
 import com.banglalink.toffee.databinding.FragmentAddNewPaymentMethodBinding
 import com.banglalink.toffee.extension.observe
 
 class AddNewPaymentMethodFragment : Fragment(), OnClickListener {
     
-    private lateinit var binding: FragmentAddNewPaymentMethodBinding
+    private var _binding: FragmentAddNewPaymentMethodBinding ? = null
+    private val binding get() = _binding!!
     private val viewModel by viewModels<AddNewPaymentMethodViewModel>()
 
     companion object {
@@ -31,7 +29,7 @@ class AddNewPaymentMethodFragment : Fragment(), OnClickListener {
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentAddNewPaymentMethodBinding.inflate(inflater, container, false)
+        _binding = FragmentAddNewPaymentMethodBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
         return binding.root
@@ -65,6 +63,10 @@ class AddNewPaymentMethodFragment : Fragment(), OnClickListener {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     private fun showRatingDialog() {
         val dialogBuilder = AlertDialog.Builder(requireContext())
         val dialogBinding = AlertDialogSuccessBinding.inflate(LayoutInflater.from(requireContext()))

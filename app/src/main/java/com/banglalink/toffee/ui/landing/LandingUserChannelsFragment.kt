@@ -32,17 +32,21 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
     private var categoryInfo: Category? = null
     private var channelInfo: UserChannelInfo? = null
     private val viewModel by activityViewModels<LandingPageViewModel>()
-    private lateinit var binding: FragmentLandingUserChannelsBinding
+    private var _binding: FragmentLandingUserChannelsBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentLandingUserChannelsBinding.inflate(inflater, container, false)
+        _binding = FragmentLandingUserChannelsBinding.inflate(inflater, container, false)
         return binding.root
     }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

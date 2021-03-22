@@ -26,13 +26,17 @@ import com.google.android.material.chip.Chip
 class CategoryInfoFragment: HomeBaseFragment() {
     private val landingViewModel by activityViewModels<LandingPageViewModel>()
     private lateinit var categoryInfo: Category
-    private lateinit var binding: FragmentCategoryInfoBinding
+    private var _binding: FragmentCategoryInfoBinding ? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentCategoryInfoBinding.inflate(inflater, container, false)
+        _binding = FragmentCategoryInfoBinding.inflate(inflater, container, false)
         return binding.root
     }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         categoryInfo = requireParentFragment().requireArguments().getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)!!

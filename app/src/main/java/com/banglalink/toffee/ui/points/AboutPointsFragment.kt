@@ -19,17 +19,21 @@ class AboutPointsFragment : Fragment() {
         ViewModelProviders.of(this).get(AboutPointsViewModel::class.java)
     }
     
-    private lateinit var binding: FragmentAboutPointsBinding
+    private var _binding: FragmentAboutPointsBinding ? = null
+    private val binding get() = _binding!!
     
     companion object {
         fun createInstance() = AboutPointsFragment()
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_about_points, container, false)
+        _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_about_points, container, false)
         return binding.root
     }
-    
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = this

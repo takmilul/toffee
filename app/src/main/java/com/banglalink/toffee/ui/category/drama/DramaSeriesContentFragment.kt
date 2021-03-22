@@ -31,14 +31,19 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
     private var selectedFilter: Int = FEED.value
     private val viewModel by viewModels<DramaSeriesViewModel>()
     private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
-    private lateinit var binding: FragmentDramaSeriesContentBinding
+    private var _binding: FragmentDramaSeriesContentBinding ? = null
+    private val binding get() = _binding!!
     private lateinit var mAdapter: DramaSeriesListAdapter<ChannelInfo>
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?, ): View {
-        binding = FragmentDramaSeriesContentBinding.inflate(inflater, container, false)
+        _binding = FragmentDramaSeriesContentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         category = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM) as Category?

@@ -18,7 +18,8 @@ import com.banglalink.toffee.util.unsafeLazy
 
 class ChallengeChannelFragment : Fragment(), OnClickListener {
 
-    private lateinit var binding: FragmentChallengeResultBinding
+    private var _binding: FragmentChallengeResultBinding ? = null
+    private val binding get() = _binding!!
     private val viewModel by unsafeLazy { ViewModelProviders.of(this).get(ChallengeResultViewModel::class.java) }
     
     companion object {
@@ -28,10 +29,14 @@ class ChallengeChannelFragment : Fragment(), OnClickListener {
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentChallengeResultBinding.inflate(inflater, container, false)
+        _binding = FragmentChallengeResultBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
         return binding.root
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

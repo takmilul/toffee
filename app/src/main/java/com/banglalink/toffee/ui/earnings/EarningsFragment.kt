@@ -18,7 +18,8 @@ import com.google.android.material.tabs.TabLayoutMediator
 
 class EarningsFragment : Fragment() {
 
-    private lateinit var binding: FragmentEarningsBinding
+    private var _binding: FragmentEarningsBinding ? = null
+    private val binding get() = _binding!!
     private val viewModel by unsafeLazy { ViewModelProviders.of(this).get(EarningsViewModel::class.java) }
 
     private lateinit var viewPagerAdapter: ViewPagerAdapter
@@ -46,12 +47,15 @@ class EarningsFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_earnings, container, false)
+        _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_earnings, container, false)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
         return binding.root
     }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

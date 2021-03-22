@@ -12,7 +12,6 @@ import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.databinding.FragmentRecentTvChannelsBinding
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
-import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.UtilsKt
 import kotlinx.coroutines.flow.collectLatest
 
@@ -23,7 +22,8 @@ class RecentChannelsFragment: BaseFragment() {
 
     private var showSelected = false
 
-    private lateinit var binding: FragmentRecentTvChannelsBinding
+    private var _binding: FragmentRecentTvChannelsBinding ? = null
+    private val binding get() = _binding!!
 
     companion object {
         const val SHOW_SELECTED = "SHOW_SELECTED"
@@ -47,8 +47,13 @@ class RecentChannelsFragment: BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentRecentTvChannelsBinding.inflate(inflater, container, false)
+        _binding = FragmentRecentTvChannelsBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

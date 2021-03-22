@@ -35,7 +35,8 @@ class VerifySignInFragment : BaseFragment() {
     private var resendCodeTimer: ResendCodeTimer? = null
     private var verifiedUserData: CustomerInfoSignIn? = null
     private val viewModel by viewModels<VerifyCodeViewModel>()
-    private lateinit var binding: FragmentVerifySigninBinding
+    private var _binding: FragmentVerifySigninBinding ? = null
+    private val binding get() = _binding!!
     private lateinit var mSmsBroadcastReceiver: SMSBroadcastReceiver
     private val progressDialog by unsafeLazy { VelBoxProgressDialog(requireContext()) }
 
@@ -45,10 +46,14 @@ class VerifySignInFragment : BaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = FragmentVerifySigninBinding.inflate(inflater, container, false)
+        _binding = FragmentVerifySigninBinding.inflate(inflater, container, false)
         return binding.root
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.signInVerifyMotionLayout.setOnClickListener { UtilsKt.hideSoftKeyboard(requireActivity()) }

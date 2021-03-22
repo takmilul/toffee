@@ -19,7 +19,8 @@ import com.banglalink.toffee.ui.home.HomeViewModel
 abstract class SingleListFragmentV2<T: Any> : Fragment() {
 
     private lateinit var scrollListener: EndlessRecyclerViewScrollListener
-    lateinit var binding: FragmentCommonSingleListV2Binding
+    private var _binding: FragmentCommonSingleListV2Binding ? = null
+    private val binding get() = _binding!!
 
     protected lateinit var mAdapter: MyBaseAdapterV2<T>
     protected lateinit var mViewModel: SingleListViewModel<T>
@@ -36,7 +37,7 @@ abstract class SingleListFragmentV2<T: Any> : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentCommonSingleListV2Binding.inflate(inflater, container, false)
+        _binding = FragmentCommonSingleListV2Binding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -165,6 +166,7 @@ abstract class SingleListFragmentV2<T: Any> : Fragment() {
         binding.listview.adapter = null
         binding.listview.clearOnScrollListeners()
         binding.unbind()
+        _binding = null
         super.onDestroyView()
     }
 }

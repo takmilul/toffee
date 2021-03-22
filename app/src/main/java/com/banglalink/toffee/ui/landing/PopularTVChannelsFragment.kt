@@ -19,7 +19,8 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class PopularTVChannelsFragment : HomeBaseFragment() {
     private lateinit var mAdapter: ChannelAdapter
-    private lateinit var binding: FragmentLandingTvChannelsBinding
+    private  var _binding: FragmentLandingTvChannelsBinding?=null
+    private val binding get() = _binding!!
     val viewModel by activityViewModels<LandingPageViewModel>()
 
     override fun onCreateView(
@@ -27,8 +28,13 @@ class PopularTVChannelsFragment : HomeBaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentLandingTvChannelsBinding.inflate(layoutInflater)
+        _binding = FragmentLandingTvChannelsBinding.inflate(layoutInflater)
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

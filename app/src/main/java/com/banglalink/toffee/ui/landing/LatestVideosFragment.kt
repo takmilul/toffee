@@ -52,14 +52,20 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     private var category: Category? = null
     private var selectedFilter: Int = FEED.value
     private lateinit var mAdapter: LatestVideosAdapter
-    private lateinit var binding: FragmentLandingLatestVideosBinding
+    private var _binding: FragmentLandingLatestVideosBinding ? = null
+    private val binding get() = _binding!!
     private val viewModel by activityViewModels<LandingPageViewModel>()
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = FragmentLandingLatestVideosBinding.inflate(inflater, container, false)
+        _binding = FragmentLandingLatestVideosBinding.inflate(inflater, container, false)
         return binding.root
     }
-    
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

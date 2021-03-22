@@ -24,17 +24,20 @@ class AllCategoriesFragment: BaseFragment() {
     private lateinit var mAdapter: CategoriesListAdapter
 
     private val viewModel by activityViewModels<LandingPageViewModel>()
-    private lateinit var binding: FragmentLandingCategoriesBinding
-
+    private var _binding: FragmentLandingCategoriesBinding ? =null
+    private val binding get() = _binding!!
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentLandingCategoriesBinding.inflate(inflater, container, false)
+        _binding = FragmentLandingCategoriesBinding.inflate(inflater, container, false)
         return binding.root
     }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.categoriesBg.isVisible = false

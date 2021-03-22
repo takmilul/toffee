@@ -39,7 +39,8 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
     private lateinit var channelInfo: ChannelInfo
     @Inject lateinit var mPref: SessionPreference
     @Inject lateinit var cacheManager: CacheManager
-    private lateinit var binding: AlertDialogMyChannelAddToPlaylistBinding
+    private var _binding: AlertDialogMyChannelAddToPlaylistBinding ? = null
+    private val binding get() = _binding!!
     private val mAdapter: MyChannelAddToPlaylistAdapter by lazy { MyChannelAddToPlaylistAdapter(this) }
     private val viewModel by viewModels<MyChannelAddToPlaylistViewModel>()
     private val createPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
@@ -78,7 +79,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
     
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         
-        binding = AlertDialogMyChannelAddToPlaylistBinding.inflate(this.layoutInflater)
+        _binding = AlertDialogMyChannelAddToPlaylistBinding.inflate(this.layoutInflater)
         val dialogBuilder = AlertDialog.Builder(requireContext()).setView(binding.root)
         alertDialog = dialogBuilder.create().apply {
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -105,6 +106,11 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
             binding.createButton -> createPlaylist()
             binding.closeIv -> alertDialog.dismiss()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
     
     private fun createPlaylist() {

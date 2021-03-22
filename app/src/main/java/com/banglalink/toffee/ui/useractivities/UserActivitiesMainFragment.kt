@@ -11,7 +11,8 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class UserActivitiesMainFragment: Fragment() {
-    private lateinit var binding: TabActivitiesMainBinding
+    private var _binding: TabActivitiesMainBinding ? = null
+    private val binding get() = _binding!!
 
     companion object {
         const val ARG_SELECTED_TAB = "selected-tab"
@@ -28,10 +29,14 @@ class UserActivitiesMainFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = TabActivitiesMainBinding.inflate(inflater, container, false)
+        _binding = TabActivitiesMainBinding.inflate(inflater, container, false)
         return binding.root
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

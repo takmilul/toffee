@@ -7,7 +7,6 @@ import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -44,7 +43,8 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     private var newBannerUrl: String? = null
     private var newProfileImageUrl: String? = null
     private lateinit var progressDialog: VelBoxProgressDialog
-    private lateinit var binding: FragmentMyChannelEditDetailBinding
+    private var _binding: FragmentMyChannelEditDetailBinding ? = null
+    private val binding get() = _binding!!
 
     @Inject lateinit var viewModelAssistedFactory: MyChannelEditDetailViewModel.AssistedFactory
     private val viewModel by viewModels<MyChannelEditDetailViewModel> { MyChannelEditDetailViewModel.provideFactory(viewModelAssistedFactory, myChannelDetail) }
@@ -63,12 +63,15 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_my_channel_edit_detail, container, false)
+        _binding = FragmentMyChannelEditDetailBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
         return binding.root
     }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.container.setOnClickListener(this)

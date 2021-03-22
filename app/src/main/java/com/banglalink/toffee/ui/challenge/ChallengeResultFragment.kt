@@ -17,7 +17,8 @@ import com.banglalink.toffee.model.Resource.Success
 
 class ChallengeResultFragment : Fragment(), OnClickListener {
 
-    private lateinit var binding: FragmentChallengeResultBinding
+    private var _binding: FragmentChallengeResultBinding ? = null
+    private val binding get() = _binding!!
     private val viewModel by viewModels<ChallengeResultViewModel>()
     
     companion object {
@@ -27,12 +28,15 @@ class ChallengeResultFragment : Fragment(), OnClickListener {
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentChallengeResultBinding.inflate(inflater, container, false)
+        _binding = FragmentChallengeResultBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
         return binding.root
     }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.joinButton.visibility = GONE

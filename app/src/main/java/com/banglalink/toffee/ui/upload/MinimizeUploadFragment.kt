@@ -24,7 +24,8 @@ class MinimizeUploadFragment: BaseFragment() {
     private var contentId: Long = -1
     private var uploadIdLong = -1L
 
-    private lateinit var binding: FragmentMinimizeUploadBinding
+    private var _binding: FragmentMinimizeUploadBinding ? = null
+    private val binding get() = _binding!!
 
     @Inject
     lateinit var uploadRepo: UploadInfoRepository
@@ -47,10 +48,14 @@ class MinimizeUploadFragment: BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMinimizeUploadBinding.inflate(inflater, container, false)
+        _binding = FragmentMinimizeUploadBinding.inflate(inflater, container, false)
         return binding.root
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

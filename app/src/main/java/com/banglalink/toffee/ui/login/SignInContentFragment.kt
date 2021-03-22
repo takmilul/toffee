@@ -50,7 +50,9 @@ class SignInContentFragment : BaseFragment() {
     private var referralCode: String = ""
     private var regSessionToken: String = ""
     private var isNumberShown:Boolean=false
-    lateinit var binding: FragmentSigninContentBinding
+    private var _binding: FragmentSigninContentBinding ? = null
+    private val binding get() = _binding!!
+
     private val viewModel by viewModels<SignInViewModel>()
     private val progressDialog by unsafeLazy { VelBoxProgressDialog(requireContext()) }
     
@@ -61,10 +63,14 @@ class SignInContentFragment : BaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = FragmentSigninContentBinding.inflate(inflater, container, false)
+        _binding = FragmentSigninContentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.signInContentMotionLayout.setOnClickListener { UtilsKt.hideSoftKeyboard(requireActivity()) }

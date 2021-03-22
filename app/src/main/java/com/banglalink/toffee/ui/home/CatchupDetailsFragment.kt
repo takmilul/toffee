@@ -50,7 +50,8 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
     private val viewModel by viewModels<CatchupDetailsViewModel>()
     private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
     private val myChannelVideosViewModel by activityViewModels<MyChannelVideosViewModel>()
-    private lateinit var binding: FragmentCatchupBinding
+    private var _binding: FragmentCatchupBinding ? = null
+    private val binding get() = _binding!!
     companion object{
         const val CHANNEL_INFO = "channel_info_"
         fun createInstance(channelInfo: ChannelInfo): CatchupDetailsFragment {
@@ -72,8 +73,13 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentCatchupBinding.inflate(inflater, container, false)
+        _binding = FragmentCatchupBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -20,7 +20,8 @@ import com.banglalink.toffee.util.bindCategoryImage
 
 class MovieFragment : BaseFragment() {
     private lateinit var category: Category
-    private lateinit var binding: FragmentMovieBinding
+    private var _binding: FragmentMovieBinding ? = null
+    private val binding get() = _binding!!
     private val landingViewModel by activityViewModels<LandingPageViewModel>()
     private val viewModel by activityViewModels<MovieViewModel>()
 
@@ -34,10 +35,14 @@ class MovieFragment : BaseFragment() {
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = FragmentMovieBinding.inflate(inflater, container, false)
+        _binding = FragmentMovieBinding.inflate(inflater, container, false)
         return binding.root
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         category = requireArguments().getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)!!

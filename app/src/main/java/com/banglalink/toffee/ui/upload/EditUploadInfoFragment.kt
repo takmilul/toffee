@@ -21,8 +21,8 @@ import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.FragmentEditUploadInfoBinding
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.extension.*
-import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.Category
+import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.SubCategory
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.ToffeeSpinnerAdapter
@@ -39,7 +39,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class EditUploadInfoFragment: BaseFragment() {
     
-    private lateinit var binding: FragmentEditUploadInfoBinding
+    private var _binding: FragmentEditUploadInfoBinding ? = null
+    private val binding get() = _binding!!
     private var progressDialog: VelBoxProgressDialog? = null
     @Inject lateinit var editUploadViewModelFactory: EditUploadInfoViewModel.AssistedFactory
     @Inject lateinit var uploadRepo: UploadInfoRepository
@@ -83,7 +84,7 @@ class EditUploadInfoFragment: BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = DataBindingUtil.inflate(
+        _binding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_edit_upload_info,
             container,
@@ -95,10 +96,10 @@ class EditUploadInfoFragment: BaseFragment() {
 
         return binding.root
     }
-
     override fun onDestroyView() {
         viewModel.tags.value = binding.uploadTags.selectedChipList.joinToString(" | ") { it.label }
         super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

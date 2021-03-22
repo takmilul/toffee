@@ -15,7 +15,8 @@ import com.banglalink.toffee.model.Resource.Success
 
 class ChallengeResultRewardWinnerFragment: Fragment(), BaseListItemCallback<ChallengeReward> {
     private lateinit var mAdapter: ChallengeResultRewardWinnerAdapter
-    private lateinit var binding: FragmentChallengeResultRewardWinnerBinding
+    private var _binding: FragmentChallengeResultRewardWinnerBinding ? = null
+    private val binding get() = _binding!!
     val viewModel by viewModels<ChallengeResultRewardWinnerViewModel>()
 
     companion object {
@@ -24,10 +25,13 @@ class ChallengeResultRewardWinnerFragment: Fragment(), BaseListItemCallback<Chal
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentChallengeResultRewardWinnerBinding.inflate(inflater, container, false)
+        _binding = FragmentChallengeResultRewardWinnerBinding.inflate(inflater, container, false)
         return binding.root
     }
-    
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

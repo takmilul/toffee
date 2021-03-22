@@ -46,10 +46,11 @@ class NewUploadMethodFragment : DialogFragment() {
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private var videoUri: Uri? = null
     private var alertDialog: AlertDialog? = null
-    private lateinit var binding: FragmentNewUploadMethodBinding
+    private var _binding: FragmentNewUploadMethodBinding ? = null
+    private val binding get() = _binding!!
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        binding = FragmentNewUploadMethodBinding.inflate(layoutInflater)
+        _binding = FragmentNewUploadMethodBinding.inflate(layoutInflater)
         binding.myChannelButton.setOnClickListener {
             openMyChannelFragment()
         }
@@ -70,7 +71,10 @@ class NewUploadMethodFragment : DialogFragment() {
             }
         return alertDialog!!
     }
-    
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     private fun checkFileSystemPermission() {
         lifecycleScope.launch {
             try {

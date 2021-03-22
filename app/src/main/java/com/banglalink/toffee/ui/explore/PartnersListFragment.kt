@@ -19,7 +19,9 @@ import kotlinx.coroutines.flow.collectLatest
 
 class PartnersListFragment : BaseFragment(), BaseListItemCallback<ChannelInfo> {
     private lateinit var mAdapter: PartnersListAdapter
-    private lateinit var binding: FragmentPartnersListBinding
+    private var _binding: FragmentPartnersListBinding ? = null
+    private val binding get() = _binding!!
+
     private val viewModel by viewModels<PartnersViewModel>()
     private val homeViewModel by activityViewModels<HomeViewModel>()
     
@@ -29,10 +31,13 @@ class PartnersListFragment : BaseFragment(), BaseListItemCallback<ChannelInfo> {
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_partners_list, container, false)
+        _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_partners_list, container, false)
         return binding.root
     }
-    
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mAdapter = PartnersListAdapter(this)

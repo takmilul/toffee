@@ -15,7 +15,8 @@ import com.banglalink.toffee.model.ReviewWithdrawal
 class ReviewWithdrawalFragment : Fragment(), OnClickListener {
 
     private lateinit var reviewWithdrawal: ReviewWithdrawal
-    private lateinit var binding: FragmentReviewWithdrawalBinding
+    private var _binding: FragmentReviewWithdrawalBinding ? = null
+    private val binding get() = _binding!!
     private val viewModel by viewModels<ReviewWithdrawalViewModel>()
 
     companion object {
@@ -34,12 +35,15 @@ class ReviewWithdrawalFragment : Fragment(), OnClickListener {
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentReviewWithdrawalBinding.inflate(inflater, container, false)
+        _binding = FragmentReviewWithdrawalBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
         binding.data = reviewWithdrawal
         return binding.root
     }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.confirmButton.setOnClickListener(this)

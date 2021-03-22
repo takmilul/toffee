@@ -26,17 +26,20 @@ class FeaturedContentFragment : HomeBaseFragment() {
     private var slideJob: Job? = null
     private lateinit var mAdapter: FeaturedContentAdapter
     val viewModel by activityViewModels<LandingPageViewModel>()
-    private lateinit var binding:FragmentLandingFeaturedBinding
-
+    private var _binding:FragmentLandingFeaturedBinding ? = null
+    private val binding get() = _binding!!
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-         binding = FragmentLandingFeaturedBinding.inflate(inflater, container, false)
+         _binding = FragmentLandingFeaturedBinding.inflate(inflater, container, false)
          return binding.root
     }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mAdapter = FeaturedContentAdapter(object : BaseListItemCallback<ChannelInfo> {
