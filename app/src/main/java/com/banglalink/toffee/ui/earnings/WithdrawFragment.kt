@@ -30,7 +30,8 @@ class WithdrawFragment : Fragment(), CheckedChangeListener<PaymentMethod>, OnCli
     private lateinit var mAdapter: WithdrawAdapter
     private lateinit var mViewModel: WithdrawViewModel
     private var enableToolbar: Boolean = false
-    private lateinit var binding: FragmentWithdrawBinding
+    private var _binding: FragmentWithdrawBinding ? = null
+    private val binding get() = _binding!!
 
     companion object {
         private const val SHOW_TOOLBAR = "enableToolbar"
@@ -46,7 +47,7 @@ class WithdrawFragment : Fragment(), CheckedChangeListener<PaymentMethod>, OnCli
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentWithdrawBinding.inflate(inflater, container, false)
+        _binding = FragmentWithdrawBinding.inflate(inflater, container, false)
 //        binding.lifecycleOwner = this
         return binding.root
     }
@@ -187,6 +188,7 @@ class WithdrawFragment : Fragment(), CheckedChangeListener<PaymentMethod>, OnCli
         binding.listview.clearOnScrollListeners()
 //        binding.unbind()
         super.onDestroyView()
+        _binding = null
     }
 
     override fun onCheckedChanged(view: View, item: PaymentMethod, position: Int, isFromCheckableView: Boolean) {
