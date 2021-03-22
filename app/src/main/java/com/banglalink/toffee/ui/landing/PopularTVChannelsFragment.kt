@@ -33,6 +33,7 @@ class PopularTVChannelsFragment : HomeBaseFragment() {
     }
 
     override fun onDestroyView() {
+        binding.channelList.adapter = null
         super.onDestroyView()
         _binding = null
     }

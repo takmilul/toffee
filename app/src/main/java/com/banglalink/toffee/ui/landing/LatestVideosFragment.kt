@@ -62,6 +62,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     }
 
     override fun onDestroyView() {
+        binding.latestVideosList.adapter = null
         super.onDestroyView()
         _binding = null
     }

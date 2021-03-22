@@ -38,6 +38,7 @@ class LandingCategoriesFragment: BaseFragment() {
     }
 
     override fun onDestroyView() {
+        binding.categoriesList.adapter = null
         super.onDestroyView()
         _binding = null
     }

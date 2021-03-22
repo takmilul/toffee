@@ -44,6 +44,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
         return binding.root
     }
     override fun onDestroyView() {
+        binding.userChannelList.adapter = null
         super.onDestroyView()
         _binding = null
     }

@@ -38,6 +38,7 @@ class FeaturedContentFragment : HomeBaseFragment() {
     }
     override fun onDestroyView() {
         slideJob?.cancel()
+        binding.featuredViewpager.adapter = null
         super.onDestroyView()
         _binding = null
     }

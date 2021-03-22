@@ -28,6 +28,7 @@ class EditorsChoiceFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInf
         return binding.root
     }
     override fun onDestroyView() {
+        binding.editorsChoiceList.adapter = null
         super.onDestroyView()
         _binding = null
     }
