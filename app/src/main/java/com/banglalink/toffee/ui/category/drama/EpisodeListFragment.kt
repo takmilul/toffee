@@ -165,6 +165,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
                     currentItem?.isSubscribed = isSubscribed
                     currentItem?.subscriberCount = (++subscriberCount).toInt()
                     detailsAdapter?.notifyDataSetChanged()
+                    homeViewModel.updateSubscriptionInfoDb(item.channel_owner_id,1)
                 }
                 else {
                     UnSubscribeDialog.show(requireContext()){
@@ -173,6 +174,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
                         currentItem?.isSubscribed = isSubscribed
                         currentItem?.subscriberCount = (--subscriberCount).toInt()
                         detailsAdapter?.notifyDataSetChanged()
+                        homeViewModel.updateSubscriptionInfoDb(item.channel_owner_id,-1)
                     }
                 }
             }

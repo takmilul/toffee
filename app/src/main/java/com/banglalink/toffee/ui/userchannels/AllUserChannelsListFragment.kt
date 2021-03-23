@@ -58,6 +58,7 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
                     }
                     homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId) ,1)
                     mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, trendingChannelInfo)
+                    homeViewModel.updateSubscriptionInfoDb(info.channelOwnerId,1)
                 }
                 else {
                     UnSubscribeDialog.show(requireContext()) {
@@ -67,6 +68,7 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
                         }
                         homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId) ,-1)
                         mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, trendingChannelInfo)
+                        homeViewModel.updateSubscriptionInfoDb(info.channelOwnerId,-1)
                     }
                 }
             }
