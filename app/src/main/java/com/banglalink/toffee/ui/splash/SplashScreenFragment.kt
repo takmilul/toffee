@@ -43,8 +43,10 @@ class SplashScreenFragment:BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.splashScreenMotionLayout.onTransitionCompletedListener {
-            if (viewModel.isCustomerLoggedIn())
+            if (viewModel.isCustomerLoggedIn()) {
                 initApp()
+                viewModel.loginResponse()
+            }
             else {
                 lifecycleScope.launch {
                     if(findNavController().currentDestination?.id != R.id.signInFragment && findNavController().currentDestination?.id == R.id.splashScreenFragment) {
@@ -59,7 +61,7 @@ class SplashScreenFragment:BaseFragment() {
     }
 
     private fun initApp(skipUpdate:Boolean = false){
-        observe(viewModel.init(skipUpdate)){
+        observe(viewModel.apiLoginResponse){
             when(it){
                 is Resource.Success ->{
                     ToffeeAnalytics.updateCustomerId(mPref.customerId)
@@ -75,7 +77,8 @@ class SplashScreenFragment:BaseFragment() {
                             ToffeeAnalytics.logApiError("apiLogin",it.error.msg)
                             binding.root.snack(it.error.msg){
                                 action("Retry") {
-                                    initApp(skipUpdate)
+//                                    initApp(skipUpdate)
+                                    viewModel.loginResponse(skipUpdate)
                                 }
                             }
                         }
@@ -113,7 +116,8 @@ class SplashScreenFragment:BaseFragment() {
         if (!forceUpdate) {
             builder.setNegativeButton("SKIP") { dialogInterface, _ ->
                 dialogInterface.dismiss()
-                initApp(true)
+//                initApp(true)
+                viewModel.loginResponse(true)
             }
         }
 
