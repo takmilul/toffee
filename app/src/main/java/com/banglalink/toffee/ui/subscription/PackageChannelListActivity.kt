@@ -8,8 +8,7 @@ import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.text.style.StrikethroughSpan
 import android.view.View
-import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProviders
+import androidx.activity.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import coil.load
 import coil.transform.CircleCropTransformation
@@ -33,9 +32,7 @@ class PackageChannelListActivity : AppCompatActivity() {
     lateinit var mPackage:Package
     lateinit var mAdapter:PackageChannelListAdapter
 
-    private val viewModel by unsafeLazy {
-        ViewModelProviders.of(this).get(PackageChannelListViewModel::class.java)
-    }
+    private val viewModel by viewModels<PackageChannelListViewModel>()
 
     private val progressDialog by unsafeLazy {
         VelBoxProgressDialog(this)
@@ -45,7 +42,8 @@ class PackageChannelListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         mPackage = intent.getSerializableExtra(PACKAGE) as Package
-        binding= DataBindingUtil.setContentView(this,R.layout.activity_package_channel_list_layout)
+        binding = ActivityPackageChannelListLayoutBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         setupToolbar()
         setupUi()

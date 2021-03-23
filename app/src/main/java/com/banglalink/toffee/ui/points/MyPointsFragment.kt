@@ -5,19 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.viewModels
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentMyPointsBinding
-import com.banglalink.toffee.util.unsafeLazy
 
 class MyPointsFragment : Fragment() {
 
     private var _binding: FragmentMyPointsBinding ? = null
     private val binding get() = _binding!!
     
-    private val viewModel by unsafeLazy {
-        ViewModelProviders.of(this).get(MyPointsViewModel::class.java)
-    }
+    private val viewModel by viewModels<MyPointsViewModel>()
     
     companion object {
         fun createInstance() = MyPointsFragment()
@@ -39,10 +36,10 @@ class MyPointsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         
         binding.redeemButton.setOnClickListener {
-            fragmentManager?.beginTransaction()
-                ?.replace(R.id.content_viewer, RedeemPointsFragment.createInstance())
-                ?.addToBackStack(RedeemPointsFragment::class.java.name)
-                ?.commit()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.content_viewer, RedeemPointsFragment.createInstance())
+                .addToBackStack(RedeemPointsFragment::class.java.name)
+                .commit()
         }
         
         

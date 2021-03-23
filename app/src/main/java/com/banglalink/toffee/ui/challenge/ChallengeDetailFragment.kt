@@ -4,24 +4,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
-import com.banglalink.toffee.R
+import androidx.fragment.app.viewModels
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentChallengeDetailBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
-import com.banglalink.toffee.util.unsafeLazy
 
 class ChallengeDetailFragment : Fragment(), BaseListItemCallback<String> {
 
     private lateinit var mAdapter: ChallengeDetailAdapter
     private var _binding: FragmentChallengeDetailBinding ? = null
     private val binding get() = _binding!!
-    private val viewModel by unsafeLazy { ViewModelProviders.of(this).get(ChallengeDetailViewModel::class.java) }
+    private val viewModel by viewModels<ChallengeDetailViewModel>()
     
     companion object {
         
@@ -33,8 +30,8 @@ class ChallengeDetailFragment : Fragment(), BaseListItemCallback<String> {
         super.onDestroyView()
         _binding = null
     }
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_challenge_detail, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentChallengeDetailBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
         return binding.root

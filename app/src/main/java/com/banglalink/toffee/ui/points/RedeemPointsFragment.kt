@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.R
@@ -17,7 +17,6 @@ import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
 import com.banglalink.toffee.model.RedeemPoints
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.onboarding.OnBoarding
-import com.banglalink.toffee.util.unsafeLazy
 
 class RedeemPointsFragment : Fragment() {
     
@@ -26,9 +25,7 @@ class RedeemPointsFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var scrollListener: EndlessRecyclerViewScrollListener
-    private val viewModel by unsafeLazy { 
-        ViewModelProviders.of(this).get(RedeemPointsViewModel::class.java)
-    }
+    private val viewModel by viewModels<RedeemPointsViewModel>()
 
     companion object {
         fun createInstance() = RedeemPointsFragment()

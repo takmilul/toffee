@@ -6,21 +6,20 @@ import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentChallengeResultBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
-import com.banglalink.toffee.util.unsafeLazy
 
 
 class ChallengeChannelFragment : Fragment(), OnClickListener {
 
     private var _binding: FragmentChallengeResultBinding ? = null
     private val binding get() = _binding!!
-    private val viewModel by unsafeLazy { ViewModelProviders.of(this).get(ChallengeResultViewModel::class.java) }
+    private val viewModel by viewModels<ChallengeResultViewModel>()
     
     companion object {
         @JvmStatic
@@ -28,7 +27,7 @@ class ChallengeChannelFragment : Fragment(), OnClickListener {
             ChallengeChannelFragment()
     }
     
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentChallengeResultBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
