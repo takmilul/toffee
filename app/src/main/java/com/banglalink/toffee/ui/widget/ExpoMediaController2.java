@@ -7,15 +7,12 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
-
-import androidx.databinding.DataBindingUtil;
 
 import com.banglalink.toffee.R;
 import com.banglalink.toffee.databinding.MediaControlLayout3Binding;
@@ -91,7 +88,7 @@ public class ExpoMediaController2 extends FrameLayout implements View.OnClickLis
     }
 
     private void initView() {
-        binding = DataBindingUtil.inflate(inflater, R.layout.media_control_layout3, this, true);
+        binding = MediaControlLayout3Binding.inflate(inflater,this, true);
         binding.minimize.setOnClickListener(this);
         binding.play.setOnClickListener(this);
 //        binding.forward.setOnClickListener(this);

@@ -24,7 +24,7 @@ class RedeemPointsSuccessFragment : Fragment() {
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_redeem_points_success, container, false)
+        binding = FragmentRedeemPointsSuccessBinding.inflate(inflater, container, false)
         return binding.root
     }
     

@@ -36,7 +36,7 @@ class MoviesPreviewItemFragment : BaseFragment(), BaseListItemCallback<ChannelIn
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_movies_preview_item, container, false)
+        _binding = FragmentMoviesPreviewItemBinding.inflate(inflater, container, false)
         return binding.root
     }
 

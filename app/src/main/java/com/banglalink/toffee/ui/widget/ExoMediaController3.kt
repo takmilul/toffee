@@ -105,7 +105,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
 
     private fun initView() {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        binding = DataBindingUtil.inflate(inflater, layout.media_control_layout3, this, true)
+        binding = MediaControlLayout3Binding.inflate(inflater, this, true)
         binding.minimize.setOnClickListener(this)
         binding.play.setOnClickListener(this)
 //        binding.forward.setOnClickListener(this)

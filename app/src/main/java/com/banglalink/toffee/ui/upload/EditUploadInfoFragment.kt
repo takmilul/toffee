@@ -84,9 +84,8 @@ class EditUploadInfoFragment: BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = DataBindingUtil.inflate(
+        _binding = FragmentEditUploadInfoBinding.inflate(
             inflater,
-            R.layout.fragment_edit_upload_info,
             container,
             false
         )

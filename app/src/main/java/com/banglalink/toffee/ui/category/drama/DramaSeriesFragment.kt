@@ -30,7 +30,7 @@ class DramaSeriesFragment: BaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_drama_series, container, false)
+        _binding = FragmentDramaSeriesBinding.inflate(inflater, container, false)
         return binding.root
     }
 

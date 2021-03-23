@@ -31,7 +31,7 @@ class PartnersListFragment : BaseFragment(), BaseListItemCallback<ChannelInfo> {
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_partners_list, container, false)
+        _binding = FragmentPartnersListBinding.inflate(inflater, container, false)
         return binding.root
     }
     override fun onDestroyView() {
