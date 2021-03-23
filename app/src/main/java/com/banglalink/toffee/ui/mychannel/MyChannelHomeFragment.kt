@@ -163,7 +163,6 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                     binding.isSubscribed = isSubscribed
                     binding.subscriberCount = ++subscriberCount
                     binding.channelDetailView.subscriptionButton.isEnabled = true
-                    homeViewModel.updateSubscriptionInfoDb(channelOwnerId,1)
                 } else {
                     UnSubscribeDialog.show(requireContext()) {
                         binding.channelDetailView.subscriptionButton.isEnabled = false
@@ -172,7 +171,6 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                         binding.subscriberCount = --subscriberCount
                         binding.isSubscribed = isSubscribed
                         binding.channelDetailView.subscriptionButton.isEnabled = true
-                        homeViewModel.updateSubscriptionInfoDb(channelOwnerId,-1)
                     }
                 }
             }

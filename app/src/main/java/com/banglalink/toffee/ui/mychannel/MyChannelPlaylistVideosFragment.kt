@@ -159,7 +159,6 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
                     currentItem?.isSubscribed = isSubscribed
                     currentItem?.subscriberCount = (++subscriberCount).toInt()
                     detailsAdapter.notifyDataSetChanged()
-                    homeViewModel.updateSubscriptionInfoDb(item.channel_owner_id,1)
                 } else {
                     UnSubscribeDialog.show(requireContext()) {
                         homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), -1)
@@ -167,7 +166,6 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
                         currentItem?.isSubscribed = isSubscribed
                         currentItem?.subscriberCount = (--subscriberCount).toInt()
                         detailsAdapter.notifyDataSetChanged()
-                        homeViewModel.updateSubscriptionInfoDb(item.channel_owner_id,-1)
                     }
                 }
             }
