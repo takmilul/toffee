@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.core.view.marginTop
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
@@ -25,6 +26,7 @@ import com.banglalink.toffee.databinding.FragmentMyChannelVideosBinding
 import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
@@ -134,6 +136,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
                 uploadVideoButton.hide()
                 creatorsPolicyButton.hide()
                 emptyViewLabel.text = "This channel has no video yet"
+                (emptyViewIcon.layoutParams as ViewGroup.MarginLayoutParams).topMargin = 32.px
             }
         }
     }

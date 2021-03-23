@@ -37,7 +37,9 @@ class PopularTVChannelsFragment : HomeBaseFragment() {
 
         mAdapter = ChannelAdapter(object : BaseListItemCallback<ChannelInfo> {
             override fun onItemClicked(item: ChannelInfo) {
-                homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+                if (item.id.isNotBlank()) {
+                    homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+                }
             }
         })
 

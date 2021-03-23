@@ -16,6 +16,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.databinding.DataBindingUtil
@@ -50,7 +52,8 @@ class SignInContentFragment : BaseFragment() {
     private var phoneNumber: String = ""
     private var referralCode: String = ""
     private var regSessionToken: String = ""
-    private var isNumberShown:Boolean=false
+    private var snackBar: Snackbar? = null
+    private var isNumberShown:Boolean = false
     lateinit var binding: FragmentSigninContentBinding
     private val viewModel by viewModels<SignInViewModel>()
     private val progressDialog by unsafeLazy { VelBoxProgressDialog(requireContext()) }
@@ -124,6 +127,7 @@ class SignInContentFragment : BaseFragment() {
             progressDialog.dismiss()
             when (it) {
                 is Resource.Success -> {
+                    snackBar?.dismiss()
                     phoneNumber = binding.phoneNumberEt.text.toString().trim()
                     referralCode = binding.refCodeEt.text.toString().trim()
                     regSessionToken = it.data
@@ -147,11 +151,11 @@ class SignInContentFragment : BaseFragment() {
                             showInvalidReferralCodeDialog(it.error.msg, it.error.additionalMsg)
                         }
                         LOGIN_ERROR -> {
-                            binding.root.snack(it.error.msg, Snackbar.LENGTH_LONG) {}
+                            snackBar = binding.root.snack(it.error.msg, Snackbar.LENGTH_LONG) {}
                         }
                         else -> {
                             ToffeeAnalytics.logApiError("reRegistration",it.error.msg,phoneNo)
-                            binding.root.snack(it.error.msg) {
+                            snackBar = binding.root.snack(it.error.msg) {
                                 action("Retry") {
                                     handleLogin()
                                 }
@@ -231,23 +235,28 @@ class SignInContentFragment : BaseFragment() {
             val hintRequest = HintRequest.Builder().setPhoneNumberIdentifierSupported(true).build()
             val intent = Credentials.getClient(requireActivity()).getHintPickerIntent(hintRequest)
             intent?.intentSender?.let {
-                startIntentSenderForResult(it, RESOLVE_HINT, null, 0, 0, 0, null)
+                phoneNumberHintResultLauncher.launch(IntentSenderRequest.Builder(it).build())
             }
         } catch (e: Exception) {
             ToffeeAnalytics.logException(e)
             ToffeeAnalytics.logBreadCrumb("Could not retrieve phone number")
         }
     }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == RESOLVE_HINT && resultCode == AppCompatActivity.RESULT_OK && data != null) {
-            val credential: Credential? =
-                data.getParcelableExtra(Credential.EXTRA_KEY)
-            credential?.let {
-                binding.phoneNumberEt.setText(it.id)
-                binding.phoneNumberEt.setSelection(it.id.length)
+    
+    private val phoneNumberHintResultLauncher = 
+        registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()){ result ->
+            if (result.resultCode == AppCompatActivity.RESULT_OK && result.data != null) {
+                val credential: Credential? = result.data!!.getParcelableExtra(Credential.EXTRA_KEY)
+                credential?.let {
+                    binding.phoneNumberEt.setText(it.id)
+                    binding.phoneNumberEt.setSelection(it.id.length)
+                }
             }
-        }
+    }
+
+    override fun onDestroy() {
+        snackBar = null
+        phoneNumberHintResultLauncher.unregister()
+        super.onDestroy()
     }
 }

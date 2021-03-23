@@ -540,7 +540,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         when (playbackState) {
             Player.STATE_BUFFERING -> {
                 binding.preview.setOnClickListener(this)
-                binding.preview.setImageResource(color.black)
+//                binding.preview.setImageResource(color.black)
                 binding.play.visibility = GONE
 //                binding.forward.visibility = INVISIBLE
 //                binding.backward.visibility = INVISIBLE

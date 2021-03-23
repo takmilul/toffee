@@ -179,4 +179,10 @@ class NewUploadMethodFragment : DialogFragment() {
             findNavController().navigate(R.id.editUploadInfoFragment, Bundle().apply { putString(EditUploadInfoFragment.UPLOAD_FILE_URI, uri) })
         }
     }
+    
+    override fun onDestroy() {
+        cameraResultLauncher.unregister()
+        galleryResultLauncher.unregister()
+        super.onDestroy()
+    }
 }
