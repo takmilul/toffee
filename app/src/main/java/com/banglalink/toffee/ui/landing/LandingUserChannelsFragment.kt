@@ -72,7 +72,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
                             userChannelInfo.subscriberCount--
                         }
 //                        subscriptionViewModel.setSubscriptionStatus(info.id, 0, info.channelOwnerId)
-                     //   homeViewModel.updateSubscriptionInfoDb(info.channelOwnerId,-1)
+                        homeViewModel.updateSubscriptionInfoDb(info.channelOwnerId,-1)
                         homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId), -1)
                         mAdapterLanding.notifyItemRangeChanged(0, mAdapterLanding.itemCount, channelInfo)
                     }
