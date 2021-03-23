@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.*
 import com.banglalink.toffee.data.database.dao.ReactionDao
-import com.banglalink.toffee.data.database.entities.SubscriptionCount
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.data.network.retrofit.DbApi
@@ -68,7 +67,6 @@ class HomeViewModel @Inject constructor(
     val shareContentLiveData = SingleLiveEvent<ChannelInfo>()
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val switchBottomTab = SingleLiveEvent<Int>()
-
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val viewAllVideoLiveData = MutableLiveData<Boolean>()
     val viewAllCategories = MutableLiveData<Boolean>()
@@ -96,17 +94,6 @@ class HomeViewModel @Inject constructor(
         }
 
     }
-    fun updateSubscriptionInfoDb(channelId: Int, status: Int){
-        viewModelScope.launch {
-           val subscriptionCount=subscriptionCountRepository.getSubscriptionCount(channelId)
-            if (subscriptionCount.status!=0L) {
-                subscriptionCountRepository.updateSubscriptionCount(channelId, status)
-             }
-           else {
-             subscriptionCountRepository.insert(SubscriptionCount(channelId, 1))
-           }
-         }
-     }
     private fun setFcmToken(token: String) {
         viewModelScope.launch {
             try {
