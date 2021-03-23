@@ -222,6 +222,7 @@ abstract class PlayerPageActivity :
 
             exoPlayer = Builder(this)
                 .setTrackSelector(defaultTrackSelector!!)
+                .setLoadControl(DefaultLoadControl.Builder().setBufferDurationsMs(30_000, 60_000, 2_500, 5_000).build())
                 .build().apply {
                     addAnalyticsListener(playerAnalyticsListener!!)
                     addListener(playerEventListener)

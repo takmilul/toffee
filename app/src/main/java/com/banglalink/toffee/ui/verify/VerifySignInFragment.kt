@@ -68,11 +68,15 @@ class VerifySignInFragment : BaseFragment() {
         
         binding.resend.paintFlags = binding.resend.paintFlags or Paint.UNDERLINE_TEXT_FLAG
         binding.resend.setOnClickListener {
+            progressDialog.show()
             handleResendButton()
+            viewModel.resendCode(phoneNumber, referralCode)
         }
         binding.confirmBtn.setOnClickListener {
+            progressDialog.show()
             binding.codeNumber.clearFocus()
-            verifyCode(binding.codeNumber.text.toString())
+            observeVerifyCode(binding.codeNumber.text.toString())
+            viewModel.verifyCode(binding.codeNumber.text.toString(), regSessionToken, referralCode)
         }
         binding.backButton.setOnClickListener {
             binding.signInVerifyMotionLayout.onTransitionCompletedListener {
@@ -94,7 +98,8 @@ class VerifySignInFragment : BaseFragment() {
         observe(mSmsBroadcastReceiver.otpLiveData) {
             binding.codeNumber.setText(it)
             binding.codeNumber.setSelection(it.length)
-            verifyCode(binding.codeNumber.text.toString())
+//            verifyCode(binding.codeNumber.text.toString())
+            viewModel.verifyCode(binding.codeNumber.text.toString(), regSessionToken, referralCode)
         }
 
         val intentFilter = IntentFilter()
@@ -105,12 +110,10 @@ class VerifySignInFragment : BaseFragment() {
         mClient.startSmsRetriever()
     }
 
-    private fun verifyCode(code: String) {
-        progressDialog.show()
-
+    private fun observeVerifyCode(code: String) {
         val signInMotionLayout = parentFragment?.parentFragment?.view
         
-        observe(viewModel.verifyCode(code, regSessionToken, referralCode)) {
+        observe(viewModel.verifyResponse) {
             progressDialog.dismiss()
             when (it) {
                 is Resource.Success -> {
@@ -151,8 +154,8 @@ class VerifySignInFragment : BaseFragment() {
     }
     
     private fun handleResendButton() {
-        progressDialog.show()
-        observe(viewModel.resendCode(phoneNumber, referralCode)) {
+        observe(viewModel.resendCodeResponse) {
+
             progressDialog.dismiss()
             when (it) {
                 is Resource.Success -> {
@@ -164,7 +167,9 @@ class VerifySignInFragment : BaseFragment() {
                 is Resource.Failure -> {
                     binding.root.snack(it.error.msg) {
                         action("Retry") {
+                            progressDialog.show()
                             handleResendButton()
+                            viewModel.resendCode(phoneNumber, referralCode)
                         }
                     }
                 }

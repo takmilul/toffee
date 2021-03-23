@@ -14,13 +14,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AllUserChannelsListViewModel @Inject constructor(
-    private val popularChannelApiService: AllUserChannelsService,
+        private val popularChannelApiService: AllUserChannelsService,
 ) : ViewModel() {
-
     fun loadUserChannels(): Flow<PagingData<UserChannelInfo>> {
         return userChannelRepo.getList().cachedIn(viewModelScope)
     }
-
     private val userChannelRepo by lazy {
         BaseListRepositoryImpl({
             BaseNetworkPagingSource(

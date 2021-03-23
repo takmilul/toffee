@@ -1,6 +1,7 @@
 package com.banglalink.toffee.usecase
 
 import android.util.Log
+import com.banglalink.toffee.data.database.entities.SubscriptionCount
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.repository.SubscriptionCountRepository
 import com.banglalink.toffee.data.repository.SubscriptionInfoRepository
@@ -14,7 +15,7 @@ class SendSubscribeEvent @Inject constructor(
     private val subscriptionInfoRepository: SubscriptionInfoRepository, 
     private val subscriptionCountRepository: SubscriptionCountRepository
     ) {
-
+    var subscriptionCount: SubscriptionCount? =null
     suspend fun execute(subscriptionInfo: SubscriptionInfo, status: Int, sendToPubSub:Boolean = true){
         if(sendToPubSub){
             sendToPubSub(subscriptionInfo, status)
@@ -37,13 +38,22 @@ class SendSubscribeEvent @Inject constructor(
     }
 
     private suspend fun updateSubscriptionInfoDb(subscriptionInfo: SubscriptionInfo, status: Int){
+        subscriptionCount=subscriptionCountRepository.getSubscriptionCount(subscriptionInfo.channelId)
+        if (subscriptionCount!=null) {
+
+            subscriptionCountRepository.updateSubscriptionCount(subscriptionInfo.channelId, status)
+        }
+        else {
+            subscriptionCountRepository.insert(SubscriptionCount(subscriptionInfo.channelId, 1))
+        }
         if (status == 1){
             subscriptionInfoRepository.insert(subscriptionInfo)
         }
         else{
             subscriptionInfoRepository.deleteSubscriptionInfo(subscriptionInfo.channelId, subscriptionInfo.customerId)
         }
-        subscriptionCountRepository.updateSubscriptionCount(subscriptionInfo.channelId, status)
+
+
     }
 
     /*private suspend fun sendToToffeeServer(SubscriptionCount: SubscriptionCount, subscriptionCount: Int){

@@ -7,6 +7,7 @@ interface SubscriptionCountRepository {
     suspend fun delete(subscriptionCount: SubscriptionCount): Int
     suspend fun getAllSubscriptionCount(): List<SubscriptionCount>
     suspend fun getSubscriberCount(channelId: Int): Long
+    suspend fun getSubscriptionCount(channelId: Int): SubscriptionCount
     suspend fun updateSubscriptionCount(channelId: Int, status: Int): Int
     suspend fun insertAll(vararg subscriptionCountList: SubscriptionCount): LongArray
 }

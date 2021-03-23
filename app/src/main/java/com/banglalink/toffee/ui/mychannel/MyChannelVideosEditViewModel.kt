@@ -11,6 +11,7 @@ import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.SubCategory
+import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.getError
 import com.banglalink.toffee.util.imagePathToBase64
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -41,10 +42,19 @@ class MyChannelVideosEditViewModel @Inject constructor(
     var bannerBase64: String? = "NULL"
     private val responseLiveData = MutableLiveData<Resource<ResponseBean>>()
     val editResponse = responseLiveData.toLiveData()
+    val exitFragment = SingleLiveEvent<Boolean>()
 
     init {
         viewModelScope.launch {
-            categories.value = categoryApi.loadData(0, 0)
+            categories.value = try {
+                categoryApi.loadData(0, 0)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                emptyList()
+            }
+            if (categories.value.isNullOrEmpty()) {
+                exitFragment.value = true
+            }
         }
         ageGroup.value = listOf("For All", "3+", "9+", "13+", "18+")
         ageGroupPosition.value = 0
@@ -85,7 +95,10 @@ class MyChannelVideosEditViewModel @Inject constructor(
 
     fun categoryIndexChanged(idx: Int) {
         categories.value?.getOrNull(idx)?.let {
-            subCategories.value = it.subcategories
+            it.subcategories?.let {subCategoriesList->
+                subCategories.value = subCategoriesList
+            }
+
         }
     }
 }
