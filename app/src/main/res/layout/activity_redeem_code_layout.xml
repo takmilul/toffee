@@ -29,6 +29,7 @@
             android:layout_marginTop="20dp"
             android:layout_marginEnd="8dp"
             android:adjustViewBounds="true"
+            android:contentDescription="@string/redeem_code"
             android:src="@drawable/redeem_code_icon"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
