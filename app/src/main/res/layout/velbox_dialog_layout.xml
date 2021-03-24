@@ -103,12 +103,13 @@
 
     <ImageView
         android:id="@+id/close_button"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="16dp"
         android:clickable="true"
         android:focusable="true"
+        android:scaleType="centerInside"
+        android:contentDescription="Close"
         android:background="?selectableItemBackgroundBorderless"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
