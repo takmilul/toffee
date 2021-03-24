@@ -109,6 +109,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
     }
 
     override fun onDestroyView() {
+        binding.listview.adapter = null
         super.onDestroyView()
         _binding = null
     }

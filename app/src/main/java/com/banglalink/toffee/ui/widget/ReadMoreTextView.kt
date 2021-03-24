@@ -67,21 +67,32 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
         }
         typedArray.recycle()
         viewMoreSpan = ReadMoreClickableSpan()
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
         onGlobalLayoutLineEndIndex()
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        viewTreeObserver.removeOnGlobalLayoutListener(globalLayoutListener)
+    }
+
+    private val globalLayoutListener = object : OnGlobalLayoutListener {
+        override fun onGlobalLayout() {
+            val obs = viewTreeObserver
+            if (lineCount > 0) {
+                obs.removeOnGlobalLayoutListener(this)
+            }
+            refreshLineEndIndex()
+            setText()
+        }
     }
 
     private fun onGlobalLayoutLineEndIndex() {
         if (trimMode == TRIM_MODE_LINES) {
-            viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    val obs = viewTreeObserver
-                    if (lineCount > 0) {
-                        obs.removeOnGlobalLayoutListener(this)
-                    }
-                    refreshLineEndIndex()
-                    setText()
-                }
-            })
+            viewTreeObserver.addOnGlobalLayoutListener(globalLayoutListener)
         }
     }
 

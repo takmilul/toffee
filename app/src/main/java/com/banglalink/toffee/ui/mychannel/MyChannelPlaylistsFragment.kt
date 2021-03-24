@@ -77,6 +77,7 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
         return binding.root
     }
     override fun onDestroyView() {
+        binding.myChannelPlaylists.adapter = null
         super.onDestroyView()
         _binding = null
     }
