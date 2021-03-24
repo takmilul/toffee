@@ -82,7 +82,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:elevation="2dp"
-            android:contentDescription="@string/content_loader"
+            android:contentDescription="@string/txt_content_loader"
             android:visibility="gone"
             android:src="@drawable/content_loader"
             android:background="@drawable/gif_round_border"
@@ -108,7 +108,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
-                android:contentDescription="@string/empty"
+                android:contentDescription="@string/txt_empty"
                 android:maxWidth="144dp"
                 app:srcCompat="@drawable/ic_activities_empty" />
 

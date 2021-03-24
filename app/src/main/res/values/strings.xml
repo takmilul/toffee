@@ -160,4 +160,14 @@
     <string name="terms">Terms &amp; Conditions</string>
     <string name="phone_number_hint"><i>Your Phone Number</i></string>
     <string name="channel_name_hint"><i>Set Your Channel Name</i></string>
+    <string name="txt_close">Close</string>
+    <string name="txt_movies">Movies</string>
+    <string name="txt_msg_success">Success</string>
+    <string name="txt_redeem_code">Redeem code</string>
+    <string name="txt_content_loader">Content Loader</string>
+    <string name="txt_empty">Empty</string>
+    <string name="txt_category">Category</string>
+    <string name="txt_placeholder">Placeholder</string>
+    <string name="txt_profile_image">Profile Image</string>
+    <string name="txt_back">back</string>
 </resources>

@@ -41,7 +41,7 @@
                     android:layout_height="140dp"
                     android:layout_gravity="center"
                     android:layout_marginTop="60dp"
-                    android:contentDescription="@string/toffee"
+                    android:contentDescription="@string/app_name"
                     app:srcCompat="@drawable/ic_logo_large_white"/>
 
 
