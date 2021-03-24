@@ -97,7 +97,7 @@ dependencies {
     //Firebase Push Notification
     implementation 'com.google.firebase:firebase-messaging:21.0.1'
     //Firebase in app messaging
-    implementation 'com.google.firebase:firebase-inappmessaging-display:19.1.4'
+    implementation 'com.google.firebase:firebase-inappmessaging-display:19.1.5'
     //Firebase core
     implementation 'com.google.firebase:firebase-core:18.0.2'
     // Recommended: Add the Firebase SDK for Google Analytics.
@@ -121,6 +121,7 @@ dependencies {
     implementation 'androidx.mediarouter:mediarouter:1.2.2'
     implementation 'com.google.android.gms:play-services-cast-framework:19.0.0'
 
+    //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.6'
 
     // Paging
     implementation 'androidx.paging:paging-runtime-ktx:3.0.0-beta02'
@@ -160,7 +161,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.3.0"
 
 	implementation 'de.hdodenhof:circleimageview:3.1.0'
-    implementation 'com.google.android.gms:play-services-auth:18.1.0'
+    implementation 'com.google.android.gms:play-services-auth:19.0.0'
     implementation 'com.google.android.gms:play-services-auth-api-phone:17.5.0'
 
     implementation ('com.google.apis:google-api-services-pubsub:v1-rev354-1.22.0') {
