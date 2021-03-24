@@ -97,6 +97,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     }
 
     override fun onDestroyView() {
+        binding.myChannelPlaylistVideos.adapter = null
         super.onDestroyView()
         _binding = null
     }

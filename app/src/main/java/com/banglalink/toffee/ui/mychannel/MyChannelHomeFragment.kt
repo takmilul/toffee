@@ -102,6 +102,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         return binding.root
     }
     override fun onDestroyView() {
+        binding.viewPager.adapter = null
         super.onDestroyView()
         _binding = null
     }

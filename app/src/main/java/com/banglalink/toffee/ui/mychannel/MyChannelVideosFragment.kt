@@ -83,6 +83,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
         return binding.root
     }
     override fun onDestroyView() {
+        binding.myChannelVideos.adapter = null
         super.onDestroyView()
         _binding = null
     }
