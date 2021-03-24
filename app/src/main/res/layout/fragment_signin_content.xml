@@ -88,6 +88,7 @@
             app:layout_constraintTop_toTopOf="@id/ref_code_et" />
 
         <ImageView
+            android:contentDescription="@string/txt_refer_code"
             android:id="@+id/arrow_icon"
             android:layout_width="14dp"
             android:layout_height="14dp"

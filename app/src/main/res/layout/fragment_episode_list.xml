@@ -50,6 +50,7 @@
             android:id="@+id/progress_bar"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:contentDescription="@string/txt_content_loader"
             android:layout_marginBottom="16dp"
             android:background="@drawable/gif_round_border"
             android:src="@drawable/content_loader"

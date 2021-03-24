@@ -51,6 +51,7 @@
             app:layout_constraintTop_toTopOf="@+id/catch_tv"/>
 
         <ImageView
+            android:contentDescription="@string/txt_view_all"
             android:visibility="gone"
             android:id="@+id/catch_view_all_arrow"
             android:layout_width="14dp"

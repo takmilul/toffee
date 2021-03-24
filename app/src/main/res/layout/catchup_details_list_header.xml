@@ -68,7 +68,8 @@
             android:src="@drawable/ic_menu_more"
             app:layout_constraintBottom_toBottomOf="@+id/program_name"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/program_name" />
+            app:layout_constraintTop_toTopOf="@+id/program_name"
+            android:contentDescription="@string/txt_options" />
         
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

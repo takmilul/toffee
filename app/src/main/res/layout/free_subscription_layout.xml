@@ -25,6 +25,7 @@
             tools:layout_editor_absoluteX="1dp">
 
             <ImageView
+                android:contentDescription="@string/txt_badge_icon"
                 android:id="@+id/package_badge_icon"
                 loadImageFromUrl="@{data.mobileLogo}"
                 android:layout_width="100dp"
@@ -38,6 +39,7 @@
                 app:srcCompat="@drawable/ic_free_package" />
 
             <ImageView
+                android:contentDescription="@string/txt_check"
                 android:id="@+id/imageView3"
                 android:layout_width="@dimen/check_dimen"
                 android:layout_height="@dimen/check_dimen"

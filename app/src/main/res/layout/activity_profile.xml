@@ -55,7 +55,8 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        android:src="@drawable/ic_profile_default"/>
+                        android:src="@drawable/ic_profile_default"
+                        android:contentDescription="@string/txt_avatar" />
 
                     <TextView
                         android:id="@+id/name_tv"

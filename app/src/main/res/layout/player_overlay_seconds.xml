@@ -15,6 +15,7 @@
         android:orientation="horizontal">
 
         <ImageView
+            android:contentDescription="@string/txt_icon"
             android:id="@+id/icon_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -22,6 +23,7 @@
             tools:alpha="0.18" />
 
         <ImageView
+            android:contentDescription="@string/txt_icon"
             android:id="@+id/icon_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -29,6 +31,7 @@
             tools:alpha="0.5" />
 
         <ImageView
+            android:contentDescription="@string/txt_icon"
             android:id="@+id/icon_3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

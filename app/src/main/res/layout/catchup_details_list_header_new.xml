@@ -66,7 +66,8 @@ Day 21 - AUS vs IND" />
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/program_name"
             app:layout_constraintVertical_bias="0"
-            app:srcCompat="@drawable/ic_menu_more" />
+            app:srcCompat="@drawable/ic_menu_more"
+            android:contentDescription="@string/txt_options" />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/circleImageView"
@@ -75,6 +76,7 @@ Day 21 - AUS vs IND" />
             android:layout_height="40dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="12dp"
+            android:contentDescription="@string/txt_avatar"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:onClick="@{()-> callback.onProviderIconClicked(data)}"
             app:layout_constraintStart_toStartOf="parent"
@@ -155,7 +157,8 @@ Day 21 - AUS vs IND" />
                 app:layout_constraintStart_toStartOf="@id/secondIcon"
                 app:layout_constraintTop_toTopOf="@id/reactionCount"
                 bind:emoIcon="@{data}"
-                bind:iconPosition="@{3}" />
+                bind:iconPosition="@{3}"
+                android:contentDescription="@string/tv_wow" />
 
             <ImageView
                 android:id="@+id/secondIcon"
@@ -167,6 +170,7 @@ Day 21 - AUS vs IND" />
                 app:layout_constraintEnd_toEndOf="@id/thirdIcon"
                 app:layout_constraintTop_toTopOf="@id/reactionCount"
                 bind:emoIcon="@{data}"
+                android:contentDescription="@string/txt_love"
                 bind:iconPosition="@{2}" />
 
             <ImageView
@@ -179,6 +183,7 @@ Day 21 - AUS vs IND" />
                 app:layout_constraintEnd_toEndOf="@id/secondIcon"
                 app:layout_constraintTop_toTopOf="@id/reactionCount"
                 bind:emoIcon="@{data}"
+                android:contentDescription="@string/txt_like"
                 bind:iconPosition="@{1}" />
 
             <TextView
