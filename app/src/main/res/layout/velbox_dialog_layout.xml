@@ -109,7 +109,7 @@
         android:clickable="true"
         android:focusable="true"
         android:scaleType="centerInside"
-        android:contentDescription="Close"
+        android:contentDescription="@string/txt_close"
         android:background="?selectableItemBackgroundBorderless"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

@@ -36,6 +36,7 @@
         android:background="@drawable/gif_round_border"
         android:src="@drawable/content_loader"
         android:layout_gravity="center"
+        android:contentDescription="@string/txt_content_loader"
         android:layout_width="40dp"
         android:layout_height="40dp"/>
     <!--<Button

@@ -19,6 +19,7 @@
         android:layout_height="match_parent"
         android:scaleType="fitXY"
         android:minHeight="200dp"
+        android:contentDescription="@string/txt_featued_image"
         android:onClick="@{()->callback.onItemClicked(data)}"
         loadImageFromUrl="@{data.ugcFeaturedImage}"
         android:adjustViewBounds="true"

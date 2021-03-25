@@ -25,6 +25,7 @@
             tools:layout_editor_absoluteX="1dp">
 
             <ImageView
+                android:contentDescription="@string/txt_badge_icon"
                 android:id="@+id/package_badge_icon"
                 loadImageFromUrlRounded="@{data.mobileLogo}"
                 android:layout_width="100dp"
@@ -50,6 +51,7 @@
                 tools:text="@string/free_trial" />
 
             <ImageView
+                android:contentDescription="@string/txt_check"
                 android:id="@+id/imageView3"
                 android:layout_width="@dimen/check_dimen"
                 android:layout_height="@dimen/check_dimen"

@@ -41,6 +41,7 @@
                     android:layout_height="140dp"
                     android:layout_gravity="center"
                     android:layout_marginTop="60dp"
+                    android:contentDescription="@string/app_name"
                     app:srcCompat="@drawable/ic_logo_large_white"/>
 
 
@@ -72,7 +73,8 @@
                         android:layout_width="14dp"
                         android:layout_height="14dp"
                         android:layout_marginTop="2dp"
-                        android:src="@drawable/ic_right_arrow_white"/>
+                        android:src="@drawable/ic_right_arrow_white"
+                        android:contentDescription="@string/txt_terms_condition" />
 
                 </LinearLayout>
 
@@ -104,7 +106,8 @@
                         android:layout_width="14dp"
                         android:layout_height="14dp"
                         android:layout_marginTop="2dp"
-                        android:src="@drawable/ic_right_arrow_white"/>
+                        android:src="@drawable/ic_right_arrow_white"
+                        android:contentDescription="@string/privacy_policy" />
 
                 </LinearLayout>
 

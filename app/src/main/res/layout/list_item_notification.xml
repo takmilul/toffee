@@ -40,6 +40,7 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_margin="16dp"
+                android:contentDescription="@string/txt_profile_image"
                 android:src="@drawable/ic_profile"
                 loadImageFromUrlRounded="@{data.thumbnailUrl}"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -152,6 +153,7 @@
                 app:layout_constraintBottom_toBottomOf="@id/learnMoreButton"/>
 
             <ImageView
+                android:contentDescription="@string/txt_options"
                 android:id="@+id/options"
                 style="@style/OptionMenuStyle"
                 android:onClick="@{(view) -> callback.onOpenMenu(view, data)}"

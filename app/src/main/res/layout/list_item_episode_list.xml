@@ -36,6 +36,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
+                android:contentDescription="@string/txt_poster"
                 android:id="@+id/poster"
                 loadChannelImage="@{data}"
                 android:layout_width="match_parent"
@@ -45,6 +46,7 @@
                 tools:src="@drawable/placeholder" />
 
             <ImageView
+                android:contentDescription="@string/txt_play"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/backgroundDarkAlpha"
@@ -66,6 +68,7 @@
             app:layout_constraintStart_toStartOf="@+id/poster_container" />
 
         <ImageView
+            android:contentDescription="@string/txt_options"
             android:id="@+id/options"
             style="@style/OptionMenuStyle"
             android:onClick="@{(v)->callback.onOpenMenu(v, data)}"
@@ -108,6 +111,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginTop="6dp"
+            android:contentDescription="@string/txt_profile_image"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:onClick="@{()-> callback.onProviderIconClicked(data)}"
             app:layout_constraintStart_toStartOf="@+id/name"

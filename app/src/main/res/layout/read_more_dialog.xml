@@ -25,7 +25,8 @@
             android:layout_gravity="right"
             android:background="@drawable/rounded_layout"
             android:padding="5dp"
-            app:srcCompat="@drawable/ic_close" />
+            app:srcCompat="@drawable/ic_close"
+            android:contentDescription="@string/txt_close" />
 
         <View
             android:id="@+id/textView8"

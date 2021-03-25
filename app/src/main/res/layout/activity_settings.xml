@@ -98,7 +98,8 @@
                     android:layout_marginTop="16dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_pref_video_settings" />
+                    app:srcCompat="@drawable/ic_pref_video_settings"
+                    android:contentDescription="@string/txt_quality_settings" />
 
                 <TextView
                     android:id="@+id/dateQualityTextView"
@@ -303,7 +304,8 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_gravity="center_vertical"
-                    app:srcCompat="@drawable/ic_background_playback" />
+                    app:srcCompat="@drawable/ic_background_playback"
+                    android:contentDescription="@string/txt_floating_player" />
 
                 <TextView
                     style="@style/PrefItemTextStyle"
@@ -346,7 +348,8 @@
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    app:srcCompat="@drawable/ic_clear_search_pref" />
+                    app:srcCompat="@drawable/ic_clear_search_pref"
+                    android:contentDescription="@string/txt_clear_search_history" />
 
                 <TextView
                     style="@style/PrefItemTextStyle"
@@ -371,7 +374,8 @@
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    app:srcCompat="@drawable/ic_clear_watch_pref" />
+                    app:srcCompat="@drawable/ic_clear_watch_pref"
+                    android:contentDescription="@string/txt_clear_activities" />
 
                 <TextView
                     style="@style/PrefItemTextStyle"
@@ -395,7 +399,8 @@
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    app:srcCompat="@drawable/ic_pref_terms" />
+                    app:srcCompat="@drawable/ic_pref_terms"
+                    android:contentDescription="@string/terms_and_conditions" />
 
                 <TextView
                     style="@style/PrefItemTextStyle"
@@ -419,7 +424,8 @@
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    app:srcCompat="@drawable/ic_pref_privacy" />
+                    app:srcCompat="@drawable/ic_pref_privacy"
+                    android:contentDescription="@string/txt_privacy_policy" />
 
                 <TextView
                     style="@style/PrefItemTextStyle"
@@ -443,7 +449,8 @@
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    app:srcCompat="@drawable/ic_pref_about" />
+                    app:srcCompat="@drawable/ic_pref_about"
+                    android:contentDescription="@string/txt_about" />
 
                 <TextView
                     style="@style/PrefItemTextStyle"

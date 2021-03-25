@@ -29,6 +29,7 @@
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
             loadChannelImage="@{data}"
+            android:contentDescription="@string/txt_poster"
             app:onSafeClick="@{()->callback.onItemClicked(data)}"
             app:layout_constraintDimensionRatio="W,16:9"
             app:layout_constraintEnd_toEndOf="parent"
@@ -83,6 +84,7 @@
             tools:text="This Makeup Tutorial By Kylie Jenner Is All You Need For Summer" />
         
         <ImageView
+            android:contentDescription="@string/txt_options"
             android:id="@+id/options"
             style="@style/OptionMenuStyle"
             android:paddingVertical="8dp"
@@ -112,6 +114,7 @@
             tools:text=" &#8226; 14h" />
         
         <ImageView
+            android:contentDescription="@string/tv_wow"
             android:id="@+id/thirdIcon"
             android:layout_width="17dp"
             android:layout_height="17dp"
@@ -124,6 +127,7 @@
             app:layout_constraintStart_toStartOf="@id/secondIcon"/>
 
         <ImageView
+            android:contentDescription="@string/txt_love"
             android:id="@+id/secondIcon"
             android:layout_width="17dp"
             android:layout_height="17dp"
@@ -136,6 +140,7 @@
             app:layout_constraintStart_toStartOf="@id/firstIcon"/>
 
         <ImageView
+            android:contentDescription="@string/txt_like"
             android:id="@+id/firstIcon"
             android:layout_width="17dp"
             android:layout_height="17dp"

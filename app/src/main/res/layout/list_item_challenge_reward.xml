@@ -17,6 +17,7 @@
         android:background="@color/screen_bg_white">
         
         <ImageView
+            android:contentDescription="@string/txt_prize"
             android:id="@+id/prizeImageView"
             android:layout_width="136dp"
             android:layout_height="120dp"

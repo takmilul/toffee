@@ -38,7 +38,8 @@
                 android:layout_marginTop="16dp"
                 app:layout_constraintStart_toStartOf="@+id/guideline3"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_daily_package" />
+                app:srcCompat="@drawable/ic_daily_package"
+                android:contentDescription="@string/txt_daily_package" />
 
             <TextView
                 android:id="@+id/package_name_tv"
@@ -102,7 +103,8 @@
                 android:layout_height="@dimen/check_dimen"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_check" />
+                app:srcCompat="@drawable/ic_check"
+                android:contentDescription="@string/txt_check" />
 
             <ImageView
                 android:id="@+id/imageView5"
@@ -113,7 +115,8 @@
                 app:layout_constraintBottom_toBottomOf="@+id/channel_list_tv"
                 app:layout_constraintEnd_toStartOf="@+id/guideline3"
                 app:layout_constraintTop_toTopOf="@+id/channel_list_tv"
-                app:srcCompat="@drawable/ic_right_arrow_accent" />
+                app:srcCompat="@drawable/ic_right_arrow_accent"
+                android:contentDescription="@string/txt_channel" />
 
             <Switch
                 android:id="@+id/auto_renew_switch"
@@ -124,7 +127,8 @@
                 android:onClick="@{()->callback.onAutoRenewUpdate(data)}"
                 app:layout_constraintBottom_toBottomOf="@+id/subscribe"
                 app:layout_constraintEnd_toStartOf="@+id/guideline3"
-                app:layout_constraintTop_toTopOf="@+id/subscribe" />
+                app:layout_constraintTop_toTopOf="@+id/subscribe"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
 
             <TextView
                 android:id="@+id/textView5"

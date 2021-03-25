@@ -20,7 +20,8 @@
             android:src="@drawable/ic_bottom_sheet_topicon"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@string/txt_icon" />
 
         <TextView
             android:id="@+id/textView28"
@@ -53,6 +54,7 @@
             android:id="@+id/channel_logo_iv"
             android:layout_width="80dp"
             android:layout_height="80dp"
+            android:contentDescription="@string/txt_channel_logo"
             android:layout_marginTop="6dp"
             android:src="@drawable/ic_channel_logo"
             app:layout_constraintEnd_toEndOf="parent"
@@ -74,7 +76,8 @@
             app:layout_constraintBottom_toBottomOf="@+id/channel_logo_iv"
             app:layout_constraintEnd_toEndOf="@+id/channel_logo_iv"
             app:layout_constraintStart_toStartOf="@+id/channel_logo_iv"
-            app:layout_constraintTop_toBottomOf="@+id/channel_logo_iv" />
+            app:layout_constraintTop_toBottomOf="@+id/channel_logo_iv"
+            android:contentDescription="@string/txt_edit_channel_logo" />
         
         <EditText
             android:id="@+id/channel_name_et"
@@ -115,7 +118,8 @@
                 android:id="@+id/image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_phone" />
+                android:src="@drawable/ic_phone"
+                android:contentDescription="@string/txt_phone_number" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -136,7 +140,8 @@
                 android:layout_marginStart="5dp"
                 android:layout_width="14dp"
                 android:layout_height="12dp"
-                android:src="@drawable/ic_path_down_arrow" />
+                android:src="@drawable/ic_path_down_arrow"
+                android:contentDescription="@string/txt_down_arrow_flag" />
             
             <TextView
                 android:drawablePadding="10dp"

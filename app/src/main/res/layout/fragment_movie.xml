@@ -39,6 +39,7 @@
                         android:id="@+id/categoryIcon"
                         android:layout_width="30dp"
                         android:layout_height="28dp"
+                        android:contentDescription="@string/txt_category"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
                         tools:src="@drawable/ic_profile_default" />
@@ -51,6 +52,7 @@
                         android:layout_marginTop="8dp"
                         android:textSize="16sp"
                         tools:text="Movies"
+                        android:contentDescription="@string/txt_movies"
                         android:layout_gravity="center_vertical"
                         android:fontFamily="@font/roboto_medium"
                         android:textColor="@color/categoryNameColor"/>
