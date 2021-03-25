@@ -35,6 +35,7 @@ class PartnersListFragment : BaseFragment(), BaseListItemCallback<ChannelInfo> {
         return binding.root
     }
     override fun onDestroyView() {
+        binding.listView.adapter = null
         super.onDestroyView()
         _binding = null
     }

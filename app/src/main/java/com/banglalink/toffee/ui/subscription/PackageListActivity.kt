@@ -12,7 +12,9 @@ import com.banglalink.toffee.model.Package
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class PackageListActivity: AppCompatActivity(), PackageCallBack {
     private lateinit var binding: ActivitySubscribePackageListBinding
     private val viewModel by viewModels<PackageListViewModel>()

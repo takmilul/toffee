@@ -22,7 +22,9 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.widget.GridSpacingItemDecoration
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class PackageChannelListActivity : AppCompatActivity() {
 
     companion object{
