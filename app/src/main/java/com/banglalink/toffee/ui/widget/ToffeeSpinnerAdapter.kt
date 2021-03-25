@@ -10,7 +10,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.banglalink.toffee.R
-import kotlinx.android.synthetic.main.layout_spinner.view.*
 
 class ToffeeSpinnerAdapter<T: Any?>(
     private val mContext: Context,

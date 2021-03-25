@@ -4,37 +4,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.transition.AutoTransition
-import androidx.transition.ChangeBounds
-import androidx.transition.TransitionManager
-import androidx.transition.TransitionSet
-import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentCommonSingleListV2Binding
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.home.HomeViewModel
-import com.banglalink.toffee.util.unsafeLazy
-import kotlinx.android.synthetic.main.fragment_common_single_list_v2.*
-import kotlinx.android.synthetic.main.fragment_top_panel_search_collapsed.*
 
 abstract class SingleListFragmentV2<T: Any> : Fragment() {
 
     private lateinit var scrollListener: EndlessRecyclerViewScrollListener
-    lateinit var binding: FragmentCommonSingleListV2Binding
+    private var _binding: FragmentCommonSingleListV2Binding ? = null
+    private val binding get() = _binding!!
 
     protected lateinit var mAdapter: MyBaseAdapterV2<T>
     protected lateinit var mViewModel: SingleListViewModel<T>
@@ -51,7 +37,7 @@ abstract class SingleListFragmentV2<T: Any> : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_common_single_list_v2, container, false)
+        _binding = FragmentCommonSingleListV2Binding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -141,7 +127,7 @@ abstract class SingleListFragmentV2<T: Any> : Fragment() {
     }
 
     private fun observeList() {
-        mViewModel.listData.observe(viewLifecycleOwner, Observer {
+        mViewModel.listData.observe(viewLifecycleOwner) {
             when(it) {
                 is Resource.Success -> {
                     val itemCount = mAdapter.itemCount
@@ -157,15 +143,15 @@ abstract class SingleListFragmentV2<T: Any> : Fragment() {
                     activity?.showToast(it.error.msg)
                 }
             }
-        })
+        }
 
-        mViewModel.showProgress.observe(viewLifecycleOwner, Observer {
+        mViewModel.showProgress.observe(viewLifecycleOwner){
             if(it) {
                 showProgress()
             } else{
                 hideProgress()
             }
-        })
+        }
     }
 
     private fun showProgress() {
@@ -180,6 +166,7 @@ abstract class SingleListFragmentV2<T: Any> : Fragment() {
         binding.listview.adapter = null
         binding.listview.clearOnScrollListeners()
         binding.unbind()
+        _binding = null
         super.onDestroyView()
     }
 }

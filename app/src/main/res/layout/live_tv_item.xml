@@ -17,6 +17,7 @@
 
 
         <ImageView
+            android:contentDescription="@string/txt_channel"
             android:id="@+id/icon"
             android:layout_width="@dimen/channel_width"
             android:layout_height="@dimen/channel_height"

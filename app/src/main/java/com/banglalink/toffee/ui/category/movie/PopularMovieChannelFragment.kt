@@ -7,15 +7,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.map
-import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.databinding.FragmentLandingTvChannelsBinding
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.BaseFragment
-import com.banglalink.toffee.ui.landing.ChannelAdapter
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.home.LandingPageViewModel
+import com.banglalink.toffee.ui.landing.ChannelAdapter
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_landing_tv_channels.*
 import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
@@ -24,19 +23,27 @@ class PopularMovieChannelFragment : BaseFragment() {
 
     val viewModel by activityViewModels<LandingPageViewModel>()
     val homeViewModel by activityViewModels<HomeViewModel>()
+    private var _binding: FragmentLandingTvChannelsBinding ? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_landing_tv_channels, container, false)
+    ): View {
+        _binding = FragmentLandingTvChannelsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        channel_tv.text = "Top Movie Channels"
+        binding.channelTv.text = "Top Movie Channels"
 
         mAdapter = ChannelAdapter(object : BaseListItemCallback<ChannelInfo> {
             override fun onItemClicked(item: ChannelInfo) {
@@ -44,11 +51,11 @@ class PopularMovieChannelFragment : BaseFragment() {
             }
         })
 
-        viewAllButton.setOnClickListener {
+        binding.viewAllButton.setOnClickListener {
             homeViewModel.switchBottomTab.postValue(1)
         }
 
-        with(channel_list) {
+        with(binding.channelList) {
             adapter = mAdapter
         }
 

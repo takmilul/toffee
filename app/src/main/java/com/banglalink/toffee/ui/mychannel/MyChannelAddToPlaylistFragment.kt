@@ -13,9 +13,9 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_PLAYLIST_VIDEOS_URL
+import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_PLAYLIST_VIDEOS
 import com.banglalink.toffee.data.network.retrofit.CacheManager
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.AlertDialogMyChannelAddToPlaylistBinding
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.extension.observe
@@ -37,9 +37,10 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
     private var channelOwnerId: Int = 0
     private var playlistId: Int = 0
     private lateinit var channelInfo: ChannelInfo
-    @Inject lateinit var mPref: Preference
+    @Inject lateinit var mPref: SessionPreference
     @Inject lateinit var cacheManager: CacheManager
-    private lateinit var binding: AlertDialogMyChannelAddToPlaylistBinding
+    private var _binding: AlertDialogMyChannelAddToPlaylistBinding ? = null
+    private val binding get() = _binding!!
     private val mAdapter: MyChannelAddToPlaylistAdapter by lazy { MyChannelAddToPlaylistAdapter(this) }
     private val viewModel by viewModels<MyChannelAddToPlaylistViewModel>()
     private val createPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
@@ -78,7 +79,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
     
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         
-        binding = AlertDialogMyChannelAddToPlaylistBinding.inflate(this.layoutInflater)
+        _binding = AlertDialogMyChannelAddToPlaylistBinding.inflate(this.layoutInflater)
         val dialogBuilder = AlertDialog.Builder(requireContext()).setView(binding.root)
         alertDialog = dialogBuilder.create().apply {
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -105,6 +106,12 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
             binding.createButton -> createPlaylist()
             binding.closeIv -> alertDialog.dismiss()
         }
+    }
+
+    override fun onDestroyView() {
+        binding.listview.adapter = null
+        super.onDestroyView()
+        _binding = null
     }
     
     private fun createPlaylist() {
@@ -156,7 +163,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
                 is Success -> {
                     alertDialog.dismiss()
                     requireContext().showToast(it.data.message)
-                    cacheManager.clearCacheByUrl(GET_MY_CHANNEL_PLAYLIST_VIDEOS_URL)
+                    cacheManager.clearCacheByUrl(GET_MY_CHANNEL_PLAYLIST_VIDEOS)
                     playlistReloadViewModel.reloadPlaylist.value = true
                 }
                 is Failure -> {

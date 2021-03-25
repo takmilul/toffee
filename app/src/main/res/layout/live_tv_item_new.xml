@@ -20,6 +20,7 @@
         xmlns:tools="http://schemas.android.com/tools">
         
         <ImageView
+            android:contentDescription="@string/txt_icon"
             android:id="@+id/icon"
             android:layout_width="@dimen/channel_width"
             android:layout_height="@dimen/channel_height"

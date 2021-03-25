@@ -6,28 +6,33 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.database.entities.TVChannelItem
+import com.banglalink.toffee.databinding.FragmentBottomTvChannelsBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
-import kotlinx.android.synthetic.main.fragment_landing_tv_channels.*
 import kotlinx.coroutines.flow.collectLatest
 
 class BottomChannelFragment: BaseFragment() {
     private lateinit var mAdapter: BottomChannelAdapter
     val viewModel by activityViewModels<AllChannelsViewModel>()
     val homeViewModel by activityViewModels<HomeViewModel>()
+    private var _binding: FragmentBottomTvChannelsBinding ? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_bottom_tv_channels, container, false)
+    ): View {
+        _binding = FragmentBottomTvChannelsBinding.inflate(inflater, container, false)
+        return binding.root
     }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -37,7 +42,7 @@ class BottomChannelFragment: BaseFragment() {
             }
         })
 
-        with(channel_list) {
+        with(binding.channelList) {
             adapter = mAdapter
         }
 

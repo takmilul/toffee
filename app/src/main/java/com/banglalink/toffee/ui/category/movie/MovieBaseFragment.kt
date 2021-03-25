@@ -4,9 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
-import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.databinding.LayoutHorizontalContentContainerBinding
 import com.banglalink.toffee.model.ChannelInfo
@@ -18,15 +16,21 @@ import com.banglalink.toffee.ui.home.LandingPageViewModel
 abstract class MovieBaseFragment<T: Any>: HomeBaseFragment(), ProviderIconCallback<T> {
     protected abstract val cardTitle: String
     protected open val adapter: MyBaseAdapterV2<T> by lazy { MoviesAdapter(this) }
-    private lateinit var binding: LayoutHorizontalContentContainerBinding
+    private var _binding: LayoutHorizontalContentContainerBinding ? = null
+    private val binding get() = _binding!!
     protected val viewModel by activityViewModels<MovieViewModel>()
     private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.layout_horizontal_content_container, container, false)
+
+        _binding = LayoutHorizontalContentContainerBinding.inflate(inflater, container, false)
         return binding.root
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.titleTextView.text = cardTitle

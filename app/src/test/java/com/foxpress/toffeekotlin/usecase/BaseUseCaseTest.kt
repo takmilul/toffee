@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.nhaarman.mockitokotlin2.mock
 import org.junit.Rule
 import org.junit.rules.ExpectedException
@@ -49,6 +49,6 @@ open class BaseUseCaseTest {
         ).thenReturn(mockEditor)
         Mockito.`when`(mockEditor.putInt(ArgumentMatchers.anyString(), ArgumentMatchers.anyInt())).thenReturn(mockEditor)
 
-        Preference.init(mockContext)
+        SessionPreference.init(mockContext)
     }
 }

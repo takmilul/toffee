@@ -37,7 +37,8 @@
                 android:layout_marginStart="16dp"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_weekly_package" />
+                app:srcCompat="@drawable/ic_weekly_package"
+                android:contentDescription="@string/txt_weekly_package" />
 
             <TextView
                 android:id="@+id/package_name_tv"
@@ -108,7 +109,8 @@
                 app:layout_constraintBottom_toBottomOf="@+id/channel_list_tv"
                 app:layout_constraintEnd_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toTopOf="@+id/channel_list_tv"
-                app:srcCompat="@drawable/ic_right_arrow_accent" />
+                app:srcCompat="@drawable/ic_right_arrow_accent"
+                android:contentDescription="@string/txt_channel" />
 
             <Switch
                 android:id="@+id/switch1"

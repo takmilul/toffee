@@ -2,7 +2,7 @@ package com.foxpress.toffeekotlin.usecase
 
 import com.banglalink.toffee.data.network.request.RelativeContentRequest
 import com.banglalink.toffee.data.network.response.RelativeContentResponse
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.ContentBean
 import com.banglalink.toffee.apiservice.GetRelativeContents
@@ -41,7 +41,7 @@ class GetRelativeContentsTest :BaseUseCaseTest(){
                 view_count = "1000000000009"
             })
 
-            val getContents = GetRelativeContents(Preference.getInstance(),mockToffeeApi)
+            val getContents = GetRelativeContents(SessionPreference.getInstance(),mockToffeeApi)
             Mockito.`when`(mockToffeeApi.getRelativeContents(any<RelativeContentRequest>())).thenReturn(
                 Response.success(RelativeContentResponse(
                     ContentBean(channelInfoList,1,1)
@@ -87,7 +87,7 @@ class GetRelativeContentsTest :BaseUseCaseTest(){
                 view_count = "1009"
             })
 
-            val getContents = GetRelativeContents(Preference.getInstance(),mockToffeeApi)
+            val getContents = GetRelativeContents(SessionPreference.getInstance(),mockToffeeApi)
             Mockito.`when`(mockToffeeApi.getRelativeContents(any<RelativeContentRequest>())).thenReturn(
                 Response.success(RelativeContentResponse(
                     ContentBean(channelInfoList,2,2)
@@ -120,7 +120,7 @@ class GetRelativeContentsTest :BaseUseCaseTest(){
                 video_tags="tag"
             }
 
-            val getContents = GetRelativeContents(Preference.getInstance(),mockToffeeApi)
+            val getContents = GetRelativeContents(SessionPreference.getInstance(),mockToffeeApi)
             Mockito.`when`(mockToffeeApi.getRelativeContents(any<RelativeContentRequest>())).thenReturn(
                 Response.success(RelativeContentResponse(
                     ContentBean(null,0,10)

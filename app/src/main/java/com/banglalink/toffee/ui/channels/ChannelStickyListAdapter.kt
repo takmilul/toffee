@@ -7,16 +7,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.Group
-import coil.load
-import coil.request.CachePolicy
-import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.widget.StickyHeaderGridAdapter
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.bindChannel
-import com.banglalink.toffee.util.bindRoundImage
 import de.hdodenhof.circleimageview.CircleImageView
 
 class ChannelStickyListAdapter(
@@ -151,7 +147,7 @@ class ChannelStickyListAdapter(
             liveTvViewHolder.icon.borderWidth = 0
         }
 
-        if(!item.isExpired(Preference.getInstance().getSystemTime())){
+        if(!item.isExpired(SessionPreference.getInstance().getSystemTime())){
             liveTvViewHolder.premimumIcon.visibility = View.INVISIBLE
         }
         else if(item.isPurchased||item.subscription){

@@ -1,13 +1,10 @@
 package com.banglalink.toffee.ui.subscription
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.ViewModelProviders
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.banglalink.toffee.R
+import com.banglalink.toffee.databinding.ActivitySubscribePackageListBinding
 import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
@@ -15,16 +12,12 @@ import com.banglalink.toffee.model.Package
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
+import dagger.hilt.android.AndroidEntryPoint
 
-class PackageListActivity : AppCompatActivity(),PackageCallBack {
-
-    private val toolbar by unsafeLazy {
-        findViewById<Toolbar>(R.id.toolbar)
-    }
-
-    private val viewModel by unsafeLazy {
-        ViewModelProviders.of(this).get(PackageListViewModel::class.java)
-    }
+@AndroidEntryPoint
+class PackageListActivity: AppCompatActivity(), PackageCallBack {
+    private lateinit var binding: ActivitySubscribePackageListBinding
+    private val viewModel by viewModels<PackageListViewModel>()
 
     private val mAdapter:PackageListAdapter by unsafeLazy {
         PackageListAdapter(this){
@@ -41,14 +34,14 @@ class PackageListActivity : AppCompatActivity(),PackageCallBack {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_subscribe_package_list)
+        binding = ActivitySubscribePackageListBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        toolbar.setNavigationOnClickListener { onBackPressed() }
+        binding.toolbar.setNavigationOnClickListener { onBackPressed() }
 
-        val list :RecyclerView = findViewById(R.id.list)
-        list.apply {
+        binding.list.apply {
             layoutManager = LinearLayoutManager(this@PackageListActivity)
             adapter = mAdapter
         }

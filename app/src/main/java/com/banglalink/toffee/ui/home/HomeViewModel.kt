@@ -13,7 +13,7 @@ import com.banglalink.toffee.data.network.retrofit.DbApi
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.data.repository.*
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelDetailBean
@@ -42,7 +42,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val dbApi: DbApi,
-    private val mPref: Preference,
+    private val mPref: SessionPreference,
     private val profileApi: GetProfile,
     private val setFcmToken: SetFcmToken,
     private val reactionDao: ReactionDao,
@@ -65,10 +65,8 @@ class HomeViewModel @Inject constructor(
     val fragmentDetailsMutableLiveData = SingleLiveEvent<Any>()
     val addToPlayListMutableLiveData = MutableLiveData<AddToPlaylistData>()
     val shareContentLiveData = SingleLiveEvent<ChannelInfo>()
-
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val switchBottomTab = SingleLiveEvent<Int>()
-
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val viewAllVideoLiveData = MutableLiveData<Boolean>()
     val viewAllCategories = MutableLiveData<Boolean>()
@@ -96,7 +94,6 @@ class HomeViewModel @Inject constructor(
         }
 
     }
-
     private fun setFcmToken(token: String) {
         viewModelScope.launch {
             try {

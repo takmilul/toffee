@@ -3,7 +3,7 @@ package com.foxpress.toffeekotlin.usecase
 import com.banglalink.toffee.apiservice.SignInByPhone
 import com.banglalink.toffee.data.network.request.SigninByPhoneRequest
 import com.banglalink.toffee.data.network.response.SignInByPhoneResponse
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.SignInByPhoneBean
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.times
@@ -21,7 +21,7 @@ class SignInByPhoneTest :BaseUseCaseTest(){
         runBlocking {
             //set up test
             setupPref()
-            val signInByPhone = SignInByPhone(Preference.getInstance(), mockToffeeApi)
+            val signInByPhone = SignInByPhone(SessionPreference.getInstance(), mockToffeeApi)
             Mockito.`when`(mockToffeeApi.signInByPhone(any<SigninByPhoneRequest>())).thenReturn(
                 SignInByPhoneResponse(
                     SignInByPhoneBean(true,

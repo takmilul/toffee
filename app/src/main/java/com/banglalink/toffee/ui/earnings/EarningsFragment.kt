@@ -4,22 +4,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
-import com.banglalink.toffee.R
+import androidx.fragment.app.viewModels
 import com.banglalink.toffee.databinding.FragmentEarningsBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.ViewPagerAdapter
-import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.material.tabs.TabLayoutMediator
 
 class EarningsFragment : Fragment() {
 
-    private lateinit var binding: FragmentEarningsBinding
-    private val viewModel by unsafeLazy { ViewModelProviders.of(this).get(EarningsViewModel::class.java) }
+    private var _binding: FragmentEarningsBinding ? = null
+    private val binding get() = _binding!!
+    private val viewModel by viewModels<EarningsViewModel>()
 
     private lateinit var viewPagerAdapter: ViewPagerAdapter
     private var fragmentList: ArrayList<Fragment> = arrayListOf()
@@ -45,13 +43,16 @@ class EarningsFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_earnings, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentEarningsBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
         return binding.root
     }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

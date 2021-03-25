@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
+import com.banglalink.toffee.databinding.FragmentLandingUserChannelsBinding
 import com.banglalink.toffee.listeners.LandingPopularChannelCallback
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
@@ -21,7 +22,6 @@ import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.common.UnSubscribeDialog
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_landing_user_channels.*
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
@@ -32,15 +32,22 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
     private var categoryInfo: Category? = null
     private var channelInfo: UserChannelInfo? = null
     private val viewModel by activityViewModels<LandingPageViewModel>()
+    private var _binding: FragmentLandingUserChannelsBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_landing_user_channels, container, false)
+    ): View {
+        _binding = FragmentLandingUserChannelsBinding.inflate(inflater, container, false)
+        return binding.root
     }
-
+    override fun onDestroyView() {
+        binding.userChannelList.adapter = null
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -78,11 +85,11 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
             }
         })
 
-        viewAllButton.setOnClickListener {
+        binding.viewAllButton.setOnClickListener {
             parentFragment?.findNavController()?.navigate(R.id.action_menu_feed_to_trendingChannelsFragment)
         }
 
-        with(userChannelList) {
+        with(binding.userChannelList) {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter = mAdapterLanding
         }

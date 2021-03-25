@@ -6,8 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.databinding.FragmentLandingFeaturedBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource.Failure
@@ -15,7 +15,6 @@ import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.android.synthetic.main.fragment_landing_featured.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -27,15 +26,22 @@ class FeaturedContentFragment : HomeBaseFragment() {
     private var slideJob: Job? = null
     private lateinit var mAdapter: FeaturedContentAdapter
     val viewModel by activityViewModels<LandingPageViewModel>()
-
+    private var _binding:FragmentLandingFeaturedBinding ? = null
+    private val binding get() = _binding!!
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_landing_featured, container, false)
+    ): View {
+         _binding = FragmentLandingFeaturedBinding.inflate(inflater, container, false)
+         return binding.root
     }
-
+    override fun onDestroyView() {
+        slideJob?.cancel()
+        binding.featuredViewpager.adapter = null
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mAdapter = FeaturedContentAdapter(object : BaseListItemCallback<ChannelInfo> {
@@ -46,8 +52,8 @@ class FeaturedContentFragment : HomeBaseFragment() {
             }
         })
 
-        featured_viewpager.adapter = mAdapter
-        TabLayoutMediator(featured_indicator, featured_viewpager, true) { tab_, position -> }.attach()
+        binding.featuredViewpager.adapter = mAdapter
+        TabLayoutMediator(binding.featuredIndicator, binding.featuredViewpager, true) { tab_, position -> }.attach()
         
         val channelInfoList = listOf(
             ChannelInfo(""), 
@@ -92,7 +98,7 @@ class FeaturedContentFragment : HomeBaseFragment() {
             while (isActive) {
                 delay(5000)
                 if (isActive && mAdapter.itemCount > 0) {
-                    featured_viewpager?.currentItem = (featured_viewpager.currentItem + 1) % mAdapter.itemCount
+                    binding.featuredViewpager.currentItem = (binding.featuredViewpager.currentItem + 1) % mAdapter.itemCount
                 }
             }
         }
@@ -101,10 +107,5 @@ class FeaturedContentFragment : HomeBaseFragment() {
     override fun onStop() {
         viewModel.featuredContents.removeObservers(this)
         super.onStop()
-    }
-    
-    override fun onDestroy() {
-        slideJob?.cancel()
-        super.onDestroy()
     }
 }

@@ -5,12 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentWithdrawalSuccessBinding
-import kotlinx.android.synthetic.main.fragment_withdrawal_success.*
 
 class WithdrawalSuccessFragment : Fragment(), OnClickListener {
     private lateinit var binding: FragmentWithdrawalSuccessBinding
@@ -22,7 +20,7 @@ class WithdrawalSuccessFragment : Fragment(), OnClickListener {
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_withdrawal_success, container, false)
+        binding = FragmentWithdrawalSuccessBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
         return binding.root
     }
@@ -33,7 +31,7 @@ class WithdrawalSuccessFragment : Fragment(), OnClickListener {
     }
 
     override fun onClick(v: View?) {
-        if (v == backToTransactionButton){
+        if (v == binding.backToTransactionButton){
             findNavController().navigate(R.id.action_withdrawalSuccessFragment_to_earningsFragment)
         }
     }

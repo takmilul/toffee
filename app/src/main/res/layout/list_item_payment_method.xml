@@ -92,6 +92,7 @@
                     app:layout_constraintTop_toBottomOf="@id/accountNameTextView"/>
 
                 <ImageView
+                    android:contentDescription="@string/txt_options"
                     android:id="@+id/options"
                     android:layout_width="24dp"
                     android:layout_height="24dp"

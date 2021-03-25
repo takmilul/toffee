@@ -3,11 +3,11 @@ package com.banglalink.toffee.data.repository.impl
 import com.banglalink.toffee.data.database.dao.ContentViewProgressDao
 import com.banglalink.toffee.data.database.entities.ContentViewProgress
 import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 
 class ContentViewPorgressRepsitoryImpl(
     private val dao: ContentViewProgressDao,
-    private val mPref: Preference
+    private val mPref: SessionPreference
     ): ContentViewPorgressRepsitory {
     
     override suspend fun insert(item: ContentViewProgress) {

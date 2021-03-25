@@ -2,7 +2,7 @@ package com.foxpress.toffeekotlin.usecase
 
 import com.banglalink.toffee.data.network.request.HistoryContentRequest
 import com.banglalink.toffee.data.network.response.HistoryContentResponse
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.ContentBean
 import com.nhaarman.mockitokotlin2.*
@@ -29,7 +29,7 @@ class GetHistoryTest :BaseUseCaseTest(){
                 view_count = "1000000000009"
             })
 
-            val getContents = GetHistory(Preference.getInstance(),mockToffeeApi)
+            val getContents = GetHistory(SessionPreference.getInstance(),mockToffeeApi)
             Mockito.`when`(mockToffeeApi.getHistoryContents(any<HistoryContentRequest>())).thenReturn(
                 Response.success(HistoryContentResponse(
                     ContentBean(channelInfoList,1,1)
@@ -59,7 +59,7 @@ class GetHistoryTest :BaseUseCaseTest(){
             //set up test
             setupPref()
 
-            val getContents = GetHistory(Preference.getInstance(),mockToffeeApi)
+            val getContents = GetHistory(SessionPreference.getInstance(),mockToffeeApi)
             Mockito.`when`(mockToffeeApi.getHistoryContents(any<HistoryContentRequest>())).thenReturn(
                 Response.success(HistoryContentResponse(
                     ContentBean(null,0,0)

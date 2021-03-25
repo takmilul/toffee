@@ -45,14 +45,15 @@ class SettingsFragment : BaseFragment() {
         R.string.profile_1280x720,
         R.string.profile_1920x1080)
     
-    private lateinit var binding: ActivitySettingsBinding
+    private var _binding: ActivitySettingsBinding ? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = ActivitySettingsBinding.inflate(inflater, container, false)
+        _binding = ActivitySettingsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -88,7 +89,10 @@ class SettingsFragment : BaseFragment() {
 
         setPrefItemListener()
     }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     private fun initializeSettings() {
         binding.defaultDataQuality = mPref.defaultDataQuality()
         binding.watchWifiOnly = mPref.watchOnlyWifi()

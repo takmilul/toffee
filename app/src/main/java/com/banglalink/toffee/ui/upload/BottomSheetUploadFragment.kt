@@ -15,10 +15,10 @@ import androidx.navigation.fragment.findNavController
 import coil.load
 import coil.request.CachePolicy
 import com.banglalink.toffee.R
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_DETAILS_URL
+import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_DETAILS
 import com.banglalink.toffee.data.network.request.MyChannelEditRequest
 import com.banglalink.toffee.data.network.retrofit.CacheManager
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.UploadBottomSheetBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
@@ -32,18 +32,18 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.list_item_live.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class BottomSheetUploadFragment : BottomSheetDialogFragment(), TextWatcher {
 
-    @Inject lateinit var mPref: Preference
+    @Inject lateinit var mPref: SessionPreference
     @Inject lateinit var cacheManager: CacheManager
     private var channelName: String = ""
     private var channelLogoUrl: String = ""
     private var profileImageBase64: String? = null
-    private lateinit var binding: UploadBottomSheetBinding
+    private var _binding: UploadBottomSheetBinding ? = null
+    private val binding get() = _binding!!
     private lateinit var progressDialog: VelBoxProgressDialog
     private val viewModel by viewModels<ViewProfileViewModel>()
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
@@ -53,10 +53,13 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment(), TextWatcher {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = UploadBottomSheetBinding.inflate(layoutInflater)
+        _binding = UploadBottomSheetBinding.inflate(layoutInflater)
         return binding.root
     }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         progressDialog = VelBoxProgressDialog(requireContext())
@@ -85,10 +88,10 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment(), TextWatcher {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
-        val view = View.inflate(context, R.layout.upload_bottom_sheet, null)
+        val dialogBinding = UploadBottomSheetBinding.inflate(layoutInflater)
 
-        dialog.setContentView(view)
-        val parent = view.parent as View
+        dialog.setContentView(dialogBinding.root)
+        val parent = dialogBinding.root.parent as View
         bottomSheetBehavior = BottomSheetBehavior.from(parent)
         val displayMetrics = DisplayMetrics()
         activity?.windowManager?.defaultDisplay?.getMetrics(displayMetrics)
@@ -153,7 +156,7 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment(), TextWatcher {
                     }
                     progressDialog.dismiss()
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
-                    cacheManager.clearCacheByUrl(GET_MY_CHANNEL_DETAILS_URL)
+                    cacheManager.clearCacheByUrl(GET_MY_CHANNEL_DETAILS)
                     findNavController().popBackStack().let { 
                         findNavController().navigate(R.id.newUploadMethodFragment)
                     }

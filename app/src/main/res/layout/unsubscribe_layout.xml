@@ -13,7 +13,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_unsubscribe_alert" />
+        app:srcCompat="@drawable/ic_unsubscribe_alert"
+        android:contentDescription="@string/txt_alert" />
 
     <TextView
         android:id="@+id/textView15"

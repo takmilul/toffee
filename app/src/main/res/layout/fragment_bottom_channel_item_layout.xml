@@ -19,6 +19,7 @@
         tools:src="@mipmap/ic_menu_channel" />
 
     <ImageView
+        android:contentDescription="@string/txt_channel"
         android:id="@+id/premium_icon"
         android:layout_width="20dp"
         android:layout_height="20dp"

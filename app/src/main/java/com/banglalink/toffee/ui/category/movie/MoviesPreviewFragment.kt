@@ -17,7 +17,8 @@ import com.banglalink.toffee.ui.common.BaseFragment
 class MoviesPreviewFragment : BaseFragment() {
     private lateinit var moviePreviews: List<ChannelInfo>
     private lateinit var adapter: MoviesPreviewSliderAdapter
-    private lateinit var binding: FragmentMoviesPreviewBinding
+    private var _binding: FragmentMoviesPreviewBinding? = null
+    private val binding get() = _binding!!
     private val viewModel by activityViewModels<MovieViewModel>()
     
     companion object {
@@ -25,11 +26,16 @@ class MoviesPreviewFragment : BaseFragment() {
         fun newInstance() = MoviesPreviewFragment()
     }
     
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?, ): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_movies_preview, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentMoviesPreviewBinding.inflate(inflater, container, false)
         return binding.root
     }
 
+    override fun onDestroyView() {
+        binding.viewPager.adapter = null
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.titleTextView.text = "Movie Previews"

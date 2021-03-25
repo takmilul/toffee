@@ -47,7 +47,8 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
     private var subscriberCount: Long = 0
     private var detailsAdapter: ChannelHeaderAdapter? = null
     private val mViewModel by viewModels<EpisodeListViewModel>()
-    private lateinit var binding: FragmentEpisodeListBinding
+    private var _binding: FragmentEpisodeListBinding ? = null
+    private val binding get() = _binding!!
     @Inject lateinit var subscriptionInfoRepository: SubscriptionInfoRepository
     @Inject lateinit var subscriptionCountRepository: SubscriptionCountRepository
 
@@ -79,8 +80,13 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentEpisodeListBinding.inflate(inflater, container, false)
+        _binding = FragmentEpisodeListBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

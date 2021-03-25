@@ -19,6 +19,7 @@
         android:layout_height="match_parent"
         android:minHeight="200dp"
         android:scaleType="fitXY"
+        android:contentDescription="@string/txt_featued_image"
         android:onClick="@{()->callback.onItemClicked(data)}"
         loadImageFromUrl="@{data.feature_image}"
         android:adjustViewBounds="true" />

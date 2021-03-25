@@ -24,6 +24,7 @@
             android:id="@+id/icon"
             android:layout_width="60dp"
             android:layout_height="60dp"
+            android:contentDescription="@string/txt_channel"
             android:layout_gravity="center"
             loadChannelImage="@{data.channelInfo}"
             app:civ_border_color="@color/colorAccent"
@@ -31,6 +32,7 @@
             tools:src="@mipmap/ic_menu_channel" />
     
         <ImageView
+            android:contentDescription="@string/txt_badge_icon"
             android:id="@+id/premium_icon"
             android:layout_width="20dp"
             android:layout_height="20dp"

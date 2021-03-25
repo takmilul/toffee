@@ -37,7 +37,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_VIDEOS_URL
+import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_VIDEOS
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.repository.UploadInfoRepository
@@ -70,15 +70,9 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
-import com.google.gson.Gson
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_main_menu.*
-import kotlinx.android.synthetic.main.home_mini_upload_progress.*
-import kotlinx.android.synthetic.main.layout_appbar.view.*
-import kotlinx.android.synthetic.main.player_bottom_sheet_layout.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -140,7 +134,8 @@ class HomeActivity :
             )
         }
 //        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main_menu)
+        binding = ActivityMainMenuBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setSupportActionBar(binding.tbar.toolbar)
         supportActionBar?.setHomeButtonEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
@@ -357,11 +352,11 @@ class HomeActivity :
     }
 
     private fun configureBottomSheet() {
-        bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet)
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.homeBottomSheet.bottomSheet)
         if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-            bottom_sheet.hide()
+            binding.homeBottomSheet.bottomSheet.hide()
         } else {
-            bottom_sheet.show()
+            binding.homeBottomSheet.bottomSheet.show()
         }
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
@@ -530,10 +525,10 @@ class HomeActivity :
          */
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             if(playlistManager.getCurrentChannel()?.isLive == true) {
-                bottom_sheet.visibility = View.VISIBLE
+                binding.homeBottomSheet.bottomSheet.visibility = View.VISIBLE
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             } else {
-                bottom_sheet.visibility = View.GONE
+                binding.homeBottomSheet.bottomSheet.visibility = View.GONE
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             }
             binding.playerView.isFullScreen = true
@@ -541,7 +536,7 @@ class HomeActivity :
             binding.playerView.scaleY = 1f
         } else {
             binding.playerView.isFullScreen = false
-            bottom_sheet.visibility = View.GONE
+            binding.homeBottomSheet.bottomSheet.visibility = View.GONE
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             binding.playerView.moveController(-1.0f)
         }
@@ -1282,20 +1277,20 @@ class HomeActivity :
         maximizePlayer()
         onViewMaximize()
         if(binding.playerView.isVideoPortrait && resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            requestedOrientation = Configuration.ORIENTATION_PORTRAIT
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
         updateFullScreenState()
     }
 
     private fun observeUpload2() {
-        add_upload_info_button.setOnClickListener {
+        binding.homeMiniProgressContainer.addUploadInfoButton.setOnClickListener {
             viewModel.myChannelNavLiveData.value = MyChannelNavParams(mPref.customerId)
             /*if(navController.currentDestination?.id != R.id.myChannelHomeFragment) {
                 navController.navigate(R.id.myChannelHomeFragment)
             }*/
         }
 
-        close_button.setOnClickListener {
+        binding.homeMiniProgressContainer.closeButton.setOnClickListener {
             lifecycleScope.launch {
                 uploadRepo.getActiveUploadsList().let {
                     if(it.isNotEmpty()) {
@@ -1311,31 +1306,31 @@ class HomeActivity :
             uploadViewModel.getActiveUploadList().collectLatest {
                 Log.e("UPLOAD 2", "Collecting ->>> ${it.size}")
                 if(it.isNotEmpty()) {
-                    home_mini_progress_container.isVisible = true
+                    binding.homeMiniProgressContainer.root.isVisible = true
                     val upInfo = it[0]
                     when(upInfo.status){
                         UploadStatus.SUCCESS.value,
                         UploadStatus.SUBMITTED.value -> {
-                            mini_upload_progress.progress = 100
-                            add_upload_info_button.isVisible = true
-                            close_button.isVisible = true
-                            upload_size_text.isInvisible = true
-                            mini_upload_progress_text.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_upload_done, 0, 0, 0)
-                            mini_upload_progress_text.text = "Upload complete"
-                            cacheManager.clearCacheByUrl(GET_MY_CHANNEL_VIDEOS_URL)
+                            binding.homeMiniProgressContainer.miniUploadProgress.progress = 100
+                            binding.homeMiniProgressContainer.addUploadInfoButton.isVisible = true
+                            binding.homeMiniProgressContainer.closeButton.isVisible = true
+                            binding.homeMiniProgressContainer.uploadSizeText.isInvisible = true
+                            binding.homeMiniProgressContainer.miniUploadProgressText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_upload_done, 0, 0, 0)
+                            binding.homeMiniProgressContainer.miniUploadProgressText.text = "Upload complete"
+                            cacheManager.clearCacheByUrl(GET_MY_CHANNEL_VIDEOS)
                         }
                         UploadStatus.ADDED.value,
                         UploadStatus.STARTED.value -> {
-                            add_upload_info_button.isInvisible = true
-                            upload_size_text.isVisible = true
-                            close_button.isInvisible = true
-                            mini_upload_progress_text.text = "Uploading - ${upInfo.completedPercent}%"
-                            mini_upload_progress.progress = upInfo.completedPercent
-                            upload_size_text.text = Utils.readableFileSize(upInfo.fileSize)
+                            binding.homeMiniProgressContainer.addUploadInfoButton.isInvisible = true
+                            binding.homeMiniProgressContainer.uploadSizeText.isVisible = true
+                            binding.homeMiniProgressContainer.closeButton.isInvisible = true
+                            binding.homeMiniProgressContainer.miniUploadProgressText.text = "Uploading - ${upInfo.completedPercent}%"
+                            binding.homeMiniProgressContainer.miniUploadProgress.progress = upInfo.completedPercent
+                            binding.homeMiniProgressContainer.uploadSizeText.text = Utils.readableFileSize(upInfo.fileSize)
                         }
                     }
                 } else {
-                    home_mini_progress_container.isVisible = false
+                    binding.homeMiniProgressContainer.root.isVisible = false
                 }
             }
         }

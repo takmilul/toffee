@@ -13,14 +13,14 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_landing_tv_channels.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class PopularTVChannelsFragment : HomeBaseFragment() {
     private lateinit var mAdapter: ChannelAdapter
-    private lateinit var binding: FragmentLandingTvChannelsBinding
+    private  var _binding: FragmentLandingTvChannelsBinding?=null
+    private val binding get() = _binding!!
     val viewModel by activityViewModels<LandingPageViewModel>()
 
     override fun onCreateView(
@@ -28,8 +28,14 @@ class PopularTVChannelsFragment : HomeBaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentLandingTvChannelsBinding.inflate(layoutInflater)
+        _binding = FragmentLandingTvChannelsBinding.inflate(layoutInflater)
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        binding.channelList.adapter = null
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -37,7 +43,9 @@ class PopularTVChannelsFragment : HomeBaseFragment() {
 
         mAdapter = ChannelAdapter(object : BaseListItemCallback<ChannelInfo> {
             override fun onItemClicked(item: ChannelInfo) {
-                homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+                if (item.id.isNotBlank()) {
+                    homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
+                }
             }
         })
 
@@ -45,10 +53,11 @@ class PopularTVChannelsFragment : HomeBaseFragment() {
             adapter = mAdapter
         }
 
-        viewAllButton.setOnClickListener {
+        binding.viewAllButton.setOnClickListener {
             homeViewModel.switchBottomTab.postValue(1)
         }
         val channelInfoList = PagingData.from(listOf(
+            ChannelInfo("", type = "LIVE"),
             ChannelInfo("", type = "LIVE"),
             ChannelInfo("", type = "LIVE"),
             ChannelInfo("", type = "LIVE"),

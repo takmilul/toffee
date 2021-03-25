@@ -7,7 +7,7 @@ import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BasePagingViewModel
 import com.banglalink.toffee.data.database.entities.UserActivities
 import com.banglalink.toffee.data.repository.UserActivitiesRepository
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.MyChannelDetailBean
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class UserActivitiesListViewModel @Inject constructor(
     private val activitiesRepo: UserActivitiesRepository,
-    private val preference: Preference,
+    private val preference: SessionPreference,
 ) : BasePagingViewModel<UserActivities>() {
 
     val myChannelDetail = MutableLiveData<MyChannelDetailBean>()

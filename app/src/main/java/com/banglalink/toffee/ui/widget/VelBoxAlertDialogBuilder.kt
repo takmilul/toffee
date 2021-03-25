@@ -6,8 +6,7 @@ import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.app.AlertDialog
-import com.banglalink.toffee.R
-import kotlinx.android.synthetic.main.velbox_dialog_layout.view.*
+import com.banglalink.toffee.databinding.VelboxDialogLayoutBinding
 
 data class VelBoxAlertDialogBuilder(
         var context: Context,
@@ -20,6 +19,7 @@ data class VelBoxAlertDialogBuilder(
         private var negativeButtonListener: ((d: AlertDialog?) -> Unit)? = null
     ) {
         private var dialog: AlertDialog? = null
+        private lateinit var binding: VelboxDialogLayoutBinding
 
         fun setTitle(title: String) = apply { this.title = title }
         fun setText(text: String) = apply { this.text = text }
@@ -44,35 +44,35 @@ data class VelBoxAlertDialogBuilder(
 
         fun create(): AlertDialog {
             val dialogBuilder = AlertDialog.Builder(context).apply {
-                val view = LayoutInflater.from(context).inflate(R.layout.velbox_dialog_layout, null)
-                setView(view)
-                if(icon > 0) view.dialog_icon.setImageResource(icon) else { view.dialog_icon.visibility = View.GONE }
-                title?.let { view.dialog_title.text = it } ?: run {view.dialog_title.visibility = View.GONE}
-                text?.let { view.dialog_text.text = it } ?: run {view.dialog_text.visibility = View.GONE}
-                positiveButtonTitle.let { view.dialog_positive_button.text = it }
-                negativeButtonTitle.let { view.dialog_negative_button.text = it }
+                binding = VelboxDialogLayoutBinding.inflate(LayoutInflater.from(context), null, false)
+                setView(binding.root)
+                if(icon > 0) binding.dialogIcon.setImageResource(icon) else { binding.dialogIcon.visibility = View.GONE }
+                title?.let { binding.dialogTitle.text = it } ?: run {binding.dialogTitle.visibility = View.GONE}
+                text?.let { binding.dialogText.text = it } ?: run {binding.dialogText.visibility = View.GONE}
+                positiveButtonTitle.let { binding.dialogPositiveButton.text = it }
+                negativeButtonTitle.let { binding.dialogNegativeButton.text = it }
 
                 if(positiveButtonListener == null && negativeButtonListener == null) {
-                    view.dialog_buttons.visibility = View.GONE
+                    binding.dialogButtons.visibility = View.GONE
                 }
 
                 positiveButtonListener?.let {
-                    view.dialog_positive_button.setOnClickListener { _->
+                    binding.dialogPositiveButton.setOnClickListener { _->
                         it.invoke(dialog)
                     }
                 } ?: run {
-                    view.dialog_positive_button.visibility = View.GONE
+                    binding.dialogPositiveButton.visibility = View.GONE
                 }
 
                 negativeButtonListener?.let {
-                    view.dialog_negative_button.setOnClickListener { _->
+                    binding.dialogNegativeButton.setOnClickListener { _->
                         it.invoke(dialog)
                     }
                 } ?: run {
-                    view.dialog_negative_button.visibility = View.GONE
+                    binding.dialogNegativeButton.visibility = View.GONE
                 }
 
-                view.close_button.setOnClickListener { dialog?.dismiss() }
+                binding.closeButton.setOnClickListener { dialog?.dismiss() }
             }
             return dialogBuilder.create().apply {
                 window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))

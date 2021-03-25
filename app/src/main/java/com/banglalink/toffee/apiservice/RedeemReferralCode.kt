@@ -3,11 +3,11 @@ package com.banglalink.toffee.apiservice
 import com.banglalink.toffee.data.network.request.RedeemReferralCodeRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.RedeemReferralCodeBean
 import javax.inject.Inject
 
-class RedeemReferralCode @Inject constructor(private val preference: Preference, private val toffeeApi: ToffeeApi) {
+class RedeemReferralCode @Inject constructor(private val preference: SessionPreference, private val toffeeApi: ToffeeApi) {
 
     suspend fun execute(referralCode: String): RedeemReferralCodeBean {
         val response = tryIO2 {

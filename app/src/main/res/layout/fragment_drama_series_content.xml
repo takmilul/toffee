@@ -27,9 +27,10 @@
 
         <ImageButton
             android:id="@+id/filterButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_marginEnd="16dp"
+            android:padding="8dp"
             android:src="@drawable/ic_filter"
             android:visibility="visible"
             android:background="?attr/selectableItemBackgroundBorderless"
@@ -81,6 +82,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:elevation="2dp"
+            android:contentDescription="@string/txt_content_loader"
             android:visibility="gone"
             android:src="@drawable/content_loader"
             android:background="@drawable/gif_round_border"
@@ -106,6 +108,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
+                android:contentDescription="@string/txt_empty"
                 android:maxWidth="144dp"
                 app:srcCompat="@drawable/ic_activities_empty" />
 

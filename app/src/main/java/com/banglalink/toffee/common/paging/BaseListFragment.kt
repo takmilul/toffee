@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
@@ -14,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.databinding.FragmentBaseSingleListBinding
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.px
-import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import kotlinx.coroutines.flow.collectLatest
@@ -23,7 +21,8 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
     protected abstract val mAdapter: BasePagingDataAdapter<T>
     protected abstract val mViewModel: BasePagingViewModel<T>
 
-    protected lateinit var binding: FragmentBaseSingleListBinding
+    private var _binding: FragmentBaseSingleListBinding? = null
+    protected val binding get() = _binding!!
 
     open val itemMargin = 0
     open val verticalPadding = Pair(0,0)
@@ -34,7 +33,7 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentBaseSingleListBinding.inflate(inflater, container, false)
+        _binding = FragmentBaseSingleListBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -90,15 +89,10 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
             updatePadding(left = horizontalPadding.first.px, right = horizontalPadding.second.px)
             
             mAdapter.addLoadStateListener {
-                if(it.source.refresh is LoadState.Loading) {
-                    binding.progressBar.show()
-                } else {
-                    binding.progressBar.hide()
-                }
-
+                binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
                 mAdapter.apply {
-                    val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached
-                    binding.emptyView.isGone = !showEmpty
+                    val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
+                    binding.emptyView.isVisible = showEmpty
                     binding.listview.isVisible = !showEmpty
                 }
             }
@@ -130,6 +124,7 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
         binding.listview.clearOnScrollListeners()
         binding.unbind()
         super.onDestroyView()
+        _binding = null
     }
 
     companion object {

@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentMovieBinding
@@ -18,11 +17,11 @@ import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.util.bindCategoryImage
-import kotlinx.android.synthetic.main.fragment_category_info.*
 
 class MovieFragment : BaseFragment() {
     private lateinit var category: Category
-    private lateinit var binding: FragmentMovieBinding
+    private var _binding: FragmentMovieBinding ? = null
+    private val binding get() = _binding!!
     private val landingViewModel by activityViewModels<LandingPageViewModel>()
     private val viewModel by activityViewModels<MovieViewModel>()
 
@@ -35,11 +34,15 @@ class MovieFragment : BaseFragment() {
         }
     }
     
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_movie, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentMovieBinding.inflate(inflater, container, false)
         return binding.root
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         category = requireArguments().getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)!!
@@ -54,9 +57,9 @@ class MovieFragment : BaseFragment() {
 
     private fun setCategoryIcon() {
         category.let {
-            categoryName.text = it.categoryName
-            bindCategoryImage(categoryIcon, it)
-            categoryIcon.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.colorAccent2))
+            binding.categoryName.text = it.categoryName
+            bindCategoryImage(binding.categoryIcon, it)
+            binding.categoryIcon.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.colorAccent2))
         }
     }
 

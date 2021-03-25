@@ -12,7 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.ReactionInfo
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.AlertDialogReactionsBinding
 import com.banglalink.toffee.enums.ActivityType.*
 import com.banglalink.toffee.enums.Reaction
@@ -27,7 +27,7 @@ class ReactionPopup: Fragment() {
 
     private var reactionIconCallback: ReactionIconCallback? = null
     private var channelInfo: ChannelInfo? = null
-    @Inject lateinit var preference: Preference
+    @Inject lateinit var preference: SessionPreference
     @Inject lateinit var reactionDao: ReactionDao
     private val mViewModel by viewModels<ReactionViewModel>()
     private var reactionPopupWindow: PopupWindow? = null

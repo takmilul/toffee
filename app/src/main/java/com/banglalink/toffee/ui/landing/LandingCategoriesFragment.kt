@@ -10,13 +10,13 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.databinding.FragmentLandingCategoriesBinding
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_landing_categories.*
 import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
@@ -25,13 +25,22 @@ class LandingCategoriesFragment: BaseFragment() {
 
     private val viewModel by activityViewModels<LandingPageViewModel>()
     private val homeViewModel by activityViewModels<HomeViewModel>()
+    private var _binding: FragmentLandingCategoriesBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_landing_categories, container, false)
+    ): View {
+        _binding = FragmentLandingCategoriesBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        binding.categoriesList.adapter = null
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -69,11 +78,11 @@ class LandingCategoriesFragment: BaseFragment() {
             }
         })
 
-        viewAllButton.setOnClickListener {
+        binding.viewAllButton.setOnClickListener {
             homeViewModel.switchBottomTab.postValue(3)
         }
 
-        with(categoriesList) {
+        with(binding.categoriesList) {
             layoutManager = GridLayoutManager(context, 2, GridLayoutManager.HORIZONTAL, false)
             adapter = mAdapter
         }

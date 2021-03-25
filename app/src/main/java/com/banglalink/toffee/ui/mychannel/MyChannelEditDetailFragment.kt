@@ -7,17 +7,14 @@ import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import coil.load
-import coil.request.CachePolicy
 import com.banglalink.toffee.R
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_DETAILS_URL
+import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_DETAILS
 import com.banglalink.toffee.data.network.request.MyChannelEditRequest
 import com.banglalink.toffee.data.network.retrofit.CacheManager
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.FragmentMyChannelEditDetailBinding
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
@@ -31,20 +28,23 @@ import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
 import com.banglalink.toffee.ui.widget.ToffeeSpinnerAdapter
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.UtilsKt
+import com.banglalink.toffee.util.bindImageFromUrl
+import com.banglalink.toffee.util.bindRoundImage
 import com.banglalink.toffee.util.imagePathToBase64
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MyChannelEditDetailFragment : Fragment(), OnClickListener {
-    @Inject lateinit var mPref: Preference
+    @Inject lateinit var mPref: SessionPreference
     @Inject lateinit var cacheManager: CacheManager
     private var isPosterClicked = false
     private var myChannelDetail: MyChannelDetail? = null
     private var newBannerUrl: String? = null
     private var newProfileImageUrl: String? = null
     private lateinit var progressDialog: VelBoxProgressDialog
-    private lateinit var binding: FragmentMyChannelEditDetailBinding
+    private var _binding: FragmentMyChannelEditDetailBinding ? = null
+    private val binding get() = _binding!!
 
     @Inject lateinit var viewModelAssistedFactory: MyChannelEditDetailViewModel.AssistedFactory
     private val viewModel by viewModels<MyChannelEditDetailViewModel> { MyChannelEditDetailViewModel.provideFactory(viewModelAssistedFactory, myChannelDetail) }
@@ -63,12 +63,15 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_my_channel_edit_detail, container, false)
+        _binding = FragmentMyChannelEditDetailBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
         return binding.root
     }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.container.setOnClickListener(this)
@@ -102,10 +105,15 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         }
 
         observe(viewModel.categoryList) { categories ->
-            categoryAdapter.setData(categories)
             progressDialog.dismiss()
-            viewModel.selectedCategory = categories?.find { it.id == myChannelDetail?.categoryId } ?: categories?.first()
-            viewModel.selectedCategoryPosition.value = (categories.indexOf(categories.find { it.id == myChannelDetail?.categoryId }).takeIf { it > 0 } ?: 0) + 1
+            if(!categories.isNullOrEmpty()) {
+                categoryAdapter.setData(categories)
+                viewModel.selectedCategory =
+                    categories?.find { it.id == myChannelDetail?.categoryId } ?: categories?.first()
+                viewModel.selectedCategoryPosition.value =
+                    (categories.indexOf(categories.find { it.id == myChannelDetail?.categoryId })
+                        .takeIf { it > 0 } ?: 0) + 1
+            }
         }
 
         observe(viewModel.selectedCategoryPosition) {
@@ -132,18 +140,10 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
 
     private fun loadImage(){
         newBannerUrl?.let {
-            binding.bannerImageView.load(it){
-                memoryCachePolicy(CachePolicy.DISABLED)
-                diskCachePolicy(CachePolicy.ENABLED)
-                crossfade(false)
-            }
+            bindImageFromUrl(binding.bannerImageView, it)
         }
         newProfileImageUrl?.let {
-            binding.profileImageView.load(it) {
-                memoryCachePolicy(CachePolicy.DISABLED)
-                diskCachePolicy(CachePolicy.ENABLED)
-                crossfade(false)
-            }
+            bindRoundImage(binding.profileImageView, it)
         }
     }
     
@@ -157,7 +157,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                 is Success -> {
                     binding.saveButton.isClickable = true
                     progressDialog.dismiss()
-                    cacheManager.clearCacheByUrl(GET_MY_CHANNEL_DETAILS_URL)
+                    cacheManager.clearCacheByUrl(GET_MY_CHANNEL_DETAILS)
                     findNavController().navigateUp()
                     Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
                 }

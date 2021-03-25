@@ -20,7 +20,7 @@ import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.databinding.DataBindingUtil
 import com.banglalink.toffee.R.*
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.MediaControlLayout3Binding
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener
 import com.banglalink.toffee.listeners.PlaylistListener
@@ -84,7 +84,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     private var debugJob: Job? = null
 
     @Inject
-    lateinit var mPref: Preference
+    lateinit var mPref: SessionPreference
 
     init {
         handler = MessageHandler()
@@ -105,7 +105,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
 
     private fun initView() {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        binding = DataBindingUtil.inflate(inflater, layout.media_control_layout3, this, true)
+        binding = MediaControlLayout3Binding.inflate(inflater, this, true)
         binding.minimize.setOnClickListener(this)
         binding.play.setOnClickListener(this)
 //        binding.forward.setOnClickListener(this)
@@ -540,7 +540,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         when (playbackState) {
             Player.STATE_BUFFERING -> {
                 binding.preview.setOnClickListener(this)
-                binding.preview.setImageResource(color.black)
+//                binding.preview.setImageResource(color.black)
                 binding.play.visibility = GONE
 //                binding.forward.visibility = INVISIBLE
 //                binding.backward.visibility = INVISIBLE

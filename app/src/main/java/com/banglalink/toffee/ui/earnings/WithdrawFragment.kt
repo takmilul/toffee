@@ -8,9 +8,7 @@ import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -25,7 +23,6 @@ import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.CheckedChangeListener
 import com.banglalink.toffee.ui.common.SingleListFragmentV2
-import kotlinx.android.synthetic.main.fragment_withdraw.*
 
 class WithdrawFragment : Fragment(), CheckedChangeListener<PaymentMethod>, OnClickListener {
 
@@ -33,7 +30,8 @@ class WithdrawFragment : Fragment(), CheckedChangeListener<PaymentMethod>, OnCli
     private lateinit var mAdapter: WithdrawAdapter
     private lateinit var mViewModel: WithdrawViewModel
     private var enableToolbar: Boolean = false
-    lateinit var binding: FragmentWithdrawBinding
+    private var _binding: FragmentWithdrawBinding ? = null
+    private val binding get() = _binding!!
 
     companion object {
         private const val SHOW_TOOLBAR = "enableToolbar"
@@ -49,8 +47,8 @@ class WithdrawFragment : Fragment(), CheckedChangeListener<PaymentMethod>, OnCli
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_withdraw, container, false)
-        binding.lifecycleOwner = this
+        _binding = FragmentWithdrawBinding.inflate(inflater, container, false)
+//        binding.lifecycleOwner = this
         return binding.root
     }
 
@@ -143,7 +141,7 @@ class WithdrawFragment : Fragment(), CheckedChangeListener<PaymentMethod>, OnCli
     }
 
     private fun observeList() {
-        mViewModel.listData.observe(viewLifecycleOwner, Observer {
+        mViewModel.listData.observe(viewLifecycleOwner) {
             when (it) {
                 is Success -> {
                     val itemCount = mAdapter.itemCount
@@ -165,16 +163,16 @@ class WithdrawFragment : Fragment(), CheckedChangeListener<PaymentMethod>, OnCli
                     activity?.showToast(it.error.msg)
                 }
             }
-        })
+        }
 
-        mViewModel.showProgress.observe(viewLifecycleOwner, Observer {
+        mViewModel.showProgress.observe(viewLifecycleOwner) {
             if (it) {
                 showProgress()
             }
             else {
                 hideProgress()
             }
-        })
+        }
     }
 
     private fun showProgress() {
@@ -188,8 +186,9 @@ class WithdrawFragment : Fragment(), CheckedChangeListener<PaymentMethod>, OnCli
     override fun onDestroyView() {
         binding.listview.adapter = null
         binding.listview.clearOnScrollListeners()
-        binding.unbind()
+//        binding.unbind()
         super.onDestroyView()
+        _binding = null
     }
 
     override fun onCheckedChanged(view: View, item: PaymentMethod, position: Int, isFromCheckableView: Boolean) {
@@ -217,7 +216,7 @@ class WithdrawFragment : Fragment(), CheckedChangeListener<PaymentMethod>, OnCli
     
     override fun onClick(v: View?) {
         when (v) {
-            nextButton -> {
+            binding.nextButton -> {
                 val amount = binding.withdrawalAmountEditText.text.toString()
                 if (amount.isNotEmpty() && mAdapter.selectedPosition >= 0) {
                     val paymentMethod = mAdapter.getItem(mAdapter.selectedPosition)
@@ -228,7 +227,7 @@ class WithdrawFragment : Fragment(), CheckedChangeListener<PaymentMethod>, OnCli
                     Toast.makeText(requireContext(), "Please enter amount and select an account to withdraw", Toast.LENGTH_SHORT).show()
                 }
             }
-            addPaymentButton -> {
+            binding.addPaymentButton -> {
                 findNavController().navigate(R.id.action_earningsFragment_to_addNewPaymentMethodFragment)
             }
         }

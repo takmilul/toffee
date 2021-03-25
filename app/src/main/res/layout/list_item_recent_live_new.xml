@@ -55,6 +55,8 @@
                     app:layout_constraintTop_toTopOf="parent">
                     
                     <ImageView
+                        android:contentDescription="@string/txt_channel"
+
                         android:id="@+id/channel"
                         loadChannelImage="@{data.channelInfo}"
                         android:layout_width="@dimen/channel_width"
@@ -69,6 +71,7 @@
                 </FrameLayout>
 
                 <ImageView
+                    android:contentDescription="@string/txt_like"
                     android:id="@+id/reactIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -80,6 +83,7 @@
                     app:srcCompat="@drawable/ic_view" />
 
                 <ImageView
+                    android:contentDescription="@string/txt_options"
                     android:id="@+id/options"
                     style="@style/OptionMenuStyle"
                     android:onClick="@{(v)->callback.onOpenMenu(v, data)}"

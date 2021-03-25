@@ -18,7 +18,7 @@ class SignInFragment : Fragment() {
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?, ): View {
-        val binding: FragmentSigninBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_signin, container, false)
+        val binding = FragmentSigninBinding.inflate(inflater, container, false)
         return binding.root
     }
 }

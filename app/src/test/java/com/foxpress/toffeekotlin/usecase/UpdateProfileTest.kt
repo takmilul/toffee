@@ -2,7 +2,7 @@ package com.foxpress.toffeekotlin.usecase
 
 import com.banglalink.toffee.data.network.request.UpdateProfileRequest
 import com.banglalink.toffee.data.network.response.UpdateProfileResponse
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.exception.ApiException
 import com.banglalink.toffee.apiservice.UpdateProfile
 import com.nhaarman.mockitokotlin2.*
@@ -22,7 +22,7 @@ class UpdateProfileTest :BaseUseCaseTest(){
         runBlocking {
             //set up test
             setupPref()
-            val apiLogin = UpdateProfile(Preference.getInstance(), mockToffeeApi)
+            val apiLogin = UpdateProfile(SessionPreference.getInstance(), mockToffeeApi)
             Mockito.`when`(mockToffeeApi.updateProfile(any<UpdateProfileRequest>())).thenReturn(
                 Response.success(UpdateProfileResponse(
                 )))
@@ -50,7 +50,7 @@ class UpdateProfileTest :BaseUseCaseTest(){
         runBlocking {
             //set up test
             setupPref()
-            val apiLogin = UpdateProfile(Preference.getInstance(), mockToffeeApi)
+            val apiLogin = UpdateProfile(SessionPreference.getInstance(), mockToffeeApi)
             Mockito.`when`(mockToffeeApi.updateProfile(any<UpdateProfileRequest>())).thenReturn(
                 Response.success(UpdateProfileResponse().apply {
                     errorCode = 109

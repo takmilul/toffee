@@ -5,13 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.banglalink.toffee.R
+import com.banglalink.toffee.databinding.TabActivitiesMainBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.tab_activities_main.*
 
 @AndroidEntryPoint
 class UserActivitiesMainFragment: Fragment() {
+    private var _binding: TabActivitiesMainBinding ? = null
+    private val binding get() = _binding!!
+
     companion object {
         const val ARG_SELECTED_TAB = "selected-tab"
 
@@ -27,20 +29,25 @@ class UserActivitiesMainFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.tab_activities_main, container, false)
+        _binding = TabActivitiesMainBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val selectedTab = arguments?.getInt(ARG_SELECTED_TAB, 0) ?: 0
 
-        activities_pager.isUserInputEnabled = false
-        activities_pager.adapter = UserActivitiesPagerAdapter(this)
-        TabLayoutMediator(tab_layout, activities_pager) { tab, position ->
+        binding.activitiesPager.isUserInputEnabled = false
+        binding.activitiesPager.adapter = UserActivitiesPagerAdapter(this)
+        TabLayoutMediator(binding.tabLayout, binding.activitiesPager) { tab, position ->
             tab.text = tabTitle[position]
-            activities_pager.currentItem = tab.position
+            binding.activitiesPager.currentItem = tab.position
         }.attach()
-        activities_pager.currentItem = selectedTab
+        binding.activitiesPager.currentItem = selectedTab
     }
 }

@@ -5,12 +5,12 @@ import com.banglalink.toffee.data.network.request.AllChannelRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.repository.TVChannelRepository
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.google.gson.Gson
 import javax.inject.Inject
 
 class GetChannelWithCategory @Inject constructor(
-    private val preference: Preference,
+    private val preference: SessionPreference,
     private val toffeeApi: ToffeeApi,
     private val tvChannelRepo: TVChannelRepository
 ) {

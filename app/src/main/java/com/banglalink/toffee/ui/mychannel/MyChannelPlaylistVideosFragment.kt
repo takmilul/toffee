@@ -5,10 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
-import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.fragment.app.activityViewModels
@@ -20,7 +18,7 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_PLAYLIST_VIDEOS_URL
+import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_PLAYLIST_VIDEOS
 import com.banglalink.toffee.apiservice.MyChannelPlaylistContentParam
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
@@ -45,7 +43,6 @@ import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.ui.widget.MyPopupWindow
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.catchup_details_list_header_new.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
@@ -66,7 +63,8 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private lateinit var requestParams: MyChannelPlaylistContentParam
     private lateinit var playlistAdapter: MyChannelPlaylistVideosAdapter
-    private lateinit var binding: FragmentMyChannelPlaylistVideosBinding
+    private var _binding: FragmentMyChannelPlaylistVideosBinding ? = null
+    private val binding get() = _binding!!
     @Inject lateinit var subscriptionInfoRepository: SubscriptionInfoRepository
     @Inject lateinit var subscriptionCountRepository: SubscriptionCountRepository
     
@@ -94,10 +92,15 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = FragmentMyChannelPlaylistVideosBinding.inflate(inflater, container, false)
+        _binding = FragmentMyChannelPlaylistVideosBinding.inflate(inflater, container, false)
         return binding.root
     }
-    
+
+    override fun onDestroyView() {
+        binding.myChannelPlaylistVideos.adapter = null
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
@@ -205,8 +208,8 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
             playlistAdapter.addLoadStateListener {
                 binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
                 playlistAdapter.apply {
-                    val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached
-                    binding.emptyView.isGone = !showEmpty
+                    val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
+                    binding.emptyView.isVisible = showEmpty
                     binding.myChannelPlaylistVideos.isVisible = !showEmpty
                 }
             }
@@ -271,12 +274,12 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
         observe(mViewModel.deletePlaylistVideoLiveData) {
             when (it) {
                 is Success -> {
-                    cacheManager.clearCacheByUrl(GET_MY_CHANNEL_PLAYLIST_VIDEOS_URL)
+                    cacheManager.clearCacheByUrl(GET_MY_CHANNEL_PLAYLIST_VIDEOS)
                     playlistAdapter.refresh()
-                    Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
+                    requireContext().showToast(it.data.message)
                 }
                 is Failure -> {
-                    Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
+                    requireContext().showToast(it.error.msg)
                 }
             }
         }

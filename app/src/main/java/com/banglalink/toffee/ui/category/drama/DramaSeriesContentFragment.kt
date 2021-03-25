@@ -5,14 +5,11 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
-import com.banglalink.toffee.R
 import com.banglalink.toffee.R.string
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.databinding.FragmentDramaSeriesContentBinding
@@ -34,14 +31,19 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
     private var selectedFilter: Int = FEED.value
     private val viewModel by viewModels<DramaSeriesViewModel>()
     private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
-    private lateinit var binding: FragmentDramaSeriesContentBinding
+    private var _binding: FragmentDramaSeriesContentBinding ? = null
+    private val binding get() = _binding!!
     private lateinit var mAdapter: DramaSeriesListAdapter<ChannelInfo>
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?, ): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_drama_series_content, container, false)
+        _binding = FragmentDramaSeriesContentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         category = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM) as Category?
@@ -85,15 +87,10 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
         }
 
         mAdapter.addLoadStateListener {
-            if(it.source.refresh is LoadState.Loading) {
-                binding.progressBar.visibility = View.VISIBLE
-            } else {
-                binding.progressBar.visibility = View.GONE
-            }
-
+            binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
             mAdapter.apply {
-                val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached
-                binding.emptyView.isGone = !showEmpty
+                val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
+                binding.emptyView.isVisible = showEmpty
                 binding.latestVideosList.isVisible = !showEmpty
             }
         }

@@ -15,7 +15,8 @@ import com.banglalink.toffee.ui.home.HomeViewModel
 
 class MoviesPreviewItemFragment : BaseFragment(), BaseListItemCallback<ChannelInfo> {
     private lateinit var moviePreview: ChannelInfo
-    private lateinit var binding: FragmentMoviesPreviewItemBinding
+    private var _binding: FragmentMoviesPreviewItemBinding ? = null
+    private val binding get() = _binding!!
     val homeViewModel by activityViewModels<HomeViewModel>()
 
     companion object {
@@ -35,8 +36,13 @@ class MoviesPreviewItemFragment : BaseFragment(), BaseListItemCallback<ChannelIn
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_movies_preview_item, container, false)
+        _binding = FragmentMoviesPreviewItemBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

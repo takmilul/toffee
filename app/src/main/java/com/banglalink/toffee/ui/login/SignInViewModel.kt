@@ -2,30 +2,44 @@ package com.banglalink.toffee.ui.login
 
 import android.database.sqlite.SQLiteDatabase
 import android.os.Environment
+import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.apiservice.CheckReferralCodeStatus
 import com.banglalink.toffee.apiservice.SignInByPhone
+import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.network.util.resultLiveData
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.model.CustomerInfoSignIn
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseViewModel
+import com.banglalink.toffee.util.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
-    private val pref: Preference,
+    private val pref: SessionPreference,
     private val signInByPhone: SignInByPhone,
     private val checkReferralCodeStatus: CheckReferralCodeStatus,
 ) : BaseViewModel() {
 
-    fun signIn(phoneNumber: String, referralCode: String): LiveData<Resource<String>> {
-        return resultLiveData {
+    val signByPhoneResponse = SingleLiveEvent<Resource<Any>>()
+
+    fun signIn(phoneNumber: String, referralCode: String) {
+        viewModelScope.launch {
             if (referralCode.isNotBlank()) {
-                checkReferralCodeStatus.execute(phoneNumber, referralCode)
+               val referResponse= resultFromResponse { checkReferralCodeStatus.execute(phoneNumber, referralCode)}
+                if(referResponse is Resource.Failure)
+                {
+                    signByPhoneResponse.value = referResponse
+                    return@launch
+                }
             }
-            signInByPhone.execute(phoneNumber, referralCode)
+           val response= resultFromResponse {  signInByPhone.execute(phoneNumber, referralCode) }
+            signByPhoneResponse.value=response
         }
     }
 

@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics.logException
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.util.Utils
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
@@ -41,7 +41,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
     private var isClamped = 0
     private val onPositionChangedListenerList: MutableList<OnPositionChangedListener> = ArrayList()
     @Inject
-    lateinit var mPref: Preference
+    lateinit var mPref: SessionPreference
 
     init {
         initializeAttributes(attrs)

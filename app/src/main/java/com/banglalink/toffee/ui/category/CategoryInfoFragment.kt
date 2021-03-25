@@ -11,7 +11,9 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentCategoryInfoBinding
+import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
@@ -24,17 +26,21 @@ import com.google.android.material.chip.Chip
 class CategoryInfoFragment: HomeBaseFragment() {
     private val landingViewModel by activityViewModels<LandingPageViewModel>()
     private lateinit var categoryInfo: Category
-    private lateinit var binding: FragmentCategoryInfoBinding
+    private var _binding: FragmentCategoryInfoBinding ? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentCategoryInfoBinding.inflate(inflater, container, false)
+        _binding = FragmentCategoryInfoBinding.inflate(inflater, container, false)
         return binding.root
     }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         categoryInfo = requireParentFragment().requireArguments().getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)!!
-        
+        binding.hashTagChipGroupHolder.hide()
         observeCategoryData()
         observeHashTags()
         observeSubCategories()
@@ -71,6 +77,7 @@ class CategoryInfoFragment: HomeBaseFragment() {
 
     private fun observeHashTags(){
         observe(landingViewModel.hashtagList) {
+            binding.hashTagChipGroupHolder.show()
             binding.hashTagChipGroup.removeAllViews()
             val hashTagList = it
             hashTagList.forEachIndexed{ _, hashTag ->

@@ -3,12 +3,12 @@ package com.banglalink.toffee.data.repository.impl
 import com.banglalink.toffee.data.database.dao.ContinueWatchingDao
 import com.banglalink.toffee.data.database.entities.ContinueWatchingItem
 import com.banglalink.toffee.data.repository.ContinueWatchingRepository
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import kotlinx.coroutines.flow.Flow
 
 class ContinueWatchingRepositoryImpl(
     private val dao: ContinueWatchingDao,
-    private val pref: Preference)
+    private val pref: SessionPreference)
 : ContinueWatchingRepository {
     
     override suspend fun insertItem(item: ContinueWatchingItem) {

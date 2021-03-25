@@ -32,7 +32,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/app_bar"
-            app:srcCompat="@drawable/ic_daily_package" />
+            app:srcCompat="@drawable/ic_daily_package"
+            android:contentDescription="@string/txt_badge_icon" />
 
         <TextView
             android:id="@+id/package_name_tv"

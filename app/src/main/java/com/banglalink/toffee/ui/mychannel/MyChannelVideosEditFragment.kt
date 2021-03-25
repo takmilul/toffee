@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.Toast
 import androidx.core.view.setPadding
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -39,7 +40,8 @@ class MyChannelVideosEditFragment : BaseFragment() {
 
     private var channelInfo: ChannelInfo? = null
     private lateinit var progressDialog: VelBoxProgressDialog
-    private lateinit var binding: FragmentMyChannelVideosEditBinding
+    private var _binding: FragmentMyChannelVideosEditBinding ? = null
+    private val binding get() = _binding!!
     private val viewModel: MyChannelVideosEditViewModel by viewModels()
     private val videosReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
 
@@ -61,11 +63,17 @@ class MyChannelVideosEditFragment : BaseFragment() {
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentMyChannelVideosEditBinding.inflate(inflater)
+        _binding = FragmentMyChannelVideosEditBinding.inflate(inflater)
         binding.setVariable(BR.viewmodel, viewModel)
         binding.lifecycleOwner = this
         return binding.root
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -112,13 +120,17 @@ class MyChannelVideosEditFragment : BaseFragment() {
 
     private fun observeCategory() {
         observe(viewModel.categories){ categoryList ->
+            progressDialog.dismiss()
             if(categoryList.isNotEmpty()){
                 val selectedCategory = categoryList.find { it.id.toInt() == channelInfo?.categoryId }
                 val categoryIndex = categoryList.indexOf(selectedCategory).takeIf { it > 0 } ?: 0
                 viewModel.categoryPosition.value = categoryIndex+1
                 viewModel.ageGroupPosition.value = channelInfo?.age_restriction?.toInt()?:0
             }
-            progressDialog.dismiss()
+        }
+        observe(viewModel.exitFragment) {
+            Toast.makeText(requireContext(), "Unable to load data!", Toast.LENGTH_SHORT).show()
+            findNavController().popBackStack()
         }
     }
 

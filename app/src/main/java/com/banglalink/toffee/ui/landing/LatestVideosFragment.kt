@@ -14,7 +14,6 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.get
-import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
@@ -53,14 +52,21 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     private var category: Category? = null
     private var selectedFilter: Int = FEED.value
     private lateinit var mAdapter: LatestVideosAdapter
-    private lateinit var binding: FragmentLandingLatestVideosBinding
+    private var _binding: FragmentLandingLatestVideosBinding ? = null
+    private val binding get() = _binding!!
     private val viewModel by activityViewModels<LandingPageViewModel>()
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = FragmentLandingLatestVideosBinding.inflate(inflater, container, false)
+        _binding = FragmentLandingLatestVideosBinding.inflate(inflater, container, false)
         return binding.root
     }
-    
+
+    override fun onDestroyView() {
+        binding.latestVideosList.adapter = null
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -74,8 +80,8 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
             mAdapter.addLoadStateListener {
                 binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
                 mAdapter.apply {
-                    val showEmpty = itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
-                    binding.emptyView.isGone = ! showEmpty
+                    val showEmpty = itemCount <= 0 && ! it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
+                    binding.emptyView.isVisible = showEmpty
                     binding.latestVideosList.isVisible = ! showEmpty
                 }
             }
@@ -89,10 +95,10 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         if (category?.id?.toInt() == 1) {
             createSubCategoryList()
         }
-        if (category?.id?.toInt() != 0) {
-            observeSubCategoryChange()
-            observeHashTagChange()
-        }
+        
+        observeSubCategoryChange()
+        observeHashTagChange()
+        
         binding.filterButton.setOnClickListener { filterButtonClickListener(it) }
     }
     
@@ -115,8 +121,9 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     
     private fun observeSubCategoryChange() {
         observe(viewModel.subCategoryId) {
-            if (viewModel.checkedSubCategoryChipId.value != 0 && it == 0 && category?.id?.toInt() != 0)
+            if (viewModel.checkedSubCategoryChipId.value != 0 && it == 0 && category?.id?.toInt() != 0 && binding.subCategoryChipGroup.childCount > 0) {
                 binding.subCategoryChipGroup.check(binding.subCategoryChipGroup[0].id)
+            }
 
             if (selectedFilter == LATEST_VIDEOS.value || selectedFilter == FEED.value) {
                 observeLatestVideosList(category?.id?.toInt() ?: 0, it)
@@ -131,7 +138,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         observe(viewModel.selectedHashTag) {
             listJob?.cancel()
             listJob = lifecycleScope.launchWhenCreated {
-                viewModel.loadHashTagContents.collectLatest {
+                viewModel.loadHashTagContents(it, category?.id?.toInt() ?: 0, viewModel.subCategoryId.value ?: 0).collectLatest {
                     mAdapter.submitData(it)
                 }
             }

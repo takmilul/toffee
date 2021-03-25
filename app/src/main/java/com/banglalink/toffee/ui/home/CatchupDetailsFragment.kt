@@ -15,11 +15,13 @@ import androidx.paging.filter
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
+import com.banglalink.toffee.apiservice.CatchupParams
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.repository.SubscriptionCountRepository
 import com.banglalink.toffee.data.repository.SubscriptionInfoRepository
+import com.banglalink.toffee.databinding.FragmentCatchupBinding
 import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
@@ -29,7 +31,6 @@ import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_catchup.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
@@ -41,14 +42,16 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
     private var isSubscribed: Int = 0
     private var subscriberCount: Long = 0
     private lateinit var mAdapter: ConcatAdapter
+    private lateinit var currentItem: ChannelInfo
     private lateinit var catchupAdapter: CatchUpDetailsAdapter
     private lateinit var detailsAdapter: ChannelHeaderAdapter
-    private lateinit var currentItem: ChannelInfo
-    private val viewModel by viewModels<CatchupDetailsViewModel>()
-    private val myChannelVideosViewModel by activityViewModels<MyChannelVideosViewModel>()
     @Inject lateinit var subscriptionInfoRepository: SubscriptionInfoRepository
     @Inject lateinit var subscriptionCountRepository: SubscriptionCountRepository
-
+    private val viewModel by viewModels<CatchupDetailsViewModel>()
+    private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
+    private val myChannelVideosViewModel by activityViewModels<MyChannelVideosViewModel>()
+    private var _binding: FragmentCatchupBinding ? = null
+    private val binding get() = _binding!!
     companion object{
         const val CHANNEL_INFO = "channel_info_"
         fun createInstance(channelInfo: ChannelInfo): CatchupDetailsFragment {
@@ -69,8 +72,14 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_catchup, container, false)
+    ): View {
+        _binding = FragmentCatchupBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -86,7 +95,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
             detailsAdapter.notifyDataSetChanged()
         }
         
-        with(listview) {
+        with(binding.listview) {
             addItemDecoration(MarginItemDecoration(12))
             layoutManager = LinearLayoutManager(context)
             adapter = mAdapter
@@ -171,7 +180,9 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
     
     private fun observeList() {
         lifecycleScope.launchWhenStarted {
-            viewModel.loadRelativeContent(currentItem).collectLatest {
+            val catchupParams = CatchupParams(currentItem.id, currentItem.video_tags, landingPageViewModel.categoryId
+                .value ?: 0, landingPageViewModel.subCategoryId.value ?: 0)
+            viewModel.loadRelativeContent(catchupParams).collectLatest {
                 catchupAdapter.submitData(it)
             }
         }

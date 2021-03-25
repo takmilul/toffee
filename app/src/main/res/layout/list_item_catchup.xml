@@ -30,6 +30,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
+                android:contentDescription="@string/txt_poster"
                 android:id="@+id/poster"
                 android:layout_width="@dimen/catchup_width"
                 android:layout_height="@dimen/catchup_height"
@@ -43,6 +44,7 @@
 
 
         <ImageView
+            android:contentDescription="@string/txt_options"
             android:id="@+id/options"
             android:layout_width="24dp"
             android:layout_height="24dp"

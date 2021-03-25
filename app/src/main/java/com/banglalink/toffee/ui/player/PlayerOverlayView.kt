@@ -2,9 +2,7 @@ package com.banglalink.toffee.ui.player
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
 import androidx.annotation.*
@@ -13,9 +11,9 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.widget.TextViewCompat
 import com.banglalink.toffee.R
+import com.banglalink.toffee.databinding.PlayerOverlayLayoutBinding
 import com.banglalink.toffee.model.ChannelInfo
 import com.google.android.exoplayer2.Player
-import kotlinx.android.synthetic.main.player_overlay_layout.view.*
 
 
 /**
@@ -28,6 +26,7 @@ import kotlinx.android.synthetic.main.player_overlay_layout.view.*
  */
 class PlayerOverlayView(context: Context, private val attrs: AttributeSet?) :
     ConstraintLayout(context, attrs), PlayerDoubleTapListener {
+    private val binding = PlayerOverlayLayoutBinding.inflate(LayoutInflater.from(context), this, true)
 
     constructor(context: Context) : this(context, null) {
         // Hide overlay initially when added programmatically
@@ -41,20 +40,18 @@ class PlayerOverlayView(context: Context, private val attrs: AttributeSet?) :
     private var player: Player? = null
 
     init {
-        LayoutInflater.from(context).inflate(R.layout.player_overlay_layout, this, true)
-
         // Initialize UI components
         initializeAttributes()
-        seconds_view.isForward = true
+        binding.secondsView.isForward = true
         changeConstraints(true)
 
         // This code snippet is executed when the circle scale animation is finished
-        circle_clip_tap_view.performAtEnd = {
+        binding.circleClipTapView.performAtEnd = {
             performListener?.onAnimationEnd()
 
-            seconds_view.visibility = View.INVISIBLE
-            seconds_view.seconds = 0
-            seconds_view.stop()
+            binding.secondsView.visibility = View.INVISIBLE
+            binding.secondsView.seconds = 0
+            binding.secondsView.stop()
         }
     }
 
@@ -190,9 +187,9 @@ class PlayerOverlayView(context: Context, private val attrs: AttributeSet?) :
      * Color of the scaling circle on touch feedback.
      */
     var tapCircleColor: Int
-        get() = circle_clip_tap_view.circleColor
+        get() = binding.circleClipTapView.circleColor
         private set(value) {
-            circle_clip_tap_view.circleColor = value
+            binding.circleClipTapView.circleColor = value
         }
 
     fun tapCircleColorRes(@ColorRes resId: Int) = apply {
@@ -207,9 +204,9 @@ class PlayerOverlayView(context: Context, private val attrs: AttributeSet?) :
      * Color of the clipped background circle
      */
     var circleBackgroundColor: Int
-        get() = circle_clip_tap_view.circleBackgroundColor
+        get() = binding.circleClipTapView.circleBackgroundColor
         private set(value) {
-            circle_clip_tap_view.circleBackgroundColor = value
+            binding.circleClipTapView.circleBackgroundColor = value
         }
 
     fun circleBackgroundColorRes(@ColorRes resId: Int) = apply {
@@ -225,9 +222,9 @@ class PlayerOverlayView(context: Context, private val attrs: AttributeSet?) :
      * The overlay keeps visible until the animation finishes.
      */
     var animationDuration: Long
-        get() = circle_clip_tap_view.animationDuration
+        get() = binding.circleClipTapView.animationDuration
         private set(value) {
-            circle_clip_tap_view.animationDuration = value
+            binding.circleClipTapView.animationDuration = value
         }
 
     fun animationDuration(duration: Long) = apply {
@@ -239,9 +236,9 @@ class PlayerOverlayView(context: Context, private val attrs: AttributeSet?) :
      * The greater the value the more roundish the shape becomes
      */
     var arcSize: Float
-        get() = circle_clip_tap_view.arcSize
+        get() = binding.circleClipTapView.arcSize
         internal set(value) {
-            circle_clip_tap_view.arcSize = value
+            binding.circleClipTapView.arcSize = value
         }
 
     fun arcSize(@DimenRes resId: Int) = apply {
@@ -256,9 +253,9 @@ class PlayerOverlayView(context: Context, private val attrs: AttributeSet?) :
      * Duration the icon animation (fade in + fade out) for a full cycle in milliseconds.
      */
     var iconAnimationDuration: Long = 750
-        get() = seconds_view.cycleDuration
+        get() = binding.secondsView.cycleDuration
         private set(value) {
-            seconds_view.cycleDuration = value
+            binding.secondsView.cycleDuration = value
             field = value
         }
 
@@ -275,10 +272,10 @@ class PlayerOverlayView(context: Context, private val attrs: AttributeSet?) :
      */
     @DrawableRes
     var icon: Int = 0
-        get() = seconds_view.icon
+        get() = binding.secondsView.icon
         private set(value) {
-            seconds_view.stop()
-            seconds_view.icon = value
+            binding.secondsView.stop()
+            binding.secondsView.icon = value
             field = value
         }
 
@@ -292,7 +289,7 @@ class PlayerOverlayView(context: Context, private val attrs: AttributeSet?) :
     @StyleRes
     var textAppearance: Int = 0
         private set(value) {
-            TextViewCompat.setTextAppearance(seconds_view.textView, value)
+            TextViewCompat.setTextAppearance(binding.secondsView.textView, value)
             field = value
         }
 
@@ -306,7 +303,7 @@ class PlayerOverlayView(context: Context, private val attrs: AttributeSet?) :
      * In case of you'd like to change some specific attributes of the TextView in runtime.
      */
     val secondsTextView: TextView
-        get() = seconds_view.textView
+        get() = binding.secondsView.textView
 
     private fun getCurrentChannel(): ChannelInfo? {
         player?.currentMediaItem?.playbackProperties?.tag?.let {
@@ -334,8 +331,8 @@ class PlayerOverlayView(context: Context, private val attrs: AttributeSet?) :
         if (this.visibility != View.VISIBLE) {
             if (posX < playerView?.width!! * 0.35 || posX > playerView?.width!! * 0.65) {
                 performListener?.onAnimationStart()
-                seconds_view.visibility = View.VISIBLE
-                seconds_view.start()
+                binding.secondsView.visibility = View.VISIBLE
+                binding.secondsView.start()
             } else
                 return
         }
@@ -344,9 +341,9 @@ class PlayerOverlayView(context: Context, private val attrs: AttributeSet?) :
             posX < playerView?.width!! * 0.35 -> {
 
                 // First time tap or switched
-                if (seconds_view.isForward) {
+                if (binding.secondsView.isForward) {
                     changeConstraints(false)
-                    seconds_view.apply {
+                    binding.secondsView.apply {
                         isForward = false
                         seconds = 0
                     }
@@ -354,17 +351,17 @@ class PlayerOverlayView(context: Context, private val attrs: AttributeSet?) :
 
                 // Cancel ripple and start new without triggering overlay disappearance
                 // (resetting instead of ending)
-                circle_clip_tap_view.resetAnimation {
-                    circle_clip_tap_view.updatePosition(posX, posY)
+                binding.circleClipTapView.resetAnimation {
+                    binding.circleClipTapView.updatePosition(posX, posY)
                 }
                 rewinding()
             }
             posX > playerView?.width!! * 0.65 -> {
 
                 // First time tap or switched
-                if (!seconds_view.isForward) {
+                if (!binding.secondsView.isForward) {
                     changeConstraints(true)
-                    seconds_view.apply {
+                    binding.secondsView.apply {
                         isForward = true
                         seconds = 0
                     }
@@ -372,8 +369,8 @@ class PlayerOverlayView(context: Context, private val attrs: AttributeSet?) :
 
                 // Cancel ripple and start new without triggering overlay disappearance
                 // (resetting instead of ending)
-                circle_clip_tap_view.resetAnimation {
-                    circle_clip_tap_view.updatePosition(posX, posY)
+                binding.circleClipTapView.resetAnimation {
+                    binding.circleClipTapView.updatePosition(posX, posY)
                 }
                 forwarding()
             }
@@ -381,8 +378,8 @@ class PlayerOverlayView(context: Context, private val attrs: AttributeSet?) :
                 // Middle area tapped: do nothing
                 //
                 // playerView?.cancelInDoubleTapMode()
-                // circle_clip_tap_view.endAnimation()
-                // triangle_seconds_view.stop()
+                // binding.circleClipTapView.endAnimation()
+                // triangle_binding.secondsView.stop()
             }
         }
     }
@@ -421,30 +418,30 @@ class PlayerOverlayView(context: Context, private val attrs: AttributeSet?) :
     }
 
     private fun forwarding() {
-        seconds_view.seconds += seekSeconds
+        binding.secondsView.seconds += seekSeconds
         seekToPosition(player?.currentPosition?.plus(seekSeconds * 1000))
     }
 
     private fun rewinding() {
-        seconds_view.seconds += seekSeconds
+        binding.secondsView.seconds += seekSeconds
         seekToPosition(player?.currentPosition?.minus(seekSeconds * 1000))
     }
 
     private fun changeConstraints(forward: Boolean) {
         val constraintSet = ConstraintSet()
         with(constraintSet) {
-            clone(root_constraint_layout)
+            clone(binding.rootConstraintLayout)
             if (forward) {
-                clear(seconds_view.id, ConstraintSet.START)
-                connect(seconds_view.id, ConstraintSet.END,
+                clear(binding.secondsView.id, ConstraintSet.START)
+                connect(binding.secondsView.id, ConstraintSet.END,
                     ConstraintSet.PARENT_ID, ConstraintSet.END)
             } else {
-                clear(seconds_view.id, ConstraintSet.END)
-                connect(seconds_view.id, ConstraintSet.START,
+                clear(binding.secondsView.id, ConstraintSet.END)
+                connect(binding.secondsView.id, ConstraintSet.START,
                     ConstraintSet.PARENT_ID, ConstraintSet.START)
             }
-            seconds_view.start()
-            applyTo(root_constraint_layout)
+            binding.secondsView.start()
+            applyTo(binding.rootConstraintLayout)
         }
     }
 

@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
-import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -17,13 +16,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import com.banglalink.toffee.R
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_PLAYLISTS_URL
+import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_PLAYLISTS
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBinding
 import com.banglalink.toffee.databinding.FragmentMyChannelPlaylistsBinding
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.MyChannelPlaylist
 import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.model.Resource.Failure
@@ -45,7 +45,8 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
     @Inject lateinit var cacheManager: CacheManager
     private lateinit var mAdapter: MyChannelPlaylistAdapter
     val mViewModel by viewModels<MyChannelPlaylistViewModel>()
-    private lateinit var binding: FragmentMyChannelPlaylistsBinding
+    private var _binding: FragmentMyChannelPlaylistsBinding ? = null
+    private val binding get() = _binding!!
     private val editPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
     private val deletePlaylistViewModel by viewModels<MyChannelPlaylistDeleteViewModel>()
     private val playlistReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
@@ -72,10 +73,14 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentMyChannelPlaylistsBinding.inflate(inflater, container, false)
+        _binding = FragmentMyChannelPlaylistsBinding.inflate(inflater, container, false)
         return binding.root
     }
-    
+    override fun onDestroyView() {
+        binding.myChannelPlaylists.adapter = null
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
@@ -87,8 +92,8 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
             mAdapter.addLoadStateListener {
                 binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
                 mAdapter.apply {
-                    val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached
-                    binding.emptyView.isGone = !showEmpty
+                    val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
+                    binding.emptyView.isVisible = showEmpty
                     binding.myChannelPlaylists.isVisible = !showEmpty
                 }
             }
@@ -175,11 +180,11 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
         observe(editPlaylistViewModel.editPlaylistLiveData) {
             when (it) {
                 is Success -> {
-                    Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
+                    requireContext().showToast(it.data.message)
                     reloadPlaylist()
                 }
                 is Failure -> {
-                    Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
+                    requireContext().showToast(it.error.msg)
                 }
             }
         }
@@ -225,18 +230,18 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
         observe(deletePlaylistViewModel.liveData) {
             when (it) {
                 is Success -> {
-                    Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
+                    requireContext().showToast(it.data.message)
                     reloadPlaylist()
                 }
                 is Failure -> {
-                    Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
+                    requireContext().showToast(it.error.msg)
                 }
             }
         }
     }
     
     private fun reloadPlaylist() {
-        cacheManager.clearCacheByUrl(GET_MY_CHANNEL_PLAYLISTS_URL)
+        cacheManager.clearCacheByUrl(GET_MY_CHANNEL_PLAYLISTS)
         mAdapter.refresh()
     }
 }

@@ -10,7 +10,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.ui.NavigationUI
 import com.banglalink.toffee.R
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
 import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.extension.loadProfileImage
@@ -29,7 +29,7 @@ import com.suke.widget.SwitchButton
 
 class DrawerHelper(
     private val activity: HomeActivity,
-    private val mPref: Preference,
+    private val mPref: SessionPreference,
     private val binding: ActivityMainMenuBinding,
 ) {
 

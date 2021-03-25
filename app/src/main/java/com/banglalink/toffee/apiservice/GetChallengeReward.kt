@@ -3,12 +3,12 @@ package com.banglalink.toffee.apiservice
 import com.banglalink.toffee.data.network.request.ContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ChallengeReward
 import com.banglalink.toffee.ui.common.SingleListRepository
 import javax.inject.Inject
 
-class GetChallengeReward @Inject constructor(private val preference: Preference, private val toffeeApi: ToffeeApi) : SingleListRepository<ChallengeReward> {
+class GetChallengeReward @Inject constructor(private val preference: SessionPreference, private val toffeeApi: ToffeeApi) : SingleListRepository<ChallengeReward> {
 
     var mOffset: Int = 0
         private set

@@ -8,8 +8,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.motion.widget.MotionLayout
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -26,7 +24,8 @@ import kotlinx.coroutines.launch
 
 class SplashScreenFragment:BaseFragment() {
 
-    lateinit var binding: FragmentSplashScreenBinding
+    private var _binding: FragmentSplashScreenBinding ? = null
+    private val binding get() = _binding!!
     private val viewModel by viewModels<SplashViewModel>()
 
     companion object {
@@ -36,15 +35,20 @@ class SplashScreenFragment:BaseFragment() {
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?, ): View {
         viewModel.reportAppLaunch()
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_splash_screen, container, false)
+        _binding = FragmentSplashScreenBinding.inflate(inflater, container, false)
         return binding.root
     }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.splashScreenMotionLayout.onTransitionCompletedListener {
-            if (viewModel.isCustomerLoggedIn())
+            if (viewModel.isCustomerLoggedIn()) {
                 initApp()
+                viewModel.loginResponse()
+            }
             else {
                 lifecycleScope.launch {
                     if(findNavController().currentDestination?.id != R.id.signInFragment && findNavController().currentDestination?.id == R.id.splashScreenFragment) {
@@ -59,7 +63,7 @@ class SplashScreenFragment:BaseFragment() {
     }
 
     private fun initApp(skipUpdate:Boolean = false){
-        observe(viewModel.init(skipUpdate)){
+        observe(viewModel.apiLoginResponse){
             when(it){
                 is Resource.Success ->{
                     ToffeeAnalytics.updateCustomerId(mPref.customerId)
@@ -75,7 +79,8 @@ class SplashScreenFragment:BaseFragment() {
                             ToffeeAnalytics.logApiError("apiLogin",it.error.msg)
                             binding.root.snack(it.error.msg){
                                 action("Retry") {
-                                    initApp(skipUpdate)
+//                                    initApp(skipUpdate)
+                                    viewModel.loginResponse(skipUpdate)
                                 }
                             }
                         }
@@ -113,7 +118,8 @@ class SplashScreenFragment:BaseFragment() {
         if (!forceUpdate) {
             builder.setNegativeButton("SKIP") { dialogInterface, _ ->
                 dialogInterface.dismiss()
-                initApp(true)
+//                initApp(true)
+                viewModel.loginResponse(true)
             }
         }
 

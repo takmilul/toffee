@@ -5,22 +5,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentChallengeResultBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
-import com.banglalink.toffee.util.unsafeLazy
-import kotlinx.android.synthetic.main.fragment_challenge_result.*
+
 
 class ChallengeChannelFragment : Fragment(), OnClickListener {
 
-    private lateinit var binding: FragmentChallengeResultBinding
-    private val viewModel by unsafeLazy { ViewModelProviders.of(this).get(ChallengeResultViewModel::class.java) }
+    private var _binding: FragmentChallengeResultBinding ? = null
+    private val binding get() = _binding!!
+    private val viewModel by viewModels<ChallengeResultViewModel>()
     
     companion object {
         @JvmStatic
@@ -28,11 +27,15 @@ class ChallengeChannelFragment : Fragment(), OnClickListener {
             ChallengeChannelFragment()
     }
     
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_challenge_result, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentChallengeResultBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
         return binding.root
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -60,7 +63,7 @@ class ChallengeChannelFragment : Fragment(), OnClickListener {
     }
 
     override fun onClick(v: View?) {
-        if (v == joinButton){
+        if (v == binding.joinButton){
             findNavController().navigate(R.id.action_challengeResultFragment_to_challengeDetailFragment)
         }
     }

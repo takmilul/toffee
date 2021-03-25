@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
-import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.core.view.marginTop
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
@@ -18,7 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import com.banglalink.toffee.R
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_VIDEOS_URL
+import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_VIDEOS
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.network.retrofit.CacheManager
@@ -26,6 +26,7 @@ import com.banglalink.toffee.databinding.FragmentMyChannelVideosBinding
 import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
@@ -52,7 +53,8 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
     @Inject lateinit var cacheManager: CacheManager
     private lateinit var mAdapter: MyChannelVideosAdapter
     val mViewModel by viewModels<MyChannelVideosViewModel>()
-    private lateinit var binding: FragmentMyChannelVideosBinding
+    private var _binding: FragmentMyChannelVideosBinding ? = null
+    private val binding get() = _binding!!
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private val videosReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
     
@@ -77,10 +79,15 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentMyChannelVideosBinding.inflate(inflater, container, false)
+        _binding = FragmentMyChannelVideosBinding.inflate(inflater, container, false)
         return binding.root
     }
-    
+    override fun onDestroyView() {
+        binding.myChannelVideos.adapter = null
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
@@ -92,8 +99,8 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
             mAdapter.addLoadStateListener {
                 binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
                 mAdapter.apply {
-                    val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached
-                    binding.emptyView.isGone = !showEmpty
+                    val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
+                    binding.emptyView.isVisible = showEmpty
                     binding.myChannelVideos.isVisible = !showEmpty
                 }
             }
@@ -135,6 +142,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
                 uploadVideoButton.hide()
                 creatorsPolicyButton.hide()
                 emptyViewLabel.text = "This channel has no video yet"
+                (emptyViewIcon.layoutParams as ViewGroup.MarginLayoutParams).topMargin = 32.px
             }
         }
     }
@@ -278,7 +286,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
     }
     
     private fun reloadVideosList() {
-        cacheManager.clearCacheByUrl(GET_MY_CHANNEL_VIDEOS_URL)
+        cacheManager.clearCacheByUrl(GET_MY_CHANNEL_VIDEOS)
         mAdapter.refresh()
     }
 }

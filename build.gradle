@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.4.21'
+    ext.kotlin_version = '1.4.31'
     repositories {
         google()
         jcenter()
@@ -16,8 +16,8 @@ buildscript {
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
 
         // Add the Crashlytics Gradle plugin.
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.5.0'
-        classpath 'com.google.dagger:hilt-android-gradle-plugin:2.29.1-alpha'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.5.1'
+        classpath 'com.google.dagger:hilt-android-gradle-plugin:2.33-beta'
     }
 }
 

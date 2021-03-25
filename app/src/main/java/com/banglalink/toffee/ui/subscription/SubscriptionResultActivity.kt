@@ -9,7 +9,9 @@ import com.banglalink.toffee.databinding.ActivitySubscriptionResultBinding
 import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.model.Package
 import com.banglalink.toffee.ui.home.HomeActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SubscriptionResultActivity : AppCompatActivity() {
 
     companion object{

@@ -3,12 +3,12 @@ package com.banglalink.toffee.apiservice
 import com.banglalink.toffee.data.network.request.MyChannelSubscribeRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.MyChannelSubscribeBean
 import javax.inject.Inject
 
 class MyChannelSubscribeService @Inject constructor(
-    private val mPref: Preference,
+    private val mPref: SessionPreference,
     private val toffeeApi: ToffeeApi
 ) {
     suspend operator fun invoke(channelId: Int, subStatus: Int, channelOwnerId: Int): MyChannelSubscribeBean {

@@ -32,6 +32,7 @@
             
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/icon"
+                android:contentDescription="@string/txt_profile_image"
                 loadImageFromUrlRounded="@{data.profileUrl}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

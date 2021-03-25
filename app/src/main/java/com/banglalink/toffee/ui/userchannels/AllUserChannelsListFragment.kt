@@ -7,9 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
-import com.banglalink.toffee.R
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
+import com.banglalink.toffee.databinding.FragmentAllUserChannelsListBinding
 import com.banglalink.toffee.listeners.LandingPopularChannelCallback
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
@@ -19,7 +19,6 @@ import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.common.UnSubscribeDialog
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_all_user_channels_list.*
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
@@ -31,15 +30,21 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
     private lateinit var mAdapter: AllUserChannelsListAdapter
     private var trendingChannelInfo: UserChannelInfo? = null
     private val viewModel by viewModels<AllUserChannelsListViewModel>()
+    private var _binding: FragmentAllUserChannelsListBinding ? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_all_user_channels_list, container, false)
+    ): View {
+        _binding = FragmentAllUserChannelsListBinding.inflate(inflater, container, false)
+        return binding.root    
     }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -72,7 +77,7 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
             }
         })
 
-        with(userChannelList) {
+        with(binding.userChannelList) {
             layoutManager = GridLayoutManager(context, 3)
             adapter = mAdapter
         }

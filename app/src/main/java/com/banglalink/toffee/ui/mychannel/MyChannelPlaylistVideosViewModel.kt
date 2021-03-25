@@ -12,13 +12,14 @@ import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
 import com.banglalink.toffee.data.database.entities.UserActivities
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.repository.UserActivitiesRepository
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.ActivityType.PLAYLIST
 import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelDeletePlaylistVideoBean
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseViewModel
+import com.banglalink.toffee.util.SingleLiveEvent
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -27,13 +28,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyChannelPlaylistVideosViewModel @Inject constructor(
-    private val preference: Preference,
+    private val preference: SessionPreference,
     private val activitiesRepo: UserActivitiesRepository,
     private val playlistVideoDeleteApiService: MyChannelPlaylistVideoDeleteService,
     private val apiService: MyChannelPlaylistVideosService.AssistedFactory,
 ) : BaseViewModel() {
     
-    private val _data = MutableLiveData<Resource<MyChannelDeletePlaylistVideoBean>>()
+    private val _data = SingleLiveEvent<Resource<MyChannelDeletePlaylistVideoBean>>()
     val deletePlaylistVideoLiveData = _data.toLiveData()
     
     fun getMyChannelPlaylistVideos(requestParams: MyChannelPlaylistContentParam): Flow<PagingData<ChannelInfo>> {

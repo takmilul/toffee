@@ -2,7 +2,7 @@ package com.foxpress.toffeekotlin.usecase
 
 import com.banglalink.toffee.data.network.request.SearchContentRequest
 import com.banglalink.toffee.data.network.response.SearchContentResponse
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.ContentBean
 import com.banglalink.toffee.usecase.SearchContent
@@ -30,7 +30,7 @@ class SearchContentTest :BaseUseCaseTest(){
                 view_count = "1000000000009"
             })
 
-            val getContents = SearchContent(Preference.getInstance(),mockToffeeApi)
+            val getContents = SearchContent(SessionPreference.getInstance(),mockToffeeApi)
             Mockito.`when`(mockToffeeApi.searchContent(any<SearchContentRequest>())).thenReturn(
                 Response.success(SearchContentResponse(
                     ContentBean(channelInfoList,1,1)
@@ -61,7 +61,7 @@ class SearchContentTest :BaseUseCaseTest(){
             //set up test
             setupPref()
 
-            val getContents = SearchContent(Preference.getInstance(),mockToffeeApi)
+            val getContents = SearchContent(SessionPreference.getInstance(),mockToffeeApi)
             Mockito.`when`(mockToffeeApi.searchContent(any<SearchContentRequest>())).thenReturn(
                 Response.success(SearchContentResponse(
                     ContentBean(null,0,0)

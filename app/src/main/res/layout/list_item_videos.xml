@@ -24,11 +24,14 @@
         <com.banglalink.toffee.ui.widget.CustomImageView
             android:id="@+id/poster"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="200dp"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
+            android:contentDescription="@string/txt_placeholder"
             app:onSafeClick="@{()->callback.onItemClicked(data)}"
             loadChannelImage="@{data}"
+            app:layout_constraintDimensionRatio="W,16:9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -66,6 +69,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginTop="12dp"
+            android:contentDescription="@string/txt_profile_image"
             android:layout_marginStart="16dp"
             app:onSafeClick="@{()-> callback.onProviderIconClicked(data)}"
             android:src="@drawable/ic_profile_default"
@@ -93,6 +97,7 @@
             tools:text="This Makeup Tutorial By Kylie Jenner Is All You Need For Summer" />
         
         <ImageView
+            android:contentDescription="@string/txt_options"
             android:id="@+id/options"
             style="@style/OptionMenuStyle"
             android:paddingVertical="8dp"
@@ -141,6 +146,7 @@
             tools:text="14h" />
         
         <ImageView
+            android:contentDescription="@string/tv_wow"
             android:id="@+id/thirdIcon"
             android:layout_width="17dp"
             android:layout_height="17dp"
@@ -153,6 +159,7 @@
             app:layout_constraintStart_toStartOf="@id/secondIcon"/>
 
         <ImageView
+            android:contentDescription="@string/txt_love"
             android:id="@+id/secondIcon"
             android:layout_width="17dp"
             android:layout_height="17dp"
@@ -165,6 +172,7 @@
             app:layout_constraintStart_toStartOf="@id/firstIcon"/>
 
         <ImageView
+            android:contentDescription="@string/txt_like"
             android:id="@+id/firstIcon"
             android:layout_width="17dp"
             android:layout_height="17dp"

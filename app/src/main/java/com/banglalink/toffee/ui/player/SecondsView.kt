@@ -10,7 +10,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import com.banglalink.toffee.R
-import kotlinx.android.synthetic.main.player_overlay_seconds.view.*
+import com.banglalink.toffee.databinding.PlayerOverlaySecondsBinding
 
 /**
  * Layout group which handles the icon animation while forwarding and rewinding.
@@ -22,6 +22,10 @@ import kotlinx.android.synthetic.main.player_overlay_seconds.view.*
  */
 class SecondsView(context: Context, attrs: AttributeSet?) :
     ConstraintLayout(context, attrs) {
+
+    private val binding =
+        PlayerOverlaySecondsBinding.inflate(LayoutInflater.from(context), this, true)
+
 
     /**
      * Defines the duration for a full cycle of the triangle animation.
@@ -42,7 +46,7 @@ class SecondsView(context: Context, attrs: AttributeSet?) :
      */
     var seconds: Int = 0
         set(value) {
-            tv_seconds.text = "$value seconds"
+            binding.tvSeconds.text = "$value seconds"
             field = value
         }
 
@@ -51,27 +55,23 @@ class SecondsView(context: Context, attrs: AttributeSet?) :
      */
     var isForward: Boolean = true
         set(value) {
-            triangle_container.rotation = if (value) 0f else 180f
+            binding.triangleContainer.rotation = if (value) 0f else 180f
             field = value
         }
 
     val textView: TextView
-        get() = tv_seconds
+        get() = binding.tvSeconds
 
     @DrawableRes
     var icon: Int = R.drawable.ic_player_play
         set(value) {
             if (value > 0) {
-                icon_1.setImageResource(value)
-                icon_2.setImageResource(value)
-                icon_3.setImageResource(value)
+                binding.icon1.setImageResource(value)
+                binding.icon2.setImageResource(value)
+                binding.icon3.setImageResource(value)
             }
             field = value
         }
-
-    init {
-        LayoutInflater.from(context).inflate(R.layout.player_overlay_seconds, this, true)
-    }
 
     /**
      * Starts the triangle animation
@@ -94,18 +94,18 @@ class SecondsView(context: Context, attrs: AttributeSet?) :
     }
 
     private fun reset() {
-        icon_1.alpha = 0f
-        icon_2.alpha = 0f
-        icon_3.alpha = 0f
+        binding.icon1.alpha = 0f
+        binding.icon2.alpha = 0f
+        binding.icon3.alpha = 0f
     }
 
     private val firstAnimator: ValueAnimator = CustomValueAnimator(
         {
-            icon_1.alpha = 0f
-            icon_2.alpha = 0f
-            icon_3.alpha = 0f
+            binding.icon1.alpha = 0f
+            binding.icon2.alpha = 0f
+            binding.icon3.alpha = 0f
         }, {
-            icon_1.alpha = it
+            binding.icon1.alpha = it
         }, {
             secondAnimator.start()
         }
@@ -113,11 +113,11 @@ class SecondsView(context: Context, attrs: AttributeSet?) :
 
     private val secondAnimator: ValueAnimator = CustomValueAnimator(
         {
-            icon_1.alpha = 1f
-            icon_2.alpha = 0f
-            icon_3.alpha = 0f
+            binding.icon1.alpha = 1f
+            binding.icon2.alpha = 0f
+            binding.icon3.alpha = 0f
         }, {
-            icon_2.alpha = it
+            binding.icon2.alpha = it
         }, {
             thirdAnimator.start()
         }
@@ -125,12 +125,12 @@ class SecondsView(context: Context, attrs: AttributeSet?) :
 
     private val thirdAnimator: ValueAnimator = CustomValueAnimator(
         {
-            icon_1.alpha = 1f
-            icon_2.alpha = 1f
-            icon_3.alpha = 0f
+            binding.icon1.alpha = 1f
+            binding.icon2.alpha = 1f
+            binding.icon3.alpha = 0f
         }, {
-            icon_1.alpha = 1f - icon_3.alpha // or 1f - it (t3.alpha => all three stay a little longer together)
-            icon_3.alpha = it
+            binding.icon1.alpha = 1f - binding.icon3.alpha // or 1f - it (t3.alpha => all three stay a little longer together)
+            binding.icon3.alpha = it
         }, {
             fourthAnimator.start()
         }
@@ -138,11 +138,11 @@ class SecondsView(context: Context, attrs: AttributeSet?) :
 
     private val fourthAnimator: ValueAnimator = CustomValueAnimator(
         {
-            icon_1.alpha = 0f
-            icon_2.alpha = 1f
-            icon_3.alpha = 1f
+            binding.icon1.alpha = 0f
+            binding.icon2.alpha = 1f
+            binding.icon3.alpha = 1f
         }, {
-            icon_2.alpha = 1f - it
+            binding.icon2.alpha = 1f - it
         }, {
             fifthAnimator.start()
         }
@@ -150,11 +150,11 @@ class SecondsView(context: Context, attrs: AttributeSet?) :
 
     private val fifthAnimator: ValueAnimator = CustomValueAnimator(
         {
-            icon_1.alpha = 0f
-            icon_2.alpha = 0f
-            icon_3.alpha = 1f
+            binding.icon1.alpha = 0f
+            binding.icon2.alpha = 0f
+            binding.icon3.alpha = 1f
         }, {
-            icon_3.alpha = 1f - it
+            binding.icon3.alpha = 1f - it
         }, {
             firstAnimator.start()
         }

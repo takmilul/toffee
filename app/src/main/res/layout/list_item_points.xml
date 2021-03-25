@@ -16,6 +16,7 @@
         android:layout_margin="8dp">
         
         <ImageView
+            android:contentDescription="@string/txt_level"
             android:id="@+id/imageView12"
             android:layout_width="60dp"
             android:layout_height="60dp"

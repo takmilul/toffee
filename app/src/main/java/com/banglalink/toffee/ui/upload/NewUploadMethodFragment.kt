@@ -21,7 +21,8 @@ import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.repository.UploadInfoRepository
-import com.banglalink.toffee.data.storage.Preference
+import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.databinding.FragmentNewUploadMethodBinding
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.ui.home.HomeViewModel
@@ -30,7 +31,6 @@ import com.banglalink.toffee.util.UtilsKt
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_new_upload_method.view.*
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
@@ -41,37 +41,40 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class NewUploadMethodFragment : DialogFragment() {
     
-    @Inject lateinit var mpref: Preference
+    @Inject lateinit var mpref: SessionPreference
     @Inject lateinit var mUploadInfoRepository: UploadInfoRepository
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private var videoUri: Uri? = null
     private var alertDialog: AlertDialog? = null
+    private var _binding: FragmentNewUploadMethodBinding ? = null
+    private val binding get() = _binding!!
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialogView = layoutInflater.inflate(R.layout.fragment_new_upload_method, null, false)
-        with(dialogView) {
-            myChannelButton.setOnClickListener {
-                openMyChannelFragment()
-            }
-            imageView11?.setOnClickListener {
-                findNavController().popBackStack()
-            }
-            open_camera_button.setOnClickListener {
-                checkCameraPermissions()
-            }
-            open_gallery_button.setOnClickListener {
-                checkFileSystemPermission()
-            }
+        _binding = FragmentNewUploadMethodBinding.inflate(layoutInflater)
+        binding.myChannelButton.setOnClickListener {
+            openMyChannelFragment()
+        }
+        binding.imageView11.setOnClickListener {
+            findNavController().popBackStack()
+        }
+        binding.openCameraButton.setOnClickListener {
+            checkCameraPermissions()
+        }
+        binding.openGalleryButton.setOnClickListener {
+            checkFileSystemPermission()
         }
         alertDialog = AlertDialog
             .Builder(requireContext())
-            .setView(dialogView).create()
+            .setView(binding.root).create()
             .apply {
                 window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             }
         return alertDialog!!
     }
-    
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     private fun checkFileSystemPermission() {
         lifecycleScope.launch {
             try {
@@ -178,5 +181,11 @@ class NewUploadMethodFragment : DialogFragment() {
         findNavController().popBackStack().let {
             findNavController().navigate(R.id.editUploadInfoFragment, Bundle().apply { putString(EditUploadInfoFragment.UPLOAD_FILE_URI, uri) })
         }
+    }
+    
+    override fun onDestroy() {
+        cameraResultLauncher.unregister()
+        galleryResultLauncher.unregister()
+        super.onDestroy()
     }
 }

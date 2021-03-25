@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout
-    xmlns:android="http://schemas.android.com/apk/res/android" >
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <variable
@@ -17,8 +19,11 @@
         android:layout_height="match_parent"
         android:scaleType="fitXY"
         android:minHeight="200dp"
+        android:contentDescription="@string/txt_featued_image"
         android:onClick="@{()->callback.onItemClicked(data)}"
         loadImageFromUrl="@{data.ugcFeaturedImage}"
-        android:adjustViewBounds="true" />
+        android:adjustViewBounds="true"
+        app:layout_constraintDimensionRatio="W,16:9"
+        tools:src="@drawable/placeholder"/>
     
 </layout>

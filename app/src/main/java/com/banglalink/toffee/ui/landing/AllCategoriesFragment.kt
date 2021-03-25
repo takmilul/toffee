@@ -11,12 +11,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.databinding.FragmentLandingCategoriesBinding
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_landing_categories.*
 import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
@@ -24,20 +24,25 @@ class AllCategoriesFragment: BaseFragment() {
     private lateinit var mAdapter: CategoriesListAdapter
 
     private val viewModel by activityViewModels<LandingPageViewModel>()
-
+    private var _binding: FragmentLandingCategoriesBinding ? =null
+    private val binding get() = _binding!!
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_landing_categories, container, false)
+    ): View {
+        _binding = FragmentLandingCategoriesBinding.inflate(inflater, container, false)
+        return binding.root
     }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        categoriesBg.isVisible = false
+        binding.categoriesBg.isVisible = false
 //        categoriesHeader.isVisible = false
-        viewAllButton.isVisible = false
+        binding.viewAllButton.isVisible = false
 
         mAdapter = CategoriesListAdapter(object: BaseListItemCallback<Category> {
             override fun onItemClicked(item: Category) {
@@ -59,7 +64,7 @@ class AllCategoriesFragment: BaseFragment() {
             }
         }, true)
 
-        with(categoriesList) {
+        with(binding.categoriesList) {
             layoutManager = GridLayoutManager(context, 2)
             adapter = mAdapter
         }

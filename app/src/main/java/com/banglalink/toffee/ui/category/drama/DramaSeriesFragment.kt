@@ -16,7 +16,8 @@ import com.banglalink.toffee.ui.home.LandingPageViewModel
 
 class DramaSeriesFragment: BaseFragment() {
     private lateinit var category: Category
-    private lateinit var binding: FragmentDramaSeriesBinding
+    private var _binding: FragmentDramaSeriesBinding ? = null
+    private val binding get() = _binding!!
     private val landingViewModel by activityViewModels<LandingPageViewModel>()
 
     companion object {
@@ -29,8 +30,13 @@ class DramaSeriesFragment: BaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_drama_series, container, false)
+        _binding = FragmentDramaSeriesBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

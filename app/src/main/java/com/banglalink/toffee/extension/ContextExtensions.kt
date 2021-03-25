@@ -36,10 +36,6 @@ inline fun <reified T : Any> FragmentActivity.launchActivity(
 inline fun <reified T : Any> newIntent(context: Context): Intent =
     Intent(context, T::class.java)
 
-inline fun <reified T: BaseViewModel> FragmentActivity.getViewModel():T{
-    return ViewModelProviders.of(this).get(T::class.java)
-}
-
 fun View.setVisibility(isVisible: Boolean){
     this.visibility = if(isVisible) View.VISIBLE else View.GONE
 }

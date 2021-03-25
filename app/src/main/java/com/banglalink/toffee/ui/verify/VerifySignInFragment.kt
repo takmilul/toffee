@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.view.ViewCompat
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -36,7 +35,8 @@ class VerifySignInFragment : BaseFragment() {
     private var resendCodeTimer: ResendCodeTimer? = null
     private var verifiedUserData: CustomerInfoSignIn? = null
     private val viewModel by viewModels<VerifyCodeViewModel>()
-    private lateinit var binding: FragmentVerifySigninBinding
+    private var _binding: FragmentVerifySigninBinding ? = null
+    private val binding get() = _binding!!
     private lateinit var mSmsBroadcastReceiver: SMSBroadcastReceiver
     private val progressDialog by unsafeLazy { VelBoxProgressDialog(requireContext()) }
 
@@ -46,10 +46,14 @@ class VerifySignInFragment : BaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_verify_signin, container, false)
+        _binding = FragmentVerifySigninBinding.inflate(inflater, container, false)
         return binding.root
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.signInVerifyMotionLayout.setOnClickListener { UtilsKt.hideSoftKeyboard(requireActivity()) }
@@ -64,11 +68,15 @@ class VerifySignInFragment : BaseFragment() {
         
         binding.resend.paintFlags = binding.resend.paintFlags or Paint.UNDERLINE_TEXT_FLAG
         binding.resend.setOnClickListener {
+            progressDialog.show()
             handleResendButton()
+            viewModel.resendCode(phoneNumber, referralCode)
         }
         binding.confirmBtn.setOnClickListener {
+            progressDialog.show()
             binding.codeNumber.clearFocus()
-            verifyCode(binding.codeNumber.text.toString())
+            observeVerifyCode(binding.codeNumber.text.toString())
+            viewModel.verifyCode(binding.codeNumber.text.toString(), regSessionToken, referralCode)
         }
         binding.backButton.setOnClickListener {
             binding.signInVerifyMotionLayout.onTransitionCompletedListener {
@@ -90,7 +98,8 @@ class VerifySignInFragment : BaseFragment() {
         observe(mSmsBroadcastReceiver.otpLiveData) {
             binding.codeNumber.setText(it)
             binding.codeNumber.setSelection(it.length)
-            verifyCode(binding.codeNumber.text.toString())
+//            verifyCode(binding.codeNumber.text.toString())
+            viewModel.verifyCode(binding.codeNumber.text.toString(), regSessionToken, referralCode)
         }
 
         val intentFilter = IntentFilter()
@@ -101,12 +110,10 @@ class VerifySignInFragment : BaseFragment() {
         mClient.startSmsRetriever()
     }
 
-    private fun verifyCode(code: String) {
-        progressDialog.show()
-
+    private fun observeVerifyCode(code: String) {
         val signInMotionLayout = parentFragment?.parentFragment?.view
         
-        observe(viewModel.verifyCode(code, regSessionToken, referralCode)) {
+        observe(viewModel.verifyResponse) {
             progressDialog.dismiss()
             when (it) {
                 is Resource.Success -> {
@@ -147,8 +154,8 @@ class VerifySignInFragment : BaseFragment() {
     }
     
     private fun handleResendButton() {
-        progressDialog.show()
-        observe(viewModel.resendCode(phoneNumber, referralCode)) {
+        observe(viewModel.resendCodeResponse) {
+
             progressDialog.dismiss()
             when (it) {
                 is Resource.Success -> {
@@ -160,7 +167,9 @@ class VerifySignInFragment : BaseFragment() {
                 is Resource.Failure -> {
                     binding.root.snack(it.error.msg) {
                         action("Retry") {
+                            progressDialog.show()
                             handleResendButton()
+                            viewModel.resendCode(phoneNumber, referralCode)
                         }
                     }
                 }
