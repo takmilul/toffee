@@ -20,6 +20,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
+            android:contentDescription="@string/txt_splash_line"
             android:id="@+id/splashLineImageView"
             android:layout_width="448dp"
             android:layout_height="400dp"
@@ -30,6 +31,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
+            android:contentDescription="@string/txt_splash_logo"
             android:id="@+id/splashPinkImageView"
             android:layout_width="436dp"
             android:layout_height="420dp"
@@ -42,6 +44,7 @@
             app:layout_constraintTop_toTopOf="@id/splashLineImageView" />
 
         <ImageView
+            android:contentDescription="@string/txt_splash_white"
             android:id="@+id/splashWhiteImageView"
             android:layout_width="350dp"
             android:layout_height="372dp"
@@ -52,6 +55,7 @@
             app:layout_constraintTop_toTopOf="@id/splashLineImageView" />
 
         <ImageView
+            android:contentDescription="@string/app_name"
             android:id="@+id/splashLogoImageView"
             android:layout_width="80dp"
             android:layout_height="56dp"
@@ -63,6 +67,7 @@
             app:layout_constraintTop_toTopOf="@id/splashLineImageView" />
 
         <ImageView
+            android:contentDescription="@string/txt_spalash_logo_title"
             android:id="@+id/splashLogoTitleImageView"
             android:layout_width="120dp"
             android:layout_height="22dp"

@@ -10,7 +10,8 @@
         android:layout_gravity="center_vertical"
         android:gravity="center_vertical"
         android:layout_width="16dp"
-        android:layout_height="16dp"/>
+        android:layout_height="16dp"
+        android:contentDescription="@string/txt_state_view" />
 
     <TextView
         android:id="@+id/menu_name"

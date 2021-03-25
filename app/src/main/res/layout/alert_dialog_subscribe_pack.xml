@@ -48,7 +48,8 @@
         android:padding="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_close" />
+        app:srcCompat="@drawable/ic_close"
+        android:contentDescription="@string/txt_close" />
 
     <ImageView
         android:id="@+id/imageView7"
@@ -58,6 +59,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_vip_badge" />
+        app:srcCompat="@drawable/ic_vip_badge"
+        android:contentDescription="@string/txt_badge" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,6 +14,7 @@
         android:layout_width="@dimen/channel_width"
         android:layout_height="@dimen/channel_height"
         android:layout_gravity="center"
+        android:contentDescription="@string/txt_channel"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         app:civ_border_color="@color/colorAccent"
@@ -21,6 +22,7 @@
         android:src="@mipmap/ic_menu_channel" />
 
     <ImageView
+        android:contentDescription="@string/txt_icon"
         android:id="@+id/premium_icon"
         android:layout_width="20dp"
         android:layout_height="20dp"

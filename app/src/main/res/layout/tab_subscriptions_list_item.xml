@@ -34,6 +34,7 @@
                 android:layout_width="84dp"
                 android:layout_height="84dp"
                 android:layout_marginStart="16dp"
+                android:contentDescription="@string/txt_profile_image"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
                 loadImageFromUrlRounded="@{data.channelProfileUrl}"
@@ -50,7 +51,8 @@
                 android:background="?selectableItemBackgroundBorderless"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_menu_more" />
+                app:srcCompat="@drawable/ic_menu_more"
+                android:contentDescription="@string/txt_menu" />
 
             <TextView
                 android:id="@+id/textView4"
@@ -75,7 +77,8 @@
                 android:visibility="@{data.isLive() ? View.VISIBLE : View.GONE}"
                 app:layout_constraintEnd_toEndOf="@+id/ownerThumb"
                 app:layout_constraintTop_toTopOf="@+id/ownerThumb"
-                app:srcCompat="@drawable/ic_badge_live" />
+                app:srcCompat="@drawable/ic_badge_live"
+                android:contentDescription="@string/txt_badge_icon" />
 
             <com.banglalink.toffee.ui.widget.MultiTextButton
                 android:id="@+id/subscribe_button"
@@ -112,7 +115,8 @@
                 app:layout_constraintBottom_toBottomOf="@+id/textView11"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/textView11"
-                android:src="@{data.subscription ? @drawable/ic_sub_notification_active : @drawable/ic_sub_notification_inactive}" />
+                android:src="@{data.subscription ? @drawable/ic_sub_notification_active : @drawable/ic_sub_notification_inactive}"
+                android:contentDescription="@string/txt_subscription" />
 
             <TextView
                 android:id="@+id/textView13"

@@ -17,6 +17,7 @@
         android:layout_marginEnd="5dp">
 
         <ImageView
+            android:contentDescription="@string/txt_poster"
             android:id="@+id/poster"
             loadImageFromUrl="@{data.coming_soon_poster_url}"
             android:layout_width="0dp"

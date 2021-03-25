@@ -65,7 +65,8 @@
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0" />
+                    app:layout_constraintVertical_bias="0.0"
+                    android:contentDescription="@string/txt_like" />
 
                 <TextView
                     android:id="@+id/likeCountTextView"
@@ -92,7 +93,8 @@
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toEndOf="@+id/likeButton"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0" />
+                    app:layout_constraintVertical_bias="0.0"
+                    android:contentDescription="@string/txt_love" />
 
                 <TextView
                     android:id="@+id/loveCountTextView"
@@ -119,7 +121,8 @@
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toEndOf="@+id/loveButton"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0" />
+                    app:layout_constraintVertical_bias="0.0"
+                    android:contentDescription="@string/txt_haha" />
 
                 <TextView
                     android:id="@+id/hahaCountTextView"
@@ -146,7 +149,8 @@
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toEndOf="@+id/hahaButton"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0" />
+                    app:layout_constraintVertical_bias="0.0"
+                    android:contentDescription="@string/tv_wow" />
 
                 <TextView
                     android:id="@+id/wowCountTextView"
@@ -173,7 +177,8 @@
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toEndOf="@+id/wowButton"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0" />
+                    app:layout_constraintVertical_bias="0.0"
+                    android:contentDescription="@string/txt_sad" />
 
                 <TextView
                     android:id="@+id/sadCountTextView"
@@ -200,7 +205,8 @@
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toEndOf="@+id/sadButton"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.0" />
+                    app:layout_constraintVertical_bias="0.0"
+                    android:contentDescription="@string/txt_angry" />
 
                 <TextView
                     android:id="@+id/angryCountTextView"

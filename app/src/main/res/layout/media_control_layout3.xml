@@ -50,6 +50,7 @@
             android:layout_height="match_parent" >
 
         <ImageView
+            android:contentDescription="@string/txt_drawer"
             android:id="@+id/drawer"
             android:layout_width="32dp"
             android:layout_height="32dp"
@@ -61,6 +62,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
+            android:contentDescription="@string/txt_options"
             android:id="@+id/video_option"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
@@ -77,6 +79,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
+                android:contentDescription="@string/txt_share"
                 android:id="@+id/share"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -122,7 +125,8 @@
                 app:layout_constraintEnd_toStartOf="@+id/play_next"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/play_prev"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/txt_play" />
 
 <!--        <ImageView-->
 <!--            android:id="@+id/forward"-->
@@ -147,6 +151,7 @@
             android:clickable="true"
             android:focusable="true"
             android:padding="2dp"
+            android:contentDescription="@string/txt_play_next"
             android:src="@drawable/ic_player_control_next"
             app:layout_constraintBottom_toBottomOf="@+id/play"
             app:layout_constraintEnd_toEndOf="parent"
@@ -184,7 +189,8 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/play" />
+            app:layout_constraintTop_toTopOf="@+id/play"
+            android:contentDescription="@string/txt_play_previous" />
 
         <Chronometer
             android:id="@+id/current_time"
@@ -226,6 +232,7 @@
 
 
             <ImageView
+                android:contentDescription="@string/txt_rotation"
                 android:id="@+id/rotation"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -242,7 +249,8 @@
                 android:src="@drawable/ic_player_minimize"
                 app:layout_constraintBottom_toBottomOf="@+id/fullscreen"
                 app:layout_constraintEnd_toStartOf="@+id/fullscreen"
-                app:layout_constraintTop_toTopOf="@+id/fullscreen" />
+                app:layout_constraintTop_toTopOf="@+id/fullscreen"
+                android:contentDescription="@string/txt_minimize" />
 
         <ImageView
             android:id="@+id/fullscreen"
@@ -254,7 +262,8 @@
             app:layout_goneMarginBottom="8dp"
             android:src="@drawable/ic_fullscreen_enter"
             app:layout_constraintBottom_toTopOf="@+id/progress"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            android:contentDescription="@string/txt_full_screen" />
 
 <!--            <com.google.android.material.slider.Slider-->
 <!--                android:id="@+id/progress"-->

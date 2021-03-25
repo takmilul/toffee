@@ -31,6 +31,7 @@
 
 
             <ImageView
+                android:contentDescription="@string/txt_channel"
                 android:id="@+id/channel"
                 android:layout_width="@dimen/channel_width"
                 android:layout_height="@dimen/channel_height"
@@ -47,6 +48,7 @@
 
 
         <ImageView
+            android:contentDescription="@string/txt_options"
             android:id="@+id/options"
             android:layout_width="24dp"
             android:layout_height="24dp"

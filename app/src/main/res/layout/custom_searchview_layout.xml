@@ -45,7 +45,8 @@
             android:scaleType="centerInside"
             android:layout_gravity="center_vertical"
             android:visibility="gone"
-            style="@style/RtlOverlay.Widget.AppCompat.SearchView.MagIcon" />
+            style="@style/RtlOverlay.Widget.AppCompat.SearchView.MagIcon"
+            android:contentDescription="@string/abc_searchview_description_search" />
         
         <!-- Inner layout contains the app icon, button(s) and EditText -->
         

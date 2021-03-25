@@ -33,6 +33,7 @@
             app:layout_constraintTop_toTopOf="parent">
             
             <de.hdodenhof.circleimageview.CircleImageView
+                android:contentDescription="@string/txt_profile_image"
                 android:id="@+id/icon"
                 loadImageFromUrlRounded="@{data.channel_logo}"
                 android:layout_width="match_parent"

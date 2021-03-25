@@ -19,6 +19,7 @@
             android:background="@color/screen_bg">
     
             <ImageView
+                android:contentDescription="@string/txt_back"
                 android:id="@+id/backButton"
                 android:layout_width="36dp"
                 android:layout_height="36dp"

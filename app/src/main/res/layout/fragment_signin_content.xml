@@ -78,6 +78,7 @@
             android:focusable="true"
             android:fontFamily="@font/roboto_medium"
             android:text="@string/have_referral_code"
+            android:contentDescription="@string/have_referral_code"
             android:textColor="@color/main_text_color"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="@id/ref_code_et"
@@ -87,6 +88,7 @@
             app:layout_constraintTop_toTopOf="@id/ref_code_et" />
 
         <ImageView
+            android:contentDescription="@string/txt_refer_code"
             android:id="@+id/arrow_icon"
             android:layout_width="14dp"
             android:layout_height="14dp"

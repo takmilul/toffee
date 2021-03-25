@@ -34,6 +34,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
+                android:contentDescription="@string/txt_poster"
                 android:id="@+id/poster"
                 loadChannelImage="@{data}"
                 android:layout_width="match_parent"
@@ -57,6 +58,7 @@
             app:layout_constraintStart_toStartOf="@+id/poster_container" />
 
         <ImageView
+            android:contentDescription="@string/txt_options"
             android:id="@+id/options"
             style="@style/OptionMenuStyle"
             android:onClick="@{(v)->callback.onOpenMenu(v, data)}"

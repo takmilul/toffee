@@ -24,6 +24,7 @@
 
         <ImageView
             android:id="@+id/profile_picture"
+            android:contentDescription="@string/txt_profile_image"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="16dp"

@@ -25,6 +25,7 @@
             android:gravity="center"
             android:layout_marginStart="8dp"
             android:padding="10dp"
+            android:contentDescription="@string/txt_back"
             android:layout_marginTop="16dp"
             android:src="@drawable/ic_arrow_back"
             app:layout_constraintEnd_toStartOf="@id/title"
@@ -52,6 +53,7 @@
             android:paddingStart="4dp"
             android:paddingEnd="0dp"
             android:visibility="gone"
+
             app:layout_constraintBottom_toBottomOf="@id/title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1"
