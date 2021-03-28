@@ -21,7 +21,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<ChannelInfo> {
     
-    lateinit var searchKey: String
+    private lateinit var searchKey: String
     override val itemMargin: Int = 12
     override val verticalPadding = Pair(16, 16)
     @Inject lateinit var factory: SearchViewModel.AssistedFactory
@@ -40,6 +40,10 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
             searchListFragment.arguments = bundle
             return searchListFragment
         }
+    }
+
+    fun getSearchString(): String? {
+        return if(::searchKey.isInitialized) searchKey else null
     }
     
     override fun onCreate(savedInstanceState: Bundle?) {
