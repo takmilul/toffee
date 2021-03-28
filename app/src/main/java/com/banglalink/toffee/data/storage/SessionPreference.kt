@@ -10,6 +10,8 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.model.CustomerInfoSignIn
 import com.banglalink.toffee.model.DBVersion
 import com.banglalink.toffee.model.DBVersionV2
+import com.banglalink.toffee.model.PlayerOverlayData
+import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.Utils
 import java.text.ParseException
 import java.util.*
@@ -27,10 +29,11 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val sessionTokenLiveData = MutableLiveData<String>()
     val profileImageUrlLiveData = MutableLiveData<String>()
     val customerNameLiveData = MutableLiveData<String>()
+    val playerOverlayLiveData = SingleLiveEvent<PlayerOverlayData>()
+    val forceLogoutUserLiveData = SingleLiveEvent<Boolean>()
 
-    val deviceId by lazy {
-        Settings.Secure.getString(context.getContentResolver(),
-            Settings.Secure.ANDROID_ID);
+    val deviceId: String by lazy {
+        Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
     }
 
     var phoneNumber: String
@@ -408,7 +411,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         }
         latitude = customerInfoSignIn.lat?:""
         longitude = customerInfoSignIn.long?:""
-        isSubscriptionActive = customerInfoSignIn.isSubscriptionActive?:"true"
+        isSubscriptionActive = customerInfoSignIn.isSubscriptionActive?:"false"
         viewCountDbUrl = (customerInfoSignIn.viewCountDbUrl?:"")
         reactionDbUrl = (customerInfoSignIn.reactionDbUrl?:"")
         reactionStatusDbUrl = (customerInfoSignIn.reactionStatusDbUrl?:"")

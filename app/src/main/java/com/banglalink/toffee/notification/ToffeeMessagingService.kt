@@ -17,10 +17,13 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.data.database.entities.NotificationInfo
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.enums.NotificationType
+import com.banglalink.toffee.model.PlayerOverlayData
 import com.banglalink.toffee.receiver.NotificationActionReceiver
 import com.banglalink.toffee.util.UtilsKt
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -38,8 +41,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
     @Inject lateinit var notificationInfoRepository: NotificationInfoRepository
     private val coroutineContext = Dispatchers.IO + SupervisorJob()
     private val imageCoroutineScope = CoroutineScope(coroutineContext)
-
-
+    
     override fun onNewToken(s: String) {
         super.onNewToken(s)
         Log.i(TAG, "Token: $s")
@@ -48,17 +50,31 @@ class ToffeeMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         Log.d(TAG, "From: " + remoteMessage.from!!)
-
-        if (remoteMessage.data.isNotEmpty()) {
-            Log.d(TAG, "Data payload: " + remoteMessage.data)
-            prepareNotification(remoteMessage.data)
-        } else {
+        
+        if (remoteMessage.data.isNullOrEmpty()){
             imageCoroutineScope.launch {
                 handleDefaultNotification(
                     remoteMessage.notification?.title,
                     remoteMessage.notification?.body,
                     remoteMessage.notification?.imageUrl
                 )
+            }
+        }
+        else {
+            val data: Map<String, String> = remoteMessage.data
+            when(data["notificationType"]!!.toLowerCase()) {
+                NotificationType.OVERLAY.type -> {
+                    val payload = Gson().fromJson(remoteMessage.data["notificationText"]?.trimIndent(), PlayerOverlayData::class.java)
+                    Log.d(TAG, "json: $payload")
+                    payload?.let { mPref.playerOverlayLiveData.postValue(payload) }
+                }
+                NotificationType.LOGOUT.type -> {
+                    mPref.forceLogoutUserLiveData.postValue(true)
+                }
+                else -> {
+                    Log.d(TAG, "Data payload: " + remoteMessage.data)
+                    prepareNotification(remoteMessage.data)
+                }
             }
         }
     }
@@ -98,8 +114,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             Log.e(TAG, e.message, e)
         }
     }
-
-
+    
     private suspend fun handleDefaultNotification(
         title: String?,
         content: String?,

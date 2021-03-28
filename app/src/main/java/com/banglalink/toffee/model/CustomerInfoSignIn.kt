@@ -39,7 +39,7 @@ class CustomerInfoSignIn:BodyResponse() {
     @SerializedName("tokenLifeSpan")
     var tokenLifeSpan = 0
     @SerializedName("isSubscriptionActive")
-    var isSubscriptionActive:String? = "true"
+    var isSubscriptionActive:String? = "false"
 
     @SerializedName("real_db_01_url")
     var viewCountDbUrl:String? = null

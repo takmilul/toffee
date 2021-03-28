@@ -4,21 +4,17 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.Rect
 import android.util.AttributeSet
-import android.util.Log
-import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.view.isVisible
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.PlayerOverlayData
 import com.banglalink.toffee.util.Utils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import kotlin.math.max
-import kotlin.math.min
-
 
 @AndroidEntryPoint
 class DebugOverlayView(ctx: Context, val attrs: AttributeSet? = null, val defAttrStyle: Int = 0)
@@ -52,6 +48,7 @@ class DebugOverlayView(ctx: Context, val attrs: AttributeSet? = null, val defAtt
         overlayData?.let { data ->
             resetViewState()
             customTextView?.text = data.params.customText
+            customTextView?.isVisible = data.params.customText.isNotBlank()
             debugTextView?.text = getFormattedDebugText(data.params.displayParams)
         }
     }
@@ -67,7 +64,7 @@ class DebugOverlayView(ctx: Context, val attrs: AttributeSet? = null, val defAtt
                 customTextView?.setTextColor(textColor)
                 debugTextView?.setTextColor(textColor)
             }
-            val fontSize = data.params.fontSize.replace("\\w+".toRegex(), "").toIntOrNull()
+            val fontSize = data.params.fontSize.replace("[^\\d.]".toRegex(), "").toIntOrNull()
             fontSize?.let {
                 customTextView?.textSize = it.toFloat()
                 debugTextView?.textSize = it.toFloat()
@@ -79,23 +76,24 @@ class DebugOverlayView(ctx: Context, val attrs: AttributeSet? = null, val defAtt
         val sb = StringBuilder()
         displayParams.forEach {
             when(it) {
-                MSISDN -> sb.appendLine(mPref.phoneNumber)
-                DEVICE_ID -> sb.appendLine(mPref.deviceId)
-                USER_ID -> sb.appendLine(mPref.customerId)
-                USER_NAME -> sb.appendLine(mPref.customerName)
-//                PUBLIC_IP -> sb.appendLine(mPref.)
-                LOCATION -> sb.appendLine("${mPref.latitude}, ${mPref.longitude}")
+                MSISDN -> if(mPref.phoneNumber.isNotBlank()) sb.appendLine(mPref.phoneNumber)
+                DEVICE_ID -> if(mPref.deviceId.isNotBlank()) sb.appendLine(mPref.deviceId)
+                USER_ID -> if(mPref.customerId != 0) sb.appendLine(mPref.customerId)
+                USER_NAME -> if(mPref.customerName.isNotBlank()) sb.appendLine(mPref.customerName)
+//                PUBLIC_IP -> if(mPref.phoneNumber.isNotBlank()) sb.appendLine(mPref.)
+                LOCATION -> if(mPref.latitude.isNotBlank() || mPref.longitude.isNotBlank()) sb.appendLine("${mPref.latitude}, ${mPref.longitude}")
                 DEVICE_TYPE -> sb.appendLine("Android")
-                CONTENT_ID -> sb.appendLine(contentId)
+                CONTENT_ID -> if(!contentId.isNullOrBlank()) sb.appendLine(contentId)
             }
         }
+        sb.setLength(sb.length - 1)
         return sb.toString()
     }
 
     private var dX = 0f
     private var dY = 0f
 
-    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+    /*override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
         return overlayData?.params?.position == "floating"
     }
 
@@ -119,7 +117,7 @@ class DebugOverlayView(ctx: Context, val attrs: AttributeSet? = null, val defAtt
             else -> return false
         }
         return true
-    }
+    }*/
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         super.onLayout(changed, l, t, r, b)

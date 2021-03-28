@@ -7,8 +7,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.map
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
+import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentLandingUserChannelsBinding
@@ -28,6 +30,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class LandingUserChannelsFragment : HomeBaseFragment() {
     @Inject lateinit var cacheManager: CacheManager
+    @Inject lateinit var localSync: LocalSync
     private lateinit var mAdapterLanding: LandingUserChannelsListAdapter
     private var categoryInfo: Category? = null
     private var channelInfo: UserChannelInfo? = null
@@ -114,6 +117,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
                 viewModel.loadUserChannelsByCategory(categoryInfo!!)
             }
             content.collectLatest {
+                val pagingUserInfo = it.map { data-> localSync.syncUserChannel(data) }
                 mAdapterLanding.submitData(it)
             }
         }
