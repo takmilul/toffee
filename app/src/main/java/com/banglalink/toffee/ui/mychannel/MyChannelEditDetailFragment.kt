@@ -69,6 +69,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         return binding.root
     }
     override fun onDestroyView() {
+        binding.categorySpinner.adapter = null
         super.onDestroyView()
         _binding = null
     }

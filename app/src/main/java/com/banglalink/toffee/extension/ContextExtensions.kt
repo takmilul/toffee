@@ -7,7 +7,9 @@ import android.os.SystemClock
 import android.view.View
 import android.widget.Toast
 import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProviders
 import com.banglalink.toffee.ui.common.BaseViewModel
 
@@ -74,3 +76,6 @@ fun View.safeClick(action: View.OnClickListener, debounceTime: Long = 1000L) {
         }
     })
 }
+
+val FragmentManager.currentNavigationFragment: Fragment?
+    get() = primaryNavigationFragment?.childFragmentManager?.fragments?.first()

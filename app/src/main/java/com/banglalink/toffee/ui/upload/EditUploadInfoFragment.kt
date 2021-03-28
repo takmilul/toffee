@@ -97,6 +97,10 @@ class EditUploadInfoFragment: BaseFragment() {
     }
     override fun onDestroyView() {
         viewModel.tags.value = binding.uploadTags.selectedChipList.joinToString(" | ") { it.label }
+        binding.unbind()
+        binding.subCategorySpinner.adapter = null
+        binding.categorySpinner.adapter = null
+        binding.ageGroupSpinner.adapter = null
         super.onDestroyView()
         _binding = null
     }

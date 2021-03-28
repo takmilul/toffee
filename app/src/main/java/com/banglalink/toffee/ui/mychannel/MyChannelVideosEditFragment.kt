@@ -70,6 +70,10 @@ class MyChannelVideosEditFragment : BaseFragment() {
     }
 
     override fun onDestroyView() {
+        binding.unbind()
+        binding.ageGroupSpinner.adapter = null
+        binding.categorySpinner.adapter = null
+        binding.subCategorySpinner.adapter = null
         super.onDestroyView()
         _binding = null
     }

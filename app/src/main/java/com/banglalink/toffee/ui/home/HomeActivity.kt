@@ -1239,6 +1239,16 @@ class HomeActivity :
             }
         }
 
+        searchView?.setOnSearchClickListener {
+            val searchFrag = supportFragmentManager.currentNavigationFragment
+            if(searchFrag is SearchFragment) {
+                searchFrag.getSearchString()?.let {
+                    searchAutoComplete.setText(it)
+                    searchAutoComplete.setSelection(searchAutoComplete.text.length)
+                }
+            }
+        }
+
         val notificationActionView = menu.findItem(R.id.action_notification)?.actionView
         notificationBadge = notificationActionView?.findViewById<TextView>(R.id.notification_badge)
         notificationActionView?.setOnClickListener {
