@@ -116,7 +116,7 @@ class LandingPageViewModel @Inject constructor(
     }
 
     val loadUserChannels by lazy {
-        userChannelRepo.getList().cachedIn(viewModelScope)
+        userChannelRepo.getList()/*.cachedIn(viewModelScope)*/
     }
 
     private val userChannelRepo by lazy {

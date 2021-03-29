@@ -2,8 +2,7 @@
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    >
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <variable
@@ -13,13 +12,13 @@
             name="callback"
             type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
     </data>
+    
     <androidx.cardview.widget.CardView
-        android:layout_width="160dp"
+        android:layout_width="156dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         app:cardCornerRadius="16dp"
-        app:cardUseCompatPadding="false"
-        >
+        app:cardUseCompatPadding="false">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
@@ -28,16 +27,16 @@
             android:onClick="@{()->callback.onItemClicked(data)}">
 
             <ImageView
-
                 android:id="@+id/category_background"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="156dp"
+                android:layout_height="80dp"
                 android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
                 loadCategoryBackground="@{data}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:src="@drawable/placeholder"
+                tools:src="@drawable/placeholder"
                 android:contentDescription="@string/txt_category" />
 
             <View
@@ -55,11 +54,13 @@
                 loadCategoryImage="@{data}"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:maxHeight="30dp"
+                android:maxWidth="30dp"
                 android:layout_marginStart="12dp"
                 android:layout_marginEnd="4dp"
                 android:layout_marginBottom="12dp"
                 android:adjustViewBounds="true"
-                android:src="@drawable/ic_cat_movie"
+                tools:src="@drawable/ic_cat_movie"
                 app:layout_constraintBottom_toBottomOf="@+id/category_background"
                 app:layout_constraintEnd_toStartOf="@+id/guideline16"
                 app:layout_constraintStart_toStartOf="@+id/category_background" />

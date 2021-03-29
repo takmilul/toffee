@@ -14,8 +14,8 @@ android {
         applicationId "com.banglalink.toffee"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 49
-        versionName "1.1.28"
+        versionCode 48
+        versionName "1.1.27"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     
@@ -156,6 +156,9 @@ dependencies {
     implementation 'com.facebook.android:facebook-android-sdk:5.15.3'
     //Leak canary
 //    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-4'
+
+    // fireworks sdk
+    implementation 'com.github.loopsocial:firework_sdk:v5.1.7'
 
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.3.0"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.3.0"

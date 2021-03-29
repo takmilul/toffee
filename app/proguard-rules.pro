@@ -89,3 +89,5 @@
     android.widget.OverScroller scroller;
 }
 -keep class androidx.navigation** { *; }
+
+-keepclassmembers class com.loopnow.fireworklibrary.** { <fields>; }

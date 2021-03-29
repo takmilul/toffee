@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentLandingPage2Binding
@@ -54,7 +55,7 @@ class LandingPageFragment : HomeBaseFragment() {
         landingViewModel.categoryId.value = 0
         landingViewModel.pageType.value = Landing
         landingViewModel.isDramaSeries.value = false
-
+        binding.fireworkFragment.isVisible = mPref.isFireworkActive == "true"
         binding.landingAppbar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
             appbarOffset = verticalOffset
         })

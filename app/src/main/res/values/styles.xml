@@ -473,4 +473,18 @@
         <item name="behavior_peekHeight">300dp</item>
         <item name="android:windowIsFloating">true</item>
     </style>
+    
+    <style name="fireworkVideoTitleStyle">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">12dp</item>
+        <item name="android:lines">2</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:gravity">left</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+    </style>
+    
+    <style name="fireworkImageStyle" >
+        <item name="android:radius">12dp</item>
+    </style>
 </resources>

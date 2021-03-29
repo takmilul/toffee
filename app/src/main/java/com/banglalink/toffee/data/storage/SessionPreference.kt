@@ -164,6 +164,12 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             pref.edit().putString(PREF_SUBSCRIPTION_ACTIVE, phoneNumber).apply()
         }
 
+    var isFireworkActive: String
+        get() = pref.getString(PREF_FIREWORK_ACTIVE, "true") ?: "true"
+        set(isActive) {
+            pref.edit().putString(PREF_FIREWORK_ACTIVE, isActive).apply()
+        }
+
     var channelId: Int
         get() = pref.getInt(PREF_CHANNEL_ID, 0)
         set(channelId) = pref.edit().putInt(PREF_CHANNEL_ID, channelId).apply()
@@ -418,6 +424,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         subscribeDbUrl = (customerInfoSignIn.subscribeDbUrl ?: "")
         subscriberStatusDbUrl = (customerInfoSignIn.subscriberStatusDbUrl ?: "")
         shareCountDbUrl = (customerInfoSignIn.shareCountDbUrl ?: "")
+        isFireworkActive = (customerInfoSignIn.isFireworkActive ?: "true")
     }
 
     companion object {
@@ -445,6 +452,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_WIFI= "WIFI"
         private const val PREF_CELLULAR= "CELLULAR"
         private const val PREF_SUBSCRIPTION_ACTIVE= "subscription_active"
+        private const val PREF_FIREWORK_ACTIVE= "fireworks_active"
         private const val PREF_SYSTEM_TIME= "systemTime"
         private const val PREF_WATCH_ONLY_WIFI= "WatchOnlyWifi"
         private const val PREF_KEY_NOTIFICATION= "pref_key_notification"

@@ -55,4 +55,5 @@ class CustomerInfoSignIn:BodyResponse() {
     var subscribeDbUrl: String? = null
     @SerializedName("real_db_01_crc32")
     var viewCountDBVersion:String? = null
+    var isFireworkActive: String? = "true"
 }
