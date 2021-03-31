@@ -141,7 +141,7 @@
                     android:textSize="16sp">
                 </TextView>
 
-                <TextView
+                <!--<TextView
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_gravity="center"
@@ -152,7 +152,7 @@
                     android:visibility="visible"
                     android:textColor="@android:color/white"
                     android:textSize="12sp"
-                    android:text="@string/powered_by_txt"/>
+                    android:text="@string/powered_by_txt"/>-->
 
             </LinearLayout>
 

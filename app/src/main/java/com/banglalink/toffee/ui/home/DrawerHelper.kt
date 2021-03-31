@@ -22,8 +22,6 @@ import com.banglalink.toffee.ui.common.HtmlPageViewActivity
 import com.banglalink.toffee.ui.profile.ViewProfileActivity
 import com.banglalink.toffee.ui.redeem.RedeemCodeActivity
 import com.banglalink.toffee.ui.refer.ReferAFriendActivity
-import com.banglalink.toffee.ui.subscription.MySubscriptionActivity
-import com.banglalink.toffee.ui.subscription.PackageListActivity
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.suke.widget.SwitchButton
 
@@ -247,7 +245,7 @@ class DrawerHelper(
 //                }
 //                binding.drawerLayout.closeDrawers()
 //            }
-            R.id.menu_subscriptions -> {
+            /*R.id.menu_subscriptions -> {
                 binding.drawerLayout.closeDrawers()
                 if (mPref.isSubscriptionActive == "true") {
                     activity.launchActivity<PackageListActivity>()
@@ -255,7 +253,7 @@ class DrawerHelper(
                     activity.launchActivity<MySubscriptionActivity>()
                 }
                 return true
-            }
+            }*/
             R.id.ic_menu_internet_packs -> {
                 binding.drawerLayout.closeDrawers()
                 activity.launchActivity<Html5PlayerViewActivity> {
