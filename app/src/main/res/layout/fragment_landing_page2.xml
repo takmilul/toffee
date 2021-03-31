@@ -42,9 +42,10 @@
 
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/fireworkFragment"
-                    android:name="com.banglalink.toffee.ui.fireworks.FireworksFragment"
+                    android:name="com.banglalink.toffee.ui.firework.FireworkFragment"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"/>
 
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/trendingNowFragment"

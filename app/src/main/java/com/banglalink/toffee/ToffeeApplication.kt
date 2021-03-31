@@ -7,7 +7,6 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkRequest
 import android.os.Build
-import android.util.Log
 import coil.Coil
 import coil.ImageLoader
 import coil.imageLoader
@@ -21,8 +20,6 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.ui.upload.UploadObserver
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.loopnow.fireworklibrary.FwSDK
-import com.loopnow.fireworklibrary.SdkStatus
 import dagger.hilt.android.HiltAndroidApp
 import net.gotev.uploadservice.UploadServiceConfig
 import net.gotev.uploadservice.data.RetryPolicyConfig
@@ -30,11 +27,10 @@ import net.gotev.uploadservice.okhttp.OkHttpStack
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 
-private const val CLIENT_ID = "9e320da50f69212461fd9528a6b3e6f6758537187097720fe71cf0b3f867415d"
-
 @HiltAndroidApp
 class ToffeeApplication : Application() {
 
+    @Inject lateinit var mPref: SessionPreference
     @Inject lateinit var cacheManager: CacheManager
     @Inject lateinit var mUploadObserver: UploadObserver
     @Inject lateinit var commonPreference: CommonPreference
@@ -65,15 +61,7 @@ class ToffeeApplication : Application() {
 
 
         initUploader()
-        initFireworks()
-    }
-    
-    private fun initFireworks() {
-        FwSDK.initialize(this, CLIENT_ID, null, object : FwSDK.SdkStatusListener{
-            override fun currentStatus(status: SdkStatus, extra: String) {
-                Log.d("FwSDK", "currentStatus: ${status.name}, message: $extra")
-            }
-        })
+        mPref.isFireworkInitialized = false
     }
     
     private fun initCoil() {
