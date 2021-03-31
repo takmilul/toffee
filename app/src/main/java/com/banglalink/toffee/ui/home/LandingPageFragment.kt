@@ -1,37 +1,24 @@
 package com.banglalink.toffee.ui.home
 
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.MutableLiveData
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentLandingPage2Binding
 import com.banglalink.toffee.enums.PageType.Landing
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.google.android.material.appbar.AppBarLayout
-import com.loopnow.fireworklibrary.FwSDK
-import com.loopnow.fireworklibrary.SdkStatus
-import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
 
-private const val CLIENT_ID = "9e320da50f69212461fd9528a6b3e6f6758537187097720fe71cf0b3f867415d"
-
-@AndroidEntryPoint
-class LandingPageFragment : HomeBaseFragment(), FwSDK.SdkStatusListener {
+class LandingPageFragment : HomeBaseFragment() {
+    
     private var appbarOffset = 0
-    @Inject @ApplicationContext lateinit var appContext: Context
-    private val isFireworkContentLoaded = MutableLiveData<Boolean>()
-    private val landingViewModel by activityViewModels<LandingPageViewModel>()
     private var _binding: FragmentLandingPage2Binding ? = null
     private val binding get() = _binding!!
+    private val landingViewModel by activityViewModels<LandingPageViewModel>()
 
     companion object {
         fun newInstance(): LandingPageFragment {
@@ -39,19 +26,7 @@ class LandingPageFragment : HomeBaseFragment(), FwSDK.SdkStatusListener {
         }
     }
     
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (mPref.isFireworkActive == "true" && !mPref.isFireworkInitialized) {
-            try {
-                FwSDK.initialize(appContext, CLIENT_ID, null, this)
-            }
-            catch (e: Exception) {
-                mPref.isFireworkInitialized = false
-            }
-        }
-    }
-    
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLandingPage2Binding.inflate(inflater, container, false)
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -83,16 +58,6 @@ class LandingPageFragment : HomeBaseFragment(), FwSDK.SdkStatusListener {
         binding.landingAppbar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
             appbarOffset = verticalOffset
         })
-    }
-    
-    override fun currentStatus(status: SdkStatus, extra: String) {
-        when(status){
-            SdkStatus.Initialized -> mPref.isFireworkInitialized = true
-            SdkStatus.InitializationFailed -> mPref.isFireworkInitialized = false
-            SdkStatus.ContentLoaded -> binding.fireworkFragment.isVisible = true
-            SdkStatus.LoadingContent -> binding.fireworkFragment.isVisible = false
-            SdkStatus.LoadingContentFailed -> Log.d("FwSDK", "LoadingContentFailed: $extra")
-        }
     }
     
     fun onBackPressed(): Boolean {
