@@ -29,6 +29,7 @@ import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.widget.VelBoxFieldTextWatcher
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.UtilsKt
+import com.github.florent37.runtimepermission.kotlin.NoActivityException
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
 import com.yalantis.ucrop.UCrop
@@ -136,6 +137,10 @@ class EditProfileActivity : BaseAppCompatActivity() {
                 ToffeeAnalytics.logBreadCrumb("Storage permission denied")
                 showToast(getString(R.string.grant_storage_permission))
             }
+            catch (e: NoActivityException){
+                ToffeeAnalytics.logBreadCrumb("Activity Not Found - filesystem(gallery)")
+                showToast(getString(R.string.no_activity_msg))
+            }
         }
     }
 
@@ -215,6 +220,10 @@ class EditProfileActivity : BaseAppCompatActivity() {
             catch (e: PermissionException){
                 ToffeeAnalytics.logBreadCrumb("Camera permission denied")
                 showToast(getString(R.string.grant_camera_permission))
+            }
+            catch (e: NoActivityException){
+                ToffeeAnalytics.logBreadCrumb("Activity Not Found - filesystem(camera)")
+                showToast(getString(R.string.no_activity_msg))
             }
         }
     }

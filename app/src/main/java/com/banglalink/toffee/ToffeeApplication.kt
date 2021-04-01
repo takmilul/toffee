@@ -30,7 +30,6 @@ import javax.inject.Inject
 @HiltAndroidApp
 class ToffeeApplication : Application() {
 
-    @Inject lateinit var mPref: SessionPreference
     @Inject lateinit var cacheManager: CacheManager
     @Inject lateinit var mUploadObserver: UploadObserver
     @Inject lateinit var commonPreference: CommonPreference
@@ -61,7 +60,6 @@ class ToffeeApplication : Application() {
 
 
         initUploader()
-        mPref.isFireworkInitialized = false
     }
     
     private fun initCoil() {

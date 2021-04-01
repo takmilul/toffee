@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.landing
 
+import android.content.res.Resources
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 import com.banglalink.toffee.R
@@ -8,6 +9,7 @@ import com.banglalink.toffee.common.paging.BasePagingDataAdapter
 import com.banglalink.toffee.common.paging.BaseViewHolder
 import com.banglalink.toffee.common.paging.ItemComparator
 import com.banglalink.toffee.databinding.ListItemCategoriesV3Binding
+import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.model.Category
 
 class CategoriesListAdapter(
@@ -23,6 +25,30 @@ class CategoriesListAdapter(
         if(fullWidth) {
             binding.root.layoutParams = binding.root.layoutParams.apply {
                 width = ViewGroup.LayoutParams.MATCH_PARENT
+            }
+        }
+        else {
+            if (binding is ListItemCategoriesV3Binding) {
+                val calculatedWidth = (Resources.getSystem().displayMetrics.widthPixels - (16.px * 3)) / 2.5    // 16dp margin
+                val calculatedHeight = (calculatedWidth / 16) * 8.21    // Category card ratio = 16:8.21
+                val iconSize = calculatedHeight / 2.62  // category_card_height : category_icon_height = 2.62:1
+                
+                binding.root.layoutParams = binding.root.layoutParams.apply {
+                    width = calculatedWidth.toInt()
+                    height = calculatedHeight.toInt()
+                }
+                binding.categoryCardView.layoutParams = binding.categoryCardView.layoutParams.apply {
+                    width = calculatedWidth.toInt()
+                    height = calculatedHeight.toInt()
+                }
+                binding.icon.maxWidth = iconSize.toInt()
+                binding.icon.maxHeight = iconSize.toInt()
+                if (calculatedWidth < 136.px) {
+                    val params = binding.icon.layoutParams as ViewGroup.MarginLayoutParams
+                    params.marginStart = 8.px
+                    binding.icon.layoutParams = params
+                    binding.text.textSize = 13f
+                }
             }
         }
     }
