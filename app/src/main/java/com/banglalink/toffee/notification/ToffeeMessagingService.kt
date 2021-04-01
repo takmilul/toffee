@@ -78,24 +78,29 @@ class ToffeeMessagingService : FirebaseMessagingService() {
     }
     
     private fun kickOutUser(data: Map<String, String>) {
-        val authList: Array<String>? = Gson().fromJson(data["message"]?.trimIndent(), Array<String>::class.java)
-        authList?.forEach { value ->
-            var decryptedData = Base64.decode(value, Base64.DEFAULT)
-            repeat(2) { decryptedData = Base64.decode(decryptedData, Base64.DEFAULT) }
-            when (decryptedData.toString()) {
-                mPref.customerId.toString() -> {
-                    mPref.forceLogoutUserLiveData.postValue(true)
-                    return
-                }
-                mPref.deviceId -> {
-                    mPref.forceLogoutUserLiveData.postValue(true)
-                    return
-                }
-                mPref.phoneNumber -> {
-                    mPref.forceLogoutUserLiveData.postValue(true)
-                    return
+        try {
+            val authList: Array<String>? = Gson().fromJson(data["message"]?.trimIndent(), Array<String>::class.java)
+            authList?.forEach { value ->
+                var decryptedData = Base64.decode(value, Base64.DEFAULT)
+                repeat(2) { decryptedData = Base64.decode(decryptedData, Base64.DEFAULT) }
+                when (String(decryptedData)) {
+                    mPref.customerId.toString() -> {
+                        mPref.forceLogoutUserLiveData.postValue(true)
+                        return
+                    }
+                    mPref.deviceId -> {
+                        mPref.forceLogoutUserLiveData.postValue(true)
+                        return
+                    }
+                    mPref.phoneNumber -> {
+                        mPref.forceLogoutUserLiveData.postValue(true)
+                        return
+                    }
                 }
             }
+        }
+        catch (e: Exception) {
+            Log.e(TAG, "kickOutUser: ${e.message}")
         }
     }
     
