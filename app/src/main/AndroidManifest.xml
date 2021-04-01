@@ -196,7 +196,7 @@
         <!-- Instead of providing app_id in VideoFeedFragment xml , you can specify it in AndroidManifest.xml-->
         <meta-data
             android:name="Firework:AppID"
-            android:value="BQEaIb9E80fiqAyaNQ5uv5_II5lXL3ET" />
+            android:value="9e320da50f69212461fd9528a6b3e6f6758537187097720fe71cf0b3f867415d" />
         
         <!-- We plan on using advertising_id to improve target ads so that you can monetize better.-->
         <!-- This is needed for to get advertising id using Android ad sdk.-->

@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.MutableLiveData
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentLandingPage2Binding
 import com.banglalink.toffee.enums.PageType.Landing
@@ -28,7 +27,6 @@ private const val CLIENT_ID = "9e320da50f69212461fd9528a6b3e6f6758537187097720fe
 class LandingPageFragment : HomeBaseFragment(), FwSDK.SdkStatusListener {
     private var appbarOffset = 0
     @Inject @ApplicationContext lateinit var appContext: Context
-    private val isFireworkContentLoaded = MutableLiveData<Boolean>()
     private val landingViewModel by activityViewModels<LandingPageViewModel>()
     private var _binding: FragmentLandingPage2Binding ? = null
     private val binding get() = _binding!!
@@ -87,10 +85,13 @@ class LandingPageFragment : HomeBaseFragment(), FwSDK.SdkStatusListener {
     
     override fun currentStatus(status: SdkStatus, extra: String) {
         when(status){
-            SdkStatus.Initialized -> mPref.isFireworkInitialized = true
+            SdkStatus.Initialized -> {
+                mPref.isFireworkInitialized = true
+                binding.fireworkFragment.isVisible = true
+            }
             SdkStatus.InitializationFailed -> mPref.isFireworkInitialized = false
-            SdkStatus.ContentLoaded -> binding.fireworkFragment.isVisible = true
-            SdkStatus.LoadingContent -> binding.fireworkFragment.isVisible = false
+            SdkStatus.ContentLoaded -> Log.d("FwSDK", "ContentLoaded: $extra")
+            SdkStatus.LoadingContent -> Log.d("FwSDK", "LoadingContent: $extra")
             SdkStatus.LoadingContentFailed -> Log.d("FwSDK", "LoadingContentFailed: $extra")
         }
     }
