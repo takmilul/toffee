@@ -7,11 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentLandingPage2Binding
 import com.banglalink.toffee.enums.PageType.Landing
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.google.android.material.appbar.AppBarLayout
@@ -49,7 +50,7 @@ class LandingPageFragment : HomeBaseFragment(), FwSDK.SdkStatusListener {
         }
     }
     
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLandingPage2Binding.inflate(inflater, container, false)
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -87,12 +88,23 @@ class LandingPageFragment : HomeBaseFragment(), FwSDK.SdkStatusListener {
         when(status){
             SdkStatus.Initialized -> {
                 mPref.isFireworkInitialized = true
-                binding.fireworkFragment.isVisible = true
+                binding.fireworkFragment.show()
+                Log.d("FwSDK", "Initialized: $extra")
             }
             SdkStatus.InitializationFailed -> mPref.isFireworkInitialized = false
-            SdkStatus.ContentLoaded -> Log.d("FwSDK", "ContentLoaded: $extra")
             SdkStatus.LoadingContent -> Log.d("FwSDK", "LoadingContent: $extra")
-            SdkStatus.LoadingContentFailed -> Log.d("FwSDK", "LoadingContentFailed: $extra")
+            SdkStatus.ContentLoaded -> {
+                if (extra.toInt() <= 0 && _binding != null) {
+                    binding.fireworkFragment.hide()
+                }
+                Log.d("FwSDK", "ContentLoaded: $extra")
+            }
+            SdkStatus.LoadingContentFailed -> {
+                _binding?.let { 
+                    binding.fireworkFragment.hide()
+                }
+                Log.d("FwSDK", "LoadingContentFailed: $extra")
+            }
         }
     }
     
