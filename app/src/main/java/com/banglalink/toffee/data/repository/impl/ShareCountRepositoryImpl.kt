@@ -5,11 +5,26 @@ import com.banglalink.toffee.data.database.entities.ShareCount
 import com.banglalink.toffee.data.repository.ShareCountRepository
 
 class ShareCountRepositoryImpl(private val dao: ShareCountDao) : ShareCountRepository {
-    override suspend fun insert(vararg items: ShareCount): LongArray {
-        return dao.insert(*items)
+    override suspend fun insert(item: ShareCount): Int {
+        return dao.insert(item)
+    }
+    
+    override suspend fun insertAll(vararg items: ShareCount): LongArray {
+        return dao.insertAll(*items)
     }
 
-    override suspend fun getShareCountByContentId(contentId: Int): Long {
-        return dao.getShareCountByContentId(contentId) ?: 0L
+    override suspend fun getShareCountByContentId(contentId: Int): Long? {
+        return dao.getShareCountByContentId(contentId)
+    }
+    
+    override suspend fun updateShareCount(contentId: Int, status: Int): Int {
+        val count = getShareCountByContentId(contentId)
+        
+        return if(count == null){
+            insert(ShareCount(contentId, 1))
+        }
+        else{
+            dao.updateShareCount(contentId, count + 1)
+        }
     }
 }

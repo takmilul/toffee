@@ -46,6 +46,7 @@ import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.*
+import com.banglalink.toffee.mqttservice.ToffeeMqttService
 import com.banglalink.toffee.ui.category.drama.EpisodeListFragment
 import com.banglalink.toffee.ui.channels.AllChannelsViewModel
 import com.banglalink.toffee.ui.channels.ChannelFragmentNew
@@ -104,6 +105,7 @@ class HomeActivity :
     @Inject lateinit var notificationRepo: NotificationInfoRepository
     @Inject lateinit var uploadManager: UploadStateManager
     @Inject lateinit var cacheManager: CacheManager
+    @Inject lateinit var mqttService: ToffeeMqttService
     private var channelOwnerId: Int = 0
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private var notificationBadge: View? = null
@@ -155,7 +157,31 @@ class HomeActivity :
         binding.uploadButton.setOnClickListener {
             if (showUploadDialog()) return@setOnClickListener
         }
-
+        
+        if (mPref.mqttHost.isBlank() && mPref.mqttClientId.isBlank() && mPref.mqttUserName.isBlank() && mPref.mqttPassword.isBlank()) {
+            observe(viewModel.mqttCredentialLiveData) {
+                when (it) {
+                    is Resource.Success -> {
+                        it.data?.let { data ->
+                            mPref.mqttHost = data.mqttUrl
+                            mPref.mqttClientId = data.mqttUserId
+                            mPref.mqttUserName = data.mqttUserId
+                            mPref.mqttPassword = data.mqttPassword
+    
+                            mqttService.initialize()
+                        }
+                    }
+                    is Resource.Failure -> {
+                        Log.e("MQTT_", "onCreate: ${it.error.msg}")
+                    }
+                }
+            }
+            viewModel.getMqttCredential()
+        }
+        else {
+            mqttService.initialize()
+        }
+        
         observe(viewModel.fragmentDetailsMutableLiveData) {
             onDetailsFragmentLoad(it)
         }
@@ -1094,6 +1120,7 @@ class HomeActivity :
         binding.draggableView.visibility = View.GONE
         binding.draggableView.resetImmediately()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        mqttService.destroy()
     }
 
     fun handleExitApp() {

@@ -393,6 +393,26 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var hasReactionDb: Boolean
         get() = pref.getBoolean(PREF_HAS_REACTION_DB, false)
         set(value) = pref.edit { putBoolean(PREF_HAS_REACTION_DB, value) }
+    
+    var mqttHost: String
+        get() = pref.getString(PREF_MQTT_HOST, "") ?: ""  //ssl://im.toffeelive.com:1883
+        set(value) = pref.edit { putString(PREF_MQTT_HOST, value) }
+    
+    var mqttClientId: String
+        get() = pref.getString(PREF_MQTT_CLIENT_ID, "") ?: ""  //evan-02@im.toffeelive.com
+        set(value) = pref.edit { putString(PREF_MQTT_CLIENT_ID, value) }
+
+    var mqttUserName: String
+        get() = pref.getString(PREF_MQTT_USER_NAME, "") ?: ""  //evan-02@im.toffeelive.com
+        set(value) = pref.edit { putString(PREF_MQTT_USER_NAME, value) }
+
+    var mqttPassword: String
+        get() = pref.getString(PREF_MQTT_PASSWORD, "") ?: ""  //12345678
+        set(value) = pref.edit { putString(PREF_MQTT_PASSWORD, value) }
+
+    var mqttTopic: String
+        get() = pref.getString(PREF_MQTT_TOPIC, "test") ?: ""
+        set(value) = pref.edit { putString(PREF_MQTT_TOPIC, value) }
 
 //    var uploadUri: String?
 //        get() = pref.getString("toffee-upload-uri", null)
@@ -477,6 +497,11 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_IS_CHANNEL_DETAIL_CHECKED = "isChannelDetailChecked"
         private const val PREF_KEEP_ASPECT_RATIO = "pref_keep_aspect_ratio"
         private const val PREF_HAS_REACTION_DB = "pref_has_reaction_db"
+        private const val PREF_MQTT_HOST = "pref_mqtt_host"
+        private const val PREF_MQTT_CLIENT_ID = "pref_mqtt_client_id"
+        private const val PREF_MQTT_USER_NAME = "pref_mqtt_user_name"
+        private const val PREF_MQTT_PASSWORD = "pref_mqtt_password"
+        private const val PREF_MQTT_TOPIC = "pref_mqtt_topic"
 
         private const val PREF_NAME_IP_TV= "IP_TV"
 

@@ -5,6 +5,7 @@ import com.banglalink.toffee.data.database.entities.SubscriptionCount
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.repository.SubscriptionCountRepository
 import com.banglalink.toffee.data.repository.SubscriptionInfoRepository
+import com.banglalink.toffee.mqttservice.ToffeeMqttService
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.notification.SUBSCRIPTION_TOPIC
 import com.google.gson.Gson
@@ -12,8 +13,9 @@ import com.google.gson.annotations.SerializedName
 import javax.inject.Inject
 
 class SendSubscribeEvent @Inject constructor(
+    private val mqttService: ToffeeMqttService,
     private val subscriptionInfoRepository: SubscriptionInfoRepository, 
-    private val subscriptionCountRepository: SubscriptionCountRepository
+    private val subscriptionCountRepository: SubscriptionCountRepository,
     ) {
     var subscriptionCount: SubscriptionCount? =null
     suspend fun execute(subscriptionInfo: SubscriptionInfo, status: Int, sendToPubSub:Boolean = true){
@@ -34,6 +36,7 @@ class SendSubscribeEvent @Inject constructor(
             date_time=subscriptionInfo.getDate()
         )
         PubSubMessageUtil.sendMessage(Gson().toJson(subscriptionCountData), SUBSCRIPTION_TOPIC)
+        mqttService.sendMessage(Gson().toJson(subscriptionCountData), SUBSCRIPTION_TOPIC)
         Log.e("Pubsub","data"+Gson().toJson(subscriptionCountData))
     }
 
@@ -52,8 +55,6 @@ class SendSubscribeEvent @Inject constructor(
         else{
             subscriptionInfoRepository.deleteSubscriptionInfo(subscriptionInfo.channelId, subscriptionInfo.customerId)
         }
-
-
     }
 
     /*private suspend fun sendToToffeeServer(SubscriptionCount: SubscriptionCount, subscriptionCount: Int){
@@ -70,15 +71,15 @@ class SendSubscribeEvent @Inject constructor(
             )
         }*//*
     }*/
-
-    private data class SubscriptionCountData(
-        @SerializedName("channel_id")
-        val channelId: Int,
-        @SerializedName("subscriber_id")
-        val subscriberId: Int,
-        @SerializedName("status")
-        val status: Int,
-        @SerializedName("date_time")
-        val date_time: String
-    )
 }
+
+data class SubscriptionCountData(
+    @SerializedName("channel_id")
+    val channelId: Int,
+    @SerializedName("subscriber_id")
+    val subscriberId: Int,
+    @SerializedName("status")
+    val status: Int,
+    @SerializedName("date_time")
+    val date_time: String
+)

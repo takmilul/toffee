@@ -1,9 +1,7 @@
 package com.banglalink.toffee.usecase
 
-import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.ReactionInfo
-import com.banglalink.toffee.data.network.retrofit.ToffeeApi
-import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.mqttservice.ToffeeMqttService
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.notification.REACTION_TOPIC
 import com.google.gson.Gson
@@ -11,9 +9,7 @@ import com.google.gson.annotations.SerializedName
 import javax.inject.Inject
 
 class SendReactionEvent @Inject constructor(
-    private val preference: SessionPreference,
-    private val toffeeApi: ToffeeApi,
-    private val reactionDao: ReactionDao
+    private val mqttService: ToffeeMqttService
 ) {
 
     private val gson = Gson()
@@ -37,6 +33,7 @@ class SendReactionEvent @Inject constructor(
             reactionTime = reactionInfo.getReactionDate(),
         )
         PubSubMessageUtil.sendMessage(gson.toJson(reactionData), REACTION_TOPIC)
+        mqttService.sendMessage(gson.toJson(reactionData), REACTION_TOPIC)
     }
 
     private suspend fun sendToToffeeServer(reactionInfo: ReactionInfo, reactionCount: Int){
@@ -53,19 +50,19 @@ class SendReactionEvent @Inject constructor(
             )
         }*/
     }
-    
-    private data class ReactionData(
-        @SerializedName("id")
-        val id: Int,
-        @SerializedName("customer_id")
-        val customerId: Int,
-        @SerializedName("content_id")
-        val contentId: Long,
-        @SerializedName("reaction_type")
-        val reactionType: Int,
-        @SerializedName("reaction_status")
-        val reactionStatus: Int,
-        @SerializedName("reaction_time")
-        val reactionTime: String
-    )
 }
+
+data class ReactionData(
+    @SerializedName("id")
+    val id: Int,
+    @SerializedName("customer_id")
+    val customerId: Int,
+    @SerializedName("content_id")
+    val contentId: Long,
+    @SerializedName("reaction_type")
+    val reactionType: Int,
+    @SerializedName("reaction_status")
+    val reactionStatus: Int,
+    @SerializedName("reaction_time")
+    val reactionTime: String
+)
