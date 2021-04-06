@@ -66,6 +66,7 @@ import com.banglalink.toffee.ui.upload.UploadStatus
 import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.ui.widget.showSubscriptionDialog
+import com.banglalink.toffee.util.EncryptionUtil
 import com.banglalink.toffee.util.InAppMessageParser
 import com.banglalink.toffee.util.Utils
 import com.google.android.exoplayer2.util.Util
@@ -158,17 +159,17 @@ class HomeActivity :
             if (showUploadDialog()) return@setOnClickListener
         }
         
-        if (mPref.mqttHost.isBlank() && mPref.mqttClientId.isBlank() && mPref.mqttUserName.isBlank() && mPref.mqttPassword.isBlank()) {
+        if (mPref.mqttHost.isBlank() || mPref.mqttClientId.isBlank() || mPref.mqttUserName.isBlank() || mPref.mqttPassword.isBlank()) {
             observe(viewModel.mqttCredentialLiveData) {
                 when (it) {
                     is Resource.Success -> {
                         it.data?.let { data ->
-                            mPref.mqttHost = data.mqttUrl
                             mPref.mqttIsActive = data.mqttIsActive == 1
-                            mPref.mqttClientId = data.mqttUserId
-                            mPref.mqttUserName = data.mqttUserId
-                            mPref.mqttPassword = data.mqttPassword
-    
+                            mPref.mqttHost = EncryptionUtil.encryptRequest(data.mqttUrl)
+                            mPref.mqttClientId = EncryptionUtil.encryptRequest(data.mqttUserId)
+                            mPref.mqttUserName = EncryptionUtil.encryptRequest(data.mqttUserId)
+                            mPref.mqttPassword = EncryptionUtil.encryptRequest(data.mqttPassword)
+                            
                             if (mPref.mqttIsActive) {
                                 mqttService.initialize()
                             }

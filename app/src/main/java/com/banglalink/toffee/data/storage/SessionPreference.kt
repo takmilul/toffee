@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.provider.Settings
 import android.text.TextUtils
+import android.util.Base64
 import androidx.core.content.edit
 import androidx.lifecycle.MutableLiveData
 import com.banglalink.toffee.analytics.ToffeeAnalytics
@@ -11,6 +12,7 @@ import com.banglalink.toffee.model.CustomerInfoSignIn
 import com.banglalink.toffee.model.DBVersion
 import com.banglalink.toffee.model.DBVersionV2
 import com.banglalink.toffee.model.PlayerOverlayData
+import com.banglalink.toffee.util.EncryptionUtil
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.Utils
 import java.text.ParseException
@@ -449,8 +451,8 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         subscriberStatusDbUrl = customerInfoSignIn.subscriberStatusDbUrl ?: ""
         shareCountDbUrl = customerInfoSignIn.shareCountDbUrl ?: ""
         isFireworkActive = customerInfoSignIn.isFireworkActive ?: "true"
+        mqttHost = customerInfoSignIn.mqttUrl?.let { EncryptionUtil.encryptRequest(it) } ?: ""
         mqttIsActive = customerInfoSignIn.mqttIsActive == 1
-        mqttHost = customerInfoSignIn.mqttUrl ?: ""
     }
 
     companion object {
