@@ -19,9 +19,11 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
+import androidx.paging.map
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.string
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
+import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.databinding.FragmentLandingLatestVideosBinding
 import com.banglalink.toffee.enums.FilterContentType.*
 import com.banglalink.toffee.enums.Reaction.Love
@@ -42,10 +44,13 @@ import com.banglalink.toffee.ui.common.ReactionPopup.Companion.TAG
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.google.android.material.chip.Chip
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<ChannelInfo> {
     
     private var listJob: Job? = null
@@ -55,6 +60,9 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     private var _binding: FragmentLandingLatestVideosBinding ? = null
     private val binding get() = _binding!!
     private val viewModel by activityViewModels<LandingPageViewModel>()
+
+    @Inject
+    lateinit var localSync: LocalSync
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLandingLatestVideosBinding.inflate(inflater, container, false)
@@ -168,12 +176,18 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         listJob = lifecycleScope.launchWhenStarted {
             if (categoryId == 0) {
                 viewModel.loadLatestVideos().collectLatest {
-                    mAdapter.submitData(it)
+                    mAdapter.submitData(it.map { channel->
+                        localSync.syncData(channel)
+                        channel
+                    })
                 }
             }
             else {
                 viewModel.loadLatestVideosByCategory(categoryId, subCategoryId).collectLatest {
-                    mAdapter.submitData(it)
+                    mAdapter.submitData(it.map { channel->
+                        localSync.syncData(channel)
+                        channel
+                    })
                 }
             }
         }
@@ -183,7 +197,10 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         listJob?.cancel()
         listJob = lifecycleScope.launchWhenStarted {
             viewModel.loadMostPopularVideos(categoryId, subCategoryId).collectLatest {
-                mAdapter.submitData(it)
+                mAdapter.submitData(it.map { channel->
+                    localSync.syncData(channel)
+                    channel
+                })
             }
         }
     }
