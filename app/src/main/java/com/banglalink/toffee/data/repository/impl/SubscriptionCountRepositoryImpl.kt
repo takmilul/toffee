@@ -25,7 +25,9 @@ class SubscriptionCountRepositoryImpl(private val dao: SubscriptionCountDao): Su
         val count = dao.getSubscriberCount(channelId)
 
         return if(count == null){
-            dao.insert(SubscriptionCount(channelId, status.toLong())).toInt()
+            status.takeIf { it > 0 }?.run { 
+                dao.insert(SubscriptionCount(channelId, this.toLong())).toInt()
+            } ?: 0
         }
         else{
             if(status == 1) {
@@ -33,7 +35,7 @@ class SubscriptionCountRepositoryImpl(private val dao: SubscriptionCountDao): Su
             }
             else{
                 count.takeIf { it > 0 }?.run {
-                    dao.updateSubscription(channelId, count + status)
+                    dao.updateSubscription(channelId, this + status)
                 } ?: 0
             }
         }

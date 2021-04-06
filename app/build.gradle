@@ -188,10 +188,10 @@ dependencies {
 //    implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
 
     //mqtt library
-//    implementation files('libs/org.eclipse.paho.android.service-1.1.1.jar')
-//    implementation files('libs/org.eclipse.paho.client.mqttv3-1.1.1.jar')
-    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.1'
-    implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
+    implementation files('libs/org.eclipse.paho.android.service-1.1.1.jar')
+    implementation files('libs/org.eclipse.paho.client.mqttv3-1.1.1.jar')
+//    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.1'
+//    implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
 
     testImplementation 'junit:junit:4.12'
     testImplementation "android.arch.core:core-testing:1.1.1"

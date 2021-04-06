@@ -21,10 +21,10 @@ class ShareCountRepositoryImpl(private val dao: ShareCountDao) : ShareCountRepos
         val count = getShareCountByContentId(contentId)
         
         return if(count == null){
-            insert(ShareCount(contentId, 1)).toInt()
+            insert(ShareCount(contentId, status.toLong())).toInt()
         }
         else{
-            dao.updateShareCount(contentId, count + 1)
+            dao.updateShareCount(contentId, count + status)
         }
     }
 }

@@ -23,17 +23,19 @@ class ReactionStatusRepositoryImpl(private val dao: ReactionStatusDao): Reaction
     
     override suspend fun updateReaction(contentId: Long, reactionType: Int, status: Int): Int {
         val count = getReactionCountByReactionType(contentId, reactionType)
-    
-        return if(count == null){
-            dao.insert(ReactionStatusItem(contentId.toInt(), reactionType, status.toLong())).toInt()
+        
+        return if(count == null) {
+            status.takeIf { it > 0 }?.run {
+                dao.insert(ReactionStatusItem(contentId.toInt(), reactionType, this.toLong())).toInt()
+            } ?: 0
         }
         else{
             if(status == 1) {
-                dao.updateReactionStatusByChannelId(contentId, reactionType, System.currentTimeMillis(), count + 1)
+                dao.updateReactionStatusByChannelId(contentId, reactionType, System.currentTimeMillis(), count + status)
             }
             else{
-                count.takeIf { it > 0 }?.run { 
-                    dao.updateReactionStatusByChannelId(contentId, reactionType, System.currentTimeMillis(), count - 1)
+                count.takeIf { it > 0 }?.run {
+                    dao.updateReactionStatusByChannelId(contentId, reactionType, System.currentTimeMillis(), this + status)
                 } ?: 0
             }
         }

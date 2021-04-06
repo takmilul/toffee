@@ -164,11 +164,14 @@ class HomeActivity :
                     is Resource.Success -> {
                         it.data?.let { data ->
                             mPref.mqttHost = data.mqttUrl
+                            mPref.mqttIsActive = data.mqttIsActive == 1
                             mPref.mqttClientId = data.mqttUserId
                             mPref.mqttUserName = data.mqttUserId
                             mPref.mqttPassword = data.mqttPassword
     
-                            mqttService.initialize()
+                            if (mPref.mqttIsActive) {
+                                mqttService.initialize()
+                            }
                         }
                     }
                     is Resource.Failure -> {
@@ -179,7 +182,9 @@ class HomeActivity :
             viewModel.getMqttCredential()
         }
         else {
-            mqttService.initialize()
+            if (mPref.mqttIsActive) {
+                mqttService.initialize()
+            }
         }
         
         observe(viewModel.fragmentDetailsMutableLiveData) {
@@ -1123,7 +1128,7 @@ class HomeActivity :
     }
     
     override fun onDestroy() {
-        mqttService.destroy()
+//        mqttService.destroy()
         super.onDestroy()
     }
     
