@@ -51,10 +51,10 @@ class MovieViewModel @Inject constructor(
     private var originalCards = MoviesContentVisibilityCards()
     private var continueWatchingFlag: Boolean = false
     
-    val loadMovieCategoryDetail by lazy{
+    fun loadMovieCategoryDetail(categoryId: Int, type: String = "VOD", limit: Int = 0, offset: Int = 0) {
         viewModelScope.launch {
             val response = try {
-                movieApiService.loadData("VOD", 0, 0)
+                movieApiService.loadData(type, categoryId, limit, offset)
             } catch (ex: Exception) {
                 null
             }

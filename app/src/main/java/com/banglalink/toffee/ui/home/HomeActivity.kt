@@ -1,11 +1,14 @@
 package com.banglalink.toffee.ui.home
 
 import android.animation.LayoutTransition
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.app.SearchManager
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.ColorStateList
 import android.content.res.Configuration
+import android.graphics.Path
 import android.graphics.Point
 import android.net.Uri
 import android.os.Bundle
@@ -24,7 +27,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.*
 import androidx.core.widget.addTextChangedListener
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
@@ -73,6 +75,7 @@ import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -230,6 +233,15 @@ class HomeActivity :
         observe(mPref.shareCountDbUrlLiveData){
             if(it.isNotEmpty()){
                 viewModel.populateShareCountDb(it)
+            }
+        }
+        
+        observe(mPref.forceLogoutUserLiveData){
+            if (it) {
+                mPref.clear()
+                UploadService.stopAllUploads()
+                launchActivity<SplashScreenActivity>()
+                finish()
             }
         }
         
@@ -742,7 +754,10 @@ class HomeActivity :
                         )
                     )
                 }
-                (it.isPurchased || it.isPaidSubscribed) && !it.isExpired(Date())->{
+                !((it.isPurchased || it.isPaidSubscribed) && !it.isExpired(Date())) && mPref.isSubscriptionActive == "true" ->{
+                    showSubscribePackDialog()
+                }
+                else ->{
 //                    maximizePlayer()
                     when (detailsInfo) {
                         is PlaylistPlaybackInfo -> {
@@ -756,9 +771,6 @@ class HomeActivity :
                         }
                     }
                     loadDetailFragment(detailsInfo)
-                }
-                else ->{
-                    showSubscribePackDialog()
                 }
             }
         }
@@ -1003,30 +1015,63 @@ class HomeActivity :
             ActivityInfo.SCREEN_ORIENTATION_LOCKED
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-//        lifecycleScope.launch {
-//            delay(5_000)
-//            val playerOverlayData = Gson().fromJson("""
-//                {
-//                	"id": 234,
-//                	"function": "notification_on_top_of_player",
-//                	"timestamp": "2021-03-08 ",
-//                	"parameters": {
-//                		"show": ["msisdn", "user_name", "device_id", "user_id", "device_type", "content_id", "public_ip", "location"],
-//                		"custom_text": "Hello world!!",
-//                		"bg_color_code": "#77989908",
-//                		"font_color_code": "",
-//                		"font_size": "12px",
-//                		"opacity": "",
-//                		"position": "constant/floating",
-//                		"duration": 30
-//                	}
-//                }
-//            """.trimIndent(), PlayerOverlayData::class.java)
-//
-//            binding.playerView.showDebugOverlay(playerOverlayData, playlistManager.getCurrentChannel()?.id ?: "")
-//        }
+        observe(mPref.playerOverlayLiveData) {
+            it?.let { showPlayerOverlay(it) }
+        }
+//        showPlayerOverlay()
     }
-
+    
+    private fun showPlayerOverlay(playerOverlayData: PlayerOverlayData? = null) {
+        lifecycleScope.launch {
+            delay(1_000)
+            /*val playerOverlayData = Gson().fromJson("""
+                    {
+                        "id": 234,
+                        "function": "notification_on_top_of_player",
+                        "timestamp": "2021-03-08 ",
+                        "parameters": {
+                            "show": ["msisdn", "user_name", "device_id", "user_id", "device_type", "content_id", "public_ip", "location"],
+                            "custom_text": "",
+                            "bg_color_code": "#77989908",
+                            "font_color_code": "",
+                            "font_size": "10px",
+                            "opacity": "",
+                            "position": "floating",
+                            "duration": 30
+                        }
+                    }
+                """.trimIndent(), PlayerOverlayData::class.java)*/
+            binding.playerView.showDebugOverlay(playerOverlayData!!, playlistManager.getCurrentChannel()?.id ?: "")
+        
+            if (playerOverlayData.params.position == "floating") {
+                val debugOverlayView = binding.playerView.getDebugOverLay()
+                debugOverlayView?.let {
+                    val observer = object : ViewTreeObserver.OnGlobalLayoutListener {
+                        override fun onGlobalLayout() {
+                            if (it.measuredWidth > 0) {
+                                val width = it.measuredWidth.toFloat() + (10.px * 2)
+                                val height = it.measuredHeight.toFloat() + (10.px * 2)
+                            
+                                val path = Path().apply {
+                                    moveTo(0f, 0f)
+                                    lineTo(binding.playerView.measuredWidth.toFloat() - width, 0f /*binding.playerView.measuredHeight.toFloat() - height*/)
+                                }
+                                ObjectAnimator.ofFloat(it.parent as View, View.X, View.Y, path).apply {
+                                    duration = playerOverlayData.params.duration * 1_000
+                                    repeatMode = ValueAnimator.REVERSE
+                                    repeatCount = 2
+                                    start()
+                                }
+                                it.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                            }
+                        }
+                    }
+                    it.viewTreeObserver.addOnGlobalLayoutListener(observer)
+                }
+            }
+        }
+    }
+    
     override fun onRotationLock(isAutoRotationEnabled: Boolean) {
        if(isAutoRotationEnabled && !binding.playerView.isVideoPortrait){
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
@@ -1141,6 +1186,7 @@ class HomeActivity :
 
     fun destroyPlayer() {
         binding.draggableView.destroyView()
+        mPref.playerOverlayLiveData.removeObservers(this)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
 

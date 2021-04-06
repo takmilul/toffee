@@ -10,6 +10,8 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.model.CustomerInfoSignIn
 import com.banglalink.toffee.model.DBVersion
 import com.banglalink.toffee.model.DBVersionV2
+import com.banglalink.toffee.model.PlayerOverlayData
+import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.Utils
 import java.text.ParseException
 import java.util.*
@@ -27,10 +29,11 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val sessionTokenLiveData = MutableLiveData<String>()
     val profileImageUrlLiveData = MutableLiveData<String>()
     val customerNameLiveData = MutableLiveData<String>()
+    val playerOverlayLiveData = SingleLiveEvent<PlayerOverlayData>()
+    val forceLogoutUserLiveData = SingleLiveEvent<Boolean>()
 
-    val deviceId by lazy {
-        Settings.Secure.getString(context.getContentResolver(),
-            Settings.Secure.ANDROID_ID);
+    val deviceId: String by lazy {
+        Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
     }
 
     var phoneNumber: String
@@ -159,6 +162,12 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getString(PREF_SUBSCRIPTION_ACTIVE, "") ?: ""
         set(phoneNumber) {
             pref.edit().putString(PREF_SUBSCRIPTION_ACTIVE, phoneNumber).apply()
+        }
+
+    var isFireworkActive: String
+        get() = pref.getString(PREF_FIREWORK_ACTIVE, "true") ?: "true"
+        set(isActive) {
+            pref.edit().putString(PREF_FIREWORK_ACTIVE, isActive).apply()
         }
 
     var channelId: Int
@@ -408,13 +417,14 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         }
         latitude = customerInfoSignIn.lat?:""
         longitude = customerInfoSignIn.long?:""
-        isSubscriptionActive = customerInfoSignIn.isSubscriptionActive?:"true"
+        isSubscriptionActive = customerInfoSignIn.isSubscriptionActive?:"false"
         viewCountDbUrl = (customerInfoSignIn.viewCountDbUrl?:"")
         reactionDbUrl = (customerInfoSignIn.reactionDbUrl?:"")
         reactionStatusDbUrl = (customerInfoSignIn.reactionStatusDbUrl?:"")
         subscribeDbUrl = (customerInfoSignIn.subscribeDbUrl ?: "")
         subscriberStatusDbUrl = (customerInfoSignIn.subscriberStatusDbUrl ?: "")
         shareCountDbUrl = (customerInfoSignIn.shareCountDbUrl ?: "")
+        isFireworkActive = (customerInfoSignIn.isFireworkActive ?: "true")
     }
 
     companion object {
@@ -442,6 +452,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_WIFI= "WIFI"
         private const val PREF_CELLULAR= "CELLULAR"
         private const val PREF_SUBSCRIPTION_ACTIVE= "subscription_active"
+        private const val PREF_FIREWORK_ACTIVE= "firework_active"
         private const val PREF_SYSTEM_TIME= "systemTime"
         private const val PREF_WATCH_ONLY_WIFI= "WatchOnlyWifi"
         private const val PREF_KEY_NOTIFICATION= "pref_key_notification"

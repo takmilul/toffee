@@ -27,9 +27,9 @@
 <!--        android:title="@string/menu_create_text"-->
 <!--        android:icon="@mipmap/ic_menu_create" />-->
 
-    <item android:id="@+id/menu_subscriptions"
+    <!--<item android:id="@+id/menu_subscriptions"
         android:title="Subscriptions"
-        android:icon="@drawable/ic_menu_subscriptions" />
+        android:icon="@drawable/ic_menu_subscriptions" />-->
 
     <item android:id="@+id/menu_invite"
         android:title="@string/invite_friends_txt"

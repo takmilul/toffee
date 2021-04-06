@@ -9,6 +9,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
+import android.util.Base64
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -17,10 +18,13 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.data.database.entities.NotificationInfo
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.enums.NotificationType
+import com.banglalink.toffee.model.PlayerOverlayData
 import com.banglalink.toffee.receiver.NotificationActionReceiver
 import com.banglalink.toffee.util.UtilsKt
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -38,8 +42,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
     @Inject lateinit var notificationInfoRepository: NotificationInfoRepository
     private val coroutineContext = Dispatchers.IO + SupervisorJob()
     private val imageCoroutineScope = CoroutineScope(coroutineContext)
-
-
+    
     override fun onNewToken(s: String) {
         super.onNewToken(s)
         Log.i(TAG, "Token: $s")
@@ -48,11 +51,8 @@ class ToffeeMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         Log.d(TAG, "From: " + remoteMessage.from!!)
-
-        if (remoteMessage.data.isNotEmpty()) {
-            Log.d(TAG, "Data payload: " + remoteMessage.data)
-            prepareNotification(remoteMessage.data)
-        } else {
+        
+        if (remoteMessage.data.isNullOrEmpty()){
             imageCoroutineScope.launch {
                 handleDefaultNotification(
                     remoteMessage.notification?.title,
@@ -61,15 +61,55 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                 )
             }
         }
+        else {
+            val data: Map<String, String> = remoteMessage.data
+            when(data["notificationType"]!!.toLowerCase()) {
+                NotificationType.OVERLAY.type -> {
+                    Gson().fromJson(remoteMessage.data["notificationText"]?.trimIndent(), PlayerOverlayData::class.java)?.let { mPref.playerOverlayLiveData.postValue(it) }
+                }
+                NotificationType.LOGOUT.type -> {
+                    kickOutUser(remoteMessage.data)
+                }
+                else -> {
+                    prepareNotification(remoteMessage.data)
+                }
+            }
+        }
     }
-
+    
+    private fun kickOutUser(data: Map<String, String>) {
+        try {
+            val authList: Array<String>? = Gson().fromJson(data["message"]?.trimIndent(), Array<String>::class.java)
+            authList?.forEach { value ->
+                var decryptedData = Base64.decode(value, Base64.DEFAULT)
+                repeat(2) { decryptedData = Base64.decode(decryptedData, Base64.DEFAULT) }
+                when (String(decryptedData)) {
+                    mPref.customerId.toString() -> {
+                        mPref.forceLogoutUserLiveData.postValue(true)
+                        return
+                    }
+                    mPref.deviceId -> {
+                        mPref.forceLogoutUserLiveData.postValue(true)
+                        return
+                    }
+                    mPref.phoneNumber -> {
+                        mPref.forceLogoutUserLiveData.postValue(true)
+                        return
+                    }
+                }
+            }
+        }
+        catch (e: Exception) {
+            Log.e(TAG, "kickOutUser: ${e.message}")
+        }
+    }
+    
     private fun prepareNotification(data: Map<String, String>) {
         try {
             val notificationType = data["notificationType"]
 
             when {
                 notificationType!!.equals("SMALL", ignoreCase = true) -> {
-
                     imageCoroutineScope.launch {
                         handleSmallImage(data)
                     }
@@ -98,8 +138,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             Log.e(TAG, e.message, e)
         }
     }
-
-
+    
     private suspend fun handleDefaultNotification(
         title: String?,
         content: String?,

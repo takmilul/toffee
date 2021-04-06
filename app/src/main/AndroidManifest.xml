@@ -178,6 +178,7 @@
                 <action android:name="com.toffee.notification_receiver" />
             </intent-filter>
         </receiver>
+        
     </application>
 
 </manifest>

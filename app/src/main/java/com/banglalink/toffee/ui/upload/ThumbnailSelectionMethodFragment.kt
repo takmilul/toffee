@@ -20,6 +20,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.databinding.FragmentThumbSelectionMethodBinding
 import com.banglalink.toffee.extension.showToast
+import com.github.florent37.runtimepermission.kotlin.NoActivityException
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
 import com.yalantis.ucrop.UCrop
@@ -75,6 +76,10 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
                 ToffeeAnalytics.logBreadCrumb("Storage permission denied")
                 requireContext().showToast(getString(R.string.grant_storage_permission))
             }
+            catch (e: NoActivityException){
+                ToffeeAnalytics.logBreadCrumb("Activity Not Found - filesystem(gallery)")
+                requireContext().showToast(getString(R.string.no_activity_msg))
+            }
         }
     }
 
@@ -88,6 +93,10 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
             catch (e: PermissionException){
                 ToffeeAnalytics.logBreadCrumb("Camera permission denied")
                 requireContext().showToast(getString(R.string.grant_camera_permission))
+            }
+            catch (e: NoActivityException){
+                ToffeeAnalytics.logBreadCrumb("Activity Not Found - filesystem(camera)")
+                requireContext().showToast(getString(R.string.no_activity_msg))
             }
         }
     }

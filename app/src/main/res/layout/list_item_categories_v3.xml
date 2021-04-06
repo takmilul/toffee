@@ -2,8 +2,7 @@
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    >
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <variable
@@ -13,84 +12,95 @@
             name="callback"
             type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
     </data>
-    <androidx.cardview.widget.CardView
-        android:layout_width="160dp"
+    
+    <LinearLayout
+        android:layout_width="156dp"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        app:cardCornerRadius="16dp"
-        app:cardUseCompatPadding="false"
-        >
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:onClick="@{()->callback.onItemClicked(data)}">
-
-            <ImageView
-
-                android:id="@+id/category_background"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                loadCategoryBackground="@{data}"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:src="@drawable/placeholder"
-                android:contentDescription="@string/txt_category" />
-
-            <View
-                android:id="@+id/categoryGradient"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:background="@drawable/category_gradient_overlay"
-                app:layout_constraintEnd_toEndOf="@+id/category_background"
-                app:layout_constraintStart_toStartOf="@+id/category_background"
-                app:layout_constraintTop_toTopOf="@+id/category_background"
-                app:layout_constraintBottom_toBottomOf="@+id/category_background"/>
-
-            <ImageView
-                android:id="@+id/icon"
-                loadCategoryImage="@{data}"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_marginEnd="4dp"
-                android:layout_marginBottom="12dp"
-                android:adjustViewBounds="true"
-                android:src="@drawable/ic_cat_movie"
-                app:layout_constraintBottom_toBottomOf="@+id/category_background"
-                app:layout_constraintEnd_toStartOf="@+id/guideline16"
-                app:layout_constraintStart_toStartOf="@+id/category_background" />
-
-            <TextView
-                android:id="@+id/text"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:ellipsize="end"
-                android:fontFamily="@font/roboto_medium"
-                android:gravity="start|center_vertical"
-                android:lines="1"
-                android:text="@{data.categoryName}"
-                android:textColor="@android:color/white"
-                android:textSize="14sp"
-                android:textStyle="normal"
-                app:layout_constraintBottom_toBottomOf="@+id/icon"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/guideline16"
-                app:layout_constraintTop_toTopOf="@+id/icon"
-                app:layout_constraintVertical_bias="1.0"
-                tools:text="Music Videos" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline16"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.3" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
+        android:gravity="center_horizontal"
+        android:layout_margin="8dp">
+    
+        <androidx.cardview.widget.CardView
+            android:id="@+id/categoryCardView"
+            android:layout_width="156dp"
+            android:layout_height="80dp"
+            app:cardCornerRadius="16dp"
+            app:cardUseCompatPadding="false">
+    
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:onClick="@{()->callback.onItemClicked(data)}">
+    
+                <ImageView
+                    android:id="@+id/category_background"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    loadCategoryBackground="@{data}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    tools:src="@drawable/placeholder"
+                    android:contentDescription="@string/txt_category" />
+    
+                <View
+                    android:id="@+id/categoryGradient"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:background="@drawable/category_gradient_overlay"
+                    app:layout_constraintEnd_toEndOf="@+id/category_background"
+                    app:layout_constraintStart_toStartOf="@+id/category_background"
+                    app:layout_constraintTop_toTopOf="@+id/category_background"
+                    app:layout_constraintBottom_toBottomOf="@+id/category_background"/>
+    
+                <ImageView
+                    android:id="@+id/icon"
+                    loadCategoryImage="@{data}"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:maxHeight="30dp"
+                    android:maxWidth="30dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginBottom="12dp"
+                    android:adjustViewBounds="true"
+                    tools:src="@drawable/ic_cat_movie"
+                    app:layout_constraintBottom_toBottomOf="@+id/category_background"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline16"
+                    app:layout_constraintStart_toStartOf="@+id/category_background" />
+    
+                <TextView
+                    android:id="@+id/text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_centerInParent="true"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/roboto_medium"
+                    android:gravity="start|center_vertical"
+                    android:lines="1"
+                    android:text="@{data.categoryName}"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    android:textStyle="normal"
+                    app:layout_constraintBottom_toBottomOf="@+id/icon"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/guideline16"
+                    app:layout_constraintTop_toTopOf="@+id/icon"
+                    app:layout_constraintVertical_bias="1.0"
+                    tools:text="Music Videos" />
+    
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline16"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.3" />
+    
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
 </layout>

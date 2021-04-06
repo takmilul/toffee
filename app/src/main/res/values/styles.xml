@@ -473,4 +473,5 @@
         <item name="behavior_peekHeight">300dp</item>
         <item name="android:windowIsFloating">true</item>
     </style>
+    
 </resources>

@@ -52,7 +52,7 @@ class MovieFragment : BaseFragment() {
         landingViewModel.isDramaSeries.value = false
         setCategoryIcon()
         observeCardsVisibility()
-        viewModel.loadMovieCategoryDetail
+        viewModel.loadMovieCategoryDetail(category.id.toInt())
     }
 
     private fun setCategoryIcon() {

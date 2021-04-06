@@ -14,18 +14,19 @@ import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.google.android.material.appbar.AppBarLayout
 
 class LandingPageFragment : HomeBaseFragment() {
+    
     private var appbarOffset = 0
-    private val landingViewModel by activityViewModels<LandingPageViewModel>()
     private var _binding: FragmentLandingPage2Binding ? = null
     private val binding get() = _binding!!
+    private val landingViewModel by activityViewModels<LandingPageViewModel>()
 
     companion object {
         fun newInstance(): LandingPageFragment {
             return LandingPageFragment()
         }
     }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLandingPage2Binding.inflate(inflater, container, false)
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -54,12 +55,11 @@ class LandingPageFragment : HomeBaseFragment() {
         landingViewModel.categoryId.value = 0
         landingViewModel.pageType.value = Landing
         landingViewModel.isDramaSeries.value = false
-
         binding.landingAppbar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
             appbarOffset = verticalOffset
         })
     }
-
+    
     fun onBackPressed(): Boolean {
         return false
     }
@@ -67,5 +67,4 @@ class LandingPageFragment : HomeBaseFragment() {
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
 //        popularVideoListAdapter.remove(channelInfo)
     }
-
 }

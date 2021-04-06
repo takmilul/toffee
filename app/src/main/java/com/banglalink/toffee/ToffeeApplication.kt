@@ -61,7 +61,7 @@ class ToffeeApplication : Application() {
 
         initUploader()
     }
-
+    
     private fun initCoil() {
         val imageLoader = ImageLoader.Builder(this).apply {
             crossfade(true)
