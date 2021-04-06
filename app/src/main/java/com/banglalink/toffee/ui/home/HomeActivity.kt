@@ -1120,9 +1120,13 @@ class HomeActivity :
         binding.draggableView.visibility = View.GONE
         binding.draggableView.resetImmediately()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        mqttService.destroy()
     }
-
+    
+    override fun onDestroy() {
+        mqttService.destroy()
+        super.onDestroy()
+    }
+    
     fun handleExitApp() {
         AlertDialog.Builder(this, R.style.AlertDialogTheme)
             .setMessage(String.format(EXIT_FROM_APP_MSG, getString(R.string.app_name)))

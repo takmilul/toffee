@@ -10,7 +10,7 @@ import com.banglalink.toffee.data.database.entities.ShareCount
 interface ShareCountDao {
     
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(item: ShareCount): Int
+    suspend fun insert(item: ShareCount): Long
     
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg items: ShareCount): LongArray

@@ -142,8 +142,14 @@ class ToffeeMqttService @Inject constructor(
     }
     
     fun destroy() {
-        client?.disconnect()
-        client?.close()
-        client = null
+        client?.let { 
+            it.unsubscribe(REACTION_TOPIC)
+            it.unsubscribe(SHARE_COUNT_TOPIC)
+            it.unsubscribe(SUBSCRIPTION_TOPIC)
+            it.unregisterResources()
+            it.disconnect()
+            it.close()
+            client = null
+        }
     }
 }
