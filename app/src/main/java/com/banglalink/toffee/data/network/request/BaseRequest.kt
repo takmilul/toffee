@@ -5,6 +5,7 @@ import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.data.storage.SessionPreference
 
 open class BaseRequest(val apiName: String) {
+    val deviceId = SessionPreference.getInstance().deviceId
     val product : String = "PLAAS OTT API"
     val version : Double = 1.01
     val appId: String = "NexViewersentTV"

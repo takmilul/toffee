@@ -290,7 +290,12 @@ class DrawerHelper(
 //
 //            }
             R.id.menu_logout -> {
+
                 activity.handleExitApp()
+                return true
+            }
+            R.id.menu_verfication -> {
+                activity.handleVerficationApp()
                 return true
             }
             R.id.menu_change_theme -> {

@@ -3,10 +3,13 @@ package com.banglalink.toffee.data.network.retrofit
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.data.network.request.ApiLoginRequest
 import com.banglalink.toffee.data.network.request.CheckUpdateRequest
+import com.banglalink.toffee.data.network.request.CredentialRequest
 import com.banglalink.toffee.data.network.response.ApiLoginResponse
 import com.banglalink.toffee.data.network.response.CheckUpdateResponse
-import retrofit2.Response
-import retrofit2.http.*
+import com.banglalink.toffee.data.network.response.CredentialResponse
+import retrofit2.http.Body
+import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface AuthApi{
 
@@ -18,4 +21,7 @@ interface AuthApi{
 
     @POST("api-login")
     suspend fun apiLogin(@Body apiLoginRequest: ApiLoginRequest): ApiLoginResponse
+
+    @POST("ugc-credential-by-deviceid")
+    suspend fun apiExistingLogin(@Body apiLoginRequest: CredentialRequest): CredentialResponse
 }
