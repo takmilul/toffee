@@ -159,34 +159,7 @@ class HomeActivity :
             if (showUploadDialog()) return@setOnClickListener
         }
         
-        if (mPref.mqttHost.isBlank() || mPref.mqttClientId.isBlank() || mPref.mqttUserName.isBlank() || mPref.mqttPassword.isBlank()) {
-            observe(viewModel.mqttCredentialLiveData) {
-                when (it) {
-                    is Resource.Success -> {
-                        it.data?.let { data ->
-                            mPref.mqttIsActive = data.mqttIsActive == 1
-                            mPref.mqttHost = EncryptionUtil.encryptRequest(data.mqttUrl)
-                            mPref.mqttClientId = EncryptionUtil.encryptRequest(data.mqttUserId)
-                            mPref.mqttUserName = EncryptionUtil.encryptRequest(data.mqttUserId)
-                            mPref.mqttPassword = EncryptionUtil.encryptRequest(data.mqttPassword)
-                            
-                            if (mPref.mqttIsActive) {
-                                mqttService.initialize()
-                            }
-                        }
-                    }
-                    is Resource.Failure -> {
-                        Log.e("MQTT_", "onCreate: ${it.error.msg}")
-                    }
-                }
-            }
-            viewModel.getMqttCredential()
-        }
-        else {
-            if (mPref.mqttIsActive) {
-                mqttService.initialize()
-            }
-        }
+        initMqtt()
         
         observe(viewModel.fragmentDetailsMutableLiveData) {
             onDetailsFragmentLoad(it)
@@ -326,7 +299,38 @@ class HomeActivity :
         watchConnectionChange()
         observeMyChannelNavigation()
     }
-
+    
+    private fun initMqtt() {
+        if (mPref.mqttHost.isBlank() || mPref.mqttClientId.isBlank() || mPref.mqttUserName.isBlank() || mPref.mqttPassword.isBlank()) {
+            observe(viewModel.mqttCredentialLiveData) {
+                when (it) {
+                    is Resource.Success -> {
+                        it.data?.let { data ->
+                            mPref.mqttIsActive = data.mqttIsActive == 1
+                            mPref.mqttHost = EncryptionUtil.encryptRequest(data.mqttUrl)
+                            mPref.mqttClientId = EncryptionUtil.encryptRequest(data.mqttUserId)
+                            mPref.mqttUserName = EncryptionUtil.encryptRequest(data.mqttUserId)
+                            mPref.mqttPassword = EncryptionUtil.encryptRequest(data.mqttPassword)
+                        
+                            if (mPref.mqttIsActive) {
+                                mqttService.initialize()
+                            }
+                        }
+                    }
+                    is Resource.Failure -> {
+                        Log.e("MQTT_", "onCreate: ${it.error.msg}")
+                    }
+                }
+            }
+            viewModel.getMqttCredential()
+        }
+        else {
+            if (mPref.mqttIsActive) {
+                mqttService.initialize()
+            }
+        }
+    }
+    
     fun showUploadDialog(): Boolean {
         if (mPref.hasChannelLogo() && mPref.hasChannelName()){
             if (navController.currentDestination?.id == R.id.uploadMethodFragment) {

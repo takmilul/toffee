@@ -17,6 +17,7 @@ import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Default
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
@@ -35,6 +36,9 @@ class ToffeeMqttService @Inject constructor(
     
     private var gson: Gson? = null
     private var client: MqttAndroidClient? = null
+    private val shareList = arrayListOf<ShareData>()
+    private val reactionList = arrayListOf<ReactionData>()
+    private val subscriptionList = arrayListOf<SubscriptionCountData>()
     
     fun initialize() {
         try {
@@ -48,6 +52,7 @@ class ToffeeMqttService @Inject constructor(
                     setCallback(this@ToffeeMqttService)
                     connect(getMqttConnectionOption(userName, password), null, this@ToffeeMqttService)
                 }
+                startScheduler()
             }
         }
         catch (e: Exception) {
@@ -55,11 +60,40 @@ class ToffeeMqttService @Inject constructor(
         }
     }
     
+    fun startScheduler(){
+        CoroutineScope(Default).launch {
+            while (true)
+                startDbBatchUpdate()
+        }
+    }
+    
+    private suspend fun startDbBatchUpdate() {
+        delay(10_000)
+        if (shareList.isNotEmpty()) {
+            shareList.forEach {
+                shareCountRepository.updateShareCount(it.contentId.toInt(), 1)
+            }
+            shareList.clear()
+        }
+        if (subscriptionList.isNotEmpty()) {
+            subscriptionList.forEach {
+                subscriptionCountRepository.updateSubscriptionCount(it.channelId, it.status)
+            }
+            subscriptionList.clear()
+        }
+        if (reactionList.isNotEmpty()) {
+            reactionList.forEach {
+                reactionStatusRepository.updateReaction(it.contentId, it.reactionType, it.reactionStatus)
+            }
+            reactionList.clear()
+        }
+    }
+    
     private fun getMqttConnectionOption(userName: String, password: String): MqttConnectOptions {
         return MqttConnectOptions().apply {
             isCleanSession = false
             isAutomaticReconnect = true
-            connectionTimeout = 3600
+            connectionTimeout = 30
             socketFactory = SSLSocketFactory.getDefault()
             this.userName = userName
             this.password = password.toCharArray()
@@ -74,12 +108,13 @@ class ToffeeMqttService @Inject constructor(
             }
         }
         catch (e: Exception){
-            
+            Log.e("MQTT_", "sendMessage: ${e.message}")
         }
     }
     
     override fun onSuccess(token: IMqttToken?) {
         if(token?.client?.isConnected == true && token.topics.isNullOrEmpty()) {
+            Log.e("MQTT_", "onSuccess: Connected")
             val disconnectedBufferOptions = DisconnectedBufferOptions().apply {
                 isBufferEnabled = true
                 bufferSize = 100
@@ -93,6 +128,7 @@ class ToffeeMqttService @Inject constructor(
         }
         else {
             gson = gson ?: Gson()
+            Log.e("MQTT_", "onSuccess - subscribed: ${token?.topics}")
         }
     }
     
@@ -104,25 +140,19 @@ class ToffeeMqttService @Inject constructor(
                 REACTION_TOPIC -> {
                     val data = gson!!.fromJson(jsonString, ReactionData::class.java)
                     if (data.customerId != mPref.customerId) {
-                        CoroutineScope(Default).launch {
-                            reactionStatusRepository.updateReaction(data.contentId, data.reactionType, data.reactionStatus)
-                        }
+                        reactionList.add(data)
                     }
                 }
                 SHARE_COUNT_TOPIC -> {
                     val data = gson!!.fromJson(jsonString, ShareData::class.java)
                     if (data.customerId != mPref.customerId) {
-                        CoroutineScope(Default).launch {
-                            shareCountRepository.updateShareCount(data.contentId.toInt(), 1)
-                        }
+                        shareList.add(data)
                     }
                 }
                 SUBSCRIPTION_TOPIC -> {
                     val data = gson!!.fromJson(jsonString, SubscriptionCountData::class.java)
                     if (data.subscriberId != mPref.customerId){
-                        CoroutineScope(Default).launch {
-                            subscriptionCountRepository.updateSubscriptionCount(data.channelId, data.status)
-                        }
+                        subscriptionList.add(data)
                     }
                 }
             }
