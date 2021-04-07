@@ -49,6 +49,11 @@
         tools:layout="@layout/activity_settings"
         />
     <fragment
+        android:id="@+id/menu_subscriptions"
+        android:name="com.banglalink.toffee.ui.subscription.MySubscriptionFragment"
+        android:label="My SubsCription"
+        />
+    <fragment
         android:id="@+id/menu_feed"
         android:name="com.banglalink.toffee.ui.home.LandingPageFragment"
         android:label="Toffee">

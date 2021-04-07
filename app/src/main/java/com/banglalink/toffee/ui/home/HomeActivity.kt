@@ -443,7 +443,8 @@ class HomeActivity :
 
 //                R.id.menu_all_tv_channel,
                 R.id.menu_favorites,
-                R.id.menu_settings
+                R.id.menu_settings,
+                R.id.menu_subscriptions
             ),
             binding.drawerLayout
         )
@@ -453,6 +454,9 @@ class HomeActivity :
         binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
         binding.sideNavigation.setupWithNavController(navController)
         binding.tabNavigator.setupWithNavController(navController)
+//        binding.tabNavigator.setOnNavigationItemReselectedListener {
+//
+//        }
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.bottomAppBar) { _, insets ->
             insets.consumeSystemWindowInsets()

@@ -6,17 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/app_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        >
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            style="@style/CustomToolBarStyle"/>
-    </com.google.android.material.appbar.AppBarLayout>
 
     <TextView
         android:id="@+id/tv_sub_tv"
@@ -28,7 +17,7 @@
         android:layout_marginStart="16dp"
         android:fontFamily="@font/roboto_medium"
         android:textColor="@color/main_text_color"
-        app:layout_constraintTop_toBottomOf="@id/app_bar"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         />
@@ -68,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/roboto_medium"
                 android:text="@string/free_trial"
-                android:textColor="@color/main_text_color"
+                android:textColor="@color/fixed_second_main_text_color"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="@+id/package_badge_icon"
                 app:layout_constraintEnd_toStartOf="@+id/package_badge_icon"
@@ -99,8 +88,9 @@
         android:id="@+id/subscribedChannels"
         android:name="com.banglalink.toffee.ui.subscription.SubscribedChannelsFragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="18dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/freetrial_cv" />
 
 
