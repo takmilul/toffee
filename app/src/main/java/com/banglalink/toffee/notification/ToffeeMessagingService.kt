@@ -9,6 +9,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
+import android.util.Base64
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -64,28 +65,51 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             val data: Map<String, String> = remoteMessage.data
             when(data["notificationType"]!!.toLowerCase()) {
                 NotificationType.OVERLAY.type -> {
-                    val payload = Gson().fromJson(remoteMessage.data["notificationText"]?.trimIndent(), PlayerOverlayData::class.java)
-                    Log.d(TAG, "json: $payload")
-                    payload?.let { mPref.playerOverlayLiveData.postValue(payload) }
+                    Gson().fromJson(remoteMessage.data["notificationText"]?.trimIndent(), PlayerOverlayData::class.java)?.let { mPref.playerOverlayLiveData.postValue(it) }
                 }
                 NotificationType.LOGOUT.type -> {
-                    mPref.forceLogoutUserLiveData.postValue(true)
+                    kickOutUser(remoteMessage.data)
                 }
                 else -> {
-                    Log.d(TAG, "Data payload: " + remoteMessage.data)
                     prepareNotification(remoteMessage.data)
                 }
             }
         }
     }
-
+    
+    private fun kickOutUser(data: Map<String, String>) {
+        try {
+            val authList: Array<String>? = Gson().fromJson(data["message"]?.trimIndent(), Array<String>::class.java)
+            authList?.forEach { value ->
+                var decryptedData = Base64.decode(value, Base64.DEFAULT)
+                repeat(2) { decryptedData = Base64.decode(decryptedData, Base64.DEFAULT) }
+                when (String(decryptedData)) {
+                    mPref.customerId.toString() -> {
+                        mPref.forceLogoutUserLiveData.postValue(true)
+                        return
+                    }
+                    mPref.deviceId -> {
+                        mPref.forceLogoutUserLiveData.postValue(true)
+                        return
+                    }
+                    mPref.phoneNumber -> {
+                        mPref.forceLogoutUserLiveData.postValue(true)
+                        return
+                    }
+                }
+            }
+        }
+        catch (e: Exception) {
+            Log.e(TAG, "kickOutUser: ${e.message}")
+        }
+    }
+    
     private fun prepareNotification(data: Map<String, String>) {
         try {
             val notificationType = data["notificationType"]
 
             when {
                 notificationType!!.equals("SMALL", ignoreCase = true) -> {
-
                     imageCoroutineScope.launch {
                         handleSmallImage(data)
                     }

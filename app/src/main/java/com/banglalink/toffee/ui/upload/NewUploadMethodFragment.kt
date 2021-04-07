@@ -28,6 +28,7 @@ import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.util.UtilsKt
+import com.github.florent37.runtimepermission.kotlin.NoActivityException
 import com.github.florent37.runtimepermission.kotlin.PermissionException
 import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
 import dagger.hilt.android.AndroidEntryPoint
@@ -85,6 +86,10 @@ class NewUploadMethodFragment : DialogFragment() {
                 ToffeeAnalytics.logBreadCrumb("Storage permission denied")
                 requireContext().showToast(getString(R.string.grant_storage_permission))
             }
+            catch (e: NoActivityException){
+                ToffeeAnalytics.logBreadCrumb("Activity Not Found - filesystem(gallery)")
+                requireContext().showToast(getString(R.string.no_activity_msg))
+            }
         }
     }
 
@@ -97,6 +102,10 @@ class NewUploadMethodFragment : DialogFragment() {
             } catch (e: PermissionException) {
                 ToffeeAnalytics.logBreadCrumb("Camera permission denied")
                 requireContext().showToast(getString(R.string.grant_camera_permission))
+            }
+            catch (e: NoActivityException){
+                ToffeeAnalytics.logBreadCrumb("Activity Not Found - filesystem(camera)")
+                requireContext().showToast(getString(R.string.no_activity_msg))
             }
         }
     }

@@ -132,6 +132,7 @@
     <string name="back_to_home">Back to Home</string>
     <string name="subscribe_pack">You need to subscribe premium pack to view this channel</string>
     <string name="grant_camera_permission">Please grant camera permission</string>
+    <string name="no_activity_msg">Operation failed</string>
     <string name="auto_rotation_on">Auto rotation on</string>
     <string name="auto_rotation_off">Auto rotation off</string>
     <string name="refer_policy">Refer toffee to a friend and enjoy up to 1GB of free internet</string>
