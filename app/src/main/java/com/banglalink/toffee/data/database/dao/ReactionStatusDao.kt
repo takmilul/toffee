@@ -8,10 +8,19 @@ import com.banglalink.toffee.data.database.entities.ReactionStatusItem
 
 @Dao
 interface ReactionStatusDao {
+    
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(reactionStatusItem: ReactionStatusItem): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(vararg items: ReactionStatusItem): LongArray
+    suspend fun insertAll(vararg items: ReactionStatusItem): LongArray
 
-    @Query("SELECT * FROM reaction_status_item WHERE channel_id = :channelId")
-    suspend fun getReactionStatusByChannelId(channelId: Long): List<ReactionStatusItem>
+    @Query("SELECT * FROM ReactionStatusItem WHERE contentId = :contentId")
+    suspend fun getReactionStatusByChannelId(contentId: Long): List<ReactionStatusItem>?
+    
+    @Query("SELECT reactionCount FROM ReactionStatusItem WHERE contentId = :contentId AND reactionType = :reactionType")
+    suspend fun getReactionCountByReactionType(contentId: Long, reactionType: Int): Long?
+    
+    @Query("UPDATE ReactionStatusItem SET reactionCount = :count, updateTime = :updateTime WHERE contentId = :contentId AND reactionType = :reactionType")
+    suspend fun updateReactionStatusByChannelId(contentId: Long, reactionType: Int, updateTime: Long, count: Long): Int
 }

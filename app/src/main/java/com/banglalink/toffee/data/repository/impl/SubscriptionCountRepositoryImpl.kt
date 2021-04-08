@@ -22,25 +22,29 @@ class SubscriptionCountRepositoryImpl(private val dao: SubscriptionCountDao): Su
     }
 
     override suspend fun updateSubscriptionCount(channelId: Int, status: Int): Int {
-        val count = dao.getSubscriberCount(channelId) ?: 0L
+        val count = dao.getSubscriberCount(channelId)
 
-        return if(count==0L){
-            dao.updateSubscription(channelId, 1)
+        return if(count == null){
+            status.takeIf { it > 0 }?.run { 
+                dao.insert(SubscriptionCount(channelId, this.toLong())).toInt()
+            } ?: 0
         }
         else{
-            if(status==1) {
-                dao.updateSubscription(channelId, count +1)
+            if(status == 1) {
+                dao.updateSubscription(channelId, count + status)
             }
             else{
-                dao.updateSubscription(channelId, count - 1)
+                count.takeIf { it > 0 }?.run {
+                    dao.updateSubscription(channelId, this + status)
+                } ?: 0
             }
         }
-
-
     }
+    
     override suspend fun getSubscriptionCount(channelId: Int): SubscriptionCount {
-             return dao.getSubscription(channelId)
-      }
+        return dao.getSubscription(channelId)
+    }
+    
     override suspend fun insertAll(vararg subscriptionCountList: SubscriptionCount): LongArray {
         return dao.insertAll(*subscriptionCountList)
     }

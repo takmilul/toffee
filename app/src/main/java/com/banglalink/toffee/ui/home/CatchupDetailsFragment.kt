@@ -18,9 +18,8 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.apiservice.CatchupParams
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.common.paging.ProviderIconCallback
+import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
-import com.banglalink.toffee.data.repository.SubscriptionCountRepository
-import com.banglalink.toffee.data.repository.SubscriptionInfoRepository
 import com.banglalink.toffee.databinding.FragmentCatchupBinding
 import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.model.ChannelInfo
@@ -39,21 +38,20 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<ChannelInfo> {
-    private var isSubscribed: Int = 0
-    private var subscriberCount: Long = 0
+    @Inject lateinit var localSync: LocalSync
     private lateinit var mAdapter: ConcatAdapter
     private lateinit var currentItem: ChannelInfo
-    private lateinit var catchupAdapter: CatchUpDetailsAdapter
+    private var _binding: FragmentCatchupBinding ? = null
     private lateinit var detailsAdapter: ChannelHeaderAdapter
-    @Inject lateinit var subscriptionInfoRepository: SubscriptionInfoRepository
-    @Inject lateinit var subscriptionCountRepository: SubscriptionCountRepository
+    private lateinit var catchupAdapter: CatchUpDetailsAdapter
+    private val binding get() = _binding!!
     private val viewModel by viewModels<CatchupDetailsViewModel>()
     private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
     private val myChannelVideosViewModel by activityViewModels<MyChannelVideosViewModel>()
-    private var _binding: FragmentCatchupBinding ? = null
-    private val binding get() = _binding!!
+    
     companion object{
         const val CHANNEL_INFO = "channel_info_"
+        
         fun createInstance(channelInfo: ChannelInfo): CatchupDetailsFragment {
             return CatchupDetailsFragment().apply {
                 arguments = Bundle().also {
@@ -68,11 +66,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
         currentItem = arguments?.getParcelable(CHANNEL_INFO)!!
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentCatchupBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -85,13 +79,9 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         
         initAdapter()
-        val channelId = currentItem.channel_owner_id
 
         lifecycleScope.launch {
-            isSubscribed = if(subscriptionInfoRepository.getSubscriptionInfoByChannelId(channelId, mPref.customerId) != null) 1 else 0
-            subscriberCount = subscriptionCountRepository.getSubscriberCount(channelId)
-            currentItem.isSubscribed = isSubscribed
-            currentItem.subscriberCount = subscriberCount.toInt()
+            localSync.syncData(currentItem)
             detailsAdapter.notifyDataSetChanged()
         }
         
@@ -115,19 +105,17 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
 
     override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
         super.onSubscribeButtonClicked(view, item)
-        if (isSubscribed == 0) {
+        if (item.isSubscribed == 0) {
             homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), 1)
-            isSubscribed = 1
-            currentItem.isSubscribed = isSubscribed
-            currentItem.subscriberCount = (++subscriberCount).toInt()
+            currentItem.isSubscribed = 1
+            currentItem.subscriberCount = ++item.subscriberCount
             detailsAdapter.notifyDataSetChanged()
         }
         else{
             UnSubscribeDialog.show(requireContext()){
                 homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), -1)
-                isSubscribed = 0
-                currentItem.isSubscribed = isSubscribed
-                currentItem.subscriberCount = (--subscriberCount).toInt()
+                currentItem.isSubscribed = 0
+                currentItem.subscriberCount = --item.subscriberCount
                 detailsAdapter.notifyDataSetChanged()
             }
         }

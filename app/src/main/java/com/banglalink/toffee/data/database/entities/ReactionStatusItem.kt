@@ -1,20 +1,13 @@
 package com.banglalink.toffee.data.database.entities
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.Index
 
 @Entity(
-    tableName = "reaction_status_item"
+    indices = [Index(value = ["contentId", "reactionType"], unique = true)]
 )
 data class ReactionStatusItem(
-    @PrimaryKey
-    @ColumnInfo(name = "channel_id")
-    val channelId: Int = 0,
-
-    @ColumnInfo(name = "reaction_type")
+    val contentId: Int = 0,
     val reactionType: Int = 0,
-
-    @ColumnInfo(name = "reaction_count")
     val reactionCount: Long = 0L,
-)
+): BaseEntity()

@@ -54,7 +54,7 @@ class DownloadReactionStatusDb(
 
     private suspend fun updateDb() {
         ToffeeAnalytics.logBreadCrumb("Updating reaction status db")
-        reactionStatusRepository.insert(*reactionList.toTypedArray())
+        reactionStatusRepository.insertAll(*reactionList.toTypedArray())
         ToffeeAnalytics.logBreadCrumb("Reaction status db updated")
     }
 }

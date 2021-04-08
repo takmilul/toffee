@@ -321,4 +321,7 @@ interface ToffeeApi {
         @Path("dbVersion") dbVersion: Int,
         @Body partnersRequest: PartnersRequest
     ): PartnersResponse
+    
+    @POST("/mqtt-credential")
+    suspend fun getMqttCredential(@Body mqttRequest: MqttRequest): MqttResponse
 }
