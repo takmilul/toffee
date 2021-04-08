@@ -133,28 +133,33 @@ class ToffeeMqttService @Inject constructor(
     }
     
     override fun messageArrived(topic: String?, message: MqttMessage?) {
-        message?.let {
-            val jsonString = String(it.payload)
+        if(message != null) {
+            val jsonString = String(message.payload)
             
-            when(topic) {
-                REACTION_TOPIC -> {
-                    val data = gson!!.fromJson(jsonString, ReactionData::class.java)
-                    if (data.customerId != mPref.customerId) {
-                        reactionList.add(data)
+            try {
+                when(topic) {
+                    REACTION_TOPIC -> {
+                        val data = gson!!.fromJson(jsonString, ReactionData::class.java)
+                        if (data != null && data.customerId != mPref.customerId) {
+                            reactionList.add(data)
+                        }
+                    }
+                    SHARE_COUNT_TOPIC -> {
+                        val data = gson!!.fromJson(jsonString, ShareData::class.java)
+                        if (data != null) {
+                            shareList.add(data)
+                        }
+                    }
+                    SUBSCRIPTION_TOPIC -> {
+                        val data = gson!!.fromJson(jsonString, SubscriptionCountData::class.java)
+                        if (data != null && data.subscriberId != mPref.customerId){
+                            subscriptionList.add(data)
+                        }
                     }
                 }
-                SHARE_COUNT_TOPIC -> {
-                    val data = gson!!.fromJson(jsonString, ShareData::class.java)
-                    if (data.customerId != mPref.customerId) {
-                        shareList.add(data)
-                    }
-                }
-                SUBSCRIPTION_TOPIC -> {
-                    val data = gson!!.fromJson(jsonString, SubscriptionCountData::class.java)
-                    if (data.subscriberId != mPref.customerId){
-                        subscriptionList.add(data)
-                    }
-                }
+            }
+            catch (e: Exception) {
+                Log.e("MQTT_", "messageArrived: ${e.message}")
             }
         }
     }
@@ -178,7 +183,10 @@ class ToffeeMqttService @Inject constructor(
             it.unsubscribe(SUBSCRIPTION_TOPIC)
             it.unregisterResources()
             it.disconnect()
-            client = null
         }
+        client = null
+        shareList.clear()
+        reactionList.clear()
+        subscriptionList.clear()
     }
 }
