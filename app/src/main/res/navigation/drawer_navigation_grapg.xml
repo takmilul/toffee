@@ -25,10 +25,10 @@
         android:name="com.banglalink.toffee.ui.common.HtmlPageViewActivity"
         android:label="activity_html_page_view"
         tools:layout="@layout/activity_html_page_view" />
-    <activity
-        android:id="@+id/packageListActivity"
-        android:name="com.banglalink.toffee.ui.subscription.PackageListActivity"
-        android:label="PackageListActivity" />
+<!--    <activity-->
+<!--        android:id="@+id/packageListActivity"-->
+<!--        android:name="com.banglalink.toffee.ui.subscription.PackageListActivity"-->
+<!--        android:label="PackageListActivity" />-->
     <activity
         android:id="@+id/mySubscriptionActivity"
         android:name="com.banglalink.toffee.ui.subscription.MySubscriptionActivity"

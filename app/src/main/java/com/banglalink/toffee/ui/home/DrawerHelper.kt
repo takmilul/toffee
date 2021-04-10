@@ -22,8 +22,6 @@ import com.banglalink.toffee.ui.common.HtmlPageViewActivity
 import com.banglalink.toffee.ui.profile.ViewProfileActivity
 import com.banglalink.toffee.ui.redeem.RedeemCodeActivity
 import com.banglalink.toffee.ui.refer.ReferAFriendActivity
-import com.banglalink.toffee.ui.subscription.MySubscriptionActivity
-import com.banglalink.toffee.ui.subscription.PackageListActivity
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.suke.widget.SwitchButton
 
