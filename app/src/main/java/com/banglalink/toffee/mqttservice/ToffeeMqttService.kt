@@ -104,7 +104,7 @@ class ToffeeMqttService @Inject constructor(
         try {
             MqttMessage().apply { 
                 payload = jsonMessage.toByteArray(charset("UTF-8"))
-                client?.publish(topic, this)
+                client?.publish(topic, payload, 2, true)
             }
         }
         catch (e: Exception){
@@ -122,9 +122,9 @@ class ToffeeMqttService @Inject constructor(
                 isDeleteOldestMessages = false
             }
             client?.setBufferOpts(disconnectedBufferOptions)
-            client?.subscribe(REACTION_TOPIC, 0, null, this@ToffeeMqttService)
-            client?.subscribe(SHARE_COUNT_TOPIC, 0, null, this@ToffeeMqttService)
-            client?.subscribe(SUBSCRIPTION_TOPIC, 0, null, this@ToffeeMqttService)
+            client?.subscribe(REACTION_TOPIC, 2, null, this@ToffeeMqttService)
+            client?.subscribe(SHARE_COUNT_TOPIC, 2, null, this@ToffeeMqttService)
+            client?.subscribe(SUBSCRIPTION_TOPIC, 2, null, this@ToffeeMqttService)
         }
         else {
             gson = gson ?: Gson()
