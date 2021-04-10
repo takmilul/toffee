@@ -258,6 +258,14 @@ interface ToffeeApi {
         @Body allUserChannelsRequest: AllUserChannelsRequest
     ): AllUserChannelsResponse
     
+    @POST("/ugc-channel-subscription-list/1/{limit}/{offset}/{dbVersion}")
+    suspend fun getSubscribedUserChannels(
+        @Path("limit") limit: Int,
+        @Path("offset") offset: Int,
+        @Path("dbVersion") dbVersion: Int,
+        @Body subscribedUserChannelsRequest: SubscribedUserChannelsRequest
+    ): SubscribedUserChannelsResponse
+    
     @POST("/ugc-movie-category-details/1/{type}/{categoryId}/{limit}/{offset}/{dbVersion}")
     suspend fun getMovieCategoryDetail(
         @Path("type") type: String,

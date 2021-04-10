@@ -16,10 +16,7 @@ import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.data.repository.*
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.AppCoroutineScope
-import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.MyChannelDetailBean
-import com.banglalink.toffee.model.MyChannelNavParams
-import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
@@ -57,6 +54,7 @@ class HomeViewModel @Inject constructor(
     private val sendViewContentEvent: SendViewContentEvent,
     @AppCoroutineScope private val appScope: CoroutineScope,
     private val mqttCredentialService: MqttCredentialService,
+    private val sendContentReportEvent: SendContentReportEvent,
     private val reactionStatusRepository: ReactionStatusRepository,
     private val contentFromShareableUrl: GetContentFromShareableUrl,
     private val myChannelDetailApiService: MyChannelGetDetailService,
@@ -225,6 +223,12 @@ class HomeViewModel @Inject constructor(
     fun getMqttCredential() {
         viewModelScope.launch { 
             mqttCredentialLiveData.postValue(resultFromResponse { mqttCredentialService.execute() })
+        }
+    }
+    
+    fun sendReportData(reportInfo: ReportInfo) {
+        viewModelScope.launch { 
+            sendContentReportEvent.execute(reportInfo)
         }
     }
 }
