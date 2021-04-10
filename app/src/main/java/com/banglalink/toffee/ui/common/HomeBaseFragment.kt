@@ -47,7 +47,7 @@ abstract class HomeBaseFragment:BaseFragment(), OptionCallBack {
                     val fragment =
                         channelInfo.duration?.let { durations ->
                             ReportPopupFragment.newInstance(-1,
-                                durations
+                                durations, channelInfo.id
                             )
                         }
                     fragment?.show(requireActivity().supportFragmentManager, "report_video")

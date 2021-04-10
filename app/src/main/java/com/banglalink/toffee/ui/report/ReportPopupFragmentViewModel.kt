@@ -1,64 +1,39 @@
 package com.banglalink.toffee.ui.report
 
-import android.content.Context
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.banglalink.toffee.apiservice.ContentUpload
-import com.banglalink.toffee.apiservice.GetCategories
-import com.banglalink.toffee.data.repository.UploadInfoRepository
-import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.extension.toLiveData
+import androidx.paging.PagingData
+import com.banglalink.toffee.apiservice.GetOffenseService
+import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
+import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
 import com.banglalink.toffee.model.Category
-import com.banglalink.toffee.model.MyChannelAddToPlaylistBean
+import com.banglalink.toffee.model.MyChannelPlaylist
+import com.banglalink.toffee.model.OffenseType
 import com.banglalink.toffee.model.ReportListModel
-import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.upload.EditUploadInfoViewModel
 import com.banglalink.toffee.util.SingleLiveEvent
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ReportPopupFragmentViewModel @Inject constructor(
-    private val categoryApi: GetCategories,
+    private val reportApiService:GetOffenseService
 ) : ViewModel()  {
 
-    lateinit var reportList:List<ReportListModel>
     val reports = MutableLiveData<List<Category>>()
     val exitDialogue = SingleLiveEvent<Boolean>()
-    init {
-        load()
+
+    fun loadReportList(): Flow<PagingData<OffenseType>> {
+        return reportRepo.getList()
     }
-
-    fun getReportList(){
-
-        reportList=listOf(ReportListModel(1,"Violence"),
-            ReportListModel(2,"Safety"),
-            ReportListModel(3,"Fraud,Spam And Fake Information"),
-            ReportListModel(4,"Hate Speech"),
-            ReportListModel(5,"Nudity"))
-    }
-
-    private fun load() {
-        viewModelScope.launch {
-            reports.value = try {
-                categoryApi.loadData(0, 0)
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-                null
-            }
-            if (reports.value.isNullOrEmpty()) {
-                exitDialogue.value=true
-                return@launch
-            }
-
-        }
+    private val reportRepo by lazy {
+        BaseListRepositoryImpl({
+            BaseNetworkPagingSource(
+                reportApiService
+            )
+        })
     }
 
 

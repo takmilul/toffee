@@ -22,8 +22,11 @@ import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.databinding.FragmentCatchupBinding
 import com.banglalink.toffee.enums.Reaction.Love
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
+import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.*
 import com.banglalink.toffee.ui.mychannel.MyChannelVideosViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
@@ -97,6 +100,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
             observeList()
         }
         observeListState()
+//        observeSubscribeChannel()
     }
 
     fun isAutoPlayEnabled(): Boolean {
@@ -175,7 +179,32 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
             }
         }
     }
-
+    
+    private fun observeSubscribeChannel() {
+        observe(homeViewModel.subscriptionLiveData) { response ->
+            when(response) {
+                is Resource.Success -> {
+                    currentItem.let {
+                        val status = response.data.isSubscribed.takeIf { it == 1 } ?: -1
+                        if (response.data.isSubscribed == 1) {
+                            it.isSubscribed = 1
+                            ++ it.subscriberCount
+                        }
+                        else {
+                            it.isSubscribed = 0
+                            -- it.subscriberCount
+                        }
+                        homeViewModel.updateSubscriptionCountTable(SubscriptionInfo(null, it.channel_owner_id, mPref.customerId), status)
+                    }
+                    detailsAdapter.notifyDataSetChanged()
+                }
+                is Resource.Failure -> {
+                    requireContext().showToast(response.error.msg)
+                }
+            }
+        }
+    }
+    
     override fun onReactionClicked(view: View, reactionCountView: View, item: ChannelInfo) {
         super.onReactionClicked(view, reactionCountView, item)
         val iconLocation = IntArray(2)

@@ -51,7 +51,7 @@
     <fragment
         android:id="@+id/menu_subscriptions"
         android:name="com.banglalink.toffee.ui.subscription.MySubscriptionFragment"
-        android:label="My SubsCription"
+        android:label="My Subscription"
         />
     <fragment
         android:id="@+id/menu_feed"

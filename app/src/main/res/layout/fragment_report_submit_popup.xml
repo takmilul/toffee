@@ -97,10 +97,12 @@
 
 
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/timestamp_layout"
                     android:layout_width="120dp"
                     android:layout_height="30dp"
                     android:layout_marginTop="20dp"
                     android:layout_marginEnd="25dp"
+                    android:background="@drawable/single_line_input_text_bg_two"
                     app:layout_constraintBottom_toBottomOf="@+id/time_stamp_tv"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="1.0"
@@ -144,19 +146,18 @@
                         android:id="@+id/minute_et"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginEnd="2dp"
                         android:background="@null"
                         android:hint="00"
                         android:inputType="numberDecimal"
                         android:maxLength="2"
                         android:maxLines="1"
                         android:textSize="16sp"
-                        android:layout_marginEnd="2dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/textView2"
                         app:layout_constraintHorizontal_bias="0.5"
                         app:layout_constraintStart_toEndOf="@+id/textView"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="1.0" />
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                         android:id="@+id/textView2"
@@ -190,11 +191,24 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <TextView
+                    android:id="@+id/error_timestamp_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="Timestamp required"
+                    android:textColor="@color/pink_to_accent_color"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@+id/timestamp_layout"
+                    app:layout_constraintStart_toStartOf="@+id/time_stamp_tv"
+                    app:layout_constraintTop_toBottomOf="@+id/timestamp_layout"
+                    tools:visibility="visible" />
+
+                <TextView
                     android:id="@+id/additional_details_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="20dp"
                     android:fontFamily="@font/roboto_regular"
                     android:text="Additional Details"
                     android:textColor="@color/cardTitleColor"
@@ -202,7 +216,7 @@
                     app:layout_constraintEnd_toStartOf="@+id/reportType"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/time_stamp_tv" />
+                    app:layout_constraintTop_toBottomOf="@+id/error_timestamp_tv" />
 
 
                 <com.banglalink.toffee.ui.widget.HashTagEditText

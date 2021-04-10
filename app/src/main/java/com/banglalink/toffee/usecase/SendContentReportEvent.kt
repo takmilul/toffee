@@ -36,7 +36,7 @@ data class ReportInAppropriateVideoData(
     @SerializedName("time_stamp")
     val timeStamp: String,
     @SerializedName("additional_detail")
-    val additionalDetail: String,
+    val additionalDetail: String?,
     @SerializedName("report_time")
     val reportTime: String = System.currentTimeMillis().toFormattedDate(),
     @SerializedName("device_type")

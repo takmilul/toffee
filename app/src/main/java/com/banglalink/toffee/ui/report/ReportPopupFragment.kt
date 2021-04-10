@@ -10,40 +10,46 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import com.banglalink.toffee.databinding.FragmentReportPopupBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
-import com.banglalink.toffee.model.Category
-import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.ReportListModel
+import com.banglalink.toffee.model.OffenseType
 import com.banglalink.toffee.ui.common.CheckedChangeListener
-import com.banglalink.toffee.ui.mychannel.MyChannelAddToPlaylistFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 
 
 @AndroidEntryPoint
 class ReportPopupFragment : DialogFragment(),
-    CheckedChangeListener<Category>, View.OnClickListener {
+    CheckedChangeListener<OffenseType>, View.OnClickListener {
 
     private var selectedItemPosition: Int =-1
+    private var selectedType:String=""
     private var videoDuration: String =""
+    private var contentId:String=""
+    private var selectedOffenceTypeId:Long=0
     private var _binding: FragmentReportPopupBinding? = null
     private val binding get() = _binding!!
     private val viewModel by viewModels<ReportPopupFragmentViewModel>()
     lateinit var  mAdapter: ReportListAdapter
-
     private lateinit var alertDialog: AlertDialog
 
     companion object {
         private const val SELECTED_ITEM_POSITION = "itempostition"
         private const val VIDEO_DURATION="videoduration"
+        private const val CONTENT_ID="contentid"
 
-        fun newInstance(itemposition:Int=-1,duration:String): ReportPopupFragment {
+        fun newInstance(itemposition: Int = -1, duration: String, contentId:String): ReportPopupFragment {
             return ReportPopupFragment().apply {
                 arguments = Bundle().apply {
                     putInt(SELECTED_ITEM_POSITION, itemposition)
-                    putString(VIDEO_DURATION,duration)
+                    putString(VIDEO_DURATION, duration)
+                    putString(CONTENT_ID, contentId)
 
                 }
             }
@@ -54,6 +60,7 @@ class ReportPopupFragment : DialogFragment(),
         super.onCreate(savedInstanceState)
         selectedItemPosition = arguments?.getInt(SELECTED_ITEM_POSITION)!!
         videoDuration = arguments?.getString(VIDEO_DURATION)!!
+        contentId = arguments?.getString(CONTENT_ID)!!
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -67,46 +74,81 @@ class ReportPopupFragment : DialogFragment(),
         binding.nextButton.safeClick(this)
         binding.cancelButton.safeClick(this)
         binding.closeIv.safeClick(this)
-        showData()
-        observeExitDialogue()
-        return alertDialog
-    }
+        mAdapter=ReportListAdapter(this)
+        mAdapter.addLoadStateListener {
 
-    fun showData()
-    {
-        observe(viewModel.reports) {
-            mAdapter=ReportListAdapter(this,it)
-            binding.listview.adapter = mAdapter
+        }
+        binding.listview.adapter = mAdapter
 
-            if(selectedItemPosition>=0) {
-                binding.nextButton.isEnabled=true
-                mAdapter.setSelectedItemPosition(selectedItemPosition)
-                mAdapter.notifyDataSetChanged()
+        mAdapter.addLoadStateListener {
+            mAdapter.apply {
+                val showEmpty = itemCount <= 0 && ! it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
+                if (showEmpty) {
+                    Toast.makeText(requireContext(), "Unable to load data.", Toast.LENGTH_SHORT).show()
+                    alertDialog.dismiss()
+                }
             }
         }
 
+        lifecycleScope.launch{
+          val reportList=  viewModel.loadReportList()
+            reportList.collectLatest {
+                mAdapter.submitData(it)
+            }
+
+        }
+
+
+        if(selectedItemPosition>=0) {
+            binding.nextButton.isEnabled=true
+            mAdapter.setSelectedItemPosition(selectedItemPosition)
+        }
+        return alertDialog
     }
+
+
+
+//    fun showData()
+//    {
+//        observe(viewModel.reports) {
+//            if(selectedItemPosition>=0) {
+//                binding.nextButton.isEnabled=true
+//                mAdapter.setSelectedItemPosition(selectedItemPosition)
+//                mAdapter.notifyDataSetChanged()
+//            }
+//        }
+//
+//    }
 
     override fun onClick(v: View?) {
         when (v) {
             binding.closeIv -> alertDialog.dismiss()
-            binding.cancelButton ->alertDialog.dismiss()
-            binding.nextButton ->{
+            binding.cancelButton -> alertDialog.dismiss()
+            binding.nextButton -> {
+                val fragment = ReportSubmitPopupFragment.newInstance(
+                    selectedItemPosition,
+                    selectedType,
+                    videoDuration,
+                    contentId,
+                    selectedOffenceTypeId
+                )
+                fragment.show(requireActivity().supportFragmentManager, "report_popup")
                 alertDialog.dismiss()
-                val fragment = viewModel.reports.value?.get(selectedItemPosition)?.let {
-                    ReportSubmitPopupFragment.newInstance(selectedItemPosition,it.categoryName,videoDuration)
-                }
-                fragment?.show(requireActivity().supportFragmentManager, "report_submit")
-
             }
-
         }
     }
 
-    override fun onCheckedChanged(view: View, item: Category, position: Int, isFromCheckableView: Boolean) {
+    override fun onCheckedChanged(
+        view: View,
+        item: OffenseType,
+        position: Int,
+        isFromCheckableView: Boolean
+    ) {
         super.onCheckedChanged(view, item, position, isFromCheckableView)
         selectedItemPosition=position
         binding.nextButton.isEnabled=true
+        selectedType=item.type
+        selectedOffenceTypeId=item.id
         when (view) {
             is RadioButton -> {
                 if (view.isChecked) {
@@ -116,16 +158,6 @@ class ReportPopupFragment : DialogFragment(),
                     mAdapter.setSelectedItemPosition(-1)
                     mAdapter.notifyDataSetChanged()
                 }
-            }
-        }
-    }
-
-
-    private fun observeExitDialogue() {
-        observe(viewModel.exitDialogue) {
-            if(it) {
-                Toast.makeText(requireContext(), "Unable to load data.", Toast.LENGTH_SHORT).show()
-                alertDialog.dismiss()
             }
         }
     }

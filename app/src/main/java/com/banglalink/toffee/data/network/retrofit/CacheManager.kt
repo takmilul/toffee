@@ -2,6 +2,7 @@ package com.banglalink.toffee.data.network.retrofit
 
 import com.banglalink.toffee.apiservice.GET_ALL_CHANNELS
 import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_DETAILS
+import com.banglalink.toffee.apiservice.GET_SUBSCRIBED_CHANNELS
 import com.banglalink.toffee.apiservice.GET_TRENDING_CHANNELS
 import com.banglalink.toffee.di.DefaultCache
 import okhttp3.Cache
@@ -25,7 +26,7 @@ class CacheManager @Inject constructor(@DefaultCache private val retrofitCache: 
         while (urlIterator.hasNext()) {
             val next = urlIterator.next()
             if (next.contains(GET_ALL_CHANNELS) || next.contains(GET_TRENDING_CHANNELS) || next.contains
-                    (GET_MY_CHANNEL_DETAILS)) {
+                    (GET_MY_CHANNEL_DETAILS) || next.contains(GET_SUBSCRIBED_CHANNELS)) {
                 urlIterator.remove()
             }
         }

@@ -8,21 +8,21 @@ import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
+import com.banglalink.toffee.common.paging.BasePagingDataAdapter
 import com.banglalink.toffee.common.paging.BaseViewHolder
+import com.banglalink.toffee.common.paging.ItemComparator
 import com.banglalink.toffee.model.Category
+import com.banglalink.toffee.model.OffenseType
 import com.banglalink.toffee.model.ReportListModel
 
-class ReportListAdapter (private val callback: BaseListItemCallback<Category>,
-                         private val dataList:List<Category>)
-    :RecyclerView.Adapter<BaseViewHolder>(
-
-) {
+class ReportListAdapter (private val cb: BaseListItemCallback<OffenseType>)
+    : BasePagingDataAdapter<OffenseType>(cb, ItemComparator())  {
 
     var selectedPosition = -1
         private set
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
-        val obj = dataList.get(position)
+        val obj = getItem(position)
         holder.binding.setVariable(BR.selectedPosition, selectedPosition)
         obj?.let {
             holder.bind(obj, callback, position)
@@ -37,10 +37,7 @@ class ReportListAdapter (private val callback: BaseListItemCallback<Category>,
         return BaseViewHolder(binding)
     }
 
-    override fun getItemCount(): Int {
-      return  dataList.size
 
-    }
 
     override fun getItemViewType(position: Int): Int {
         return R.layout.list_item_report_fragment_popup

@@ -20,7 +20,7 @@
 
         <variable
             name="data"
-            type="com.banglalink.toffee.model.Category" />
+            type="com.banglalink.toffee.model.OffenseType" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -38,7 +38,7 @@
             android:maxLines="2"
             android:minLines="1"
             android:onClick="@{(view) -> callback.onCheckedChanged(view, data, position, true)}"
-            android:text="@{` ` + data.categoryName}"
+            android:text="@{` ` + data.type}"
             android:textColor="@color/main_text_color"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
