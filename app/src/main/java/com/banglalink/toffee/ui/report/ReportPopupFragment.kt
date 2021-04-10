@@ -6,9 +6,11 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
 import android.widget.RadioButton
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.databinding.FragmentReportPopupBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
@@ -21,10 +23,11 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class ReportPopupFragment : DialogFragment() ,
+class ReportPopupFragment : DialogFragment(),
     CheckedChangeListener<Category>, View.OnClickListener {
 
     private var selectedItemPosition: Int =-1
+    private var videoDuration: String =""
     private var _binding: FragmentReportPopupBinding? = null
     private val binding get() = _binding!!
     private val viewModel by viewModels<ReportPopupFragmentViewModel>()
@@ -34,11 +37,14 @@ class ReportPopupFragment : DialogFragment() ,
 
     companion object {
         private const val SELECTED_ITEM_POSITION = "itempostition"
+        private const val VIDEO_DURATION="videoduration"
 
-        fun newInstance(itemposition:Int=-1): ReportPopupFragment {
+        fun newInstance(itemposition:Int=-1,duration:String): ReportPopupFragment {
             return ReportPopupFragment().apply {
                 arguments = Bundle().apply {
                     putInt(SELECTED_ITEM_POSITION, itemposition)
+                    putString(VIDEO_DURATION,duration)
+
                 }
             }
         }
@@ -47,6 +53,7 @@ class ReportPopupFragment : DialogFragment() ,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         selectedItemPosition = arguments?.getInt(SELECTED_ITEM_POSITION)!!
+        videoDuration = arguments?.getString(VIDEO_DURATION)!!
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -61,6 +68,7 @@ class ReportPopupFragment : DialogFragment() ,
         binding.cancelButton.safeClick(this)
         binding.closeIv.safeClick(this)
         showData()
+        observeExitDialogue()
         return alertDialog
     }
 
@@ -86,7 +94,7 @@ class ReportPopupFragment : DialogFragment() ,
             binding.nextButton ->{
                 alertDialog.dismiss()
                 val fragment = viewModel.reports.value?.get(selectedItemPosition)?.let {
-                    ReportSubmitPopupFragment.newInstance(selectedItemPosition,it.categoryName)
+                    ReportSubmitPopupFragment.newInstance(selectedItemPosition,it.categoryName,videoDuration)
                 }
                 fragment?.show(requireActivity().supportFragmentManager, "report_submit")
 
@@ -112,6 +120,15 @@ class ReportPopupFragment : DialogFragment() ,
         }
     }
 
+
+    private fun observeExitDialogue() {
+        observe(viewModel.exitDialogue) {
+            if(it) {
+                Toast.makeText(requireContext(), "Unable to load data.", Toast.LENGTH_SHORT).show()
+                alertDialog.dismiss()
+            }
+        }
+    }
 
 
 }

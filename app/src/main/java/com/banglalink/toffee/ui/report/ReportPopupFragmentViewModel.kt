@@ -16,17 +16,22 @@ import com.banglalink.toffee.model.MyChannelAddToPlaylistBean
 import com.banglalink.toffee.model.ReportListModel
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.upload.EditUploadInfoViewModel
+import com.banglalink.toffee.util.SingleLiveEvent
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ReportPopupFragmentViewModel @ViewModelInject constructor(
+@HiltViewModel
+class ReportPopupFragmentViewModel @Inject constructor(
     private val categoryApi: GetCategories,
 ) : ViewModel()  {
 
     lateinit var reportList:List<ReportListModel>
     val reports = MutableLiveData<List<Category>>()
+    val exitDialogue = SingleLiveEvent<Boolean>()
     init {
         load()
     }
@@ -49,7 +54,7 @@ class ReportPopupFragmentViewModel @ViewModelInject constructor(
                 null
             }
             if (reports.value.isNullOrEmpty()) {
-
+                exitDialogue.value=true
                 return@launch
             }
 

@@ -44,8 +44,13 @@ abstract class HomeBaseFragment:BaseFragment(), OptionCallBack {
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_report -> {
-                    val fragment = ReportPopupFragment.newInstance(-1)
-                    fragment.show(requireActivity().supportFragmentManager, "add_to_playlist")
+                    val fragment =
+                        channelInfo.duration?.let { durations ->
+                            ReportPopupFragment.newInstance(-1,
+                                durations
+                            )
+                        }
+                    fragment?.show(requireActivity().supportFragmentManager, "report_video")
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_not_interested->{

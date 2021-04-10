@@ -51,7 +51,6 @@
             app:layout_constraintTop_toTopOf="@+id/listview" />
 
         <include android:id="@+id/always_free"
-            android:visibility="gone"
             layout="@layout/always_free_trial_layout" />
 
     </LinearLayout>
