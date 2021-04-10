@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="selectedPosition"
+            type="java.lang.Integer" />
+
+        <variable
+            name="callback"
+            type="com.banglalink.toffee.ui.common.CheckedChangeListener" />
+
+        <variable
+            name="position"
+            type="java.lang.Integer" />
+
+        <variable
+            name="data"
+            type="com.banglalink.toffee.model.Category" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatRadioButton
+            android:id="@+id/radioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:button="@drawable/custom_radio_button"
+            android:checked="@{position.equals(selectedPosition)}"
+            android:fontFamily="@font/roboto_regular"
+            android:maxLines="2"
+            android:minLines="1"
+            android:onClick="@{(view) -> callback.onCheckedChanged(view, data, position, true)}"
+            android:text="@{` ` + data.categoryName}"
+            android:textColor="@color/main_text_color"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text=" Fraud,Spam And Fake Information" />
+
+        <ImageView
+            android:id="@+id/question_mark"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginStart="5dp"
+            android:src="@drawable/ic_question_mark"
+            app:layout_constraintBottom_toBottomOf="@+id/radioButton"
+            app:layout_constraintStart_toEndOf="@+id/radioButton"
+            app:layout_constraintTop_toTopOf="@+id/radioButton" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
