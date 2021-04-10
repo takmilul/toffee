@@ -125,7 +125,7 @@ class ReactionPopup: Fragment() {
                     }
                     else {
                         reactionCount++
-                        mViewModel.updateReaction(newReactionInfo, previousReactionInfo)
+                        mViewModel.updateReaction(newReactionInfo, it)
                         mViewModel.insertActivity(preference.customerId, channelInfo!!, REACTION_CHANGED.value, reaction.value)
                         reaction.value
                     }
