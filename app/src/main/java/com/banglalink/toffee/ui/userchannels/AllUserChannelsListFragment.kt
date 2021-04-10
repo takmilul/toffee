@@ -10,11 +10,10 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentAllUserChannelsListBinding
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.LandingPopularChannelCallback
-import com.banglalink.toffee.model.Category
-import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.MyChannelNavParams
-import com.banglalink.toffee.model.UserChannelInfo
+import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.common.UnSubscribeDialog
@@ -27,24 +26,22 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
     
     private var categoryInfo: Category? = null
     @Inject lateinit var cacheManager: CacheManager
-    private lateinit var mAdapter: AllUserChannelsListAdapter
     private var trendingChannelInfo: UserChannelInfo? = null
-    private val viewModel by viewModels<AllUserChannelsListViewModel>()
+    private lateinit var mAdapter: AllUserChannelsListAdapter
     private var _binding: FragmentAllUserChannelsListBinding ? = null
     private val binding get() = _binding!!
+    private val viewModel by viewModels<AllUserChannelsListViewModel>()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentAllUserChannelsListBinding.inflate(inflater, container, false)
         return binding.root    
     }
+    
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -56,13 +53,15 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
             }
 
             override fun onSubscribeButtonClicked(view: View, info: UserChannelInfo) {
+//                trendingChannelInfo = info
+                
                 if (info.isSubscribed == 0) {
                     trendingChannelInfo = info.also {
                         it.isSubscribed = 1
                         it.subscriberCount++
                     }
-                    homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId) ,1)
                     mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, trendingChannelInfo)
+                    homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId) ,1)
                 }
                 else {
                     UnSubscribeDialog.show(requireContext()) {
@@ -70,8 +69,8 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
                             it.isSubscribed = 0
                             it.subscriberCount--
                         }
-                        homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId) ,-1)
                         mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, trendingChannelInfo)
+                        homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId) ,-1)
                     }
                 }
             }
@@ -82,6 +81,7 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
             adapter = mAdapter
         }
         observeList()
+//        observeSubscribeChannel()
     }
 
     private fun observeList() {
@@ -92,7 +92,32 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
             }
         }
     }
-
+    
+    private fun observeSubscribeChannel() {
+        observe(homeViewModel.subscriptionLiveData) { response ->
+            when(response) {
+                is Resource.Success -> {
+                    trendingChannelInfo?.let {
+                        val status = response.data.isSubscribed.takeIf { it == 1 } ?: -1
+                        if(response.data.isSubscribed == 1) {
+                            it.isSubscribed = 1
+                            ++ it.subscriberCount
+                        }
+                        else {
+                            it.isSubscribed = 0
+                            -- it.subscriberCount
+                        }
+                        mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, it)
+                        homeViewModel.updateSubscriptionCountTable(SubscriptionInfo(null, it.channelOwnerId, mPref.customerId), status)
+                    }
+                }
+                is Resource.Failure -> {
+                    requireContext().showToast(response.error.msg)
+                }
+            }
+        }
+    }
+    
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
 
     }

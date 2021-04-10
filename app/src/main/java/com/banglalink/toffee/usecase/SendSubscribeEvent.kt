@@ -9,6 +9,7 @@ import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.repository.SubscriptionCountRepository
 import com.banglalink.toffee.data.repository.SubscriptionInfoRepository
 import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.model.MyChannelSubscribeBean
 import com.banglalink.toffee.mqttservice.ToffeeMqttService
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.notification.SUBSCRIPTION_TOPIC
@@ -26,12 +27,10 @@ class SendSubscribeEvent @Inject constructor(
     
     var subscriptionCount: SubscriptionCount? =null
     
-    suspend fun execute(subscriptionInfo: SubscriptionInfo, status: Int, sendToPubSub:Boolean = true){
-        if(sendToPubSub){
-            sendToPubSub(subscriptionInfo, status)
-            updateSubscriptionInfoDb(subscriptionInfo, status)
-            sendToToffeeServer(subscriptionInfo, status)
-        }
+    suspend fun execute(subscriptionInfo: SubscriptionInfo, status: Int, sendToPubSub:Boolean = true): MyChannelSubscribeBean {
+        sendToPubSub(subscriptionInfo, status)
+        updateSubscriptionCountDb(subscriptionInfo, status)
+        return sendToToffeeServer(subscriptionInfo, status)
     }
 
     private fun sendToPubSub(subscriptionInfo: SubscriptionInfo, status: Int){
@@ -46,7 +45,7 @@ class SendSubscribeEvent @Inject constructor(
         Log.e("Pubsub","data"+Gson().toJson(subscriptionCountData))
     }
 
-    private suspend fun updateSubscriptionInfoDb(subscriptionInfo: SubscriptionInfo, status: Int){
+    suspend fun updateSubscriptionCountDb(subscriptionInfo: SubscriptionInfo, status: Int){
         subscriptionCount=subscriptionCountRepository.getSubscriptionCount(subscriptionInfo.channelId)
         if (subscriptionCount!=null) {
             subscriptionCountRepository.updateSubscriptionCount(subscriptionInfo.channelId, status)
@@ -62,8 +61,8 @@ class SendSubscribeEvent @Inject constructor(
         }
     }
 
-    private suspend fun sendToToffeeServer(subscriptionInfo: SubscriptionInfo, status: Int){
-        tryIO2 {
+    private suspend fun sendToToffeeServer(subscriptionInfo: SubscriptionInfo, status: Int): MyChannelSubscribeBean {
+        val response = tryIO2 {
             toffeeApi.subscribeOnMyChannel(
                 MyChannelSubscribeRequest(
                     subscriptionInfo.channelId,
@@ -74,6 +73,7 @@ class SendSubscribeEvent @Inject constructor(
                 )
             )
         }
+        return response.response
     }
 }
 

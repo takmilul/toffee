@@ -59,14 +59,14 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     @Inject lateinit var cacheManager: CacheManager
     private lateinit var detailsAdapter: ChannelHeaderAdapter
     private lateinit var args: MyChannelPlaylistVideosFragmentArgs
-    val mViewModel by viewModels<MyChannelPlaylistVideosViewModel>()
-    private val homeViewModel by activityViewModels<HomeViewModel>()
     private lateinit var requestParams: MyChannelPlaylistContentParam
     private lateinit var playlistAdapter: MyChannelPlaylistVideosAdapter
     private var _binding: FragmentMyChannelPlaylistVideosBinding ? = null
     private val binding get() = _binding!!
     @Inject lateinit var subscriptionInfoRepository: SubscriptionInfoRepository
     @Inject lateinit var subscriptionCountRepository: SubscriptionCountRepository
+    private val homeViewModel by activityViewModels<HomeViewModel>()
+    val mViewModel by viewModels<MyChannelPlaylistVideosViewModel>()
     
     companion object {
         fun newInstance(info: PlaylistPlaybackInfo): MyChannelPlaylistVideosFragment {
@@ -108,6 +108,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
         observeListState()
         observeVideoList()
         setSubscriptionStatus()
+//        observeSubscribeChannel()
         
         currentItem?.let { 
             binding.backButton.hide()
@@ -188,8 +189,8 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
             currentItem?.let {
                 isSubscribed = if (subscriptionInfoRepository.getSubscriptionInfoByChannelId(it.channel_owner_id, mPref.customerId) != null) 1 else 0
                 subscriberCount = subscriptionCountRepository.getSubscriberCount(it.channel_owner_id)
-                it.isSubscribed = isSubscribed
-                it.subscriberCount = subscriberCount.toInt()
+                it.isSubscribed = if (subscriptionInfoRepository.getSubscriptionInfoByChannelId(it.channel_owner_id, mPref.customerId) != null) 1 else 0
+                it.subscriberCount = subscriptionCountRepository.getSubscriberCount(it.channel_owner_id).toInt()
                 detailsAdapter.notifyDataSetChanged()
             }
         }
@@ -199,6 +200,31 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
         lifecycleScope.launchWhenStarted {
             mViewModel.getMyChannelPlaylistVideos(requestParams).collectLatest {
                 playlistAdapter.submitData(it)
+            }
+        }
+    }
+    
+    private fun observeSubscribeChannel() {
+        observe(homeViewModel.subscriptionLiveData) { response ->
+            when(response) {
+                is Success -> {
+                    currentItem?.let {
+                        val status = response.data.isSubscribed.takeIf { it == 1 } ?: -1
+                        if (response.data.isSubscribed == 1){
+                            it.isSubscribed = 1
+                            ++ it.subscriberCount
+                        }
+                        else {
+                            it.isSubscribed = 0
+                            -- it.subscriberCount
+                        }
+                        homeViewModel.updateSubscriptionCountTable(SubscriptionInfo(null, it.channel_owner_id, mPref.customerId), status)
+                    }
+                    detailsAdapter.notifyDataSetChanged()
+                }
+                is Failure -> {
+                    requireContext().showToast(response.error.msg)
+                }
             }
         }
     }

@@ -33,6 +33,7 @@ import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.MyChannelDetail
+import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
@@ -120,6 +121,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         }
         
         observeChannelDetail()
+//        observeSubscribeChannel()
         viewModel.getChannelDetail(channelOwnerId)
         
         binding.channelDetailView.subscriptionButton.isEnabled = true
@@ -322,6 +324,32 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     
     fun getViewPagerPosition(): Int {
         return binding.viewPager.currentItem
+    }
+    
+    private fun observeSubscribeChannel() {
+        observe(homeViewModel.subscriptionLiveData) { response ->
+            when(response) {
+                is Success -> {
+                    val status = response.data.isSubscribed.takeIf { it == 1 } ?: -1
+                    if (response.data.isSubscribed == 1) {
+                        isSubscribed = 1
+                        binding.isSubscribed = isSubscribed
+                        binding.subscriberCount = ++subscriberCount
+                    }
+                    else {
+                        isSubscribed = 0
+                        binding.isSubscribed = isSubscribed
+                        binding.subscriberCount = --subscriberCount
+                    }
+                    binding.channelDetailView.subscriptionButton.isEnabled = true
+                    homeViewModel.updateSubscriptionCountTable(SubscriptionInfo(null, channelOwnerId, mPref.customerId), status)
+                }
+                is Failure -> {
+                    requireContext().showToast(response.error.msg)
+                    binding.channelDetailView.subscriptionButton.isEnabled = true
+                }
+            }
+        }
     }
     
     private fun observeRatingChannel() {

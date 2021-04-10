@@ -332,4 +332,12 @@ interface ToffeeApi {
     
     @POST("/mqtt-credential")
     suspend fun getMqttCredential(@Body mqttRequest: MqttRequest): MqttResponse
+    
+    @POST("/ugc-inappropriate-head-list/1/{limit}/{offset}/{dbVersion}")
+    suspend fun getOffenseList(
+        @Path("limit") limit: Int,
+        @Path("offset") offset: Int,
+        @Path("dbVersion") dbVersion: Int,
+        @Body offenseRequest: OffenseRequest
+    ): OffenseResponse
 }
