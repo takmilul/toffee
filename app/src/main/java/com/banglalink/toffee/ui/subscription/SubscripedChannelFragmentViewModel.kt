@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.banglalink.toffee.apiservice.AllUserChannelsService
+import com.banglalink.toffee.apiservice.SubscribedUserChannelsService
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
 import com.banglalink.toffee.model.UserChannelInfo
@@ -14,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SubscripedChannelFragmentViewModel @Inject constructor(
-    private val popularChannelApiService: AllUserChannelsService,
+    private val subscribeChannelApiService: SubscribedUserChannelsService,
 ) : ViewModel() {
 
     fun loadUserChannels(): Flow<PagingData<UserChannelInfo>> {
@@ -23,7 +24,7 @@ class SubscripedChannelFragmentViewModel @Inject constructor(
     private val userChannelRepo by lazy {
         BaseListRepositoryImpl({
             BaseNetworkPagingSource(
-                popularChannelApiService
+                subscribeChannelApiService
             )
         })
     }
