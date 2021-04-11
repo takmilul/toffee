@@ -75,10 +75,16 @@ class ReportPopupFragment : DialogFragment(),
         binding.cancelButton.safeClick(this)
         binding.closeIv.safeClick(this)
         mAdapter=ReportListAdapter(this)
-        mAdapter.addLoadStateListener {
+        binding.listview.adapter = mAdapter
+
+
+        lifecycleScope.launch{
+          val reportList=  viewModel.loadReportList()
+            reportList.collectLatest {
+                mAdapter.submitData(it)
+            }
 
         }
-        binding.listview.adapter = mAdapter
 
         mAdapter.addLoadStateListener {
             mAdapter.apply {
@@ -89,15 +95,6 @@ class ReportPopupFragment : DialogFragment(),
                 }
             }
         }
-
-        lifecycleScope.launch{
-          val reportList=  viewModel.loadReportList()
-            reportList.collectLatest {
-                mAdapter.submitData(it)
-            }
-
-        }
-
 
         if(selectedItemPosition>=0) {
             binding.nextButton.isEnabled=true

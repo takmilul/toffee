@@ -8,6 +8,7 @@
     android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
     android:layout_height="130dp"
     app:cardCornerRadius="20dp"
+    android:layout_marginBottom="3dp"
     app:cardBackgroundColor="@color/cardBgColor"
     >
     <androidx.constraintlayout.widget.ConstraintLayout
