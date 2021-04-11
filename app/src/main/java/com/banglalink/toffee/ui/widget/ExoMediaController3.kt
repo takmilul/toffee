@@ -36,6 +36,7 @@ import com.google.android.exoplayer2.Player.*
 import com.google.android.exoplayer2.Player.EventListener
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.video.VideoListener
+import com.google.android.gms.cast.framework.CastButtonFactory
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import java.lang.Runnable
@@ -147,7 +148,11 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     }
 
     private fun setupCastButton() {
-//        CastButtonFactory.setUpMediaRouteButton(context.applicationContext, binding.castButton)
+        if(mPref.isCastEnabled) {
+            CastButtonFactory.setUpMediaRouteButton(context.applicationContext, binding.castButton)
+        } else {
+            binding.castButton.visibility = View.GONE
+        }
     }
 
     fun showDebugOverlay(data: PlayerOverlayData, cid: String) {

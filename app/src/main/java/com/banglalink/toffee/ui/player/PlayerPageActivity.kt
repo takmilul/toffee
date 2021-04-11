@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -31,6 +32,7 @@ import com.google.android.exoplayer2.SimpleExoPlayer.Builder
 import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.analytics.AnalyticsListener.EventTime
 import com.google.android.exoplayer2.ext.cast.CastPlayer
+import com.google.android.exoplayer2.ext.cast.MediaItemConverter
 import com.google.android.exoplayer2.ext.cast.SessionAvailabilityListener
 import com.google.android.exoplayer2.source.*
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
@@ -52,12 +54,13 @@ import com.google.android.gms.cast.MediaQueueItem
 import com.google.android.gms.cast.framework.*
 import com.google.android.gms.common.images.WebImage
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.api.client.json.JsonObjectParser
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import java.net.CookieHandler
-import java.net.CookieManager
-import java.net.CookiePolicy
+import okhttp3.HttpUrl.Companion.toHttpUrl
+import org.json.JSONObject
+import java.net.*
 import javax.inject.Inject
 import kotlin.math.max
 
@@ -119,7 +122,9 @@ abstract class PlayerPageActivity :
             CookieHandler.setDefault(defaultCookieManager)
         }
 
-//        castContext = CastContext.getSharedInstance(this)
+        if(mPref.isCastEnabled) {
+            castContext = CastContext.getSharedInstance(this)
+        }
 
         if (savedInstanceState != null) {
             trackSelectorParameters = savedInstanceState.getParcelable(KEY_TRACK_SELECTOR_PARAMETERS)
@@ -237,9 +242,9 @@ abstract class PlayerPageActivity :
     private fun initializeRemotePlayer() {
         castContext?.let {
             Log.e("CAST", "Castplayer init")
-            castPlayer = CastPlayer(it).apply {
+            castPlayer = CastPlayer(it, ToffeeMediaItemConverter()).apply {
                 addListener(this@PlayerPageActivity)
-                playWhenReady = false
+                playWhenReady = true
                 setSessionAvailabilityListener(this@PlayerPageActivity)
             }
         }
@@ -392,10 +397,12 @@ abstract class PlayerPageActivity :
 //        if(oldChannelInfo != null && oldChannelInfo.getId().equalsIgnoreCase(this.channelInfo.getId())){
 //            isReload = true;//that means we have reload situation. We need to start where we left for VODs
 //        }
+//        Log.e("MEDIA_T", "Player is -> ${player?.javaClass?.name}")
         player?.let {
-            val oldChannelInfo = it.currentMediaItem?.playbackProperties?.tag as ChannelInfo?
+//            Log.e("MEDIA_T", "${it.currentMediaItem?.playbackProperties?.tag}")
+            val oldChannelInfo = it.currentMediaItem?.playbackProperties?.tag
             oldChannelInfo?.let { oldInfo ->
-                if(it.playbackState != STATE_ENDED) {
+                if(oldInfo is ChannelInfo && it.playbackState != STATE_ENDED) {
                     insertContentViewProgress(oldInfo, it.currentPosition)
                 }
             }
@@ -416,13 +423,19 @@ abstract class PlayerPageActivity :
                 if (haveStartPosition && !channelInfo.isLive) {
                     if(it is SimpleExoPlayer) {
                         it.setMediaSource(mediaSource, false)
-                        it.prepare()
                         //                    player.prepare(mediaSource, false, false);
-                        it.seekTo(startWindow, startPosition) //we seek to where we left for VODs
                     } else if(it is CastPlayer){
-                        it.loadItem(getMediaInfo(channelInfo), startPosition)
-                        it.playWhenReady = true
+                        if(mPref.isCastUrlOverride) {
+                            mediaItem.buildUpon()
+                                .setUri(getCastUrl(uri))
+                                .build()
+                        }
+                        it.setMediaItem(mediaItem, startPosition)
                     }
+                    it.prepare()
+                    it.playWhenReady = true
+                    it.seekTo(startWindow, startPosition) //we seek to where we left for VODs
+//                    it.prepare()
                     return
                 }
             }
@@ -438,24 +451,75 @@ abstract class PlayerPageActivity :
                 it.setMediaSource(mediaSource, startPosition)
                 it.prepare()
             } else if(it is CastPlayer) {
-                it.loadItem(getMediaInfo(channelInfo), startPosition)
+                if(mPref.isCastUrlOverride) {
+                    mediaItem.buildUpon()
+                        .setUri(getCastUrl(uri))
+                        .build()
+                }
+                it.setMediaItem(mediaItem, startPosition)
                 it.playWhenReady = true
+                it.prepare()
             }
             //            player.prepare(mediaSource);//Non reload event or reload for live. Just prepare the media and play it
+        }
+    }
+
+    private fun getCastUrl(uri: String): String {
+        var newUrl = uri
+        if (mPref.isCastUrlOverride && mPref.castOverrideUrl.isNotBlank()) {
+            try {
+                val url = URL(uri)
+                var path = url.path
+                if (!TextUtils.isEmpty(url.query)) {
+                    path = path + "?" + url.query
+                }
+                newUrl = mPref.castOverrideUrl + path
+            } catch (e: MalformedURLException) {
+                e.printStackTrace()
+            }
+        }
+        return newUrl
+    }
+
+    private inner class ToffeeMediaItemConverter: MediaItemConverter {
+        override fun toMediaQueueItem(mediaItem: MediaItem): MediaQueueItem {
+//            Log.e("MEDIA_T", "MediaTag -> ${mediaItem.playbackProperties?.tag}")
+            return getMediaInfo(mediaItem.playbackProperties?.tag as ChannelInfo)
+        }
+
+        override fun toMediaItem(mediaQueueItem: MediaQueueItem): MediaItem {
+//            Log.e("MEDIA_T", "CustomData -> ${mediaQueueItem.customData}")
+            return MediaItem.Builder().setUri(mediaQueueItem.media.contentUrl)
+                .setMediaMetadata(
+                    com.google.android.exoplayer2.MediaMetadata
+                        .Builder()
+                        .setTitle(mediaQueueItem.media.metadata.getString(MediaMetadata.KEY_TITLE))
+                        .build()
+                )
+                .setMimeType(MimeTypes.APPLICATION_M3U8)
+                .setTag(jsonToChannelInfo(mediaQueueItem.customData!!))
+                .build()
         }
     }
 
     private fun getMediaInfo(info: ChannelInfo): MediaQueueItem {
         val mediaMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE )
         mediaMetadata.putString( MediaMetadata.KEY_TITLE , info.program_name)
-        mediaMetadata.addImage(WebImage(Uri.parse(info.landscape_ratio_1280_720)))
+        if(info.isLive) {
+            mediaMetadata.addImage(WebImage(Uri.parse(info.channel_logo)))
+        }
+        else {
+            mediaMetadata.addImage(WebImage(Uri.parse(info.landscape_ratio_1280_720)))
+        }
 
-        val channelUrl = Channel.createChannel(info).getContentUri(this, mPref, connectionWatcher)
+        val channelUrl = Channel.createChannel(info).getContentUri(this, mPref, connectionWatcher)?.let {
+            getCastUrl(it)
+        }
 
         val mediaInfo = if (info.isLive) {
             MediaInfo.Builder(channelUrl).apply {
                 setContentType(MimeTypes.APPLICATION_M3U8)//"application/x-mpegurl")
-                setStreamType( MediaInfo.STREAM_TYPE_BUFFERED )
+                setStreamType( MediaInfo.STREAM_TYPE_LIVE )
                 setMetadata( mediaMetadata )
             }
     //                    .setStreamDuration(0) // 0 for Infinity
@@ -468,7 +532,17 @@ abstract class PlayerPageActivity :
     //                    .setStreamDuration(MediaInfo.STREAM_TYPE_LIVE)
                 .build()
         }
-        return MediaQueueItem.Builder(mediaInfo).build()
+        return MediaQueueItem.Builder(mediaInfo).setCustomData(channelInfoToJson(info)).build()
+    }
+
+    private fun channelInfoToJson(info: ChannelInfo): JSONObject {
+        return JSONObject().apply {
+            put("channel_info", Gson().toJson(info))
+        }
+    }
+
+    private fun jsonToChannelInfo(json: JSONObject): ChannelInfo {
+        return Gson().fromJson(json.getString("channel_info"), ChannelInfo::class.java)
     }
 
     //This will be called due to session token change while playing content or after init of player

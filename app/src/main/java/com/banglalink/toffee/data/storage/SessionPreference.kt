@@ -420,6 +420,22 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getString(PREF_MQTT_TOPIC, "test") ?: ""
         set(value) = pref.edit { putString(PREF_MQTT_TOPIC, value) }
 
+    var isCastEnabled: Boolean
+        get() = pref.getBoolean(PREF_IS_CAST_ENABLED, false)
+        set(value) = pref.edit { putBoolean(PREF_IS_CAST_ENABLED, value) }
+
+    var isCastUrlOverride: Boolean
+        get() = pref.getBoolean(PREF_IS_CAST_URL_OVERRIDE, false)
+        set(value) = pref.edit { putBoolean(PREF_IS_CAST_URL_OVERRIDE, value) }
+
+    var castOverrideUrl: String
+        get() = pref.getString(PREF_CAST_OVERRIDE_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_CAST_OVERRIDE_URL, value) }
+
+    var castReceiverId: String
+        get() = pref.getString(PREF_CAST_RECEIVER_ID, "") ?: ""
+        set(value) = pref.edit { putString(PREF_CAST_RECEIVER_ID, value) }
+
 //    var uploadUri: String?
 //        get() = pref.getString("toffee-upload-uri", null)
 //        set(value) = pref.edit { putString("toffee-upload-uri", value) }
@@ -453,6 +469,11 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         isFireworkActive = customerInfoSignIn.isFireworkActive ?: "true"
         mqttHost = customerInfoSignIn.mqttUrl?.let { EncryptionUtil.encryptRequest(it) } ?: ""
         mqttIsActive = customerInfoSignIn.mqttIsActive == 1
+
+        isCastEnabled = customerInfoSignIn.isCastEnabled == 1
+        isCastUrlOverride = customerInfoSignIn.isCastUrlOverride == 1
+        castReceiverId = customerInfoSignIn.castReceiverId ?: ""
+        castOverrideUrl = customerInfoSignIn.castOverrideUrl ?: ""
     }
 
     companion object {
@@ -511,6 +532,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_MQTT_USER_NAME = "pref_mqtt_user_name"
         private const val PREF_MQTT_PASSWORD = "pref_mqtt_password"
         private const val PREF_MQTT_TOPIC = "pref_mqtt_topic"
+        private const val PREF_IS_CAST_ENABLED = "pref_is_cast_enabled"
+        private const val PREF_IS_CAST_URL_OVERRIDE = "pref_is_cast_url_override"
+        private const val PREF_CAST_RECEIVER_ID = "pref_cast_receiver_id"
+        private const val PREF_CAST_OVERRIDE_URL = "pref_cast_override_url"
 
         private const val PREF_NAME_IP_TV= "IP_TV"
 
