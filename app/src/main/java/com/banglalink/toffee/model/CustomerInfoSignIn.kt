@@ -58,4 +58,13 @@ class CustomerInfoSignIn:BodyResponse() {
     var isFireworkActive: String? = "true"
     var mqttIsActive: Int = 1
     var mqttUrl: String? = null
+
+    @SerializedName("isCastEnable")
+    var isCastEnabled: Int = 0
+    @SerializedName("castRecieverId")
+    var castReceiverId: String? = null
+    @SerializedName("isCastUrlOverride")
+    var isCastUrlOverride: Int = 0
+    @SerializedName("castOverrideUrl")
+    var castOverrideUrl: String? = null
 }
