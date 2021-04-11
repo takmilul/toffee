@@ -12,6 +12,7 @@
     <androidx.cardview.widget.CardView
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        app:cardBackgroundColor="@color/cardBgColor"
         app:cardCornerRadius="@dimen/pack_corner_radius"
         android:elevation="5dp"
         android:layout_margin="5dp"
@@ -19,20 +20,19 @@
         >
 
         <androidx.constraintlayout.widget.ConstraintLayout
-
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:layout_editor_absoluteX="1dp">
 
             <ImageView
-                android:contentDescription="@string/txt_badge_icon"
                 android:id="@+id/package_badge_icon"
                 loadImageFromUrlRounded="@{data.mobileLogo}"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="92dp"
+                android:layout_height="85dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
+                android:contentDescription="@string/txt_badge_icon"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/guideline4"
                 app:layout_constraintTop_toTopOf="parent"
@@ -51,10 +51,10 @@
                 tools:text="@string/free_trial" />
 
             <ImageView
-                android:contentDescription="@string/txt_check"
                 android:id="@+id/imageView3"
                 android:layout_width="@dimen/check_dimen"
                 android:layout_height="@dimen/check_dimen"
+                android:contentDescription="@string/txt_check"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_check" />
@@ -67,34 +67,34 @@
                 android:layout_marginTop="8dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:gravity="center"
-                tools:text="Enjoy 30 days of tv"
                 android:textColor="@color/main_text_color"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="@+id/package_name_tv"
-                app:layout_constraintTop_toBottomOf="@+id/package_name_tv" />
+                app:layout_constraintTop_toBottomOf="@+id/package_name_tv"
+                tools:text="Enjoy 30 days of tv" />
 
             <TextView
                 android:id="@+id/expiry_tv"
+                packageExpiryText="@{data}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:fontFamily="@font/roboto_medium"
                 android:gravity="center"
-                tools:text="24 days left"
-                packageExpiryText="@{data}"
                 android:textColor="@color/main_text_color"
                 android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="@id/package_description_tv"
-                app:layout_constraintTop_toBottomOf="@id/package_description_tv" />
+                app:layout_constraintTop_toBottomOf="@id/package_description_tv"
+                tools:text="24 days left" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="@dimen/guide_line_width_percent"
-                app:layout_constraintGuide_begin="230dp" />
+                app:layout_constraintGuide_begin="230dp"
+                app:layout_constraintGuide_percent="@dimen/guide_line_width_percent" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

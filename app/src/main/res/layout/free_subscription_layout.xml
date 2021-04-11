@@ -12,6 +12,7 @@
     <androidx.cardview.widget.CardView
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        app:cardBackgroundColor="@color/cardBgColor"
         app:cardCornerRadius="@dimen/pack_corner_radius"
         android:elevation="5dp"
         android:layout_margin="5dp"
@@ -28,8 +29,8 @@
                 android:contentDescription="@string/txt_badge_icon"
                 android:id="@+id/package_badge_icon"
                 loadImageFromUrl="@{data.mobileLogo}"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="92dp"
+                android:layout_height="85dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"

@@ -13,7 +13,15 @@ object MigrationProvider {
         }
     }
     
+    private val MIGRATION_2_3 = object : Migration(2,3) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("DROP TABLE IF EXISTS `reaction_status_item`")
+            database.execSQL("CREATE TABLE IF NOT EXISTS `ReactionStatusItem` (`contentId` INTEGER NOT NULL, `reactionType` INTEGER NOT NULL, `reactionCount` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `createTime` INTEGER NOT NULL, `updateTime` INTEGER NOT NULL)")
+            database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_ReactionStatusItem_contentId_reactionType` ON `ReactionStatusItem` (`contentId`, `reactionType`)")
+        }
+    }
+    
     fun getMigrationList(): List<Migration> {
-        return listOf(MIGRATION_1_2)
+        return listOf(MIGRATION_1_2, MIGRATION_2_3)
     }
 }

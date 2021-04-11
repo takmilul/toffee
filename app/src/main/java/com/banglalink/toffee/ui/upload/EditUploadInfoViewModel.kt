@@ -78,7 +78,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
         durationData.value = 0
         load()
 
-        ageGroup.value = listOf("For All", "3+", "9+", "13+", "18+")
+        ageGroup.value = listOf("For All", "3+", "9+", "13+")
         ageGroupPosition.value = 0
 
 //        challengeSelectionList.value = listOf("Select", "Music", "Movie", "Games", "TV Series")

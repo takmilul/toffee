@@ -56,7 +56,7 @@ class MyChannelVideosEditViewModel @Inject constructor(
                 exitFragment.value = true
             }
         }
-        ageGroup.value = listOf("For All", "3+", "9+", "13+", "18+")
+        ageGroup.value = listOf("For All", "3+", "9+", "13+")
         ageGroupPosition.value = 0
     }
 

@@ -132,7 +132,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             //sending pub-sub message
             val id = data["notificationId"]
             //Message Status Meaning : /*0=Delivered,1=open, 2=later */
-            PubSubMessageUtil.sendNotificationStatus(id, PUBSUBMessageStatus.DELIVERED);
+            PubSubMessageUtil.sendNotificationStatus(id, PUBSUBMessageStatus.DELIVERED)
 
         } catch (e: Exception) {
             Log.e(TAG, e.message, e)
@@ -200,11 +200,9 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             }
             thumbnailImage = thumbnailDrawable?.toBitmap(48, 48)
         }
-
-        val intent = Intent(
-            Intent.ACTION_VIEW,
-            Uri.parse(resourceUrl)
-        )
+        
+        val intent = resourceUrl?.let { Intent(Intent.ACTION_VIEW, Uri.parse(it)) } ?: Intent(Intent.ACTION_VIEW)
+        
         val pendingIntent = PendingIntent.getActivity(applicationContext, 0, intent, 0)
         val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_NAME)
 

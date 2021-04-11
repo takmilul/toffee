@@ -7,16 +7,17 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.map
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
+import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentLandingUserChannelsBinding
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.LandingPopularChannelCallback
-import com.banglalink.toffee.model.Category
-import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.MyChannelNavParams
-import com.banglalink.toffee.model.UserChannelInfo
+import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.common.UnSubscribeDialog
@@ -27,27 +28,26 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class LandingUserChannelsFragment : HomeBaseFragment() {
-    @Inject lateinit var cacheManager: CacheManager
-    private lateinit var mAdapterLanding: LandingUserChannelsListAdapter
+    @Inject lateinit var localSync: LocalSync
     private var categoryInfo: Category? = null
+    @Inject lateinit var cacheManager: CacheManager
     private var channelInfo: UserChannelInfo? = null
-    private val viewModel by activityViewModels<LandingPageViewModel>()
+    private lateinit var mAdapter: LandingUserChannelsListAdapter
     private var _binding: FragmentLandingUserChannelsBinding? = null
     private val binding get() = _binding!!
+    private val viewModel by activityViewModels<LandingPageViewModel>()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLandingUserChannelsBinding.inflate(inflater, container, false)
         return binding.root
     }
+    
     override fun onDestroyView() {
         binding.userChannelList.adapter = null
         super.onDestroyView()
         _binding = null
     }
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -55,13 +55,13 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
             CategoryDetailsFragment.ARG_CATEGORY_ITEM
         )
 
-        mAdapterLanding = LandingUserChannelsListAdapter(object : LandingPopularChannelCallback<UserChannelInfo> {
+        mAdapter = LandingUserChannelsListAdapter(object : LandingPopularChannelCallback<UserChannelInfo> {
             override fun onItemClicked(item: UserChannelInfo) {
                 homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channelOwnerId)
             }
 
             override fun onSubscribeButtonClicked(view: View, info: UserChannelInfo) {
-
+//                channelInfo = info
                 if (info.isSubscribed == 0) {
                     channelInfo = info.also { userChannelInfo ->
                         userChannelInfo.isSubscribed = 1
@@ -69,7 +69,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
                     }
 //                    subscriptionViewModel.setSubscriptionStatus(info.id, 1, info.channelOwnerId)
                     homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId), 1)
-                    mAdapterLanding.notifyItemRangeChanged(0, mAdapterLanding.itemCount, channelInfo)
+                    mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, channelInfo)
                 }
                 else {
                     UnSubscribeDialog.show(requireContext()){
@@ -79,7 +79,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
                         }
 //                        subscriptionViewModel.setSubscriptionStatus(info.id, 0, info.channelOwnerId)
                         homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId), -1)
-                        mAdapterLanding.notifyItemRangeChanged(0, mAdapterLanding.itemCount, channelInfo)
+                        mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, channelInfo)
                     }
                 }
             }
@@ -91,7 +91,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
 
         with(binding.userChannelList) {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            adapter = mAdapterLanding
+            adapter = mAdapter
         }
         /*val userChannelList = PagingData.from(listOf(
             UserChannelInfo(contentProviderName = "Channel"),
@@ -103,6 +103,7 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
             mAdapterLanding.submitData(userChannelList)
         }*/
         observeList()
+//        observeSubscribeChannel()
     }
 
     private fun observeList() {
@@ -114,19 +115,39 @@ class LandingUserChannelsFragment : HomeBaseFragment() {
                 viewModel.loadUserChannelsByCategory(categoryInfo!!)
             }
             content.collectLatest {
-                mAdapterLanding.submitData(it)
+                mAdapter.submitData(it.map { userChannelInfo ->
+                    localSync.syncUserChannel(userChannelInfo)
+                    userChannelInfo
+                })
             }
         }
-
-        /*observe(subscriptionViewModel.subscriptionResponse) {
-            if(it is Resource.Success) {
-                cacheManager.clearSubscriptionCache()
-                mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, channelInfo)
-            }
-            else requireContext().showToast("Failed to subscribe channel")
-        }*/
     }
 
+    private fun observeSubscribeChannel() {
+        observe(homeViewModel.subscriptionLiveData) { response ->
+            when(response) {
+                is Resource.Success -> {
+                    channelInfo?.let {
+                        val status = response.data.isSubscribed.takeIf { it == 1 } ?: -1
+                        if(response.data.isSubscribed == 1) {
+                            it.isSubscribed = 1
+                            ++ it.subscriberCount
+                        }
+                        else {
+                            it.isSubscribed = 0
+                            -- it.subscriberCount
+                        }
+                        mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, channelInfo)
+                        homeViewModel.updateSubscriptionCountTable(SubscriptionInfo(null, it.channelOwnerId, mPref.customerId), status)
+                    }
+                }
+                is Resource.Failure -> {
+                    requireContext().showToast(response.error.msg)
+                }
+            }
+        }
+    }
+    
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
 
     }

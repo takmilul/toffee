@@ -52,7 +52,7 @@ class DownloadShareCountDb(
 
     private suspend fun updateDb() {
         ToffeeAnalytics.logBreadCrumb("Updating share count db")
-        shareCountRepository.insert(*shareCountList.toTypedArray())
+        shareCountRepository.insertAll(*shareCountList.toTypedArray())
         ToffeeAnalytics.logBreadCrumb("Share count db updated")
     }
 }
