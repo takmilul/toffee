@@ -4,13 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import androidx.paging.filter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentSubscribedChannelsBinding
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.listeners.LandingPopularChannelCallback
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
@@ -79,6 +83,18 @@ class SubscribedChannelsFragment : HomeBaseFragment() {
 
             }
         })
+
+        mAdapter.addLoadStateListener {
+            mAdapter.apply {
+                val showEmpty = itemCount <= 0 && ! it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
+                if (showEmpty) {
+                    binding.noChannelTv.show()
+                }
+                else{
+                    binding.noChannelTv.hide()
+                }
+            }
+        }
 
         with(binding.subscribedChannelList) {
             layoutManager = LinearLayoutManager(context)

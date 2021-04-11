@@ -31,6 +31,7 @@ import com.banglalink.toffee.model.SeriesPlaybackInfo
 import com.banglalink.toffee.ui.common.*
 import com.banglalink.toffee.ui.home.ChannelHeaderAdapter
 import com.banglalink.toffee.ui.player.AddToPlaylistData
+import com.banglalink.toffee.ui.report.ReportPopupFragment
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.ui.widget.MyPopupWindow
 import com.suke.widget.SwitchButton
@@ -313,6 +314,16 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
                     homeViewModel.updateFavorite(channelInfo).observe(viewLifecycleOwner, { resp->
                         handleFavoriteResponse(resp)
                     })
+                    return@setOnMenuItemClickListener true
+                }
+                R.id.menu_report -> {
+                    val fragment =
+                        channelInfo.duration?.let { durations ->
+                            ReportPopupFragment.newInstance(-1,
+                                durations, channelInfo.id
+                            )
+                        }
+                    fragment?.show(requireActivity().supportFragmentManager, "report_video")
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_not_interested->{

@@ -79,6 +79,22 @@
             tools:listitem="@layout/list_all_subscribed_channels"
             />
 
+        <TextView
+            android:id="@+id/no_channel_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="You are not subscribe any channel yet"
+            android:textAlignment="center"
+            android:textColor="@color/fixed_second_main_text_color"
+            android:textSize="16sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/guideline"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/number_of_subscription"
+            app:layout_constraintVertical_bias="0.35000002"
+            tools:visibility="visible" />
+
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"
             android:layout_width="wrap_content"
