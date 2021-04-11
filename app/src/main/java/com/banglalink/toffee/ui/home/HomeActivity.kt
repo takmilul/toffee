@@ -59,7 +59,7 @@ import com.banglalink.toffee.ui.player.PlaylistItem
 import com.banglalink.toffee.ui.player.PlaylistManager
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.splash.SplashScreenActivity
-import com.banglalink.toffee.ui.subscription.PackageListActivity
+import com.banglalink.toffee.ui.subscription.PackageListFragment
 import com.banglalink.toffee.ui.upload.UploadProgressViewModel
 import com.banglalink.toffee.ui.upload.UploadStateManager
 import com.banglalink.toffee.ui.upload.UploadStatus
@@ -479,7 +479,8 @@ class HomeActivity :
 
 //                R.id.menu_all_tv_channel,
                 R.id.menu_favorites,
-                R.id.menu_settings
+                R.id.menu_settings,
+                R.id.menu_subscriptions
             ),
             binding.drawerLayout
         )
@@ -489,6 +490,9 @@ class HomeActivity :
         binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
         binding.sideNavigation.setupWithNavController(navController)
         binding.tabNavigator.setupWithNavController(navController)
+//        binding.tabNavigator.setOnNavigationItemReselectedListener {
+//
+//        }
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.bottomAppBar) { _, insets ->
             insets.consumeSystemWindowInsets()
@@ -814,7 +818,10 @@ class HomeActivity :
 
     private fun showSubscribePackDialog(){
         showSubscriptionDialog(this) {
-            launchActivity<PackageListActivity>()
+//            launchActivity<PackageListFragment>()
+            if(navController.currentDestination?.id != R.id.menu_subscriptions) {
+                navController.navigate(R.id.menu_subscriptions)
+            }
         }
     }
 

@@ -32,8 +32,8 @@
             <ImageView
                 android:id="@+id/package_badge_icon"
                 loadImageFromUrlRounded="@{data.mobileLogo}"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="92dp"
+                android:layout_height="85dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 app:layout_constraintStart_toStartOf="@+id/guideline3"

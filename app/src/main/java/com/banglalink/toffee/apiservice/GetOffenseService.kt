@@ -8,7 +8,7 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.OffenseType
 import javax.inject.Inject
 
-class GetOffenseTypes @Inject constructor(
+class GetOffenseService @Inject constructor(
     private val toffeeApi: ToffeeApi,
     private val preference: SessionPreference,
 ): BaseApiService<OffenseType> {

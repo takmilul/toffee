@@ -50,12 +50,12 @@
             android:label="@string/confirm_purchase"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ui.subscription.PackageListActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:label="@string/subscriptions"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+<!--        <activity-->
+<!--            android:name=".ui.subscription.PackageListActivity"-->
+<!--            android:configChanges="orientation|screenSize|keyboardHidden"-->
+<!--            android:label="@string/subscriptions"-->
+<!--            android:screenOrientation="portrait"-->
+<!--            android:theme="@style/AppTheme.NoActionBar" />-->
         <activity
             android:name=".ui.subscription.MySubscriptionActivity"
             android:label="@string/subscriptions"

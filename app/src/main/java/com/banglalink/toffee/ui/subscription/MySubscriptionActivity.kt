@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.Toolbar
 import com.banglalink.toffee.R
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MySubscriptionActivity : AppCompatActivity() {
 
     private val toolbar by lazy {
