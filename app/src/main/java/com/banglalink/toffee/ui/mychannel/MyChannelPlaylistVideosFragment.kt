@@ -322,7 +322,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
         }
         
         popupMenu.menu.findItem(R.id.menu_share).isVisible = channelInfo.isApproved == 1
-        popupMenu.menu.findItem(R.id.menu_report).isVisible = false
+        popupMenu.menu.findItem(R.id.menu_report).isVisible = mPref.customerId != channelInfo.channel_owner_id
         popupMenu.setOnMenuItemClickListener {
             when (it?.itemId) {
                 R.id.menu_share -> {
