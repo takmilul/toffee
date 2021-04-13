@@ -17,8 +17,10 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class PackageListFragment: BaseFragment(), PackageCallBack {
-    private lateinit var binding: ActivitySubscribePackageListBinding
+    private var _binding: ActivitySubscribePackageListBinding? = null
     private val viewModel by viewModels<PackageListViewModel>()
+
+    private val binding get() = _binding!!
 
     private val mAdapter:PackageListAdapter by unsafeLazy {
         PackageListAdapter(this){
@@ -33,19 +35,25 @@ class PackageListFragment: BaseFragment(), PackageCallBack {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = ActivitySubscribePackageListBinding.inflate(inflater, container, false)
+        _binding = ActivitySubscribePackageListBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        binding.list.adapter = null
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         if(mPref.isSubscriptionActive != "true") {
-            binding.alwaysFree.root.visibility = View.VISIBLE
-            binding.list.visibility = View.GONE
+            binding.root.visibility = View.GONE
+//            binding.list.visibility = View.GONE
         } else {
             binding.list.visibility = View.VISIBLE
-            binding.alwaysFree.root.visibility = View.GONE
+//            binding.alwaysFree.root.visibility = View.GONE
             binding.list.apply {
                 adapter = mAdapter
             }
