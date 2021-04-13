@@ -15,10 +15,10 @@ import com.banglalink.toffee.usecase.SubscriptionCountData
 import com.banglalink.toffee.util.EncryptionUtil
 import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.Default
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
 import javax.inject.Inject
@@ -39,6 +39,10 @@ class ToffeeMqttService @Inject constructor(
     private val shareList = arrayListOf<ShareData>()
     private val reactionList = arrayListOf<ReactionData>()
     private val subscriptionList = arrayListOf<SubscriptionCountData>()
+    private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val shareListMutex = Mutex()
+    private val reactionListMutex = Mutex()
+    private val subscribeListMutex = Mutex()
     
     fun initialize() {
         try {
@@ -61,31 +65,41 @@ class ToffeeMqttService @Inject constructor(
     }
     
     fun startScheduler(){
-        CoroutineScope(Default).launch {
-            while (true)
+        coroutineScope.launch {
+            while (isActive) {
                 startDbBatchUpdate()
+            }
         }
     }
     
     private suspend fun startDbBatchUpdate() {
         delay(10_000)
-        if (shareList.isNotEmpty()) {
-            shareList.forEach {
-                shareCountRepository.updateShareCount(it.contentId.toInt(), 1)
+
+        shareListMutex.withLock {
+            if (shareList.isNotEmpty()) {
+                shareList.forEach {
+                    shareCountRepository.updateShareCount(it.contentId.toInt(), 1)
+                }
+                shareList.clear()
             }
-            shareList.clear()
         }
-        if (subscriptionList.isNotEmpty()) {
-            subscriptionList.forEach {
-                subscriptionCountRepository.updateSubscriptionCount(it.channelId, it.status)
+
+        subscribeListMutex.withLock {
+            if (subscriptionList.isNotEmpty()) {
+                subscriptionList.forEach {
+                    subscriptionCountRepository.updateSubscriptionCount(it.channelId, it.status)
+                }
+                subscriptionList.clear()
             }
-            subscriptionList.clear()
         }
-        if (reactionList.isNotEmpty()) {
-            reactionList.forEach {
-                reactionStatusRepository.updateReaction(it.contentId, it.reactionType, it.reactionStatus)
+
+        reactionListMutex.withLock {
+            if (reactionList.isNotEmpty()) {
+                reactionList.forEach {
+                    reactionStatusRepository.updateReaction(it.contentId, it.reactionType, it.reactionStatus)
+                }
+                reactionList.clear()
             }
-            reactionList.clear()
         }
     }
     
@@ -141,19 +155,31 @@ class ToffeeMqttService @Inject constructor(
                     REACTION_TOPIC -> {
                         val data = gson!!.fromJson(jsonString, ReactionData::class.java)
                         if (data != null && data.customerId != mPref.customerId) {
-                            reactionList.add(data)
+                            coroutineScope.launch {
+                                reactionListMutex.withLock {
+                                    reactionList.add(data)
+                                }
+                            }
                         }
                     }
                     SHARE_COUNT_TOPIC -> {
                         val data = gson!!.fromJson(jsonString, ShareData::class.java)
                         if (data != null) {
-                            shareList.add(data)
+                            coroutineScope.launch {
+                                shareListMutex.withLock {
+                                    shareList.add(data)
+                                }
+                            }
                         }
                     }
                     SUBSCRIPTION_TOPIC -> {
                         val data = gson!!.fromJson(jsonString, SubscriptionCountData::class.java)
                         if (data != null && data.subscriberId != mPref.customerId){
-                            subscriptionList.add(data)
+                            coroutineScope.launch {
+                                subscribeListMutex.withLock {
+                                    subscriptionList.add(data)
+                                }
+                            }
                         }
                     }
                 }
@@ -185,6 +211,8 @@ class ToffeeMqttService @Inject constructor(
             it.disconnect()
         }
         client = null
+
+        // TODO: Lock the list if using destroy
         shareList.clear()
         reactionList.clear()
         subscriptionList.clear()
