@@ -36,6 +36,7 @@ import com.banglalink.toffee.ui.about.AboutActivity
 import com.banglalink.toffee.ui.common.*
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
+import com.banglalink.toffee.ui.report.ReportPopupFragment
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -182,6 +183,16 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
                         homeViewModel.updateFavorite(item).observe(viewLifecycleOwner, Observer {
                             handleFavoriteResponse(it)
                         })
+                    }
+                    R.id.menu_report -> {
+                        val fragment =
+                            item.duration?.let { durations ->
+                                ReportPopupFragment.newInstance(-1,
+                                    durations, item.id
+                                )
+                            }
+                        fragment?.show(requireActivity().supportFragmentManager, "report_video")
+                        return@setOnMenuItemClickListener true
                     }
                     R.id.menu_delete_content -> {
                         showDeleteVideoDialog(item.id.toInt())

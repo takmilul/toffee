@@ -14,6 +14,7 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.home.HomeViewModel
+import com.banglalink.toffee.ui.report.ReportPopupFragment
 import com.banglalink.toffee.ui.widget.MyPopupWindow
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -92,6 +93,16 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
                     homeViewModel.updateFavorite(channelInfo).observe(viewLifecycleOwner, { resp->
                         handleFavoriteResponse(resp)
                     })
+                    return@setOnMenuItemClickListener true
+                }
+                R.id.menu_report -> {
+                    val fragment =
+                        channelInfo.duration?.let { durations ->
+                            ReportPopupFragment.newInstance(-1,
+                                durations, channelInfo.id
+                            )
+                        }
+                    fragment?.show(requireActivity().supportFragmentManager, "report_video")
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_not_interested->{

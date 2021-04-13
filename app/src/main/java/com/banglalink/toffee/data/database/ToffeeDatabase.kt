@@ -23,7 +23,7 @@ import com.banglalink.toffee.data.database.entities.*
         SubscriptionInfo::class,
         ShareCount::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = false)
 
 abstract class ToffeeDatabase: RoomDatabase() {

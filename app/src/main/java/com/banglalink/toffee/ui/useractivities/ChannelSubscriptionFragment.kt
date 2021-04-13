@@ -4,16 +4,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListFragment
-import com.banglalink.toffee.common.paging.BasePagingDataAdapter
-import com.banglalink.toffee.common.paging.BasePagingViewModel
-import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.ui.common.SingleListFragmentV2
-import com.banglalink.toffee.ui.subscription.PackageListActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -56,7 +49,7 @@ class ChannelSubscriptionFragment
     }
 
     override fun onSubscribeClicked(item: ChannelInfo) {
-        activity?.launchActivity<PackageListActivity>()
+//        activity?.launchActivity<PackageListFragment>()
     }
 
     override fun onNotificationBellClicked(item: ChannelInfo, pos: Int) {

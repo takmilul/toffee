@@ -245,15 +245,15 @@ class DrawerHelper(
 //                }
 //                binding.drawerLayout.closeDrawers()
 //            }
-            /*R.id.menu_subscriptions -> {
-                binding.drawerLayout.closeDrawers()
-                if (mPref.isSubscriptionActive == "true") {
-                    activity.launchActivity<PackageListActivity>()
-                } else {
-                    activity.launchActivity<MySubscriptionActivity>()
-                }
-                return true
-            }*/
+//            R.id.menu_subscriptions -> {
+//                binding.drawerLayout.closeDrawers()
+//                if (mPref.isSubscriptionActive == "true") {
+//                    activity.launchActivity<PackageListActivity>()
+//                } else {
+//                    activity.launchActivity<MySubscriptionActivity>()
+//                }
+//                return true
+//            }
             R.id.ic_menu_internet_packs -> {
                 binding.drawerLayout.closeDrawers()
                 activity.launchActivity<Html5PlayerViewActivity> {

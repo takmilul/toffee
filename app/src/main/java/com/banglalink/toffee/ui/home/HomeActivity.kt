@@ -46,6 +46,7 @@ import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.*
+import com.banglalink.toffee.mqttservice.ToffeeMqttService
 import com.banglalink.toffee.ui.category.drama.EpisodeListFragment
 import com.banglalink.toffee.ui.channels.AllChannelsViewModel
 import com.banglalink.toffee.ui.channels.ChannelFragmentNew
@@ -58,13 +59,14 @@ import com.banglalink.toffee.ui.player.PlaylistItem
 import com.banglalink.toffee.ui.player.PlaylistManager
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.splash.SplashScreenActivity
-import com.banglalink.toffee.ui.subscription.PackageListActivity
+import com.banglalink.toffee.ui.subscription.PackageListFragment
 import com.banglalink.toffee.ui.upload.UploadProgressViewModel
 import com.banglalink.toffee.ui.upload.UploadStateManager
 import com.banglalink.toffee.ui.upload.UploadStatus
 import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.ui.widget.showSubscriptionDialog
+import com.banglalink.toffee.util.EncryptionUtil
 import com.banglalink.toffee.util.InAppMessageParser
 import com.banglalink.toffee.util.Utils
 import com.google.android.exoplayer2.util.Util
@@ -104,6 +106,7 @@ class HomeActivity :
     @Inject lateinit var notificationRepo: NotificationInfoRepository
     @Inject lateinit var uploadManager: UploadStateManager
     @Inject lateinit var cacheManager: CacheManager
+    @Inject lateinit var mqttService: ToffeeMqttService
     private var channelOwnerId: Int = 0
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private var notificationBadge: View? = null
@@ -155,7 +158,9 @@ class HomeActivity :
         binding.uploadButton.setOnClickListener {
             if (showUploadDialog()) return@setOnClickListener
         }
-
+        
+        initMqtt()
+        
         observe(viewModel.fragmentDetailsMutableLiveData) {
             onDetailsFragmentLoad(it)
         }
@@ -294,7 +299,38 @@ class HomeActivity :
         watchConnectionChange()
         observeMyChannelNavigation()
     }
-
+    
+    private fun initMqtt() {
+        if (mPref.mqttHost.isBlank() || mPref.mqttClientId.isBlank() || mPref.mqttUserName.isBlank() || mPref.mqttPassword.isBlank()) {
+            observe(viewModel.mqttCredentialLiveData) {
+                when (it) {
+                    is Resource.Success -> {
+                        it.data?.let { data ->
+                            mPref.mqttIsActive = data.mqttIsActive == 1
+                            mPref.mqttHost = EncryptionUtil.encryptRequest(data.mqttUrl)
+                            mPref.mqttClientId = EncryptionUtil.encryptRequest(data.mqttUserId)
+                            mPref.mqttUserName = EncryptionUtil.encryptRequest(data.mqttUserId)
+                            mPref.mqttPassword = EncryptionUtil.encryptRequest(data.mqttPassword)
+                        
+                            if (mPref.mqttIsActive) {
+                                mqttService.initialize()
+                            }
+                        }
+                    }
+                    is Resource.Failure -> {
+                        Log.e("MQTT_", "onCreate: ${it.error.msg}")
+                    }
+                }
+            }
+            viewModel.getMqttCredential()
+        }
+        else {
+            if (mPref.mqttIsActive) {
+                mqttService.initialize()
+            }
+        }
+    }
+    
     fun showUploadDialog(): Boolean {
         if (mPref.hasChannelLogo() && mPref.hasChannelName()){
             if (navController.currentDestination?.id == R.id.uploadMethodFragment) {
@@ -443,7 +479,8 @@ class HomeActivity :
 
 //                R.id.menu_all_tv_channel,
                 R.id.menu_favorites,
-                R.id.menu_settings
+                R.id.menu_settings,
+                R.id.menu_subscriptions
             ),
             binding.drawerLayout
         )
@@ -453,6 +490,9 @@ class HomeActivity :
         binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
         binding.sideNavigation.setupWithNavController(navController)
         binding.tabNavigator.setupWithNavController(navController)
+//        binding.tabNavigator.setOnNavigationItemReselectedListener {
+//
+//        }
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.bottomAppBar) { _, insets ->
             insets.consumeSystemWindowInsets()
@@ -778,7 +818,10 @@ class HomeActivity :
 
     private fun showSubscribePackDialog(){
         showSubscriptionDialog(this) {
-            launchActivity<PackageListActivity>()
+//            launchActivity<PackageListFragment>()
+            if(navController.currentDestination?.id != R.id.menu_subscriptions) {
+                navController.navigate(R.id.menu_subscriptions)
+            }
         }
     }
 
@@ -1095,7 +1138,12 @@ class HomeActivity :
         binding.draggableView.resetImmediately()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
-
+    
+    override fun onDestroy() {
+//        mqttService.destroy()
+        super.onDestroy()
+    }
+    
     fun handleExitApp() {
         AlertDialog.Builder(this, R.style.AlertDialogTheme)
             .setMessage(String.format(EXIT_FROM_APP_MSG, getString(R.string.app_name)))

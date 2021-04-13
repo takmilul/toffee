@@ -4,35 +4,52 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     android:background="@color/screen_bg">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
-        <com.google.android.material.appbar.AppBarLayout
+        <TextView
+            android:id="@+id/tv_sub_tv"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                style="@style/CustomToolBarStyle"/>
-        </com.google.android.material.appbar.AppBarLayout>
-
+            android:layout_height="wrap_content"
+            android:text="TV Subscriptions"
+            style="@style/SectionTitleTextStyle"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="16dp"
+            android:textColor="@color/main_text_color"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
 
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:layout_marginStart="@dimen/activity_horizontal_margin"
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/activity_horizontal_margin"
             android:id="@+id/list">
         </androidx.recyclerview.widget.RecyclerView>
 
+        <pl.droidsonroids.gif.GifImageView
+            android:id="@+id/progress_bar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:elevation="2dp"
+            android:visibility="gone"
+            android:src="@drawable/content_loader"
+            android:background="@drawable/gif_round_border"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/listview" />
 
+        <include android:id="@+id/always_free"
+            layout="@layout/always_free_trial_layout" />
 
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

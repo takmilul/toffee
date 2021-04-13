@@ -22,12 +22,16 @@ import com.banglalink.toffee.data.repository.SubscriptionCountRepository
 import com.banglalink.toffee.data.repository.SubscriptionInfoRepository
 import com.banglalink.toffee.databinding.FragmentEpisodeListBinding
 import com.banglalink.toffee.enums.Reaction.Love
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
+import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.SeriesPlaybackInfo
 import com.banglalink.toffee.ui.common.*
 import com.banglalink.toffee.ui.home.ChannelHeaderAdapter
 import com.banglalink.toffee.ui.player.AddToPlaylistData
+import com.banglalink.toffee.ui.report.ReportPopupFragment
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.ui.widget.MyPopupWindow
 import com.suke.widget.SwitchButton
@@ -95,6 +99,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
         setupHeader()
         setupList()
         observeListState()
+//        observeSubscribeChannel()
     }
 
     private fun setSubscriptionStatus() {
@@ -102,8 +107,8 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
             currentItem?.let {
                 isSubscribed = if(subscriptionInfoRepository.getSubscriptionInfoByChannelId(it.channel_owner_id, mPref.customerId) != null) 1 else 0
                 subscriberCount = subscriptionCountRepository.getSubscriberCount(it.channel_owner_id)
-                it.isSubscribed = isSubscribed
-                it.subscriberCount = subscriberCount.toInt()
+                it.isSubscribed = if(subscriptionInfoRepository.getSubscriptionInfoByChannelId(it.channel_owner_id, mPref.customerId) != null) 1 else 0
+                it.subscriberCount = subscriptionCountRepository.getSubscriberCount(it.channel_owner_id).toInt()
                 detailsAdapter?.notifyDataSetChanged()
             }
         }
@@ -252,6 +257,31 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
         }
     }
 
+    private fun observeSubscribeChannel() {
+        observe(homeViewModel.subscriptionLiveData) { response ->
+            when(response) {
+                is Resource.Success -> {
+                    currentItem?.let {
+                        val status = response.data.isSubscribed.takeIf { it == 1 } ?: -1
+                        if (response.data.isSubscribed == 1) {
+                            it.isSubscribed = 1
+                            ++ it.subscriberCount
+                        }
+                        else {
+                            it.isSubscribed = 0
+                            -- it.subscriberCount
+                        }
+                        mAdapter.notifyDataSetChanged()
+                        homeViewModel.updateSubscriptionCountTable(SubscriptionInfo(null, it.channel_owner_id, mPref.customerId), status)
+                    }
+                }
+                is Resource.Failure -> {
+                    requireContext().showToast(response.error.msg)
+                }
+            }
+        }
+    }
+    
     override fun onProviderIconClicked(item: ChannelInfo) {
         super.onProviderIconClicked(item)
         homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
@@ -284,6 +314,16 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
                     homeViewModel.updateFavorite(channelInfo).observe(viewLifecycleOwner, { resp->
                         handleFavoriteResponse(resp)
                     })
+                    return@setOnMenuItemClickListener true
+                }
+                R.id.menu_report -> {
+                    val fragment =
+                        channelInfo.duration?.let { durations ->
+                            ReportPopupFragment.newInstance(-1,
+                                durations, channelInfo.id
+                            )
+                        }
+                    fragment?.show(requireActivity().supportFragmentManager, "report_video")
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_not_interested->{

@@ -15,6 +15,7 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.home.HomeViewModel
+import com.banglalink.toffee.ui.report.ReportPopupFragment
 import com.banglalink.toffee.ui.widget.MyPopupWindow
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -74,6 +75,16 @@ class FavoriteFragment : BaseListFragment<ChannelInfo>(), ProviderIconCallback<C
                     homeViewModel.updateFavorite(channelInfo).observe(viewLifecycleOwner, Observer {
                         handleFavoriteResponse(it)
                     })
+                    return@setOnMenuItemClickListener true
+                }
+                R.id.menu_report -> {
+                    val fragment =
+                        channelInfo.duration?.let { durations ->
+                            ReportPopupFragment.newInstance(-1,
+                                durations, channelInfo.id
+                            )
+                        }
+                    fragment?.show(requireActivity().supportFragmentManager, "report_video")
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_not_interested->{

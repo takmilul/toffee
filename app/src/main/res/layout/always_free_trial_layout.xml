@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/freetrial_cv"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    app:cardBackgroundColor="@color/cardBgColor"
+    app:cardCornerRadius="@dimen/pack_corner_radius"
+    android:elevation="5dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginBottom="5dp"
+    >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="1dp">
+
+        <ImageView
+            android:contentDescription="@string/txt_badge_icon"
+            android:id="@+id/package_badge_icon"
+            android:layout_width="92dp"
+            android:layout_height="85dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline4"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_free_package" />
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="@dimen/check_dimen"
+            android:layout_height="@dimen/check_dimen"
+            android:contentDescription="@string/txt_check"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_check" />
+
+        <TextView
+            android:id="@+id/package_name_tv"
+            style="@style/subscription_pack_header_style"
+            android:layout_width="0dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/free_trial"
+            app:layout_constraintEnd_toStartOf="@+id/guideline4"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintTop_toTopOf="@+id/package_badge_icon" />
+
+        <TextView
+            android:id="@+id/package_description_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:gravity="center"
+            android:text="@string/free_trial_text"
+            android:textColor="@drawable/text_selector2"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@+id/package_name_tv"
+            app:layout_constraintTop_toBottomOf="@+id/package_name_tv" />
+
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="@dimen/guide_line_width_percent"
+            app:layout_constraintGuide_begin="230dp" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
