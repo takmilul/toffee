@@ -33,7 +33,7 @@ class SubscribedChannelsFragment : HomeBaseFragment() {
     private var subscribedChannelInfo: UserChannelInfo? = null
     private var _binding: FragmentSubscribedChannelsBinding ? = null
     private val binding get() = _binding!!
-    private val viewModel by viewModels<SubscripedChannelFragmentViewModel>()
+    private val viewModel by viewModels<SubscribedChannelFragmentViewModel>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSubscribedChannelsBinding.inflate(inflater, container, false)

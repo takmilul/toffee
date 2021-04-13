@@ -7,7 +7,7 @@
     <data>
         <variable
             name="data"
-            type="com.banglalink.toffee.ui.subscription.SubscripedChannelFragmentViewModel" />
+            type="com.banglalink.toffee.ui.subscription.SubscribedChannelFragmentViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
