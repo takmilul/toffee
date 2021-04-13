@@ -22,8 +22,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-private const val CLIENT_ID = "9e320da50f69212461fd9528a6b3e6f6758537187097720fe71cf0b3f867415d"
-
 @AndroidEntryPoint
 class LandingPageFragment : HomeBaseFragment(), FwSDK.SdkStatusListener {
     private var appbarOffset = 0
@@ -33,6 +31,8 @@ class LandingPageFragment : HomeBaseFragment(), FwSDK.SdkStatusListener {
     private val binding get() = _binding!!
 
     companion object {
+        private const val CLIENT_ID = "9e320da50f69212461fd9528a6b3e6f6758537187097720fe71cf0b3f867415d"
+        
         fun newInstance(): LandingPageFragment {
             return LandingPageFragment()
         }
