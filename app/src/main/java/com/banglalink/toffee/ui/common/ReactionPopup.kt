@@ -105,33 +105,33 @@ class ReactionPopup: Fragment() {
 
     private fun react(reaction: Reaction, reactIcon: Int) {
         reactionPopupWindow?.dismiss()
-        channelInfo?.let {
+        channelInfo?.let { info ->
             lifecycleScope.launchWhenStarted {
-                val previousReactionInfo = reactionDao.getReactionByContentId(preference.customerId, channelInfo!!.id.toLong())
-                val newReactionInfo = ReactionInfo(null, preference.customerId, channelInfo!!.id.toLong(), reaction.value)
-                var reactionCount = channelInfo!!.reaction?.run {
+                val previousReactionInfo = reactionDao.getReactionByContentId(preference.customerId, info.id.toLong())
+                val newReactionInfo = ReactionInfo(null, preference.customerId, info.id.toLong(), reaction.value)
+                var reactionCount = info.reaction?.run {
                     like + love + haha + wow + sad + angry
                 } ?: 0L
                 var reactionText = reaction.name
                 var reactionIcon = reactIcon
 
-                channelInfo!!.myReaction = previousReactionInfo?.let {
+                info.myReaction = previousReactionInfo?.let {
                     if (it.reactionType == newReactionInfo.reactionType) {
                         reactionText = "React"
                         reactionIcon = R.drawable.ic_reaction_love_empty
                         mViewModel.removeReaction(it)
-                        mViewModel.insertActivity(preference.customerId, channelInfo!!, REACTION_REMOVED.value, reaction.value)
+                        mViewModel.insertActivity(preference.customerId, info, REACTION_REMOVED.value, reaction.value)
                         None.value
                     }
                     else {
                         reactionCount++
                         mViewModel.updateReaction(newReactionInfo, it)
-                        mViewModel.insertActivity(preference.customerId, channelInfo!!, REACTION_CHANGED.value, reaction.value)
+                        mViewModel.insertActivity(preference.customerId, info, REACTION_CHANGED.value, reaction.value)
                         reaction.value
                     }
                 } ?: run {
                     mViewModel.insertReaction(newReactionInfo)
-                    mViewModel.insertActivity(preference.customerId, channelInfo!!, REACTED.value, reaction.value)
+                    mViewModel.insertActivity(preference.customerId, info, REACTED.value, reaction.value)
                     reactionCount++
                     reaction.value
                 }
