@@ -48,8 +48,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/listview" />
 
-        <include android:id="@+id/always_free"
-            layout="@layout/always_free_trial_layout" />
+<!--        <include android:id="@+id/always_free"-->
+<!--            layout="@layout/always_free_trial_layout" />-->
 
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.apiservice.ContentUpload
 import com.banglalink.toffee.apiservice.GetCategories
+import com.banglalink.toffee.apiservice.GetContentCategories
 import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -32,7 +33,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
     private val uploadRepo: UploadInfoRepository,
     private val contentUploadApi: ContentUpload,
     private val preference: SessionPreference,
-    private val categoryApi: GetCategories,
+    private val categoryApi: GetContentCategories,
     @Assisted private val uploadFileUri: String
 ) : ViewModel() {
 

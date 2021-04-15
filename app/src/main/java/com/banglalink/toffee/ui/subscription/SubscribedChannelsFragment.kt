@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
@@ -29,23 +28,14 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class SubscribedChannelsFragment : HomeBaseFragment() {
 
-    @Inject
-    lateinit var cacheManager: CacheManager
+    @Inject lateinit var cacheManager: CacheManager
     private lateinit var mAdapter: AllSubscribedChannelAdapter
-    private val viewModel by viewModels<SubscripedChannelFragmentViewModel>()
+    private var subscribedChannelInfo: UserChannelInfo? = null
     private var _binding: FragmentSubscribedChannelsBinding ? = null
     private val binding get() = _binding!!
-    private var subscribedChannelInfo: UserChannelInfo? = null
+    private val viewModel by viewModels<SubscribedChannelFragmentViewModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSubscribedChannelsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -80,7 +70,6 @@ class SubscribedChannelsFragment : HomeBaseFragment() {
                         mAdapter.refresh()
                     }
                 }
-
             }
         })
 
@@ -88,10 +77,14 @@ class SubscribedChannelsFragment : HomeBaseFragment() {
             mAdapter.apply {
                 val showEmpty = itemCount <= 0 && ! it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
                 if (showEmpty) {
+                    binding.tvSubTv.hide()
                     binding.noChannelTv.show()
+                    binding.subscribedChannelList.hide()
                 }
                 else{
+                    binding.tvSubTv.show()
                     binding.noChannelTv.hide()
+                    binding.subscribedChannelList.show()
                 }
             }
         }
@@ -106,12 +99,10 @@ class SubscribedChannelsFragment : HomeBaseFragment() {
     private fun observeList() {
         lifecycleScope.launchWhenStarted {
             val content = viewModel.loadUserChannels().map{
-                it.filter { item -> item.isSubscribed==1
-                }
+                it.filter { item -> item.isSubscribed==1 }
             }
             content.collectLatest {
                 mAdapter.submitData(it)
-
             }
             binding.numberOfSubscription.setText(mAdapter.itemCount)
         }
@@ -120,6 +111,4 @@ class SubscribedChannelsFragment : HomeBaseFragment() {
     override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
         TODO("Not yet implemented")
     }
-
-
 }
