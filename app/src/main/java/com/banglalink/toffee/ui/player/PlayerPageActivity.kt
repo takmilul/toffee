@@ -88,7 +88,7 @@ abstract class PlayerPageActivity :
     private var playerAnalyticsListener: PlayerAnalyticsListener? = null
     private var defaultCookieManager = CookieManager()
 
-    private var castContext: CastContext? = null
+    protected var castContext: CastContext? = null
     private var sessionManager: SessionManager? = null
 
     private var exoPlayer: SimpleExoPlayer? = null

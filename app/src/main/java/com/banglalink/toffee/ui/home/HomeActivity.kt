@@ -69,6 +69,7 @@ import com.banglalink.toffee.ui.widget.showSubscriptionDialog
 import com.banglalink.toffee.util.EncryptionUtil
 import com.banglalink.toffee.util.InAppMessageParser
 import com.banglalink.toffee.util.Utils
+import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.util.Util
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.switchmaterial.SwitchMaterial
@@ -529,6 +530,12 @@ class HomeActivity :
 
     override fun resetPlayer() {
         binding.playerView.setPlayer(player)
+        if(player is CastPlayer) {
+            val deviceName = castContext?.sessionManager?.currentCastSession?.castDevice?.friendlyName
+            binding.playerView.showCastingText(true, deviceName)
+        } else {
+            binding.playerView.showCastingText(false)
+        }
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {

@@ -169,6 +169,19 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         }
     }
 
+    fun showCastingText(show: Boolean, deviceName: String? = null) {
+        if(show) {
+            binding.controllerBg.visibility = View.VISIBLE
+            binding.textCasting.visibility = View.VISIBLE
+            binding.textCasting.text = if(deviceName != null) "Playing on $deviceName" else "Casting..."
+        } else {
+            binding.textCasting.visibility = View.GONE
+            if(binding.controller.visibility != View.VISIBLE) {
+                binding.controllerBg.visibility = View.GONE
+            }
+        }
+    }
+
     fun getDebugOverLay(): View? {
         if(binding.debugContainer.childCount > 0) return binding.debugContainer.getChildAt(0)
         return null
@@ -261,6 +274,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         handler.removeCallbacks(hideRunnable)
         if (binding.controller.visibility != VISIBLE && !isMinimize) {
             binding.controller.visibility = VISIBLE
+            binding.controllerBg.visibility = View.VISIBLE
             onPlayerControllerChangedListeners.forEach {
                 it.onControllerVisible()
             }
@@ -279,6 +293,10 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     private var hideRunnable = Runnable {
         if (binding.controller.visibility != GONE) {
             binding.controller.visibility = GONE
+            if(binding.textCasting.visibility != View.VISIBLE) {
+                binding.controllerBg.visibility = View.GONE
+            }
+
             onPlayerControllerChangedListeners.forEach {
                 it.onControllerInVisible()
             }

@@ -32,10 +32,29 @@
 
         </FrameLayout>
 
+        <View
+            android:id="@+id/controller_bg"
+            android:background="#40000000"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
         <FrameLayout
             android:id="@+id/debug_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/text_casting"
+            tools:text="Casting on KDL-W800C"
+            tools:visibility="visible"
+            android:fontFamily="@font/roboto_medium"
+            android:textColor="#ffffff"
+            android:layout_marginBottom="48dp"
+            android:gravity="center"
+            android:visibility="gone"
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <com.banglalink.toffee.ui.player.PlayerOverlayView
             android:id="@+id/playerOverlay"
@@ -45,44 +64,43 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/controller"
-            android:background="#40000000"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-
-        <ImageView
-            android:contentDescription="@string/txt_drawer"
-            android:id="@+id/drawer"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:padding="8dp"
-            android:src="@drawable/ic_drawer_player"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:contentDescription="@string/txt_options"
-            android:id="@+id/video_option"
-            android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="8dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:paddingStart="8dp"
-            android:paddingTop="8dp"
-            android:paddingEnd="8dp"
-            android:paddingBottom="8dp"
-            android:src="@drawable/ic_option_drawer"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="match_parent">
 
             <ImageView
-                android:contentDescription="@string/txt_share"
+                android:id="@+id/drawer"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:contentDescription="@string/txt_drawer"
+                android:padding="8dp"
+                android:src="@drawable/ic_drawer_player"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/video_option"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:clickable="true"
+                android:contentDescription="@string/txt_options"
+                android:focusable="true"
+                android:paddingStart="8dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="8dp"
+                android:src="@drawable/ic_option_drawer"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
                 android:id="@+id/share"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
+                android:contentDescription="@string/txt_share"
                 android:padding="8dp"
                 android:src="@drawable/ic_player_share"
                 app:layout_constraintBottom_toBottomOf="@+id/video_option"
@@ -93,24 +111,24 @@
                 android:id="@+id/cast_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:mediaRouteButtonTint="#ffffff"
                 app:layout_constraintBottom_toBottomOf="@+id/share"
                 app:layout_constraintEnd_toStartOf="@+id/share"
-                app:layout_constraintTop_toTopOf="@+id/share" />
+                app:layout_constraintTop_toTopOf="@+id/share"
+                app:mediaRouteButtonTint="#ffffff" />
 
             <com.mikhaellopez.circularprogressbar.CircularProgressBar
                 android:id="@+id/autoplayProgress"
                 android:layout_width="72dp"
                 android:layout_height="72dp"
+                android:visibility="gone"
+                app:cpb_progress_max="1000"
                 app:cpb_progressbar_color="@color/colorAccent2"
                 app:cpb_progressbar_width="4dp"
-                app:cpb_progress_max="1000"
-                android:visibility="gone"
-                app:layout_constraintTop_toTopOf="@+id/play"
-                app:layout_constraintStart_toStartOf="@+id/play"
-                app:layout_constraintEnd_toEndOf="@+id/play"
                 app:layout_constraintBottom_toBottomOf="@+id/play"
-                />
+                app:layout_constraintEnd_toEndOf="@+id/play"
+                app:layout_constraintStart_toStartOf="@+id/play"
+                app:layout_constraintTop_toTopOf="@+id/play" />
+
             <ImageView
                 android:id="@+id/play"
                 android:layout_width="64dp"
@@ -118,123 +136,123 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginEnd="24dp"
                 android:adjustViewBounds="true"
+                android:contentDescription="@string/txt_play"
                 android:padding="2dp"
                 android:src="@drawable/ic_player_pause"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/play_next"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/play_prev"
-                app:layout_constraintTop_toTopOf="parent"
-                android:contentDescription="@string/txt_play" />
+                app:layout_constraintTop_toTopOf="parent" />
 
-<!--        <ImageView-->
-<!--            android:id="@+id/forward"-->
-<!--            android:layout_width="64dp"-->
-<!--            android:layout_height="64dp"-->
-<!--            android:adjustViewBounds="true"-->
-<!--            android:clickable="true"-->
-<!--            android:focusable="true"-->
-<!--            android:padding="2dp"-->
-<!--            android:src="@drawable/ic_player_next"-->
-<!--            app:layout_constraintBottom_toBottomOf="@+id/play"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintHorizontal_bias="0.5"-->
-<!--            app:layout_constraintStart_toEndOf="@+id/play"-->
-<!--            app:layout_constraintTop_toTopOf="@+id/play" />-->
+            <!--        <ImageView-->
+            <!--            android:id="@+id/forward"-->
+            <!--            android:layout_width="64dp"-->
+            <!--            android:layout_height="64dp"-->
+            <!--            android:adjustViewBounds="true"-->
+            <!--            android:clickable="true"-->
+            <!--            android:focusable="true"-->
+            <!--            android:padding="2dp"-->
+            <!--            android:src="@drawable/ic_player_next"-->
+            <!--            app:layout_constraintBottom_toBottomOf="@+id/play"-->
+            <!--            app:layout_constraintEnd_toEndOf="parent"-->
+            <!--            app:layout_constraintHorizontal_bias="0.5"-->
+            <!--            app:layout_constraintStart_toEndOf="@+id/play"-->
+            <!--            app:layout_constraintTop_toTopOf="@+id/play" />-->
 
-        <ImageView
-            android:id="@+id/play_next"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:adjustViewBounds="true"
-            android:clickable="true"
-            android:focusable="true"
-            android:padding="2dp"
-            android:contentDescription="@string/txt_play_next"
-            android:src="@drawable/ic_player_control_next"
-            app:layout_constraintBottom_toBottomOf="@+id/play"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/play"
-            app:layout_constraintTop_toTopOf="@+id/play" />
+            <ImageView
+                android:id="@+id/play_next"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:adjustViewBounds="true"
+                android:clickable="true"
+                android:contentDescription="@string/txt_play_next"
+                android:focusable="true"
+                android:padding="2dp"
+                android:src="@drawable/ic_player_control_next"
+                app:layout_constraintBottom_toBottomOf="@+id/play"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/play"
+                app:layout_constraintTop_toTopOf="@+id/play" />
 
-<!--        <ImageView-->
-<!--            android:id="@+id/backward"-->
-<!--            android:layout_width="64dp"-->
-<!--            android:layout_height="64dp"-->
-<!--            android:adjustViewBounds="true"-->
-<!--            android:clickable="true"-->
-<!--            android:focusable="true"-->
-<!--            android:padding="2dp"-->
-<!--            android:src="@drawable/ic_player_prev"-->
-<!--            app:layout_constraintBottom_toBottomOf="@+id/play"-->
-<!--            app:layout_constraintEnd_toStartOf="@+id/play"-->
-<!--            app:layout_constraintHorizontal_bias="0.5"-->
-<!--            app:layout_constraintHorizontal_chainStyle="packed"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="@+id/play" />-->
+            <!--        <ImageView-->
+            <!--            android:id="@+id/backward"-->
+            <!--            android:layout_width="64dp"-->
+            <!--            android:layout_height="64dp"-->
+            <!--            android:adjustViewBounds="true"-->
+            <!--            android:clickable="true"-->
+            <!--            android:focusable="true"-->
+            <!--            android:padding="2dp"-->
+            <!--            android:src="@drawable/ic_player_prev"-->
+            <!--            app:layout_constraintBottom_toBottomOf="@+id/play"-->
+            <!--            app:layout_constraintEnd_toStartOf="@+id/play"-->
+            <!--            app:layout_constraintHorizontal_bias="0.5"-->
+            <!--            app:layout_constraintHorizontal_chainStyle="packed"-->
+            <!--            app:layout_constraintStart_toStartOf="parent"-->
+            <!--            app:layout_constraintTop_toTopOf="@+id/play" />-->
 
-        <ImageView
-            android:id="@+id/play_prev"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:adjustViewBounds="true"
-            android:clickable="true"
-            android:focusable="true"
-            android:padding="2dp"
-            android:src="@drawable/ic_player_previous"
-            app:layout_constraintBottom_toBottomOf="@+id/play"
-            app:layout_constraintEnd_toStartOf="@+id/play"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/play"
-            android:contentDescription="@string/txt_play_previous" />
+            <ImageView
+                android:id="@+id/play_prev"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:adjustViewBounds="true"
+                android:clickable="true"
+                android:contentDescription="@string/txt_play_previous"
+                android:focusable="true"
+                android:padding="2dp"
+                android:src="@drawable/ic_player_previous"
+                app:layout_constraintBottom_toBottomOf="@+id/play"
+                app:layout_constraintEnd_toStartOf="@+id/play"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/play" />
 
-        <Chronometer
-            android:id="@+id/current_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:textColor="@android:color/white"
-            android:format="HH:MM:SS"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toTopOf="@+id/progress"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:text="00:00" />
+            <Chronometer
+                android:id="@+id/current_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:format="HH:MM:SS"
+                android:textColor="@android:color/white"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toTopOf="@+id/progress"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="00:00" />
 
 
-        <TextView
-            android:id="@+id/time_seperator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingStart="4dp"
-            android:paddingEnd="4dp"
-            android:text="/"
-            android:visibility="invisible"
-            android:textColor="@android:color/white"
-            app:layout_constraintBottom_toBottomOf="@+id/current_time"
-            app:layout_constraintStart_toEndOf="@+id/current_time"
-            app:layout_constraintTop_toTopOf="@+id/current_time" />
+            <TextView
+                android:id="@+id/time_seperator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
+                android:text="/"
+                android:textColor="@android:color/white"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@+id/current_time"
+                app:layout_constraintStart_toEndOf="@+id/current_time"
+                app:layout_constraintTop_toTopOf="@+id/current_time" />
 
-        <Chronometer
-            android:id="@+id/duration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:format="HH:MM:SS"
-            android:visibility="invisible"
-            android:textColor="@android:color/white"
-            app:layout_constraintBottom_toBottomOf="@+id/current_time"
-            app:layout_constraintStart_toEndOf="@+id/time_seperator"
-            app:layout_constraintTop_toTopOf="@+id/current_time"
-            tools:text="02:00" />
+            <Chronometer
+                android:id="@+id/duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:format="HH:MM:SS"
+                android:textColor="@android:color/white"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@+id/current_time"
+                app:layout_constraintStart_toEndOf="@+id/time_seperator"
+                app:layout_constraintTop_toTopOf="@+id/current_time"
+                tools:text="02:00" />
 
 
             <ImageView
-                android:contentDescription="@string/txt_rotation"
                 android:id="@+id/rotation"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
+                android:contentDescription="@string/txt_rotation"
                 android:padding="8dp"
                 android:src="@drawable/ic_screen_rotate"
                 app:layout_constraintBottom_toBottomOf="@+id/fullscreen"
@@ -244,41 +262,41 @@
                 android:id="@+id/minimize"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
+                android:contentDescription="@string/txt_minimize"
                 android:padding="8dp"
                 android:src="@drawable/ic_player_minimize"
                 app:layout_constraintBottom_toBottomOf="@+id/fullscreen"
                 app:layout_constraintEnd_toStartOf="@+id/fullscreen"
-                app:layout_constraintTop_toTopOf="@+id/fullscreen"
-                android:contentDescription="@string/txt_minimize" />
+                app:layout_constraintTop_toTopOf="@+id/fullscreen" />
 
-        <ImageView
-            android:id="@+id/fullscreen"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginEnd="16dp"
-            android:adjustViewBounds="true"
-            android:padding="8dp"
-            app:layout_goneMarginBottom="8dp"
-            android:src="@drawable/ic_fullscreen_enter"
-            app:layout_constraintBottom_toTopOf="@+id/progress"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:contentDescription="@string/txt_full_screen" />
+            <ImageView
+                android:id="@+id/fullscreen"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="16dp"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/txt_full_screen"
+                android:padding="8dp"
+                android:src="@drawable/ic_fullscreen_enter"
+                app:layout_constraintBottom_toTopOf="@+id/progress"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_goneMarginBottom="8dp" />
 
-<!--            <com.google.android.material.slider.Slider-->
-<!--                android:id="@+id/progress"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginStart="16dp"-->
-<!--                android:layout_marginEnd="16dp"-->
-<!--                android:layout_marginBottom="16dp"-->
-<!--                android:valueFrom="0"-->
-<!--                android:valueTo="1000"-->
-<!--                android:value="500"-->
-<!--                app:trackColorActive="@color/colorAccent2"-->
-<!--                app:thumbColor="@color/colorAccent2"-->
-<!--                app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                app:layout_constraintEnd_toEndOf="parent"-->
-<!--                app:layout_constraintStart_toStartOf="parent" />-->
+            <!--            <com.google.android.material.slider.Slider-->
+            <!--                android:id="@+id/progress"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginStart="16dp"-->
+            <!--                android:layout_marginEnd="16dp"-->
+            <!--                android:layout_marginBottom="16dp"-->
+            <!--                android:valueFrom="0"-->
+            <!--                android:valueTo="1000"-->
+            <!--                android:value="500"-->
+            <!--                app:trackColorActive="@color/colorAccent2"-->
+            <!--                app:thumbColor="@color/colorAccent2"-->
+            <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+            <!--                app:layout_constraintEnd_toEndOf="parent"-->
+            <!--                app:layout_constraintStart_toStartOf="parent" />-->
 
             <SeekBar
                 android:id="@+id/progress"
@@ -296,16 +314,16 @@
                 tools:secondaryProgress="80" />
 
             <pl.droidsonroids.gif.GifImageView
-                android:visibility="gone"
                 android:id="@+id/buffering"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:background="@drawable/gif_round_border"
                 android:src="@drawable/player_loader"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <Space
                 android:id="@+id/player_bottom_space"
