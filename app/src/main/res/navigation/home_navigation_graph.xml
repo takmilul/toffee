@@ -60,7 +60,7 @@
     <fragment
         android:id="@+id/menu_subscriptions"
         android:name="com.banglalink.toffee.ui.subscription.MySubscriptionFragment"
-        android:label="My Subscription"
+        android:label="Subscriptions"
         />
     <fragment
         android:id="@+id/menu_redeem"

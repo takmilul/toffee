@@ -16,7 +16,6 @@ import com.banglalink.toffee.util.EncryptionUtil
 import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
-import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.eclipse.paho.android.service.MqttAndroidClient
@@ -46,7 +45,7 @@ class ToffeeMqttService @Inject constructor(
     
     fun initialize() {
         try {
-            if (mPref.mqttHost.isNotBlank() && mPref.mqttClientId.isNotBlank() && mPref.mqttUserName.isNotBlank() && mPref.mqttPassword.isNotBlank()) {
+            if (mPref.mqttHost.isNotBlank() && mPref.mqttClientId.isNotBlank() && mPref.mqttUserName.isNotBlank() && mPref.mqttPassword.isNotBlank() && client == null) {
                 val host = EncryptionUtil.decryptResponse(mPref.mqttHost)
                 val clientId = EncryptionUtil.decryptResponse(mPref.mqttClientId)
                 val userName = EncryptionUtil.decryptResponse(mPref.mqttUserName)
@@ -55,6 +54,7 @@ class ToffeeMqttService @Inject constructor(
                 client = MqttAndroidClient(context, host, clientId).apply {
                     setCallback(this@ToffeeMqttService)
                     connect(getMqttConnectionOption(userName, password), null, this@ToffeeMqttService)
+                    Log.e("MQTT_", "initialize: connecting...")
                 }
                 startScheduler()
             }

@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.apiservice.ContentEdit
-import com.banglalink.toffee.apiservice.GetCategories
+import com.banglalink.toffee.apiservice.GetContentCategories
 import com.banglalink.toffee.data.network.response.ResponseBean
 import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.Category
@@ -24,7 +24,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyChannelVideosEditViewModel @Inject constructor(
-    private val categoryApi: GetCategories,
+    private val categoryApi: GetContentCategories,
     private val contentEditApi: ContentEdit,
     @ApplicationContext private val appContext: Context,
 ) : ViewModel() {

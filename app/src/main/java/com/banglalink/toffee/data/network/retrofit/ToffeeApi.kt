@@ -118,6 +118,12 @@ interface ToffeeApi {
         @Path("dbVersion") dbVersion: Int,
         @Body categoryRequest: CategoryRequest
     ): CategoryResponse
+    
+    @POST("ugc-active-inactive-categories/1/{dbVersion}")
+    suspend fun getUgcContentCategoryList(
+        @Path("dbVersion") dbVersion: Int,
+        @Body categoryRequest: ContentCategoryRequest
+    ): CategoryResponse
 
     @POST("ugc-category-wise-editors-choice/1/{type}/{editorChoiceType}/{categoryId}/{dbVersion}")
     suspend fun getUgcEditorsChoice(
