@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/screen_bg_white"
+        android:paddingBottom="8dp">
+
+
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="172dp"
+            android:layout_height="140dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="8dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/txt_redeem_code"
+            android:src="@drawable/redeem_code_icon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/title_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="25dp"
+            android:fontFamily="@font/roboto_medium"
+            android:gravity="center"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:text="@string/redeem_code_txt"
+            android:textColor="@color/cardTitleColor"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="@+id/logo"
+            app:layout_constraintStart_toStartOf="@+id/logo"
+            app:layout_constraintTop_toBottomOf="@+id/logo" />
+
+        <EditText
+            android:id="@+id/referralCode"
+            style="@style/editTextOval"
+            android:background="@drawable/single_line_input_text_bg"
+            android:layout_width="200dp"
+            android:layout_height="@dimen/single_line_input_text_height"
+            android:layout_marginStart="64dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="64dp"
+            android:gravity="center"
+            android:ems="10"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textSize="@dimen/default_text_size"
+            android:hint="@string/redeem_code_txt"
+            android:textColor="@color/cardTitleColor"
+            app:layout_constraintEnd_toEndOf="@+id/title_tv"
+            app:layout_constraintStart_toStartOf="@+id/title_tv"
+            app:layout_constraintTop_toBottomOf="@+id/title_tv" />
+
+        <Button
+            android:id="@+id/redeemBtn"
+            android:enabled="true"
+            style="@style/BgToggleButtonStyleSolidPink"
+            android:layout_width="@dimen/button_accent_width"
+            android:layout_gravity="center"
+            android:layout_marginTop="12dp"
+            android:text="@string/redeem_button"
+            android:textAllCaps="true"
+            app:layout_constraintEnd_toEndOf="@+id/referralCode"
+            app:layout_constraintStart_toStartOf="@+id/referralCode"
+            app:layout_constraintTop_toBottomOf="@+id/referralCode" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

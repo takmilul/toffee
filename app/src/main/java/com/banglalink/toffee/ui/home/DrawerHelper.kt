@@ -264,13 +264,13 @@ class DrawerHelper(
                 }
                 return true
             }
-            R.id.menu_creators_policy -> {
-                val intent = Intent(activity, HtmlPageViewActivity::class.java).apply {
-                    putExtra(HtmlPageViewActivity.CONTENT_KEY, AboutActivity.PRIVACY_POLICY_URL)
-                    putExtra(HtmlPageViewActivity.TITLE_KEY, "Creators Policy")
-                }
-                activity.startActivity(intent)
-            }
+//            R.id.menu_creators_policy -> {
+//                val intent = Intent(activity, HtmlPageViewActivity::class.java).apply {
+//                    putExtra(HtmlPageViewActivity.CONTENT_KEY, AboutActivity.PRIVACY_POLICY_URL)
+//                    putExtra(HtmlPageViewActivity.TITLE_KEY, "Creators Policy")
+//                }
+//                activity.startActivity(intent)
+//            }
 //            R.id.menu_settings -> {
 //                activity.launchActivity<SettingsActivity>()
 //                binding.drawerLayout.closeDrawers()
@@ -303,14 +303,14 @@ class DrawerHelper(
                     }
                 }
             }
-            R.id.menu_invite -> {
-                activity.launchActivity<ReferAFriendActivity>()
-                binding.drawerLayout.closeDrawers()
-            }
-            R.id.menu_redeem -> {
-                activity.launchActivity<RedeemCodeActivity>()
-                binding.drawerLayout.closeDrawers()
-            }
+//            R.id.menu_invite -> {
+//                activity.launchActivity<ReferAFriendActivity>()
+//                binding.drawerLayout.closeDrawers()
+//            }
+//            R.id.menu_redeem -> {
+//                activity.launchActivity<RedeemCodeActivity>()
+//                binding.drawerLayout.closeDrawers()
+//            }
         }
         return run {
             if (NavigationUI.onNavDestinationSelected(item, activity.getNavController())) {

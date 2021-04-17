@@ -480,7 +480,10 @@ class HomeActivity :
 //                R.id.menu_all_tv_channel,
                 R.id.menu_favorites,
                 R.id.menu_settings,
-                R.id.menu_subscriptions
+                R.id.menu_subscriptions,
+                R.id.menu_invite,
+                R.id.menu_redeem,
+                R.id.menu_creators_policy,
             ),
             binding.drawerLayout
         )

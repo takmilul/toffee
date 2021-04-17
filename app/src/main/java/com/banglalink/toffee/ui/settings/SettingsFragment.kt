@@ -11,12 +11,14 @@ import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.repository.UserActivitiesRepository
 import com.banglalink.toffee.databinding.ActivitySettingsBinding
 import com.banglalink.toffee.ui.about.AboutActivity
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.common.HtmlPageViewActivity
+import com.banglalink.toffee.ui.mychannel.MyChannelHomeFragmentDirections
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -146,7 +148,13 @@ class SettingsFragment : BaseFragment() {
         binding.prefTerms.setOnClickListener { onClickTermsAndConditions() }
 
         binding.prefAbout.setOnClickListener {
-            startActivity(Intent(requireActivity(), AboutActivity::class.java))
+           // startActivity(Intent(requireActivity(), AboutActivity::class.java))
+
+            if (findNavController().currentDestination?.id != R.id.privacyPolicyFragment && findNavController().currentDestination?.id == R.id.menu_settings) {
+                val action = SettingsFragmentDirections.actionSettingsFragmentToAboutFragment()
+                findNavController().navigate(action)
+            }
+
         }
     }
 
@@ -165,19 +173,23 @@ class SettingsFragment : BaseFragment() {
     }
 
     private fun onClickTermsAndConditions() {
-        val intent = Intent(requireActivity(), HtmlPageViewActivity::class.java).apply {
-            putExtra(HtmlPageViewActivity.CONTENT_KEY, AboutActivity.TERMS_AND_CONDITION_URL)
-            putExtra(HtmlPageViewActivity.TITLE_KEY, "Terms and Conditions")
+//        val intent = Intent(requireActivity(), HtmlPageViewActivity::class.java).apply {
+//            putExtra(HtmlPageViewActivity.CONTENT_KEY, AboutActivity.TERMS_AND_CONDITION_URL)
+//            putExtra(HtmlPageViewActivity.TITLE_KEY, "Terms and Conditions")
+//        }
+//        startActivity(intent)
+
+        if (findNavController().currentDestination?.id != R.id.privacyPolicyFragment && findNavController().currentDestination?.id == R.id.menu_settings) {
+            val action = SettingsFragmentDirections.actionSettingsFragmentToPrivacyPolicyFragment("Terms & Conditions")
+            findNavController().navigate(action)
         }
-        startActivity(intent)
     }
 
     private fun onClickPrivacyPolicy() {
-        val intent = Intent(requireActivity(), HtmlPageViewActivity::class.java).apply {
-            putExtra(HtmlPageViewActivity.CONTENT_KEY, AboutActivity.PRIVACY_POLICY_URL)
-            putExtra(HtmlPageViewActivity.TITLE_KEY, "Privacy Policy")
+        if (findNavController().currentDestination?.id != R.id.privacyPolicyFragment && findNavController().currentDestination?.id == R.id.menu_settings) {
+            val action = SettingsFragmentDirections.actionSettingsFragmentToPrivacyPolicyFragment("Privacy Policy")
+            findNavController().navigate(action)
         }
-        startActivity(intent)
     }
 
     companion object {

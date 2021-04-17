@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_navigation_grapg">
 
-    <activity
+    <fragment
         android:id="@+id/menu_redeem"
-        android:name="com.banglalink.toffee.ui.redeem.RedeemCodeActivity"
+        android:name="com.banglalink.toffee.ui.redeem.RedeemCodeFragment"
         android:label="RedeemCodeActivity" />
-    <activity
+    <fragment
         android:id="@+id/menu_invite"
-        android:name="com.banglalink.toffee.ui.refer.ReferAFriendActivity"
+        android:name="com.banglalink.toffee.ui.refer.ReferAFriendFragment"
         android:label="ReferAFriendActivity" />
     <activity
         android:id="@+id/menu_about"
@@ -29,9 +29,9 @@
 <!--        android:id="@+id/packageListActivity"-->
 <!--        android:name="com.banglalink.toffee.ui.subscription.PackageListActivity"-->
 <!--        android:label="PackageListActivity" />-->
-    <activity
+    <fragment
         android:id="@+id/mySubscriptionActivity"
-        android:name="com.banglalink.toffee.ui.subscription.MySubscriptionActivity"
+        android:name="com.banglalink.toffee.ui.subscription.MySubscriptionFragment"
         android:label="MySubscriptionActivity" />
     <fragment
         android:id="@+id/menu_channel"
