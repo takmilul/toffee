@@ -54,7 +54,7 @@ class AboutFragment : BaseFragment() {
 
     fun onClickTermsAndConditions() {
         if (findNavController().currentDestination?.id != R.id.privacyPolicyFragment && findNavController().currentDestination?.id == R.id.AboutFragment) {
-            val action = AboutFragmentDirections.actionAboutFragmentToPrivacyPolicyFragment("Terms And Conditions")
+            val action = AboutFragmentDirections.actionAboutFragmentToPrivacyPolicyFragment("Terms & Conditions")
             findNavController().navigate(action)
         }
     }
