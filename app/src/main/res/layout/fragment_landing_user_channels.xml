@@ -32,11 +32,30 @@
         app:layout_constraintTop_toTopOf="@id/userChannelsHeader"
         app:layout_constraintBottom_toBottomOf="@+id/userChannelsHeader"
         app:layout_constraintEnd_toEndOf="parent" />
+    
+    <LinearLayout
+        android:id="@+id/placeholder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="8dp"
+        android:clipToPadding="false"
+        tools:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userChannelsHeader">
+        
+        <include layout="@layout/placeholder_user_channels" />
+        <include layout="@layout/placeholder_user_channels" />
+        <include layout="@layout/placeholder_user_channels" />
+        <include layout="@layout/placeholder_user_channels" />
+        
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/userChannelList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:clipToPadding="false"
         android:paddingHorizontal="8dp"
         android:orientation="horizontal"
@@ -45,6 +64,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/userChannelsHeader"
         app:reverseLayout="false"
+        tools:visibility="visible"
         tools:listitem="@layout/list_item_landing_user_channels"/>
     
     <androidx.constraintlayout.widget.Guideline
@@ -53,4 +73,5 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.48" />
+    
 </androidx.constraintlayout.widget.ConstraintLayout>

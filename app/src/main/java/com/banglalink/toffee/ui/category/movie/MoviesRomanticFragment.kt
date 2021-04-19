@@ -14,6 +14,7 @@ class MoviesRomanticFragment: MovieBaseFragment<ChannelInfo>() {
     override fun loadContent() {
         observe(viewModel.romanticMovies){
             adapter.addAll(it)
+            showCard(it.isNotEmpty())
         }
     }
 

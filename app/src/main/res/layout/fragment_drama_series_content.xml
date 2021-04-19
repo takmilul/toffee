@@ -34,43 +34,40 @@
         app:layout_constraintStart_toEndOf="@id/latestVideosHeader"
         app:layout_constraintTop_toTopOf="@id/latestVideosHeader" />
     
-    <HorizontalScrollView
-        android:id="@+id/subCategoryChipGroupHolder"
+    <LinearLayout
+        android:id="@+id/placeholder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:scrollbars="none"
-        android:visibility="gone"
+        android:layout_marginTop="4dp"
+        android:clipToPadding="false"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/latestVideosHeader">
+        app:layout_constraintTop_toBottomOf="@+id/latestVideosHeader"
+        tools:visibility="gone">
         
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/subCategoryChipGroup"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            app:selectionRequired="true"
-            app:singleLine="true"
-            app:singleSelection="true" />
-    </HorizontalScrollView>
+        <include layout="@layout/placeholder_drama_series" />
+        <include layout="@layout/placeholder_drama_series" />
+        <include layout="@layout/placeholder_drama_series" />
+    
+    </LinearLayout>
     
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/latestVideosList"
-        tools:listitem="@layout/list_item_drama_feed"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        android:layout_marginTop="4dp"
         android:clipToPadding="false"
         android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/subCategoryChipGroupHolder"
-        app:reverseLayout="false" />
+        app:layout_constraintTop_toBottomOf="@+id/latestVideosHeader"
+        app:reverseLayout="false"
+        tools:visibility="visible"
+        tools:listitem="@layout/list_item_drama_feed" />
     
     <pl.droidsonroids.gif.GifImageView
         android:id="@+id/progress_bar"

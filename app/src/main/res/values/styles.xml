@@ -183,6 +183,8 @@
         <item name="android:background">@android:color/transparent</item>
         <item name="android:textSize">@dimen/default_text_size</item>
         <item name="android:fontFamily">@font/roboto_medium</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">2</item>
     </style>
     
     <style name="subscription_pack_header_style">
@@ -472,6 +474,18 @@
         <item name="android:windowFrame">@null</item>
         <item name="behavior_peekHeight">300dp</item>
         <item name="android:windowIsFloating">true</item>
+    </style>
+    
+    <style name="ShimmerStyle" >
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="shimmer_colored">false</item>
+        <item name="shimmer_base_alpha">1</item>
+        <item name="shimmer_highlight_alpha">0.5</item>
+        <item name="shimmer_auto_start">true</item>
+        <item name="shimmer_duration">1000</item>
+        <item name="shimmer_clip_to_children">true</item>
+        <item name="android:clipToPadding">false</item>
     </style>
     
 </resources>
