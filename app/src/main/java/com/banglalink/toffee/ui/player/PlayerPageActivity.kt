@@ -4,7 +4,6 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
-import android.text.TextUtils
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -402,7 +401,7 @@ abstract class PlayerPageActivity :
 //            Log.e("MEDIA_T", "${it.currentMediaItem?.playbackProperties?.tag}")
             val oldChannelInfo = it.currentMediaItem?.playbackProperties?.tag
             oldChannelInfo?.let { oldInfo ->
-                if(oldInfo is ChannelInfo && it.playbackState != STATE_ENDED) {
+                if(oldInfo is ChannelInfo && oldInfo.id != channelInfo.id && it.playbackState != STATE_ENDED) {
                     insertContentViewProgress(oldInfo, it.currentPosition)
                 }
             }
@@ -470,7 +469,7 @@ abstract class PlayerPageActivity :
             try {
                 val url = URL(uri)
                 var path = url.path
-                if (!TextUtils.isEmpty(url.query)) {
+                if (!url.query.isNullOrEmpty()) {
                     path = path + "?" + url.query
                 }
                 newUrl = mPref.castOverrideUrl + path
@@ -532,7 +531,9 @@ abstract class PlayerPageActivity :
     //                    .setStreamDuration(MediaInfo.STREAM_TYPE_LIVE)
                 .build()
         }
-        return MediaQueueItem.Builder(mediaInfo).setCustomData(channelInfoToJson(info)).build()
+        return MediaQueueItem.Builder(mediaInfo).setCustomData(channelInfoToJson(info).apply { Log.e("CAST_T",
+            this.toString(4)
+        ) }).build()
     }
 
     private fun channelInfoToJson(info: ChannelInfo): JSONObject {
@@ -708,6 +709,11 @@ abstract class PlayerPageActivity :
 
     override fun onCastSessionAvailable() {
         updateStartPosition()
+        playlistManager.getCurrentChannel()?.let {
+            if(player?.playbackState != STATE_ENDED) {
+                insertContentViewProgress(it, player?.currentPosition ?: -1)
+            }
+        }
         player?.stop()
         player = castPlayer
         resetPlayer()
@@ -716,6 +722,11 @@ abstract class PlayerPageActivity :
 
     override fun onCastSessionUnavailable() {
         updateStartPosition()
+        playlistManager.getCurrentChannel()?.let {
+            if(player?.playbackState != STATE_ENDED) {
+                insertContentViewProgress(it, player?.currentPosition ?: -1)
+            }
+        }
         player?.stop()
         player = exoPlayer
         resetPlayer()
