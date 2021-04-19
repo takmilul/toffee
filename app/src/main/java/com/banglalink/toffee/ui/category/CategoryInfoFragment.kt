@@ -13,10 +13,8 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentCategoryInfoBinding
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.SubCategory
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
@@ -40,7 +38,6 @@ class CategoryInfoFragment: HomeBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         categoryInfo = requireParentFragment().requireArguments().getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)!!
-        binding.hashTagChipGroupHolder.hide()
         observeCategoryData()
         observeHashTags()
         observeSubCategories()
@@ -48,11 +45,19 @@ class CategoryInfoFragment: HomeBaseFragment() {
 
     private fun observeSubCategories() {
         observe(landingViewModel.subCategories){
-            when(it){
-                is Resource.Success -> {
-                    val subList = it.data.sortedBy { sub -> sub.id }
-                    binding.subCategoryChipGroup.removeAllViews()
-                    subList.forEachIndexed{ _, subCategory ->
+            if (it.isNotEmpty()) {
+                binding.subCategoryChipGroup.removeAllViews()
+                binding.subCategoryChipGroup.setOnCheckedChangeListener { group, checkedId ->
+                    val selectedChip = group.findViewById<Chip>(checkedId)
+                    if(selectedChip != null) {
+                        val selectedSub = selectedChip.tag as SubCategory
+                        landingViewModel.subCategoryId.value = selectedSub.id.toInt()
+                        landingViewModel.isDramaSeries.value = selectedSub.categoryId.toInt() == 9
+                    }
+                }
+                val subList = it.sortedBy { sub -> sub.id }
+                subList.let { list ->
+                    list.forEachIndexed{ _, subCategory ->
                         val newChip = addChip(subCategory).apply {
                             tag = subCategory
                         }
@@ -61,39 +66,38 @@ class CategoryInfoFragment: HomeBaseFragment() {
                             binding.subCategoryChipGroup.check(newChip.id)
                         }
                     }
-                    binding.subCategoryChipGroup.setOnCheckedChangeListener { group, checkedId ->
-                        val selectedChip = group.findViewById<Chip>(checkedId)
-                        if(selectedChip != null) {
-                            val selectedSub = selectedChip.tag as SubCategory
-                            landingViewModel.subCategoryId.value = selectedSub.id.toInt()
-                            landingViewModel.isDramaSeries.value = selectedSub.categoryId.toInt() == 9
-                        }
-                    }
                 }
-                is Resource.Failure -> {}
+            }
+            else {
+                binding.subCategoryChipGroupHolder.hide()
             }
         }
     }
 
     private fun observeHashTags(){
         observe(landingViewModel.hashtagList) {
-            binding.hashTagChipGroupHolder.show()
-            binding.hashTagChipGroup.removeAllViews()
-            val hashTagList = it
-            hashTagList.forEachIndexed{ _, hashTag ->
-                if(hashTag.isNotBlank()) {
-                    val newChip = addHashTagChip(hashTag).apply {
-                        tag = hashTag
+            if (it.isNotEmpty()) {
+                binding.hashTagChipGroup.removeAllViews()
+                binding.hashTagChipGroup.setOnCheckedChangeListener{ group, checkedId ->
+                    val selectedHashTag = group.findViewById<Chip>(checkedId)
+                    if(selectedHashTag != null) {
+                        val hashTag = selectedHashTag.tag as String
+                        landingViewModel.selectedHashTag.value = hashTag.removePrefix("#")
                     }
-                    binding.hashTagChipGroup.addView(newChip)
+                }
+                it.let { list ->
+                    list.forEachIndexed{ _, hashTag ->
+                        if(hashTag.isNotBlank()) {
+                            val newChip = addHashTagChip(hashTag).apply {
+                                tag = hashTag
+                            }
+                            binding.hashTagChipGroup.addView(newChip)
+                        }
+                    }
                 }
             }
-            binding.hashTagChipGroup.setOnCheckedChangeListener{ group, checkedId ->
-                val selectedHashTag = group.findViewById<Chip>(checkedId)
-                if(selectedHashTag != null) {
-                    val hashTag = selectedHashTag.tag as String
-                    landingViewModel.selectedHashTag.value = hashTag.removePrefix("#")
-                }
+            else {
+                binding.hashTagChipGroupHolder.hide()
             }
         }
     }

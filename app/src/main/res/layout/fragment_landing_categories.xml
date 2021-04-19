@@ -33,11 +33,34 @@
         app:layout_constraintTop_toTopOf="@id/categoriesHeader"
         app:layout_constraintBottom_toBottomOf="@+id/categoriesHeader"
         app:layout_constraintEnd_toEndOf="parent" />
-
+    
+    <GridLayout
+        android:id="@+id/placeholder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="8dp"
+        android:clipToPadding="false"
+        android:columnCount="3"
+        android:rowCount="2"
+        tools:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/categoriesHeader">
+        
+        <include layout="@layout/placeholder_categories" />
+        <include layout="@layout/placeholder_categories" />
+        <include layout="@layout/placeholder_categories" />
+        <include layout="@layout/placeholder_categories" />
+        <include layout="@layout/placeholder_categories" />
+        <include layout="@layout/placeholder_categories" />
+            
+    </GridLayout>
+    
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/categoriesList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:clipToPadding="false"
         android:paddingHorizontal="8dp"
         android:nestedScrollingEnabled="false"
@@ -47,6 +70,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/categoriesHeader"
         app:reverseLayout="false"
+        tools:visibility="visible"
         tools:listitem="@layout/list_item_categories_v3"/>
 
     <androidx.constraintlayout.widget.Guideline

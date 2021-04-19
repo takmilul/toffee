@@ -154,6 +154,7 @@ dependencies {
     implementation 'com.github.florent37:runtime-permission-kotlin:1.1.1'
     //Facebook SDK
     implementation 'com.facebook.android:facebook-android-sdk:5.15.3'
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
     //Leak canary
 //    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-4'
 
@@ -191,6 +192,9 @@ dependencies {
     implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.1'
     implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
 
+    // facebook shimmer
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
+    
     testImplementation 'junit:junit:4.12'
     testImplementation "android.arch.core:core-testing:1.1.1"
     testImplementation('com.squareup.okhttp3:mockwebserver:4.9.0')

@@ -21,6 +21,7 @@ class MoviesTrendingNowFragment: MovieBaseFragment<ChannelInfo>() {
     override fun loadContent() {
         observe(viewModel.trendingNowMovies){
             adapter.addAll(it)
+            showCard(it.isNotEmpty())
         }
     }
 

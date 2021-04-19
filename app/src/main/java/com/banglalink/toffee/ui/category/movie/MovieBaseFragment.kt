@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.databinding.LayoutHorizontalContentContainerBinding
@@ -22,7 +23,6 @@ abstract class MovieBaseFragment<T: Any>: HomeBaseFragment(), ProviderIconCallba
     private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-
         _binding = LayoutHorizontalContentContainerBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -31,6 +31,7 @@ abstract class MovieBaseFragment<T: Any>: HomeBaseFragment(), ProviderIconCallba
         super.onDestroyView()
         _binding = null
     }
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.titleTextView.text = cardTitle
@@ -40,6 +41,10 @@ abstract class MovieBaseFragment<T: Any>: HomeBaseFragment(), ProviderIconCallba
 
     protected abstract fun loadContent()
 
+    protected fun showCard(isShow: Boolean) {
+        binding.root.isVisible = isShow
+    }
+    
     override fun onItemClicked(item: T) {
         homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
     }

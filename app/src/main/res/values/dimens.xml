@@ -32,6 +32,9 @@
     <dimen name="duration_text_size">12sp</dimen>
     <dimen name="duration_vertical_padding">0dp</dimen>
     <dimen name="duration_horizontal_padding">4dp</dimen>
-
     <dimen name="player_seek_arc_size">40dp</dimen>
+    <dimen name="placeholder_small_text_height">12dp</dimen>
+    <dimen name="placeholder_medium_text_height">14dp</dimen>
+    <dimen name="placeholder_large_text_height">16dp</dimen>
+    <dimen name="placeholder_2_line_text_height">24dp</dimen>
 </resources>
