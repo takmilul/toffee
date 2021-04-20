@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -88,14 +89,7 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
             updatePadding(top = verticalPadding.first.px, bottom = verticalPadding.second.px)
             updatePadding(left = horizontalPadding.first.px, right = horizontalPadding.second.px)
             
-            mAdapter.addLoadStateListener {
-                binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
-                mAdapter.apply {
-                    val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
-                    binding.emptyView.isVisible = showEmpty
-                    binding.listview.isVisible = !showEmpty
-                }
-            }
+            mAdapter.addLoadStateListener(loadStateListener)
 
             setHasFixedSize(true)
 //            setEmptyView(binding.emptyView)
@@ -104,6 +98,15 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
 //           setItemViewCacheSize(10)
 
             adapter = getRecyclerAdapter()
+        }
+    }
+
+    private val loadStateListener : (CombinedLoadStates) -> Unit = {
+        binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
+        mAdapter.apply {
+            val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
+            binding.emptyView.isVisible = showEmpty
+            binding.listview.isVisible = !showEmpty
         }
     }
 
@@ -120,6 +123,7 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
     }
 
     override fun onDestroyView() {
+        mAdapter.removeLoadStateListener(loadStateListener)
         binding.listview.adapter = null
         binding.listview.clearOnScrollListeners()
         binding.unbind()
