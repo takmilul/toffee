@@ -27,7 +27,9 @@
     <color name="colorButtonSecondary">#FF3988</color>
     <color name="menuColorSecondaryDark">#BED6F3</color>
     <color name="durationBgColor">#88000000</color>
-    <color name="placeholderBgColor">#E1E1E1</color>
+    <color name="placeholderBgColor">#6781A1</color>
+    <color name="placeholderCatBgColor">#6781A1</color>
+    <color name="placeholderCircleBgColor">#829AB8</color>
     <color name="statusTextBgColor">#525252</color>
     <color name="colorSettingsDivider">#29466B</color>
     <color name="searchBarBgColor">#29466B</color>

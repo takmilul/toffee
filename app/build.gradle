@@ -154,6 +154,7 @@ dependencies {
     implementation 'com.github.florent37:runtime-permission-kotlin:1.1.1'
     //Facebook SDK
     implementation 'com.facebook.android:facebook-android-sdk:5.15.3'
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
     //Leak canary
 //    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-4'
 

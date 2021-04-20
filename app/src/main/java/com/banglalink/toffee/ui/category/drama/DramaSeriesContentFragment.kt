@@ -29,11 +29,11 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
 
     private var category: Category? = null
     private var selectedFilter: Int = FEED.value
+    private var _binding: FragmentDramaSeriesContentBinding ? = null
+    private lateinit var mAdapter: DramaSeriesListAdapter<ChannelInfo>
+    private val binding get() = _binding!!
     private val viewModel by viewModels<DramaSeriesViewModel>()
     private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
-    private var _binding: FragmentDramaSeriesContentBinding ? = null
-    private val binding get() = _binding!!
-    private lateinit var mAdapter: DramaSeriesListAdapter<ChannelInfo>
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?, ): View {
         _binding = FragmentDramaSeriesContentBinding.inflate(inflater, container, false)
@@ -44,8 +44,10 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
         super.onDestroyView()
         _binding = null
     }
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        var isInitialized = false
         category = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM) as Category?
         setupEmptyView()
         mAdapter = DramaSeriesListAdapter(this)
@@ -89,9 +91,12 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
         mAdapter.addLoadStateListener {
             binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
             mAdapter.apply {
-                val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
-                binding.emptyView.isVisible = showEmpty
-                binding.latestVideosList.isVisible = !showEmpty
+                val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
+                val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
+                binding.emptyView.isVisible = isEmpty && !isLoading
+                binding.placeholder.isVisible = isLoading
+                binding.latestVideosList.isVisible = !isEmpty
+                isInitialized = true
             }
         }
     }
