@@ -16,6 +16,7 @@ class MoviesComingSoonFragment : MovieBaseFragment<ComingSoonContent>() {
     override fun loadContent() {
         observe(viewModel.comingSoonContents){
             adapter.addAll(it)
+            showCard(it.isNotEmpty())
         }
         viewModel.loadComingSoonContents
     }

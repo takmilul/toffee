@@ -14,6 +14,7 @@ class MoviesBanglaFragment: MovieBaseFragment<ChannelInfo>() {
     override fun loadContent() {
         observe(viewModel.banglaMovies){
             adapter.addAll(it)
+            showCard(it.isNotEmpty())
         }
     }
 

@@ -85,24 +85,21 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:ellipsize="end"
-            android:maxLines="2"
             android:gravity="center_vertical"
             android:text="@{data.program_name}"
             app:onSafeClick="@{()->callback.onItemClicked(data)}"
-            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintEnd_toStartOf="@+id/options"
             app:layout_constraintStart_toEndOf="@+id/ownerPicture"
             app:layout_constraintTop_toBottomOf="@id/poster"
             tools:text="This Makeup Tutorial By Kylie Jenner Is All You Need For Summer" />
         
         <ImageView
-            android:contentDescription="@string/txt_options"
             android:id="@+id/options"
             style="@style/OptionMenuStyle"
             android:paddingVertical="8dp"
             android:paddingStart="16dp"
             android:paddingEnd="14dp"
+            android:contentDescription="@string/txt_options"
             app:onSafeClick="@{(v)->callback.onOpenMenu(v, data)}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/name"
@@ -146,7 +143,6 @@
             tools:text="14h" />
         
         <ImageView
-            android:contentDescription="@string/tv_wow"
             android:id="@+id/thirdIcon"
             android:layout_width="17dp"
             android:layout_height="17dp"
@@ -154,12 +150,12 @@
             android:src="@drawable/ic_reaction_wow_no_shadow"
             bind:emoIcon="@{data}"
             bind:iconPosition="@{3}"
+            android:contentDescription="@string/tv_wow"
             app:layout_constraintTop_toTopOf="@id/reactionCount"
             app:layout_constraintBottom_toBottomOf="@id/reactionCount"
             app:layout_constraintStart_toStartOf="@id/secondIcon"/>
 
         <ImageView
-            android:contentDescription="@string/txt_love"
             android:id="@+id/secondIcon"
             android:layout_width="17dp"
             android:layout_height="17dp"
@@ -167,25 +163,26 @@
             android:src="@drawable/ic_reaction_love_no_shadow"
             bind:emoIcon="@{data}"
             bind:iconPosition="@{2}"
+            android:contentDescription="@string/txt_love"
             app:layout_constraintTop_toTopOf="@id/reactionCount"
             app:layout_constraintBottom_toBottomOf="@id/reactionCount"
             app:layout_constraintStart_toStartOf="@id/firstIcon"/>
 
         <ImageView
-            android:contentDescription="@string/txt_like"
             android:id="@+id/firstIcon"
             android:layout_width="17dp"
             android:layout_height="17dp"
             android:src="@drawable/ic_reaction_like_no_shadow"
             bind:emoIcon="@{data}"
             bind:iconPosition="@{1}"
+            android:contentDescription="@string/txt_like"
             app:layout_constraintStart_toStartOf="@id/guideline3"
             app:layout_constraintTop_toTopOf="@id/reactionCount"
             app:layout_constraintBottom_toBottomOf="@id/reactionCount"/>
 
         <TextView
             android:id="@+id/reactionCount"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="2dp"
@@ -195,7 +192,6 @@
             android:textSize="@dimen/default_text_size"
             android:textColor="@color/fixed_second_text_color"
             android:fontFamily="@font/roboto_medium"
-            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toEndOf="@id/thirdIcon"
             app:layout_constraintBottom_toBottomOf="@+id/owner"
             app:layout_constraintEnd_toEndOf="parent"
@@ -263,7 +259,6 @@
             app:drawableStartCompat="@drawable/ic_reaction_love_empty"
             loadReactionEmo="@{data.myReaction}"
             app:onSafeClick="@{(v) -> callback.onReactionClicked(v, reactionCount, data)}"
-            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintBottom_toBottomOf="@+id/viewCount"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/guideline3"
