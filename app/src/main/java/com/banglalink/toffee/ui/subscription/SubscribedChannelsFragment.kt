@@ -97,7 +97,7 @@ class SubscribedChannelsFragment : HomeBaseFragment() {
     }
 
     private fun observeList() {
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             val content = viewModel.loadUserChannels().map{
                 it.filter { item -> item.isSubscribed==1 }
             }

@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
-import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -88,8 +87,17 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
             
             updatePadding(top = verticalPadding.first.px, bottom = verticalPadding.second.px)
             updatePadding(left = horizontalPadding.first.px, right = horizontalPadding.second.px)
-            
-            mAdapter.addLoadStateListener(loadStateListener)
+
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                mAdapter.loadStateFlow.collectLatest {
+                    binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
+                    mAdapter.apply {
+                        val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
+                        binding.emptyView.isVisible = showEmpty
+                        binding.listview.isVisible = !showEmpty
+                    }
+                }
+            }
 
             setHasFixedSize(true)
 //            setEmptyView(binding.emptyView)
@@ -101,21 +109,12 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
         }
     }
 
-    private val loadStateListener : (CombinedLoadStates) -> Unit = {
-        binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
-        mAdapter.apply {
-            val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
-            binding.emptyView.isVisible = showEmpty
-            binding.listview.isVisible = !showEmpty
-        }
-    }
-
     open fun getRecyclerAdapter(): RecyclerView.Adapter<*> {
         return mAdapter.withLoadStateFooter( ListLoadStateAdapter{ mAdapter.retry() } )
     }
 
     private fun observeList() {
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             mViewModel.getListData.collectLatest {
                 mAdapter.submitData(it)
             }
@@ -123,7 +122,6 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
     }
 
     override fun onDestroyView() {
-        mAdapter.removeLoadStateListener(loadStateListener)
         binding.listview.adapter = null
         binding.listview.clearOnScrollListeners()
         binding.unbind()

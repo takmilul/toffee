@@ -129,7 +129,7 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
     
     private fun observeMyChannelPlaylists() {
         listJob?.cancel()
-        listJob = lifecycleScope.launchWhenStarted {
+        listJob = viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             mViewModel.getMyChannelPlaylists(channelOwnerId).collectLatest {
                 mAdapter.submitData(it)
             }

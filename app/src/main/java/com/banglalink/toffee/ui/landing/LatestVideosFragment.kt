@@ -172,7 +172,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
 
     private fun observeLatestVideosList(categoryId: Int, subCategoryId: Int = 0) {
         listJob?.cancel()
-        listJob = lifecycleScope.launchWhenStarted {
+        listJob = viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             if (categoryId == 0) {
                 viewModel.loadLatestVideos().collectLatest {
                     mAdapter.submitData(it.map { channel->
@@ -194,7 +194,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     
     private fun observeTrendingVideosList(categoryId: Int, subCategoryId: Int = 0) {
         listJob?.cancel()
-        listJob = lifecycleScope.launchWhenStarted {
+        listJob = viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.loadMostPopularVideos(categoryId, subCategoryId).collectLatest {
                 mAdapter.submitData(it.map { channel->
                     localSync.syncData(channel)

@@ -64,7 +64,7 @@ class PopularMovieChannelFragment : BaseFragment() {
     }
 
     private fun observeList() {
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.loadPopularMovieChannels.collectLatest {
                 val channelList = it.map { tvItem ->
                     tvItem.channelInfo!!

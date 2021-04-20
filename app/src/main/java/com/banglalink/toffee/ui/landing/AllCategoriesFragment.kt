@@ -58,7 +58,7 @@ class AllCategoriesFragment: BaseFragment(), BaseListItemCallback<Category> {
     }
 
     private fun observeList() {
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.loadCategories.collectLatest {
                 mAdapter.submitData(it)
             }

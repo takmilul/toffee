@@ -63,7 +63,7 @@ class EditorsChoiceFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInf
     }
     
     private fun observeList() {
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             val content = if (landingPageViewModel.pageType.value == PageType.Landing) {
                 landingPageViewModel.loadLandingEditorsChoiceContent
             }

@@ -75,7 +75,7 @@ class PopularTVChannelsFragment : HomeBaseFragment(), BaseListItemCallback<Chann
     }
     
     private fun observeList() {
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.loadChannels.collectLatest {
                 mAdapter.submitData(it)
             }

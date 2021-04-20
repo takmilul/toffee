@@ -50,7 +50,7 @@ class BottomChannelFragment: BaseFragment() {
     }
 
     private fun observeList() {
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.loadAllChannels().collectLatest {
                 mAdapter.submitData(it)
             }

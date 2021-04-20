@@ -163,7 +163,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
     }
 
     private fun observeMyChannelVideos() {
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             myChannelVideosViewModel.getMyChannelVideos(currentItem.channel_owner_id).collectLatest {
                 catchupAdapter.submitData(it.filter { channelInfo -> channelInfo.id != currentItem.id })
             }
@@ -171,7 +171,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
     }
     
     private fun observeList() {
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             val catchupParams = CatchupParams(currentItem.id, currentItem.video_tags, landingPageViewModel.categoryId
                 .value ?: 0, landingPageViewModel.subCategoryId.value ?: 0)
             viewModel.loadRelativeContent(catchupParams).collectLatest {

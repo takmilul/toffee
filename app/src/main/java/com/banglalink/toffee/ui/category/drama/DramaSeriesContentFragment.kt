@@ -120,7 +120,7 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
     }
 
     private fun observeTrendingVideosList(categoryId: Int, subCategoryId: Int = 0) {
-        lifecycleScope.launchWhenStarted { 
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             landingPageViewModel.loadMostPopularVideos(categoryId, subCategoryId).collectLatest {
                 mAdapter.submitData(it)
             }
@@ -128,7 +128,7 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
     }
 
     private fun observeLatestVideosList(categoryId: Int, subCategoryId: Int = 0, isFilter: Int = 0, hashTag: String = "null") {
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.loadDramaSeriesContents(categoryId, subCategoryId, isFilter, hashTag).collectLatest {
                 mAdapter.submitData(it)
             }

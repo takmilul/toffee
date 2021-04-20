@@ -116,7 +116,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
     
     private fun observeMyChannelVideos() {
         listJob?.cancel()
-        listJob = lifecycleScope.launchWhenStarted {
+        listJob = viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             mViewModel.getMyChannelVideos(channelOwnerId).collectLatest {
                 mAdapter.submitData(it)
             }

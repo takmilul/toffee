@@ -197,7 +197,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     }
     
     private fun observeVideoList() {
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             mViewModel.getMyChannelPlaylistVideos(requestParams).collectLatest {
                 playlistAdapter.submitData(it)
             }
