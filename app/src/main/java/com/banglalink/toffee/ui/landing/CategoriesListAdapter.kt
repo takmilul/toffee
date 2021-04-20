@@ -44,7 +44,7 @@ class CategoriesListAdapter(
                     icon.maxWidth = iconSize.toInt()
                     icon.maxHeight = iconSize.toInt()
                     if (calculatedWidth < 136.px) {
-                        (binding.icon.layoutParams as ViewGroup.MarginLayoutParams).apply {
+                        (icon.layoutParams as ViewGroup.MarginLayoutParams).apply {
                             marginStart = 8.px
                             text.textSize = 13f
                         }

@@ -370,15 +370,3 @@ fun loadUnseenBgColor(view: CardView, isSeen: Boolean){
 fun  onSafeClick(view: View, listener: View.OnClickListener){
     view.safeClick(listener)
 }
-
-@BindingAdapter("loadCategoryPlaceholderIcon")
-fun loadCategoryPlaceholderIcon(view: ImageView, position: Int) {
-    when(position) {
-        1 -> view.setImageResource(R.drawable.ic_cat_movie)
-        2 -> view.setImageResource(R.drawable.ic_cat_game)
-        3 -> view.setImageResource(R.drawable.ic_cat_news)
-        4 -> view.setImageResource(R.drawable.ic_cat_music)
-        5 -> view.setImageResource(R.drawable.ic_cat_fashion)
-        6 -> view.setImageResource(R.drawable.ic_cat_podcasts)
-    }
-}
