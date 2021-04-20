@@ -4,11 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentMoviesPreviewBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ChannelInfo
@@ -46,6 +45,7 @@ class MoviesPreviewFragment : BaseFragment() {
     private fun observeMoviePreviews() {
         observe(viewModel.moviePreviews){
             moviePreviews = it
+            binding.root.isVisible = it.isNotEmpty()
             adapter = MoviesPreviewSliderAdapter(this)
             binding.viewPager.offscreenPageLimit = 1
             binding.viewPager.adapter = adapter

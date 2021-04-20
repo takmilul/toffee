@@ -17,6 +17,7 @@ class MoviesContinueWatchingFragment : MovieBaseFragment<ChannelInfo>() {
             viewModel.getContinueWatchingFlow(1).collectLatest {
                 adapter.removeAll()
                 adapter.addAll(it)
+                showCard(it.isNotEmpty())
             }
         }
     }
