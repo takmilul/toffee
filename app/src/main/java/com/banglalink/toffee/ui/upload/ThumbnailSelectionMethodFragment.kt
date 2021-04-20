@@ -127,6 +127,11 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val imageFileName = "IMAGE_" + timeStamp + "_"
         val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        if (storageDir?.exists() == true){
+            storageDir.mkdir()
+        }else{
+            storageDir?.mkdirs()
+        }
         return File.createTempFile(imageFileName, ".jpg", storageDir)
     }
 

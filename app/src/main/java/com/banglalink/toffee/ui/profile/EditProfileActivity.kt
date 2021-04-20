@@ -185,6 +185,11 @@ class EditProfileActivity : BaseAppCompatActivity() {
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val imageFileName = "IMG_" + timeStamp + "_"
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        if (storageDir?.exists() == true){
+            storageDir.mkdir()
+        }else{
+            storageDir?.mkdirs()
+        }
         return File.createTempFile(imageFileName, ".jpg", storageDir)
     }
 
