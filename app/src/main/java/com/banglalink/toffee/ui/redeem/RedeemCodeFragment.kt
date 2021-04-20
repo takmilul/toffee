@@ -25,7 +25,8 @@ import com.banglalink.toffee.util.unsafeLazy
 
 
 class RedeemCodeFragment : BaseFragment() {
-    private lateinit var binding: FragmentRedeemCodeBinding
+    private var _binding: FragmentRedeemCodeBinding?=null
+    private val binding get() = _binding!!
     private val viewModel by viewModels<RedeemCodeViewModel>()
 
     private val progressDialog by unsafeLazy {
@@ -35,8 +36,8 @@ class RedeemCodeFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentRedeemCodeBinding.inflate(inflater, container, false)
+    ): View {
+        _binding = FragmentRedeemCodeBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -44,6 +45,11 @@ class RedeemCodeFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.redeemBtn.setOnClickListener { _ -> handleRedeemCodeButton() }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun handleRedeemCodeButton() {

@@ -5,7 +5,6 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.content.res.AssetManager
 import android.graphics.Color
 import android.os.Bundle
 import android.os.SystemClock
@@ -15,18 +14,14 @@ import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.text.style.ForegroundColorSpan
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
-import androidx.activity.viewModels
 import androidx.core.app.ShareCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.banglalink.toffee.R
-import com.banglalink.toffee.databinding.ActivityReferAFriendLayoutBinding
-import com.banglalink.toffee.databinding.FragmentLandingUserChannelsBinding
 import com.banglalink.toffee.databinding.FragmentReferAFriendBinding
 import com.banglalink.toffee.extension.action
 import com.banglalink.toffee.extension.observe
@@ -34,14 +29,13 @@ import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.extension.snack
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseFragment
-import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
 
 
 class ReferAFriendFragment : BaseFragment() {
 
-    private lateinit var _binding: FragmentReferAFriendBinding
+    private var _binding: FragmentReferAFriendBinding?=null
     private val binding get() = _binding!!
     private val viewModel by viewModels<ReferAFriendViewModel>()
     private val progressDialog by unsafeLazy {
@@ -55,7 +49,7 @@ class ReferAFriendFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         _binding = FragmentReferAFriendBinding.inflate(inflater, container, false)
         return binding.root
@@ -66,6 +60,10 @@ class ReferAFriendFragment : BaseFragment() {
         getMyReferralCode()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
 
     private fun getMyReferralCode() {

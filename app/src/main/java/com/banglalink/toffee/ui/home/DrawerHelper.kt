@@ -1,13 +1,15 @@
 package com.banglalink.toffee.ui.home
 
-import android.content.Intent
+import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -16,14 +18,13 @@ import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.extension.loadProfileImage
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.*
-import com.banglalink.toffee.ui.about.AboutActivity
+import com.banglalink.toffee.ui.about.AboutFragment
+import com.banglalink.toffee.ui.about.AboutFragmentDirections
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
-import com.banglalink.toffee.ui.common.HtmlPageViewActivity
 import com.banglalink.toffee.ui.profile.ViewProfileActivity
-import com.banglalink.toffee.ui.redeem.RedeemCodeActivity
-import com.banglalink.toffee.ui.refer.ReferAFriendActivity
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.suke.widget.SwitchButton
+
 
 class DrawerHelper(
     private val activity: HomeActivity,

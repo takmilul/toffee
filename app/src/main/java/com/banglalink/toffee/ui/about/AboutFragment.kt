@@ -14,10 +14,8 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.ActivitySettingsBinding
 import com.banglalink.toffee.databinding.FragmentAboutBinding
 import com.banglalink.toffee.databinding.FragmentAboutPointsBinding
-import com.banglalink.toffee.databinding.FragmentPrivacyPolicyBinding
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.common.HtmlPageViewActivity
-import com.banglalink.toffee.ui.settings.SettingsFragmentDirections
 
 class AboutFragment : BaseFragment() {
 
@@ -27,9 +25,14 @@ class AboutFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         _binding = FragmentAboutBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         binding.versionTv.text = getVersionText()
 
@@ -45,16 +48,19 @@ class AboutFragment : BaseFragment() {
 
             onClickCheckUpdateButton()
         }
-
-        return binding.root
     }
 
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
 
     fun onClickTermsAndConditions() {
-        if (findNavController().currentDestination?.id != R.id.privacyPolicyFragment && findNavController().currentDestination?.id == R.id.AboutFragment) {
-            val action = AboutFragmentDirections.actionAboutFragmentToPrivacyPolicyFragment("Terms & Conditions")
+        if (findNavController().currentDestination?.id != R.id.termsAndConditionFragment && findNavController().currentDestination?.id == R.id.AboutFragment) {
+            val action = AboutFragmentDirections.actionAboutFragmentToTermsAndConditons("Terms & Conditions",
+                requireContext().getString(R.string.terms_and_conditions_url))
             findNavController().navigate(action)
         }
     }
@@ -62,7 +68,7 @@ class AboutFragment : BaseFragment() {
     fun onClickPrivacyPolicy() {
 
         if (findNavController().currentDestination?.id != R.id.privacyPolicyFragment && findNavController().currentDestination?.id == R.id.AboutFragment) {
-            val action = AboutFragmentDirections.actionAboutFragmentToPrivacyPolicyFragment("Privacy Policy")
+            val action = AboutFragmentDirections.actionAboutFragmentToPrivacyPolicy("Privacy Policy",requireContext().getString(R.string.privacy_policy_url))
             findNavController().navigate(action)
         }
     }

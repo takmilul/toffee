@@ -231,4 +231,10 @@
     <string name="txt_splash_line">Splash Line</string>
     <string name="txt_spalash_logo_title">Spalash Logo Title</string>
     <string name="fireworks_section_title">Moments</string>
+    <string name="Creators_policy_page_title">Creators Policy</string>
+
+<!--    url-->
+    <string name="creators_policy_url">https://www.banglalink.net/en/toffee-privacy-policy</string>
+    <string name="privacy_policy_url">https://www.banglalink.net/en/toffee-privacy-policy</string>
+    <string name="terms_and_conditions_url">https://www.banglalink.net/en/toffee-privacy-policy</string>
 </resources>

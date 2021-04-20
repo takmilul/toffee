@@ -16,6 +16,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.data.repository.UserActivitiesRepository
 import com.banglalink.toffee.databinding.ActivitySettingsBinding
 import com.banglalink.toffee.ui.about.AboutActivity
+import com.banglalink.toffee.ui.about.AboutFragment
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.common.HtmlPageViewActivity
 import com.banglalink.toffee.ui.mychannel.MyChannelHomeFragmentDirections
@@ -150,7 +151,7 @@ class SettingsFragment : BaseFragment() {
         binding.prefAbout.setOnClickListener {
            // startActivity(Intent(requireActivity(), AboutActivity::class.java))
 
-            if (findNavController().currentDestination?.id != R.id.privacyPolicyFragment && findNavController().currentDestination?.id == R.id.menu_settings) {
+            if (findNavController().currentDestination?.id != R.id.AboutFragment && findNavController().currentDestination?.id == R.id.menu_settings) {
                 val action = SettingsFragmentDirections.actionSettingsFragmentToAboutFragment()
                 findNavController().navigate(action)
             }
@@ -179,15 +180,16 @@ class SettingsFragment : BaseFragment() {
 //        }
 //        startActivity(intent)
 
-        if (findNavController().currentDestination?.id != R.id.privacyPolicyFragment && findNavController().currentDestination?.id == R.id.menu_settings) {
-            val action = SettingsFragmentDirections.actionSettingsFragmentToPrivacyPolicyFragment("Terms & Conditions")
+        if (findNavController().currentDestination?.id != R.id.termsAndConditionFragment&& findNavController().currentDestination?.id == R.id.menu_settings) {
+            val action = SettingsFragmentDirections.actionSettingsFragmentToTermsAndConditions("Terms & Conditions",requireContext().getString(R.string.terms_and_conditions_url))
             findNavController().navigate(action)
         }
     }
 
     private fun onClickPrivacyPolicy() {
         if (findNavController().currentDestination?.id != R.id.privacyPolicyFragment && findNavController().currentDestination?.id == R.id.menu_settings) {
-            val action = SettingsFragmentDirections.actionSettingsFragmentToPrivacyPolicyFragment("Privacy Policy")
+            val action = SettingsFragmentDirections.actionSettingsFragmentToPrivacyPolicy("Privacy Policy",
+                requireContext().getString(R.string.privacy_policy_url))
             findNavController().navigate(action)
         }
     }
