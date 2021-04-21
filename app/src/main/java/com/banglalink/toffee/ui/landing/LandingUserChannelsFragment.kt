@@ -27,6 +27,9 @@ import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.facebook.shimmer.ShimmerFrameLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -66,13 +69,18 @@ class LandingUserChannelsFragment : HomeBaseFragment(), LandingPopularChannelCal
         }
 
         with(binding.userChannelList) {
-            mAdapter.addLoadStateListener {
-                val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
-                val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
-                binding.placeholder.isVisible = isEmpty
-                binding.userChannelList.isVisible = ! isEmpty
-                startLoadingAnimation(isLoading)
-                isInitialized = true
+
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                mAdapter.loadStateFlow
+//                    .distinctUntilChangedBy { it.refresh }
+                    .collectLatest {
+                    val isLoading = it.source.refresh is LoadState.Loading// || !isInitialized
+                    val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
+                    binding.placeholder.isVisible = isEmpty
+                    binding.userChannelList.isVisible = ! isEmpty
+                    startLoadingAnimation(isLoading)
+                    isInitialized = true
+                }
             }
             adapter = mAdapter
         }

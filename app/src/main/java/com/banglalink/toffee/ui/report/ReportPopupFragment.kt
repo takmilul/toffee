@@ -19,6 +19,7 @@ import com.banglalink.toffee.model.OffenseType
 import com.banglalink.toffee.ui.common.CheckedChangeListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -77,21 +78,23 @@ class ReportPopupFragment : DialogFragment(),
         mAdapter=ReportListAdapter(this)
         binding.listview.adapter = mAdapter
 
-
-        lifecycleScope.launch{
-          val reportList=  viewModel.loadReportList()
-            reportList.collectLatest {
+        //https://stackoverflow.com/questions/59521691/use-viewlifecycleowner-as-the-lifecycleowner (Comment)
+        lifecycleScope.launchWhenStarted {
+            viewModel.loadReportList().collectLatest {
                 mAdapter.submitData(it)
             }
-
         }
 
-        mAdapter.addLoadStateListener {
-            mAdapter.apply {
-                val showEmpty = itemCount <= 0 && ! it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
-                if (showEmpty) {
-                    Toast.makeText(requireContext(), "Unable to load data.", Toast.LENGTH_SHORT).show()
-                    alertDialog.dismiss()
+        lifecycleScope.launchWhenStarted {
+            mAdapter.loadStateFlow
+//                .distinctUntilChangedBy { it.refresh }
+                .collectLatest {
+                mAdapter.apply {
+                    val showEmpty = itemCount <= 0 && ! it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
+                    if (showEmpty) {
+                        Toast.makeText(requireContext(), "Unable to load data.", Toast.LENGTH_SHORT).show()
+                        alertDialog.dismiss()
+                    }
                 }
             }
         }

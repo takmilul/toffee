@@ -24,6 +24,7 @@ import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 
 class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<ChannelInfo> {
 
@@ -88,15 +89,19 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
             }
         }
 
-        mAdapter.addLoadStateListener {
-            binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
-            mAdapter.apply {
-                val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
-                val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
-                binding.emptyView.isVisible = isEmpty && !isLoading
-                binding.placeholder.isVisible = isLoading
-                binding.latestVideosList.isVisible = !isEmpty
-                isInitialized = true
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            mAdapter.loadStateFlow
+//                .distinctUntilChangedBy { it.refresh }
+                .collectLatest {
+                binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
+                mAdapter.apply {
+                    val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
+                    val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
+                    binding.emptyView.isVisible = isEmpty && !isLoading
+                    binding.placeholder.isVisible = isLoading
+                    binding.latestVideosList.isVisible = !isEmpty
+                    isInitialized = true
+                }
             }
         }
     }

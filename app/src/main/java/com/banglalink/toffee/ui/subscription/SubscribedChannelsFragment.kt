@@ -22,6 +22,7 @@ import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.common.UnSubscribeDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -73,18 +74,22 @@ class SubscribedChannelsFragment : HomeBaseFragment() {
             }
         })
 
-        mAdapter.addLoadStateListener {
-            mAdapter.apply {
-                val showEmpty = itemCount <= 0 && ! it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
-                if (showEmpty) {
-                    binding.tvSubTv.hide()
-                    binding.noChannelTv.show()
-                    binding.subscribedChannelList.hide()
-                }
-                else{
-                    binding.tvSubTv.show()
-                    binding.noChannelTv.hide()
-                    binding.subscribedChannelList.show()
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            mAdapter.loadStateFlow
+//                .distinctUntilChangedBy { it.refresh }
+                .collectLatest {
+                mAdapter.apply {
+                    val showEmpty = itemCount <= 0 && ! it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
+                    if (showEmpty) {
+                        binding.tvSubTv.hide()
+                        binding.noChannelTv.show()
+                        binding.subscribedChannelList.hide()
+                    }
+                    else{
+                        binding.tvSubTv.show()
+                        binding.noChannelTv.hide()
+                        binding.subscribedChannelList.show()
+                    }
                 }
             }
         }

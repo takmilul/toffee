@@ -146,12 +146,13 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
     }
 
     private fun observeListState() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             catchupAdapter
                 .loadStateFlow
-                .distinctUntilChangedBy {
-                    it.refresh
-                }.collect {
+//                .distinctUntilChangedBy {
+//                    it.refresh
+//                }
+                .collect {
                     val list = catchupAdapter.snapshot()
                     if(list.size > 0) {
                         homeViewModel.addToPlayListMutableLiveData.postValue(

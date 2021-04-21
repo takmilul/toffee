@@ -47,6 +47,9 @@ import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -84,13 +87,17 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         with(binding.latestVideosList) {
             addItemDecoration(MarginItemDecoration(12))
 
-            mAdapter.addLoadStateListener {
-                val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
-                val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
-                binding.emptyView.isVisible = isEmpty && !isLoading
-                binding.placeholder.isVisible = isLoading
-                binding.latestVideosList.isVisible = !isEmpty
-                isInitialized = true
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                mAdapter.loadStateFlow
+//                    .distinctUntilChangedBy { it.refresh }
+                    .collectLatest {
+                    val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
+                    val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
+                    binding.emptyView.isVisible = isEmpty && !isLoading
+                    binding.placeholder.isVisible = isLoading
+                    binding.latestVideosList.isVisible = !isEmpty
+                    isInitialized = true
+                }
             }
             adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
             setHasFixedSize(true)
@@ -144,7 +151,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     private fun observeHashTagChange() {
         observe(viewModel.selectedHashTag) {
             listJob?.cancel()
-            listJob = lifecycleScope.launchWhenCreated {
+            listJob = viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 viewModel.loadHashTagContents(it, category?.id?.toInt() ?: 0, viewModel.subCategoryId.value ?: 0).collectLatest {
                     mAdapter.submitData(it)
                 }

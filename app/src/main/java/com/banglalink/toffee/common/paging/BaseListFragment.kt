@@ -16,6 +16,7 @@ import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 
 abstract class BaseListFragment<T: Any>: BaseFragment() {
     protected abstract val mAdapter: BasePagingDataAdapter<T>
@@ -89,7 +90,9 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
             updatePadding(left = horizontalPadding.first.px, right = horizontalPadding.second.px)
 
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-                mAdapter.loadStateFlow.collectLatest {
+                mAdapter.loadStateFlow
+//                    .distinctUntilChangedBy { it.refresh }
+                    .collectLatest {
                     binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
                     mAdapter.apply {
                         val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading

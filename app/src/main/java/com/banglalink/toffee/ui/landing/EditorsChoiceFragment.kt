@@ -18,6 +18,7 @@ import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.facebook.shimmer.ShimmerFrameLayout
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 
 class EditorsChoiceFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo> {
     
@@ -47,13 +48,17 @@ class EditorsChoiceFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInf
         }*/
         
         with(binding.editorsChoiceList) {
-            mAdapter.addLoadStateListener {
-                val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
-                val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
-                binding.placeholder.isVisible = isEmpty
-                binding.editorsChoiceList.isVisible = ! isEmpty
-                startLoadingAnimation(isLoading)
-                isInitialized = true
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                mAdapter.loadStateFlow
+//                    .distinctUntilChangedBy { it.refresh }
+                    .collectLatest {
+                    val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
+                    val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
+                    binding.placeholder.isVisible = isEmpty
+                    binding.editorsChoiceList.isVisible = ! isEmpty
+                    startLoadingAnimation(isLoading)
+                    isInitialized = true
+                }
             }
             binding.placeholder.isVisible = true
             adapter = mAdapter
