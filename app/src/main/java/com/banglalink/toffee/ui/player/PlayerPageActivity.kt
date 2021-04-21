@@ -208,6 +208,20 @@ abstract class PlayerPageActivity :
         initializeRemotePlayer()
         player = if(castPlayer?.isCastSessionAvailable == true) castPlayer else exoPlayer
 
+        player?.let { pl ->
+            if(pl is CastPlayer && playlistManager.getCurrentChannel() == null) {
+                val tag = pl.currentMediaItem?.playbackProperties?.tag
+                if(tag is Int) {
+                    val cis = pl.getItem(tag)
+                    if(cis != null && cis.customData != null) {
+                        val cinfo = jsonToChannelInfo(cis.customData!!)
+                        cinfo.viewProgress = pl.currentPosition
+                        playlistManager.setPlaylist(cinfo)
+                    }
+                }
+            }
+        }
+
         //we are checking whether there is already channelInfo exist. If not null then play it
         if (playlistManager.getCurrentChannel() != null) {
             player?.playWhenReady = true
@@ -242,7 +256,7 @@ abstract class PlayerPageActivity :
         castContext?.let {
             Log.e("CAST", "Castplayer init")
             castPlayer = CastPlayer(it, ToffeeMediaItemConverter()).apply {
-                addListener(this@PlayerPageActivity)
+                addListener(playerEventListener)
                 playWhenReady = true
                 setSessionAvailabilityListener(this@PlayerPageActivity)
             }
@@ -270,8 +284,14 @@ abstract class PlayerPageActivity :
     }
 
     private fun releaseRemotePlayer() {
+        castPlayer?.removeListener(playerEventListener)
         castPlayer?.setSessionAvailabilityListener(null)
-        castPlayer?.release()
+//        castPlayer?.release()
+//        Log.e("CAST_T", "Release remote player")
+//        if(castPlayer?.isPlaying == true && playlistManager.getCurrentChannel() != null) {
+//            mPref.savedCastInfo = playlistManager.getCurrentChannel()
+//            Log.e("CAST_T", "Saving channel info -> ${mPref.savedCastInfo?.id}")
+//        }
         castPlayer = null
     }
 
@@ -399,9 +419,9 @@ abstract class PlayerPageActivity :
 //        Log.e("MEDIA_T", "Player is -> ${player?.javaClass?.name}")
         player?.let {
 //            Log.e("MEDIA_T", "${it.currentMediaItem?.playbackProperties?.tag}")
-            val oldChannelInfo = it.currentMediaItem?.playbackProperties?.tag
+            val oldChannelInfo = getCurrentChannelInfo()
             oldChannelInfo?.let { oldInfo ->
-                if(oldInfo is ChannelInfo && oldInfo.id != channelInfo.id && it.playbackState != STATE_ENDED) {
+                if(oldInfo.id != channelInfo.id && it.playbackState != STATE_ENDED) {
                     insertContentViewProgress(oldInfo, it.currentPosition)
                 }
             }
@@ -482,8 +502,19 @@ abstract class PlayerPageActivity :
 
     private inner class ToffeeMediaItemConverter: MediaItemConverter {
         override fun toMediaQueueItem(mediaItem: MediaItem): MediaQueueItem {
-//            Log.e("MEDIA_T", "MediaTag -> ${mediaItem.playbackProperties?.tag}")
-            return getMediaInfo(mediaItem.playbackProperties?.tag as ChannelInfo)
+            val tag = mediaItem.playbackProperties?.tag
+            val cinfo = if(tag is Int) {
+                val cdata = castPlayer?.getItem(tag)?.customData
+                try {
+                    jsonToChannelInfo(cdata!!)
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                    null
+                }
+            } else {
+                tag as ChannelInfo
+            }
+            return getMediaInfo(cinfo!!)
         }
 
         override fun toMediaItem(mediaQueueItem: MediaQueueItem): MediaItem {
@@ -531,9 +562,9 @@ abstract class PlayerPageActivity :
     //                    .setStreamDuration(MediaInfo.STREAM_TYPE_LIVE)
                 .build()
         }
-        return MediaQueueItem.Builder(mediaInfo).setCustomData(channelInfoToJson(info).apply { Log.e("CAST_T",
+        return MediaQueueItem.Builder(mediaInfo).setCustomData(channelInfoToJson(info)/*.apply { Log.e("CAST_T",
             this.toString(4)
-        ) }).build()
+        ) }*/).build()
     }
 
     private fun channelInfoToJson(info: ChannelInfo): JSONObject {
@@ -665,8 +696,8 @@ abstract class PlayerPageActivity :
                 clearStartPosition()
                 reloadChannel()
             }
-            player?.currentMediaItem?.playbackProperties?.tag?.let { cinfo->
-                if(cinfo is ChannelInfo && !cinfo.isLive) {
+            getCurrentChannelInfo()?.let { cinfo->
+                if(!cinfo.isLive) {
                     insertContentViewProgress(cinfo, player?.duration ?: -1)
                 }
             }
@@ -695,20 +726,42 @@ abstract class PlayerPageActivity :
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             super.onIsPlayingChanged(isPlaying)
             if(isPlaying) return
-            player?.currentMediaItem?.playbackProperties?.tag?.let { cinfo->
-                if(cinfo is ChannelInfo) {
-                    if(player?.currentPosition ?: 0 > 0L) {
-                        insertContentViewProgress(cinfo, player?.currentPosition ?: -1)
-                    }
+            val cinfo = getCurrentChannelInfo()
+            if(cinfo is ChannelInfo) {
+                if(player?.currentPosition ?: 0 > 0L) {
+                    insertContentViewProgress(cinfo, player?.currentPosition ?: -1)
                 }
             }
         }
     }
 
+    private fun getCurrentChannelInfo(): ChannelInfo? {
+        val tag = player?.currentMediaItem?.playbackProperties?.tag
+        if(tag is ChannelInfo) {
+            return tag
+        }
+        else if(tag is Int) {
+            return try {
+                jsonToChannelInfo(castPlayer?.getItem(tag)?.customData!!)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                null
+            }
+        }
+        return null
+    }
+
     abstract fun resetPlayer()
 
     override fun onCastSessionAvailable() {
+        Log.e("CAST_T", "Cast Session available")
         updateStartPosition()
+//        val savedSession = mPref.savedCastInfo
+//        if(savedSession != null) {
+//            Log.e("CAST_T", "Saved session id -> ${savedSession?.id}")
+//            playlistManager.setPlaylist(savedSession)
+//            mPref.savedCastInfo = null
+//        }
         playlistManager.getCurrentChannel()?.let {
             if(player?.playbackState != STATE_ENDED) {
                 insertContentViewProgress(it, player?.currentPosition ?: -1)

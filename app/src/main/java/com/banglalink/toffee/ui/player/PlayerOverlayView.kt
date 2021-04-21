@@ -14,6 +14,8 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.PlayerOverlayLayoutBinding
 import com.banglalink.toffee.model.ChannelInfo
 import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.ext.cast.CastPlayer
+import com.google.gson.Gson
 
 
 /**
@@ -308,6 +310,14 @@ class PlayerOverlayView(context: Context, private val attrs: AttributeSet?) :
     private fun getCurrentChannel(): ChannelInfo? {
         player?.currentMediaItem?.playbackProperties?.tag?.let {
             if(it is ChannelInfo) return it
+            else if(it is Int && player is CastPlayer) {
+                return try {
+                    Gson().fromJson((player as CastPlayer).getItem(it)?.customData!!.getString("channel_info"), ChannelInfo::class.java)
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                    null
+                }
+            }
         }
         return null
     }
