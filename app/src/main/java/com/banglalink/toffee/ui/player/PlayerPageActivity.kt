@@ -252,8 +252,68 @@ abstract class PlayerPageActivity :
         }
     }
 
+    private val castSessionListener = object: SessionManagerListener<CastSession> {
+        override fun onSessionStarting(p0: CastSession?) {
+//            Log.e("CAST_SESSION_T", "onSessionStarting")
+        }
+
+        override fun onSessionStarted(p0: CastSession?, p1: String?) {
+
+//            Log.e("CAST_SESSION_T", "onSessionStarted")
+        }
+
+        override fun onSessionStartFailed(p0: CastSession?, p1: Int) {
+
+//            Log.e("CAST_SESSION_T", "onSessionStarFailed")
+        }
+
+        override fun onSessionEnding(p0: CastSession?) {
+
+//            Log.e("CAST_SESSION_T", "onSessionEnding")
+        }
+
+        override fun onSessionEnded(p0: CastSession?, p1: Int) {
+
+//            Log.e("CAST_SESSION_T", "onSessionEnded")
+        }
+
+        override fun onSessionResuming(p0: CastSession?, p1: String?) {
+//            Log.e("CAST_SESSION_T", "onSessionResuming")
+        }
+
+        override fun onSessionResumed(p0: CastSession?, p1: Boolean) {
+//            Log.e("CAST_SESSION_T", "onSessionResumed")
+            p0?.let {
+                val cinfo = try {
+                    jsonToChannelInfo(it.remoteMediaClient.currentItem.customData!!)
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                    null
+                }
+                if(cinfo != null && playlistManager.getCurrentChannel() == null) {
+                    playlistManager.setPlaylist(cinfo)
+                    resumeCastSession(cinfo)
+                }
+            }
+        }
+
+        override fun onSessionResumeFailed(p0: CastSession?, p1: Int) {
+
+//            Log.e("CAST_SESSION_T", "onSessionResumeFailed")
+        }
+
+        override fun onSessionSuspended(p0: CastSession?, p1: Int) {
+
+//            Log.e("CAST_SESSION_T", "onSessionSuspended")
+        }
+    }
+
+    protected open fun resumeCastSession(info: ChannelInfo) {}
+
     private fun initializeRemotePlayer() {
         castContext?.let {
+            it.sessionManager.addSessionManagerListener(castSessionListener, CastSession::class.java)
+
             Log.e("CAST", "Castplayer init")
             castPlayer = CastPlayer(it, ToffeeMediaItemConverter()).apply {
                 addListener(playerEventListener)
@@ -266,6 +326,7 @@ abstract class PlayerPageActivity :
     private fun releasePlayer() {
         releaseLocalPlayer()
         releaseRemotePlayer()
+        castContext?.sessionManager?.removeSessionManagerListener(castSessionListener, CastSession::class.java)
         player = null
     }
 

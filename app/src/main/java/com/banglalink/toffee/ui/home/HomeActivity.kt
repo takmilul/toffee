@@ -604,6 +604,11 @@ class HomeActivity :
         }
     }
 
+    override fun resumeCastSession(info: ChannelInfo) {
+        maximizePlayer()
+        loadDetailFragment(info)
+    }
+
     override fun onStop() {
         super.onStop()
         if (Util.SDK_INT > 23) {
