@@ -46,13 +46,59 @@
         android:id="@+id/menu_settings"
         android:name="com.banglalink.toffee.ui.settings.SettingsFragment"
         android:label="Settings"
-        tools:layout="@layout/activity_settings"
-        />
+        tools:layout="@layout/activity_settings">
+        <action
+            android:id="@+id/action_SettingsFragment_to_PrivacyPolicy"
+            app:destination="@id/privacyPolicyFragment"
+            />
+        <action
+            android:id="@+id/action_SettingsFragment_to_TermsAndConditions"
+            app:destination="@id/termsAndConditionFragment"
+            />
+        <action
+            android:id="@+id/action_SettingsFragment_to_AboutFragment"
+            app:destination="@id/AboutFragment"
+            />
+    </fragment>
+
     <fragment
         android:id="@+id/menu_subscriptions"
         android:name="com.banglalink.toffee.ui.subscription.MySubscriptionFragment"
         android:label="Subscriptions"
         />
+    <fragment
+        android:id="@+id/menu_redeem"
+        android:name="com.banglalink.toffee.ui.redeem.RedeemCodeFragment"
+        android:label="Enter Referral Code"
+        />
+
+    <fragment
+        android:id="@+id/menu_invite"
+        android:name="com.banglalink.toffee.ui.refer.ReferAFriendFragment"
+        android:label="Refer A Friend"
+        />
+
+<!--    <fragment-->
+<!--        android:id="@+id/menu_creators_policy"-->
+<!--        android:name="com.banglalink.toffee.ui.common.PrivacyPolicyFragment"-->
+<!--        android:label="Creators Policy"-->
+<!--        />-->
+
+    <fragment
+        android:id="@+id/menu_creators_policy"
+        android:name="com.banglalink.toffee.ui.common.HtmlPageViewFragment"
+        android:label="{myTitle}">
+        <argument
+            android:name="myTitle"
+            app:argType="string"
+            android:defaultValue="Creators Policy"
+            />
+        <argument
+            android:name="url"
+            app:argType="string"
+            android:defaultValue="https://www.banglalink.net/en/toffee-privacy-policy"/>
+    </fragment>
+
     <fragment
         android:id="@+id/menu_feed"
         android:name="com.banglalink.toffee.ui.home.LandingPageFragment"
@@ -129,6 +175,69 @@
             android:id="@+id/action_menu_channel_to_myChannelVideosEditFragment"
             app:destination="@id/myChannelVideosEditFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/htmlPageViewFragment"
+        android:name="com.banglalink.toffee.ui.common.HtmlPageViewFragment"
+        android:label="{myTitle}">
+        <argument
+            android:name="myTitle"
+            app:argType="string" />
+        <argument
+            android:name="url"
+            app:argType="string" />
+        <argument
+            android:name="header"
+            app:argType="string"
+            android:defaultValue=""/>
+    </fragment>
+    <fragment
+        android:id="@+id/privacyPolicyFragment"
+        android:name="com.banglalink.toffee.ui.common.HtmlPageViewFragment"
+        android:label="{myTitle}">
+        <argument
+            android:name="myTitle"
+            app:argType="string" />
+        <argument
+            android:name="url"
+            app:argType="string" />
+        <argument
+            android:name="header"
+            app:argType="string"
+            android:defaultValue=""/>
+    </fragment>
+
+
+
+    <fragment
+        android:id="@+id/termsAndConditionFragment"
+        android:name="com.banglalink.toffee.ui.common.HtmlPageViewFragment"
+        android:label="{myTitle}">
+        <argument
+            android:name="myTitle"
+            app:argType="string" />
+        <argument
+            android:name="url"
+            app:argType="string" />
+        <argument
+            android:name="header"
+            app:argType="string"
+            android:defaultValue=""/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/AboutFragment"
+        android:name="com.banglalink.toffee.ui.about.AboutFragment"
+        android:label="About">
+        <action
+            android:id="@+id/action_AboutFragment_to_PrivacyPolicy"
+            app:destination="@id/privacyPolicyFragment"
+            />
+        <action
+            android:id="@+id/action_AboutFragment_to_TermsAndConditons"
+            app:destination="@id/termsAndConditionFragment"
+            />
+    </fragment>
+
     <dialog
         android:id="@+id/uploadMethodFragment"
         android:name="com.banglalink.toffee.ui.upload.UploadMethodFragment"

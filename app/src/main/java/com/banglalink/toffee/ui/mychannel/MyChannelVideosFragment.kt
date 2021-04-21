@@ -33,6 +33,7 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.about.AboutActivity
+import com.banglalink.toffee.ui.about.AboutFragment
 import com.banglalink.toffee.ui.common.*
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
@@ -134,7 +135,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
                 }
                 creatorsPolicyButton.setOnClickListener {
                     val intent = Intent(requireActivity(), HtmlPageViewActivity::class.java).apply {
-                        putExtra(HtmlPageViewActivity.CONTENT_KEY, AboutActivity.PRIVACY_POLICY_URL)
+                        putExtra(HtmlPageViewActivity.CONTENT_KEY, AboutFragment.PRIVACY_POLICY_URL)
                         putExtra(HtmlPageViewActivity.TITLE_KEY, "Creators Policy")
                     }
                     requireActivity().startActivity(intent)
