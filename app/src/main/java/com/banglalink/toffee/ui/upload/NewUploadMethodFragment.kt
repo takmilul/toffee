@@ -140,10 +140,8 @@ class NewUploadMethodFragment : DialogFragment() {
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val videoFileName = "VIDEO_" + timeStamp + "_"
         val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_MOVIES)
-        if (storageDir?.exists() == true){
-            storageDir.mkdir()
-        }else{
-            storageDir?.mkdirs()
+        if (storageDir?.exists() == false){
+            storageDir.mkdirs()
         }
         return File.createTempFile(videoFileName, ".mp4", storageDir)
     }
