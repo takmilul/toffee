@@ -22,6 +22,7 @@ import androidx.databinding.DataBindingUtil
 import com.banglalink.toffee.R.*
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.MediaControlLayout3Binding
+import com.banglalink.toffee.extension.getChannelMetadata
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener
 import com.banglalink.toffee.listeners.PlaylistListener
 import com.banglalink.toffee.model.ChannelInfo
@@ -228,12 +229,10 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
             }
         }
 
-        simpleExoPlayer?.currentMediaItem?.playbackProperties?.tag?.let {
-            if(it is ChannelInfo) {
-                isVideoPortrait = it.isHorizontal != 1
-                binding.rotation.visibility = if(isVideoPortrait) View.GONE else View.VISIBLE
-                binding.share.visibility = if(it.isApproved == 1) View.VISIBLE else View.GONE
-            }
+        simpleExoPlayer?.currentMediaItem?.getChannelMetadata(simpleExoPlayer)?.let {
+            isVideoPortrait = it.isHorizontal != 1
+            binding.rotation.visibility = if(isVideoPortrait) View.GONE else View.VISIBLE
+            binding.share.visibility = if(it.isApproved == 1) View.VISIBLE else View.GONE
         }
     }
 
@@ -560,6 +559,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     }
 
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+        //Log.e("CAST_T", "Player state changed")
         when (playbackState) {
             Player.STATE_BUFFERING -> {
                 binding.preview.setOnClickListener(this)
@@ -688,7 +688,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         super.onMediaItemTransition(mediaItem, reason)
         videoWidth = -1
         videoHeight = -1
-        val channelInfo = mediaItem?.playbackProperties?.tag
+        val channelInfo = mediaItem?.getChannelMetadata(simpleExoPlayer)
         if(channelInfo is ChannelInfo) {
             val prevState = isVideoPortrait
             isVideoPortrait = channelInfo.isHorizontal != 1
