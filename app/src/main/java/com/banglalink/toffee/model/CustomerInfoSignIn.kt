@@ -67,4 +67,5 @@ class CustomerInfoSignIn:BodyResponse() {
     var isCastUrlOverride: Int = 0
     @SerializedName("castOverrideUrl")
     var castOverrideUrl: String? = null
+    var verified_status: Boolean? = false
 }

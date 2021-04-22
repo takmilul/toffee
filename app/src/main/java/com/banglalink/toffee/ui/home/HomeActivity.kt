@@ -24,6 +24,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.core.view.*
 import androidx.core.widget.addTextChangedListener
@@ -142,6 +143,8 @@ class HomeActivity :
                 WindowManager.LayoutParams.FLAG_SECURE
             )
         }
+        Toast.makeText(this,""+mPref.verfication,Toast.LENGTH_LONG).show()
+        mPref.logout="0"
 //        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         binding = ActivityMainMenuBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -389,7 +392,7 @@ class HomeActivity :
                 //                        mPref.uploadId = null
                 //                        navController.navigate(R.id.uploadMethodFragment)
                 //                        return@launch
-                //                    }
+                //
                 ////                    if(uploads.status in listOf(0, 1, 2, 3) && UploadService.taskList.isEmpty()) {
                 ////                        uploads.apply {
                 ////                            status = UploadStatus.ERROR.value
@@ -1210,6 +1213,7 @@ class HomeActivity :
             .setCancelable(false)
             .setPositiveButton("Yes") { _, _ ->
                 mPref.clear()
+                mPref.logout="1"
                 UploadService.stopAllUploads()
                 launchActivity<SplashScreenActivity>()
                 finish()
@@ -1220,6 +1224,13 @@ class HomeActivity :
             .show()
     }
 
+    fun handleVerficationApp() {
+        mPref.clear()
+        mPref.logout="1"
+        UploadService.stopAllUploads()
+        launchActivity<SplashScreenActivity>()
+        finish()
+    }
     override fun onDrawerButtonPressed(): Boolean {
         binding.drawerLayout.openDrawer(GravityCompat.END, true)
         return true

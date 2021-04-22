@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.storage
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.provider.Settings
@@ -20,6 +21,7 @@ import java.util.*
 
 const val PREF_NAME_IP_TV= "IP_TV"
 
+@SuppressLint("HardwareIds")
 class SessionPreference(private val pref: SharedPreferences, private val context: Context) {
 
     val viewCountDbUrlLiveData = MutableLiveData<String>()
@@ -76,6 +78,17 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     set(isBanglalinkNumber){
         pref.edit().putString(PREF_BANGLALINK_NUMBER,isBanglalinkNumber).apply()
     }
+
+    var verfication:String
+        get() = pref.getString(PREF_VERFICATION,"false")?:"false"
+        set(isBanglalinkNumber){
+            pref.edit().putString(PREF_VERFICATION,isBanglalinkNumber).apply()
+        }
+    var logout:String
+        get() = pref.getString(PREF_LOGOUT,"0")?: ""
+        set(logout){
+            pref.edit().putString(PREF_LOGOUT,logout).apply()
+        }
 
     var balance: Int
         get() = pref.getInt(PREF_BALANCE, 0)
@@ -148,7 +161,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         set(userPhoto) {
             pref.edit().putString(PREF_IMAGE_URL, userPhoto).apply()
             if (!TextUtils.isEmpty(userPhoto))
-                profileImageUrlLiveData.postValue(userPhoto)
+                profileImageUrlLiveData.postValue(userPhoto!!)
         }
 
     var appThemeMode: Int
@@ -440,8 +453,11 @@ class SessionPreference(private val pref: SharedPreferences, private val context
 //        get() = pref.getString("toffee-upload-uri", null)
 //        set(value) = pref.edit { putString("toffee-upload-uri", value) }
 
+
     fun saveCustomerInfo(customerInfoSignIn:CustomerInfoSignIn){
         balance = customerInfoSignIn.balance
+        logout = "0"
+        verfication = customerInfoSignIn.verified_status.toString()
         customerId = customerInfoSignIn.customerId
         password = customerInfoSignIn.password?:""
         customerName = customerInfoSignIn.customerName?:""
@@ -484,6 +500,8 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_CHANNEL_ID = "channel_id"
         private const val PREF_SESSION_TOKEN = "session_token"
         private const val PREF_BANGLALINK_NUMBER = "banglalink_number"
+        private const val PREF_VERFICATION = "VER"
+        private const val PREF_LOGOUT= "LOGIYT"
         private const val PREF_BALANCE = "balance"
         private const val PREF_LATITUDE= "latitude"
         private const val PREF_LONGITUDE= "Longitude"

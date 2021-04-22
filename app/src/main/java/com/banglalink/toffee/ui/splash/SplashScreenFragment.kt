@@ -45,20 +45,22 @@ class SplashScreenFragment:BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.splashScreenMotionLayout.onTransitionCompletedListener {
-            if (viewModel.isCustomerLoggedIn()) {
-                initApp()
-                viewModel.loginResponse()
-            }
-            else {
+            if(mPref.logout.equals("1")){
                 lifecycleScope.launch {
                     if(findNavController().currentDestination?.id != R.id.signInFragment && findNavController().currentDestination?.id == R.id.splashScreenFragment) {
                         findNavController().navigate(SplashScreenFragmentDirections.actionSplashScreenFragmentToSigninByPhoneFragment())
                     }
                 }
             }
+            else{
+                viewModel.credentialResponse()
+            }
+
+
             val appEventsLogger = AppEventsLogger.newLogger(requireContext())
             appEventsLogger.logEvent("app_launch")
             appEventsLogger.flush()
+            initApp()
         }
     }
 
@@ -66,9 +68,32 @@ class SplashScreenFragment:BaseFragment() {
         observe(viewModel.apiLoginResponse){
             when(it){
                 is Resource.Success ->{
-                    ToffeeAnalytics.updateCustomerId(mPref.customerId)
-                    requireActivity().launchActivity<HomeActivity>()
-                    requireActivity().finish()
+                    if (mPref.customerId != 0) {
+                        if(mPref.logout.equals("0")){
+                            ToffeeAnalytics.updateCustomerId(mPref.customerId)
+                            requireActivity().launchActivity<HomeActivity>()
+                            requireActivity().finish()
+                        }
+                        else{
+                            lifecycleScope.launch {
+                                if(findNavController().currentDestination?.id != R.id.signInFragment && findNavController().currentDestination?.id == R.id.splashScreenFragment) {
+                                    findNavController().navigate(SplashScreenFragmentDirections.actionSplashScreenFragmentToSigninByPhoneFragment())
+                                }
+                            }
+                        }
+
+                        //viewModel.loginResponse(
+
+                    }
+                    else {
+                        lifecycleScope.launch {
+                            if(findNavController().currentDestination?.id != R.id.signInFragment && findNavController().currentDestination?.id == R.id.splashScreenFragment) {
+                                findNavController().navigate(SplashScreenFragmentDirections.actionSplashScreenFragmentToSigninByPhoneFragment())
+                            }
+                        }
+
+                    }
+
                 }
                 is Resource.Failure->{
                     when(it.error){
@@ -125,5 +150,10 @@ class SplashScreenFragment:BaseFragment() {
 
         val alertDialog = builder.create()
         alertDialog.show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mPref.logout="0"
     }
 }
