@@ -856,7 +856,9 @@ class HomeActivity :
                     showSubscribePackDialog()
                 }
                 else ->{
-//                    maximizePlayer()
+                    if(player is CastPlayer) {
+                        maximizePlayer()
+                    }
                     when (detailsInfo) {
                         is PlaylistPlaybackInfo -> {
                             loadPlayListItem(detailsInfo)
