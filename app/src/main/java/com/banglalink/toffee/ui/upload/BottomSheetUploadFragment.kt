@@ -194,7 +194,7 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment(), TextWatcher {
 
     private fun observeLogoChange() {
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String?>(ThumbnailSelectionMethodFragment.THUMB_URI)
-            ?.observe(viewLifecycleOwner, {
+            ?.observe(this, {
                 it?.let {
                     channelLogoUrl = it
                     loadImage()

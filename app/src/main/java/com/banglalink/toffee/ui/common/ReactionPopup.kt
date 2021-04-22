@@ -106,7 +106,7 @@ class ReactionPopup: Fragment() {
     private fun react(reaction: Reaction, reactIcon: Int) {
         reactionPopupWindow?.dismiss()
         channelInfo?.let { info ->
-            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            lifecycleScope.launchWhenStarted {
                 val previousReactionInfo = reactionDao.getReactionByContentId(preference.customerId, info.id.toLong())
                 val newReactionInfo = ReactionInfo(null, preference.customerId, info.id.toLong(), reaction.value)
                 var reactionCount = info.reaction?.run {
