@@ -71,6 +71,7 @@ class ReportPopupFragment : DialogFragment(),
         alertDialog = dialogBuilder.create().apply {
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }
+        var isInitialized = false
 
         binding.nextButton.safeClick(this)
         binding.cancelButton.safeClick(this)
@@ -90,8 +91,9 @@ class ReportPopupFragment : DialogFragment(),
 //                .distinctUntilChangedBy { it.refresh }
                 .collectLatest {
                 mAdapter.apply {
-                    val showEmpty = itemCount <= 0 && ! it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
-                    if (showEmpty) {
+                    val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
+                    val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
+                    if (isEmpty && !isLoading) {
                         Toast.makeText(requireContext(), "Unable to load data.", Toast.LENGTH_SHORT).show()
                         alertDialog.dismiss()
                     }
