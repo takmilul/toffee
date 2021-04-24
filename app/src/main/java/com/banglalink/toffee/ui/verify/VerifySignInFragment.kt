@@ -126,6 +126,7 @@ class VerifySignInFragment : BaseFragment() {
             when (it) {
                 is Resource.Success -> {
                     verifiedUserData = it.data
+                    mPref.phoneNumber = phoneNumber
                     val action = VerifySignInFragmentDirections.actionVerifySignInFragmentToUserInterestFragment(verifiedUserData)
                     findNavController().navigate(action)
 //                    signInMotionLayout?.let { view ->

@@ -23,6 +23,7 @@ class ApiLogin @Inject constructor(private val pref: SessionPreference, private 
         return ApiLoginRequest(
             pref.customerId,
             pref.password,
+            pref.phoneNumber,
             pref.latitude,
             pref.longitude,
             fcmToken = pref.fcmToken

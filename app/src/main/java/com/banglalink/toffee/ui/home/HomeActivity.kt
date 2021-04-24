@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.app.SearchManager
 import android.content.Intent
+import android.content.IntentSender.SendIntentException
 import android.content.pm.ActivityInfo
 import android.content.res.ColorStateList
 import android.content.res.Configuration
@@ -68,11 +69,17 @@ import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.ui.widget.showSubscriptionDialog
 import com.banglalink.toffee.util.EncryptionUtil
 import com.banglalink.toffee.util.InAppMessageParser
+import com.banglalink.toffee.util.TAG
 import com.banglalink.toffee.util.Utils
 import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.util.Util
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.switchmaterial.SwitchMaterial
+import com.google.android.play.core.appupdate.AppUpdateInfo
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.UpdateAvailability
+import com.google.android.play.core.tasks.Task
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.suke.widget.SwitchButton
@@ -95,6 +102,7 @@ const val ID_INVITE_FRIEND = 23
 const val ID_REDEEM_CODE = 24
 const val PLAY_IN_WEB_VIEW = 1
 const val OPEN_IN_EXTERNAL_BROWSER = 2
+const val IN_APP_UPDATE_REQUEST_CODE = 0x100
 
 @AndroidEntryPoint
 class HomeActivity :
@@ -140,8 +148,6 @@ class HomeActivity :
                 WindowManager.LayoutParams.FLAG_SECURE
             )
         }
-        Toast.makeText(this,""+mPref.isVerifiedUser,Toast.LENGTH_LONG).show()
-//        mPref.isVerifiedUser = false
         mPref.logout="0"
 //        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         binding = ActivityMainMenuBinding.inflate(layoutInflater)
@@ -340,6 +346,7 @@ class HomeActivity :
         observeUpload2()
         watchConnectionChange()
         observeMyChannelNavigation()
+        inAppUpdate()
     }
     
     private fun initMqtt() {
@@ -369,6 +376,42 @@ class HomeActivity :
         else {
             if (mPref.mqttIsActive) {
                 mqttService.initialize()
+            }
+        }
+    }
+    
+    fun inAppUpdate() {
+        val appUpdateManager = AppUpdateManagerFactory.create(this)
+        val appUpdateInfoTask: Task<AppUpdateInfo> = appUpdateManager.appUpdateInfo
+        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
+                try {
+                    appUpdateManager.startUpdateFlowForResult(
+                        appUpdateInfo,
+                        AppUpdateType.FLEXIBLE,
+                        this,
+                        IN_APP_UPDATE_REQUEST_CODE)
+                }
+                catch (e: SendIntentException) {
+                    e.printStackTrace()
+                }
+            }
+        }
+//        val listener = InstallStateUpdatedListener { state ->
+//            if (state.installStatus() === InstallStatus.DOWNLOADED) {
+//                popupSnackbarForCompleteUpdate()
+//            }
+//        }
+//        appUpdateManager.registerListener(listener)
+    }
+    
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == IN_APP_UPDATE_REQUEST_CODE) {
+            Log.e(TAG, "Start Download")
+            if (resultCode != RESULT_OK) {
+                Log.e(TAG, "Download Failed")
             }
         }
     }
@@ -744,11 +787,8 @@ class HomeActivity :
             ToffeeAnalytics.logBreadCrumb("Failed to handle depplink $url")
             ToffeeAnalytics.logException(e)
         }
-
-
     }
-
-
+    
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         if (Intent.ACTION_SEARCH == intent.action) {

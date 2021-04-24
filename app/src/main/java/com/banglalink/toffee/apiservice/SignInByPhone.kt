@@ -20,9 +20,9 @@ class SignInByPhone @Inject constructor(private val preference: SessionPreferenc
             )
 
         }
-        if (response.response.authorize) {
+        /*if (response.response.authorize) {
             preference.phoneNumber = phoneNumber
-        }
+        }*/
         return response.response.regSessionToken;
     }
 }
