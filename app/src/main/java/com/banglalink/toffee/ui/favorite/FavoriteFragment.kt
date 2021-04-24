@@ -14,6 +14,7 @@ import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.report.ReportPopupFragment
 import com.banglalink.toffee.ui.widget.MyPopupWindow
@@ -68,16 +69,28 @@ class FavoriteFragment : BaseListFragment<ChannelInfo>(), ProviderIconCallback<C
         popupMenu.setOnMenuItemClickListener{
             when(it?.itemId){
                 R.id.menu_share->{
+                    if (!mPref.isVerifiedUser) {
+                        (activity as HomeActivity).handleVerficationApp()
+                        return@setOnMenuItemClickListener true
+                    }
                     homeViewModel.shareContentLiveData.postValue(channelInfo)
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_fav->{
+                    if (!mPref.isVerifiedUser) {
+                        (activity as HomeActivity).handleVerficationApp()
+                        return@setOnMenuItemClickListener true
+                    }
                     homeViewModel.updateFavorite(channelInfo).observe(viewLifecycleOwner, Observer {
                         handleFavoriteResponse(it)
                     })
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_report -> {
+                    if (!mPref.isVerifiedUser) {
+                        (activity as HomeActivity).handleVerficationApp()
+                        return@setOnMenuItemClickListener true
+                    }
                     val fragment =
                         channelInfo.duration?.let { durations ->
                             ReportPopupFragment.newInstance(-1,

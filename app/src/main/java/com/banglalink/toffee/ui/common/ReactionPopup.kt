@@ -17,6 +17,7 @@ import com.banglalink.toffee.databinding.AlertDialogReactionsBinding
 import com.banglalink.toffee.enums.ActivityType.*
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.enums.Reaction.*
+import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.util.Utils
 import dagger.hilt.android.AndroidEntryPoint
@@ -104,9 +105,10 @@ class ReactionPopup: Fragment() {
     }
 
     private fun react(reaction: Reaction, reactIcon: Int) {
+        requireActivity().checkVerification(preference)
         reactionPopupWindow?.dismiss()
         channelInfo?.let { info ->
-            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            /*viewLifecycleOwner.lifecycleScope*/lifecycleScope.launchWhenStarted {
                 val previousReactionInfo = reactionDao.getReactionByContentId(preference.customerId, info.id.toLong())
                 val newReactionInfo = ReactionInfo(null, preference.customerId, info.id.toLong(), reaction.value)
                 var reactionCount = info.reaction?.run {

@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.provider.Settings
 import android.text.TextUtils
-import android.util.Base64
 import androidx.core.content.edit
 import androidx.lifecycle.MutableLiveData
 import com.banglalink.toffee.analytics.ToffeeAnalytics
@@ -79,11 +78,12 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         pref.edit().putString(PREF_BANGLALINK_NUMBER,isBanglalinkNumber).apply()
     }
 
-    var verfication:String
-        get() = pref.getString(PREF_VERFICATION,"false")?:"false"
-        set(isBanglalinkNumber){
-            pref.edit().putString(PREF_VERFICATION,isBanglalinkNumber).apply()
+    var isVerifiedUser: Boolean
+        get() = pref.getBoolean(PREF_VERFICATION,false)
+        set(isVerified){
+            pref.edit().putBoolean(PREF_VERFICATION,isVerified).apply()
         }
+    
     var logout:String
         get() = pref.getString(PREF_LOGOUT,"0")?: ""
         set(logout){
@@ -457,7 +457,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     fun saveCustomerInfo(customerInfoSignIn:CustomerInfoSignIn){
         balance = customerInfoSignIn.balance
         logout = "0"
-        verfication = customerInfoSignIn.verified_status.toString()
+        isVerifiedUser = customerInfoSignIn.verified_status
         customerId = customerInfoSignIn.customerId
         password = customerInfoSignIn.password?:""
         customerName = customerInfoSignIn.customerName?:""

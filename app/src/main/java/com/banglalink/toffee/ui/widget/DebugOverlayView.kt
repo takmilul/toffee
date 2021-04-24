@@ -10,6 +10,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.isVisible
 import com.banglalink.toffee.R
+import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.PlayerOverlayData
 import com.banglalink.toffee.util.Utils
@@ -21,7 +22,7 @@ class DebugOverlayView(ctx: Context, val attrs: AttributeSet? = null, val defAtt
     :LinearLayout(ctx, attrs, defAttrStyle) {
 
     @Inject lateinit var mPref: SessionPreference
-
+    @Inject lateinit var commonPreference: CommonPreference
     private var customTextView: TextView? = null
     private var debugTextView: TextView? = null
     private var contentId: String? = null
@@ -77,7 +78,7 @@ class DebugOverlayView(ctx: Context, val attrs: AttributeSet? = null, val defAtt
         displayParams.forEach {
             when(it) {
                 MSISDN -> if(mPref.phoneNumber.isNotBlank()) sb.appendLine(mPref.phoneNumber)
-                DEVICE_ID -> if(mPref.deviceId.isNotBlank()) sb.appendLine(mPref.deviceId)
+                DEVICE_ID -> if(commonPreference.deviceId.isNotBlank()) sb.appendLine(commonPreference.deviceId)
                 USER_ID -> if(mPref.customerId != 0) sb.appendLine(mPref.customerId)
                 USER_NAME -> if(mPref.customerName.isNotBlank()) sb.appendLine(mPref.customerName)
 //                PUBLIC_IP -> if(mPref.phoneNumber.isNotBlank()) sb.appendLine(mPref.)

@@ -28,10 +28,7 @@ import com.banglalink.toffee.data.repository.SubscriptionInfoRepository
 import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBinding
 import com.banglalink.toffee.databinding.AlertDialogMyChannelRatingBinding
 import com.banglalink.toffee.databinding.FragmentMyChannelHomeBinding
-import com.banglalink.toffee.extension.hide
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.safeClick
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.MyChannelDetail
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.Resource.Failure
@@ -102,11 +99,13 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         binding.viewModel = viewModel
         return binding.root
     }
+    
     override fun onDestroyView() {
         binding.viewPager.adapter = null
         super.onDestroyView()
         _binding = null
     }
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
@@ -119,11 +118,20 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             binding.isSubscribed = isSubscribed
             binding.subscriberCount = subscriberCount
         }
-        
-        observeChannelDetail()
+        if (mPref.isVerifiedUser) {
+            observeChannelDetail()
 //        observeSubscribeChannel()
-        viewModel.getChannelDetail(channelOwnerId)
-        
+            viewModel.getChannelDetail(channelOwnerId)
+        }
+        else {
+            progressDialog.hide()
+            myChannelDetail = null
+            isSubscribed = 0
+            binding.data = null
+            binding.isSubscribed = 0
+            binding.isOwner = isOwner
+            loadBody()
+        }
         binding.channelDetailView.subscriptionButton.isEnabled = true
         binding.channelDetailView.addBioButton.safeClick(this)
         binding.channelDetailView.editButton.safeClick(this)
@@ -135,6 +143,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     override fun onClick(v: View?) {
         when (v) {
             binding.channelDetailView.addBioButton -> {
+                requireActivity().checkVerification(mPref)
                 if (findNavController().currentDestination?.id != R.id.myChannelEditDetailFragment && findNavController().currentDestination?.id == R.id.myChannelHomeFragment) {
                     val action = MyChannelHomeFragmentDirections.actionMyChannelHomeFragmentToMyChannelEditDetailFragment(myChannelDetail)
                     findNavController().navigate(action)
@@ -144,6 +153,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             }
 
             binding.channelDetailView.editButton -> {
+                requireActivity().checkVerification(mPref)
                 if (findNavController().currentDestination?.id != R.id.myChannelEditDetailFragment && findNavController().currentDestination?.id == R.id.myChannelHomeFragment) {
                     val action = MyChannelHomeFragmentDirections.actionMyChannelHomeFragmentToMyChannelEditDetailFragment(myChannelDetail)
                     findNavController().navigate(action)
@@ -153,8 +163,12 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                 }
             }
 
-            binding.channelDetailView.ratingButton -> showRatingDialog()
+            binding.channelDetailView.ratingButton -> {
+                requireActivity().checkVerification(mPref)
+                showRatingDialog()
+            }
             binding.channelDetailView.analyticsButton -> {
+                requireActivity().checkVerification(mPref)
                 if (channelId > 0) {
                     showCreatePlaylistDialog()
                 } else {
@@ -162,6 +176,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                 }
             }
             binding.channelDetailView.subscriptionButton -> {
+                requireActivity().checkVerification(mPref)
                 if (isSubscribed == 0) {
                     binding.channelDetailView.subscriptionButton.isEnabled = false
                     homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, channelOwnerId, mPref.customerId), 1)

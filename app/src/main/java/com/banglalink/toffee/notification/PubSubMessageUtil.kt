@@ -31,6 +31,7 @@ const val REACTION_TOPIC = "projects/$PROJECTID/topics/ugc_reaction"
 const val SHARE_COUNT_TOPIC = "projects/$PROJECTID/topics/share_count"
 const val SUBSCRIPTION_TOPIC = "projects/$PROJECTID/topics/channels_subscribers"
 const val CONTENT_REPORT_TOPIC = "projects/$PROJECTID/topics/report_inappropriate_content"
+const val USER_INTEREST_TOPIC = "projects/$PROJECTID/topics/user_interest"
 
 object PubSubMessageUtil {
 

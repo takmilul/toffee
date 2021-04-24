@@ -9,4 +9,4 @@ data class SigninByPhoneRequest(
     val serviceOperatorType: String = "TELCO",
     val referralCode: String = ""
 
-) : BaseRequest("reRegistration")
+) : BaseRequest("reRegistrationV2")

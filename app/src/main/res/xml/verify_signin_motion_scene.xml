@@ -40,6 +40,11 @@
                 motion:framePosition="75"
                 motion:keyPositionType="deltaRelative"
                 motion:percentX="1.05" />
+            <KeyPosition
+                motion:motionTarget="@+id/skipButton"
+                motion:framePosition="75"
+                motion:keyPositionType="deltaRelative"
+                motion:percentX="1.05" />
         </KeyFrameSet>
     </Transition>
 
@@ -117,6 +122,21 @@
             motion:layout_constraintTop_toBottomOf="@id/confirm_btn"
             motion:layout_constraintStart_toStartOf="@id/text_tv"
             motion:layout_constraintEnd_toEndOf="@id/text_tv" />
+    
+        <Constraint
+            android:id="@+id/skipButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:text="Skip"
+            motion:drawableEndCompat="@drawable/ic_right_arrow"
+            motion:layout_constraintTop_toBottomOf="@id/backButton"
+            motion:layout_constraintStart_toStartOf="@id/text_tv"
+            motion:layout_constraintEnd_toEndOf="@id/text_tv"/>
 
     </ConstraintSet>
 </MotionScene>

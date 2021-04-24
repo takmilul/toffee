@@ -7,4 +7,4 @@ data class ApiLoginRequest(
     val lat: String,
     val lon: String,
     val fcmToken: String
-) : BaseRequest("apiLogin")
+) : BaseRequest("apiLoginV2")

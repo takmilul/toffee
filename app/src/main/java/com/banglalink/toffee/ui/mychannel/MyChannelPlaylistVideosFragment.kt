@@ -37,6 +37,7 @@ import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.*
 import com.banglalink.toffee.ui.home.ChannelHeaderAdapter
+import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
@@ -45,7 +46,6 @@ import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -159,6 +159,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
             }
     
             override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
+                requireActivity().checkVerification(mPref)
                 if (isSubscribed == 0) {
                     homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), 1)
                     isSubscribed = 1
@@ -279,6 +280,10 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
                 setOnMenuItemClickListener {
                     when (it.itemId) {
                         R.id.menu_share -> {
+                            if (!mPref.isVerifiedUser) {
+                                (activity as HomeActivity).handleVerficationApp()
+                                return@setOnMenuItemClickListener true
+                            }
                             homeViewModel.shareContentLiveData.postValue(item)
                         }
                         R.id.menu_delete_playlist_video -> {
@@ -326,16 +331,28 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
         popupMenu.setOnMenuItemClickListener {
             when (it?.itemId) {
                 R.id.menu_share -> {
+                    if (!mPref.isVerifiedUser) {
+                        (activity as HomeActivity).handleVerficationApp()
+                        return@setOnMenuItemClickListener true
+                    }
                     homeViewModel.shareContentLiveData.postValue(channelInfo)
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_fav -> {
+                    if (!mPref.isVerifiedUser) {
+                        (activity as HomeActivity).handleVerficationApp()
+                        return@setOnMenuItemClickListener true
+                    }
                     homeViewModel.updateFavorite(channelInfo).observe(viewLifecycleOwner, { resp ->
                         handleFavoriteResponse(resp)
                     })
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_not_interested -> {
+                    if (!mPref.isVerifiedUser) {
+                        (activity as HomeActivity).handleVerficationApp()
+                        return@setOnMenuItemClickListener true
+                    }
                     return@setOnMenuItemClickListener true
                 }
                 else -> {

@@ -73,8 +73,7 @@
                         android:textColor="@{TextUtils.isEmpty(data.fullName)?@color/fixed_second_text_color:@color/main_text_color}"
                         android:textSize="14sp"
                         android:textStyle="normal"
-
-                        tools:text="Md. Taufiqur Rahman"/>
+                        tools:text="John Doe"/>
 
                     <TextView
                         android:id="@+id/mobile_tv"
@@ -87,11 +86,11 @@
                         android:fontFamily="@font/roboto_regular"
                         android:gravity="center_vertical"
                         android:padding="10dp"
-                        android:text="@{data.phoneNo}"
+                        android:text="@{TextUtils.isEmpty(data.phoneNo)?@string/add_your_phone:data.phoneNo}"
                         android:textColor="@{TextUtils.isEmpty(data.phoneNo)?@color/fixed_second_text_color:@color/main_text_color}"
                         android:textSize="14sp"
                         android:textStyle="normal"
-                        tools:text="+8801776198791"/>
+                        tools:text="+8801xxxxxxxxx"/>
 
                     <TextView
                         android:id="@+id/email_tv"
@@ -108,7 +107,7 @@
                         android:textColor="@{TextUtils.isEmpty(data.email)?@color/fixed_second_text_color:@color/main_text_color}"
                         android:textSize="14sp"
                         android:textStyle="normal"
-                        tools:text="tushar.sust@gmail.com"/>
+                        tools:text="user@gmail.com"/>
 
                     <TextView
                         android:id="@+id/address_tv"
@@ -125,7 +124,7 @@
                         android:text="@{TextUtils.isEmpty(data.address)?@string/add_your_address:data.address}"
                         android:textSize="14sp"
                         android:textStyle="normal"
-                        tools:text="176 Mazar Road, Mirpur-1, Dhaka-1217"/>
+                        tools:text="Address"/>
 
                     <Button
                         android:id="@+id/save_button"

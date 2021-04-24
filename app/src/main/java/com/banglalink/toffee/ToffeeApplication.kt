@@ -50,6 +50,7 @@ class ToffeeApplication : Application() {
         }
         PubSubMessageUtil.init(this)
         SessionPreference.init(this)
+        CommonPreference.init(this)
         PlayerPreference.init(this)
         ToffeeAnalytics.initFireBaseAnalytics(this)
         

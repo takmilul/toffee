@@ -10,14 +10,12 @@ import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.data.network.response.MqttBean
-import com.banglalink.toffee.data.network.response.MyChannelSubscribeResponse
 import com.banglalink.toffee.data.network.retrofit.DbApi
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.data.repository.*
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.AppCoroutineScope
-import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseViewModel
@@ -46,6 +44,7 @@ class HomeViewModel @Inject constructor(
     private val setFcmToken: SetFcmToken,
     private val reactionDao: ReactionDao,
     private val updateFavorite: UpdateFavorite,
+    private val logoutService: LogoutService,
     private val tvChannelRepo: TVChannelRepository,
     @ApplicationContext private val mContext: Context,
     private val sendSubscribeEvent: SendSubscribeEvent,
@@ -55,6 +54,7 @@ class HomeViewModel @Inject constructor(
     private val sendViewContentEvent: SendViewContentEvent,
     @AppCoroutineScope private val appScope: CoroutineScope,
     private val mqttCredentialService: MqttCredentialService,
+    private val sendUserInterestEvent: SendUserInterestEvent,
     private val sendContentReportEvent: SendContentReportEvent,
     private val reactionStatusRepository: ReactionStatusRepository,
     private val contentFromShareableUrl: GetContentFromShareableUrl,
@@ -71,6 +71,7 @@ class HomeViewModel @Inject constructor(
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val viewAllVideoLiveData = MutableLiveData<Boolean>()
     val viewAllCategories = MutableLiveData<Boolean>()
+    val logoutLiveData = SingleLiveEvent<Resource<LogoutBean>>()
     val myChannelNavLiveData = SingleLiveEvent<MyChannelNavParams>()
     val notificationUrlLiveData = SingleLiveEvent<String>()
     val mqttCredentialLiveData = SingleLiveEvent<Resource<MqttBean?>>()
@@ -237,6 +238,18 @@ class HomeViewModel @Inject constructor(
     fun sendReportData(reportInfo: ReportInfo) {
         viewModelScope.launch { 
             sendContentReportEvent.execute(reportInfo)
+        }
+    }
+    
+    fun logoutUser() {
+        viewModelScope.launch { 
+            logoutLiveData.postValue(resultFromResponse { logoutService.execute() })
+        }
+    }
+    
+    fun sendUserInterestData(interestList: ArrayList<Int>) {
+        viewModelScope.launch {
+            sendUserInterestEvent.execute(interestList)
         }
     }
 }

@@ -1,15 +1,12 @@
 package com.banglalink.toffee.ui.home
 
-import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -18,8 +15,6 @@ import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.extension.loadProfileImage
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.*
-import com.banglalink.toffee.ui.about.AboutFragment
-import com.banglalink.toffee.ui.about.AboutFragmentDirections
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.ui.profile.ViewProfileActivity
 import com.google.android.material.switchmaterial.SwitchMaterial
@@ -66,21 +61,22 @@ class DrawerHelper(
     private fun setProfileInfo() {
         val header = binding.sideNavigation.getHeaderView(0)
         val profileName = header.findViewById(R.id.profile_name) as TextView
-        activity.observe(mPref.customerNameLiveData) {
-            when {
-                it.isBlank() -> profileName.text =
-                    activity.getString(R.string.profile)
-                else -> {
-                    profileName.text = mPref.customerName
-                }
-            }
-        }
         val profilePicture = header.findViewById(R.id.profile_picture) as ImageView
 
-        activity.observe(mPref.profileImageUrlLiveData) {
-            profilePicture.loadProfileImage(it)
+        if (mPref.isVerifiedUser) {
+            activity.observe(mPref.customerNameLiveData) {
+                when {
+                    it.isBlank() -> profileName.text =
+                        activity.getString(R.string.profile)
+                    else -> {
+                        profileName.text = mPref.customerName
+                    }
+                }
+            }
+            activity.observe(mPref.profileImageUrlLiveData) {
+                profilePicture.loadProfileImage(it)
+            }
         }
-
         header.findViewById<LinearLayout>(R.id.menu_profile).setOnClickListener {
             activity.launchActivity<ViewProfileActivity>()
         }
@@ -309,14 +305,22 @@ class DrawerHelper(
                     }
                 }
             }
-//            R.id.menu_invite -> {
+            R.id.menu_invite -> {
+                if (!mPref.isVerifiedUser) {
+                    activity.handleVerficationApp()
+                    return false
+                }
 //                activity.launchActivity<ReferAFriendActivity>()
 //                binding.drawerLayout.closeDrawers()
-//            }
-//            R.id.menu_redeem -> {
+            }
+            R.id.menu_redeem -> {
+                if (!mPref.isVerifiedUser) {
+                    activity.handleVerficationApp()
+                    return false
+                }
 //                activity.launchActivity<RedeemCodeActivity>()
 //                binding.drawerLayout.closeDrawers()
-//            }
+            }
         }
         return run {
             if (NavigationUI.onNavDestinationSelected(item, activity.getNavController())) {

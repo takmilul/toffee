@@ -22,6 +22,7 @@ import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBinding
 import com.banglalink.toffee.databinding.FragmentMyChannelPlaylistsBinding
+import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.MyChannelPlaylist
@@ -34,7 +35,6 @@ import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChangedBy
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -105,7 +105,9 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
             adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
             setHasFixedSize(true)
         }
-        
+        if (!mPref.isVerifiedUser) {
+            return
+        }
         observeMyChannelPlaylists()
         observeEditPlaylist()
         observeDeletePlaylist()
@@ -117,6 +119,7 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
             if (isOwner) {
                 emptyViewLabel.text = "You haven't created any playlist yet"
                 createPlaylistButton.setOnClickListener {
+                    requireActivity().checkVerification(mPref)
                     if (mPref.channelId > 0) {
                         if (parentFragment?.parentFragment?.parentFragment is MyChannelHomeFragment) {
                             (parentFragment?.parentFragment?.parentFragment as? MyChannelHomeFragment)?.showCreatePlaylistDialog()

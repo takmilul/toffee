@@ -16,6 +16,7 @@ import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentLandingUserChannelsBinding
+import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.LandingPopularChannelCallback
@@ -27,9 +28,6 @@ import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.facebook.shimmer.ShimmerFrameLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.distinctUntilChangedBy
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -149,6 +147,7 @@ class LandingUserChannelsFragment : HomeBaseFragment(), LandingPopularChannelCal
     }
     
     override fun onSubscribeButtonClicked(view: View, info: UserChannelInfo) {
+        requireActivity().checkVerification(mPref)
 //                channelInfo = info
         if (info.isSubscribed == 0) {
             channelInfo = info.also { userChannelInfo ->

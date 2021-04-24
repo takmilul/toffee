@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentAllUserChannelsListBinding
+import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.LandingPopularChannelCallback
@@ -53,6 +54,7 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
             }
 
             override fun onSubscribeButtonClicked(view: View, info: UserChannelInfo) {
+                requireActivity().checkVerification(mPref)
 //                trendingChannelInfo = info
                 
                 if (info.isSubscribed == 0) {

@@ -1,10 +1,13 @@
 package com.banglalink.toffee.extension
 
+import android.app.Activity
 import android.content.res.Resources
 import android.util.Patterns
 import android.view.View
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.InputType
 import com.banglalink.toffee.enums.InputType.*
+import com.banglalink.toffee.ui.home.HomeActivity
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -51,4 +54,11 @@ fun Long.toFormattedDate(): String{
     val dateGMT = cal.time
     val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
     return sdf.format(dateGMT)
+}
+
+fun Activity.checkVerification(preference: SessionPreference) {
+    if (!preference.isVerifiedUser && this is HomeActivity) {
+        handleVerficationApp()
+        return
+    }
 }

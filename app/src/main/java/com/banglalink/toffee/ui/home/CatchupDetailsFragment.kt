@@ -22,6 +22,7 @@ import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.databinding.FragmentCatchupBinding
 import com.banglalink.toffee.enums.Reaction.Love
+import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
@@ -35,7 +36,6 @@ import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -109,6 +109,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
 
     override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
         super.onSubscribeButtonClicked(view, item)
+        requireActivity().checkVerification(mPref)
         if (item.isSubscribed == 0) {
             homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), 1)
             currentItem.isSubscribed = 1
@@ -235,6 +236,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
 
     override fun onShareClicked(view: View, item: ChannelInfo) {
         super.onShareClicked(view, item)
+        requireActivity().checkVerification(mPref)
         homeViewModel.shareContentLiveData.postValue(item)
     }
     

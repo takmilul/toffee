@@ -2,6 +2,7 @@ package com.banglalink.toffee.data.storage
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.provider.Settings
 import androidx.core.content.edit
 
 const val COMMON_PREF_NAME = "LIFETIME_DATA"
@@ -29,5 +30,8 @@ class CommonPreference(private val pref: SharedPreferences, private val context:
     var versionCode: Int
         get() = pref.getInt(APP_VERSION, 0)
         set(value) = pref.edit { putInt(APP_VERSION, value) }
-
+    
+    val deviceId: String by lazy {
+        Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+    }
 }

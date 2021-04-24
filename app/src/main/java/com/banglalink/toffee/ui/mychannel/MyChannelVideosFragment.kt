@@ -9,7 +9,6 @@ import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.core.view.marginTop
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
@@ -24,15 +23,11 @@ import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentMyChannelVideosBinding
 import com.banglalink.toffee.enums.Reaction.Love
-import com.banglalink.toffee.extension.hide
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.px
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
-import com.banglalink.toffee.ui.about.AboutActivity
 import com.banglalink.toffee.ui.about.AboutFragment
 import com.banglalink.toffee.ui.common.*
 import com.banglalink.toffee.ui.home.HomeActivity
@@ -43,7 +38,6 @@ import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChangedBy
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -85,6 +79,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
         _binding = FragmentMyChannelVideosBinding.inflate(inflater, container, false)
         return binding.root
     }
+    
     override fun onDestroyView() {
         binding.myChannelVideos.adapter = null
         super.onDestroyView()
@@ -114,7 +109,9 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
             adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
             setHasFixedSize(true)
         }
-        
+        if (!mPref.isVerifiedUser) {
+            return
+        }
         observeReloadVideos()
         observeDeleteVideo()
         observeMyChannelVideos()
@@ -134,6 +131,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
             if (isOwner) {
                 emptyViewLabel.text = "You haven't uploaded any video yet"
                 uploadVideoButton.setOnClickListener {
+                    requireActivity().checkVerification(mPref)
                     if (requireActivity() is HomeActivity) {
                         (requireActivity() as HomeActivity).showUploadDialog()
                     }
@@ -183,14 +181,26 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
                         fragment.show(requireActivity().supportFragmentManager, "add_to_playlist")
                     }
                     R.id.menu_share -> {
+                        if (!mPref.isVerifiedUser) {
+                            (activity as HomeActivity).handleVerficationApp()
+                            return@setOnMenuItemClickListener true
+                        }
                         homeViewModel.shareContentLiveData.postValue(item)
                     }
                     R.id.menu_fav -> {
+                        if (!mPref.isVerifiedUser) {
+                            (activity as HomeActivity).handleVerficationApp()
+                            return@setOnMenuItemClickListener true
+                        }
                         homeViewModel.updateFavorite(item).observe(viewLifecycleOwner, Observer {
                             handleFavoriteResponse(it)
                         })
                     }
                     R.id.menu_report -> {
+                        if (!mPref.isVerifiedUser) {
+                            (activity as HomeActivity).handleVerficationApp()
+                            return@setOnMenuItemClickListener true
+                        }
                         val fragment =
                             item.duration?.let { durations ->
                                 ReportPopupFragment.newInstance(-1,
@@ -279,6 +289,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
     
     override fun onShareClicked(view: View, item: ChannelInfo) {
         super.onShareClicked(view, item)
+        requireActivity().checkVerification(mPref)
         homeViewModel.shareContentLiveData.postValue(item)
     }
     

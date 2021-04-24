@@ -14,9 +14,10 @@ import com.banglalink.toffee.databinding.FragmentBaseSingleListBinding
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.ui.common.BaseFragment
+import com.banglalink.toffee.ui.favorite.FavoriteFragment
+import com.banglalink.toffee.ui.useractivities.UserActivitiesListFragment
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChangedBy
 
 abstract class BaseListFragment<T: Any>: BaseFragment() {
     protected abstract val mAdapter: BasePagingDataAdapter<T>
@@ -47,6 +48,9 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
 
         setEmptyView()
         setupListView()
+        if (this is UserActivitiesListFragment || this is FavoriteFragment && !mPref.isVerifiedUser) {
+            return
+        }
         observeList()
     }
 

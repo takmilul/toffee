@@ -26,19 +26,25 @@ class LocalSync @Inject constructor(
         val viewCount = viewCountRepo.getViewCountByChannelId(channelInfo.id.toInt())
         channelInfo.view_count= viewCount?.toString() ?: channelInfo.view_count
         channelInfo.viewProgress = viewProgressRepo.getProgressByContent(channelInfo.id.toLong())?.progress ?: 0L
-        channelInfo.isSubscribed = if(subscriptionInfoRepository.getSubscriptionInfoByChannelId(channelInfo.channel_owner_id, preference.customerId) != null) 1 else 0
         channelInfo.subscriberCount = subscriptionCountRepository.getSubscriberCount(channelInfo.channel_owner_id).toInt()
         channelInfo.shareCount = shareCountRepository.getShareCountByContentId(channelInfo.id.toInt()) ?: 0
         val reactionList = reactionStatusRepo.getReactionStatusByChannelId(channelInfo.id.toLong())
         if(!reactionList.isNullOrEmpty()) {
             channelInfo.reaction = getReactionStatus(channelInfo, reactionList)
         }
-        val reactionInfo = reactionDao.getReactionByContentId(preference.customerId, channelInfo.id.toLong())
-        channelInfo.myReaction = reactionInfo?.reactionType ?: Reaction.None.value
+        if (preference.isVerifiedUser) {
+            channelInfo.isSubscribed =
+                if (subscriptionInfoRepository.getSubscriptionInfoByChannelId(channelInfo.channel_owner_id, preference.customerId) != null) 1 else 0
+            val reactionInfo = reactionDao.getReactionByContentId(preference.customerId, channelInfo.id.toLong())
+            channelInfo.myReaction = reactionInfo?.reactionType ?: Reaction.None.value
+        }
     }
 
     suspend fun syncUserChannel(userChannel: UserChannelInfo){
-        userChannel.isSubscribed = if(subscriptionInfoRepository.getSubscriptionInfoByChannelId(userChannel.channelOwnerId, preference.customerId) != null) 1 else 0
+        if (preference.isVerifiedUser) {
+            userChannel.isSubscribed =
+                if (subscriptionInfoRepository.getSubscriptionInfoByChannelId(userChannel.channelOwnerId, preference.customerId) != null) 1 else 0
+        }
         userChannel.subscriberCount = subscriptionCountRepository.getSubscriberCount(userChannel.channelOwnerId)
     }
     

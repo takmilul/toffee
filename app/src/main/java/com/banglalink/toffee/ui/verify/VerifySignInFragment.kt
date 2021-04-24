@@ -6,8 +6,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.view.ViewCompat
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -20,6 +20,8 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.receiver.SMSBroadcastReceiver
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeActivity
+import com.banglalink.toffee.ui.splash.SplashScreenActivity
+import com.banglalink.toffee.ui.splash.SplashViewModel
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.UtilsKt
 import com.banglalink.toffee.util.unsafeLazy
@@ -28,16 +30,18 @@ import com.google.android.material.snackbar.Snackbar
 
 class VerifySignInFragment : BaseFragment() {
     
+    private var otp: String = ""
     private var phoneNumber: String = ""
     private var referralCode: String = ""
     private var regSessionToken: String = ""
     private var resendBtnPressCount: Int = 0
     private var resendCodeTimer: ResendCodeTimer? = null
     private var verifiedUserData: CustomerInfoSignIn? = null
-    private val viewModel by viewModels<VerifyCodeViewModel>()
     private var _binding: FragmentVerifySigninBinding ? = null
     private val binding get() = _binding!!
     private lateinit var mSmsBroadcastReceiver: SMSBroadcastReceiver
+    private val viewModel by viewModels<VerifyCodeViewModel>()
+    private val splashViewModel by activityViewModels<SplashViewModel>()
     private val progressDialog by unsafeLazy { VelBoxProgressDialog(requireContext()) }
 
     companion object {
@@ -54,6 +58,7 @@ class VerifySignInFragment : BaseFragment() {
         super.onDestroyView()
         _binding = null
     }
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.signInVerifyMotionLayout.setOnClickListener { UtilsKt.hideSoftKeyboard(requireActivity()) }
@@ -67,39 +72,42 @@ class VerifySignInFragment : BaseFragment() {
         }
         
         binding.resend.paintFlags = binding.resend.paintFlags or Paint.UNDERLINE_TEXT_FLAG
-        binding.resend.setOnClickListener {
+        binding.resend.safeClick ({
             progressDialog.show()
             handleResendButton()
             viewModel.resendCode(phoneNumber, referralCode)
-        }
-        binding.confirmBtn.setOnClickListener {
+        })
+        binding.confirmBtn.safeClick ({
             progressDialog.show()
             binding.codeNumber.clearFocus()
-            observeVerifyCode(binding.codeNumber.text.toString())
-            viewModel.verifyCode(binding.codeNumber.text.toString(), regSessionToken, referralCode)
-        }
-        binding.backButton.setOnClickListener {
+            otp = binding.codeNumber.text.toString().trim()
+            observeVerifyCode()
+            viewModel.verifyCode(otp, regSessionToken, referralCode)
+        })
+        binding.backButton.safeClick ({
             binding.signInVerifyMotionLayout.onTransitionCompletedListener {
                 if (it == R.id.start){
                     findNavController().popBackStack()
                 }
             }
             binding.signInVerifyMotionLayout.transitionToStart()
-        }
-
+        })
+        binding.skipButton.safeClick({
+            (requireActivity() as SplashScreenActivity).observeApiLogin()
+            splashViewModel.credentialResponse()
+        })
+        
         startCountDown(if (resendBtnPressCount <= 1) 1 else 30)
-
         initSmsBroadcastReceiver()
     }
 
     private fun initSmsBroadcastReceiver() {
-        // init broadcast receiver
         mSmsBroadcastReceiver = SMSBroadcastReceiver()
         observe(mSmsBroadcastReceiver.otpLiveData) {
             binding.codeNumber.setText(it)
             binding.codeNumber.setSelection(it.length)
-//            verifyCode(binding.codeNumber.text.toString())
-            viewModel.verifyCode(binding.codeNumber.text.toString(), regSessionToken, referralCode)
+            otp = binding.codeNumber.text.toString().trim()
+            viewModel.verifyCode(otp, regSessionToken, referralCode)
         }
 
         val intentFilter = IntentFilter()
@@ -110,30 +118,27 @@ class VerifySignInFragment : BaseFragment() {
         mClient.startSmsRetriever()
     }
 
-    private fun observeVerifyCode(code: String) {
-        val signInMotionLayout = parentFragment?.parentFragment?.view
+    private fun observeVerifyCode() {
+//        val signInMotionLayout = parentFragment?.parentFragment?.view
         
         observe(viewModel.verifyResponse) {
             progressDialog.dismiss()
             when (it) {
                 is Resource.Success -> {
                     verifiedUserData = it.data
-                    signInMotionLayout?.let { view ->
-                        if (view is MotionLayout){
-                            view.onTransitionCompletedListener { onLoginSuccessAnimationCompletion() }
-                            view.setTransition(R.id.firstEndAnim, R.id.secondEndAmin)
-                            view.transitionToEnd()
-                        }
-                    }
+                    val action = VerifySignInFragmentDirections.actionVerifySignInFragmentToUserInterestFragment(verifiedUserData)
+                    findNavController().navigate(action)
+//                    signInMotionLayout?.let { view ->
+//                        if (view is MotionLayout){
+//                            view.onTransitionCompletedListener { onLoginSuccessAnimationCompletion() }
+//                            view.setTransition(R.id.firstEndAnim, R.id.secondEndAmin)
+//                            view.transitionToEnd()
+//                        }
+//                    }
                 }
                 is Resource.Failure -> {
                     ToffeeAnalytics.logApiError("confirmCode",it.error.msg)
                     binding.root.snack(it.error.msg, Snackbar.LENGTH_LONG){}
-//                    {
-//                        action("Retry") {
-//                            verifyCode(binding.codeNumber.text.toString())
-//                        }
-//                    }
                 }
             }
         }
@@ -155,7 +160,6 @@ class VerifySignInFragment : BaseFragment() {
     
     private fun handleResendButton() {
         observe(viewModel.resendCodeResponse) {
-
             progressDialog.dismiss()
             when (it) {
                 is Resource.Success -> {

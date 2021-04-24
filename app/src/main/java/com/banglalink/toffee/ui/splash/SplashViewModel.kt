@@ -2,6 +2,7 @@ package com.banglalink.toffee.ui.splash
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
+import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.ApiLogin
 import com.banglalink.toffee.apiservice.CheckUpdate
@@ -13,7 +14,6 @@ import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.util.SingleLiveEvent
-import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -38,10 +38,10 @@ class SplashViewModel @Inject constructor(
     private val reportAppLaunch by lazy {
         ReportAppLaunch()
     }
+    
     fun credentialResponse() {
         viewModelScope.launch {
             val response = resultFromResponse { credential.execute() }
-            Log.e("response","response"+ Gson().toJson(response))
             when(response){
                 is Resource.Failure -> {
                     Log.e("response","failure"+response.error.msg)
@@ -50,17 +50,17 @@ class SplashViewModel @Inject constructor(
                     loginResponse(false)
                 }
             }
-
         }
     }
+    
     fun loginResponse(skipUpdate: Boolean = false) {
         viewModelScope.launch {
             val response = resultFromResponse { apiLogin.execute() }
-           Log.e("response","login"+ Gson().toJson(response))
-//            if (!skipUpdate) {
-//              val updateResponse = resultFromResponse { checkUpdate.execute(BuildConfig.VERSION_CODE.toString())}
-//              if(updateResponse is Resource.Failure) apiLoginResponse.value = updateResponse
-//            }
+            Log.e("response","login: $response")
+            if (!skipUpdate) {
+              val updateResponse = resultFromResponse { checkUpdate.execute(BuildConfig.VERSION_CODE.toString())}
+              if(updateResponse is Resource.Failure) apiLoginResponse.value = updateResponse
+            }
             apiLoginResponse.value=response
         }
     }

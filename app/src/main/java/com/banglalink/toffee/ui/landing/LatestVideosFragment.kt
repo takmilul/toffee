@@ -28,6 +28,7 @@ import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.databinding.FragmentLandingLatestVideosBinding
 import com.banglalink.toffee.enums.FilterContentType.*
 import com.banglalink.toffee.enums.Reaction.Love
+import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.Category
@@ -47,9 +48,6 @@ import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.distinctUntilChangedBy
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -244,6 +242,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
 
     override fun onShareClicked(view: View, item: ChannelInfo) {
         super.onShareClicked(view, item)
+        requireActivity().checkVerification(mPref)
         homeViewModel.shareContentLiveData.postValue(item)
     }
 

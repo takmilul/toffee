@@ -23,5 +23,17 @@
         <argument
             android:name="regSessionToken"
             app:argType="string" />
+        <action
+            android:id="@+id/action_verifySignInFragment_to_userInterestFragment"
+            app:destination="@id/userInterestFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/userInterestFragment"
+        android:name="com.banglalink.toffee.ui.userinterest.UserInterestFragment"
+        android:label="Search" >
+        <argument
+            android:name="verifiedUserData"
+            app:argType="com.banglalink.toffee.model.CustomerInfoSignIn"
+            app:nullable="true" />
     </fragment>
 </navigation>

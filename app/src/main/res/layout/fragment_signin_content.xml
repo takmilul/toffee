@@ -142,5 +142,24 @@
             app:layout_constraintEnd_toEndOf="@+id/signin_tv"
             app:layout_constraintStart_toStartOf="@+id/signin_tv"
             app:layout_constraintTop_toBottomOf="@+id/terms_and_conditions_checkbox" />
+       
+       <TextView
+           android:id="@+id/skipButton"
+           style="@style/ViewAllTextView"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_marginTop="16dp"
+           android:layout_marginBottom="16dp"
+           android:paddingHorizontal="16dp"
+           android:paddingVertical="8dp"
+           android:text="Skip"
+           android:textAllCaps="true"
+           android:clickable="true"
+           android:focusable="true"
+           android:fontFamily="@font/roboto_bold"
+           app:drawableEndCompat="@drawable/ic_right_arrow"
+           app:layout_constraintTop_toBottomOf="@id/login_btn"
+           app:layout_constraintStart_toStartOf="parent"
+           app:layout_constraintEnd_toEndOf="parent"/>
 
     </androidx.constraintlayout.motion.widget.MotionLayout>

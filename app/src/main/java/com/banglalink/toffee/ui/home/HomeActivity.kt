@@ -24,7 +24,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.core.view.*
 import androidx.core.widget.addTextChangedListener
@@ -47,6 +46,7 @@ import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.*
+import com.banglalink.toffee.model.Resource.*
 import com.banglalink.toffee.mqttservice.ToffeeMqttService
 import com.banglalink.toffee.ui.category.drama.EpisodeListFragment
 import com.banglalink.toffee.ui.channels.AllChannelsViewModel
@@ -60,18 +60,15 @@ import com.banglalink.toffee.ui.player.PlaylistItem
 import com.banglalink.toffee.ui.player.PlaylistManager
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.splash.SplashScreenActivity
-import com.banglalink.toffee.ui.subscription.PackageListFragment
 import com.banglalink.toffee.ui.upload.UploadProgressViewModel
 import com.banglalink.toffee.ui.upload.UploadStateManager
 import com.banglalink.toffee.ui.upload.UploadStatus
 import com.banglalink.toffee.ui.widget.DraggerLayout
-import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.ui.widget.showSubscriptionDialog
 import com.banglalink.toffee.util.EncryptionUtil
 import com.banglalink.toffee.util.InAppMessageParser
 import com.banglalink.toffee.util.Utils
-import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.util.Util
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -143,7 +140,8 @@ class HomeActivity :
                 WindowManager.LayoutParams.FLAG_SECURE
             )
         }
-        Toast.makeText(this,""+mPref.verfication,Toast.LENGTH_LONG).show()
+        Toast.makeText(this,""+mPref.isVerifiedUser,Toast.LENGTH_LONG).show()
+//        mPref.isVerifiedUser = false
         mPref.logout="0"
 //        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         binding = ActivityMainMenuBinding.inflate(layoutInflater)
@@ -162,6 +160,7 @@ class HomeActivity :
         showRedeemMessageIfPossible()
 
         binding.uploadButton.setOnClickListener {
+            this.checkVerification(mPref)
             if (showUploadDialog()) return@setOnClickListener
         }
         
@@ -347,7 +346,7 @@ class HomeActivity :
         if (mPref.mqttHost.isBlank() || mPref.mqttClientId.isBlank() || mPref.mqttUserName.isBlank() || mPref.mqttPassword.isBlank()) {
             observe(viewModel.mqttCredentialLiveData) {
                 when (it) {
-                    is Resource.Success -> {
+                    is Success -> {
                         it.data?.let { data ->
                             mPref.mqttIsActive = data.mqttIsActive == 1
                             mPref.mqttHost = EncryptionUtil.encryptRequest(data.mqttUrl)
@@ -360,7 +359,7 @@ class HomeActivity :
                             }
                         }
                     }
-                    is Resource.Failure -> {
+                    is Failure -> {
                         Log.e("MQTT_", "onCreate: ${it.error.msg}")
                     }
                 }
@@ -733,7 +732,7 @@ class HomeActivity :
                 val hash = url.substring(url.lastIndexOf("/") + 1)
                 observe(viewModel.getShareableContent(hash)){ channelResource ->
                     when(channelResource){
-                        is Resource.Success -> {
+                        is Success -> {
                             channelResource.data?.let {
                                 onDetailsFragmentLoad(it)
                             }
@@ -1007,7 +1006,14 @@ class HomeActivity :
             val subMenu = binding.sideNavigation.menu.findItem(R.id.ic_menu_internet_packs)
             subMenu?.isVisible = false
         }
-
+        if (!mPref.isVerifiedUser) {
+            val logout = binding.sideNavigation.menu.findItem(R.id.menu_logout)
+            logout?.isVisible = false
+        }
+        else {
+            val verify = binding.sideNavigation.menu.findItem(R.id.menu_verfication)
+            verify?.isVisible = false
+        }
         val sideNav = binding.sideNavigation.menu.findItem(R.id.menu_change_theme)
         sideNav?.let { themeMenu ->
             val isDarkEnabled = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
@@ -1212,11 +1218,8 @@ class HomeActivity :
             .setMessage(String.format(EXIT_FROM_APP_MSG, getString(R.string.app_name)))
             .setCancelable(false)
             .setPositiveButton("Yes") { _, _ ->
-                mPref.clear()
-                mPref.logout="1"
-                UploadService.stopAllUploads()
-                launchActivity<SplashScreenActivity>()
-                finish()
+                observeLogout()
+                viewModel.logoutUser()
             }
             .setNegativeButton(
                 "No"
@@ -1224,6 +1227,25 @@ class HomeActivity :
             .show()
     }
 
+    fun observeLogout() {
+        observe(viewModel.logoutLiveData) {
+            when(it) {
+                is Success -> {
+                    if (!it.data.verifyStatus) {
+                        mPref.clear()
+                        mPref.logout = "1"
+                        UploadService.stopAllUploads()
+                        launchActivity<SplashScreenActivity>()
+                        finish()
+                    }
+                }
+                is Failure -> {
+                    showToast(it.error.msg)
+                }
+            }
+        }
+    }
+    
     fun handleVerficationApp() {
         mPref.clear()
         mPref.logout="1"
@@ -1316,9 +1338,11 @@ class HomeActivity :
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        observe(mPref.profileImageUrlLiveData) {
-            menu?.findItem(R.id.action_avatar)
-                ?.actionView?.findViewById<ImageView>(R.id.view_avatar)?.loadProfileImage(it)
+        if (mPref.isVerifiedUser) {
+            observe(mPref.profileImageUrlLiveData) {
+                menu?.findItem(R.id.action_avatar)
+                    ?.actionView?.findViewById<ImageView>(R.id.view_avatar)?.loadProfileImage(it)
+            }
         }
         return super.onPrepareOptionsMenu(menu)
     }

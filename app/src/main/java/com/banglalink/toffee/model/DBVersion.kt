@@ -1,7 +1,10 @@
 package com.banglalink.toffee.model
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class DBVersion(
     @SerializedName(value = "channel_db_version",alternate = ["chanelDbVersion"])
     val chanelDbVersion: Int,
@@ -15,4 +18,4 @@ data class DBVersion(
     val packageDbVersion: Int,
     @SerializedName("category_db_version",alternate = ["categoryDbVersion"])
     val categoryDbVersion:Int
-)
+) : Parcelable

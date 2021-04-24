@@ -67,7 +67,7 @@
             style="@style/ButtonStyleSolidPink"
             android:layout_width="@dimen/button_accent_width"
             android:layout_marginTop="16dp"
-            android:text="@string/sign_in_text"
+            android:text="@string/next"
             android:textAllCaps="true"
             app:layout_constraintStart_toStartOf="@id/text_tv"
             app:layout_constraintEnd_toEndOf="@id/text_tv"
@@ -90,5 +90,25 @@
             app:layout_constraintTop_toBottomOf="@id/confirm_btn"
             app:layout_constraintStart_toStartOf="@id/text_tv"
             app:layout_constraintEnd_toEndOf="@id/text_tv" />
+    
+    <TextView
+        android:id="@+id/skipButton"
+        style="@style/ViewAllTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginStart="16dp"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp"
+        android:text="@string/skip_text"
+        android:textAllCaps="true"
+        android:clickable="true"
+        android:focusable="true"
+        android:fontFamily="@font/roboto_bold"
+        app:drawableEndCompat="@drawable/ic_right_arrow"
+        app:layout_constraintTop_toBottomOf="@id/backButton"
+        app:layout_constraintStart_toStartOf="@id/text_tv"
+        app:layout_constraintEnd_toEndOf="@id/text_tv"/>
 
     </androidx.constraintlayout.motion.widget.MotionLayout>

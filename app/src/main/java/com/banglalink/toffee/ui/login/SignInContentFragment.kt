@@ -20,6 +20,7 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
@@ -32,6 +33,8 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.TERMS_AND_CONDITION_URL
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.common.HtmlPageViewActivity
+import com.banglalink.toffee.ui.splash.SplashScreenActivity
+import com.banglalink.toffee.ui.splash.SplashViewModel
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.UtilsKt
@@ -41,10 +44,7 @@ import com.google.android.gms.auth.api.credentials.Credentials
 import com.google.android.gms.auth.api.credentials.HintRequest
 import com.google.android.material.snackbar.Snackbar
 
-private const val RESOLVE_HINT = 2
-
 class SignInContentFragment : BaseFragment() {
-
     private var phoneNumber: String = ""
     private var referralCode: String = ""
     private var regSessionToken: String = ""
@@ -52,14 +52,13 @@ class SignInContentFragment : BaseFragment() {
     private var isNumberShown:Boolean = false
     private var _binding: FragmentSigninContentBinding ? = null
     private val binding get() = _binding!!
-
     private val viewModel by viewModels<SignInViewModel>()
+    private val splashViewModel by activityViewModels<SplashViewModel>()
     private val progressDialog by unsafeLazy { VelBoxProgressDialog(requireContext()) }
     lateinit var phoneNo:String
     companion object {
         @JvmStatic
-        fun newInstance() =
-            SignInContentFragment()
+        fun newInstance() = SignInContentFragment()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -71,15 +70,20 @@ class SignInContentFragment : BaseFragment() {
         super.onDestroyView()
         _binding = null
     }
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.signInContentMotionLayout.setOnClickListener { UtilsKt.hideSoftKeyboard(requireActivity()) }
         setSpannableTermsAndConditions()
         binding.haveRefTv.setOnClickListener { handleHaveReferralOption() }
-        binding.loginBtn.safeClick( {
+        binding.loginBtn.safeClick({
             handleLogin()
             observeSignIn()
             viewModel.signIn(phoneNo, referralCode)
+        })
+        binding.skipButton.safeClick({
+            (requireActivity() as SplashScreenActivity).observeApiLogin()
+            splashViewModel.credentialResponse()
         })
         binding.termsAndConditionsCheckbox.setOnClickListener {
             binding.loginBtn.isEnabled = binding.termsAndConditionsCheckbox.isChecked

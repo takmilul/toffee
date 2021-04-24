@@ -17,6 +17,7 @@ import androidx.core.graphics.drawable.toBitmap
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.database.entities.NotificationInfo
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
+import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.NotificationType
 import com.banglalink.toffee.model.PlayerOverlayData
@@ -38,6 +39,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
     private var notificationId = 1
     private val TAG = "ToffeeMessagingService"
     @Inject lateinit var mPref: SessionPreference
+    @Inject lateinit var commonPreference: CommonPreference
     private val NOTIFICATION_CHANNEL_NAME = "Toffee Channel"
     @Inject lateinit var notificationInfoRepository: NotificationInfoRepository
     private val coroutineContext = Dispatchers.IO + SupervisorJob()
@@ -88,7 +90,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                         mPref.forceLogoutUserLiveData.postValue(true)
                         return
                     }
-                    mPref.deviceId -> {
+                    commonPreference.deviceId -> {
                         mPref.forceLogoutUserLiveData.postValue(true)
                         return
                     }
