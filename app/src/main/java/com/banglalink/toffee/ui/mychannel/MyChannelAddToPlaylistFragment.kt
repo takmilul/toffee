@@ -70,7 +70,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
     }
     
     private fun observePlaylist() {
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        lifecycleScope.launchWhenStarted {
             playlistViewModel.getMyChannelPlaylists(channelOwnerId).collectLatest {
                 mAdapter.submitData(it)
             }
