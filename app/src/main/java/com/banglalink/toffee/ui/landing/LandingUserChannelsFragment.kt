@@ -72,7 +72,7 @@ class LandingUserChannelsFragment : HomeBaseFragment(), LandingPopularChannelCal
                 mAdapter.loadStateFlow
 //                    .distinctUntilChangedBy { it.refresh }
                     .collectLatest {
-                    val isLoading = it.source.refresh is LoadState.Loading// || !isInitialized
+                    val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
                     val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
                     binding.placeholder.isVisible = isEmpty
                     binding.userChannelList.isVisible = ! isEmpty

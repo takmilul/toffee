@@ -13,16 +13,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import com.banglalink.toffee.databinding.FragmentReportPopupBinding
-import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.model.OffenseType
 import com.banglalink.toffee.ui.common.CheckedChangeListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChangedBy
-import kotlinx.coroutines.launch
-import java.text.DateFormat
-import java.text.SimpleDateFormat
 
 
 @AndroidEntryPoint
@@ -71,6 +66,7 @@ class ReportPopupFragment : DialogFragment(),
         alertDialog = dialogBuilder.create().apply {
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }
+        var isInitialized = false
 
         binding.nextButton.safeClick(this)
         binding.cancelButton.safeClick(this)
@@ -90,11 +86,13 @@ class ReportPopupFragment : DialogFragment(),
 //                .distinctUntilChangedBy { it.refresh }
                 .collectLatest {
                 mAdapter.apply {
-                    val showEmpty = itemCount <= 0 && ! it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
-                    if (showEmpty) {
+                    val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
+                    val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
+                    if (isEmpty && !isLoading) {
                         Toast.makeText(requireContext(), "Unable to load data.", Toast.LENGTH_SHORT).show()
                         alertDialog.dismiss()
                     }
+                    isInitialized = true
                 }
             }
         }
