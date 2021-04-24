@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentLandingCategoriesBinding
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.BaseFragment
@@ -20,49 +22,32 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
-class AllCategoriesFragment: BaseFragment() {
+class AllCategoriesFragment: BaseFragment(), BaseListItemCallback<Category> {
+    
     private lateinit var mAdapter: CategoriesListAdapter
-
-    private val viewModel by activityViewModels<LandingPageViewModel>()
     private var _binding: FragmentLandingCategoriesBinding ? =null
     private val binding get() = _binding!!
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    private val viewModel by activityViewModels<LandingPageViewModel>()
+    
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLandingCategoriesBinding.inflate(inflater, container, false)
         return binding.root
     }
+    
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        
         binding.categoriesBg.isVisible = false
-//        categoriesHeader.isVisible = false
         binding.viewAllButton.isVisible = false
-
-        mAdapter = CategoriesListAdapter(object: BaseListItemCallback<Category> {
-            override fun onItemClicked(item: Category) {
-                val args = Bundle().apply {
-                    putParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM, item)
-                    putString(CategoryDetailsFragment.ARG_TITLE, item.categoryName)
-                }
-                when(item.id.toInt()) {
-                    1 -> {
-                        parentFragment?.findNavController()?.navigate(R.id.action_allCategoriesFragment_to_movieFragment, args)
-                    }
-                    9 -> {
-                        parentFragment?.findNavController()?.navigate(R.id.action_allCategoriesFragment_to_dramaSeriesFragment, args)
-                    }
-                    else -> {
-                        parentFragment?.findNavController()?.navigate(R.id.action_allCategoriesFragment_to_categoryDetailsFragment, args)
-                    }
-                }
-            }
-        }, true)
+        binding.placeholder.hide()
+        binding.categoriesList.show()
+        
+        mAdapter = CategoriesListAdapter(this, true)
 
         with(binding.categoriesList) {
             layoutManager = GridLayoutManager(context, 2)
@@ -73,9 +58,27 @@ class AllCategoriesFragment: BaseFragment() {
     }
 
     private fun observeList() {
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.loadCategories.collectLatest {
                 mAdapter.submitData(it)
+            }
+        }
+    }
+    
+    override fun onItemClicked(item: Category) {
+        val args = Bundle().apply {
+            putParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM, item)
+            putString(CategoryDetailsFragment.ARG_TITLE, item.categoryName)
+        }
+        when(item.id.toInt()) {
+            1 -> {
+                parentFragment?.findNavController()?.navigate(R.id.action_allCategoriesFragment_to_movieFragment, args)
+            }
+            9 -> {
+                parentFragment?.findNavController()?.navigate(R.id.action_allCategoriesFragment_to_dramaSeriesFragment, args)
+            }
+            else -> {
+                parentFragment?.findNavController()?.navigate(R.id.action_allCategoriesFragment_to_categoryDetailsFragment, args)
             }
         }
     }

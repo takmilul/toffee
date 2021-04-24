@@ -16,6 +16,7 @@ import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 
 abstract class BaseListFragment<T: Any>: BaseFragment() {
     protected abstract val mAdapter: BasePagingDataAdapter<T>
@@ -87,13 +88,17 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
             
             updatePadding(top = verticalPadding.first.px, bottom = verticalPadding.second.px)
             updatePadding(left = horizontalPadding.first.px, right = horizontalPadding.second.px)
-            
-            mAdapter.addLoadStateListener {
-                binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
-                mAdapter.apply {
-                    val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
-                    binding.emptyView.isVisible = showEmpty
-                    binding.listview.isVisible = !showEmpty
+
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                mAdapter.loadStateFlow
+//                    .distinctUntilChangedBy { it.refresh }
+                    .collectLatest {
+                    binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
+                    mAdapter.apply {
+                        val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
+                        binding.emptyView.isVisible = showEmpty
+                        binding.listview.isVisible = !showEmpty
+                    }
                 }
             }
 
@@ -112,7 +117,7 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
     }
 
     private fun observeList() {
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             mViewModel.getListData.collectLatest {
                 mAdapter.submitData(it)
             }

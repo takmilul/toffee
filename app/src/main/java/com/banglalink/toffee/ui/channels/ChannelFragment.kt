@@ -100,7 +100,7 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
 
         Log.e("CHANNEL", channelViewModel.toString())
 
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             with(channelViewModel(0)){
                 collectLatest { tvList ->
                     val res = tvList.groupBy { it.categoryName }.map {

@@ -83,7 +83,7 @@ class MinimizeUploadFragment: BaseFragment() {
     }
 
     private fun observeUpload() {
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             uploadRepo.getUploadFlowById(uploadIdLong).collectLatest { uploadInfo ->
                 when(uploadInfo?.status) {
                     UploadStatus.SUCCESS.value,

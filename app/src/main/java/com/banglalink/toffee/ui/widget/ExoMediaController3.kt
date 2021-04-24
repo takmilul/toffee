@@ -9,7 +9,6 @@ import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Message
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.TextureView.SurfaceTextureListener
@@ -18,10 +17,10 @@ import android.view.View.OnClickListener
 import android.widget.FrameLayout
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
-import androidx.databinding.DataBindingUtil
 import com.banglalink.toffee.R.*
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.MediaControlLayout3Binding
+import com.banglalink.toffee.extension.getChannelMetadata
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener
 import com.banglalink.toffee.listeners.PlaylistListener
 import com.banglalink.toffee.model.ChannelInfo
@@ -32,7 +31,6 @@ import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.UtilsKt
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.Player.*
 import com.google.android.exoplayer2.Player.EventListener
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.video.VideoListener
@@ -46,10 +44,6 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
-
-/**
- * Created by shantanu on 5/4/16.
- */
 
 @AndroidEntryPoint
 open class ExoMediaController3 @JvmOverloads constructor(context: Context,
@@ -109,8 +103,6 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         binding = MediaControlLayout3Binding.inflate(inflater, this, true)
         binding.minimize.setOnClickListener(this)
         binding.play.setOnClickListener(this)
-//        binding.forward.setOnClickListener(this)
-//        binding.backward.setOnClickListener(this)
         binding.drawer.setOnClickListener(this)
         binding.rotation.setOnClickListener(this)
         binding.playPrev.setOnClickListener(this)
@@ -169,6 +161,19 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         }
     }
 
+    fun showCastingText(show: Boolean, deviceName: String? = null) {
+        if(show) {
+            binding.controllerBg.visibility = View.VISIBLE
+            binding.textCasting.visibility = View.VISIBLE
+            binding.textCasting.text = if(deviceName != null) "Playing on $deviceName" else "Casting..."
+        } else {
+            binding.textCasting.visibility = View.GONE
+            if(binding.controller.visibility != View.VISIBLE) {
+                binding.controllerBg.visibility = View.GONE
+            }
+        }
+    }
+
     fun getDebugOverLay(): View? {
         if(binding.debugContainer.childCount > 0) return binding.debugContainer.getChildAt(0)
         return null
@@ -215,12 +220,10 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
             }
         }
 
-        simpleExoPlayer?.currentMediaItem?.playbackProperties?.tag?.let {
-            if(it is ChannelInfo) {
-                isVideoPortrait = it.isHorizontal != 1
-                binding.rotation.visibility = if(isVideoPortrait) View.GONE else View.VISIBLE
-                binding.share.visibility = if(it.isApproved == 1) View.VISIBLE else View.GONE
-            }
+        simpleExoPlayer?.currentMediaItem?.getChannelMetadata(simpleExoPlayer)?.let {
+            isVideoPortrait = it.isHorizontal != 1
+            binding.rotation.visibility = if(isVideoPortrait) View.GONE else View.VISIBLE
+            binding.share.visibility = if(it.isApproved == 1) View.VISIBLE else View.GONE
         }
     }
 
@@ -261,14 +264,10 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         handler.removeCallbacks(hideRunnable)
         if (binding.controller.visibility != VISIBLE && !isMinimize) {
             binding.controller.visibility = VISIBLE
+            binding.controllerBg.visibility = View.VISIBLE
             onPlayerControllerChangedListeners.forEach {
                 it.onControllerVisible()
             }
-//            for (onPlayerControllerChangedListener in onPlayerControllerChangedListeners) {
-//                onPlayerControllerChangedListener.onControllerVisible()
-//            }
-//            nextButtonVisibility(true)
-//            prevButtonVisibility(true)
 
             status = true
         }
@@ -279,12 +278,13 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     private var hideRunnable = Runnable {
         if (binding.controller.visibility != GONE) {
             binding.controller.visibility = GONE
+            if(binding.textCasting.visibility != View.VISIBLE) {
+                binding.controllerBg.visibility = View.GONE
+            }
+
             onPlayerControllerChangedListeners.forEach {
                 it.onControllerInVisible()
             }
-//            for (onPlayerControllerChangedListener in onPlayerControllerChangedListeners) {
-//                onPlayerControllerChangedListener.onControllerInVisible()
-//            }
         }
     }
 
@@ -301,8 +301,8 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
                 binding.duration.visibility = VISIBLE
                 binding.timeSeperator.visibility = VISIBLE
                 binding.currentTime.visibility = VISIBLE
-                nextButtonVisibility(simpleExoPlayer?.playbackState == STATE_READY)
-                prevButtonVisibility(simpleExoPlayer?.playbackState == STATE_READY)
+                nextButtonVisibility(simpleExoPlayer?.playbackState == Player.STATE_READY)
+                prevButtonVisibility(simpleExoPlayer?.playbackState == Player.STATE_READY)
             }
             else {
                 nextButtonVisibility(false)
@@ -365,14 +365,12 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     }
 
     override fun onViewMinimize() {
-//        binding.root.keepScreenOn = true
         isMinimize = true
         binding.textureView.setOnClickListener(null)
         hideControls(0)
     }
 
     override fun onViewMaximize() {
-//        binding.root.keepScreenOn = true
         isMinimize = false
         binding.textureView.setOnClickListener(this)
         if (simpleExoPlayer?.isPlaying == true) {
@@ -384,7 +382,6 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     }
 
     override fun onViewDestroy() {
-//        binding.root.keepScreenOn = false
         simpleExoPlayer?.stop()
     }
 
@@ -513,12 +510,6 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
                     hideControls(0)
                 }
             }
-//            binding.forward -> {
-//                forward()
-//            }
-//            binding.backward -> {
-//                backward()
-//            }
             binding.playPrev -> {
                 mPlayListListener?.playPrevious()
             }
@@ -542,15 +533,12 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     }
 
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+        //Log.e("CAST_T", "Player state changed")
         when (playbackState) {
             Player.STATE_BUFFERING -> {
                 binding.preview.setOnClickListener(this)
 //                binding.preview.setImageResource(color.black)
                 binding.play.visibility = GONE
-//                binding.forward.visibility = INVISIBLE
-//                binding.backward.visibility = INVISIBLE
-//                binding.playPrev.visibility = INVISIBLE
-//                binding.playNext.visibility = INVISIBLE
                 nextButtonVisibility(false)
                 prevButtonVisibility(false)
                 binding.autoplayProgress.visibility = GONE
@@ -564,8 +552,6 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
                 binding.play.setImageResource(drawable.ic_player_replay)
                 binding.buffering.visibility = GONE
                 binding.play.visibility = VISIBLE
-//                binding.forward.visibility = INVISIBLE
-//                binding.backward.visibility = INVISIBLE
                 if (mPlayListListener?.isAutoplayEnabled() == true &&
                     mPlayListListener?.hasNext() == true
                 ) {
@@ -594,10 +580,6 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
                 binding.play.setImageResource(drawable.ic_player_play)
                 binding.buffering.visibility = GONE
                 binding.play.visibility = VISIBLE
-//                binding.forward.visibility = INVISIBLE
-//                binding.backward.visibility = INVISIBLE
-//                binding.playNext.visibility = INVISIBLE
-//                binding.playPrev.visibility = INVISIBLE
                 nextButtonVisibility(false)
                 prevButtonVisibility(false)
                 binding.autoplayProgress.visibility = GONE
@@ -613,25 +595,15 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
                 binding.preview.setImageResource(0)
                 binding.share.isEnabled = true
                 binding.autoplayProgress.visibility = GONE
-//                binding.playNext.visibility = GONE
-//                binding.playPrev.visibility = GONE
                 if (playWhenReady) {
                     binding.play.setImageResource(drawable.ic_player_pause)
                     binding.buffering.visibility = GONE
                     binding.play.visibility = VISIBLE
                     if (simpleExoPlayer?.isCurrentWindowLive == true) {
-//                        binding.forward.visibility = INVISIBLE
-//                        binding.backward.visibility = INVISIBLE
-//                        binding.playNext.visibility = INVISIBLE
-//                        binding.playPrev.visibility = INVISIBLE
                         nextButtonVisibility(false)
                         prevButtonVisibility(false)
                     }
                     else {
-//                        binding.forward.visibility = VISIBLE
-//                        binding.backward.visibility = VISIBLE
-//                        binding.playNext.visibility = VISIBLE
-//                        binding.playPrev.visibility = VISIBLE
                         nextButtonVisibility(true)
                         prevButtonVisibility(true)
                     }
@@ -643,18 +615,10 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
                     binding.buffering.visibility = GONE
                     binding.play.visibility = VISIBLE
                     if (simpleExoPlayer?.isCurrentWindowLive == true) {
-//                        binding.playNext.visibility = INVISIBLE
-//                        binding.playPrev.visibility = INVISIBLE
-//                        binding.forward.visibility = INVISIBLE
-//                        binding.backward.visibility = INVISIBLE
                         nextButtonVisibility(false)
                         prevButtonVisibility(false)
                     }
                     else {
-//                        binding.forward.visibility = VISIBLE
-//                        binding.backward.visibility = VISIBLE
-//                        binding.playNext.visibility = VISIBLE
-//                        binding.playPrev.visibility = VISIBLE
                         nextButtonVisibility(true)
                         prevButtonVisibility(true)
                     }
@@ -670,7 +634,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         super.onMediaItemTransition(mediaItem, reason)
         videoWidth = -1
         videoHeight = -1
-        val channelInfo = mediaItem?.playbackProperties?.tag
+        val channelInfo = mediaItem?.getChannelMetadata(simpleExoPlayer)
         if(channelInfo is ChannelInfo) {
             val prevState = isVideoPortrait
             isVideoPortrait = channelInfo.isHorizontal != 1

@@ -24,16 +24,17 @@ import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 
 class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<ChannelInfo> {
 
     private var category: Category? = null
     private var selectedFilter: Int = FEED.value
+    private var _binding: FragmentDramaSeriesContentBinding ? = null
+    private lateinit var mAdapter: DramaSeriesListAdapter<ChannelInfo>
+    private val binding get() = _binding!!
     private val viewModel by viewModels<DramaSeriesViewModel>()
     private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
-    private var _binding: FragmentDramaSeriesContentBinding ? = null
-    private val binding get() = _binding!!
-    private lateinit var mAdapter: DramaSeriesListAdapter<ChannelInfo>
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?, ): View {
         _binding = FragmentDramaSeriesContentBinding.inflate(inflater, container, false)
@@ -44,8 +45,10 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
         super.onDestroyView()
         _binding = null
     }
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        var isInitialized = false
         category = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM) as Category?
         setupEmptyView()
         mAdapter = DramaSeriesListAdapter(this)
@@ -86,12 +89,19 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
             }
         }
 
-        mAdapter.addLoadStateListener {
-            binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
-            mAdapter.apply {
-                val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
-                binding.emptyView.isVisible = showEmpty
-                binding.latestVideosList.isVisible = !showEmpty
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            mAdapter.loadStateFlow
+//                .distinctUntilChangedBy { it.refresh }
+                .collectLatest {
+                binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
+                mAdapter.apply {
+                    val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
+                    val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
+                    binding.emptyView.isVisible = isEmpty && !isLoading
+                    binding.placeholder.isVisible = isLoading
+                    binding.latestVideosList.isVisible = !isEmpty
+                    isInitialized = true
+                }
             }
         }
     }
@@ -115,7 +125,7 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
     }
 
     private fun observeTrendingVideosList(categoryId: Int, subCategoryId: Int = 0) {
-        lifecycleScope.launchWhenStarted { 
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             landingPageViewModel.loadMostPopularVideos(categoryId, subCategoryId).collectLatest {
                 mAdapter.submitData(it)
             }
@@ -123,7 +133,7 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
     }
 
     private fun observeLatestVideosList(categoryId: Int, subCategoryId: Int = 0, isFilter: Int = 0, hashTag: String = "null") {
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.loadDramaSeriesContents(categoryId, subCategoryId, isFilter, hashTag).collectLatest {
                 mAdapter.submitData(it)
             }

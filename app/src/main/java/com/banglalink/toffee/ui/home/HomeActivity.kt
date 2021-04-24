@@ -64,11 +64,14 @@ import com.banglalink.toffee.ui.upload.UploadProgressViewModel
 import com.banglalink.toffee.ui.upload.UploadStateManager
 import com.banglalink.toffee.ui.upload.UploadStatus
 import com.banglalink.toffee.ui.widget.DraggerLayout
+import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.ui.widget.showSubscriptionDialog
 import com.banglalink.toffee.util.EncryptionUtil
 import com.banglalink.toffee.util.InAppMessageParser
 import com.banglalink.toffee.util.Utils
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.util.Util
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.switchmaterial.SwitchMaterial
@@ -162,7 +165,44 @@ class HomeActivity :
         initMqtt()
         
         observe(viewModel.fragmentDetailsMutableLiveData) {
-            onDetailsFragmentLoad(it)
+            val cp = player
+//            if(cp is CastPlayer) {
+//                cp.getItem()
+//            }
+//            if(player is CastPlayer &&
+//                !(player?.playbackState != Player.STATE_ENDED &&
+//                        player?.playbackState != Player.STATE_IDLE)) {
+//                val channelInfo = when (it) {
+//                    is ChannelInfo -> {
+//                        it
+//                    }
+//                    is PlaylistPlaybackInfo -> {
+//                        it.currentItem
+//                    }
+//                    is SeriesPlaybackInfo -> {
+//                        it.currentItem
+//                    }
+//                    else -> null
+//                }
+//
+//                Log.e("CAST_T", "${player?.currentMediaItem?.playbackProperties?.tag}")
+//
+//                VelBoxAlertDialogBuilder(this).apply {
+//                    setTitle("Remote play")
+//                    setText("Play ${channelInfo?.program_name} on remote player?")
+//                    setPositiveButtonListener("Play") { dialog->
+//                        onDetailsFragmentLoad(it)
+//                        dialog?.dismiss()
+//                    }
+//                    setNegativeButtonListener("Cancel") { dialog->
+//                        dialog?.dismiss()
+//                    }
+//                }
+//                .create()
+//                .show()
+//            } else {
+                onDetailsFragmentLoad(it)
+//            }
         }
 
         /*observe(viewModel.userChannelMutableLiveData) {
@@ -480,7 +520,10 @@ class HomeActivity :
 //                R.id.menu_all_tv_channel,
                 R.id.menu_favorites,
                 R.id.menu_settings,
-                R.id.menu_subscriptions
+                R.id.menu_subscriptions,
+                R.id.menu_invite,
+                R.id.menu_redeem,
+                R.id.menu_creators_policy,
             ),
             binding.drawerLayout
         )
@@ -529,6 +572,12 @@ class HomeActivity :
 
     override fun resetPlayer() {
         binding.playerView.setPlayer(player)
+        if(player is CastPlayer) {
+            val deviceName = castContext?.sessionManager?.currentCastSession?.castDevice?.friendlyName
+            binding.playerView.showCastingText(true, deviceName)
+        } else {
+            binding.playerView.showCastingText(false)
+        }
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -549,9 +598,18 @@ class HomeActivity :
         if(playlistManager.getCurrentChannel() != null) {
             maximizePlayer()
             loadDetailFragment(
-                PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
+                if(playlistManager.playlistId >= 0) {
+                    PlaylistItem(playlistManager.playlistId, playlistManager.getCurrentChannel()!!)
+                } else {
+                    playlistManager.getCurrentChannel()!!
+                }
             )
         }
+    }
+
+    override fun resumeCastSession(info: ChannelInfo) {
+        maximizePlayer()
+        loadDetailFragment(info)
     }
 
     override fun onStop() {
@@ -798,7 +856,9 @@ class HomeActivity :
                     showSubscribePackDialog()
                 }
                 else ->{
-//                    maximizePlayer()
+                    if(player is CastPlayer) {
+                        maximizePlayer()
+                    }
                     when (detailsInfo) {
                         is PlaylistPlaybackInfo -> {
                             loadPlayListItem(detailsInfo)

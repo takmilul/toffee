@@ -50,7 +50,7 @@ class PartnersListFragment : BaseFragment(), BaseListItemCallback<ChannelInfo> {
     }
     
     private fun observePartners() {
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.getPartnersList.collectLatest {
                 mAdapter.submitData(it)
             }

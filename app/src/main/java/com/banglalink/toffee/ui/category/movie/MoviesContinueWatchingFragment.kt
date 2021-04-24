@@ -13,10 +13,11 @@ class MoviesContinueWatchingFragment : MovieBaseFragment<ChannelInfo>() {
     }
 
     override fun loadContent() {
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.getContinueWatchingFlow(1).collectLatest {
                 adapter.removeAll()
                 adapter.addAll(it)
+                showCard(it.isNotEmpty())
             }
         }
     }

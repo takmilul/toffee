@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.children
 import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
@@ -32,8 +33,6 @@ import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
-import com.banglalink.toffee.model.Resource.Failure
-import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.model.SubCategory
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.ContentReactionCallback
@@ -43,10 +42,14 @@ import com.banglalink.toffee.ui.common.ReactionPopup
 import com.banglalink.toffee.ui.common.ReactionPopup.Companion.TAG
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -55,14 +58,12 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     
     private var listJob: Job? = null
     private var category: Category? = null
+    @Inject lateinit var localSync: LocalSync
     private var selectedFilter: Int = FEED.value
     private lateinit var mAdapter: LatestVideosAdapter
     private var _binding: FragmentLandingLatestVideosBinding ? = null
     private val binding get() = _binding!!
     private val viewModel by activityViewModels<LandingPageViewModel>()
-
-    @Inject
-    lateinit var localSync: LocalSync
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLandingLatestVideosBinding.inflate(inflater, container, false)
@@ -77,20 +78,25 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        var isInitialized = false
         category = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM) as Category?
+    
         setupEmptyView()
         mAdapter = LatestVideosAdapter(this)
         
         with(binding.latestVideosList) {
             addItemDecoration(MarginItemDecoration(12))
 
-            mAdapter.addLoadStateListener {
-                binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
-                mAdapter.apply {
-                    val showEmpty = itemCount <= 0 && ! it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
-                    binding.emptyView.isVisible = showEmpty
-                    binding.latestVideosList.isVisible = ! showEmpty
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                mAdapter.loadStateFlow
+//                    .distinctUntilChangedBy { it.refresh }
+                    .collectLatest {
+                    val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
+                    val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
+                    binding.emptyView.isVisible = isEmpty && !isLoading
+                    binding.placeholder.isVisible = isLoading
+                    binding.latestVideosList.isVisible = !isEmpty
+                    isInitialized = true
                 }
             }
             adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
@@ -145,7 +151,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     private fun observeHashTagChange() {
         observe(viewModel.selectedHashTag) {
             listJob?.cancel()
-            listJob = lifecycleScope.launchWhenCreated {
+            listJob = viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 viewModel.loadHashTagContents(it, category?.id?.toInt() ?: 0, viewModel.subCategoryId.value ?: 0).collectLatest {
                     mAdapter.submitData(it)
                 }
@@ -173,7 +179,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
 
     private fun observeLatestVideosList(categoryId: Int, subCategoryId: Int = 0) {
         listJob?.cancel()
-        listJob = lifecycleScope.launchWhenStarted {
+        listJob = viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             if (categoryId == 0) {
                 viewModel.loadLatestVideos().collectLatest {
                     mAdapter.submitData(it.map { channel->
@@ -195,7 +201,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     
     private fun observeTrendingVideosList(categoryId: Int, subCategoryId: Int = 0) {
         listJob?.cancel()
-        listJob = lifecycleScope.launchWhenStarted {
+        listJob = viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.loadMostPopularVideos(categoryId, subCategoryId).collectLatest {
                 mAdapter.submitData(it.map { channel->
                     localSync.syncData(channel)
@@ -262,31 +268,27 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     private fun createSubCategoryList() {
         lifecycleScope.launch {
             observe(viewModel.subCategories) {
-                when (it) {
-                    is Success -> {
-                        val subList = it.data.sortedBy { sub -> sub.id }
-                        binding.subCategoryChipGroup.removeAllViews()
-                        subList.forEachIndexed { _, subCategory ->
-                            val newChip = addChip(subCategory).apply {
-                                tag = subCategory
-                            }
-                            binding.subCategoryChipGroup.addView(newChip)
-                            if (subCategory.id == 0L) {
-                                binding.subCategoryChipGroup.check(newChip.id)
-                            }
-                        }
-                        binding.subCategoryChipGroupHolder.show()
-                        binding.subCategoryChipGroup.setOnCheckedChangeListener { group, checkedId ->
-                            val selectedChip = group.findViewById<Chip>(checkedId)
-                            if (selectedChip != null) {
-                                val selectedSub = selectedChip.tag as SubCategory
-                                viewModel.subCategoryId.value = selectedSub.id.toInt()
-                                viewModel.isDramaSeries.value = selectedSub.categoryId.toInt() == 9
-                            }
+                if (it.isNotEmpty()) {
+                    binding.subCategoryChipGroup.removeAllViews()
+                    binding.subCategoryChipGroup.setOnCheckedChangeListener { group, checkedId ->
+                        val selectedChip = group.findViewById<Chip>(checkedId)
+                        if (selectedChip != null) {
+                            val selectedSub = selectedChip.tag as SubCategory
+                            viewModel.subCategoryId.value = selectedSub.id.toInt()
+                            viewModel.isDramaSeries.value = selectedSub.categoryId.toInt() == 9
                         }
                     }
-                    is Failure -> {
+                    val subList = it.sortedBy { sub -> sub.id }
+                    subList.forEachIndexed { _, subCategory ->
+                        val newChip = addChip(subCategory).apply {
+                            tag = subCategory
+                        }
+                        binding.subCategoryChipGroup.addView(newChip)
+                        if (subCategory.id == 0L) {
+                            binding.subCategoryChipGroup.check(newChip.id)
+                        }
                     }
+                    binding.subCategoryChipGroupHolder.show()
                 }
             }
         }
@@ -321,5 +323,18 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
                 unSelectedColor
             )
         )
+    }
+    
+    private fun startLoadingAnimation(isStart: Boolean) {
+        binding.placeholder.children.forEach {
+            if (it is ShimmerFrameLayout) {
+                if (isStart) {
+                    it.startShimmer()
+                }
+                else {
+                    it.stopShimmer()
+                }
+            }
+        }
     }
 }

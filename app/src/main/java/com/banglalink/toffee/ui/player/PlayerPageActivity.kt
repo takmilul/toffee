@@ -4,7 +4,6 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
-import android.text.TextUtils
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -19,6 +18,8 @@ import com.banglalink.toffee.data.database.entities.ContinueWatchingItem
 import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
 import com.banglalink.toffee.data.repository.ContinueWatchingRepository
 import com.banglalink.toffee.data.storage.PlayerPreference
+import com.banglalink.toffee.extension.getChannelMetadata
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener
 import com.banglalink.toffee.listeners.PlaylistListener
 import com.banglalink.toffee.model.Channel
@@ -88,7 +89,7 @@ abstract class PlayerPageActivity :
     private var playerAnalyticsListener: PlayerAnalyticsListener? = null
     private var defaultCookieManager = CookieManager()
 
-    private var castContext: CastContext? = null
+    protected var castContext: CastContext? = null
     private var sessionManager: SessionManager? = null
 
     private var exoPlayer: SimpleExoPlayer? = null
@@ -209,8 +210,16 @@ abstract class PlayerPageActivity :
         initializeRemotePlayer()
         player = if(castPlayer?.isCastSessionAvailable == true) castPlayer else exoPlayer
 
+        player?.let { pl ->
+            if(pl is CastPlayer && playlistManager.getCurrentChannel() == null) {
+                val ci = pl.currentMediaItem?.getChannelMetadata(pl)
+                ci?.viewProgress = pl.currentPosition
+                if(ci != null) playlistManager.setPlaylist(ci)
+            }
+        }
+
         //we are checking whether there is already channelInfo exist. If not null then play it
-        if (playlistManager.getCurrentChannel() != null) {
+        if (playlistManager.getCurrentChannel() != null && player != castPlayer) {
             player?.playWhenReady = true
             playChannel(true)
         }
@@ -239,11 +248,57 @@ abstract class PlayerPageActivity :
         }
     }
 
+    private val castSessionListener = object: SessionManagerListener<CastSession> {
+        override fun onSessionStarting(p0: CastSession?) {
+            p0?.castDevice?.friendlyName?.let {
+                showToast("Connecting to $it")
+            }
+        }
+
+        override fun onSessionStarted(p0: CastSession?, p1: String?) {
+            p0?.castDevice?.friendlyName?.let {
+                showToast("Connected to $it")
+            }
+        }
+
+        override fun onSessionStartFailed(p0: CastSession?, p1: Int) {
+            p0?.castDevice?.friendlyName?.let {
+                showToast("Failed to connect to $it")
+            }
+        }
+
+        override fun onSessionEnding(p0: CastSession?) {}
+        override fun onSessionEnded(p0: CastSession?, p1: Int) {}
+        override fun onSessionResuming(p0: CastSession?, p1: String?) {}
+
+        override fun onSessionResumed(p0: CastSession?, p1: Boolean) {
+            p0?.let {
+                val cinfo = try {
+                    jsonToChannelInfo(it.remoteMediaClient.currentItem.customData!!)
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                    null
+                }
+                if(cinfo != null && playlistManager.getCurrentChannel() == null) {
+                    playlistManager.setPlaylist(cinfo)
+                    resumeCastSession(cinfo)
+                }
+            }
+        }
+
+        override fun onSessionResumeFailed(p0: CastSession?, p1: Int) {}
+        override fun onSessionSuspended(p0: CastSession?, p1: Int) {}
+    }
+
+    protected open fun resumeCastSession(info: ChannelInfo) {}
+
     private fun initializeRemotePlayer() {
         castContext?.let {
+            it.sessionManager.addSessionManagerListener(castSessionListener, CastSession::class.java)
+
             Log.e("CAST", "Castplayer init")
             castPlayer = CastPlayer(it, ToffeeMediaItemConverter()).apply {
-                addListener(this@PlayerPageActivity)
+                addListener(playerEventListener)
                 playWhenReady = true
                 setSessionAvailabilityListener(this@PlayerPageActivity)
             }
@@ -253,6 +308,7 @@ abstract class PlayerPageActivity :
     private fun releasePlayer() {
         releaseLocalPlayer()
         releaseRemotePlayer()
+        castContext?.sessionManager?.removeSessionManagerListener(castSessionListener, CastSession::class.java)
         player = null
     }
 
@@ -271,8 +327,14 @@ abstract class PlayerPageActivity :
     }
 
     private fun releaseRemotePlayer() {
+        castPlayer?.removeListener(playerEventListener)
         castPlayer?.setSessionAvailabilityListener(null)
-        castPlayer?.release()
+//        castPlayer?.release()
+//        Log.e("CAST_T", "Release remote player")
+//        if(castPlayer?.isPlaying == true && playlistManager.getCurrentChannel() != null) {
+//            mPref.savedCastInfo = playlistManager.getCurrentChannel()
+//            Log.e("CAST_T", "Saving channel info -> ${mPref.savedCastInfo?.id}")
+//        }
         castPlayer = null
     }
 
@@ -400,9 +462,9 @@ abstract class PlayerPageActivity :
 //        Log.e("MEDIA_T", "Player is -> ${player?.javaClass?.name}")
         player?.let {
 //            Log.e("MEDIA_T", "${it.currentMediaItem?.playbackProperties?.tag}")
-            val oldChannelInfo = it.currentMediaItem?.playbackProperties?.tag
+            val oldChannelInfo = getCurrentChannelInfo()
             oldChannelInfo?.let { oldInfo ->
-                if(oldInfo is ChannelInfo && it.playbackState != STATE_ENDED) {
+                if(oldInfo.id != channelInfo.id && it.playbackState != STATE_ENDED) {
                     insertContentViewProgress(oldInfo, it.currentPosition)
                 }
             }
@@ -470,7 +532,7 @@ abstract class PlayerPageActivity :
             try {
                 val url = URL(uri)
                 var path = url.path
-                if (!TextUtils.isEmpty(url.query)) {
+                if (!url.query.isNullOrEmpty()) {
                     path = path + "?" + url.query
                 }
                 newUrl = mPref.castOverrideUrl + path
@@ -483,8 +545,7 @@ abstract class PlayerPageActivity :
 
     private inner class ToffeeMediaItemConverter: MediaItemConverter {
         override fun toMediaQueueItem(mediaItem: MediaItem): MediaQueueItem {
-//            Log.e("MEDIA_T", "MediaTag -> ${mediaItem.playbackProperties?.tag}")
-            return getMediaInfo(mediaItem.playbackProperties?.tag as ChannelInfo)
+            return getMediaInfo(mediaItem.getChannelMetadata(castPlayer)!!)
         }
 
         override fun toMediaItem(mediaQueueItem: MediaQueueItem): MediaItem {
@@ -532,7 +593,9 @@ abstract class PlayerPageActivity :
     //                    .setStreamDuration(MediaInfo.STREAM_TYPE_LIVE)
                 .build()
         }
-        return MediaQueueItem.Builder(mediaInfo).setCustomData(channelInfoToJson(info)).build()
+        return MediaQueueItem.Builder(mediaInfo).setCustomData(channelInfoToJson(info)/*.apply { Log.e("CAST_T",
+            this.toString(4)
+        ) }*/).build()
     }
 
     private fun channelInfoToJson(info: ChannelInfo): JSONObject {
@@ -664,8 +727,8 @@ abstract class PlayerPageActivity :
                 clearStartPosition()
                 reloadChannel()
             }
-            player?.currentMediaItem?.playbackProperties?.tag?.let { cinfo->
-                if(cinfo is ChannelInfo && !cinfo.isLive) {
+            getCurrentChannelInfo()?.let { cinfo->
+                if(!cinfo.isLive) {
                     insertContentViewProgress(cinfo, player?.duration ?: -1)
                 }
             }
@@ -694,20 +757,35 @@ abstract class PlayerPageActivity :
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             super.onIsPlayingChanged(isPlaying)
             if(isPlaying) return
-            player?.currentMediaItem?.playbackProperties?.tag?.let { cinfo->
-                if(cinfo is ChannelInfo) {
-                    if(player?.currentPosition ?: 0 > 0L) {
-                        insertContentViewProgress(cinfo, player?.currentPosition ?: -1)
-                    }
+            val cinfo = getCurrentChannelInfo()
+            if(cinfo is ChannelInfo) {
+                if(player?.currentPosition ?: 0 > 0L) {
+                    insertContentViewProgress(cinfo, player?.currentPosition ?: -1)
                 }
             }
         }
     }
 
+    private fun getCurrentChannelInfo(): ChannelInfo? {
+        return player?.currentMediaItem?.getChannelMetadata(player)
+    }
+
     abstract fun resetPlayer()
 
     override fun onCastSessionAvailable() {
+        Log.e("CAST_T", "Cast Session available")
         updateStartPosition()
+//        val savedSession = mPref.savedCastInfo
+//        if(savedSession != null) {
+//            Log.e("CAST_T", "Saved session id -> ${savedSession?.id}")
+//            playlistManager.setPlaylist(savedSession)
+//            mPref.savedCastInfo = null
+//        }
+        playlistManager.getCurrentChannel()?.let {
+            if(player?.playbackState != STATE_ENDED) {
+                insertContentViewProgress(it, player?.currentPosition ?: -1)
+            }
+        }
         player?.stop()
         player = castPlayer
         resetPlayer()
@@ -716,6 +794,11 @@ abstract class PlayerPageActivity :
 
     override fun onCastSessionUnavailable() {
         updateStartPosition()
+        playlistManager.getCurrentChannel()?.let {
+            if(player?.playbackState != STATE_ENDED) {
+                insertContentViewProgress(it, player?.currentPosition ?: -1)
+            }
+        }
         player?.stop()
         player = exoPlayer
         resetPlayer()

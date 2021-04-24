@@ -32,22 +32,23 @@ class CategoriesListAdapter(
                 val calculatedWidth = (Resources.getSystem().displayMetrics.widthPixels - (16.px * 3)) / 2.5    // 16dp margin
                 val calculatedHeight = (calculatedWidth / 16) * 8.21    // Category card ratio = 16:8.21
                 val iconSize = calculatedHeight / 2.62  // category_card_height : category_icon_height = 2.62:1
-                
-                binding.root.layoutParams = binding.root.layoutParams.apply {
-                    width = calculatedWidth.toInt()
-                    height = calculatedHeight.toInt()
-                }
-                binding.categoryCardView.layoutParams = binding.categoryCardView.layoutParams.apply {
-                    width = calculatedWidth.toInt()
-                    height = calculatedHeight.toInt()
-                }
-                binding.icon.maxWidth = iconSize.toInt()
-                binding.icon.maxHeight = iconSize.toInt()
-                if (calculatedWidth < 136.px) {
-                    val params = binding.icon.layoutParams as ViewGroup.MarginLayoutParams
-                    params.marginStart = 8.px
-                    binding.icon.layoutParams = params
-                    binding.text.textSize = 13f
+                with(binding) {
+                    root.layoutParams.apply {
+                        width = calculatedWidth.toInt()
+                        height = calculatedHeight.toInt()
+                    }
+                    categoryCardView.layoutParams.apply {
+                        width = calculatedWidth.toInt()
+                        height = calculatedHeight.toInt()
+                    }
+                    icon.maxWidth = iconSize.toInt()
+                    icon.maxHeight = iconSize.toInt()
+                    if (calculatedWidth < 136.px) {
+                        (icon.layoutParams as ViewGroup.MarginLayoutParams).apply {
+                            marginStart = 8.px
+                            text.textSize = 13f
+                        }
+                    }
                 }
             }
         }

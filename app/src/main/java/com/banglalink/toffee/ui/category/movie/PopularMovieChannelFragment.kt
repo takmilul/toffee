@@ -11,6 +11,8 @@ import androidx.paging.map
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentLandingTvChannelsBinding
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
@@ -21,18 +23,14 @@ import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
 class PopularMovieChannelFragment : BaseFragment() {
+    
     private lateinit var mAdapter: ChannelAdapter
-
-    val viewModel by activityViewModels<LandingPageViewModel>()
-    val homeViewModel by activityViewModels<HomeViewModel>()
     private var _binding: FragmentLandingTvChannelsBinding ? = null
     private val binding get() = _binding!!
+    val homeViewModel by activityViewModels<HomeViewModel>()
+    val viewModel by activityViewModels<LandingPageViewModel>()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLandingTvChannelsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -46,7 +44,8 @@ class PopularMovieChannelFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.channelTv.text = "Top Movie Channels"
-
+        binding.placeholder.hide()
+        binding.channelList.show()
         mAdapter = ChannelAdapter(object : BaseListItemCallback<ChannelInfo> {
             override fun onItemClicked(item: ChannelInfo) {
                 homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
@@ -54,7 +53,6 @@ class PopularMovieChannelFragment : BaseFragment() {
         })
 
         binding.viewAllButton.setOnClickListener {
-//            homeViewModel.switchBottomTab.postValue(1)
             findNavController().navigate(R.id.menu_tv)
         }
 
@@ -66,7 +64,7 @@ class PopularMovieChannelFragment : BaseFragment() {
     }
 
     private fun observeList() {
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.loadPopularMovieChannels.collectLatest {
                 val channelList = it.map { tvItem ->
                     tvItem.channelInfo!!

@@ -14,6 +14,7 @@ class MoviesThrillerFragment: MovieBaseFragment<ChannelInfo>() {
     override fun loadContent() {
         observe(viewModel.thrillerMovies){
             adapter.addAll(it)
+            showCard(it.isNotEmpty())
         }
     }
 

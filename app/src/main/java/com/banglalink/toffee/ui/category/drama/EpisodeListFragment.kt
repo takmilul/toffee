@@ -37,9 +37,7 @@ import com.banglalink.toffee.ui.widget.MyPopupWindow
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -98,7 +96,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
         setSubscriptionStatus()
         setupHeader()
         setupList()
-        observeListState()
+//        observeListState()
 //        observeSubscribeChannel()
     }
 
@@ -119,21 +117,6 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
 
     fun isAutoplayEnabled(): Boolean {
         return view?.findViewById<SwitchButton>(R.id.autoPlaySwitch)?.isChecked == true
-    }
-
-    private fun observeListState() {
-        lifecycleScope.launch {
-            mAdapter
-                .loadStateFlow
-                .distinctUntilChangedBy {
-                    it.refresh
-                }.collect {
-                    val list = mAdapter.snapshot()
-                    homeViewModel.addToPlayListMutableLiveData.postValue(
-                        AddToPlaylistData(getPlaylistId(), list.items, false)
-                    )
-                }
-        }
     }
 
     private fun setupHeader() {
@@ -235,8 +218,17 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
             addItemDecoration(MarginItemDecoration(8))
             adapter = ConcatAdapter(detailsAdapter, mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() }))
 
-            mAdapter.addLoadStateListener {
-                binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                mAdapter.loadStateFlow
+//                    .distinctUntilChangedBy { it.refresh }
+                    .collectLatest {
+                        binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
+
+                        val list = mAdapter.snapshot()
+                        homeViewModel.addToPlayListMutableLiveData.postValue(
+                            AddToPlaylistData(getPlaylistId(), list.items, false)
+                        )
+                    }
             }
         }
         observeList(seriesInfo.seasonNo)
@@ -244,7 +236,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
 
     private fun observeList(currentSeasonNo: Int) {
         seasonListJob?.cancel()
-        seasonListJob = lifecycleScope.launchWhenStarted {
+        seasonListJob = viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             mViewModel.getEpisodesBySeason(
                 DramaSeasonRequestParam(
                     seriesInfo.type,

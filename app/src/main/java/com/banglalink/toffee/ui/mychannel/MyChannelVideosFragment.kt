@@ -33,6 +33,7 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.about.AboutActivity
+import com.banglalink.toffee.ui.about.AboutFragment
 import com.banglalink.toffee.ui.common.*
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
@@ -42,6 +43,7 @@ import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -96,13 +98,17 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
         
         with(binding.myChannelVideos) {
             addItemDecoration(MarginItemDecoration(12))
-            
-            mAdapter.addLoadStateListener {
-                binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
-                mAdapter.apply {
-                    val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
-                    binding.emptyView.isVisible = showEmpty
-                    binding.myChannelVideos.isVisible = !showEmpty
+
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                mAdapter.loadStateFlow
+//                    .distinctUntilChangedBy { it.refresh }
+                    .collectLatest {
+                    binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
+                    mAdapter.apply {
+                        val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
+                        binding.emptyView.isVisible = showEmpty
+                        binding.myChannelVideos.isVisible = !showEmpty
+                    }
                 }
             }
             adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
@@ -116,7 +122,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
     
     private fun observeMyChannelVideos() {
         listJob?.cancel()
-        listJob = lifecycleScope.launchWhenStarted {
+        listJob = viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             mViewModel.getMyChannelVideos(channelOwnerId).collectLatest {
                 mAdapter.submitData(it)
             }
@@ -134,7 +140,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
                 }
                 creatorsPolicyButton.setOnClickListener {
                     val intent = Intent(requireActivity(), HtmlPageViewActivity::class.java).apply {
-                        putExtra(HtmlPageViewActivity.CONTENT_KEY, AboutActivity.PRIVACY_POLICY_URL)
+                        putExtra(HtmlPageViewActivity.CONTENT_KEY, AboutFragment.PRIVACY_POLICY_URL)
                         putExtra(HtmlPageViewActivity.TITLE_KEY, "Creators Policy")
                     }
                     requireActivity().startActivity(intent)

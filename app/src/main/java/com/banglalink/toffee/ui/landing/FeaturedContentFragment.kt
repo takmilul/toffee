@@ -8,10 +8,10 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentLandingFeaturedBinding
+import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.Resource.Failure
-import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.google.android.material.tabs.TabLayoutMediator
@@ -20,78 +20,61 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-class FeaturedContentFragment : HomeBaseFragment() {
-
-    private var isDataLoaded = false
+class FeaturedContentFragment : HomeBaseFragment(), BaseListItemCallback<ChannelInfo> {
+    
     private var slideJob: Job? = null
     private lateinit var mAdapter: FeaturedContentAdapter
-    val viewModel by activityViewModels<LandingPageViewModel>()
     private var _binding:FragmentLandingFeaturedBinding ? = null
     private val binding get() = _binding!!
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    val viewModel by activityViewModels<LandingPageViewModel>()
+    
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
          _binding = FragmentLandingFeaturedBinding.inflate(inflater, container, false)
          return binding.root
     }
+    
     override fun onDestroyView() {
         slideJob?.cancel()
         binding.featuredViewpager.adapter = null
         super.onDestroyView()
         _binding = null
     }
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mAdapter = FeaturedContentAdapter(object : BaseListItemCallback<ChannelInfo> {
-            override fun onItemClicked(item: ChannelInfo) {
-                if(isDataLoaded) {
-                    homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
-                }
-            }
-        })
-
+        
+        /*if (viewModel.pageType.value != PageType.Landing) {
+            startLoadingAnimation(false)
+        }*/
+        
+        mAdapter = FeaturedContentAdapter(this)
+        
         binding.featuredViewpager.adapter = mAdapter
         TabLayoutMediator(binding.featuredIndicator, binding.featuredViewpager, true) { tab_, position -> }.attach()
         
-        val channelInfoList = listOf(
-            ChannelInfo(""), 
-            ChannelInfo(""), 
-            ChannelInfo(""), 
-            ChannelInfo("")
-        )
-        mAdapter.removeAll()
-        mAdapter.addAll(channelInfoList)
-        startPageScroll()
-
         observeList()
         viewModel.loadFeaturedContentList()
     }
 
     private fun observeList() {
-        lifecycleScope.launchWhenStarted {
-            observe(viewModel.featuredContents) {
-                when (it) {
-                    is Success -> {
-                        isDataLoaded = true
-                        it.data?.let { channelInfoList ->
-                            startPageScroll()
-                            mAdapter.removeAll()
-                            mAdapter.addAll(channelInfoList)
-                        }
-                    }
-                    is Failure -> {
-                    }
-                }
+        observe(viewModel.featuredContents) {
+            if(it.isNotEmpty()) {
+                mAdapter.removeAll()
+                mAdapter.addAll(it)
+                startPageScroll()
+                binding.placeholder.root.hide()
+                binding.featuredViewpager.show()
+            }
+            else {
+                startLoadingAnimation(false)
             }
         }
     }
-
-    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
-
+    
+    override fun onItemClicked(item: ChannelInfo) {
+        homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
     }
-
+    
     private fun startPageScroll() {
         slideJob?.cancel()
         slideJob = lifecycleScope.launch {
@@ -107,5 +90,17 @@ class FeaturedContentFragment : HomeBaseFragment() {
     override fun onStop() {
         viewModel.featuredContents.removeObservers(this)
         super.onStop()
+    }
+    
+    private fun startLoadingAnimation(isStart: Boolean) {
+        if (isStart) {
+            binding.placeholder.root.startShimmer()
+        } else {
+            binding.placeholder.root.stopShimmer()
+        }
+    }
+    
+    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
+
     }
 }

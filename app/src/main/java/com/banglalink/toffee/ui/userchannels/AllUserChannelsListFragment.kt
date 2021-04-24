@@ -85,7 +85,7 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
     }
 
     private fun observeList() {
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             val content = viewModel.loadUserChannels()
             content.collectLatest {
                 mAdapter.submitData(it)

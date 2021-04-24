@@ -12,8 +12,11 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.TextViewCompat
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.PlayerOverlayLayoutBinding
+import com.banglalink.toffee.extension.getChannelMetadata
 import com.banglalink.toffee.model.ChannelInfo
 import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.ext.cast.CastPlayer
+import com.google.gson.Gson
 
 
 /**
@@ -306,10 +309,7 @@ class PlayerOverlayView(context: Context, private val attrs: AttributeSet?) :
         get() = binding.secondsView.textView
 
     private fun getCurrentChannel(): ChannelInfo? {
-        player?.currentMediaItem?.playbackProperties?.tag?.let {
-            if(it is ChannelInfo) return it
-        }
-        return null
+        return player?.currentMediaItem?.getChannelMetadata(player)
     }
 
     override fun onDoubleTapProgressUp(posX: Float, posY: Float) {

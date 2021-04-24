@@ -81,7 +81,7 @@ class RecentChannelsFragment: BaseFragment() {
     }
 
     private fun observeList() {
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.loadRecentTvChannels().collectLatest {
                 val newList = if(it.isNotEmpty()) {
                     if(showSelected) it.subList(1, it.size) else it.subList(0, it.size - 1)

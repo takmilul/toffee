@@ -15,13 +15,11 @@ import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.enums.PageType.Landing
-import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.util.SingleLiveEvent
-import com.banglalink.toffee.util.unsafeLazy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -42,30 +40,19 @@ class LandingPageViewModel @Inject constructor(
     private val editorsChoiceAssistedFactory: GetUgcTrendingNowContents.AssistedFactory,
 ) : BaseViewModel() {
     
-    val latestVideoLiveData = MutableLiveData<Pair<Int, Int>>()
-    val checkedSubCategoryChipId = MutableLiveData<Int>()
-    val pageType = MutableLiveData<PageType>()
     val categoryId = SingleLiveEvent<Int>()
     val subCategoryId = SingleLiveEvent<Int>()
+    val pageType = MutableLiveData<PageType>()
     val isDramaSeries = MutableLiveData<Boolean>()
-    private val featuredContentList = SingleLiveEvent<Resource<List<ChannelInfo>?>>()
-    val featuredContents = featuredContentList.toLiveData()
-    private val subCategoryList = SingleLiveEvent<Resource<List<SubCategory>>>()
-    val subCategories = subCategoryList.toLiveData()
-
-    private val hashtagData = SingleLiveEvent<List<String>>()
-    val hashtagList = hashtagData.toLiveData()
     val selectedHashTag = SingleLiveEvent<String>()
-
-    private val channelMutableLiveData = MutableLiveData<Resource<List<ChannelInfo>>>()
-    val channelLiveData = channelMutableLiveData.toLiveData()
+    val hashtagList = SingleLiveEvent<List<String>>()
+    val checkedSubCategoryChipId = MutableLiveData<Int>()
+    val subCategories = SingleLiveEvent<List<SubCategory>>()
+    val featuredContents = SingleLiveEvent<List<ChannelInfo>>()
+    val latestVideoLiveData = MutableLiveData<Pair<Int, Int>>()
 
     val loadChannels by lazy {
         channelRepo.getList().cachedIn(viewModelScope)
-    }
-
-    private val getChannels by unsafeLazy {
-        getContentAssistedFactory.create(ChannelRequestParams("", 0, "", 0, "LIVE"))
     }
 
     /*val loadLatestVideos by lazy {
@@ -86,21 +73,18 @@ class LandingPageViewModel @Inject constructor(
 
             when (response) {
                 is Success -> {
-                    response.data.channels?.let {
-                        featuredContentList.postValue(resultFromResponse { it })
-                    }
-                    response.data.subcategories?.let {
-                        if (it.isNotEmpty()) {
-                            subCategoryList.postValue(resultFromResponse { it })
-                        }
-                    }
-                    response.data.hashTags?.let {
-                        if (!it.isNullOrEmpty()) {
-                            hashtagData.postValue(it)
-                        }
+                    featuredContents.postValue(response.data.channels ?: emptyList())
+                    if (pageType.value != Landing) {
+                        subCategories.postValue(response.data.subcategories ?: emptyList())
+                        hashtagList.postValue(response.data.hashTags ?: emptyList())
                     }
                 }
                 is Failure -> {
+                    featuredContents.postValue(emptyList())
+                    if (pageType.value != Landing) {
+                        subCategories.postValue(emptyList())
+                        hashtagList.postValue(emptyList())
+                    }
                     Toast.makeText(context, response.error.msg, Toast.LENGTH_SHORT).show()
                 }
             }
@@ -111,10 +95,14 @@ class LandingPageViewModel @Inject constructor(
         categoryListRepo.getList().cachedIn(viewModelScope)
     }
 
-    fun loadEditorsChoiceContent(): Flow<PagingData<ChannelInfo>> {
-        return editorsChoiceRepo.getList().cachedIn(viewModelScope)
+    val loadLandingEditorsChoiceContent by lazy {
+        editorsChoiceRepo.getList().cachedIn(viewModelScope)
     }
-
+    
+    fun loadEditorsChoiceContent(): Flow<PagingData<ChannelInfo>> {
+        return editorsChoiceRepo.getList()
+    }
+    
     val loadUserChannels by lazy {
         userChannelRepo.getList().cachedIn(viewModelScope)
     }

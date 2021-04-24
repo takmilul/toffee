@@ -197,7 +197,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     }
     
     private fun observeVideoList() {
-        lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             mViewModel.getMyChannelPlaylistVideos(requestParams).collectLatest {
                 playlistAdapter.submitData(it)
             }
@@ -230,20 +230,20 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     }
     
     private fun observeListState() {
-        lifecycleScope.launch {
-            playlistAdapter.addLoadStateListener {
-                binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
-                playlistAdapter.apply {
-                    val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
-                    binding.emptyView.isVisible = showEmpty
-                    binding.myChannelPlaylistVideos.isVisible = !showEmpty
-                }
-            }
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             playlistAdapter
                 .loadStateFlow
-                .distinctUntilChangedBy {
-                    it.refresh
-                }.collect {
+//                .distinctUntilChangedBy {
+//                    it.refresh
+//                }
+                .collect {
+                    binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
+                    playlistAdapter.apply {
+                        val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
+                        binding.emptyView.isVisible = showEmpty
+                        binding.myChannelPlaylistVideos.isVisible = !showEmpty
+                    }
+
                     val list = playlistAdapter.snapshot()
                     homeViewModel.addToPlayListMutableLiveData.postValue(
                         AddToPlaylistData(getPlaylistId(), list.items, false)
