@@ -87,7 +87,6 @@ object PubSubMessageUtil {
                      publishRequest.messages = ImmutableList.of(
                          pubsubMessage
                      )
-
                 client.projects().topics().publish(topic, publishRequest).queue(batch, callback)
                 batch?.execute()
 

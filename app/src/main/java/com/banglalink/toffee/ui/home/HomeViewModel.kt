@@ -247,7 +247,7 @@ class HomeViewModel @Inject constructor(
         }
     }
     
-    fun sendUserInterestData(interestList: ArrayList<Int>) {
+    fun sendUserInterestData(interestList: Map<String, Int>) {
         viewModelScope.launch {
             sendUserInterestEvent.execute(interestList)
         }

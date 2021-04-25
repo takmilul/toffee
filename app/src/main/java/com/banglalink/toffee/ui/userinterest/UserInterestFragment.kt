@@ -13,10 +13,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentUserInterestBinding
-import com.banglalink.toffee.extension.launchActivity
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.onTransitionCompletedListener
-import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.CustomerInfoSignIn
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeActivity
@@ -28,10 +25,10 @@ class UserInterestFragment : BaseFragment() {
     private var verifiedUserData: CustomerInfoSignIn? = null
     private var _binding: FragmentUserInterestBinding? = null
     private val binding get() = _binding !!
-    private val selectedInterestList: ArrayList<Int> = arrayListOf()
     private val homeViewModel: HomeViewModel by activityViewModels()
     private val viewModel: MyChannelVideosEditViewModel by activityViewModels()
     private val args by navArgs<UserInterestFragmentArgs>()
+    private val userInterestList: MutableMap<String, Int> = mutableMapOf()
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentUserInterestBinding.inflate(inflater, container, false)
@@ -46,12 +43,18 @@ class UserInterestFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         verifiedUserData = args.verifiedUserData
-        selectedInterestList.clear()
+        userInterestList.clear()
         binding.interestChipGroup.removeAllViews()
         
         binding.confirmBtn.safeClick({
-            homeViewModel.sendUserInterestData(selectedInterestList)
-            signIn()
+            val userInterestCount = userInterestList.values.count { it == 1 }
+            if (userInterestCount >= 3) {
+                homeViewModel.sendUserInterestData(userInterestList)
+                signIn()
+            }
+            else {
+                requireActivity().showToast("Please select at least 3 interest or press skip to sign in")
+            }
         })
         binding.skipButton.safeClick({ signIn() })
         
@@ -76,15 +79,16 @@ class UserInterestFragment : BaseFragment() {
                 categoryList.let { list ->
                     list.forEachIndexed { _, category ->
                         val newChip = addChip(category.categoryName).apply {
-                            tag = category.id
+                            tag = category.categoryName
                         }
                         binding.interestChipGroup.addView(newChip)
+                        userInterestList[category.categoryName] = 0
                     }
                 }
                 binding.interestChipGroup.forEach { 
                     val selectedChip = it as Chip
                     selectedChip.setOnCheckedChangeListener { buttonView, isChecked ->
-                        selectedInterestList.add(buttonView.tag.toString().toInt())
+                        userInterestList[buttonView.tag.toString()] = if (isChecked) 1 else 0
                     }
                 }
             }
@@ -106,15 +110,18 @@ class UserInterestFragment : BaseFragment() {
     }
     
     private fun addChip(name: String): Chip {
-        val intColor = ContextCompat.getColor(requireContext(), R.color.hashtag_chip_color)
-        val textColor = ContextCompat.getColor(requireContext(), R.color.main_text_color)
+        val intColor = ContextCompat.getColor(requireContext(), R.color.interest_chip_color)
+        val selectedTextColor = ContextCompat.getColor(requireContext(), R.color.fixedStrokeColor)
+        val unSelectedTextColor = ContextCompat.getColor(requireContext(), R.color.cardTitleColor)
         val chipColor = createStateColor(intColor)
+        val strokeColor = createStateColor(intColor, unSelectedTextColor)
         val chip = layoutInflater.inflate(R.layout.interest_chip_layout, binding.interestChipGroup, false) as Chip
         chip.text = name
         chip.id = View.generateViewId()
         chip.chipBackgroundColor = chipColor
         chip.rippleColor = chipColor
-        chip.setTextColor(createStateColor(textColor, textColor))
+        chip.chipStrokeColor = strokeColor
+        chip.setTextColor(createStateColor(selectedTextColor, unSelectedTextColor))
         return chip
     }
     

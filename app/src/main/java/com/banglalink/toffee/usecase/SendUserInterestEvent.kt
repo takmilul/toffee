@@ -14,9 +14,9 @@ class SendUserInterestEvent @Inject constructor(
     
     private val gson = Gson()
     
-    suspend fun execute(interestList: ArrayList<Int>, sendToPubSub: Boolean = true) {
-        val shareCount = InterestData(preference.customerId, interestList)
-        PubSubMessageUtil.sendMessage(gson.toJson(shareCount), USER_INTEREST_TOPIC)
+    suspend fun execute(interestList: Map<String, Int>, sendToPubSub: Boolean = true) {
+        val interestData = InterestData(preference.customerId, interestList)
+        PubSubMessageUtil.sendMessage(gson.toJson(interestData), USER_INTEREST_TOPIC)
     }
 }
 
@@ -24,7 +24,7 @@ data class InterestData(
     @SerializedName("user_id")
     val customerId: Int,
     @SerializedName("interest_list")
-    val interestList: ArrayList<Int>,
+    val interestList: Map<String, Int>,
     @SerializedName("device_type")
     val deviceType: Int = 1,
     @SerializedName("date_time")
