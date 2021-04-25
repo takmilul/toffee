@@ -38,12 +38,18 @@ class LocalSync @Inject constructor(
             val reactionInfo = reactionDao.getReactionByContentId(preference.customerId, channelInfo.id.toLong())
             channelInfo.myReaction = reactionInfo?.reactionType ?: Reaction.None.value
         }
+        else {
+            channelInfo.isSubscribed = 0
+        }
     }
 
     suspend fun syncUserChannel(userChannel: UserChannelInfo){
         if (preference.isVerifiedUser) {
             userChannel.isSubscribed =
                 if (subscriptionInfoRepository.getSubscriptionInfoByChannelId(userChannel.channelOwnerId, preference.customerId) != null) 1 else 0
+        }
+        else {
+            userChannel.isSubscribed = 0
         }
         userChannel.subscriberCount = subscriptionCountRepository.getSubscriberCount(userChannel.channelOwnerId)
     }

@@ -48,7 +48,7 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
 
         setEmptyView()
         setupListView()
-        if (this is UserActivitiesListFragment || this is FavoriteFragment && !mPref.isVerifiedUser) {
+        if ((this is UserActivitiesListFragment || this is FavoriteFragment) && !mPref.isVerifiedUser) {
             return
         }
         observeList()
