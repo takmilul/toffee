@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.mychannel
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
@@ -47,7 +46,7 @@ class MyChannelPlaylistVideosViewModel @Inject constructor(
     
     fun deletePlaylistVideo(channelId: Int, playlistContentId: Int, playlistId: Int) {
         viewModelScope.launch {
-            _data.postValue(resultFromResponse { playlistVideoDeleteApiService.invoke(channelId, playlistContentId, playlistId) })
+            _data.postValue(resultFromResponse { playlistVideoDeleteApiService.invoke(channelId, playlistContentId, playlistId) }!!)
         }
     }
     
