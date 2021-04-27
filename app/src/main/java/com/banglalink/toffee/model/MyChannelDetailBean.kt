@@ -9,11 +9,11 @@ data class MyChannelDetailBean(
     val isRated: Int = 0,
     val myRating: Int = 0,
     val ratingCount: Float = 0.0f,
-    var subscriberCount: Int = 0,
+    var subscriberCount: Long = 0,
     var formattedSubscriberCount: String? = null,
     val isOwner: Int = 0,
     @SerializedName("channel_owner_id")
     val channelOwnerId: Int = 0,
-    val isSubscribed: Int = 0,
+    var isSubscribed: Int = 0,
     val systemTime: String? = null
 )

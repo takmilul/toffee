@@ -67,7 +67,7 @@
             app:layout_constraintTop_toTopOf="@id/splashLineImageView" />
 
         <ImageView
-            android:contentDescription="@string/txt_spalash_logo_title"
+            android:contentDescription="@string/txt_splash_logo_title"
             android:id="@+id/splashLogoTitleImageView"
             android:layout_width="120dp"
             android:layout_height="22dp"

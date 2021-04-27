@@ -109,7 +109,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
             adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
             setHasFixedSize(true)
         }
-        if (!mPref.isVerifiedUser) {
+        if (isOwner && !mPref.isVerifiedUser) {
             return
         }
         observeReloadVideos()
@@ -165,8 +165,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
                 when (it.itemId) {
                     R.id.menu_edit_content -> {
                         if (findNavController().currentDestination?.id != R.id.myChannelVideosEditFragment && findNavController().currentDestination?.id == R.id.myChannelHomeFragment) {
-                            val action = MyChannelHomeFragmentDirections.actionMyChannelHomeFragmentToMyChannelVideosEditFragment(item)
-                            parentFragment?.findNavController()?.navigate(action)
+                            parentFragment?.findNavController()?.navigate(R.id.action_myChannelHomeFragment_to_myChannelVideosEditFragment, Bundle().apply{ putParcelable(MyChannelVideosEditFragment.CHANNEL_INFO, item) })
                         } else if(findNavController().currentDestination?.id != R.id.myChannelVideosEditFragment && findNavController().currentDestination?.id == R.id.menu_channel){
                             this@MyChannelVideosFragment.findNavController().navigate(
                                 R.id.action_menu_channel_to_myChannelVideosEditFragment,

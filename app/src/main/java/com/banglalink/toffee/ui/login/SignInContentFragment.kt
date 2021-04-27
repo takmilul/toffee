@@ -45,7 +45,6 @@ import com.google.android.gms.auth.api.credentials.HintRequest
 import com.google.android.material.snackbar.Snackbar
 
 class SignInContentFragment : BaseFragment() {
-    private var phoneNumber: String = ""
     private var referralCode: String = ""
     private var regSessionToken: String = ""
     private var snackBar: Snackbar? = null
@@ -138,15 +137,13 @@ class SignInContentFragment : BaseFragment() {
             when (it) {
                 is Resource.Success -> {
                     snackBar?.dismiss()
-                    phoneNumber = binding.phoneNumberEt.text.toString().trim()
-                    referralCode = binding.refCodeEt.text.toString().trim()
                     if (it.data is String) {
                        regSessionToken = it.data as String
                        binding.signInContentMotionLayout.onTransitionCompletedListener {
                            if (findNavController().currentDestination?.id != R.id.verifySignInFragment && findNavController().currentDestination?.id == R.id.signInContentFragment) {
                                findNavController().navigate(
                                    SignInContentFragmentDirections.actionSignInContentFragmentToVerifySignInFragment(
-                                       phoneNumber,
+                                       phoneNo,
                                        referralCode,
                                        regSessionToken
                                    )

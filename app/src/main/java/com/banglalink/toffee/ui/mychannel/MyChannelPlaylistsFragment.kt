@@ -77,11 +77,13 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
         _binding = FragmentMyChannelPlaylistsBinding.inflate(inflater, container, false)
         return binding.root
     }
+    
     override fun onDestroyView() {
         binding.myChannelPlaylists.adapter = null
         super.onDestroyView()
         _binding = null
     }
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
@@ -105,7 +107,7 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
             adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
             setHasFixedSize(true)
         }
-        if (!mPref.isVerifiedUser) {
+        if (isOwner && !mPref.isVerifiedUser) {
             return
         }
         observeMyChannelPlaylists()

@@ -16,21 +16,21 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.toSpannable
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.color
 import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_DETAILS
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
-import com.banglalink.toffee.data.repository.SubscriptionCountRepository
-import com.banglalink.toffee.data.repository.SubscriptionInfoRepository
 import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBinding
 import com.banglalink.toffee.databinding.AlertDialogMyChannelRatingBinding
 import com.banglalink.toffee.databinding.FragmentMyChannelHomeBinding
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.MyChannelDetail
-import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.MyChannelDetailBean
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.BaseFragment
@@ -42,7 +42,6 @@ import com.banglalink.toffee.util.bindButtonState
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -66,8 +65,6 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     private var _bindingRating: AlertDialogMyChannelRatingBinding ? = null
     private val bindingRating get() = _bindingRating!!
     private val viewModel by viewModels<MyChannelHomeViewModel>()
-    @Inject lateinit var subscriptionInfoRepository: SubscriptionInfoRepository
-    @Inject lateinit var subscriptionCountRepository: SubscriptionCountRepository
     private val createPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
     private val playlistReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
     
@@ -112,26 +109,10 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         progressDialog.show()
         binding.contentBody.hide()
         
-        lifecycleScope.launch {
-            isSubscribed = if (subscriptionInfoRepository.getSubscriptionInfoByChannelId(channelOwnerId, mPref.customerId) != null) 1 else 0
-            subscriberCount = subscriptionCountRepository.getSubscriberCount(channelOwnerId)
-            binding.isSubscribed = isSubscribed
-            binding.subscriberCount = subscriberCount
-        }
-        if (mPref.isVerifiedUser) {
-            observeChannelDetail()
+        observeChannelDetail()
 //        observeSubscribeChannel()
-            viewModel.getChannelDetail(channelOwnerId)
-        }
-        else {
-            progressDialog.hide()
-            myChannelDetail = null
-            isSubscribed = 0
-            binding.data = null
-            binding.isSubscribed = 0
-            binding.isOwner = isOwner
-            loadBody()
-        }
+        viewModel.getChannelDetail(channelOwnerId)
+        
         binding.channelDetailView.subscriptionButton.isEnabled = true
         binding.channelDetailView.addBioButton.safeClick(this)
         binding.channelDetailView.editButton.safeClick(this)
@@ -141,34 +122,23 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     }
     
     override fun onClick(v: View?) {
+        if (!mPref.isVerifiedUser) {
+            findNavController().navigate(R.id.signInDialog)
+            return
+        }
         when (v) {
             binding.channelDetailView.addBioButton -> {
-                requireActivity().checkVerification(mPref)
-                if (findNavController().currentDestination?.id != R.id.myChannelEditDetailFragment && findNavController().currentDestination?.id == R.id.myChannelHomeFragment) {
-                    val action = MyChannelHomeFragmentDirections.actionMyChannelHomeFragmentToMyChannelEditDetailFragment(myChannelDetail)
-                    findNavController().navigate(action)
-                }  else if (findNavController().currentDestination?.id != R.id.myChannelEditDetailFragment && findNavController().currentDestination?.id == R.id.menu_channel) {
-                    findNavController().navigate(R.id.action_menu_channel_to_myChannelEditFragment, Bundle().apply { putParcelable("myChannelDetail", myChannelDetail) })
-                }
+                navigateToEditChannel()
             }
 
             binding.channelDetailView.editButton -> {
-                requireActivity().checkVerification(mPref)
-                if (findNavController().currentDestination?.id != R.id.myChannelEditDetailFragment && findNavController().currentDestination?.id == R.id.myChannelHomeFragment) {
-                    val action = MyChannelHomeFragmentDirections.actionMyChannelHomeFragmentToMyChannelEditDetailFragment(myChannelDetail)
-                    findNavController().navigate(action)
-                }
-                else if (findNavController().currentDestination?.id != R.id.myChannelEditDetailFragment && findNavController().currentDestination?.id == R.id.menu_channel) {
-                    findNavController().navigate(R.id.action_menu_channel_to_myChannelEditFragment, Bundle().apply { putParcelable("myChannelDetail", myChannelDetail) })
-                }
+                navigateToEditChannel()
             }
 
             binding.channelDetailView.ratingButton -> {
-                requireActivity().checkVerification(mPref)
                 showRatingDialog()
             }
             binding.channelDetailView.analyticsButton -> {
-                requireActivity().checkVerification(mPref)
                 if (channelId > 0) {
                     showCreatePlaylistDialog()
                 } else {
@@ -176,7 +146,6 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                 }
             }
             binding.channelDetailView.subscriptionButton -> {
-                requireActivity().checkVerification(mPref)
                 if (isSubscribed == 0) {
                     binding.channelDetailView.subscriptionButton.isEnabled = false
                     homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, channelOwnerId, mPref.customerId), 1)
@@ -195,6 +164,17 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                     }
                 }
             }
+        }
+    }
+    
+    private fun navigateToEditChannel() {
+        if (findNavController().currentDestination?.id != R.id.myChannelEditDetailFragment && findNavController().currentDestination?.id == R.id.myChannelHomeFragment) {
+            findNavController().navigate(R.id.action_myChannelHomeFragment_to_MyChannelEditDetailFragment,
+                Bundle().apply { putParcelable("myChannelDetail", myChannelDetail) })
+        }
+        else if (findNavController().currentDestination?.id != R.id.myChannelEditDetailFragment && findNavController().currentDestination?.id == R.id.menu_channel) {
+            findNavController().navigate(R.id.action_menu_channel_to_myChannelEditFragment,
+                Bundle().apply { putParcelable("myChannelDetail", myChannelDetail) })
         }
     }
     
@@ -251,38 +231,64 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         observe(viewModel.liveData) {
             when (it) {
                 is Success -> {
-                    if (it.data != null) {
-                        myChannelDetail = it.data.myChannelDetail
-                        rating = it.data.ratingCount
-                        myRating = it.data.myRating
-                        binding.myRating = myRating
-                        isOwner = it.data.isOwner == 1
+                    it.data?.let { channelData ->
+                        myChannelDetail = channelData.myChannelDetail
+                        rating = channelData.ratingCount
+                        myRating = channelData.myRating
+                        isOwner = channelData.isOwner == 1
+                        isSubscribed = channelData.isSubscribed
+                        subscriberCount = channelData.subscriberCount
                         channelId = myChannelDetail?.id?.toInt() ?: 0
-                        binding.data = it.data
-                        binding.isOwner = isOwner
                         mPref.channelId = channelId
-                        if (isOwner) {
-                            myChannelDetail?.let { detail ->
-                                if (!detail.profileUrl.isNullOrBlank()) {
-                                    mPref.channelLogo = detail.profileUrl
-                                }
-                                if (!detail.channelName.isNullOrBlank()) {
-                                    mPref.channelName = detail.channelName
-                                }
-                            }
-                        }
+    
+                        setBindingData(channelData)
                         loadBody()
-                    }
+                    } ?: setEmptyData()
                 }
                 is Failure -> {
-                    myChannelDetail = null
-                    isSubscribed = 0
-                    binding.data = null
-                    binding.isSubscribed = 0
-                    binding.isOwner = isOwner
-                    loadBody()
+                    setEmptyData()
                 }
             }
+        }
+    }
+    
+    private fun setEmptyData() {
+        myChannelDetail = null
+        binding.data = null
+        binding.isSubscribed = 0
+        binding.isOwner = isOwner
+        loadBody()
+    }
+    
+    private fun setBindingData(channelData: MyChannelDetailBean?) {
+        if (isOwner) {
+            myChannelDetail?.let { detail ->
+                if (! detail.profileUrl.isNullOrBlank()) {
+                    mPref.channelLogo = detail.profileUrl
+                }
+                if (! detail.channelName.isNullOrBlank()) {
+                    mPref.channelName = detail.channelName
+                }
+            }
+        }
+        if (! mPref.isVerifiedUser && isOwner) {
+            myChannelDetail = null
+            binding.data = null
+            binding.isOwner = isOwner
+        }
+        else if (! mPref.isVerifiedUser && ! isOwner) {
+            binding.data = channelData
+            binding.isOwner = isOwner
+            binding.myRating = 0
+            binding.isSubscribed = 0
+            binding.subscriberCount = channelData?.subscriberCount
+        }
+        else {
+            binding.data = channelData
+            binding.isOwner = isOwner
+            binding.myRating = myRating
+            binding.isSubscribed = channelData?.isSubscribed
+            binding.subscriberCount = channelData?.subscriberCount
         }
     }
     

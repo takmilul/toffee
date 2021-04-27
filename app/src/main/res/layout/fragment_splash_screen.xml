@@ -40,7 +40,7 @@
             app:layout_constraintEnd_toEndOf="@id/splashLineImageView"
             app:layout_constraintStart_toStartOf="@id/splashLineImageView"
             app:layout_constraintTop_toTopOf="@id/splashLineImageView"
-            android:contentDescription="@string/txt_spalash_pink" />
+            android:contentDescription="@string/txt_splash_pink" />
 
         <ImageView
             android:id="@+id/splashWhiteImageView"
@@ -75,7 +75,7 @@
             app:layout_constraintEnd_toEndOf="@id/splashLogoImageView"
             app:layout_constraintStart_toStartOf="@id/splashLogoImageView"
             app:layout_constraintTop_toBottomOf="@id/splashLogoImageView"
-            android:contentDescription="@string/txt_spalash_logo_title" />
+            android:contentDescription="@string/txt_splash_logo_title" />
 
     </androidx.constraintlayout.motion.widget.MotionLayout>
 

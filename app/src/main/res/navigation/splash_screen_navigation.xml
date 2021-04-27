@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/splashScreenFragment"
-        android:name="com.banglalink.toffee.ui.splash.SplashScreenFragment"
+        android:name="com.banglalink.toffee.ui.splash.SplashScreenFragment2"
         android:label="SplashScreenFragment" >
         <action
             android:id="@+id/action_splashScreenFragment_to_signinByPhoneFragment"

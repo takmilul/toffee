@@ -6,8 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
-import com.banglalink.toffee.R
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.databinding.FragmentSplashScreenBinding
 import com.banglalink.toffee.extension.onTransitionCompletedListener
@@ -42,13 +40,34 @@ class SplashScreenFragment:BaseFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        
+        /*binding.splashScreenMotionLayout.onTransitionCompletedListener { 
+            if (it == R.id.firstEnd) {
+                lifecycleScope.launch {
+                    delay(300)
+                    with(binding.splashScreenMotionLayout) {
+                        setTransition(R.id.firstEnd, R.id.secondEnd)
+                        transitionToEnd()
+                    }
+                }
+            }
+            if (it == R.id.secondEnd) {
+                *//*val shimmer = Shimmer.AlphaHighlightBuilder()
+                    .setBaseAlpha(1f)
+                    .setHighlightAlpha(0.4f)
+                    .setDuration(2000L)
+                
+                binding.splashLogoImageView.setShimmer(shimmer.build())*//*
+                binding.splashLogoImageView.startShimmer()
+            }
+        }*/
         binding.splashScreenMotionLayout.onTransitionCompletedListener {
             if(mPref.logout.equals("1")){
                 mPref.logout = "0"
                 lifecycleScope.launch {
-                    if(findNavController().currentDestination?.id != R.id.signInFragment && findNavController().currentDestination?.id == R.id.splashScreenFragment) {
+                    /*if(findNavController().currentDestination?.id != R.id.signInFragment && findNavController().currentDestination?.id == R.id.splashScreenFragment) {
                         findNavController().navigate(SplashScreenFragmentDirections.actionSplashScreenFragmentToSigninByPhoneFragment())
-                    }
+                    }*/
                 }
             }
             else if (mPref.customerId != 0 && mPref.password.isNotEmpty()){

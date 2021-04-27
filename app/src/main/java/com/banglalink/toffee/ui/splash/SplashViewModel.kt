@@ -1,5 +1,7 @@
 package com.banglalink.toffee.ui.splash
 
+import android.database.sqlite.SQLiteDatabase
+import android.os.Environment
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.BuildConfig
@@ -17,6 +19,7 @@ import com.banglalink.toffee.util.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -74,6 +77,20 @@ class SplashViewModel @Inject constructor(
             }
         }
     }
-
+    
+    fun deletePreviousDatabase() {
+        try {
+            val data: File = Environment.getDataDirectory()
+            val previousDBPath = "/data/com.banglalink.toffee/databases/" + "toffee_database"
+            val previousDB = File(data, previousDBPath)
+            if (previousDB.exists()) {
+                mPref.isPreviousDbDeleted = SQLiteDatabase.deleteDatabase(previousDB)
+            } else {
+                mPref.isPreviousDbDeleted = true
+            }
+        } catch (e: Exception) {
+        }
+    }
+    
     fun isCustomerLoggedIn() = mPref.customerId != 0
 }
