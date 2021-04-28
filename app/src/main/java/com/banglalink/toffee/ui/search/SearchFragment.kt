@@ -7,7 +7,7 @@ import androidx.fragment.app.viewModels
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.common.paging.ProviderIconCallback
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.Resource
@@ -87,39 +87,15 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
         popupMenu.setOnMenuItemClickListener{
             when(it?.itemId){
                 R.id.menu_share->{
-                    if (!mPref.isVerifiedUser) {
-                        (activity as HomeActivity).handleVerficationApp()
-                        return@setOnMenuItemClickListener true
-                    }
-                    homeViewModel.shareContentLiveData.postValue(channelInfo)
+                    requireActivity().handleShare(channelInfo)
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_fav->{
-                    if (!mPref.isVerifiedUser) {
-                        (activity as HomeActivity).handleVerficationApp()
-                        return@setOnMenuItemClickListener true
-                    }
-                    homeViewModel.updateFavorite(channelInfo).observe(viewLifecycleOwner, { resp->
-                        handleFavoriteResponse(resp)
-                    })
+                    requireActivity().handleFavorite(channelInfo)
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_report -> {
-                    if (!mPref.isVerifiedUser) {
-                        (activity as HomeActivity).handleVerficationApp()
-                        return@setOnMenuItemClickListener true
-                    }
-                    val fragment =
-                        channelInfo.duration?.let { durations ->
-                            ReportPopupFragment.newInstance(-1,
-                                durations, channelInfo.id
-                            )
-                        }
-                    fragment?.show(requireActivity().supportFragmentManager, "report_video")
-                    return@setOnMenuItemClickListener true
-                }
-                R.id.menu_not_interested->{
-//                    removeItemNotInterestedItem(channelInfo)
+                    requireActivity().handleReport(channelInfo)
                     return@setOnMenuItemClickListener true
                 }
                 else->{
@@ -129,25 +105,7 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
         }
         popupMenu.show()
     }
-    
-    private fun handleFavoriteResponse(it: Resource<ChannelInfo>){
-        when(it){
-            is Success ->{
-                val channelInfo = it.data
-                when(channelInfo.favorite){
-                    "0"->{
-                        context?.showToast("Content successfully removed from favorite list")
-                    }
-                    "1"->{
-                        context?.showToast("Content successfully added to favorite list")
-                    }
-                }
-            }
-            is Failure ->{
-                context?.showToast(it.error.msg)
-            }
-        }
-    }
+
 
 //    override fun onDestroy() {
 //        super.onDestroy()

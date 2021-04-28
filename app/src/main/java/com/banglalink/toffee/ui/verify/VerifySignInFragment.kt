@@ -64,12 +64,12 @@ class VerifySignInFragment : BaseFragment() {
         binding.signInVerifyMotionLayout.setOnClickListener { UtilsKt.hideSoftKeyboard(requireActivity()) }
         ViewCompat.setTranslationZ(binding.root, 100f)
         
-        val args by navArgs<VerifySignInFragmentArgs>()
-        args.let { 
-            phoneNumber = it.phoneNumber
-            referralCode = it.referralCode
-            regSessionToken = it.regSessionToken
-        }
+//        val args by navArgs<VerifySignInFragmentArgs>()
+//        args.let {
+//            phoneNumber = it.phoneNumber
+//            referralCode = it.referralCode
+//            regSessionToken = it.regSessionToken
+//        }
         
         binding.resend.paintFlags = binding.resend.paintFlags or Paint.UNDERLINE_TEXT_FLAG
         binding.resend.safeClick ({
@@ -127,8 +127,8 @@ class VerifySignInFragment : BaseFragment() {
                 is Resource.Success -> {
                     verifiedUserData = it.data
                     mPref.phoneNumber = phoneNumber
-                    val action = VerifySignInFragmentDirections.actionVerifySignInFragmentToUserInterestFragment(verifiedUserData)
-                    findNavController().navigate(action)
+//                    val action = VerifySignInFragmentDirections.actionVerifySignInFragmentToUserInterestFragment(verifiedUserData)
+//                    findNavController().navigate(action)
 //                    signInMotionLayout?.let { view ->
 //                        if (view is MotionLayout){
 //                            view.onTransitionCompletedListener { onLoginSuccessAnimationCompletion() }

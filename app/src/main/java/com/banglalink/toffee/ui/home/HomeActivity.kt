@@ -166,8 +166,9 @@ class HomeActivity :
         showRedeemMessageIfPossible()
 
         binding.uploadButton.setOnClickListener {
-            this.checkVerification(mPref)
-            if (showUploadDialog()) return@setOnClickListener
+            checkVerification {
+                showUploadDialog()
+            }
         }
         
         initMqtt()
@@ -1275,8 +1276,10 @@ class HomeActivity :
                         mPref.clear()
                         mPref.logout = "1"
                         UploadService.stopAllUploads()
-                        launchActivity<SplashScreenActivity>()
-                        finish()
+//                        launchActivity<SplashScreenActivity>()
+//                        finish()
+//                      overridePendingTransition(0, 0)
+                        recreate()
                     }
                 }
                 is Failure -> {
@@ -1286,13 +1289,13 @@ class HomeActivity :
         }
     }
     
-    fun handleVerficationApp() {
-        mPref.clear()
-        mPref.logout="1"
-        UploadService.stopAllUploads()
-        launchActivity<SplashScreenActivity>()
-        finish()
-    }
+//    fun handleVerficationApp() {
+//        mPref.clear()
+//        mPref.logout="1"
+//        UploadService.stopAllUploads()
+//        launchActivity<SplashScreenActivity>()
+//        finish()
+//    }
     override fun onDrawerButtonPressed(): Boolean {
         binding.drawerLayout.openDrawer(GravityCompat.END, true)
         return true
@@ -1591,7 +1594,7 @@ class HomeActivity :
         }
     }
     
-    private fun showLoginDialog() {
+    fun showLoginDialog() {
         
     }
 }

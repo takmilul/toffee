@@ -27,7 +27,7 @@ class UserInterestFragment : BaseFragment() {
     private val binding get() = _binding !!
     private val homeViewModel: HomeViewModel by activityViewModels()
     private val viewModel: MyChannelVideosEditViewModel by activityViewModels()
-    private val args by navArgs<UserInterestFragmentArgs>()
+//    private val args by navArgs<UserInterestFragmentArgs>()
     private val userInterestList: MutableMap<String, Int> = mutableMapOf()
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -42,7 +42,7 @@ class UserInterestFragment : BaseFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        verifiedUserData = args.verifiedUserData
+        verifiedUserData = null//args.verifiedUserData
         userInterestList.clear()
         binding.interestChipGroup.removeAllViews()
         

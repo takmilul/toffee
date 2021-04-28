@@ -131,17 +131,19 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
             if (isOwner) {
                 emptyViewLabel.text = "You haven't uploaded any video yet"
                 uploadVideoButton.setOnClickListener {
-                    requireActivity().checkVerification(mPref)
-                    if (requireActivity() is HomeActivity) {
-                        (requireActivity() as HomeActivity).showUploadDialog()
+                    requireActivity().checkVerification {
+                        requireActivity().let {
+                            if(it is HomeActivity) it.showUploadDialog()
+                        }
                     }
                 }
                 creatorsPolicyButton.setOnClickListener {
-                    val intent = Intent(requireActivity(), HtmlPageViewActivity::class.java).apply {
-                        putExtra(HtmlPageViewActivity.CONTENT_KEY, AboutFragment.PRIVACY_POLICY_URL)
-                        putExtra(HtmlPageViewActivity.TITLE_KEY, "Creators Policy")
-                    }
-                    requireActivity().startActivity(intent)
+//                    val intent = Intent(requireActivity(), HtmlPageViewActivity::class.java).apply {
+//                        putExtra(HtmlPageViewActivity.CONTENT_KEY, AboutFragment.PRIVACY_POLICY_URL)
+//                        putExtra(HtmlPageViewActivity.TITLE_KEY, "Creators Policy")
+//                    }
+//                    requireActivity().startActivity(intent)
+                    findNavController().navigate(R.id.privacyPolicyFragment)
                 }
             } else {
                 uploadVideoButton.hide()
@@ -180,33 +182,13 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
                         fragment.show(requireActivity().supportFragmentManager, "add_to_playlist")
                     }
                     R.id.menu_share -> {
-                        if (!mPref.isVerifiedUser) {
-                            (activity as HomeActivity).handleVerficationApp()
-                            return@setOnMenuItemClickListener true
-                        }
-                        homeViewModel.shareContentLiveData.postValue(item)
+                        requireActivity().handleShare(item)
                     }
                     R.id.menu_fav -> {
-                        if (!mPref.isVerifiedUser) {
-                            (activity as HomeActivity).handleVerficationApp()
-                            return@setOnMenuItemClickListener true
-                        }
-                        homeViewModel.updateFavorite(item).observe(viewLifecycleOwner, Observer {
-                            handleFavoriteResponse(it)
-                        })
+                        requireActivity().handleFavorite(item)
                     }
                     R.id.menu_report -> {
-                        if (!mPref.isVerifiedUser) {
-                            (activity as HomeActivity).handleVerficationApp()
-                            return@setOnMenuItemClickListener true
-                        }
-                        val fragment =
-                            item.duration?.let { durations ->
-                                ReportPopupFragment.newInstance(-1,
-                                    durations, item.id
-                                )
-                            }
-                        fragment?.show(requireActivity().supportFragmentManager, "report_video")
+                        requireActivity().handleReport(item)
                         return@setOnMenuItemClickListener true
                     }
                     R.id.menu_delete_content -> {
@@ -232,33 +214,6 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
             }
         ).create().show()
     }
-    
-    private fun handleFavoriteResponse(it: Resource<ChannelInfo>) {
-        when (it) {
-            is Success -> {
-                val channelInfo = it.data
-                when (channelInfo.favorite) {
-                    "0" -> {
-                        context?.showToast("Content successfully removed from favorite list")
-                        handleFavoriteRemovedSuccessFully(channelInfo)
-                    }
-                    "1" -> {
-                        handleFavoriteAddedSuccessfully(channelInfo)
-                        context?.showToast("Content successfully added to favorite list")
-                    }
-                }
-            }
-            is Failure -> {
-                context?.showToast(it.error.msg)
-            }
-        }
-    }
-    
-    private fun handleFavoriteAddedSuccessfully(channelInfo: ChannelInfo) {}
-    
-    private fun handleFavoriteRemovedSuccessFully(channelInfo: ChannelInfo) {}
-    
-    fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {}
     
     override fun onItemClicked(item: ChannelInfo) {
         super.onItemClicked(item)
@@ -288,8 +243,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
     
     override fun onShareClicked(view: View, item: ChannelInfo) {
         super.onShareClicked(view, item)
-        requireActivity().checkVerification(mPref)
-        homeViewModel.shareContentLiveData.postValue(item)
+        requireActivity().handleShare(item)
     }
     
     private fun observeReloadVideos() {

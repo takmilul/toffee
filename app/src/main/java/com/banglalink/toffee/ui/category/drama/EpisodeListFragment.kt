@@ -22,8 +22,7 @@ import com.banglalink.toffee.data.repository.SubscriptionCountRepository
 import com.banglalink.toffee.data.repository.SubscriptionInfoRepository
 import com.banglalink.toffee.databinding.FragmentEpisodeListBinding
 import com.banglalink.toffee.enums.Reaction.Love
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.Resource
@@ -150,7 +149,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
             }
 
             override fun onShareClicked(view: View, item: ChannelInfo) {
-                homeViewModel.shareContentLiveData.postValue(item)
+                requireActivity().handleShare(item)
             }
 
             override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
@@ -300,38 +299,15 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
         popupMenu.setOnMenuItemClickListener{
             when(it?.itemId){
                 R.id.menu_share->{
-                    if (!mPref.isVerifiedUser) {
-                        (activity as HomeActivity).handleVerficationApp()
-                        return@setOnMenuItemClickListener true
-                    }
-                    homeViewModel.shareContentLiveData.postValue(channelInfo)
+                    requireActivity().handleShare(channelInfo)
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_fav->{
-                    if (!mPref.isVerifiedUser) {
-                        (activity as HomeActivity).handleVerficationApp()
-                        return@setOnMenuItemClickListener true
-                    }
-                    homeViewModel.updateFavorite(channelInfo).observe(viewLifecycleOwner, { resp->
-                        handleFavoriteResponse(resp)
-                    })
+                    requireActivity().handleFavorite(channelInfo)
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_report -> {
-                    if (!mPref.isVerifiedUser) {
-                        (activity as HomeActivity).handleVerficationApp()
-                        return@setOnMenuItemClickListener true
-                    }
-                    val fragment =
-                        channelInfo.duration?.let { durations ->
-                            ReportPopupFragment.newInstance(-1,
-                                durations, channelInfo.id
-                            )
-                        }
-                    fragment?.show(requireActivity().supportFragmentManager, "report_video")
-                    return@setOnMenuItemClickListener true
-                }
-                R.id.menu_not_interested->{
+                    requireActivity().handleReport(channelInfo)
                     return@setOnMenuItemClickListener true
                 }
                 else->{
@@ -340,10 +316,6 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
             }
         }
         popupMenu.show()
-    }
-
-    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
-
     }
 
     fun setCurrentChannel(channelInfo: ChannelInfo?) {

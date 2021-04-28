@@ -11,6 +11,7 @@ import androidx.navigation.ui.NavigationUI
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
+import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.extension.loadProfileImage
 import com.banglalink.toffee.extension.observe
@@ -287,12 +288,13 @@ class DrawerHelper(
 //
 //            }
             R.id.menu_logout -> {
-
+                binding.drawerLayout.closeDrawers()
                 activity.handleExitApp()
                 return true
             }
             R.id.menu_verfication -> {
-                activity.handleVerficationApp()
+                binding.drawerLayout.closeDrawers()
+                activity.checkVerification()
                 return true
             }
             R.id.menu_change_theme -> {
@@ -307,19 +309,19 @@ class DrawerHelper(
             }
             R.id.menu_invite -> {
                 if (!mPref.isVerifiedUser) {
-                    activity.handleVerficationApp()
-                    return false
+                    activity.checkVerification()
+                    binding.drawerLayout.closeDrawers()
+                    return true
                 }
 //                activity.launchActivity<ReferAFriendActivity>()
-//                binding.drawerLayout.closeDrawers()
             }
             R.id.menu_redeem -> {
                 if (!mPref.isVerifiedUser) {
-                    activity.handleVerficationApp()
-                    return false
+                    activity.checkVerification()
+                    binding.drawerLayout.closeDrawers()
+                    return true
                 }
 //                activity.launchActivity<RedeemCodeActivity>()
-//                binding.drawerLayout.closeDrawers()
             }
         }
         return run {

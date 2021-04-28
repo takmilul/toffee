@@ -112,8 +112,4 @@ class SubscribedChannelsFragment : HomeBaseFragment() {
             binding.numberOfSubscription.setText(mAdapter.itemCount)
         }
     }
-
-    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
-        TODO("Not yet implemented")
-    }
 }

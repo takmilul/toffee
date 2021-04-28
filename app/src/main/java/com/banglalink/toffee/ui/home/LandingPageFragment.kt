@@ -63,8 +63,4 @@ class LandingPageFragment : HomeBaseFragment() {
     fun onBackPressed(): Boolean {
         return false
     }
-
-    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
-//        popularVideoListAdapter.remove(channelInfo)
-    }
 }

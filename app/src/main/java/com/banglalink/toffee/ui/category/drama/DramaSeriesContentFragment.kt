@@ -170,10 +170,6 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
         homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
     }
 
-    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
-        
-    }
-
     override fun hideShareMenuItem(hide: Boolean): Boolean {
         return true
     }

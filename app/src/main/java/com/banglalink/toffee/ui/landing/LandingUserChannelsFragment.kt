@@ -147,31 +147,39 @@ class LandingUserChannelsFragment : HomeBaseFragment(), LandingPopularChannelCal
     }
     
     override fun onSubscribeButtonClicked(view: View, info: UserChannelInfo) {
-        requireActivity().checkVerification(mPref)
+        requireActivity().checkVerification {
 //                channelInfo = info
-        if (info.isSubscribed == 0) {
-            channelInfo = info.also { userChannelInfo ->
-                userChannelInfo.isSubscribed = 1
-                userChannelInfo.subscriberCount++
-            }
-//                    subscriptionViewModel.setSubscriptionStatus(info.id, 1, info.channelOwnerId)
-            homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId), 1)
-            mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, channelInfo)
-        }
-        else {
-            UnSubscribeDialog.show(requireContext()){
+            if (info.isSubscribed == 0) {
                 channelInfo = info.also { userChannelInfo ->
-                    userChannelInfo.isSubscribed = 0
-                    userChannelInfo.subscriberCount--
+                    userChannelInfo.isSubscribed = 1
+                    userChannelInfo.subscriberCount++
                 }
-//                        subscriptionViewModel.setSubscriptionStatus(info.id, 0, info.channelOwnerId)
-                homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId), -1)
+//                    subscriptionViewModel.setSubscriptionStatus(info.id, 1, info.channelOwnerId)
+                homeViewModel.sendSubscriptionStatus(
+                    SubscriptionInfo(
+                        null,
+                        info.channelOwnerId,
+                        mPref.customerId
+                    ), 1
+                )
                 mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, channelInfo)
+            } else {
+                UnSubscribeDialog.show(requireContext()) {
+                    channelInfo = info.also { userChannelInfo ->
+                        userChannelInfo.isSubscribed = 0
+                        userChannelInfo.subscriberCount--
+                    }
+//                        subscriptionViewModel.setSubscriptionStatus(info.id, 0, info.channelOwnerId)
+                    homeViewModel.sendSubscriptionStatus(
+                        SubscriptionInfo(
+                            null,
+                            info.channelOwnerId,
+                            mPref.customerId
+                        ), -1
+                    )
+                    mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, channelInfo)
+                }
             }
         }
-    }
-    
-    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
-
     }
 }

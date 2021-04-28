@@ -18,9 +18,9 @@
         app:showAsAction="never"
         />
 
-    <item android:id="@+id/menu_not_interested"
-        android:title="@string/menu_not_interested"
-        android:visible="false"
-        app:showAsAction="never"
-        />
+<!--    <item android:id="@+id/menu_not_interested"-->
+<!--        android:title="@string/menu_not_interested"-->
+<!--        android:visible="false"-->
+<!--        app:showAsAction="never"-->
+<!--        />-->
 </menu>

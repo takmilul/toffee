@@ -25,10 +25,7 @@ import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBinding
 import com.banglalink.toffee.databinding.AlertDialogMyChannelRatingBinding
 import com.banglalink.toffee.databinding.FragmentMyChannelHomeBinding
-import com.banglalink.toffee.extension.hide
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.safeClick
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.MyChannelDetail
 import com.banglalink.toffee.model.MyChannelDetailBean
 import com.banglalink.toffee.model.Resource.Failure
@@ -120,12 +117,14 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         binding.channelDetailView.ratingButton.safeClick(this)
         binding.channelDetailView.subscriptionButton.safeClick(this)
     }
-    
+
     override fun onClick(v: View?) {
-        if (!mPref.isVerifiedUser) {
-            findNavController().navigate(R.id.signInDialog)
-            return
+        requireActivity().checkVerification {
+            handleClick(v)
         }
+    }
+
+    fun handleClick(v: View?) {
         when (v) {
             binding.channelDetailView.addBioButton -> {
                 navigateToEditChannel()

@@ -6,8 +6,11 @@ import android.content.IntentFilter
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
@@ -21,6 +24,7 @@ import com.banglalink.toffee.extension.snack
 import com.banglalink.toffee.model.CustomerInfoSignIn
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.receiver.SMSBroadcastReceiver
+import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.login.SignInContentFragment2
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
@@ -30,13 +34,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class VerifySignInFragment2 : DialogFragment() {
+class VerifySignInFragment2 : ChildDialogFragment() {
     
     private var otp: String = ""
     private var phoneNumber: String = ""
     private var regSessionToken: String = ""
     private var resendBtnPressCount: Int = 0
-    private var alertDialog: AlertDialog? = null
     @Inject lateinit var mPref: SessionPreference
     private var resendCodeTimer: ResendCodeTimer? = null
     private var verifiedUserData: CustomerInfoSignIn? = null
@@ -51,16 +54,19 @@ class VerifySignInFragment2 : DialogFragment() {
         phoneNumber = requireArguments().getString(SignInContentFragment2.PHONE_NO_ARG) ?: ""
         regSessionToken = requireArguments().getString(SignInContentFragment2.REG_SESSION_TOKEN_ARG) ?: ""
     }
-    
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        _binding = AlertDialogVerifyBinding.inflate(layoutInflater)
-        alertDialog = AlertDialog
-            .Builder(requireContext())
-            .setView(binding.root).create()
-            .apply {
-                window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            }
-    
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = AlertDialogVerifyBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         with(binding) {
             resendButton.safeClick ({
                 progressDialog.show()
@@ -74,14 +80,12 @@ class VerifySignInFragment2 : DialogFragment() {
                 observeVerifyCode()
                 viewModel.verifyCode(otp, regSessionToken, "")
             })
-            closeButton.safeClick({ dismiss() })
-            skipButton.safeClick({ dismiss() })
+            closeButton.safeClick({ /*dismiss()*/ })
+            skipButton.safeClick({ closeDialog() })
         }
         
         startCountDown(if (resendBtnPressCount <= 1) 1 else 30)
         initSmsBroadcastReceiver()
-        
-        return alertDialog!!
     }
     
     private fun observeVerifyCode() {
@@ -91,9 +95,9 @@ class VerifySignInFragment2 : DialogFragment() {
                 is Resource.Success -> {
                     verifiedUserData = it.data
                     mPref.phoneNumber = phoneNumber
-                    findNavController().popBackStack().let {
-                        findNavController().navigate(R.id.userInterestDialog)
-                    }
+//                    findNavController().popBackStack().let {
+                        findNavController().navigate(R.id.userInterestFragment2)
+//                    }
                 }
                 is Resource.Failure -> {
                     ToffeeAnalytics.logApiError("confirmCode",it.error.msg)

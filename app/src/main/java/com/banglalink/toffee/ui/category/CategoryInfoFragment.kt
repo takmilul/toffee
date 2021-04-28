@@ -152,6 +152,4 @@ class CategoryInfoFragment: HomeBaseFragment() {
             )
         )
     }
-
-    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {}
 }

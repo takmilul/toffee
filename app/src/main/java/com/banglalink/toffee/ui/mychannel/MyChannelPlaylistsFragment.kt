@@ -121,13 +121,18 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
             if (isOwner) {
                 emptyViewLabel.text = "You haven't created any playlist yet"
                 createPlaylistButton.setOnClickListener {
-                    requireActivity().checkVerification(mPref)
-                    if (mPref.channelId > 0) {
-                        if (parentFragment?.parentFragment?.parentFragment is MyChannelHomeFragment) {
-                            (parentFragment?.parentFragment?.parentFragment as? MyChannelHomeFragment)?.showCreatePlaylistDialog()
+                    requireActivity().checkVerification {
+                        if (mPref.channelId > 0) {
+                            if (parentFragment?.parentFragment?.parentFragment is MyChannelHomeFragment) {
+                                (parentFragment?.parentFragment?.parentFragment as? MyChannelHomeFragment)?.showCreatePlaylistDialog()
+                            }
+                        } else {
+                            Toast.makeText(
+                                requireContext(),
+                                "Please create channel first",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
-                    } else {
-                        Toast.makeText(requireContext(), "Please create channel first", Toast.LENGTH_SHORT).show()
                     }
                 }
             } else {

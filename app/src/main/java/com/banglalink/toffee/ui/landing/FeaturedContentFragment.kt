@@ -99,8 +99,4 @@ class FeaturedContentFragment : HomeBaseFragment(), BaseListItemCallback<Channel
             binding.placeholder.root.stopShimmer()
         }
     }
-    
-    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
-
-    }
 }

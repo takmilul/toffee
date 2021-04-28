@@ -1,46 +1,48 @@
 package com.banglalink.toffee.ui.userinterest
 
-import android.app.AlertDialog
-import android.app.Dialog
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.AlertDialogUserInterestBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.mychannel.MyChannelVideosEditViewModel
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.material.chip.Chip
 
-class UserInterestFragment2 : DialogFragment() {
-    
-    private var alertDialog: AlertDialog? = null
+class UserInterestFragment2 : ChildDialogFragment() {
     private var _binding: AlertDialogUserInterestBinding? = null
     private val homeViewModel: HomeViewModel by activityViewModels()
     private val binding get() = _binding !!
     private val userInterestList: MutableMap<String, Int> = mutableMapOf()
     private val viewModel: MyChannelVideosEditViewModel by activityViewModels()
     private val progressDialog by unsafeLazy { VelBoxProgressDialog(requireContext()) }
-    
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        _binding = AlertDialogUserInterestBinding.inflate(layoutInflater)
-        alertDialog = AlertDialog
-            .Builder(requireContext())
-            .setView(binding.root).create()
-            .apply {
-                window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            }
-        
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = AlertDialogUserInterestBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         userInterestList.clear()
         
         with(binding) {
@@ -60,14 +62,14 @@ class UserInterestFragment2 : DialogFragment() {
         }
         
         observeCategory()
-        return alertDialog!!
     }
     
     private fun reloadContent() {
-        alertDialog?.dismiss()
+        closeDialog()
+//        requireActivity().overridePendingTransition(0, 0)
         requireActivity().recreate()
     }
-    
+
     private fun observeCategory() {
         progressDialog.show()
         observe(viewModel.categories){
@@ -92,7 +94,7 @@ class UserInterestFragment2 : DialogFragment() {
             }
             else {
                 progressDialog.hide()
-                alertDialog?.dismiss()
+                closeDialog()
                 requireActivity().showToast("Couldn't load data")
             }
         }

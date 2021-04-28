@@ -98,14 +98,7 @@ abstract class CommonSingleListFragment : HomeBaseFragment() {
         binding.progress.visibility = View.GONE
     }
 
-    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
-        mAdapter.remove(channelInfo)
-        if (mAdapter.itemCount == 0) {
-            binding.emptyView.visibility = View.VISIBLE
-        }
-    }
-
-    override fun handleFavoriteRemovedSuccessFully(channelInfo: ChannelInfo) {
+    fun handleFavoriteRemovedSuccessFully(channelInfo: ChannelInfo) {
         if (removeUnFavoriteItemFromList()) {
             mAdapter.remove(channelInfo)
             if (mAdapter.itemCount == 0) {

@@ -501,23 +501,23 @@
         android:label="Search" />
     <dialog
         android:id="@+id/signInDialog"
-        android:name="com.banglalink.toffee.ui.login.SignInContentFragment2"
+        android:name="com.banglalink.toffee.ui.login.SignInFragment"
         android:label="Login" />
-    <dialog
-        android:id="@+id/verifySignInDialog"
-        android:name="com.banglalink.toffee.ui.verify.VerifySignInFragment2"
-        android:label="Verify">
-        
-        <argument
-            android:name="phoneNumber"
-            app:argType="string" />
-        <argument
-            android:name="regSessionToken"
-            app:argType="string" />
-        
-    </dialog>
-    <dialog
-        android:id="@+id/userInterestDialog"
-        android:name="com.banglalink.toffee.ui.userinterest.UserInterestFragment2"
-        android:label="User Interest" />
+<!--    <dialog-->
+<!--        android:id="@+id/verifySignInDialog"-->
+<!--        android:name="com.banglalink.toffee.ui.verify.VerifySignInFragment2"-->
+<!--        android:label="Verify">-->
+<!--        -->
+<!--        <argument-->
+<!--            android:name="phoneNumber"-->
+<!--            app:argType="string" />-->
+<!--        <argument-->
+<!--            android:name="regSessionToken"-->
+<!--            app:argType="string" />-->
+<!--        -->
+<!--    </dialog>-->
+<!--    <dialog-->
+<!--        android:id="@+id/userInterestDialog"-->
+<!--        android:name="com.banglalink.toffee.ui.userinterest.UserInterestFragment2"-->
+<!--        android:label="User Interest" />-->
 </navigation>

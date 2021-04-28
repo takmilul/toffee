@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+<!--    <androidx.constraintlayout.motion.widget.MotionLayout-->
+<!--        android:id="@+id/signInMotionLayout"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:background="@drawable/splash_gradient_bg"-->
+<!--        app:layoutDescription="@xml/signin_loading_motion_scene">-->
+
+<!--        <View-->
+<!--            android:id="@+id/topView"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="100dp"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent" />-->
+
+<!--        <ImageView-->
+<!--            android:contentDescription="@string/txt_splash_line"-->
+<!--            android:id="@+id/splashLineImageView"-->
+<!--            android:layout_width="448dp"-->
+<!--            android:layout_height="400dp"-->
+<!--            android:background="@drawable/ic_splash_logo_line_bg"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent" />-->
+
+<!--        <ImageView-->
+<!--            android:contentDescription="@string/txt_splash_logo"-->
+<!--            android:id="@+id/splashPinkImageView"-->
+<!--            android:layout_width="436dp"-->
+<!--            android:layout_height="420dp"-->
+<!--            android:layout_marginStart="28dp"-->
+<!--            android:layout_marginTop="24dp"-->
+<!--            android:background="@drawable/ic_splash_logo_pink_bg"-->
+<!--            app:layout_constraintBottom_toBottomOf="@id/splashLineImageView"-->
+<!--            app:layout_constraintEnd_toEndOf="@id/splashLineImageView"-->
+<!--            app:layout_constraintStart_toStartOf="@id/splashLineImageView"-->
+<!--            app:layout_constraintTop_toTopOf="@id/splashLineImageView" />-->
+
+<!--        <ImageView-->
+<!--            android:contentDescription="@string/txt_splash_white"-->
+<!--            android:id="@+id/splashWhiteImageView"-->
+<!--            android:layout_width="350dp"-->
+<!--            android:layout_height="372dp"-->
+<!--            android:background="@drawable/ic_splash_logo_white_bg"-->
+<!--            app:layout_constraintBottom_toBottomOf="@id/splashLineImageView"-->
+<!--            app:layout_constraintEnd_toEndOf="@id/splashLineImageView"-->
+<!--            app:layout_constraintStart_toStartOf="@id/splashLineImageView"-->
+<!--            app:layout_constraintTop_toTopOf="@id/splashLineImageView" />-->
+
+<!--        <ImageView-->
+<!--            android:contentDescription="@string/app_name"-->
+<!--            android:id="@+id/splashLogoImageView"-->
+<!--            android:layout_width="80dp"-->
+<!--            android:layout_height="56dp"-->
+<!--            android:layout_marginTop="36dp"-->
+<!--            android:background="@drawable/ic_logo_home"-->
+<!--            app:layout_constraintBottom_toBottomOf="@id/splashLineImageView"-->
+<!--            app:layout_constraintEnd_toEndOf="@id/splashLineImageView"-->
+<!--            app:layout_constraintStart_toStartOf="@id/splashLineImageView"-->
+<!--            app:layout_constraintTop_toTopOf="@id/splashLineImageView" />-->
+
+<!--        <ImageView-->
+<!--            android:contentDescription="@string/txt_splash_logo_title"-->
+<!--            android:id="@+id/splashLogoTitleImageView"-->
+<!--            android:layout_width="120dp"-->
+<!--            android:layout_height="22dp"-->
+<!--            android:layout_marginTop="12dp"-->
+<!--            android:background="@drawable/ic_logo_title"-->
+<!--            app:layout_constraintEnd_toEndOf="@id/splashLogoImageView"-->
+<!--            app:layout_constraintStart_toStartOf="@id/splashLogoImageView"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/splashLogoImageView" />-->
+
+        <ScrollView
+            android:id="@+id/nestedScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="parent">
+
+            <FrameLayout
+                android:id="@+id/signinWrap"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/signInFragmentContainerView"
+                    android:name="androidx.navigation.fragment.NavHostFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:defaultNavHost="false"
+                    app:navGraph="@navigation/signin_navigation_dialog" />
+                <ImageView
+                    android:id="@+id/close_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:padding="5dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:layout_gravity="top|end"
+                    app:srcCompat="@drawable/ic_close" />
+            </FrameLayout>
+
+        </ScrollView>
+<!--    </androidx.constraintlayout.motion.widget.MotionLayout>-->
+</layout>

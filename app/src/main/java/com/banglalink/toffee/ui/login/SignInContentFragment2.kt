@@ -8,8 +8,11 @@ import android.os.Bundle
 import android.text.*
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
@@ -20,17 +23,17 @@ import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class SignInContentFragment2 : DialogFragment(), TextWatcher {
+class SignInContentFragment2 : ChildDialogFragment(), TextWatcher {
     
     private var phoneNo: String = ""
     private var regSessionToken: String = ""
-    private var alertDialog: AlertDialog? = null
     @Inject lateinit var mPref: SessionPreference
     private var _binding: AlertDialogLoginBinding? = null
     private val binding get() = _binding !!
@@ -41,20 +44,21 @@ class SignInContentFragment2 : DialogFragment(), TextWatcher {
         const val PHONE_NO_ARG = "phoneNo"
         const val REG_SESSION_TOKEN_ARG = "regSessionToken"
     }
-    
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = AlertDialogLoginBinding.inflate(layoutInflater)
-        alertDialog = AlertDialog
-            .Builder(requireContext())
-            .setView(binding.root).create()
-            .apply {
-                window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            }
-        
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setSpannableTermsAndConditions()
         
         with(binding) {
-            closeIv.safeClick({ dismiss() })
+            closeIv.safeClick({ /*dismiss()*/ })
             verifyButton.safeClick({
                 progressDialog.show()
                 handleLogin()
@@ -66,8 +70,6 @@ class SignInContentFragment2 : DialogFragment(), TextWatcher {
             }
             phoneNumberEditText.addTextChangedListener(this@SignInContentFragment2)
         }
-        
-        return alertDialog !!
     }
     
     private fun handleLogin() {
@@ -92,16 +94,16 @@ class SignInContentFragment2 : DialogFragment(), TextWatcher {
                 is Resource.Success -> {
                     if (it.data is String) {
                         regSessionToken = it.data
-                        if (findNavController().currentDestination?.id != R.id.verifySignInFragment && findNavController().currentDestination?.id == R.id.signInDialog) {
-                            findNavController().popBackStack().let { 
-                                findNavController().navigate(R.id.verifySignInDialog,
+//                        if (findNavController().currentDestination?.id != R.id.verifySignInFragment && findNavController().currentDestination?.id == R.id.signInDialog) {
+//                            findNavController().popBackStack().let {
+                                findNavController().navigate(R.id.verifySignInFragment2,
                                     Bundle().apply { 
                                         putString(PHONE_NO_ARG, phoneNo)
                                         putString(REG_SESSION_TOKEN_ARG, regSessionToken)
                                     }
                                 )
-                            }
-                        }
+//                            }
+//                        }
                     }
                 }
                 is Resource.Failure -> {

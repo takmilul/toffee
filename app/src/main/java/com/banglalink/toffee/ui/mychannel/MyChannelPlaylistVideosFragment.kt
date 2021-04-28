@@ -159,20 +159,33 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
             }
     
             override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
-                requireActivity().checkVerification(mPref)
-                if (isSubscribed == 0) {
-                    homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), 1)
-                    isSubscribed = 1
-                    currentItem?.isSubscribed = isSubscribed
-                    currentItem?.subscriberCount = (++subscriberCount).toInt()
-                    detailsAdapter.notifyDataSetChanged()
-                } else {
-                    UnSubscribeDialog.show(requireContext()) {
-                        homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), -1)
-                        isSubscribed = 0
+                requireActivity().checkVerification {
+                    if (isSubscribed == 0) {
+                        homeViewModel.sendSubscriptionStatus(
+                            SubscriptionInfo(
+                                null,
+                                item.channel_owner_id,
+                                mPref.customerId
+                            ), 1
+                        )
+                        isSubscribed = 1
                         currentItem?.isSubscribed = isSubscribed
-                        currentItem?.subscriberCount = (--subscriberCount).toInt()
+                        currentItem?.subscriberCount = (++subscriberCount).toInt()
                         detailsAdapter.notifyDataSetChanged()
+                    } else {
+                        UnSubscribeDialog.show(requireContext()) {
+                            homeViewModel.sendSubscriptionStatus(
+                                SubscriptionInfo(
+                                    null,
+                                    item.channel_owner_id,
+                                    mPref.customerId
+                                ), -1
+                            )
+                            isSubscribed = 0
+                            currentItem?.isSubscribed = isSubscribed
+                            currentItem?.subscriberCount = (--subscriberCount).toInt()
+                            detailsAdapter.notifyDataSetChanged()
+                        }
                     }
                 }
             }
@@ -280,11 +293,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
                 setOnMenuItemClickListener {
                     when (it.itemId) {
                         R.id.menu_share -> {
-                            if (!mPref.isVerifiedUser) {
-                                (activity as HomeActivity).handleVerficationApp()
-                                return@setOnMenuItemClickListener true
-                            }
-                            homeViewModel.shareContentLiveData.postValue(item)
+                            requireActivity().handleShare(item)
                         }
                         R.id.menu_delete_playlist_video -> {
                             observeDeletePlaylistVideo()
@@ -331,28 +340,11 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
         popupMenu.setOnMenuItemClickListener {
             when (it?.itemId) {
                 R.id.menu_share -> {
-                    if (!mPref.isVerifiedUser) {
-                        (activity as HomeActivity).handleVerficationApp()
-                        return@setOnMenuItemClickListener true
-                    }
-                    homeViewModel.shareContentLiveData.postValue(channelInfo)
+                    requireActivity().handleShare(channelInfo)
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_fav -> {
-                    if (!mPref.isVerifiedUser) {
-                        (activity as HomeActivity).handleVerficationApp()
-                        return@setOnMenuItemClickListener true
-                    }
-                    homeViewModel.updateFavorite(channelInfo).observe(viewLifecycleOwner, { resp ->
-                        handleFavoriteResponse(resp)
-                    })
-                    return@setOnMenuItemClickListener true
-                }
-                R.id.menu_not_interested -> {
-                    if (!mPref.isVerifiedUser) {
-                        (activity as HomeActivity).handleVerficationApp()
-                        return@setOnMenuItemClickListener true
-                    }
+                    requireActivity().handleFavorite(channelInfo)
                     return@setOnMenuItemClickListener true
                 }
                 else -> {
@@ -362,26 +354,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
         }
         popupMenu.show()
     }
-    
-    private fun handleFavoriteResponse(it: Resource<ChannelInfo>) {
-        when (it) {
-            is Success -> {
-                val channelInfo = it.data
-                when (channelInfo.favorite) {
-                    "0" -> {
-                        context?.showToast("Content successfully removed from favorite list")
-                    }
-                    "1" -> {
-                        context?.showToast("Content successfully added to favorite list")
-                    }
-                }
-            }
-            is Failure -> {
-                context?.showToast(it.error.msg)
-            }
-        }
-    }
-    
+
     fun setCurrentChannel(channelInfo: ChannelInfo?) {
         currentItem = channelInfo
         detailsAdapter.setChannelInfo(channelInfo)

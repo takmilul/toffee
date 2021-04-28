@@ -54,25 +54,40 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
             }
 
             override fun onSubscribeButtonClicked(view: View, info: UserChannelInfo) {
-                requireActivity().checkVerification(mPref)
+                requireActivity().checkVerification {
 //                trendingChannelInfo = info
-                
-                if (info.isSubscribed == 0) {
-                    trendingChannelInfo = info.also {
-                        it.isSubscribed = 1
-                        it.subscriberCount++
-                    }
-                    mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, trendingChannelInfo)
-                    homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId) ,1)
-                }
-                else {
-                    UnSubscribeDialog.show(requireContext()) {
+                    if (info.isSubscribed == 0) {
                         trendingChannelInfo = info.also {
-                            it.isSubscribed = 0
-                            it.subscriberCount--
+                            it.isSubscribed = 1
+                            it.subscriberCount++
                         }
                         mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, trendingChannelInfo)
-                        homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId) ,-1)
+                        homeViewModel.sendSubscriptionStatus(
+                            SubscriptionInfo(
+                                null,
+                                info.channelOwnerId,
+                                mPref.customerId
+                            ), 1
+                        )
+                    } else {
+                        UnSubscribeDialog.show(requireContext()) {
+                            trendingChannelInfo = info.also {
+                                it.isSubscribed = 0
+                                it.subscriberCount--
+                            }
+                            mAdapter.notifyItemRangeChanged(
+                                0,
+                                mAdapter.itemCount,
+                                trendingChannelInfo
+                            )
+                            homeViewModel.sendSubscriptionStatus(
+                                SubscriptionInfo(
+                                    null,
+                                    info.channelOwnerId,
+                                    mPref.customerId
+                                ), -1
+                            )
+                        }
                     }
                 }
             }
@@ -118,9 +133,5 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
                 }
             }
         }
-    }
-    
-    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
-
     }
 }

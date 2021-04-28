@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/signin_navigation.xml"
+    app:startDestination="@id/signinIntroFragment">
+    <fragment
+        android:id="@+id/signinIntroFragment"
+        android:name="com.banglalink.toffee.ui.login.SignInIntroFragment"
+        android:label="Sign In"
+        >
+        <action
+            android:id="@+id/action_signinIntroFragment_to_signInContentFragment2"
+            app:destination="@id/signInContentFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/signInContentFragment2"
+        android:name="com.banglalink.toffee.ui.login.SignInContentFragment2"
+        android:label="Sign In" >
+        <action
+            android:id="@+id/action_signInContentFragment_to_verifySignInFragment2"
+            app:destination="@id/verifySignInFragment2"
+            app:popEnterAnim="@anim/slide_left_to_center" />
+    </fragment>
+    <fragment
+        android:id="@+id/verifySignInFragment2"
+        android:name="com.banglalink.toffee.ui.verify.VerifySignInFragment2"
+        android:label="VerifySigninFragment" >
+        <argument
+            android:name="phoneNumber"
+            app:argType="string" />
+        <argument
+            android:name="referralCode"
+            app:argType="string" />
+        <argument
+            android:name="regSessionToken"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_verifySignInFragment_to_userInterestFragment2"
+            app:destination="@id/userInterestFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/userInterestFragment2"
+        android:name="com.banglalink.toffee.ui.userinterest.UserInterestFragment2"
+        android:label="Interests" >
+<!--        <argument-->
+<!--            android:name="verifiedUserData"-->
+<!--            app:argType="com.banglalink.toffee.model.CustomerInfoSignIn"-->
+<!--            app:nullable="true" />-->
+    </fragment>
+</navigation>

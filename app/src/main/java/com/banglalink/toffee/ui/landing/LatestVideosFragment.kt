@@ -242,17 +242,14 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
 
     override fun onShareClicked(view: View, item: ChannelInfo) {
         super.onShareClicked(view, item)
-        requireActivity().checkVerification(mPref)
+//        requireActivity().checkVerification {
         homeViewModel.shareContentLiveData.postValue(item)
+//        }
     }
 
     override fun onProviderIconClicked(item: ChannelInfo) {
         super.onProviderIconClicked(item)
         homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
-    }
-    
-    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
-
     }
 
     private fun openMenu(view: View, item: ChannelInfo) {

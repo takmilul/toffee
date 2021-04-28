@@ -102,8 +102,4 @@ class EditorsChoiceFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInf
             }
         }
     }
-    
-    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
-
-    }
 }

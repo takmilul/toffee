@@ -92,8 +92,4 @@ class PopularTVChannelsFragment : HomeBaseFragment(), BaseListItemCallback<Chann
             homeViewModel.fragmentDetailsMutableLiveData.postValue(item)
         }
     }
-    
-    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
-
-    }
 }
