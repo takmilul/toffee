@@ -206,7 +206,29 @@
             android:defaultValue=""/>
     </fragment>
 
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.banglalink.toffee.ui.profile.ViewProfileFragment"
+        android:label="Profile">
+        <action
+            android:id="@+id/action_profileFragment_to_EditProfileFragment"
+            app:destination="@id/EditProfileFragment" />
+    </fragment>
 
+    <fragment
+        android:id="@+id/EditProfileFragment"
+        android:name="com.banglalink.toffee.ui.profile.EditProfileFragment"
+        android:label="Edit-Profile"
+        >
+        <argument
+            android:name="data"
+            app:argType="com.banglalink.toffee.ui.profile.EditProfileForm"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_EditProfile_to_thumbnailSelectionMethodFragment"
+            app:destination="@id/thumbnailSelectionMethodFragment" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/termsAndConditionFragment"

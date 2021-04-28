@@ -7,6 +7,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.NavController
 import androidx.navigation.ui.NavigationUI
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -79,7 +80,9 @@ class DrawerHelper(
             }
         }
         header.findViewById<LinearLayout>(R.id.menu_profile).setOnClickListener {
-            activity.launchActivity<ViewProfileActivity>()
+//            activity.launchActivity<ViewProfileActivity>()
+            activity.getNavController().navigate(R.id.profileFragment)
+            binding.drawerLayout.closeDrawers()
         }
 //        profilePicture.setOnClickListener{
 //            activity.launchActivity<ViewProfileActivity>()
