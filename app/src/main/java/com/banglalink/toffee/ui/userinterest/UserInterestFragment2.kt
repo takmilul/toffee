@@ -48,7 +48,6 @@ class UserInterestFragment2 : ChildDialogFragment() {
         with(binding) {
             interestChipGroup.removeAllViews()
             skipButton.safeClick({ reloadContent() })
-            closeButton.safeClick({ reloadContent() })
             doneButton.safeClick({
                 val userInterestCount = userInterestList.values.count { it == 1 }
                 if (userInterestCount >= 3) {
