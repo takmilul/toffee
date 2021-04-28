@@ -88,6 +88,7 @@ class PlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChannelPlaylist
                             val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
                             binding.emptyView.isVisible = showEmpty
                             binding.myChannelPlaylists.isVisible = !showEmpty
+                            binding.createPlaylistButton.isVisible = !showEmpty
                        }
                     }
             }
@@ -105,7 +106,7 @@ class PlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChannelPlaylist
         with(binding) {
             if (mPref.customerId>0) {
                 emptyViewLabel.text = "You haven't created any playlist yet"
-                createPlaylistButton.setOnClickListener {
+                createPlaylistButtonNone.setOnClickListener {
                     if (mPref.customerId > 0) {
                         showCreatePlaylistDialog()
                     }
