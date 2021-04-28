@@ -4,7 +4,7 @@ import com.banglalink.toffee.data.network.request.VerifyCodeRequest
 import com.banglalink.toffee.data.network.response.VerifyCodeResponse
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.exception.ApiException
-import com.banglalink.toffee.model.CustomerInfoSignIn
+import com.banglalink.toffee.model.CustomerInfoLogin
 import com.banglalink.toffee.apiservice.VerifyCode
 import com.nhaarman.mockitokotlin2.*
 import junit.framework.Assert.assertEquals
@@ -25,7 +25,7 @@ class VerifyCodeTest :BaseUseCaseTest(){
             val verifyCode = VerifyCode(SessionPreference.getInstance(), mockToffeeApi)
             Mockito.`when`(mockToffeeApi.verifyCode(any<VerifyCodeRequest>())).thenReturn(
                 Response.success(VerifyCodeResponse(
-                    CustomerInfoSignIn().apply {
+                    CustomerInfoLogin().apply {
                         customerId = 1729
                         customerName = null
 
@@ -55,7 +55,7 @@ class VerifyCodeTest :BaseUseCaseTest(){
                 val verifyCode = VerifyCode(SessionPreference.getInstance(), mockToffeeApi)
                 Mockito.`when`(mockToffeeApi.verifyCode(any<VerifyCodeRequest>())).thenReturn(
                     Response.success(VerifyCodeResponse(
-                        CustomerInfoSignIn()
+                        CustomerInfoLogin()
                     ).apply {
                         errorCode = 1
                         errorMsg = "Invalid code"

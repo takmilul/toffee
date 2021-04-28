@@ -1,12 +1,10 @@
-package com.banglalink.toffee.ui.verify
+package com.banglalink.toffee.ui.login
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
-import com.banglalink.toffee.apiservice.SignInByPhone
+import com.banglalink.toffee.apiservice.LoginByPhone
 import com.banglalink.toffee.apiservice.VerifyCode
 import com.banglalink.toffee.data.network.util.resultFromResponse
-import com.banglalink.toffee.data.network.util.resultLiveData
-import com.banglalink.toffee.model.CustomerInfoSignIn
+import com.banglalink.toffee.model.CustomerInfoLogin
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.util.SingleLiveEvent
@@ -17,9 +15,9 @@ import javax.inject.Inject
 @HiltViewModel
 class VerifyCodeViewModel @Inject constructor(
     private val verifyCode: VerifyCode,
-    private val signInByPhone: SignInByPhone,
+    private val loginByPhone: LoginByPhone,
 ) : BaseViewModel() {
-    val verifyResponse = SingleLiveEvent<Resource<CustomerInfoSignIn>>()
+    val verifyResponse = SingleLiveEvent<Resource<CustomerInfoLogin>>()
     val resendCodeResponse = SingleLiveEvent<Resource<String>>()
 
     fun verifyCode(code: String, regSessionToken: String, referralCode: String){
@@ -31,7 +29,7 @@ class VerifyCodeViewModel @Inject constructor(
 
     fun resendCode(phoneNumber: String, referralCode: String){
         viewModelScope.launch {
-            val response = resultFromResponse {  signInByPhone.execute(phoneNumber, referralCode) }
+            val response = resultFromResponse {  loginByPhone.execute(phoneNumber, referralCode) }
             resendCodeResponse.value=response
         }
     }

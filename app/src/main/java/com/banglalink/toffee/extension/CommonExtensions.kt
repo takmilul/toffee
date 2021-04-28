@@ -6,12 +6,10 @@ import android.util.Patterns
 import android.view.View
 import androidx.fragment.app.FragmentActivity
 import com.banglalink.toffee.R
-import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.InputType
 import com.banglalink.toffee.enums.InputType.*
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.report.ReportPopupFragment
 import java.text.SimpleDateFormat
@@ -64,7 +62,7 @@ fun Long.toFormattedDate(): String{
 
 fun Activity.checkVerification(block: (()-> Unit)? = null) {
     if (this is HomeActivity && !mPref.isVerifiedUser) {
-        this.getNavController().navigate(R.id.signInDialog)
+        this.getNavController().navigate(R.id.loginDialog)
     } else {
         block?.invoke()
     }

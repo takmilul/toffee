@@ -9,13 +9,13 @@
         android:name="com.banglalink.toffee.ui.splash.SplashScreenFragment2"
         android:label="SplashScreenFragment" >
         <action
-            android:id="@+id/action_splashScreenFragment_to_signinByPhoneFragment"
-            app:destination="@id/signInFragment" />
+            android:id="@+id/action_splashScreenFragment_to_loginByPhoneFragment"
+            app:destination="@id/loginFragment" />
     </fragment>
     <fragment
-        android:id="@+id/signInFragment"
-        android:name="com.banglalink.toffee.ui.login.SignInFragment"
-        android:label="SignInFragment"
-        tools:layout="@layout/fragment_signin" >
+        android:id="@+id/loginFragment"
+        android:name="com.banglalink.toffee.ui.login.LoginFragment"
+        android:label="LoginFragment"
+        tools:layout="@layout/fragment_login" >
     </fragment>
 </navigation>

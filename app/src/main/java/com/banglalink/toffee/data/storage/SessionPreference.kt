@@ -8,7 +8,7 @@ import android.text.TextUtils
 import androidx.core.content.edit
 import androidx.lifecycle.MutableLiveData
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.model.CustomerInfoSignIn
+import com.banglalink.toffee.model.CustomerInfoLogin
 import com.banglalink.toffee.model.DBVersion
 import com.banglalink.toffee.model.DBVersionV2
 import com.banglalink.toffee.model.PlayerOverlayData
@@ -454,42 +454,42 @@ class SessionPreference(private val pref: SharedPreferences, private val context
 //        set(value) = pref.edit { putString("toffee-upload-uri", value) }
 
 
-    fun saveCustomerInfo(customerInfoSignIn:CustomerInfoSignIn){
-        balance = customerInfoSignIn.balance
+    fun saveCustomerInfo(customerInfoLogin:CustomerInfoLogin){
+        balance = customerInfoLogin.balance
         logout = "0"
-        isVerifiedUser = customerInfoSignIn.verified_status
-        customerId = customerInfoSignIn.customerId
-        password = customerInfoSignIn.password?:""
-        customerName = customerInfoSignIn.customerName?:""
-        sessionToken = (customerInfoSignIn.sessionToken?:"")
+        isVerifiedUser = customerInfoLogin.verified_status
+        customerId = customerInfoLogin.customerId
+        password = customerInfoLogin.password?:""
+        customerName = customerInfoLogin.customerName?:""
+        sessionToken = (customerInfoLogin.sessionToken?:"")
 
-        setHeaderSessionToken(customerInfoSignIn.headerSessionToken)
-        setHlsOverrideUrl(customerInfoSignIn.hlsOverrideUrl)
-        setShouldOverrideHlsUrl(customerInfoSignIn.hlsUrlOverride)
-        setSessionTokenLifeSpanInMillis(customerInfoSignIn.tokenLifeSpan.toLong() * 1000 * 3600)
-        if(customerInfoSignIn.isBanglalinkNumber!=null){
-            isBanglalinkNumber = customerInfoSignIn.isBanglalinkNumber
+        setHeaderSessionToken(customerInfoLogin.headerSessionToken)
+        setHlsOverrideUrl(customerInfoLogin.hlsOverrideUrl)
+        setShouldOverrideHlsUrl(customerInfoLogin.hlsUrlOverride)
+        setSessionTokenLifeSpanInMillis(customerInfoLogin.tokenLifeSpan.toLong() * 1000 * 3600)
+        if(customerInfoLogin.isBanglalinkNumber!=null){
+            isBanglalinkNumber = customerInfoLogin.isBanglalinkNumber
         }
-        customerInfoSignIn.dbVersionList?.let {
+        customerInfoLogin.dbVersionList?.let {
             setDBVersion(it)
         }
-        latitude = customerInfoSignIn.lat ?: ""
-        longitude = customerInfoSignIn.long ?: ""
-        isSubscriptionActive = customerInfoSignIn.isSubscriptionActive ?: "false"
-        viewCountDbUrl = customerInfoSignIn.viewCountDbUrl ?: ""
-        reactionDbUrl = customerInfoSignIn.reactionDbUrl ?: ""
-        reactionStatusDbUrl = customerInfoSignIn.reactionStatusDbUrl ?: ""
-        subscribeDbUrl = customerInfoSignIn.subscribeDbUrl ?: ""
-        subscriberStatusDbUrl = customerInfoSignIn.subscriberStatusDbUrl ?: ""
-        shareCountDbUrl = customerInfoSignIn.shareCountDbUrl ?: ""
-        isFireworkActive = customerInfoSignIn.isFireworkActive ?: "true"
-        mqttHost = customerInfoSignIn.mqttUrl?.let { EncryptionUtil.encryptRequest(it) } ?: ""
-        mqttIsActive = customerInfoSignIn.mqttIsActive == 1
+        latitude = customerInfoLogin.lat ?: ""
+        longitude = customerInfoLogin.long ?: ""
+        isSubscriptionActive = customerInfoLogin.isSubscriptionActive ?: "false"
+        viewCountDbUrl = customerInfoLogin.viewCountDbUrl ?: ""
+        reactionDbUrl = customerInfoLogin.reactionDbUrl ?: ""
+        reactionStatusDbUrl = customerInfoLogin.reactionStatusDbUrl ?: ""
+        subscribeDbUrl = customerInfoLogin.subscribeDbUrl ?: ""
+        subscriberStatusDbUrl = customerInfoLogin.subscriberStatusDbUrl ?: ""
+        shareCountDbUrl = customerInfoLogin.shareCountDbUrl ?: ""
+        isFireworkActive = customerInfoLogin.isFireworkActive ?: "true"
+        mqttHost = customerInfoLogin.mqttUrl?.let { EncryptionUtil.encryptRequest(it) } ?: ""
+        mqttIsActive = customerInfoLogin.mqttIsActive == 1
 
-        isCastEnabled = customerInfoSignIn.isCastEnabled == 1
-        isCastUrlOverride = customerInfoSignIn.isCastUrlOverride == 1
-        castReceiverId = customerInfoSignIn.castReceiverId ?: ""
-        castOverrideUrl = customerInfoSignIn.castOverrideUrl ?: ""
+        isCastEnabled = customerInfoLogin.isCastEnabled == 1
+        isCastUrlOverride = customerInfoLogin.isCastUrlOverride == 1
+        castReceiverId = customerInfoLogin.castReceiverId ?: ""
+        castOverrideUrl = customerInfoLogin.castOverrideUrl ?: ""
     }
 
     companion object {

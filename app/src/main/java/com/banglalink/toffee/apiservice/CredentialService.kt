@@ -11,7 +11,7 @@ class CredentialService @Inject constructor(private val pref: SessionPreference,
 
     suspend fun execute(): CredentialResponse {
         val response = tryIO2 { authApi.apiExistingLogin(CredentialRequest(1, fcmToken = pref.fcmToken)) }
-        response.existingUserSignIn?.let { customerInfoSignIn ->
+        response.credential?.let { customerInfoSignIn ->
             pref.customerId=customerInfoSignIn.customerId
             pref.password=customerInfoSignIn.password!!
             pref.logout="0"

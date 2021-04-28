@@ -1,16 +1,10 @@
-package com.banglalink.toffee.ui.verify
+package com.banglalink.toffee.ui.login
 
-import android.app.AlertDialog
-import android.app.Dialog
 import android.content.IntentFilter
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
@@ -21,11 +15,10 @@ import com.banglalink.toffee.extension.action
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.extension.snack
-import com.banglalink.toffee.model.CustomerInfoSignIn
+import com.banglalink.toffee.model.CustomerInfoLogin
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.receiver.SMSBroadcastReceiver
 import com.banglalink.toffee.ui.common.ChildDialogFragment
-import com.banglalink.toffee.ui.login.SignInContentFragment2
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.gms.auth.api.phone.SmsRetriever
@@ -34,7 +27,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class VerifySignInFragment2 : ChildDialogFragment() {
+class VerifyLoginFragment2 : ChildDialogFragment() {
     
     private var otp: String = ""
     private var phoneNumber: String = ""
@@ -42,7 +35,7 @@ class VerifySignInFragment2 : ChildDialogFragment() {
     private var resendBtnPressCount: Int = 0
     @Inject lateinit var mPref: SessionPreference
     private var resendCodeTimer: ResendCodeTimer? = null
-    private var verifiedUserData: CustomerInfoSignIn? = null
+    private var verifiedUserData: CustomerInfoLogin? = null
     private var _binding: AlertDialogVerifyBinding ? = null
     private val binding get() = _binding!!
     private lateinit var mSmsBroadcastReceiver: SMSBroadcastReceiver
@@ -51,15 +44,11 @@ class VerifySignInFragment2 : ChildDialogFragment() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        phoneNumber = requireArguments().getString(SignInContentFragment2.PHONE_NO_ARG) ?: ""
-        regSessionToken = requireArguments().getString(SignInContentFragment2.REG_SESSION_TOKEN_ARG) ?: ""
+        phoneNumber = requireArguments().getString(LoginContentFragment2.PHONE_NO_ARG) ?: ""
+        regSessionToken = requireArguments().getString(LoginContentFragment2.REG_SESSION_TOKEN_ARG) ?: ""
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = AlertDialogVerifyBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -94,9 +83,7 @@ class VerifySignInFragment2 : ChildDialogFragment() {
                 is Resource.Success -> {
                     verifiedUserData = it.data
                     mPref.phoneNumber = phoneNumber
-//                    findNavController().popBackStack().let {
-                        findNavController().navigate(R.id.userInterestFragment2)
-//                    }
+                    findNavController().navigate(R.id.userInterestFragment2)
                 }
                 is Resource.Failure -> {
                     ToffeeAnalytics.logApiError("confirmCode",it.error.msg)

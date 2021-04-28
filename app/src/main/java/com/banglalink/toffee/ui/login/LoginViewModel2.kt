@@ -1,7 +1,7 @@
 package com.banglalink.toffee.ui.login
 
 import androidx.lifecycle.viewModelScope
-import com.banglalink.toffee.apiservice.SignInByPhone
+import com.banglalink.toffee.apiservice.LoginByPhone
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.Resource
@@ -12,17 +12,17 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SignInViewModel2 @Inject constructor(
+class LoginViewModel2 @Inject constructor(
     private val pref: SessionPreference,
-    private val signInByPhone: SignInByPhone,
+    private val loginByPhone: LoginByPhone,
 ) : BaseViewModel() {
 
-    val signByPhoneResponse = SingleLiveEvent<Resource<Any>>()
+    val loginByPhoneResponse = SingleLiveEvent<Resource<Any>>()
 
-    fun signIn(phoneNumber: String) {
+    fun login(phoneNumber: String) {
         viewModelScope.launch {
-            val response= resultFromResponse {  signInByPhone.execute(phoneNumber, "") }
-            signByPhoneResponse.value=response
+            val response= resultFromResponse {  loginByPhone.execute(phoneNumber, "") }
+            loginByPhoneResponse.value=response
         }
     }
 }

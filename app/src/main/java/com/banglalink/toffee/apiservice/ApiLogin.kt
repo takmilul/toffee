@@ -5,17 +5,17 @@ import com.banglalink.toffee.data.network.request.ApiLoginRequest
 import com.banglalink.toffee.data.network.retrofit.AuthApi
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.model.CustomerInfoSignIn
+import com.banglalink.toffee.model.CustomerInfoLogin
 import javax.inject.Inject
 
 class ApiLogin @Inject constructor(private val pref: SessionPreference, private val authApi: AuthApi) {
 
-    suspend fun execute(): CustomerInfoSignIn {
+    suspend fun execute(): CustomerInfoLogin {
         val response = tryIO2 { authApi.apiLogin(getApiLoginRequest()) }
-        response.customerInfoSignIn?.let { customerInfoSignIn ->
+        response.customerInfoLogin?.let { customerInfoSignIn ->
             pref.saveCustomerInfo(customerInfoSignIn)
         }
-        return response.customerInfoSignIn !!
+        return response.customerInfoLogin !!
     }
 
     private fun getApiLoginRequest(): ApiLoginRequest {

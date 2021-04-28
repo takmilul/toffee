@@ -522,12 +522,12 @@
         android:name="com.banglalink.toffee.ui.search.SearchFragment"
         android:label="Search" />
     <dialog
-        android:id="@+id/signInDialog"
-        android:name="com.banglalink.toffee.ui.login.SignInFragment"
+        android:id="@+id/loginDialog"
+        android:name="com.banglalink.toffee.ui.login.LoginFragment"
         android:label="Login" />
 <!--    <dialog-->
-<!--        android:id="@+id/verifySignInDialog"-->
-<!--        android:name="com.banglalink.toffee.ui.verify.VerifySignInFragment2"-->
+<!--        android:id="@+id/verifyLoginDialog"-->
+<!--        android:name="com.banglalink.toffee.ui.login.VerifyLoginFragment2"-->
 <!--        android:label="Verify">-->
 <!--        -->
 <!--        <argument-->
@@ -540,6 +540,6 @@
 <!--    </dialog>-->
 <!--    <dialog-->
 <!--        android:id="@+id/userInterestDialog"-->
-<!--        android:name="com.banglalink.toffee.ui.userinterest.UserInterestFragment2"-->
+<!--        android:name="com.banglalink.toffee.ui.login.UserInterestFragment2"-->
 <!--        android:label="User Interest" />-->
 </navigation>

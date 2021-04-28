@@ -1,4 +1,4 @@
-package com.banglalink.toffee.ui.verify
+package com.banglalink.toffee.ui.login
 
 import android.os.CountDownTimer
 import androidx.lifecycle.LifecycleOwner

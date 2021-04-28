@@ -1,4 +1,4 @@
-package com.banglalink.toffee.ui.verify
+package com.banglalink.toffee.ui.login
 
 import android.content.IntentFilter
 import android.graphics.Paint
@@ -10,12 +10,11 @@ import androidx.core.view.ViewCompat
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.databinding.FragmentVerifySigninBinding
+import com.banglalink.toffee.databinding.FragmentVerifyLoginBinding
 import com.banglalink.toffee.extension.*
-import com.banglalink.toffee.model.CustomerInfoSignIn
+import com.banglalink.toffee.model.CustomerInfoLogin
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.receiver.SMSBroadcastReceiver
 import com.banglalink.toffee.ui.common.BaseFragment
@@ -28,7 +27,7 @@ import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.material.snackbar.Snackbar
 
-class VerifySignInFragment : BaseFragment() {
+class VerifyLoginFragment : BaseFragment() {
     
     private var otp: String = ""
     private var phoneNumber: String = ""
@@ -36,8 +35,8 @@ class VerifySignInFragment : BaseFragment() {
     private var regSessionToken: String = ""
     private var resendBtnPressCount: Int = 0
     private var resendCodeTimer: ResendCodeTimer? = null
-    private var verifiedUserData: CustomerInfoSignIn? = null
-    private var _binding: FragmentVerifySigninBinding ? = null
+    private var verifiedUserData: CustomerInfoLogin? = null
+    private var _binding: FragmentVerifyLoginBinding? = null
     private val binding get() = _binding!!
     private lateinit var mSmsBroadcastReceiver: SMSBroadcastReceiver
     private val viewModel by viewModels<VerifyCodeViewModel>()
@@ -46,11 +45,11 @@ class VerifySignInFragment : BaseFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance() = VerifySignInFragment ()
+        fun newInstance() = VerifyLoginFragment ()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentVerifySigninBinding.inflate(inflater, container, false)
+        _binding = FragmentVerifyLoginBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -61,7 +60,7 @@ class VerifySignInFragment : BaseFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.signInVerifyMotionLayout.setOnClickListener { UtilsKt.hideSoftKeyboard(requireActivity()) }
+        binding.loginVerifyMotionLayout.setOnClickListener { UtilsKt.hideSoftKeyboard(requireActivity()) }
         ViewCompat.setTranslationZ(binding.root, 100f)
         
 //        val args by navArgs<VerifySignInFragmentArgs>()
@@ -85,12 +84,12 @@ class VerifySignInFragment : BaseFragment() {
             viewModel.verifyCode(otp, regSessionToken, referralCode)
         })
         binding.backButton.safeClick ({
-            binding.signInVerifyMotionLayout.onTransitionCompletedListener {
+            binding.loginVerifyMotionLayout.onTransitionCompletedListener {
                 if (it == R.id.start){
                     findNavController().popBackStack()
                 }
             }
-            binding.signInVerifyMotionLayout.transitionToStart()
+            binding.loginVerifyMotionLayout.transitionToStart()
         })
         binding.skipButton.safeClick({
             (requireActivity() as SplashScreenActivity).observeApiLogin()

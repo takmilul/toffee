@@ -4,7 +4,7 @@ import com.banglalink.toffee.data.network.request.VerifyCodeRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.model.CustomerInfoSignIn
+import com.banglalink.toffee.model.CustomerInfoLogin
 import javax.inject.Inject
 
 class VerifyCode @Inject constructor(
@@ -12,14 +12,14 @@ class VerifyCode @Inject constructor(
     private val toffeeApi: ToffeeApi
 ) {
 
-    suspend fun execute(code: String, regSessionToken: String, referralCode: String = ""): CustomerInfoSignIn {
+    suspend fun execute(code: String, regSessionToken: String, referralCode: String = ""): CustomerInfoLogin {
         val response = tryIO2 { toffeeApi.verifyCode(getRequest(code, regSessionToken, referralCode)) }
 
-        response.customerInfoSignIn.also { customerInfoSignIn ->
+        response.customerInfoLogin.also { customerInfoSignIn ->
             preference.saveCustomerInfo(customerInfoSignIn)
         }
 
-        return response.customerInfoSignIn
+        return response.customerInfoLogin
     }
 
     private fun getRequest(code: String, regSessionToken: String, referralCode: String): VerifyCodeRequest {

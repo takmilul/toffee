@@ -5,11 +5,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.motion.widget.MotionLayout
-        android:id="@+id/signInMotionLayout"
+        android:id="@+id/loginMotionLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/splash_gradient_bg"
-        app:layoutDescription="@xml/signin_loading_motion_scene">
+        app:layoutDescription="@xml/login_loading_motion_scene">
 
         <View
             android:id="@+id/topView"
@@ -88,12 +88,12 @@
             app:layout_constraintTop_toBottomOf="parent">
 
             <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/signInFragmentContainerView"
+                android:id="@+id/loginFragmentContainerView"
                 android:name="androidx.navigation.fragment.NavHostFragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:defaultNavHost="false"
-                app:navGraph="@navigation/signin_navigation" />
+                app:navGraph="@navigation/login_navigation" />
 
         </ScrollView>
     </androidx.constraintlayout.motion.widget.MotionLayout>

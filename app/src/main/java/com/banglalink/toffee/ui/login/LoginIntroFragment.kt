@@ -6,12 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
-import com.banglalink.toffee.databinding.FragmentSigninIntroBinding
+import com.banglalink.toffee.databinding.FragmentLoginIntroBinding
 import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.ui.common.ChildDialogFragment
 
-class SignInIntroFragment : ChildDialogFragment() {
-    private var _binding: FragmentSigninIntroBinding? = null
+class LoginIntroFragment : ChildDialogFragment() {
+    private var _binding: FragmentLoginIntroBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -19,13 +19,13 @@ class SignInIntroFragment : ChildDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentSigninIntroBinding.inflate(inflater, container, false)
+        _binding = FragmentLoginIntroBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.signInButton.safeClick({
-            findNavController().navigate(R.id.action_signinIntroFragment_to_signInContentFragment2)
+            findNavController().navigate(R.id.action_loginIntroFragment_to_loginContentFragment2)
         })
 
         binding.skipSignIn.safeClick({ closeDialog() })

@@ -10,23 +10,23 @@ import androidx.fragment.app.DialogFragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.banglalink.toffee.R
-import com.banglalink.toffee.databinding.FragmentSigninDialogBinding
+import com.banglalink.toffee.databinding.FragmentLoginDialogBinding
 import com.banglalink.toffee.extension.safeClick
 
-class SignInFragment : DialogFragment() {
+class LoginFragment : DialogFragment() {
 
     private lateinit var navController: NavController
 
     companion object {
         @JvmStatic
         fun newInstance() =
-            SignInFragment()
+            LoginFragment()
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val binding = FragmentSigninDialogBinding.inflate(layoutInflater)
+        val binding = FragmentLoginDialogBinding.inflate(layoutInflater)
 
-        val navHostFragment = childFragmentManager.findFragmentById(R.id.signInFragmentContainerView) as NavHostFragment
+        val navHostFragment = childFragmentManager.findFragmentById(R.id.loginFragmentContainerView) as NavHostFragment
         navController = navHostFragment.navController
 
         binding.closeIv.safeClick({ dismiss() })

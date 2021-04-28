@@ -1,16 +1,13 @@
-package com.banglalink.toffee.ui.userinterest
+package com.banglalink.toffee.ui.login
 
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
-import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.AlertDialogUserInterestBinding
@@ -32,11 +29,7 @@ class UserInterestFragment2 : ChildDialogFragment() {
     private val viewModel: MyChannelVideosEditViewModel by activityViewModels()
     private val progressDialog by unsafeLazy { VelBoxProgressDialog(requireContext()) }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = AlertDialogUserInterestBinding.inflate(inflater, container, false)
         return binding.root
     }

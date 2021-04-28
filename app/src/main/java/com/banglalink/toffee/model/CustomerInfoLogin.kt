@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-class CustomerInfoSignIn(
+class CustomerInfoLogin(
     @SerializedName("customerId")
     var customerId: Int = 0,
     @SerializedName("authorize")

@@ -1,9 +1,5 @@
 package com.banglalink.toffee.ui.login
 
-import android.app.AlertDialog
-import android.app.Dialog
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.*
 import android.text.method.LinkMovementMethod
@@ -11,10 +7,7 @@ import android.text.style.ClickableSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
@@ -31,14 +24,14 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class SignInContentFragment2 : ChildDialogFragment(), TextWatcher {
+class LoginContentFragment2 : ChildDialogFragment(), TextWatcher {
     
     private var phoneNo: String = ""
     private var regSessionToken: String = ""
     @Inject lateinit var mPref: SessionPreference
     private var _binding: AlertDialogLoginBinding? = null
     private val binding get() = _binding !!
-    private val viewModel by viewModels<SignInViewModel2>()
+    private val viewModel by viewModels<LoginViewModel2>()
     private val progressDialog by unsafeLazy { VelBoxProgressDialog(requireContext()) }
     
     companion object {
@@ -46,11 +39,7 @@ class SignInContentFragment2 : ChildDialogFragment(), TextWatcher {
         const val REG_SESSION_TOKEN_ARG = "regSessionToken"
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = AlertDialogLoginBinding.inflate(layoutInflater)
         return binding.root
     }
@@ -62,13 +51,13 @@ class SignInContentFragment2 : ChildDialogFragment(), TextWatcher {
             verifyButton.safeClick({
                 progressDialog.show()
                 handleLogin()
-                observeSignIn()
-                viewModel.signIn(phoneNo)
+                observeLogin()
+                viewModel.login(phoneNo)
             })
             termsAndConditionsCheckbox.setOnClickListener {
                 verifyButton.isEnabled = binding.termsAndConditionsCheckbox.isChecked && phoneNo.isNotBlank() && phoneNo.length >= 11
             }
-            phoneNumberEditText.addTextChangedListener(this@SignInContentFragment2)
+            phoneNumberEditText.addTextChangedListener(this@LoginContentFragment2)
         }
     }
     
@@ -87,23 +76,19 @@ class SignInContentFragment2 : ChildDialogFragment(), TextWatcher {
         binding.phoneNumberEditText.setSelection(phoneNo.length)
     }
     
-    private fun observeSignIn() {
-        observe(viewModel.signByPhoneResponse) {
+    private fun observeLogin() {
+        observe(viewModel.loginByPhoneResponse) {
             progressDialog.dismiss()
             when (it) {
                 is Resource.Success -> {
                     if (it.data is String) {
                         regSessionToken = it.data
-//                        if (findNavController().currentDestination?.id != R.id.verifySignInFragment && findNavController().currentDestination?.id == R.id.signInDialog) {
-//                            findNavController().popBackStack().let {
-                                findNavController().navigate(R.id.verifySignInFragment2,
-                                    Bundle().apply { 
-                                        putString(PHONE_NO_ARG, phoneNo)
-                                        putString(REG_SESSION_TOKEN_ARG, regSessionToken)
-                                    }
-                                )
-//                            }
-//                        }
+                        findNavController().navigate(R.id.verifyLoginFragment2,
+                            Bundle().apply { 
+                                putString(PHONE_NO_ARG, phoneNo)
+                                putString(REG_SESSION_TOKEN_ARG, regSessionToken)
+                            }
+                        )
                     }
                 }
                 is Resource.Failure -> {
@@ -118,16 +103,6 @@ class SignInContentFragment2 : ChildDialogFragment(), TextWatcher {
         val ss = SpannableString(getString(R.string.terms_and_conditions))
         val clickableSpan = object : ClickableSpan() {
             override fun onClick(textView: View) {
-                /*val intent = Intent(requireContext(), HtmlPageViewActivity::class.java)
-                intent.putExtra(
-                    HtmlPageViewActivity.CONTENT_KEY,
-                    TERMS_AND_CONDITION_URL
-                )
-                intent.putExtra(
-                    HtmlPageViewActivity.TITLE_KEY,
-                    getString(R.string.terms_and_conditions)
-                )
-                startActivity(intent)*/
                 showTermsAndConditionDialog()
             }
             
@@ -143,9 +118,7 @@ class SignInContentFragment2 : ChildDialogFragment(), TextWatcher {
     }
     
     private fun showTermsAndConditionDialog() {
-//        if (findNavController().currentDestination?.id != R.id.termsConditionFragment && findNavController().currentDestination?.id == R.id.signInDialog) {
         parentFragment?.parentFragment?.findNavController()?.navigate(R.id.termsConditionFragment)
-//        }
     }
     
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}

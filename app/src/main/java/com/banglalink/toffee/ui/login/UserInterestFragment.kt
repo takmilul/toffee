@@ -1,4 +1,4 @@
-package com.banglalink.toffee.ui.userinterest
+package com.banglalink.toffee.ui.login
 
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -10,11 +10,10 @@ import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.navArgs
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentUserInterestBinding
 import com.banglalink.toffee.extension.*
-import com.banglalink.toffee.model.CustomerInfoSignIn
+import com.banglalink.toffee.model.CustomerInfoLogin
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
@@ -22,7 +21,7 @@ import com.banglalink.toffee.ui.mychannel.MyChannelVideosEditViewModel
 import com.google.android.material.chip.Chip
 
 class UserInterestFragment : BaseFragment() {
-    private var verifiedUserData: CustomerInfoSignIn? = null
+    private var verifiedUserData: CustomerInfoLogin? = null
     private var _binding: FragmentUserInterestBinding? = null
     private val binding get() = _binding !!
     private val homeViewModel: HomeViewModel by activityViewModels()
@@ -50,20 +49,20 @@ class UserInterestFragment : BaseFragment() {
             val userInterestCount = userInterestList.values.count { it == 1 }
             if (userInterestCount >= 3) {
                 homeViewModel.sendUserInterestData(userInterestList)
-                signIn()
+                login()
             }
             else {
                 requireActivity().showToast("Please select at least 3 interest or press skip to sign in")
             }
         })
-        binding.skipButton.safeClick({ signIn() })
+        binding.skipButton.safeClick({ login() })
         
         observeCategory()
     }
     
-    private fun signIn() {
-        val signInMotionLayout = parentFragment?.parentFragment?.view
-        signInMotionLayout?.let {
+    private fun login() {
+        val loginMotionLayout = parentFragment?.parentFragment?.view
+        loginMotionLayout?.let {
             if (it is MotionLayout) {
                 it.onTransitionCompletedListener { onLoginSuccessAnimationCompletion() }
                 it.setTransition(R.id.firstEndAnim, R.id.secondEndAmin)

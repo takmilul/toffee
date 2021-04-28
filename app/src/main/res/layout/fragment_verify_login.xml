@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
     <androidx.constraintlayout.motion.widget.MotionLayout
-        android:id="@+id/signInVerifyMotionLayout"
+        android:id="@+id/loginVerifyMotionLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        app:layoutDescription="@xml/verify_signin_motion_scene">
+        app:layoutDescription="@xml/verify_login_motion_scene">
 
         <TextView
             android:id="@+id/text_tv"

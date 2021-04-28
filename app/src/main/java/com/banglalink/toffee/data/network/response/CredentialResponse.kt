@@ -5,5 +5,5 @@ import com.google.gson.annotations.SerializedName
 
 data class CredentialResponse (
     @SerializedName("response")
-    val existingUserSignIn: Credential?)
+    val credential: Credential?)
     :BaseResponse()

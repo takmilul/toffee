@@ -2,15 +2,11 @@ package com.banglalink.toffee.ui.login
 
 import android.database.sqlite.SQLiteDatabase
 import android.os.Environment
-import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.apiservice.CheckReferralCodeStatus
-import com.banglalink.toffee.apiservice.SignInByPhone
+import com.banglalink.toffee.apiservice.LoginByPhone
 import com.banglalink.toffee.data.network.util.resultFromResponse
-import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.model.CustomerInfoSignIn
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.util.SingleLiveEvent
@@ -20,26 +16,26 @@ import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
-class SignInViewModel @Inject constructor(
+class LoginViewModel @Inject constructor(
     private val pref: SessionPreference,
-    private val signInByPhone: SignInByPhone,
+    private val loginByPhone: LoginByPhone,
     private val checkReferralCodeStatus: CheckReferralCodeStatus,
 ) : BaseViewModel() {
 
-    val signByPhoneResponse = SingleLiveEvent<Resource<Any>>()
+    val loginByPhoneResponse = SingleLiveEvent<Resource<Any>>()
 
-    fun signIn(phoneNumber: String, referralCode: String) {
+    fun login(phoneNumber: String, referralCode: String) {
         viewModelScope.launch {
             if (referralCode.isNotBlank()) {
                val referResponse= resultFromResponse { checkReferralCodeStatus.execute(phoneNumber, referralCode)}
                 if(referResponse is Resource.Failure)
                 {
-                    signByPhoneResponse.value = referResponse
+                    loginByPhoneResponse.value = referResponse
                     return@launch
                 }
             }
-           val response= resultFromResponse {  signInByPhone.execute(phoneNumber, referralCode) }
-            signByPhoneResponse.value=response
+           val response= resultFromResponse {  loginByPhone.execute(phoneNumber, referralCode) }
+            loginByPhoneResponse.value=response
         }
     }
 

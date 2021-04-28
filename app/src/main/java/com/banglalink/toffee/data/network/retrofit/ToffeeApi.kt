@@ -10,7 +10,7 @@ interface ToffeeApi {
     
 //    @POST("re-registration")
     @POST("re-registration-v2")
-    suspend fun signInByPhone(@Body signInByPhoneRequest: SigninByPhoneRequest): SignInByPhoneResponse
+    suspend fun loginByPhone(@Body signInByPhoneRequest: LoginByPhoneRequest): LoginByPhoneResponse
 
 //    @POST("confirm-code")
     @POST("confirm-code-v2")

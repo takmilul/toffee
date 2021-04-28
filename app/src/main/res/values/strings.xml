@@ -247,4 +247,6 @@
     <string name="done_text">Done</string>
     <string name="verify_text">Verify</string>
     <string name="submit_button_text">Submit</string>
+    <string name="sign_in_intro_desc">like- Reaction, Upload, Referral etc.</string>
+    <string name="sign_in_intro_title">Sign-in to Access All Features</string>
 </resources>

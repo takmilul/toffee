@@ -70,7 +70,7 @@
 
     <ConstraintSet android:id="@+id/end">
         <Constraint
-            android:id="@+id/signin_tv"
+            android:id="@+id/login_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -88,7 +88,7 @@
             android:layout_marginTop="24dp"
             motion:layout_constraintEnd_toStartOf="parent"
             motion:layout_constraintHorizontal_bias="0.5"
-            motion:layout_constraintTop_toBottomOf="@+id/signin_tv" />
+            motion:layout_constraintTop_toBottomOf="@+id/login_tv" />
 
         <Constraint
             android:id="@+id/have_ref_tv"

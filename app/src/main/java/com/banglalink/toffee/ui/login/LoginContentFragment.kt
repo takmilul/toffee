@@ -25,7 +25,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.databinding.FragmentSigninContentBinding
+import com.banglalink.toffee.databinding.FragmentLoginContentBinding
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.INVALID_REFERRAL_ERROR_CODE
 import com.banglalink.toffee.model.LOGIN_ERROR
@@ -44,24 +44,24 @@ import com.google.android.gms.auth.api.credentials.Credentials
 import com.google.android.gms.auth.api.credentials.HintRequest
 import com.google.android.material.snackbar.Snackbar
 
-class SignInContentFragment : BaseFragment() {
+class LoginContentFragment : BaseFragment() {
     private var referralCode: String = ""
     private var regSessionToken: String = ""
     private var snackBar: Snackbar? = null
     private var isNumberShown:Boolean = false
-    private var _binding: FragmentSigninContentBinding ? = null
+    private var _binding: FragmentLoginContentBinding? = null
     private val binding get() = _binding!!
-    private val viewModel by viewModels<SignInViewModel>()
+    private val viewModel by viewModels<LoginViewModel>()
     private val splashViewModel by activityViewModels<SplashViewModel>()
     private val progressDialog by unsafeLazy { VelBoxProgressDialog(requireContext()) }
     lateinit var phoneNo:String
     companion object {
         @JvmStatic
-        fun newInstance() = SignInContentFragment()
+        fun newInstance() = LoginContentFragment()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentSigninContentBinding.inflate(inflater, container, false)
+        _binding = FragmentLoginContentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -72,13 +72,13 @@ class SignInContentFragment : BaseFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.signInContentMotionLayout.setOnClickListener { UtilsKt.hideSoftKeyboard(requireActivity()) }
+        binding.loginContentMotionLayout.setOnClickListener { UtilsKt.hideSoftKeyboard(requireActivity()) }
         setSpannableTermsAndConditions()
         binding.haveRefTv.setOnClickListener { handleHaveReferralOption() }
         binding.loginBtn.safeClick({
             handleLogin()
-            observeSignIn()
-            viewModel.signIn(phoneNo, referralCode)
+            observeLogin()
+            viewModel.login(phoneNo, referralCode)
         })
         binding.skipButton.safeClick({
             (requireActivity() as SplashScreenActivity).observeApiLogin()
@@ -131,18 +131,18 @@ class SignInContentFragment : BaseFragment() {
         binding.phoneNumberEt.setSelection(phoneNo.length)
     }
 
-    private fun observeSignIn(){
-        observe(viewModel.signByPhoneResponse) {
+    private fun observeLogin(){
+        observe(viewModel.loginByPhoneResponse) {
             progressDialog.dismiss()
             when (it) {
                 is Resource.Success -> {
                     snackBar?.dismiss()
                     if (it.data is String) {
                        regSessionToken = it.data as String
-                       binding.signInContentMotionLayout.onTransitionCompletedListener {
-                           if (findNavController().currentDestination?.id != R.id.verifySignInFragment && findNavController().currentDestination?.id == R.id.signInContentFragment) {
+                       binding.loginContentMotionLayout.onTransitionCompletedListener {
+                           if (findNavController().currentDestination?.id != R.id.verifyLoginFragment && findNavController().currentDestination?.id == R.id.loginContentFragment) {
                                findNavController().navigate(
-                                   SignInContentFragmentDirections.actionSignInContentFragmentToVerifySignInFragment(
+                                   LoginContentFragmentDirections.actionLoginContentFragmentToVerifyLoginFragment(
                                        phoneNo,
                                        referralCode,
                                        regSessionToken
@@ -150,7 +150,7 @@ class SignInContentFragment : BaseFragment() {
                                )
                            }
                        }
-                       binding.signInContentMotionLayout.transitionToEnd()
+                       binding.loginContentMotionLayout.transitionToEnd()
                    }
                 }
                 is Resource.Failure -> {
@@ -166,7 +166,7 @@ class SignInContentFragment : BaseFragment() {
                             snackBar = binding.root.snack(it.error.msg) {
                                 action("Retry") {
                                     handleLogin()
-                                    viewModel.signIn(phoneNo, referralCode)
+                                    viewModel.login(phoneNo, referralCode)
                                 }
                             }
                         }
@@ -199,7 +199,7 @@ class SignInContentFragment : BaseFragment() {
             .setOnClickListener {
                 binding.refCodeEt.setText("")
                 handleLogin()
-                viewModel.signIn(phoneNo, referralCode)
+                viewModel.login(phoneNo, referralCode)
                 alertDialog.dismiss()
             }
         alertView.findViewById<View>(R.id.retry_btn)

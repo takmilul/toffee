@@ -1,6 +1,6 @@
 package com.banglalink.toffee.data.network.request
 
-data class SigninByPhoneRequest(
+data class LoginByPhoneRequest(
     val phoneNo: String,
     val lat: String,
     val lon: String,
