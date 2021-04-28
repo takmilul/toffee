@@ -127,7 +127,7 @@ dependencies {
     implementation 'androidx.paging:paging-runtime-ktx:3.0.0-rc01'
 
     // Hilt
-    def hilt_android_ver = "2.35"
+    def hilt_android_ver = "2.35.1"
     implementation "com.google.dagger:hilt-android:$hilt_android_ver"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_android_ver"
 

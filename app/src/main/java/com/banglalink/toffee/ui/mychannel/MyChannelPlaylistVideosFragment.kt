@@ -21,6 +21,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_PLAYLIST_VIDEOS
 import com.banglalink.toffee.apiservice.MyChannelPlaylistContentParam
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
+import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.SubscriptionCountRepository
@@ -32,12 +33,10 @@ import com.banglalink.toffee.listeners.MyChannelPlaylistItemListener
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.PlaylistPlaybackInfo
-import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.*
 import com.banglalink.toffee.ui.home.ChannelHeaderAdapter
-import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
@@ -54,6 +53,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     
     private var isSubscribed: Int = 0
     private var subscriberCount: Long = 0
+    @Inject lateinit var localSync: LocalSync
     private var currentItem: ChannelInfo? = null
     private lateinit var mAdapter: ConcatAdapter
     @Inject lateinit var cacheManager: CacheManager
@@ -160,7 +160,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     
             override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
                 requireActivity().checkVerification {
-                    if (isSubscribed == 0) {
+                    if (item.isSubscribed == 0) {
                         homeViewModel.sendSubscriptionStatus(
                             SubscriptionInfo(
                                 null,
@@ -168,9 +168,13 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
                                 mPref.customerId
                             ), 1
                         )
-                        isSubscribed = 1
-                        currentItem?.isSubscribed = isSubscribed
-                        currentItem?.subscriberCount = (++subscriberCount).toInt()
+                        currentItem?.let { 
+                            it.isSubscribed = 1
+                            it.subscriberCount++
+                        }
+//                        isSubscribed = 1
+//                        currentItem?.isSubscribed = isSubscribed
+//                        currentItem?.subscriberCount = (++subscriberCount).toInt()
                         detailsAdapter.notifyDataSetChanged()
                     } else {
                         UnSubscribeDialog.show(requireContext()) {
@@ -181,9 +185,13 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
                                     mPref.customerId
                                 ), -1
                             )
-                            isSubscribed = 0
-                            currentItem?.isSubscribed = isSubscribed
-                            currentItem?.subscriberCount = (--subscriberCount).toInt()
+                            currentItem?.let {
+                                it.isSubscribed = 0
+                                it.subscriberCount--
+                            }
+//                            isSubscribed = 0
+//                            currentItem?.isSubscribed = isSubscribed
+//                            currentItem?.subscriberCount = (--subscriberCount).toInt()
                             detailsAdapter.notifyDataSetChanged()
                         }
                     }
@@ -201,10 +209,11 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     private fun setSubscriptionStatus() {
         lifecycleScope.launch {
             currentItem?.let {
-                isSubscribed = if (subscriptionInfoRepository.getSubscriptionInfoByChannelId(it.channel_owner_id, mPref.customerId) != null) 1 else 0
-                subscriberCount = subscriptionCountRepository.getSubscriberCount(it.channel_owner_id)
-                it.isSubscribed = if (subscriptionInfoRepository.getSubscriptionInfoByChannelId(it.channel_owner_id, mPref.customerId) != null) 1 else 0
-                it.subscriberCount = subscriptionCountRepository.getSubscriberCount(it.channel_owner_id).toInt()
+                localSync.syncData(it)
+//                isSubscribed = if (subscriptionInfoRepository.getSubscriptionInfoByChannelId(it.channel_owner_id, mPref.customerId) != null) 1 else 0
+//                subscriberCount = subscriptionCountRepository.getSubscriberCount(it.channel_owner_id)
+//                it.isSubscribed = if (subscriptionInfoRepository.getSubscriptionInfoByChannelId(it.channel_owner_id, mPref.customerId) != null) 1 else 0
+//                it.subscriberCount = subscriptionCountRepository.getSubscriberCount(it.channel_owner_id).toInt()
                 detailsAdapter.notifyDataSetChanged()
             }
         }

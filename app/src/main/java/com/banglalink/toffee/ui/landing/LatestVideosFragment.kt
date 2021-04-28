@@ -28,7 +28,7 @@ import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.databinding.FragmentLandingLatestVideosBinding
 import com.banglalink.toffee.enums.FilterContentType.*
 import com.banglalink.toffee.enums.Reaction.Love
-import com.banglalink.toffee.extension.checkVerification
+import com.banglalink.toffee.extension.handleShare
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.Category
@@ -242,9 +242,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
 
     override fun onShareClicked(view: View, item: ChannelInfo) {
         super.onShareClicked(view, item)
-//        requireActivity().checkVerification {
-        homeViewModel.shareContentLiveData.postValue(item)
-//        }
+        requireActivity().handleShare(item)
     }
 
     override fun onProviderIconClicked(item: ChannelInfo) {

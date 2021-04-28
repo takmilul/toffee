@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListFragment
@@ -13,10 +12,7 @@ import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
-import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
-import com.banglalink.toffee.ui.report.ReportPopupFragment
 import com.banglalink.toffee.ui.widget.MyPopupWindow
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -58,7 +54,7 @@ class FavoriteFragment : BaseListFragment<ChannelInfo>(), ProviderIconCallback<C
         val popupMenu = MyPopupWindow(requireContext(), anchor)
         popupMenu.inflate(R.menu.menu_catchup_item)
 
-        if (channelInfo.favorite == null || channelInfo.favorite == "0") {
+        if (channelInfo.favorite == null || channelInfo.favorite == "0" || !mPref.isVerifiedUser) {
             popupMenu.menu.getItem(0).title = "Add to Favorites"
         } else {
             popupMenu.menu.getItem(0).title = "Remove from Favorites"

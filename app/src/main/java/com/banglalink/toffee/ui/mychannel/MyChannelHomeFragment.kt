@@ -124,7 +124,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         }
     }
 
-    fun handleClick(v: View?) {
+    private fun handleClick(v: View?) {
         when (v) {
             binding.channelDetailView.addBioButton -> {
                 navigateToEditChannel()

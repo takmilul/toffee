@@ -2,10 +2,8 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="8dp"
     android:gravity="center">
 
     <androidx.cardview.widget.CardView
@@ -42,29 +40,43 @@
                 android:fontFamily="@font/roboto_light"
                 android:text="Sign-in to Access All Features"
                 android:textColor="@color/cardTitleColor"
-                android:textSize="24sp"
+                android:textSize="20sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/logo" />
 
+            <TextView
+                android:id="@+id/dialogDescTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="36dp"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/roboto_light"
+                android:text="like- Reaction, Upload, Referral etc."
+                android:textColor="@color/cardTitleColor"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/dialogTitleTextView" />
+
             <Button
                 android:id="@+id/signInButton"
                 style="@style/ButtonStyleSolidPink"
-                android:layout_width="@dimen/button_accent_width"
-                android:layout_marginHorizontal="36dp"
+                android:layout_width="0dp"
                 android:layout_marginBottom="36dp"
+                android:layout_marginTop="24dp"
                 android:text="@string/sign_in_text"
                 android:textAllCaps="true"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/dialogTitleTextView" />
+                app:layout_constraintEnd_toEndOf="@id/skipSignIn"
+                app:layout_constraintStart_toStartOf="@id/skipSignIn"
+                app:layout_constraintTop_toBottomOf="@+id/dialogDescTextView" />
 
             <Button
                 android:id="@+id/skipSignIn"
                 style="@style/ButtonStyleRingPurple"
-                android:layout_width="@dimen/button_accent_width"
+                android:layout_width="wrap_content"
                 android:layout_marginHorizontal="36dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginBottom="36dp"
                 android:text="@string/without_sign_in_text"
                 android:textAllCaps="true"

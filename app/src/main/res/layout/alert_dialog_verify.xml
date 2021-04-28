@@ -56,7 +56,7 @@
                     android:fontFamily="@font/roboto_light"
                     android:text="Enter OTP"
                     android:textColor="@color/cardTitleColor"
-                    android:textSize="24sp"
+                    android:textSize="20sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/logo" />

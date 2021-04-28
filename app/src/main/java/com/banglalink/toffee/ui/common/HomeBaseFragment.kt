@@ -2,15 +2,11 @@ package com.banglalink.toffee.ui.common
 
 import android.view.View
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import com.banglalink.toffee.R
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.listeners.OptionCallBack
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
-import com.banglalink.toffee.ui.report.ReportPopupFragment
 import com.banglalink.toffee.ui.widget.MyPopupWindow
 
 abstract class HomeBaseFragment:BaseFragment(), OptionCallBack {
@@ -21,7 +17,7 @@ abstract class HomeBaseFragment:BaseFragment(), OptionCallBack {
         val popupMenu = MyPopupWindow(requireContext(), anchor)
         popupMenu.inflate(R.menu.menu_catchup_item)
 
-        if (channelInfo.favorite == null || channelInfo.favorite == "0") {
+        if (channelInfo.favorite == null || channelInfo.favorite == "0" || !mPref.isVerifiedUser) {
             popupMenu.menu.getItem(0).title = "Add to Favorites"
         } else {
             popupMenu.menu.getItem(0).title = "Remove from Favorites"

@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.mychannel
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +11,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
@@ -25,14 +23,11 @@ import com.banglalink.toffee.databinding.FragmentMyChannelVideosBinding
 import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
-import com.banglalink.toffee.ui.about.AboutFragment
 import com.banglalink.toffee.ui.common.*
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
-import com.banglalink.toffee.ui.report.ReportPopupFragment
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -138,11 +133,6 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
                     }
                 }
                 creatorsPolicyButton.setOnClickListener {
-//                    val intent = Intent(requireActivity(), HtmlPageViewActivity::class.java).apply {
-//                        putExtra(HtmlPageViewActivity.CONTENT_KEY, AboutFragment.PRIVACY_POLICY_URL)
-//                        putExtra(HtmlPageViewActivity.TITLE_KEY, "Creators Policy")
-//                    }
-//                    requireActivity().startActivity(intent)
                     findNavController().navigate(R.id.privacyPolicyFragment)
                 }
             } else {
@@ -189,7 +179,6 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
                     }
                     R.id.menu_report -> {
                         requireActivity().handleReport(item)
-                        return@setOnMenuItemClickListener true
                     }
                     R.id.menu_delete_content -> {
                         showDeleteVideoDialog(item.id.toInt())
