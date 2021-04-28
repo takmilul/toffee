@@ -80,7 +80,6 @@ class VerifySignInFragment2 : ChildDialogFragment() {
                 observeVerifyCode()
                 viewModel.verifyCode(otp, regSessionToken, "")
             })
-            closeButton.safeClick({ /*dismiss()*/ })
             skipButton.safeClick({ closeDialog() })
         }
         

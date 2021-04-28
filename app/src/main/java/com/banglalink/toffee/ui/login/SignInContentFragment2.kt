@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
@@ -58,7 +59,6 @@ class SignInContentFragment2 : ChildDialogFragment(), TextWatcher {
         setSpannableTermsAndConditions()
         
         with(binding) {
-            closeIv.safeClick({ /*dismiss()*/ })
             verifyButton.safeClick({
                 progressDialog.show()
                 handleLogin()
@@ -66,7 +66,7 @@ class SignInContentFragment2 : ChildDialogFragment(), TextWatcher {
                 viewModel.signIn(phoneNo)
             })
             termsAndConditionsCheckbox.setOnClickListener {
-                binding.verifyButton.isEnabled = binding.termsAndConditionsCheckbox.isChecked
+                verifyButton.isEnabled = binding.termsAndConditionsCheckbox.isChecked && phoneNo.isNotBlank() && phoneNo.length >= 11
             }
             phoneNumberEditText.addTextChangedListener(this@SignInContentFragment2)
         }
@@ -143,9 +143,9 @@ class SignInContentFragment2 : ChildDialogFragment(), TextWatcher {
     }
     
     private fun showTermsAndConditionDialog() {
-        if (findNavController().currentDestination?.id != R.id.termsConditionFragment && findNavController().currentDestination?.id == R.id.signInDialog) {
-            findNavController().navigate(R.id.termsConditionFragment)
-        }
+//        if (findNavController().currentDestination?.id != R.id.termsConditionFragment && findNavController().currentDestination?.id == R.id.signInDialog) {
+        parentFragment?.parentFragment?.findNavController()?.navigate(R.id.termsConditionFragment)
+//        }
     }
     
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -154,7 +154,7 @@ class SignInContentFragment2 : ChildDialogFragment(), TextWatcher {
     
     override fun afterTextChanged(s: Editable?) {
         phoneNo = s.toString()
-        binding.verifyButton.isEnabled = phoneNo.isNotBlank() && phoneNo.length >= 11
+        binding.verifyButton.isEnabled = binding.termsAndConditionsCheckbox.isChecked && phoneNo.isNotBlank() && phoneNo.length >= 11
     }
     
     override fun onDestroyView() {
