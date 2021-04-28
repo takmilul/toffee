@@ -1,17 +1,9 @@
 package com.banglalink.toffee.ui.profile
 
-import android.Manifest
-import android.app.Activity
-import android.app.AlertDialog
-import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.provider.MediaStore
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,6 +24,7 @@ import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
 import com.banglalink.toffee.ui.widget.VelBoxFieldTextWatcher
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.UtilsKt
+import com.banglalink.toffee.util.unsafeLazy
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -39,28 +32,16 @@ import java.util.*
 
 class EditProfileFragment : BaseFragment() {
 
+    private val TAG = "EditProfileActivity"
+    private val progressDialog by unsafeLazy {
+        VelBoxProgressDialog(requireContext())
+    }
     private var _binding: FragmentEditProfileBinding? = null
     private val binding get() = _binding!!
-
-    var photoUri: Uri? = null
-    private val TAG = "EditProfileActivity"
-    private var alertDialog: AlertDialog? = null
-
-    private lateinit var progressDialog: VelBoxProgressDialog
-
     private val args by navArgs<EditProfileFragmentArgs>()
-
-    companion object {
-        const val PROFILE_INFO = "Profile"
-    }
-
     private val viewModel by viewModels<EditProfileViewModel>()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        // Inflate the layout for this fragment
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentEditProfileBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -68,49 +49,31 @@ class EditProfileFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.profileForm = args.data
-
-        binding.container.setOnClickListener {
-            UtilsKt.hideSoftKeyboard(requireActivity())
-        }
-
-        progressDialog = VelBoxProgressDialog(requireContext())
-        observeThumbnailChange()
-        binding.nameEt.onFocusChangeListener = VelBoxFieldTextWatcher(
-            binding.nameEt,
-            VelBoxFieldTextWatcher.FieldType.NAME_FIELD
-        )
-        binding.emailEt.onFocusChangeListener = VelBoxFieldTextWatcher(
-            binding.emailEt,
-            VelBoxFieldTextWatcher.FieldType.EMAIL_FIELD
-        )
-        binding.addressEt.onFocusChangeListener = VelBoxFieldTextWatcher(
-            binding.addressEt,
-            VelBoxFieldTextWatcher.FieldType.ADDRESS_FIELD
-        )
-
-        binding.editIv.setOnClickListener {
-            if (findNavController().currentDestination?.id != R.id.thumbnailSelectionMethodFragment && findNavController().currentDestination?.id == R.id.EditProfileFragment) {
-                val action =
-                    EditProfileFragmentDirections.actionEditProfileToThumbnailSelectionMethodFragment(
-                        "Set Profile Photo",
-                        true
-                    )
-                findNavController().navigate(action)
+        with(binding) {
+            profileForm = args.data
+            container.setOnClickListener {
+                UtilsKt.hideSoftKeyboard(requireActivity())
+            }
+            saveButton.setOnClickListener { handleSaveButton() }
+            cancelBtn.setOnClickListener { findNavController().popBackStack() }
+            nameEt.onFocusChangeListener = VelBoxFieldTextWatcher(binding.nameEt, VelBoxFieldTextWatcher.FieldType.NAME_FIELD)
+            emailEt.onFocusChangeListener = VelBoxFieldTextWatcher(binding.emailEt, VelBoxFieldTextWatcher.FieldType.EMAIL_FIELD)
+            addressEt.onFocusChangeListener = VelBoxFieldTextWatcher(binding.addressEt, VelBoxFieldTextWatcher.FieldType.ADDRESS_FIELD)
+            editIv.setOnClickListener {
+                if (findNavController().currentDestination?.id != R.id.thumbnailSelectionMethodFragment && findNavController().currentDestination?.id == R.id.EditProfileFragment) {
+                    val action =
+                        EditProfileFragmentDirections.actionEditProfileToThumbnailSelectionMethodFragment(
+                            "Set Profile Photo",
+                            true
+                        )
+                    findNavController().navigate(action)
+                }
             }
         }
-
-        binding.saveButton.setOnClickListener {
-            handleSaveButton()
-        }
-
-        binding.cancelBtn.setOnClickListener {
-            findNavController().popBackStack()
-        }
-
         observe(mPref.profileImageUrlLiveData) {
             binding.profileIv.loadProfileImage(it)
         }
+        observeThumbnailChange()
     }
 
     @Throws(IOException::class)
@@ -140,7 +103,6 @@ class EditProfileFragment : BaseFragment() {
                 }
             })
     }
-
 
     private fun handleSaveButton() {
         progressDialog.show()
@@ -188,8 +150,7 @@ class EditProfileFragment : BaseFragment() {
             }
         }
     }
-
-
+    
     private fun handleUploadImage(photoUri: Uri) {
         try {
             progressDialog.show()
@@ -216,5 +177,4 @@ class EditProfileFragment : BaseFragment() {
         super.onDestroyView()
         _binding = null
     }
-
 }

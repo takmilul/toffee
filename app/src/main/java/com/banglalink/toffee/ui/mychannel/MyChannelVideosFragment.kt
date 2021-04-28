@@ -133,7 +133,10 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
                     }
                 }
                 creatorsPolicyButton.setOnClickListener {
-                    findNavController().navigate(R.id.privacyPolicyFragment)
+                    findNavController().navigate(R.id.privacyPolicyFragment, Bundle().apply { 
+                        putString("myTitle", "Privacy Policy")
+                        putString("url", requireContext().getString(R.string.privacy_policy_url))
+                    })
                 }
             } else {
                 uploadVideoButton.hide()

@@ -8,16 +8,14 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentViewProfileBinding
-import com.banglalink.toffee.extension.launchActivity
+import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.loadProfileImage
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseFragment
-import com.banglalink.toffee.ui.splash.SplashScreenActivity
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
-import net.gotev.uploadservice.UploadService
 
 class ViewProfileFragment : BaseFragment() {
 
@@ -29,11 +27,7 @@ class ViewProfileFragment : BaseFragment() {
         VelBoxProgressDialog(requireContext())
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentViewProfileBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -41,22 +35,20 @@ class ViewProfileFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (!mPref.isVerifiedUser) {
-            return
+        if (mPref.isVerifiedUser) {
+            binding.data = EditProfileForm().apply {
+                fullName = mPref.customerName
+                phoneNo = mPref.phoneNumber
+                photoUrl = mPref.userImageUrl ?: ""
+            }
+            observe(mPref.profileImageUrlLiveData) {
+                binding.profileIv.loadProfileImage(it)
+            }
+            loadProfile()
         }
 
-        binding.data = EditProfileForm().apply {
-            fullName = mPref.customerName
-            phoneNo = mPref.phoneNumber
-            photoUrl = mPref.userImageUrl ?: ""
-        }
-
-        loadProfile()
-        observe(mPref.profileImageUrlLiveData) {
-            binding.profileIv.loadProfileImage(it)
-        }
         binding.editProfile.setOnClickListener {
-            onClickEditProfile()
+            requireActivity().checkVerification { onClickEditProfile() }
         }
     }
 
@@ -76,27 +68,12 @@ class ViewProfileFragment : BaseFragment() {
     }
 
     fun onClickEditProfile() {
-        if (!mPref.isVerifiedUser) {
-            handleVerficationApp()
-            return
-        }
-
         if (findNavController().currentDestination?.id != R.id.thumbnailSelectionMethodFragment && findNavController().currentDestination?.id == R.id.profileFragment) {
             val action =
                 ViewProfileFragmentDirections.actionProfileFragmentToEditProfileFragment(binding.data)
             findNavController().navigate(action)
         }
-
     }
-
-    fun handleVerficationApp() {
-        mPref.clear()
-        mPref.logout = "1"
-        UploadService.stopAllUploads()
-        requireActivity().launchActivity<SplashScreenActivity>()
-        requireActivity().finish()
-    }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

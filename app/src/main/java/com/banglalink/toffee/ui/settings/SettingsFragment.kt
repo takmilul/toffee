@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.settings
 
-import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,16 +9,13 @@ import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.repository.UserActivitiesRepository
 import com.banglalink.toffee.databinding.ActivitySettingsBinding
-import com.banglalink.toffee.ui.about.AboutActivity
-import com.banglalink.toffee.ui.about.AboutFragment
 import com.banglalink.toffee.ui.common.BaseFragment
-import com.banglalink.toffee.ui.common.HtmlPageViewActivity
-import com.banglalink.toffee.ui.mychannel.MyChannelHomeFragmentDirections
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -62,7 +58,9 @@ class SettingsFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        
+        binding.prefClearWatch.isVisible = mPref.isVerifiedUser
+        binding.clearWatchDivider.isVisible = mPref.isVerifiedUser
         binding.wifiProfileStateBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 mPref.wifiProfileStatus = progress + 1

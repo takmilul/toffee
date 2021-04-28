@@ -12,17 +12,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentSubscribedChannelsBinding
+import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.listeners.LandingPopularChannelCallback
-import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.UserChannelInfo
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.common.UnSubscribeDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -51,24 +50,26 @@ class SubscribedChannelsFragment : HomeBaseFragment() {
             }
 
             override fun onSubscribeButtonClicked(view: View, info: UserChannelInfo) {
-                if (info.isSubscribed == 0) {
-                    subscribedChannelInfo = info.also {
-                        it.isSubscribed = 1
-                        it.subscriberCount++
-                    }
-                    homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId) ,1)
-                    mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, subscribedChannelInfo)
-                    mAdapter.refresh()
-                }
-                else {
-                    UnSubscribeDialog.show(requireContext()) {
+                requireActivity().checkVerification {
+                    if (info.isSubscribed == 0) {
                         subscribedChannelInfo = info.also {
-                            it.isSubscribed = 0
-                            it.subscriberCount--
+                            it.isSubscribed = 1
+                            it.subscriberCount ++
                         }
-                        homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId) ,-1)
+                        homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId), 1)
                         mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, subscribedChannelInfo)
                         mAdapter.refresh()
+                    }
+                    else {
+                        UnSubscribeDialog.show(requireContext()) {
+                            subscribedChannelInfo = info.also {
+                                it.isSubscribed = 0
+                                it.subscriberCount --
+                            }
+                            homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId), - 1)
+                            mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, subscribedChannelInfo)
+                            mAdapter.refresh()
+                        }
                     }
                 }
             }

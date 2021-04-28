@@ -331,12 +331,6 @@
                 android:layout_height="1dp"
                 android:background="@color/colorSettingsDivider" />
             
-            <View
-                android:layout_width="wrap_content"
-                android:layout_height="1dp"
-                android:background="@color/colorSettingsDivider"
-                android:visibility="gone" />
-
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/pref_clear_search"
                 style="@style/PrefItemStyle"
@@ -385,6 +379,7 @@
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <View
+                android:id="@+id/clearWatchDivider"
                 android:layout_width="wrap_content"
                 android:layout_height="1dp"
                 android:background="@color/colorSettingsDivider" />
