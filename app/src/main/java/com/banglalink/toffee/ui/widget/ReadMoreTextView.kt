@@ -116,9 +116,11 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
     }
 
     private fun setText() {
-        super.setText(getTrimmedText(), bufferType)
-        movementMethod = LinkMovementMethod.getInstance()
-        highlightColor = Color.RED
+        getTrimmedText()?.let { 
+            super.setText(it, bufferType)
+            movementMethod = LinkMovementMethod.getInstance()
+            highlightColor = Color.RED
+        }
     }
 
     override fun setText(text: CharSequence, type: BufferType) {

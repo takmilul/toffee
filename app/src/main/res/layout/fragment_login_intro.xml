@@ -61,7 +61,7 @@
 
     <Button
         android:id="@+id/skipSignIn"
-        style="@style/ButtonStyleRingPurple"
+        style="@style/EditChannelStyle"
         android:layout_width="wrap_content"
         android:layout_marginHorizontal="36dp"
         android:layout_marginTop="16dp"
