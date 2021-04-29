@@ -1273,8 +1273,9 @@ class HomeActivity :
             when(it) {
                 is Success -> {
                     if (!it.data.verifyStatus) {
-                        mPref.clear()
-                        mPref.logout = "1"
+//                        mPref.clear()
+//                        mPref.logout = "1"
+                        mPref.isVerifiedUser = false
                         UploadService.stopAllUploads()
 //                        launchActivity<SplashScreenActivity>()
 //                        finish()
@@ -1582,10 +1583,8 @@ class HomeActivity :
         observe(viewModel.myChannelNavLiveData) {
             if (navController.currentDestination?.id != R.id.myChannelHomeFragment || channelOwnerId != it.channelOwnerId) {
                 channelOwnerId = it.channelOwnerId
-                val isOwner = mPref.customerId == channelOwnerId
                 navController.navigate(R.id.myChannelHomeFragment, Bundle().apply {
                     putString(MyChannelHomeFragment.PAGE_TITLE, it.pageTitle)
-                    putBoolean(MyChannelHomeFragment.IS_OWNER, isOwner)
                     putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, it.channelOwnerId)
                 })
             } else{

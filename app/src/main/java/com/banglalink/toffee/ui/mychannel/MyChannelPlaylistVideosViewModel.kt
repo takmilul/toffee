@@ -42,7 +42,7 @@ class MyChannelPlaylistVideosViewModel @Inject constructor(
             BaseNetworkPagingSource(
                 apiService.create(requestParams)
             )
-        }).getList().cachedIn(viewModelScope)
+        }).getList()
     }
     
     fun deletePlaylistVideo(channelId: Int, playlistContentId: Int, playlistId: Int) {

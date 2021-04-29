@@ -83,7 +83,12 @@ class VerifyLoginFragment2 : ChildDialogFragment() {
                 is Resource.Success -> {
                     verifiedUserData = it.data
                     mPref.phoneNumber = phoneNumber
-                    findNavController().navigate(R.id.userInterestFragment2)
+                    if (mPref.isUserInterestSubmitted) {
+                        reloadContent()
+                    }
+                    else {
+                        findNavController().navigate(R.id.userInterestFragment2)
+                    }
                 }
                 is Resource.Failure -> {
                     ToffeeAnalytics.logApiError("confirmCode",it.error.msg)
@@ -91,6 +96,12 @@ class VerifyLoginFragment2 : ChildDialogFragment() {
                 }
             }
         }
+    }
+    
+    private fun reloadContent() {
+        closeDialog()
+//        requireActivity().overridePendingTransition(0, 0)
+        requireActivity().recreate()
     }
 
     private fun handleResendButton() {

@@ -201,6 +201,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getBoolean(PREF_IS_CHANNEL_DETAIL_CHECKED, false)
         set(value) = pref.edit().putBoolean(PREF_IS_CHANNEL_DETAIL_CHECKED, value).apply()
     
+    var isUserInterestSubmitted: Boolean
+        get() = pref.getBoolean(PREF_IS_USER_INTEREST_SUBMITTED, false)
+        set(value) = pref.edit().putBoolean(PREF_IS_USER_INTEREST_SUBMITTED, value).apply()
+    
     fun hasChannelLogo(): Boolean{
         return channelLogo.isNotBlank()
     }
@@ -542,6 +546,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_CHANNEL_NAME = "channel_name"
         private const val PREF_IS_PREVIOUS_DB_DELETED = "isPreviousDBDELETE"
         private const val PREF_IS_CHANNEL_DETAIL_CHECKED = "isChannelDetailChecked"
+        private const val PREF_IS_USER_INTEREST_SUBMITTED = "isUserInterestSubmitted"
         private const val PREF_KEEP_ASPECT_RATIO = "pref_keep_aspect_ratio"
         private const val PREF_HAS_REACTION_DB = "pref_has_reaction_db"
         private const val PREF_MQTT_IS_ACTIVE = "pref_mqtt_is_active"

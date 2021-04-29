@@ -37,7 +37,7 @@ open class BaseAppCompatActivity : AppCompatActivity() {
             when(it.getValue()){
                 is CustomerNotFoundException->{
                     if(this is HomeActivity) {
-//                        recreate()
+                        recreate()
 //                        overridePendingTransition(0, 0)
                     } else {
                         mPref.clear()

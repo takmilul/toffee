@@ -67,13 +67,11 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     
     companion object {
         const val PAGE_TITLE = "title"
-        const val IS_OWNER = "isOwner"
         const val CHANNEL_OWNER_ID = "channelOwnerId"
         
-        fun newInstance(channelOwnerId: Int, isOwner: Boolean = false): MyChannelHomeFragment {
+        fun newInstance(channelOwnerId: Int): MyChannelHomeFragment {
             return MyChannelHomeFragment().apply {
                 arguments = Bundle().apply {
-                    putBoolean(IS_OWNER, isOwner)
                     putInt(CHANNEL_OWNER_ID, channelOwnerId)
                 }
             }
@@ -83,8 +81,8 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         progressDialog = VelBoxProgressDialog(requireContext())
-        isOwner = arguments?.getBoolean(IS_OWNER) ?: true
         channelOwnerId = arguments?.getInt(CHANNEL_OWNER_ID) ?: mPref.customerId
+        isOwner = channelOwnerId == mPref.customerId
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -230,36 +228,26 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         observe(viewModel.liveData) {
             when (it) {
                 is Success -> {
-                    it.data?.let { channelData ->
-                        myChannelDetail = channelData.myChannelDetail
-                        rating = channelData.ratingCount
-                        myRating = channelData.myRating
-                        isOwner = channelData.isOwner == 1
-                        isSubscribed = channelData.isSubscribed
-                        subscriberCount = channelData.subscriberCount
-                        channelId = myChannelDetail?.id?.toInt() ?: 0
-                        mPref.channelId = channelId
-    
-                        setBindingData(channelData)
-                        loadBody()
-                    } ?: setEmptyData()
+                    setBindingData(it.data)
                 }
                 is Failure -> {
-                    setEmptyData()
+                    setBindingData()
                 }
             }
         }
     }
     
-    private fun setEmptyData() {
-        myChannelDetail = null
-        binding.data = null
-        binding.isSubscribed = 0
-        binding.isOwner = isOwner
-        loadBody()
-    }
-    
-    private fun setBindingData(channelData: MyChannelDetailBean?) {
+    private fun setBindingData(channelData: MyChannelDetailBean? = null) {
+        channelData?.let {
+            myChannelDetail = it.myChannelDetail
+            rating = it.ratingCount
+            myRating = it.myRating
+            isOwner = it.isOwner == 1
+            isSubscribed = it.isSubscribed
+            subscriberCount = it.subscriberCount
+            channelId = myChannelDetail?.id?.toInt() ?: 0
+        }
+        
         if (isOwner) {
             myChannelDetail?.let { detail ->
                 if (! detail.profileUrl.isNullOrBlank()) {
@@ -270,25 +258,29 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                 }
             }
         }
-        if (! mPref.isVerifiedUser && isOwner) {
+        
+        mPref.channelId = 0
+        binding.data = channelData
+        binding.isSubscribed = isSubscribed
+        binding.myRating = myRating
+        binding.isOwner = isOwner
+        binding.subscriberCount = subscriberCount
+        
+        if (isOwner && mPref.isVerifiedUser) {
+            mPref.channelId = channelId
+        }
+        else if (isOwner && ! mPref.isVerifiedUser) {
             myChannelDetail = null
             binding.data = null
-            binding.isOwner = isOwner
         }
-        else if (! mPref.isVerifiedUser && ! isOwner) {
-            binding.data = channelData
-            binding.isOwner = isOwner
-            binding.myRating = 0
+        else if (!isOwner && ! mPref.isVerifiedUser) {
             binding.isSubscribed = 0
-            binding.subscriberCount = channelData?.subscriberCount
+            binding.myRating = 0
         }
-        else {
-            binding.data = channelData
-            binding.isOwner = isOwner
-            binding.myRating = myRating
-            binding.isSubscribed = channelData?.isSubscribed
-            binding.subscriberCount = channelData?.subscriberCount
-        }
+//        else if (!isOwner && mPref.isVerifiedUser) {
+//             //do nothing
+//        }
+        loadBody()
     }
     
     private fun loadBody() {

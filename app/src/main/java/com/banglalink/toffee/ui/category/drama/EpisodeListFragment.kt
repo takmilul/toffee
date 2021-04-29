@@ -17,6 +17,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.apiservice.DramaSeasonRequestParam
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.common.paging.ProviderIconCallback
+import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.repository.SubscriptionCountRepository
 import com.banglalink.toffee.data.repository.SubscriptionInfoRepository
@@ -41,19 +42,20 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo> {
-    private lateinit var mAdapter: EpisodeListAdapter
-    private var currentItem: ChannelInfo? = null
     private var isSubscribed: Int = 0
     private var subscriberCount: Long = 0
+    private var seasonListJob: Job? = null
+    @Inject lateinit var localSync: LocalSync
+    private var currentItem: ChannelInfo? = null
+    private lateinit var mAdapter: EpisodeListAdapter
+    private lateinit var seriesInfo: SeriesPlaybackInfo
     private var detailsAdapter: ChannelHeaderAdapter? = null
-    private val mViewModel by viewModels<EpisodeListViewModel>()
     private var _binding: FragmentEpisodeListBinding ? = null
     private val binding get() = _binding!!
     @Inject lateinit var subscriptionInfoRepository: SubscriptionInfoRepository
     @Inject lateinit var subscriptionCountRepository: SubscriptionCountRepository
+    private val mViewModel by viewModels<EpisodeListViewModel>()
 
-    private var seasonListJob: Job? = null
-    private lateinit var seriesInfo: SeriesPlaybackInfo
 
     companion object {
         const val SERIES_INFO = "series-info"
@@ -75,11 +77,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
         currentItem = seriesInfo.currentItem
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentEpisodeListBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -101,10 +99,11 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
     private fun setSubscriptionStatus() {
         lifecycleScope.launch {
             currentItem?.let {
-                isSubscribed = if(subscriptionInfoRepository.getSubscriptionInfoByChannelId(it.channel_owner_id, mPref.customerId) != null) 1 else 0
-                subscriberCount = subscriptionCountRepository.getSubscriberCount(it.channel_owner_id)
-                it.isSubscribed = if(subscriptionInfoRepository.getSubscriptionInfoByChannelId(it.channel_owner_id, mPref.customerId) != null) 1 else 0
-                it.subscriberCount = subscriptionCountRepository.getSubscriberCount(it.channel_owner_id).toInt()
+                localSync.syncData(it)
+//                isSubscribed = if(subscriptionInfoRepository.getSubscriptionInfoByChannelId(it.channel_owner_id, mPref.customerId) != null) 1 else 0
+//                subscriberCount = subscriptionCountRepository.getSubscriberCount(it.channel_owner_id)
+//                it.isSubscribed = if(subscriptionInfoRepository.getSubscriptionInfoByChannelId(it.channel_owner_id, mPref.customerId) != null) 1 else 0
+//                it.subscriberCount = subscriptionCountRepository.getSubscriberCount(it.channel_owner_id).toInt()
                 detailsAdapter?.notifyDataSetChanged()
             }
         }
@@ -152,19 +151,27 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
 
             override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
                 requireActivity().checkVerification { 
-                    if (isSubscribed == 0) {
+                    if (item.isSubscribed == 0) {
                         homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), 1)
-                        isSubscribed = 1
-                        currentItem?.isSubscribed = isSubscribed
-                        currentItem?.subscriberCount = (++subscriberCount).toInt()
+                        currentItem?.apply { 
+                            isSubscribed = 1
+                            subscriberCount++
+                        }
+//                        isSubscribed = 1
+//                        currentItem?.isSubscribed = isSubscribed
+//                        currentItem?.subscriberCount = (++subscriberCount).toInt()
                         detailsAdapter?.notifyDataSetChanged()
                     }
                     else {
                         UnSubscribeDialog.show(requireContext()){
                             homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), -1)
-                            isSubscribed = 0
-                            currentItem?.isSubscribed = isSubscribed
-                            currentItem?.subscriberCount = (--subscriberCount).toInt()
+                            currentItem?.apply {
+                                isSubscribed = 0
+                                subscriberCount--
+                            }
+//                            isSubscribed = 0
+//                            currentItem?.isSubscribed = isSubscribed
+//                            currentItem?.subscriberCount = (--subscriberCount).toInt()
                             detailsAdapter?.notifyDataSetChanged()
                         }
                     }
