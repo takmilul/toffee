@@ -24,6 +24,7 @@ import com.banglalink.toffee.databinding.ActivityEditProfileBinding
 import com.banglalink.toffee.databinding.DialogueProfileImageSelectionBinding
 import com.banglalink.toffee.enums.InputType
 import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.model.EditProfileForm
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.widget.VelBoxFieldTextWatcher

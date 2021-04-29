@@ -8,7 +8,7 @@
     <data>
         <variable
             name="profileForm"
-            type="com.banglalink.toffee.ui.profile.EditProfileForm" />
+            type="com.banglalink.toffee.model.EditProfileForm" />
     </data>
 
 

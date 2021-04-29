@@ -222,7 +222,7 @@
         >
         <argument
             android:name="data"
-            app:argType="com.banglalink.toffee.ui.profile.EditProfileForm"
+            app:argType="com.banglalink.toffee.model.EditProfileForm"
             app:nullable="true" />
         <action
             android:id="@+id/action_EditProfile_to_thumbnailSelectionMethodFragment"

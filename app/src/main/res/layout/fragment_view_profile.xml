@@ -9,7 +9,7 @@
 
         <variable
             name="data"
-            type="com.banglalink.toffee.ui.profile.EditProfileForm" />
+            type="com.banglalink.toffee.model.EditProfileForm" />
     </data>
 
     <LinearLayout

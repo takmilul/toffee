@@ -1,4 +1,4 @@
-package com.banglalink.toffee.ui.profile
+package com.banglalink.toffee.model
 
 import androidx.databinding.BaseObservable
 import java.io.Serializable
