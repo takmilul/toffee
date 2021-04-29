@@ -36,8 +36,12 @@ open class BaseAppCompatActivity : AppCompatActivity() {
         observe(EventProvider.getEventLiveData()){
             when(it.getValue()){
                 is CustomerNotFoundException->{
-                    if(this is HomeActivity) {
-                        recreate()
+                    if(this is HomeActivity && !mPref.isAlreadyForceLoggedOut) {
+                        mPref.isVerifiedUser = false
+                        mPref.isAlreadyForceLoggedOut = true
+                        launchActivity<SplashScreenActivity> { flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK }
+                        finish()
+//                        recreate()
 //                        overridePendingTransition(0, 0)
                     } else {
                         mPref.clear()
