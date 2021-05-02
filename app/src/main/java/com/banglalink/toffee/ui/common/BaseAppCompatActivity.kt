@@ -13,7 +13,6 @@ import com.banglalink.toffee.exception.OutsideOfBDException
 import com.banglalink.toffee.exception.UnEthicalActivitiesException
 import com.banglalink.toffee.extension.launchActivity
 import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.splash.SplashScreenActivity
 import com.banglalink.toffee.util.EventProvider
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,7 +45,7 @@ open class BaseAppCompatActivity : AppCompatActivity() {
                 is CustomerNotFoundException,
                 is UnEthicalActivitiesException -> {
                     client.dispatcher.cancelAll()
-                    if(this is HomeActivity && !cPref.isAlreadyForceLoggedOut) {
+                    if(!cPref.isAlreadyForceLoggedOut) {
                         cPref.isAlreadyForceLoggedOut = true
                         mPref.clear()
                         launchActivity<SplashScreenActivity> { flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK }
