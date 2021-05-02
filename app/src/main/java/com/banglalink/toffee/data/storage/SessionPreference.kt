@@ -84,12 +84,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             pref.edit().putBoolean(PREF_VERFICATION,isVerified).apply()
         }
     
-    var isAlreadyForceLoggedOut: Boolean
-        get() = pref.getBoolean(PREF_FORCE_LOGGED_OUT,false)
-        set(isVerified){
-            pref.edit().putBoolean(PREF_FORCE_LOGGED_OUT,isVerified).apply()
-        }
-    
     var logout:String
         get() = pref.getString(PREF_LOGOUT,"0")?: ""
         set(logout){
@@ -511,7 +505,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_SESSION_TOKEN = "session_token"
         private const val PREF_BANGLALINK_NUMBER = "banglalink_number"
         private const val PREF_VERFICATION = "VER"
-        private const val PREF_FORCE_LOGGED_OUT = "is_force_logged_out"
         private const val PREF_LOGOUT= "LOGIYT"
         private const val PREF_BALANCE = "balance"
         private const val PREF_LATITUDE= "latitude"

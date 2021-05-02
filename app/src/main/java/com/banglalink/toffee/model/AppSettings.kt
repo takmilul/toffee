@@ -4,9 +4,11 @@ import android.os.Build
 import com.banglalink.toffee.BuildConfig
 import com.google.android.exoplayer2.ExoPlayerLibraryInfo
 
-const val MULTI_DEVICE_LOGIN_ERROR_CODE = 109
 const val LOGIN_ERROR = 103
+const val OUTSIDE_OF_BD_ERROR_CODE = 403
 const val INVALID_REFERRAL_ERROR_CODE = -100
+const val MULTI_DEVICE_LOGIN_ERROR_CODE = 109
+const val UN_ETHICAL_ACTIVITIES_ERROR_CODE = 402
 const val CLIENT_API_HEADER = "CLIENT-API-HEADER"
 
 //    https://github.com/shamanland/simple-string-obfuscator

@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isVisible
@@ -127,11 +126,7 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
                                 (parentFragment?.parentFragment?.parentFragment as? MyChannelHomeFragment)?.showCreatePlaylistDialog()
                             }
                         } else {
-                            Toast.makeText(
-                                requireContext(),
-                                "Please create channel first",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            requireContext().showToast("Please create channel first")
                         }
                     }
                 }
@@ -221,7 +216,7 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
                 editPlaylistViewModel.editPlaylist(playlistId, channelOwnerId)
                 alertDialog.dismiss()
             } else {
-                Toast.makeText(requireContext(), "Please give a playlist name", Toast.LENGTH_SHORT).show()
+                requireContext().showToast("Please give a playlist name")
             }
         }
         playlistBinding.closeIv.setOnClickListener { alertDialog.dismiss() }

@@ -11,6 +11,7 @@ class CommonPreference(private val pref: SharedPreferences, private val context:
     
     companion object {
         private const val APP_VERSION = "app_version"
+        private const val PREF_FORCE_LOGGED_OUT = "is_force_logged_out"
         private var instance: CommonPreference? = null
         
         fun init(mContext: Context) {
@@ -34,4 +35,10 @@ class CommonPreference(private val pref: SharedPreferences, private val context:
     val deviceId: String by lazy {
         Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
     }
+    var isAlreadyForceLoggedOut: Boolean
+        get() = pref.getBoolean(PREF_FORCE_LOGGED_OUT,false)
+        set(isVerified){
+            pref.edit().putBoolean(PREF_FORCE_LOGGED_OUT,isVerified).apply()
+        }
+    
 }

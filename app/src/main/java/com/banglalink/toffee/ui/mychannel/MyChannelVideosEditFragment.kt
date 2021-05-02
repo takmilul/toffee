@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.Toast
 import androidx.core.view.setPadding
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -133,7 +132,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
             }
         }
         observe(viewModel.exitFragment) {
-            Toast.makeText(requireContext(), "Unable to load data!", Toast.LENGTH_SHORT).show()
+            requireContext().showToast("Unable to load data!")
             findNavController().popBackStack()
         }
     }

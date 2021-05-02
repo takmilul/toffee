@@ -7,12 +7,12 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.FragmentTermsConditionBinding
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.profile.ViewProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -60,7 +60,7 @@ class TermsConditionFragment : DialogFragment() {
                 is Resource.Failure -> {
                     println(it.error)
                     Log.e("data", "data" + it.error.msg)
-                    Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
+                    requireContext().showToast(it.error.msg)
                 }
             }
         }

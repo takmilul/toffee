@@ -21,13 +21,15 @@
     <dimen name="design_fab_image_size" tools:override="true">13dp</dimen>
     //256 : 144
 
+    <dimen name="button_height">40dp</dimen>
+    <dimen name="button_text_size">12sp</dimen>
     <dimen name="button_accent_width">140dp</dimen>
     <dimen name="button_accent_height">40dp</dimen>
     <dimen name="header_shadow_size">5dp</dimen>
     <dimen name="check_dimen">48dp</dimen>
     <dimen name="pack_corner_radius">8dp</dimen>
 
-    <dimen name="single_line_input_text_height">36dp</dimen>
+    <dimen name="single_line_input_text_height">40dp</dimen>
     <dimen name="default_text_size">12sp</dimen>
     <dimen name="duration_text_size">12sp</dimen>
     <dimen name="duration_vertical_padding">0dp</dimen>

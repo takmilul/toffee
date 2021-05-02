@@ -11,7 +11,6 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.text.toSpannable
 import androidx.fragment.app.activityViewModels
@@ -139,7 +138,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                 if (channelId > 0) {
                     showCreatePlaylistDialog()
                 } else {
-                    Toast.makeText(requireContext(), "Please create channel first", Toast.LENGTH_SHORT).show()
+                    requireContext().showToast("Please create channel first")
                 }
             }
             binding.channelDetailView.subscriptionButton -> {
@@ -218,7 +217,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                 createPlaylistViewModel.playlistName = null
                 alertDialog.dismiss()
             } else {
-                Toast.makeText(requireContext(), "Please give a playlist name", Toast.LENGTH_SHORT).show()
+                requireContext().showToast("Please give a playlist name")
             }
         }
         playlistBinding.closeIv.setOnClickListener { alertDialog.dismiss() }
@@ -374,7 +373,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                     cacheManager.clearCacheByUrl(GET_MY_CHANNEL_DETAILS)
                 }
                 is Failure -> {
-                    Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
+                    requireContext().showToast(it.error.msg)
                 }
             }
         }
@@ -384,7 +383,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         observe(createPlaylistViewModel.createPlaylistLiveData) {
             when (it) {
                 is Success -> {
-                    requireContext().showToast(it.data.message ?: "")
+                    requireContext().showToast(it.data.message)
                     playlistReloadViewModel.reloadPlaylist.value = true
                 }
                 is Failure -> {

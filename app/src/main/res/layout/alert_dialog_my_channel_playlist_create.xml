@@ -84,8 +84,6 @@
                 <Button
                     android:id="@+id/createButton"
                     style="@style/ButtonStyleSolidPink"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_margin="32dp"
                     android:text="Create"
                     app:layout_constraintBottom_toBottomOf="parent"

@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.View
 import android.view.View.OnClickListener
 import android.widget.RadioButton
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
@@ -119,7 +118,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
             observeCreatePlaylist()
             createPlaylistViewModel.createPlaylist(channelOwnerId)
         } else {
-            Toast.makeText(requireContext(), "Please give a playlist name", Toast.LENGTH_SHORT).show()
+            requireContext().showToast("Please give a playlist name")
         }
     }
     
@@ -131,7 +130,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
                     addToPlaylist(true)
                 }
                 is Failure -> {
-                    Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
+                    requireContext().showToast(it.error.msg)
                 }
             }
         }
@@ -139,7 +138,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
     
     private fun addToPlaylist(isCreate: Boolean) {
         if (mAdapter.selectedPosition < 0 && playlistId == 0) {
-            Toast.makeText(requireContext(), "Please select a playlist", Toast.LENGTH_SHORT).show()
+            requireContext().showToast("Please select a playlist")
         } else {
             var isAlreadyAdded = false
             if (mAdapter.selectedPosition >= 0 && !isCreate) {

@@ -20,14 +20,15 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.facebook.appevents.AppEventsLogger
-import com.facebook.shimmer.Shimmer
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import pl.droidsonroids.gif.GifDrawable
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class SplashScreenFragment2 : BaseFragment() {
+    private var logoGifDrawable: GifDrawable? = null
     private var isOperationCompleted: Boolean = false
     @Inject lateinit var commonPreference: CommonPreference
     private var _binding: FragmentSplashScreen2Binding? = null
@@ -47,19 +48,20 @@ class SplashScreenFragment2 : BaseFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val gif = binding.splashLogoImageView.drawable ?: binding.splashLogoImageView.background
+        if (gif != null && gif is GifDrawable) {
+            logoGifDrawable = gif.apply {
+                stop()
+                seekTo(0)
+            }
+        }
         
-        if (mPref.customerId != 0 && mPref.password.isNotEmpty()) {
-            observeApiLogin()
-            viewModel.loginResponse()
-        }
-        else {
-            observeApiLogin()
-            viewModel.credentialResponse()
-        }
+        observeApiLogin()
+        requestAppLaunch()
         binding.splashScreenMotionLayout.onTransitionCompletedListener {
             if (it == R.id.firstEnd) {
                 lifecycleScope.launch {
-                    delay(300)
+                    delay(1000)
                     with(binding.splashScreenMotionLayout) {
                         setTransition(R.id.firstEnd, R.id.secondEnd)
                         transitionToEnd()
@@ -67,13 +69,12 @@ class SplashScreenFragment2 : BaseFragment() {
                 }
             }
             if (it == R.id.secondEnd) {
-                val shimmer = Shimmer.AlphaHighlightBuilder()
-                    .setBaseAlpha(1f)
-                    .setHighlightAlpha(0.4f)
-                    .setDuration(500L)
-                
-                binding.splashLogoImageView.setShimmer(shimmer.build())
-                binding.splashLogoImageView.startShimmer()
+                logoGifDrawable?.let { 
+                    lifecycleScope.launch { 
+                        delay(300)
+                    }
+                    it.start()
+                }
                 if (isOperationCompleted) {
                     launchHomePage()
                 }
@@ -83,12 +84,22 @@ class SplashScreenFragment2 : BaseFragment() {
         if (!mPref.isPreviousDbDeleted){
             viewModel.deletePreviousDatabase()
         }
-        val appEventsLogger = AppEventsLogger.newLogger(requireContext())
-        appEventsLogger.logEvent("app_launch")
-        appEventsLogger.flush()
+        AppEventsLogger.newLogger(requireContext()).run { 
+            logEvent("app_launch")
+            flush()
+        }
     }
     
-    private fun observeApiLogin(skipUpdate: Boolean = false) {
+    private fun requestAppLaunch() {
+        if (mPref.customerId != 0 && mPref.password.isNotEmpty()) {
+            viewModel.loginResponse()
+        }
+        else {
+            viewModel.credentialResponse()
+        }
+    }
+    
+    private fun observeApiLogin() {
         observe(viewModel.apiLoginResponse) {
             when (it) {
                 is Resource.Success -> {
@@ -106,7 +117,7 @@ class SplashScreenFragment2 : BaseFragment() {
                             ToffeeAnalytics.logApiError("apiLogin", it.error.msg)
                             binding.root.snack(it.error.msg) {
                                 action("Retry") {
-                                    viewModel.loginResponse(skipUpdate)
+                                    requestAppLaunch()
                                 }
                             }
                         }
@@ -123,40 +134,36 @@ class SplashScreenFragment2 : BaseFragment() {
     }
     
     private fun showUpdateDialog(title: String, message: String, forceUpdate: Boolean) {
-        val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle(title)
-        builder.setMessage(message)
-        builder.setCancelable(false)
-        
-        builder.setPositiveButton("Update") { _, _ ->
-            try {
-                startActivity(
-                    Intent(
-                        Intent.ACTION_VIEW,
-                        Uri.parse("market://details?id=${requireActivity().packageName}")
+        AlertDialog.Builder(requireContext()).apply {
+            setTitle(title)
+            setMessage(message)
+            setCancelable(false)
+            setPositiveButton("Update") { _, _ ->
+                try {
+                    startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("market://details?id=${requireActivity().packageName}")
+                        )
                     )
-                )
-            }
-            catch (e: ActivityNotFoundException) {
-                startActivity(
-                    Intent(
-                        Intent.ACTION_VIEW,
-                        Uri.parse("https://play.google.com/store/apps/details?id=${requireActivity().packageName}")
+                }
+                catch (e: ActivityNotFoundException) {
+                    startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("https://play.google.com/store/apps/details?id=${requireActivity().packageName}")
+                        )
                     )
-                )
+                }
+                requireActivity().finish()
             }
-            requireActivity().finish()
-        }
-        
-        if (! forceUpdate) {
-            builder.setNegativeButton("SKIP") { dialogInterface, _ ->
-                dialogInterface.dismiss()
-                viewModel.loginResponse(true)
+            if (! forceUpdate) {
+                setNegativeButton("SKIP") { dialogInterface, _ ->
+                    dialogInterface.dismiss()
+                    viewModel.loginResponse(true)
+                }
             }
-        }
-        
-        val alertDialog = builder.create()
-        alertDialog.show()
+        }.create().show()
     }
     
     override fun onDestroyView() {

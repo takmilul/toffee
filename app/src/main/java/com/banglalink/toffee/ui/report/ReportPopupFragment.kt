@@ -6,7 +6,6 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
 import android.widget.RadioButton
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
@@ -14,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import com.banglalink.toffee.databinding.FragmentReportPopupBinding
 import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.OffenseType
 import com.banglalink.toffee.ui.common.CheckedChangeListener
 import dagger.hilt.android.AndroidEntryPoint
@@ -89,7 +89,7 @@ class ReportPopupFragment : DialogFragment(),
                     val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
                     val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
                     if (isEmpty && !isLoading) {
-                        Toast.makeText(requireContext(), "Unable to load data.", Toast.LENGTH_SHORT).show()
+                        requireContext().showToast("Unable to load data!")
                         alertDialog.dismiss()
                     }
                     isInitialized = true

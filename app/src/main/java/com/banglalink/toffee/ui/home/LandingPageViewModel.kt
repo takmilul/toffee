@@ -2,7 +2,6 @@ package com.banglalink.toffee.ui.home
 
 import android.content.Context
 import android.util.Pair
-import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -15,6 +14,7 @@ import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.enums.PageType.Landing
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
@@ -85,7 +85,7 @@ class LandingPageViewModel @Inject constructor(
                         subCategories.postValue(emptyList())
                         hashtagList.postValue(emptyList())
                     }
-                    Toast.makeText(context, response.error.msg, Toast.LENGTH_SHORT).show()
+                    context.showToast(response.error.msg)
                 }
             }
         }

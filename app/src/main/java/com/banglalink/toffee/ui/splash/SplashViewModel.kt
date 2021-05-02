@@ -47,7 +47,7 @@ class SplashViewModel @Inject constructor(
             val response = resultFromResponse { credential.execute() }
             when(response){
                 is Resource.Failure -> {
-                    Log.e("response","failure"+response.error.msg)
+                    apiLoginResponse.value = response
                 }
                 is Resource.Success -> {
                     loginResponse(false)

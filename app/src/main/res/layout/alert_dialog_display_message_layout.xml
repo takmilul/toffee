@@ -28,9 +28,9 @@
             android:textSize="16sp"/>
 
 
-        <TextView
+        <Button
             android:id="@+id/ok_button"
-            style="@style/Button1Style"
+            style="@style/ButtonStyleSolidPink"
             android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -40,7 +40,7 @@
             android:textAllCaps="true"
             android:clickable="true"
             android:textSize="16sp">
-        </TextView>
+        </Button>
 
     </LinearLayout>
 

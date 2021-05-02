@@ -59,7 +59,7 @@
 
         <Button
             android:id="@+id/back_to_home"
-            style="@style/Button1Style"
+            style="@style/ButtonStyleSolidPink"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"

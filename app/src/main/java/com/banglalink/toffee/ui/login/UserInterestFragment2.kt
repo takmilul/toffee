@@ -54,7 +54,7 @@ class UserInterestFragment2 : ChildDialogFragment() {
                     reloadContent()
                 }
                 else {
-                    requireActivity().showToast("Please select at least 3 interest or press skip to sign in")
+                    requireContext().showToast("Please select at least 3 interest or press skip to sign in")
                 }
             })
         }
@@ -93,7 +93,7 @@ class UserInterestFragment2 : ChildDialogFragment() {
             else {
                 progressDialog.hide()
                 closeDialog()
-                requireActivity().showToast("Couldn't load data")
+                requireContext().showToast("Unable to load data!")
             }
         }
     }

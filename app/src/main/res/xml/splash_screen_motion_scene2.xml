@@ -7,7 +7,7 @@
         motion:autoTransition="animateToEnd"
         motion:constraintSetEnd="@id/firstEnd"
         motion:constraintSetStart="@id/firstStart"
-        motion:duration="800"
+        motion:duration="700"
         motion:motionInterpolator="linear">
         
         <KeyFrameSet>
@@ -132,7 +132,6 @@
             android:layout_height="420dp"
             android:layout_marginStart="28dp"
             android:layout_marginTop="24dp"
-            android:background="@drawable/ic_splash_logo_pink_bg"
             motion:layout_constraintBottom_toBottomOf="@id/splashLineImageView"
             motion:layout_constraintEnd_toEndOf="@id/splashLineImageView"
             motion:layout_constraintStart_toStartOf="@id/splashLineImageView"
@@ -142,7 +141,6 @@
             android:id="@+id/splashWhiteImageView"
             android:layout_width="350dp"
             android:layout_height="372dp"
-            android:background="@drawable/ic_splash_logo_white_bg"
             motion:layout_constraintBottom_toBottomOf="@id/splashLineImageView"
             motion:layout_constraintEnd_toEndOf="@id/splashLineImageView"
             motion:layout_constraintStart_toStartOf="@id/splashLineImageView"
@@ -153,7 +151,6 @@
             android:layout_width="80dp"
             android:layout_height="56dp"
             android:layout_marginTop="36dp"
-            android:background="@drawable/ic_logo_home"
             motion:layout_constraintBottom_toBottomOf="@id/splashLineImageView"
             motion:layout_constraintEnd_toEndOf="@id/splashLineImageView"
             motion:layout_constraintStart_toStartOf="@id/splashLineImageView"
@@ -161,10 +158,9 @@
         
         <Constraint
             android:id="@+id/splashLogoTitleImageView"
-            android:layout_width="120dp"
+            android:layout_width="126dp"
             android:layout_height="22dp"
             android:layout_marginTop="12dp"
-            android:background="@drawable/ic_logo_title"
             motion:layout_constraintEnd_toEndOf="@id/splashLogoImageView"
             motion:layout_constraintStart_toStartOf="@id/splashLogoImageView"
             motion:layout_constraintTop_toBottomOf="@id/splashLogoImageView" />
@@ -174,11 +170,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="38dp"
-            android:fontFamily="@font/roboto_medium"
-            android:gravity="center"
-            android:text="Watch FREE\non Any Network!"
-            android:textColor="@android:color/white"
-            android:textSize="24sp"
             motion:layout_constraintBottom_toBottomOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
@@ -189,7 +180,7 @@
     <Transition
         motion:constraintSetEnd="@+id/secondEnd"
         motion:constraintSetStart="@id/firstEnd"
-        motion:duration="800"
+        motion:duration="700"
         motion:motionInterpolator="linear">
         
         <KeyFrameSet>
@@ -228,7 +219,6 @@
             android:layout_height="420dp"
             android:layout_marginStart="28dp"
             android:layout_marginTop="24dp"
-            android:background="@drawable/ic_splash_logo_pink_bg"
             motion:layout_constraintBottom_toBottomOf="@id/splashLineImageView"
             motion:layout_constraintEnd_toEndOf="@id/splashLineImageView"
             motion:layout_constraintStart_toStartOf="@id/splashLineImageView"
@@ -238,43 +228,26 @@
             android:id="@+id/splashWhiteImageView"
             android:layout_width="350dp"
             android:layout_height="372dp"
-            android:background="@drawable/ic_splash_logo_white_bg"
             motion:layout_constraintBottom_toBottomOf="@id/splashLineImageView"
             motion:layout_constraintEnd_toEndOf="@id/splashLineImageView"
             motion:layout_constraintStart_toStartOf="@id/splashLineImageView"
             motion:layout_constraintTop_toTopOf="@id/splashLineImageView" />
         
         <Constraint
-            android:id="@+id/splashLogoImageView"
+            android:id="@id/splashLogoImageView"
             android:layout_width="80dp"
             android:layout_height="56dp"
-            android:background="@drawable/ic_logo_home"
             motion:layout_constraintBottom_toTopOf="@id/splashLogoTitleImageView"
             motion:layout_constraintEnd_toEndOf="@id/splashLineImageView"
             motion:layout_constraintStart_toStartOf="@id/splashLineImageView"
             motion:layout_constraintTop_toTopOf="parent"
-            motion:layout_constraintVertical_chainStyle="packed" />
-        
-        <!--<Constraint
-            android:id="@+id/splashLogo"
-            android:layout_width="80dp"
-            android:layout_height="56dp"
-            android:visibility="invisible"
-            motion:visibilityMode="ignore"
-            android:background="@drawable/ic_logo_home"
-            motion:layout_constraintVertical_bias="1"
-            motion:layout_constraintVertical_chainStyle="packed"
-            motion:layout_constraintTop_toTopOf="@id/splashLogoImageView"
-            motion:layout_constraintBottom_toBottomOf="@id/splashLogoImageView"
-            motion:layout_constraintStart_toStartOf="@id/splashLogoImageView"
-            motion:layout_constraintEnd_toEndOf="@id/splashLogoImageView"/>-->
+            motion:layout_constraintVertical_chainStyle="packed"/>
         
         <Constraint
             android:id="@+id/splashLogoTitleImageView"
-            android:layout_width="120dp"
+            android:layout_width="126dp"
             android:layout_height="22dp"
             android:layout_marginTop="12dp"
-            android:background="@drawable/ic_logo_title"
             motion:layout_constraintBottom_toBottomOf="parent"
             motion:layout_constraintEnd_toEndOf="@id/splashLogoImageView"
             motion:layout_constraintStart_toStartOf="@id/splashLogoImageView"
@@ -290,11 +263,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="38dp"
-            android:fontFamily="@font/roboto_medium"
-            android:gravity="center"
-            android:text="Watch FREE\non Any Network!"
-            android:textColor="@android:color/white"
-            android:textSize="24sp"
             motion:layout_constraintBottom_toBottomOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"

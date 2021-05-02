@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
@@ -15,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.repository.UserActivitiesRepository
 import com.banglalink.toffee.databinding.ActivitySettingsBinding
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -164,7 +164,7 @@ class SettingsFragment : BaseFragment() {
             setPositiveButtonListener("Clear") {
                 lifecycleScope.launch {
                     userActivitiesRepository.deleteAll()
-                    Toast.makeText(requireContext(), "Activities cleared", Toast.LENGTH_SHORT).show()
+                    requireContext().showToast("Activities cleared")
                     it?.dismiss()
                 }
             }

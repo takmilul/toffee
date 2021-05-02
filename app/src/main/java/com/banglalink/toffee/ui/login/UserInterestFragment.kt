@@ -52,7 +52,7 @@ class UserInterestFragment : BaseFragment() {
                 login()
             }
             else {
-                requireActivity().showToast("Please select at least 3 interest or press skip to sign in")
+                requireContext().showToast("Please select at least 3 interest or press skip to sign in")
             }
         })
         binding.skipButton.safeClick({ login() })

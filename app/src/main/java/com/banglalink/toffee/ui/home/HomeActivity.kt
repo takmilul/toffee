@@ -149,6 +149,7 @@ class HomeActivity :
             )
         }
         mPref.logout="0"
+        cPref.isAlreadyForceLoggedOut = false
 //        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         binding = ActivityMainMenuBinding.inflate(layoutInflater)
         setContentView(binding.root)

@@ -116,9 +116,9 @@
                     android:layout_marginTop="40dp"
                     android:text="Edit Profile" />
 
-                <TextView
+                <Button
                     android:id="@+id/change_password_button"
-                    style="@style/Button2Style"
+                    style="@style/ButtonStyleRingPink"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"

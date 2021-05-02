@@ -23,6 +23,7 @@ import com.banglalink.toffee.databinding.UploadBottomSheetBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.extension.show
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.profile.ViewProfileViewModel
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
@@ -155,7 +156,7 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment(), TextWatcher {
                         mPref.channelName = channelName
                     }
                     progressDialog.dismiss()
-                    Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
+                    requireContext().showToast(it.data.message)
                     cacheManager.clearCacheByUrl(GET_MY_CHANNEL_DETAILS)
                     findNavController().popBackStack().let { 
                         findNavController().navigate(R.id.newUploadMethodFragment)
@@ -163,7 +164,7 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment(), TextWatcher {
                 }
                 is Resource.Failure -> {
                     Log.e("data", "data" + it.error.msg)
-                    Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
+                    requireContext().showToast(it.error.msg)
                     progressDialog.dismiss()
                 }
             }
