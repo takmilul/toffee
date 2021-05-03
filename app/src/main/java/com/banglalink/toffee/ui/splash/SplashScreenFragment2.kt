@@ -52,7 +52,7 @@ class SplashScreenFragment2 : BaseFragment() {
         if (gif != null && gif is GifDrawable) {
             logoGifDrawable = gif.apply {
                 stop()
-                seekTo(0)
+                seekToFrame(0)
             }
         }
         
@@ -69,14 +69,12 @@ class SplashScreenFragment2 : BaseFragment() {
                 }
             }
             if (it == R.id.secondEnd) {
-                logoGifDrawable?.let { 
-                    lifecycleScope.launch { 
-                        delay(300)
-                    }
-                    it.start()
-                }
+                logoGifDrawable?.start()
                 if (isOperationCompleted) {
-                    launchHomePage()
+                    lifecycleScope.launch { 
+                        delay(500)
+                        launchHomePage()
+                    }
                 }
                 isOperationCompleted = true
             }

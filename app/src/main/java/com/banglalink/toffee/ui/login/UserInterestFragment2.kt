@@ -10,7 +10,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
-import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.AlertDialogUserInterestBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
@@ -22,11 +21,9 @@ import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class UserInterestFragment2 : ChildDialogFragment() {
-    @Inject lateinit var mPref: SessionPreference
     private var _binding: AlertDialogUserInterestBinding? = null
     private val homeViewModel: HomeViewModel by activityViewModels()
     private val binding get() = _binding !!
@@ -50,7 +47,7 @@ class UserInterestFragment2 : ChildDialogFragment() {
                 val userInterestCount = userInterestList.values.count { it == 1 }
                 if (userInterestCount >= 3) {
                     homeViewModel.sendUserInterestData(userInterestList)
-                    mPref.isUserInterestSubmitted = true
+                    cPref.setUserInterestSubmitted(mPref.phoneNumber)
                     reloadContent()
                 }
                 else {

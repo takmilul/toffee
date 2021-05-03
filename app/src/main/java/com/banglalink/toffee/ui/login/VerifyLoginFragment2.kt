@@ -9,7 +9,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.AlertDialogVerifyBinding
 import com.banglalink.toffee.extension.action
 import com.banglalink.toffee.extension.observe
@@ -24,7 +23,6 @@ import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class VerifyLoginFragment2 : ChildDialogFragment() {
@@ -33,7 +31,6 @@ class VerifyLoginFragment2 : ChildDialogFragment() {
     private var phoneNumber: String = ""
     private var regSessionToken: String = ""
     private var resendBtnPressCount: Int = 0
-    @Inject lateinit var mPref: SessionPreference
     private var resendCodeTimer: ResendCodeTimer? = null
     private var verifiedUserData: CustomerInfoLogin? = null
     private var _binding: AlertDialogVerifyBinding ? = null
@@ -83,7 +80,7 @@ class VerifyLoginFragment2 : ChildDialogFragment() {
                 is Resource.Success -> {
                     verifiedUserData = it.data
                     mPref.phoneNumber = phoneNumber
-                    if (mPref.isUserInterestSubmitted) {
+                    if (cPref.isUserInterestSubmitted(phoneNumber)) {
                         reloadContent()
                     }
                     else {
