@@ -15,6 +15,7 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.databinding.FragmentSplashScreen2Binding
 import com.banglalink.toffee.exception.AppDeprecatedError
+import com.banglalink.toffee.exception.CustomerNotFoundError
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseFragment
@@ -111,8 +112,12 @@ class SplashScreenFragment2 : BaseFragment() {
                         is AppDeprecatedError -> {
                             showUpdateDialog(it.error.title, it.error.updateMsg, it.error.forceUpdate)
                         }
+                        is CustomerNotFoundError -> {
+                            mPref.clear()
+                            requestAppLaunch()
+                        }
                         else -> {
-                            ToffeeAnalytics.logApiError("apiLogin", it.error.msg)
+                            ToffeeAnalytics.logApiError("apiLoginV2", it.error.msg)
                             binding.root.snack(it.error.msg) {
                                 action("Retry") {
                                     requestAppLaunch()

@@ -1,6 +1,3 @@
 package com.banglalink.toffee.exception
 
-import java.lang.Exception
-
-class CustomerNotFoundException(val errorMessage:String):Exception(errorMessage) {
-}
+class CustomerNotFoundException(val errorCode: Int, val errorMessage:String):Exception(errorMessage)

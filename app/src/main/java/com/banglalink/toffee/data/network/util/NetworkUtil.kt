@@ -33,8 +33,8 @@ suspend fun <T : BaseResponse> tryIO2(block: suspend () -> T): T {
             )
         }
         response.errorCode == MULTI_DEVICE_LOGIN_ERROR_CODE -> {
-            EventProvider.post(CustomerNotFoundException("Customer multiple login occurred"))
-            throw ApiException(
+            EventProvider.post(CustomerNotFoundException(response.errorCode, "Customer multiple login occurred"))
+            throw CustomerNotFoundException(
                 response.errorCode,
                 ""//we do not want to show error message for this error code
             )
