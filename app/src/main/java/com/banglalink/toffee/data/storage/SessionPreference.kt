@@ -164,12 +164,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
                 profileImageUrlLiveData.postValue(userPhoto!!)
         }
 
-    var appThemeMode: Int
-        get() = pref.getInt(PREF_APP, 0)
-        set(themeMode){
-            pref.edit().putInt(PREF_APP, themeMode).apply()
-        }
-
     val netType: String
         get() = if (Utils.checkWifiOnAndConnected(context)) PREF_WIFI else PREF_CELLULAR
 
@@ -290,7 +284,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     fun getHeaderSessionToken(): String? {
         return pref.getString(PREF_SESSION_TOKEN_HEADER, "")
     }
-
+    
     fun setHlsOverrideUrl(hlsOverrideUrl: String?) {
         pref.edit().putString(PREF_HLS_OVERRIDE_URL, hlsOverrideUrl).apply()
     }
@@ -299,14 +293,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         return pref.getString(PREF_HLS_OVERRIDE_URL, "")
     }
 
-    fun setShouldOverrideHlsUrl(value: Boolean) {
-        pref.edit().putBoolean(PREF_SHOULD_OVERRIDE, value).apply()
-    }
-
-    fun shouldOverrideHlsUrl(): Boolean {
-        return pref.getBoolean(PREF_SHOULD_OVERRIDE, false)
-    }
-
+    var shouldOverrideHlsUrl: Boolean
+        get() = pref.getBoolean(PREF_SHOULD_OVERRIDE, true)
+        set(value) = pref.edit{ putBoolean(PREF_SHOULD_OVERRIDE, value) }
+    
     fun setSessionTokenLifeSpanInMillis(tokenLifeSpanInMillis: Long) {
         pref.edit().putLong(PREF_DEVICE_TIME_IN_MILLISECONDS, System.currentTimeMillis()).apply()
         pref.edit().putLong(PREF_TOKEN_LIFE_SPAN, tokenLifeSpanInMillis - 10 * 60 * 1000)
@@ -462,10 +452,12 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         password = customerInfoLogin.password?:""
         customerName = customerInfoLogin.customerName?:""
         sessionToken = (customerInfoLogin.sessionToken?:"")
-
+        if (userImageUrl.isNullOrBlank()) {
+            userImageUrl = customerInfoLogin.profileImage
+        }
         setHeaderSessionToken(customerInfoLogin.headerSessionToken)
         setHlsOverrideUrl(customerInfoLogin.hlsOverrideUrl)
-        setShouldOverrideHlsUrl(customerInfoLogin.hlsUrlOverride)
+        shouldOverrideHlsUrl = customerInfoLogin.hlsUrlOverride
         setSessionTokenLifeSpanInMillis(customerInfoLogin.tokenLifeSpan.toLong() * 1000 * 3600)
         if(customerInfoLogin.isBanglalinkNumber!=null){
             isBanglalinkNumber = customerInfoLogin.isBanglalinkNumber
@@ -515,7 +507,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_NOTIFICATION_DB_VERSION= "notification_db_version"
         private const val PREF_FCM_TOKEN= "FCMToken"
         private const val PREF_IMAGE_URL= "image_url"
-        private const val PREF_APP= "app_theme"
         private const val PREF_WIFI= "WIFI"
         private const val PREF_CELLULAR= "CELLULAR"
         private const val PREF_SUBSCRIPTION_ACTIVE= "subscription_active"

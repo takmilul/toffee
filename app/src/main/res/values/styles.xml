@@ -487,4 +487,42 @@
         <item name="android:clipToPadding">false</item>
     </style>
     
+    <style name="SingleLineInputFieldStyle" parent="Widget.AppCompat.EditText">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">@dimen/single_line_input_text_height</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginHorizontal">16dp</item>
+        <item name="android:background">@drawable/single_line_input_text_bg</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:inputType">textPersonName</item>
+        <item name="android:ems">10</item>
+        <item name="singleLine">true</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="android:textColor">@color/cardTitleColor</item>
+        <item name="android:textSize">@dimen/input_field_text_size</item>
+        <item name="android:textColorHint">@color/switchUnCheckedColor</item>
+    </style>
+    
+    <style name="MultilineInputFieldStyle" parent="Widget.AppCompat.EditText">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginHorizontal">16dp</item>
+        <item name="android:background">@drawable/multiline_input_text_bg</item>
+        <item name="android:lines">4</item>
+        <item name="android:maxLines">8</item>
+        <item name="android:inputType">textMultiLine|textCapSentences</item>
+        <item name="android:ems">10</item>
+        <item name="android:maxLength">2000</item>
+        <item name="android:gravity">top|start</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="android:textColor">@color/cardTitleColor</item>
+        <item name="android:textSize">@dimen/input_field_text_size</item>
+        <item name="android:textColorHint">@color/switchUnCheckedColor</item>
+    </style>
+    
+    <style name="LeadingIconSingleLineInputFieldStyle" parent="SingleLineInputFieldStyle">
+        <item name="android:drawablePadding">13dp</item>
+        <item name="android:inputType">textCapWords</item>
+    </style>
 </resources>

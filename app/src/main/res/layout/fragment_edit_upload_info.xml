@@ -3,12 +3,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" >
+    
     <data>
         <import type="android.view.View" />
         <variable
             name="viewmodel"
             type="com.banglalink.toffee.ui.upload.EditUploadInfoViewModel" />
     </data>
+    
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -62,20 +64,6 @@
                 app:layout_constraintBottom_toBottomOf="@+id/video_thumb"
                 tools:text="00:00" />
 
-<!--            <ProgressBar-->
-<!--                android:id="@+id/progressBar"-->
-<!--                style="?android:attr/progressBarStyleHorizontal"-->
-<!--                android:layout_width="0dp"-->
-<!--                android:layout_height="0dp"-->
-<!--                android:max="100"-->
-<!--                android:progress="@{viewmodel.uploadProgress}"-->
-<!--                android:progressDrawable="@drawable/upload_progress_bg"-->
-<!--                android:visibility="gone"-->
-<!--                app:layout_constraintBottom_toBottomOf="@+id/video_thumb"-->
-<!--                app:layout_constraintEnd_toEndOf="@+id/video_thumb"-->
-<!--                app:layout_constraintStart_toStartOf="@+id/video_thumb"-->
-<!--                app:layout_constraintTop_toTopOf="@+id/video_thumb" />-->
-
             <TextView
                 android:id="@+id/textView15"
                 android:layout_width="wrap_content"
@@ -91,18 +79,10 @@
 
             <EditText
                 android:id="@+id/upload_title"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/single_line_input_text_height"
-                android:layout_marginStart="16dp"
+                style="@style/SingleLineInputFieldStyle"
                 android:layout_marginTop="4dp"
-                android:layout_marginEnd="16dp"
-                android:background="@drawable/single_line_input_text_bg"
-                android:ems="10"
-                android:maxLines="1"
                 android:hint="Title"
-                android:inputType="textPersonName"
                 android:fontFamily="@font/roboto_medium"
-                android:textColor="@color/cardTitleColor"
                 android:text="@={viewmodel.title}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -122,8 +102,7 @@
                 app:layout_constraintStart_toStartOf="@+id/upload_title"
                 app:layout_constraintTop_toBottomOf="@+id/upload_title"
                 tools:visibility="visible" />
-
-
+            
             <TextView
                 android:id="@+id/textView17"
                 android:layout_width="wrap_content"
@@ -139,21 +118,9 @@
 
             <com.banglalink.toffee.ui.widget.HashTagEditText
                 android:id="@+id/upload_description"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                style="@style/MultilineInputFieldStyle"
                 android:layout_marginTop="4dp"
-                android:layout_marginEnd="16dp"
-                android:background="@drawable/multiline_input_text_bg"
-                android:ems="10"
                 android:hint="Description..."
-                android:gravity="top|start"
-                android:inputType="textMultiLine|textCapSentences"
-                android:lines="4"
-                android:maxLength="2000"
-                android:maxLines="8"
-                android:fontFamily="@font/roboto_regular"
-                android:textColor="@color/cardTitleColor"
                 android:text="@={viewmodel.description}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -231,26 +198,7 @@
                 app:layout_constraintStart_toStartOf="@+id/upload_tags"
                 app:layout_constraintTop_toBottomOf="@+id/upload_tags"
                 tools:visibility="visible" />
-
-
-
-            <!--            <com.banglalink.toffee.ui.widget.ChipEditText-->
-            <!--                android:id="@+id/upload_tags"-->
-            <!--                android:layout_width="0dp"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:layout_marginStart="16dp"-->
-            <!--                android:layout_marginTop="4dp"-->
-            <!--                android:layout_marginEnd="16dp"-->
-            <!--                android:background="@drawable/upload_edittext_bg"-->
-            <!--                android:ems="10"-->
-            <!--                android:lines="2"-->
-            <!--                android:maxLines="2"-->
-            <!--                android:gravity="top|start"-->
-            <!--                android:inputType="textMultiLine"-->
-            <!--                app:layout_constraintEnd_toEndOf="parent"-->
-            <!--                app:layout_constraintStart_toStartOf="parent"-->
-            <!--                app:layout_constraintTop_toBottomOf="@+id/textView19" />-->
-
+            
             <TextView
                 android:id="@+id/textView20"
                 android:layout_width="wrap_content"
@@ -293,6 +241,7 @@
                     android:id="@+id/category_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:textSize="13sp"
                     android:spinnerMode="dialog" />
             </RelativeLayout>
 
@@ -312,8 +261,8 @@
                     android:id="@+id/age_group_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:spinnerMode="dialog"
-                     />
+                    android:textSize="13sp"
+                    android:spinnerMode="dialog" />
             </RelativeLayout>
 
             <TextView
@@ -344,41 +293,10 @@
                 <Spinner
                     android:id="@+id/subCategorySpinner"
                     android:spinnerMode="dialog"
+                    android:textSize="13sp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
             </RelativeLayout>
-<!--
-
-            <TextView
-                android:id="@+id/textView22"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="24dp"
-                android:visibility="gone"
-                android:text="Submit to Challenge"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/category_spinner_wrap" />
-
-            <RelativeLayout
-                android:id="@+id/challenge_selection_spinner_wrap"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="4dp"
-                android:visibility="gone"
-                android:layout_marginEnd="16dp"
-                android:background="@drawable/upload_spinner_bg"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView22">
-
-                <Spinner
-                    android:id="@+id/challenge_selection_spinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </RelativeLayout>
--->
 
             <Button
                 android:id="@+id/cancel_button"
@@ -420,25 +338,6 @@
                 app:layout_constraintStart_toStartOf="@+id/video_thumb"
                 app:layout_constraintTop_toBottomOf="@+id/video_thumb"
                 tools:text="File name.mp4 \u2022 250MB" />
-
-<!--            <TextView-->
-<!--                android:id="@+id/upload_size_text"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginEnd="16dp"-->
-<!--                android:text="@{viewmodel.uploadSize}"-->
-<!--                android:textColor="#ffffff"-->
-<!--                android:visibility="@{viewmodel.uploadProgress == 100 ? View.GONE : View.VISIBLE}"-->
-<!--                app:layout_constraintBottom_toBottomOf="@+id/video_thumb"-->
-<!--                app:layout_constraintEnd_toEndOf="@+id/video_thumb"-->
-<!--                app:layout_constraintTop_toTopOf="@+id/video_thumb"-->
-<!--                tools:text="250 MB" />-->
-
-<!--            <androidx.constraintlayout.widget.Group-->
-<!--                android:id="@+id/uploadProgressGroup"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                app:constraint_referenced_ids="upload_progress_text,upload_size_text" />-->
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

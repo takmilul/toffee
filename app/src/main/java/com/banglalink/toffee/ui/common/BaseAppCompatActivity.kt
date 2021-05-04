@@ -29,7 +29,7 @@ open class BaseAppCompatActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        when (mPref.appThemeMode) {
+        when (cPref.appThemeMode) {
             Configuration.UI_MODE_NIGHT_NO -> {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             }

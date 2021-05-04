@@ -1059,8 +1059,8 @@ class HomeActivity :
         val sideNav = binding.sideNavigation.menu.findItem(R.id.menu_change_theme)
         sideNav?.let { themeMenu ->
             val isDarkEnabled = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
-            if (mPref.appThemeMode == 0) {
-                mPref.appThemeMode = if (isDarkEnabled) Configuration.UI_MODE_NIGHT_YES else Configuration.UI_MODE_NIGHT_NO 
+            if (cPref.appThemeMode == 0) {
+                cPref.appThemeMode = if (isDarkEnabled) Configuration.UI_MODE_NIGHT_YES else Configuration.UI_MODE_NIGHT_NO 
             }
             val parser: XmlPullParser = resources.getXml(R.xml.custom_switch)
             var switch: View? = null
@@ -1103,10 +1103,10 @@ class HomeActivity :
 
     private fun changeAppTheme(isDarkEnabled: Boolean){
         if (isDarkEnabled) {
-            mPref.appThemeMode = Configuration.UI_MODE_NIGHT_YES
+            cPref.appThemeMode = Configuration.UI_MODE_NIGHT_YES
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         } else {
-            mPref.appThemeMode = Configuration.UI_MODE_NIGHT_NO
+            cPref.appThemeMode = Configuration.UI_MODE_NIGHT_NO
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
     }
@@ -1274,14 +1274,12 @@ class HomeActivity :
             when(it) {
                 is Success -> {
                     if (!it.data.verifyStatus) {
-//                        mPref.clear()
-//                        mPref.logout = "1"
+                        mPref.phoneNumber = ""
+                        mPref.userImageUrl = null
                         mPref.isVerifiedUser = false
-                        UploadService.stopAllUploads()
-//                        launchActivity<SplashScreenActivity>()
-//                        finish()
-//                      overridePendingTransition(0, 0)
-                        recreate()
+                        navController.popBackStack(R.id.menu_feed, false).let { 
+                            recreate()
+                        }
                     }
                 }
                 is Failure -> {
@@ -1291,13 +1289,6 @@ class HomeActivity :
         }
     }
     
-//    fun handleVerficationApp() {
-//        mPref.clear()
-//        mPref.logout="1"
-//        UploadService.stopAllUploads()
-//        launchActivity<SplashScreenActivity>()
-//        finish()
-//    }
     override fun onDrawerButtonPressed(): Boolean {
         binding.drawerLayout.openDrawer(GravityCompat.END, true)
         return true

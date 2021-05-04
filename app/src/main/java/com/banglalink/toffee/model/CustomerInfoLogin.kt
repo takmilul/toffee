@@ -15,6 +15,8 @@ class CustomerInfoLogin(
     var password: String? = null,
     @SerializedName("sessionToken")
     var sessionToken: String? = null,
+    @SerializedName("profileImage")
+    val profileImage: String? = null,
     @SerializedName("systemTime")
     var systemTime: String? = null,
     @SerializedName("balance")

@@ -66,17 +66,11 @@
 
                 <EditText
                     android:id="@+id/playlistNameEditText"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/single_line_input_text_height"
+                    style="@style/SingleLineInputFieldStyle"
+                    android:layout_marginHorizontal="0dp"
                     android:layout_marginTop="8dp"
-                    android:background="@drawable/single_line_dialog_input_text_bg"
-                    android:ems="10"
                     android:hint="Playlist name"
-                    android:inputType="textPersonName"
-                    android:textSize="14sp"
                     android:text="@={viewModel.playlistName}"
-                    android:fontFamily="@font/roboto_regular"
-                    android:textColor="@color/cardTitleColor"
                     app:layout_constraintEnd_toEndOf="@+id/textView51"
                     app:layout_constraintStart_toStartOf="@+id/textView51"
                     app:layout_constraintTop_toBottomOf="@+id/textView51" />
