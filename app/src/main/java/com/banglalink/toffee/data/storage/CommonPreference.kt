@@ -12,7 +12,7 @@ class CommonPreference(private val pref: SharedPreferences, private val context:
     companion object {
         private const val APP_VERSION = "app_version"
         private const val PREF_FORCE_LOGGED_OUT = "is_force_logged_out"
-        private const val PREF_IS_USER_INTEREST_SUBMITTED = "isUserInterestSubmitted"
+        private const val PREF_IS_USER_INTEREST_SUBMITTED = "_isUserInterestSubmitted"
         private var instance: CommonPreference? = null
         
         fun init(mContext: Context) {

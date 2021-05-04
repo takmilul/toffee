@@ -120,6 +120,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="7dp"
                 android:textSize="@dimen/default_text_size"
+                android:text="@{data.formattedCreateTime()}"
                 android:textColor="@color/fixed_second_main_text_color"
                 app:layout_constraintStart_toStartOf="@id/channel_name"
                 app:layout_constraintTop_toBottomOf="@+id/multiTextButton"

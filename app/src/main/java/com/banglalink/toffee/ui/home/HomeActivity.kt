@@ -332,7 +332,7 @@ class HomeActivity :
             viewModel.sendShareLog(channelInfo)
         }
         
-        if (!mPref.hasChannelName() && !mPref.hasChannelLogo() && !mPref.isChannelDetailChecked) {
+        if (!mPref.hasChannelName() && !mPref.hasChannelLogo() && !mPref.isChannelDetailChecked && mPref.isVerifiedUser) {
             viewModel.getChannelDetail(1, 0, 0, mPref.customerId)
         }
         
