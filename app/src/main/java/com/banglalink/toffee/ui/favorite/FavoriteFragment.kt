@@ -66,7 +66,9 @@ class FavoriteFragment : BaseListFragment<ChannelInfo>(), ProviderIconCallback<C
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_fav->{
-                    requireActivity().handleFavorite(channelInfo)
+                    requireActivity().handleFavorite(channelInfo, onRemoved = {
+                        mAdapter.refresh()
+                    })
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_report -> {
