@@ -164,12 +164,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
                 profileImageUrlLiveData.postValue(userPhoto!!)
         }
 
-    var appThemeMode: Int
-        get() = pref.getInt(PREF_APP, 0)
-        set(themeMode){
-            pref.edit().putInt(PREF_APP, themeMode).apply()
-        }
-
     val netType: String
         get() = if (Utils.checkWifiOnAndConnected(context)) PREF_WIFI else PREF_CELLULAR
 
@@ -515,7 +509,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_NOTIFICATION_DB_VERSION= "notification_db_version"
         private const val PREF_FCM_TOKEN= "FCMToken"
         private const val PREF_IMAGE_URL= "image_url"
-        private const val PREF_APP= "app_theme"
         private const val PREF_WIFI= "WIFI"
         private const val PREF_CELLULAR= "CELLULAR"
         private const val PREF_SUBSCRIPTION_ACTIVE= "subscription_active"

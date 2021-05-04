@@ -7,7 +7,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.navigation.NavController
 import androidx.navigation.ui.NavigationUI
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -18,7 +17,6 @@ import com.banglalink.toffee.extension.loadProfileImage
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
-import com.banglalink.toffee.ui.profile.ViewProfileActivity
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.suke.widget.SwitchButton
 
@@ -212,26 +210,10 @@ class DrawerHelper(
 
     fun handleMenuItemById(item: MenuItem): Boolean {
         when (item.itemId) {
-//            R.id.menu_activities -> {
-////                with(activity.getNavController()) {
-////                    if(currentDestination?.id != R.id.menu_activities) {
-////                        navigate(R.id.menu_activities)
-////                    }
-////                }
-//                binding.drawerLayout.closeDrawers()
-//            }
 //            R.id.menu_tv -> {
 //                with(activity.getNavController()) {
 //                    if(currentDestination?.id != R.id.menu_tv) {
 //                        navigate(R.id.menu_tv)
-//                    }
-//                }
-//                binding.drawerLayout.closeDrawers()
-//            }
-//            R.id.menu_favorites -> {
-//                with(activity.getNavController()) {
-//                    if(currentDestination?.id != R.id.menu_favorites) {
-//                        navigate(R.id.menu_favorites)
 //                    }
 //                }
 //                binding.drawerLayout.closeDrawers()
@@ -310,13 +292,26 @@ class DrawerHelper(
                     }
                 }
             }
+            R.id.menu_favorites -> {
+                if (!mPref.isVerifiedUser) {
+                    activity.checkVerification()
+                    binding.drawerLayout.closeDrawers()
+                    return true
+                }
+            }
+            R.id.menu_activities -> {
+                if (!mPref.isVerifiedUser) {
+                    activity.checkVerification()
+                    binding.drawerLayout.closeDrawers()
+                    return true
+                }
+            }
             R.id.menu_invite -> {
                 if (!mPref.isVerifiedUser) {
                     activity.checkVerification()
                     binding.drawerLayout.closeDrawers()
                     return true
                 }
-//                activity.launchActivity<ReferAFriendActivity>()
             }
             R.id.menu_redeem -> {
                 if (!mPref.isVerifiedUser) {
@@ -324,7 +319,6 @@ class DrawerHelper(
                     binding.drawerLayout.closeDrawers()
                     return true
                 }
-//                activity.launchActivity<RedeemCodeActivity>()
             }
         }
         return run {

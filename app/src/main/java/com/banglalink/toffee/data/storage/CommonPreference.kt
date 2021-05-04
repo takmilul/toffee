@@ -11,6 +11,7 @@ class CommonPreference(private val pref: SharedPreferences, private val context:
     
     companion object {
         private const val APP_VERSION = "app_version"
+        private const val PREF_APP_THEME= "app_theme"
         private const val PREF_FORCE_LOGGED_OUT = "is_force_logged_out"
         private const val PREF_IS_USER_INTEREST_SUBMITTED = "_isUserInterestSubmitted"
         private var instance: CommonPreference? = null
@@ -36,6 +37,12 @@ class CommonPreference(private val pref: SharedPreferences, private val context:
     val deviceId: String by lazy {
         Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
     }
+    
+    var appThemeMode: Int
+        get() = pref.getInt(PREF_APP_THEME, 0)
+        set(themeMode){
+            pref.edit().putInt(PREF_APP_THEME, themeMode).apply()
+        }
     
     var isAlreadyForceLoggedOut: Boolean
         get() = pref.getBoolean(PREF_FORCE_LOGGED_OUT, false)

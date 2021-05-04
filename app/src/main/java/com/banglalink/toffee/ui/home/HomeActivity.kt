@@ -1059,8 +1059,8 @@ class HomeActivity :
         val sideNav = binding.sideNavigation.menu.findItem(R.id.menu_change_theme)
         sideNav?.let { themeMenu ->
             val isDarkEnabled = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
-            if (mPref.appThemeMode == 0) {
-                mPref.appThemeMode = if (isDarkEnabled) Configuration.UI_MODE_NIGHT_YES else Configuration.UI_MODE_NIGHT_NO 
+            if (cPref.appThemeMode == 0) {
+                cPref.appThemeMode = if (isDarkEnabled) Configuration.UI_MODE_NIGHT_YES else Configuration.UI_MODE_NIGHT_NO 
             }
             val parser: XmlPullParser = resources.getXml(R.xml.custom_switch)
             var switch: View? = null
@@ -1103,10 +1103,10 @@ class HomeActivity :
 
     private fun changeAppTheme(isDarkEnabled: Boolean){
         if (isDarkEnabled) {
-            mPref.appThemeMode = Configuration.UI_MODE_NIGHT_YES
+            cPref.appThemeMode = Configuration.UI_MODE_NIGHT_YES
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         } else {
-            mPref.appThemeMode = Configuration.UI_MODE_NIGHT_NO
+            cPref.appThemeMode = Configuration.UI_MODE_NIGHT_NO
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
     }

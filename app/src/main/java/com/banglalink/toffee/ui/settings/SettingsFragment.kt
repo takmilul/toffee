@@ -133,10 +133,10 @@ class SettingsFragment : BaseFragment() {
     
     private fun changeAppTheme(isDarkEnabled: Boolean){
         if (isDarkEnabled) {
-            mPref.appThemeMode = Configuration.UI_MODE_NIGHT_YES
+            cPref.appThemeMode = Configuration.UI_MODE_NIGHT_YES
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         } else {
-            mPref.appThemeMode = Configuration.UI_MODE_NIGHT_NO
+            cPref.appThemeMode = Configuration.UI_MODE_NIGHT_NO
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
     }

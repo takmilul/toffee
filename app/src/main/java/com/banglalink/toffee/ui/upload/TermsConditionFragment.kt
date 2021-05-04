@@ -9,7 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
-import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.databinding.FragmentTermsConditionBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
@@ -21,7 +21,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class TermsConditionFragment : DialogFragment() {
     
-    @Inject lateinit var mPref: SessionPreference
+    @Inject lateinit var cPref: CommonPreference
     private var alertDialog: AlertDialog? = null
     private val viewModel by viewModels<ViewProfileViewModel>()
     private var _binding: FragmentTermsConditionBinding ? = null
@@ -50,7 +50,7 @@ class TermsConditionFragment : DialogFragment() {
         observe(viewModel.termsAndConditionResult) {
             when (it) {
                 is Resource.Success -> {
-                    if (mPref.appThemeMode == Configuration.UI_MODE_NIGHT_YES) {
+                    if (cPref.appThemeMode == Configuration.UI_MODE_NIGHT_YES) {
                         loadTermsAndConditionText(it.data.terms_and_conditions_black!!)
                     }
                     else {

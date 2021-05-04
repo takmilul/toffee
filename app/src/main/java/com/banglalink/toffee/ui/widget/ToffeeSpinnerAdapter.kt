@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.widget
 
 import android.content.Context
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -63,6 +64,7 @@ class ToffeeSpinnerAdapter<T: Any?>(
 
             if(retView is TextView) {
                 retView.text = item?.toString() ?: title
+                retView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mContext.resources.getDimension(R.dimen.input_field_text_size))
             }
             else {
                 val parentTv:TextView = retView.findViewById(R.id.tv_parent_name)
