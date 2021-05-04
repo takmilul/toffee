@@ -37,6 +37,7 @@ import javax.inject.Inject
 class ToffeeMessagingService : FirebaseMessagingService() {
 
     private var notificationId = 1
+    private val gson: Gson = Gson()
     private val TAG = "ToffeeMessagingService"
     @Inject lateinit var mPref: SessionPreference
     @Inject lateinit var commonPreference: CommonPreference
@@ -48,7 +49,6 @@ class ToffeeMessagingService : FirebaseMessagingService() {
     override fun onNewToken(s: String) {
         super.onNewToken(s)
         Log.i(TAG, "Token: $s")
-//        Preference.getInstance().fcmToken = s
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
@@ -65,17 +65,33 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         }
         else {
             val data: Map<String, String> = remoteMessage.data
+            Log.i("NOT_", "onMessageReceived: $data")
             when(data["notificationType"]!!.toLowerCase()) {
                 NotificationType.OVERLAY.type -> {
-                    Gson().fromJson(remoteMessage.data["notificationText"]?.trimIndent(), PlayerOverlayData::class.java)?.let { mPref.playerOverlayLiveData.postValue(it) }
+                    gson.fromJson(remoteMessage.data["notificationText"]?.trimIndent(), PlayerOverlayData::class.java)?.let { mPref.playerOverlayLiveData.postValue(it) }
                 }
                 NotificationType.LOGOUT.type -> {
-                    kickOutUser(remoteMessage.data)
+                    kickOutUser(data)
+                }
+                NotificationType.CHANGE_URL.type -> {
+                    changeHlsUrl(data)
                 }
                 else -> {
-                    prepareNotification(remoteMessage.data)
+                    prepareNotification(data)
                 }
             }
+        }
+    }
+    
+    private fun changeHlsUrl(notificationData: Map<String, String>) {
+        try {
+            mPref.shouldOverrideHlsUrl = notificationData["should_override"].equals("true")
+            if (mPref.shouldOverrideHlsUrl && notificationData["url_id"].equals("1")) {
+                mPref.setHlsOverrideUrl(notificationData["hls_override_url"])
+            }
+        }
+        catch (e: Exception) {
+            Log.e(TAG, "changeHlsUrl: ${e.message}")
         }
     }
     

@@ -1274,14 +1274,12 @@ class HomeActivity :
             when(it) {
                 is Success -> {
                     if (!it.data.verifyStatus) {
-//                        mPref.clear()
-//                        mPref.logout = "1"
+                        mPref.phoneNumber = ""
+                        mPref.userImageUrl = null
                         mPref.isVerifiedUser = false
-                        UploadService.stopAllUploads()
-//                        launchActivity<SplashScreenActivity>()
-//                        finish()
-//                      overridePendingTransition(0, 0)
-                        recreate()
+                        navController.popBackStack(R.id.menu_feed, false).let { 
+                            recreate()
+                        }
                     }
                 }
                 is Failure -> {
@@ -1291,13 +1289,6 @@ class HomeActivity :
         }
     }
     
-//    fun handleVerficationApp() {
-//        mPref.clear()
-//        mPref.logout="1"
-//        UploadService.stopAllUploads()
-//        launchActivity<SplashScreenActivity>()
-//        finish()
-//    }
     override fun onDrawerButtonPressed(): Boolean {
         binding.drawerLayout.openDrawer(GravityCompat.END, true)
         return true

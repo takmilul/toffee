@@ -284,7 +284,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     fun getHeaderSessionToken(): String? {
         return pref.getString(PREF_SESSION_TOKEN_HEADER, "")
     }
-
+    
     fun setHlsOverrideUrl(hlsOverrideUrl: String?) {
         pref.edit().putString(PREF_HLS_OVERRIDE_URL, hlsOverrideUrl).apply()
     }
@@ -293,14 +293,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         return pref.getString(PREF_HLS_OVERRIDE_URL, "")
     }
 
-    fun setShouldOverrideHlsUrl(value: Boolean) {
-        pref.edit().putBoolean(PREF_SHOULD_OVERRIDE, value).apply()
-    }
-
-    fun shouldOverrideHlsUrl(): Boolean {
-        return pref.getBoolean(PREF_SHOULD_OVERRIDE, false)
-    }
-
+    var shouldOverrideHlsUrl: Boolean
+        get() = pref.getBoolean(PREF_SHOULD_OVERRIDE, true)
+        set(value) = pref.edit{ putBoolean(PREF_SHOULD_OVERRIDE, value) }
+    
     fun setSessionTokenLifeSpanInMillis(tokenLifeSpanInMillis: Long) {
         pref.edit().putLong(PREF_DEVICE_TIME_IN_MILLISECONDS, System.currentTimeMillis()).apply()
         pref.edit().putLong(PREF_TOKEN_LIFE_SPAN, tokenLifeSpanInMillis - 10 * 60 * 1000)
@@ -456,10 +452,12 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         password = customerInfoLogin.password?:""
         customerName = customerInfoLogin.customerName?:""
         sessionToken = (customerInfoLogin.sessionToken?:"")
-
+        if (userImageUrl.isNullOrBlank()) {
+            userImageUrl = customerInfoLogin.profileImage
+        }
         setHeaderSessionToken(customerInfoLogin.headerSessionToken)
         setHlsOverrideUrl(customerInfoLogin.hlsOverrideUrl)
-        setShouldOverrideHlsUrl(customerInfoLogin.hlsUrlOverride)
+        shouldOverrideHlsUrl = customerInfoLogin.hlsUrlOverride
         setSessionTokenLifeSpanInMillis(customerInfoLogin.tokenLifeSpan.toLong() * 1000 * 3600)
         if(customerInfoLogin.isBanglalinkNumber!=null){
             isBanglalinkNumber = customerInfoLogin.isBanglalinkNumber

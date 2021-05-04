@@ -4,5 +4,6 @@ enum class NotificationType(val type: String) {
     SMALL("small"),
     LARGE("large"),
     LOGOUT("logout"),
-    OVERLAY("overlay")
+    OVERLAY("overlay"),
+    CHANGE_URL("change_cdn"),
 }

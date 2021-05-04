@@ -85,6 +85,7 @@ class HomeViewModel @Inject constructor(
         getProfile()
         FirebaseMessaging.getInstance().subscribeToTopic("buzz")
         FirebaseMessaging.getInstance().subscribeToTopic("controls")
+        FirebaseMessaging.getInstance().subscribeToTopic("cdn_control")
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener(this)
     }
 
