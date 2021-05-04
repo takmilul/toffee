@@ -10,9 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R.string
 import com.banglalink.toffee.analytics.HeartBeatManager
-import com.banglalink.toffee.analytics.ToffeeAnalytics.logBreadCrumb
-import com.banglalink.toffee.analytics.ToffeeAnalytics.logException
-import com.banglalink.toffee.analytics.ToffeeAnalytics.logForcePlay
+import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.database.entities.ContentViewProgress
 import com.banglalink.toffee.data.database.entities.ContinueWatchingItem
 import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
@@ -124,7 +122,12 @@ abstract class PlayerPageActivity :
         }
 
         if(mPref.isCastEnabled) {
-            castContext = CastContext.getSharedInstance(this)
+            castContext = try {
+                CastContext.getSharedInstance(this)
+            } catch (ex: Exception) {
+                ToffeeAnalytics.logException(ex)
+                null
+            }
         }
 
         if (savedInstanceState != null) {
@@ -676,7 +679,7 @@ abstract class PlayerPageActivity :
 
     override fun onPlayerIdleDueToError() {
         if (player?.playWhenReady == true) {
-            logForcePlay()
+            ToffeeAnalytics.logForcePlay()
             reloadChannel()
         }
     }
@@ -722,7 +725,7 @@ abstract class PlayerPageActivity :
     private inner class PlayerEventListener : EventListener {
         override fun onPlayerError(e: ExoPlaybackException) {
             e.printStackTrace()
-            logException(e)
+            ToffeeAnalytics.logException(e)
             if (isBehindLiveWindow(e)) {
                 clearStartPosition()
                 reloadChannel()
@@ -828,7 +831,7 @@ abstract class PlayerPageActivity :
                     "Event time " + durationInMillis / 1000 + " Bytes " + totalBytesInMB * 0.000001 + " MB"
                 )
             } catch (e: Exception) {
-                logBreadCrumb("Exception in PlayerAnalyticsListener")
+                ToffeeAnalytics.logBreadCrumb("Exception in PlayerAnalyticsListener")
             }
         }
 

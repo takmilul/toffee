@@ -153,7 +153,7 @@ dependencies {
     //Permission extension
     implementation 'com.github.florent37:runtime-permission-kotlin:1.1.1'
     //Facebook SDK
-    implementation 'com.facebook.android:facebook-android-sdk:5.15.3'
+    implementation 'com.facebook.android:facebook-android-sdk:9.1.1'
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
     //Leak canary
 //    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-4'
@@ -185,7 +185,7 @@ dependencies {
         exclude group: 'com.google.guava'
     }
     implementation project(path: ':showcase_view')
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+//    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 //    implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
 
     //mqtt library
