@@ -1,48 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-
+    
     <data>
         <variable
             name="data"
             type="com.banglalink.toffee.model.UserChannelInfo" />
-
+        
         <variable
             name="callback"
             type="com.banglalink.toffee.listeners.LandingPopularChannelCallback" />
     </data>
-
-
-
+    
     <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginTop="3dp"
-        android:layout_marginBottom="3dp"
         app:cardBackgroundColor="@color/cardBgColor"
-        app:cardCornerRadius="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="105dp">
-
+        app:cardCornerRadius="20dp">
+        
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
+            android:layout_height="match_parent"
+            android:paddingVertical="16dp">
+            
             <FrameLayout
                 android:id="@+id/iconHolder"
                 android:layout_width="68dp"
                 android:layout_height="68dp"
                 android:layout_marginStart="16dp"
+                android:onClick="@{() -> callback.onItemClicked(data)}"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/guideline"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
-
+                
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/icon"
                     loadImageFromUrlRounded="@{data.profileUrl}"
@@ -50,99 +46,88 @@
                     android:layout_height="match_parent"
                     android:contentDescription="@string/txt_profile_image"
                     tools:src="@drawable/ic_profile_default" />
-
+            
             </FrameLayout>
-
+            
             <TextView
                 android:id="@+id/channel_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/roboto_medium"
+                style="@style/programNameTextView"
+                android:layout_width="0dp"
+                android:layout_marginStart="16dp"
                 android:text="@{data.contentProviderName}"
                 android:textColor="@color/fixed_second_main_text_color"
-                android:textSize="12sp"
-                android:layout_marginStart="15dp"
+                app:layout_constraintVertical_chainStyle="packed"
                 app:layout_constraintTop_toTopOf="@+id/iconHolder"
-                app:layout_constraintStart_toEndOf="@+id/guideline"
-                tools:text="Channel Name"
-                />
-
+                app:layout_constraintStart_toEndOf="@+id/iconHolder"
+                app:layout_constraintEnd_toStartOf="@id/optionMenuIcon"
+                app:layout_constraintBottom_toTopOf="@id/multiTextButton"
+                tools:text="Channel Name" />
+    
+            <ImageView
+                android:id="@+id/optionMenuIcon"
+                style="@style/OptionMenuStyle"
+                android:visibility="gone"
+                android:contentDescription="@string/txt_menu"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/channel_name"
+                app:layout_constraintBottom_toTopOf="@+id/channel_name"
+                app:srcCompat="@drawable/ic_menu_more"
+                tools:visibility="visible" />
+    
             <com.banglalink.toffee.ui.widget.MultiTextButton
                 android:id="@+id/multiTextButton"
-                bindSubscriptionStatus="@{data.isSubscribed == 1}"
-                channelOwnerId="@{data.channelOwnerId}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:layout_marginStart="15dp"
                 android:clickable="true"
                 android:focusable="true"
-                app:onSafeClick="@{(v) -> callback.onSubscribeButtonClicked(v, data)}"
-               app:layout_constraintStart_toEndOf="@+id/guideline"
-                app:layout_constraintTop_toBottomOf="@+id/channel_name" />
-
+                channelOwnerId="@{data.channelOwnerId}"
+                bindSubscriptionStatus="@{data.isSubscribed == 1}"
+                app:layout_constraintStart_toStartOf="@id/channel_name"
+                app:layout_constraintTop_toBottomOf="@+id/channel_name"
+                app:layout_constraintBottom_toTopOf="@id/channelCreateTime"
+                app:onSafeClick="@{(v) -> callback.onSubscribeButtonClicked(v, data)}" />
+            
             <TextView
                 android:id="@+id/subscribe_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:textColor="@color/fixed_second_main_text_color"
                 android:layout_marginStart="6dp"
                 android:text="@{String.valueOf(data.subscriberCount)}"
+                android:textSize="@dimen/default_text_size"
+                android:textColor="@color/fixed_second_main_text_color"
                 app:layout_constraintBottom_toBottomOf="@+id/multiTextButton"
                 app:layout_constraintStart_toEndOf="@+id/multiTextButton"
                 app:layout_constraintTop_toTopOf="@+id/multiTextButton"
                 tools:text="561K" />
-
-
+    
             <ImageView
                 android:layout_width="26dp"
                 android:layout_height="26dp"
-                android:src="@drawable/ic_channel_noti_on"
-                app:layout_constraintBottom_toBottomOf="@+id/subscribe_count"
-                app:layout_constraintEnd_toStartOf="@+id/videoMenuIcon"
-                app:layout_constraintHorizontal_bias="0.89"
                 android:visibility="gone"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_channel_noti_on"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/subscribe_count"
                 app:layout_constraintTop_toTopOf="@+id/subscribe_count"
-                tools:visibility="visible"
-                />
-
-            <ImageView
-                android:contentDescription="@string/txt_menu"
-                android:id="@+id/videoMenuIcon"
-                style="@style/OptionMenuStyle"
-                android:paddingHorizontal="8dp"
-                android:paddingVertical="8dp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@+id/channel_name"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/channel_name"
-                app:srcCompat="@drawable/ic_menu_more"
-                tools:visibility="visible"
-                />
-
+                app:layout_constraintBottom_toBottomOf="@+id/subscribe_count"
+                tools:visibility="visible" />
+            
             <TextView
+                android:id="@+id/channelCreateTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:layout_marginStart="15dp"
+                android:layout_marginTop="7dp"
+                android:textSize="@dimen/default_text_size"
+                android:text="@{data.formattedCreateTime()}"
                 android:textColor="@color/fixed_second_main_text_color"
-                app:layout_constraintStart_toEndOf="@+id/guideline"
+                app:layout_constraintStart_toStartOf="@id/channel_name"
                 app:layout_constraintTop_toBottomOf="@+id/multiTextButton"
+                app:layout_constraintBottom_toBottomOf="@id/iconHolder"
                 tools:text="2y ago" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent=".25" />
-
+            
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
     </androidx.cardview.widget.CardView>
-
 </layout>
 

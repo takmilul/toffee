@@ -5,7 +5,6 @@ import com.banglalink.toffee.exception.*
 import retrofit2.HttpException
 import java.io.IOException
 import java.net.SocketTimeoutException
-import java.util.*
 
 //this will use non synchronized lazy method
 fun <T>unsafeLazy(initializer: () -> T): Lazy<T>{
@@ -35,6 +34,9 @@ fun getError(e: Exception): Error {
         }
         is UpdateRequiredException -> {
             return AppDeprecatedError(-1, "", e.title, e.updateMsg, e.forceUpdate)
+        }
+        is CustomerNotFoundException -> {
+            return CustomerNotFoundError(e.errorCode, e.errorMessage)
         }
         else -> {
             return Error(-1, "Unknown error occurred")

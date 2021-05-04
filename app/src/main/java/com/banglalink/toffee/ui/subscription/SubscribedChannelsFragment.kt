@@ -8,7 +8,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.filter
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentSubscribedChannelsBinding
@@ -20,6 +19,7 @@ import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.UserChannelInfo
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.common.UnSubscribeDialog
+import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
@@ -96,7 +96,7 @@ class SubscribedChannelsFragment : HomeBaseFragment() {
         }
 
         with(binding.subscribedChannelList) {
-            layoutManager = LinearLayoutManager(context)
+            addItemDecoration(MarginItemDecoration(12))
             adapter = mAdapter
         }
         observeList()

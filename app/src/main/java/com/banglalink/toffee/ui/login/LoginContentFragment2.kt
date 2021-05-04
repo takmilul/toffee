@@ -11,7 +11,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.AlertDialogLoginBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
@@ -21,14 +20,12 @@ import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class LoginContentFragment2 : ChildDialogFragment(), TextWatcher {
     
     private var phoneNo: String = ""
     private var regSessionToken: String = ""
-    @Inject lateinit var mPref: SessionPreference
     private var _binding: AlertDialogLoginBinding? = null
     private val binding get() = _binding !!
     private val viewModel by viewModels<LoginViewModel2>()

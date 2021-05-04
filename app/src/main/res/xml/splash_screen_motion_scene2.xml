@@ -7,7 +7,7 @@
         motion:autoTransition="animateToEnd"
         motion:constraintSetEnd="@id/firstEnd"
         motion:constraintSetStart="@id/firstStart"
-        motion:duration="700"
+        motion:duration="500"
         motion:motionInterpolator="linear">
         
         <KeyFrameSet>
@@ -180,7 +180,7 @@
     <Transition
         motion:constraintSetEnd="@+id/secondEnd"
         motion:constraintSetStart="@id/firstEnd"
-        motion:duration="700"
+        motion:duration="500"
         motion:motionInterpolator="linear">
         
         <KeyFrameSet>
