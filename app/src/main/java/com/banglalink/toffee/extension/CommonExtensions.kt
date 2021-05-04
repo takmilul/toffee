@@ -87,7 +87,7 @@ fun Activity.handleShare(item: ChannelInfo) {
     }
 }
 
-fun Activity.handleFavorite(item: ChannelInfo) {
+fun Activity.handleFavorite(item: ChannelInfo, onAdded: (()->Unit)? = null, onRemoved: (()-> Unit)? = null) {
     checkVerification {
         if(this is HomeActivity) {
             getHomeViewModel().updateFavorite(item).observe(this, {
@@ -96,10 +96,12 @@ fun Activity.handleFavorite(item: ChannelInfo) {
                         val channelInfo = it.data
                         when (channelInfo.favorite) {
                             "0" -> {
+                                onRemoved?.invoke()
                                 showToast("Content successfully removed from favorite list")
 //                                handleFavoriteRemovedSuccessFully(channelInfo)
                             }
                             "1" -> {
+                                onAdded?.invoke()
 //                                handleFavoriteAddedSuccessfully(channelInfo)
                                 showToast("Content successfully added to favorite list")
                             }
