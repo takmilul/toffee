@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.banglalink.toffee.R
 import com.banglalink.toffee.apiservice.ContentUpload
 import com.banglalink.toffee.apiservice.GetCategories
 import com.banglalink.toffee.apiservice.GetContentCategories
@@ -17,7 +18,6 @@ import com.banglalink.toffee.exception.Error
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.SubCategory
-import com.banglalink.toffee.model.TUS_UPLOAD_SERVER_URL
 import com.banglalink.toffee.util.*
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -269,7 +269,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
         return withContext(Dispatchers.IO + Job()) {
             TusUploadRequest(
                 appContext,
-                TUS_UPLOAD_SERVER_URL,
+                appContext.resources.getString(R.string.tus_upload_server_url),
             )
                 .setResumeInfo(upInfo.getFingerprint()!!, null)
                 .setMetadata(upInfo.getFileNameMetadata())

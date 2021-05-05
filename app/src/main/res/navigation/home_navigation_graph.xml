@@ -96,7 +96,7 @@
         <argument
             android:name="url"
             app:argType="string"
-            android:defaultValue="https://www.banglalink.net/en/toffee-privacy-policy"/>
+            android:defaultValue="https://toffeelive.com/policies.php"/>
     </fragment>
 
     <fragment

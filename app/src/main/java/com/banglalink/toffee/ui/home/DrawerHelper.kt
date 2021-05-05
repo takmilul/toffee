@@ -242,7 +242,7 @@ class DrawerHelper(
                 activity.launchActivity<Html5PlayerViewActivity> {
                     putExtra(
                         Html5PlayerViewActivity.CONTENT_URL,
-                        INTERNET_PACK_URL
+                        activity.resources.getString(R.string.internet_pack_url)
                     )
                 }
                 return true

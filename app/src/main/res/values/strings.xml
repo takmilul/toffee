@@ -238,9 +238,16 @@
     <string name="Creators_policy_page_title">Creators Policy</string>
     
     <!--    url-->
-    <string name="creators_policy_url">https://www.banglalink.net/en/toffee-privacy-policy</string>
+    <string name="micro_site_url">https://portal.toffeelive.com</string>
+    <string name="faq_url">https://portal.toffeelive.com/faq.html</string>
+    <string name="creators_policy_url">https://toffeelive.com/policies.php</string>
+    <string name="tus_upload_server_url">https://ugc-upload.toffeelive.com/upload</string>
+    <string name="all_channel_list_url">http://test.viewersent.com.bd/channelList.php</string>
     <string name="privacy_policy_url">https://www.banglalink.net/en/toffee-privacy-policy</string>
     <string name="terms_and_conditions_url">https://www.banglalink.net/en/toffee-privacy-policy</string>
+    <string name="internet_pack_url">https://www.banglalink.net/en/apps-and-services/other-details/53</string>
+    <!--    url-->
+    
     <string name="skip_text">Skip</string>
     <string name="login_with_phone_image">Phone Login</string>
     <string name="resend_text">Resend</string>

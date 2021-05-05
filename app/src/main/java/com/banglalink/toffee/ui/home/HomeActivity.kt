@@ -1268,15 +1268,18 @@ class HomeActivity :
             ) { dialog, _ -> dialog.cancel() }
             .show()
     }
-
+    
     fun observeLogout() {
         observe(viewModel.logoutLiveData) {
             when(it) {
                 is Success -> {
                     if (!it.data.verifyStatus) {
                         mPref.phoneNumber = ""
+                        mPref.channelName = ""
+                        mPref.channelLogo = ""
                         mPref.userImageUrl = null
                         mPref.isVerifiedUser = false
+                        mPref.isChannelDetailChecked = false
                         navController.popBackStack(R.id.menu_feed, false).let { 
                             recreate()
                         }

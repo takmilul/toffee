@@ -1,10 +1,10 @@
 package com.banglalink.toffee.ui.upload
 
 import android.app.Application
+import com.banglalink.toffee.R
 import com.banglalink.toffee.apiservice.UploadConfirmation
 import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.repository.UploadInfoRepository
-import com.banglalink.toffee.model.TUS_UPLOAD_SERVER_URL
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.util.UtilsKt
 import kotlinx.coroutines.Dispatchers
@@ -104,7 +104,7 @@ class UploadStateManager(
         withContext(Dispatchers.IO + Job()) {
             TusUploadRequest(
                 app,
-                TUS_UPLOAD_SERVER_URL,
+                app.resources.getString(R.string.tus_upload_server_url),
             )
                 .setResumeInfo(info.getFingerprint()!!, info.tusUploadUri)
                 .setMetadata(info.getFileNameMetadata())

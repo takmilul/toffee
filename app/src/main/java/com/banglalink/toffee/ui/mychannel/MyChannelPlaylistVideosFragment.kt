@@ -18,6 +18,7 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
+import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_PLAYLISTS
 import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_PLAYLIST_VIDEOS
 import com.banglalink.toffee.apiservice.MyChannelPlaylistContentParam
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
@@ -323,6 +324,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
         observe(mViewModel.deletePlaylistVideoLiveData) {
             when (it) {
                 is Success -> {
+                    cacheManager.clearCacheByUrl(GET_MY_CHANNEL_PLAYLISTS)
                     cacheManager.clearCacheByUrl(GET_MY_CHANNEL_PLAYLIST_VIDEOS)
                     playlistAdapter.refresh()
                     requireContext().showToast(it.data.message)

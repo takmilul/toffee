@@ -30,7 +30,6 @@ import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.INVALID_REFERRAL_ERROR_CODE
 import com.banglalink.toffee.model.LOGIN_ERROR
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.model.TERMS_AND_CONDITION_URL
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.common.HtmlPageViewActivity
 import com.banglalink.toffee.ui.splash.SplashScreenActivity
@@ -220,7 +219,7 @@ class LoginContentFragment : BaseFragment() {
                 val intent = Intent(requireContext(), HtmlPageViewActivity::class.java)
                 intent.putExtra(
                     HtmlPageViewActivity.CONTENT_KEY,
-                    TERMS_AND_CONDITION_URL
+                    resources.getString(R.string.terms_and_conditions_url)
                 )
                 intent.putExtra(
                     HtmlPageViewActivity.TITLE_KEY,
