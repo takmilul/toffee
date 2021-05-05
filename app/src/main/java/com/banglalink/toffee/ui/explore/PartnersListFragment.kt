@@ -4,12 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
-import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentPartnersListBinding
 import com.banglalink.toffee.model.ChannelInfo
@@ -43,6 +42,15 @@ class PartnersListFragment : BaseFragment(), BaseListItemCallback<ChannelInfo> {
         super.onViewCreated(view, savedInstanceState)
         mAdapter = PartnersListAdapter(this)
         with(binding.listView) {
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                mAdapter.loadStateFlow
+//                    .distinctUntilChangedBy { it.refresh }
+                    .collectLatest {
+                        val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
+                        binding.contentHeader.isVisible = ! isEmpty
+                        binding.listView.isVisible = ! isEmpty
+                    }
+            }
             layoutManager = GridLayoutManager(context, 3)
             adapter = mAdapter
         }

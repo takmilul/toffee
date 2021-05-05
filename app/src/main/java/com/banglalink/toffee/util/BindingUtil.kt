@@ -44,6 +44,10 @@ fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
             diskCachePolicy(CachePolicy.ENABLED)
             crossfade(false)
 //            crossfade(crossFadeDurationInMills)
+//            size(720, 405)
+            UtilsKt.getImageSize(view.context, 720).apply {
+                size(x, y)
+            }
         }
     }
 }
