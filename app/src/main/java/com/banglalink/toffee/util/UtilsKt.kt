@@ -1,6 +1,7 @@
 package com.banglalink.toffee.util
 
 import android.app.Activity
+import android.app.ActivityManager
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Bitmap
@@ -180,6 +181,24 @@ object UtilsKt {
         } else {
             Point(getScreenWidth(), getScreenHeight())
         }
+    }
+
+    private var ramSize: Long = -1
+    fun getRamSize(ctx: Context): Long {
+        if(ramSize > 0) return ramSize
+        val memInfo = ActivityManager.MemoryInfo()
+        (ctx.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager).getMemoryInfo(memInfo)
+        ramSize = memInfo.totalMem
+        return ramSize
+    }
+
+    fun getImageSize(ctx: Context, expectedWidth: Int): Point {
+        var maxWidth = expectedWidth//(expectedWidth * Resources.getSystem().displayMetrics.density).toInt()//getScreenWidth()
+//        if(expectedWidth > getScreenWidth()) maxWidth = getScreenWidth()
+        val ram = getRamSize(ctx)
+        if(ram <= 1_500_000_000) maxWidth = maxWidth * 2 / 3
+        val maxHeight = maxWidth * 9 / 16
+        return Point(maxWidth, maxHeight)
     }
 }
 

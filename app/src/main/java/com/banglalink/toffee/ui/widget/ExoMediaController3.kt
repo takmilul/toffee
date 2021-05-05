@@ -33,6 +33,7 @@ import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.Player.EventListener
 import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.video.VideoListener
 import com.google.android.gms.cast.framework.CastButtonFactory
 import dagger.hilt.android.AndroidEntryPoint
@@ -382,7 +383,9 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     }
 
     override fun onViewDestroy() {
-        simpleExoPlayer?.stop()
+        if(simpleExoPlayer !is CastPlayer) {
+            simpleExoPlayer?.stop()
+        }
     }
 
     override fun onSurfaceTextureAvailable(surfaceTexture: SurfaceTexture, i: Int, i1: Int) {
