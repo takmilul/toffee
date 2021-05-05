@@ -137,6 +137,10 @@ fun bindChannel(view: ImageView, channelInfo: ChannelInfo) {
                 error(R.drawable.placeholder)
 //            crossfade(crossFadeDurationInMills)
                 size(720, 405)
+                //TODO: Uncomment for low ram devices.
+//                UtilsKt.getImageSize(view.context, 720).apply {
+//                    size(x, y)
+//                }
             }
         }
     }
