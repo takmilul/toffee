@@ -27,6 +27,11 @@ class SecondsView(context: Context, attrs: AttributeSet?) :
         PlayerOverlaySecondsBinding.inflate(LayoutInflater.from(context), this, true)
 
 
+    override fun onDetachedFromWindow() {
+        stop()
+        super.onDetachedFromWindow()
+    }
+
     /**
      * Defines the duration for a full cycle of the triangle animation.
      * Each animation step takes 20% of it.
@@ -169,8 +174,8 @@ class SecondsView(context: Context, attrs: AttributeSet?) :
             setFloatValues(0f, 1f)
 
             addUpdateListener { update(it.animatedValue as Float) }
-            doOnStart { start() }
-            doOnEnd { end() }
+            doOnStart { if(isAttachedToWindow) start() }
+            doOnEnd { if(isAttachedToWindow) end() }
         }
     }
 }
