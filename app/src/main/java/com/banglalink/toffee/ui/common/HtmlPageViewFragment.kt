@@ -1,11 +1,13 @@
 package com.banglalink.toffee.ui.common
 
 import android.graphics.Bitmap
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebChromeClient
+import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.banglalink.toffee.databinding.FragmentHtmlPageViewBinding
@@ -48,7 +50,22 @@ class HtmlPageViewFragment : BaseFragment() {
             }
         }
 
-        binding.webview.settings.javaScriptEnabled = true
+        with(binding.webview.settings) {
+            if (Build.VERSION.SDK_INT >= 21) {
+                mixedContentMode =  WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+            }
+            javaScriptEnabled = true
+            setSupportZoom(true)
+            setNeedInitialFocus(false)
+            setAppCacheEnabled(true)
+            databaseEnabled = true
+            useWideViewPort = true
+            builtInZoomControls = true
+            displayZoomControls = false
+            setSupportMultipleWindows(true)
+            javaScriptCanOpenWindowsAutomatically = true
+            domStorageEnabled = true
+        }
         if(header.isNullOrEmpty()){
             binding.webview.loadUrl(htmlUrl)
         }else{
