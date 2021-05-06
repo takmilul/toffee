@@ -1052,10 +1052,10 @@ class HomeActivity :
             val logout = binding.sideNavigation.menu.findItem(R.id.menu_logout)
             logout?.isVisible = false
         }
-        else {
-            val verify = binding.sideNavigation.menu.findItem(R.id.menu_verfication)
-            verify?.isVisible = false
-        }
+//        else {
+//            val verify = binding.sideNavigation.menu.findItem(R.id.menu_verfication)
+//            verify?.isVisible = false
+//        }
         val sideNav = binding.sideNavigation.menu.findItem(R.id.menu_change_theme)
         sideNav?.let { themeMenu ->
             val isDarkEnabled = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES

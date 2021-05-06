@@ -46,9 +46,9 @@
         android:title="Generate Code"
         android:icon="@drawable/ic_menu_redeem" />-->
 
-    <item android:id="@+id/menu_verfication"
-        android:title="Verify"
-        android:icon="@drawable/ic_menu_invite" />
+<!--    <item android:id="@+id/menu_verfication"-->
+<!--        android:title="Verify"-->
+<!--        android:icon="@drawable/ic_menu_invite" />-->
 
     <item android:id="@+id/menu_settings"
         android:title="Settings"

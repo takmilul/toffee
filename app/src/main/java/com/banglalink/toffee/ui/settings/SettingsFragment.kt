@@ -179,15 +179,14 @@ class SettingsFragment : BaseFragment() {
 //        startActivity(intent)
 
         if (findNavController().currentDestination?.id != R.id.termsAndConditionFragment&& findNavController().currentDestination?.id == R.id.menu_settings) {
-            val action = SettingsFragmentDirections.actionSettingsFragmentToTermsAndConditions("Terms & Conditions",requireContext().getString(R.string.terms_and_conditions_url))
+            val action = SettingsFragmentDirections.actionSettingsFragmentToTermsAndConditions("Terms & Conditions", mPref.termsAndConditionUrl)
             findNavController().navigate(action)
         }
     }
 
     private fun onClickPrivacyPolicy() {
         if (findNavController().currentDestination?.id != R.id.privacyPolicyFragment && findNavController().currentDestination?.id == R.id.menu_settings) {
-            val action = SettingsFragmentDirections.actionSettingsFragmentToPrivacyPolicy("Privacy Policy",
-                requireContext().getString(R.string.privacy_policy_url))
+            val action = SettingsFragmentDirections.actionSettingsFragmentToPrivacyPolicy("Privacy Policy", mPref.privacyPolicyUrl)
             findNavController().navigate(action)
         }
     }

@@ -439,11 +439,26 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getString(PREF_CAST_RECEIVER_ID, "") ?: ""
         set(value) = pref.edit { putString(PREF_CAST_RECEIVER_ID, value) }
 
-//    var uploadUri: String?
-//        get() = pref.getString("toffee-upload-uri", null)
-//        set(value) = pref.edit { putString("toffee-upload-uri", value) }
+    var internetPackUrl: String
+        get() = pref.getString(PREF_INTERNET_PACK_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_INTERNET_PACK_URL, value) }
 
+    var tusUploadServerUrl: String
+        get() = pref.getString(PREF_TUS_UPLOAD_SERVER_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_TUS_UPLOAD_SERVER_URL, value) }
 
+    var privacyPolicyUrl: String
+        get() = pref.getString(PREF_PRIVACY_POLICY_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_PRIVACY_POLICY_URL, value) }
+
+    var creatorsPolicyUrl: String
+        get() = pref.getString(PREF_CREATORS_POLICY_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_CREATORS_POLICY_URL, value) }
+
+    var termsAndConditionUrl: String
+        get() = pref.getString(PREF_TERMS_AND_CONDITIONS_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_TERMS_AND_CONDITIONS_URL, value) }
+    
     fun saveCustomerInfo(customerInfoLogin:CustomerInfoLogin){
         balance = customerInfoLogin.balance
         logout = "0"
@@ -482,6 +497,12 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         isCastUrlOverride = customerInfoLogin.isCastUrlOverride == 1
         castReceiverId = customerInfoLogin.castReceiverId ?: ""
         castOverrideUrl = customerInfoLogin.castOverrideUrl ?: ""
+        
+        internetPackUrl = customerInfoLogin.internetPackUrl ?: ""
+        tusUploadServerUrl = customerInfoLogin.tusUploadServerUrl ?: ""
+        privacyPolicyUrl = customerInfoLogin.privacyPolicyUrl ?: ""
+        creatorsPolicyUrl = customerInfoLogin.creatorsPolicyUrl ?: ""
+        termsAndConditionUrl = customerInfoLogin.termsAndConditionsUrl ?: ""
     }
 
     companion object {
@@ -545,6 +566,11 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_IS_CAST_URL_OVERRIDE = "pref_is_cast_url_override"
         private const val PREF_CAST_RECEIVER_ID = "pref_cast_receiver_id"
         private const val PREF_CAST_OVERRIDE_URL = "pref_cast_override_url"
+        private const val PREF_INTERNET_PACK_URL = "internet_pack_url"
+        private const val PREF_TUS_UPLOAD_SERVER_URL = "tus_upload_server_url"
+        private const val PREF_PRIVACY_POLICY_URL = "privacy_policy_url"
+        private const val PREF_CREATORS_POLICY_URL = "creators_policy_url"
+        private const val PREF_TERMS_AND_CONDITIONS_URL = "terms_and_conditions_url"
 
         private const val PREF_NAME_IP_TV= "IP_TV"
 

@@ -269,7 +269,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
         return withContext(Dispatchers.IO + Job()) {
             TusUploadRequest(
                 appContext,
-                appContext.resources.getString(R.string.tus_upload_server_url),
+                preference.tusUploadServerUrl,
             )
                 .setResumeInfo(upInfo.getFingerprint()!!, null)
                 .setMetadata(upInfo.getFileNameMetadata())

@@ -219,7 +219,7 @@ class LoginContentFragment : BaseFragment() {
                 val intent = Intent(requireContext(), HtmlPageViewActivity::class.java)
                 intent.putExtra(
                     HtmlPageViewActivity.CONTENT_KEY,
-                    resources.getString(R.string.terms_and_conditions_url)
+                    mPref.termsAndConditionUrl
                 )
                 intent.putExtra(
                     HtmlPageViewActivity.TITLE_KEY,

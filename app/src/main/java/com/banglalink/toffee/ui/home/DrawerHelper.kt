@@ -242,7 +242,7 @@ class DrawerHelper(
                 activity.launchActivity<Html5PlayerViewActivity> {
                     putExtra(
                         Html5PlayerViewActivity.CONTENT_URL,
-                        activity.resources.getString(R.string.internet_pack_url)
+                        mPref.internetPackUrl
                     )
                 }
                 return true
@@ -277,11 +277,11 @@ class DrawerHelper(
                 activity.handleExitApp()
                 return true
             }
-            R.id.menu_verfication -> {
-                binding.drawerLayout.closeDrawers()
-                activity.checkVerification()
-                return true
-            }
+//            R.id.menu_verfication -> {
+//                binding.drawerLayout.closeDrawers()
+//                activity.checkVerification()
+//                return true
+//            }
             R.id.menu_change_theme -> {
                 when (val switch = item.actionView) {
                     is SwitchButton -> {

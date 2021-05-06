@@ -72,4 +72,9 @@ class CustomerInfoLogin(
     @SerializedName("castOverrideUrl")
     var castOverrideUrl: String? = null,
     var verified_status: Boolean = false,
+    val internetPackUrl: String? = null,
+    val tusUploadServerUrl: String? = null,
+    val privacyPolicyUrl: String? = null,
+    val creatorsPolicyUrl: String? = null,
+    val termsAndConditionsUrl: String? = null,
 ) : BodyResponse(), Parcelable

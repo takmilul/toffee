@@ -38,16 +38,16 @@ class AboutFragment : BaseFragment() {
     }
     
     fun onClickTermsAndConditions() {
-        if (findNavController().currentDestination?.id != R.id.termsAndConditionFragment && findNavController().currentDestination?.id == R.id.AboutFragment) {
-            val action = AboutFragmentDirections.actionAboutFragmentToTermsAndConditons("Terms & Conditions",
-                requireContext().getString(R.string.terms_and_conditions_url))
+        if (findNavController().currentDestination?.id != R.id.termsAndConditionFragment && findNavController().currentDestination?.id == R.id
+                .AboutFragment && mPref.termsAndConditionUrl.isNotBlank()) {
+            val action = AboutFragmentDirections.actionAboutFragmentToTermsAndConditons("Terms & Conditions", mPref.termsAndConditionUrl)
             findNavController().navigate(action)
         }
     }
     
     private fun onClickPrivacyPolicy() {
-        if (findNavController().currentDestination?.id != R.id.privacyPolicyFragment && findNavController().currentDestination?.id == R.id.AboutFragment) {
-            val action = AboutFragmentDirections.actionAboutFragmentToPrivacyPolicy("Privacy Policy",requireContext().getString(R.string.privacy_policy_url))
+        if (findNavController().currentDestination?.id != R.id.privacyPolicyFragment && findNavController().currentDestination?.id == R.id.AboutFragment && mPref.privacyPolicyUrl.isNotBlank()   ) {
+            val action = AboutFragmentDirections.actionAboutFragmentToPrivacyPolicy("Privacy Policy", mPref.privacyPolicyUrl)
             findNavController().navigate(action)
         }
     }
