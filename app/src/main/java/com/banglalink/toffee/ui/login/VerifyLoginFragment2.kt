@@ -53,6 +53,7 @@ class VerifyLoginFragment2 : ChildDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        observeVerifyCode()
         with(binding) {
             resendButton.safeClick ({
                 progressDialog.show()
@@ -63,7 +64,6 @@ class VerifyLoginFragment2 : ChildDialogFragment() {
                 progressDialog.show()
                 binding.otpEditText.clearFocus()
                 otp = binding.otpEditText.text.toString().trim()
-                observeVerifyCode()
                 viewModel.verifyCode(otp, regSessionToken, "")
             })
             skipButton.safeClick({ closeDialog() })

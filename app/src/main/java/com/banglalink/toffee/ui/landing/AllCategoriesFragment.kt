@@ -72,13 +72,13 @@ class AllCategoriesFragment: BaseFragment(), BaseListItemCallback<Category> {
         }
         when(item.id.toInt()) {
             1 -> {
-                parentFragment?.findNavController()?.navigate(R.id.action_allCategoriesFragment_to_movieFragment, args)
+                parentFragment?.findNavController()?.navigate(R.id.movieFragment, args)
             }
             9 -> {
-                parentFragment?.findNavController()?.navigate(R.id.action_allCategoriesFragment_to_dramaSeriesFragment, args)
+                parentFragment?.findNavController()?.navigate(R.id.dramaSeriesFragment, args)
             }
             else -> {
-                parentFragment?.findNavController()?.navigate(R.id.action_allCategoriesFragment_to_categoryDetailsFragment, args)
+                parentFragment?.findNavController()?.navigate(R.id.categoryDetailsFragment, args)
             }
         }
     }
