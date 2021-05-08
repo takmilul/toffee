@@ -53,11 +53,9 @@ import com.google.android.gms.cast.MediaQueueItem
 import com.google.android.gms.cast.framework.*
 import com.google.android.gms.common.images.WebImage
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.api.client.json.JsonObjectParser
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.json.JSONObject
 import java.net.*
 import javax.inject.Inject
@@ -123,7 +121,7 @@ abstract class PlayerPageActivity :
 
         if(mPref.isCastEnabled) {
             castContext = try {
-                CastContext.getSharedInstance(this)
+                CastContext.getSharedInstance(applicationContext)
             } catch (ex: Exception) {
                 ToffeeAnalytics.logException(ex)
                 null
@@ -332,6 +330,19 @@ abstract class PlayerPageActivity :
     private fun releaseRemotePlayer() {
         castPlayer?.removeListener(playerEventListener)
         castPlayer?.setSessionAvailabilityListener(null)
+        try {
+            castPlayer?.let {
+                val pf = it::class.java.getDeclaredField("statusListener")
+                pf.isAccessible = true
+
+                val obj = pf.get(it)
+                if(obj is SessionManagerListener<*>) {
+                    castContext?.sessionManager?.removeSessionManagerListener(obj , CastSession::class.java)
+                }
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
 //        castPlayer?.release()
 //        Log.e("CAST_T", "Release remote player")
 //        if(castPlayer?.isPlaying == true && playlistManager.getCurrentChannel() != null) {
