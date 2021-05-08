@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @HiltViewModel
-class SubscribedChannelFragmentViewModel @Inject constructor(
+class SubscribedChannelsViewModel @Inject constructor(
     private val subscribeChannelApiService: SubscribedUserChannelsService,
 ) : ViewModel() {
 

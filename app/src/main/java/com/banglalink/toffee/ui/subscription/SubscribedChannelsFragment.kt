@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
@@ -12,8 +13,6 @@ import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentSubscribedChannelsBinding
 import com.banglalink.toffee.extension.checkVerification
-import com.banglalink.toffee.extension.hide
-import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.listeners.LandingPopularChannelCallback
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.UserChannelInfo
@@ -33,7 +32,7 @@ class SubscribedChannelsFragment : HomeBaseFragment() {
     private var subscribedChannelInfo: UserChannelInfo? = null
     private var _binding: FragmentSubscribedChannelsBinding ? = null
     private val binding get() = _binding!!
-    private val viewModel by viewModels<SubscribedChannelFragmentViewModel>()
+    private val viewModel by viewModels<SubscribedChannelsViewModel>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSubscribedChannelsBinding.inflate(inflater, container, false)
@@ -74,24 +73,19 @@ class SubscribedChannelsFragment : HomeBaseFragment() {
                 }
             }
         })
-
+    
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            mAdapter.loadStateFlow
-//                .distinctUntilChangedBy { it.refresh }
-                .collectLatest {
-                mAdapter.apply {
-                    val showEmpty = itemCount <= 0 && ! it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
-                    if (showEmpty) {
-                        binding.tvSubTv.hide()
-                        binding.noChannelTv.show()
-                        binding.subscribedChannelList.hide()
-                    }
-                    else{
-                        binding.tvSubTv.show()
-                        binding.noChannelTv.hide()
-                        binding.subscribedChannelList.show()
-                    }
+            var isInitialized = false
+            mAdapter.loadStateFlow.collectLatest {
+                val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
+                val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
+                with(binding) {
+                    progressBar.isVisible = isLoading
+                    titleTextView.isVisible = !isEmpty
+                    subscribedChannelList.isVisible = !isEmpty
+                    emptyTextView.isVisible = isEmpty && !isLoading
                 }
+                isInitialized = true
             }
         }
 
@@ -110,7 +104,13 @@ class SubscribedChannelsFragment : HomeBaseFragment() {
             content.collectLatest {
                 mAdapter.submitData(it)
             }
-            binding.numberOfSubscription.setText(mAdapter.itemCount)
+            binding.totalSubscriptionsTextView.setText(mAdapter.itemCount)
         }
+    }
+    
+    override fun onDestroyView() {
+        binding.subscribedChannelList.adapter = null
+        super.onDestroyView()
+        _binding = null
     }
 }

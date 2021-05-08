@@ -18,12 +18,12 @@ import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentLandingCategoriesBinding
 import com.banglalink.toffee.databinding.PlaceholderCategoriesBinding
 import com.banglalink.toffee.extension.px
+import com.banglalink.toffee.extension.showLoadingAnimation
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.home.LandingPageViewModel
-import com.facebook.shimmer.ShimmerFrameLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 
@@ -83,14 +83,12 @@ class LandingCategoriesFragment: BaseFragment(), BaseListItemCallback<Category> 
         
         with(binding.categoriesList) {
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-                mAdapter.loadStateFlow
-//                    .distinctUntilChangedBy { it.refresh }
-                    .collectLatest {
+                mAdapter.loadStateFlow.collectLatest {
                     val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
                     val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
                     binding.placeholder.isVisible = isEmpty
                     binding.categoriesList.isVisible = ! isEmpty
-                    startLoadingAnimation(isLoading)
+                    binding.placeholder.showLoadingAnimation(isLoading)
                     isInitialized = true
                 }
             }
@@ -99,19 +97,6 @@ class LandingCategoriesFragment: BaseFragment(), BaseListItemCallback<Category> 
         }
 
         observeList()
-    }
-    
-    private fun startLoadingAnimation(isStart: Boolean) {
-        binding.placeholder.forEach {
-            if (it is ShimmerFrameLayout) {
-                if (isStart) {
-                    it.startShimmer()
-                }
-                else {
-                    it.stopShimmer()
-                }
-            }
-        }
     }
     
     private fun observeList() {

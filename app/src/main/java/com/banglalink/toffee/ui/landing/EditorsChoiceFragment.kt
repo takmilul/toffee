@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -12,13 +11,12 @@ import androidx.paging.LoadState
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.databinding.FragmentEditorsChoiceBinding
 import com.banglalink.toffee.enums.PageType
+import com.banglalink.toffee.extension.showLoadingAnimation
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
-import com.facebook.shimmer.ShimmerFrameLayout
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChangedBy
 
 class EditorsChoiceFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo> {
     
@@ -43,20 +41,14 @@ class EditorsChoiceFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInf
         var isInitialized = false
         mAdapter = EditorsChoiceListAdapter(this)
         
-        /*if (landingPageViewModel.pageType.value != PageType.Landing) {
-            startLoadingAnimation(false)
-        }*/
-        
         with(binding.editorsChoiceList) {
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-                mAdapter.loadStateFlow
-//                    .distinctUntilChangedBy { it.refresh }
-                    .collectLatest {
+                mAdapter.loadStateFlow.collectLatest {
                     val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
                     val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
                     binding.placeholder.isVisible = isEmpty
                     binding.editorsChoiceList.isVisible = ! isEmpty
-                    startLoadingAnimation(isLoading)
+                    binding.placeholder.showLoadingAnimation(isLoading)
                     isInitialized = true
                 }
             }
@@ -88,18 +80,5 @@ class EditorsChoiceFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInf
     override fun onProviderIconClicked(item: ChannelInfo) {
         super.onProviderIconClicked(item)
         homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
-    }
-    
-    private fun startLoadingAnimation(isStart: Boolean) {
-        binding.placeholder.children.forEach {
-            if (it is ShimmerFrameLayout) {
-                if (isStart) {
-                    it.startShimmer()
-                }
-                else {
-                    it.stopShimmer()
-                }
-            }
-        }
     }
 }

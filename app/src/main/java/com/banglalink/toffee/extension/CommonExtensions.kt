@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.res.Resources
 import android.util.Patterns
 import android.view.View
+import android.view.ViewGroup
+import androidx.core.view.forEach
 import androidx.fragment.app.FragmentActivity
 import com.banglalink.toffee.R
 import com.banglalink.toffee.enums.InputType
@@ -12,6 +14,7 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.report.ReportPopupFragment
+import com.facebook.shimmer.ShimmerFrameLayout
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -112,6 +115,19 @@ fun Activity.handleFavorite(item: ChannelInfo, onAdded: (()->Unit)? = null, onRe
                     }
                 }
             })
+        }
+    }
+}
+
+fun ViewGroup.showLoadingAnimation(isStart: Boolean) {
+    this.forEach {
+        if (it is ShimmerFrameLayout) {
+            if (isStart && !it.isShimmerStarted) {
+                it.startShimmer()
+            }
+            else {
+                it.stopShimmer()
+            }
         }
     }
 }

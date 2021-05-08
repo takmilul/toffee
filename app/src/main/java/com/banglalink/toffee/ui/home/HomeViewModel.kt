@@ -10,6 +10,7 @@ import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.data.network.response.MqttBean
+import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.network.retrofit.DbApi
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.network.util.resultLiveData
@@ -43,8 +44,9 @@ class HomeViewModel @Inject constructor(
     private val mPref: SessionPreference,
     private val setFcmToken: SetFcmToken,
     private val reactionDao: ReactionDao,
-    private val updateFavorite: UpdateFavorite,
+    private val cacheManager: CacheManager,
     private val logoutService: LogoutService,
+    private val updateFavorite: UpdateFavorite,
     private val tvChannelRepo: TVChannelRepository,
     @ApplicationContext private val mContext: Context,
     private val sendSubscribeEvent: SendSubscribeEvent,
@@ -213,7 +215,11 @@ class HomeViewModel @Inject constructor(
 
     fun sendSubscriptionStatus(subscriptionInfo: SubscriptionInfo, status: Int) {
         viewModelScope.launch {
-            subscriptionLiveData.value = resultFromResponse { sendSubscribeEvent.execute(subscriptionInfo, status, true) }
+            val response = resultFromResponse { sendSubscribeEvent.execute(subscriptionInfo, status, true) }
+            if (response is Success) {
+                cacheManager.clearCacheByUrl(GET_SUBSCRIBED_CHANNELS)
+            }
+            subscriptionLiveData.value = response
         }
     }
 
@@ -232,7 +238,7 @@ class HomeViewModel @Inject constructor(
     
     fun getMqttCredential() {
         viewModelScope.launch { 
-            mqttCredentialLiveData.postValue(resultFromResponse { mqttCredentialService.execute() })
+            mqttCredentialLiveData.postValue(resultFromResponse { mqttCredentialService.execute() }!!)
         }
     }
     
@@ -244,7 +250,7 @@ class HomeViewModel @Inject constructor(
     
     fun logoutUser() {
         viewModelScope.launch { 
-            logoutLiveData.postValue(resultFromResponse { logoutService.execute() })
+            logoutLiveData.postValue(resultFromResponse { logoutService.execute() }!!)
         }
     }
     
