@@ -115,7 +115,11 @@ class LoginContentFragment2 : ChildDialogFragment(), TextWatcher {
     }
     
     private fun showTermsAndConditionDialog() {
-        parentFragment?.parentFragment?.findNavController()?.navigate(R.id.termsConditionFragment)
+        val args = Bundle().apply {
+            putString("myTitle", "Terms & Conditions")
+            putString("url", mPref.termsAndConditionUrl)
+        }
+        parentFragment?.parentFragment?.findNavController()?.navigate(R.id.termsAndConditionFragment, args)
     }
     
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}

@@ -1277,6 +1277,7 @@ class HomeActivity :
                         mPref.phoneNumber = ""
                         mPref.channelName = ""
                         mPref.channelLogo = ""
+                        mPref.customerName = ""
                         mPref.userImageUrl = null
                         mPref.isVerifiedUser = false
                         mPref.isChannelDetailChecked = false

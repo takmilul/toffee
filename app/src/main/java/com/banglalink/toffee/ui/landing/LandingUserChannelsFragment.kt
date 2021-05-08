@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -18,14 +17,17 @@ import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentLandingUserChannelsBinding
 import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.showLoadingAnimation
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.LandingPopularChannelCallback
-import com.banglalink.toffee.model.*
+import com.banglalink.toffee.model.Category
+import com.banglalink.toffee.model.MyChannelNavParams
+import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.UserChannelInfo
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.common.UnSubscribeDialog
 import com.banglalink.toffee.ui.home.LandingPageViewModel
-import com.facebook.shimmer.ShimmerFrameLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
@@ -69,14 +71,12 @@ class LandingUserChannelsFragment : HomeBaseFragment(), LandingPopularChannelCal
         with(binding.userChannelList) {
 
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-                mAdapter.loadStateFlow
-//                    .distinctUntilChangedBy { it.refresh }
-                    .collectLatest {
+                mAdapter.loadStateFlow.collectLatest {
                     val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
                     val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
                     binding.placeholder.isVisible = isEmpty
                     binding.userChannelList.isVisible = ! isEmpty
-                    startLoadingAnimation(isLoading)
+                    binding.placeholder.showLoadingAnimation(isLoading)
                     isInitialized = true
                 }
             }
@@ -85,19 +85,6 @@ class LandingUserChannelsFragment : HomeBaseFragment(), LandingPopularChannelCal
         
         observeList()
 //        observeSubscribeChannel()
-    }
-    
-    private fun startLoadingAnimation(isStart: Boolean) {
-        binding.placeholder.children.forEach {
-            if (it is ShimmerFrameLayout) {
-                if (isStart) {
-                    it.startShimmer()
-                }
-                else {
-                    it.stopShimmer()
-                }
-            }
-        }
     }
     
     private fun observeList() {

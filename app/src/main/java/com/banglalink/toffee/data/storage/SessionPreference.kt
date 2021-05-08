@@ -465,7 +465,9 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         isVerifiedUser = customerInfoLogin.verified_status
         customerId = customerInfoLogin.customerId
         password = customerInfoLogin.password?:""
-        customerName = customerInfoLogin.customerName?:""
+        if (customerName.isBlank()) {
+            customerName = customerInfoLogin.customerName?:""
+        }
         sessionToken = (customerInfoLogin.sessionToken?:"")
         if (userImageUrl.isNullOrBlank()) {
             userImageUrl = customerInfoLogin.profileImage

@@ -13,7 +13,6 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.view.children
 import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
@@ -31,6 +30,7 @@ import com.banglalink.toffee.enums.Reaction.Love
 import com.banglalink.toffee.extension.handleShare
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.show
+import com.banglalink.toffee.extension.showLoadingAnimation
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
@@ -43,7 +43,6 @@ import com.banglalink.toffee.ui.common.ReactionPopup
 import com.banglalink.toffee.ui.common.ReactionPopup.Companion.TAG
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
-import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
@@ -86,14 +85,13 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
             addItemDecoration(MarginItemDecoration(12))
 
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-                mAdapter.loadStateFlow
-//                    .distinctUntilChangedBy { it.refresh }
-                    .collectLatest {
+                mAdapter.loadStateFlow.collectLatest {
                     val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
                     val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
                     binding.emptyView.isVisible = isEmpty && !isLoading
                     binding.placeholder.isVisible = isLoading
                     binding.latestVideosList.isVisible = !isEmpty
+                    binding.placeholder.showLoadingAnimation(isLoading)
                     isInitialized = true
                 }
             }
@@ -102,7 +100,6 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         }
         
         selectedFilter = FEED.value
-        observeLatestVideosList(category?.id?.toInt() ?: 0)
 
         if (category?.id?.toInt() == 1) {
             createSubCategoryList()
@@ -110,6 +107,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         
         observeSubCategoryChange()
         observeHashTagChange()
+        observeLatestVideosList(category?.id?.toInt() ?: 0)
         
         binding.filterButton.setOnClickListener { filterButtonClickListener(it) }
     }
@@ -264,14 +262,6 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
             observe(viewModel.subCategories) {
                 if (it.isNotEmpty()) {
                     binding.subCategoryChipGroup.removeAllViews()
-                    binding.subCategoryChipGroup.setOnCheckedChangeListener { group, checkedId ->
-                        val selectedChip = group.findViewById<Chip>(checkedId)
-                        if (selectedChip != null) {
-                            val selectedSub = selectedChip.tag as SubCategory
-                            viewModel.subCategoryId.value = selectedSub.id.toInt()
-                            viewModel.isDramaSeries.value = selectedSub.categoryId.toInt() == 9
-                        }
-                    }
                     val subList = it.sortedBy { sub -> sub.id }
                     subList.forEachIndexed { _, subCategory ->
                         val newChip = addChip(subCategory).apply {
@@ -280,6 +270,14 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
                         binding.subCategoryChipGroup.addView(newChip)
                         if (subCategory.id == 0L) {
                             binding.subCategoryChipGroup.check(newChip.id)
+                        }
+                    }
+                    binding.subCategoryChipGroup.setOnCheckedChangeListener { group, checkedId ->
+                        val selectedChip = group.findViewById<Chip>(checkedId)
+                        if (selectedChip != null) {
+                            val selectedSub = selectedChip.tag as SubCategory
+                            viewModel.subCategoryId.value = selectedSub.id.toInt()
+                            viewModel.isDramaSeries.value = selectedSub.categoryId.toInt() == 9
                         }
                     }
                     binding.subCategoryChipGroupHolder.show()
@@ -317,18 +315,5 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
                 unSelectedColor
             )
         )
-    }
-    
-    private fun startLoadingAnimation(isStart: Boolean) {
-        binding.placeholder.children.forEach {
-            if (it is ShimmerFrameLayout) {
-                if (isStart) {
-                    it.startShimmer()
-                }
-                else {
-                    it.stopShimmer()
-                }
-            }
-        }
     }
 }

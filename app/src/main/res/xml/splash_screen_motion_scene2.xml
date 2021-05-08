@@ -7,11 +7,10 @@
         motion:autoTransition="animateToEnd"
         motion:constraintSetEnd="@id/firstEnd"
         motion:constraintSetStart="@id/firstStart"
-        motion:duration="500"
+        motion:duration="700"
         motion:motionInterpolator="linear">
         
         <KeyFrameSet>
-            
             <KeyPosition
                 motion:framePosition="75"
                 motion:keyPositionType="deltaRelative"
@@ -104,7 +103,6 @@
                 motion:keyPositionType="deltaRelative"
                 motion:percentY="0.2" />
         </KeyFrameSet>
-        <OnClick motion:targetId="@+id/button" />
     </Transition>
     
     <ConstraintSet android:id="@+id/firstStart">
@@ -184,7 +182,6 @@
         motion:motionInterpolator="linear">
         
         <KeyFrameSet>
-            
             <KeyAttribute
                 android:rotation="-360"
                 android:scaleX="4.5"

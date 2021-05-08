@@ -104,10 +104,11 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment(), TextWatcher {
     }
 
     private fun showTermsAndConditionDialog() {
-        if (findNavController().currentDestination?.id != R.id.termsConditionFragment && findNavController().currentDestination?.id == R.id.bottomSheetUploadFragment) {
-            val action = BottomSheetUploadFragmentDirections.actionBottomSheetUploadFragmentToTermsConditionFragment()
-            findNavController().navigate(action)
+        val args = Bundle().apply { 
+            putString("myTitle", "Terms & Conditions")
+            putString("url", mPref.termsAndConditionUrl)
         }
+        findNavController().navigate(R.id.termsAndConditionFragment, args)
     }
 
     private fun showImagePickerDialog() {
