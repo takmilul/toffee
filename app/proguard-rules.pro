@@ -89,3 +89,8 @@
     android.widget.OverScroller scroller;
 }
 -keep class androidx.navigation** { *; }
+
+-keepnames class com.google.android.exoplayer2.ext.cast.CastPlayer$StatusListener
+-keepclassmembers class com.google.android.exoplayer2.ext.cast.CastPlayer {
+    private com.google.android.exoplayer2.ext.cast.CastPlayer$StatusListener statusListener;
+}
