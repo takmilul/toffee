@@ -124,14 +124,14 @@ dependencies {
     //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.6'
 
     // Paging
-    implementation 'androidx.paging:paging-runtime-ktx:3.0.0-rc01'
+    implementation 'androidx.paging:paging-runtime-ktx:3.0.0'
 
     // Hilt
     def hilt_android_ver = "2.35.1"
     implementation "com.google.dagger:hilt-android:$hilt_android_ver"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_android_ver"
 
-    def hilt_ver = "1.0.0-beta01"
+    def hilt_ver = "1.0.0"
     implementation "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03"
     kapt "androidx.hilt:hilt-compiler:$hilt_ver"
 

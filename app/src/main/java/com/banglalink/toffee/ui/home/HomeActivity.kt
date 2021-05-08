@@ -76,8 +76,11 @@ import com.google.android.exoplayer2.util.Util
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.play.core.appupdate.AppUpdateInfo
+import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.InstallStateUpdatedListener
 import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.android.play.core.tasks.Task
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -381,9 +384,16 @@ class HomeActivity :
             }
         }
     }
-    
+
+    private lateinit var appUpdateManager: AppUpdateManager
+    val appUpdateLietener = InstallStateUpdatedListener { state ->
+        if (state.installStatus() == InstallStatus.DOWNLOADED) {
+//                popupSnackbarForCompleteUpdate()
+        }
+    }
+
     fun inAppUpdate() {
-        val appUpdateManager = AppUpdateManagerFactory.create(this)
+        appUpdateManager = AppUpdateManagerFactory.create(this)
         val appUpdateInfoTask: Task<AppUpdateInfo> = appUpdateManager.appUpdateInfo
         appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
             if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
@@ -400,12 +410,8 @@ class HomeActivity :
                 }
             }
         }
-//        val listener = InstallStateUpdatedListener { state ->
-//            if (state.installStatus() === InstallStatus.DOWNLOADED) {
-//                popupSnackbarForCompleteUpdate()
-//            }
-//        }
-//        appUpdateManager.registerListener(listener)
+
+        appUpdateManager.registerListener(appUpdateLietener)
     }
     
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -1252,6 +1258,7 @@ class HomeActivity :
     
     override fun onDestroy() {
 //        mqttService.destroy()
+        appUpdateManager.unregisterListener(appUpdateLietener)
         super.onDestroy()
     }
     
