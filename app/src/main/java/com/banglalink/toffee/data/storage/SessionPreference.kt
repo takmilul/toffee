@@ -459,6 +459,18 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getString(PREF_TERMS_AND_CONDITIONS_URL, "") ?: ""
         set(value) = pref.edit { putString(PREF_TERMS_AND_CONDITIONS_URL, value) }
     
+    var facebookPageUrl: String
+        get() = pref.getString(PREF_FACEBOOK_PAGE_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_FACEBOOK_PAGE_URL, value) }
+    
+    var instagramPageUrl: String
+        get() = pref.getString(PREF_INSTAGRAM_PAGE_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_INSTAGRAM_PAGE_URL, value) }
+    
+    var youtubePageUrl: String
+        get() = pref.getString(PREF_YOUTUBE_PAGE_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_YOUTUBE_PAGE_URL, value) }
+    
     fun saveCustomerInfo(customerInfoLogin:CustomerInfoLogin){
         balance = customerInfoLogin.balance
         logout = "0"
@@ -505,6 +517,9 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         privacyPolicyUrl = customerInfoLogin.privacyPolicyUrl ?: ""
         creatorsPolicyUrl = customerInfoLogin.creatorsPolicyUrl ?: ""
         termsAndConditionUrl = customerInfoLogin.termsAndConditionsUrl ?: ""
+        facebookPageUrl = customerInfoLogin.facebookPageUrl
+        instagramPageUrl = customerInfoLogin.instagramPageUrl
+        youtubePageUrl = customerInfoLogin.youtubePageUrl
     }
 
     companion object {
@@ -573,6 +588,9 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_PRIVACY_POLICY_URL = "privacy_policy_url"
         private const val PREF_CREATORS_POLICY_URL = "creators_policy_url"
         private const val PREF_TERMS_AND_CONDITIONS_URL = "terms_and_conditions_url"
+        private const val PREF_FACEBOOK_PAGE_URL = "facebook_page_url"
+        private const val PREF_INSTAGRAM_PAGE_URL = "instagram_page_url"
+        private const val PREF_YOUTUBE_PAGE_URL = "youtube_page_url"
 
         private const val PREF_NAME_IP_TV= "IP_TV"
 

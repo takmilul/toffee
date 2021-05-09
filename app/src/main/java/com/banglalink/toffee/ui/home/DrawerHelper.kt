@@ -1,5 +1,8 @@
 package com.banglalink.toffee.ui.home
 
+import android.content.Intent
+import android.net.Uri
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
@@ -11,15 +14,11 @@ import androidx.navigation.ui.NavigationUI
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
-import com.banglalink.toffee.extension.checkVerification
-import com.banglalink.toffee.extension.launchActivity
-import com.banglalink.toffee.extension.loadProfileImage
-import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.suke.widget.SwitchButton
-
 
 class DrawerHelper(
     private val activity: HomeActivity,
@@ -55,8 +54,27 @@ class DrawerHelper(
         }
 
         setProfileInfo()
+        followUsAction()
     }
-
+    
+    private fun followUsAction() {
+        try {
+            val actionView = binding.sideNavigation.menu.findItem(R.id.menu_follow_us).actionView
+            actionView.findViewById<ImageView>(R.id.facebookButton).setOnClickListener {
+                activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(mPref.facebookPageUrl)))
+            }
+            actionView.findViewById<ImageView>(R.id.instagramButton).setOnClickListener {
+                activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(mPref.instagramPageUrl)))
+            }
+            actionView.findViewById<ImageView>(R.id.youtubeButton).setOnClickListener {
+                activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(mPref.youtubePageUrl)))
+            }
+        }
+        catch (e: Exception) {
+            Log.e("TAG", "Url is not valid", )
+        }
+    }
+    
     private fun setProfileInfo() {
         val header = binding.sideNavigation.getHeaderView(0)
         val profileName = header.findViewById(R.id.profile_name) as TextView
