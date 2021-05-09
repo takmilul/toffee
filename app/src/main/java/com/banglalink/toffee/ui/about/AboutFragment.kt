@@ -8,8 +8,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.fragment.findNavController
-import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentAboutBinding
 import com.banglalink.toffee.ui.common.BaseFragment
 
@@ -26,29 +24,8 @@ class AboutFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.versionTv.text = getVersionText()
-        binding.termsConditionsTv.setOnClickListener {
-            onClickTermsAndConditions()
-        }
-        binding.privacyPolicyTv.setOnClickListener {
-            onClickPrivacyPolicy()
-        }
         binding.checkUpdate.setOnClickListener {
             onClickCheckUpdateButton()
-        }
-    }
-    
-    fun onClickTermsAndConditions() {
-        if (findNavController().currentDestination?.id != R.id.termsAndConditionFragment && findNavController().currentDestination?.id == R.id
-                .AboutFragment && mPref.termsAndConditionUrl.isNotBlank()) {
-            val action = AboutFragmentDirections.actionAboutFragmentToTermsAndConditons("Terms & Conditions", mPref.termsAndConditionUrl)
-            findNavController().navigate(action)
-        }
-    }
-    
-    private fun onClickPrivacyPolicy() {
-        if (findNavController().currentDestination?.id != R.id.privacyPolicyFragment && findNavController().currentDestination?.id == R.id.AboutFragment && mPref.privacyPolicyUrl.isNotBlank()   ) {
-            val action = AboutFragmentDirections.actionAboutFragmentToPrivacyPolicy("Privacy Policy", mPref.privacyPolicyUrl)
-            findNavController().navigate(action)
         }
     }
     

@@ -77,4 +77,7 @@ class CustomerInfoLogin(
     val privacyPolicyUrl: String? = null,
     val creatorsPolicyUrl: String? = null,
     val termsAndConditionsUrl: String? = null,
+    val facebookPageUrl: String = "https://www.facebook.com/Toffee.Bangladesh",
+    val instagramPageUrl: String = "https://www.instagram.com/toffee.bangladesh/?hl=en",
+    val youtubePageUrl: String = "https://www.youtube.com/channel/UCv9NYIjz4jhw-KSqdRulSuw",
 ) : BodyResponse(), Parcelable
