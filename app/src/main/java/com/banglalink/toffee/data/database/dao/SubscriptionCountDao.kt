@@ -8,6 +8,9 @@ interface SubscriptionCountDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(subscriptionCount: SubscriptionCount): Long
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(vararg subscriptionCountList: SubscriptionCount): LongArray
+
     @Delete
     suspend fun delete(subscriptionCount: SubscriptionCount): Int
 
@@ -23,7 +26,6 @@ interface SubscriptionCountDao {
     @Query("UPDATE SubscriptionCount SET status = :count WHERE channelId == :channelId")
     suspend fun updateSubscription(channelId: Int, count: Long): Int
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(vararg subscriptionCountList: SubscriptionCount): LongArray
-
+    @Query("SELECT * FROM SubscriptionCount WHERE channelId IN (:contentIds)")
+    suspend fun getSubscriptionListByContentIds(contentIds: List<Int>): List<SubscriptionCount>
 }

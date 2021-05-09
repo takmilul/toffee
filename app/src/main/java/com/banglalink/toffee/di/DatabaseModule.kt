@@ -151,14 +151,14 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun providesReactionStatusRepository(dao: ReactionStatusDao): ReactionStatusRepository {
-        return ReactionStatusRepositoryImpl(dao)
+    fun providesReactionStatusRepository(db: ToffeeDatabase, dao: ReactionStatusDao): ReactionStatusRepository {
+        return ReactionStatusRepositoryImpl(db, dao)
     }
 
     @Provides
     @Singleton
-    fun providesSubscribeCount(dao: SubscriptionCountDao): SubscriptionCountRepository {
-        return SubscriptionCountRepositoryImpl(dao)
+    fun providesSubscribeCount(db: ToffeeDatabase, dao: SubscriptionCountDao): SubscriptionCountRepository {
+        return SubscriptionCountRepositoryImpl(db, dao)
     }
     @Provides
     @Singleton
@@ -186,7 +186,7 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun providesShareCountRepository(dao: ShareCountDao): ShareCountRepository {
-        return ShareCountRepositoryImpl(dao)
+    fun providesShareCountRepository(db: ToffeeDatabase, dao: ShareCountDao): ShareCountRepository {
+        return ShareCountRepositoryImpl(db, dao)
     }
 }

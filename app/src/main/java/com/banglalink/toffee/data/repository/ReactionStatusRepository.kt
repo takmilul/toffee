@@ -7,5 +7,6 @@ interface ReactionStatusRepository {
     suspend fun insertAll(vararg items: ReactionStatusItem): LongArray
     suspend fun getReactionStatusByChannelId(contentId: Long): List<ReactionStatusItem>?
     suspend fun getReactionCountByReactionType(contentId: Long, reactionType: Int): Long?
+    suspend fun updateReaction(reactionStatusList: ArrayList<ReactionStatusItem>)
     suspend fun updateReaction(contentId: Long, reactionType: Int, status: Int): Int
 }
