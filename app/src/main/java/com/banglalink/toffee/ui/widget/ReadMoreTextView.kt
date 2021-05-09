@@ -13,6 +13,7 @@ import android.text.style.AlignmentSpan.Standard
 import android.text.style.ClickableSpan
 import android.text.style.MetricAffectingSpan
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.appcompat.widget.AppCompatTextView
@@ -36,6 +37,7 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
     private var lineEndIndex = 0
     private var trimLines: Int
 
+    val TAG = "READ_"
     companion object {
         private const val TRIM_MODE_LINES = 0
         private const val TRIM_MODE_LENGTH = 1
@@ -71,32 +73,37 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        Log.i(TAG, "onAttachedToWindow: ")
         onGlobalLayoutLineEndIndex()
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
+        Log.i(TAG, "onDetachedFromWindow: ")
         viewTreeObserver.removeOnGlobalLayoutListener(globalLayoutListener)
     }
 
     private val globalLayoutListener = object : OnGlobalLayoutListener {
         override fun onGlobalLayout() {
+            Log.i(TAG, "onGlobalLayout: $lineCount")
             val obs = viewTreeObserver
-            if (lineCount > 0) {
+            if (lineCount > 0 && measuredHeight > 0 && measuredWidth > 0) {
                 obs.removeOnGlobalLayoutListener(this)
-            }
             refreshLineEndIndex()
             setText()
+            }
         }
     }
 
     private fun onGlobalLayoutLineEndIndex() {
+        Log.i(TAG, "onGlobalLayoutLineEndIndex: ")
         if (trimMode == TRIM_MODE_LINES) {
             viewTreeObserver.addOnGlobalLayoutListener(globalLayoutListener)
         }
     }
 
     private fun refreshLineEndIndex() {
+        Log.i(TAG, "refreshLineEndIndex: ")
         try {
             lineEndIndex = when (trimLines) {
                 0 -> {
@@ -116,6 +123,7 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
     }
 
     private fun setText() {
+        Log.i(TAG, "setText: Pri")
         getTrimmedText()?.let { 
             super.setText(it, bufferType)
             movementMethod = LinkMovementMethod.getInstance()
@@ -124,6 +132,7 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
     }
 
     override fun setText(text: CharSequence, type: BufferType) {
+        Log.i(TAG, "setText: ")
 //        this.mainText = text
         this.mainText = text.toString().replace("\n".toRegex(), " ")
         bufferType = type
@@ -131,6 +140,7 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
     }
 
     private fun getTrimmedText(): CharSequence? {
+        Log.i(TAG, "getTrimmedText: ")
         if (trimMode == TRIM_MODE_LENGTH) {
             if (!mainText.isNullOrBlank() && mainText?.length?:0 > trimLength) {
                 return if (readMore) {
@@ -157,7 +167,8 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
         return mainText
     }
 
-    private fun updateCollapsedText(): CharSequence {
+    private fun updateCollapsedText(): CharSequence? {
+        Log.i(TAG, "updateCollapsedText: ")
         var trimEndIndex = mainText?.length?:0
         when (trimMode) {
             TRIM_MODE_LINES -> {
@@ -168,13 +179,19 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
             }
             TRIM_MODE_LENGTH -> trimEndIndex = trimLength + 1
         }
-        val spannableText = SpannableStringBuilder(mainText, 0, trimEndIndex)
-            .append(ELLIPSIZE)
-            .append(trimCollapsedText)
-        return addClickableSpan(spannableText, trimCollapsedText)
+        mainText?.let { 
+            if (it.length > trimEndIndex) {
+                val spannableText = SpannableStringBuilder(it, 0, trimEndIndex)
+                    .append(ELLIPSIZE)
+                    .append(trimCollapsedText)
+                return addClickableSpan(spannableText, trimCollapsedText)
+            }
+        }
+        return mainText
     }
 
     private fun updateExpandedText(): CharSequence? {
+        Log.i(TAG, "updateExpandedText: ")
         if (showTrimExpandedText) {
             val s = SpannableStringBuilder(mainText, 0, mainText?.length?:0).append("\n").append(trimExpandedText.toString())
             return addClickableSpan(s, trimExpandedText)
