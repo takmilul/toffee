@@ -147,7 +147,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     private fun observeHashTagChange() {
         observe(viewModel.selectedHashTag) {
             listJob?.cancel()
-            listJob = viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            listJob = viewLifecycleOwner.lifecycleScope.launch {
                 viewModel.loadHashTagContents(it, category?.id?.toInt() ?: 0, viewModel.subCategoryId.value ?: 0).collectLatest {
                     mAdapter.submitData(it)
                 }
@@ -175,7 +175,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
 
     private fun observeLatestVideosList(categoryId: Int, subCategoryId: Int = 0) {
         listJob?.cancel()
-        listJob = viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        listJob = viewLifecycleOwner.lifecycleScope.launch {
             if (categoryId == 0) {
                 viewModel.loadLatestVideos().collectLatest {
                     mAdapter.submitData(it.map { channel->
@@ -197,7 +197,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     
     private fun observeTrendingVideosList(categoryId: Int, subCategoryId: Int = 0) {
         listJob?.cancel()
-        listJob = viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        listJob = viewLifecycleOwner.lifecycleScope.launch {
             viewModel.loadMostPopularVideos(categoryId, subCategoryId).collectLatest {
                 mAdapter.submitData(it.map { channel->
                     localSync.syncData(channel)
@@ -258,30 +258,28 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     }
     
     private fun createSubCategoryList() {
-        lifecycleScope.launch {
-            observe(viewModel.subCategories) {
-                if (it.isNotEmpty()) {
-                    binding.subCategoryChipGroup.removeAllViews()
-                    val subList = it.sortedBy { sub -> sub.id }
-                    subList.forEachIndexed { _, subCategory ->
-                        val newChip = addChip(subCategory).apply {
-                            tag = subCategory
-                        }
-                        binding.subCategoryChipGroup.addView(newChip)
-                        if (subCategory.id == 0L) {
-                            binding.subCategoryChipGroup.check(newChip.id)
-                        }
+        observe(viewModel.subCategories) {
+            if (it.isNotEmpty()) {
+                binding.subCategoryChipGroup.removeAllViews()
+                val subList = it.sortedBy { sub -> sub.id }
+                subList.forEachIndexed { _, subCategory ->
+                    val newChip = addChip(subCategory).apply {
+                        tag = subCategory
                     }
-                    binding.subCategoryChipGroup.setOnCheckedChangeListener { group, checkedId ->
-                        val selectedChip = group.findViewById<Chip>(checkedId)
-                        if (selectedChip != null) {
-                            val selectedSub = selectedChip.tag as SubCategory
-                            viewModel.subCategoryId.value = selectedSub.id.toInt()
-                            viewModel.isDramaSeries.value = selectedSub.categoryId.toInt() == 9
-                        }
+                    binding.subCategoryChipGroup.addView(newChip)
+                    if (subCategory.id == 0L) {
+                        binding.subCategoryChipGroup.check(newChip.id)
                     }
-                    binding.subCategoryChipGroupHolder.show()
                 }
+                binding.subCategoryChipGroup.setOnCheckedChangeListener { group, checkedId ->
+                    val selectedChip = group.findViewById<Chip>(checkedId)
+                    if (selectedChip != null) {
+                        val selectedSub = selectedChip.tag as SubCategory
+                        viewModel.subCategoryId.value = selectedSub.id.toInt()
+                        viewModel.isDramaSeries.value = selectedSub.categoryId.toInt() == 9
+                    }
+                }
+                binding.subCategoryChipGroupHolder.show()
             }
         }
     }

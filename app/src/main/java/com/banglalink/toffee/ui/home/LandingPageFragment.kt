@@ -45,8 +45,13 @@ class LandingPageFragment : HomeBaseFragment() {
     }
 
     override fun onDestroyView() {
+        binding.landingAppbar.removeOnOffsetChangedListener(offsetListener)
         super.onDestroyView()
         _binding = null
+    }
+
+    private val offsetListener = AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
+        appbarOffset = verticalOffset
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -55,9 +60,7 @@ class LandingPageFragment : HomeBaseFragment() {
         landingViewModel.categoryId.value = 0
         landingViewModel.pageType.value = Landing
         landingViewModel.isDramaSeries.value = false
-        binding.landingAppbar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
-            appbarOffset = verticalOffset
-        })
+        binding.landingAppbar.addOnOffsetChangedListener(offsetListener)
     }
     
     fun onBackPressed(): Boolean {
