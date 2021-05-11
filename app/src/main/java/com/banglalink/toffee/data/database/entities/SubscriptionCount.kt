@@ -10,5 +10,5 @@ data class SubscriptionCount (
     @SerializedName("channel_id")
     val channelId: Int,
     @SerializedName("status")
-    val status: Long = 0L
+    var status: Long = 0L
 )

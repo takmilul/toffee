@@ -386,9 +386,10 @@ class HomeActivity :
     }
 
     private lateinit var appUpdateManager: AppUpdateManager
-    val appUpdateLietener = InstallStateUpdatedListener { state ->
+    
+    val appUpdateListener = InstallStateUpdatedListener { state ->
         if (state.installStatus() == InstallStatus.DOWNLOADED) {
-//                popupSnackbarForCompleteUpdate()
+            showToast("Toffee updated successfully")
         }
     }
 
@@ -411,7 +412,7 @@ class HomeActivity :
             }
         }
 
-        appUpdateManager.registerListener(appUpdateLietener)
+        appUpdateManager.registerListener(appUpdateListener)
     }
     
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -1258,7 +1259,7 @@ class HomeActivity :
     
     override fun onDestroy() {
 //        mqttService.destroy()
-        appUpdateManager.unregisterListener(appUpdateLietener)
+        appUpdateManager.unregisterListener(appUpdateListener)
         super.onDestroy()
     }
     

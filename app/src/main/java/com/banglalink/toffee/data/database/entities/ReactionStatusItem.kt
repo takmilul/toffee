@@ -9,5 +9,5 @@ import androidx.room.Index
 data class ReactionStatusItem(
     val contentId: Int = 0,
     val reactionType: Int = 0,
-    val reactionCount: Long = 0L,
+    var reactionCount: Long = 0L,
 ): BaseEntity()

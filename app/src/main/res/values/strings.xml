@@ -245,6 +245,31 @@
     <string name="sign_in_intro_desc">like- Reaction, Upload, Referral etc.</string>
     <string name="sign_in_intro_title">Sign-in to Access All Features</string>
     <string name="subscription_empty_view_text">You haven\'t subscribed any channel yet</string>
+    <string name="about_toffee_title">About Toffee</string>
+    <string name="about_toffee_text">
+        Enjoy instant streaming on TV channels and exciting videos – all FREE on Toffee!
+        \n\nLooking for a single app to cater to all your entertainment needs?
+        \n\nDownload Toffee and enjoy instant buffer-less experience! Enjoy the ultimate streaming platform with access to 100+ local and international TV 
+        channels, movies, telefilms, music videos – all on-the-go. Not only that, you can now make your own video contents and earn money through Toffee. Access all of these from any internet network, and enjoy watching videos in the app absolutely free!
+        \n\nSo why wait? Download Toffee and indulge in endless entertainment, anywhere!
+    </string>
+    <string name="about_feature_title">App Features – </string>
+    <string name="about_feature_text">
+        \u2713 Live Stream TV channels
+        \n\u2713 Absolutely buffer-less experience
+        \n\u2713 Easy content discoverability with refresh app interface
+        \n\u2713 Access to 100+ TV, live sports, international mega series 
+        \n\u2713 Opportunity to earn money through user generated contents
+        \n\u2713 FREE access for all users from any network!
+    </string>
+    <string name="about_message">*Toffee is only available in Bangladesh</string>
+    <string name="tick">✓</string>
+    <string name="bullet_1_text">Live Stream TV channels</string>
+    <string name="bullet_2_text">Absolutely buffer-less experience</string>
+    <string name="bullet_3_text">Easy content discoverability with refresh app interface</string>
+    <string name="bullet_4_text">Access to 100+ TV, live sports, international mega series</string>
+    <string name="bullet_5_text">Opportunity to earn money through user generated contents</string>
+    <string name="bullet_6_text">FREE access for all users from any network!</string>
     
     <!--    url    -->
 <!--    <string name="creators_policy_url">https://toffeelive.com/policies.php</string>-->

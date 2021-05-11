@@ -23,4 +23,7 @@ interface ReactionStatusDao {
     
     @Query("UPDATE ReactionStatusItem SET reactionCount = :count, updateTime = :updateTime WHERE contentId = :contentId AND reactionType = :reactionType")
     suspend fun updateReactionStatusByChannelId(contentId: Long, reactionType: Int, updateTime: Long, count: Long): Int
+    
+    @Query("SELECT * FROM ReactionStatusItem WHERE contentId in (:contentIds)")
+    suspend fun getReactionListByChannelIds(contentIds: List<Int>): List<ReactionStatusItem>
 }

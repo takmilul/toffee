@@ -20,4 +20,7 @@ interface ShareCountDao {
     
     @Query("UPDATE ShareCount SET count = :count WHERE contentId = :contentId")
     suspend fun updateShareCount(contentId: Int, count: Long): Int
+    
+    @Query("SELECT * FROM ShareCount WHERE contentId IN (:contentIds)")
+    suspend fun getShareCountListByContentIds(contentIds: List<Int>): List<ShareCount>
 }
