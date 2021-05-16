@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.channels
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.banglalink.toffee.apiservice.GetChannelWithCategory
@@ -8,7 +9,6 @@ import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.ui.common.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -18,7 +18,7 @@ import javax.inject.Inject
 class AllChannelsViewModel @Inject constructor(
     private val allChannelService: GetChannelWithCategory,
     private val tvChannelsRepo: TVChannelRepository
-): BaseViewModel() {
+): ViewModel() {
     val selectedChannel = MutableLiveData<ChannelInfo?>()
 
     val repo by lazy {

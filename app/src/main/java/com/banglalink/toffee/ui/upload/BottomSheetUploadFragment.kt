@@ -20,14 +20,10 @@ import com.banglalink.toffee.data.network.request.MyChannelEditRequest
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.UploadBottomSheetBinding
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.safeClick
-import com.banglalink.toffee.extension.show
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.profile.ViewProfileViewModel
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
-import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.imagePathToBase64
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -98,7 +94,7 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment(), TextWatcher {
         activity?.windowManager?.defaultDisplay?.getMetrics(displayMetrics)
         val height = displayMetrics.heightPixels
         val value = height - parent.layoutParams.height + 80
-        bottomSheetBehavior.peekHeight = Utils.pxToDp(value)
+        bottomSheetBehavior.peekHeight = value.dp
 
         return dialog
     }

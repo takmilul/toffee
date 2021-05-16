@@ -13,7 +13,6 @@ import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.MyChannelDetail
 import com.banglalink.toffee.model.MyChannelEditBean
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.util.SingleLiveEvent
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -23,7 +22,7 @@ class MyChannelEditDetailViewModel @AssistedInject constructor(
     private val myChannelDetailApiService: MyChannelEditDetailService,
     private val categoryApiService: GetCategories,
     @Assisted val myChannelDetail: MyChannelDetail?,
-) : BaseViewModel() {
+) : ViewModel() {
     
     private val _data = MutableLiveData<Resource<MyChannelEditBean>>()
     val editDetailLiveData = _data.toLiveData()

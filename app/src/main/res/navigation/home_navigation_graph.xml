@@ -46,7 +46,7 @@
         android:id="@+id/menu_settings"
         android:name="com.banglalink.toffee.ui.settings.SettingsFragment"
         android:label="Settings"
-        tools:layout="@layout/activity_settings">
+        tools:layout="@layout/fragment_settings">
         <action
             android:id="@+id/action_SettingsFragment_to_PrivacyPolicy"
             app:destination="@id/privacyPolicyFragment"
@@ -272,22 +272,12 @@
             />
     </dialog>
     <dialog
-        android:id="@+id/termsConditionFragment"
-        android:name="com.banglalink.toffee.ui.upload.TermsConditionFragment"
-        android:label="Terms" >
-
-    </dialog>
-    
-    <dialog
         android:id="@+id/bottomSheetUploadFragment"
         android:name="com.banglalink.toffee.ui.upload.BottomSheetUploadFragment"
         android:label="BottomUpload" >
         <action
             android:id="@+id/action_bottomSheetUploadFragment_to_newUploadMethodFragment"
             app:destination="@id/newUploadMethodFragment" />
-        <action
-            android:id="@+id/action_bottomSheetUploadFragment_to_termsConditionFragment"
-            app:destination="@id/termsConditionFragment" />
         <action
             android:id="@+id/action_bottomSheetUploadFragment_to_thumbnailSelectionMethodFragment"
             app:destination="@id/thumbnailSelectionMethodFragment" />
@@ -472,10 +462,6 @@
         android:id="@+id/challengeDetailFragment"
         android:name="com.banglalink.toffee.ui.challenge.ChallengeDetailFragment"
         android:label="ChallengeDetailFragment" />
-    <fragment
-        android:id="@+id/recentFragment"
-        android:name="com.banglalink.toffee.ui.recent.RecentFragment"
-        android:label="Recent" />
     <fragment
         android:id="@+id/favoriteFragment"
         android:name="com.banglalink.toffee.ui.favorite.FavoriteFragment"

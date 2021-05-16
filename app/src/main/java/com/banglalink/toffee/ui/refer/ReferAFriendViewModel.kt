@@ -1,11 +1,11 @@
 package com.banglalink.toffee.ui.refer
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
 import com.banglalink.toffee.apiservice.GetMyReferralCode
 import com.banglalink.toffee.apiservice.GetReferrerPolicy
 import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.common.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -13,7 +13,7 @@ import javax.inject.Inject
 class ReferAFriendViewModel @Inject constructor(
     private val myReferralCode: GetMyReferralCode,
     private val referrerPolicy: GetReferrerPolicy,
-) : BaseViewModel() {
+) : ViewModel() {
 
     fun getMyReferralCode(): LiveData<Resource<ReferralForm>> {
         return resultLiveData {

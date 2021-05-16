@@ -92,7 +92,7 @@ fun bindCategoryBackground(view: ImageView, category: Category) {
 @BindingAdapter("loadCategoryImage")
 fun bindCategoryImage(view: ImageView, category: Category) {
     if (category.categoryIcon.isNullOrBlank()) {
-        view.setImageResource(R.drawable.ic_cat_music)
+        view.setImageResource(R.drawable.ic_cat_movie)
     }
     else {
         view.load(category.categoryIcon) {

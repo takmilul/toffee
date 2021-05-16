@@ -3,6 +3,7 @@ package com.banglalink.toffee.ui.home
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.*
@@ -19,7 +20,6 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.Success
-import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.player.PlaylistManager
 import com.banglalink.toffee.usecase.*
@@ -62,7 +62,7 @@ class HomeViewModel @Inject constructor(
     private val contentFromShareableUrl: GetContentFromShareableUrl,
     private val myChannelDetailApiService: MyChannelGetDetailService,
     private val subscriptionCountRepository: SubscriptionCountRepository,
-) : BaseViewModel(), OnCompleteListener<InstanceIdResult> {
+) : ViewModel(), OnCompleteListener<InstanceIdResult> {
 
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val fragmentDetailsMutableLiveData = SingleLiveEvent<Any>()

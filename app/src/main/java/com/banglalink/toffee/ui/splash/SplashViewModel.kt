@@ -3,6 +3,7 @@ package com.banglalink.toffee.ui.splash
 import android.database.sqlite.SQLiteDatabase
 import android.os.Environment
 import android.util.Log
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.analytics.ToffeeAnalytics
@@ -14,7 +15,6 @@ import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.util.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -29,9 +29,10 @@ class SplashViewModel @Inject constructor(
     private val credential: CredentialService,
     private val checkUpdate: CheckUpdate,
     @AppCoroutineScope private val appScope: CoroutineScope,
-) : BaseViewModel() {
+) : ViewModel() {
 
     val apiLoginResponse = SingleLiveEvent<Resource<Any>>()
+    
     init {
         appScope.launch {
             reportAppLaunch()

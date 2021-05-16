@@ -9,9 +9,9 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.Group
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.widget.StickyHeaderGridAdapter
-import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.bindChannel
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -142,7 +142,7 @@ class ChannelStickyListAdapter(
 //        }
 
         if(item.id == highlightedChannel?.id.toString() && !getSection(section).header.contains("Recent")) {
-            liveTvViewHolder.icon.borderWidth = Utils.dpToPx(4)
+            liveTvViewHolder.icon.borderWidth = 4.px
         } else {
             liveTvViewHolder.icon.borderWidth = 0
         }

@@ -2,7 +2,7 @@ package com.banglalink.toffee.ui.category.movie
 
 import android.view.View
 import androidx.viewpager2.widget.ViewPager2
-import com.banglalink.toffee.util.Utils
+import com.banglalink.toffee.extension.px
 import kotlin.math.abs
 
 /**
@@ -12,7 +12,7 @@ import kotlin.math.abs
 class ZoomInPageTransformer : ViewPager2.PageTransformer {
 //    val nextItemVisiblePx = Utils.dpToPx(24)
 //    val currentItemHorizontalMarginPx = Utils.dpToPx(24)
-    private val pageTranslationX = Utils.dpToPx(48) //nextItemVisiblePx + currentItemHorizontalMarginPx
+    private val pageTranslationX = 48.px //nextItemVisiblePx + currentItemHorizontalMarginPx
     private val DIFF_SCALE = 0.28f
 
     override fun transformPage(view: View, position: Float) {

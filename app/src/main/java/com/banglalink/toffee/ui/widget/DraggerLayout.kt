@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics.logException
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.util.Utils
+import com.banglalink.toffee.extension.px
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 import javax.inject.Inject
@@ -31,7 +31,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
     private lateinit var dragView: ExoMediaController3
     private lateinit var bottomView: View
     private var lastAction = 0
-    private val bottomMargin = Utils.dpToPx(52 + 72)
+    private val bottomMargin = (52 + 72).px
     private lateinit var viewDragHelper: ViewDragHelper
     private lateinit var dragableViewCallback: DraggableViewCallback
     private var mVerticalDragRange = 0

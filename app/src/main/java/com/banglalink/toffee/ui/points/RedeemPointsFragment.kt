@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.R
+import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentRedeemPointsBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
@@ -18,7 +19,7 @@ import com.banglalink.toffee.model.RedeemPoints
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.onboarding.OnBoarding
 
-class RedeemPointsFragment : Fragment() {
+class RedeemPointsFragment : Fragment(), BaseListItemCallback<RedeemPoints> {
     
     private lateinit var mAdapter: RedeemPointsAdapter
     private var _binding: FragmentRedeemPointsBinding ? = null
@@ -43,9 +44,7 @@ class RedeemPointsFragment : Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mAdapter = RedeemPointsAdapter(requireActivity(), {
-            onItemClicked(it)
-        }, {view1, view2 -> getItemView(view1, view2)})
+        mAdapter = RedeemPointsAdapter(requireActivity(), this, {view1, view2 -> getItemView(view1, view2)})
         scrollListener = object : EndlessRecyclerViewScrollListener(LinearLayoutManager(context)) {
             override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
                 loadList()
@@ -95,7 +94,7 @@ class RedeemPointsFragment : Fragment() {
         }
     }
     
-    private fun onItemClicked(item: RedeemPoints) {
+    override fun onItemClicked(item: RedeemPoints) {
         observe(viewModel.redeemPoints()){
             when(it){
                 is Resource.Success -> {

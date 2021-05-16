@@ -2,27 +2,20 @@ package com.banglalink.toffee.ui.redeem
 
 import android.os.Bundle
 import android.text.TextUtils
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.viewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.banglalink.toffee.R
-import com.banglalink.toffee.databinding.ActivityRedeemCodeLayoutBinding
 import com.banglalink.toffee.databinding.FragmentRedeemCodeBinding
-import com.banglalink.toffee.databinding.FragmentReferAFriendBinding
 import com.banglalink.toffee.extension.action
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.snack
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseFragment
-import com.banglalink.toffee.ui.refer.ReferAFriendViewModel
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.util.unsafeLazy
-
 
 class RedeemCodeFragment : BaseFragment() {
     private var _binding: FragmentRedeemCodeBinding?=null

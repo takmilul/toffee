@@ -1,9 +1,8 @@
 package com.banglalink.toffee.ui.mychannel
 
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import com.banglalink.toffee.apiservice.MyChannelPlaylistContentParam
 import com.banglalink.toffee.apiservice.MyChannelPlaylistVideoDeleteService
 import com.banglalink.toffee.apiservice.MyChannelPlaylistVideosService
@@ -18,7 +17,6 @@ import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelDeletePlaylistVideoBean
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,7 +30,7 @@ class MyChannelPlaylistVideosViewModel @Inject constructor(
     private val activitiesRepo: UserActivitiesRepository,
     private val playlistVideoDeleteApiService: MyChannelPlaylistVideoDeleteService,
     private val apiService: MyChannelPlaylistVideosService.AssistedFactory,
-) : BaseViewModel() {
+) : ViewModel() {
     
     private val _data = SingleLiveEvent<Resource<MyChannelDeletePlaylistVideoBean>>()
     val deletePlaylistVideoLiveData = _data.toLiveData()

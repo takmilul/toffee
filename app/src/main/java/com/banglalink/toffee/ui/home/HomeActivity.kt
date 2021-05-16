@@ -1086,7 +1086,7 @@ class HomeActivity :
                 when(themeMenu.actionView){
                     is SwitchButton -> {
                         (themeMenu.actionView as SwitchButton).let {
-                            val param = LinearLayout.LayoutParams(Utils.dpToPx(36), Utils.dpToPx(22))
+                            val param = LinearLayout.LayoutParams(36.px, 22.px)
                             param.topMargin = 30
                             it.layoutParams = param
                             it.isChecked = isDarkEnabled
