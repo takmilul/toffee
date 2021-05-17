@@ -16,9 +16,13 @@ import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
-import com.banglalink.toffee.util.bindCategoryImage
+import com.banglalink.toffee.util.BindingUtil
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MovieFragment : BaseFragment() {
+    @Inject lateinit var bindingUtil: BindingUtil
     private lateinit var category: Category
     private var _binding: FragmentMovieBinding ? = null
     private val binding get() = _binding!!
@@ -58,7 +62,7 @@ class MovieFragment : BaseFragment() {
     private fun setCategoryIcon() {
         category.let {
             binding.categoryName.text = it.categoryName
-            bindCategoryImage(binding.categoryIcon, it)
+            bindingUtil.bindCategoryImage(binding.categoryIcon, it)
             binding.categoryIcon.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.colorAccent2))
         }
     }

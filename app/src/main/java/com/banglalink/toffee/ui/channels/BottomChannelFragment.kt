@@ -12,9 +12,14 @@ import com.banglalink.toffee.databinding.FragmentBottomTvChannelsBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
+import com.banglalink.toffee.util.BindingUtil
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class BottomChannelFragment: BaseFragment() {
+    @Inject lateinit var bindingUtil: BindingUtil
     private lateinit var mAdapter: BottomChannelAdapter
     val viewModel by activityViewModels<AllChannelsViewModel>()
     val homeViewModel by activityViewModels<HomeViewModel>()
@@ -40,7 +45,7 @@ class BottomChannelFragment: BaseFragment() {
             override fun onItemClicked(item: TVChannelItem) {
                 homeViewModel.fragmentDetailsMutableLiveData.postValue(item.channelInfo)
             }
-        })
+        }, bindingUtil)
 
         with(binding.channelList) {
             adapter = mAdapter

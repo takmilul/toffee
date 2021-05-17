@@ -17,10 +17,14 @@ import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.SubCategory
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
-import com.banglalink.toffee.util.bindCategoryImage
+import com.banglalink.toffee.util.BindingUtil
 import com.google.android.material.chip.Chip
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class CategoryInfoFragment: HomeBaseFragment() {
+    @Inject lateinit var bindingUtil: BindingUtil
     private val landingViewModel by activityViewModels<LandingPageViewModel>()
     private lateinit var categoryInfo: Category
     private var _binding: FragmentCategoryInfoBinding ? = null
@@ -134,7 +138,7 @@ class CategoryInfoFragment: HomeBaseFragment() {
     private fun observeCategoryData() {
         categoryInfo.let {
             binding.categoryName.text = it.categoryName
-            bindCategoryImage(binding.categoryIcon, categoryInfo)
+            bindingUtil.bindCategoryImage(binding.categoryIcon, categoryInfo)
             binding.categoryIcon.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.colorAccent2))
         }
     }

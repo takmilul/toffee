@@ -9,9 +9,10 @@ import com.banglalink.toffee.common.paging.ItemComparator
 import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.util.bindChannel
+import com.banglalink.toffee.util.BindingUtil
 
-class BottomChannelAdapter(private val callback: BaseListItemCallback<TVChannelItem>)
+class BottomChannelAdapter( private val callback: BaseListItemCallback<TVChannelItem>,
+                            private val bindingUtil: BindingUtil)
     :PagingDataAdapter<TVChannelItem, BottomChannelViewHolder>(ItemComparator()) {
 
     private var selectedItem: ChannelInfo? = null
@@ -20,7 +21,7 @@ class BottomChannelAdapter(private val callback: BaseListItemCallback<TVChannelI
         val obj = getItem(position)
         obj?.let {
             if(it.channelInfo != null) {
-                bindChannel(holder.imageView, it.channelInfo)
+                bindingUtil.bindChannel(holder.imageView, it.channelInfo)
                 if (it.channelInfo.id == selectedItem?.id.toString()) {
                     holder.imageView.borderWidth = 4.px
                 } else {

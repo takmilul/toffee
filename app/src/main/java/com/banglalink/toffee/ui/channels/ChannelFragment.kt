@@ -17,14 +17,16 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.StickyHeaderGridLayoutManager
+import com.banglalink.toffee.util.BindingUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onEmpty
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListener {
-
+    @Inject lateinit var bindingUtil: BindingUtil
     private var title: String? = null
     private var subCategoryID: Int = 0
     private var category: String? = null
@@ -85,7 +87,7 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
         
         setupEmptyView()
         
-        val channelAdapter = ChannelStickyListAdapter(requireContext(), this)
+        val channelAdapter = ChannelStickyListAdapter(requireContext(), this, bindingUtil)
         
         with(binding.gridView){
             setHasFixedSize(true)

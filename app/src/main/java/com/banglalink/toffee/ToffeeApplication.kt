@@ -7,6 +7,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkRequest
 import android.os.Build
+import androidx.databinding.DataBindingUtil
 import coil.Coil
 import coil.ImageLoader
 import coil.imageLoader
@@ -17,15 +18,19 @@ import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.PlayerPreference
 import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.di.databinding.CustomBindingComponentBuilder
+import com.banglalink.toffee.di.databinding.CustomBindingEntryPoint
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.ui.upload.UploadObserver
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import dagger.hilt.EntryPoints
 import dagger.hilt.android.HiltAndroidApp
 import net.gotev.uploadservice.UploadServiceConfig
 import net.gotev.uploadservice.data.RetryPolicyConfig
 import net.gotev.uploadservice.okhttp.OkHttpStack
 import okhttp3.OkHttpClient
 import javax.inject.Inject
+import javax.inject.Provider
 
 @HiltAndroidApp
 class ToffeeApplication : Application() {
@@ -34,6 +39,8 @@ class ToffeeApplication : Application() {
     @Inject lateinit var mUploadObserver: UploadObserver
     @Inject lateinit var commonPreference: CommonPreference
     @Inject lateinit var heartBeatManager: HeartBeatManager
+    @Inject
+    lateinit var bindingComponentProvider: Provider<CustomBindingComponentBuilder>
 
     override fun onCreate() {
         super.onCreate()
@@ -48,6 +55,14 @@ class ToffeeApplication : Application() {
         if (BuildConfig.DEBUG) {
             FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(false)
         }
+
+        // (Binding adapter with hilt) https://gist.github.com/nuhkoca/1bf28190dc71b00a2f32ce425f99924d
+        val dataBindingComponent = bindingComponentProvider.get().build()
+        val dataBindingEntryPoint = EntryPoints.get(
+            dataBindingComponent, CustomBindingEntryPoint::class.java
+        )
+        DataBindingUtil.setDefaultComponent(dataBindingEntryPoint)
+
         PubSubMessageUtil.init(this)
         SessionPreference.init(this)
         CommonPreference.init(this)

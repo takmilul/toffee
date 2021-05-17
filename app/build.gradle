@@ -121,7 +121,7 @@ dependencies {
     implementation 'androidx.mediarouter:mediarouter:1.2.2'
     implementation 'com.google.android.gms:play-services-cast-framework:20.0.0'
 
-    //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.6'
+    //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
 
     // Paging
     implementation 'androidx.paging:paging-runtime-ktx:3.0.0'
@@ -130,6 +130,7 @@ dependencies {
     def hilt_android_ver = "2.35.1"
     implementation "com.google.dagger:hilt-android:$hilt_android_ver"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_android_ver"
+    kapt "com.google.dagger:hilt-compiler:$hilt_android_ver"
 
     def hilt_ver = "1.0.0"
     implementation "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03"
