@@ -57,24 +57,6 @@ object PubSubMessageUtil {
         }
     }
 
-//    fun sendHeartBeatToPubSub(jsonStringRequest:String){
-//        coroutineScope.launch {
-//            sendMessage(jsonStringRequest, heartBeatTopic)
-//        }
-//    }
-//
-//    fun sendViewContentToPubSub(jsonStringRequest:String){
-//        coroutineScope.launch {
-//            sendMessage(jsonStringRequest, viewContentTopic)
-//        }
-//    }
-
-//    fun sendReactionToPubSub(jsonStringRequest:String){
-//        coroutineScope.launch {
-//            sendMessage(jsonStringRequest, reactionTopic)
-//        }
-//    }
-
     fun sendMessage(jsonMessage: String, topic:String) {
          coroutineScope.launch {
              withContext(Dispatchers.IO){

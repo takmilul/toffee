@@ -23,9 +23,8 @@ import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
 import com.banglalink.toffee.ui.widget.ToffeeSpinnerAdapter
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.util.BindingUtil
 import com.banglalink.toffee.util.UtilsKt
-import com.banglalink.toffee.util.bindImageFromUrl
-import com.banglalink.toffee.util.bindRoundImage
 import com.banglalink.toffee.util.imagePathToBase64
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -34,6 +33,7 @@ import javax.inject.Inject
 class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     @Inject lateinit var mPref: SessionPreference
     @Inject lateinit var cacheManager: CacheManager
+    @Inject lateinit var bindingUtil: BindingUtil
     private var isPosterClicked = false
     private var myChannelDetail: MyChannelDetail? = null
     private var newBannerUrl: String? = null
@@ -137,10 +137,10 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
 
     private fun loadImage(){
         newBannerUrl?.let {
-            bindImageFromUrl(binding.bannerImageView, it)
+            bindingUtil.bindImageFromUrl(binding.bannerImageView, it)
         }
         newProfileImageUrl?.let {
-            bindRoundImage(binding.profileImageView, it)
+            bindingUtil.bindRoundImage(binding.profileImageView, it)
         }
     }
     

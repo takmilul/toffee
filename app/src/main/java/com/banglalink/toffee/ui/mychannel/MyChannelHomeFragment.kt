@@ -34,7 +34,7 @@ import com.banglalink.toffee.ui.common.UnSubscribeDialog
 import com.banglalink.toffee.ui.common.ViewPagerAdapter
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
-import com.banglalink.toffee.util.bindButtonState
+import com.banglalink.toffee.util.BindingUtil
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
@@ -52,6 +52,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     private var isOwner: Boolean = false
     private var subscriberCount: Long = 0
     @Inject lateinit var cacheManager: CacheManager
+    @Inject lateinit var bindingUtil: BindingUtil
     private var myChannelDetail: MyChannelDetail? = null
     private lateinit var viewPagerAdapter: ViewPagerAdapter
     val homeViewModel by activityViewModels<HomeViewModel>()
@@ -194,12 +195,12 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             }
             alertDialog.dismiss()
         }
-        alertDialog.setOnDismissListener { bindButtonState(binding.channelDetailView.ratingButton, myRating > 0) }
+        alertDialog.setOnDismissListener { bindingUtil.bindButtonState(binding.channelDetailView.ratingButton, myRating > 0) }
     }
 
     override fun onResume() {
         super.onResume()
-        bindButtonState(binding.channelDetailView.ratingButton, myRating > 0)
+        bindingUtil.bindButtonState(binding.channelDetailView.ratingButton, myRating > 0)
     }
     
     fun showCreatePlaylistDialog() {
@@ -368,7 +369,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             when (it) {
                 is Success -> {
                     binding.myRating = myRating
-                    bindButtonState(binding.channelDetailView.ratingButton, myRating > 0)
+                    bindingUtil.bindButtonState(binding.channelDetailView.ratingButton, myRating > 0)
                     binding.channelDetailView.ratingCountTextView.text = it.data.ratingCount.toString()
                     cacheManager.clearCacheByUrl(GET_MY_CHANNEL_DETAILS)
                 }
