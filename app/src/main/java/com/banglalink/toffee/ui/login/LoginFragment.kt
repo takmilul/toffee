@@ -10,11 +10,16 @@ import androidx.fragment.app.DialogFragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.banglalink.toffee.R
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.FragmentLoginDialogBinding
 import com.banglalink.toffee.extension.safeClick
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class LoginFragment : DialogFragment() {
 
+    @Inject lateinit var mPref: SessionPreference
     private lateinit var navController: NavController
 
     companion object {
@@ -29,7 +34,13 @@ class LoginFragment : DialogFragment() {
         val navHostFragment = childFragmentManager.findFragmentById(R.id.loginFragmentContainerView) as NavHostFragment
         navController = navHostFragment.navController
 
-        binding.closeIv.safeClick({ dismiss() })
+        binding.closeIv.safeClick({
+            dismiss().let { 
+                if (mPref.isVerifiedUser) {
+                    requireActivity().recreate()
+                }
+            }
+        })
 
         return AlertDialog
             .Builder(requireContext())

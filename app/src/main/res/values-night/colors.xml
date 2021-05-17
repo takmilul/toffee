@@ -46,4 +46,5 @@
     <color name="upload_button_color">#29466B</color>
     <color name="unseenCardColor">#29466B</color>
     <color name="reaction_selected_bg_color">#29466B</color>
+    <color name="placeholder_logo_color">#829AB8</color>
 </resources>
