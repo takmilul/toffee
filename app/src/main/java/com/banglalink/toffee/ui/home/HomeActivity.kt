@@ -175,7 +175,9 @@ class HomeActivity :
             }
         }
         
-        initMqtt()
+        if (mPref.isVerifiedUser) {
+            initMqtt()
+        }
         
         observe(viewModel.fragmentDetailsMutableLiveData) {
             val cp = player

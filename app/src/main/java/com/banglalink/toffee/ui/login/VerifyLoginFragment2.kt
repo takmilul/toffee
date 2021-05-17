@@ -35,7 +35,7 @@ class VerifyLoginFragment2 : ChildDialogFragment() {
     private var verifiedUserData: CustomerInfoLogin? = null
     private var _binding: AlertDialogVerifyBinding ? = null
     private val binding get() = _binding!!
-    private lateinit var mSmsBroadcastReceiver: SMSBroadcastReceiver
+    private var mSmsBroadcastReceiver: SMSBroadcastReceiver? = null
     private val viewModel by viewModels<VerifyCodeViewModel>()
     private val progressDialog by unsafeLazy { VelBoxProgressDialog(requireContext()) }
     
@@ -152,7 +152,7 @@ class VerifyLoginFragment2 : ChildDialogFragment() {
     
     private fun initSmsBroadcastReceiver() {
         mSmsBroadcastReceiver = SMSBroadcastReceiver()
-        observe(mSmsBroadcastReceiver.otpLiveData) {
+        observe(mSmsBroadcastReceiver!!.otpLiveData) {
             binding.otpEditText.setText(it)
             binding.otpEditText.setSelection(it.length)
             otp = binding.otpEditText.text.toString().trim()
@@ -175,7 +175,10 @@ class VerifyLoginFragment2 : ChildDialogFragment() {
     override fun onDestroy() {
         resendCodeTimer?.cancelTimer()
         resendCodeTimer = null
-        requireActivity().unregisterReceiver(mSmsBroadcastReceiver)
+        mSmsBroadcastReceiver?.abortBroadcast
+        if(mSmsBroadcastReceiver != null) {
+            requireActivity().unregisterReceiver(mSmsBroadcastReceiver)
+        }
         super.onDestroy()
     }
 }

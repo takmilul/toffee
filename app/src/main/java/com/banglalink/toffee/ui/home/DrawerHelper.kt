@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.home
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.util.Log
 import android.view.MenuItem
@@ -58,21 +59,58 @@ class DrawerHelper(
     }
     
     private fun followUsAction() {
-        try {
-            val actionView = binding.sideNavigation.menu.findItem(R.id.menu_follow_us).actionView
-            actionView.findViewById<ImageView>(R.id.facebookButton).setOnClickListener {
-                activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(mPref.facebookPageUrl)))
+        val actionView = binding.sideNavigation.menu.findItem(R.id.menu_follow_us).actionView
+        actionView.findViewById<ImageView>(R.id.facebookButton).setOnClickListener {
+            try {
+                activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getFacebookPageURL())))
             }
-            actionView.findViewById<ImageView>(R.id.instagramButton).setOnClickListener {
+            catch (e: Exception) {
+                Log.e("TAG", "Url is not valid")
+            }
+        }
+        actionView.findViewById<ImageView>(R.id.instagramButton).setOnClickListener {
+            try {
                 activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(mPref.instagramPageUrl)))
             }
-            actionView.findViewById<ImageView>(R.id.youtubeButton).setOnClickListener {
-                activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(mPref.youtubePageUrl)))
+            catch (e: Exception) {
+                Log.e("TAG", "Url is not valid")
             }
         }
-        catch (e: Exception) {
-            Log.e("TAG", "Url is not valid", )
+        actionView.findViewById<ImageView>(R.id.youtubeButton).setOnClickListener {
+            try {
+                activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(mPref.youtubePageUrl)))
+            }
+            catch (e: Exception) {
+                Log.e("TAG", "Url is not valid")
+            }
         }
+    }
+    
+    private fun getFacebookPageURL(): String {
+        val packageManager: PackageManager = activity.packageManager
+        val fbAppUrl = "fb://page${mPref.facebookPageUrl.replaceBeforeLast("/", "")}"
+        try {
+//            val versionCode = packageManager.getPackageInfo("com.facebook.katana", 0).longVersionCode
+            val isEnabled = packageManager.getApplicationInfo("com.facebook.katana", 0).enabled
+            if (isEnabled) {
+//                if (versionCode >= 3002850) {
+//                    "fb://facewebmodal/f?href=${mPref.facebookPageUrl}"
+//                }
+//                else {
+//                    "fb://page${mPref.facebookPageUrl.replaceBeforeLast("/", "")}"
+//                }
+                return fbAppUrl
+            }
+        }
+        catch (e: Exception) { }
+        try {
+            val isEnabled = packageManager.getApplicationInfo("com.facebook.lite", 0).enabled
+            if (isEnabled) {
+                return fbAppUrl
+            }
+        }
+        catch (e: Exception) { }
+        return mPref.facebookPageUrl
     }
     
     private fun setProfileInfo() {

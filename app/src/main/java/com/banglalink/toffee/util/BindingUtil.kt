@@ -44,7 +44,7 @@ fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
             diskCachePolicy(CachePolicy.ENABLED)
             crossfade(false)
 //            crossfade(crossFadeDurationInMills)
-//            size(720, 405)
+            size(720, 405)
             UtilsKt.getImageSize(view.context, 720).apply {
                 size(x, y)
             }
@@ -64,6 +64,7 @@ fun bindRoundImage(view: ImageView, imageUrl: String?) {
 //            memoryCachePolicy(CachePolicy.ENABLED)
             diskCachePolicy(CachePolicy.ENABLED)
 //            crossfade(crossFadeDurationInMills)
+            size(180, 180)
         }
     }
     else {
@@ -85,7 +86,7 @@ fun bindCategoryBackground(view: ImageView, category: Category) {
         error(R.drawable.placeholder)
 //            memoryCachePolicy(CachePolicy.ENABLED)
         diskCachePolicy(CachePolicy.ENABLED)
-        size(624, 320)
+        size(360, 184)
     }
 }
 
