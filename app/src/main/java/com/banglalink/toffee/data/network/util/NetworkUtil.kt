@@ -1,82 +1,51 @@
 package com.banglalink.toffee.data.network.util
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
-import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.network.response.BaseResponse
 import com.banglalink.toffee.exception.ApiException
 import com.banglalink.toffee.exception.CustomerNotFoundException
+import com.banglalink.toffee.exception.OutsideOfBDException
+import com.banglalink.toffee.exception.UnEthicalActivitiesException
 import com.banglalink.toffee.model.MULTI_DEVICE_LOGIN_ERROR_CODE
+import com.banglalink.toffee.model.OUTSIDE_OF_BD_ERROR_CODE
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.UN_ETHICAL_ACTIVITIES_ERROR_CODE
 import com.banglalink.toffee.util.EventProvider
 import com.banglalink.toffee.util.getError
 import kotlinx.coroutines.Dispatchers
-import retrofit2.Response
-
-suspend fun <T : BaseResponse> tryIO(block: suspend () -> Response<T>): T {
-    val response: Response<T> = block()
-    if (response.isSuccessful) {
-        if(response.raw().cacheResponse!=null){
-            Log.i("Network","FROM CACHE")
-        }
-        if(response.raw().networkResponse!=null){
-            Log.i("Network","FROM NETWORK")
-        }
-        response.body()?.let {
-           return when{
-                it.errorCode == MULTI_DEVICE_LOGIN_ERROR_CODE->{
-//                    ToffeeAnalytics.logApiError(it.apiName,it.errorMsg)
-                    EventProvider.post(CustomerNotFoundException("Customer multiple login occurred"))
-                    throw ApiException(
-                        it.errorCode,
-                        ""//we do not want to show error message for this error code
-                    )
-                }
-               it.status == 1 ->{//server suffered a serious error
-//                   ToffeeAnalytics.logApiError(it.apiName,it.errorMsg)
-                   throw ApiException(
-                       it.errorCode,
-                       it.errorMsg ?:"Something went wrong. Please try again later"
-                   )
-               }
-                it.errorCode!=0->{//hmmm....error occurred ....throw it
-//                    ToffeeAnalytics.logApiError(it.apiName,it.errorMsg)
-                    throw ApiException(
-                        it.errorCode,
-                        it.errorMsg ?:"Unknown error occurred"
-                    )
-                }
-                else->{
-                    it//seems like all fine ...return the body
-                }
-            }
-        }
-    }
-    throw ApiException(response.code(),response.message())
-
-}
 
 suspend fun <T : BaseResponse> tryIO2(block: suspend () -> T): T {
     val response = block()
     return when{
-        response.errorCode == MULTI_DEVICE_LOGIN_ERROR_CODE->{
-//            ToffeeAnalytics.logApiError(response.apiName,response.errorMsg)
-            EventProvider.post(CustomerNotFoundException("Customer multiple login occurred"))
+        response.errorCode == UN_ETHICAL_ACTIVITIES_ERROR_CODE -> {
+            EventProvider.post(UnEthicalActivitiesException(response.errorMsg ?: "You are trying to do unethical activities"))
             throw ApiException(
+                response.errorCode,
+                response.errorMsg ?: "You are trying to do unethical activities"
+            )
+        }
+        response.errorCode == OUTSIDE_OF_BD_ERROR_CODE -> {
+            EventProvider.post(OutsideOfBDException(response.errorMsg ?: "You are trying to connect out of Bangladesh"))
+            throw ApiException(
+                response.errorCode,
+                response.errorMsg ?: "You are trying to connect out of Bangladesh"
+            )
+        }
+        response.errorCode == MULTI_DEVICE_LOGIN_ERROR_CODE -> {
+            EventProvider.post(CustomerNotFoundException(response.errorCode, "Customer multiple login occurred"))
+            throw CustomerNotFoundException(
                 response.errorCode,
                 ""//we do not want to show error message for this error code
             )
         }
         response.status == 1 ->{//server suffered a serious error
-//            ToffeeAnalytics.logApiError(response.apiName,response.errorMsg)
             throw ApiException(
                 response.errorCode,
                 response.errorMsg ?:"Something went wrong. Please try again later"
             )
         }
-        response.errorCode!=0->{//hmmm....error occurred ....throw it
-//            ToffeeAnalytics.logApiError(response.apiName,response.errorMsg)
+        response.errorCode != 0 ->{//hmmm....error occurred ....throw it
             throw ApiException(
                 response.errorCode,
                 response.errorMsg ?:"Unknown error occurred"

@@ -4,7 +4,7 @@ import android.app.Application
 import com.banglalink.toffee.apiservice.UploadConfirmation
 import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.repository.UploadInfoRepository
-import com.banglalink.toffee.model.TUS_UPLOAD_SERVER_URL
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.util.UtilsKt
 import kotlinx.coroutines.Dispatchers
@@ -16,6 +16,7 @@ import net.gotev.uploadservice.network.ServerResponse
 
 class UploadStateManager(
     private val app: Application,
+    private val mPref: SessionPreference,
     private val uploadRepo: UploadInfoRepository,
     private val uploadConfirmApi: UploadConfirmation
 ) {
@@ -104,7 +105,7 @@ class UploadStateManager(
         withContext(Dispatchers.IO + Job()) {
             TusUploadRequest(
                 app,
-                TUS_UPLOAD_SERVER_URL,
+                mPref.tusUploadServerUrl,
             )
                 .setResumeInfo(info.getFingerprint()!!, info.tusUploadUri)
                 .setMetadata(info.getFileNameMetadata())

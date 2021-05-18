@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginHorizontal="36dp"
+        android:layout_marginTop="36dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/login_with_phone_image"
+        app:srcCompat="@drawable/ic_phone_login"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/dialogTitleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="36dp"
+        android:layout_marginTop="24dp"
+        android:fontFamily="@font/roboto_light"
+        android:text="Enter OTP"
+        android:textColor="@color/cardTitleColor"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/logo" />
+
+    <EditText
+        android:id="@+id/otpEditText"
+        style="@style/SingleLineInputFieldStyle"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        android:hint="@string/otpHint"
+        android:inputType="phone"
+        app:layout_constraintWidth_percent="0.7"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dialogTitleTextView" />
+
+    <TextView
+        android:id="@+id/countdownTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:fontFamily="@font/roboto_medium"
+        android:text="Resend OTP in 59s"
+        android:textColor="@color/main_text_color"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="@id/otpEditText"
+        app:layout_constraintEnd_toEndOf="@id/otpEditText"
+        app:layout_constraintTop_toBottomOf="@+id/otpEditText"
+        tools:text="Resend OTP in 59s" />
+
+    <TextView
+        android:id="@+id/resendButton"
+        style="@style/ViewAllTextView"
+        android:paddingHorizontal="16dp"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
+        android:text="@string/resend_text"
+        app:drawableEndCompat="@drawable/ic_right_arrow"
+        app:layout_constraintEnd_toEndOf="@id/otpEditText"
+        app:layout_constraintStart_toStartOf="@id/otpEditText"
+        app:layout_constraintTop_toBottomOf="@id/otpEditText" />
+
+    <Button
+        android:id="@+id/submitButton"
+        style="@style/ButtonStyleSolidPink"
+        android:layout_width="@dimen/button_accent_width"
+        android:layout_marginHorizontal="36dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/submit_button_text"
+        android:textAllCaps="true"
+        app:layout_constraintEnd_toEndOf="@id/otpEditText"
+        app:layout_constraintStart_toStartOf="@id/otpEditText"
+        app:layout_constraintTop_toBottomOf="@+id/countdownTextView" />
+
+    <TextView
+        android:id="@+id/skipButton"
+        style="@style/ViewAllTextView"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginEnd="0dp"
+        android:paddingHorizontal="16dp"
+        android:text="@string/skip_text"
+        android:textAllCaps="true"
+        android:clickable="true"
+        android:focusable="true"
+        app:drawableEndCompat="@drawable/ic_right_arrow"
+        app:layout_constraintTop_toBottomOf="@id/submitButton"
+        app:layout_constraintStart_toStartOf="@id/otpEditText"
+        app:layout_constraintEnd_toEndOf="@id/otpEditText"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+    
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="ic_launcher_background">#FFFFFF</color>
     <color name="colorPrimary">#ECECEC</color>
     <color name="colorPrimaryDark">#000000</color>
     <!--<color name="colorAccent">#FF8683FF</color>-->
@@ -100,10 +101,12 @@
     <color name="tvChannelTitleColor">#111F31</color>
     <color name="round_bg_tv_color">#f8f9f9</color>
     <color name="hashtag_chip_color">#BED6F3</color>
+    <color name="interest_chip_color">#BED6F3</color>
     <color name="spinnerSeasonColor">#F3F3F3</color>
     <color name="fixedStrokeColor">#29466B</color>
     <color name="optionMenuColor">#FFFFFF</color>
     <color name="upload_number_color">#29466B</color>
     <color name="upload_button_color">#E1E1E1</color>
     <color name="reaction_selected_bg_color">#F2F2F2</color>
+    <color name="placeholder_logo_color">#F2F2F2</color>
 </resources>

@@ -13,13 +13,6 @@ import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
 import okio.Buffer
 import java.io.IOException
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
-import java.security.InvalidKeyException
-import java.security.NoSuchAlgorithmException
-import javax.crypto.BadPaddingException
-import javax.crypto.IllegalBlockSizeException
-import javax.crypto.NoSuchPaddingException
 
 class AuthInterceptor (private val iGetMethodTracker: IGetMethodTracker): Interceptor {
     @Throws(IOException::class)

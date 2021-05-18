@@ -69,8 +69,13 @@ class LandingPageFragment : HomeBaseFragment(), FwSDK.SdkStatusListener {
     }
 
     override fun onDestroyView() {
+        binding.landingAppbar.removeOnOffsetChangedListener(offsetListener)
         super.onDestroyView()
         _binding = null
+    }
+
+    private val offsetListener = AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
+        appbarOffset = verticalOffset
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -79,9 +84,7 @@ class LandingPageFragment : HomeBaseFragment(), FwSDK.SdkStatusListener {
         landingViewModel.categoryId.value = 0
         landingViewModel.pageType.value = Landing
         landingViewModel.isDramaSeries.value = false
-        binding.landingAppbar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
-            appbarOffset = verticalOffset
-        })
+        binding.landingAppbar.addOnOffsetChangedListener(offsetListener)
     }
     
     override fun currentStatus(status: SdkStatus, extra: String) {
@@ -110,9 +113,5 @@ class LandingPageFragment : HomeBaseFragment(), FwSDK.SdkStatusListener {
     
     fun onBackPressed(): Boolean {
         return false
-    }
-
-    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
-//        popularVideoListAdapter.remove(channelInfo)
     }
 }

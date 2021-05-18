@@ -93,7 +93,7 @@
             android:layout_marginHorizontal="16dp"
             android:layout_marginVertical="8dp"
             android:gravity="center"
-            android:text="@{data.myChannelDetail.description}"
+            android:text='@{data.myChannelDetail.description == null ? "" : data.myChannelDetail.description}'
             android:textColor="@color/main_text_color"
             android:textSize="@dimen/default_text_size"
             android:fontFamily="@font/roboto_regular"

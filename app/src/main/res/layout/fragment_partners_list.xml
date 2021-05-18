@@ -17,6 +17,7 @@
             android:id="@+id/contentHeader"
             style="@style/SectionTitleTextStyle"
             android:text="Partners"
+            android:visibility="gone"
             app:layout_constraintEnd_toStartOf="@+id/viewAllButton"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -37,13 +38,15 @@
             android:clipToPadding="false"
             android:layout_marginTop="4dp"
             android:paddingHorizontal="8dp"
+            android:visibility="gone"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/contentHeader"
             app:reverseLayout="false"
             android:layout_gravity="center_horizontal"
-            tools:listitem="@layout/list_item_partners"/>
+            tools:listitem="@layout/list_item_partners"
+            tools:visibility="visible"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

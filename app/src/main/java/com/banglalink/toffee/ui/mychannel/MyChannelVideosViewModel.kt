@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.mychannel
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.banglalink.toffee.apiservice.MyChannelVideoDeleteService
@@ -19,7 +20,6 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelDeleteVideoBean
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.Resource.Success
-import com.banglalink.toffee.ui.common.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -34,7 +34,7 @@ class MyChannelVideosViewModel @Inject constructor(
     private val continueWatchingRepo: ContinueWatchingRepository,
     private val apiService: MyChannelVideosService.AssistedFactory,
     private val myChannelVideoDeleteApiService: MyChannelVideoDeleteService,
-) : BaseViewModel() {
+) : ViewModel() {
 
     private val _data = MutableLiveData<Resource<MyChannelDeleteVideoBean>>()
     val deleteVideoLiveData = _data.toLiveData()

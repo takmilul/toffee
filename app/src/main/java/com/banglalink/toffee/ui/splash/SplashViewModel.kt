@@ -1,34 +1,38 @@
 package com.banglalink.toffee.ui.splash
 
-import androidx.lifecycle.LiveData
+import android.database.sqlite.SQLiteDatabase
+import android.os.Environment
+import android.util.Log
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.ApiLogin
 import com.banglalink.toffee.apiservice.CheckUpdate
+import com.banglalink.toffee.apiservice.CredentialService
 import com.banglalink.toffee.apiservice.ReportAppLaunch
 import com.banglalink.toffee.data.network.util.resultFromResponse
-import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.AppCoroutineScope
-import com.banglalink.toffee.model.CustomerInfoSignIn
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.util.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
     val mPref: SessionPreference,
     private val apiLogin: ApiLogin,
+    private val credential: CredentialService,
     private val checkUpdate: CheckUpdate,
     @AppCoroutineScope private val appScope: CoroutineScope,
-) : BaseViewModel() {
+) : ViewModel() {
 
     val apiLoginResponse = SingleLiveEvent<Resource<Any>>()
+    
     init {
         appScope.launch {
             reportAppLaunch()
@@ -38,10 +42,25 @@ class SplashViewModel @Inject constructor(
     private val reportAppLaunch by lazy {
         ReportAppLaunch()
     }
-
+    
+    fun credentialResponse() {
+        viewModelScope.launch {
+            val response = resultFromResponse { credential.execute() }
+            when(response){
+                is Resource.Failure -> {
+                    apiLoginResponse.value = response
+                }
+                is Resource.Success -> {
+                    loginResponse(false)
+                }
+            }
+        }
+    }
+    
     fun loginResponse(skipUpdate: Boolean = false) {
         viewModelScope.launch {
             val response = resultFromResponse { apiLogin.execute() }
+            Log.e("response","login: $response")
             if (!skipUpdate) {
               val updateResponse = resultFromResponse { checkUpdate.execute(BuildConfig.VERSION_CODE.toString())}
               if(updateResponse is Resource.Failure) apiLoginResponse.value = updateResponse
@@ -59,6 +78,20 @@ class SplashViewModel @Inject constructor(
             }
         }
     }
-
+    
+    fun deletePreviousDatabase() {
+        try {
+            val data: File = Environment.getDataDirectory()
+            val previousDBPath = "/data/com.banglalink.toffee/databases/" + "toffee_database"
+            val previousDB = File(data, previousDBPath)
+            if (previousDB.exists()) {
+                mPref.isPreviousDbDeleted = SQLiteDatabase.deleteDatabase(previousDB)
+            } else {
+                mPref.isPreviousDbDeleted = true
+            }
+        } catch (e: Exception) {
+        }
+    }
+    
     fun isCustomerLoggedIn() = mPref.customerId != 0
 }

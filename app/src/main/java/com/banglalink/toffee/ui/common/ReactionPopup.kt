@@ -17,6 +17,7 @@ import com.banglalink.toffee.databinding.AlertDialogReactionsBinding
 import com.banglalink.toffee.enums.ActivityType.*
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.enums.Reaction.*
+import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.util.Utils
 import dagger.hilt.android.AndroidEntryPoint
@@ -104,39 +105,61 @@ class ReactionPopup: Fragment() {
     }
 
     private fun react(reaction: Reaction, reactIcon: Int) {
-        reactionPopupWindow?.dismiss()
-        channelInfo?.let { info ->
-            lifecycleScope.launchWhenStarted {
-                val previousReactionInfo = reactionDao.getReactionByContentId(preference.customerId, info.id.toLong())
-                val newReactionInfo = ReactionInfo(null, preference.customerId, info.id.toLong(), reaction.value)
-                var reactionCount = info.reaction?.run {
-                    like + love + haha + wow + sad + angry
-                } ?: 0L
-                var reactionText = reaction.name
-                var reactionIcon = reactIcon
+        requireActivity().checkVerification {
+            reactionPopupWindow?.dismiss()
+            channelInfo?.let { info ->
+                lifecycleScope.launchWhenStarted {
+                    val previousReactionInfo =
+                        reactionDao.getReactionByContentId(preference.customerId, info.id.toLong())
+                    val newReactionInfo =
+                        ReactionInfo(null, preference.customerId, info.id.toLong(), reaction.value)
+                    var reactionCount = info.reaction?.run {
+                        like + love + haha + wow + sad + angry
+                    } ?: 0L
+                    var reactionText = reaction.name
+                    var reactionIcon = reactIcon
 
-                info.myReaction = previousReactionInfo?.let {
-                    if (it.reactionType == newReactionInfo.reactionType) {
-                        reactionText = "React"
-                        reactionIcon = R.drawable.ic_reaction_love_empty
-                        mViewModel.removeReaction(it)
-                        mViewModel.insertActivity(preference.customerId, info, REACTION_REMOVED.value, reaction.value)
-                        None.value
-                    }
-                    else {
+                    info.myReaction = previousReactionInfo?.let {
+                        if (it.reactionType == newReactionInfo.reactionType) {
+                            reactionText = "React"
+                            reactionIcon = R.drawable.ic_reaction_love_empty
+                            mViewModel.removeReaction(it)
+                            mViewModel.insertActivity(
+                                preference.customerId,
+                                info,
+                                REACTION_REMOVED.value,
+                                reaction.value
+                            )
+                            None.value
+                        } else {
+                            reactionCount++
+                            mViewModel.updateReaction(newReactionInfo, it)
+                            mViewModel.insertActivity(
+                                preference.customerId,
+                                info,
+                                REACTION_CHANGED.value,
+                                reaction.value
+                            )
+                            reaction.value
+                        }
+                    } ?: run {
+                        mViewModel.insertReaction(newReactionInfo)
+                        mViewModel.insertActivity(
+                            preference.customerId,
+                            info,
+                            REACTED.value,
+                            reaction.value
+                        )
                         reactionCount++
-                        mViewModel.updateReaction(newReactionInfo, it)
-                        mViewModel.insertActivity(preference.customerId, info, REACTION_CHANGED.value, reaction.value)
                         reaction.value
                     }
-                } ?: run {
-                    mViewModel.insertReaction(newReactionInfo)
-                    mViewModel.insertActivity(preference.customerId, info, REACTED.value, reaction.value)
-                    reactionCount++
-                    reaction.value
-                }
 
-                reactionIconCallback?.onReactionChange(Utils.getFormattedViewsText(reactionCount.toString()), reactionText, reactionIcon)
+                    reactionIconCallback?.onReactionChange(
+                        Utils.getFormattedViewsText(reactionCount.toString()),
+                        reactionText,
+                        reactionIcon
+                    )
+                }
             }
         }
     }

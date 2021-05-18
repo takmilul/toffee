@@ -80,9 +80,9 @@
             app:layout_constraintStart_toStartOf="@+id/package_name_tv"
             app:layout_constraintTop_toBottomOf="@+id/package_name_tv" />
 
-        <TextView
+        <Button
             android:id="@+id/subscribe"
-            style="@style/Button1Style"
+            style="@style/ButtonStyleSolidPink"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"

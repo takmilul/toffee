@@ -8,6 +8,7 @@
     <string name="action_sign_in">Sign In</string>
     <string name="action_subscribe">SUBSCRIBE</string>
     <string name="sign_in_text">Sign In</string>
+    <string name="without_sign_in_text">Continue without Sign In</string>
     <string name="sign_in_top_text">To get started, please provide the following information</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -58,6 +59,7 @@
     <string name="phone_number">Phone Number</string>
     <string name="add_your_address">Add Your Address</string>
     <string name="add_your_email">Add Your Email</string>
+    <string name="add_your_phone">Add Your Phone Number</string>
     <string name="add_your_name">Add Your Name</string>
     <string name="change_password_button">Change Password</string>
     <string name="profile">Profile</string>
@@ -158,6 +160,8 @@
     <string name="terms">Terms &amp; Conditions</string>
     <string name="phone_number_hint"><i>Your Phone Number</i></string>
     <string name="channel_name_hint"><i>Set Your Channel Name</i></string>
+    <string name="phoneNumberHint"><i>Enter Phone Number</i></string>
+    <string name="otpHint"><i>Enter OTP</i></string>
     <string name="txt_close">Close</string>
     <string name="txt_movies">Movies</string>
     <string name="txt_msg_success">Success</string>
@@ -225,16 +229,53 @@
     <string name="txt_banner">Banner</string>
     <string name="txt_refer_code">Refer code</string>
     <string name="txt_spalash_logo">Spalash Logo</string>
-    <string name="txt_spalash_pink">Spalash Pink</string>
+    <string name="txt_splash_pink">Spalash Pink</string>
     <string name="txt_splash_white">Splash White</string>
     <string name="txt_splash_logo">Splash Logo</string>
     <string name="txt_splash_line">Splash Line</string>
-    <string name="txt_spalash_logo_title">Spalash Logo Title</string>
+    <string name="txt_splash_logo_title">Spalash Logo Title</string>
     <string name="fireworks_section_title">Moments</string>
     <string name="Creators_policy_page_title">Creators Policy</string>
-
-<!--    url-->
-    <string name="creators_policy_url">https://www.banglalink.net/en/toffee-privacy-policy</string>
-    <string name="privacy_policy_url">https://www.banglalink.net/en/toffee-privacy-policy</string>
-    <string name="terms_and_conditions_url">https://www.banglalink.net/en/toffee-privacy-policy</string>
+    <string name="skip_text">Skip</string>
+    <string name="login_with_phone_image">Phone Login</string>
+    <string name="resend_text">Resend</string>
+    <string name="done_text">Done</string>
+    <string name="verify_text">Verify</string>
+    <string name="submit_button_text">Submit</string>
+    <string name="sign_in_intro_desc">like- Reaction, Upload, Referral etc.</string>
+    <string name="sign_in_intro_title">Sign-in to Access All Features</string>
+    <string name="subscription_empty_view_text">You haven\'t subscribed any channel yet</string>
+    <string name="about_toffee_title">About Toffee</string>
+    <string name="about_toffee_text">
+        Enjoy instant streaming on TV channels and exciting videos – all FREE on Toffee!
+        \n\nLooking for a single app to cater to all your entertainment needs?
+        \n\nDownload Toffee and enjoy instant buffer-less experience! Enjoy the ultimate streaming platform with access to 100+ local and international TV 
+        channels, movies, telefilms, music videos – all on-the-go. Not only that, you can now make your own video contents and earn money through Toffee. Access all of these from any internet network, and enjoy watching videos in the app absolutely free!
+        \n\nSo why wait? Download Toffee and indulge in endless entertainment, anywhere!
+    </string>
+    <string name="about_feature_title">App Features – </string>
+    <string name="about_feature_text">
+        \u2713 Live Stream TV channels
+        \n\u2713 Absolutely buffer-less experience
+        \n\u2713 Easy content discoverability with refresh app interface
+        \n\u2713 Access to 100+ TV, live sports, international mega series 
+        \n\u2713 Opportunity to earn money through user generated contents
+        \n\u2713 FREE access for all users from any network!
+    </string>
+    <string name="about_message">*Toffee is only available in Bangladesh</string>
+    <string name="tick">✓</string>
+    <string name="bullet_1_text">Live Stream TV channels</string>
+    <string name="bullet_2_text">Absolutely buffer-less experience</string>
+    <string name="bullet_3_text">Easy content discoverability with refresh app interface</string>
+    <string name="bullet_4_text">Access to 100+ TV, live sports, international mega series</string>
+    <string name="bullet_5_text">Opportunity to earn money through user generated contents</string>
+    <string name="bullet_6_text">FREE access for all users from any network!</string>
+    
+    <!--    url    -->
+<!--    <string name="creators_policy_url">https://toffeelive.com/policies.php</string>-->
+<!--    <string name="tus_upload_server_url">https://ugc-upload.toffeelive.com/upload</string>-->
+<!--    <string name="privacy_policy_url">https://www.banglalink.net/en/legal</string>-->
+<!--    <string name="terms_and_conditions_url">https://www.banglalink.net/en/legal</string>-->
+<!--    <string name="internet_pack_url">https://www.banglalink.net/en/apps-and-services/other-details/53</string>-->
+    <!--    url    -->
 </resources>

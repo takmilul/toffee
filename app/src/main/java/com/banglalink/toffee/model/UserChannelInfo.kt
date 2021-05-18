@@ -31,9 +31,11 @@ data class UserChannelInfo(
     val bannerUrl: String? = null,
 
     var isSubscribed: Int = 0,
+    val created_at: String? = null,
     
     @SerializedName("user_id")
     val userId: Int = 0,
 ) {
     fun getFormatedSubscriberCount() = Utils.getFormattedViewsText(subscriberCount.toString())
+    fun formattedCreateTime(): String = if(!created_at.isNullOrBlank()) Utils.getDateDiffInDayOrHourOrMinute(Utils.getDate(created_at).time) else "0"
 }

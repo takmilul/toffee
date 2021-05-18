@@ -31,6 +31,7 @@ const val REACTION_TOPIC = "projects/$PROJECTID/topics/ugc_reaction"
 const val SHARE_COUNT_TOPIC = "projects/$PROJECTID/topics/share_count"
 const val SUBSCRIPTION_TOPIC = "projects/$PROJECTID/topics/channels_subscribers"
 const val CONTENT_REPORT_TOPIC = "projects/$PROJECTID/topics/report_inappropriate_content"
+const val USER_INTEREST_TOPIC = "projects/$PROJECTID/topics/user_interest"
 
 object PubSubMessageUtil {
 
@@ -56,24 +57,6 @@ object PubSubMessageUtil {
         }
     }
 
-//    fun sendHeartBeatToPubSub(jsonStringRequest:String){
-//        coroutineScope.launch {
-//            sendMessage(jsonStringRequest, heartBeatTopic)
-//        }
-//    }
-//
-//    fun sendViewContentToPubSub(jsonStringRequest:String){
-//        coroutineScope.launch {
-//            sendMessage(jsonStringRequest, viewContentTopic)
-//        }
-//    }
-
-//    fun sendReactionToPubSub(jsonStringRequest:String){
-//        coroutineScope.launch {
-//            sendMessage(jsonStringRequest, reactionTopic)
-//        }
-//    }
-
     fun sendMessage(jsonMessage: String, topic:String) {
          coroutineScope.launch {
              withContext(Dispatchers.IO){
@@ -86,7 +69,6 @@ object PubSubMessageUtil {
                      publishRequest.messages = ImmutableList.of(
                          pubsubMessage
                      )
-
                 client.projects().topics().publish(topic, publishRequest).queue(batch, callback)
                 batch?.execute()
 

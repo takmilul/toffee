@@ -8,4 +8,4 @@ data class VerifyCodeRequest(
     val lat: String,
     val lon: String,
     val parentId: Int = 1
-) : BaseRequest("confirmCode")
+) : BaseRequest("confirmCodeV2")

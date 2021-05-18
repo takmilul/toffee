@@ -7,9 +7,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/ic_bg_about"
         android:fitsSystemWindows="true"
         android:orientation="vertical">
+        
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -18,128 +18,222 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:orientation="vertical"
-                >
+                android:paddingHorizontal="16dp"
+                android:orientation="vertical">
 
                 <ImageView
-                    android:layout_width="170dp"
-                    android:layout_height="140dp"
+                    android:layout_width="120dp"
+                    android:layout_height="100dp"
                     android:layout_gravity="center"
-                    android:layout_marginTop="60dp"
+                    android:layout_marginTop="24dp"
                     android:contentDescription="@string/app_name"
-                    app:srcCompat="@drawable/ic_logo_large_white"/>
-
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
+                    app:srcCompat="@drawable/ic_splash_logo"/>
+                
+                <TextView
+                    style="@style/programNameTextView"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="30dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="10dp">
-
+                    android:layout_marginTop="24dp"
+                    android:textSize="15sp"
+                    android:text="@string/about_toffee_title"/>
+                
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:justificationMode="inter_word"
+                    android:textSize="14sp"
+                    android:textColor="@color/main_text_color"
+                    android:text="@string/about_toffee_text"/>
+                
+                <TextView
+                    style="@style/programNameTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:textSize="15sp"
+                    android:textColor="@color/main_text_color"
+                    android:text="@string/about_feature_title"/>
+                
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp">
+                    
                     <TextView
-                        android:id="@+id/terms_conditions_tv"
+                        android:id="@+id/bullet1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:fontFamily="@font/roboto_bold"
-                        android:gravity="center"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:text="@string/terms_and_conditions"
-                        android:textColor="@drawable/text_selector"
-                        android:textSize="16sp"/>
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_marginTop="2dp"
-                        android:src="@drawable/ic_right_arrow_white"
-                        android:contentDescription="@string/txt_terms_condition" />
-
-                </LinearLayout>
-
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="10dp">
+                        android:justificationMode="inter_word"
+                        android:textColor="@color/main_text_color"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:text="@string/tick"/>
+    
+                    <TextView
+                        android:id="@+id/bullet1Text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:justificationMode="inter_word"
+                        android:textColor="@color/main_text_color"
+                        app:layout_constraintStart_toEndOf="@id/bullet1"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/bullet1"
+                        android:text="@string/bullet_1_text"/>
 
                     <TextView
-                        android:id="@+id/privacy_policy_tv"
+                        android:id="@+id/bullet2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:fontFamily="@font/roboto_bold"
-                        android:gravity="center"
-                        android:text="@string/privacy_policy"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:textColor="@drawable/text_selector"
-                        android:textSize="16sp"/>
+                        android:justificationMode="inter_word"
+                        android:textColor="@color/main_text_color"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/bullet1Text"
+                        android:text="@string/tick"/>
+    
+                    <TextView
+                        android:id="@+id/bullet2Text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:justificationMode="inter_word"
+                        android:textColor="@color/main_text_color"
+                        app:layout_constraintStart_toEndOf="@id/bullet2"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/bullet2"
+                        android:text="@string/bullet_2_text"/>
 
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:layout_marginTop="2dp"
-                        android:src="@drawable/ic_right_arrow_white"
-                        android:contentDescription="@string/privacy_policy" />
+                    <TextView
+                        android:id="@+id/bullet3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:justificationMode="inter_word"
+                        android:textColor="@color/main_text_color"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/bullet2Text"
+                        android:text="@string/tick"/>
+    
+                    <TextView
+                        android:id="@+id/bullet3Text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:justificationMode="inter_word"
+                        android:textColor="@color/main_text_color"
+                        app:layout_constraintStart_toEndOf="@id/bullet3"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/bullet3"
+                        android:text="@string/bullet_3_text"/>
 
-                </LinearLayout>
+                    <TextView
+                        android:id="@+id/bullet4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:justificationMode="inter_word"
+                        android:textColor="@color/main_text_color"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/bullet3Text"
+                        android:text="@string/tick"/>
+    
+                    <TextView
+                        android:id="@+id/bullet4Text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:justificationMode="inter_word"
+                        android:textColor="@color/main_text_color"
+                        app:layout_constraintStart_toEndOf="@id/bullet4"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/bullet4"
+                        android:text="@string/bullet_4_text"/>
 
+                    <TextView
+                        android:id="@+id/bullet5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:justificationMode="inter_word"
+                        android:textColor="@color/main_text_color"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/bullet4Text"
+                        android:text="@string/tick"/>
+    
+                    <TextView
+                        android:id="@+id/bullet5Text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:justificationMode="inter_word"
+                        android:textColor="@color/main_text_color"
+                        app:layout_constraintStart_toEndOf="@id/bullet5"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/bullet5"
+                        android:text="@string/bullet_5_text"/>
 
+                    <TextView
+                        android:id="@+id/bullet6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:justificationMode="inter_word"
+                        android:textColor="@color/main_text_color"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/bullet5Text"
+                        android:text="@string/tick"/>
+    
+                    <TextView
+                        android:id="@+id/bullet6Text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:justificationMode="inter_word"
+                        android:textColor="@color/main_text_color"
+                        app:layout_constraintStart_toEndOf="@id/bullet6"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/bullet6"
+                        android:text="@string/bullet_6_text"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+                
+<!--                <TextView-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="8dp"-->
+<!--                    android:justificationMode="inter_word"-->
+<!--                    android:textColor="@color/main_text_color"-->
+<!--                    android:text="@string/about_feature_text"/>-->
+                
+                <TextView
+                    style="@style/programNameTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:textSize="14sp"
+                    android:textColor="@color/main_text_color"
+                    android:text="@string/about_message"/>
+                
                 <TextView
                     android:id="@+id/version_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginTop="40dp"
+                    android:layout_marginTop="24dp"
                     android:fontFamily="@font/roboto_medium"
                     android:gravity="center"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/main_text_color"
                     android:textSize="16sp"
                     tools:text="Version 1.1.3"/>
-
-
-                <TextView
+                
+                <Button
                     android:id="@+id/check_update"
-                    style="@style/Button1Style"
-                    android:layout_width="180dp"
-                    android:layout_height="wrap_content"
+                    style="@style/ButtonStyleSolidPink"
+                    android:layout_width="@dimen/button_accent_width"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginTop="24dp"
                     android:layout_gravity="center"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginTop="30dp"
                     android:text="@string/update"
-                    android:textAllCaps="true"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:textSize="16sp">
-                </TextView>
-
-                <!--<TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_gravity="center"
-                    android:layout_margin="10dp"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/roboto_medium"
-                    android:gravity="center"
-                    android:visibility="visible"
-                    android:textColor="@android:color/white"
-                    android:textSize="12sp"
-                    android:text="@string/powered_by_txt"/>-->
-
+                    android:textAllCaps="true">
+                </Button>
             </LinearLayout>
-
         </ScrollView>
-
-
     </LinearLayout>
 </layout>

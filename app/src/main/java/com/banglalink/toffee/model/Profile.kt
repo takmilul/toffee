@@ -1,6 +1,5 @@
 package com.banglalink.toffee.model
 
-import com.banglalink.toffee.ui.profile.EditProfileForm
 import com.google.gson.annotations.SerializedName
 
 data class Profile (
@@ -16,7 +15,7 @@ data class Profile (
     val email:String?
 ){
 
-    fun toProfileForm():EditProfileForm{
+    fun toProfileForm(): EditProfileForm {
         return EditProfileForm().apply {
             fullName = name?:""
             email = this@Profile.email?:""

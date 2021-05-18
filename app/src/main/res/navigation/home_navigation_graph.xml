@@ -46,7 +46,7 @@
         android:id="@+id/menu_settings"
         android:name="com.banglalink.toffee.ui.settings.SettingsFragment"
         android:label="Settings"
-        tools:layout="@layout/activity_settings">
+        tools:layout="@layout/fragment_settings">
         <action
             android:id="@+id/action_SettingsFragment_to_PrivacyPolicy"
             app:destination="@id/privacyPolicyFragment"
@@ -96,7 +96,7 @@
         <argument
             android:name="url"
             app:argType="string"
-            android:defaultValue="https://www.banglalink.net/en/toffee-privacy-policy"/>
+            android:defaultValue="https://toffeelive.com/policies.php"/>
     </fragment>
 
     <fragment
@@ -206,7 +206,29 @@
             android:defaultValue=""/>
     </fragment>
 
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.banglalink.toffee.ui.profile.ViewProfileFragment"
+        android:label="Profile">
+        <action
+            android:id="@+id/action_profileFragment_to_EditProfileFragment"
+            app:destination="@id/EditProfileFragment" />
+    </fragment>
 
+    <fragment
+        android:id="@+id/EditProfileFragment"
+        android:name="com.banglalink.toffee.ui.profile.EditProfileFragment"
+        android:label="Edit-Profile"
+        >
+        <argument
+            android:name="data"
+            app:argType="com.banglalink.toffee.model.EditProfileForm"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_EditProfile_to_thumbnailSelectionMethodFragment"
+            app:destination="@id/thumbnailSelectionMethodFragment" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/termsAndConditionFragment"
@@ -250,22 +272,12 @@
             />
     </dialog>
     <dialog
-        android:id="@+id/termsConditionFragment"
-        android:name="com.banglalink.toffee.ui.upload.TermsConditionFragment"
-        android:label="Terms" >
-
-    </dialog>
-    
-    <dialog
         android:id="@+id/bottomSheetUploadFragment"
         android:name="com.banglalink.toffee.ui.upload.BottomSheetUploadFragment"
         android:label="BottomUpload" >
         <action
             android:id="@+id/action_bottomSheetUploadFragment_to_newUploadMethodFragment"
             app:destination="@id/newUploadMethodFragment" />
-        <action
-            android:id="@+id/action_bottomSheetUploadFragment_to_termsConditionFragment"
-            app:destination="@id/termsConditionFragment" />
         <action
             android:id="@+id/action_bottomSheetUploadFragment_to_thumbnailSelectionMethodFragment"
             app:destination="@id/thumbnailSelectionMethodFragment" />
@@ -451,10 +463,6 @@
         android:name="com.banglalink.toffee.ui.challenge.ChallengeDetailFragment"
         android:label="ChallengeDetailFragment" />
     <fragment
-        android:id="@+id/recentFragment"
-        android:name="com.banglalink.toffee.ui.recent.RecentFragment"
-        android:label="Recent" />
-    <fragment
         android:id="@+id/favoriteFragment"
         android:name="com.banglalink.toffee.ui.favorite.FavoriteFragment"
         android:label="Favorites" />
@@ -499,4 +507,25 @@
         android:id="@+id/searchFragment"
         android:name="com.banglalink.toffee.ui.search.SearchFragment"
         android:label="Search" />
+    <dialog
+        android:id="@+id/loginDialog"
+        android:name="com.banglalink.toffee.ui.login.LoginFragment"
+        android:label="Login" />
+<!--    <dialog-->
+<!--        android:id="@+id/verifyLoginDialog"-->
+<!--        android:name="com.banglalink.toffee.ui.login.VerifyLoginFragment2"-->
+<!--        android:label="Verify">-->
+<!--        -->
+<!--        <argument-->
+<!--            android:name="phoneNumber"-->
+<!--            app:argType="string" />-->
+<!--        <argument-->
+<!--            android:name="regSessionToken"-->
+<!--            app:argType="string" />-->
+<!--        -->
+<!--    </dialog>-->
+<!--    <dialog-->
+<!--        android:id="@+id/userInterestDialog"-->
+<!--        android:name="com.banglalink.toffee.ui.login.UserInterestFragment2"-->
+<!--        android:label="User Interest" />-->
 </navigation>

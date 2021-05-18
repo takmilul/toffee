@@ -2,12 +2,10 @@ package com.banglalink.toffee.util;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Resources;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -106,27 +104,6 @@ public class Utils {
         return diffHours + " hours";
     }
 
-    String getRemainingTimeText(Date expiryDate){
-        long different = expiryDate.getTime() - System.currentTimeMillis();
-
-        long secondsInMilli = 1000;
-        long minutesInMilli = secondsInMilli * 60;
-        long hoursInMilli = minutesInMilli * 60;
-        long daysInMilli = hoursInMilli * 24;
-
-        long elapsedDays = different / daysInMilli;
-        different = different % daysInMilli;
-
-        long elapsedHours = different / hoursInMilli;
-        different = different % hoursInMilli;
-
-        long elapsedMinutes = different / minutesInMilli;
-
-        return String.format(Locale.US,"%dd:%02dh:%02dm Remaining",
-                elapsedDays,
-                elapsedHours, elapsedMinutes);
-    }
-
     public static String getFormattedViewsText(String viewCount) {
 
         if (TextUtils.isEmpty(viewCount) || !TextUtils.isDigitsOnly(viewCount)) return viewCount;
@@ -151,17 +128,6 @@ public class Utils {
         } else {
             return false; // Wi-Fi adapter is OFF
         }
-    }
-
-    public static String getGmtOffsetString() {
-        int offsetMillis = TimeZone.getDefault().getRawOffset();
-        int offsetMinutes = offsetMillis / 60000;
-        char sign = '+';
-        if (offsetMinutes < 0) {
-            sign = '-';
-            offsetMinutes = -offsetMinutes;
-        }
-        return String.format("%c%02d:%02d", sign, offsetMinutes / 60, offsetMinutes % 60);
     }
 
     public static String getTime(String dateTime) {
@@ -259,23 +225,11 @@ public class Utils {
 
     }
 
-    public static float convertDpToPixel(float dp, Context context){
-        return dp * ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
-    }
-
     public static String readableFileSize(long size) {
         if(size <= 0) return "0 B";
         final String[] units = new String[] { "B", "KB", "MB", "GB", "TB" };
         int digitGroups = (int) (Math.log10(size)/Math.log10(1024));
         return new DecimalFormat("#,##0.##").format(size/Math.pow(1024, digitGroups)) + " " + units[digitGroups];
-    }
-
-    public static int dpToPx(int dp) {
-        return (int)(dp * Resources.getSystem().getDisplayMetrics().density);
-    }
-
-    public static int pxToDp(int px) {
-        return (int)(px / Resources.getSystem().getDisplayMetrics().density);
     }
 
     public static String getDateTime(){

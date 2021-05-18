@@ -103,7 +103,7 @@
                     android:layout_height="88dp"
                     android:contentDescription="@string/txt_profile_image"
                     android:layout_marginTop="32dp"
-                    android:src="@drawable/ic_profile_default"
+                    app:srcCompat="@drawable/ic_profile_default"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/textView5" />

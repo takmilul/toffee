@@ -18,9 +18,11 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
+import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_PLAYLISTS
 import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_PLAYLIST_VIDEOS
 import com.banglalink.toffee.apiservice.MyChannelPlaylistContentParam
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
+import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.SubscriptionCountRepository
@@ -32,7 +34,6 @@ import com.banglalink.toffee.listeners.MyChannelPlaylistItemListener
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.PlaylistPlaybackInfo
-import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.*
@@ -45,7 +46,6 @@ import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -54,6 +54,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     
     private var isSubscribed: Int = 0
     private var subscriberCount: Long = 0
+    @Inject lateinit var localSync: LocalSync
     private var currentItem: ChannelInfo? = null
     private lateinit var mAdapter: ConcatAdapter
     @Inject lateinit var cacheManager: CacheManager
@@ -159,19 +160,41 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
             }
     
             override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
-                if (isSubscribed == 0) {
-                    homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), 1)
-                    isSubscribed = 1
-                    currentItem?.isSubscribed = isSubscribed
-                    currentItem?.subscriberCount = (++subscriberCount).toInt()
-                    detailsAdapter.notifyDataSetChanged()
-                } else {
-                    UnSubscribeDialog.show(requireContext()) {
-                        homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), -1)
-                        isSubscribed = 0
-                        currentItem?.isSubscribed = isSubscribed
-                        currentItem?.subscriberCount = (--subscriberCount).toInt()
+                requireActivity().checkVerification {
+                    if (item.isSubscribed == 0) {
+                        homeViewModel.sendSubscriptionStatus(
+                            SubscriptionInfo(
+                                null,
+                                item.channel_owner_id,
+                                mPref.customerId
+                            ), 1
+                        )
+                        currentItem?.let { 
+                            it.isSubscribed = 1
+                            it.subscriberCount++
+                        }
+//                        isSubscribed = 1
+//                        currentItem?.isSubscribed = isSubscribed
+//                        currentItem?.subscriberCount = (++subscriberCount).toInt()
                         detailsAdapter.notifyDataSetChanged()
+                    } else {
+                        UnSubscribeDialog.show(requireContext()) {
+                            homeViewModel.sendSubscriptionStatus(
+                                SubscriptionInfo(
+                                    null,
+                                    item.channel_owner_id,
+                                    mPref.customerId
+                                ), -1
+                            )
+                            currentItem?.let {
+                                it.isSubscribed = 0
+                                it.subscriberCount--
+                            }
+//                            isSubscribed = 0
+//                            currentItem?.isSubscribed = isSubscribed
+//                            currentItem?.subscriberCount = (--subscriberCount).toInt()
+                            detailsAdapter.notifyDataSetChanged()
+                        }
                     }
                 }
             }
@@ -187,10 +210,11 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     private fun setSubscriptionStatus() {
         lifecycleScope.launch {
             currentItem?.let {
-                isSubscribed = if (subscriptionInfoRepository.getSubscriptionInfoByChannelId(it.channel_owner_id, mPref.customerId) != null) 1 else 0
-                subscriberCount = subscriptionCountRepository.getSubscriberCount(it.channel_owner_id)
-                it.isSubscribed = if (subscriptionInfoRepository.getSubscriptionInfoByChannelId(it.channel_owner_id, mPref.customerId) != null) 1 else 0
-                it.subscriberCount = subscriptionCountRepository.getSubscriberCount(it.channel_owner_id).toInt()
+                localSync.syncData(it)
+//                isSubscribed = if (subscriptionInfoRepository.getSubscriptionInfoByChannelId(it.channel_owner_id, mPref.customerId) != null) 1 else 0
+//                subscriberCount = subscriptionCountRepository.getSubscriberCount(it.channel_owner_id)
+//                it.isSubscribed = if (subscriptionInfoRepository.getSubscriptionInfoByChannelId(it.channel_owner_id, mPref.customerId) != null) 1 else 0
+//                it.subscriberCount = subscriptionCountRepository.getSubscriberCount(it.channel_owner_id).toInt()
                 detailsAdapter.notifyDataSetChanged()
             }
         }
@@ -279,7 +303,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
                 setOnMenuItemClickListener {
                     when (it.itemId) {
                         R.id.menu_share -> {
-                            homeViewModel.shareContentLiveData.postValue(item)
+                            requireActivity().handleShare(item)
                         }
                         R.id.menu_delete_playlist_video -> {
                             observeDeletePlaylistVideo()
@@ -300,6 +324,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
         observe(mViewModel.deletePlaylistVideoLiveData) {
             when (it) {
                 is Success -> {
+                    cacheManager.clearCacheByUrl(GET_MY_CHANNEL_PLAYLISTS)
                     cacheManager.clearCacheByUrl(GET_MY_CHANNEL_PLAYLIST_VIDEOS)
                     playlistAdapter.refresh()
                     requireContext().showToast(it.data.message)
@@ -326,16 +351,11 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
         popupMenu.setOnMenuItemClickListener {
             when (it?.itemId) {
                 R.id.menu_share -> {
-                    homeViewModel.shareContentLiveData.postValue(channelInfo)
+                    requireActivity().handleShare(channelInfo)
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_fav -> {
-                    homeViewModel.updateFavorite(channelInfo).observe(viewLifecycleOwner, { resp ->
-                        handleFavoriteResponse(resp)
-                    })
-                    return@setOnMenuItemClickListener true
-                }
-                R.id.menu_not_interested -> {
+                    requireActivity().handleFavorite(channelInfo)
                     return@setOnMenuItemClickListener true
                 }
                 else -> {
@@ -345,26 +365,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
         }
         popupMenu.show()
     }
-    
-    private fun handleFavoriteResponse(it: Resource<ChannelInfo>) {
-        when (it) {
-            is Success -> {
-                val channelInfo = it.data
-                when (channelInfo.favorite) {
-                    "0" -> {
-                        context?.showToast("Content successfully removed from favorite list")
-                    }
-                    "1" -> {
-                        context?.showToast("Content successfully added to favorite list")
-                    }
-                }
-            }
-            is Failure -> {
-                context?.showToast(it.error.msg)
-            }
-        }
-    }
-    
+
     fun setCurrentChannel(channelInfo: ChannelInfo?) {
         currentItem = channelInfo
         detailsAdapter.setChannelInfo(channelInfo)

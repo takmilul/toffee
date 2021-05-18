@@ -5,7 +5,7 @@ import com.banglalink.toffee.data.network.response.ApiLoginResponse
 import com.banglalink.toffee.data.network.retrofit.AuthApi
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.exception.ApiException
-import com.banglalink.toffee.model.CustomerInfoSignIn
+import com.banglalink.toffee.model.CustomerInfoLogin
 import com.banglalink.toffee.apiservice.ApiLogin
 import com.nhaarman.mockitokotlin2.*
 import junit.framework.Assert.assertEquals
@@ -30,7 +30,7 @@ class ApiLoginTest :BaseUseCaseTest(){
             val apiLogin = ApiLogin(SessionPreference.getInstance(), mockAuthApi)
             Mockito.`when`(mockAuthApi.apiLogin(any<ApiLoginRequest>())).thenReturn(
                 Response.success(ApiLoginResponse(
-                    CustomerInfoSignIn().apply {
+                    CustomerInfoLogin().apply {
                         balance = 0
                         authorize = true
                         customerId = 1729

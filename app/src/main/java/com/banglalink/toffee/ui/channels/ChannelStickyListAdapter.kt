@@ -9,17 +9,17 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.Group
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.widget.StickyHeaderGridAdapter
-import com.banglalink.toffee.util.Utils
-import com.banglalink.toffee.util.bindChannel
+import com.banglalink.toffee.util.BindingUtil
 import de.hdodenhof.circleimageview.CircleImageView
 
 class ChannelStickyListAdapter(
     private val context: Context,
-    private val onItemClickListener: OnItemClickListener?
-) :
-    StickyHeaderGridAdapter() {
+    private val onItemClickListener: OnItemClickListener?,
+    private val bindingUtil: BindingUtil
+): StickyHeaderGridAdapter() {
     private var highlightedChannel: ChannelInfo? = null
     private var selectedChannel: ChannelInfo? = null
     private var values: List<StickyHeaderInfo> = emptyList()
@@ -102,7 +102,7 @@ class ChannelStickyListAdapter(
     ) {
         if(viewHolder is TvTitleViewHolder && selectedChannel != null) {
             selectedChannel?.let {
-                bindChannel(viewHolder.providerIcon, it)
+                bindingUtil.bindChannel(viewHolder.providerIcon, it)
 
 //                viewHolder.providerIcon.load(it.channel_logo){
 //                    transformations(CircleCropTransformation())
@@ -132,7 +132,7 @@ class ChannelStickyListAdapter(
         val item = getSection(section).channelInfoList[offset]
         val liveTvViewHolder = viewHolder as LiveTvViewHolder
 
-        bindChannel(liveTvViewHolder.icon, item)
+        bindingUtil.bindChannel(liveTvViewHolder.icon, item)
 
 //        liveTvViewHolder.icon.load(item.channel_logo){
 //            transformations(CircleCropTransformation())
@@ -142,7 +142,7 @@ class ChannelStickyListAdapter(
 //        }
 
         if(item.id == highlightedChannel?.id.toString() && !getSection(section).header.contains("Recent")) {
-            liveTvViewHolder.icon.borderWidth = Utils.dpToPx(4)
+            liveTvViewHolder.icon.borderWidth = 4.px
         } else {
             liveTvViewHolder.icon.borderWidth = 0
         }

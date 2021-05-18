@@ -43,12 +43,7 @@ class FeaturedContentFragment : HomeBaseFragment(), BaseListItemCallback<Channel
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-        /*if (viewModel.pageType.value != PageType.Landing) {
-            startLoadingAnimation(false)
-        }*/
-        
         mAdapter = FeaturedContentAdapter(this)
-        
         binding.featuredViewpager.adapter = mAdapter
         TabLayoutMediator(binding.featuredIndicator, binding.featuredViewpager, true) { tab_, position -> }.attach()
         
@@ -64,9 +59,10 @@ class FeaturedContentFragment : HomeBaseFragment(), BaseListItemCallback<Channel
                 startPageScroll()
                 binding.placeholder.root.hide()
                 binding.featuredViewpager.show()
+                binding.placeholder.root.stopShimmer()
             }
             else {
-                startLoadingAnimation(false)
+                binding.placeholder.root.stopShimmer()
             }
         }
     }
@@ -90,17 +86,5 @@ class FeaturedContentFragment : HomeBaseFragment(), BaseListItemCallback<Channel
     override fun onStop() {
         viewModel.featuredContents.removeObservers(this)
         super.onStop()
-    }
-    
-    private fun startLoadingAnimation(isStart: Boolean) {
-        if (isStart) {
-            binding.placeholder.root.startShimmer()
-        } else {
-            binding.placeholder.root.stopShimmer()
-        }
-    }
-    
-    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
-
     }
 }

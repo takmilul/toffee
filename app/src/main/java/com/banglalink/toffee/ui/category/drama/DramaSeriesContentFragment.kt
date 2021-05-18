@@ -15,6 +15,7 @@ import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.databinding.FragmentDramaSeriesContentBinding
 import com.banglalink.toffee.enums.FilterContentType.*
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.showLoadingAnimation
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
@@ -24,7 +25,6 @@ import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChangedBy
 
 class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<ChannelInfo> {
 
@@ -52,10 +52,8 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
         category = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM) as Category?
         setupEmptyView()
         mAdapter = DramaSeriesListAdapter(this)
-
         binding.latestVideosList.adapter = mAdapter
         landingPageViewModel.isDramaSeries.value = true
-        observeLatestVideosList(category?.id?.toInt() ?: 0)
 
         observe(landingPageViewModel.subCategoryId) {
             if (selectedFilter == LATEST_VIDEOS.value || selectedFilter == FEED.value) {
@@ -65,12 +63,12 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
                 observeTrendingVideosList(category?.id?.toInt() ?: 9, it)
             }
         }
-        
         observe(landingPageViewModel.selectedHashTag) {
             lifecycleScope.launchWhenCreated {
                 observeLatestVideosList(category?.id?.toInt() ?: 9, landingPageViewModel.subCategoryId.value ?: 0, 1, it)
             }
         }
+        observeLatestVideosList(category?.id?.toInt() ?: 0)
         
         binding.filterButton.setOnClickListener {
             val popupMenu = android.widget.PopupMenu(requireContext(), it)
@@ -90,18 +88,14 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
         }
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            mAdapter.loadStateFlow
-//                .distinctUntilChangedBy { it.refresh }
-                .collectLatest {
-                binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
-                mAdapter.apply {
-                    val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
-                    val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
-                    binding.emptyView.isVisible = isEmpty && !isLoading
-                    binding.placeholder.isVisible = isLoading
-                    binding.latestVideosList.isVisible = !isEmpty
-                    isInitialized = true
-                }
+            mAdapter.loadStateFlow.collectLatest {
+                val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
+                val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
+                binding.emptyView.isVisible = isEmpty && !isLoading
+                binding.placeholder.isVisible = isLoading
+                binding.latestVideosList.isVisible = !isEmpty
+                binding.placeholder.showLoadingAnimation(isLoading)
+                isInitialized = true
             }
         }
     }
@@ -168,10 +162,6 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
     override fun onProviderIconClicked(item: ChannelInfo) {
         super.onProviderIconClicked(item)
         homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
-    }
-
-    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
-        
     }
 
     override fun hideShareMenuItem(hide: Boolean): Boolean {

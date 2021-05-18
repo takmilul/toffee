@@ -38,12 +38,10 @@ annotation class DbRetrofit
 @Module
 object NetworkModule {
 
-    @EncryptedHttpClient
     @Provides
+    @Singleton
+    @EncryptedHttpClient
     fun providesEncryptedHttpClient(@DefaultCache cache: Cache): OkHttpClient {
-//        val cacheSize = 10 * 1024 * 1024 // 10 MB
-//        val cache = Cache(FacebookSdk.getCacheDir(), cacheSize.toLong())
-
         val clientBuilder = OkHttpClient.Builder().apply {
             connectTimeout(15, TimeUnit.SECONDS)
             readTimeout(30, TimeUnit.SECONDS)
@@ -72,7 +70,6 @@ object NetworkModule {
     fun providesRetrofit(@EncryptedHttpClient httpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .client(httpClient)
-//            .baseUrl("https://mapi.toffeelive.com/")
             .baseUrl(TOFFEE_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -82,7 +79,6 @@ object NetworkModule {
     @Singleton
     fun providesToffeeApi(retrofit: Retrofit): ToffeeApi {
         return retrofit.create(ToffeeApi::class.java)
-//        return RetrofitApiClient.toffeeApi
     }
 
     @DbRetrofit
@@ -92,7 +88,6 @@ object NetworkModule {
         return Retrofit.Builder()
             .client(OkHttpClient.Builder().build())
             .baseUrl("https://real-db.toffeelive.com/")
-//            .baseUrl("https://dev.toffeelive.com/")
             .build()
     }
 
@@ -100,14 +95,12 @@ object NetworkModule {
     @Singleton
     fun providesDbApi(@DbRetrofit dbRetrofit: Retrofit): DbApi {
         return dbRetrofit.create(DbApi::class.java)
-//        return RetrofitApiClient.toffeeApi
     }
 
     @Provides
     @Singleton
     fun providesAuthApi(retrofit: Retrofit): AuthApi {
         return retrofit.create(AuthApi::class.java)
-//        return RetrofitApiClient.authApi
     }
 
     @ExperimentalCoroutinesApi

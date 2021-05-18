@@ -10,11 +10,9 @@ import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.ViewModelProviders
-import com.banglalink.toffee.ui.common.BaseViewModel
 
-fun Context.showToast(message: String, length: Int = Toast.LENGTH_SHORT) {
-    if(message.isNotBlank())
+fun Context.showToast(message: String?, length: Int = Toast.LENGTH_SHORT) {
+    if(!message.isNullOrBlank())
         Toast.makeText(this, message, length).show()
 }
 

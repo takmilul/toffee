@@ -42,6 +42,13 @@
     <item android:id="@+id/menu_creators_policy"
         android:title="Creators Policy"
         android:icon="@drawable/ic_side_menu_creators_policy" />
+    <!--<item android:id="@+id/menu_code"
+        android:title="Generate Code"
+        android:icon="@drawable/ic_menu_redeem" />-->
+
+<!--    <item android:id="@+id/menu_verfication"-->
+<!--        android:title="Verify"-->
+<!--        android:icon="@drawable/ic_menu_invite" />-->
 
     <item android:id="@+id/menu_settings"
         android:title="Settings"
@@ -62,4 +69,9 @@
     <item android:id="@+id/menu_change_theme"
         android:icon="@drawable/ic_menu_dark_mode"
         android:title="Dark Mode" />
+    
+    <item android:id="@+id/menu_follow_us"
+        app:actionLayout="@layout/follow_us_action_layout"
+        app:showAsAction="always">
+    </item>
 </menu>

@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -16,20 +15,21 @@ import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentLandingUserChannelsBinding
+import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.showLoadingAnimation
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.LandingPopularChannelCallback
-import com.banglalink.toffee.model.*
+import com.banglalink.toffee.model.Category
+import com.banglalink.toffee.model.MyChannelNavParams
+import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.UserChannelInfo
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.common.UnSubscribeDialog
 import com.banglalink.toffee.ui.home.LandingPageViewModel
-import com.facebook.shimmer.ShimmerFrameLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.distinctUntilChangedBy
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -65,20 +65,18 @@ class LandingUserChannelsFragment : HomeBaseFragment(), LandingPopularChannelCal
         mAdapter = LandingUserChannelsListAdapter(this)
 
         binding.viewAllButton.setOnClickListener {
-            parentFragment?.findNavController()?.navigate(R.id.action_menu_feed_to_trendingChannelsFragment)
+            parentFragment?.findNavController()?.navigate(R.id.trendingChannelsFragment)
         }
 
         with(binding.userChannelList) {
 
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-                mAdapter.loadStateFlow
-//                    .distinctUntilChangedBy { it.refresh }
-                    .collectLatest {
+                mAdapter.loadStateFlow.collectLatest {
                     val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
                     val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
                     binding.placeholder.isVisible = isEmpty
                     binding.userChannelList.isVisible = ! isEmpty
-                    startLoadingAnimation(isLoading)
+                    binding.placeholder.showLoadingAnimation(isLoading)
                     isInitialized = true
                 }
             }
@@ -87,19 +85,6 @@ class LandingUserChannelsFragment : HomeBaseFragment(), LandingPopularChannelCal
         
         observeList()
 //        observeSubscribeChannel()
-    }
-    
-    private fun startLoadingAnimation(isStart: Boolean) {
-        binding.placeholder.children.forEach {
-            if (it is ShimmerFrameLayout) {
-                if (isStart) {
-                    it.startShimmer()
-                }
-                else {
-                    it.stopShimmer()
-                }
-            }
-        }
     }
     
     private fun observeList() {
@@ -149,30 +134,39 @@ class LandingUserChannelsFragment : HomeBaseFragment(), LandingPopularChannelCal
     }
     
     override fun onSubscribeButtonClicked(view: View, info: UserChannelInfo) {
+        requireActivity().checkVerification {
 //                channelInfo = info
-        if (info.isSubscribed == 0) {
-            channelInfo = info.also { userChannelInfo ->
-                userChannelInfo.isSubscribed = 1
-                userChannelInfo.subscriberCount++
-            }
-//                    subscriptionViewModel.setSubscriptionStatus(info.id, 1, info.channelOwnerId)
-            homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId), 1)
-            mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, channelInfo)
-        }
-        else {
-            UnSubscribeDialog.show(requireContext()){
+            if (info.isSubscribed == 0) {
                 channelInfo = info.also { userChannelInfo ->
-                    userChannelInfo.isSubscribed = 0
-                    userChannelInfo.subscriberCount--
+                    userChannelInfo.isSubscribed = 1
+                    userChannelInfo.subscriberCount++
                 }
-//                        subscriptionViewModel.setSubscriptionStatus(info.id, 0, info.channelOwnerId)
-                homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId), -1)
+//                    subscriptionViewModel.setSubscriptionStatus(info.id, 1, info.channelOwnerId)
+                homeViewModel.sendSubscriptionStatus(
+                    SubscriptionInfo(
+                        null,
+                        info.channelOwnerId,
+                        mPref.customerId
+                    ), 1
+                )
                 mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, channelInfo)
+            } else {
+                UnSubscribeDialog.show(requireContext()) {
+                    channelInfo = info.also { userChannelInfo ->
+                        userChannelInfo.isSubscribed = 0
+                        userChannelInfo.subscriberCount--
+                    }
+//                        subscriptionViewModel.setSubscriptionStatus(info.id, 0, info.channelOwnerId)
+                    homeViewModel.sendSubscriptionStatus(
+                        SubscriptionInfo(
+                            null,
+                            info.channelOwnerId,
+                            mPref.customerId
+                        ), -1
+                    )
+                    mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, channelInfo)
+                }
             }
         }
-    }
-    
-    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
-
     }
 }

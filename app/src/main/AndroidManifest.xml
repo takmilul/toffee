@@ -61,19 +61,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ui.profile.EditProfileActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:label="@string/profile_edit"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".ui.profile.ViewProfileActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/profile"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".ui.home.HomeActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
@@ -116,32 +103,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.common.HtmlPageViewActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".ui.common.Html5PlayerViewActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:screenOrientation="fullSensor"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ui.about.AboutActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:label="About"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name="com.yalantis.ucrop.UCropActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ui.refer.ReferAFriendActivity"
-            android:label="@string/refer_a_friend_txt"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ui.redeem.RedeemCodeActivity"
-            android:label="@string/redeem_code_txt"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 

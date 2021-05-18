@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isVisible
@@ -22,6 +21,7 @@ import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBinding
 import com.banglalink.toffee.databinding.FragmentMyChannelPlaylistsBinding
+import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.MyChannelPlaylist
@@ -34,7 +34,6 @@ import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChangedBy
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -77,11 +76,13 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
         _binding = FragmentMyChannelPlaylistsBinding.inflate(inflater, container, false)
         return binding.root
     }
+    
     override fun onDestroyView() {
         binding.myChannelPlaylists.adapter = null
         super.onDestroyView()
         _binding = null
     }
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
@@ -105,7 +106,9 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
             adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
             setHasFixedSize(true)
         }
-        
+        if (isOwner && !mPref.isVerifiedUser) {
+            return
+        }
         observeMyChannelPlaylists()
         observeEditPlaylist()
         observeDeletePlaylist()
@@ -117,12 +120,14 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
             if (isOwner) {
                 emptyViewLabel.text = "You haven't created any playlist yet"
                 createPlaylistButton.setOnClickListener {
-                    if (mPref.channelId > 0) {
-                        if (parentFragment?.parentFragment?.parentFragment is MyChannelHomeFragment) {
-                            (parentFragment?.parentFragment?.parentFragment as? MyChannelHomeFragment)?.showCreatePlaylistDialog()
+                    requireActivity().checkVerification {
+                        if (mPref.channelId > 0) {
+                            if (parentFragment?.parentFragment?.parentFragment is MyChannelHomeFragment) {
+                                (parentFragment?.parentFragment?.parentFragment as? MyChannelHomeFragment)?.showCreatePlaylistDialog()
+                            }
+                        } else {
+                            requireContext().showToast("Please create channel first")
                         }
-                    } else {
-                        Toast.makeText(requireContext(), "Please create channel first", Toast.LENGTH_SHORT).show()
                     }
                 }
             } else {
@@ -211,7 +216,7 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
                 editPlaylistViewModel.editPlaylist(playlistId, channelOwnerId)
                 alertDialog.dismiss()
             } else {
-                Toast.makeText(requireContext(), "Please give a playlist name", Toast.LENGTH_SHORT).show()
+                requireContext().showToast("Please give a playlist name")
             }
         }
         playlistBinding.closeIv.setOnClickListener { alertDialog.dismiss() }

@@ -2,6 +2,9 @@ package com.banglalink.toffee.mqttservice
 
 import android.content.Context
 import android.util.Log
+import com.banglalink.toffee.data.database.entities.ReactionStatusItem
+import com.banglalink.toffee.data.database.entities.ShareCount
+import com.banglalink.toffee.data.database.entities.SubscriptionCount
 import com.banglalink.toffee.data.repository.ReactionStatusRepository
 import com.banglalink.toffee.data.repository.ShareCountRepository
 import com.banglalink.toffee.data.repository.SubscriptionCountRepository
@@ -20,9 +23,11 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.eclipse.paho.android.service.MqttAndroidClient
 import org.eclipse.paho.client.mqttv3.*
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 import javax.net.ssl.SSLSocketFactory
+import kotlin.system.measureTimeMillis
 
 @Singleton
 class ToffeeMqttService @Inject constructor(
@@ -35,9 +40,9 @@ class ToffeeMqttService @Inject constructor(
     
     private var gson: Gson? = null
     private var client: MqttAndroidClient? = null
-    private val shareList = arrayListOf<ShareData>()
-    private val reactionList = arrayListOf<ReactionData>()
-    private val subscriptionList = arrayListOf<SubscriptionCountData>()
+    private val shareStatusList = arrayListOf<ShareCount>()
+    private val reactionStatusList = arrayListOf<ReactionStatusItem>()
+    private val subscriptionStatusList = arrayListOf<SubscriptionCount>()
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val shareListMutex = Mutex()
     private val reactionListMutex = Mutex()
@@ -56,6 +61,13 @@ class ToffeeMqttService @Inject constructor(
                     connect(getMqttConnectionOption(userName, password), null, this@ToffeeMqttService)
                     Log.e("MQTT_", "initialize: connecting...")
                 }
+                
+//                repeat(100){
+//                    shareStatusList.add(ShareCount(it, 1))
+//                    subscriptionStatusList.add(SubscriptionCount(it+50, 1))
+//                    reactionStatusList.add(ReactionStatusItem(it+50, mPref.customerId, 1))
+//                }
+                
                 startScheduler()
             }
         }
@@ -73,34 +85,36 @@ class ToffeeMqttService @Inject constructor(
     }
     
     private suspend fun startDbBatchUpdate() {
-        delay(10_000)
-
-        shareListMutex.withLock {
-            if (shareList.isNotEmpty()) {
-                shareList.forEach {
-                    shareCountRepository.updateShareCount(it.contentId.toInt(), 1)
+        delay(20_000)
+        var time = measureTimeMillis { 
+            shareListMutex.withLock {
+                if (shareStatusList.isNotEmpty()) {
+                    shareCountRepository.updateShareCount(shareStatusList)
+                    shareStatusList.clear()
                 }
-                shareList.clear()
             }
         }
+        Log.i("MQT_", "share end $time")
 
-        subscribeListMutex.withLock {
-            if (subscriptionList.isNotEmpty()) {
-                subscriptionList.forEach {
-                    subscriptionCountRepository.updateSubscriptionCount(it.channelId, it.status)
+        time = measureTimeMillis { 
+            subscribeListMutex.withLock {
+                if (subscriptionStatusList.isNotEmpty()) {
+                    subscriptionCountRepository.updateSubscriptionCount(subscriptionStatusList)
+                    subscriptionStatusList.clear()
                 }
-                subscriptionList.clear()
             }
         }
+        Log.i("MQT_", "subs end $time")
 
-        reactionListMutex.withLock {
-            if (reactionList.isNotEmpty()) {
-                reactionList.forEach {
-                    reactionStatusRepository.updateReaction(it.contentId, it.reactionType, it.reactionStatus)
+        time = measureTimeMillis { 
+            reactionListMutex.withLock {
+                if (reactionStatusList.isNotEmpty()) {
+                    reactionStatusRepository.updateReaction(reactionStatusList)
+                    reactionStatusList.clear()
                 }
-                reactionList.clear()
             }
         }
+        Log.i("MQT_", "reaction ended $time")
     }
     
     private fun getMqttConnectionOption(userName: String, password: String): MqttConnectOptions {
@@ -157,7 +171,7 @@ class ToffeeMqttService @Inject constructor(
                         if (data != null && data.customerId != mPref.customerId) {
                             coroutineScope.launch {
                                 reactionListMutex.withLock {
-                                    reactionList.add(data)
+                                    reactionStatusList.add(ReactionStatusItem(data.contentId.toInt(), data.reactionType, data.reactionStatus.toLong()))
                                 }
                             }
                         }
@@ -167,7 +181,7 @@ class ToffeeMqttService @Inject constructor(
                         if (data != null) {
                             coroutineScope.launch {
                                 shareListMutex.withLock {
-                                    shareList.add(data)
+                                    shareStatusList.add(ShareCount(data.contentId.toInt(), 1))
                                 }
                             }
                         }
@@ -177,7 +191,7 @@ class ToffeeMqttService @Inject constructor(
                         if (data != null && data.subscriberId != mPref.customerId){
                             coroutineScope.launch {
                                 subscribeListMutex.withLock {
-                                    subscriptionList.add(data)
+                                    subscriptionStatusList.add(SubscriptionCount(data.channelId, data.status.toLong()))
                                 }
                             }
                         }
@@ -213,8 +227,8 @@ class ToffeeMqttService @Inject constructor(
         client = null
 
         // TODO: Lock the list if using destroy
-        shareList.clear()
-        reactionList.clear()
-        subscriptionList.clear()
+        shareStatusList.clear()
+        reactionStatusList.clear()
+        subscriptionStatusList.clear()
     }
 }

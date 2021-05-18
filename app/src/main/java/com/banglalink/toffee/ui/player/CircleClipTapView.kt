@@ -75,6 +75,11 @@ internal class CircleClipTapView(context: Context?, attrs: AttributeSet) :
         valueAnimator = getCircleAnimator()
     }
 
+    override fun onDetachedFromWindow() {
+        endAnimation()
+        super.onDetachedFromWindow()
+    }
+
     var performAtEnd: () -> Unit = { }
 
     /*

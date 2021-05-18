@@ -23,9 +23,8 @@
 
     <Button
         android:id="@+id/ok_button"
-        style="@style/Button1Style"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
+        style="@style/ButtonStyleSolidPink"
+        android:layout_width="@dimen/button_accent_width"
         android:layout_marginTop="24dp"
         android:layout_marginBottom="16dp"
         android:clickable="true"

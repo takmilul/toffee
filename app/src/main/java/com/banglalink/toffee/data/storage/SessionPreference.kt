@@ -1,14 +1,14 @@
 package com.banglalink.toffee.data.storage
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.provider.Settings
 import android.text.TextUtils
-import android.util.Base64
 import androidx.core.content.edit
 import androidx.lifecycle.MutableLiveData
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.model.CustomerInfoSignIn
+import com.banglalink.toffee.model.CustomerInfoLogin
 import com.banglalink.toffee.model.DBVersion
 import com.banglalink.toffee.model.DBVersionV2
 import com.banglalink.toffee.model.PlayerOverlayData
@@ -20,6 +20,7 @@ import java.util.*
 
 const val PREF_NAME_IP_TV= "IP_TV"
 
+@SuppressLint("HardwareIds")
 class SessionPreference(private val pref: SharedPreferences, private val context: Context) {
 
     val viewCountDbUrlLiveData = MutableLiveData<String>()
@@ -76,6 +77,18 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     set(isBanglalinkNumber){
         pref.edit().putString(PREF_BANGLALINK_NUMBER,isBanglalinkNumber).apply()
     }
+
+    var isVerifiedUser: Boolean
+        get() = pref.getBoolean(PREF_VERFICATION,false)
+        set(isVerified){
+            pref.edit().putBoolean(PREF_VERFICATION,isVerified).apply()
+        }
+    
+    var logout:String
+        get() = pref.getString(PREF_LOGOUT,"0")?: ""
+        set(logout){
+            pref.edit().putString(PREF_LOGOUT,logout).apply()
+        }
 
     var balance: Int
         get() = pref.getInt(PREF_BALANCE, 0)
@@ -148,13 +161,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         set(userPhoto) {
             pref.edit().putString(PREF_IMAGE_URL, userPhoto).apply()
             if (!TextUtils.isEmpty(userPhoto))
-                profileImageUrlLiveData.postValue(userPhoto)
-        }
-
-    var appThemeMode: Int
-        get() = pref.getInt(PREF_APP, 0)
-        set(themeMode){
-            pref.edit().putInt(PREF_APP, themeMode).apply()
+                profileImageUrlLiveData.postValue(userPhoto!!)
         }
 
     val netType: String
@@ -283,7 +290,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     fun getHeaderSessionToken(): String? {
         return pref.getString(PREF_SESSION_TOKEN_HEADER, "")
     }
-
+    
     fun setHlsOverrideUrl(hlsOverrideUrl: String?) {
         pref.edit().putString(PREF_HLS_OVERRIDE_URL, hlsOverrideUrl).apply()
     }
@@ -292,14 +299,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         return pref.getString(PREF_HLS_OVERRIDE_URL, "")
     }
 
-    fun setShouldOverrideHlsUrl(value: Boolean) {
-        pref.edit().putBoolean(PREF_SHOULD_OVERRIDE, value).apply()
-    }
-
-    fun shouldOverrideHlsUrl(): Boolean {
-        return pref.getBoolean(PREF_SHOULD_OVERRIDE, false)
-    }
-
+    var shouldOverrideHlsUrl: Boolean
+        get() = pref.getBoolean(PREF_SHOULD_OVERRIDE, true)
+        set(value) = pref.edit{ putBoolean(PREF_SHOULD_OVERRIDE, value) }
+    
     fun setSessionTokenLifeSpanInMillis(tokenLifeSpanInMillis: Long) {
         pref.edit().putLong(PREF_DEVICE_TIME_IN_MILLISECONDS, System.currentTimeMillis()).apply()
         pref.edit().putLong(PREF_TOKEN_LIFE_SPAN, tokenLifeSpanInMillis - 10 * 60 * 1000)
@@ -311,7 +314,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     }
 
     fun getSessionTokenSaveTimeInMillis(): Long {
-        return pref.getLong(PREF_DEVICE_TIME_IN_MILLISECONDS, System.currentTimeMillis());
+        return pref.getLong(PREF_DEVICE_TIME_IN_MILLISECONDS, System.currentTimeMillis())
     }
 
 //    var uploadId: String?
@@ -442,44 +445,87 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getString(PREF_CAST_RECEIVER_ID, "") ?: ""
         set(value) = pref.edit { putString(PREF_CAST_RECEIVER_ID, value) }
 
-//    var uploadUri: String?
-//        get() = pref.getString("toffee-upload-uri", null)
-//        set(value) = pref.edit { putString("toffee-upload-uri", value) }
+    var internetPackUrl: String
+        get() = pref.getString(PREF_INTERNET_PACK_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_INTERNET_PACK_URL, value) }
 
-    fun saveCustomerInfo(customerInfoSignIn:CustomerInfoSignIn){
-        balance = customerInfoSignIn.balance
-        customerId = customerInfoSignIn.customerId
-        password = customerInfoSignIn.password?:""
-        customerName = customerInfoSignIn.customerName?:""
-        sessionToken = (customerInfoSignIn.sessionToken?:"")
+    var tusUploadServerUrl: String
+        get() = pref.getString(PREF_TUS_UPLOAD_SERVER_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_TUS_UPLOAD_SERVER_URL, value) }
 
-        setHeaderSessionToken(customerInfoSignIn.headerSessionToken)
-        setHlsOverrideUrl(customerInfoSignIn.hlsOverrideUrl)
-        setShouldOverrideHlsUrl(customerInfoSignIn.hlsUrlOverride)
-        setSessionTokenLifeSpanInMillis(customerInfoSignIn.tokenLifeSpan.toLong() * 1000 * 3600)
-        if(customerInfoSignIn.isBanglalinkNumber!=null){
-            isBanglalinkNumber = customerInfoSignIn.isBanglalinkNumber
+    var privacyPolicyUrl: String
+        get() = pref.getString(PREF_PRIVACY_POLICY_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_PRIVACY_POLICY_URL, value) }
+
+    var creatorsPolicyUrl: String
+        get() = pref.getString(PREF_CREATORS_POLICY_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_CREATORS_POLICY_URL, value) }
+
+    var termsAndConditionUrl: String
+        get() = pref.getString(PREF_TERMS_AND_CONDITIONS_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_TERMS_AND_CONDITIONS_URL, value) }
+    
+    var facebookPageUrl: String
+        get() = pref.getString(PREF_FACEBOOK_PAGE_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_FACEBOOK_PAGE_URL, value) }
+    
+    var instagramPageUrl: String
+        get() = pref.getString(PREF_INSTAGRAM_PAGE_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_INSTAGRAM_PAGE_URL, value) }
+    
+    var youtubePageUrl: String
+        get() = pref.getString(PREF_YOUTUBE_PAGE_URL, "") ?: ""
+        set(value) = pref.edit { putString(PREF_YOUTUBE_PAGE_URL, value) }
+    
+    fun saveCustomerInfo(customerInfoLogin:CustomerInfoLogin){
+        balance = customerInfoLogin.balance
+        logout = "0"
+        isVerifiedUser = customerInfoLogin.verified_status
+        customerId = customerInfoLogin.customerId
+        password = customerInfoLogin.password?:""
+        if (customerName.isBlank()) {
+            customerName = customerInfoLogin.customerName?:""
         }
-        customerInfoSignIn.dbVersionList?.let {
+        sessionToken = (customerInfoLogin.sessionToken?:"")
+        if (userImageUrl.isNullOrBlank()) {
+            userImageUrl = customerInfoLogin.profileImage
+        }
+        setHeaderSessionToken(customerInfoLogin.headerSessionToken)
+        setHlsOverrideUrl(customerInfoLogin.hlsOverrideUrl)
+        shouldOverrideHlsUrl = customerInfoLogin.hlsUrlOverride
+        setSessionTokenLifeSpanInMillis(customerInfoLogin.tokenLifeSpan.toLong() * 1000 * 3600)
+        if(customerInfoLogin.isBanglalinkNumber!=null){
+            isBanglalinkNumber = customerInfoLogin.isBanglalinkNumber
+        }
+        customerInfoLogin.dbVersionList?.let {
             setDBVersion(it)
         }
-        latitude = customerInfoSignIn.lat ?: ""
-        longitude = customerInfoSignIn.long ?: ""
-        isSubscriptionActive = customerInfoSignIn.isSubscriptionActive ?: "false"
-        viewCountDbUrl = customerInfoSignIn.viewCountDbUrl ?: ""
-        reactionDbUrl = customerInfoSignIn.reactionDbUrl ?: ""
-        reactionStatusDbUrl = customerInfoSignIn.reactionStatusDbUrl ?: ""
-        subscribeDbUrl = customerInfoSignIn.subscribeDbUrl ?: ""
-        subscriberStatusDbUrl = customerInfoSignIn.subscriberStatusDbUrl ?: ""
-        shareCountDbUrl = customerInfoSignIn.shareCountDbUrl ?: ""
-        isFireworkActive = customerInfoSignIn.isFireworkActive ?: "true"
-        mqttHost = customerInfoSignIn.mqttUrl?.let { EncryptionUtil.encryptRequest(it) } ?: ""
-        mqttIsActive = customerInfoSignIn.mqttIsActive == 1
+        latitude = customerInfoLogin.lat ?: ""
+        longitude = customerInfoLogin.long ?: ""
+        isSubscriptionActive = customerInfoLogin.isSubscriptionActive ?: "false"
+        viewCountDbUrl = customerInfoLogin.viewCountDbUrl ?: ""
+        reactionDbUrl = customerInfoLogin.reactionDbUrl ?: ""
+        reactionStatusDbUrl = customerInfoLogin.reactionStatusDbUrl ?: ""
+        subscribeDbUrl = customerInfoLogin.subscribeDbUrl ?: ""
+        subscriberStatusDbUrl = customerInfoLogin.subscriberStatusDbUrl ?: ""
+        shareCountDbUrl = customerInfoLogin.shareCountDbUrl ?: ""
+        isFireworkActive = customerInfoLogin.isFireworkActive ?: "true"
+        mqttHost = customerInfoLogin.mqttUrl?.let { EncryptionUtil.encryptRequest(it) } ?: ""
+        mqttIsActive = customerInfoLogin.mqttIsActive == 1
 
-        isCastEnabled = customerInfoSignIn.isCastEnabled == 1
-        isCastUrlOverride = customerInfoSignIn.isCastUrlOverride == 1
-        castReceiverId = customerInfoSignIn.castReceiverId ?: ""
-        castOverrideUrl = customerInfoSignIn.castOverrideUrl ?: ""
+        isCastEnabled = customerInfoLogin.isCastEnabled == 1
+        isCastUrlOverride = customerInfoLogin.isCastUrlOverride == 1
+        castReceiverId = customerInfoLogin.castReceiverId ?: ""
+        castOverrideUrl = customerInfoLogin.castOverrideUrl ?: ""
+        
+        internetPackUrl = customerInfoLogin.internetPackUrl ?: ""
+        tusUploadServerUrl = customerInfoLogin.tusUploadServerUrl ?: ""
+        privacyPolicyUrl = customerInfoLogin.privacyPolicyUrl ?: ""
+        creatorsPolicyUrl = customerInfoLogin.creatorsPolicyUrl ?: ""
+        termsAndConditionUrl = customerInfoLogin.termsAndConditionsUrl ?: ""
+        facebookPageUrl = customerInfoLogin.facebookPageUrl
+        instagramPageUrl = customerInfoLogin.instagramPageUrl
+        youtubePageUrl = customerInfoLogin.youtubePageUrl
     }
 
     companion object {
@@ -490,6 +536,8 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_CHANNEL_ID = "channel_id"
         private const val PREF_SESSION_TOKEN = "session_token"
         private const val PREF_BANGLALINK_NUMBER = "banglalink_number"
+        private const val PREF_VERFICATION = "VER"
+        private const val PREF_LOGOUT= "LOGIYT"
         private const val PREF_BALANCE = "balance"
         private const val PREF_LATITUDE= "latitude"
         private const val PREF_LONGITUDE= "Longitude"
@@ -503,7 +551,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_NOTIFICATION_DB_VERSION= "notification_db_version"
         private const val PREF_FCM_TOKEN= "FCMToken"
         private const val PREF_IMAGE_URL= "image_url"
-        private const val PREF_APP= "app_theme"
         private const val PREF_WIFI= "WIFI"
         private const val PREF_CELLULAR= "CELLULAR"
         private const val PREF_SUBSCRIPTION_ACTIVE= "subscription_active"
@@ -543,6 +590,14 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_IS_CAST_URL_OVERRIDE = "pref_is_cast_url_override"
         private const val PREF_CAST_RECEIVER_ID = "pref_cast_receiver_id"
         private const val PREF_CAST_OVERRIDE_URL = "pref_cast_override_url"
+        private const val PREF_INTERNET_PACK_URL = "internet_pack_url"
+        private const val PREF_TUS_UPLOAD_SERVER_URL = "tus_upload_server_url"
+        private const val PREF_PRIVACY_POLICY_URL = "privacy_policy_url"
+        private const val PREF_CREATORS_POLICY_URL = "creators_policy_url"
+        private const val PREF_TERMS_AND_CONDITIONS_URL = "terms_and_conditions_url"
+        private const val PREF_FACEBOOK_PAGE_URL = "facebook_page_url"
+        private const val PREF_INSTAGRAM_PAGE_URL = "instagram_page_url"
+        private const val PREF_YOUTUBE_PAGE_URL = "youtube_page_url"
 
         private const val PREF_NAME_IP_TV= "IP_TV"
 

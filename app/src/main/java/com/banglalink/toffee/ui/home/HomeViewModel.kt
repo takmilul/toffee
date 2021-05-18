@@ -3,6 +3,7 @@ package com.banglalink.toffee.ui.home
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.*
@@ -10,17 +11,15 @@ import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.data.network.response.MqttBean
-import com.banglalink.toffee.data.network.response.MyChannelSubscribeResponse
+import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.network.retrofit.DbApi
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.data.repository.*
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.AppCoroutineScope
-import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.Success
-import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.player.PlaylistManager
 import com.banglalink.toffee.usecase.*
@@ -45,6 +44,8 @@ class HomeViewModel @Inject constructor(
     private val mPref: SessionPreference,
     private val setFcmToken: SetFcmToken,
     private val reactionDao: ReactionDao,
+    private val cacheManager: CacheManager,
+    private val logoutService: LogoutService,
     private val updateFavorite: UpdateFavorite,
     private val tvChannelRepo: TVChannelRepository,
     @ApplicationContext private val mContext: Context,
@@ -55,12 +56,13 @@ class HomeViewModel @Inject constructor(
     private val sendViewContentEvent: SendViewContentEvent,
     @AppCoroutineScope private val appScope: CoroutineScope,
     private val mqttCredentialService: MqttCredentialService,
+    private val sendUserInterestEvent: SendUserInterestEvent,
     private val sendContentReportEvent: SendContentReportEvent,
     private val reactionStatusRepository: ReactionStatusRepository,
     private val contentFromShareableUrl: GetContentFromShareableUrl,
     private val myChannelDetailApiService: MyChannelGetDetailService,
     private val subscriptionCountRepository: SubscriptionCountRepository,
-) : BaseViewModel(), OnCompleteListener<InstanceIdResult> {
+) : ViewModel(), OnCompleteListener<InstanceIdResult> {
 
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val fragmentDetailsMutableLiveData = SingleLiveEvent<Any>()
@@ -71,6 +73,7 @@ class HomeViewModel @Inject constructor(
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val viewAllVideoLiveData = MutableLiveData<Boolean>()
     val viewAllCategories = MutableLiveData<Boolean>()
+    val logoutLiveData = SingleLiveEvent<Resource<LogoutBean>>()
     val myChannelNavLiveData = SingleLiveEvent<MyChannelNavParams>()
     val notificationUrlLiveData = SingleLiveEvent<String>()
     val mqttCredentialLiveData = SingleLiveEvent<Resource<MqttBean?>>()
@@ -84,6 +87,7 @@ class HomeViewModel @Inject constructor(
         getProfile()
         FirebaseMessaging.getInstance().subscribeToTopic("buzz")
         FirebaseMessaging.getInstance().subscribeToTopic("controls")
+        FirebaseMessaging.getInstance().subscribeToTopic("cdn_control")
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener(this)
     }
 
@@ -211,7 +215,11 @@ class HomeViewModel @Inject constructor(
 
     fun sendSubscriptionStatus(subscriptionInfo: SubscriptionInfo, status: Int) {
         viewModelScope.launch {
-            subscriptionLiveData.value = resultFromResponse { sendSubscribeEvent.execute(subscriptionInfo, status, true) }
+            val response = resultFromResponse { sendSubscribeEvent.execute(subscriptionInfo, status, true) }
+            if (response is Success) {
+                cacheManager.clearCacheByUrl(GET_SUBSCRIBED_CHANNELS)
+            }
+            subscriptionLiveData.value = response
         }
     }
 
@@ -230,13 +238,25 @@ class HomeViewModel @Inject constructor(
     
     fun getMqttCredential() {
         viewModelScope.launch { 
-            mqttCredentialLiveData.postValue(resultFromResponse { mqttCredentialService.execute() })
+            mqttCredentialLiveData.postValue(resultFromResponse { mqttCredentialService.execute() }!!)
         }
     }
     
     fun sendReportData(reportInfo: ReportInfo) {
         viewModelScope.launch { 
             sendContentReportEvent.execute(reportInfo)
+        }
+    }
+    
+    fun logoutUser() {
+        viewModelScope.launch { 
+            logoutLiveData.postValue(resultFromResponse { logoutService.execute() }!!)
+        }
+    }
+    
+    fun sendUserInterestData(interestList: Map<String, Int>) {
+        viewModelScope.launch {
+            sendUserInterestEvent.execute(interestList)
         }
     }
 }

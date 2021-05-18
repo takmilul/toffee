@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.app.SearchManager
 import android.content.Intent
+import android.content.IntentSender.SendIntentException
 import android.content.pm.ActivityInfo
 import android.content.res.ColorStateList
 import android.content.res.Configuration
@@ -46,6 +47,7 @@ import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.*
+import com.banglalink.toffee.model.Resource.*
 import com.banglalink.toffee.mqttservice.ToffeeMqttService
 import com.banglalink.toffee.ui.category.drama.EpisodeListFragment
 import com.banglalink.toffee.ui.channels.AllChannelsViewModel
@@ -59,22 +61,28 @@ import com.banglalink.toffee.ui.player.PlaylistItem
 import com.banglalink.toffee.ui.player.PlaylistManager
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.splash.SplashScreenActivity
-import com.banglalink.toffee.ui.subscription.PackageListFragment
 import com.banglalink.toffee.ui.upload.UploadProgressViewModel
 import com.banglalink.toffee.ui.upload.UploadStateManager
 import com.banglalink.toffee.ui.upload.UploadStatus
 import com.banglalink.toffee.ui.widget.DraggerLayout
-import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.ui.widget.showSubscriptionDialog
 import com.banglalink.toffee.util.EncryptionUtil
 import com.banglalink.toffee.util.InAppMessageParser
+import com.banglalink.toffee.util.TAG
 import com.banglalink.toffee.util.Utils
-import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.util.Util
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.switchmaterial.SwitchMaterial
+import com.google.android.play.core.appupdate.AppUpdateInfo
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.InstallStateUpdatedListener
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.InstallStatus
+import com.google.android.play.core.install.model.UpdateAvailability
+import com.google.android.play.core.tasks.Task
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.suke.widget.SwitchButton
@@ -97,6 +105,7 @@ const val ID_INVITE_FRIEND = 23
 const val ID_REDEEM_CODE = 24
 const val PLAY_IN_WEB_VIEW = 1
 const val OPEN_IN_EXTERNAL_BROWSER = 2
+const val IN_APP_UPDATE_REQUEST_CODE = 0x100
 
 @AndroidEntryPoint
 class HomeActivity :
@@ -142,6 +151,8 @@ class HomeActivity :
                 WindowManager.LayoutParams.FLAG_SECURE
             )
         }
+        mPref.logout="0"
+        cPref.isAlreadyForceLoggedOut = false
 //        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         binding = ActivityMainMenuBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -159,10 +170,22 @@ class HomeActivity :
         showRedeemMessageIfPossible()
 
         binding.uploadButton.setOnClickListener {
-            if (showUploadDialog()) return@setOnClickListener
+            checkVerification {
+                showUploadDialog()
+            }
         }
         
-        initMqtt()
+        if(mPref.mqttClientId.startsWith("_") || mPref.mqttClientId.substringBefore("_") != mPref.phoneNumber) {
+            mPref.mqttIsActive = false
+            mPref.mqttHost = ""
+            mPref.mqttClientId = ""
+            mPref.mqttUserName = ""
+            mPref.mqttPassword = ""
+        }
+        
+        if (mPref.isVerifiedUser) {
+            initMqtt()
+        }
         
         observe(viewModel.fragmentDetailsMutableLiveData) {
             val cp = player
@@ -322,7 +345,7 @@ class HomeActivity :
             viewModel.sendShareLog(channelInfo)
         }
         
-        if (!mPref.hasChannelName() && !mPref.hasChannelLogo() && !mPref.isChannelDetailChecked) {
+        if (!mPref.hasChannelName() && !mPref.hasChannelLogo() && !mPref.isChannelDetailChecked && mPref.isVerifiedUser) {
             viewModel.getChannelDetail(1, 0, 0, mPref.customerId)
         }
         
@@ -338,13 +361,14 @@ class HomeActivity :
         observeUpload2()
         watchConnectionChange()
         observeMyChannelNavigation()
+        inAppUpdate()
     }
     
     private fun initMqtt() {
         if (mPref.mqttHost.isBlank() || mPref.mqttClientId.isBlank() || mPref.mqttUserName.isBlank() || mPref.mqttPassword.isBlank()) {
             observe(viewModel.mqttCredentialLiveData) {
                 when (it) {
-                    is Resource.Success -> {
+                    is Success -> {
                         it.data?.let { data ->
                             mPref.mqttIsActive = data.mqttIsActive == 1
                             mPref.mqttHost = EncryptionUtil.encryptRequest(data.mqttUrl)
@@ -357,7 +381,7 @@ class HomeActivity :
                             }
                         }
                     }
-                    is Resource.Failure -> {
+                    is Failure -> {
                         Log.e("MQTT_", "onCreate: ${it.error.msg}")
                     }
                 }
@@ -367,6 +391,46 @@ class HomeActivity :
         else {
             if (mPref.mqttIsActive) {
                 mqttService.initialize()
+            }
+        }
+    }
+
+    private lateinit var appUpdateManager: AppUpdateManager
+    
+    val appUpdateListener = InstallStateUpdatedListener { state ->
+        if (state.installStatus() == InstallStatus.DOWNLOADED) {
+            showToast("Toffee updated successfully")
+        }
+    }
+
+    fun inAppUpdate() {
+        appUpdateManager = AppUpdateManagerFactory.create(this)
+        val appUpdateInfoTask: Task<AppUpdateInfo> = appUpdateManager.appUpdateInfo
+        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
+                try {
+                    appUpdateManager.startUpdateFlowForResult(
+                        appUpdateInfo,
+                        AppUpdateType.FLEXIBLE,
+                        this,
+                        IN_APP_UPDATE_REQUEST_CODE)
+                }
+                catch (e: SendIntentException) {
+                    e.printStackTrace()
+                }
+            }
+        }
+
+        appUpdateManager.registerListener(appUpdateListener)
+    }
+    
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == IN_APP_UPDATE_REQUEST_CODE) {
+            Log.e(TAG, "Start Download")
+            if (resultCode != RESULT_OK) {
+                Log.e(TAG, "Download Failed")
             }
         }
     }
@@ -389,7 +453,7 @@ class HomeActivity :
                 //                        mPref.uploadId = null
                 //                        navController.navigate(R.id.uploadMethodFragment)
                 //                        return@launch
-                //                    }
+                //
                 ////                    if(uploads.status in listOf(0, 1, 2, 3) && UploadService.taskList.isEmpty()) {
                 ////                        uploads.apply {
                 ////                            status = UploadStatus.ERROR.value
@@ -682,7 +746,9 @@ class HomeActivity :
             supportActionBar?.hide()
             binding.bottomAppBar.hide()
             binding.uploadButton.hide()
+            binding.mainUiFrame.visibility = View.GONE
         } else {
+            binding.mainUiFrame.visibility = View.VISIBLE
             supportActionBar?.show()
             binding.bottomAppBar.show()
             binding.uploadButton.show()
@@ -730,7 +796,7 @@ class HomeActivity :
                 val hash = url.substring(url.lastIndexOf("/") + 1)
                 observe(viewModel.getShareableContent(hash)){ channelResource ->
                     when(channelResource){
-                        is Resource.Success -> {
+                        is Success -> {
                             channelResource.data?.let {
                                 onDetailsFragmentLoad(it)
                             }
@@ -742,11 +808,8 @@ class HomeActivity :
             ToffeeAnalytics.logBreadCrumb("Failed to handle depplink $url")
             ToffeeAnalytics.logException(e)
         }
-
-
     }
-
-
+    
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         if (Intent.ACTION_SEARCH == intent.action) {
@@ -1004,12 +1067,19 @@ class HomeActivity :
             val subMenu = binding.sideNavigation.menu.findItem(R.id.ic_menu_internet_packs)
             subMenu?.isVisible = false
         }
-
+        if (!mPref.isVerifiedUser) {
+            val logout = binding.sideNavigation.menu.findItem(R.id.menu_logout)
+            logout?.isVisible = false
+        }
+//        else {
+//            val verify = binding.sideNavigation.menu.findItem(R.id.menu_verfication)
+//            verify?.isVisible = false
+//        }
         val sideNav = binding.sideNavigation.menu.findItem(R.id.menu_change_theme)
         sideNav?.let { themeMenu ->
             val isDarkEnabled = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
-            if (mPref.appThemeMode == 0) {
-                mPref.appThemeMode = if (isDarkEnabled) Configuration.UI_MODE_NIGHT_YES else Configuration.UI_MODE_NIGHT_NO 
+            if (cPref.appThemeMode == 0) {
+                cPref.appThemeMode = if (isDarkEnabled) Configuration.UI_MODE_NIGHT_YES else Configuration.UI_MODE_NIGHT_NO 
             }
             val parser: XmlPullParser = resources.getXml(R.xml.custom_switch)
             var switch: View? = null
@@ -1028,7 +1098,7 @@ class HomeActivity :
                 when(themeMenu.actionView){
                     is SwitchButton -> {
                         (themeMenu.actionView as SwitchButton).let {
-                            val param = LinearLayout.LayoutParams(Utils.dpToPx(36), Utils.dpToPx(22))
+                            val param = LinearLayout.LayoutParams(36.px, 22.px)
                             param.topMargin = 30
                             it.layoutParams = param
                             it.isChecked = isDarkEnabled
@@ -1052,10 +1122,10 @@ class HomeActivity :
 
     private fun changeAppTheme(isDarkEnabled: Boolean){
         if (isDarkEnabled) {
-            mPref.appThemeMode = Configuration.UI_MODE_NIGHT_YES
+            cPref.appThemeMode = Configuration.UI_MODE_NIGHT_YES
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         } else {
-            mPref.appThemeMode = Configuration.UI_MODE_NIGHT_NO
+            cPref.appThemeMode = Configuration.UI_MODE_NIGHT_NO
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
     }
@@ -1201,6 +1271,7 @@ class HomeActivity :
     
     override fun onDestroy() {
 //        mqttService.destroy()
+        appUpdateManager.unregisterListener(appUpdateListener)
         super.onDestroy()
     }
     
@@ -1209,17 +1280,44 @@ class HomeActivity :
             .setMessage(String.format(EXIT_FROM_APP_MSG, getString(R.string.app_name)))
             .setCancelable(false)
             .setPositiveButton("Yes") { _, _ ->
-                mPref.clear()
-                UploadService.stopAllUploads()
-                launchActivity<SplashScreenActivity>()
-                finish()
+                observeLogout()
+                viewModel.logoutUser()
             }
             .setNegativeButton(
                 "No"
             ) { dialog, _ -> dialog.cancel() }
             .show()
     }
-
+    
+    fun observeLogout() {
+        observe(viewModel.logoutLiveData) {
+            when(it) {
+                is Success -> {
+                    if (!it.data.verifyStatus) {
+                        mPref.phoneNumber = ""
+                        mPref.channelName = ""
+                        mPref.channelLogo = ""
+                        mPref.customerName = ""
+                        mPref.userImageUrl = null
+                        mPref.isVerifiedUser = false
+                        mPref.isChannelDetailChecked = false
+                        mPref.mqttIsActive = false
+                        mPref.mqttHost = ""
+                        mPref.mqttClientId = ""
+                        mPref.mqttUserName = ""
+                        mPref.mqttPassword = ""
+                        navController.popBackStack(R.id.menu_feed, false).let { 
+                            recreate()
+                        }
+                    }
+                }
+                is Failure -> {
+                    showToast(it.error.msg)
+                }
+            }
+        }
+    }
+    
     override fun onDrawerButtonPressed(): Boolean {
         binding.drawerLayout.openDrawer(GravityCompat.END, true)
         return true
@@ -1305,9 +1403,11 @@ class HomeActivity :
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        observe(mPref.profileImageUrlLiveData) {
-            menu?.findItem(R.id.action_avatar)
-                ?.actionView?.findViewById<ImageView>(R.id.view_avatar)?.loadProfileImage(it)
+        if (mPref.isVerifiedUser) {
+            observe(mPref.profileImageUrlLiveData) {
+                menu?.findItem(R.id.action_avatar)
+                    ?.actionView?.findViewById<ImageView>(R.id.view_avatar)?.loadProfileImage(it)
+            }
         }
         return super.onPrepareOptionsMenu(menu)
     }
@@ -1504,15 +1604,17 @@ class HomeActivity :
         observe(viewModel.myChannelNavLiveData) {
             if (navController.currentDestination?.id != R.id.myChannelHomeFragment || channelOwnerId != it.channelOwnerId) {
                 channelOwnerId = it.channelOwnerId
-                val isOwner = mPref.customerId == channelOwnerId
                 navController.navigate(R.id.myChannelHomeFragment, Bundle().apply {
                     putString(MyChannelHomeFragment.PAGE_TITLE, it.pageTitle)
-                    putBoolean(MyChannelHomeFragment.IS_OWNER, isOwner)
                     putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, it.channelOwnerId)
                 })
             } else{
                 minimizePlayer()
             }
         }
+    }
+    
+    fun showLoginDialog() {
+        
     }
 }

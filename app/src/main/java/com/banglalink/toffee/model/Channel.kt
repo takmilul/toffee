@@ -7,7 +7,6 @@ import android.text.TextUtils
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.player.Samples
-import com.banglalink.toffee.util.Utils
 import com.google.android.exoplayer2.C
 import java.net.MalformedURLException
 import java.net.URL
@@ -49,7 +48,7 @@ class Channel(
         } else {
             "/" + pref.cellularProfileStatus
         }
-        if (pref.shouldOverrideHlsUrl()) {
+        if (pref.shouldOverrideHlsUrl) {
             try {
                 val url = URL(uri)
                 var path = url.path

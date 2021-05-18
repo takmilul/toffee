@@ -59,12 +59,10 @@
                 
                 <Button
                     android:id="@+id/submitButton"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    style="@style/ButtonStyleRingPink"
+                    android:layout_width="@dimen/button_accent_width"
                     android:layout_marginBottom="48dp"
                     android:text="Submit"
-                    android:textSize="16sp"
-                    style="@style/ButtonStyleRingPink"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

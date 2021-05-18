@@ -14,14 +14,17 @@ import com.banglalink.toffee.databinding.FragmentCategoryInfoBinding
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.Category
-import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.SubCategory
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
-import com.banglalink.toffee.util.bindCategoryImage
+import com.banglalink.toffee.util.BindingUtil
 import com.google.android.material.chip.Chip
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class CategoryInfoFragment: HomeBaseFragment() {
+    @Inject lateinit var bindingUtil: BindingUtil
     private val landingViewModel by activityViewModels<LandingPageViewModel>()
     private lateinit var categoryInfo: Category
     private var _binding: FragmentCategoryInfoBinding ? = null
@@ -47,14 +50,6 @@ class CategoryInfoFragment: HomeBaseFragment() {
         observe(landingViewModel.subCategories){
             if (it.isNotEmpty()) {
                 binding.subCategoryChipGroup.removeAllViews()
-                binding.subCategoryChipGroup.setOnCheckedChangeListener { group, checkedId ->
-                    val selectedChip = group.findViewById<Chip>(checkedId)
-                    if(selectedChip != null) {
-                        val selectedSub = selectedChip.tag as SubCategory
-                        landingViewModel.subCategoryId.value = selectedSub.id.toInt()
-                        landingViewModel.isDramaSeries.value = selectedSub.categoryId.toInt() == 9
-                    }
-                }
                 val subList = it.sortedBy { sub -> sub.id }
                 subList.let { list ->
                     list.forEachIndexed{ _, subCategory ->
@@ -65,6 +60,14 @@ class CategoryInfoFragment: HomeBaseFragment() {
                         if(subCategory.id == 0L) {
                             binding.subCategoryChipGroup.check(newChip.id)
                         }
+                    }
+                }
+                binding.subCategoryChipGroup.setOnCheckedChangeListener { group, checkedId ->
+                    val selectedChip = group.findViewById<Chip>(checkedId)
+                    if(selectedChip != null) {
+                        val selectedSub = selectedChip.tag as SubCategory
+                        landingViewModel.subCategoryId.value = selectedSub.id.toInt()
+                        landingViewModel.isDramaSeries.value = selectedSub.categoryId.toInt() == 9
                     }
                 }
             }
@@ -135,7 +138,7 @@ class CategoryInfoFragment: HomeBaseFragment() {
     private fun observeCategoryData() {
         categoryInfo.let {
             binding.categoryName.text = it.categoryName
-            bindCategoryImage(binding.categoryIcon, categoryInfo)
+            bindingUtil.bindCategoryImage(binding.categoryIcon, categoryInfo)
             binding.categoryIcon.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(),R.color.colorAccent2))
         }
     }
@@ -152,6 +155,4 @@ class CategoryInfoFragment: HomeBaseFragment() {
             )
         )
     }
-
-    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {}
 }

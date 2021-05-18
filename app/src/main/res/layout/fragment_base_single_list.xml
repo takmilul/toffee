@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
     <data>
         <import type="android.view.View" />
         <variable
@@ -38,6 +38,7 @@
             android:layout_height="0dp"
             android:gravity="center"
             android:visibility="gone"
+            tools:visibility="visible"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -46,10 +47,9 @@
             
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/empty_view_icon"
-                android:layout_width="wrap_content"
+                android:layout_width="144dp"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
-                android:maxWidth="144dp"
                 app:srcCompat="@drawable/ic_activities_empty" />
 
             <TextView

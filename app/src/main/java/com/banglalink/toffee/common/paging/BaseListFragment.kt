@@ -16,7 +16,6 @@ import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChangedBy
 
 abstract class BaseListFragment<T: Any>: BaseFragment() {
     protected abstract val mAdapter: BasePagingDataAdapter<T>

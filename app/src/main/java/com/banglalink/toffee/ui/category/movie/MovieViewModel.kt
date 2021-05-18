@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.category.movie
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.apiservice.*
 import com.banglalink.toffee.data.network.request.ChannelRequestParams
@@ -10,7 +11,6 @@ import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.ComingSoonContent
 import com.banglalink.toffee.model.MoviesContentVisibilityCards
-import com.banglalink.toffee.ui.common.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -26,7 +26,7 @@ class MovieViewModel @Inject constructor(
     private val continueWatchingRepo: ContinueWatchingRepository,
     private val getContentAssistedFactory: GetContents.AssistedFactory,
     private val comingSoonApiService: MoviesComingSoonService,
-): BaseViewModel() {
+): ViewModel() {
     
     private val moviesContentCardsResponse = MutableLiveData<MoviesContentVisibilityCards>()
     val moviesContentCards = moviesContentCardsResponse.toLiveData()

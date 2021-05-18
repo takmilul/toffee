@@ -1,0 +1,131 @@
+package com.banglalink.toffee.ui.login
+
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.core.view.forEach
+import androidx.fragment.app.activityViewModels
+import com.banglalink.toffee.R
+import com.banglalink.toffee.databinding.AlertDialogUserInterestBinding
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.ui.common.ChildDialogFragment
+import com.banglalink.toffee.ui.home.HomeViewModel
+import com.banglalink.toffee.ui.mychannel.MyChannelVideosEditViewModel
+import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.util.unsafeLazy
+import com.google.android.material.chip.Chip
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
+class UserInterestFragment2 : ChildDialogFragment() {
+    private var _binding: AlertDialogUserInterestBinding? = null
+    private val homeViewModel: HomeViewModel by activityViewModels()
+    private val binding get() = _binding !!
+    private val userInterestList: MutableMap<String, Int> = mutableMapOf()
+    private val viewModel: MyChannelVideosEditViewModel by activityViewModels()
+    private val progressDialog by unsafeLazy { VelBoxProgressDialog(requireContext()) }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = AlertDialogUserInterestBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        userInterestList.clear()
+        
+        with(binding) {
+            interestChipGroup.removeAllViews()
+            skipButton.safeClick({ reloadContent() })
+            doneButton.safeClick({
+                val userInterestCount = userInterestList.values.count { it == 1 }
+                if (userInterestCount >= 3) {
+                    homeViewModel.sendUserInterestData(userInterestList)
+                    cPref.setUserInterestSubmitted(mPref.phoneNumber)
+                    reloadContent()
+                }
+                else {
+                    requireContext().showToast("Please select at least 3 interest or press skip to sign in")
+                }
+            })
+        }
+        
+        observeCategory()
+    }
+    
+    private fun reloadContent() {
+        closeDialog()
+//        requireActivity().overridePendingTransition(0, 0)
+        requireActivity().recreate()
+    }
+
+    private fun observeCategory() {
+        progressDialog.show()
+        observe(viewModel.categories){
+            if(it.isNotEmpty()){
+                val categoryList = it.sortedBy { category -> category.id }
+                categoryList.let { list ->
+                    list.forEachIndexed { _, category ->
+                        val newChip = addChip(category.categoryName).apply {
+                            tag = category.categoryName
+                        }
+                        binding.interestChipGroup.addView(newChip)
+                        userInterestList[category.categoryName] = 0
+                    }
+                }
+                binding.interestChipGroup.forEach { 
+                    val selectedChip = it as Chip
+                    selectedChip.setOnCheckedChangeListener { buttonView, isChecked ->
+                        userInterestList[buttonView.tag.toString()] = if (isChecked) 1 else 0
+                    }
+                }
+                progressDialog.hide()
+            }
+            else {
+                progressDialog.hide()
+                closeDialog()
+                requireContext().showToast("Unable to load data!")
+            }
+        }
+    }
+    
+    private fun addChip(name: String): Chip {
+        val intColor = ContextCompat.getColor(requireContext(), R.color.interest_chip_color)
+        val selectedTextColor = ContextCompat.getColor(requireContext(), R.color.fixedStrokeColor)
+        val unSelectedTextColor = ContextCompat.getColor(requireContext(), R.color.cardTitleColor)
+        val chipColor = createStateColor(intColor)
+        val strokeColor = createStateColor(intColor, unSelectedTextColor)
+        val chip = layoutInflater.inflate(R.layout.interest_chip_layout, binding.interestChipGroup, false) as Chip
+        chip.text = name
+        chip.id = View.generateViewId()
+        chip.chipBackgroundColor = chipColor
+        chip.rippleColor = chipColor
+        chip.chipStrokeColor = strokeColor
+        chip.setTextColor(createStateColor(selectedTextColor, unSelectedTextColor))
+        return chip
+    }
+    
+    private fun createStateColor(selectedColor: Int, unSelectedColor: Int = Color.TRANSPARENT): ColorStateList {
+        return ColorStateList(
+            arrayOf(
+                intArrayOf(android.R.attr.state_checked),
+                intArrayOf()
+            ),
+            intArrayOf(
+                selectedColor,
+                unSelectedColor
+            )
+        )
+    }
+    
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+}

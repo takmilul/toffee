@@ -22,6 +22,8 @@ import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.databinding.FragmentCatchupBinding
 import com.banglalink.toffee.enums.Reaction.Love
+import com.banglalink.toffee.extension.checkVerification
+import com.banglalink.toffee.extension.handleShare
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.ChannelInfo
@@ -35,7 +37,6 @@ import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -109,18 +110,31 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
 
     override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
         super.onSubscribeButtonClicked(view, item)
-        if (item.isSubscribed == 0) {
-            homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), 1)
-            currentItem.isSubscribed = 1
-            currentItem.subscriberCount = ++item.subscriberCount
-            detailsAdapter.notifyDataSetChanged()
-        }
-        else{
-            UnSubscribeDialog.show(requireContext()){
-                homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), -1)
-                currentItem.isSubscribed = 0
-                currentItem.subscriberCount = --item.subscriberCount
+        requireActivity().checkVerification {
+            if (item.isSubscribed == 0) {
+                homeViewModel.sendSubscriptionStatus(
+                    SubscriptionInfo(
+                        null,
+                        item.channel_owner_id,
+                        mPref.customerId
+                    ), 1
+                )
+                currentItem.isSubscribed = 1
+                currentItem.subscriberCount = ++item.subscriberCount
                 detailsAdapter.notifyDataSetChanged()
+            } else {
+                UnSubscribeDialog.show(requireContext()) {
+                    homeViewModel.sendSubscriptionStatus(
+                        SubscriptionInfo(
+                            null,
+                            item.channel_owner_id,
+                            mPref.customerId
+                        ), -1
+                    )
+                    currentItem.isSubscribed = 0
+                    currentItem.subscriberCount = --item.subscriberCount
+                    detailsAdapter.notifyDataSetChanged()
+                }
             }
         }
     }
@@ -235,7 +249,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
 
     override fun onShareClicked(view: View, item: ChannelInfo) {
         super.onShareClicked(view, item)
-        homeViewModel.shareContentLiveData.postValue(item)
+        requireActivity().handleShare(item)
     }
     
     override fun onOpenMenu(view: View, item: ChannelInfo) {
@@ -245,9 +259,5 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
 
     override fun hideShareMenuItem(hide: Boolean): Boolean {
         return true
-    }
-    
-    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
-
     }
 }

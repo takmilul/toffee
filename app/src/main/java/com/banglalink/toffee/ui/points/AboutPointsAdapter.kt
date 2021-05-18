@@ -2,9 +2,9 @@ package com.banglalink.toffee.ui.points
 
 import com.banglalink.toffee.R
 import com.banglalink.toffee.model.AboutPoints
-import com.banglalink.toffee.ui.common.MyBaseAdapter
+import com.banglalink.toffee.ui.common.MyBaseAdapterV2
 
-class AboutPointsAdapter() : MyBaseAdapter<AboutPoints>(){
+class AboutPointsAdapter() : MyBaseAdapterV2<AboutPoints>(){
     
     override fun getLayoutIdForPosition(position: Int): Int {
         return R.layout.list_item_points

@@ -7,10 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.setPadding
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -162,7 +160,7 @@ class EditUploadInfoFragment: BaseFragment() {
     private fun observeExitFragment() {
         observe(viewModel.exitFragment) {
             if(it) {
-                Toast.makeText(requireContext(), "Unable to load data.", Toast.LENGTH_SHORT).show()
+                requireContext().showToast("Unable to load data!")
                 findNavController().popBackStack()
             }
         }

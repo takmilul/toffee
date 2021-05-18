@@ -53,8 +53,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesUploadStateManager(app: Application, repo: UploadInfoRepository, uploadConfApi: UploadConfirmation): UploadStateManager {
-        return UploadStateManager(app, repo, uploadConfApi)
+    fun providesUploadStateManager(mPref: SessionPreference, app: Application, repo: UploadInfoRepository, uploadConfApi: UploadConfirmation): UploadStateManager {
+        return UploadStateManager(app, mPref, repo, uploadConfApi)
     }
 
     @Provides

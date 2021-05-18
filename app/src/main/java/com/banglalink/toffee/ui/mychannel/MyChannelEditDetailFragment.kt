@@ -6,7 +6,6 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -16,10 +15,7 @@ import com.banglalink.toffee.data.network.request.MyChannelEditRequest
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.FragmentMyChannelEditDetailBinding
-import com.banglalink.toffee.extension.hide
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.safeClick
-import com.banglalink.toffee.extension.show
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.MyChannelDetail
 import com.banglalink.toffee.model.Resource.Failure
@@ -27,9 +23,8 @@ import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
 import com.banglalink.toffee.ui.widget.ToffeeSpinnerAdapter
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.util.BindingUtil
 import com.banglalink.toffee.util.UtilsKt
-import com.banglalink.toffee.util.bindImageFromUrl
-import com.banglalink.toffee.util.bindRoundImage
 import com.banglalink.toffee.util.imagePathToBase64
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -38,6 +33,7 @@ import javax.inject.Inject
 class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     @Inject lateinit var mPref: SessionPreference
     @Inject lateinit var cacheManager: CacheManager
+    @Inject lateinit var bindingUtil: BindingUtil
     private var isPosterClicked = false
     private var myChannelDetail: MyChannelDetail? = null
     private var newBannerUrl: String? = null
@@ -110,7 +106,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             if(!categories.isNullOrEmpty()) {
                 categoryAdapter.setData(categories)
                 viewModel.selectedCategory =
-                    categories?.find { it.id == myChannelDetail?.categoryId } ?: categories?.first()
+                    categories.find { it.id == myChannelDetail?.categoryId } ?: categories.first()
                 viewModel.selectedCategoryPosition.value =
                     (categories.indexOf(categories.find { it.id == myChannelDetail?.categoryId })
                         .takeIf { it > 0 } ?: 0) + 1
@@ -141,16 +137,16 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
 
     private fun loadImage(){
         newBannerUrl?.let {
-            bindImageFromUrl(binding.bannerImageView, it)
+            bindingUtil.bindImageFromUrl(binding.bannerImageView, it)
         }
         newProfileImageUrl?.let {
-            bindRoundImage(binding.profileImageView, it)
+            bindingUtil.bindRoundImage(binding.profileImageView, it)
         }
     }
     
     private fun observeEditChannel() {
         observe(viewModel.exitFragment) {
-            Toast.makeText(requireContext(), "Unable to load data!", Toast.LENGTH_SHORT).show()
+            requireContext().showToast("Unable to load data!")
             findNavController().popBackStack()
         }
         observe(viewModel.editDetailLiveData) {
@@ -160,13 +156,13 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                     progressDialog.dismiss()
                     cacheManager.clearCacheByUrl(GET_MY_CHANNEL_DETAILS)
                     findNavController().navigateUp()
-                    Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
+                    requireContext().showToast(it.data.message)
                 }
                 is Failure -> {
                     binding.saveButton.isClickable = true
                     progressDialog.dismiss()
                     println(it.error)
-                    Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
+                    requireContext().showToast(it.error.msg)
                 }
             }
         }

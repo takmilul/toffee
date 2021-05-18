@@ -1,10 +1,20 @@
 package com.banglalink.toffee.extension
 
+import android.app.Activity
 import android.content.res.Resources
 import android.util.Patterns
 import android.view.View
+import android.view.ViewGroup
+import androidx.core.view.forEach
+import androidx.fragment.app.FragmentActivity
+import com.banglalink.toffee.R
 import com.banglalink.toffee.enums.InputType
 import com.banglalink.toffee.enums.InputType.*
+import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.ui.home.HomeActivity
+import com.banglalink.toffee.ui.report.ReportPopupFragment
+import com.facebook.shimmer.ShimmerFrameLayout
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -51,4 +61,73 @@ fun Long.toFormattedDate(): String{
     val dateGMT = cal.time
     val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
     return sdf.format(dateGMT)
+}
+
+fun Activity.checkVerification(block: (()-> Unit)? = null) {
+    if (this is HomeActivity && !mPref.isVerifiedUser) {
+        this.getNavController().navigate(R.id.loginDialog)
+    } else {
+        block?.invoke()
+    }
+}
+
+fun Activity.handleReport(item: ChannelInfo) {
+    checkVerification {
+        val fragment =
+            item.duration?.let { durations ->
+                ReportPopupFragment.newInstance(
+                    -1,
+                    durations, item.id
+                )
+            }
+        fragment?.show((this as FragmentActivity).supportFragmentManager, "report_video")
+    }
+}
+
+fun Activity.handleShare(item: ChannelInfo) {
+    if(this is HomeActivity) {
+        getHomeViewModel().shareContentLiveData.postValue(item)
+    }
+}
+
+fun Activity.handleFavorite(item: ChannelInfo, onAdded: (()->Unit)? = null, onRemoved: (()-> Unit)? = null) {
+    checkVerification {
+        if(this is HomeActivity) {
+            getHomeViewModel().updateFavorite(item).observe(this, {
+                when (it) {
+                    is Resource.Success -> {
+                        val channelInfo = it.data
+                        when (channelInfo.favorite) {
+                            "0" -> {
+                                onRemoved?.invoke()
+                                showToast("Content successfully removed from favorite list")
+//                                handleFavoriteRemovedSuccessFully(channelInfo)
+                            }
+                            "1" -> {
+                                onAdded?.invoke()
+//                                handleFavoriteAddedSuccessfully(channelInfo)
+                                showToast("Content successfully added to favorite list")
+                            }
+                        }
+                    }
+                    is Resource.Failure -> {
+                        showToast(it.error.msg)
+                    }
+                }
+            })
+        }
+    }
+}
+
+fun ViewGroup.showLoadingAnimation(isStart: Boolean) {
+    this.forEach {
+        if (it is ShimmerFrameLayout) {
+            if (isStart && !it.isShimmerStarted) {
+                it.startShimmer()
+            }
+            else {
+                it.stopShimmer()
+            }
+        }
+    }
 }

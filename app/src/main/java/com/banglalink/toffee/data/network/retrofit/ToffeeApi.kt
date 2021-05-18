@@ -8,10 +8,12 @@ import retrofit2.http.Path
 
 interface ToffeeApi {
     
-    @POST("re-registration")
-    suspend fun signInByPhone(@Body signInByPhoneRequest: SigninByPhoneRequest): SignInByPhoneResponse
+//    @POST("re-registration")
+    @POST("re-registration-v2")
+    suspend fun loginByPhone(@Body signInByPhoneRequest: LoginByPhoneRequest): LoginByPhoneResponse
 
-    @POST("confirm-code")
+//    @POST("confirm-code")
+    @POST("confirm-code-v2")
     suspend fun verifyCode(@Body verifyCodeRequest: VerifyCodeRequest):VerifyCodeResponse
 
     @POST("subscriber-profile")
@@ -346,4 +348,9 @@ interface ToffeeApi {
         @Path("dbVersion") dbVersion: Int,
         @Body offenseRequest: OffenseRequest
     ): OffenseResponse
+    
+    @POST("/ugc-user-unverified")
+    suspend fun unVerifyUser(
+        @Body logoutRequest: LogoutRequest
+    ): LogoutResponse
 }

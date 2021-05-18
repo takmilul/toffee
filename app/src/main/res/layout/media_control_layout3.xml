@@ -133,17 +133,15 @@
                 android:id="@+id/play"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/txt_play"
                 android:padding="2dp"
-                android:src="@drawable/ic_player_pause"
+                app:srcCompat="@drawable/ic_player_pause"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/play_next"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/play_prev"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:layout_editor_absoluteX="64dp" />
 
             <!--        <ImageView-->
             <!--            android:id="@+id/forward"-->
@@ -164,15 +162,14 @@
                 android:id="@+id/play_next"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
+                android:layout_marginStart="24dp"
                 android:adjustViewBounds="true"
                 android:clickable="true"
                 android:contentDescription="@string/txt_play_next"
                 android:focusable="true"
                 android:padding="2dp"
-                android:src="@drawable/ic_player_control_next"
+                app:srcCompat="@drawable/ic_player_control_next"
                 app:layout_constraintBottom_toBottomOf="@+id/play"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/play"
                 app:layout_constraintTop_toTopOf="@+id/play" />
 
@@ -196,17 +193,15 @@
                 android:id="@+id/play_prev"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
+                android:layout_marginEnd="24dp"
                 android:adjustViewBounds="true"
                 android:clickable="true"
                 android:contentDescription="@string/txt_play_previous"
                 android:focusable="true"
                 android:padding="2dp"
-                android:src="@drawable/ic_player_previous"
+                app:srcCompat="@drawable/ic_player_previous"
                 app:layout_constraintBottom_toBottomOf="@+id/play"
                 app:layout_constraintEnd_toStartOf="@+id/play"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/play" />
 
             <Chronometer
@@ -255,7 +250,7 @@
                 android:contentDescription="@string/txt_rotation"
                 android:padding="8dp"
                 android:src="@drawable/ic_screen_rotate"
-                app:layout_constraintBottom_toBottomOf="@+id/fullscreen"
+                app:layout_constraintBottom_toBottomOf="@+id/minimize"
                 app:layout_constraintEnd_toStartOf="@+id/minimize" />
 
             <ImageView

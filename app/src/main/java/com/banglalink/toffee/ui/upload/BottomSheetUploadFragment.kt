@@ -20,13 +20,10 @@ import com.banglalink.toffee.data.network.request.MyChannelEditRequest
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.UploadBottomSheetBinding
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.safeClick
-import com.banglalink.toffee.extension.show
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.profile.ViewProfileViewModel
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
-import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.imagePathToBase64
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -97,16 +94,17 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment(), TextWatcher {
         activity?.windowManager?.defaultDisplay?.getMetrics(displayMetrics)
         val height = displayMetrics.heightPixels
         val value = height - parent.layoutParams.height + 80
-        bottomSheetBehavior.peekHeight = Utils.pxToDp(value)
+        bottomSheetBehavior.peekHeight = value.dp
 
         return dialog
     }
 
     private fun showTermsAndConditionDialog() {
-        if (findNavController().currentDestination?.id != R.id.termsConditionFragment && findNavController().currentDestination?.id == R.id.bottomSheetUploadFragment) {
-            val action = BottomSheetUploadFragmentDirections.actionBottomSheetUploadFragmentToTermsConditionFragment()
-            findNavController().navigate(action)
+        val args = Bundle().apply { 
+            putString("myTitle", "Terms & Conditions")
+            putString("url", mPref.termsAndConditionUrl)
         }
+        findNavController().navigate(R.id.termsAndConditionFragment, args)
     }
 
     private fun showImagePickerDialog() {
@@ -155,7 +153,7 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment(), TextWatcher {
                         mPref.channelName = channelName
                     }
                     progressDialog.dismiss()
-                    Toast.makeText(requireContext(), it.data.message, Toast.LENGTH_SHORT).show()
+                    requireContext().showToast(it.data.message)
                     cacheManager.clearCacheByUrl(GET_MY_CHANNEL_DETAILS)
                     findNavController().popBackStack().let { 
                         findNavController().navigate(R.id.newUploadMethodFragment)
@@ -163,7 +161,7 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment(), TextWatcher {
                 }
                 is Resource.Failure -> {
                     Log.e("data", "data" + it.error.msg)
-                    Toast.makeText(requireContext(), it.error.msg, Toast.LENGTH_SHORT).show()
+                    requireContext().showToast(it.error.msg)
                     progressDialog.dismiss()
                 }
             }

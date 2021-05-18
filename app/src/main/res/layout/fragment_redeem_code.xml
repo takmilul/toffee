@@ -7,8 +7,7 @@
         android:layout_height="match_parent"
         android:background="@color/screen_bg_white"
         android:paddingBottom="8dp">
-
-
+        
         <ImageView
             android:id="@+id/logo"
             android:layout_width="172dp"
@@ -18,7 +17,7 @@
             android:layout_marginEnd="8dp"
             android:adjustViewBounds="true"
             android:contentDescription="@string/txt_redeem_code"
-            android:src="@drawable/redeem_code_icon"
+            app:srcCompat="@drawable/redeem_code_icon"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -42,20 +41,13 @@
 
         <EditText
             android:id="@+id/referralCode"
-            style="@style/editTextOval"
-            android:background="@drawable/single_line_input_text_bg"
+            style="@style/SingleLineInputFieldStyle"
             android:layout_width="200dp"
-            android:layout_height="@dimen/single_line_input_text_height"
             android:layout_marginStart="64dp"
             android:layout_marginTop="12dp"
             android:layout_marginEnd="64dp"
             android:gravity="center"
-            android:ems="10"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textSize="@dimen/default_text_size"
             android:hint="@string/redeem_code_txt"
-            android:textColor="@color/cardTitleColor"
             app:layout_constraintEnd_toEndOf="@+id/title_tv"
             app:layout_constraintStart_toStartOf="@+id/title_tv"
             app:layout_constraintTop_toBottomOf="@+id/title_tv" />

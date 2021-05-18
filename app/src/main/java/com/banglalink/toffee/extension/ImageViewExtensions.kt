@@ -18,6 +18,7 @@ fun ImageView.loadProfileImage(imageUrl: String) {
             transformations(CircleCropTransformation())
             placeholder(R.drawable.ic_menu_profile)
             error(R.drawable.ic_menu_profile)
+            size(80.px, 80.px)
         }
     }
 }

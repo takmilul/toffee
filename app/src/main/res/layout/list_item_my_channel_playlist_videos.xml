@@ -53,7 +53,7 @@
             app:layout_constraintStart_toStartOf="@+id/poster"
             app:layout_constraintTop_toTopOf="@+id/poster"
             app:layout_constraintEnd_toEndOf="@+id/poster"
-            android:src="@drawable/ic_player_play" />
+            app:srcCompat="@drawable/ic_player_play" />
 
         <ProgressBar
             android:id="@+id/progress"

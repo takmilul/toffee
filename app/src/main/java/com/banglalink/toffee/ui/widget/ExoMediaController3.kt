@@ -17,22 +17,24 @@ import android.view.View.OnClickListener
 import android.widget.FrameLayout
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
-import com.banglalink.toffee.R.*
+import com.banglalink.toffee.R.drawable
+import com.banglalink.toffee.R.mipmap
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.MediaControlLayout3Binding
 import com.banglalink.toffee.extension.getChannelMetadata
+import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener
 import com.banglalink.toffee.listeners.PlaylistListener
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.PlayerOverlayData
 import com.banglalink.toffee.ui.player.PlayerOverlayView
 import com.banglalink.toffee.ui.widget.DraggerLayout.OnPositionChangedListener
-import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.UtilsKt
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.Player.EventListener
 import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.video.VideoListener
 import com.google.android.gms.cast.framework.CastButtonFactory
 import dagger.hilt.android.AndroidEntryPoint
@@ -251,10 +253,10 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
 
     fun moveController(offset: Float) {
         val intOffset = if (offset < 0.0f) {
-            (Utils.dpToPx(48) * (1.0f + offset)).toInt()
+            (48.px * (1.0f + offset)).toInt()
         }
         else {
-            (Utils.dpToPx(104 - 48) * offset).toInt() + Utils.dpToPx(48)
+            ((104 - 48).px * offset).toInt() + 48.px
         }
         binding.playerBottomSpace.minimumHeight = intOffset
     }
@@ -382,7 +384,9 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     }
 
     override fun onViewDestroy() {
-        simpleExoPlayer?.stop()
+        if(simpleExoPlayer !is CastPlayer) {
+            simpleExoPlayer?.stop()
+        }
     }
 
     override fun onSurfaceTextureAvailable(surfaceTexture: SurfaceTexture, i: Int, i1: Int) {

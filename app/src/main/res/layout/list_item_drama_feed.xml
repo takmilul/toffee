@@ -116,7 +116,7 @@
             android:layout_marginTop="12dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:onClick="@{()-> callback.onProviderIconClicked(data)}"
-            android:src="@drawable/ic_profile_default"
+            app:srcCompat="@drawable/ic_profile_default"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/poster" />
 

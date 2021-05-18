@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.text.TextUtils" />
+
+        <variable
+            name="data"
+            type="com.banglalink.toffee.model.EditProfileForm" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <ImageView
+                    android:id="@+id/profile_iv"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:contentDescription="@string/txt_avatar"
+                    app:srcCompat="@drawable/ic_profile_default"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/name_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:background="@android:color/transparent"
+                    android:drawablePadding="13dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center_vertical"
+                    android:padding="10dp"
+                    android:text="@{TextUtils.isEmpty(data.fullName)?@string/add_your_name:data.fullName}"
+                    android:textColor="@{TextUtils.isEmpty(data.fullName)?@color/fixed_second_text_color:@color/main_text_color}"
+                    android:textSize="14sp"
+                    android:textStyle="normal"
+                    app:drawableStartCompat="@drawable/ic_user"
+                    tools:text="John Doe" />
+
+                <TextView
+                    android:id="@+id/mobile_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:background="@android:color/transparent"
+                    android:drawablePadding="13dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center_vertical"
+                    android:padding="10dp"
+                    android:text="@{TextUtils.isEmpty(data.phoneNo)?@string/add_your_phone:data.phoneNo}"
+                    android:textColor="@{TextUtils.isEmpty(data.phoneNo)?@color/fixed_second_text_color:@color/main_text_color}"
+                    android:textSize="14sp"
+                    android:textStyle="normal"
+                    app:drawableStartCompat="@drawable/ic_phone"
+                    tools:text="+8801xxxxxxxxx" />
+
+                <TextView
+                    android:id="@+id/email_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:background="@android:color/transparent"
+                    android:drawablePadding="13dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center_vertical"
+                    android:padding="10dp"
+                    android:text="@{TextUtils.isEmpty(data.email)?@string/add_your_email:data.email}"
+                    android:textColor="@{TextUtils.isEmpty(data.email)?@color/fixed_second_text_color:@color/main_text_color}"
+                    android:textSize="14sp"
+                    android:textStyle="normal"
+                    app:drawableStartCompat="@drawable/ic_email"
+                    tools:text="user@gmail.com" />
+
+                <TextView
+                    android:id="@+id/address_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:background="@android:color/transparent"
+                    android:drawablePadding="13dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center_vertical"
+                    android:padding="10dp"
+                    android:text="@{TextUtils.isEmpty(data.address)?@string/add_your_address:data.address}"
+                    android:textColor="@{TextUtils.isEmpty(data.address)?@color/fixed_second_text_color:@color/main_text_color}"
+                    android:textSize="14sp"
+                    android:textStyle="normal"
+                    app:drawableStartCompat="@drawable/ic_location"
+                    tools:text="Address" />
+
+                <Button
+                    android:id="@+id/edit_profile"
+                    style="@style/EditChannelStyle"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="40dp"
+                    android:text="Edit Profile" />
+
+                <Button
+                    android:id="@+id/change_password_button"
+                    style="@style/ButtonStyleRingPink"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp"
+                    android:onClick="onClickChangePassword"
+                    android:text="@string/change_password_button"
+                    android:textAllCaps="true"
+                    android:textSize="16sp"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+</layout>

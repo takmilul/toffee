@@ -17,13 +17,13 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.apiservice.DramaSeasonRequestParam
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.common.paging.ProviderIconCallback
+import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.repository.SubscriptionCountRepository
 import com.banglalink.toffee.data.repository.SubscriptionInfoRepository
 import com.banglalink.toffee.databinding.FragmentEpisodeListBinding
 import com.banglalink.toffee.enums.Reaction.Love
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.model.Resource
@@ -31,7 +31,6 @@ import com.banglalink.toffee.model.SeriesPlaybackInfo
 import com.banglalink.toffee.ui.common.*
 import com.banglalink.toffee.ui.home.ChannelHeaderAdapter
 import com.banglalink.toffee.ui.player.AddToPlaylistData
-import com.banglalink.toffee.ui.report.ReportPopupFragment
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.ui.widget.MyPopupWindow
 import com.suke.widget.SwitchButton
@@ -43,19 +42,20 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo> {
-    private lateinit var mAdapter: EpisodeListAdapter
-    private var currentItem: ChannelInfo? = null
     private var isSubscribed: Int = 0
     private var subscriberCount: Long = 0
+    private var seasonListJob: Job? = null
+    @Inject lateinit var localSync: LocalSync
+    private var currentItem: ChannelInfo? = null
+    private lateinit var mAdapter: EpisodeListAdapter
+    private lateinit var seriesInfo: SeriesPlaybackInfo
     private var detailsAdapter: ChannelHeaderAdapter? = null
-    private val mViewModel by viewModels<EpisodeListViewModel>()
     private var _binding: FragmentEpisodeListBinding ? = null
     private val binding get() = _binding!!
     @Inject lateinit var subscriptionInfoRepository: SubscriptionInfoRepository
     @Inject lateinit var subscriptionCountRepository: SubscriptionCountRepository
+    private val mViewModel by viewModels<EpisodeListViewModel>()
 
-    private var seasonListJob: Job? = null
-    private lateinit var seriesInfo: SeriesPlaybackInfo
 
     companion object {
         const val SERIES_INFO = "series-info"
@@ -77,11 +77,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
         currentItem = seriesInfo.currentItem
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentEpisodeListBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -103,10 +99,11 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
     private fun setSubscriptionStatus() {
         lifecycleScope.launch {
             currentItem?.let {
-                isSubscribed = if(subscriptionInfoRepository.getSubscriptionInfoByChannelId(it.channel_owner_id, mPref.customerId) != null) 1 else 0
-                subscriberCount = subscriptionCountRepository.getSubscriberCount(it.channel_owner_id)
-                it.isSubscribed = if(subscriptionInfoRepository.getSubscriptionInfoByChannelId(it.channel_owner_id, mPref.customerId) != null) 1 else 0
-                it.subscriberCount = subscriptionCountRepository.getSubscriberCount(it.channel_owner_id).toInt()
+                localSync.syncData(it)
+//                isSubscribed = if(subscriptionInfoRepository.getSubscriptionInfoByChannelId(it.channel_owner_id, mPref.customerId) != null) 1 else 0
+//                subscriberCount = subscriptionCountRepository.getSubscriberCount(it.channel_owner_id)
+//                it.isSubscribed = if(subscriptionInfoRepository.getSubscriptionInfoByChannelId(it.channel_owner_id, mPref.customerId) != null) 1 else 0
+//                it.subscriberCount = subscriptionCountRepository.getSubscriberCount(it.channel_owner_id).toInt()
                 detailsAdapter?.notifyDataSetChanged()
             }
         }
@@ -149,24 +146,34 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
             }
 
             override fun onShareClicked(view: View, item: ChannelInfo) {
-                homeViewModel.shareContentLiveData.postValue(item)
+                requireActivity().handleShare(item)
             }
 
             override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
-                if (isSubscribed == 0) {
-                    homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), 1)
-                    isSubscribed = 1
-                    currentItem?.isSubscribed = isSubscribed
-                    currentItem?.subscriberCount = (++subscriberCount).toInt()
-                    detailsAdapter?.notifyDataSetChanged()
-                }
-                else {
-                    UnSubscribeDialog.show(requireContext()){
-                        homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), -1)
-                        isSubscribed = 0
-                        currentItem?.isSubscribed = isSubscribed
-                        currentItem?.subscriberCount = (--subscriberCount).toInt()
+                requireActivity().checkVerification { 
+                    if (item.isSubscribed == 0) {
+                        homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), 1)
+                        currentItem?.apply { 
+                            isSubscribed = 1
+                            subscriberCount++
+                        }
+//                        isSubscribed = 1
+//                        currentItem?.isSubscribed = isSubscribed
+//                        currentItem?.subscriberCount = (++subscriberCount).toInt()
                         detailsAdapter?.notifyDataSetChanged()
+                    }
+                    else {
+                        UnSubscribeDialog.show(requireContext()){
+                            homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), -1)
+                            currentItem?.apply {
+                                isSubscribed = 0
+                                subscriberCount--
+                            }
+//                            isSubscribed = 0
+//                            currentItem?.isSubscribed = isSubscribed
+//                            currentItem?.subscriberCount = (--subscriberCount).toInt()
+                            detailsAdapter?.notifyDataSetChanged()
+                        }
                     }
                 }
             }
@@ -299,26 +306,15 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
         popupMenu.setOnMenuItemClickListener{
             when(it?.itemId){
                 R.id.menu_share->{
-                    homeViewModel.shareContentLiveData.postValue(channelInfo)
+                    requireActivity().handleShare(channelInfo)
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_fav->{
-                    homeViewModel.updateFavorite(channelInfo).observe(viewLifecycleOwner, { resp->
-                        handleFavoriteResponse(resp)
-                    })
+                    requireActivity().handleFavorite(channelInfo)
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_report -> {
-                    val fragment =
-                        channelInfo.duration?.let { durations ->
-                            ReportPopupFragment.newInstance(-1,
-                                durations, channelInfo.id
-                            )
-                        }
-                    fragment?.show(requireActivity().supportFragmentManager, "report_video")
-                    return@setOnMenuItemClickListener true
-                }
-                R.id.menu_not_interested->{
+                    requireActivity().handleReport(channelInfo)
                     return@setOnMenuItemClickListener true
                 }
                 else->{
@@ -327,10 +323,6 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
             }
         }
         popupMenu.show()
-    }
-
-    override fun removeItemNotInterestedItem(channelInfo: ChannelInfo) {
-
     }
 
     fun setCurrentChannel(channelInfo: ChannelInfo?) {

@@ -2,8 +2,8 @@ package com.banglalink.toffee.ui.home
 
 import android.content.Context
 import android.util.Pair
-import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
@@ -15,10 +15,10 @@ import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.enums.PageType.Landing
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
-import com.banglalink.toffee.ui.common.BaseViewModel
 import com.banglalink.toffee.util.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -38,7 +38,7 @@ class LandingPageViewModel @Inject constructor(
     private val relativeContentsFactory: GetRelativeContents.AssistedFactory,
     private val popularChannelAssistedFactory: GetPopularUserChannels.AssistedFactory,
     private val editorsChoiceAssistedFactory: GetUgcTrendingNowContents.AssistedFactory,
-) : BaseViewModel() {
+) : ViewModel() {
     
     val categoryId = SingleLiveEvent<Int>()
     val subCategoryId = SingleLiveEvent<Int>()
@@ -85,7 +85,7 @@ class LandingPageViewModel @Inject constructor(
                         subCategories.postValue(emptyList())
                         hashtagList.postValue(emptyList())
                     }
-                    Toast.makeText(context, response.error.msg, Toast.LENGTH_SHORT).show()
+                    context.showToast(response.error.msg)
                 }
             }
         }
