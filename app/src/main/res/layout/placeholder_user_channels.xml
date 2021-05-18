@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/ShimmerStyle"
+    android:layout_width="wrap_content"
     android:paddingHorizontal="8dp">
     
     <androidx.constraintlayout.widget.ConstraintLayout

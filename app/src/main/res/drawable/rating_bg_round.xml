@@ -13,6 +13,10 @@
                 </shape>
             </item>
             <item
+                android:left="19.5dp"
+                android:right="19.5dp"
+                android:top="1dp"
+                android:bottom="1dp"
                 android:drawable="@drawable/ic_rating"
                 android:gravity="center"/>
         </layer-list>
@@ -29,6 +33,10 @@
                 </shape>
             </item>
             <item
+                android:left="19.5dp"
+                android:right="19.5dp"
+                android:top="1dp"
+                android:bottom="1dp"
                 android:drawable="@drawable/ic_rating"
                 android:gravity="center"/>
         </layer-list>
@@ -47,6 +55,10 @@
                 </shape>
             </item>
             <item
+                android:left="19.5dp"
+                android:right="19.5dp"
+                android:top="1dp"
+                android:bottom="1dp"
                 android:drawable="@drawable/ic_rating"
                 android:gravity="center"/>
         </layer-list>

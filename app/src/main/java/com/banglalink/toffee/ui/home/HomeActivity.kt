@@ -175,6 +175,14 @@ class HomeActivity :
             }
         }
         
+        if(mPref.mqttClientId.startsWith("_") || mPref.mqttClientId.substringBefore("_") != mPref.phoneNumber) {
+            mPref.mqttIsActive = false
+            mPref.mqttHost = ""
+            mPref.mqttClientId = ""
+            mPref.mqttUserName = ""
+            mPref.mqttPassword = ""
+        }
+        
         if (mPref.isVerifiedUser) {
             initMqtt()
         }
@@ -1293,6 +1301,11 @@ class HomeActivity :
                         mPref.userImageUrl = null
                         mPref.isVerifiedUser = false
                         mPref.isChannelDetailChecked = false
+                        mPref.mqttIsActive = false
+                        mPref.mqttHost = ""
+                        mPref.mqttClientId = ""
+                        mPref.mqttUserName = ""
+                        mPref.mqttPassword = ""
                         navController.popBackStack(R.id.menu_feed, false).let { 
                             recreate()
                         }
