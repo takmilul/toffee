@@ -738,7 +738,9 @@ class HomeActivity :
             supportActionBar?.hide()
             binding.bottomAppBar.hide()
             binding.uploadButton.hide()
+            binding.mainUiFrame.visibility = View.GONE
         } else {
+            binding.mainUiFrame.visibility = View.VISIBLE
             supportActionBar?.show()
             binding.bottomAppBar.show()
             binding.uploadButton.show()
