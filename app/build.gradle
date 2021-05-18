@@ -15,7 +15,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 54
-        versionName "2.0.0"
+        versionName "2.0.0_firework"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -157,8 +157,6 @@ dependencies {
     //Facebook SDK
     implementation 'com.facebook.android:facebook-android-sdk:9.1.1'
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
-    //Leak canary
-//    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-4'
 
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.3.1"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.3.1"
@@ -169,7 +167,7 @@ dependencies {
     implementation 'com.google.android.play:core:1.10.0'
     
     //firework sdk
-    implementation 'com.github.loopsocial:firework_sdk:v5.3.7'
+    implementation 'com.github.loopsocial:firework_sdk:v5.4.3'
 
     implementation ('com.google.apis:google-api-services-pubsub:v1-rev354-1.22.0') {
         exclude group: 'com.google.code.findbugs'
