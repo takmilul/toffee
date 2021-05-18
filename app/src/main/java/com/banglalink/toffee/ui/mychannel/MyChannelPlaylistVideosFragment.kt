@@ -16,7 +16,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.ConcatAdapter
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
 import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_PLAYLISTS
 import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_PLAYLIST_VIDEOS
@@ -117,13 +116,12 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
             binding.myChannelPlaylistVideos.updatePadding(top = 0.dp)
         }
         binding.emptyViewLabel.text = "No item found"
-        binding
         binding.playlistName.text = args.playlistInfo.playlistName
         binding.backButton.safeClick({ findNavController().popBackStack() })
         with(binding.myChannelPlaylistVideos) {
             addItemDecoration(MarginItemDecoration(12))
-            layoutManager = LinearLayoutManager(context)
             adapter = mAdapter
+            setHasFixedSize(true)
         }
     }
     
@@ -221,7 +219,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     }
     
     private fun observeVideoList() {
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launch {
             mViewModel.getMyChannelPlaylistVideos(requestParams).collectLatest {
                 playlistAdapter.submitData(it)
             }
@@ -254,7 +252,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     }
     
     private fun observeListState() {
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launch {
             playlistAdapter
                 .loadStateFlow
 //                .distinctUntilChangedBy {
