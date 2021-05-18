@@ -136,7 +136,7 @@
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/txt_play"
                 android:padding="2dp"
-                android:src="@drawable/ic_player_pause"
+                app:srcCompat="@drawable/ic_player_pause"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -168,7 +168,7 @@
                 android:contentDescription="@string/txt_play_next"
                 android:focusable="true"
                 android:padding="2dp"
-                android:src="@drawable/ic_player_control_next"
+                app:srcCompat="@drawable/ic_player_control_next"
                 app:layout_constraintBottom_toBottomOf="@+id/play"
                 app:layout_constraintStart_toEndOf="@+id/play"
                 app:layout_constraintTop_toTopOf="@+id/play" />
@@ -199,7 +199,7 @@
                 android:contentDescription="@string/txt_play_previous"
                 android:focusable="true"
                 android:padding="2dp"
-                android:src="@drawable/ic_player_previous"
+                app:srcCompat="@drawable/ic_player_previous"
                 app:layout_constraintBottom_toBottomOf="@+id/play"
                 app:layout_constraintEnd_toStartOf="@+id/play"
                 app:layout_constraintTop_toTopOf="@+id/play" />
