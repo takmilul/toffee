@@ -132,7 +132,7 @@
             android:layout_width="17dp"
             android:layout_height="17dp"
             android:layout_marginStart="13dp"
-            android:src="@drawable/ic_reaction_love_no_shadow"
+            app:srcCompat="@drawable/ic_reaction_love_no_shadow"
             bind:emoIcon="@{data}"
             bind:iconPosition="@{2}"
             app:layout_constraintTop_toTopOf="@id/reactionCount"

@@ -15,7 +15,7 @@
         android:layout_marginTop="36dp"
         android:adjustViewBounds="true"
         android:contentDescription="@string/login_with_phone_image"
-        android:src="@drawable/ic_phone_login"
+        app:srcCompat="@drawable/ic_phone_login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
