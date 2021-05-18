@@ -65,7 +65,7 @@
             android:layout_height="28dp"
             android:layout_marginTop="12dp"
             android:contentDescription="@string/txt_profile_image"
-            android:src="@drawable/ic_profile_default"
+            app:srcCompat="@drawable/ic_profile_default"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:onClick="@{()-> callback.onProviderIconClicked(data)}"
             app:layout_constraintStart_toStartOf="parent"
