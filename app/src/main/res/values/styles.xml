@@ -476,7 +476,7 @@
     </style>
     
     <style name="ShimmerStyle" >
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="shimmer_colored">false</item>
         <item name="shimmer_base_alpha">1</item>
