@@ -32,8 +32,8 @@ import javax.inject.Singleton
 
 @Singleton
 class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
-    @BindingAdapter("loadImageFromUrl")
-    fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
+    @BindingAdapter(value = ["loadImageFromUrl", "imageWidth", "imageHeight"], requireAll = false)
+    fun bindImageFromUrl(view: ImageView, imageUrl: String?, width: Int = 0, height: Int = 0) {
         if (imageUrl.isNullOrEmpty()) {
             view.setImageResource(R.drawable.placeholder)
         } else {
@@ -43,6 +43,9 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
                 error(R.drawable.placeholder)
                 diskCachePolicy(CachePolicy.ENABLED)
                 crossfade(false)
+                if (width > 0 && height > 0) {
+                    size(width, height)
+                }
                 UtilsKt.getImageSize(view.context, 720).apply {
                     size(x, y)
                 }
