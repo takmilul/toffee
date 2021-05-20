@@ -33,6 +33,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
+import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
@@ -84,6 +85,7 @@ import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.android.play.core.tasks.Task
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
@@ -96,6 +98,7 @@ import net.gotev.uploadservice.UploadService
 import org.xmlpull.v1.XmlPullParser
 import java.util.*
 import javax.inject.Inject
+
 
 const val ID_SUBSCRIPTIONS = 15
 const val ID_SUB_VIDEO = 16
@@ -362,8 +365,15 @@ class HomeActivity :
         watchConnectionChange()
         observeMyChannelNavigation()
         inAppUpdate()
+        customCrashReport()
     }
-    
+    private fun customCrashReport()
+    {
+        val runtime = Runtime.getRuntime()
+        val maxMemory = runtime.maxMemory()
+        FirebaseCrashlytics.getInstance().setCustomKey("heap_size", "$maxMemory")
+    }
+
     private fun initMqtt() {
         if (mPref.mqttHost.isBlank() || mPref.mqttClientId.isBlank() || mPref.mqttUserName.isBlank() || mPref.mqttPassword.isBlank()) {
             observe(viewModel.mqttCredentialLiveData) {
@@ -616,6 +626,20 @@ class HomeActivity :
                 minimizePlayer()
             }
             closeSearchBarIfOpen()
+            ///
+            if (controller.currentDestination is FragmentNavigator.Destination)
+            {
+                val currentFragmentClassName =
+                    (controller.currentDestination as FragmentNavigator.Destination)
+                        .className
+                        .substringAfterLast(".")
+
+                val bundle = Bundle()
+                bundle.putString(FirebaseAnalytics.Param.SCREEN_CLASS, currentFragmentClassName)
+                FirebaseAnalytics.getInstance(this)
+                    .logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle)
+            }
+
             binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
         }
 
