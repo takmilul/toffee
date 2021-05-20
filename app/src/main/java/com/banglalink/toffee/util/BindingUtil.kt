@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import coil.load
 import coil.request.CachePolicy
+import coil.size.Scale
 import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.database.entities.UserActivities
@@ -22,6 +23,7 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.ActivityType
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.enums.Reaction.*
+import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
@@ -29,23 +31,35 @@ import com.banglalink.toffee.model.Package
 import com.banglalink.toffee.ui.widget.MultiTextButton
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.math.min
 
 @Singleton
 class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
     @BindingAdapter("loadImageFromUrl")
     fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
         if (imageUrl.isNullOrEmpty()) {
+            if(android.os.Build.VERSION.SDK_INT < 24) {
+                view.scaleType = ImageView.ScaleType.FIT_XY
+            }
             view.setImageResource(R.drawable.placeholder)
         } else {
+            if(android.os.Build.VERSION.SDK_INT < 24) {
+                view.scaleType = ImageView.ScaleType.FIT_XY
+            }
             view.load(imageUrl) {
                 fallback(R.drawable.placeholder)
                 placeholder(R.drawable.placeholder)
                 error(R.drawable.placeholder)
                 diskCachePolicy(CachePolicy.ENABLED)
                 crossfade(false)
-                UtilsKt.getImageSize(view.context, 720).apply {
-                    size(x, y)
-                }
+//                UtilsKt.getImageSize(view.context, 720).apply {
+//                    size(x, y)
+//                }
+                size(min(360.px, 720), min(202.px, 405))
+                listener(
+                    onSuccess = { _, _->
+                        view.scaleType = ImageView.ScaleType.CENTER_CROP
+                })
             }
         }
     }
@@ -60,7 +74,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
                 placeholder(R.drawable.ic_profile)
                 error(R.drawable.ic_profile)
                 diskCachePolicy(CachePolicy.ENABLED)
-                size(180, 180)
+                size(min(60.px, 180), min(60.px, 180))
             }
         } else {
             view.setImageResource(R.drawable.ic_profile)
@@ -80,7 +94,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
             placeholder(R.drawable.placeholder)
             error(R.drawable.placeholder)
             diskCachePolicy(CachePolicy.ENABLED)
-            size(312, 160)
+            size(min(78.px, 234), min(40.px, 120))
         }
     }
 
@@ -95,6 +109,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
                 placeholder(R.drawable.ic_cat_movie)
                 error(R.drawable.ic_cat_movie)
                 diskCachePolicy(CachePolicy.ENABLED)
+                size(min(30.px, 92), min(30.px, 92))
             }
         }
     }
@@ -112,13 +127,15 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
                     placeholder(R.drawable.ic_profile)
                     error(R.drawable.ic_profile)
                     diskCachePolicy(CachePolicy.ENABLED)
-                    size(180, 180)
+                    size(min(60.px, 180), min(60.px, 180))
                 }
             }
         } else {
             if (channelInfo.landscape_ratio_1280_720.isNullOrBlank()) {
+                view.scaleType = ImageView.ScaleType.FIT_XY
                 view.setImageResource(R.drawable.placeholder)
             } else {
+                view.scaleType = ImageView.ScaleType.FIT_XY
                 view.load(channelInfo.landscape_ratio_1280_720)
                 {
                     diskCachePolicy(CachePolicy.ENABLED)
@@ -126,9 +143,13 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
                     fallback(R.drawable.placeholder)
                     placeholder(R.drawable.placeholder)
                     error(R.drawable.placeholder)
-                    UtilsKt.getImageSize(view.context, 720).apply {
-                        size(x, y)
-                    }
+//                    UtilsKt.getImageSize(view.context, 720).apply {
+//                        size(x, y)
+//                    }
+                    size(min(360.px, 720), min(202.px, 405))
+                    listener(onSuccess = { _, _->
+                        view.scaleType = ImageView.ScaleType.CENTER_CROP
+                    })
                 }
             }
         }
