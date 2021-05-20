@@ -43,7 +43,6 @@ import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.ui.widget.MyPopupWindow
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -51,8 +50,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener {
     
-    private var isSubscribed: Int = 0
-    private var subscriberCount: Long = 0
     @Inject lateinit var localSync: LocalSync
     private var currentItem: ChannelInfo? = null
     private lateinit var mAdapter: ConcatAdapter
@@ -171,9 +168,6 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
                             it.isSubscribed = 1
                             it.subscriberCount++
                         }
-//                        isSubscribed = 1
-//                        currentItem?.isSubscribed = isSubscribed
-//                        currentItem?.subscriberCount = (++subscriberCount).toInt()
                         detailsAdapter.notifyDataSetChanged()
                     } else {
                         UnSubscribeDialog.show(requireContext()) {
@@ -188,9 +182,6 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
                                 it.isSubscribed = 0
                                 it.subscriberCount--
                             }
-//                            isSubscribed = 0
-//                            currentItem?.isSubscribed = isSubscribed
-//                            currentItem?.subscriberCount = (--subscriberCount).toInt()
                             detailsAdapter.notifyDataSetChanged()
                         }
                     }
@@ -209,10 +200,6 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
         lifecycleScope.launch {
             currentItem?.let {
                 localSync.syncData(it)
-//                isSubscribed = if (subscriptionInfoRepository.getSubscriptionInfoByChannelId(it.channel_owner_id, mPref.customerId) != null) 1 else 0
-//                subscriberCount = subscriptionCountRepository.getSubscriberCount(it.channel_owner_id)
-//                it.isSubscribed = if (subscriptionInfoRepository.getSubscriptionInfoByChannelId(it.channel_owner_id, mPref.customerId) != null) 1 else 0
-//                it.subscriberCount = subscriptionCountRepository.getSubscriberCount(it.channel_owner_id).toInt()
                 detailsAdapter.notifyDataSetChanged()
             }
         }
@@ -252,25 +239,22 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     }
     
     private fun observeListState() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            playlistAdapter
-                .loadStateFlow
-//                .distinctUntilChangedBy {
-//                    it.refresh
-//                }
-                .collect {
-                    binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
-                    playlistAdapter.apply {
-                        val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
-                        binding.emptyView.isVisible = showEmpty
-                        binding.myChannelPlaylistVideos.isVisible = !showEmpty
-                    }
-
+        var isInitialized = false
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            playlistAdapter.loadStateFlow.collectLatest {
+                val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
+                val isEmpty = playlistAdapter.itemCount <= 0 && !it.source.refresh.endOfPaginationReached && !isLoading
+                binding.progressBar.isVisible = isLoading
+                binding.emptyView.isVisible = isEmpty
+                binding.myChannelPlaylistVideos.isVisible = !isEmpty
+                if (!isEmpty) {
                     val list = playlistAdapter.snapshot()
                     homeViewModel.addToPlayListMutableLiveData.postValue(
                         AddToPlaylistData(getPlaylistId(), list.items, false)
                     )
                 }
+                isInitialized = true
+            }
         }
     }
     
