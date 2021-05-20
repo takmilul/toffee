@@ -14,7 +14,9 @@ import com.banglalink.toffee.R.string
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.databinding.FragmentDramaSeriesContentBinding
 import com.banglalink.toffee.enums.FilterContentType.*
+import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.extension.showLoadingAnimation
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
@@ -56,6 +58,9 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
         landingPageViewModel.isDramaSeries.value = true
 
         observe(landingPageViewModel.subCategoryId) {
+            binding.placeholder.show()
+            binding.latestVideosList.hide()
+            binding.placeholder.showLoadingAnimation(true)
             if (selectedFilter == LATEST_VIDEOS.value || selectedFilter == FEED.value) {
                 observeLatestVideosList(category?.id?.toInt() ?: 9, it)
             }
@@ -93,7 +98,7 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
                 val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
                 binding.emptyView.isVisible = isEmpty && !isLoading
                 binding.placeholder.isVisible = isLoading
-                binding.latestVideosList.isVisible = !isEmpty
+                binding.latestVideosList.isVisible = !isEmpty && !isLoading
                 binding.placeholder.showLoadingAnimation(isLoading)
                 isInitialized = true
             }

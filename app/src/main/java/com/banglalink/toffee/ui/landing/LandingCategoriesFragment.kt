@@ -94,6 +94,7 @@ class LandingCategoriesFragment: BaseFragment(), BaseListItemCallback<Category> 
             }
             layoutManager = GridLayoutManager(context, 2, GridLayoutManager.HORIZONTAL, false)
             adapter = mAdapter
+            setHasFixedSize(true)
         }
 
         observeList()

@@ -81,6 +81,7 @@ class LandingUserChannelsFragment : HomeBaseFragment(), LandingPopularChannelCal
                 }
             }
             adapter = mAdapter
+            setHasFixedSize(true)
         }
         
         observeList()

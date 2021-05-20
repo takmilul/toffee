@@ -27,10 +27,7 @@ import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.databinding.FragmentLandingLatestVideosBinding
 import com.banglalink.toffee.enums.FilterContentType.*
 import com.banglalink.toffee.enums.Reaction.Love
-import com.banglalink.toffee.extension.handleShare
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.show
-import com.banglalink.toffee.extension.showLoadingAnimation
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
@@ -90,7 +87,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
                     val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
                     binding.emptyView.isVisible = isEmpty && !isLoading
                     binding.placeholder.isVisible = isLoading
-                    binding.latestVideosList.isVisible = !isEmpty
+                    binding.latestVideosList.isVisible = !isEmpty && !isLoading
                     binding.placeholder.showLoadingAnimation(isLoading)
                     isInitialized = true
                 }
@@ -131,6 +128,9 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     
     private fun observeSubCategoryChange() {
         observe(viewModel.subCategoryId) {
+            binding.placeholder.show()
+            binding.latestVideosList.hide()
+            binding.placeholder.showLoadingAnimation(true)
             if (viewModel.checkedSubCategoryChipId.value != 0 && it == 0 && category?.id?.toInt() != 0 && binding.subCategoryChipGroup.childCount > 0) {
                 binding.subCategoryChipGroup.check(binding.subCategoryChipGroup[0].id)
             }
