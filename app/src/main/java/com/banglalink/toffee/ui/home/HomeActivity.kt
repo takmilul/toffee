@@ -4,6 +4,7 @@ import android.animation.LayoutTransition
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.app.SearchManager
+import android.content.Context
 import android.content.Intent
 import android.content.IntentSender.SendIntentException
 import android.content.pm.ActivityInfo
@@ -45,6 +46,7 @@ import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
+import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.*
@@ -87,11 +89,9 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import net.gotev.uploadservice.UploadService
 import org.xmlpull.v1.XmlPullParser
 import java.util.*
@@ -119,6 +119,7 @@ class HomeActivity :
     @Inject lateinit var uploadManager: UploadStateManager
     @Inject lateinit var cacheManager: CacheManager
     @Inject lateinit var mqttService: ToffeeMqttService
+    @Inject @AppCoroutineScope lateinit var appScope: CoroutineScope
     private var channelOwnerId: Int = 0
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private var notificationBadge: View? = null
@@ -377,7 +378,19 @@ class HomeActivity :
                             mPref.mqttPassword = EncryptionUtil.encryptRequest(data.mqttPassword)
                         
                             if (mPref.mqttIsActive) {
-                                mqttService.initialize()
+                                appScope.launch {
+                                    val mqttDir = withContext(Dispatchers.IO + Job()) {
+                                        val mqttTag = "MqttConnection"
+                                        var tempDir = getExternalFilesDir(mqttTag)
+                                        if (tempDir == null) {
+                                            tempDir = getDir(mqttTag, Context.MODE_PRIVATE)
+                                        }
+                                        tempDir
+                                    }
+                                    if(mqttDir != null) {
+                                        mqttService.initialize()
+                                    }
+                                }
                             }
                         }
                     }

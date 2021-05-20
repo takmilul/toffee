@@ -1,6 +1,7 @@
 package com.banglalink.toffee.di
 
 import android.app.Application
+import android.content.Context
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.data.network.interceptor.AuthInterceptor
 import com.banglalink.toffee.data.network.interceptor.GetTracker
@@ -14,6 +15,7 @@ import com.facebook.FacebookSdk
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import okhttp3.Cache
@@ -60,9 +62,9 @@ object NetworkModule {
     @Provides
     @Singleton
     @DefaultCache
-    fun getCacheIterator(): Cache{
+    fun getCacheIterator(@ApplicationContext ctx: Context): Cache{
         val cacheSize = 25 * 1024 * 1024 // 25 MB
-        return Cache(FacebookSdk.getCacheDir(), cacheSize.toLong())
+        return Cache(ctx.cacheDir, cacheSize.toLong())
     }
     
     @Provides
