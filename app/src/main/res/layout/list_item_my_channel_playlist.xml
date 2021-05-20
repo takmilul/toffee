@@ -32,6 +32,8 @@
             android:scaleType="fitXY"
             android:contentDescription="@string/txt_poster"
             android:src="@drawable/placeholder"
+            imageWidth="@{720}"
+            imageHeight="@{405}"
             loadImageFromUrl="@{data.landscape_ratio_1280_720}"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"

@@ -137,7 +137,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
 
     private fun loadImage(){
         newBannerUrl?.let {
-            bindingUtil.bindImageFromUrl(binding.bannerImageView, it)
+            bindingUtil.bindImageFromUrl(binding.bannerImageView, it, 720, 405)
         }
         newProfileImageUrl?.let {
             bindingUtil.bindRoundImage(binding.profileImageView, it)

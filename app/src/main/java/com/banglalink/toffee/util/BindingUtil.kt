@@ -35,8 +35,8 @@ import kotlin.math.min
 
 @Singleton
 class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
-    @BindingAdapter("loadImageFromUrl")
-    fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
+    @BindingAdapter(value = ["loadImageFromUrl", "imageWidth", "imageHeight"], requireAll = false)
+    fun bindImageFromUrl(view: ImageView, imageUrl: String?, width: Int = 0, height: Int = 0) {
         if (imageUrl.isNullOrEmpty()) {
             if(android.os.Build.VERSION.SDK_INT < 24) {
                 view.scaleType = ImageView.ScaleType.FIT_XY
@@ -55,7 +55,13 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
 //                UtilsKt.getImageSize(view.context, 720).apply {
 //                    size(x, y)
 //                }
-                size(min(360.px, 720), min(202.px, 405))
+
+                if (width > 0 && height > 0) {
+                    size(width, height)
+                }
+                else {
+                    size(min(360.px, 720), min(202.px, 405))
+                }
                 listener(
                     onSuccess = { _, _->
                         view.scaleType = ImageView.ScaleType.CENTER_CROP

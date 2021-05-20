@@ -71,6 +71,8 @@
             android:adjustViewBounds="true"
             android:scaleType="centerInside"
             android:src="@drawable/placeholder"
+            imageWidth="@{720}"
+            imageHeight="@{405}"
             loadImageFromUrl="@{data.imageUrl}"
             android:visibility="@{data.imageUrl == null || data.imageUrl.isEmpty() ? View.GONE : View.VISIBLE}"
             app:layout_constraintEnd_toEndOf="parent"
