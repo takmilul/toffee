@@ -28,6 +28,8 @@
             <ImageView
                 android:contentDescription="@string/txt_badge_icon"
                 android:id="@+id/package_badge_icon"
+                imageWidth="@{720}"
+                imageHeight="@{405}"
                 loadImageFromUrl="@{data.mobileLogo}"
                 android:layout_width="92dp"
                 android:layout_height="85dp"

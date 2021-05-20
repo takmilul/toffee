@@ -5,6 +5,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View.MeasureSpec
+import android.view.ViewGroup
 import android.widget.PopupWindow
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -83,6 +84,8 @@ class ReactionPopup: Fragment() {
         
         with(reactionPopupWindow!!){
             contentView = binding.root
+            width = ViewGroup.LayoutParams.WRAP_CONTENT
+            height = ViewGroup.LayoutParams.WRAP_CONTENT
             isTouchable = true
             isFocusable = true
             isOutsideTouchable = true

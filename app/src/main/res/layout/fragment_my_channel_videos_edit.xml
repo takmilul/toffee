@@ -21,6 +21,8 @@
 
             <com.banglalink.toffee.ui.widget.CustomImageView
                 android:id="@+id/bannerImageView"
+                imageWidth="@{720}"
+                imageHeight="@{405}"
                 loadImageFromUrl="@{viewmodel.thumbnailUrl}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

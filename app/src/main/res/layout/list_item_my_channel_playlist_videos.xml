@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -27,20 +26,20 @@
         android:background="?selectableItemBackground"
         android:onClick="@{()-> callback.onItemClickAtPosition(position, data)}" >
 
-        <com.banglalink.toffee.ui.widget.CustomImageView
+        <ImageView
             android:id="@+id/poster"
-            loadImageFromUrl="@{data.landscape_ratio_1280_720}"
+            loadChannelImage="@{data}"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginStart="16dp"
             android:adjustViewBounds="true"
-            android:minHeight="180dp"
-            android:contentDescription="@string/txt_poster"
             android:scaleType="centerCrop"
+            app:layout_constraintDimensionRatio="16:9"
+            android:contentDescription="@string/txt_poster"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent="0.45" />
+            app:layout_constraintEnd_toEndOf="@id/guideline13" />
 
         <ImageView
             android:contentDescription="@string/txt_play"
@@ -54,7 +53,14 @@
             app:layout_constraintTop_toTopOf="@+id/poster"
             app:layout_constraintEnd_toEndOf="@+id/poster"
             app:srcCompat="@drawable/ic_player_play" />
-
+    
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline13"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+    
         <ProgressBar
             android:id="@+id/progress"
             style="?android:attr/progressBarStyleHorizontal"
@@ -85,21 +91,26 @@
             android:id="@+id/title"
             style="@style/programNameTextView"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_marginEnd="4dp"
-            android:ellipsize="end"
             android:lines="2"
-            android:maxLines="2"
             tools:text="Program Name"
             android:text="@{data.program_name}"
-            app:layout_constraintVertical_chainStyle="packed"
-            app:layout_constraintBottom_toTopOf="@id/viewCount"
             app:layout_constraintEnd_toStartOf="@+id/options"
             app:layout_constraintStart_toEndOf="@+id/poster"
-            app:layout_constraintTop_toTopOf="@+id/poster"
-            app:layout_constraintVertical_bias="0.0" />
-
+            app:layout_constraintTop_toTopOf="@+id/poster" />
+    
+        <ImageView
+            android:contentDescription="@string/txt_options"
+            android:id="@+id/options"
+            style="@style/OptionMenuStyle"
+            android:paddingStart="12dp"
+            android:paddingEnd="16dp"
+            android:onClick="@{(v) -> callback.onOpenMenu(v, data)}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/title"
+            app:srcCompat="@drawable/ic_menu_more" />
+    
         <TextView
             android:id="@+id/viewCount"
             android:layout_width="wrap_content"
@@ -109,8 +120,6 @@
             android:textColor="@color/fixed_second_text_color"
             android:textSize="@dimen/default_text_size"
             android:text="@{data.formattedViewCount() + ` Views`}"
-            app:layout_constraintEnd_toStartOf="@+id/uploadTime"
-            app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="@id/title"
             app:layout_constraintTop_toBottomOf="@id/title"
             tools:text="18K views" />
@@ -129,17 +138,5 @@
             app:layout_constraintStart_toEndOf="@+id/viewCount"
             app:layout_constraintTop_toTopOf="@+id/viewCount" />
 
-        <ImageView
-            android:contentDescription="@string/txt_options"
-            android:id="@+id/options"
-            style="@style/OptionMenuStyle"
-            android:paddingStart="12dp"
-            android:paddingEnd="16dp"
-            android:onClick="@{(v) -> callback.onOpenMenu(v, data)}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/title"
-            app:layout_constraintTop_toTopOf="@+id/title"
-            app:srcCompat="@drawable/ic_menu_more" />
-    
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
