@@ -80,7 +80,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
                 placeholder(R.drawable.ic_profile)
                 error(R.drawable.ic_profile)
                 diskCachePolicy(CachePolicy.ENABLED)
-                size(min(60.px, 180), min(60.px, 180))
+                size(min(80.px, 150), min(80.px, 150))
             }
         } else {
             view.setImageResource(R.drawable.ic_profile)
@@ -100,7 +100,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
             placeholder(R.drawable.placeholder)
             error(R.drawable.placeholder)
             diskCachePolicy(CachePolicy.ENABLED)
-            size(min(78.px, 234), min(40.px, 120))
+            size(min(120.px, 360), min(61.px, 184))
         }
     }
 
@@ -133,7 +133,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
                     placeholder(R.drawable.ic_profile)
                     error(R.drawable.ic_profile)
                     diskCachePolicy(CachePolicy.ENABLED)
-                    size(min(60.px, 180), min(60.px, 180))
+                    size(min(80.px, 150), min(80.px, 150))
                 }
             }
         } else {
