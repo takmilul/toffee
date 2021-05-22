@@ -527,14 +527,16 @@
         <item name="android:drawablePadding">13dp</item>
         <item name="android:inputType">textCapWords</item>
     </style>
+    
     <style name="fireworkVideoTitleStyle">
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:textSize">12dp</item>
         <item name="android:lines">2</item>
         <item name="android:maxLines">2</item>
         <item name="android:gravity">left</item>
         <item name="android:layout_width">match_parent</item>
+        <item name="android:textColor">@android:color/white</item>
         <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="android:textSize">@dimen/default_text_size</item>
+        <item name="android:background">@drawable/overlay_bottom_round_bg</item>
     </style>
     
     <style name="fireworkImageStyle" >

@@ -8,18 +8,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentLandingPage2Binding
 import com.banglalink.toffee.enums.PageType.Landing
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.show
-import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.google.android.material.appbar.AppBarLayout
 import com.loopnow.fireworklibrary.FwSDK
 import com.loopnow.fireworklibrary.SdkStatus
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -91,20 +93,30 @@ class LandingPageFragment : HomeBaseFragment(), FwSDK.SdkStatusListener {
         when(status){
             SdkStatus.Initialized -> {
                 mPref.isFireworkInitialized = true
-                binding.fireworkFragment.show()
+                _binding?.let { 
+                    viewLifecycleOwner.lifecycleScope.launch(Main) {
+                        it.fireworkFragment.show()
+                    }
+                }
                 Log.d("FwSDK", "Initialized: $extra")
             }
             SdkStatus.InitializationFailed -> mPref.isFireworkInitialized = false
             SdkStatus.LoadingContent -> Log.d("FwSDK", "LoadingContent: $extra")
             SdkStatus.ContentLoaded -> {
-                if (extra.toInt() <= 0 && _binding != null) {
-                    binding.fireworkFragment.hide()
+                _binding?.let { 
+                    viewLifecycleOwner.lifecycleScope.launch(Main) {
+                        if (extra.toInt() <= 0) {
+                            it.fireworkFragment.show()
+                        }
+                    }
                 }
                 Log.d("FwSDK", "ContentLoaded: $extra")
             }
             SdkStatus.LoadingContentFailed -> {
                 _binding?.let { 
-                    binding.fireworkFragment.hide()
+                    viewLifecycleOwner.lifecycleScope.launch(Main) {
+                        binding.fireworkFragment.hide()
+                    }
                 }
                 Log.d("FwSDK", "LoadingContentFailed: $extra")
             }
