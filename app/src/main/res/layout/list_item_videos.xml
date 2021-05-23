@@ -72,7 +72,7 @@
             android:contentDescription="@string/txt_profile_image"
             android:layout_marginStart="16dp"
             app:onSafeClick="@{()-> callback.onProviderIconClicked(data)}"
-            app:srcCompat="@drawable/ic_profile_default"
+            tools:src="@drawable/ic_menu_profile"
             loadImageFromUrlRounded="@{data.channelProfileUrl}"
             android:background="?attr/selectableItemBackgroundBorderless"
             app:layout_constraintStart_toStartOf="parent"

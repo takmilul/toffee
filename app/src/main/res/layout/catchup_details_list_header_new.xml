@@ -81,7 +81,7 @@ Day 21 - AUS vs IND" />
             android:onClick="@{()-> callback.onProviderIconClicked(data)}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/shareCount"
-            tools:src="@drawable/ic_profile_default" />
+            tools:src="@drawable/ic_menu_profile" />
 
         <TextView
             android:id="@+id/liveStatus"
