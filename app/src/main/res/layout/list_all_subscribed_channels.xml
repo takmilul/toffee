@@ -45,7 +45,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/txt_profile_image"
-                    tools:src="@drawable/ic_profile_default" />
+                    tools:src="@drawable/ic_menu_profile" />
             
             </FrameLayout>
             
