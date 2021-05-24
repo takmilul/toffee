@@ -243,14 +243,6 @@ class HomeActivity :
             minimizePlayer()
         }*/
 
-        observe(viewModel.switchBottomTab) {
-//            drawerHelper.onMenuClick(NavigationMenu(ID_CHANNEL, "All Videos", 0, listOf(), false))
-            when(it) {
-                1 -> binding.tabNavigator.selectedItemId = R.id.menu_tv
-                3 -> binding.tabNavigator.selectedItemId = R.id.menu_explore
-            }
-//            binding.homeTabPager.currentItem = 1
-        }
 
         observe(viewModel.viewAllCategories) {
             val currentFragment = supportFragmentManager.findFragmentById(R.id.content_viewer)
@@ -469,29 +461,6 @@ class HomeActivity :
                 if (uploadRepo.getActiveUploadsList().isNotEmpty()) {
                     return@launch
                 }
-
-                //                mPref.uploadId?.let {
-                //                    val uploads = uploadRepo.getUploadById(UtilsKt.stringToUploadId(it))
-                //                    if(uploads == null || uploads.status !in listOf(0, 1, 2, 3)) {
-                //                        mPref.uploadId = null
-                //                        navController.navigate(R.id.uploadMethodFragment)
-                //                        return@launch
-                //
-                ////                    if(uploads.status in listOf(0, 1, 2, 3) && UploadService.taskList.isEmpty()) {
-                ////                        uploads.apply {
-                ////                            status = UploadStatus.ERROR.value
-                ////                            statusMessage = "Process killed"
-                ////                        }.also { info ->
-                ////                            uploadRepo.updateUploadInfo(info)
-                ////                        }
-                ////                        mPref.uploadId = null
-                ////                        navController.navigate(R.id.uploadMethodFragment)
-                ////                    }
-                //                    if(navController.currentDestination?.id != R.id.editUploadInfoFragment) {
-                //                        navController.navigate(R.id.editUploadInfoFragment)
-                //                    }
-                //                    return@launch
-                //                }
                 navController.navigate(R.id.uploadMethodFragment)
             }
         }
@@ -872,10 +841,6 @@ class HomeActivity :
     private fun handleVoiceSearchEvent(query: String){
         if (!TextUtils.isEmpty(query)) {
             navigateToSearch(query)
-//            loadFragmentById(
-//                R.id.content_viewer, SearchFragment.createInstance(query),
-//                SearchFragment::class.java.name
-//            )
         }
         if (searchView != null) {
             searchView!!.setQuery(query.toLowerCase(), false)

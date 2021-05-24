@@ -8,7 +8,9 @@ import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
+import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentLandingTvChannelsBinding
 import com.banglalink.toffee.model.ChannelInfo
@@ -60,7 +62,8 @@ class PopularTVChannelsFragment : HomeBaseFragment(), BaseListItemCallback<Chann
         }
 
         binding.viewAllButton.setOnClickListener {
-            homeViewModel.switchBottomTab.postValue(1)
+//            homeViewModel.switchBottomTab.postValue(1)
+            parentFragment?.findNavController()?.navigate(R.id.menu_tv)
         }
         
         observeList()
