@@ -100,7 +100,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
     }
 
     fun getMaxScale() = 1.0f
-    fun getMidScale() = 0.92f//(getMaxScale() + getMinScale()) / 2.0f
+    fun getMidScale() = 0.98f//(getMaxScale() + getMinScale()) / 2.0f
     fun getMinScale() = 0.5f//if(dragView.isVideoPortrait) 0.25f else 0.5f
 
     fun isMaximized() = dragView.scaleX == getMaxScale()
