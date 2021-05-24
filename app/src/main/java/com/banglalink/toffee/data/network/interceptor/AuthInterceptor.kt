@@ -68,8 +68,6 @@ class AuthInterceptor (private val iGetMethodTracker: IGetMethodTracker): Interc
         } catch (e: Exception) {
             throw AuthEncodeDecodeException(e.message, e.cause)
         }
-
-        return response
     }
 
     private fun bodyToString(request: RequestBody?): String {

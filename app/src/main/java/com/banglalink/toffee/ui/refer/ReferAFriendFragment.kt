@@ -23,15 +23,12 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentReferAFriendBinding
-import com.banglalink.toffee.extension.action
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
-import com.banglalink.toffee.extension.snack
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
-
 
 class ReferAFriendFragment : BaseFragment() {
 
@@ -41,16 +38,8 @@ class ReferAFriendFragment : BaseFragment() {
     private val progressDialog by unsafeLazy {
         VelBoxProgressDialog(requireContext())
     }
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-
+    
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentReferAFriendBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -64,8 +53,7 @@ class ReferAFriendFragment : BaseFragment() {
         super.onDestroyView()
         _binding = null
     }
-
-
+    
     private fun getMyReferralCode() {
         progressDialog.show()
         observe(viewModel.getMyReferralCode()) {
@@ -88,18 +76,13 @@ class ReferAFriendFragment : BaseFragment() {
                     setShareBtnClick(it.data.shareableString)
                 }
                 is Resource.Failure -> {
-                    binding.root.snack(it.error.msg) {
-                        action("Retry") {
-                            getMyReferralCode()
-                        }
-                    }
+                    requireContext().showToast(it.error.msg)
                 }
             }
         }
     }
 
     private fun setSpannableString(msg: String){
-
         val ss = SpannableString("$msg more")
         val clickableSpan = object : ClickableSpan() {
 
@@ -129,7 +112,7 @@ class ReferAFriendFragment : BaseFragment() {
 
     private fun setShareBtnClick(shareableText: String) {
         binding.shareBtn.setOnClickListener {
-            val shareIntent: Intent = ShareCompat.IntentBuilder.from(requireActivity())
+            val shareIntent: Intent = ShareCompat.IntentBuilder(requireContext())
                 .setType("text/plan")
                 .setText(shareableText)
                 .intent
@@ -154,19 +137,12 @@ class ReferAFriendFragment : BaseFragment() {
 
     private fun showReadMoreDialog(msg:String ){
         val factory = LayoutInflater.from(requireContext())
-        val alertView: View =
-            factory.inflate(R.layout.read_more_dialog, null)
+        val alertView: View = factory.inflate(R.layout.read_more_dialog, null)
         val alertDialog = AlertDialog.Builder(requireContext()).create()
         alertDialog.setView(alertView)
         alertDialog.setCancelable(true)
-
-        alertView.findViewById<View>(R.id.close_iv)
-            .setOnClickListener {
-                alertDialog.dismiss()
-            }
-
+        alertView.findViewById<View>(R.id.close_iv).setOnClickListener { alertDialog.dismiss() }
         val message = alertView.findViewById<WebView>(R.id.webview)
-
         message.loadData(msg, "text/html", "UTF-8")
         message.computeScroll()
         message.isVerticalScrollBarEnabled = true

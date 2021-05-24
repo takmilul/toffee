@@ -14,10 +14,12 @@ import coil.imageLoader
 import coil.util.CoilUtils
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.data.network.interceptor.CoilInterceptor
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.PlayerPreference
 import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.di.databinding.CustomBindingComponentBuilder
 import com.banglalink.toffee.di.databinding.CustomBindingEntryPoint
 import com.banglalink.toffee.notification.PubSubMessageUtil
@@ -25,6 +27,9 @@ import com.banglalink.toffee.ui.upload.UploadObserver
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.EntryPoints
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 import net.gotev.uploadservice.UploadServiceConfig
 import net.gotev.uploadservice.data.RetryPolicyConfig
 import net.gotev.uploadservice.okhttp.OkHttpStack
@@ -39,17 +44,22 @@ class ToffeeApplication : Application() {
     @Inject lateinit var mUploadObserver: UploadObserver
     @Inject lateinit var commonPreference: CommonPreference
     @Inject lateinit var heartBeatManager: HeartBeatManager
-    @Inject
-    lateinit var bindingComponentProvider: Provider<CustomBindingComponentBuilder>
+    @Inject @AppCoroutineScope lateinit var coroutineScope: CoroutineScope
+    @Inject lateinit var bindingComponentProvider: Provider<CustomBindingComponentBuilder>
 
     override fun onCreate() {
         super.onCreate()
 
         if (commonPreference.versionCode < BuildConfig.VERSION_CODE) {
-//            cacheManager.clearCacheByUrl(GET_FEATURED_CONTENT_URL)
-//            cacheManager.clearCacheByUrl(GET_DRAMA_SERIES_CONTENTS_URL)
-            cacheManager.clearAllCache()
-            commonPreference.versionCode = BuildConfig.VERSION_CODE
+            try {
+                coroutineScope.launch(IO) { 
+                    cacheManager.clearAllCache()
+                    commonPreference.versionCode = BuildConfig.VERSION_CODE
+                }
+            }
+            catch (e: Exception) {
+                ToffeeAnalytics.logException(e)
+            }
         }
         
         if (BuildConfig.DEBUG) {
@@ -86,6 +96,7 @@ class ToffeeApplication : Application() {
             okHttpClient {
                 OkHttpClient.Builder()
                     .cache(CoilUtils.createDefaultCache(this@ToffeeApplication))
+                    .addInterceptor(CoilInterceptor())
                     .build()
             }
 

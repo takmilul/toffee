@@ -10,10 +10,9 @@ import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.databinding.AlertDialogVerifyBinding
-import com.banglalink.toffee.extension.action
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
-import com.banglalink.toffee.extension.snack
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.CustomerInfoLogin
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.receiver.SMSBroadcastReceiver
@@ -21,7 +20,6 @@ import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.gms.auth.api.phone.SmsRetriever
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -89,7 +87,7 @@ class VerifyLoginFragment2 : ChildDialogFragment() {
                 }
                 is Resource.Failure -> {
                     ToffeeAnalytics.logApiError("confirmCode",it.error.msg)
-                    binding.root.snack(it.error.msg, Snackbar.LENGTH_LONG){}
+                    requireContext().showToast(it.error.msg)
                 }
             }
         }
@@ -112,13 +110,7 @@ class VerifyLoginFragment2 : ChildDialogFragment() {
                     startCountDown(if (resendBtnPressCount <= 1) 1 else 30)
                 }
                 is Resource.Failure -> {
-                    binding.root.snack(it.error.msg) {
-                        action("Retry") {
-                            progressDialog.show()
-                            handleResendButton()
-                            viewModel.resendCode(phoneNumber, "")
-                        }
-                    }
+                    requireContext().showToast(it.error.msg)
                 }
             }
         }
