@@ -389,6 +389,13 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
                         onScaleToBoundary(scale)
                     }
                 }
+            } else {
+                if(dragView.right < 5) {
+                    dragView.scaleX = getMaxScale()
+                    dragView.scaleY = getMaxScale()
+                    dragView.left = -dragView.width
+                    dragView.top = 0
+                }
             }
             requestLayout()
         }
