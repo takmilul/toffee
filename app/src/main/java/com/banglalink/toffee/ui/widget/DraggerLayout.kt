@@ -100,7 +100,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
     }
 
     fun getMaxScale() = 1.0f
-    fun getMidScale() = (getMaxScale() + getMinScale()) / 2.0f
+    fun getMidScale() = 0.98f//(getMaxScale() + getMinScale()) / 2.0f
     fun getMinScale() = 0.5f//if(dragView.isVideoPortrait) 0.25f else 0.5f
 
     fun isMaximized() = dragView.scaleX == getMaxScale()
@@ -117,6 +117,13 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
     private var scrollDir = 0
     private var lastScrollY = 0f
     private var isScrollCaptured = false
+//
+//    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+//        val ts = measureTimeMillis {
+//            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+//        }
+//        Log.e("MEASURE_T", "onMeasure_DraggerLayout ->> $ts")
+//    }
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         if(dragView.isFullScreenPortrait()) return false
@@ -304,7 +311,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
                     if (viewDragHelper.smoothSlideViewTo(
                             dragView,
                             0 - (right - paddingRight),
-                            newtop
+                            parent.height - dragView.height
                         )
                     ) {
                         ViewCompat.postInvalidateOnAnimation(parent)
@@ -312,8 +319,8 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
                     onPositionChangedListenerList.forEach {
                         it.onViewDestroy()
                     }
-                    dragView.scaleX = getMaxScale()
-                    dragView.scaleY = getMaxScale()
+                    dragView.scaleX = getMinScale()
+                    dragView.scaleY = getMinScale()
                 } else {
                     minimize()
                 }
@@ -381,6 +388,13 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
                     if(scale == getMaxScale() || scale == getMinScale()) {
                         onScaleToBoundary(scale)
                     }
+                }
+            } else {
+                if(dragView.right < 5) {
+                    dragView.scaleX = getMaxScale()
+                    dragView.scaleY = getMaxScale()
+                    dragView.left = -dragView.width
+                    dragView.top = 0
                 }
             }
             requestLayout()

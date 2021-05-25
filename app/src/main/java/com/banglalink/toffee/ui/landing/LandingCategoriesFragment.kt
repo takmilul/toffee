@@ -53,7 +53,7 @@ class LandingCategoriesFragment: BaseFragment(), BaseListItemCallback<Category> 
         mAdapter = CategoriesListAdapter(this)
         
         binding.viewAllButton.setOnClickListener {
-            homeViewModel.switchBottomTab.postValue(3)
+            parentFragment?.findNavController()?.navigate(R.id.menu_explore)
         }
 
         with(binding.placeholder) {
