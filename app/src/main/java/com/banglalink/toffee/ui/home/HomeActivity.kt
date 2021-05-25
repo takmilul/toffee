@@ -1069,6 +1069,7 @@ class HomeActivity :
             val subMenu = binding.sideNavigation.menu.findItem(R.id.ic_menu_internet_packs)
             subMenu?.isVisible = false
         }
+        binding.sideNavigation.menu.findItem(R.id.menu_tv).isVisible = mPref.isAllTvChannelMenuEnabled
         if (!mPref.isVerifiedUser) {
             val logout = binding.sideNavigation.menu.findItem(R.id.menu_logout)
             logout?.isVisible = false

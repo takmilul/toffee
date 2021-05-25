@@ -270,7 +270,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     }
 
     fun defaultDataQuality(): Boolean {
-        return pref.getBoolean(PREF_DEFAULT_DATA_QUALITY_2, false)
+        return pref.getBoolean(PREF_DEFAULT_DATA_QUALITY_2, true)
     }
 
     fun setDefaultDataQuality(value: Boolean) {
@@ -296,6 +296,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var shouldOverrideHlsUrl: Boolean
         get() = pref.getBoolean(PREF_SHOULD_OVERRIDE, true)
         set(value) = pref.edit{ putBoolean(PREF_SHOULD_OVERRIDE, value) }
+    
+    var isAllTvChannelMenuEnabled: Boolean
+        get() = pref.getBoolean(PREF_ALL_TV_CHANNEL_MENU, false)
+        set(value) = pref.edit{ putBoolean(PREF_ALL_TV_CHANNEL_MENU, value) }
     
     fun setSessionTokenLifeSpanInMillis(tokenLifeSpanInMillis: Long) {
         pref.edit().putLong(PREF_DEVICE_TIME_IN_MILLISECONDS, System.currentTimeMillis()).apply()
@@ -503,6 +507,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         subscribeDbUrl = customerInfoLogin.subscribeDbUrl ?: ""
         subscriberStatusDbUrl = customerInfoLogin.subscriberStatusDbUrl ?: ""
         shareCountDbUrl = customerInfoLogin.shareCountDbUrl ?: ""
+        isAllTvChannelMenuEnabled = customerInfoLogin.isAllTvChannelsMenuEnabled
         isFireworkActive = customerInfoLogin.isFireworkActive ?: "true"
         mqttHost = customerInfoLogin.mqttUrl?.let { EncryptionUtil.encryptRequest(it) } ?: ""
         mqttIsActive = customerInfoLogin.mqttIsActive == 1
@@ -556,6 +561,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_SESSION_TOKEN_HEADER= "sessionTokenHeader"
         private const val PREF_HLS_OVERRIDE_URL= "hlsOverrideUrl"
         private const val PREF_SHOULD_OVERRIDE= "shouldOverride"
+        private const val PREF_ALL_TV_CHANNEL_MENU= "isAllTvChannelMenuEnabled"
         private const val PREF_DEVICE_TIME_IN_MILLISECONDS= "deviceTimeInMillis"
         private const val PREF_TOKEN_LIFE_SPAN= "tokenLifeSpan"
         private const val PREF_VIEW_COUNT_DB_URL= "viewCountDbUrl"
