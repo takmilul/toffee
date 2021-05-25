@@ -103,7 +103,7 @@
                     android:ellipsize="end"
                     android:fontFamily="@font/roboto_regular"
                     android:maxLines="1"
-                    android:text="Watched"
+                    android:text="@string/watched_text"
                     android:textColor="@color/fixed_second_text_color"
                     android:textSize="@dimen/default_text_size"
                     app:layout_constraintBottom_toBottomOf="@+id/reactIcon"

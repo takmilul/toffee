@@ -22,7 +22,7 @@
             android:layout_centerHorizontal="true"
             android:gravity="center_horizontal"
             android:textStyle="normal"
-            tools:text="Profile Updated"
+            tools:text="@string/profile_updated_text"
             android:fontFamily="@font/roboto_medium"
             android:textColor="@color/cardTitleColor"
             android:textSize="16sp"/>
@@ -36,7 +36,7 @@
             android:layout_gravity="center"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="30dp"
-            android:text="OK"
+            android:text="@string/ok_text"
             android:textAllCaps="true"
             android:clickable="true"
             android:textSize="16sp">
