@@ -120,7 +120,7 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
 
     private fun openCameraIntent() {
         val imageIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        if (imageIntent.resolveActivity(requireActivity().packageManager) != null) {
+        if (imageIntent.resolveActivity(requireContext().packageManager) != null) {
 
             val imageFile: File?
             try {

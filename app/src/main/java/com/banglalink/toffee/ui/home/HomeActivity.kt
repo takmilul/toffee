@@ -99,7 +99,6 @@ import org.xmlpull.v1.XmlPullParser
 import java.util.*
 import javax.inject.Inject
 
-
 const val ID_SUBSCRIPTIONS = 15
 const val ID_SUB_VIDEO = 16
 const val ID_SETTINGS = 17
@@ -185,10 +184,6 @@ class HomeActivity :
             mPref.mqttClientId = ""
             mPref.mqttUserName = ""
             mPref.mqttPassword = ""
-        }
-        
-        if (mPref.isVerifiedUser) {
-            initMqtt()
         }
         
         observe(viewModel.fragmentDetailsMutableLiveData) {
@@ -360,8 +355,8 @@ class HomeActivity :
         inAppUpdate()
         customCrashReport()
     }
-    private fun customCrashReport()
-    {
+    
+    private fun customCrashReport() {
         val runtime = Runtime.getRuntime()
         val maxMemory = runtime.maxMemory()
         FirebaseCrashlytics.getInstance().setCustomKey("heap_size", "$maxMemory")
@@ -675,6 +670,9 @@ class HomeActivity :
                 }
             )
         }
+        if (mPref.isVerifiedUser) {
+            initMqtt()
+        }
     }
 
     override fun resumeCastSession(info: ChannelInfo) {
@@ -687,6 +685,7 @@ class HomeActivity :
         if (Util.SDK_INT > 23) {
             binding.playerView.setPlayer(null)
         }
+        mqttService.destroy()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {

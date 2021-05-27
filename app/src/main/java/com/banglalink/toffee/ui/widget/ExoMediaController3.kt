@@ -29,6 +29,7 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.PlayerOverlayData
 import com.banglalink.toffee.ui.player.PlayerOverlayView
 import com.banglalink.toffee.ui.widget.DraggerLayout.OnPositionChangedListener
+import com.banglalink.toffee.util.BindingUtil
 import com.banglalink.toffee.util.UtilsKt
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
@@ -80,8 +81,8 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private var debugJob: Job? = null
 
-    @Inject
-    lateinit var mPref: SessionPreference
+    @Inject lateinit var bindingUtil: BindingUtil
+    @Inject lateinit var mPref: SessionPreference
 
     init {
         handler = MessageHandler()
@@ -243,7 +244,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     }
 
     fun showWifiOnlyMessage() {
-        binding.preview.setImageResource(mipmap.watch_wifi_only_msg)
+        bindingUtil.loadImageFromResource(binding.preview, drawable.watch_wifi_only_msg)
         hideControls(0)
         binding.preview.setOnClickListener(null)
     }
@@ -405,7 +406,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         }
         binding.videoOption.isEnabled = false
         binding.share.isEnabled = false
-        binding.preview.setImageResource(drawable.content_expired)
+        bindingUtil.loadImageFromResource(binding.preview, drawable.content_expired)
         hideControls(0)
         binding.preview.setOnClickListener(null)
     }

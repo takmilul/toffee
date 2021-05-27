@@ -76,7 +76,7 @@ class ToffeeMqttService @Inject constructor(
         }
     }
     
-    fun startScheduler(){
+    private fun startScheduler(){
         coroutineScope.launch {
             while (isActive) {
                 startDbBatchUpdate()
@@ -217,18 +217,21 @@ class ToffeeMqttService @Inject constructor(
     }
     
     fun destroy() {
-        client?.let { 
-            it.unsubscribe(REACTION_TOPIC)
-            it.unsubscribe(SHARE_COUNT_TOPIC)
-            it.unsubscribe(SUBSCRIPTION_TOPIC)
-            it.unregisterResources()
-            it.disconnect()
+        try {
+            client?.let {
+                if (it.isConnected) {
+                    it.unsubscribe(REACTION_TOPIC)
+                    it.unsubscribe(SHARE_COUNT_TOPIC)
+                    it.unsubscribe(SUBSCRIPTION_TOPIC)
+                    it.unregisterResources()
+                    it.disconnect()
+                }
+            }
+            client = null
+            Log.e("MQTT_", "destroyed")
         }
-        client = null
-
-        // TODO: Lock the list if using destroy
-        shareStatusList.clear()
-        reactionStatusList.clear()
-        subscriptionStatusList.clear()
+        catch (e: Exception) {
+            Log.e("MQTT_", "disconnectionError: $e")
+        }
     }
 }
