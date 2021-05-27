@@ -33,7 +33,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="24dp"
                     android:layout_marginTop="24dp"
-                    android:text="Select Playlist for This Video"
+                    android:text="@string/select_playlist_for_this_video_text"
                     android:fontFamily="@font/roboto_medium"
                     android:textColor="@color/cardTitleColor"
                     android:textSize="16sp"
@@ -103,7 +103,7 @@
                             android:id="@+id/doneButton"
                             style="@style/ButtonStyleSolidPink"
                             android:layout_marginStart="24dp"
-                            android:text="Done"
+                            android:text="@string/done_text"
                             android:minWidth="64dp"
                             android:layout_alignParentEnd="true"/>
                     </RelativeLayout>

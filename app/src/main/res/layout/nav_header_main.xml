@@ -37,7 +37,7 @@
             android:fontFamily="@font/roboto_medium"
             android:textSize="14sp"
             android:textStyle="normal"
-            android:text="Profile"
+            android:text="@string/profile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/side_menu_color_selector"

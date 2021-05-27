@@ -59,7 +59,7 @@
                     style="@style/ButtonStyleSolidPink"
                     android:layout_marginTop="16dp"
                     android:paddingHorizontal="16dp"
-                    android:text="Upload Video"
+                    android:text="@string/upload_video_text"
                     app:icon="@drawable/ic_upload_menu_plus"
                     app:iconPadding="8dp" />
     
@@ -68,7 +68,7 @@
                     style="@style/ViewAllTextView"
                     android:layout_margin="12dp"
                     android:padding="4dp"
-                    android:text="Creators Policy"
+                    android:text="@string/Creators_policy_page_title"
                     app:drawableEndCompat="@drawable/ic_right_arrow_accent_2" />
     
                 <androidx.appcompat.widget.AppCompatImageView
@@ -86,7 +86,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:fontFamily="@font/roboto_regular"
-                    android:text="No item found"
+                    android:text="@string/no_item_found_text"
                     android:textColor="@color/fixed_second_text_color"
                     android:textSize="16sp"
                     tools:text="No item found" />

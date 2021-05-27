@@ -18,7 +18,7 @@
         <TextView
             android:id="@+id/titleTextView"
             style="@style/SectionTitleTextStyle"
-            android:text="Subscribed Channels"
+            android:text="@string/subscribed_channel_text"
             android:layout_marginTop="10dp"
             android:visibility="gone"
             app:layout_constraintTop_toTopOf="parent"
