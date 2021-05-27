@@ -251,7 +251,8 @@
                 android:padding="8dp"
                 android:src="@drawable/ic_screen_rotate"
                 app:layout_constraintBottom_toBottomOf="@+id/minimize"
-                app:layout_constraintEnd_toStartOf="@+id/minimize" />
+                app:layout_constraintEnd_toStartOf="@+id/minimize"
+                app:layout_constraintTop_toTopOf="@+id/minimize" />
 
             <ImageView
                 android:id="@+id/minimize"
