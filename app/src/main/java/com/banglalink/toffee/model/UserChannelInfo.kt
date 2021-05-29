@@ -36,6 +36,6 @@ data class UserChannelInfo(
     @SerializedName("user_id")
     val userId: Int = 0,
 ) {
-    fun getFormatedSubscriberCount() = Utils.getFormattedViewsText(subscriberCount.toString())
+    fun formattedSubscriberCount(): String = Utils.getFormattedViewsText(subscriberCount.toString())
     fun formattedCreateTime(): String = if(!created_at.isNullOrBlank()) Utils.getDateDiffInDayOrHourOrMinute(Utils.getDate(created_at).time) else "0"
 }
