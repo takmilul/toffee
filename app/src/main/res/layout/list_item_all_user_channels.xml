@@ -89,7 +89,7 @@
             android:fontFamily="@font/roboto_regular"
             android:textSize="@dimen/default_text_size"
             android:textColor="@color/fixed_second_text_color"
-            android:text="@{String.valueOf(data.subscriberCount)}"
+            android:text="@{data.formattedSubscriberCount()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
