@@ -14,7 +14,7 @@
             android:id="@+id/tv_sub_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TV Subscriptions"
+            android:text="@string/tv_subscriptions_text"
             style="@style/SectionTitleTextStyle"
             android:layout_marginTop="10dp"
             android:layout_marginStart="16dp"

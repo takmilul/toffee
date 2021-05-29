@@ -22,7 +22,7 @@
         android:id="@+id/tv_sub_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TV Subscriptions"
+        android:text="@string/tv_subscriptions_text"
         android:textSize="20sp"
         android:layout_marginTop="18dp"
         android:layout_marginStart="16dp"

@@ -23,12 +23,12 @@ const val PREF_NAME_IP_TV= "IP_TV"
 @SuppressLint("HardwareIds")
 class SessionPreference(private val pref: SharedPreferences, private val context: Context) {
 
-    val viewCountDbUrlLiveData = MutableLiveData<String>()
-    val reactionDbUrlLiveData = MutableLiveData<String>()
-    val reactionStatusDbUrlLiveData = MutableLiveData<String>()
-    val subscribeDbUrlLiveData = MutableLiveData<String>()
-    val subscriberStatusDbUrlLiveData = MutableLiveData<String>()
-    val shareCountDbUrlLiveData = MutableLiveData<String>()
+    val viewCountDbUrlLiveData = SingleLiveEvent<String>()
+    val reactionDbUrlLiveData = SingleLiveEvent<String>()
+    val reactionStatusDbUrlLiveData = SingleLiveEvent<String>()
+    val subscribeDbUrlLiveData = SingleLiveEvent<String>()
+    val subscriberStatusDbUrlLiveData = SingleLiveEvent<String>()
+    val shareCountDbUrlLiveData = SingleLiveEvent<String>()
     val sessionTokenLiveData = MutableLiveData<String>()
     val profileImageUrlLiveData = MutableLiveData<String>()
     val customerNameLiveData = MutableLiveData<String>()

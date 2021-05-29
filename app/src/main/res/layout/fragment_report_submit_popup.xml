@@ -30,7 +30,7 @@
                     android:layout_marginHorizontal="24dp"
                     android:layout_marginTop="24dp"
                     android:fontFamily="@font/roboto_regular"
-                    android:text="You're Reporting for"
+                    android:text="@string/you_are_reporting_for_text"
                     android:textColor="@color/cardTitleColor"
                     android:textSize="14sp"
                     app:layout_constraintBottom_toTopOf="@id/reportType"
@@ -70,7 +70,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="20dp"
                     android:fontFamily="@font/roboto_regular"
-                    android:text="Timestamp Selected*"
+                    android:text="@string/timestamp_selected"
                     android:textColor="@color/cardTitleColor"
                     android:textSize="14sp"
                     app:layout_constraintEnd_toStartOf="@+id/reportType"
@@ -195,7 +195,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="Timestamp required"
+                    android:text="@string/timestamp_error_text"
                     android:textColor="@color/pink_to_accent_color"
                     android:textSize="12sp"
                     android:visibility="gone"
@@ -210,7 +210,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:fontFamily="@font/roboto_regular"
-                    android:text="Additional Details"
+                    android:text="@string/additional_details_text"
                     android:textColor="@color/cardTitleColor"
                     android:textSize="14sp"
                     app:layout_constraintEnd_toStartOf="@+id/reportType"
@@ -228,7 +228,7 @@
                     android:textSize="14sp"
                     android:fontFamily="@font/roboto_regular"
                     android:gravity="top|start"
-                    android:hint="Description..."
+                    android:hint="@string/description_text"
                     android:inputType="textMultiLine|textCapSentences"
                     android:lines="8"
                     android:maxLength="2000"
@@ -262,7 +262,7 @@
                             android:minWidth="0dp"
                             android:paddingLeft="30dp"
                             android:paddingRight="30dp"
-                            android:text="Back"
+                            android:text="@string/txt_back"
                             app:iconSize="16dp"
                             app:iconTint="@color/main_text_color"
                             app:strokeColor="@color/main_text_color" />
@@ -275,7 +275,7 @@
                             android:minWidth="64dp"
                             android:paddingLeft="30dp"
                             android:paddingRight="30dp"
-                            android:text="Report" />
+                            android:text="@string/report_text" />
                     </RelativeLayout>
 
 

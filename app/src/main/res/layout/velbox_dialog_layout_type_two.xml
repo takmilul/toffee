@@ -52,7 +52,7 @@
         android:fontFamily="@font/roboto_regular"
         android:gravity="center_horizontal"
         android:textColor="@color/cardTitleColor"
-        android:text="You still have 25 days of subscription left. Unsubscribe anyway?"
+        android:text="@string/you_still_have_25_days_to_subscription_left_text"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/dialog_buttons"
         app:layout_constraintEnd_toEndOf="parent"
