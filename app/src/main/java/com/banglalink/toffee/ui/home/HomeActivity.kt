@@ -1335,8 +1335,13 @@ class HomeActivity :
 
     override fun onFullScreenButtonPressed(): Boolean {
         super.onFullScreenButtonPressed()
-        if(!binding.playerView.isAutoRotationEnabled) {
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED
+        requestedOrientation =
+        if(!binding.playerView.isAutoRotationEnabled
+            || binding.playerView.isFullScreen
+            || binding.playerView.isVideoPortrait) {
+            ActivityInfo.SCREEN_ORIENTATION_LOCKED
+        } else {
+            ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
         }
         updateFullScreenState()
         return true
