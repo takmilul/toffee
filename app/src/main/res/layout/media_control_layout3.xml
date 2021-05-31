@@ -4,15 +4,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <FrameLayout
-        android:id="@+id/root"
+        android:id="@+id/rootLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:focusableInTouchMode="false">
 
-        <FrameLayout
+        <com.banglalink.toffee.ui.widget.AspectRatioFrameLayout
             android:id="@+id/playerContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_gravity="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -30,7 +31,7 @@
                 android:layout_height="match_parent"
                 android:src="@null" />
 
-        </FrameLayout>
+        </com.banglalink.toffee.ui.widget.AspectRatioFrameLayout>
 
         <View
             android:id="@+id/controller_bg"
@@ -251,7 +252,8 @@
                 android:padding="8dp"
                 android:src="@drawable/ic_screen_rotate"
                 app:layout_constraintBottom_toBottomOf="@+id/minimize"
-                app:layout_constraintEnd_toStartOf="@+id/minimize" />
+                app:layout_constraintEnd_toStartOf="@+id/minimize"
+                app:layout_constraintTop_toTopOf="@+id/minimize" />
 
             <ImageView
                 android:id="@+id/minimize"

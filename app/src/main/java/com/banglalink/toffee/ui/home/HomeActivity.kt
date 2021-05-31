@@ -34,6 +34,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -555,6 +556,31 @@ class HomeActivity :
     fun getNavController() = navController
     fun getHomeViewModel() = viewModel
 
+    private val destinationChangeListener =
+        NavController.OnDestinationChangedListener { controller, _, _ ->
+            supportFragmentManager.popBackStack(R.id.content_viewer, POP_BACK_STACK_INCLUSIVE)
+
+            if(binding.draggableView.isMaximized()) {
+                minimizePlayer()
+            }
+            closeSearchBarIfOpen()
+
+            // For firebase screenview logging
+            if (controller.currentDestination is FragmentNavigator.Destination) {
+                val currentFragmentClassName =
+                    (controller.currentDestination as FragmentNavigator.Destination)
+                        .className
+                        .substringAfterLast(".")
+
+                val bundle = Bundle()
+                bundle.putString(FirebaseAnalytics.Param.SCREEN_CLASS, currentFragmentClassName)
+                FirebaseAnalytics.getInstance(this@HomeActivity)
+                    .logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle)
+            }
+
+            binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
+        }
+
     private fun setupNavController() {
         Log.e("NAV", "SetupNavController")
 
@@ -596,29 +622,7 @@ class HomeActivity :
             drawerHelper.handleMenuItemById(it)
         }
 
-        navController.addOnDestinationChangedListener { controller, destination, arguments ->
-            supportFragmentManager.popBackStack(R.id.content_viewer, POP_BACK_STACK_INCLUSIVE)
-
-            if(binding.draggableView.isMaximized()) {
-                minimizePlayer()
-            }
-            closeSearchBarIfOpen()
-            ///
-            if (controller.currentDestination is FragmentNavigator.Destination)
-            {
-                val currentFragmentClassName =
-                    (controller.currentDestination as FragmentNavigator.Destination)
-                        .className
-                        .substringAfterLast(".")
-
-                val bundle = Bundle()
-                bundle.putString(FirebaseAnalytics.Param.SCREEN_CLASS, currentFragmentClassName)
-                FirebaseAnalytics.getInstance(this)
-                    .logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle)
-            }
-
-            binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
-        }
+        navController.addOnDestinationChangedListener(destinationChangeListener)
 
 //        binding.sideNavigation.setNavigationItemSelectedListener {
 //            binding.drawerLayout.closeDrawers()
@@ -1273,6 +1277,7 @@ class HomeActivity :
     
     override fun onDestroy() {
 //        mqttService.destroy()
+        navController.removeOnDestinationChangedListener(destinationChangeListener)
         appUpdateManager.unregisterListener(appUpdateListener)
         super.onDestroy()
     }
@@ -1335,8 +1340,13 @@ class HomeActivity :
 
     override fun onFullScreenButtonPressed(): Boolean {
         super.onFullScreenButtonPressed()
-        if(!binding.playerView.isAutoRotationEnabled) {
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED
+        requestedOrientation =
+        if(!binding.playerView.isAutoRotationEnabled
+            || binding.playerView.isFullScreen
+            || binding.playerView.isVideoPortrait) {
+            ActivityInfo.SCREEN_ORIENTATION_LOCKED
+        } else {
+            ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
         }
         updateFullScreenState()
         return true

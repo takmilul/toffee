@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.provider.OpenableColumns
+import android.provider.Settings
 import android.util.Base64
 import android.util.Log
 import android.view.inputmethod.InputMethodManager
@@ -200,6 +201,9 @@ object UtilsKt {
         val maxHeight = maxWidth * 9 / 16
         return Point(maxWidth, maxHeight)
     }
+
+    fun isSystemRotationOn(ctx: Context) = Settings.System.getInt(ctx.contentResolver,
+        Settings.System.ACCELEROMETER_ROTATION, 0) == 1
 }
 
 
