@@ -136,7 +136,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         setupRotationObserver()
-        updateRotationStatus(UtilsKt.isSystemRotationOn(context))
+        updateRotationStatus(UtilsKt.isSystemRotationOn(context), false)
     }
 
     private fun setupOverlay() {
@@ -469,12 +469,14 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         }
     }
 
-    fun updateRotationStatus(status: Boolean) {
+    fun updateRotationStatus(status: Boolean, invokeListener: Boolean = true) {
         binding.rotation.visibility = if(status && !isVideoPortrait) View.VISIBLE else View.GONE
         isAutoRotationEnabled = status
         binding.rotation.setImageResource(if (!isAutoRotationEnabled) mipmap.rotation_off else drawable.ic_screen_rotate)
-        onPlayerControllerChangedListeners.forEach {
-            it.onRotationLock(isAutoRotationEnabled)
+        if(invokeListener) {
+            onPlayerControllerChangedListeners.forEach {
+                it.onRotationLock(isAutoRotationEnabled)
+            }
         }
     }
 
