@@ -24,15 +24,20 @@ class DownloadSubscriptionCountDb(
 
     suspend fun execute(context: Context, url: String) {
         withContext(Dispatchers.IO) {
-            val file = DownloaderGeneric(context, dbApi).downloadFile(url)
-            if(processFile(file)) {
-                updateDb()
+            try {
+                val file = DownloaderGeneric(context, dbApi).downloadFile(url)
+                if(processFile(file)) {
+                    updateDb()
+                }
+            }
+            catch (e: Exception) {
+                ToffeeAnalytics.logApiError("", e.message)
             }
         }
     }
 
     private fun processFile(file: File?): Boolean {
-        if (file == null) {
+        if (file == null || !file.exists()) {
             return false
         }
         ToffeeAnalytics.logBreadCrumb("Processing subscription count file")
