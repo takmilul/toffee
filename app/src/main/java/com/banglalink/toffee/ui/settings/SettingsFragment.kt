@@ -79,6 +79,7 @@ class SettingsFragment : BaseFragment() {
         binding.watchOnlyWifiToggleBtn.setOnCheckedChangeListener { _, _ -> handleWatchOnlyWifiToggleBtn() }
         binding.notificationSwitch.setOnCheckedChangeListener { _, _ -> handleNotificationChange() }
         binding.prefFloatingWindow.setOnCheckedChangeListener { _, _ -> handleFloatingWindowPrefChange() }
+        binding.prefAspectRatio.setOnCheckedChangeListener { _, _ -> handleAspectRatioPrefChange() }
         initializeSettings()
 
         setPrefItemListener()
@@ -92,6 +93,7 @@ class SettingsFragment : BaseFragment() {
         binding.watchWifiOnly = mPref.watchOnlyWifi()
         binding.enableNotification = mPref.isNotificationEnabled()
         binding.enableFloatingWindow = mPref.isEnableFloatingWindow
+        binding.keepAspectRatio = mPref.keepAspectRatio
         binding.cellularProfileDescTxt.text =
             getString(cellularProfileBWRequiredTxt[mPref.cellularProfileStatus - 1])
         binding.cellularProfileStatusTv.text =getString(R.string.txt_video_resolution, cellularProfileRes[mPref.cellularProfileStatus - 1])
@@ -110,6 +112,11 @@ class SettingsFragment : BaseFragment() {
     private fun handleFloatingWindowPrefChange() {
         mPref.isEnableFloatingWindow = binding.prefFloatingWindow.isChecked
         binding.enableFloatingWindow = mPref.isEnableFloatingWindow
+    }
+
+    private fun handleAspectRatioPrefChange() {
+        mPref.keepAspectRatio = binding.prefAspectRatio.isChecked
+        binding.keepAspectRatio = mPref.keepAspectRatio
     }
 
     private fun handleDefaultDataQualityToggleBtn() {

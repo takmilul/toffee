@@ -326,6 +326,7 @@
     <string name="mobile_data_profile_text">Mobile Data Profile</string>
     <string name="need_1mbps_connections">Need 1 Mbps Connection</string>
     <string name="floating_player_text">Floating Player</string>
+    <string name="keep_aspect_ratio">Keep Video Aspect Ratio</string>
     <string name="clear_activities_text">Clear Activities</string>
     <string name="subscribed_channel_text">Subscribed Channels</string>
     <string name="watched_text">Watched</string>

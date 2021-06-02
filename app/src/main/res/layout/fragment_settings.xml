@@ -23,6 +23,10 @@
         <variable
             name="enableFloatingWindow"
             type="boolean" />
+
+        <variable
+            name="keepAspectRatio"
+            type="boolean" />
         <!--<variable
             name="viewModel"
             type="com.banglalink.toffee.ui.settings.SettingsViewModel" />-->
@@ -291,6 +295,40 @@
                 android:layout_height="1dp"
                 android:layout_marginTop="16dp"
                 android:background="@color/colorSettingsDivider" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                style="@style/PrefItemStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical"
+                    app:srcCompat="@drawable/ic_background_playback"
+                    android:contentDescription="@string/keep_aspect_ratio" />
+
+                <TextView
+                    style="@style/PrefItemTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/keep_aspect_ratio" />
+
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/prefAspectRatio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="@null"
+                    android:button="@drawable/custom_checkbox"
+                    android:checked="@{keepAspectRatio}"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 style="@style/PrefItemStyle"
