@@ -740,7 +740,10 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
 
     private val scaleType: Int
         get() {
-            return if(isFullScreen)
+            if(!mPref.keepAspectRatio && maxBound == minBound) {
+                return AspectRatioFrameLayout.RESIZE_MODE_FILL
+            }
+            return if (isFullScreen)
                 AspectRatioFrameLayout.RESIZE_MODE_FIT
             else
                 AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH

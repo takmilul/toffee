@@ -379,9 +379,9 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             }
         }
     
-    var keepVideoAspectRatio: Boolean
-        get() = pref.getBoolean(PREF_KEEP_ASPECT_RATIO, true)
-        set(value) = pref.edit{ putBoolean(PREF_KEEP_ASPECT_RATIO, value) }
+    var keepAspectRatio: Boolean
+        get() = !pref.getBoolean(PREF_KEEP_ASPECT_RATIO, true)
+        set(value) = pref.edit{ putBoolean(PREF_KEEP_ASPECT_RATIO, !value) }
 
     var uploadStatus: Int
         get() = pref.getInt(PREF_TOFFEE_UPLOAD_STATUS, -1)
