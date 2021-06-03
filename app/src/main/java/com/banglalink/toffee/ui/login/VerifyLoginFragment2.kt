@@ -84,6 +84,7 @@ class VerifyLoginFragment2 : ChildDialogFragment() {
                     else {
                         findNavController().navigate(R.id.userInterestFragment2)
                     }
+                    viewModel.sendLoginLogData()
                 }
                 is Resource.Failure -> {
                     ToffeeAnalytics.logApiError("confirmCode",it.error.msg)
@@ -95,7 +96,6 @@ class VerifyLoginFragment2 : ChildDialogFragment() {
     
     private fun reloadContent() {
         closeDialog()
-//        requireActivity().overridePendingTransition(0, 0)
         requireActivity().recreate()
     }
 
