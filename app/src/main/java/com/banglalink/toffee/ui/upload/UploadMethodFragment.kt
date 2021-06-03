@@ -2,6 +2,7 @@ package com.banglalink.toffee.ui.upload
 
 import android.Manifest
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -97,6 +98,14 @@ class UploadMethodFragment : DialogFragment() {
                 ToffeeAnalytics.logBreadCrumb("Activity Not Found - filesystem(gallery)")
                 requireContext().showToast(getString(R.string.no_activity_msg))
             }
+            catch (e: ActivityNotFoundException){
+                ToffeeAnalytics.logBreadCrumb("Activity Not Found - filesystem(gallery)")
+                requireContext().showToast(getString(R.string.no_activity_msg))
+            }
+            catch (e: Exception) {
+                ToffeeAnalytics.logBreadCrumb(e.message ?: "")
+                requireContext().showToast(getString(R.string.no_activity_msg))
+            }
         }
     }
 
@@ -113,6 +122,14 @@ class UploadMethodFragment : DialogFragment() {
             }
             catch (e: NoActivityException){
                 ToffeeAnalytics.logBreadCrumb("Activity Not Found - filesystem(camera)")
+                requireContext().showToast(getString(R.string.no_activity_msg))
+            }
+            catch (e: ActivityNotFoundException){
+                ToffeeAnalytics.logBreadCrumb("Activity Not Found - filesystem(camera)")
+                requireContext().showToast(getString(R.string.no_activity_msg))
+            }
+            catch (e: Exception) {
+                ToffeeAnalytics.logBreadCrumb(e.message ?: "")
                 requireContext().showToast(getString(R.string.no_activity_msg))
             }
         }

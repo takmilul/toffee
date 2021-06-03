@@ -86,7 +86,7 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
                 requireContext().showToast(getString(R.string.no_activity_msg))
             }
             catch (e: Exception) {
-                ToffeeAnalytics.logBreadCrumb("Activity Not Found - filesystem(gallery)")
+                ToffeeAnalytics.logBreadCrumb(e.message ?: "")
                 requireContext().showToast(getString(R.string.no_activity_msg))
             }
         }
@@ -108,11 +108,11 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
                 requireContext().showToast(getString(R.string.no_activity_msg))
             }
             catch (e: ActivityNotFoundException) {
-                ToffeeAnalytics.logBreadCrumb("Activity Not Found - filesystem(gallery)")
+                ToffeeAnalytics.logBreadCrumb("Activity Not Found - filesystem(camera)")
                 requireContext().showToast(getString(R.string.no_activity_msg))
             }
             catch (e: Exception) {
-                ToffeeAnalytics.logBreadCrumb("Activity Not Found - filesystem(gallery)")
+                ToffeeAnalytics.logBreadCrumb(e.message ?: "")
                 requireContext().showToast(getString(R.string.no_activity_msg))
             }
         }
