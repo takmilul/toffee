@@ -128,8 +128,9 @@ class ReportSubmitPopupFragment:DialogFragment(),View.OnClickListener {
             override fun afterTextChanged(s: Editable?) {
                 val data = s.toString()
                 val lenght = data.length
+
                 if (lenght == 2) {
-                    if (data.toInt() > 5) {
+                    if (data.toIntOrNull()?:0 > 5) {
                         binding.hourEt.setText("05")
                     }
                     binding.minuteEt.requestFocus()
@@ -150,7 +151,7 @@ class ReportSubmitPopupFragment:DialogFragment(),View.OnClickListener {
                 val data = s.toString()
                 val lenght = data.length
                 if (lenght == 2) {
-                    if (data.toInt() > 59) binding.minuteEt.setText("59")
+                    if (data.toIntOrNull()?:0 > 59) binding.minuteEt.setText("59")
                     binding.secondsEt.requestFocus()
                     if (binding.secondsEt.text.length == 2) binding.secondsEt.setSelection(2)
                 } else if (lenght == 0) {
@@ -176,7 +177,7 @@ class ReportSubmitPopupFragment:DialogFragment(),View.OnClickListener {
                 if (lenght == 0) {
                     binding.minuteEt.requestFocus()
                     if (binding.minuteEt.text.length == 2) binding.minuteEt.setSelection(2)
-                } else if (data.toInt() > 59) {
+                } else if (data.toIntOrNull()?:0 > 59) {
                     binding.secondsEt.setText("59")
                     binding.secondsEt.setSelection(2)
                 }
@@ -198,6 +199,16 @@ class ReportSubmitPopupFragment:DialogFragment(),View.OnClickListener {
         val hour= binding.hourEt.text
         val minute= binding.minuteEt.text
         val second= binding.secondsEt.text
+
+        if (hour.contains(".") || minute.contains("." ,second.contains(".")))
+        {
+            binding.errorTimestampTv.let {
+                it.show()
+                it.setText("*Select right time format")
+            }
+            return
+        }
+
          timestamp ="${if(hour.isNullOrBlank()) "00" else if (minute.length==1) "0$hour" else hour}:" +
                 "${if(minute.isNullOrBlank()) "00" else if (minute.length==1) "0$minute" else minute}:" +
                 "${if(second.isNullOrBlank()) "00" else if (minute.length==1) "0$second" else second}"
@@ -222,7 +233,7 @@ class ReportSubmitPopupFragment:DialogFragment(),View.OnClickListener {
         else{
             binding.errorTimestampTv.let {
                 it.show()
-                it.setText("*$timestamp is greater then $videoDuration")
+                it.setText("*$timestamp is greater than $videoDuration")
             }
         }
 

@@ -26,7 +26,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="16dp">
 
                 <ImageView
                     android:id="@+id/profile_iv"
@@ -59,7 +59,7 @@
                     tools:text="John Doe" />
 
                 <TextView
-                    android:id="@+id/mobile_tv"
+                    android:id="@+id/address_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
@@ -68,12 +68,29 @@
                     android:fontFamily="@font/roboto_regular"
                     android:gravity="center_vertical"
                     android:padding="10dp"
-                    android:text="@{TextUtils.isEmpty(data.phoneNo)?@string/add_your_phone:data.phoneNo}"
-                    android:textColor="@{TextUtils.isEmpty(data.phoneNo)?@color/fixed_second_text_color:@color/main_text_color}"
+                    android:text="@{TextUtils.isEmpty(data.address)?@string/add_your_address:data.address}"
+                    android:textColor="@{TextUtils.isEmpty(data.address)?@color/fixed_second_text_color:@color/main_text_color}"
                     android:textSize="14sp"
                     android:textStyle="normal"
-                    app:drawableStartCompat="@drawable/ic_phone"
-                    tools:text="+8801xxxxxxxxx" />
+                    app:drawableStartCompat="@drawable/ic_location"
+                    tools:text="Address" />
+
+                <TextView
+                    android:id="@+id/dateOfBirth_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:background="@android:color/transparent"
+                    android:drawablePadding="13dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center_vertical"
+                    android:padding="10dp"
+                    android:text="10/10/2000"
+                    android:textColor="@{TextUtils.isEmpty(data.address)?@color/fixed_second_text_color:@color/main_text_color}"
+                    android:textSize="14sp"
+                    android:textStyle="normal"
+                    app:drawableStartCompat="@drawable/ic_date_icon"
+                    tools:text="10/10/2000" />
 
                 <TextView
                     android:id="@+id/email_tv"
@@ -92,8 +109,9 @@
                     app:drawableStartCompat="@drawable/ic_email"
                     tools:text="user@gmail.com" />
 
+
                 <TextView
-                    android:id="@+id/address_tv"
+                    android:id="@+id/nid_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
@@ -102,12 +120,55 @@
                     android:fontFamily="@font/roboto_regular"
                     android:gravity="center_vertical"
                     android:padding="10dp"
-                    android:text="@{TextUtils.isEmpty(data.address)?@string/add_your_address:data.address}"
-                    android:textColor="@{TextUtils.isEmpty(data.address)?@color/fixed_second_text_color:@color/main_text_color}"
+                    android:text="01234567890123456"
+                    android:textColor="@{TextUtils.isEmpty(data.email)?@color/fixed_second_text_color:@color/main_text_color}"
                     android:textSize="14sp"
                     android:textStyle="normal"
-                    app:drawableStartCompat="@drawable/ic_location"
-                    tools:text="Address" />
+                    app:drawableStartCompat="@drawable/ic_nid_icon"
+                    tools:text="01234567890123456" />
+
+
+                <TextView
+                    android:id="@+id/mobile_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:background="@android:color/transparent"
+                    android:drawablePadding="13dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center_vertical"
+                    android:padding="10dp"
+                    android:text="@{TextUtils.isEmpty(data.phoneNo)?@string/add_your_phone:data.phoneNo}"
+                    android:textColor="@{TextUtils.isEmpty(data.phoneNo)?@color/fixed_second_text_color:@color/main_text_color}"
+                    android:textSize="14sp"
+                    android:textStyle="normal"
+                    app:drawableStartCompat="@drawable/ic_phone"
+                    tools:text="+8801xxxxxxxxx" />
+
+                <TextView
+                    android:id="@+id/interest_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:background="@android:color/transparent"
+                    android:drawablePadding="13dp"
+                    android:fontFamily="@font/roboto_regular"
+                    android:gravity="center_vertical"
+                    android:padding="10dp"
+                    android:text="@string/interest_text"
+                    android:textColor="@color/main_text_color"
+                    android:textSize="14sp"
+                    android:textStyle="normal"/>
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/interestChipGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    app:singleSelection="false"
+                    app:singleLine="false"
+                    app:chipSpacingHorizontal="16dp"
+                    />
 
                 <Button
                     android:id="@+id/edit_profile"

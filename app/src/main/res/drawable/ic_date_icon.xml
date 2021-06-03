@@ -1,0 +1,9 @@
+<vector android:height="23dp"
+    android:viewportHeight="79.294"
+    android:viewportWidth="80"
+    android:width="23dp" xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:fillColor="@color/cardTitleColor" android:pathData="M61.5,8.673L61.5,3.004a3,3 0,1 0,-6 0L55.5,8.004h-12.5L43,3.004a3,3 0,1 0,-6 0L37,8.004h-12.5L24.5,3.004a3,3 0,1 0,-6 0L18.5,8.673a24.181,24.181 0,0 0,-18.5 23.47L0,55.151A24.17,24.17 0,0 0,24.143 79.294h31.715a24.169,24.169 0,0 0,24.142 -24.143L80,32.143A24.18,24.18 0,0 0,61.5 8.673ZM74,55.151A18.163,18.163 0,0 1,55.858 73.294L24.143,73.294a18.164,18.164 0,0 1,-18.143 -18.143L6,32.143a18.168,18.168 0,0 1,12.5 -17.233L18.5,21.004a3,3 0,1 0,6 0L24.5,14.004h12.5v7a3,3 0,1 0,6 0L43,14.004h12.5v7a3,3 0,1 0,6 0v-6.09a18.167,18.167 0,0 1,12.5 17.233Z"/>
+    <path android:fillColor="@color/cardTitleColor" android:pathData="M21.5,37.161a7,7 0,1 0,7 7A7.008,7.008 0,0 0,21.5 37.161ZM21.5,45.161a1,1 0,1 1,1 -1A1,1 0,0 1,21.5 45.161Z"/>
+    <path android:fillColor="@color/cardTitleColor" android:pathData="M58.5,37.161a7,7 0,1 0,7 7A7.008,7.008 0,0 0,58.5 37.161ZM58.5,45.161a1,1 0,1 1,1 -1A1,1 0,0 1,58.5 45.161Z"/>
+    <path android:fillColor="@color/cardTitleColor" android:pathData="M39.763,37.161a7,7 0,1 0,7 7A7.008,7.008 0,0 0,39.763 37.161ZM39.763,45.161a1,1 0,1 1,1 -1A1,1 0,0 1,39.763 45.161Z"/>
+</vector>

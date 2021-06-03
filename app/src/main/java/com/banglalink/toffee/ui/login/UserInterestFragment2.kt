@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.login
 
 import android.content.res.ColorStateList
+import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,6 +13,7 @@ import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.AlertDialogUserInterestBinding
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.ui.common.ChildDialogFragment
@@ -69,10 +71,11 @@ class UserInterestFragment2 : ChildDialogFragment() {
         progressDialog.show()
         observe(viewModel.categories){
             if(it.isNotEmpty()){
+                val width = (binding.root.measuredWidth - 48.px) / 3
                 val categoryList = it.sortedBy { category -> category.id }
                 categoryList.let { list ->
                     list.forEachIndexed { _, category ->
-                        val newChip = addChip(category.categoryName).apply {
+                        val newChip = addChip(category.categoryName,width).apply {
                             tag = category.categoryName
                         }
                         binding.interestChipGroup.addView(newChip)
@@ -95,13 +98,14 @@ class UserInterestFragment2 : ChildDialogFragment() {
         }
     }
     
-    private fun addChip(name: String): Chip {
+    private fun addChip(name: String,width:Int): Chip {
         val intColor = ContextCompat.getColor(requireContext(), R.color.interest_chip_color)
         val selectedTextColor = ContextCompat.getColor(requireContext(), R.color.fixedStrokeColor)
         val unSelectedTextColor = ContextCompat.getColor(requireContext(), R.color.cardTitleColor)
         val chipColor = createStateColor(intColor)
         val strokeColor = createStateColor(intColor, unSelectedTextColor)
         val chip = layoutInflater.inflate(R.layout.interest_chip_layout, binding.interestChipGroup, false) as Chip
+        chip.layoutParams.width = width
         chip.text = name
         chip.id = View.generateViewId()
         chip.chipBackgroundColor = chipColor
