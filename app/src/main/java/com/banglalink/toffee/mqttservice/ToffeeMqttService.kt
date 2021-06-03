@@ -122,6 +122,7 @@ class ToffeeMqttService @Inject constructor(
             isCleanSession = false
             isAutomaticReconnect = true
             connectionTimeout = 30
+            keepAliveInterval = 300
             socketFactory = SSLSocketFactory.getDefault()
             this.userName = userName
             this.password = password.toCharArray()
@@ -150,9 +151,7 @@ class ToffeeMqttService @Inject constructor(
                 isDeleteOldestMessages = false
             }
             client?.setBufferOpts(disconnectedBufferOptions)
-            client?.subscribe(REACTION_TOPIC, 2, null, this@ToffeeMqttService)
-            client?.subscribe(SHARE_COUNT_TOPIC, 2, null, this@ToffeeMqttService)
-            client?.subscribe(SUBSCRIPTION_TOPIC, 2, null, this@ToffeeMqttService)
+            client?.subscribe(arrayOf(REACTION_TOPIC, SHARE_COUNT_TOPIC, SUBSCRIPTION_TOPIC), intArrayOf(2,2,2), null, this@ToffeeMqttService)
         }
         else {
             gson = gson ?: Gson()
@@ -163,7 +162,7 @@ class ToffeeMqttService @Inject constructor(
     override fun messageArrived(topic: String?, message: MqttMessage?) {
         if(message != null) {
             val jsonString = String(message.payload)
-            
+            Log.e("MQTT_", "messageArrived: $message")
             try {
                 when(topic) {
                     REACTION_TOPIC -> {
@@ -209,6 +208,7 @@ class ToffeeMqttService @Inject constructor(
     }
     
     override fun onFailure(token: IMqttToken?, error: Throwable?) {
+        client = null
         Log.e("MQTT_", "onFailure: ${error?.message}")
     }
     
@@ -220,12 +220,11 @@ class ToffeeMqttService @Inject constructor(
         try {
             client?.let {
                 if (it.isConnected) {
-                    it.unsubscribe(REACTION_TOPIC)
-                    it.unsubscribe(SHARE_COUNT_TOPIC)
-                    it.unsubscribe(SUBSCRIPTION_TOPIC)
-                    it.unregisterResources()
-                    it.disconnect()
+                    it.unsubscribe(arrayOf(REACTION_TOPIC, SHARE_COUNT_TOPIC, SUBSCRIPTION_TOPIC))
                 }
+                it.unregisterResources()
+                it.close()
+                it.disconnect(0)
             }
             client = null
             Log.e("MQTT_", "destroyed")

@@ -1,19 +1,14 @@
 package com.banglalink.toffee.usecase
 
 import android.content.Context
-import android.os.Environment
-import android.util.Log
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.data.network.retrofit.DbApi
-import com.banglalink.toffee.data.database.dao.ViewCountDAO
 import com.banglalink.toffee.data.database.entities.ViewCount
+import com.banglalink.toffee.data.network.retrofit.DbApi
 import com.banglalink.toffee.data.repository.ViewCountRepository
 import com.google.common.io.Files
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.io.FileOutputStream
-import java.io.InputStream
 import java.nio.ByteBuffer
 import java.util.zip.CRC32
 
@@ -28,22 +23,27 @@ class DownloadViewCountDb(
 
     suspend fun execute(context: Context, url: String){
         withContext(Dispatchers.IO) {
-            val file = DownloaderGeneric(context, dbApi).downloadFile(url)
-            if(processFile(file)) {
-                updateDb()
+            try {
+                val file = DownloaderGeneric(context, dbApi).downloadFile(url)
+                if(processFile(file)) {
+                    updateDb()
+                }
+            }
+            catch (e: Exception) {
+                ToffeeAnalytics.logApiError("", e.message)
             }
         }
     }
 
     private fun processFile(file: File?):Boolean {
-        if(file == null){
+        if(file == null || !file.exists()){
             return false
         }
         ToffeeAnalytics.logBreadCrumb("Processing view count file")
-        val filebytes = Files.toByteArray(file)
-        val byteBuffer = ByteBuffer.wrap(filebytes)
+        val fileBytes = Files.toByteArray(file)
+        val byteBuffer = ByteBuffer.wrap(fileBytes)
         val checksum = CRC32()
-        checksum.update(filebytes, 0, filebytes.size)
+        checksum.update(fileBytes, 0, fileBytes.size)
 
         viewCountList.clear()
         while (byteBuffer.remaining() > 0) {

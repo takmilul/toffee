@@ -16,6 +16,7 @@ import com.banglalink.toffee.data.database.entities.ContinueWatchingItem
 import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
 import com.banglalink.toffee.data.repository.ContinueWatchingRepository
 import com.banglalink.toffee.data.storage.PlayerPreference
+import com.banglalink.toffee.exception.ContentExpiredException
 import com.banglalink.toffee.extension.getChannelMetadata
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener
@@ -58,6 +59,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.net.*
+import java.util.*
 import javax.inject.Inject
 import kotlin.math.max
 
@@ -66,7 +68,7 @@ import kotlin.math.max
 abstract class PlayerPageActivity :
     BaseAppCompatActivity(),
     OnPlayerControllerChangedListener,
-    EventListener,
+    Player.EventListener,
     PlaylistListener,
     AnalyticsListener,
     SessionAvailabilityListener
@@ -143,8 +145,9 @@ abstract class PlayerPageActivity :
                 //In each heartbeat we are checking channel's expire date. Seriously??
                 val cinfo = playlistManager.getCurrentChannel()
                 if (cinfo?.isExpired(mPref.getSystemTime()) == true) {
-                    player?.stop(true)
-                    onContentExpired() //content is expired. Notify the subclass
+                    ToffeeAnalytics.logException(ContentExpiredException(0, "serverDate: ${mPref.getSystemTime()}, deviceDate: ${Date()}, expireTime: ${cinfo.expireTime}"))
+//                    player?.stop(true)
+//                    onContentExpired() //content is expired. Notify the subclass
                 }
                 playerAnalyticsListener?.let {
                     //In every heartbeat event we are sending bandwitdh data to Pubsub
@@ -626,10 +629,11 @@ abstract class PlayerPageActivity :
     protected fun reloadChannel() {
         val cinfo = playlistManager.getCurrentChannel()
         if (cinfo?.isExpired(mPref.getSystemTime()) == true) {
+            ToffeeAnalytics.logException(ContentExpiredException(0, "serverDate: ${mPref.getSystemTime()}, deviceDate: ${Date()}, expireTime: ${cinfo.expireTime}"))
             //channel is expired. Stop the player and notify hook/subclass
-            player?.stop(true)
-            onContentExpired()
-            return
+//            player?.stop(true)
+//            onContentExpired()
+//            return
         }
         if (cinfo != null) {
             playChannel(true)
@@ -733,7 +737,7 @@ abstract class PlayerPageActivity :
         return false
     }
 
-    private inner class PlayerEventListener : EventListener {
+    private inner class PlayerEventListener : Player.EventListener {
         override fun onPlayerError(e: ExoPlaybackException) {
             e.printStackTrace()
             ToffeeAnalytics.logException(e)

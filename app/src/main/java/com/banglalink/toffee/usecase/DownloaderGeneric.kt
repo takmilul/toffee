@@ -21,7 +21,7 @@ class DownloaderGeneric(private val context: Context, private val dbApi: DbApi) 
                 if (buffer != null) {
                     file = createFile(context)
                     ToffeeAnalytics.logBreadCrumb("File created")
-                    if (file != null) {
+                    if (file != null && file.exists()) {
                         copyStreamToFile(buffer, file)
                     }
                 }
@@ -38,6 +38,9 @@ class DownloaderGeneric(private val context: Context, private val dbApi: DbApi) 
 
     private fun createFile(context: Context): File? {
         val storageDir = context.cacheDir
+        if (!storageDir.exists()) {
+            storageDir.mkdirs()
+        }
         val fileName = "temp_${UUID.randomUUID()}"
         return File.createTempFile(fileName, ".db", storageDir)
     }
