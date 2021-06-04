@@ -740,8 +740,18 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
 
     private val scaleType: Int
         get() {
-            if(!mPref.keepAspectRatio && maxBound == minBound) {
-                return AspectRatioFrameLayout.RESIZE_MODE_FILL
+            if(!mPref.keepAspectRatio/* && maxBound == minBound*/) {
+                if(videoWidth > 0 && videoHeight > 0) {
+                    if(isFullScreen && videoWidth > videoHeight) {
+                        return AspectRatioFrameLayout.RESIZE_MODE_FILL
+                    }
+                } else if(isFullScreen && !isVideoPortrait) {
+                    return AspectRatioFrameLayout.RESIZE_MODE_FILL
+                }
+//                if(videoWidth > 0 && videoHeight > 0 && videoWidth > videoHeight
+//                    && isFullScreen) { // Horizontal
+//                    return AspectRatioFrameLayout.RESIZE_MODE_FILL
+//                }
             }
             return if (isFullScreen)
                 AspectRatioFrameLayout.RESIZE_MODE_FIT
@@ -756,7 +766,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     val maxBound: Int
         get() {
             if(videoWidth > 0 && videoHeight > 0) {
-                return min(max(minVideoHeight, (videoHeight / videoWidth) * screenWidth), maxVideoHeight)
+                return min(max(minVideoHeight, ((videoHeight / videoWidth.toFloat()) * screenWidth).toInt()), maxVideoHeight)
             }
             return if(isVideoPortrait) {
                 maxVideoHeight
@@ -780,10 +790,12 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     }
 
     fun setHeightWithAnim(height: Int, animDuration: Long = 100L) {
+        if(height == layoutParams.height) return
+        heightAnim?.cancel()
         heightAnim = ValueAnimator.ofInt(layoutParams.height, height)
         heightAnim?.duration = animDuration
         heightAnim?.addUpdateListener {
-            setLayoutHeight(it.animatedValue as Int)
+            if(isAttachedToWindow) setLayoutHeight(it.animatedValue as Int)
         }
         heightAnim?.start()
     }
@@ -874,7 +886,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         videoWidth = (width * pixelWidthHeightRatio).toInt()
         videoHeight = height
 
-        Log.e("CONTROL_T", "Video resolution -> $videoWidth x $videoHeight, ratio -> $pixelWidthHeightRatio")
+        Log.e("CONTROL_T", "Video resolution -> $videoWidth x $videoHeight, ratio -> $pixelWidthHeightRatio, min -> $minBound, max -> $maxBound")
 
 //        isVideoPortrait = videoWidth <= videoHeight
         isVideoScalable = minBound != maxBound
