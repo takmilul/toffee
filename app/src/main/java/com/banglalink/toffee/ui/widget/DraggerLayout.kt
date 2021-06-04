@@ -227,15 +227,18 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
         return false
     }
 
-    private fun isBottomPanelScrolled(): Boolean {
-        return findBottomRecycler()?.canScrollVertically(1) ?: false
-    }
-
     private fun canScrollBottomPanel(): Boolean {
         findBottomRecycler()?.let {
             if(it.layoutManager is LinearLayoutManager) {
                 (it.layoutManager as LinearLayoutManager).let { lm->
                     val pos = lm.findFirstVisibleItemPosition()
+                    if(pos == 0 && lm.findViewByPosition(pos)?.top == 0) {
+                        return false
+                    }
+                }
+            } else if(it.layoutManager is StickyHeaderGridLayoutManager) {
+                (it.layoutManager as StickyHeaderGridLayoutManager).let { lm->
+                    val pos = lm.getFirstVisibleHeaderPosition(true)
                     if(pos == 0 && lm.findViewByPosition(pos)?.top == 0) {
                         return false
                     }
