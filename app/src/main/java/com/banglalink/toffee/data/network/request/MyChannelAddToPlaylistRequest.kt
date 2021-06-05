@@ -6,5 +6,6 @@ data class MyChannelAddToPlaylistRequest(
     val channelId: Int,
     val isOwner: Int,
     val customerId: Int,
-    val password: String
+    val password: String,
+    val isUserPlaylist: Int = 0
 ): BaseRequest("ugcAddContentToPlaylist")

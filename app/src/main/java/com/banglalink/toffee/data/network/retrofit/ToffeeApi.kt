@@ -229,6 +229,16 @@ interface ToffeeApi {
         @Body channelPlaylistRequest: MyChannelPlaylistRequest
     ): MyChannelPlaylistResponse
 
+    @POST("ugc-user-playlist-names/1/{isOwner}/{channelOwnerId}/{limit}/{offset}/{dbVersion}")
+    suspend fun getMyChannelUserPlaylist(
+        @Path("isOwner") isOwner: Int,
+        @Path("channelOwnerId") channelOwnerId: Int,
+        @Path("limit") limit: Int,
+        @Path("offset") offset: Int,
+        @Path("dbVersion") dbVersion: Int,
+        @Body channelUserPlaylistRequest: MyChannelUserPlaylistRequest
+    ): MyChannelPlaylistResponse
+
     @POST("ugc-content-by-playlist/1/{channelOwnerId}/{isOwner}/{playlistId}/{limit}/{offset}/{dbVersion}")
     suspend fun getMyChannelPlaylistVideos(
         @Path("channelOwnerId") channelOwnerId: Int,
@@ -238,6 +248,17 @@ interface ToffeeApi {
         @Path("offset") offset: Int,
         @Path("dbVersion") dbVersion: Int,
         @Body channelPlaylistVideosRequest: MyChannelPlaylistVideosRequest
+    ): MyChannelPlaylistVideosResponse
+
+    @POST("ugc-content-by-user-playlist/1/{channelOwnerId}/{isOwner}/{playlistId}/{limit}/{offset}/{dbVersion}")
+    suspend fun getMyChannelUserPlaylistVideos(
+        @Path("channelOwnerId") channelOwnerId: Int,
+        @Path("isOwner") isOwner: Int,
+        @Path("playlistId") playlistId: Int,
+        @Path("limit") limit: Int,
+        @Path("offset") offset: Int,
+        @Path("dbVersion") dbVersion: Int,
+        @Body channelUserPlaylistVideosRequest: MyChannelUserPlaylistVideosRequest
     ): MyChannelPlaylistVideosResponse
 
     @POST("/ugc-edit-playlist-name")
