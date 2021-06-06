@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<navigation xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/login_navigation.xml"
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/login_navigation.xml"
     app:startDestination="@id/loginIntroFragment">
     <fragment
         android:id="@+id/loginIntroFragment"
+        tools:layout="@layout/fragment_login_intro"
         android:name="com.banglalink.toffee.ui.login.LoginIntroFragment"
         android:label="Login">
         <action
@@ -11,6 +15,7 @@
     </fragment>
     <fragment
         android:id="@+id/loginContentFragment2"
+        tools:layout="@layout/alert_dialog_login"
         android:name="com.banglalink.toffee.ui.login.LoginContentFragment2"
         android:label="Sign In" >
         <action
@@ -20,6 +25,7 @@
     </fragment>
     <fragment
         android:id="@+id/verifyLoginFragment2"
+        tools:layout="@layout/alert_dialog_verify"
         android:name="com.banglalink.toffee.ui.login.VerifyLoginFragment2"
         android:label="VerifyLoginFragment">
         <argument
@@ -37,6 +43,7 @@
     </fragment>
     <fragment
         android:id="@+id/userInterestFragment2"
+        tools:layout="@layout/alert_dialog_user_interest"
         android:name="com.banglalink.toffee.ui.login.UserInterestFragment2"
         android:label="Interests" >
 <!--        <argument-->

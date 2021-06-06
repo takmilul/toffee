@@ -242,14 +242,14 @@
     <string name="done_text">Done</string>
     <string name="verify_text">Verify</string>
     <string name="submit_button_text">Submit</string>
-    <string name="sign_in_intro_desc">like, Reaction, Upload, Referral etc.</string>
+    <string name="sign_in_intro_desc">like-Reaction, Upload, Referral etc.</string>
     <string name="sign_in_intro_title">Sign in to Access All Features</string>
     <string name="login_with_phone_text">Login with Phone</string>
     <string name="i_agree_to_the_text">&#160;&#160;I agree to the&#160;</string>
     <string name="enter_otp_text">Enter OTP</string>
     <string name="resend_otp_in_59s_text">Resend OTP in 59s</string>
     <string name="successfully_loged_in_text">Successfully Logged In!</string>
-    <string name="select_at_least_3_of_your_interests_text">Select at least 3 of your interests</string>
+    <string name="select_at_least_3_of_your_interests_text">Please Select \nat least 3 of your interests</string>
     <string name="subscription_empty_view_text">You haven\'t subscribed any channel yet</string>
     <string name="about_toffee_title">About Toffee</string>
     <string name="about_toffee_text">
@@ -335,7 +335,25 @@
     <string name="save_text">Save</string>
     <string name="please_fill_up_all_fields_text">*Please fill up all fields to continue</string>
     <string name="you_still_have_25_days_to_subscription_left_text">You still have 25 days of subscription left. Unsubscribe anyway?</string>
-
+    
+    <string name="partnership_text">By uploading video,<br/>you are about to apply for<br/> <b>the Toffee Creators Partnership Program</b></string>
+    <string name="learn_more">LEARN MORE></string>
+    <string name="okey_text">okey</string>
+    <string name="your_name_text">Your Name</string>
+    <string name="address_text">Address</string>
+    <string name="address_null_error_text">*Address Required</string>
+    <string name="date_of_birth_text">Date of Birth</string>
+    <string name="email_text">Email</string>
+    <string name="nid_number">NID Number</string>
+    <string name="verification_email_sent">*verification email will be sent to you</string>
+    <string name="your_nid_must_match">*Your NID must match with your name &amp; date of birth</string>
+    <string name="interest_text">Interests</string>
+    <string name="date_error_text">*Date of Birth Required</string>
+    <string name="email_null_error_text">*Email Required</string>
+    <string name="nid_null_error_text">*NID Required</string>
+    <string name="Date_of_birth_must_be_match">*Date of birth must at least 18</string>
+    <string name="others_text">Others</string>
+    <string name="payment_option_required">Payment Option Required</string>
     <!--    url    -->
 <!--    <string name="creators_policy_url">https://toffeelive.com/policies.php</string>-->
 <!--    <string name="tus_upload_server_url">https://ugc-upload.toffeelive.com/upload</string>-->

@@ -1,5 +1,9 @@
 package com.banglalink.toffee.ui.profile
 
+import android.app.DatePickerDialog
+import android.content.res.ColorStateList
+import android.content.res.Resources
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -7,7 +11,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import androidx.core.view.forEach
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -25,6 +31,7 @@ import com.banglalink.toffee.ui.widget.VelBoxFieldTextWatcher
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.UtilsKt
 import com.banglalink.toffee.util.unsafeLazy
+import com.google.android.material.chip.Chip
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -41,6 +48,16 @@ class EditProfileFragment : BaseFragment() {
     private val args by navArgs<EditProfileFragmentArgs>()
     private val viewModel by viewModels<EditProfileViewModel>()
 
+    private val userInterestList: MutableMap<String, Int> = mutableMapOf()
+
+    //
+    val c = Calendar.getInstance()
+    val year = c.get(Calendar.YEAR)
+    val month = c.get(Calendar.MONTH)
+    val day = c.get(Calendar.DAY_OF_MONTH)
+
+    lateinit var selectedDate:String
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentEditProfileBinding.inflate(inflater, container, false)
         return binding.root
@@ -49,6 +66,7 @@ class EditProfileFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        observeCategory()
         with(binding) {
             profileForm = args.data
             container.setOnClickListener {
@@ -73,6 +91,7 @@ class EditProfileFragment : BaseFragment() {
         observe(mPref.profileImageUrlLiveData) {
             binding.profileIv.loadProfileImage(it)
         }
+
         observeThumbnailChange()
     }
 
@@ -172,6 +191,74 @@ class EditProfileFragment : BaseFragment() {
             Log.e(TAG, e.message, e)
         }
     }
+
+
+    private fun addChip(name: String, width:Int): Chip {
+        val intColor = ContextCompat.getColor(requireContext(), R.color.colorSecondaryDark)
+        val selectedTextColor = ContextCompat.getColor(requireContext(), R.color.main_text_color)
+        val unSelectedTextColor = ContextCompat.getColor(requireContext(), R.color.cardTitleColor)
+        val chipColor = createStateColor(intColor,intColor)
+        val strokeColor = createStateColor( unSelectedTextColor,unSelectedTextColor)
+        val chip = layoutInflater.inflate(R.layout.interest_chip_layout, binding.interestChipGroup, false) as Chip
+        chip.layoutParams.width = width
+        chip.text = name
+        chip.id = View.generateViewId()
+        chip.chipBackgroundColor = chipColor
+        chip.rippleColor =createStateColor(Color.TRANSPARENT)
+        chip.chipStrokeColor = chipColor
+        chip.setTextColor(Color.WHITE)
+        return chip
+    }
+
+    private fun createStateColor(selectedColor: Int, unSelectedColor: Int = Color.TRANSPARENT): ColorStateList {
+        return ColorStateList(
+            arrayOf(
+                intArrayOf(android.R.attr.state_checked),
+                intArrayOf()
+            ),
+            intArrayOf(
+                selectedColor,
+                unSelectedColor
+            )
+        )
+    }
+
+
+    private fun observeCategory() {
+        //  progressDialog.show()
+        observe(viewModel.categories){
+            if(it.isNotEmpty()){
+                val width = (Resources.getSystem().displayMetrics.widthPixels - 64.px) / 3
+                val categoryList = it.sortedBy { category -> category.id }
+                categoryList.let { list ->
+                    list.forEachIndexed { _, category ->
+                        val newChip = addChip(category.categoryName, width).apply {
+                            tag = category.categoryName
+                        }
+                        binding.interestChipGroup.addView(newChip)
+                        userInterestList[category.categoryName] = 0
+                    }
+                }
+                binding.interestChipGroup.addView(addChip("   +   ",width).apply {
+                    tag = "+"
+                })
+                binding.interestChipGroup.forEach {
+                    val selectedChip = it as Chip
+                    selectedChip.setOnCheckedChangeListener { buttonView, isChecked ->
+                        userInterestList[buttonView.tag.toString()] = if (isChecked) 1 else 0
+                        if(buttonView.tag.toString().equals("+"))
+                        {
+                            requireContext().showToast("clicked")
+                        }
+                    }
+                }
+
+                // progressDialog.hide()
+            }
+
+        }
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

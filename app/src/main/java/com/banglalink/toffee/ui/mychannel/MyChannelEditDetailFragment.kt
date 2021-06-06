@@ -1,11 +1,13 @@
 package com.banglalink.toffee.ui.mychannel
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.AdapterView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -15,6 +17,7 @@ import com.banglalink.toffee.data.network.request.MyChannelEditRequest
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.FragmentMyChannelEditDetailBinding
+import com.banglalink.toffee.enums.InputType
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.MyChannelDetail
@@ -27,6 +30,7 @@ import com.banglalink.toffee.util.BindingUtil
 import com.banglalink.toffee.util.UtilsKt
 import com.banglalink.toffee.util.imagePathToBase64
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -44,6 +48,14 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
 
     @Inject lateinit var viewModelAssistedFactory: MyChannelEditDetailViewModel.AssistedFactory
     private val viewModel by viewModels<MyChannelEditDetailViewModel> { MyChannelEditDetailViewModel.provideFactory(viewModelAssistedFactory, myChannelDetail) }
+
+
+    //
+    var c = Calendar.getInstance()
+    var selected_year = c.get(Calendar.YEAR)
+    var selected_month = c.get(Calendar.MONTH)
+    var selected_day = c.get(Calendar.DAY_OF_MONTH)
+    lateinit var selectedDate: String
 
     companion object {
         fun newInstance(): MyChannelEditDetailFragment {
@@ -66,6 +78,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     }
     override fun onDestroyView() {
         binding.categorySpinner.adapter = null
+        binding.categoryPaymentSpinner.adapter = null
         super.onDestroyView()
         _binding = null
     }
@@ -76,10 +89,51 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         observeEditChannel()
         observeThumbnailChange()
         setupCategorySpinner()
+        setupPaymentCategorySpinner()
         binding.bannerEditButton.safeClick(this)
         binding.profileImageEditButton.safeClick(this)
         binding.cancelButton.safeClick(this)
         binding.saveButton.safeClick(this)
+    }
+
+    private fun setupPaymentCategorySpinner() {
+        val paymentCategoryAdapter = ToffeeSpinnerAdapter<String>(requireContext(), "Select Payment Option")
+        binding.categoryPaymentSpinner.adapter = paymentCategoryAdapter
+        binding.categoryPaymentSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                if(position != 0 && viewModel.selectedPaymentPosition.value != position) {
+                    viewModel.selectedPaymentCategory = viewModel.paymentCategoryList.value?.get(position-1)
+                    viewModel.selectedPaymentPosition.value = position
+                }
+                else {
+                    binding.categoryPaymentSpinner.setSelection(viewModel.selectedPaymentPosition.value ?: 1)
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+        }
+
+        observe(viewModel.paymentCategoryList) { categories ->
+            progressDialog.dismiss()
+//            if(!categories.isNullOrEmpty()) {
+//                paymentCategoryAdapter.setData(categories)
+//                viewModel.selectedPaymentPosition =
+//                    categories.find { it.id == myChannelDetail?.categoryId } ?: categories.first()
+//                viewModel.selectedCategoryPosition.value =
+//                    (categories.indexOf(categories.find { it.id == myChannelDetail?.categoryId })
+//                        .takeIf { it > 0 } ?: 0) + 1
+//            }
+
+            paymentCategoryAdapter.setData(categories)
+            viewModel.selectedCategoryPosition.value = 1
+        }
+
+        observe(viewModel.selectedPaymentPosition) {
+            paymentCategoryAdapter.selectedItemPosition = it
+            binding.categoryPaymentSpinner.setSelection(it)
+        }
     }
 
     private fun setupCategorySpinner() {
@@ -231,23 +285,30 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         val channelName = binding.channelName.text.toString().trim()
         val description = binding.description.text.toString().trim()
         val isChannelLogoAvailable= !myChannelDetail?.profileUrl.isNullOrEmpty() or !profileImageBase64.isNullOrEmpty()
+
+        val userName = binding.nameEt.text.toString().trim()
+        val userAddress = binding.addressEt.text.toString().trim()
+        val userDOB = binding.dateOfBirthTv.text.toString().trim()
+        val userEmail=binding.emailEt.text.toString().trim()
+        val userNID=binding.nidEt.text.toString().trim()
+        val userPhoneNumber=binding.mobileTv.text.toString().trim()
+
         
         if (channelName.isNotBlank()) {
 
-            binding.saveButton.isClickable = true
             progressDialog.dismiss()
             binding.channelName.setBackgroundResource(R.drawable.single_line_input_text_bg)
             binding.errorChannelNameTv.hide()
         }
         else {
-            binding.saveButton.isClickable = true
+
             progressDialog.dismiss()
             binding.channelName.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
             binding.errorChannelNameTv.show()
             //   binding.errorDescriptionTv.hide()
         }
         if (isChannelLogoAvailable) {
-            binding.saveButton.isClickable = true
+
             progressDialog.dismiss()
             binding.errorThumTv.hide()
         }
@@ -256,6 +317,93 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             progressDialog.dismiss()
             binding.errorThumTv.show()
         }
+
+
+
+        if (userName.isBlank()) {
+            binding.errorNameTv.show()
+        } else {
+            binding.errorNameTv.hide()
+        }
+
+        if (userAddress.isBlank()) {
+            binding.errorAddressTv.show()
+        } else {
+            binding.errorAddressTv.hide()
+        }
+
+        if (userDOB.isBlank()) {
+            binding.errorDateTv.show()
+        } else {
+            val age =getAge(selected_year,selected_month,selected_day)
+            if (age<18)
+            {
+                binding.errorDateTv.text=getString(R.string.Date_of_birth_must_be_match)
+            }
+            else {
+                binding.errorDateTv.hide()
+            }
+        }
+
+
+
+       // val emailText = binding.emailEt.text.toString()
+        val notValidEmail = userEmail.isNotBlank() and !userEmail.isValid(InputType.EMAIL)
+
+        if (userEmail.isBlank()) {
+            binding.errorEmailTv.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.pink_to_accent_color
+                )
+            )
+            binding.errorEmailTv.text = getString(R.string.email_null_error_text)
+        }
+
+        if (notValidEmail) {
+            binding.errorEmailTv.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.pink_to_accent_color
+                )
+            )
+            binding.errorEmailTv.text = getString(R.string.email_error_text)
+        } else{
+            binding.errorEmailTv.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.main_text_color
+                )
+            )
+            binding.errorEmailTv.text = getString(R.string.verification_email_sent)
+        }
+
+        if (userNID.isBlank()) {
+            binding.nidErrorTv.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.pink_to_accent_color
+                )
+            )
+            binding.nidErrorTv.text = getString(R.string.nid_null_error_text)
+        } else{
+            binding.nidErrorTv.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.main_text_color
+                )
+            )
+            binding.nidErrorTv.text = getString(R.string.your_nid_must_match)
+        }
+
+
+        if(viewModel.selectedPaymentCategory.isNullOrBlank())
+        {
+            binding.errorPaymentOption.show()
+        }else{
+            binding.errorPaymentOption.hide()
+        }
+
 
         if(channelName.isNotBlank() and isChannelLogoAvailable){
             val ugcEditMyChannelRequest = MyChannelEditRequest(
@@ -286,4 +434,37 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             }
         }
     }*/
+
+
+    private fun openDatePicker() {
+        val dpd = DatePickerDialog(
+            requireContext(),
+            DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+                // Display Selected date in TextView
+                selectedDate = ("" + dayOfMonth + "/" + monthOfYear + "/" + year)
+                selected_year = year
+                selected_month=monthOfYear
+                selected_day = dayOfMonth
+                binding.dateOfBirthTv.text = selectedDate
+            },
+            selected_year,
+            selected_month,
+            selected_day
+        )
+        dpd.show()
+    }
+
+
+    private fun getAge(year: Int, month: Int, day: Int): Int {
+        val dob = Calendar.getInstance()
+        val today = Calendar.getInstance()
+        dob[year, month] = day
+        var age = today[Calendar.YEAR] - dob[Calendar.YEAR]
+        if (today[Calendar.DAY_OF_YEAR] < dob[Calendar.DAY_OF_YEAR]) {
+            age--
+        }
+
+        return age
+    }
+
 }

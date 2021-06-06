@@ -30,6 +30,10 @@ class MyChannelEditDetailViewModel @AssistedInject constructor(
     var selectedCategory: Category? = null
     val selectedCategoryPosition = MutableLiveData<Int>()
     val exitFragment = SingleLiveEvent<Boolean>()
+
+    var paymentCategoryList = MutableLiveData<List<String>>()
+    var selectedPaymentPosition= MutableLiveData<Int>()
+    var selectedPaymentCategory: String?=null
     
     init {
         viewModelScope.launch {
@@ -44,6 +48,9 @@ class MyChannelEditDetailViewModel @AssistedInject constructor(
                 exitFragment.value = true
             }
         }
+
+        paymentCategoryList.value= listOf("Bkash", "Nagad", "Rocket")
+        selectedPaymentPosition.value = 0
     }
     
     @dagger.assisted.AssistedFactory

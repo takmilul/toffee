@@ -8,219 +8,232 @@
         android:id="@+id/views"
         android:background="@drawable/bottom_round_bg"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/bottom_sheet_top_image"
             android:layout_width="40dp"
             android:layout_height="8dp"
             android:layout_marginTop="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/textView28"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_sheetFragmentContainerView"
             android:src="@drawable/ic_bottom_sheet_topicon"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:contentDescription="@string/txt_icon" />
 
-        <TextView
-            android:id="@+id/textView28"
-            android:layout_width="wrap_content"
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/bottom_sheetFragmentContainerView"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="38dp"
-            android:fontFamily="@font/roboto_regular"
-            android:text="@string/lets_fill_some_basic_info_text"
-            android:textColor="@color/main_text_color"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toTopOf="@+id/textView29"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:defaultNavHost="false"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/bottom_sheet_top_image" />
-
-        <TextView
-            android:id="@+id/textView29"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="19dp"
-            android:text="@string/set_your_channel_logo"
-            android:textColor="@color/main_text_color"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toTopOf="@+id/channel_logo_iv"
+            app:layout_constraintTop_toBottomOf="@id/bottom_sheet_top_image"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView28" />
+            app:navGraph="@navigation/bottom_sheet_navigation_graph"
+            />
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/channel_logo_iv"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:contentDescription="@string/txt_channel_logo"
-            android:layout_marginTop="6dp"
-            android:src="@drawable/ic_channel_logo"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/channel_name_et"
-            app:layout_constraintTop_toBottomOf="@+id/textView29" />
 
-        <ImageView
-            android:visibility="gone"
-            android:id="@+id/edit_iv"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="?selectableItemBackgroundBorderless"
-            android:elevation="2dp"
-            android:padding="4dp"
-            android:scaleType="fitXY"
-            android:src="@drawable/ic_edit_btn"
-            tools:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="@+id/channel_logo_iv"
-            app:layout_constraintEnd_toEndOf="@+id/channel_logo_iv"
-            app:layout_constraintStart_toStartOf="@+id/channel_logo_iv"
-            app:layout_constraintTop_toBottomOf="@+id/channel_logo_iv"
-            android:contentDescription="@string/txt_edit_channel_logo" />
-        
-        <EditText
-            android:id="@+id/channel_name_et"
-            style="@style/SingleLineInputFieldStyle"
-            android:layout_marginTop="20dp"
-            android:drawableStart="@drawable/ic_channel_name_logo"
-            android:hint="@string/channel_name_hint"
-            android:drawablePadding="10dp"
-            app:layout_constraintBottom_toTopOf="@+id/phone_number_layout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/channel_logo_iv" />
-        
-        <LinearLayout
-            android:id="@+id/phone_number_layout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/single_line_input_text_bg"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/terms_and_conditions_checkbox"
-            app:layout_constraintTop_toBottomOf="@+id/channel_name_et">
+        <!--        <TextView-->
+<!--            android:id="@+id/textView28"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="38dp"-->
+<!--            android:fontFamily="@font/roboto_regular"-->
+<!--            android:text="@string/lets_fill_some_basic_info_text"-->
+<!--            android:textColor="@color/main_text_color"-->
+<!--            android:textSize="16sp"-->
+<!--            app:layout_constraintBottom_toTopOf="@+id/textView29"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/bottom_sheet_top_image" />-->
 
-            <ImageView
-                android:id="@+id/image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_phone"
-                android:contentDescription="@string/txt_phone_number" />
+<!--        <TextView-->
+<!--            android:id="@+id/textView29"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="19dp"-->
+<!--            android:text="@string/set_your_channel_logo"-->
+<!--            android:textColor="@color/main_text_color"-->
+<!--            android:textSize="12sp"-->
+<!--            app:layout_constraintBottom_toTopOf="@+id/channel_logo_iv"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/textView28" />-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:background="@android:color/transparent"
-                android:drawablePadding="3dp"
-                android:fontFamily="@font/roboto_regular"
-                android:gravity="center_vertical"
-                android:text="+88"
-                android:textColor="@color/switchUnCheckedColor"
-                android:textSize="14sp"
-                android:textStyle="normal"
-                app:drawableStartCompat="@drawable/ic_bd_flag" />
-            
-            <ImageView
-                android:layout_marginTop="3dp"
-                android:layout_marginStart="5dp"
-                android:layout_width="14dp"
-                android:layout_height="12dp"
-                android:src="@drawable/ic_path_down_arrow"
-                android:contentDescription="@string/txt_down_arrow_flag" />
-            
-            <TextView
-                android:drawablePadding="10dp"
-                app:drawableEndCompat="@drawable/ic_verified"
-                android:id="@+id/mobile_tv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:background="@android:color/transparent"
-                android:fontFamily="@font/roboto_regular"
-                android:gravity="center_vertical"
-                android:hint="@string/phone_number_hint"
-                android:textColor="@color/upload_number_color"
-                android:textSize="14sp"
-                android:textStyle="normal" />
-        </LinearLayout>
-        
-        <androidx.appcompat.widget.AppCompatCheckBox
-            android:id="@+id/terms_and_conditions_checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="37dp"
-            android:background="@null"
-            android:button="@drawable/custom_checkbox"
-            android:checked="true"
-            android:gravity="center_vertical"
-            android:text="@string/i_agree_to_the_text"
-            android:textColor="@color/main_text_color"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toTopOf="@+id/cancelButton"
-            app:layout_constraintEnd_toStartOf="@+id/terms_and_conditions_tv"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/phone_number_layout" />
+<!--        <de.hdodenhof.circleimageview.CircleImageView-->
+<!--            android:id="@+id/channel_logo_iv"-->
+<!--            android:layout_width="80dp"-->
+<!--            android:layout_height="80dp"-->
+<!--            android:contentDescription="@string/txt_channel_logo"-->
+<!--            android:layout_marginTop="6dp"-->
+<!--            android:src="@drawable/ic_channel_logo"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintBottom_toTopOf="@+id/channel_name_et"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/textView29" />-->
 
-        <TextView
-            android:id="@+id/terms_and_conditions_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:paddingVertical="4dp"
-            android:gravity="center_vertical"
-            android:text="@string/terms_and_conditions"
-            android:textColor="@color/colorAccent"
-            android:textColorLink="@drawable/text_selector2"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="@+id/terms_and_conditions_checkbox"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@id/terms_and_conditions_checkbox"
-            app:layout_constraintTop_toTopOf="@+id/terms_and_conditions_checkbox" />
-        
-        <Button
-            android:id="@+id/save_btn"
-            style="@style/ButtonStyleSolidSave"
-            android:text="@string/save_text"
-            android:paddingStart="32dp"
-            android:paddingEnd="32dp"
-            android:textAllCaps="true"
-            android:enabled="false"
-            android:layout_marginStart="12dp"
-            app:layout_constraintBottom_toBottomOf="@+id/cancelButton"
-            app:layout_constraintEnd_toEndOf="@+id/terms_and_conditions_tv"
-            app:layout_constraintStart_toEndOf="@id/cancelButton"
-            app:layout_constraintTop_toTopOf="@+id/cancelButton" />
+<!--        <ImageView-->
+<!--            android:visibility="gone"-->
+<!--            android:id="@+id/edit_iv"-->
+<!--            android:layout_width="30dp"-->
+<!--            android:layout_height="30dp"-->
+<!--            android:background="?selectableItemBackgroundBorderless"-->
+<!--            android:elevation="2dp"-->
+<!--            android:padding="4dp"-->
+<!--            android:scaleType="fitXY"-->
+<!--            android:src="@drawable/ic_edit_btn"-->
+<!--            tools:visibility="visible"-->
+<!--            app:layout_constraintBottom_toBottomOf="@+id/channel_logo_iv"-->
+<!--            app:layout_constraintEnd_toEndOf="@+id/channel_logo_iv"-->
+<!--            app:layout_constraintStart_toStartOf="@+id/channel_logo_iv"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/channel_logo_iv"-->
+<!--            android:contentDescription="@string/txt_edit_channel_logo" />-->
+<!--        -->
+<!--        <EditText-->
+<!--            android:id="@+id/channel_name_et"-->
+<!--            style="@style/SingleLineInputFieldStyle"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:drawableStart="@drawable/ic_channel_name_logo"-->
+<!--            android:hint="@string/channel_name_hint"-->
+<!--            android:drawablePadding="10dp"-->
+<!--            app:layout_constraintBottom_toTopOf="@+id/phone_number_layout"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/channel_logo_iv" />-->
+<!--        -->
+<!--        <LinearLayout-->
+<!--            android:id="@+id/phone_number_layout"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginHorizontal="16dp"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:background="@drawable/single_line_input_text_bg"-->
+<!--            android:orientation="horizontal"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintBottom_toTopOf="@+id/terms_and_conditions_checkbox"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/channel_name_et">-->
 
-        <Button
-            android:id="@+id/cancelButton"
-            style="@style/EditChannelStyle"
-            android:text="@string/cancel"
-            android:layout_marginTop="20dp"
-            app:layout_constraintEnd_toStartOf="@+id/save_btn"
-            app:layout_constraintStart_toStartOf="@+id/terms_and_conditions_checkbox"
-            app:layout_constraintTop_toBottomOf="@+id/terms_and_conditions_checkbox" />
-        
-        <TextView
-            android:visibility="invisible"
-            android:id="@+id/text_view_fill_up"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            tools:visibility="visible"
-            android:fontFamily="@font/roboto_regular"
-            android:text="@string/please_fill_up_all_fields_text"
-            android:textColor="@color/main_text_color"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cancelButton" />
+<!--            <ImageView-->
+<!--                android:id="@+id/image"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:src="@drawable/ic_phone"-->
+<!--                android:contentDescription="@string/txt_phone_number" />-->
+
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="10dp"-->
+<!--                android:background="@android:color/transparent"-->
+<!--                android:drawablePadding="3dp"-->
+<!--                android:fontFamily="@font/roboto_regular"-->
+<!--                android:gravity="center_vertical"-->
+<!--                android:text="+88"-->
+<!--                android:textColor="@color/switchUnCheckedColor"-->
+<!--                android:textSize="14sp"-->
+<!--                android:textStyle="normal"-->
+<!--                app:drawableStartCompat="@drawable/ic_bd_flag" />-->
+<!--            -->
+<!--            <ImageView-->
+<!--                android:layout_marginTop="3dp"-->
+<!--                android:layout_marginStart="5dp"-->
+<!--                android:layout_width="14dp"-->
+<!--                android:layout_height="12dp"-->
+<!--                android:src="@drawable/ic_path_down_arrow"-->
+<!--                android:contentDescription="@string/txt_down_arrow_flag" />-->
+<!--            -->
+<!--            <TextView-->
+<!--                android:drawablePadding="10dp"-->
+<!--                app:drawableEndCompat="@drawable/ic_verified"-->
+<!--                android:id="@+id/mobile_tv"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="8dp"-->
+<!--                android:background="@android:color/transparent"-->
+<!--                android:fontFamily="@font/roboto_regular"-->
+<!--                android:gravity="center_vertical"-->
+<!--                android:hint="@string/phone_number_hint"-->
+<!--                android:textColor="@color/upload_number_color"-->
+<!--                android:textSize="14sp"-->
+<!--                android:textStyle="normal" />-->
+<!--        </LinearLayout>-->
+<!--        -->
+<!--        <androidx.appcompat.widget.AppCompatCheckBox-->
+<!--            android:id="@+id/terms_and_conditions_checkbox"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="8dp"-->
+<!--            android:layout_marginTop="37dp"-->
+<!--            android:background="@null"-->
+<!--            android:button="@drawable/custom_checkbox"-->
+<!--            android:checked="true"-->
+<!--            android:gravity="center_vertical"-->
+<!--            android:text="@string/i_agree_to_the_text"-->
+<!--            android:textColor="@color/main_text_color"-->
+<!--            android:textSize="16sp"-->
+<!--            app:layout_constraintBottom_toTopOf="@+id/cancelButton"-->
+<!--            app:layout_constraintEnd_toStartOf="@+id/terms_and_conditions_tv"-->
+<!--            app:layout_constraintHorizontal_chainStyle="packed"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/phone_number_layout" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/terms_and_conditions_tv"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginEnd="8dp"-->
+<!--            android:paddingVertical="4dp"-->
+<!--            android:gravity="center_vertical"-->
+<!--            android:text="@string/terms_and_conditions"-->
+<!--            android:textColor="@color/colorAccent"-->
+<!--            android:textColorLink="@drawable/text_selector2"-->
+<!--            android:textSize="16sp"-->
+<!--            app:layout_constraintBottom_toBottomOf="@+id/terms_and_conditions_checkbox"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintHorizontal_bias="0.5"-->
+<!--            app:layout_constraintStart_toEndOf="@id/terms_and_conditions_checkbox"-->
+<!--            app:layout_constraintTop_toTopOf="@+id/terms_and_conditions_checkbox" />-->
+<!--        -->
+<!--        <Button-->
+<!--            android:id="@+id/save_btn"-->
+<!--            style="@style/ButtonStyleSolidSave"-->
+<!--            android:text="@string/save_text"-->
+<!--            android:paddingStart="32dp"-->
+<!--            android:paddingEnd="32dp"-->
+<!--            android:textAllCaps="true"-->
+<!--            android:enabled="false"-->
+<!--            android:layout_marginStart="12dp"-->
+<!--            app:layout_constraintBottom_toBottomOf="@+id/cancelButton"-->
+<!--            app:layout_constraintEnd_toEndOf="@+id/terms_and_conditions_tv"-->
+<!--            app:layout_constraintStart_toEndOf="@id/cancelButton"-->
+<!--            app:layout_constraintTop_toTopOf="@+id/cancelButton" />-->
+
+<!--        <Button-->
+<!--            android:id="@+id/cancelButton"-->
+<!--            style="@style/EditChannelStyle"-->
+<!--            android:text="@string/cancel"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            app:layout_constraintEnd_toStartOf="@+id/save_btn"-->
+<!--            app:layout_constraintStart_toStartOf="@+id/terms_and_conditions_checkbox"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/terms_and_conditions_checkbox" />-->
+<!--        -->
+<!--        <TextView-->
+<!--            android:visibility="invisible"-->
+<!--            android:id="@+id/text_view_fill_up"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="4dp"-->
+<!--            tools:visibility="visible"-->
+<!--            android:fontFamily="@font/roboto_regular"-->
+<!--            android:text="@string/please_fill_up_all_fields_text"-->
+<!--            android:textColor="@color/main_text_color"-->
+<!--            android:textSize="12sp"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/cancelButton" />-->
         
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
