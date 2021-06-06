@@ -40,7 +40,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:fontFamily="@font/roboto_regular"
+        android:fontFamily="@font/roboto_medium"
         android:text="@string/select_at_least_3_of_your_interests_text"
         android:textAlignment="center"
         android:textColor="@color/main_text_color"
@@ -70,12 +70,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        android:background="@android:color/transparent"
-        android:drawablePadding="13dp"
         android:fontFamily="@font/roboto_regular"
         android:gravity="center_vertical"
-        android:padding="10dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="14dp"
         android:text="@string/others_text"
         android:textColor="@color/main_text_color"
         android:textSize="14sp"
@@ -87,9 +84,9 @@
     <EditText
         android:id="@+id/other_et"
         style="@style/LeadingIconSingleLineInputFieldStyle"
-        android:layout_marginVertical="16dp"
-        android:drawableRight="@drawable/ic_upload_menu_plus"
+        android:drawableEnd="@drawable/ic_upload_menu_plus"
         android:hint="@string/enter_your_address_text"
+        android:focusable="true"
         android:inputType="textPostalAddress"
         android:maxLines="2"
         app:layout_constraintEnd_toEndOf="parent"
@@ -100,11 +97,12 @@
         android:id="@+id/interestOthersChipGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="8dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         app:chipSpacingHorizontal="8dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/other_et"
         app:singleLine="false"
@@ -148,7 +146,7 @@
         app:layout_constraintEnd_toStartOf="@+id/doneButton"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/other_et"
+        app:layout_constraintTop_toBottomOf="@+id/interestOthersChipGroup"
         app:srcCompat="@drawable/ic_skip_icon" />
 
     <ImageView
@@ -161,5 +159,12 @@
         app:layout_constraintStart_toEndOf="@+id/skipButton"
         app:layout_constraintTop_toTopOf="@+id/skipButton"
         app:srcCompat="@drawable/ic_check_icon" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/doneButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -92,16 +92,6 @@ class EditProfileFragment : BaseFragment() {
             binding.profileIv.loadProfileImage(it)
         }
 
-        binding.dateOfBirthTv.setOnClickListener {
-            val dpd = DatePickerDialog(requireContext(), DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-                // Display Selected date in TextView
-                selectedDate = ("" + dayOfMonth + "/" + month + "/" + year)
-                binding.dateOfBirthTv.text=selectedDate
-
-            }, year, month, day)
-            dpd.show()
-        }
-
         observeThumbnailChange()
     }
 

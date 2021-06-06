@@ -26,7 +26,7 @@ class LoginIntroFragment : ChildDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.signInButton.safeClick({
             findNavController().navigate(R.id.action_loginIntroFragment_to_loginContentFragment2)
-            //findNavController().navigate(R.id.userInterestFragment2)
+        //    findNavController().navigate(R.id.userInterestFragment2)
         })
 
         binding.skipSignIn.safeClick({ closeDialog() })

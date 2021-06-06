@@ -54,19 +54,30 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
 
     private fun handleSubmitButton() {
 
-        if (binding.nameEt.text.isBlank()) {
+
+        val userName = binding.nameEt.text.toString().trim()
+        val userAddress = binding.addressEt.text.toString().trim()
+        val userDOB = binding.dateOfBirthTv.text.toString().trim()
+        val userEmail=binding.emailEt.text.toString().trim()
+        val userNID=binding.nidEt.text.toString().trim()
+
+
+
+
+
+        if (userName.isBlank()) {
             binding.errorNameTv.show()
         } else {
             binding.errorNameTv.hide()
         }
 
-        if (binding.addressEt.text.isBlank()) {
+        if (userAddress.isBlank()) {
             binding.errorAddressTv.show()
         } else {
             binding.errorAddressTv.hide()
         }
 
-        if (binding.dateOfBirthTv.text.isBlank()) {
+        if (userDOB.isBlank()) {
             binding.errorDateTv.show()
         } else {
             val age =getAge(selected_year,selected_month,selected_day)
@@ -81,10 +92,10 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
 
 
 
-        val emailText = binding.emailEt.text.toString()
-        val notValidEmail = emailText.isNotBlank() and !emailText.isValid(InputType.EMAIL)
+       // val emailText = binding.emailEt.text.toString()
+        val notValidEmail = userEmail.isNotBlank() and !userEmail.isValid(InputType.EMAIL)
 
-        if (binding.emailEt.text.isBlank()) {
+        if (userEmail.isBlank()) {
             binding.errorEmailTv.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
@@ -102,9 +113,17 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
                 )
             )
             binding.errorEmailTv.text = getString(R.string.email_error_text)
+        } else{
+            binding.errorEmailTv.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.main_text_color
+                )
+            )
+            binding.errorEmailTv.text = getString(R.string.verification_email_sent)
         }
 
-        if (binding.nidEt.text.isBlank()) {
+        if (userNID.isBlank()) {
             binding.nidWarningTv.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
@@ -112,6 +131,14 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
                 )
             )
             binding.nidWarningTv.text = getString(R.string.nid_null_error_text)
+        } else{
+            binding.nidWarningTv.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.main_text_color
+                )
+            )
+            binding.nidWarningTv.text = getString(R.string.your_nid_must_match)
         }
 
 
