@@ -60,6 +60,12 @@ class CustomerInfoLogin(
     @SerializedName("real_db_01_crc32")
     var viewCountDBVersion: String? = null,
     val isAllTvChannelsMenuEnabled: Boolean = false,
+    @SerializedName("geo_city")
+    var geoCity: String? = null,
+    @SerializedName("geo_location")
+    var geoLocation: String? = null,
+    @SerializedName("user_ip")
+    var userIp: String? = null,
     var isFireworkActive: String? = "true",
     var mqttIsActive: Int = 1,
     var mqttUrl: String? = null,

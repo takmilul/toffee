@@ -6,6 +6,9 @@ data class PlayerOverlayData(
     val id: Long,
     val function: String,
 
+    @SerializedName("content_id")
+    val contentId: String,
+    
     @SerializedName("timestamp")
     val timeStamp: String,
 

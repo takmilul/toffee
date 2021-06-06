@@ -30,6 +30,12 @@ data class LoginLogData(
     val isBlNumber: String = SessionPreference.getInstance().isBanglalinkNumber,
     val lat: String = SessionPreference.getInstance().latitude,
     val lon: String = SessionPreference.getInstance().longitude,
+    @SerializedName("geo_city")
+    val geoCity: String = SessionPreference.getInstance().geoCity,
+    @SerializedName("geo_location")
+    val geoLocation: String = SessionPreference.getInstance().geoLocation,
+    @SerializedName("user_ip")
+    val userIp: String = SessionPreference.getInstance().userIp,
     @SerializedName("net_type")
     val netType:String = SessionPreference.getInstance().netType,
     @SerializedName("os_name")

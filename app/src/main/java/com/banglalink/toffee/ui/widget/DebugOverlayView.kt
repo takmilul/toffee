@@ -81,7 +81,7 @@ class DebugOverlayView(ctx: Context, val attrs: AttributeSet? = null, val defAtt
                 DEVICE_ID -> if(commonPreference.deviceId.isNotBlank()) sb.appendLine(commonPreference.deviceId)
                 USER_ID -> if(mPref.customerId != 0) sb.appendLine(mPref.customerId)
                 USER_NAME -> if(mPref.customerName.isNotBlank()) sb.appendLine(mPref.customerName)
-//                PUBLIC_IP -> if(mPref.phoneNumber.isNotBlank()) sb.appendLine(mPref.)
+                PUBLIC_IP -> if(mPref.userIp.isNotBlank()) sb.appendLine(mPref.userIp)
                 LOCATION -> if(mPref.latitude.isNotBlank() || mPref.longitude.isNotBlank()) sb.appendLine("${mPref.latitude}, ${mPref.longitude}")
                 DEVICE_TYPE -> sb.appendLine("Android")
                 CONTENT_ID -> if(!contentId.isNullOrBlank()) sb.appendLine(contentId)
