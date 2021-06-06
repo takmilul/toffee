@@ -125,7 +125,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         binding.progress.setOnSeekBarChangeListener(this)
         binding.videoOption.setOnClickListener(this)
         binding.fullscreen.setOnClickListener(this)
-        binding.preview.setOnClickListener(this)
+        binding.dtInterceptor.setOnClickListener(this)
         binding.share.setOnClickListener(this)
         mFormatBuilder = StringBuilder()
         mFormatter = Formatter(mFormatBuilder, Locale.getDefault())
@@ -264,7 +264,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     fun showWifiOnlyMessage() {
         bindingUtil.loadImageFromResource(binding.preview, drawable.watch_wifi_only_msg)
         hideControls(0)
-        binding.preview.setOnClickListener(null)
+        binding.dtInterceptor.setOnClickListener(null)
     }
 
     val isControllerHidden: Boolean
@@ -387,13 +387,13 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
 
     override fun onViewMinimize() {
         isMinimize = true
-        binding.textureView.setOnClickListener(null)
+//        binding.textureView.setOnClickListener(null)
         hideControls(0)
     }
 
     override fun onViewMaximize() {
         isMinimize = false
-        binding.textureView.setOnClickListener(this)
+//        binding.textureView.setOnClickListener(this)
         if (simpleExoPlayer?.isPlaying == true) {
             hideControls(2000)
         }
@@ -426,7 +426,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         binding.share.isEnabled = false
         bindingUtil.loadImageFromResource(binding.preview, drawable.content_expired)
         hideControls(0)
-        binding.preview.setOnClickListener(null)
+        binding.dtInterceptor.setOnClickListener(null)
     }
 
     private inner class MessageHandler : Handler() {
@@ -534,7 +534,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
                     it.onDrawerButtonPressed()
                 }
             }
-            binding.preview -> {
+            binding.dtInterceptor -> {
                 if (showControls()) {
                     if (simpleExoPlayer?.isPlaying == true) {
                         hideControls(3000)
@@ -570,7 +570,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         //Log.e("CAST_T", "Player state changed")
         when (playbackState) {
             Player.STATE_BUFFERING -> {
-                binding.preview.setOnClickListener(this)
+                binding.dtInterceptor.setOnClickListener(this)
 //                binding.preview.setImageResource(color.black)
                 binding.play.visibility = GONE
                 nextButtonVisibility(false)
