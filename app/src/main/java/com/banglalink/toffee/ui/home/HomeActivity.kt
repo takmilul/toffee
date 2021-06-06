@@ -71,10 +71,7 @@ import com.banglalink.toffee.ui.upload.UploadStatus
 import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.ui.widget.showSubscriptionDialog
-import com.banglalink.toffee.util.EncryptionUtil
-import com.banglalink.toffee.util.InAppMessageParser
-import com.banglalink.toffee.util.TAG
-import com.banglalink.toffee.util.Utils
+import com.banglalink.toffee.util.*
 import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.util.Util
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -97,6 +94,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import net.gotev.uploadservice.UploadService
 import org.xmlpull.v1.XmlPullParser
+import java.net.MalformedURLException
 import java.util.*
 import javax.inject.Inject
 
@@ -777,10 +775,26 @@ class HomeActivity :
 
 
     private fun handleSharedUrl(intent: Intent) {
-        val uri = intent.data
-        if (uri != null) {
-            val strUri = uri.toString()
-             handleDeepLink(strUri)
+        lifecycleScope.launch {
+            var appLinkUriStr: String? = null
+            try{
+                val appLinkUri = AppLinks.getTargetUrlFromInboundIntent(this@HomeActivity, intent)
+                if(appLinkUri != null && appLinkUri.host != "toffeelive.com") {
+                    appLinkUriStr = viewModel.fetchRedirectedDeepLink(appLinkUri.toString())
+                }
+            } catch (ex: Exception) {
+                ToffeeAnalytics.logException(ex)
+            }
+            if(!appLinkUriStr.isNullOrEmpty()) {
+                handleDeepLink(appLinkUriStr)
+            }
+            else {
+                val uri = intent.data
+                if (uri != null) {
+                    val strUri = uri.toString()
+                    handleDeepLink(strUri)
+                }
+            }
         }
     }
 
@@ -814,7 +828,7 @@ class HomeActivity :
                 }
             }
         }catch (e: Exception){
-            ToffeeAnalytics.logBreadCrumb("Failed to handle depplink $url")
+            ToffeeAnalytics.logBreadCrumb("2. Failed to handle depplink $url")
             ToffeeAnalytics.logException(e)
         }
     }

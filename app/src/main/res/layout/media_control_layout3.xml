@@ -9,6 +9,12 @@
         android:layout_height="match_parent"
         android:focusableInTouchMode="false">
 
+        <com.banglalink.toffee.ui.player.PlayerPreview
+            android:id="@+id/dtInterceptor"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+        />
+
         <com.banglalink.toffee.ui.widget.AspectRatioFrameLayout
             android:id="@+id/playerContainer"
             android:layout_width="match_parent"
@@ -25,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
-            <com.banglalink.toffee.ui.player.PlayerPreview
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/preview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

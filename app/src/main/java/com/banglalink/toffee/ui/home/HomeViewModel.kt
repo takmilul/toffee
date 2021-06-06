@@ -18,6 +18,7 @@ import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.data.repository.*
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.AppCoroutineScope
+import com.banglalink.toffee.di.SimpleHttpClient
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.player.AddToPlaylistData
@@ -25,16 +26,13 @@ import com.banglalink.toffee.ui.player.PlaylistManager
 import com.banglalink.toffee.usecase.*
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.getError
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
-import com.google.firebase.iid.FirebaseInstanceId
-import com.google.firebase.iid.InstanceIdResult
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import javax.inject.Inject
 
 @HiltViewModel
@@ -54,6 +52,7 @@ class HomeViewModel @Inject constructor(
     private val sendShareCountEvent: SendShareCountEvent,
     private val shareCountRepository: ShareCountRepository,
     private val sendViewContentEvent: SendViewContentEvent,
+    @SimpleHttpClient private val httpClient: OkHttpClient,
     @AppCoroutineScope private val appScope: CoroutineScope,
     private val mqttCredentialService: MqttCredentialService,
     private val sendUserInterestEvent: SendUserInterestEvent,
@@ -62,7 +61,7 @@ class HomeViewModel @Inject constructor(
     private val contentFromShareableUrl: GetContentFromShareableUrl,
     private val myChannelDetailApiService: MyChannelGetDetailService,
     private val subscriptionCountRepository: SubscriptionCountRepository,
-) : ViewModel(), OnCompleteListener<InstanceIdResult> {
+) : ViewModel() {
 
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val fragmentDetailsMutableLiveData = SingleLiveEvent<Any>()
@@ -86,15 +85,12 @@ class HomeViewModel @Inject constructor(
         FirebaseMessaging.getInstance().subscribeToTopic("buzz")
         FirebaseMessaging.getInstance().subscribeToTopic("controls")
         FirebaseMessaging.getInstance().subscribeToTopic("cdn_control")
-        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener(this)
-    }
-
-    //overridden function for firebase token
-    override fun onComplete(task: Task<InstanceIdResult>) {
-        if (task.isSuccessful) {
-            val token = task.result?.token
-            if (token != null) {
-                setFcmToken(token)
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if(task.isSuccessful) {
+                val token = task.result
+                if(token != null) {
+                    setFcmToken(token)
+                }
             }
         }
 
@@ -150,6 +146,22 @@ class HomeViewModel @Inject constructor(
                 profileApi()
             } catch (e: Exception) {
                 ToffeeAnalytics.logException(e)
+            }
+        }
+    }
+
+    suspend fun fetchRedirectedDeepLink(url: String?): String? {
+        if(url == null) return url
+        return withContext(Dispatchers.IO + Job()) {
+            try {
+                val resp = httpClient.newCall(Request.Builder().url(url).build()).execute()
+                val redirUrl = resp.request.url
+                if (redirUrl.host == "toffeelive.com") redirUrl.toString()
+                else null
+            }
+            catch (ex: Exception) {
+                ex.printStackTrace()
+                null
             }
         }
     }
