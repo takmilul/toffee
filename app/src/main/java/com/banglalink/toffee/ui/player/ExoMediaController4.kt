@@ -31,7 +31,7 @@ class ExoMediaController4 @JvmOverloads constructor(
     private var controllerRef: Int = -1
 
     init {
-        gestureListener = DoubleTapGestureListener(binding.preview)
+        gestureListener = DoubleTapGestureListener(binding.dtInterceptor)
         gestureDetector = GestureDetectorCompat(context, gestureListener)
 
         controller = binding.playerOverlay

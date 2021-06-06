@@ -125,7 +125,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         binding.progress.setOnSeekBarChangeListener(this)
         binding.videoOption.setOnClickListener(this)
         binding.fullscreen.setOnClickListener(this)
-        binding.preview.setOnClickListener(this)
+        binding.dtInterceptor.setOnClickListener(this)
         binding.share.setOnClickListener(this)
         mFormatBuilder = StringBuilder()
         mFormatter = Formatter(mFormatBuilder, Locale.getDefault())
@@ -264,7 +264,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     fun showWifiOnlyMessage() {
         bindingUtil.loadImageFromResource(binding.preview, drawable.watch_wifi_only_msg)
         hideControls(0)
-        binding.preview.setOnClickListener(null)
+        binding.dtInterceptor.setOnClickListener(null)
     }
 
     val isControllerHidden: Boolean
@@ -387,13 +387,13 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
 
     override fun onViewMinimize() {
         isMinimize = true
-        binding.textureView.setOnClickListener(null)
+//        binding.textureView.setOnClickListener(null)
         hideControls(0)
     }
 
     override fun onViewMaximize() {
         isMinimize = false
-        binding.textureView.setOnClickListener(this)
+//        binding.textureView.setOnClickListener(this)
         if (simpleExoPlayer?.isPlaying == true) {
             hideControls(2000)
         }
@@ -426,7 +426,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         binding.share.isEnabled = false
         bindingUtil.loadImageFromResource(binding.preview, drawable.content_expired)
         hideControls(0)
-        binding.preview.setOnClickListener(null)
+        binding.dtInterceptor.setOnClickListener(null)
     }
 
     private inner class MessageHandler : Handler() {
@@ -534,7 +534,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
                     it.onDrawerButtonPressed()
                 }
             }
-            binding.preview -> {
+            binding.dtInterceptor -> {
                 if (showControls()) {
                     if (simpleExoPlayer?.isPlaying == true) {
                         hideControls(3000)
@@ -570,7 +570,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         //Log.e("CAST_T", "Player state changed")
         when (playbackState) {
             Player.STATE_BUFFERING -> {
-                binding.preview.setOnClickListener(this)
+                binding.dtInterceptor.setOnClickListener(this)
 //                binding.preview.setImageResource(color.black)
                 binding.play.visibility = GONE
                 nextButtonVisibility(false)
@@ -740,8 +740,18 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
 
     private val scaleType: Int
         get() {
-            if(!mPref.keepAspectRatio && maxBound == minBound) {
-                return AspectRatioFrameLayout.RESIZE_MODE_FILL
+            if(!mPref.keepAspectRatio/* && maxBound == minBound*/) {
+                if(videoWidth > 0 && videoHeight > 0) {
+                    if(isFullScreen && videoWidth > videoHeight) {
+                        return AspectRatioFrameLayout.RESIZE_MODE_FILL
+                    }
+                } else if(isFullScreen && !isVideoPortrait) {
+                    return AspectRatioFrameLayout.RESIZE_MODE_FILL
+                }
+//                if(videoWidth > 0 && videoHeight > 0 && videoWidth > videoHeight
+//                    && isFullScreen) { // Horizontal
+//                    return AspectRatioFrameLayout.RESIZE_MODE_FILL
+//                }
             }
             return if (isFullScreen)
                 AspectRatioFrameLayout.RESIZE_MODE_FIT
@@ -756,7 +766,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     val maxBound: Int
         get() {
             if(videoWidth > 0 && videoHeight > 0) {
-                return min(max(minVideoHeight, (videoHeight / videoWidth) * screenWidth), maxVideoHeight)
+                return min(max(minVideoHeight, ((videoHeight / videoWidth.toFloat()) * screenWidth).toInt()), maxVideoHeight)
             }
             return if(isVideoPortrait) {
                 maxVideoHeight
@@ -780,10 +790,12 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     }
 
     fun setHeightWithAnim(height: Int, animDuration: Long = 100L) {
+        if(height == layoutParams.height) return
+        heightAnim?.cancel()
         heightAnim = ValueAnimator.ofInt(layoutParams.height, height)
         heightAnim?.duration = animDuration
         heightAnim?.addUpdateListener {
-            setLayoutHeight(it.animatedValue as Int)
+            if(isAttachedToWindow) setLayoutHeight(it.animatedValue as Int)
         }
         heightAnim?.start()
     }
@@ -874,7 +886,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         videoWidth = (width * pixelWidthHeightRatio).toInt()
         videoHeight = height
 
-        Log.e("CONTROL_T", "Video resolution -> $videoWidth x $videoHeight, ratio -> $pixelWidthHeightRatio")
+        Log.e("CONTROL_T", "Video resolution -> $videoWidth x $videoHeight, ratio -> $pixelWidthHeightRatio, min -> $minBound, max -> $maxBound")
 
 //        isVideoPortrait = videoWidth <= videoHeight
         isVideoScalable = minBound != maxBound
