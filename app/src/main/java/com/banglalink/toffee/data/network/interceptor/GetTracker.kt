@@ -33,6 +33,8 @@ class GetTracker:IGetMethodTracker {
         "/ugc-channel-subscription-list/1",
         "/ugc-inappropriate-head-list/1",
         "/ugc-active-inactive-categories/1",
+        "/ugc-user-playlist-names/1",
+        "/ugc-content-by-user-playlist/1",
     )
 
     override fun shouldConvertToGetRequest(urlEncodedFragmentString: String):Boolean {

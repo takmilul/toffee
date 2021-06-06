@@ -15,6 +15,7 @@ import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.usecase.SendLoginLogEvent
 import com.banglalink.toffee.util.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -26,8 +27,9 @@ import javax.inject.Inject
 class SplashViewModel @Inject constructor(
     val mPref: SessionPreference,
     private val apiLogin: ApiLogin,
-    private val credential: CredentialService,
     private val checkUpdate: CheckUpdate,
+    private val credential: CredentialService,
+    private val sendLoginLogEvent: SendLoginLogEvent,
     @AppCoroutineScope private val appScope: CoroutineScope,
 ) : ViewModel() {
 
@@ -93,5 +95,9 @@ class SplashViewModel @Inject constructor(
         }
     }
     
-    fun isCustomerLoggedIn() = mPref.customerId != 0
+    fun sendLoginLogData() {
+        viewModelScope.launch {
+            sendLoginLogEvent.execute()
+        }
+    }
 }

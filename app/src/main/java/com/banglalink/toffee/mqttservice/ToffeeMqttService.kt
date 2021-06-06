@@ -151,7 +151,7 @@ class ToffeeMqttService @Inject constructor(
                 isDeleteOldestMessages = false
             }
             client?.setBufferOpts(disconnectedBufferOptions)
-            client?.subscribe(arrayOf(REACTION_TOPIC, SHARE_COUNT_TOPIC, SUBSCRIPTION_TOPIC), intArrayOf(2,2,2), null, this@ToffeeMqttService)
+            client?.subscribe(arrayOf(REACTION_TOPIC, SHARE_COUNT_TOPIC, SUBSCRIPTION_TOPIC), intArrayOf(2, 2, 2), null, this@ToffeeMqttService)
         }
         else {
             gson = gson ?: Gson()
@@ -208,7 +208,6 @@ class ToffeeMqttService @Inject constructor(
     }
     
     override fun onFailure(token: IMqttToken?, error: Throwable?) {
-        client = null
         Log.e("MQTT_", "onFailure: ${error?.message}")
     }
     
@@ -227,6 +226,7 @@ class ToffeeMqttService @Inject constructor(
                 it.disconnect(0)
             }
             client = null
+            coroutineScope.cancel()
             Log.e("MQTT_", "destroyed")
         }
         catch (e: Exception) {
