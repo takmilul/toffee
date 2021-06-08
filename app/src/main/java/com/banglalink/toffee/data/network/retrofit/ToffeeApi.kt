@@ -120,6 +120,14 @@ interface ToffeeApi {
         @Path("dbVersion") dbVersion: Int,
         @Body categoryRequest: CategoryRequest
     ): CategoryResponse
+
+    @POST("ugc-payment-method-list/1/{limit}/{offset}/{dbVersion}")
+    suspend fun getPaymentMethodList(
+        @Path("limit") limit:Int,
+        @Path("offset") offset:Int,
+        @Path("dbVersion") dbVersion: Int,
+        @Body paymentMethodRequest: PaymentMethodRequest
+    ): PaymentMethodResponse
     
     @POST("ugc-active-inactive-categories/1/{dbVersion}")
     suspend fun getUgcContentCategoryList(
