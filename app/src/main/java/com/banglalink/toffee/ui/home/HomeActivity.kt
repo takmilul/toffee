@@ -34,7 +34,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -94,7 +93,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import net.gotev.uploadservice.UploadService
 import org.xmlpull.v1.XmlPullParser
-import java.net.MalformedURLException
 import java.util.*
 import javax.inject.Inject
 
@@ -1209,7 +1207,9 @@ class HomeActivity :
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         observe(mPref.playerOverlayLiveData) {
-            it?.let { showPlayerOverlay(it) }
+            if (it?.contentId == "all" || it?.contentId == playlistManager.getCurrentChannel()?.id) {
+                it?.let { showPlayerOverlay(it) }
+            }
         }
 //        showPlayerOverlay()
     }
@@ -1220,6 +1220,7 @@ class HomeActivity :
             /*val playerOverlayData = Gson().fromJson("""
                     {
                         "id": 234,
+                        "content_id": "254896",
                         "function": "notification_on_top_of_player",
                         "timestamp": "2021-03-08 ",
                         "parameters": {

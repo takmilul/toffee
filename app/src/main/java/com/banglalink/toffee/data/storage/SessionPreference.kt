@@ -475,6 +475,18 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getString(PREF_YOUTUBE_PAGE_URL, "") ?: ""
         set(value) = pref.edit { putString(PREF_YOUTUBE_PAGE_URL, value) }
     
+    var geoCity: String
+        get() = pref.getString(PREF_GEO_CITY, "") ?: ""
+        set(value) = pref.edit { putString(PREF_GEO_CITY, value) }
+    
+    var geoLocation: String
+        get() = pref.getString(PREF_GEO_LOCATION, "") ?: ""
+        set(value) = pref.edit { putString(PREF_GEO_LOCATION, value) }
+    
+    var userIp: String
+        get() = pref.getString(PREF_USER_IP, "") ?: ""
+        set(value) = pref.edit { putString(PREF_USER_IP, value) }
+    
     fun saveCustomerInfo(customerInfoLogin:CustomerInfoLogin){
         balance = customerInfoLogin.balance
         logout = "0"
@@ -525,6 +537,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         facebookPageUrl = customerInfoLogin.facebookPageUrl
         instagramPageUrl = customerInfoLogin.instagramPageUrl
         youtubePageUrl = customerInfoLogin.youtubePageUrl
+        
+        geoCity = customerInfoLogin.geoCity ?: ""
+        geoLocation = customerInfoLogin.geoLocation ?: ""
+        userIp = customerInfoLogin.userIp ?: ""
     }
 
     companion object {
@@ -597,6 +613,9 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_FACEBOOK_PAGE_URL = "facebook_page_url"
         private const val PREF_INSTAGRAM_PAGE_URL = "instagram_page_url"
         private const val PREF_YOUTUBE_PAGE_URL = "youtube_page_url"
+        private const val PREF_GEO_CITY = "geo_city"
+        private const val PREF_GEO_LOCATION = "geo_location"
+        private const val PREF_USER_IP = "user_ip"
 
         private const val PREF_NAME_IP_TV= "IP_TV"
 

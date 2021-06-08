@@ -68,7 +68,13 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             Log.i("NOT_", "onMessageReceived: $data")
             when(data["notificationType"]!!.toLowerCase()) {
                 NotificationType.OVERLAY.type -> {
-                    gson.fromJson(remoteMessage.data["notificationText"]?.trimIndent(), PlayerOverlayData::class.java)?.let { mPref.playerOverlayLiveData.postValue(it) }
+                    try {
+                        gson.fromJson(remoteMessage.data["notificationText"]?.trimIndent(), PlayerOverlayData::class.java)
+                            ?.let { mPref.playerOverlayLiveData.postValue(it) }
+                    }
+                    catch (e: Exception) {
+                        Log.e(TAG, "playerOverlay: ${e.message}")
+                    }
                 }
                 NotificationType.LOGOUT.type -> {
                     kickOutUser(data)
