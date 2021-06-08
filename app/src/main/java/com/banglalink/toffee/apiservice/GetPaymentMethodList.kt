@@ -1,12 +1,10 @@
 package com.banglalink.toffee.apiservice
 
 import com.banglalink.toffee.common.paging.BaseApiService
-import com.banglalink.toffee.data.network.request.CategoryRequest
 import com.banglalink.toffee.data.network.request.PaymentMethodRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.Payment
 import javax.inject.Inject
 
@@ -15,6 +13,7 @@ class GetPaymentMethodList @Inject constructor(
     private val toffeeApi: ToffeeApi
 ): BaseApiService<Payment> {
     override suspend fun loadData(offset: Int, limit: Int): List<Payment> {
+        if(offset > 0) return emptyList()
         val response = tryIO2 {
             toffeeApi.getPaymentMethodList(
                 limit,

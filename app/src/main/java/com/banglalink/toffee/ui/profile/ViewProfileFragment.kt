@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.profile
 
-import android.app.DatePickerDialog
 import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.graphics.Color
@@ -21,21 +20,14 @@ import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.material.chip.Chip
-import java.util.*
 
 class ViewProfileFragment : BaseFragment() {
 
     private var _binding: FragmentViewProfileBinding? = null
     private val binding get() = _binding!!
-    private val viewModel by viewModels<ViewProfileViewModel>()
-
     private val userInterestList: MutableMap<String, Int> = mutableMapOf()
-
-
-
-    private val progressDialog by unsafeLazy {
-        VelBoxProgressDialog(requireContext())
-    }
+    private val viewModel by viewModels<ViewProfileViewModel>()
+    private val progressDialog by unsafeLazy { VelBoxProgressDialog(requireContext()) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentViewProfileBinding.inflate(inflater, container, false)
@@ -46,9 +38,10 @@ class ViewProfileFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         observeCategory()
         if (mPref.isVerifiedUser) {
+            val phoneNumber = if (mPref.phoneNumber.length == 11) mPref.phoneNumber else mPref.phoneNumber.substring(3)
             binding.data = EditProfileForm().apply {
                 fullName = mPref.customerName
-                phoneNo = mPref.phoneNumber
+                phoneNo = phoneNumber
                 photoUrl = mPref.userImageUrl ?: ""
             }
             observe(mPref.profileImageUrlLiveData) {
@@ -70,7 +63,7 @@ class ViewProfileFragment : BaseFragment() {
             progressDialog.dismiss()
             when (it) {
                 is Resource.Success -> {
-                    binding.data = it.data
+                    binding.data = it.data.apply { phoneNo = if (phoneNo.length == 11) phoneNo else phoneNo.substring(3) }
                 }
                 is Resource.Failure -> {
                     requireContext().showToast(it.error.msg)
@@ -146,8 +139,6 @@ class ViewProfileFragment : BaseFragment() {
                 }
                // progressDialog.hide()
             }
-
         }
     }
-
 }

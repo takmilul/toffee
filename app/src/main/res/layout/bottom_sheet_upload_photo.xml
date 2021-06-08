@@ -7,27 +7,13 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/views"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bottom_round_bg">
-
-        <ImageView
-            android:id="@+id/bottom_sheet_top_image"
-            android:layout_width="40dp"
-            android:layout_height="8dp"
-            android:layout_marginTop="8dp"
-            android:visibility="invisible"
-            android:contentDescription="@string/txt_icon"
-            android:src="@drawable/ic_bottom_sheet_topicon"
-            app:layout_constraintBottom_toTopOf="@+id/textView28"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/textView28"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="38dp"
+            android:layout_marginTop="20dp"
             android:fontFamily="@font/roboto_regular"
             android:text="@string/lets_fill_some_basic_info_text"
             android:textColor="@color/main_text_color"
@@ -35,7 +21,7 @@
             app:layout_constraintBottom_toTopOf="@+id/textView29"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/bottom_sheet_top_image" />
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
             android:id="@+id/textView29"
@@ -82,7 +68,7 @@
         <EditText
             android:id="@+id/channel_name_et"
             style="@style/SingleLineInputFieldStyle"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="24dp"
             android:drawableStart="@drawable/ic_channel_name_logo"
             android:drawablePadding="10dp"
             android:hint="@string/channel_name_hint"
@@ -91,63 +77,63 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/channel_logo_iv" />
 
-        <LinearLayout
-            android:id="@+id/phone_number_layout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/single_line_input_text_bg"
-            android:orientation="horizontal"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/channel_name_et">
+<!--        <LinearLayout-->
+<!--            android:id="@+id/phone_number_layout"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginHorizontal="16dp"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:background="@drawable/single_line_input_text_bg"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:visibility="gone"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/channel_name_et">-->
 
-            <ImageView
-                android:id="@+id/image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/txt_phone_number"
-                android:src="@drawable/ic_phone" />
+<!--            <ImageView-->
+<!--                android:id="@+id/image"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:contentDescription="@string/txt_phone_number"-->
+<!--                android:src="@drawable/ic_phone" />-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:background="@android:color/transparent"
-                android:drawablePadding="3dp"
-                android:fontFamily="@font/roboto_regular"
-                android:gravity="center_vertical"
-                android:text="+88"
-                android:textColor="@color/switchUnCheckedColor"
-                android:textSize="14sp"
-                android:textStyle="normal"
-                app:drawableStartCompat="@drawable/ic_bd_flag" />
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="10dp"-->
+<!--                android:background="@android:color/transparent"-->
+<!--                android:drawablePadding="3dp"-->
+<!--                android:fontFamily="@font/roboto_regular"-->
+<!--                android:gravity="center_vertical"-->
+<!--                android:text="+88"-->
+<!--                android:textColor="@color/switchUnCheckedColor"-->
+<!--                android:textSize="14sp"-->
+<!--                android:textStyle="normal"-->
+<!--                app:drawableStartCompat="@drawable/ic_bd_flag" />-->
 
-            <ImageView
-                android:layout_width="14dp"
-                android:layout_height="12dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="3dp"
-                android:contentDescription="@string/txt_down_arrow_flag"
-                android:src="@drawable/ic_path_down_arrow" />
+<!--            <ImageView-->
+<!--                android:layout_width="14dp"-->
+<!--                android:layout_height="12dp"-->
+<!--                android:layout_marginStart="5dp"-->
+<!--                android:layout_marginTop="3dp"-->
+<!--                android:contentDescription="@string/txt_down_arrow_flag"-->
+<!--                android:src="@drawable/ic_path_down_arrow" />-->
 
-            <TextView
-                android:id="@+id/mobile_tv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:background="@android:color/transparent"
-                android:drawablePadding="10dp"
-                android:fontFamily="@font/roboto_regular"
-                android:gravity="center_vertical"
-                android:hint="@string/phone_number_hint"
-                android:textColor="@color/upload_number_color"
-                android:textSize="14sp"
-                android:textStyle="normal"
-                app:drawableEndCompat="@drawable/ic_verified" />
-        </LinearLayout>
+<!--            <TextView-->
+<!--                android:id="@+id/mobile_tv"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="8dp"-->
+<!--                android:background="@android:color/transparent"-->
+<!--                android:drawablePadding="10dp"-->
+<!--                android:fontFamily="@font/roboto_regular"-->
+<!--                android:gravity="center_vertical"-->
+<!--                android:hint="@string/phone_number_hint"-->
+<!--                android:textColor="@color/upload_number_color"-->
+<!--                android:textSize="14sp"-->
+<!--                android:textStyle="normal"-->
+<!--                app:drawableEndCompat="@drawable/ic_verified" />-->
+<!--        </LinearLayout>-->
 
         <Button
             android:id="@+id/next_btn"

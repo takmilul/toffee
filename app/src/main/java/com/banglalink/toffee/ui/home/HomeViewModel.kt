@@ -19,6 +19,7 @@ import com.banglalink.toffee.data.repository.*
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.di.SimpleHttpClient
+import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.player.AddToPlaylistData
@@ -74,9 +75,10 @@ class HomeViewModel @Inject constructor(
     val myChannelNavLiveData = SingleLiveEvent<MyChannelNavParams>()
     val notificationUrlLiveData = SingleLiveEvent<String>()
     val mqttCredentialLiveData = SingleLiveEvent<Resource<MqttBean?>>()
-    private val _channelDetail = MutableLiveData<Resource<MyChannelDetailBean?>>()
+    private val _channelDetail = MutableLiveData<MyChannelDetail>()
     private var _playlistManager = PlaylistManager()
     val subscriptionLiveData = SingleLiveEvent<Resource<MyChannelSubscribeBean>>()
+    val myChannelDetailLiveData = _channelDetail.toLiveData()
 
     fun getPlaylistManager() = _playlistManager
 
@@ -197,13 +199,14 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getChannelDetail(isOwner: Int, isPublic: Int, channelId: Int, channelOwnerId: Int) {
+    fun getChannelDetail(channelOwnerId: Int) {
         viewModelScope.launch {
             val result = resultFromResponse { myChannelDetailApiService.execute(channelOwnerId) }
 
             if (result is Success) {
                 val myChannelDetail = result.data.myChannelDetail
                 myChannelDetail?.let {
+                    _channelDetail.value = it
                     mPref.isChannelDetailChecked = true
                     mPref.channelId = it.id.toInt()
                     if (!it.profileUrl.isNullOrBlank()) {
@@ -211,6 +214,21 @@ class HomeViewModel @Inject constructor(
                     }
                     if (!it.channelName.isNullOrBlank()) {
                         mPref.channelName = it.channelName
+                    }
+                    if (!it.name.isNullOrBlank()) {
+                        mPref.customerName = it.name !!
+                    }
+                    if (!it.email.isNullOrBlank()) {
+                        mPref.customerEmail = it.email !!
+                    }
+                    if (!it.address.isNullOrBlank()) {
+                        mPref.customerAddress = it.address !!
+                    }
+                    if (!it.dateOfBirth.isNullOrBlank()) {
+                        mPref.customerDOB = it.dateOfBirth
+                    }
+                    if (!it.nationalIdNo.isNullOrBlank()) {
+                        mPref.customerNID = it.nationalIdNo
                     }
                 }
             }

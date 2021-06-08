@@ -1,15 +1,12 @@
 package com.banglalink.toffee.ui.login
 
-import android.app.Activity
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.forEach
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
@@ -22,7 +19,6 @@ import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
-
 
 @AndroidEntryPoint
 class UserInterestFragment2 : ChildDialogFragment() {
@@ -88,7 +84,6 @@ class UserInterestFragment2 : ChildDialogFragment() {
                         val tag = it.tag.toString()
                         binding.interestOthersChipGroup.removeView(it)
                         userInterestList[tag] = 0
-                        val dd =""
                     }
                     binding.interestOthersChipGroup.addView(newChip)
                     userInterestList[data] = 1

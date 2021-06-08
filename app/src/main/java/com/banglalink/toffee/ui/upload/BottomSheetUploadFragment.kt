@@ -2,31 +2,18 @@ package com.banglalink.toffee.ui.upload
 
 import android.app.Dialog
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.DisplayMetrics
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.*
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
-import coil.load
-import coil.request.CachePolicy
 import com.banglalink.toffee.R
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_DETAILS
-import com.banglalink.toffee.data.network.request.MyChannelEditRequest
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.UploadBottomSheetBinding
-import com.banglalink.toffee.extension.*
-import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.extension.dp
 import com.banglalink.toffee.ui.profile.ViewProfileViewModel
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
-import com.banglalink.toffee.util.imagePathToBase64
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -93,7 +80,7 @@ class BottomSheetUploadFragment : BottomSheetDialogFragment() {
         val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
         val dialogBinding = UploadBottomSheetBinding.inflate(layoutInflater)
 
-        val navHostFragment = childFragmentManager.findFragmentById(R.id.bottom_sheetFragmentContainerView) as NavHostFragment
+        val navHostFragment = childFragmentManager.findFragmentById(R.id.bottomSheetFragmentContainerView) as NavHostFragment
         navController = navHostFragment.navController
 
         dialog.setContentView(dialogBinding.root)

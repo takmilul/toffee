@@ -10,5 +10,12 @@ data class MyChannelEditRequest (
     val oldBannerImageUrl: String? = "NULL",
     val bannerImage: String? = "NULL",
     val oldProfileImageUrl: String? = "NULL",
-    val profileImage: String? = "NULL"
+    val profileImage: String? = "NULL",
+    val name: String = "",
+    val email: String = "",
+    val address: String = "",
+    val dateOfBirth: String = "",
+    val nationalIdNo: String = "",
+    val paymentPhoneNumber: String = "",
+    val paymentMethodId: Int = 0,
 ): BaseRequest("ugcChannelEdit")

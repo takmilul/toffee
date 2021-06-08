@@ -22,7 +22,7 @@ const val PREF_NAME_IP_TV= "IP_TV"
 
 @SuppressLint("HardwareIds")
 class SessionPreference(private val pref: SharedPreferences, private val context: Context) {
-
+    
     val viewCountDbUrlLiveData = SingleLiveEvent<String>()
     val reactionDbUrlLiveData = SingleLiveEvent<String>()
     val reactionStatusDbUrlLiveData = SingleLiveEvent<String>()
@@ -34,21 +34,37 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val customerNameLiveData = MutableLiveData<String>()
     val playerOverlayLiveData = SingleLiveEvent<PlayerOverlayData>()
     val forceLogoutUserLiveData = SingleLiveEvent<Boolean>()
-
+    
     val deviceId: String by lazy {
         Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
     }
-
+    
     var phoneNumber: String
         get() = pref.getString(PREF_PHONE_NUMBER, "") ?: ""
-        set(phoneNumber) = pref.edit{ putString(PREF_PHONE_NUMBER, phoneNumber) }
-
+        set(phoneNumber) = pref.edit { putString(PREF_PHONE_NUMBER, phoneNumber) }
+    
     var customerName: String
         get() = pref.getString(PREF_CUSTOMER_NAME, "") ?: ""
         set(customerName) {
             customerNameLiveData.postValue(customerName)
-            pref.edit{ putString(PREF_CUSTOMER_NAME, customerName) }
+            pref.edit { putString(PREF_CUSTOMER_NAME, customerName) }
         }
+    
+    var customerEmail: String
+        get() = pref.getString(PREF_CUSTOMER_EMAIL, "") ?: ""
+        set(email) = pref.edit { putString(PREF_CUSTOMER_EMAIL, email) }
+
+    var customerAddress: String
+        get() = pref.getString(PREF_CUSTOMER_ADDRESS, "") ?: ""
+        set(address) = pref.edit{ putString(PREF_CUSTOMER_ADDRESS, address) }
+
+    var customerDOB: String
+        get() = pref.getString(PREF_CUSTOMER_DOB, "") ?: ""
+        set(dob) = pref.edit{ putString(PREF_CUSTOMER_DOB, dob) }
+
+    var customerNID: String
+        get() = pref.getString(PREF_CUSTOMER_NID, "") ?: ""
+        set(nidNumber) = pref.edit{ putString(PREF_CUSTOMER_NID, nidNumber) }
 
     var customerId: Int
         get() = pref.getInt(PREF_CUSTOMER_ID, 0)
@@ -546,6 +562,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     companion object {
         private const val PREF_PHONE_NUMBER = "p_number"
         private const val PREF_CUSTOMER_NAME = "customer_name"
+        private const val PREF_CUSTOMER_EMAIL = "customer_email"
+        private const val PREF_CUSTOMER_ADDRESS = "customer_address"
+        private const val PREF_CUSTOMER_DOB = "customer_dob"
+        private const val PREF_CUSTOMER_NID = "customer_nid"
         private const val PREF_CUSTOMER_ID = "customer_id"
         private const val PREF_PASSWORD = "passwd"
         private const val PREF_CHANNEL_ID = "channel_id"

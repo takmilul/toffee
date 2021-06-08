@@ -1,29 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
-
+    
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bottom_round_bg">
-
-        <ImageView
-            android:id="@+id/bottom_sheet_top_image"
-            android:layout_width="40dp"
-            android:layout_height="8dp"
-            android:layout_marginTop="12dp"
-            android:contentDescription="@string/txt_icon"
-            android:src="@drawable/ic_bottom_sheet_topicon"
-            app:layout_constraintBottom_toTopOf="@+id/imageView6"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:visibility="gone"
-            />
-
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/imageView6"
@@ -33,16 +14,16 @@
             app:layout_constraintBottom_toTopOf="@+id/textView3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/bottom_sheet_top_image"
+            app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_partnership_icon" />
 
         <TextView
             android:id="@+id/textView3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="42dp"
             android:layout_marginTop="40dp"
-            android:layout_marginEnd="42dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:fontFamily="@font/roboto_regular"
             android:text="@string/partnership_text"
             android:textAlignment="center"
@@ -61,48 +42,39 @@
             android:fontFamily="@font/roboto_regular"
             android:text="@string/learn_more"
             android:textColor="@color/main_text_color"
-            android:textSize="12sp"
+            android:textSize="@dimen/default_text_size"
+            app:drawableEndCompat="@drawable/ic_right_arrow"
             app:layout_constraintBottom_toTopOf="@+id/cancelButton"
             app:layout_constraintEnd_toEndOf="@+id/textView3"
             app:layout_constraintStart_toStartOf="@+id/textView3"
             app:layout_constraintTop_toBottomOf="@+id/textView3" />
-
+    
         <Button
-            android:id="@+id/okey_btn"
+            android:id="@+id/cancelButton"
+            style="@style/EditChannelStyle"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="32dp"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
+            android:text="@string/cancel"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/okay_btn"
+            app:layout_constraintStart_toStartOf="@+id/learn_more_tv"
+            app:layout_constraintTop_toBottomOf="@+id/learn_more_tv" />
+    
+        <Button
+            android:id="@+id/okay_btn"
             style="@style/ButtonStyleSolidSave"
             android:layout_marginStart="12dp"
             android:paddingStart="55dp"
             android:paddingEnd="55dp"
-            android:text="@string/okey_text"
+            android:text="@string/okay_text"
             android:textAllCaps="true"
             app:layout_constraintBottom_toBottomOf="@+id/cancelButton"
             app:layout_constraintEnd_toEndOf="@+id/learn_more_tv"
             app:layout_constraintStart_toEndOf="@id/cancelButton"
             app:layout_constraintTop_toTopOf="@+id/cancelButton" />
 
-        <Button
-            android:id="@+id/cancelButton"
-            style="@style/EditChannelStyle"
-            android:layout_marginTop="20dp"
-            android:paddingStart="30dp"
-            android:paddingEnd="30dp"
-            android:text="@string/cancel"
-            app:layout_constraintEnd_toStartOf="@+id/okey_btn"
-            app:layout_constraintStart_toStartOf="@+id/learn_more_tv"
-            app:layout_constraintTop_toBottomOf="@+id/learn_more_tv" />
-
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cancelButton" />
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 </layout>
 

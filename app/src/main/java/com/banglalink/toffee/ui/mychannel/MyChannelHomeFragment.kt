@@ -256,6 +256,21 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                 if (! detail.channelName.isNullOrBlank()) {
                     mPref.channelName = detail.channelName
                 }
+                if (! detail.name.isNullOrBlank()) {
+                    mPref.customerName = detail.name !!
+                }
+                if (! detail.email.isNullOrBlank()) {
+                    mPref.customerEmail = detail.email !!
+                }
+                if (! detail.address.isNullOrBlank()) {
+                    mPref.customerAddress = detail.address !!
+                }
+                if (! detail.dateOfBirth.isNullOrBlank()) {
+                    mPref.customerDOB = detail.dateOfBirth
+                }
+                if (! detail.nationalIdNo.isNullOrBlank()) {
+                    mPref.customerNID = detail.nationalIdNo
+                }
             }
         }
         

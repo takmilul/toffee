@@ -1,12 +1,10 @@
 package com.banglalink.toffee.ui.profile
 
-import android.app.DatePickerDialog
 import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -32,10 +30,6 @@ import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.UtilsKt
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.material.chip.Chip
-import java.io.File
-import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.*
 
 class EditProfileFragment : BaseFragment() {
 
@@ -47,16 +41,7 @@ class EditProfileFragment : BaseFragment() {
     private val binding get() = _binding!!
     private val args by navArgs<EditProfileFragmentArgs>()
     private val viewModel by viewModels<EditProfileViewModel>()
-
     private val userInterestList: MutableMap<String, Int> = mutableMapOf()
-
-    //
-    val c = Calendar.getInstance()
-    val year = c.get(Calendar.YEAR)
-    val month = c.get(Calendar.MONTH)
-    val day = c.get(Calendar.DAY_OF_MONTH)
-
-    lateinit var selectedDate:String
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentEditProfileBinding.inflate(inflater, container, false)
@@ -95,21 +80,8 @@ class EditProfileFragment : BaseFragment() {
         observeThumbnailChange()
     }
 
-    @Throws(IOException::class)
-    fun createImageFile(): File {
-        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        val imageFileName = "IMG_" + timeStamp + "_"
-        val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        if (storageDir?.exists() == false) {
-            storageDir.mkdirs()
-        }
-        return File.createTempFile(imageFileName, ".jpg", storageDir)
-    }
-
     private fun observeThumbnailChange() {
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String?>(
-            ThumbnailSelectionMethodFragment.THUMB_URI
-        )
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String?>(ThumbnailSelectionMethodFragment.THUMB_URI)
             ?.observe(viewLifecycleOwner, {
                 it?.let { photoData ->
                     ToffeeAnalytics.logBreadCrumb("Got result from crop lib")
@@ -147,7 +119,7 @@ class EditProfileFragment : BaseFragment() {
                 binding.errorEmailTv.hide()
             }
 
-            if (it.fullName.isNotBlank()) {
+            if (it.fullName.isNotBlank() && !notValidEmail) {
                 it.apply {
                     fullName = fullName.trim()
                     email = email.trim()
@@ -191,8 +163,7 @@ class EditProfileFragment : BaseFragment() {
             Log.e(TAG, e.message, e)
         }
     }
-
-
+    
     private fun addChip(name: String, width:Int): Chip {
         val intColor = ContextCompat.getColor(requireContext(), R.color.colorSecondaryDark)
         val selectedTextColor = ContextCompat.getColor(requireContext(), R.color.main_text_color)
@@ -222,8 +193,7 @@ class EditProfileFragment : BaseFragment() {
             )
         )
     }
-
-
+    
     private fun observeCategory() {
         //  progressDialog.show()
         observe(viewModel.categories){
@@ -258,8 +228,7 @@ class EditProfileFragment : BaseFragment() {
 
         }
     }
-
-
+    
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

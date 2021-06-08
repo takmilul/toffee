@@ -5,14 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.apiservice.GetCategories
+import com.banglalink.toffee.apiservice.GetPaymentMethodList
 import com.banglalink.toffee.apiservice.MyChannelEditDetailService
 import com.banglalink.toffee.data.network.request.MyChannelEditRequest
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.extension.toLiveData
-import com.banglalink.toffee.model.Category
-import com.banglalink.toffee.model.MyChannelDetail
-import com.banglalink.toffee.model.MyChannelEditBean
-import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.*
 import com.banglalink.toffee.util.SingleLiveEvent
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -21,6 +19,7 @@ import kotlinx.coroutines.launch
 class MyChannelEditDetailViewModel @AssistedInject constructor(
     private val myChannelDetailApiService: MyChannelEditDetailService,
     private val categoryApiService: GetCategories,
+    private val paymentMethodService: GetPaymentMethodList,
     @Assisted val myChannelDetail: MyChannelDetail?,
 ) : ViewModel() {
     
@@ -31,9 +30,9 @@ class MyChannelEditDetailViewModel @AssistedInject constructor(
     val selectedCategoryPosition = MutableLiveData<Int>()
     val exitFragment = SingleLiveEvent<Boolean>()
 
-    var paymentCategoryList = MutableLiveData<List<String>>()
+    var paymentMethodList = MutableLiveData<List<Payment>>()
     var selectedPaymentPosition= MutableLiveData<Int>()
-    var selectedPaymentCategory: String?=null
+    var selectedPaymentMethod: Payment? = null
     
     init {
         viewModelScope.launch {
@@ -48,9 +47,19 @@ class MyChannelEditDetailViewModel @AssistedInject constructor(
                 exitFragment.value = true
             }
         }
-
-        paymentCategoryList.value= listOf("Bkash", "Nagad", "Rocket")
-        selectedPaymentPosition.value = 0
+        viewModelScope.launch {
+            paymentMethodList.value = try {
+                paymentMethodService.loadData(0, 0)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                emptyList()
+            }
+    
+            if (paymentMethodList.value.isNullOrEmpty()) {
+                exitFragment.value = true
+            }
+            selectedPaymentPosition.value = 0
+        }
     }
     
     @dagger.assisted.AssistedFactory
@@ -71,7 +80,7 @@ class MyChannelEditDetailViewModel @AssistedInject constructor(
     
     fun editChannel(myChannelEditRequest: MyChannelEditRequest) {
         viewModelScope.launch {
-            _data.postValue(resultFromResponse { myChannelDetailApiService.execute(myChannelEditRequest) })
+            _data.postValue(resultFromResponse { myChannelDetailApiService.execute(myChannelEditRequest) }!!)
         }
     }
     

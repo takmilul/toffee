@@ -8,9 +8,9 @@ import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.BottomSheetPartnershipBinding
 import com.banglalink.toffee.extension.safeClick
-import com.banglalink.toffee.ui.common.BaseFragment
+import com.banglalink.toffee.ui.common.ChildDialogFragment
 
-class PartnershipBottomSheetFragment :BaseFragment(){
+class PartnershipBottomSheetFragment :ChildDialogFragment(){
     private var _binding: BottomSheetPartnershipBinding? = null
     private val binding get() = _binding!!
 
@@ -23,8 +23,9 @@ class PartnershipBottomSheetFragment :BaseFragment(){
         super.onViewCreated(view, savedInstanceState)
 
         with(binding){
-            okeyBtn.safeClick({navigateToUploadPhoto()})
+            okayBtn.safeClick({navigateToUploadPhoto()})
             learnMoreTv.safeClick({navigateToCreatorsPolicy()})
+            cancelButton.safeClick({closeDialog()})
         }
     }
 

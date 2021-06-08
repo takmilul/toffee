@@ -333,8 +333,8 @@ class HomeActivity :
             viewModel.sendShareLog(channelInfo)
         }
         
-        if (!mPref.hasChannelName() && !mPref.hasChannelLogo() && !mPref.isChannelDetailChecked && mPref.isVerifiedUser) {
-            viewModel.getChannelDetail(1, 0, 0, mPref.customerId)
+        if (!isChannelComplete() && mPref.isVerifiedUser) {
+            viewModel.getChannelDetail(mPref.customerId)
         }
         
         if(intent.hasExtra(INTENT_PACKAGE_SUBSCRIBED)){
@@ -352,6 +352,9 @@ class HomeActivity :
         inAppUpdate()
         customCrashReport()
     }
+    
+    private fun isChannelComplete() =
+        mPref.hasChannelName() && mPref.hasChannelLogo() && mPref.customerDOB.isNotBlank() && mPref.customerNID.isNotBlank() && mPref.isChannelDetailChecked
     
     private fun customCrashReport() {
         val runtime = Runtime.getRuntime()
@@ -443,7 +446,8 @@ class HomeActivity :
     }
     
     fun showUploadDialog(): Boolean {
-        if (mPref.hasChannelLogo() && mPref.hasChannelName()){
+        val isProfileComplete = mPref.customerName.isNotBlank() && mPref.customerEmail.isNotBlank() && mPref.customerAddress.isNotBlank()
+        if (isChannelComplete() && isProfileComplete){
             if (navController.currentDestination?.id == R.id.uploadMethodFragment) {
                 navController.popBackStack()
                 return true
@@ -1639,9 +1643,5 @@ class HomeActivity :
                 minimizePlayer()
             }
         }
-    }
-    
-    fun showLoginDialog() {
-        
     }
 }
