@@ -353,8 +353,7 @@ class HomeActivity :
         customCrashReport()
     }
     
-    private fun isChannelComplete() =
-        mPref.hasChannelName() && mPref.hasChannelLogo() && mPref.customerDOB.isNotBlank() && mPref.customerNID.isNotBlank() && mPref.isChannelDetailChecked
+    private fun isChannelComplete() = mPref.customerName.isNotBlank() && mPref.customerEmail.isNotBlank() && mPref.customerAddress.isNotBlank() && mPref.hasChannelName() && mPref.hasChannelLogo() && mPref.customerDOB.isNotBlank() && mPref.customerNID.isNotBlank() && mPref.isChannelDetailChecked
     
     private fun customCrashReport() {
         val runtime = Runtime.getRuntime()
@@ -407,13 +406,13 @@ class HomeActivity :
 
     private lateinit var appUpdateManager: AppUpdateManager
     
-    val appUpdateListener = InstallStateUpdatedListener { state ->
+    private val appUpdateListener = InstallStateUpdatedListener { state ->
         if (state.installStatus() == InstallStatus.DOWNLOADED) {
             showToast("Toffee updated successfully")
         }
     }
 
-    fun inAppUpdate() {
+    private fun inAppUpdate() {
         appUpdateManager = AppUpdateManagerFactory.create(this)
         val appUpdateInfoTask: Task<AppUpdateInfo> = appUpdateManager.appUpdateInfo
         appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
@@ -446,8 +445,7 @@ class HomeActivity :
     }
     
     fun showUploadDialog(): Boolean {
-        val isProfileComplete = mPref.customerName.isNotBlank() && mPref.customerEmail.isNotBlank() && mPref.customerAddress.isNotBlank()
-        if (isChannelComplete() && isProfileComplete){
+        if (isChannelComplete()){
             if (navController.currentDestination?.id == R.id.uploadMethodFragment) {
                 navController.popBackStack()
                 return true
@@ -747,10 +745,10 @@ class HomeActivity :
         binding.playerView.onFullScreen(state)
         binding.playerView.resizeView(calculateScreenWidth(), state)
         Utils.setFullScreen(this, state)// || binding.playerView.channelType != "LIVE")
-        toggleNavigations(state)
+        toggleNavigation(state)
     }
 
-    private fun toggleNavigations(state: Boolean) {
+    private fun toggleNavigation(state: Boolean) {
         if(state) {
             supportActionBar?.hide()
             binding.bottomAppBar.hide()
@@ -1055,7 +1053,7 @@ class HomeActivity :
 //            }
 //        }
     }
-    fun loadFragmentById(id: Int, fragment: Fragment, tag: String) {
+    private fun loadFragmentById(id: Int, fragment: Fragment, tag: String) {
         supportFragmentManager.popBackStack(
             LandingPageFragment::class.java.name,
             0
@@ -1315,7 +1313,7 @@ class HomeActivity :
             .show()
     }
     
-    fun observeLogout() {
+    private fun observeLogout() {
         observe(viewModel.logoutLiveData) {
             when(it) {
                 is Success -> {
@@ -1381,7 +1379,7 @@ class HomeActivity :
         }
     }
 
-    fun closeSearchBarIfOpen() {
+    private fun closeSearchBarIfOpen() {
         if(searchView?.isIconified == false) {
             searchView?.onActionViewCollapsed()
         }
@@ -1416,12 +1414,12 @@ class HomeActivity :
         }
     }
 
-    fun minimizePlayer() {
+    private fun minimizePlayer() {
         binding.draggableView.minimize()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
 
-    fun destroyPlayer() {
+    private fun destroyPlayer() {
         binding.draggableView.destroyView()
         mPref.playerOverlayLiveData.removeObservers(this)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT

@@ -541,7 +541,7 @@
     </style>
     
     <style name="LeadingIconSingleLineInputFieldStyle" parent="SingleLineInputFieldStyle">
-        <item name="android:drawablePadding">13dp</item>
+        <item name="android:drawablePadding">12dp</item>
         <item name="android:inputType">textCapWords</item>
     </style>
 </resources>

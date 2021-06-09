@@ -11,7 +11,10 @@ import androidx.core.view.forEach
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.AlertDialogUserInterestBinding
-import com.banglalink.toffee.extension.*
+import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.px
+import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.mychannel.MyChannelVideosEditViewModel
@@ -22,6 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class UserInterestFragment2 : ChildDialogFragment() {
+    private var chipWidth: Int = 0
     private var _binding: AlertDialogUserInterestBinding? = null
     private val homeViewModel: HomeViewModel by activityViewModels()
     private val binding get() = _binding !!
@@ -37,7 +41,6 @@ class UserInterestFragment2 : ChildDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         userInterestList.clear()
-        
         with(binding) {
             interestChipGroup.removeAllViews()
             skipButton.safeClick({ reloadContent() })
@@ -52,63 +55,37 @@ class UserInterestFragment2 : ChildDialogFragment() {
                     requireContext().showToast("Please select at least 3 interest or press skip to sign in")
                 }
             })
-        }
-        
-        observeCategory()
-
-        binding.otherEt.setDrawableRightTouch {
-//            val imm: InputMethodManager? =
-//                requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager?
-//            imm?.hideSoftInputFromWindow(binding.otherEt.windowToken, 0)
-
-            val interest = binding.otherEt.text.toString()
-            interest.let { data ->
-
-                if (data.isBlank()) {
-                  //  return@let
-                } else {
-                    val width = (binding.root.measuredWidth - 48.px) / 3
-
-                    val chip = layoutInflater.inflate(
-                        R.layout.interest_other_chip_layout,
-                        binding.interestChipGroup,
-                        false
-                    ) as Chip
-
-                    chip.layoutParams.width = width
-
-                    val newChip = addOthersChip(data, chip).apply {
-                        tag = data
-                    }
-                    chip.setOnCloseIconClickListener {
-                        val tag = it.tag.toString()
-                        binding.interestOthersChipGroup.removeView(it)
-                        userInterestList[tag] = 0
+            addButton.safeClick({
+                val interest = binding.otherEt.text.toString().trim()
+                if (interest.isNotBlank()) {
+                    val newChip = addOthersChip(interest).apply {
+                        tag = interest
                     }
                     binding.interestOthersChipGroup.addView(newChip)
-                    userInterestList[data] = 1
+                    userInterestList[interest] = 1
                     binding.otherEt.text.clear()
                 }
-            }
+//                val imm: InputMethodManager? = requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager?
+//                imm?.hideSoftInputFromWindow(binding.otherEt.windowToken, 0)
+            })
         }
-
+        observeCategory()
     }
     
     private fun reloadContent() {
         closeDialog()
-//        requireActivity().overridePendingTransition(0, 0)
         requireActivity().recreate()
     }
 
     private fun observeCategory() {
         progressDialog.show()
         observe(viewModel.categories){
+            chipWidth = (binding.root.measuredWidth - 48.px) / 3
             if(it.isNotEmpty()){
-                val width = (binding.root.measuredWidth - 48.px) / 3
                 val categoryList = it.sortedBy { category -> category.id }
                 categoryList.let { list ->
                     list.forEachIndexed { _, category ->
-                        val newChip = addChip(category.categoryName,width).apply {
+                        val newChip = addChip(category.categoryName).apply {
                             tag = category.categoryName
                         }
                         binding.interestChipGroup.addView(newChip)
@@ -131,41 +108,44 @@ class UserInterestFragment2 : ChildDialogFragment() {
         }
     }
 
-    private fun addOthersChip(name: String,chip:Chip): Chip {
+    private fun addOthersChip(name: String): Chip {
         val intColor = ContextCompat.getColor(requireContext(), R.color.interest_chip_color)
         val selectedTextColor = ContextCompat.getColor(requireContext(), R.color.fixedStrokeColor)
-        val unSelectedTextColor = ContextCompat.getColor(requireContext(), R.color.cardTitleColor)
         val chipColor = createStateColor(intColor,intColor)
-        val strokeColor = createStateColor(unSelectedTextColor, unSelectedTextColor)
-
-        chip.text = name
-        chip.id = View.generateViewId()
-        chip.chipBackgroundColor = chipColor
-        chip.rippleColor =createStateColor(Color.TRANSPARENT)
-       // chip.chipStrokeColor = strokeColor
-        chip.chipStrokeColor = chipColor
-        chip.setTextColor(selectedTextColor)
-        //   chip.rippleColor = chipColor
-
-
-       // chip.setTextColor(createStateColor(selectedTextColor,unSelectedTextColor))
+        val chip = layoutInflater.inflate(R.layout.interest_other_chip_layout, binding.interestChipGroup, false) as Chip
+        with(chip) {
+            text = name
+            id = View.generateViewId()
+            chipStrokeColor = chipColor
+            layoutParams.width = chipWidth
+            chipBackgroundColor = chipColor
+            setTextColor(selectedTextColor)
+            setOnCloseIconClickListener {
+                val tag = it.tag.toString()
+                binding.interestOthersChipGroup.removeView(it)
+                userInterestList[tag] = 0
+            }
+            rippleColor =createStateColor(Color.TRANSPARENT)
+        }
         return chip
     }
     
-    private fun addChip(name: String,width:Int): Chip {
+    private fun addChip(name: String): Chip {
         val intColor = ContextCompat.getColor(requireContext(), R.color.interest_chip_color)
         val selectedTextColor = ContextCompat.getColor(requireContext(), R.color.fixedStrokeColor)
         val unSelectedTextColor = ContextCompat.getColor(requireContext(), R.color.cardTitleColor)
         val chipColor = createStateColor(intColor)
         val strokeColor = createStateColor(intColor, unSelectedTextColor)
         val chip = layoutInflater.inflate(R.layout.interest_chip_layout, binding.interestChipGroup, false) as Chip
-        chip.layoutParams.width = width
-        chip.text = name
-        chip.id = View.generateViewId()
-        chip.chipBackgroundColor = chipColor
-        chip.rippleColor = chipColor
-        chip.chipStrokeColor = strokeColor
-        chip.setTextColor(createStateColor(selectedTextColor, unSelectedTextColor))
+        with(chip) {
+            id = View.generateViewId()
+            layoutParams.width = chipWidth
+            text = name
+            rippleColor = chipColor
+            chipStrokeColor = strokeColor
+            chipBackgroundColor = chipColor
+            setTextColor(createStateColor(selectedTextColor, unSelectedTextColor))
+        }
         return chip
     }
     

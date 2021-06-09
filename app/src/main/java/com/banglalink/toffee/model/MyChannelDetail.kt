@@ -32,7 +32,10 @@ data class MyChannelDetail(
     @SerializedName("payment_method_id")
     val paymentMethodId: Long = 0,
     @SerializedName("is_email_verified")
-    val isEmailVerified: Boolean = false,
+    val is_email_verified: Int = 0,
     @SerializedName("is_nid_verified")
-    val isNIDVerified: Boolean = false,
-) : Parcelable
+    val is_nid_verified: Int = 0,
+) : Parcelable {
+    fun isEmailVerified() = is_email_verified == 1
+    fun isNIDVerified() = is_nid_verified == 1
+}
