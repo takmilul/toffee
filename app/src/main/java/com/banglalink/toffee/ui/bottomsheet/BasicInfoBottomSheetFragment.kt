@@ -55,7 +55,7 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         profileForm = profileViewModel.profileForm.value
-        myChannelDetail = homeViewModel.myChannelDetailLiveData.value
+        myChannelDetail = homeViewModel.myChannelDetailLiveData.value ?: MyChannelDetail(0)
         channelName = arguments?.getString("channelName") ?: ""
         newChannelLogoUrl = arguments?.getString("newChannelLogoUrl") ?: ""
     }
@@ -166,7 +166,8 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
             binding.nidWarningTv.text = getString(R.string.your_nid_must_match)
         }
     
-        if (userName.isNotBlank() && userAddress.isNotBlank() && isDobValid && !notValidEmail && userNID.isNotBlank()) {
+        if (userName.isNotBlank() && userAddress.isNotBlank() && isDobValid && !notValidEmail && userNID.isNotBlank() && !profileForm?.phoneNo
+                .isNullOrBlank()) {
             saveChannelInfo()
         }
         else {
@@ -222,7 +223,9 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
                 userEmail,
                 userAddress,
                 userDOB,
-                userNID
+                userNID,
+                profileForm?.phoneNo!!,
+                0
             )
         
             viewModel.editChannel(ugcEditMyChannelRequest)

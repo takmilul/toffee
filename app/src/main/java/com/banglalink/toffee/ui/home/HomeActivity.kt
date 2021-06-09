@@ -62,6 +62,7 @@ import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
 import com.banglalink.toffee.ui.player.PlayerPageActivity
 import com.banglalink.toffee.ui.player.PlaylistItem
 import com.banglalink.toffee.ui.player.PlaylistManager
+import com.banglalink.toffee.ui.profile.ViewProfileViewModel
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.splash.SplashScreenActivity
 import com.banglalink.toffee.ui.upload.UploadProgressViewModel
@@ -136,6 +137,7 @@ class HomeActivity :
     private lateinit var appbarConfig: AppBarConfiguration
 
     private val viewModel: HomeViewModel by viewModels()
+    private val profileViewModel by viewModels<ViewProfileViewModel>()
     private val allChannelViewModel by viewModels<AllChannelsViewModel>()
     private val uploadViewModel by viewModels<UploadProgressViewModel>()
 
@@ -335,6 +337,13 @@ class HomeActivity :
         
         if (!isChannelComplete() && mPref.isVerifiedUser) {
             viewModel.getChannelDetail(mPref.customerId)
+            if (mPref.customerName.isBlank() || mPref.customerEmail.isBlank() || mPref.customerAddress.isBlank()) {
+                observe(profileViewModel.loadCustomerProfile()) {
+                    if (it is Success) {
+                        profileViewModel.profileForm.value = it.data
+                    }
+                }
+            }
         }
         
         if(intent.hasExtra(INTENT_PACKAGE_SUBSCRIBED)){

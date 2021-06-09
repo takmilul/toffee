@@ -127,7 +127,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                 viewModel.selectedPaymentMethod =
                     paymentMethodList.find { it.id == myChannelDetail?.paymentMethodId }
                 viewModel.selectedPaymentPosition.value =
-                    (paymentMethodList.indexOf(viewModel.selectedPaymentMethod).takeIf { it > 0 } ?: 0)
+                    (paymentMethodList.indexOf(viewModel.selectedPaymentMethod).takeIf { it > 0 } ?: 0) + 1
             }
         }
 
@@ -287,7 +287,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         val userDOB = binding.dateOfBirthTv.text.toString().trim()
         val userEmail=binding.emailEt.text.toString().trim()
         val userNID=binding.nidEt.text.toString().trim()
-        val paymentPhoneNumber=binding.mobileTv.text.toString().trim()
+        var paymentPhoneNumber=binding.mobileTv.text.toString().trim()
         
         if (channelName.isNotBlank()) {
             binding.channelName.setBackgroundResource(R.drawable.single_line_input_text_bg)
@@ -385,7 +385,15 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         } else{
             binding.errorPaymentOption.show()
         }
-        
+    
+        if (paymentPhoneNumber.startsWith("0")) {
+            paymentPhoneNumber = "+88$paymentPhoneNumber"
+        }
+    
+        if (! paymentPhoneNumber.startsWith("+")) {
+            paymentPhoneNumber = "+$paymentPhoneNumber"
+        }
+    
         if(channelName.isNotBlank() and isChannelLogoAvailable && userName.isNotBlank() && !notValidEmail && userAddress.isNotBlank() && isDobValid && 
             userNID.isNotBlank() && paymentPhoneNumber.isNotBlank() && viewModel.selectedPaymentMethod?.id?:0 > 0){
             val ugcEditMyChannelRequest = MyChannelEditRequest(
