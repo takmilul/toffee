@@ -1,11 +1,10 @@
-package com.foxpress.toffeekotlin.usecase
+package com.banglalink.toffee.usecase
 
-import com.banglalink.toffee.data.network.request.SearchContentRequest
-import com.banglalink.toffee.data.network.response.SearchContentResponse
+import com.banglalink.toffee.data.network.request.HistoryContentRequest
+import com.banglalink.toffee.data.network.response.HistoryContentResponse
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.ContentBean
-import com.banglalink.toffee.usecase.SearchContent
 import com.nhaarman.mockitokotlin2.*
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking
@@ -14,7 +13,7 @@ import org.mockito.Mockito
 import retrofit2.Response
 
 
-class SearchContentTest :BaseUseCaseTest(){
+class GetHistoryTest :BaseUseCaseTest(){
 
     @Test
     fun get_contents_success(){
@@ -30,24 +29,23 @@ class SearchContentTest :BaseUseCaseTest(){
                 view_count = "1000000000009"
             })
 
-            val getContents = SearchContent(SessionPreference.getInstance(),mockToffeeApi)
-            Mockito.`when`(mockToffeeApi.searchContent(any<SearchContentRequest>())).thenReturn(
-                Response.success(SearchContentResponse(
+            val getContents = GetHistory(SessionPreference.getInstance(),mockToffeeApi)
+            Mockito.`when`(mockToffeeApi.getHistoryContents(any<HistoryContentRequest>())).thenReturn(
+                Response.success(HistoryContentResponse(
                     ContentBean(channelInfoList,1,1)
                 )))
 
             //test method
-            val resultChannelInfoList = getContents.execute("search")
+            val resultChannelInfoList = getContents.execute()
             //verify it
-            assertEquals(resultChannelInfoList[0].formatted_view_count,"1T")
+            assertEquals(resultChannelInfoList[0].formattedViewCount,"1T")
             assertEquals(resultChannelInfoList[0].formattedDuration,"04:05")
             assertEquals(resultChannelInfoList[0].program_name,"Hello BD")
             assertEquals(resultChannelInfoList[0].content_provider_name,"GSeries")
             assertEquals(getContents.mOffset,1)
-            verify(mockToffeeApi).searchContent(check {
+            verify(mockToffeeApi).getHistoryContents(check {
                 assertEquals(it.offset,0)
-                assertEquals(it.limit,30)
-                assertEquals(it.keyword,"search")
+                assertEquals(it.limit,10)
 
             })
         }
@@ -61,21 +59,20 @@ class SearchContentTest :BaseUseCaseTest(){
             //set up test
             setupPref()
 
-            val getContents = SearchContent(SessionPreference.getInstance(),mockToffeeApi)
-            Mockito.`when`(mockToffeeApi.searchContent(any<SearchContentRequest>())).thenReturn(
-                Response.success(SearchContentResponse(
+            val getContents = GetHistory(SessionPreference.getInstance(),mockToffeeApi)
+            Mockito.`when`(mockToffeeApi.getHistoryContents(any<HistoryContentRequest>())).thenReturn(
+                Response.success(HistoryContentResponse(
                     ContentBean(null,0,0)
                 )))
 
             //test method
-            val resultChannelInfoList = getContents.execute("search")
+            val resultChannelInfoList = getContents.execute()
             //verify it
             assertEquals(resultChannelInfoList.size,0)
             assertEquals(getContents.mOffset,0)
-            verify(mockToffeeApi).searchContent(check {
+            verify(mockToffeeApi).getHistoryContents(check {
                 assertEquals(it.offset,0)
-                assertEquals(it.limit,30)
-                assertEquals(it.keyword,"search")
+                assertEquals(it.limit,10)
             })
         }
 

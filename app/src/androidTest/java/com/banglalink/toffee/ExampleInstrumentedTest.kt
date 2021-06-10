@@ -1,4 +1,4 @@
-package com.foxpress.toffeekotlin
+package com.banglalink.toffee
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.foxpress.toffeekotlin", appContext.packageName)
+        assertEquals("com.banglalink.toffee.toffeekotlin", appContext.packageName)
     }
 }

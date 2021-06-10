@@ -1,4 +1,4 @@
-package com.foxpress.toffeekotlin
+package com.banglalink.toffee
 
 import com.banglalink.toffee.data.network.request.CheckUpdateRequest
 import com.banglalink.toffee.data.network.response.CheckUpdateResponse

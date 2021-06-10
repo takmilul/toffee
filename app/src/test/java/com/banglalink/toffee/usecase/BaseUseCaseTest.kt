@@ -1,4 +1,4 @@
-package com.foxpress.toffeekotlin.usecase
+package com.banglalink.toffee.usecase
 
 import android.content.Context
 import android.content.SharedPreferences

@@ -1,4 +1,4 @@
-package com.foxpress.toffeekotlin.usecase
+package com.banglalink.toffee.usecase
 
 import com.banglalink.toffee.data.network.request.UpdateProfileRequest
 import com.banglalink.toffee.data.network.response.UpdateProfileResponse
