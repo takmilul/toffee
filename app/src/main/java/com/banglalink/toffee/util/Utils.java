@@ -156,6 +156,23 @@ public class Utils {
         return "";
     }
 
+    public static String formateDate(String dateTime) {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-d HH:mm:ss");
+        DateFormat formater = new SimpleDateFormat("dd/MM/yyyy");
+        Date date = null;// converting String to date
+        try {
+            if (dateTime!=null)
+            {
+                date = df.parse(dateTime);
+                return formater.format(date);
+            }
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
     public static void setFullScreen(AppCompatActivity activity, boolean visible) {
         int uiOptions = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                 | View.SYSTEM_UI_FLAG_IMMERSIVE

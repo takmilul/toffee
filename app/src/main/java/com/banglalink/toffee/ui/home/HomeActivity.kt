@@ -1321,7 +1321,7 @@ class HomeActivity :
             ) { dialog, _ -> dialog.cancel() }
             .show()
     }
-    
+
     private fun observeLogout() {
         observe(viewModel.logoutLiveData) {
             when(it) {
@@ -1339,6 +1339,10 @@ class HomeActivity :
                         mPref.mqttClientId = ""
                         mPref.mqttUserName = ""
                         mPref.mqttPassword = ""
+                        mPref.customerEmail= ""
+                        mPref.customerAddress= ""
+                        mPref.customerDOB= ""
+                        mPref.customerNID= ""
                         navController.popBackStack(R.id.menu_feed, false).let { 
                             recreate()
                         }

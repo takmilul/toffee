@@ -115,6 +115,8 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                 }
                 else {
                     binding.categoryPaymentSpinner.setSelection(viewModel.selectedPaymentPosition.value ?: 0)
+                    viewModel.selectedPaymentMethod = viewModel.paymentMethodList.value?.get(position - 1)
+                    viewModel.selectedPaymentPosition.value = position
                 }
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -393,6 +395,14 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         if (! paymentPhoneNumber.startsWith("+")) {
             paymentPhoneNumber = "+$paymentPhoneNumber"
         }
+
+        if (paymentPhoneNumber.length>11)
+        {
+            binding.errorNumberTv.show()
+        }else
+        {
+            binding.errorNumberTv.hide()
+        }
     
         if(channelName.isNotBlank() and isChannelLogoAvailable && userName.isNotBlank() && !notValidEmail && userAddress.isNotBlank() && isDobValid && 
             userNID.isNotBlank() && paymentPhoneNumber.isNotBlank() && viewModel.selectedPaymentMethod?.id?:0 > 0){
@@ -410,10 +420,12 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                 userName,
                 userEmail,
                 userAddress,
-                userDOB,
+                selectedDate,
                 userNID,
                 paymentPhoneNumber,
-                viewModel.selectedPaymentMethod?.id?.toInt() ?: 0
+                viewModel.selectedPaymentMethod?.id?.toInt() ?: 0,
+                !myChannelDetail?.nationalIdNo.isNullOrBlank(),
+                !(myChannelDetail?.channelName.isNullOrBlank() && myChannelDetail?.profileUrl.isNullOrBlank())
             )
             viewModel.editChannel(ugcEditMyChannelRequest)
         }
@@ -439,8 +451,11 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         val datePickerDialog = DatePickerDialog(
             requireContext(),
             { view, year, monthOfYear, dayOfMonth ->
-                selectedDate = "$dayOfMonth/${monthOfYear + 1}/$year"
-                binding.dateOfBirthTv.text = selectedDate
+                selectedDate = "$year-${monthOfYear + 1}-$dayOfMonth"
+//                selectedDate = "$dayOfMonth/${monthOfYear + 1}/$year"
+                val selectedDateForTextView = "$dayOfMonth/${monthOfYear + 1}/$year"
+//                val selectedDateForTextView = "$year-${monthOfYear + 1}-$dayOfMonth"
+                binding.dateOfBirthTv.text = selectedDateForTextView
                 calendar.set(year, monthOfYear, dayOfMonth)
                 val dob = Calendar.getInstance()
                 val today = Calendar.getInstance()
