@@ -115,9 +115,9 @@
         <action
             android:id="@+id/action_menu_feed_to_menu_activities"
             app:destination="@id/menu_explore" />
-        <action
-            android:id="@+id/action_menu_feed_to_menu_channel"
-            app:destination="@id/menu_channel" />
+<!--        <action-->
+<!--            android:id="@+id/action_menu_feed_to_menu_channel"-->
+<!--            app:destination="@id/menu_channel" />-->
         <action
             android:id="@+id/action_menu_feed_to_myChannelHomeFragment"
             app:destination="@id/myChannelHomeFragment" />
@@ -158,23 +158,29 @@
             app:argType="integer"
             android:defaultValue="0" />
     </fragment>
-    <fragment
-        android:id="@+id/menu_channel"
-        android:name="com.banglalink.toffee.ui.mychannel.MyChannelHomeFragment"
-        android:label="My Channel">
-        <action
-            android:id="@+id/action_menu_channel_to_myChannelEditFragment"
-            app:destination="@id/myChannelEditDetailFragment" />
-        <action
-            android:id="@+id/action_menu_channel_to_challengesFragment"
-            app:destination="@id/challengesFragment" />
-        <action
-            android:id="@+id/action_menu_channel_to_myChannelPlaylistVideosFragment"
-            app:destination="@id/myChannelPlaylistVideosFragment" />
-        <action
-            android:id="@+id/action_menu_channel_to_myChannelVideosEditFragment"
-            app:destination="@id/myChannelVideosEditFragment" />
-    </fragment>
+<!--    <fragment-->
+<!--        android:id="@+id/menu_channel"-->
+<!--        android:name="com.banglalink.toffee.ui.mychannel.MyChannelHomeFragment"-->
+<!--        android:label="My Channel">-->
+<!--&lt;!&ndash;        <argument&ndash;&gt;-->
+<!--&lt;!&ndash;            android:name="channelOwnerId"&ndash;&gt;-->
+<!--&lt;!&ndash;            app:argType="integer"&ndash;&gt;-->
+<!--&lt;!&ndash;            app:nullable="true" />&ndash;&gt;-->
+<!--        <action-->
+<!--            android:id="@+id/action_menu_channel_to_myChannelEditFragment"-->
+<!--            app:destination="@id/myChannelEditDetailFragment" />-->
+<!--        <action-->
+<!--            android:id="@+id/action_menu_channel_to_challengesFragment"-->
+<!--            app:destination="@id/challengesFragment" />-->
+<!--        <action-->
+<!--            android:id="@+id/action_menu_channel_to_myChannelPlaylistVideosFragment"-->
+<!--            app:destination="@id/myChannelPlaylistVideosFragment" />-->
+<!--        <action-->
+<!--            android:id="@+id/action_menu_channel_to_myChannelVideosEditFragment"-->
+<!--            app:destination="@id/myChannelVideosEditFragment" />-->
+
+<!--&lt;!&ndash;        <deepLink app:uri="app.toffee://ugc_channel/{channelOwnerId}" />&ndash;&gt;-->
+<!--    </fragment>-->
     <fragment
         android:id="@+id/htmlPageViewFragment"
         android:name="com.banglalink.toffee.ui.common.HtmlPageViewFragment"
@@ -350,6 +356,10 @@
             android:name="title"
             app:argType="string"
             android:defaultValue="Channel" />
+        <argument
+            android:name="channelOwnerId"
+            app:argType="integer"
+            android:defaultValue="0" />
         <action
             android:id="@+id/action_myChannelHomeFragment_to_MyChannelEditDetailFragment"
             app:destination="@id/myChannelEditDetailFragment" />
@@ -359,6 +369,9 @@
         <action
             android:id="@+id/action_myChannelHomeFragment_to_myChannelVideosEditFragment"
             app:destination="@id/myChannelVideosEditFragment" />
+
+        <deepLink app:uri="app.toffee://ugc_channel/{channelOwnerId}" />
+        <deepLink app:uri="app.toffee://ugc_channel/{channelOwnerId}/{title}" />
     </fragment>
     <fragment
         android:id="@+id/myChannelPlaylistVideosFragment"

@@ -592,7 +592,7 @@ class HomeActivity :
                 R.id.menu_feed,
                 R.id.menu_tv,
                 R.id.menu_activities,
-                R.id.menu_channel,
+                R.id.myChannelHomeFragment,
 
 //                R.id.menu_all_tv_channel,
                 R.id.menu_favorites,
@@ -1634,11 +1634,12 @@ class HomeActivity :
     private fun observeMyChannelNavigation(){
         observe(viewModel.myChannelNavLiveData) {
             if (navController.currentDestination?.id != R.id.myChannelHomeFragment || channelOwnerId != it.channelOwnerId) {
-                channelOwnerId = it.channelOwnerId
-                navController.navigate(R.id.myChannelHomeFragment, Bundle().apply {
-                    putString(MyChannelHomeFragment.PAGE_TITLE, it.pageTitle)
-                    putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, it.channelOwnerId)
-                })
+                navController.navigate(Uri.parse("app.toffee://ugc_channel/${it.channelOwnerId}"))
+//                channelOwnerId = it.channelOwnerId
+//                navController.navigate(R.id.myChannelHomeFragment, Bundle().apply {
+//                    putString(MyChannelHomeFragment.PAGE_TITLE, it.pageTitle)
+//                    putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, it.channelOwnerId)
+//                })
             } else{
                 minimizePlayer()
             }

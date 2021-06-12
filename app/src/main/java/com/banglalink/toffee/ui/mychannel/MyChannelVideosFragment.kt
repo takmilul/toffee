@@ -161,13 +161,6 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
                     R.id.menu_edit_content -> {
                         if (findNavController().currentDestination?.id != R.id.myChannelVideosEditFragment && findNavController().currentDestination?.id == R.id.myChannelHomeFragment) {
                             parentFragment?.findNavController()?.navigate(R.id.action_myChannelHomeFragment_to_myChannelVideosEditFragment, Bundle().apply{ putParcelable(MyChannelVideosEditFragment.CHANNEL_INFO, item) })
-                        } else if(findNavController().currentDestination?.id != R.id.myChannelVideosEditFragment && findNavController().currentDestination?.id == R.id.menu_channel){
-                            this@MyChannelVideosFragment.findNavController().navigate(
-                                R.id.action_menu_channel_to_myChannelVideosEditFragment,
-                                Bundle().apply {
-                                    putParcelable(MyChannelVideosEditFragment.CHANNEL_INFO, item)
-                                }
-                            )
                         }
                     }
                     R.id.menu_add_to_playlist -> {
