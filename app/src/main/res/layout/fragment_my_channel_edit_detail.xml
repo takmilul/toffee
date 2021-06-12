@@ -252,12 +252,11 @@
                         android:layout_height="wrap_content" />
 
                 </RelativeLayout>
-
-
+                
                 <EditText
                     android:id="@+id/name_et"
                     style="@style/LeadingIconSingleLineInputFieldStyle"
-                    android:drawableStart="@drawable/ic_user"
+                    app:drawableStartCompat="@drawable/ic_user"
                     android:autofillHints="Name"
                     android:hint="@string/your_name_text"
                     android:text="@{viewModel.myChannelDetail.name}"
@@ -287,7 +286,7 @@
                 <EditText
                     android:id="@+id/address_et"
                     style="@style/LeadingIconSingleLineInputFieldStyle"
-                    android:drawableStart="@drawable/ic_location"
+                    app:drawableStartCompat="@drawable/ic_location"
                     android:hint="@string/enter_your_address_text"
                     android:maxLines="2"
                     android:text="@{viewModel.myChannelDetail.address}"
@@ -343,7 +342,9 @@
                 <EditText
                     android:id="@+id/email_et"
                     style="@style/LeadingIconSingleLineInputFieldStyle"
-                    android:drawableStart="@drawable/ic_email"
+                    app:drawableStartCompat="@drawable/ic_email"
+                    android:drawableEnd="@{viewModel.myChannelDetail.isEmailVerified ? @drawable/ic_verified : @drawable/ic_not_verified}"
+                    android:paddingEnd="10dp"
                     android:autofillHints="Enter your email"
                     android:hint="@string/enter_your_email_text"
                     android:text="@{viewModel.myChannelDetail.email}"
@@ -372,7 +373,9 @@
                     style="@style/SingleLineInputFieldStyle"
                     android:layout_marginTop="16dp"
                     app:drawableStartCompat="@drawable/ic_nid_icon"
+                    android:drawableEnd="@{viewModel.myChannelDetail.isNIDVerified ? @drawable/ic_verified : @drawable/ic_not_verified}"
                     android:hint="@string/nid_number"
+                    android:paddingEnd="10dp"
                     android:text="@{viewModel.myChannelDetail.nationalIdNo}"
                     android:drawablePadding="10dp"
                     android:inputType="number"
@@ -400,6 +403,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:layout_marginHorizontal="16dp"
+                    android:paddingEnd="10dp"
                     android:background="@drawable/single_line_input_text_bg"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -417,28 +421,17 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
+                        android:layout_marginStart="8dp"
                         android:background="@android:color/transparent"
-                        android:drawablePadding="3dp"
+                        android:drawablePadding="4dp"
                         android:fontFamily="@font/roboto_regular"
                         android:gravity="center_vertical"
                         android:text="+88"
                         android:textColor="@color/switchUnCheckedColor"
-                        android:textSize="14sp"
-                        android:textStyle="normal"
-                        app:drawableStartCompat="@drawable/ic_bd_flag" />
-
-                    <ImageView
-                        android:layout_marginTop="3dp"
-                        android:layout_marginStart="5dp"
-                        android:layout_width="14dp"
-                        android:layout_height="12dp"
-                        android:src="@drawable/ic_path_down_arrow"
-                        android:contentDescription="@string/txt_down_arrow_flag" />
-
+                        app:drawableStartCompat="@drawable/ic_bd_flag"
+                        app:drawableEndCompat="@drawable/ic_path_down_arrow"/>
+                    
                     <TextView
-                        android:drawablePadding="10dp"
-                        app:drawableEndCompat="@drawable/ic_verified"
                         android:id="@+id/mobile_tv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -447,26 +440,11 @@
                         android:fontFamily="@font/roboto_regular"
                         android:gravity="center_vertical"
                         android:textColor="@color/switchUnCheckedColor"
-                        android:textSize="14sp"
                         android:text="@{viewModel.myChannelDetail.paymentPhoneNo}"
                         tools:text="01xxxxxxxxx"
-                        android:textStyle="normal" />
+                        app:drawableEndCompat="@drawable/ic_verified" />
+                    
                 </LinearLayout>
-
-
-<!--                <TextView-->
-<!--                    android:id="@+id/mobile_tv"-->
-<!--                    style="@style/LeadingIconSingleLineInputFieldStyle"-->
-<!--                    android:layout_marginVertical="16dp"-->
-<!--                    android:enabled="false"-->
-<!--                    android:gravity="center_vertical"-->
-<!--                    android:text="@={profileForm.phoneNo}"-->
-<!--                    android:textColor="@color/main_text_color"-->
-<!--                    app:drawableStartCompat="@drawable/ic_phone"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintTop_toBottomOf="@+id/nid_error_tv"-->
-<!--                    tools:text="+8801776198791" />-->
 
                 <TextView
                     android:id="@+id/error_number_tv"
@@ -482,6 +460,7 @@
                     app:layout_constraintStart_toStartOf="@+id/phone_number_layout"
                     app:layout_constraintTop_toBottomOf="@+id/phone_number_layout"
                     tools:visibility="visible" />
+                
                 <RelativeLayout
                     android:id="@+id/categoryPaymentSpinnerWrap"
                     android:layout_width="0dp"

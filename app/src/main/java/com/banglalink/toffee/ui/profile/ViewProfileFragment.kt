@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentViewProfileBinding
@@ -26,7 +26,7 @@ class ViewProfileFragment : BaseFragment() {
     private var _binding: FragmentViewProfileBinding? = null
     private val binding get() = _binding!!
     private val userInterestList: MutableMap<String, Int> = mutableMapOf()
-    private val viewModel by viewModels<ViewProfileViewModel>()
+    private val viewModel by activityViewModels<ViewProfileViewModel>()
     private val progressDialog by unsafeLazy { VelBoxProgressDialog(requireContext()) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -40,7 +40,6 @@ class ViewProfileFragment : BaseFragment() {
         if (mPref.isVerifiedUser) {
             val phoneNumber = if (mPref.phoneNumber.length == 11) mPref.phoneNumber else mPref.phoneNumber.substring(3)
             binding.data = EditProfileForm().apply {
-                fullName = mPref.customerName
                 phoneNo = phoneNumber
                 photoUrl = mPref.userImageUrl ?: ""
             }
@@ -63,6 +62,7 @@ class ViewProfileFragment : BaseFragment() {
             progressDialog.dismiss()
             when (it) {
                 is Resource.Success -> {
+                    viewModel.profileForm.value = it.data
                     binding.data = it.data.apply { phoneNo = if (phoneNo.length == 11) phoneNo else phoneNo.substring(3) }
                 }
                 is Resource.Failure -> {
@@ -72,7 +72,7 @@ class ViewProfileFragment : BaseFragment() {
         }
     }
 
-    fun onClickEditProfile() {
+    private fun onClickEditProfile() {
         if (findNavController().currentDestination?.id != R.id.thumbnailSelectionMethodFragment && findNavController().currentDestination?.id == R.id.profileFragment) {
             val action =
                 ViewProfileFragmentDirections.actionProfileFragmentToEditProfileFragment(binding.data)
@@ -114,8 +114,7 @@ class ViewProfileFragment : BaseFragment() {
             )
         )
     }
-
-
+    
     private fun observeCategory() {
       //  progressDialog.show()
         observe(viewModel.categories){

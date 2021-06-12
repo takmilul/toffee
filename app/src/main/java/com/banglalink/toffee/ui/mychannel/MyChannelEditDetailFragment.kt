@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
@@ -24,6 +25,7 @@ import com.banglalink.toffee.model.MyChannelDetail
 import com.banglalink.toffee.model.Payment
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
+import com.banglalink.toffee.ui.profile.ViewProfileViewModel
 import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
 import com.banglalink.toffee.ui.widget.ToffeeSpinnerAdapter
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
@@ -50,6 +52,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     private var _binding: FragmentMyChannelEditDetailBinding ? = null
     private val binding get() = _binding!!
     @Inject lateinit var viewModelAssistedFactory: MyChannelEditDetailViewModel.AssistedFactory
+    private val profileViewModel by activityViewModels<ViewProfileViewModel>()
     private val viewModel by viewModels<MyChannelEditDetailViewModel> { MyChannelEditDetailViewModel.provideFactory(viewModelAssistedFactory, myChannelDetail) }
     
     companion object {
@@ -63,10 +66,11 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         progressDialog = VelBoxProgressDialog(requireContext())
         val args = MyChannelEditDetailFragmentArgs.fromBundle(requireArguments())
         myChannelDetail = args.myChannelDetail ?: MyChannelDetail(0)
+        val profileForm = profileViewModel.profileForm.value
         myChannelDetail?.apply { 
-            if (name.isNullOrBlank()) name = mPref.customerName
-            if (email.isNullOrBlank()) email = mPref.customerEmail
-            if (address.isNullOrBlank()) address = mPref.customerAddress
+            if (name.isNullOrBlank()) name = profileForm?.fullName
+            if (email.isNullOrBlank()) email = profileForm?.email
+            if (address.isNullOrBlank()) address = profileForm?.address
             if (paymentPhoneNo.isNullOrBlank()) paymentPhoneNo = if (mPref.phoneNumber.length == 11) mPref.phoneNumber else mPref.phoneNumber.substring(3)
         }
     }
@@ -90,15 +94,14 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         binding.container.setOnClickListener(this)
         progressDialog.show()
         observeEditChannel()
-        observeThumbnailChange()
         setupCategorySpinner()
+        observeThumbnailChange()
         setupPaymentCategorySpinner()
-        binding.dateOfBirthTv.safeClick({showDatePicker()})
+        binding.saveButton.safeClick(this)
+        binding.cancelButton.safeClick(this)
         binding.bannerEditButton.safeClick(this)
         binding.profileImageEditButton.safeClick(this)
-        binding.cancelButton.safeClick(this)
-        binding.saveButton.safeClick(this)
-        binding.dateOfBirthTv.safeClick({ showDatePicker() })
+        binding.dateOfBirthTv.safeClick ({ showDatePicker() })
     }
 
     private fun setupPaymentCategorySpinner() {
@@ -124,7 +127,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                 viewModel.selectedPaymentMethod =
                     paymentMethodList.find { it.id == myChannelDetail?.paymentMethodId }
                 viewModel.selectedPaymentPosition.value =
-                    (paymentMethodList.indexOf(viewModel.selectedPaymentMethod).takeIf { it > 0 } ?: 0)
+                    (paymentMethodList.indexOf(viewModel.selectedPaymentMethod).takeIf { it > 0 } ?: 0) + 1
             }
         }
 
@@ -284,7 +287,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         val userDOB = binding.dateOfBirthTv.text.toString().trim()
         val userEmail=binding.emailEt.text.toString().trim()
         val userNID=binding.nidEt.text.toString().trim()
-        val paymentPhoneNumber=binding.mobileTv.text.toString().trim()
+        var paymentPhoneNumber=binding.mobileTv.text.toString().trim()
         
         if (channelName.isNotBlank()) {
             binding.channelName.setBackgroundResource(R.drawable.single_line_input_text_bg)
@@ -382,7 +385,15 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         } else{
             binding.errorPaymentOption.show()
         }
-        
+    
+        if (paymentPhoneNumber.startsWith("0")) {
+            paymentPhoneNumber = "+88$paymentPhoneNumber"
+        }
+    
+        if (! paymentPhoneNumber.startsWith("+")) {
+            paymentPhoneNumber = "+$paymentPhoneNumber"
+        }
+    
         if(channelName.isNotBlank() and isChannelLogoAvailable && userName.isNotBlank() && !notValidEmail && userAddress.isNotBlank() && isDobValid && 
             userNID.isNotBlank() && paymentPhoneNumber.isNotBlank() && viewModel.selectedPaymentMethod?.id?:0 > 0){
             val ugcEditMyChannelRequest = MyChannelEditRequest(

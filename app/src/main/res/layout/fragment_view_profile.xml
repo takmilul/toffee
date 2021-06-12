@@ -33,8 +33,7 @@
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
+                    android:layout_margin="8dp"
                     android:contentDescription="@string/txt_avatar"
                     app:srcCompat="@drawable/ic_menu_profile"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -47,7 +46,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
                     android:background="@android:color/transparent"
-                    android:drawablePadding="13dp"
+                    android:drawablePadding="12dp"
                     android:fontFamily="@font/roboto_regular"
                     android:gravity="center_vertical"
                     android:padding="10dp"
@@ -64,7 +63,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:background="@android:color/transparent"
-                    android:drawablePadding="13dp"
+                    android:drawablePadding="12dp"
                     android:fontFamily="@font/roboto_regular"
                     android:gravity="center_vertical"
                     android:padding="10dp"
@@ -81,7 +80,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:background="@android:color/transparent"
-                    android:drawablePadding="13dp"
+                    android:drawablePadding="12dp"
                     android:fontFamily="@font/roboto_regular"
                     android:gravity="center_vertical"
                     android:padding="10dp"
@@ -92,13 +91,12 @@
                     app:drawableStartCompat="@drawable/ic_email"
                     tools:text="user@gmail.com" />
 
-
                 <LinearLayout
                     android:id="@+id/phone_number_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:padding="8dp"
+                    android:padding="10dp"
                     android:orientation="horizontal">
 
                     <ImageView
@@ -106,66 +104,36 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_phone"
-                        android:layout_marginEnd="10dp"
                         android:contentDescription="@string/txt_phone_number" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
+                        android:layout_marginStart="16dp"
                         android:background="@android:color/transparent"
-                        android:drawablePadding="3dp"
+                        android:drawablePadding="4dp"
                         android:fontFamily="@font/roboto_regular"
                         android:gravity="center_vertical"
                         android:text="+88"
-                        android:textColor="@color/main_text_color"
-                        android:textSize="14sp"
-                        android:textStyle="normal"
-                        app:drawableStartCompat="@drawable/ic_bd_flag" />
-
-                    <ImageView
-                        android:layout_marginTop="3dp"
-                        android:layout_marginStart="5dp"
-                        android:layout_width="14dp"
-                        android:layout_height="12dp"
-                        app:tint="@color/main_text_color"
-                        android:src="@drawable/ic_path_down_arrow"
-                        android:contentDescription="@string/txt_down_arrow_flag" />
-
+                        android:textColor="@color/switchUnCheckedColor"
+                        app:drawableStartCompat="@drawable/ic_bd_flag"
+                        app:drawableEndCompat="@drawable/ic_path_down_arrow"/>
+                    
                     <TextView
                         android:drawablePadding="10dp"
-                        app:drawableEndCompat="@drawable/ic_verified"
                         android:id="@+id/mobile_tv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:textColor="@{TextUtils.isEmpty(data.email)?@color/fixed_second_text_color:@color/main_text_color}"
+                        android:textColor="@{TextUtils.isEmpty(data.phoneNo)?@color/fixed_second_text_color:@color/main_text_color}"
                         android:text="@{TextUtils.isEmpty(data.phoneNo)?@string/add_your_phone:data.phoneNo}"
                         android:background="@android:color/transparent"
                         android:fontFamily="@font/roboto_regular"
                         android:gravity="center_vertical"
-                        android:textSize="14sp"
                         tools:text="01xxxxxxxxx"
-                        android:textStyle="normal" />
+                        android:drawableEnd="@{TextUtils.isEmpty(data.phoneNo)?@drawable/ic_not_verified : @drawable/ic_verified}" />
+                    
                 </LinearLayout>
-
-
-                <!--                <TextView-->
-                <!--                    android:id="@+id/mobile_tv"-->
-                <!--                    android:layout_width="match_parent"-->
-                <!--                    android:layout_height="wrap_content"-->
-                <!--                    android:layout_marginTop="16dp"-->
-                <!--                    android:background="@android:color/transparent"-->
-                <!--                    android:drawablePadding="13dp"-->
-                <!--                    android:fontFamily="@font/roboto_regular"-->
-                <!--                    android:gravity="center_vertical"-->
-                <!--                    android:padding="10dp"-->
-                <!--                    android:text="@{TextUtils.isEmpty(data.phoneNo)?@string/add_your_phone:data.phoneNo}"-->
-                <!--                    android:textColor="@{TextUtils.isEmpty(data.phoneNo)?@color/fixed_second_text_color:@color/main_text_color}"-->
-                <!--                    android:textSize="14sp"-->
-                <!--                    android:textStyle="normal"-->
-                <!--                    app:drawableStartCompat="@drawable/ic_phone"-->
-                <!--                    tools:text="+8801xxxxxxxxx" />-->
 
                 <TextView
                     android:visibility="gone"
@@ -216,5 +184,4 @@
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
-
 </layout>

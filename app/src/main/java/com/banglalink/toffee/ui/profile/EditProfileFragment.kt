@@ -166,18 +166,17 @@ class EditProfileFragment : BaseFragment() {
     
     private fun addChip(name: String, width:Int): Chip {
         val intColor = ContextCompat.getColor(requireContext(), R.color.colorSecondaryDark)
-        val selectedTextColor = ContextCompat.getColor(requireContext(), R.color.main_text_color)
-        val unSelectedTextColor = ContextCompat.getColor(requireContext(), R.color.cardTitleColor)
         val chipColor = createStateColor(intColor,intColor)
-        val strokeColor = createStateColor( unSelectedTextColor,unSelectedTextColor)
         val chip = layoutInflater.inflate(R.layout.interest_chip_layout, binding.interestChipGroup, false) as Chip
-        chip.layoutParams.width = width
-        chip.text = name
-        chip.id = View.generateViewId()
-        chip.chipBackgroundColor = chipColor
-        chip.rippleColor =createStateColor(Color.TRANSPARENT)
-        chip.chipStrokeColor = chipColor
-        chip.setTextColor(Color.WHITE)
+        with(chip) {
+            layoutParams.width = width
+            text = name
+            id = View.generateViewId()
+            chipBackgroundColor = chipColor
+            rippleColor =createStateColor(Color.TRANSPARENT)
+            chipStrokeColor = chipColor
+            setTextColor(Color.WHITE)
+        }
         return chip
     }
 
@@ -225,7 +224,6 @@ class EditProfileFragment : BaseFragment() {
 
                 // progressDialog.hide()
             }
-
         }
     }
     

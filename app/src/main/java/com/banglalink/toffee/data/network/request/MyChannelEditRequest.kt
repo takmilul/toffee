@@ -16,6 +16,6 @@ data class MyChannelEditRequest (
     val address: String = "",
     val dateOfBirth: String = "",
     val nationalIdNo: String = "",
-    val paymentPhoneNumber: String = "",
+    val paymentPhoneNo: String = "",
     val paymentMethodId: Int = 0,
 ): BaseRequest("ugcChannelEdit")

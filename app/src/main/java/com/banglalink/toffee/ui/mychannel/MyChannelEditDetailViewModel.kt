@@ -58,7 +58,6 @@ class MyChannelEditDetailViewModel @AssistedInject constructor(
             if (paymentMethodList.value.isNullOrEmpty()) {
                 exitFragment.value = true
             }
-            selectedPaymentPosition.value = 0
         }
     }
     

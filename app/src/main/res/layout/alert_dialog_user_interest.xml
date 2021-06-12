@@ -53,13 +53,21 @@
     <EditText
         android:id="@+id/other_et"
         style="@style/LeadingIconSingleLineInputFieldStyle"
-        android:drawableEnd="@drawable/ic_upload_menu_plus"
         android:hint="@string/enter_your_address_text"
-        android:focusable="true"
         android:inputType="textAutoComplete"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/interest_tv" />
+    
+    <ImageView
+        android:id="@+id/addButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingEnd="10dp"
+        app:srcCompat="@drawable/ic_upload_menu_plus"
+        app:layout_constraintTop_toTopOf="@id/other_et"
+        app:layout_constraintBottom_toBottomOf="@id/other_et"
+        app:layout_constraintEnd_toEndOf="@id/other_et" />
 
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/interestOthersChipGroup"

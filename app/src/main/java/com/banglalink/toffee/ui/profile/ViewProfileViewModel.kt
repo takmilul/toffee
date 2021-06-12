@@ -19,16 +19,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ViewProfileViewModel @Inject constructor(
-    private val myChannelDetailApiService: MyChannelEditDetailService,
+    private val profileApi: GetProfile,
     private val categoryApi: GetContentCategories,
     private val termsConditionService: TermsConditionService,
-    private val profileApi: GetProfile,
+    private val myChannelDetailApiService: MyChannelEditDetailService,
 ) : ViewModel() {
 
     private val _data = MutableLiveData<Resource<MyChannelEditBean>>()
     val termsAndConditionResult = MutableLiveData<Resource<TermsAndCondition>>()
     val editChannelResult = _data.toLiveData()
-
+    val profileForm = MutableLiveData<EditProfileForm>()
     val categories = MutableLiveData<List<Category>>()
 
     init {

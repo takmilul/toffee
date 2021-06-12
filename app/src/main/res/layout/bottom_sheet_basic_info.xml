@@ -5,8 +5,8 @@
 
     <data>
         <variable
-            name="profileForm"
-            type="com.banglalink.toffee.model.EditProfileForm" />
+            name="myChannelDetail"
+            type="com.banglalink.toffee.model.MyChannelDetail" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -31,14 +31,14 @@
         <EditText
             android:id="@+id/name_et"
             style="@style/LeadingIconSingleLineInputFieldStyle"
-            android:drawableStart="@drawable/ic_user"
+            app:drawableStartCompat="@drawable/ic_user"
             android:autofillHints="Name"
             android:hint="@string/your_name_text"
             android:inputType="textCapWords"
             android:fontFamily="@font/roboto_medium"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="8dp"
-            android:text="@={profileForm.fullName}"
+            android:text="@={myChannelDetail.name}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/lets_fill_tv"/>
@@ -61,10 +61,10 @@
         <EditText
             android:id="@+id/address_et"
             style="@style/LeadingIconSingleLineInputFieldStyle"
-            android:drawableStart="@drawable/ic_location"
+            app:drawableStartCompat="@drawable/ic_location"
             android:hint="@string/enter_your_address_text"
             android:maxLines="2"
-            android:text="@={profileForm.address}"
+            android:text="@={myChannelDetail.address}"
             android:autofillHints="Enter your address"
             android:layout_marginTop="16dp"
             android:inputType="textPostalAddress"
@@ -116,12 +116,14 @@
         <EditText
             android:id="@+id/email_et"
             style="@style/LeadingIconSingleLineInputFieldStyle"
-            android:drawableStart="@drawable/ic_email"
+            app:drawableStartCompat="@drawable/ic_email"
+            android:drawableEnd="@{myChannelDetail.isEmailVerified ? @drawable/ic_verified : @drawable/ic_not_verified}"
+            android:paddingEnd="10dp"
             android:autofillHints="Enter your email"
             android:hint="@string/enter_your_email_text"
             android:layout_marginTop="16dp"
             android:inputType="textEmailAddress"
-            android:text="@={profileForm.email}"
+            android:text="@={myChannelDetail.email}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/error_date_tv"/>
@@ -144,8 +146,11 @@
             style="@style/SingleLineInputFieldStyle"
             android:layout_marginTop="16dp"
             app:drawableStartCompat="@drawable/ic_nid_icon"
+            android:drawableEnd="@{myChannelDetail.isNIDVerified ? @drawable/ic_verified : @drawable/ic_not_verified}"
+            android:paddingEnd="10dp"
             android:hint="@string/nid_number"
-            android:drawablePadding="10dp"
+            android:text="@{myChannelDetail.nationalIdNo}"
+            android:drawablePadding="12dp"
             android:inputType="number"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

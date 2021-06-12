@@ -43,26 +43,29 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
     private var newChannelLogoUrl: String = "NULL"
     private var calendar = getInstance()
     @Inject lateinit var cacheManager: CacheManager
+    private var profileForm: EditProfileForm? = null
     private var myChannelDetail: MyChannelDetail? = null
     private var _binding: BottomSheetBasicInfoBinding? = null
     private val binding get() = _binding!!
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private val viewModel by activityViewModels<ViewProfileViewModel>()
+    private val profileViewModel by activityViewModels<ViewProfileViewModel>()
     private val progressDialog by unsafeLazy { VelBoxProgressDialog(requireContext()) }
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        myChannelDetail = homeViewModel.myChannelDetailLiveData.value
+        profileForm = profileViewModel.profileForm.value
+        myChannelDetail = homeViewModel.myChannelDetailLiveData.value ?: MyChannelDetail(0)
         channelName = arguments?.getString("channelName") ?: ""
         newChannelLogoUrl = arguments?.getString("newChannelLogoUrl") ?: ""
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = BottomSheetBasicInfoBinding.inflate(inflater, container, false)
-        binding.profileForm = EditProfileForm().apply { 
-            fullName = mPref.customerName
-            email = mPref.customerEmail
-            address = mPref.customerAddress
+        binding.myChannelDetail = myChannelDetail?.apply {
+            if (name.isNullOrBlank()) name = profileForm?.fullName
+            if (email.isNullOrBlank()) email = profileForm?.email
+            if (address.isNullOrBlank()) address = profileForm?.address
         }
         return binding.root
     }
@@ -163,7 +166,8 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
             binding.nidWarningTv.text = getString(R.string.your_nid_must_match)
         }
     
-        if (userName.isNotBlank() && userAddress.isNotBlank() && isDobValid && !notValidEmail && userNID.isNotBlank()) {
+        if (userName.isNotBlank() && userAddress.isNotBlank() && isDobValid && !notValidEmail && userNID.isNotBlank() && !profileForm?.phoneNo
+                .isNullOrBlank()) {
             saveChannelInfo()
         }
         else {
@@ -219,7 +223,9 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
                 userEmail,
                 userAddress,
                 userDOB,
-                userNID
+                userNID,
+                profileForm?.phoneNo!!,
+                0
             )
         
             viewModel.editChannel(ugcEditMyChannelRequest)
