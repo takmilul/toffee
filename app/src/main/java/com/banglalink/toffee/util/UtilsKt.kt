@@ -21,6 +21,10 @@ import coil.imageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
 import java.io.*
+import java.text.DateFormat
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -204,6 +208,36 @@ object UtilsKt {
 
     fun isSystemRotationOn(ctx: Context) = Settings.System.getInt(ctx.contentResolver,
         Settings.System.ACCELEROMETER_ROTATION, 0) == 1
+
+    fun strToDate(dateTime: String?, dateFormate: String = "yyyy-MM-d HH:mm:ss"):Date? {
+
+        val df: DateFormat = SimpleDateFormat(dateFormate)
+        try {
+            if (dateTime != null) {
+                return df.parse(dateTime)
+            }
+        } catch (e: ParseException) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
+
+    fun dateToStr(dateTime: Date?, dateFormate: String = "dd/MM/yyyy"):String? {
+
+        val formater: DateFormat = SimpleDateFormat(dateFormate)
+
+        try {
+            if (dateTime != null) {
+                return formater.format(dateTime)
+            }
+        } catch (e: ParseException) {
+            e.printStackTrace()
+        }
+
+        return null
+    }
+
 }
 
 

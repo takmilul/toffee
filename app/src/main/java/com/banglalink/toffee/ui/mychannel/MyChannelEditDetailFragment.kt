@@ -38,16 +38,16 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MyChannelEditDetailFragment : Fragment(), OnClickListener {
-    private var age: Int = 0
+//    private var age: Int = 0
     private var isPosterClicked = false
-    private var selectedDate: String = ""
+//    private var selectedDate: String = ""
     private var newBannerUrl: String? = null
     @Inject lateinit var bindingUtil: BindingUtil
     @Inject lateinit var mPref: SessionPreference
     private var newProfileImageUrl: String? = null
     @Inject lateinit var cacheManager: CacheManager
     private var myChannelDetail: MyChannelDetail? = null
-    private var calendar = Calendar.getInstance()
+//    private var calendar = Calendar.getInstance()
     private lateinit var progressDialog: VelBoxProgressDialog
     private var _binding: FragmentMyChannelEditDetailBinding ? = null
     private val binding get() = _binding!!
@@ -75,7 +75,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentMyChannelEditDetailBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
@@ -319,20 +319,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             binding.errorAddressTv.hide()
         }
     
-        var isDobValid = false
-        if (userDOB.isBlank()) {
-            binding.errorDateTv.show()
-        } else {
-            if (age < 18)
-            {
-                binding.errorDateTv.text=getString(R.string.Date_of_birth_must_be_match)
-                binding.errorDateTv.show()
-            }
-            else {
-                isDobValid = true
-                binding.errorDateTv.hide()
-            }
-        }
+        val isDobValid =validateDOB()
         
         val notValidEmail = userEmail.isNotBlank() and !userEmail.isValid(InputType.EMAIL)
 
@@ -387,25 +374,29 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         } else{
             binding.errorPaymentOption.show()
         }
-    
-        if (paymentPhoneNumber.startsWith("0")) {
-            paymentPhoneNumber = "+88$paymentPhoneNumber"
-        }
-    
-        if (! paymentPhoneNumber.startsWith("+")) {
-            paymentPhoneNumber = "+$paymentPhoneNumber"
-        }
 
-        if (paymentPhoneNumber.length>11)
+        if (paymentPhoneNumber.isBlank() || paymentPhoneNumber.length!=11)
         {
             binding.errorNumberTv.show()
-        }else
+        }
+        else
         {
             binding.errorNumberTv.hide()
         }
     
         if(channelName.isNotBlank() and isChannelLogoAvailable && userName.isNotBlank() && !notValidEmail && userAddress.isNotBlank() && isDobValid && 
-            userNID.isNotBlank() && paymentPhoneNumber.isNotBlank() && viewModel.selectedPaymentMethod?.id?:0 > 0){
+            userNID.isNotBlank() && paymentPhoneNumber.isNotBlank() && viewModel.selectedPaymentMethod?.id?:0 > 0 && paymentPhoneNumber.length==11 ){
+
+            if (paymentPhoneNumber.startsWith("0")) {
+                paymentPhoneNumber = "+88$paymentPhoneNumber"
+            }
+
+//            if (! paymentPhoneNumber.startsWith("+")) {
+//                paymentPhoneNumber = "+$paymentPhoneNumber"
+//            }
+
+            val selectedDate=UtilsKt.dateToStr(UtilsKt.strToDate(binding.dateOfBirthTv.text.toString(),"dd/MM/yyyy"),"yyyy-MM-dd")
+
             val ugcEditMyChannelRequest = MyChannelEditRequest(
                 mPref.customerId,
                 mPref.password,
@@ -420,7 +411,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                 userName,
                 userEmail,
                 userAddress,
-                selectedDate,
+                selectedDate ?: "",
                 userNID,
                 paymentPhoneNumber,
                 viewModel.selectedPaymentMethod?.id?.toInt() ?: 0,
@@ -434,7 +425,29 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             binding.saveButton.isClickable = true
         }
     }
-    
+
+    private fun validateDOB(): Boolean {
+        var isDobValid = false
+        if (binding.dateOfBirthTv.text.isBlank()) {
+            binding.errorDateTv.show()
+        } else {
+            val date =UtilsKt.strToDate(binding.dateOfBirthTv.text.toString(),"dd/MM/yyyy") ?: Date()
+
+            val userAge= ageCalculate(date)
+            // selectedDate = "$year-$month-$day"
+
+            if (userAge < 18) {
+                binding.errorDateTv.text = getString(R.string.Date_of_birth_must_be_match)
+                binding.errorDateTv.show()
+            } else {
+                isDobValid = true
+                binding.errorDateTv.hide()
+            }
+        }
+
+        return isDobValid
+    }
+
     /*private fun convertImageFileToBase64(imageFile: File): String {
         return FileInputStream(imageFile).use { inputStream ->
             ByteArrayOutputStream().use { outputStream ->
@@ -448,23 +461,21 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     }*/
     
     private fun showDatePicker() {
+        val date = UtilsKt.strToDate(binding.dateOfBirthTv.text.toString(),"dd/MM/yyyy") ?: Date()
+        val calendar = Calendar.getInstance()
+        calendar.time=date
         val datePickerDialog = DatePickerDialog(
             requireContext(),
             { view, year, monthOfYear, dayOfMonth ->
-                selectedDate = "$year-${monthOfYear + 1}-$dayOfMonth"
-//                selectedDate = "$dayOfMonth/${monthOfYear + 1}/$year"
-                val selectedDateForTextView = "$dayOfMonth/${monthOfYear + 1}/$year"
-//                val selectedDateForTextView = "$year-${monthOfYear + 1}-$dayOfMonth"
-                binding.dateOfBirthTv.text = selectedDateForTextView
-                calendar.set(year, monthOfYear, dayOfMonth)
-                val dob = Calendar.getInstance()
-                val today = Calendar.getInstance()
-                dob[year, monthOfYear] = dayOfMonth
-                age = today[Calendar.YEAR] - dob[Calendar.YEAR]
-                if (today[Calendar.MONTH] <= dob[Calendar.MONTH] && today[Calendar.DAY_OF_YEAR] < dob[Calendar.DAY_OF_YEAR]) {
-                    age--
-                }
+
+                val calendarTwo=Calendar.getInstance()
+                calendarTwo.set(year, monthOfYear, dayOfMonth)
+
+                binding.dateOfBirthTv.text = UtilsKt.dateToStr(calendarTwo.time,"dd/MM/yyyy")
+                validateDOB()
+
             },
+
             calendar[Calendar.YEAR],
             calendar[Calendar.MONTH],
             calendar[Calendar.DAY_OF_MONTH]
@@ -475,5 +486,19 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(buttonColor)
             getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(buttonColor)
         }
+    }
+
+    private fun ageCalculate( date :Date):Int
+    {
+
+        val dob = Calendar.getInstance()
+        dob.time=date
+        val today = Calendar.getInstance()
+//        dob[year, monthOfYear-1] = dayOfMonth
+        var userAge = today[Calendar.YEAR] - dob[Calendar.YEAR]
+        if (today[Calendar.MONTH] <= dob[Calendar.MONTH] && today[Calendar.DAY_OF_YEAR] < dob[Calendar.DAY_OF_YEAR]) {
+            userAge--
+        }
+        return userAge
     }
 }
