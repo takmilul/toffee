@@ -65,9 +65,9 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.1"
-    implementation 'androidx.appcompat:appcompat:1.3.0-rc01'
-    implementation 'androidx.core:core-ktx:1.3.2'
-    implementation "androidx.fragment:fragment-ktx:1.3.3"
+    implementation 'androidx.appcompat:appcompat:1.3.0'
+    implementation 'androidx.core:core-ktx:1.5.0'
+    implementation "androidx.fragment:fragment-ktx:1.3.4"
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation "net.gotev:uploadservice:4.3.1"
     implementation "net.gotev:uploadservice-okhttp:4.3.1"
@@ -80,20 +80,19 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"
     implementation "android.arch.lifecycle:extensions:2.1.0"
 
-    implementation 'androidx.leanback:leanback:1.0.0'
     implementation 'com.google.android.material:material:1.3.0'
     //Switch Lib
     implementation 'com.github.zcweng:switch-button:0.0.3@aar'
 
     //GIF imageview
-    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.17'
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.23'
     // Crop Image
-    implementation 'com.github.yalantis:ucrop:2.2.6'
+    implementation 'com.github.yalantis:ucrop:2.2.7'
     implementation 'com.mikhaellopez:circularprogressbar:3.0.3'
     implementation 'com.xfinity:dahdit:0.9.3'
 
     //Coil image Lib
-    implementation 'io.coil-kt:coil:1.1.0'
+    implementation 'io.coil-kt:coil:1.2.2'
 
     //Firebase Push Notification
     implementation 'com.google.firebase:firebase-messaging:21.1.0'
@@ -119,7 +118,7 @@ dependencies {
 //    implementation 'com.google.android.exoplayer:exoplayer-ui:2.12.0'
 
     // Cast
-    implementation 'androidx.mediarouter:mediarouter:1.2.2'
+    implementation 'androidx.mediarouter:mediarouter:1.2.3'
     implementation 'com.google.android.gms:play-services-cast-framework:20.0.0'
 
     //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
@@ -153,7 +152,7 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
     //Permission extension
-    implementation 'com.github.florent37:runtime-permission-kotlin:1.1.1'
+    implementation 'com.github.florent37:runtime-permission-kotlin:1.1.2'
     //Facebook SDK
     implementation 'com.facebook.android:facebook-android-sdk:9.1.1'
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
@@ -194,12 +193,38 @@ dependencies {
     implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5'
     implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
 
-    testImplementation 'junit:junit:4.12'
-    testImplementation "android.arch.core:core-testing:1.1.1"
+
+    def espresso_version = '3.3.0'
+    def test_core = '1.3.0'
     testImplementation('com.squareup.okhttp3:mockwebserver:4.9.0')
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
-    androidTestImplementation 'androidx.test:runner:1.3.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+    //Androidx Core library
+    androidTestImplementation("androidx.test:core:$test_core")
+
+    // AndroidJUnitRunner and JUnit Rules
+    androidTestImplementation("androidx.test:runner:$test_core")
+    androidTestImplementation("androidx.test:rules:$test_core")
+
+    // Assertions
+    androidTestImplementation('androidx.test.ext:junit:1.1.2')
+    androidTestImplementation("androidx.test.ext:truth:$test_core")
+    androidTestImplementation('com.google.truth:truth:1.0')
+
+    // Espresso dependencies
+    androidTestImplementation("androidx.test.espresso:espresso-core:$espresso_version")
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:$espresso_version")
+    androidTestImplementation("androidx.test.espresso:espresso-intents:$espresso_version")
+    androidTestImplementation("androidx.test.espresso:espresso-accessibility:$espresso_version")
+    androidTestImplementation("androidx.test.espresso:espresso-web:$espresso_version")
+    androidTestImplementation("androidx.test.espresso.idling:idling-concurrent:$espresso_version")
+
+//    testImplementation('androidx.test.espresso:espresso-idling-resource:3.1.0')
+    androidTestImplementation("androidx.test.espresso:espresso-idling-resource:$espresso_version")
+
+    def mockk_version = "1.11.0"
+    testImplementation "io.mockk:mockk:$mockk_version"
+    androidTestImplementation "io.mockk:mockk-android:$mockk_version"
 }
 apply plugin: 'com.google.gms.google-services'
 // Apply the Crashlytics Gradle plugin

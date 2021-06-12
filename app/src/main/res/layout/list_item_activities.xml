@@ -143,7 +143,7 @@
                     android:layout_marginStart="6dp"
                     app:layout_constraintStart_toStartOf="@id/guideline6"
                     app:layout_constraintTop_toTopOf="@+id/video_thumb"
-                    app:srcCompat="@drawable/lb_ic_thumb_up" />
+                    app:srcCompat="@drawable/ic_reaction_love_empty" />
     
                 <TextView
                     android:id="@+id/duration"
