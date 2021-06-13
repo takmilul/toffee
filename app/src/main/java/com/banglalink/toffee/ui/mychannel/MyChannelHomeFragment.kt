@@ -169,10 +169,6 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             findNavController().navigate(R.id.action_myChannelHomeFragment_to_MyChannelEditDetailFragment,
                 Bundle().apply { putParcelable("myChannelDetail", myChannelDetail) })
         }
-        else if (findNavController().currentDestination?.id != R.id.myChannelEditDetailFragment && findNavController().currentDestination?.id == R.id.menu_channel) {
-            findNavController().navigate(R.id.action_menu_channel_to_myChannelEditFragment,
-                Bundle().apply { putParcelable("myChannelDetail", myChannelDetail) })
-        }
     }
     
     private fun showRatingDialog() {

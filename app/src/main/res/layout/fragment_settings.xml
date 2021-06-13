@@ -330,6 +330,11 @@
                     android:minHeight="0dp" />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:background="@color/colorSettingsDivider" />
+
             <androidx.appcompat.widget.LinearLayoutCompat
                 style="@style/PrefItemStyle"
                 android:layout_width="match_parent"

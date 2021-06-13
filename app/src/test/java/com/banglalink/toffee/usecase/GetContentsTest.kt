@@ -1,5 +1,6 @@
-package com.foxpress.toffeekotlin.usecase
+package com.banglalink.toffee.usecase
 
+import com.banglalink.toffee.apiservice.GetContents
 import com.banglalink.toffee.data.network.request.ContentRequest
 import com.banglalink.toffee.data.network.response.ContentResponse
 import com.banglalink.toffee.model.ChannelInfo
@@ -12,7 +13,7 @@ import org.mockito.Mockito
 import retrofit2.Response
 
 
-class GetFeatureContentTest :BaseUseCaseTest(){
+class GetContentsTest :BaseUseCaseTest(){
 
     @Test
     fun get_contents_success(){
@@ -49,6 +50,35 @@ class GetFeatureContentTest :BaseUseCaseTest(){
                 assertEquals(it.subCategoryId,0)
 
             })
+        }
+
+    }
+
+    @Test
+    fun get_contents_success_offset_check(){
+
+        runBlocking {
+            //set up test
+            setupPref()
+            val channelInfoList = mutableListOf<ChannelInfo>()
+            channelInfoList.add(ChannelInfo().apply {
+                program_name="Hello BD"
+                content_provider_name = "GSeries"
+                duration = "00:04:05"
+                view_count = "1000000000009"
+            })
+
+            val getContents = GetContents(mockToffeeApi)
+            Mockito.`when`(mockToffeeApi.getContents(any<ContentRequest>())).thenReturn(
+                Response.success(ContentResponse(
+                    ContentBean(channelInfoList,1,1)
+                )))
+
+            //test method
+            getContents.execute("",0,"",0,"VOD")
+            getContents.execute("",0,"",0,"VOD")
+            //verify that offset calculation is OK
+            assertEquals(getContents.mOffset,2)
         }
 
     }
