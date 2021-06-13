@@ -72,7 +72,7 @@ class InAppMessageParser @Inject constructor(
                         )
                     }
                     "search" -> {
-                        val keyword = link.getQueryParameter("keyword") ?: ""
+                        val keyword = link.getQueryParameter("keyword") ?: return null
                         return RouteV2(Uri.parse("app.toffee://search/${keyword}"),
                             "Search (${keyword})")
                     }
