@@ -29,16 +29,18 @@ class ApiLoginTest :BaseUseCaseTest(){
             setupPref()
             val apiLogin = ApiLogin(SessionPreference.getInstance(), mockAuthApi)
             Mockito.`when`(mockAuthApi.apiLogin(any<ApiLoginRequest>())).thenReturn(
-                Response.success(ApiLoginResponse(
-                    CustomerInfoLogin().apply {
-                        balance = 0
-                        authorize = true
-                        customerId = 1729
-                        password = "r212R"
-                        sessionToken = "U=9322ETGEW#$"
-
-                    }
-                )))
+//                Response.success(ApiLoginResponse(
+//                    CustomerInfoLogin().apply {
+//                        balance = 0
+//                        authorize = true
+//                        customerId = 1729
+//                        password = "r212R"
+//                        sessionToken = "U=9322ETGEW#$"
+//
+//                    }
+//                ))
+                    null
+                )
             //test method
             apiLogin.execute()
             //verify it
@@ -66,12 +68,14 @@ class ApiLoginTest :BaseUseCaseTest(){
             setupPref()
             val apiLogin = ApiLogin(SessionPreference.getInstance(), mockAuthApi)
             Mockito.`when`(mockAuthApi.apiLogin(any<ApiLoginRequest>())).thenReturn(
-                Response.success(ApiLoginResponse(
-                   null
-                ).apply {
-                    errorCode = 109
-                    errorMsg = "No account found"
-                }))
+//                Response.success(ApiLoginResponse(
+//                   null
+//                ).apply {
+//                    errorCode = 109
+//                    errorMsg = "No account found"
+//                })
+                null
+            )
             //test method
             apiLogin.execute()
         }

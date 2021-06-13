@@ -6,6 +6,7 @@ import com.banglalink.toffee.data.network.retrofit.AuthApi
 import com.banglalink.toffee.exception.UpdateRequiredException
 import com.banglalink.toffee.model.CheckUpdateBean
 import com.banglalink.toffee.apiservice.CheckUpdate
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.nhaarman.mockitokotlin2.*
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
@@ -29,6 +30,9 @@ class ExampleUnitTest {
     @Mock
     val mock:AuthApi = mock()
 
+    @Mock
+    val pref: SessionPreference = mock()
+
     @Test
     fun addition_isCorrect() {
         assertEquals(4, 2 + 2)
@@ -45,9 +49,9 @@ class ExampleUnitTest {
                 runBlocking {
                     checkForUpdate(CheckUpdateRequest("1"))
                 }
-            } doReturn Response.success(CheckUpdateResponse(CheckUpdateBean(2, "msg", "title")))
+            } doReturn Response.success(CheckUpdateResponse(CheckUpdateBean(2, "msg", "title"))).body()!!
         }
-        val classUnderTest = CheckUpdate(mock)
+        val classUnderTest = CheckUpdate(pref, mock)
 
         /* When */
         runBlocking {
@@ -72,9 +76,9 @@ class ExampleUnitTest {
                 runBlocking {
                     checkForUpdate(CheckUpdateRequest("1"))
                 }
-            } doReturn Response.success(CheckUpdateResponse(CheckUpdateBean(1, "msg", "title")))
+            } doReturn Response.success(CheckUpdateResponse(CheckUpdateBean(1, "msg", "title"))).body()!!
         }
-        val classUnderTest = CheckUpdate(mock)
+        val classUnderTest = CheckUpdate(pref, mock)
 
         /* When */
         runBlocking {
@@ -93,10 +97,10 @@ class ExampleUnitTest {
 
         runBlocking {
 
-            val classUnderTest = CheckUpdate(mock)
+            val classUnderTest = CheckUpdate(pref, mock)
             whenever(mock.checkForUpdate(any<CheckUpdateRequest>())).thenReturn(Response.success(
                 CheckUpdateResponse(CheckUpdateBean(0, "msg", "title"))
-            ))
+            ).body())
 
             classUnderTest.execute("1")
             verify(mock).checkForUpdate(check {

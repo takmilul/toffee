@@ -30,7 +30,7 @@ class VerifyCodeTest :BaseUseCaseTest(){
                         customerName = null
 
                     }
-                )))
+                )).body())
             //test method
             verifyCode.execute("12345","LGTY==")
             //verify it
@@ -60,7 +60,7 @@ class VerifyCodeTest :BaseUseCaseTest(){
                         errorCode = 1
                         errorMsg = "Invalid code"
                     }
-                    ))
+                    ).body())
                 //test method
                 verifyCode.execute("12345","LGTY==")
                 //verify it
