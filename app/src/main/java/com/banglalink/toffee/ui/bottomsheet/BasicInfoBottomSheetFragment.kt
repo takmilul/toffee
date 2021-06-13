@@ -222,10 +222,12 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
                 userName,
                 userEmail,
                 userAddress,
-                userDOB,
+                selectedDate,
                 userNID,
                 profileForm?.phoneNo!!,
-                0
+                0,
+                !myChannelDetail?.nationalIdNo.isNullOrBlank(),
+                !(myChannelDetail?.channelName.isNullOrBlank() && myChannelDetail?.profileUrl.isNullOrBlank())
             )
         
             viewModel.editChannel(ugcEditMyChannelRequest)
@@ -238,8 +240,11 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
         val datePickerDialog = DatePickerDialog( 
             requireContext(),
             { view, year, monthOfYear, dayOfMonth ->
-                selectedDate = "$dayOfMonth/${monthOfYear + 1}/$year"
-                binding.dateOfBirthTv.text = selectedDate
+                selectedDate = "$year-${monthOfYear + 1}-$dayOfMonth"
+//                selectedDate = "$dayOfMonth/${monthOfYear + 1}/$year"
+                val selectedDateForTextView = "$dayOfMonth/${monthOfYear + 1}/$year"
+//                val selectedDateForTextView = "$year-${monthOfYear + 1}-$dayOfMonth"
+                binding.dateOfBirthTv.text = selectedDateForTextView
                 calendar.set(year, monthOfYear, dayOfMonth)
                 val dob = getInstance()
                 val today = getInstance()

@@ -19,6 +19,8 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_DETAILS
+import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentEditProfileBinding
 import com.banglalink.toffee.enums.InputType
 import com.banglalink.toffee.extension.*
@@ -30,6 +32,7 @@ import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.UtilsKt
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.material.chip.Chip
+import javax.inject.Inject
 
 class EditProfileFragment : BaseFragment() {
 
@@ -37,6 +40,8 @@ class EditProfileFragment : BaseFragment() {
     private val progressDialog by unsafeLazy {
         VelBoxProgressDialog(requireContext())
     }
+    @Inject
+    lateinit var cacheManager: CacheManager
     private var _binding: FragmentEditProfileBinding? = null
     private val binding get() = _binding!!
     private val args by navArgs<EditProfileFragmentArgs>()
@@ -130,8 +135,12 @@ class EditProfileFragment : BaseFragment() {
                     progressDialog.dismiss()
                     when (it) {
                         is Resource.Success -> {
+
                             requireContext().showToast("Profile updated successfully")
-                            findNavController().popBackStack()
+                            findNavController().popBackStack().apply {
+                                cacheManager.clearCacheByUrl(GET_MY_CHANNEL_DETAILS)
+                            }
+
                         }
                         is Resource.Failure -> {
                             requireContext().showToast(it.error.msg)

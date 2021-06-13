@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools">
     
     <data>
+        <import type="com.banglalink.toffee.util.Utils"/>
         <variable
             name="viewModel"
             type="com.banglalink.toffee.ui.mychannel.MyChannelEditDetailViewModel" />
@@ -318,7 +319,7 @@
                     android:layout_marginTop="16dp"
                     app:drawableStartCompat="@drawable/ic_date_icon"
                     android:hint="@string/date_of_birth_text"
-                    android:text="@{viewModel.myChannelDetail.dateOfBirth}"
+                    android:text="@{Utils.formateDate(viewModel.myChannelDetail.dateOfBirth)}"
                     android:drawablePadding="10dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -431,7 +432,7 @@
                         app:drawableStartCompat="@drawable/ic_bd_flag"
                         app:drawableEndCompat="@drawable/ic_path_down_arrow"/>
                     
-                    <TextView
+                    <EditText
                         android:id="@+id/mobile_tv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -440,7 +441,8 @@
                         android:fontFamily="@font/roboto_regular"
                         android:gravity="center_vertical"
                         android:textColor="@color/switchUnCheckedColor"
-                        android:text="@{viewModel.myChannelDetail.paymentPhoneNo}"
+                        android:inputType="number"
+                        android:text="@{viewModel.myChannelDetail.paymentPhoneNo.length()==11 ? viewModel.myChannelDetail.paymentPhoneNo : viewModel.myChannelDetail.paymentPhoneNo.substring(3)}"
                         tools:text="01xxxxxxxxx"
                         app:drawableEndCompat="@drawable/ic_verified" />
                     
