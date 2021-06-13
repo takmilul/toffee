@@ -1,11 +1,21 @@
 package com.banglalink.toffee.util
 
 import android.net.Uri
+import android.os.Bundle
+import androidx.navigation.*
+import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.apiservice.GetCategories
+import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.home.*
 import java.lang.Exception
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class InAppMessageParser {
+@Singleton
+class InAppMessageParser @Inject constructor(
+    private val categoryListApi: GetCategories
+) {
 
 //    https://toffeelive.com?routing=internal&page=musicvideo&catid=18&catname=Music Video
 //    https://toffeelive.com?routing=internal&page=movie&catid=19&catname=Movie
@@ -16,54 +26,97 @@ class InAppMessageParser {
 //    https://toffeelive.com?routing=internal&page=invite
 //    https://toffeelive.com?routing=internal&page=redeem
 //    https://toffeelive.com?routing=internal&page=settings
+//    https://toffeelive.com?routing=internal&page=ugc_channel&ownerid=2233
 //    https://toffeelive.com/#video/0d52770e16b19486d9914c81061cf2da (For individual link)
 
-
-    fun parseUrl(url:String):Route?{
+    suspend fun parseUrlV2(url: String): RouteV2? {
         try {
             val link = Uri.parse(url)
             val page = link.getQueryParameter("page")
-            return page?.let {
-                when(it){
-                    "movie"->{
-                        Route(it,null,link.getQueryParameter("catid")?.toInt(),link.getQueryParameter("catname"))
+            print(page)
+            page?.let { name ->
+                when(name) {
+                    "ugc_channel" -> {
+                        val channelId = link.getQueryParameter("ownerid") ?: 0
+                        return RouteV2(
+                            Uri.parse("app.toffee://ugc_channel/${channelId}"),
+                            "Ugc Channel (${channelId})"
+                        )
                     }
-                    "drama"->{
-                        (Route(it,null,link.getQueryParameter("catid")?.toInt(),link.getQueryParameter("catname")))
+                    "categories" -> {
+                        val catId = link.getQueryParameter("catid")?.toLongOrNull() ?: return null
+                        print(catId)
+                        val catList = categoryListApi.loadData(0, 0).filter { it.id ==  catId }
+                        if(catList.isEmpty()) return null
+                        val destId = when(catId) {
+                            1L -> {
+                                R.id.movieFragment
+                            }
+                            9L -> {
+                                R.id.dramaSeriesFragment
+                            }
+                            else -> {
+                                R.id.categoryDetailsFragment
+                            }
+                        }
+                        return RouteV2(
+                            destId,
+                            "Category (${catList[0].categoryName})",
+                            Bundle().also {
+                                it.putParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM, catList[0])
+                                it.putString(CategoryDetailsFragment.ARG_TITLE, catList[0].categoryName)
+                            }
+                        )
                     }
-                    "musicvideo"->{
-                        (Route(it,null,link.getQueryParameter("catid")?.toInt(),link.getQueryParameter("catname")))
+                    "settings" -> {
+                        return RouteV2(R.id.menu_settings, "Settings")
                     }
-                    "subscription"->{
-                        (Route(it,ID_SUBSCRIPTIONS))
+                    "redeem" -> {
+                        return RouteV2(R.id.menu_redeem, "Redeem Code")
                     }
-                    "submitvideo"->{
-                        (Route(it,ID_SUB_VIDEO))
+                    "tv_channels" -> {
+                        return RouteV2(R.id.menu_tv, "Tv Channels")
                     }
-                    "invite"->{
-                        (Route(it,ID_INVITE_FRIEND))
+                    "explore" -> {
+                        return RouteV2(R.id.menu_explore, "Explore")
                     }
-                    "redeem"->{
-                        (Route(it,ID_REDEEM_CODE))
+                    "subscription" -> {
+                        return RouteV2(R.id.menu_subscriptions, "Subscriptions")
                     }
-                    "settings"->{
-                        (Route(it,ID_SETTINGS))
+                    "invite" -> {
+                        return RouteV2(R.id.menu_invite, "Invite Friends")
                     }
-                    "faq"->{
-                        (Route(it,ID_FAQ))
+                    "favorites" -> {
+                        return RouteV2(R.id.menu_favorites, "Favorites")
                     }
-                    else->{
-                        (Route(it,null))
+                    "activities" -> {
+                        return RouteV2(R.id.menu_activities, "Activities")
                     }
+                    "profile" -> {
+                        return RouteV2(R.id.profileFragment, "Profile")
+                    }
+                    "notification" -> {
+                        return RouteV2(R.id.notificationDropdownFragment, "Notification")
+                    }
+                    "ugc_all_channel" -> {
+                        return RouteV2(R.id.trendingChannelsFragment, "All UGC Channels")
+                    }
+                    else -> null
                 }
             }
-        }catch (e:Exception){
+        } catch (e: Exception){
+            e.printStackTrace()
             ToffeeAnalytics.logBreadCrumb("Cannot parse deep link url $url")
             ToffeeAnalytics.logException(e)
         }
         return null
-
     }
 
-    data class Route(val url:String, val drawerId:Int?,val categoryId:Int?=null,val categoryName:String?=null)
+    data class RouteV2(
+        val destId: Any,
+        val name: String,
+        val args: Bundle? = null,
+        val options: NavOptions? = null,
+        val navExtra: Navigator.Extras? = null
+    )
 }
