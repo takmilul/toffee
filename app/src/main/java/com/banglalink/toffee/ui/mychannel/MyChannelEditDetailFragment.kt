@@ -54,6 +54,14 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     @Inject lateinit var viewModelAssistedFactory: MyChannelEditDetailViewModel.AssistedFactory
     private val profileViewModel by activityViewModels<ViewProfileViewModel>()
     private val viewModel by viewModels<MyChannelEditDetailViewModel> { MyChannelEditDetailViewModel.provideFactory(viewModelAssistedFactory, myChannelDetail) }
+
+    var channelName = ""
+    var userName = ""
+    var userAddress = ""
+    var userDOB = ""
+    var userEmail=""
+    var userNID=""
+    var paymentPhoneNumber=""
     
     companion object {
         fun newInstance(): MyChannelEditDetailFragment {
@@ -114,20 +122,20 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                     viewModel.selectedPaymentPosition.value = position
                 }
                 else {
-                    binding.categoryPaymentSpinner.setSelection(viewModel.selectedPaymentPosition.value ?: 0)
-                    viewModel.selectedPaymentMethod = viewModel.paymentMethodList.value?.get(position - 1)
-                    viewModel.selectedPaymentPosition.value = position
+//                    binding.categoryPaymentSpinner.setSelection(viewModel.selectedPaymentPosition.value ?: 0)
+////                    viewModel.selectedPaymentMethod = viewModel.paymentMethodList.value?.get(position - 1)
+                    binding.categoryPaymentSpinner.setSelection(viewModel.selectedPaymentPosition.value ?: 1)
                 }
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
-        
+
         observe(viewModel.paymentMethodList) { paymentMethodList ->
             progressDialog.dismiss()
             if(!paymentMethodList.isNullOrEmpty()) {
                 paymentCategoryAdapter.setData(paymentMethodList)
                 viewModel.selectedPaymentMethod =
-                    paymentMethodList.find { it.id == myChannelDetail?.paymentMethodId }
+                    paymentMethodList.find { it.id == myChannelDetail?.paymentMethodId }?: paymentMethodList.first()
                 viewModel.selectedPaymentPosition.value =
                     (paymentMethodList.indexOf(viewModel.selectedPaymentMethod).takeIf { it > 0 } ?: 0) + 1
             }
@@ -204,6 +212,16 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         observe(viewModel.editDetailLiveData) {
             when (it) {
                 is Success -> {
+                    mPref.isChannelDetailChecked = true
+
+                    mPref.channelLogo = newProfileImageUrl ?: (myChannelDetail?.profileUrl ?: "")
+                    mPref.channelName = channelName
+                    mPref.customerName = userName
+                    mPref.customerEmail = userEmail
+                    mPref.customerAddress = userAddress
+                    mPref.customerDOB = userDOB
+                    mPref.customerNID = userNID
+
                     binding.saveButton.isClickable = true
                     progressDialog.dismiss()
                     cacheManager.clearCacheByUrl(GET_MY_CHANNEL_DETAILS)
@@ -280,16 +298,16 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             profileImageBase64 = null
         }
 
-        val channelName = binding.channelName.text.toString().trim()
+         channelName = binding.channelName.text.toString().trim()
         val description = binding.description.text.toString().trim()
         val isChannelLogoAvailable= !myChannelDetail?.profileUrl.isNullOrEmpty() or !profileImageBase64.isNullOrEmpty()
 
-        val userName = binding.nameEt.text.toString().trim()
-        val userAddress = binding.addressEt.text.toString().trim()
-        val userDOB = binding.dateOfBirthTv.text.toString().trim()
-        val userEmail=binding.emailEt.text.toString().trim()
-        val userNID=binding.nidEt.text.toString().trim()
-        var paymentPhoneNumber=binding.mobileTv.text.toString().trim()
+         userName = binding.nameEt.text.toString().trim()
+         userAddress = binding.addressEt.text.toString().trim()
+         userDOB = binding.dateOfBirthTv.text.toString().trim()
+         userEmail=binding.emailEt.text.toString().trim()
+         userNID=binding.nidEt.text.toString().trim()
+         paymentPhoneNumber=binding.mobileTv.text.toString().trim()
         
         if (channelName.isNotBlank()) {
             binding.channelName.setBackgroundResource(R.drawable.single_line_input_text_bg)
@@ -384,8 +402,15 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             binding.errorNumberTv.hide()
         }
     
-        if(channelName.isNotBlank() and isChannelLogoAvailable && userName.isNotBlank() && !notValidEmail && userAddress.isNotBlank() && isDobValid && 
-            userNID.isNotBlank() && paymentPhoneNumber.isNotBlank() && viewModel.selectedPaymentMethod?.id?:0 > 0 && paymentPhoneNumber.length==11 ){
+        if(channelName.isNotBlank() and isChannelLogoAvailable
+            && userName.isNotBlank()
+            && !notValidEmail
+            && userAddress.isNotBlank()
+            && isDobValid
+            && userNID.isNotBlank()
+            && paymentPhoneNumber.isNotBlank()
+            && viewModel.selectedPaymentMethod?.id?:0 > 0
+            && paymentPhoneNumber.length==11){
 
             if (paymentPhoneNumber.startsWith("0")) {
                 paymentPhoneNumber = "+88$paymentPhoneNumber"

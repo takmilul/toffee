@@ -16,8 +16,8 @@
             android:id="@+id/action_partnershipBottomSheetFragment_to_photoUploadBottomSheetFragment"
             app:destination="@id/photoUploadBottomSheetFragment" />
         <action
-            android:id="@+id/action_partnershipBottomSheetFragment_to_HtmlPageViewFragment"
-            app:destination="@id/HtmlPageViewFragment" />
+            android:id="@+id/action_partnershipBottomSheetFragment_to_htmlPageViewDialog"
+            app:destination="@id/htmlPageViewDialog" />
     </fragment>
 
     <fragment
@@ -33,8 +33,8 @@
             android:name="channelName"
             app:argType="string" />
         <action
-            android:id="@+id/action_basicInfoBottomSheetFragment2_to_HtmlPageViewFragment"
-            app:destination="@id/HtmlPageViewFragment" />
+            android:id="@+id/action_basicInfoBottomSheetFragment_to_htmlPageViewDialog"
+            app:destination="@id/htmlPageViewDialog" />
     </fragment>
 
 
@@ -70,21 +70,18 @@
     </dialog>
 
 
-    <fragment
-        android:id="@+id/HtmlPageViewFragment"
-        android:name="com.banglalink.toffee.ui.common.HtmlPageViewFragment"
-        android:label="{myTitle}"
-        tools:layout="@layout/fragment_html_page_view"
-        >
+
+    <dialog
+        android:id="@+id/htmlPageViewDialog"
+        android:name="com.banglalink.toffee.ui.common.HtmlPageViewDialog"
+        android:label="{myTitle}">
         <argument
             android:name="myTitle"
             app:argType="string"
-            android:defaultValue="Creators Policy"
             />
         <argument
             android:name="url"
-            app:argType="string"
-            android:defaultValue="https://toffeelive.com/policies.php"/>
-    </fragment>
+            app:argType="string"/>
+    </dialog>
 
 </navigation>

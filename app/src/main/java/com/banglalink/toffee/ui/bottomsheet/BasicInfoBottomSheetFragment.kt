@@ -179,6 +179,8 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
         observe(viewModel.editChannelResult) {
             when (it) {
                 is Resource.Success -> {
+                    mPref.isChannelDetailChecked = true
+
                     mPref.channelLogo = if (newChannelLogoUrl != "NULL") newChannelLogoUrl else myChannelDetail?.profileUrl ?: ""
                     mPref.channelName = channelName
                     mPref.customerName = userName
@@ -272,10 +274,11 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
     }
 
     private fun showTermsAndConditionDialog() {
-        val args = Bundle().apply {
-            putString("myTitle", "Terms & Conditions")
-            putString("url", mPref.termsAndConditionUrl)
-        }
-        parentFragment?.parentFragment?.findNavController()?.navigate(R.id.termsAndConditionFragment, args)
+        val action = BasicInfoBottomSheetFragmentDirections
+            .actionBasicInfoBottomSheetFragmentToHtmlPageViewDialog(
+                "Terms & Conditions",
+                mPref.termsAndConditionUrl
+            )
+        findNavController().navigate(action)
     }
 }
