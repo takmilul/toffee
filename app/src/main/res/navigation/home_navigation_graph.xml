@@ -519,7 +519,13 @@
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.banglalink.toffee.ui.search.SearchFragment"
-        android:label="Search" />
+        android:label="Search">
+        <argument
+            android:name="keyword"
+            app:argType="string"
+            android:defaultValue="" />
+        <deepLink app:uri="app.toffee://search/{keyword}" />
+    </fragment>
     <dialog
         android:id="@+id/loginDialog"
         android:name="com.banglalink.toffee.ui.login.LoginFragment"

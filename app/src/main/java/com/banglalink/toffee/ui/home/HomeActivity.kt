@@ -57,7 +57,6 @@ import com.banglalink.toffee.ui.channels.AllChannelsViewModel
 import com.banglalink.toffee.ui.channels.ChannelFragmentNew
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.ui.landing.AllCategoriesFragment
-import com.banglalink.toffee.ui.mychannel.MyChannelHomeFragment
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
 import com.banglalink.toffee.ui.player.PlayerPageActivity
 import com.banglalink.toffee.ui.player.PlaylistItem
@@ -858,9 +857,10 @@ class HomeActivity :
     private fun navigateToSearch(query: String?) {
 //        if(navController.currentDestination?.id != R.id.searchFragment) {
         navController.popBackStack(R.id.searchFragment, true)
-        navController.navigate(R.id.searchFragment, Bundle().apply {
-            putString(SearchFragment.SEARCH, query)
-        })
+        navController.navigate(Uri.parse("app.toffee://search/$query"))
+//        navController.navigate(R.id.searchFragment, Bundle().apply {
+//            putString(SearchFragment.SEARCH_KEYWORD, query)
+//        })
 //        }
     }
 

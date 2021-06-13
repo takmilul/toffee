@@ -51,5 +51,10 @@ class InAppMessageParserTest {
         Assert.assertNotNull(ret3)
         Assert.assertTrue(ret3?.destId is Uri)
         Assert.assertEquals("app.toffee://ugc_channel/2233", (ret3?.destId as Uri).toString())
+
+        val ret4 = inAppMessageParser.parseUrlV2("https://toffeelive.com?routing=internal&page=search&keyword=natok")
+        Assert.assertNotNull(ret4)
+        Assert.assertTrue(ret4?.destId is Uri)
+        Assert.assertEquals("app.toffee://search/natok", (ret4?.destId as Uri).toString())
     }
 }

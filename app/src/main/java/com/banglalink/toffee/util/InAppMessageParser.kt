@@ -26,18 +26,22 @@ class InAppMessageParser @Inject constructor(
 //    https://toffeelive.com?routing=internal&page=invite
 //    https://toffeelive.com?routing=internal&page=redeem
 //    https://toffeelive.com?routing=internal&page=settings
-//    https://toffeelive.com?routing=internal&page=ugc_channel&ownerid=2233
+//    https://toffeelive.com?routing=internal&page=search&keyword=natok
+//    https://toffeelive.com?routing=internal&page=ugc_channel&ownerid=6417560
+//    https://toffeelive.com?routing=internal&page=categories&catid=1
+//    https://toffeelive.com?routing=internal&page=categories&catid=9
+//    https://toffeelive.com?routing=internal&page=categories&catid=2
+//    https://toffeelive.com?routing=internal&page=playlist&listid=99&ownerid=594383
 //    https://toffeelive.com/#video/0d52770e16b19486d9914c81061cf2da (For individual link)
 
     suspend fun parseUrlV2(url: String): RouteV2? {
         try {
             val link = Uri.parse(url)
             val page = link.getQueryParameter("page")
-            print(page)
             page?.let { name ->
                 when(name) {
                     "ugc_channel" -> {
-                        val channelId = link.getQueryParameter("ownerid") ?: 0
+                        val channelId = link.getQueryParameter("ownerid") ?: "0"
                         return RouteV2(
                             Uri.parse("app.toffee://ugc_channel/${channelId}"),
                             "Ugc Channel (${channelId})"
@@ -45,7 +49,6 @@ class InAppMessageParser @Inject constructor(
                     }
                     "categories" -> {
                         val catId = link.getQueryParameter("catid")?.toLongOrNull() ?: return null
-                        print(catId)
                         val catList = categoryListApi.loadData(0, 0).filter { it.id ==  catId }
                         if(catList.isEmpty()) return null
                         val destId = when(catId) {
@@ -68,6 +71,19 @@ class InAppMessageParser @Inject constructor(
                             }
                         )
                     }
+                    "search" -> {
+                        val keyword = link.getQueryParameter("keyword") ?: ""
+                        return RouteV2(Uri.parse("app.toffee://search/${keyword}"),
+                            "Search (${keyword})")
+                    }
+//                    "playlist" -> {
+//                        val playlistId = link.getQueryParameter("listid") ?: return null
+//                        val ownerId = link.getQueryParameter("ownerid") ?: return null
+//
+//                    }
+//                    "episodelist" -> {
+//
+//                    }
                     "settings" -> {
                         return RouteV2(R.id.menu_settings, "Settings")
                     }
