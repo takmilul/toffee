@@ -362,7 +362,14 @@ class HomeActivity :
         customCrashReport()
     }
     
-    private fun isChannelComplete() = mPref.customerName.isNotBlank() && mPref.customerEmail.isNotBlank() && mPref.customerAddress.isNotBlank() && mPref.hasChannelName() && mPref.hasChannelLogo() && mPref.customerDOB.isNotBlank() && mPref.customerNID.isNotBlank() && mPref.isChannelDetailChecked
+    private fun isChannelComplete() = mPref.customerName.isNotBlank()
+            && mPref.customerEmail.isNotBlank()
+            && mPref.customerAddress.isNotBlank()
+            && mPref.hasChannelName()
+            && mPref.hasChannelLogo()
+            && mPref.customerDOB.isNotBlank()
+            && mPref.customerNID.isNotBlank()
+            && mPref.isChannelDetailChecked
     
     private fun customCrashReport() {
         val runtime = Runtime.getRuntime()

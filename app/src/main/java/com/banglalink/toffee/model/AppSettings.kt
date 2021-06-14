@@ -15,8 +15,8 @@ const val UN_ETHICAL_ACTIVITIES_ERROR_CODE = 402
 const val CLIENT_API_HEADER = "CLIENT-API-HEADER"
 
 //const val TOFFEE_BASE_URL = "https://mapi.toffeelive.com/"
-//const val TOFFEE_BASE_URL = "https://staging.toffee-cms.com/"
-const val TOFFEE_BASE_URL = "https://ugc-staging.toffeelive.com/"
+const val TOFFEE_BASE_URL = "https://staging.toffee-cms.com/"
+//const val TOFFEE_BASE_URL = "https://ugc-staging.toffeelive.com/"
 
 val TIME_OUT_MSG = "Time out occurred. Please try later" // Need to change the message later.
 val EXIT_FROM_APP_MSG = "Are you sure to logout from the %s app?"
