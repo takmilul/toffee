@@ -2,13 +2,12 @@ package com.banglalink.toffee.util
 
 import android.net.Uri
 import android.os.Bundle
-import androidx.navigation.*
+import androidx.navigation.NavOptions
+import androidx.navigation.Navigator
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.GetCategories
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
-import com.banglalink.toffee.ui.home.*
-import java.lang.Exception
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -41,7 +40,7 @@ class InAppMessageParser @Inject constructor(
             page?.let { name ->
                 when(name) {
                     "ugc_channel" -> {
-                        val channelId = link.getQueryParameter("ownerid") ?: "0"
+                        val channelId = link.getQueryParameter("owner_id") ?: "0"
                         return RouteV2(
                             Uri.parse("app.toffee://ugc_channel/${channelId}"),
                             "Ugc Channel (${channelId})"
