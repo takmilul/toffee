@@ -57,7 +57,6 @@ import com.banglalink.toffee.ui.channels.AllChannelsViewModel
 import com.banglalink.toffee.ui.channels.ChannelFragmentNew
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.ui.landing.AllCategoriesFragment
-import com.banglalink.toffee.ui.mychannel.MyChannelHomeFragment
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
 import com.banglalink.toffee.ui.player.PlayerPageActivity
 import com.banglalink.toffee.ui.player.PlaylistItem
@@ -126,7 +125,7 @@ class HomeActivity :
     private var searchView: SearchView? = null
     lateinit var binding: ActivityMainMenuBinding
     private lateinit var drawerHelper: DrawerHelper
-    private lateinit var inAppMessageParser: InAppMessageParser
+    @Inject lateinit var inAppMessageParser: InAppMessageParser
 //    private var mFirebaseAnalytics: FirebaseAnalytics? = null
     companion object {
         const val INTENT_REFERRAL_REDEEM_MSG = "REFERRAL_REDEEM_MSG"
@@ -816,36 +815,36 @@ class HomeActivity :
 
     private fun handleDeepLink(url: String){
 //        https://toffeelive.com/#video/0d52770e16b19486d9914c81061cf2da
-        try{
-            var isDeepLinkHandled = false
-            val route = inAppMessageParser.parseUrl(url)
-            route?.drawerId?.let {
-                ToffeeAnalytics.logBreadCrumb("Trying to open menu item")
-//                drawerHelper.handleMenuItemById(it)
-                isDeepLinkHandled = true
-            }
-            route?.categoryId?.let {
-                ToffeeAnalytics.logBreadCrumb("Trying to open category item")
-////                drawerHelper.handleCategoryClick(ID_VIDEO, it, route.categoryName ?: "")
-                isDeepLinkHandled = true
-            }
+        lifecycleScope.launch {
+            try{
+                var isDeepLinkHandled = false
+                val route = inAppMessageParser.parseUrlV2(url)
+                route?.let {
+                    ToffeeAnalytics.logBreadCrumb("Trying to open ${it.name}")
+                    when(it.destId) {
+                        is Uri -> navController.navigate(it.destId, it.options, it.navExtra)
+                        is Int -> navController.navigate(it.destId, it.args, it.options, it.navExtra)
+                    }
+                    isDeepLinkHandled = true
+                }
 
-            if(!isDeepLinkHandled){
-                ToffeeAnalytics.logBreadCrumb("Trying to open individual item")
-                val hash = url.substring(url.lastIndexOf("/") + 1)
-                observe(viewModel.getShareableContent(hash)){ channelResource ->
-                    when(channelResource){
-                        is Success -> {
-                            channelResource.data?.let {
-                                onDetailsFragmentLoad(it)
+                if(!isDeepLinkHandled){
+                    ToffeeAnalytics.logBreadCrumb("Trying to open individual item")
+                    val hash = url.substring(url.lastIndexOf("/") + 1)
+                    observe(viewModel.getShareableContent(hash)){ channelResource ->
+                        when(channelResource){
+                            is Success -> {
+                                channelResource.data?.let {
+                                    onDetailsFragmentLoad(it)
+                                }
                             }
                         }
                     }
                 }
+            }catch (e: Exception){
+                ToffeeAnalytics.logBreadCrumb("2. Failed to handle depplink $url")
+                ToffeeAnalytics.logException(e)
             }
-        }catch (e: Exception){
-            ToffeeAnalytics.logBreadCrumb("2. Failed to handle depplink $url")
-            ToffeeAnalytics.logException(e)
         }
     }
     
@@ -865,9 +864,10 @@ class HomeActivity :
     private fun navigateToSearch(query: String?) {
 //        if(navController.currentDestination?.id != R.id.searchFragment) {
         navController.popBackStack(R.id.searchFragment, true)
-        navController.navigate(R.id.searchFragment, Bundle().apply {
-            putString(SearchFragment.SEARCH, query)
-        })
+        navController.navigate(Uri.parse("app.toffee://search/$query"))
+//        navController.navigate(R.id.searchFragment, Bundle().apply {
+//            putString(SearchFragment.SEARCH_KEYWORD, query)
+//        })
 //        }
     }
 
@@ -1168,7 +1168,6 @@ class HomeActivity :
 
     private fun observeInAppMessage(){
         FirebaseAnalytics.getInstance(this).logEvent("trigger_inapp_messaging", null)
-        inAppMessageParser = InAppMessageParser()
         FirebaseInAppMessaging.getInstance().triggerEvent("trigger_inapp_messaging")
     }
 

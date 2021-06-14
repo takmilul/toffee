@@ -2,7 +2,6 @@ package com.banglalink.toffee.usecase
 
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.nhaarman.mockitokotlin2.mock
@@ -14,9 +13,6 @@ import org.mockito.Mock
 import org.mockito.Mockito
 
 open class BaseUseCaseTest {
-    @Rule
-    @JvmField
-    var rule: TestRule = InstantTaskExecutorRule()
     @Rule
     @JvmField
     var expectedException = ExpectedException.none()

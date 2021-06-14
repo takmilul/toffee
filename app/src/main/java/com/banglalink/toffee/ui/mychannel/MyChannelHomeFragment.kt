@@ -82,6 +82,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         super.onCreate(savedInstanceState)
         progressDialog = VelBoxProgressDialog(requireContext())
         channelOwnerId = arguments?.getInt(CHANNEL_OWNER_ID) ?: mPref.customerId
+        if(channelOwnerId == 0) channelOwnerId = mPref.customerId
         isOwner = channelOwnerId == mPref.customerId
     }
     

@@ -25,7 +25,7 @@ class UpdateProfileTest :BaseUseCaseTest(){
             val apiLogin = UpdateProfile(SessionPreference.getInstance(), mockToffeeApi)
             Mockito.`when`(mockToffeeApi.updateProfile(any<UpdateProfileRequest>())).thenReturn(
                 Response.success(UpdateProfileResponse(
-                )))
+                )).body())
             //test method
             apiLogin.execute("name","e@e.com","my address","12345")
             //verify it
@@ -55,7 +55,7 @@ class UpdateProfileTest :BaseUseCaseTest(){
                 Response.success(UpdateProfileResponse().apply {
                     errorCode = 109
                     errorMsg = "No account found"
-                }))
+                }).body())
             //test method
             apiLogin.execute("name","e@e.com","my address","12345")
         }

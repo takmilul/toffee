@@ -27,7 +27,7 @@ class CheckReferralCodeStatusTest : BaseUseCaseTest() {
                                 "Your referral code is invalid"
                             )
                         )
-                    )
+                    ).body()
                 )
 
                 val result = CheckReferralCodeStatus(mockToffeeApi)

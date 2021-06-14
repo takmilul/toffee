@@ -25,16 +25,16 @@ class UpdateFavoriteTest :BaseUseCaseTest(){
             val updateFavorite = UpdateFavorite(SessionPreference.getInstance(),mockToffeeApi)
             Mockito.`when`(mockToffeeApi.updateFavorite(any<FavoriteRequest>())).thenReturn(
                 Response.success(FavoriteResponse(
-                )))
+                )).body())
 
             //test method
-            val channelInfo = ChannelInfo().apply {
-                id="1729"
-                program_name="Hello BD"
-                content_provider_name = "GSeries"
-                duration = "00:04:05"
+            val channelInfo = ChannelInfo(
+                id="1729",
+                program_name="Hello BD",
+                content_provider_name = "GSeries",
+                duration = "00:04:05",
                 view_count = "1000000000009"
-            }
+            )
 
             val favorite= channelInfo.favorite == null || channelInfo.favorite == "0"
             val resultChannelInfo = updateFavorite.execute(channelInfo,favorite)
@@ -59,17 +59,17 @@ class UpdateFavoriteTest :BaseUseCaseTest(){
             val updateFavorite = UpdateFavorite(SessionPreference.getInstance(),mockToffeeApi)
             Mockito.`when`(mockToffeeApi.updateFavorite(any<FavoriteRequest>())).thenReturn(
                 Response.success(FavoriteResponse(
-                )))
+                )).body())
 
             //test method
-            val channelInfo = ChannelInfo().apply {
-                id="1729"
-                program_name="Hello BD"
-                content_provider_name = "GSeries"
-                duration = "00:04:05"
-                view_count = "1000000000009"
+            val channelInfo = ChannelInfo(
+                id="1729",
+                program_name="Hello BD",
+                content_provider_name = "GSeries",
+                duration = "00:04:05",
+                view_count = "1000000000009",
                 favorite = "1"
-            }
+            )
 
             val favorite= channelInfo.favorite == null || channelInfo.favorite == "0"
             val resultChannelInfo = updateFavorite.execute(channelInfo,favorite)
@@ -94,17 +94,17 @@ class UpdateFavoriteTest :BaseUseCaseTest(){
             val updateFavorite = UpdateFavorite(SessionPreference.getInstance(),mockToffeeApi)
             Mockito.`when`(mockToffeeApi.updateFavorite(any<FavoriteRequest>())).thenReturn(
                 Response.success(FavoriteResponse(
-                )))
+                )).body())
 
             //test method
-            val channelInfo = ChannelInfo().apply {
-                id="1729"
-                program_name="Hello BD"
-                content_provider_name = "GSeries"
-                duration = "00:04:05"
-                view_count = "1000000000009"
+            val channelInfo = ChannelInfo(
+                id="1729",
+                program_name="Hello BD",
+                content_provider_name = "GSeries",
+                duration = "00:04:05",
+                view_count = "1000000000009",
                 favorite = "0"
-            }
+            )
 
             val favorite= channelInfo.favorite == null || channelInfo.favorite == "0"
             val resultChannelInfo = updateFavorite.execute(channelInfo,favorite)
