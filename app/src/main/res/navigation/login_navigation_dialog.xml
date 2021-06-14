@@ -22,6 +22,9 @@
             android:id="@+id/action_loginContentFragment_to_verifyLoginFragment2"
             app:destination="@id/verifyLoginFragment2"
             app:popEnterAnim="@anim/slide_left_to_center" />
+        <action
+            android:id="@+id/action_loginContentFragment2_to_htmlPageViewDialog"
+            app:destination="@id/htmlPageViewDialog" />
     </fragment>
     <fragment
         android:id="@+id/verifyLoginFragment2"
@@ -51,4 +54,18 @@
 <!--            app:argType="com.banglalink.toffee.model.CustomerInfoSignIn"-->
 <!--            app:nullable="true" />-->
     </fragment>
+
+    <dialog
+        android:id="@+id/htmlPageViewDialog"
+        android:name="com.banglalink.toffee.ui.common.HtmlPageViewDialog"
+        android:label="{myTitle}">
+        <argument
+            android:name="myTitle"
+            app:argType="string"
+            />
+        <argument
+            android:name="url"
+            app:argType="string"/>
+    </dialog>
+
 </navigation>

@@ -361,7 +361,14 @@ class HomeActivity :
         customCrashReport()
     }
     
-    private fun isChannelComplete() = mPref.customerName.isNotBlank() && mPref.customerEmail.isNotBlank() && mPref.customerAddress.isNotBlank() && mPref.hasChannelName() && mPref.hasChannelLogo() && mPref.customerDOB.isNotBlank() && mPref.customerNID.isNotBlank() && mPref.isChannelDetailChecked
+    private fun isChannelComplete() = mPref.customerName.isNotBlank()
+            && mPref.customerEmail.isNotBlank()
+            && mPref.customerAddress.isNotBlank()
+            && mPref.hasChannelName()
+            && mPref.hasChannelLogo()
+            && mPref.customerDOB.isNotBlank()
+            && mPref.customerNID.isNotBlank()
+            && mPref.isChannelDetailChecked
     
     private fun customCrashReport() {
         val runtime = Runtime.getRuntime()
@@ -1320,7 +1327,7 @@ class HomeActivity :
             ) { dialog, _ -> dialog.cancel() }
             .show()
     }
-    
+
     private fun observeLogout() {
         observe(viewModel.logoutLiveData) {
             when(it) {
@@ -1338,6 +1345,10 @@ class HomeActivity :
                         mPref.mqttClientId = ""
                         mPref.mqttUserName = ""
                         mPref.mqttPassword = ""
+                        mPref.customerEmail= ""
+                        mPref.customerAddress= ""
+                        mPref.customerDOB= ""
+                        mPref.customerNID= ""
                         navController.popBackStack(R.id.menu_feed, false).let { 
                             recreate()
                         }

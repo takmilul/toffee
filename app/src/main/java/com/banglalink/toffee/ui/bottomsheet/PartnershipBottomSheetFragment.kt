@@ -31,11 +31,9 @@ class PartnershipBottomSheetFragment :ChildDialogFragment(){
 
     private fun navigateToCreatorsPolicy()
     {
-        val args = Bundle().apply {
-            putString("myTitle", "Creators Policy")
-            putString("url", mPref.creatorsPolicyUrl)
-        }
-        parentFragment?.parentFragment?.findNavController()?.navigate(R.id.termsAndConditionFragment, args)
+        val action = PartnershipBottomSheetFragmentDirections
+            .actionPartnershipBottomSheetFragmentToHtmlPageViewDialog("Creators Policy",mPref.creatorsPolicyUrl)
+        findNavController().navigate(action)
     }
 
     private fun navigateToUploadPhoto()
