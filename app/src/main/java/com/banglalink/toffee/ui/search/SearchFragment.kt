@@ -10,12 +10,7 @@ import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
-import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.model.Resource.Failure
-import com.banglalink.toffee.model.Resource.Success
-import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
-import com.banglalink.toffee.ui.report.ReportPopupFragment
 import com.banglalink.toffee.ui.widget.MyPopupWindow
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -34,11 +29,11 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
     }
 
     companion object{
-        const val SEARCH = "_search_"
+        const val SEARCH_KEYWORD = "keyword"
         fun createInstance(search: String): SearchFragment {
             val searchListFragment = SearchFragment()
             val bundle = Bundle()
-            bundle.putString(SEARCH, search)
+            bundle.putString(SEARCH_KEYWORD, search)
             searchListFragment.arguments = bundle
             return searchListFragment
         }
@@ -49,7 +44,7 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
     }
     
     override fun onCreate(savedInstanceState: Bundle?) {
-        searchKey = arguments?.getString(SEARCH, "")!!
+        searchKey = arguments?.getString(SEARCH_KEYWORD, "") ?: ""
         super.onCreate(savedInstanceState)
     }
     

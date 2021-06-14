@@ -114,7 +114,7 @@ object UtilsKt {
                 mmr.setDataSource(filePath)
             }
             val bmp = mmr.frameAtTime
-            val isHorizontal = if(bmp.width >= bmp.height) 1 else 0
+            val isHorizontal = if(bmp.width > bmp.height) 1 else 0
 
             val scaledBmp = resizeBitmap(bmp, 1280, 720)
             val byteArrayOutputStream = ByteArrayOutputStream()
