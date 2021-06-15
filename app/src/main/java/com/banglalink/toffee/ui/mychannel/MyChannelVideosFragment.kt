@@ -128,7 +128,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
                 uploadVideoButton.setOnClickListener {
                     requireActivity().checkVerification {
                         requireActivity().let {
-                            if(it is HomeActivity) it.showUploadDialog()
+                            if(it is HomeActivity) it.checkChannelDetailAndUpload()
                         }
                     }
                 }
