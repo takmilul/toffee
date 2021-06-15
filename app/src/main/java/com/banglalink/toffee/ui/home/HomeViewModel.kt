@@ -76,6 +76,7 @@ class HomeViewModel @Inject constructor(
     val notificationUrlLiveData = SingleLiveEvent<String>()
     val mqttCredentialLiveData = SingleLiveEvent<Resource<MqttBean?>>()
     private val _channelDetail = MutableLiveData<MyChannelDetail>()
+    val myChannelDetailResponse = SingleLiveEvent<Resource<MyChannelDetailBean>>()
     private var _playlistManager = PlaylistManager()
     val subscriptionLiveData = SingleLiveEvent<Resource<MyChannelSubscribeBean>>()
     val myChannelDetailLiveData = _channelDetail.toLiveData()
@@ -232,6 +233,7 @@ class HomeViewModel @Inject constructor(
                     }
                 }
             }
+            myChannelDetailResponse.value = result
         }
     }
 

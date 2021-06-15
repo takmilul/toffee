@@ -177,6 +177,5 @@ class SplashScreenFragment2 : BaseFragment() {
     
     override fun onDestroy() {
         super.onDestroy()
-        mPref.logout = "0"
     }
 }

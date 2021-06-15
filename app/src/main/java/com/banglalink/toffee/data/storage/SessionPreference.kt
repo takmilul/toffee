@@ -1,9 +1,7 @@
 package com.banglalink.toffee.data.storage
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
-import android.provider.Settings
 import android.text.TextUtils
 import androidx.core.content.edit
 import androidx.lifecycle.MutableLiveData
@@ -20,7 +18,6 @@ import java.util.*
 
 const val PREF_NAME_IP_TV= "IP_TV"
 
-@SuppressLint("HardwareIds")
 class SessionPreference(private val pref: SharedPreferences, private val context: Context) {
     
     val viewCountDbUrlLiveData = SingleLiveEvent<String>()
@@ -34,10 +31,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val customerNameLiveData = MutableLiveData<String>()
     val playerOverlayLiveData = SingleLiveEvent<PlayerOverlayData>()
     val forceLogoutUserLiveData = SingleLiveEvent<Boolean>()
-    
-    val deviceId: String by lazy {
-        Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
-    }
     
     var phoneNumber: String
         get() = pref.getString(PREF_PHONE_NUMBER, "") ?: ""
@@ -100,12 +93,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             pref.edit().putBoolean(PREF_VERFICATION,isVerified).apply()
         }
     
-    var logout:String
-        get() = pref.getString(PREF_LOGOUT,"0")?: ""
-        set(logout){
-            pref.edit().putString(PREF_LOGOUT,logout).apply()
-        }
-
     var balance: Int
         get() = pref.getInt(PREF_BALANCE, 0)
         set(balance) {
@@ -505,7 +492,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     
     fun saveCustomerInfo(customerInfoLogin:CustomerInfoLogin){
         balance = customerInfoLogin.balance
-        logout = "0"
         isVerifiedUser = customerInfoLogin.verified_status
         customerId = customerInfoLogin.customerId
         password = customerInfoLogin.password?:""
