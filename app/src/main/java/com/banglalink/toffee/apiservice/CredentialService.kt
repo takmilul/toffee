@@ -14,7 +14,6 @@ class CredentialService @Inject constructor(private val pref: SessionPreference,
         response.credential?.let { customerInfoSignIn ->
             pref.customerId=customerInfoSignIn.customerId
             pref.password=customerInfoSignIn.password!!
-            pref.logout="0"
         }
         return response
     }

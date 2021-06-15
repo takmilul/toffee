@@ -152,7 +152,6 @@ class HomeActivity :
                 WindowManager.LayoutParams.FLAG_SECURE
             )
         }
-        mPref.logout="0"
         cPref.isAlreadyForceLoggedOut = false
 //        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         binding = ActivityMainMenuBinding.inflate(layoutInflater)
@@ -172,7 +171,7 @@ class HomeActivity :
 
         binding.uploadButton.setOnClickListener {
             checkVerification {
-                showUploadDialog()
+                checkChannelDetailAndUpload()
             }
         }
         
@@ -336,11 +335,9 @@ class HomeActivity :
         
         if (!isChannelComplete() && mPref.isVerifiedUser) {
             viewModel.getChannelDetail(mPref.customerId)
-            if (mPref.customerName.isBlank() || mPref.customerEmail.isBlank() || mPref.customerAddress.isBlank()) {
-                observe(profileViewModel.loadCustomerProfile()) {
-                    if (it is Success) {
-                        profileViewModel.profileForm.value = it.data
-                    }
+            observe(profileViewModel.loadCustomerProfile()) {
+                if (it is Success) {
+                    profileViewModel.profileForm.value = it.data
                 }
             }
         }
@@ -459,7 +456,22 @@ class HomeActivity :
         }
     }
     
-    fun showUploadDialog(): Boolean {
+    fun checkChannelDetailAndUpload() {
+        if (!mPref.isChannelDetailChecked) {
+            observe(viewModel.myChannelDetailResponse) {
+                when(it) {
+                    is Success -> showUploadDialog()
+                    is Failure -> showToast("Operation failed")
+                }
+            }
+            viewModel.getChannelDetail(mPref.customerId)
+        }
+        else {
+            showUploadDialog()
+        }
+    }
+    
+    private fun showUploadDialog(): Boolean {
         if (isChannelComplete()){
             if (navController.currentDestination?.id == R.id.uploadMethodFragment) {
                 navController.popBackStack()
