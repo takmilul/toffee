@@ -31,9 +31,11 @@ class PartnershipBottomSheetFragment :ChildDialogFragment(){
 
     private fun navigateToCreatorsPolicy()
     {
+        if (findNavController().currentDestination?.id != R.id.htmlPageViewDialog && findNavController().currentDestination?.id == R.id.partnershipBottomSheetFragment) {
         val action = PartnershipBottomSheetFragmentDirections
             .actionPartnershipBottomSheetFragmentToHtmlPageViewDialog("Creators Policy",mPref.creatorsPolicyUrl)
         findNavController().navigate(action)
+        }
     }
 
     private fun navigateToUploadPhoto()

@@ -69,7 +69,7 @@
             android:minHeight="200dp"
             android:layout_marginTop="16dp"
             android:adjustViewBounds="true"
-            android:scaleType="centerInside"
+            android:scaleType="centerCrop"
             android:src="@drawable/placeholder"
             imageWidth="@{720}"
             imageHeight="@{405}"
