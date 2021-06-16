@@ -17,6 +17,7 @@ import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.bottomsheet.BasicInfoBottomSheetFragmentDirections
+import com.banglalink.toffee.ui.bottomsheet.PartnershipBottomSheetFragmentDirections
 import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
@@ -116,12 +117,15 @@ class LoginContentFragment2 : ChildDialogFragment(), TextWatcher {
     }
     
     private fun showTermsAndConditionDialog() {
-        val action = LoginContentFragment2Directions
-            .actionLoginContentFragment2ToHtmlPageViewDialog(
-                "Terms & Conditions",
-                mPref.termsAndConditionUrl
-            )
-        findNavController().navigate(action)
+        if (findNavController().currentDestination?.id != R.id.htmlPageViewDialog
+            && findNavController().currentDestination?.id == R.id.loginContentFragment2) {
+            val action = LoginContentFragment2Directions
+                .actionLoginContentFragment2ToHtmlPageViewDialog(
+                    "Terms & Conditions",
+                    mPref.termsAndConditionUrl
+                )
+            findNavController().navigate(action)
+        }
     }
     
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
