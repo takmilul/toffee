@@ -199,6 +199,7 @@
             android:textColor="@color/colorAccent"
             android:textColorLink="@drawable/text_selector2"
             android:textSize="16sp"
+            android:background="?attr/selectableItemBackgroundBorderless"
             app:layout_constraintBottom_toBottomOf="@+id/terms_and_conditions_checkbox"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"

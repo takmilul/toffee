@@ -274,16 +274,10 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
     }
 
     private fun showTermsAndConditionDialog() {
-
-        if (findNavController().currentDestination?.id != R.id.htmlPageViewDialog && findNavController().currentDestination?.id == R.id.basicInfoBottomSheetFragment) {
-            val action = BasicInfoBottomSheetFragmentDirections
-                .actionBasicInfoBottomSheetFragmentToHtmlPageViewDialog(
-                    "Terms & Conditions",
-                    mPref.termsAndConditionUrl
-                )
-            findNavController().navigate(action)
-
+        val args = Bundle().apply {
+            putString("myTitle", "Terms & Conditions")
+            putString("url", mPref.termsAndConditionUrl)
         }
-
+        findNavController().navigate(R.id.htmlPageViewDialog, args)
     }
 }
