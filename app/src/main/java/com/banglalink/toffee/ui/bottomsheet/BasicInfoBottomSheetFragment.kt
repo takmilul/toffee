@@ -274,11 +274,16 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
     }
 
     private fun showTermsAndConditionDialog() {
-        val action = BasicInfoBottomSheetFragmentDirections
-            .actionBasicInfoBottomSheetFragmentToHtmlPageViewDialog(
-                "Terms & Conditions",
-                mPref.termsAndConditionUrl
-            )
-        findNavController().navigate(action)
+
+        if (findNavController().currentDestination?.id != R.id.htmlPageViewDialog && findNavController().currentDestination?.id == R.id.basicInfoBottomSheetFragment) {
+            val action = BasicInfoBottomSheetFragmentDirections
+                .actionBasicInfoBottomSheetFragmentToHtmlPageViewDialog(
+                    "Terms & Conditions",
+                    mPref.termsAndConditionUrl
+                )
+            findNavController().navigate(action)
+
+        }
+
     }
 }

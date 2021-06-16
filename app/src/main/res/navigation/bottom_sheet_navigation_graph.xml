@@ -73,8 +73,8 @@
 
     <dialog
         android:id="@+id/htmlPageViewDialog"
-        android:name="com.banglalink.toffee.ui.common.HtmlPageViewDialog"
-        android:label="{myTitle}">
+        tools:layout="@layout/dialog_html_page_view"
+        android:name="com.banglalink.toffee.ui.common.HtmlPageViewDialog">
         <argument
             android:name="myTitle"
             app:argType="string"
