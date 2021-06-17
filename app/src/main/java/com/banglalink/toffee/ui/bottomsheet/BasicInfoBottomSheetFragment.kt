@@ -226,7 +226,7 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
                 userAddress,
                 selectedDate,
                 userNID,
-                profileForm?.phoneNo!!,
+                mPref.phoneNumber,
                 0,
                 !myChannelDetail?.nationalIdNo.isNullOrBlank(),
                 !(myChannelDetail?.channelName.isNullOrBlank() && myChannelDetail?.profileUrl.isNullOrBlank())
@@ -262,6 +262,7 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
         )
         datePickerDialog.show()
         datePickerDialog.apply {
+            datePicker.maxDate = System.currentTimeMillis()
             val buttonColor = ContextCompat.getColor(requireContext(), R.color.main_text_color)
             getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(buttonColor)
             getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(buttonColor)

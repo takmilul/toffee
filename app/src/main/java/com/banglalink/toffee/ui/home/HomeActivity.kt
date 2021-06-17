@@ -361,10 +361,10 @@ class HomeActivity :
     private fun isChannelComplete() = mPref.customerName.isNotBlank()
             && mPref.customerEmail.isNotBlank()
             && mPref.customerAddress.isNotBlank()
-            && mPref.hasChannelName()
-            && mPref.hasChannelLogo()
             && mPref.customerDOB.isNotBlank()
             && mPref.customerNID.isNotBlank()
+            && mPref.hasChannelName()
+            && mPref.hasChannelLogo()
             && mPref.isChannelDetailChecked
     
     private fun customCrashReport() {

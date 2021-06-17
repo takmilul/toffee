@@ -8,6 +8,7 @@ import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.repository.SubscriptionCountRepository
 import com.banglalink.toffee.data.repository.SubscriptionInfoRepository
+import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.MyChannelSubscribeBean
 import com.banglalink.toffee.mqttservice.ToffeeMqttService
@@ -84,6 +85,8 @@ data class SubscriptionCountData(
     val subscriberId: Int,
     @SerializedName("status")
     val status: Int,
+    @SerializedName("device_id")
+    val deviceId: String = CommonPreference.getInstance().deviceId,
     @SerializedName("date_time")
     val date_time: String
 )

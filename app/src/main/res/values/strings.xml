@@ -313,7 +313,7 @@
     <string name="you_can_upload_your_video">You can upload your video now</string>
     <string name="you_can_always_go_text">You can always go to</string>
     <string name="my_channel_text">MY CHANNEL</string>
-    <string name="and_update_your_info_text">and add &amp; update your informatioand</string>
+    <string name="and_update_your_info_text">and add/update your information</string>
     <string name="report_video_text">Report Video</string>
     <string name="you_are_reporting_for_text">You\'re Reporting for</string>
     <string name="timestamp_selected">Timestamp Selected*</string>
@@ -353,7 +353,7 @@
     <string name="nid_null_error_text">*NID Required</string>
     <string name="Date_of_birth_must_be_match">*Age must at least 18 y/o</string>
     <string name="others_text">Others</string>
-    <string name="payment_option_required">Payment Option Required</string>
+    <string name="payment_option_required">*Payment Option Required</string>
     <!--    url    -->
 <!--    <string name="creators_policy_url">https://toffeelive.com/policies.php</string>-->
 <!--    <string name="tus_upload_server_url">https://ugc-upload.toffeelive.com/upload</string>-->

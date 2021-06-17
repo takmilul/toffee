@@ -1,6 +1,7 @@
 package com.banglalink.toffee.usecase
 
 import com.banglalink.toffee.apiservice.SendShareLogApiService
+import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.toFormattedDate
 import com.banglalink.toffee.model.ChannelInfo
@@ -37,6 +38,8 @@ data class ShareData(
     val contentId: Long,
     @SerializedName("device_type")
     val deviceType: Int = 1,
+    @SerializedName("device_id")
+    val deviceId: String = CommonPreference.getInstance().deviceId,
     @SerializedName("date_time")
     val shareDateTime: String = System.currentTimeMillis().toFormattedDate(),
 )

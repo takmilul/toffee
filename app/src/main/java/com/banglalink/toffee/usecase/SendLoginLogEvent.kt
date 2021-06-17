@@ -2,6 +2,7 @@ package com.banglalink.toffee.usecase
 
 import android.os.Build
 import com.banglalink.toffee.BuildConfig
+import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.toFormattedDate
 import com.banglalink.toffee.notification.LOGIN_LOG_TOPIC
@@ -22,12 +23,15 @@ class SendLoginLogEvent @Inject constructor() {
 }
 
 data class LoginLogData(
+    val id: Long = System.nanoTime(),
     @SerializedName("app_version")
     val appVersion : String = BuildConfig.VERSION_NAME,
     @SerializedName("device_type")
-    val deviceType :Int = 1,
+    val deviceType :String = "1",
+    @SerializedName("device_id")
+    val deviceId: String = CommonPreference.getInstance().deviceId,
     @SerializedName("is_bl_number")
-    val isBlNumber: String = SessionPreference.getInstance().isBanglalinkNumber,
+    val isBlNumber: Int = if(SessionPreference.getInstance().isBanglalinkNumber == "false") 0 else 1,
     val lat: String = SessionPreference.getInstance().latitude,
     val lon: String = SessionPreference.getInstance().longitude,
     @SerializedName("geo_city")

@@ -102,7 +102,7 @@ class SplashScreenFragment2 : BaseFragment() {
         observe(viewModel.apiLoginResponse) {
             when (it) {
                 is Resource.Success -> {
-//                    viewModel.sendLoginLogData()
+                    viewModel.sendLoginLogData()
                     if (isOperationCompleted) {
                         launchHomePage()
                     }

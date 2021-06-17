@@ -8,7 +8,6 @@ import android.util.Log
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.BuildConfig
-import com.banglalink.toffee.R.string
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.database.entities.ContentViewProgress
@@ -386,9 +385,7 @@ abstract class PlayerPageActivity :
     }
 
     private fun prepareMedia(mediaItem: MediaItem): MediaSource {
-        val dataSourceFactory: Factory = DefaultHttpDataSourceFactory(
-            Util.getUserAgent(this, getString(string.app_name))
-        )
+        val dataSourceFactory: Factory = DefaultHttpDataSourceFactory(TOFFEE_HEADER)
         val hlsDataSourceFactory = HlsMediaSource.Factory(dataSourceFactory)
         hlsDataSourceFactory.setAllowChunklessPreparation(true)
         return HlsMediaSource.Factory { _: Int ->

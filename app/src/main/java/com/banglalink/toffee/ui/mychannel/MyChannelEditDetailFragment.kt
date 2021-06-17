@@ -122,9 +122,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                     viewModel.selectedPaymentPosition.value = position
                 }
                 else {
-//                    binding.categoryPaymentSpinner.setSelection(viewModel.selectedPaymentPosition.value ?: 0)
-////                    viewModel.selectedPaymentMethod = viewModel.paymentMethodList.value?.get(position - 1)
-                    binding.categoryPaymentSpinner.setSelection(viewModel.selectedPaymentPosition.value ?: 1)
+                    binding.categoryPaymentSpinner.setSelection(viewModel.selectedPaymentPosition.value ?: 0)
                 }
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -135,9 +133,9 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             if(!paymentMethodList.isNullOrEmpty()) {
                 paymentCategoryAdapter.setData(paymentMethodList)
                 viewModel.selectedPaymentMethod =
-                    paymentMethodList.find { it.id == myChannelDetail?.paymentMethodId }?: paymentMethodList.first()
+                    paymentMethodList.find { it.id == myChannelDetail?.paymentMethodId }
                 viewModel.selectedPaymentPosition.value =
-                    (paymentMethodList.indexOf(viewModel.selectedPaymentMethod).takeIf { it > 0 } ?: 0) + 1
+                    (paymentMethodList.indexOf(viewModel.selectedPaymentMethod) + 1)
             }
         }
 
@@ -298,7 +296,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             profileImageBase64 = null
         }
 
-         channelName = binding.channelName.text.toString().trim()
+        channelName = binding.channelName.text.toString().trim()
         val description = binding.description.text.toString().trim()
         val isChannelLogoAvailable= !myChannelDetail?.profileUrl.isNullOrEmpty() or !profileImageBase64.isNullOrEmpty()
 
@@ -507,15 +505,14 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         )
         datePickerDialog.show()
         datePickerDialog.apply {
+            datePicker.maxDate = System.currentTimeMillis()
             val buttonColor = ContextCompat.getColor(requireContext(), R.color.main_text_color)
             getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(buttonColor)
             getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(buttonColor)
         }
     }
 
-    private fun ageCalculate( date :Date):Int
-    {
-
+    private fun ageCalculate( date :Date):Int {
         val dob = Calendar.getInstance()
         dob.time=date
         val today = Calendar.getInstance()
