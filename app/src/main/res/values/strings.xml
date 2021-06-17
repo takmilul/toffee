@@ -351,9 +351,11 @@
     <string name="date_error_text">*Date of Birth Required</string>
     <string name="email_null_error_text">*Email Required</string>
     <string name="nid_null_error_text">*NID Required</string>
-    <string name="Date_of_birth_must_be_match">*Age must at least 18 y/o</string>
+    <string name="Date_of_birth_must_be_match">*You must be 18 years or old</string>
     <string name="others_text">Others</string>
     <string name="payment_option_required">Payment Option Required</string>
+    <string name="invalid_nid_number">*Invalid NID Number</string>
+    <string name="this_account_will_be_used_to_send_payment">"This account will be used to send payments if you are eligible"</string>
     <!--    url    -->
 <!--    <string name="creators_policy_url">https://toffeelive.com/policies.php</string>-->
 <!--    <string name="tus_upload_server_url">https://ugc-upload.toffeelive.com/upload</string>-->
