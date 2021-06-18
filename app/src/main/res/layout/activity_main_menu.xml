@@ -47,11 +47,11 @@
                                 android:layout_alignParentBottom="true"
                                 layout="@layout/home_mini_upload_progress" />
                         </RelativeLayout>
-                        <FrameLayout
-                            android:id="@+id/content_viewer"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            />
+<!--                        <FrameLayout-->
+<!--                            android:id="@+id/content_viewer"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="match_parent"-->
+<!--                            />-->
                     </FrameLayout>
                     <com.banglalink.toffee.ui.widget.DraggerLayout
                         xmlns:dragger_layout="http://schemas.android.com/apk/res-auto"

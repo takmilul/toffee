@@ -236,16 +236,16 @@ class HomeActivity :
         }*/
 
 
-        observe(viewModel.viewAllCategories) {
-            val currentFragment = supportFragmentManager.findFragmentById(R.id.content_viewer)
-            if (currentFragment !is AllCategoriesFragment) {
-                loadFragmentById(
-                    R.id.content_viewer, AllCategoriesFragment(), AllCategoriesFragment::class.java.getName()
-                )
-            }
-            binding.drawerLayout.closeDrawers()
-            minimizePlayer()
-        }
+//        observe(viewModel.viewAllCategories) {
+//            val currentFragment = supportFragmentManager.findFragmentById(R.id.content_viewer)
+//            if (currentFragment !is AllCategoriesFragment) {
+//                loadFragmentById(
+//                    R.id.content_viewer, AllCategoriesFragment(), AllCategoriesFragment::class.java.getName()
+//                )
+//            }
+//            binding.drawerLayout.closeDrawers()
+//            minimizePlayer()
+//        }
 
 //        observe(viewModel.openCategoryLiveData) {
 //            val currentFragment = supportFragmentManager.findFragmentById(R.id.content_viewer)
@@ -583,7 +583,7 @@ class HomeActivity :
 
     private val destinationChangeListener =
         NavController.OnDestinationChangedListener { controller, _, _ ->
-            supportFragmentManager.popBackStack(R.id.content_viewer, POP_BACK_STACK_INCLUSIVE)
+//            supportFragmentManager.popBackStack(R.id.content_viewer, POP_BACK_STACK_INCLUSIVE)
 
             if(binding.draggableView.isMaximized()) {
                 minimizePlayer()
@@ -901,8 +901,8 @@ class HomeActivity :
             POP_BACK_STACK_INCLUSIVE
         )
         //Reload it again so that we can get updated VOD/Popular channels/Feature contents
-        supportFragmentManager.beginTransaction().replace(R.id.content_viewer, LandingPageFragment())
-            .addToBackStack(LandingPageFragment::class.java.name).commit()
+//        supportFragmentManager.beginTransaction().replace(R.id.content_viewer, LandingPageFragment())
+//            .addToBackStack(LandingPageFragment::class.java.name).commit()
     }
 
     private fun loadChannel(channelInfo: ChannelInfo) {

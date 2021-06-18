@@ -36,10 +36,10 @@ class MyPointsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         
         binding.redeemButton.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.content_viewer, RedeemPointsFragment.createInstance())
-                .addToBackStack(RedeemPointsFragment::class.java.name)
-                .commit()
+//            parentFragmentManager.beginTransaction()
+//                .replace(R.id.content_viewer, RedeemPointsFragment.createInstance())
+//                .addToBackStack(RedeemPointsFragment::class.java.name)
+//                .commit()
         }
         
         

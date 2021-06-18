@@ -70,7 +70,7 @@ class HomeViewModel @Inject constructor(
     val shareContentLiveData = SingleLiveEvent<ChannelInfo>()
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val viewAllVideoLiveData = MutableLiveData<Boolean>()
-    val viewAllCategories = MutableLiveData<Boolean>()
+//    val viewAllCategories = MutableLiveData<Boolean>()
     val logoutLiveData = SingleLiveEvent<Resource<LogoutBean>>()
     val myChannelNavLiveData = SingleLiveEvent<MyChannelNavParams>()
     val notificationUrlLiveData = SingleLiveEvent<String>()
