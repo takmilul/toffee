@@ -203,15 +203,16 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     }
     
     private fun observeEditChannel() {
+        
         observe(viewModel.exitFragment) {
             requireContext().showToast("Unable to load data!")
             findNavController().popBackStack()
         }
+        
         observe(viewModel.editDetailLiveData) {
             when (it) {
                 is Success -> {
                     mPref.isChannelDetailChecked = true
-
                     mPref.channelLogo = newProfileImageUrl ?: (myChannelDetail?.profileUrl ?: "")
                     mPref.channelName = channelName
                     mPref.customerName = userName

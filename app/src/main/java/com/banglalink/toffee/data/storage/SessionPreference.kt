@@ -198,14 +198,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getBoolean(PREF_IS_CHANNEL_DETAIL_CHECKED, false)
         set(value) = pref.edit().putBoolean(PREF_IS_CHANNEL_DETAIL_CHECKED, value).apply()
     
-    fun hasChannelLogo(): Boolean{
-        return channelLogo.isNotBlank()
-    }
-    
-    fun hasChannelName(): Boolean{
-        return channelName.isNotBlank()
-    }
-    
     fun setSystemTime(systemTime: String) {
         pref.edit().putString(PREF_SYSTEM_TIME, systemTime).apply()
     }

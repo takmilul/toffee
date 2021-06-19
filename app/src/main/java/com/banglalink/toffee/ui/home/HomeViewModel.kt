@@ -210,27 +210,13 @@ class HomeViewModel @Inject constructor(
                     _channelDetail.value = it
                     mPref.isChannelDetailChecked = true
                     mPref.channelId = it.id.toInt()
-                    if (!it.profileUrl.isNullOrBlank()) {
-                        mPref.channelLogo = it.profileUrl
-                    }
-                    if (!it.channelName.isNullOrBlank()) {
-                        mPref.channelName = it.channelName
-                    }
-                    if (!it.name.isNullOrBlank()) {
-                        mPref.customerName = it.name !!
-                    }
-                    if (!it.email.isNullOrBlank()) {
-                        mPref.customerEmail = it.email !!
-                    }
-                    if (!it.address.isNullOrBlank()) {
-                        mPref.customerAddress = it.address !!
-                    }
-                    if (!it.dateOfBirth.isNullOrBlank()) {
-                        mPref.customerDOB = it.dateOfBirth
-                    }
-                    if (!it.nationalIdNo.isNullOrBlank()) {
-                        mPref.customerNID = it.nationalIdNo
-                    }
+                    mPref.customerName = it.name ?: ""
+                    mPref.customerEmail = it.email ?: ""
+                    mPref.customerAddress = it.address ?: ""
+                    mPref.customerDOB = it.dateOfBirth ?: ""
+                    mPref.customerNID = it.nationalIdNo ?: ""
+                    mPref.channelLogo = it.profileUrl ?: ""
+                    mPref.channelName = it.channelName ?: ""
                 }
             }
             myChannelDetailResponse.value = result

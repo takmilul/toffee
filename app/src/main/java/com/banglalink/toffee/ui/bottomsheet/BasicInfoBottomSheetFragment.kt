@@ -29,7 +29,6 @@ import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
-import java.util.Calendar.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -41,14 +40,12 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
     private var userEmail= ""
     private var userAddress = ""
     private var channelName: String = ""
-//    private var selectedDate: String = ""
+    private val binding get() = _binding!!
     private var newChannelLogoUrl: String = "NULL"
-//    private var calendar = getInstance()
     @Inject lateinit var cacheManager: CacheManager
     private var profileForm: EditProfileForm? = null
     private var myChannelDetail: MyChannelDetail? = null
     private var _binding: BottomSheetBasicInfoBinding? = null
-    private val binding get() = _binding!!
     private val homeViewModel by activityViewModels<HomeViewModel>()
     private val viewModel by activityViewModels<ViewProfileViewModel>()
     private val profileViewModel by activityViewModels<ViewProfileViewModel>()
@@ -173,7 +170,7 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
             && isDobValid
             && !notValidEmail
             && userNID.isNotBlank()
-            && !mPref.phoneNumber.isNullOrBlank()
+            && mPref.phoneNumber.isNotBlank()
             && validNID) {
             saveChannelInfo()
         }
