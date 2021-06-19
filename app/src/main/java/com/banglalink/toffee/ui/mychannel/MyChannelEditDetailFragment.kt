@@ -122,9 +122,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                     viewModel.selectedPaymentPosition.value = position
                 }
                 else {
-//                    binding.categoryPaymentSpinner.setSelection(viewModel.selectedPaymentPosition.value ?: 0)
-////                    viewModel.selectedPaymentMethod = viewModel.paymentMethodList.value?.get(position - 1)
-                    binding.categoryPaymentSpinner.setSelection(viewModel.selectedPaymentPosition.value ?: 1)
+                    binding.categoryPaymentSpinner.setSelection(viewModel.selectedPaymentPosition.value ?: 0)
                 }
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -135,9 +133,9 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             if(!paymentMethodList.isNullOrEmpty()) {
                 paymentCategoryAdapter.setData(paymentMethodList)
                 viewModel.selectedPaymentMethod =
-                    paymentMethodList.find { it.id == myChannelDetail?.paymentMethodId }?: paymentMethodList.first()
+                    paymentMethodList.find { it.id == myChannelDetail?.paymentMethodId }
                 viewModel.selectedPaymentPosition.value =
-                    (paymentMethodList.indexOf(viewModel.selectedPaymentMethod).takeIf { it > 0 } ?: 0) + 1
+                    (paymentMethodList.indexOf(viewModel.selectedPaymentMethod) + 1)
             }
         }
 
@@ -298,7 +296,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             profileImageBase64 = null
         }
 
-         channelName = binding.channelName.text.toString().trim()
+        channelName = binding.channelName.text.toString().trim()
         val description = binding.description.text.toString().trim()
         val isChannelLogoAvailable= !myChannelDetail?.profileUrl.isNullOrEmpty() or !profileImageBase64.isNullOrEmpty()
 
@@ -369,6 +367,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             binding.errorEmailTv.text = getString(R.string.verification_email_sent)
         }
 
+        var validNID =false
         if (userNID.isBlank()) {
             binding.nidErrorTv.setTextColor(
                 ContextCompat.getColor(
@@ -378,19 +377,45 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             )
             binding.nidErrorTv.text = getString(R.string.nid_null_error_text)
         } else{
-            binding.nidErrorTv.setTextColor(
+            val nidLength = userNID.length
+            validNID = nidLength == 10 || nidLength == 13 || nidLength == 17
+            if (!validNID) {
+                binding.nidErrorTv.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.pink_to_accent_color
+                    )
+                )
+                binding.nidErrorTv.text = getString(R.string.invalid_nid_number)
+            } else{
+                binding.nidErrorTv.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.main_text_color
+                    )
+                )
+                binding.nidErrorTv.text = getString(R.string.your_nid_must_match)
+            }
+        }
+        
+        if(viewModel.selectedPaymentMethod?.id?:0 > 0) {
+            binding.errorPaymentOption.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
                     R.color.main_text_color
                 )
             )
-            binding.nidErrorTv.text = getString(R.string.your_nid_must_match)
-        }
-        
-        if(viewModel.selectedPaymentMethod?.id?:0 > 0) {
-            binding.errorPaymentOption.hide()
+            binding.errorPaymentOption.text = getString(R.string.this_account_will_be_used_to_send_payment)
+
         } else{
-            binding.errorPaymentOption.show()
+            binding.errorPaymentOption.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.pink_to_accent_color
+                )
+            )
+            binding.errorPaymentOption.text = getString(R.string.payment_option_required)
+
         }
 
         if (paymentPhoneNumber.isBlank() || paymentPhoneNumber.length!=11)
@@ -410,7 +435,8 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             && userNID.isNotBlank()
             && paymentPhoneNumber.isNotBlank()
             && viewModel.selectedPaymentMethod?.id?:0 > 0
-            && paymentPhoneNumber.length==11){
+            && paymentPhoneNumber.length==11
+            && validNID){
 
             if (paymentPhoneNumber.startsWith("0")) {
                 paymentPhoneNumber = "+88$paymentPhoneNumber"
@@ -454,19 +480,41 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     private fun validateDOB(): Boolean {
         var isDobValid = false
         if (binding.dateOfBirthTv.text.isBlank()) {
-            binding.errorDateTv.show()
+            binding.errorDateTv.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.pink_to_accent_color
+                )
+            )
+            binding.errorDateTv.text = getString(R.string.date_error_text)
         } else {
             val date =UtilsKt.strToDate(binding.dateOfBirthTv.text.toString(),"dd/MM/yyyy") ?: Date()
 
             val userAge= ageCalculate(date)
             // selectedDate = "$year-$month-$day"
 
-            if (userAge < 18) {
+            if (userAge < 18)
+            {
+                binding.errorDateTv.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.pink_to_accent_color
+                    )
+                )
                 binding.errorDateTv.text = getString(R.string.Date_of_birth_must_be_match)
-                binding.errorDateTv.show()
-            } else {
+//                binding.errorDateTv.text=getString(R.string.Date_of_birth_must_be_match)
+//                binding.errorDateTv.show()
+            }
+            else {
                 isDobValid = true
-                binding.errorDateTv.hide()
+                binding.errorDateTv.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.main_text_color
+                    )
+                )
+                binding.errorDateTv.text = getString(R.string.Date_of_birth_must_be_match)
+                // binding.errorDateTv.hide()
             }
         }
 
@@ -507,15 +555,14 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         )
         datePickerDialog.show()
         datePickerDialog.apply {
+            datePicker.maxDate = System.currentTimeMillis()
             val buttonColor = ContextCompat.getColor(requireContext(), R.color.main_text_color)
             getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(buttonColor)
             getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(buttonColor)
         }
     }
 
-    private fun ageCalculate( date :Date):Int
-    {
-
+    private fun ageCalculate( date :Date):Int {
         val dob = Calendar.getInstance()
         dob.time=date
         val today = Calendar.getInstance()

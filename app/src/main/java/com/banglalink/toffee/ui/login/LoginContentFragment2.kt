@@ -117,15 +117,11 @@ class LoginContentFragment2 : ChildDialogFragment(), TextWatcher {
     }
     
     private fun showTermsAndConditionDialog() {
-        if (findNavController().currentDestination?.id != R.id.htmlPageViewDialog
-            && findNavController().currentDestination?.id == R.id.loginContentFragment2) {
-            val action = LoginContentFragment2Directions
-                .actionLoginContentFragment2ToHtmlPageViewDialog(
-                    "Terms & Conditions",
-                    mPref.termsAndConditionUrl
-                )
-            findNavController().navigate(action)
+        val args = Bundle().apply {
+            putString("myTitle", "Terms & Conditions")
+            putString("url", mPref.termsAndConditionUrl)
         }
+        findNavController().navigate(R.id.htmlPageViewDialog, args)
     }
     
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}

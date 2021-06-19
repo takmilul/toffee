@@ -2,6 +2,7 @@ package com.banglalink.toffee.notification
 
 import android.content.Context
 import android.util.Log
+import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.google.api.client.extensions.android.http.AndroidHttp
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
@@ -33,6 +34,7 @@ const val SHARE_COUNT_TOPIC = "projects/$PROJECTID/topics/share_count"
 const val SUBSCRIPTION_TOPIC = "projects/$PROJECTID/topics/channels_subscribers"
 const val CONTENT_REPORT_TOPIC = "projects/$PROJECTID/topics/report_inappropriate_content"
 const val USER_INTEREST_TOPIC = "projects/$PROJECTID/topics/user_interest"
+const val USER_OTP_TOPIC = "projects/$PROJECTID/topics/user_otp_log"
 
 object PubSubMessageUtil {
 
@@ -91,12 +93,13 @@ object PubSubMessageUtil {
         }
 
     private fun getPubSubMessage(notificationId: String?, messageStatus: PUBSUBMessageStatus): String {
-        val jObj = JsonObject();
-        jObj.addProperty("notificationId", notificationId);
-        jObj.addProperty("userId", SessionPreference.getInstance().customerId);
-        jObj.addProperty("messageStatus", messageStatus.ordinal);
-
+        val jObj = JsonObject().apply { 
+            addProperty("notificationId", notificationId)
+            addProperty("userId", SessionPreference.getInstance().customerId)
+            addProperty("messageStatus", messageStatus.ordinal)
+            addProperty("device_id", CommonPreference.getInstance().deviceId)
+        }
         Log.i(TAG, jObj.toString())
-        return jObj.toString();
+        return jObj.toString()
     }
 }

@@ -6,6 +6,7 @@ import com.banglalink.toffee.data.network.request.ViewingContentRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.repository.UserActivitiesRepository
+import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.ActivityType
 import com.banglalink.toffee.enums.Reaction
@@ -105,6 +106,8 @@ class SendViewContentEvent @Inject constructor(
         val netType: String,
         @SerializedName("session_token")
         val sessionToken: String,
+        @SerializedName("device_id")
+        val deviceId: String = CommonPreference.getInstance().deviceId,
         @SerializedName("date_time")
         val dateTime: String = Utils.getDateTime()
     )

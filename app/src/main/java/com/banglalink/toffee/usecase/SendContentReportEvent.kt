@@ -2,6 +2,7 @@ package com.banglalink.toffee.usecase
 
 import android.os.Build
 import com.banglalink.toffee.BuildConfig
+import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.toFormattedDate
 import com.banglalink.toffee.model.ReportInfo
@@ -41,6 +42,8 @@ data class ReportInAppropriateVideoData(
     val reportTime: String = System.currentTimeMillis().toFormattedDate(),
     @SerializedName("device_type")
     val deviceType :Int = 1,
+    @SerializedName("device_id")
+    val deviceId: String = CommonPreference.getInstance().deviceId,
     @SerializedName("app_version")
     val appVersion : String = BuildConfig.VERSION_NAME,
     @SerializedName("os_version")
