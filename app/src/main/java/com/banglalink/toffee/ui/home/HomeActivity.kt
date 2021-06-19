@@ -363,8 +363,8 @@ class HomeActivity :
             && mPref.customerAddress.isNotBlank()
             && mPref.customerDOB.isNotBlank()
             && mPref.customerNID.isNotBlank()
-            && mPref.hasChannelName()
-            && mPref.hasChannelLogo()
+            && mPref.channelName.isNotBlank()
+            && mPref.channelLogo.isNotBlank()
             && mPref.isChannelDetailChecked
     
     private fun customCrashReport() {
@@ -1349,6 +1349,10 @@ class HomeActivity :
                         mPref.channelName = ""
                         mPref.channelLogo = ""
                         mPref.customerName = ""
+                        mPref.customerEmail = ""
+                        mPref.customerAddress = ""
+                        mPref.customerDOB = ""
+                        mPref.customerNID = ""
                         mPref.userImageUrl = null
                         mPref.isVerifiedUser = false
                         mPref.isChannelDetailChecked = false
@@ -1357,10 +1361,6 @@ class HomeActivity :
                         mPref.mqttClientId = ""
                         mPref.mqttUserName = ""
                         mPref.mqttPassword = ""
-                        mPref.customerEmail= ""
-                        mPref.customerAddress= ""
-                        mPref.customerDOB= ""
-                        mPref.customerNID= ""
                         navController.popBackStack(R.id.menu_feed, false).let { 
                             recreate()
                         }

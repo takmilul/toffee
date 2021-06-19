@@ -241,33 +241,20 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             myRating = it.myRating
             isOwner = it.isOwner == 1
             isSubscribed = it.isSubscribed
+            mPref.isChannelDetailChecked = true
             subscriberCount = it.subscriberCount
             channelId = myChannelDetail?.id?.toInt() ?: 0
         }
         
         if (isOwner) {
-            myChannelDetail?.let { detail ->
-                if (! detail.profileUrl.isNullOrBlank()) {
-                    mPref.channelLogo = detail.profileUrl
-                }
-                if (! detail.channelName.isNullOrBlank()) {
-                    mPref.channelName = detail.channelName
-                }
-                if (! detail.name.isNullOrBlank()) {
-                    mPref.customerName = detail.name !!
-                }
-                if (! detail.email.isNullOrBlank()) {
-                    mPref.customerEmail = detail.email !!
-                }
-                if (! detail.address.isNullOrBlank()) {
-                    mPref.customerAddress = detail.address !!
-                }
-                if (! detail.dateOfBirth.isNullOrBlank()) {
-                    mPref.customerDOB = detail.dateOfBirth
-                }
-                if (! detail.nationalIdNo.isNullOrBlank()) {
-                    mPref.customerNID = detail.nationalIdNo
-                }
+            myChannelDetail?.let {
+                mPref.channelLogo = it.profileUrl ?: ""
+                mPref.channelName = it.channelName ?: ""
+                mPref.customerName = it.name  ?: ""
+                mPref.customerEmail = it.email  ?: ""
+                mPref.customerAddress = it.address  ?: ""
+                mPref.customerDOB = it.dateOfBirth ?: ""
+                mPref.customerNID = it.nationalIdNo ?: ""
             }
         }
         
