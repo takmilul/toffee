@@ -46,6 +46,7 @@ class HomeViewModel @Inject constructor(
     private val cacheManager: CacheManager,
     private val logoutService: LogoutService,
     private val updateFavorite: UpdateFavorite,
+    private val sendOtpLogEvent: SendOTPLogEvent,
     private val tvChannelRepo: TVChannelRepository,
     @ApplicationContext private val mContext: Context,
     private val sendSubscribeEvent: SendSubscribeEvent,
@@ -96,8 +97,8 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }
-
     }
+    
     private fun setFcmToken(token: String) {
         viewModelScope.launch {
             try {
@@ -273,6 +274,12 @@ class HomeViewModel @Inject constructor(
     fun sendUserInterestData(interestList: Map<String, Int>) {
         viewModelScope.launch {
             sendUserInterestEvent.execute(interestList)
+        }
+    }
+    
+    fun sendOtpLogData(otpLogData: OTPLogData) {
+        viewModelScope.launch {
+            sendOtpLogEvent.execute(otpLogData)
         }
     }
 }

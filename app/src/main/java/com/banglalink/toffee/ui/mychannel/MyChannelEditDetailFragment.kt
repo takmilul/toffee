@@ -38,16 +38,13 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MyChannelEditDetailFragment : Fragment(), OnClickListener {
-//    private var age: Int = 0
     private var isPosterClicked = false
-//    private var selectedDate: String = ""
     private var newBannerUrl: String? = null
     @Inject lateinit var bindingUtil: BindingUtil
     @Inject lateinit var mPref: SessionPreference
     private var newProfileImageUrl: String? = null
     @Inject lateinit var cacheManager: CacheManager
     private var myChannelDetail: MyChannelDetail? = null
-//    private var calendar = Calendar.getInstance()
     private lateinit var progressDialog: VelBoxProgressDialog
     private var _binding: FragmentMyChannelEditDetailBinding ? = null
     private val binding get() = _binding!!
@@ -55,13 +52,13 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     private val profileViewModel by activityViewModels<ViewProfileViewModel>()
     private val viewModel by viewModels<MyChannelEditDetailViewModel> { MyChannelEditDetailViewModel.provideFactory(viewModelAssistedFactory, myChannelDetail) }
 
-    var channelName = ""
-    var userName = ""
-    var userAddress = ""
-    var userDOB = ""
-    var userEmail=""
-    var userNID=""
-    var paymentPhoneNumber=""
+    private var channelName = ""
+    private var userName = ""
+    private var userAddress = ""
+    private var userDOB = ""
+    private var userEmail=""
+    private var userNID=""
+    private var paymentPhoneNumber=""
     
     companion object {
         fun newInstance(): MyChannelEditDetailFragment {
@@ -203,7 +200,6 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     }
     
     private fun observeEditChannel() {
-        
         observe(viewModel.exitFragment) {
             requireContext().showToast("Unable to load data!")
             findNavController().popBackStack()
@@ -443,10 +439,6 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                 paymentPhoneNumber = "+88$paymentPhoneNumber"
             }
 
-//            if (! paymentPhoneNumber.startsWith("+")) {
-//                paymentPhoneNumber = "+$paymentPhoneNumber"
-//            }
-
             val selectedDate=UtilsKt.dateToStr(UtilsKt.strToDate(binding.dateOfBirthTv.text.toString(),"dd/MM/yyyy"),"yyyy-MM-dd")
 
             val ugcEditMyChannelRequest = MyChannelEditRequest(
@@ -490,12 +482,9 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             binding.errorDateTv.text = getString(R.string.date_error_text)
         } else {
             val date =UtilsKt.strToDate(binding.dateOfBirthTv.text.toString(),"dd/MM/yyyy") ?: Date()
-
             val userAge= ageCalculate(date)
-            // selectedDate = "$year-$month-$day"
 
-            if (userAge < 18)
-            {
+            if (userAge < 18) {
                 binding.errorDateTv.setTextColor(
                     ContextCompat.getColor(
                         requireContext(),
@@ -503,8 +492,6 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                     )
                 )
                 binding.errorDateTv.text = getString(R.string.Date_of_birth_must_be_match)
-//                binding.errorDateTv.text=getString(R.string.Date_of_birth_must_be_match)
-//                binding.errorDateTv.show()
             }
             else {
                 isDobValid = true
@@ -515,7 +502,6 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                     )
                 )
                 binding.errorDateTv.text = getString(R.string.Date_of_birth_must_be_match)
-                // binding.errorDateTv.hide()
             }
         }
 
@@ -567,7 +553,6 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         val dob = Calendar.getInstance()
         dob.time=date
         val today = Calendar.getInstance()
-//        dob[year, monthOfYear-1] = dayOfMonth
         var userAge = today[Calendar.YEAR] - dob[Calendar.YEAR]
         if (today[Calendar.MONTH] <= dob[Calendar.MONTH] && today[Calendar.DAY_OF_YEAR] < dob[Calendar.DAY_OF_YEAR]) {
             userAge--

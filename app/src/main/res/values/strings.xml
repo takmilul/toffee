@@ -353,7 +353,7 @@
     <string name="nid_null_error_text">*NID is Required</string>
     <string name="Date_of_birth_must_be_match">*You must be 18 years or older</string>
     <string name="others_text">Others</string>
-    <string name="payment_option_required">Payment Option Required</string>
+    <string name="payment_option_required">Payment Option is Required</string>
     <string name="invalid_nid_number">*Invalid NID Number</string>
     <string name="this_account_will_be_used_to_send_payment">"This account will be used to send payments if you are eligible"</string>
     <!--    url    -->

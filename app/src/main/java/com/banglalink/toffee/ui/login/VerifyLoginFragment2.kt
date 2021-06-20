@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
@@ -17,7 +18,9 @@ import com.banglalink.toffee.model.CustomerInfoLogin
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.receiver.SMSBroadcastReceiver
 import com.banglalink.toffee.ui.common.ChildDialogFragment
+import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.usecase.OTPLogData
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,6 +37,7 @@ class VerifyLoginFragment2 : ChildDialogFragment() {
     private var _binding: AlertDialogVerifyBinding ? = null
     private val binding get() = _binding!!
     private var mSmsBroadcastReceiver: SMSBroadcastReceiver? = null
+    private val homeViewModel: HomeViewModel by activityViewModels()
     private val viewModel by viewModels<VerifyCodeViewModel>()
     private val progressDialog by unsafeLazy { VelBoxProgressDialog(requireContext()) }
     
@@ -74,17 +78,18 @@ class VerifyLoginFragment2 : ChildDialogFragment() {
     private fun observeVerifyCode() {
         observe(viewModel.verifyResponse) {
             progressDialog.dismiss()
+            homeViewModel.sendOtpLogData(OTPLogData(otp, 0, 1))
             when (it) {
                 is Resource.Success -> {
                     verifiedUserData = it.data
                     mPref.phoneNumber = phoneNumber
+                    viewModel.sendLoginLogData()
                     if (cPref.isUserInterestSubmitted(phoneNumber)) {
                         reloadContent()
                     }
                     else {
                         findNavController().navigate(R.id.userInterestFragment2)
                     }
-                    viewModel.sendLoginLogData()
                 }
                 is Resource.Failure -> {
                     ToffeeAnalytics.logApiError("confirmCode",it.error.msg)
@@ -148,6 +153,7 @@ class VerifyLoginFragment2 : ChildDialogFragment() {
             binding.otpEditText.setText(it)
             binding.otpEditText.setSelection(it.length)
             otp = binding.otpEditText.text.toString().trim()
+            homeViewModel.sendOtpLogData(OTPLogData(otp, 1, 0))
             viewModel.verifyCode(otp, regSessionToken, "")
         }
         

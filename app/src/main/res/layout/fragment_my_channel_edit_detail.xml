@@ -448,6 +448,7 @@
                         android:gravity="center_vertical"
                         android:textColor="@color/main_text_color"
                         android:inputType="number"
+                        android:textSize="14sp"
                         android:text="@{viewModel.myChannelDetail.paymentPhoneNo.length()==11 ? viewModel.myChannelDetail.paymentPhoneNo : viewModel.myChannelDetail.paymentPhoneNo.substring(3)}"
                         tools:text="01xxxxxxxxx"
                         app:drawableEndCompat="@drawable/ic_verified" />

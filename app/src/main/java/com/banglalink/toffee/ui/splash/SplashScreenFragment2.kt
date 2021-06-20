@@ -174,8 +174,4 @@ class SplashScreenFragment2 : BaseFragment() {
         super.onDestroyView()
         _binding = null
     }
-    
-    override fun onDestroy() {
-        super.onDestroy()
-    }
 }
