@@ -526,7 +526,7 @@ class HomeActivity :
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                if (newState == BottomSheetBehavior.STATE_COLLAPSED && binding.playerView.isControllerHidden) {
+                if (newState == BottomSheetBehavior.STATE_EXPANDED && binding.playerView.isControllerHidden) {
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 }
             }
@@ -734,7 +734,7 @@ class HomeActivity :
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             if(playlistManager.getCurrentChannel()?.isLive == true) {
                 binding.homeBottomSheet.bottomSheet.visibility = View.VISIBLE
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             } else {
                 binding.homeBottomSheet.bottomSheet.visibility = View.GONE
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -1210,19 +1210,14 @@ class HomeActivity :
     override fun onControllerVisible() {
         if(playlistManager.getCurrentChannel()?.isLive == true &&
             resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         } else {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
     }
 
     override fun onControllerInVisible() {
-        if(bottomSheetBehavior.state == BottomSheetBehavior.STATE_DRAGGING ||
-            bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED
-                ) {
-
-        }
-        else if(bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
+        if(bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
     }
