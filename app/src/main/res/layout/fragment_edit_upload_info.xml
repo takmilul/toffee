@@ -63,6 +63,25 @@
                 app:layout_constraintEnd_toEndOf="@+id/video_thumb"
                 app:layout_constraintBottom_toBottomOf="@+id/video_thumb"
                 tools:text="00:00" />
+    
+            <TextView
+                android:id="@+id/upload_progress_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
+                android:ellipsize="middle"
+                android:singleLine="true"
+                android:gravity="center_horizontal"
+                android:fontFamily="@font/roboto_regular"
+                android:textSize="@dimen/default_text_size"
+                android:textColor="@color/fixed_second_text_color"
+                android:text="@{viewmodel.uploadStatusText}"
+                app:layout_constraintEnd_toEndOf="@+id/video_thumb"
+                app:layout_constraintStart_toStartOf="@+id/video_thumb"
+                app:layout_constraintTop_toBottomOf="@+id/video_thumb"
+                tools:text="File name.mp4 \u2022 250MB" />
 
             <TextView
                 android:id="@+id/textView15"
@@ -212,19 +231,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/error_tags_tv" />
 
-            <TextView
-                android:id="@+id/textView21"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:text="Age Group"
-                android:fontFamily="@font/roboto_regular"
-                android:textSize="@dimen/default_text_size"
-                android:textColor="@color/cardTitleColor"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/category_spinner_wrap" />
-
             <RelativeLayout
                 android:id="@+id/category_spinner_wrap"
                 android:layout_width="0dp"
@@ -239,26 +245,6 @@
 
                 <Spinner
                     android:id="@+id/category_spinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:textSize="13sp"
-                    android:spinnerMode="dialog" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/age_group_spinner_wrap"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/single_line_input_text_height"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="8dp"
-                android:background="@drawable/spinner_bg"
-                app:layout_constraintEnd_toStartOf="@+id/guideline9"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView21">
-
-                <Spinner
-                    android:id="@+id/age_group_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:textSize="13sp"
@@ -297,7 +283,70 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
             </RelativeLayout>
+    
+            <TextView
+                android:id="@+id/textView21"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Age Group"
+                android:fontFamily="@font/roboto_regular"
+                android:textSize="@dimen/default_text_size"
+                android:textColor="@color/cardTitleColor"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/category_spinner_wrap" />
+    
+            <RelativeLayout
+                android:id="@+id/age_group_spinner_wrap"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/single_line_input_text_height"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/spinner_bg"
+                app:layout_constraintEnd_toStartOf="@+id/guideline9"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView21">
+        
+                <Spinner
+                    android:id="@+id/age_group_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textSize="13sp"
+                    android:spinnerMode="dialog" />
+            </RelativeLayout>
+    
+            <androidx.appcompat.widget.AppCompatCheckBox
+                android:id="@+id/copyrightCheckbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="8dp"
+                android:background="@null"
+                android:button="@drawable/custom_checkbox"
+                android:checked="true"
+                android:gravity="center_vertical"
+                android:text="@string/copyright_approval"
+                android:textColor="@color/main_text_color"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/age_group_spinner_wrap" />
 
+            <include
+                android:id="@+id/copyrightLayout"
+                layout="@layout/layout_copyright_file"
+                app:viewModel="@{viewmodel}"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/copyrightCheckbox" />
+            
             <Button
                 android:id="@+id/cancel_button"
                 style="@style/ButtonStyleRingPurple"
@@ -307,7 +356,7 @@
                 android:text="Cancel"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/guideline9"
-                app:layout_constraintTop_toBottomOf="@+id/age_group_spinner_wrap" />
+                app:layout_constraintTop_toBottomOf="@+id/copyrightLayout" />
 
             <Button
                 android:id="@+id/submit_button"
@@ -318,26 +367,7 @@
                 android:text="Submit"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/guideline9"
-                app:layout_constraintTop_toBottomOf="@+id/age_group_spinner_wrap" />
-
-            <TextView
-                android:id="@+id/upload_progress_text"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="16dp"
-                android:ellipsize="middle"
-                android:singleLine="true"
-                android:gravity="center_horizontal"
-                android:fontFamily="@font/roboto_regular"
-                android:textSize="@dimen/default_text_size"
-                android:textColor="@color/fixed_second_text_color"
-                android:text="@{viewmodel.uploadStatusText}"
-                app:layout_constraintEnd_toEndOf="@+id/video_thumb"
-                app:layout_constraintStart_toStartOf="@+id/video_thumb"
-                app:layout_constraintTop_toBottomOf="@+id/video_thumb"
-                tools:text="File name.mp4 \u2022 250MB" />
+                app:layout_constraintTop_toBottomOf="@+id/copyrightLayout" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

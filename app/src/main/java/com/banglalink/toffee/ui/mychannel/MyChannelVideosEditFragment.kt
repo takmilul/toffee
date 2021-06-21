@@ -144,14 +144,12 @@ class MyChannelVideosEditFragment : BaseFragment() {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 if(position != 0 && viewModel.ageGroupPosition.value != position) {
                     viewModel.ageGroupPosition.value = position
-                }else {
+                } else {
                     binding.ageGroupSpinner.setSelection(viewModel.ageGroupPosition.value ?: 1)
                 }
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-
-            }
+            override fun onNothingSelected(parent: AdapterView<*>?) { }
         }
 
         observe(viewModel.ageGroup) {
@@ -181,15 +179,12 @@ class MyChannelVideosEditFragment : BaseFragment() {
                 }
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-
-            }
+            override fun onNothingSelected(parent: AdapterView<*>?) { }
         }
 
         observe(viewModel.categories) { categories ->
             mCategoryAdapter.setData(categories)
-            viewModel.subCategoryPosition.value = (categories.indexOf(categories.find { it.id.toInt() == channelInfo?.categoryId }).takeIf { it > 0 }
-                ?: 0) + 1
+            viewModel.subCategoryPosition.value = (categories.indexOf(categories.find { it.id.toInt() == channelInfo?.categoryId }).takeIf { it > 0 } ?: 0)+ 1
         }
 
         observe(viewModel.categoryPosition) {
@@ -211,9 +206,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
                 }
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-
-            }
+            override fun onNothingSelected(parent: AdapterView<*>?) { }
         }
 
         observe(viewModel.subCategories) { subCategories ->
@@ -278,27 +271,25 @@ class MyChannelVideosEditFragment : BaseFragment() {
             progressDialog.dismiss()
             binding.uploadTitle.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
             binding.errorTitleTv.show()
-
         }
         else {
             progressDialog.dismiss()
             binding.uploadTitle.setBackgroundResource(R.drawable.single_line_input_text_bg)
             binding.errorTitleTv.hide()
         }
-         if(description.isBlank())
-        {
+         if(description.isBlank()) {
             progressDialog.dismiss()
             binding.uploadDescription.setBackgroundResource(R.drawable.error_multiline_input_text_bg)
             binding.errorDescriptionTv.show()
         }
-        else{
+        else {
              progressDialog.dismiss()
              binding.uploadDescription.setBackgroundResource(R.drawable.multiline_input_text_bg)
              binding.errorDescriptionTv.hide()
         }
 
         if (title.isNotBlank() and description.isNotBlank()) {
-            val tags = binding.uploadTags.selectedChipList.joinToString(" | ") { it.label }
+            val tags = binding.uploadTags.selectedChipList.joinToString(" | ") { it.label.replace("#", "") }
             val categoryId = viewModel.categories.value?.getOrNull(viewModel.categoryPosition.value?.minus(1) ?: 0)?.id ?: 0
             val subCategoryId = viewModel.subCategories.value?.getOrNull(viewModel.subCategoryPosition.value?.minus(1) ?: 0)?.id ?: 0
             viewModel.saveUploadInfo(channelInfo?.id?.toInt()?:0, "",tags, categoryId, subCategoryId.toInt())

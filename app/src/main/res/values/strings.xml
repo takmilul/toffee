@@ -356,6 +356,8 @@
     <string name="payment_option_required">Payment Option is Required</string>
     <string name="invalid_nid_number">*Invalid NID Number</string>
     <string name="this_account_will_be_used_to_send_payment">"This account will be used to send payments if you are eligible"</string>
+    <string name="copyright_approval">&#160;&#160;I hold relevant copyrights for the video content</string>
+    <string name="copyright_doc">Copyright Document (Optional)</string>
     <!--    url    -->
 <!--    <string name="creators_policy_url">https://toffeelive.com/policies.php</string>-->
 <!--    <string name="tus_upload_server_url">https://ugc-upload.toffeelive.com/upload</string>-->

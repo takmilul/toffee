@@ -3,10 +3,7 @@ package com.banglalink.toffee.ui.upload
 import android.content.Context
 import android.net.Uri
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.banglalink.toffee.R
 import com.banglalink.toffee.apiservice.ContentUpload
 import com.banglalink.toffee.apiservice.GetCategories
@@ -15,6 +12,8 @@ import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.exception.Error
+import com.banglalink.toffee.extension.hide
+import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.SubCategory
@@ -62,6 +61,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
     val thumbnailData = MutableLiveData<String?>()
 
     val uploadStatusText = MutableLiveData<String>()
+    val copyrightFileName = MutableLiveData<String>()
 
     val durationData = MutableLiveData<Long>()
     val orientationData = MutableLiveData<Int>()
@@ -205,10 +205,10 @@ class EditUploadInfoViewModel @AssistedInject constructor(
 //    }
 
     fun categoryIndexChanged(idx: Int) {
-            categories.value?.getOrNull(idx)?.let {
-                subCategories.value = it.subcategories
+        categories.value?.getOrNull(idx)?.let {
+            subCategories.value = it.subcategories
 //            subCategoryPosition.value = 1
-            }
+        }
     }
 
     fun updateProgress(progress: Int, size: Long) {
@@ -216,6 +216,15 @@ class EditUploadInfoViewModel @AssistedInject constructor(
         uploadSize.value = Utils.readableFileSize(size)
     }
 
+    suspend fun loadCopyrightFileName(fileUri: Uri) {
+        val fileName = withContext(Dispatchers.IO + Job()) {
+            val fileSize = UtilsKt.fileSizeFromContentUri(appContext, fileUri)
+            val actualFileSize = Utils.readableFileSize(fileSize)
+            "$fileName ($actualFileSize)"
+        }
+        copyrightFileName.value = fileName
+    }
+    
     suspend fun saveUploadInfo(tags: String?, categoryId: Long, subcategoryId: Long, duration: Long, isHorizontal: Int) {
         progressDialog.value = true
         val ageGroupId = ageGroupPosition.value ?: -1
