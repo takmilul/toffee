@@ -30,6 +30,7 @@
                 android:layout_height="wrap_content"
                 android:clickable="true"
                 android:focusable="true"
+                android:focusableInTouchMode="true"
                 android:background="@color/screen_bg_white">
 
                 <ImageView
@@ -103,8 +104,7 @@
                     app:layout_constraintStart_toStartOf="@+id/profileImageView"
                     app:layout_constraintTop_toBottomOf="@+id/profileImageEditButton"
                     tools:visibility="visible" />
-
-
+                
                 <TextView
                     android:id="@+id/textView15"
                     android:layout_width="wrap_content"
@@ -124,6 +124,7 @@
                     android:layout_marginTop="4dp"
                     android:hint="@string/channel_name_text"
                     android:inputType="textCapWords"
+                    android:maxLength="50"
                     android:fontFamily="@font/roboto_medium"
                     android:text="@{viewModel.myChannelDetail.channelName}"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -164,7 +165,7 @@
                     style="@style/MultilineInputFieldStyle"
                     android:layout_marginTop="4dp"
                     android:hint="@string/description_text"
-                    android:maxLength="150"
+                    android:maxLength="200"
                     android:text="@{viewModel.myChannelDetail.description}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -325,6 +326,7 @@
                     android:hint="@string/date_of_birth_text"
                     android:text="@{Utils.formateDate(viewModel.myChannelDetail.dateOfBirth)}"
                     android:drawablePadding="10dp"
+                    android:gravity="center_vertical"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/error_address_tv" />
@@ -439,7 +441,7 @@
                         app:drawableEndCompat="@drawable/ic_path_down_arrow"/>
                     
                     <EditText
-                        android:id="@+id/mobile_tv"
+                        android:id="@+id/paymentPhoneNumberEditText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -481,11 +483,13 @@
                     app:layout_constraintEnd_toStartOf="@+id/guideline9"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/error_number_tv">
-
+    
                     <Spinner
                         android:id="@+id/categoryPaymentSpinner"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
                         android:spinnerMode="dialog" />
 
                 </RelativeLayout>

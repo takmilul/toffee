@@ -14,10 +14,9 @@
     </data>
     
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="8dp">
 
         <FrameLayout
             android:id="@+id/iconHolder"
@@ -70,13 +69,15 @@
             channelOwnerId="@{data.channelOwnerId}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:multitext_layout_width="80dp"
+            app:multitext_layout_height="@dimen/multitext_button_height"
             android:clickable="true"
             android:focusable="true"
             android:layout_marginTop="4dp"
             app:onSafeClick="@{(v) -> callback.onSubscribeButtonClicked(v, data)}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text" />
+            app:layout_constraintTop_toBottomOf="@+id/text"/>
 
         <TextView
             android:id="@+id/textView23"

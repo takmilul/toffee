@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.facebook.shimmer.ShimmerFrameLayout
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/ShimmerStyle"
-    android:layout_width="wrap_content"
-    android:paddingHorizontal="8dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     
-    <ImageView
-        android:id="@+id/icon"
-        android:layout_width="@dimen/channel_width"
-        android:layout_height="@dimen/channel_height"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/circular_white_bg"
-        android:contentDescription="@string/txt_icon"
-        android:src="@drawable/ic_profile"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-</com.facebook.shimmer.ShimmerFrameLayout>
+    <com.facebook.shimmer.ShimmerFrameLayout
+        style="@style/ShimmerStyle"
+        android:layout_width="wrap_content"
+        android:paddingHorizontal="8dp">
+        
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="@dimen/channel_width"
+            android:layout_height="@dimen/channel_height"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/circular_white_bg"
+            android:contentDescription="@string/txt_icon"
+            android:src="@drawable/ic_profile"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    
+    </com.facebook.shimmer.ShimmerFrameLayout>
+</layout>

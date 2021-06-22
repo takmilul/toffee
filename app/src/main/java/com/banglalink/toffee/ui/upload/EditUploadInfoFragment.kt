@@ -109,7 +109,6 @@ class EditUploadInfoFragment: BaseFragment() {
         binding.container.setOnClickListener {
             UtilsKt.hideSoftKeyboard(requireActivity())
         }
-
         binding.cancelButton.setOnClickListener {
             VelBoxAlertDialogBuilder(requireContext()).apply {
                 setTitle("Cancel Uploading")
@@ -148,7 +147,6 @@ class EditUploadInfoFragment: BaseFragment() {
         setupCategorySpinner()
         setupSubcategorySpinner()
         setupAgeSpinner()
-
         setupTagView()
         observeStatus()
 //        observeUpload()
@@ -156,9 +154,9 @@ class EditUploadInfoFragment: BaseFragment() {
         observeThumbnailLoad()
         observeThumbnailChange()
         observeVideoDuration()
-
         observeExitFragment()
-
+    
+        binding.uploadTags.clearFocus()
         binding.uploadTitle.requestFocus()
     }
     

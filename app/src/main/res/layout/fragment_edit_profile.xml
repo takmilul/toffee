@@ -176,7 +176,7 @@
                         app:drawableEndCompat="@drawable/ic_path_down_arrow"/>
         
                     <TextView
-                        android:id="@+id/mobile_tv"
+                        android:id="@+id/paymentPhoneNumberEditText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"

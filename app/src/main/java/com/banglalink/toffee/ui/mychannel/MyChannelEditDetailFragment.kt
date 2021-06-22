@@ -121,6 +121,8 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                 else {
                     binding.categoryPaymentSpinner.setSelection(viewModel.selectedPaymentPosition.value ?: 0)
                 }
+                binding.container.requestFocus()
+                UtilsKt.hideSoftKeyboard(requireActivity())
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
@@ -129,10 +131,8 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             progressDialog.dismiss()
             if(!paymentMethodList.isNullOrEmpty()) {
                 paymentCategoryAdapter.setData(paymentMethodList)
-                viewModel.selectedPaymentMethod =
-                    paymentMethodList.find { it.id == myChannelDetail?.paymentMethodId }
-                viewModel.selectedPaymentPosition.value =
-                    (paymentMethodList.indexOf(viewModel.selectedPaymentMethod) + 1)
+                viewModel.selectedPaymentMethod = paymentMethodList.find { it.id == myChannelDetail?.paymentMethodId }
+                viewModel.selectedPaymentPosition.value = paymentMethodList.indexOf(viewModel.selectedPaymentMethod) + 1
             }
         }
 
@@ -150,10 +150,11 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                 if(position != 0 && viewModel.selectedCategoryPosition.value != position) {
                     viewModel.selectedCategory = viewModel.categoryList.value?.get(position-1)
                     viewModel.selectedCategoryPosition.value = position
-                }
-                else {
+                } else {
                     binding.categorySpinner.setSelection(viewModel.selectedCategoryPosition.value ?: 1)
                 }
+                binding.nameEt.requestFocus()
+                binding.nameEt.setSelection(binding.nameEt.length())
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
@@ -302,20 +303,18 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
          userDOB = binding.dateOfBirthTv.text.toString().trim()
          userEmail=binding.emailEt.text.toString().trim()
          userNID=binding.nidEt.text.toString().trim()
-         paymentPhoneNumber=binding.mobileTv.text.toString().trim()
+         paymentPhoneNumber=binding.paymentPhoneNumberEditText.text.toString().trim()
         
         if (channelName.isNotBlank()) {
             binding.channelName.setBackgroundResource(R.drawable.single_line_input_text_bg)
             binding.errorChannelNameTv.hide()
-        }
-        else {
+        } else {
             binding.channelName.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
             binding.errorChannelNameTv.show()
         }
         if (isChannelLogoAvailable) {
             binding.errorThumTv.hide()
-        }
-        else {
+        } else {
             binding.saveButton.isClickable = true
             binding.errorThumTv.show()
         }
@@ -395,7 +394,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             }
         }
         
-        if(viewModel.selectedPaymentMethod?.id?:0 > 0) {
+        /*if(viewModel.selectedPaymentMethod?.id?:0 > 0) {
             binding.errorPaymentOption.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
@@ -403,7 +402,6 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                 )
             )
             binding.errorPaymentOption.text = getString(R.string.this_account_will_be_used_to_send_payment)
-
         } else{
             binding.errorPaymentOption.setTextColor(
                 ContextCompat.getColor(
@@ -412,15 +410,11 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                 )
             )
             binding.errorPaymentOption.text = getString(R.string.payment_option_required)
+        }*/
 
-        }
-
-        if (paymentPhoneNumber.isBlank() || paymentPhoneNumber.length!=11)
-        {
+        if (paymentPhoneNumber.isBlank() || paymentPhoneNumber.length!=11) {
             binding.errorNumberTv.show()
-        }
-        else
-        {
+        } else {
             binding.errorNumberTv.hide()
         }
     
@@ -431,7 +425,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             && isDobValid
             && userNID.isNotBlank()
             && paymentPhoneNumber.isNotBlank()
-            && viewModel.selectedPaymentMethod?.id?:0 > 0
+//            && viewModel.selectedPaymentMethod?.id?:0 > 0
             && paymentPhoneNumber.length==11
             && validNID){
 
@@ -521,21 +515,18 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     }*/
     
     private fun showDatePicker() {
+        binding.emailEt.requestFocus()
+        binding.emailEt.setSelection(binding.emailEt.length())
         val date = UtilsKt.strToDate(binding.dateOfBirthTv.text.toString(),"dd/MM/yyyy") ?: Date()
         val calendar = Calendar.getInstance()
-        calendar.time=date
-        val datePickerDialog = DatePickerDialog(
-            requireContext(),
+        calendar.time = date
+        val datePickerDialog = DatePickerDialog(requireContext(),
             { view, year, monthOfYear, dayOfMonth ->
-
                 val calendarTwo=Calendar.getInstance()
                 calendarTwo.set(year, monthOfYear, dayOfMonth)
-
                 binding.dateOfBirthTv.text = UtilsKt.dateToStr(calendarTwo.time,"dd/MM/yyyy")
                 validateDOB()
-
             },
-
             calendar[Calendar.YEAR],
             calendar[Calendar.MONTH],
             calendar[Calendar.DAY_OF_MONTH]

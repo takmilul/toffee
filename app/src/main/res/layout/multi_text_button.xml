@@ -9,15 +9,14 @@
     
     <TextView
         android:id="@+id/subscription_status"
-        android:layout_width="104dp"
-        android:layout_height="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="SUBSCRIBED"
         android:duplicateParentState="true"
         android:clickable="false"
         android:background="@drawable/subscribe_bg_round"
         android:fontFamily="@font/roboto_bold"
         android:gravity="center"
-        android:textSize="@dimen/default_text_size"
         android:textColor="@color/button_text_color" />
     
     <TextView
