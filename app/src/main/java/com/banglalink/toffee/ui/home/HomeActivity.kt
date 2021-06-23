@@ -639,8 +639,8 @@ class HomeActivity :
 //
 //        }
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.bottomAppBar) { _, insets ->
-            insets.consumeSystemWindowInsets()
+        ViewCompat.setOnApplyWindowInsetsListener(binding.bottomAppBar) { _, _ ->
+             WindowInsetsCompat.CONSUMED
         }
 
         binding.sideNavigation.setNavigationItemSelectedListener {

@@ -4,20 +4,17 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.*
-import com.banglalink.toffee.R
 import com.banglalink.toffee.apiservice.ContentUpload
-import com.banglalink.toffee.apiservice.GetCategories
 import com.banglalink.toffee.apiservice.GetContentCategories
 import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.exception.Error
-import com.banglalink.toffee.extension.hide
-import com.banglalink.toffee.extension.show
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.SubCategory
 import com.banglalink.toffee.util.*
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -25,6 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import net.gotev.uploadservice.protocols.binary.BinaryUploadRequest
 import java.util.*
 
 class EditUploadInfoViewModel @AssistedInject constructor(
@@ -217,12 +215,13 @@ class EditUploadInfoViewModel @AssistedInject constructor(
     }
 
     suspend fun loadCopyrightFileName(fileUri: Uri) {
-        val fileName = withContext(Dispatchers.IO + Job()) {
+        val docFileName = withContext(Dispatchers.IO + Job()) {
             val fileSize = UtilsKt.fileSizeFromContentUri(appContext, fileUri)
             val actualFileSize = Utils.readableFileSize(fileSize)
-            "$fileName ($actualFileSize)"
+            val contentFileName = UtilsKt.fileNameFromContentUri(appContext, Uri.parse(fileUri.toString()))
+            "$contentFileName ($actualFileSize)"
         }
-        copyrightFileName.value = fileName
+        copyrightFileName.value = docFileName
     }
     
     suspend fun saveUploadInfo(tags: String?, categoryId: Long, subcategoryId: Long, duration: Long, isHorizontal: Int) {
@@ -286,5 +285,53 @@ class EditUploadInfoViewModel @AssistedInject constructor(
                 .setFileToUpload(uploadFileUri)
                 .startUpload()
         }
+    }
+
+    private suspend fun startUploadToBucket(ipFileUri: Uri) {
+        val accessToken = withContext(Dispatchers.IO) {
+            val credential = GoogleCredential.fromStream(
+                    appContext.assets.open("toffee-261507-60ca3e5405df.json")
+                ).createScoped(listOf("https://www.googleapis.com/auth/devstorage.read_write"))
+                credential.refreshToken()
+                credential.accessToken
+        }
+
+        if (accessToken.isNullOrEmpty()) {
+//            open_gallery_button.snack("Error uploading file. Please try again later.") {}
+            return
+        }
+
+        val fn = withContext(Dispatchers.IO + Job()) {
+            UtilsKt.fileNameFromContentUri(appContext, ipFileUri)
+        }
+        val idx = fn.lastIndexOf(".")
+        val ext = if (idx >= 0) {
+            fn.substring(idx)
+        }
+        else ""
+
+        val docFileName = preference.customerId.toString() + "_" + UUID.randomUUID().toString() + ext
+        val upInfo = UploadInfo(serverContentId = 0L, fileUri = ipFileUri.toString(), fileName = docFileName)
+
+        val contentType = withContext(Dispatchers.IO + Job()) {
+            UtilsKt.contentTypeFromContentUri(appContext, ipFileUri)
+        }
+
+        Log.e("UPLOAD", "$docFileName, $contentType")
+
+        val upId = uploadRepo.insertUploadInfo(upInfo)
+        val uploadIdStr =
+            withContext(Dispatchers.IO + Job()) {
+                BinaryUploadRequest(
+                    appContext,
+                    "https://storage.googleapis.com/upload/storage/v1/b/ugc-content-storage/o?uploadType=media&name=${docFileName}"
+                )
+                    .setUploadID(UtilsKt.uploadIdToString(upId))
+                    .setMethod("POST")
+                    .addHeader("Content-Type", contentType)
+                    .setFileToUpload(ipFileUri.toString())
+                    .setBearerAuth(accessToken)
+                    .startUpload()
+            }
     }
 }
