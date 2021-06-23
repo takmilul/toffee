@@ -40,9 +40,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.Parameters
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.ParametersBuilder
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
-import com.google.android.exoplayer2.upstream.DataSource.Factory
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.upstream.HttpDataSource
 import com.google.android.exoplayer2.util.EventLogger
 import com.google.android.exoplayer2.util.MimeTypes
@@ -385,11 +383,11 @@ abstract class PlayerPageActivity :
     }
 
     private fun prepareMedia(mediaItem: MediaItem): MediaSource {
-        val dataSourceFactory: Factory = DefaultHttpDataSourceFactory(TOFFEE_HEADER)
-        val hlsDataSourceFactory = HlsMediaSource.Factory(dataSourceFactory)
-        hlsDataSourceFactory.setAllowChunklessPreparation(true)
+//        val dataSourceFactory: Factory = DefaultHttpDataSource.Factory().setUserAgent(TOFFEE_HEADER)
+//        val hlsDataSourceFactory = HlsMediaSource.Factory(dataSourceFactory)
+//        hlsDataSourceFactory.setAllowChunklessPreparation(true)
         return HlsMediaSource.Factory { _: Int ->
-            val dataSource: HttpDataSource = DefaultHttpDataSource(TOFFEE_HEADER)
+            val dataSource: HttpDataSource = DefaultHttpDataSource.Factory().setUserAgent(TOFFEE_HEADER).createDataSource()
             dataSource.setRequestProperty("TOFFEE-SESSION-TOKEN", mPref.getHeaderSessionToken()!!)
             dataSource
         }
@@ -459,9 +457,11 @@ abstract class PlayerPageActivity :
     private fun playChannel(isReload: Boolean) {
         val channelInfo = playlistManager.getCurrentChannel() ?: return
         val uri = Channel.createChannel(channelInfo).getContentUri(this, mPref, connectionWatcher)
-        
+        //Log.e("PLAY_T", "${channelInfo.hlsLinks?.first()?.hls_url_mobile}")
+        //Log.e("PLAY_T", "$uri;;${mPref.sessionToken};;$TOFFEE_HEADER;;$TOFFEE_HEADER")
         if (uri == null) { //in this case settings does not allow us to play content. So stop player and trigger event viewing stop
-            player?.stop(true)
+            player?.stop()
+            player?.clearMediaItems()
             channelCannotBePlayedDueToSettings() //notify hook/subclass
             heartBeatManager.triggerEventViewingContentStop()
             return

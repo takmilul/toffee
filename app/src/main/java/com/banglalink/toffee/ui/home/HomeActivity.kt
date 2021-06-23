@@ -888,7 +888,7 @@ class HomeActivity :
             navigateToSearch(query)
         }
         if (searchView != null) {
-            searchView!!.setQuery(query.toLowerCase(), false)
+            searchView!!.setQuery(query.lowercase(), false)
             searchView!!.clearFocus()
         }
     }

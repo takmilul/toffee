@@ -70,7 +70,7 @@ object ToffeeAnalytics {
     }
 
     fun logEvent(event: String, params: Bundle? = null) {
-        firebaseAnalytics.logEvent(event, params)
+//        firebaseAnalytics.logEvent(event, params)
     }
 
     class ApiFailData(

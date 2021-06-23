@@ -17,7 +17,7 @@ import java.util.*
  */
 class Channel(
     private val name: String?,
-    contentId: String? = name?.toLowerCase(Locale.US)?.replace("\\s".toRegex(), ""),
+    contentId: String? = name?.lowercase()?.replace("\\s".toRegex(), ""),
     provider: String? = "",
     uri: String? = null,
     type: Int = C.TYPE_HLS,

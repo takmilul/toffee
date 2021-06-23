@@ -121,7 +121,7 @@ constructor(
 
     private fun callbackFlowForType(@IntRange(from = 0, to = 7) type: Int) = callbackFlow {
 
-        offer(false)
+        trySend(false)
 
         val networkRequest = NetworkRequest.Builder()
             .addTransportType(type)
@@ -129,11 +129,11 @@ constructor(
 
         val callback = object : ConnectivityManager.NetworkCallback() {
             override fun onLost(network: Network?) {
-                offer(false)
+                trySend(false)
             }
 
             override fun onUnavailable() {
-                offer(false)
+                trySend(false)
             }
 
             override fun onLosing(network: Network?, maxMsToLive: Int) {
@@ -141,7 +141,7 @@ constructor(
             }
 
             override fun onAvailable(network: Network?) {
-                offer(true)
+                trySend(true)
             }
         }
 
