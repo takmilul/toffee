@@ -12,6 +12,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_PLAYLISTS
 import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_PLAYLIST_VIDEOS
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -85,6 +86,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
         }
         binding.listview.adapter = mAdapter
         binding.viewModel = createPlaylistViewModel
+        cacheManager.clearCacheByUrl(GET_MY_CHANNEL_PLAYLISTS)
         observePlaylist()
         binding.addButton.safeClick(this)
         binding.doneButton.safeClick(this)
