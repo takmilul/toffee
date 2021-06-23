@@ -23,7 +23,7 @@ class LandingUserChannelsListAdapter(cb: BaseListItemCallback<UserChannelInfo>)
             with(binding) {
                 multiTextButton.setMultitextButtonWidth(calculatedSize.toInt())
                 if (calculatedSize < 96.px) {
-                    multiTextButton.setMultitextButtonTextSize(11)
+                    multiTextButton.setMultitextButtonTextSize(10)
                 }
                 iconHolder.layoutParams.apply {
                     width = calculatedSize.toInt() - 16

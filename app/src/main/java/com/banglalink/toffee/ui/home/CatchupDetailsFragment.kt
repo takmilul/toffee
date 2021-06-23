@@ -50,7 +50,6 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
     private lateinit var catchupAdapter: CatchUpDetailsAdapter
     private val binding get() = _binding!!
     private val viewModel by viewModels<CatchupDetailsViewModel>()
-    private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
     private val myChannelVideosViewModel by activityViewModels<MyChannelVideosViewModel>()
     
     companion object{
@@ -187,8 +186,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
     
     private fun observeList() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            val catchupParams = CatchupParams(currentItem.id, currentItem.video_tags, landingPageViewModel.categoryId
-                .value ?: 0, landingPageViewModel.subCategoryId.value ?: 0)
+            val catchupParams = CatchupParams(currentItem.id, currentItem.video_tags, currentItem.categoryId, currentItem.subCategoryId)
             viewModel.loadRelativeContent(catchupParams).collectLatest {
                 catchupAdapter.submitData(it)
             }
