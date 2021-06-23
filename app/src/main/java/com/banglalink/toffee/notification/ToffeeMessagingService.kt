@@ -66,7 +66,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         else {
             val data: Map<String, String> = remoteMessage.data
             Log.i("NOT_", "onMessageReceived: $data")
-            when(data["notificationType"]!!.toLowerCase()) {
+            when(data["notificationType"]!!.lowercase()) {
                 NotificationType.OVERLAY.type -> {
                     try {
                         gson.fromJson(remoteMessage.data["notificationText"]?.trimIndent(), PlayerOverlayData::class.java)

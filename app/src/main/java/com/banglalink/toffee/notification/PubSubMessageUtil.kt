@@ -4,11 +4,11 @@ import android.content.Context
 import android.util.Log
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.google.api.client.extensions.android.http.AndroidHttp
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
 import com.google.api.client.googleapis.batch.json.JsonBatchCallback
 import com.google.api.client.googleapis.json.GoogleJsonError
 import com.google.api.client.http.HttpHeaders
+import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.pubsub.Pubsub
 import com.google.api.services.pubsub.PubsubScopes
@@ -44,7 +44,7 @@ object PubSubMessageUtil {
     private val coroutineScope = CoroutineScope(coroutineContext)
 
     fun init(context: Context){
-        val httpTransport = AndroidHttp.newCompatibleTransport()
+        val httpTransport = NetHttpTransport()//AndroidHttp.newCompatibleTransport()
         val json: JacksonFactory? = JacksonFactory.getDefaultInstance()
         val credential = GoogleCredential.fromStream(
             context.assets.open("toffee-261507-c7793c98cdfd.json")
