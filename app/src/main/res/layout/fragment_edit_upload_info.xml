@@ -37,8 +37,8 @@
 
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/thumb_edit_button"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_marginTop="12dp"
                 android:contentDescription="@string/txt_edit_channel_logo"
                 android:layout_marginEnd="12dp"
@@ -48,7 +48,7 @@
                 android:scaleType="fitXY"
                 app:layout_constraintEnd_toEndOf="@+id/video_thumb"
                 app:layout_constraintTop_toTopOf="@+id/video_thumb"
-                app:srcCompat="@drawable/ic_edit_btn" />
+                app:srcCompat="@drawable/ic_edit_btn_2" />
 
             <TextView
                 android:id="@+id/duration"
@@ -101,11 +101,39 @@
                 style="@style/SingleLineInputFieldStyle"
                 android:layout_marginTop="4dp"
                 android:hint="Title"
+                android:paddingEnd="56dp"
+                android:paddingStart="10dp"
+                android:maxLength="200"
                 android:fontFamily="@font/roboto_medium"
                 android:text="@={viewmodel.title}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView15" />
+
+            <TextView
+                android:id="@+id/upload_title_count_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_regular"
+                android:textColor="@color/switchUnCheckedColor"
+                android:textSize="12sp"
+                android:text="0"
+                app:layout_constraintBottom_toBottomOf="@+id/upload_title_count_limit_tv"
+                app:layout_constraintEnd_toStartOf="@+id/upload_title_count_limit_tv"
+                app:layout_constraintTop_toTopOf="@+id/upload_title_count_limit_tv"
+                />
+
+            <TextView
+                android:id="@+id/upload_title_count_limit_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                android:fontFamily="@font/roboto_regular"
+                android:text="/200"
+                android:textColor="@color/switchUnCheckedColor"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="@+id/upload_title"
+                app:layout_constraintTop_toTopOf="@+id/upload_title" />
 
             <TextView
                 android:id="@+id/error_title_tv"
@@ -140,10 +168,37 @@
                 style="@style/MultilineInputFieldStyle"
                 android:layout_marginTop="4dp"
                 android:hint="Description..."
+                android:maxLength="600"
                 android:text="@={viewmodel.description}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView17" />
+
+
+            <TextView
+                android:id="@+id/upload_des_count_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_regular"
+                android:textColor="@color/switchUnCheckedColor"
+                android:textSize="12sp"
+                android:text="0"
+                app:layout_constraintBottom_toBottomOf="@+id/upload_des_count_limit_tv"
+                app:layout_constraintEnd_toStartOf="@+id/upload_des_count_limit_tv"
+                app:layout_constraintTop_toTopOf="@+id/upload_des_count_limit_tv"
+                />
+
+            <TextView
+                android:id="@+id/upload_des_count_limit_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                android:fontFamily="@font/roboto_regular"
+                android:text="/600"
+                android:textColor="@color/switchUnCheckedColor"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="@+id/upload_description"
+                app:layout_constraintTop_toTopOf="@+id/upload_description" />
 
             <TextView
                 android:id="@+id/error_description_tv"

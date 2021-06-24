@@ -5,7 +5,9 @@ import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
 import android.text.InputType
+import android.text.TextWatcher
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -158,7 +160,46 @@ class EditUploadInfoFragment: BaseFragment() {
     
         binding.uploadTags.clearFocus()
         binding.uploadTitle.requestFocus()
+
+        titleWatcher()
+        descriptionDesWatcher()
     }
+
+
+    private fun titleWatcher() {
+        binding.uploadTitle.addTextChangedListener(object : TextWatcher {
+
+            override fun afterTextChanged(s: Editable?) {
+                val lenght = s.toString().length
+                binding.uploadTitleCountTv.text=lenght.toString()
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+        })
+    }
+
+    private fun descriptionDesWatcher()
+    {
+        binding.uploadDescription.addTextChangedListener(object : TextWatcher {
+
+            override fun afterTextChanged(s: Editable?) {
+                val lenght = s.toString().length
+                binding.uploadDesCountTv.text=lenght.toString()
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+        })
+    }
+
+
     
     private fun checkFileSystemPermission() {
         lifecycleScope.launch {

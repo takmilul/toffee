@@ -2,6 +2,8 @@ package com.banglalink.toffee.ui.mychannel
 
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
@@ -107,7 +109,45 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         binding.bannerEditButton.safeClick(this)
         binding.profileImageEditButton.safeClick(this)
         binding.dateOfBirthTv.safeClick ({ showDatePicker() })
+
+        channelNameWatcher()
+        channelDesWatcher()
     }
+
+
+    private fun channelNameWatcher() {
+        binding.channelName.addTextChangedListener(object : TextWatcher {
+
+            override fun afterTextChanged(s: Editable?) {
+                val lenght = s.toString().length
+                binding.channelNameCountTv.text=lenght.toString()
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+        })
+    }
+
+    private fun channelDesWatcher()
+    {
+        binding.description.addTextChangedListener(object : TextWatcher {
+
+            override fun afterTextChanged(s: Editable?) {
+                val lenght = s.toString().length
+                binding.channelDesCountTv.text=lenght.toString()
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+        })
+    }
+
 
     private fun setupPaymentCategorySpinner() {
         val paymentCategoryAdapter = ToffeeSpinnerAdapter<Payment>(requireContext(), "Select Payment Option")
