@@ -58,6 +58,7 @@ android {
         pickFirst 'META-INF/LICENSE'
         pickFirst 'META-INF/io.netty.versions.properties'
         pickFirst 'META-INF/INDEX.LIST'
+        pickFirst 'META-INF/annotation-experimental_release.kotlin_module'
     }
 }
 
@@ -166,12 +167,11 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:19.0.0'
     implementation 'com.google.android.gms:play-services-auth-api-phone:17.5.1'
     implementation 'com.google.android.play:core:1.10.0'
-    implementation ('com.google.apis:google-api-services-pubsub:v1-rev452-1.25.0') {
     
     //firework sdk
-    implementation 'com.github.loopsocial:firework_sdk:v5.4.4'
+    implementation 'com.github.loopsocial:firework_sdk:v5.4.7'
 
-    implementation ('com.google.apis:google-api-services-pubsub:v1-rev354-1.22.0') {
+    implementation ('com.google.apis:google-api-services-pubsub:v1-rev452-1.25.0') {
         exclude group: 'com.google.code.findbugs'
         exclude group: 'org.apache.httpcomponents'
         exclude group: 'org.json'

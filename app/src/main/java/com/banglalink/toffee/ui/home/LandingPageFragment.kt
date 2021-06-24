@@ -22,6 +22,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -44,7 +45,7 @@ class LandingPageFragment : HomeBaseFragment(), FwSDK.SdkStatusListener {
         super.onCreate(savedInstanceState)
         if (mPref.isFireworkActive == "true" && !mPref.isFireworkInitialized) {
             try {
-                FwSDK.initialize(appContext, CLIENT_ID, null, this)
+                FwSDK.initialize(appContext, CLIENT_ID, "${UUID.randomUUID()}_${System.nanoTime()}", this)
             }
             catch (e: Exception) {
                 mPref.isFireworkInitialized = false
