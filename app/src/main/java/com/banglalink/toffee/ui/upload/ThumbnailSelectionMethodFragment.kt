@@ -85,6 +85,10 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
                 ToffeeAnalytics.logBreadCrumb("Activity Not Found - filesystem(gallery)")
                 requireContext().showToast(getString(R.string.no_activity_msg))
             }
+            catch (e: Exception) {
+                ToffeeAnalytics.logBreadCrumb(e.message ?: "")
+                requireContext().showToast(getString(R.string.no_activity_msg))
+            }
         }
     }
 
@@ -104,7 +108,11 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
                 requireContext().showToast(getString(R.string.no_activity_msg))
             }
             catch (e: ActivityNotFoundException) {
-                ToffeeAnalytics.logBreadCrumb("Activity Not Found - filesystem(gallery)")
+                ToffeeAnalytics.logBreadCrumb("Activity Not Found - filesystem(camera)")
+                requireContext().showToast(getString(R.string.no_activity_msg))
+            }
+            catch (e: Exception) {
+                ToffeeAnalytics.logBreadCrumb(e.message ?: "")
                 requireContext().showToast(getString(R.string.no_activity_msg))
             }
         }
@@ -112,7 +120,7 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
 
     private fun openCameraIntent() {
         val imageIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        if (imageIntent.resolveActivity(requireActivity().packageManager) != null) {
+        if (imageIntent.resolveActivity(requireContext().packageManager) != null) {
 
             val imageFile: File?
             try {
@@ -143,26 +151,31 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
     }
 
     private fun startCrop(uri: Uri) {
-        var uCrop = UCrop.of(
-            uri,
-            Uri.fromFile(createImageFile())
-        )
-
-        val options = UCrop.Options().apply {
-            setHideBottomControls(true)
-            if (isProfileImage){
-                withAspectRatio(4f, 4f)
-                setCircleDimmedLayer(true)
-            } else {
-                withAspectRatio(16f, 9f)
+        try {
+            var uCrop = UCrop.of(
+                uri,
+                Uri.fromFile(createImageFile())
+            )
+    
+            val options = UCrop.Options().apply {
+                setHideBottomControls(true)
+                if (isProfileImage){
+                    withAspectRatio(4f, 4f)
+                    setCircleDimmedLayer(true)
+                } else {
+                    withAspectRatio(16f, 9f)
+                }
+                withMaxResultSize(1280, 720)
+                setFreeStyleCropEnabled(false)
             }
-            withMaxResultSize(1280, 720)
-            setFreeStyleCropEnabled(false)
+    
+            uCrop = uCrop.withOptions(options)
+            uCrop.start(requireContext(), this)
+            ToffeeAnalytics.logBreadCrumb("Crop started")
         }
-
-        uCrop = uCrop.withOptions(options)
-        uCrop.start(requireContext(), this)
-        ToffeeAnalytics.logBreadCrumb("Crop started")
+        catch (e: Exception) {
+            ToffeeAnalytics.logBreadCrumb("Failed to crop image")
+        }
     }
 
     private val galleryResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){

@@ -98,10 +98,10 @@ class RedeemPointsFragment : Fragment(), BaseListItemCallback<RedeemPoints> {
         observe(viewModel.redeemPoints()){
             when(it){
                 is Resource.Success -> {
-                    fragmentManager?.beginTransaction()
-                        ?.replace(R.id.content_viewer, RedeemPointsSuccessFragment.createInstance(it.data.message))
-                        ?.addToBackStack(RedeemPointsSuccessFragment::class.java.name)
-                        ?.commit()
+//                    fragmentManager?.beginTransaction()
+//                        ?.replace(R.id.content_viewer, RedeemPointsSuccessFragment.createInstance(it.data.message))
+//                        ?.addToBackStack(RedeemPointsSuccessFragment::class.java.name)
+//                        ?.commit()
                 }
                 is Resource.Failure -> {
                     context?.showToast(it.error.msg)

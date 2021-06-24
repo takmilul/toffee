@@ -1,16 +1,23 @@
 package com.banglalink.toffee.ui.landing
 
+import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.children
+import androidx.core.view.forEach
 import androidx.core.view.isVisible
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
+import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentLandingTvChannelsBinding
+import com.banglalink.toffee.databinding.PlaceholderLiveTvBinding
+import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
@@ -41,7 +48,20 @@ class PopularTVChannelsFragment : HomeBaseFragment(), BaseListItemCallback<Chann
         super.onViewCreated(view, savedInstanceState)
         var isInitialized = false
         mAdapter = ChannelAdapter(this)
-
+    
+        with(binding.placeholder) {
+            val calculatedSize = (Resources.getSystem().displayMetrics.widthPixels - (16.px * 5)) / 4.5    // 16dp margin
+            this.forEach { placeholderView ->
+                val binder = DataBindingUtil.bind<PlaceholderLiveTvBinding>(placeholderView)
+                binder?.let {
+                    it.icon.layoutParams.apply {
+                        width = calculatedSize.toInt()
+                        height = calculatedSize.toInt()
+                    }
+                }
+            }
+        }
+    
         with(binding.channelList) {
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 mAdapter.loadStateFlow
@@ -60,7 +80,8 @@ class PopularTVChannelsFragment : HomeBaseFragment(), BaseListItemCallback<Chann
         }
 
         binding.viewAllButton.setOnClickListener {
-            homeViewModel.switchBottomTab.postValue(1)
+//            homeViewModel.switchBottomTab.postValue(1)
+            parentFragment?.findNavController()?.navigate(R.id.menu_tv)
         }
         
         observeList()

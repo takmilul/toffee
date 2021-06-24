@@ -15,7 +15,6 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import coil.load
 import coil.request.CachePolicy
-import coil.size.Scale
 import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.database.entities.UserActivities
@@ -89,7 +88,14 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
 
     @BindingAdapter("loadImageResource")
     fun loadImageFromResource(view: ImageView, image: Int) {
-        view.setImageResource(image)
+        view.load(image) {
+            placeholder(R.drawable.placeholder)
+            fallback(R.drawable.placeholder)
+            error(R.drawable.placeholder)
+            crossfade(false)
+            diskCachePolicy(CachePolicy.ENABLED)
+            size(min(320.px, 720), min(180.px, 405))
+        }
     }
 
     @BindingAdapter("loadCategoryBackground")

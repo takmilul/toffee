@@ -102,6 +102,7 @@ class SplashScreenFragment2 : BaseFragment() {
         observe(viewModel.apiLoginResponse) {
             when (it) {
                 is Resource.Success -> {
+                    viewModel.sendLoginLogData()
                     if (isOperationCompleted) {
                         launchHomePage()
                     }
@@ -172,10 +173,5 @@ class SplashScreenFragment2 : BaseFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-    
-    override fun onDestroy() {
-        super.onDestroy()
-        mPref.logout = "0"
     }
 }

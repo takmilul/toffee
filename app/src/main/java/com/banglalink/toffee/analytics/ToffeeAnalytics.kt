@@ -69,6 +69,10 @@ object ToffeeAnalytics {
         FirebaseCrashlytics.getInstance().log(msg)
     }
 
+    fun logEvent(event: String, params: Bundle? = null) {
+//        firebaseAnalytics.logEvent(event, params)
+    }
+
     class ApiFailData(
         @SerializedName("apiName")
         val apiName: String,

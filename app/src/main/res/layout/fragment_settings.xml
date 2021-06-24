@@ -23,6 +23,10 @@
         <variable
             name="enableFloatingWindow"
             type="boolean" />
+
+        <variable
+            name="keepAspectRatio"
+            type="boolean" />
         <!--<variable
             name="viewModel"
             type="com.banglalink.toffee.ui.settings.SettingsViewModel" />-->
@@ -63,7 +67,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Notifications" />
+                    android:text="@string/notifications_text" />
 
                 <com.suke.widget.SwitchButton
                     android:id="@+id/notificationSwitch"
@@ -137,7 +141,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="0dp"
                     android:layout_marginTop="16dp"
-                    android:text="Wi-Fi Profile"
+                    android:text="@string/wifi_profile_text"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/dateQualityTextView" />
@@ -192,7 +196,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:fontFamily="@font/roboto_regular"
-                    android:text="Watch only when Wifi is available"
+                    android:text="@string/watch_only_when_wifi_available_text"
                     android:textColor="@color/main_text_color"
                     android:textSize="@dimen/default_text_size"
                     app:layout_constraintEnd_toStartOf="@id/watchOnlyWifiToggleBtn"
@@ -223,7 +227,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="0dp"
                     android:layout_marginTop="16dp"
-                    android:text="Mobile Data Profile"
+                    android:text="@string/mobile_data_profile_text"
                     app:layout_constraintEnd_toEndOf="@id/wifi_profile_desc_txt"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/wifi_profile_desc_txt" />
@@ -263,7 +267,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="8dp"
-                    android:text="Need 1 Mbps Connection"
+                    android:text="@string/need_1mbps_connections"
                     android:textSize="@dimen/default_text_size"
                     android:fontFamily="@font/roboto_regular"
                     android:textColor="@color/main_text_color"
@@ -305,6 +309,45 @@
                     android:layout_height="20dp"
                     android:layout_gravity="center_vertical"
                     app:srcCompat="@drawable/ic_background_playback"
+                    android:contentDescription="@string/keep_aspect_ratio" />
+
+                <TextView
+                    style="@style/PrefItemTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/keep_aspect_ratio" />
+
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/prefAspectRatio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="@null"
+                    android:button="@drawable/custom_checkbox"
+                    android:checked="@{keepAspectRatio}"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:background="@color/colorSettingsDivider" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                style="@style/PrefItemStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical"
+                    app:srcCompat="@drawable/ic_background_playback"
                     android:contentDescription="@string/txt_floating_player" />
 
                 <TextView
@@ -312,7 +355,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Floating Player" />
+                    android:text="@string/floating_player_text" />
 
                 <androidx.appcompat.widget.AppCompatCheckBox
                     android:id="@+id/prefFloatingWindow"
@@ -375,7 +418,7 @@
                     style="@style/PrefItemTextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Clear Activities" />
+                    android:text="@string/clear_activities_text" />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <View
@@ -401,7 +444,7 @@
                     style="@style/PrefItemTextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Terms &amp; Conditions" />
+                    android:text="@string/terms_and_conditions" />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <View
@@ -426,7 +469,7 @@
                     style="@style/PrefItemTextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Privacy Policy" />
+                    android:text="@string/privacy_policy" />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <View
@@ -451,7 +494,7 @@
                     style="@style/PrefItemTextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="About" />
+                    android:text="@string/txt_about" />
             </androidx.appcompat.widget.LinearLayoutCompat>
         </androidx.appcompat.widget.LinearLayoutCompat>
     </ScrollView>

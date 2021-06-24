@@ -1,10 +1,13 @@
 package com.banglalink.toffee.extension
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.res.Resources
 import android.util.Patterns
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.core.view.forEach
 import androidx.fragment.app.FragmentActivity
 import com.banglalink.toffee.R
@@ -130,4 +133,22 @@ fun ViewGroup.showLoadingAnimation(isStart: Boolean) {
             }
         }
     }
+}
+
+@SuppressLint("ClickableViewAccessibility")
+fun EditText.setDrawableRightTouch(setClickListener: () -> Unit) {
+    this.setOnTouchListener(View.OnTouchListener { _, event ->
+        val DRAWABLE_LEFT = 0
+        val DRAWABLE_TOP = 1
+        val DRAWABLE_RIGHT = 2
+        val DRAWABLE_BOTTOM = 3
+        if (event.action == MotionEvent.ACTION_UP) {
+            if (event.rawX >= this.right - this.compoundDrawables[DRAWABLE_RIGHT].bounds.width()
+            ) {
+                setClickListener()
+                return@OnTouchListener true
+            }
+        }
+        false
+    })
 }

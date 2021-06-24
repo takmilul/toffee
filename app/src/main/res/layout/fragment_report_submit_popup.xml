@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.report.ReportSubmitPopupFragment">
-
-
+    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -30,7 +28,7 @@
                     android:layout_marginHorizontal="24dp"
                     android:layout_marginTop="24dp"
                     android:fontFamily="@font/roboto_regular"
-                    android:text="You're Reporting for"
+                    android:text="@string/you_are_reporting_for_text"
                     android:textColor="@color/cardTitleColor"
                     android:textSize="14sp"
                     app:layout_constraintBottom_toTopOf="@id/reportType"
@@ -48,9 +46,7 @@
                     android:fontFamily="@font/roboto_medium"
                     app:layout_constraintTop_toBottomOf="@+id/dialogTitleTextView"
                     app:layout_constraintStart_toStartOf="@+id/dialogTitleTextView"
-                    app:layout_constraintEnd_toEndOf="@+id/dialogTitleTextView"
-
-                    />
+                    app:layout_constraintEnd_toEndOf="@+id/dialogTitleTextView" />
 
                 <ImageView
                     android:id="@+id/close_iv"
@@ -64,161 +60,20 @@
                     app:srcCompat="@drawable/ic_close" />
 
                 <TextView
-                    android:id="@+id/time_stamp_tv"
+                    android:id="@+id/additional_details_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="16dp"
                     android:fontFamily="@font/roboto_regular"
-                    android:text="Timestamp Selected*"
+                    android:text="@string/additional_details_text"
                     android:textColor="@color/cardTitleColor"
                     android:textSize="14sp"
                     app:layout_constraintEnd_toStartOf="@+id/reportType"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/reportType" />
-
-
-                <!--                <EditText-->
-<!--                    android:id="@+id/time_stamp_et"-->
-<!--                    android:layout_width="120dp"-->
-<!--                    android:layout_height="30dp"-->
-<!--                    android:layout_marginTop="20dp"-->
-<!--                    android:layout_marginEnd="25dp"-->
-<!--                    android:background="@drawable/single_line_input_text_bg"-->
-<!--                    android:fontFamily="@font/roboto_medium"-->
-<!--                    android:hint="00.00.00"-->
-<!--                    android:maxLines="1"-->
-<!--                    android:textAlignment="center"-->
-<!--                    android:layout_marginStart="32dp"-->
-<!--                    android:textColor="@color/cardTitleColor"-->
-<!--                    android:textSize="14sp"-->
-<!--                   />-->
-
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/timestamp_layout"
-                    android:layout_width="120dp"
-                    android:layout_height="30dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="25dp"
-                    android:background="@drawable/single_line_input_text_bg_two"
-                    app:layout_constraintBottom_toBottomOf="@+id/time_stamp_tv"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toEndOf="@+id/time_stamp_tv"
-                    app:layout_constraintTop_toBottomOf="@+id/reportType"
-                    app:layout_constraintVertical_bias="0.0">
-
-                    <EditText
-                        android:id="@+id/hour_et"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@null"
-                        android:hint="00"
-                        android:inputType="numberDecimal"
-                        android:maxLength="2"
-                        android:maxLines="1"
-                        android:textSize="16sp"
-                        android:layout_marginEnd="5dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/textView"
-                        app:layout_constraintHorizontal_chainStyle="packed"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                       />
-
-                    <TextView
-                        android:id="@+id/textView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="2dp"
-                        android:layout_marginBottom="6dp"
-                        android:text=":"
-                        android:textSize="16sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/minute_et"
-                        app:layout_constraintStart_toEndOf="@+id/hour_et"
-                        app:layout_constraintTop_toTopOf="parent"
-                        />
-
-                    <EditText
-                        android:id="@+id/minute_et"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="2dp"
-                        android:background="@null"
-                        android:hint="00"
-                        android:inputType="numberDecimal"
-                        android:maxLength="2"
-                        android:maxLines="1"
-                        android:textSize="16sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/textView2"
-                        app:layout_constraintHorizontal_bias="0.5"
-                        app:layout_constraintStart_toEndOf="@+id/textView"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/textView2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginBottom="6dp"
-                        android:text=":"
-                        android:textSize="16sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/seconds_et"
-                        app:layout_constraintStart_toEndOf="@+id/minute_et"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <EditText
-                        android:id="@+id/seconds_et"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@null"
-                        android:hint="00"
-                        android:inputType="numberDecimal"
-                        android:maxLength="2"
-                        android:maxLines="1"
-                        android:textSize="16sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/textView2"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <TextView
-                    android:id="@+id/error_timestamp_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:text="Timestamp required"
-                    android:textColor="@color/pink_to_accent_color"
-                    android:textSize="12sp"
-                    android:visibility="gone"
-                    app:layout_constraintEnd_toEndOf="@+id/timestamp_layout"
-                    app:layout_constraintStart_toStartOf="@+id/time_stamp_tv"
-                    app:layout_constraintTop_toBottomOf="@+id/timestamp_layout"
-                    tools:visibility="visible" />
-
-                <TextView
-                    android:id="@+id/additional_details_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:fontFamily="@font/roboto_regular"
-                    android:text="Additional Details"
-                    android:textColor="@color/cardTitleColor"
-                    android:textSize="14sp"
-                    app:layout_constraintEnd_toStartOf="@+id/reportType"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/error_timestamp_tv" />
-
-
+                
                 <com.banglalink.toffee.ui.widget.HashTagEditText
                     android:id="@+id/additional_details_et"
                     android:layout_width="0dp"
@@ -228,7 +83,7 @@
                     android:textSize="14sp"
                     android:fontFamily="@font/roboto_regular"
                     android:gravity="top|start"
-                    android:hint="Description..."
+                    android:hint="@string/description_text"
                     android:inputType="textMultiLine|textCapSentences"
                     android:lines="8"
                     android:maxLength="2000"
@@ -236,13 +91,11 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="12dp"
                     android:layout_marginEnd="16dp"
-
                     android:textColor="@color/cardTitleColor"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/additional_details_tv" />
-
-
+                
                     <RelativeLayout
                         android:id="@+id/addToPlaylistGroup"
                         android:layout_width="match_parent"
@@ -252,8 +105,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/additional_details_et"
-                        >
+                        app:layout_constraintTop_toBottomOf="@+id/additional_details_et">
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@id/backButton"
@@ -262,7 +114,7 @@
                             android:minWidth="0dp"
                             android:paddingLeft="30dp"
                             android:paddingRight="30dp"
-                            android:text="Back"
+                            android:text="@string/txt_back"
                             app:iconSize="16dp"
                             app:iconTint="@color/main_text_color"
                             app:strokeColor="@color/main_text_color" />
@@ -275,16 +127,11 @@
                             android:minWidth="64dp"
                             android:paddingLeft="30dp"
                             android:paddingRight="30dp"
-                            android:text="Report" />
+                            android:text="@string/report_text" />
                     </RelativeLayout>
-
-
-
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
     </LinearLayout>
-
-
 </layout>
 
 

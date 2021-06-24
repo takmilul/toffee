@@ -1,5 +1,6 @@
 package com.banglalink.toffee.usecase
 
+import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.toFormattedDate
 import com.banglalink.toffee.notification.PubSubMessageUtil
@@ -27,6 +28,8 @@ data class InterestData(
     val interestList: Map<String, Int>,
     @SerializedName("device_type")
     val deviceType: Int = 1,
+    @SerializedName("device_id")
+    val deviceId: String = CommonPreference.getInstance().deviceId,
     @SerializedName("date_time")
     val interestDateTime: String = System.currentTimeMillis().toFormattedDate(),
 )

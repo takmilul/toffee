@@ -8,7 +8,6 @@ import android.util.Log
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.BuildConfig
-import com.banglalink.toffee.R.string
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.database.entities.ContentViewProgress
@@ -16,6 +15,7 @@ import com.banglalink.toffee.data.database.entities.ContinueWatchingItem
 import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
 import com.banglalink.toffee.data.repository.ContinueWatchingRepository
 import com.banglalink.toffee.data.storage.PlayerPreference
+import com.banglalink.toffee.exception.ContentExpiredException
 import com.banglalink.toffee.extension.getChannelMetadata
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener
@@ -40,9 +40,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.Parameters
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.ParametersBuilder
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
-import com.google.android.exoplayer2.upstream.DataSource.Factory
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.upstream.HttpDataSource
 import com.google.android.exoplayer2.util.EventLogger
 import com.google.android.exoplayer2.util.MimeTypes
@@ -58,6 +56,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.net.*
+import java.util.*
 import javax.inject.Inject
 import kotlin.math.max
 
@@ -66,7 +65,7 @@ import kotlin.math.max
 abstract class PlayerPageActivity :
     BaseAppCompatActivity(),
     OnPlayerControllerChangedListener,
-    EventListener,
+    Player.EventListener,
     PlaylistListener,
     AnalyticsListener,
     SessionAvailabilityListener
@@ -143,8 +142,9 @@ abstract class PlayerPageActivity :
                 //In each heartbeat we are checking channel's expire date. Seriously??
                 val cinfo = playlistManager.getCurrentChannel()
                 if (cinfo?.isExpired(mPref.getSystemTime()) == true) {
-                    player?.stop(true)
-                    onContentExpired() //content is expired. Notify the subclass
+                    ToffeeAnalytics.logException(ContentExpiredException(0, "serverDate: ${mPref.getSystemTime()}, deviceDate: ${Date()}, expireTime: ${cinfo.expireTime}"))
+//                    player?.stop(true)
+//                    onContentExpired() //content is expired. Notify the subclass
                 }
                 playerAnalyticsListener?.let {
                     //In every heartbeat event we are sending bandwitdh data to Pubsub
@@ -383,13 +383,11 @@ abstract class PlayerPageActivity :
     }
 
     private fun prepareMedia(mediaItem: MediaItem): MediaSource {
-        val dataSourceFactory: Factory = DefaultHttpDataSourceFactory(
-            Util.getUserAgent(this, getString(string.app_name))
-        )
-        val hlsDataSourceFactory = HlsMediaSource.Factory(dataSourceFactory)
-        hlsDataSourceFactory.setAllowChunklessPreparation(true)
+//        val dataSourceFactory: Factory = DefaultHttpDataSource.Factory().setUserAgent(TOFFEE_HEADER)
+//        val hlsDataSourceFactory = HlsMediaSource.Factory(dataSourceFactory)
+//        hlsDataSourceFactory.setAllowChunklessPreparation(true)
         return HlsMediaSource.Factory { _: Int ->
-            val dataSource: HttpDataSource = DefaultHttpDataSource(TOFFEE_HEADER)
+            val dataSource: HttpDataSource = DefaultHttpDataSource.Factory().setUserAgent(TOFFEE_HEADER).createDataSource()
             dataSource.setRequestProperty("TOFFEE-SESSION-TOKEN", mPref.getHeaderSessionToken()!!)
             dataSource
         }
@@ -459,9 +457,11 @@ abstract class PlayerPageActivity :
     private fun playChannel(isReload: Boolean) {
         val channelInfo = playlistManager.getCurrentChannel() ?: return
         val uri = Channel.createChannel(channelInfo).getContentUri(this, mPref, connectionWatcher)
-        
+        //Log.e("PLAY_T", "${channelInfo.hlsLinks?.first()?.hls_url_mobile}")
+        //Log.e("PLAY_T", "$uri;;${mPref.sessionToken};;$TOFFEE_HEADER;;$TOFFEE_HEADER")
         if (uri == null) { //in this case settings does not allow us to play content. So stop player and trigger event viewing stop
-            player?.stop(true)
+            player?.stop()
+            player?.clearMediaItems()
             channelCannotBePlayedDueToSettings() //notify hook/subclass
             heartBeatManager.triggerEventViewingContentStop()
             return
@@ -626,10 +626,11 @@ abstract class PlayerPageActivity :
     protected fun reloadChannel() {
         val cinfo = playlistManager.getCurrentChannel()
         if (cinfo?.isExpired(mPref.getSystemTime()) == true) {
+            ToffeeAnalytics.logException(ContentExpiredException(0, "serverDate: ${mPref.getSystemTime()}, deviceDate: ${Date()}, expireTime: ${cinfo.expireTime}"))
             //channel is expired. Stop the player and notify hook/subclass
-            player?.stop(true)
-            onContentExpired()
-            return
+//            player?.stop(true)
+//            onContentExpired()
+//            return
         }
         if (cinfo != null) {
             playChannel(true)
@@ -733,7 +734,7 @@ abstract class PlayerPageActivity :
         return false
     }
 
-    private inner class PlayerEventListener : EventListener {
+    private inner class PlayerEventListener : Player.EventListener {
         override fun onPlayerError(e: ExoPlaybackException) {
             e.printStackTrace()
             ToffeeAnalytics.logException(e)

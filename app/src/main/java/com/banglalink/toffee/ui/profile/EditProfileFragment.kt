@@ -1,13 +1,17 @@
 package com.banglalink.toffee.ui.profile
 
+import android.content.res.ColorStateList
+import android.content.res.Resources
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import androidx.core.view.forEach
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -15,6 +19,8 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_DETAILS
+import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentEditProfileBinding
 import com.banglalink.toffee.enums.InputType
 import com.banglalink.toffee.extension.*
@@ -25,10 +31,8 @@ import com.banglalink.toffee.ui.widget.VelBoxFieldTextWatcher
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.UtilsKt
 import com.banglalink.toffee.util.unsafeLazy
-import java.io.File
-import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.*
+import com.google.android.material.chip.Chip
+import javax.inject.Inject
 
 class EditProfileFragment : BaseFragment() {
 
@@ -36,10 +40,13 @@ class EditProfileFragment : BaseFragment() {
     private val progressDialog by unsafeLazy {
         VelBoxProgressDialog(requireContext())
     }
+    @Inject
+    lateinit var cacheManager: CacheManager
     private var _binding: FragmentEditProfileBinding? = null
     private val binding get() = _binding!!
     private val args by navArgs<EditProfileFragmentArgs>()
     private val viewModel by viewModels<EditProfileViewModel>()
+    private val userInterestList: MutableMap<String, Int> = mutableMapOf()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentEditProfileBinding.inflate(inflater, container, false)
@@ -49,6 +56,7 @@ class EditProfileFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        observeCategory()
         with(binding) {
             profileForm = args.data
             container.setOnClickListener {
@@ -73,24 +81,12 @@ class EditProfileFragment : BaseFragment() {
         observe(mPref.profileImageUrlLiveData) {
             binding.profileIv.loadProfileImage(it)
         }
+
         observeThumbnailChange()
     }
 
-    @Throws(IOException::class)
-    fun createImageFile(): File {
-        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        val imageFileName = "IMG_" + timeStamp + "_"
-        val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        if (storageDir?.exists() == false) {
-            storageDir.mkdirs()
-        }
-        return File.createTempFile(imageFileName, ".jpg", storageDir)
-    }
-
     private fun observeThumbnailChange() {
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String?>(
-            ThumbnailSelectionMethodFragment.THUMB_URI
-        )
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String?>(ThumbnailSelectionMethodFragment.THUMB_URI)
             ?.observe(viewLifecycleOwner, {
                 it?.let { photoData ->
                     ToffeeAnalytics.logBreadCrumb("Got result from crop lib")
@@ -128,7 +124,7 @@ class EditProfileFragment : BaseFragment() {
                 binding.errorEmailTv.hide()
             }
 
-            if (it.fullName.isNotBlank()) {
+            if (it.fullName.isNotBlank() && !notValidEmail) {
                 it.apply {
                     fullName = fullName.trim()
                     email = email.trim()
@@ -139,8 +135,12 @@ class EditProfileFragment : BaseFragment() {
                     progressDialog.dismiss()
                     when (it) {
                         is Resource.Success -> {
+
                             requireContext().showToast("Profile updated successfully")
-                            findNavController().popBackStack()
+                            findNavController().popBackStack().apply {
+                                cacheManager.clearCacheByUrl(GET_MY_CHANNEL_DETAILS)
+                            }
+
                         }
                         is Resource.Failure -> {
                             requireContext().showToast(it.error.msg)
@@ -172,7 +172,70 @@ class EditProfileFragment : BaseFragment() {
             Log.e(TAG, e.message, e)
         }
     }
+    
+    private fun addChip(name: String, width:Int): Chip {
+        val intColor = ContextCompat.getColor(requireContext(), R.color.colorSecondaryDark)
+        val chipColor = createStateColor(intColor,intColor)
+        val chip = layoutInflater.inflate(R.layout.interest_chip_layout, binding.interestChipGroup, false) as Chip
+        with(chip) {
+            layoutParams.width = width
+            text = name
+            id = View.generateViewId()
+            chipBackgroundColor = chipColor
+            rippleColor =createStateColor(Color.TRANSPARENT)
+            chipStrokeColor = chipColor
+            setTextColor(Color.WHITE)
+        }
+        return chip
+    }
 
+    private fun createStateColor(selectedColor: Int, unSelectedColor: Int = Color.TRANSPARENT): ColorStateList {
+        return ColorStateList(
+            arrayOf(
+                intArrayOf(android.R.attr.state_checked),
+                intArrayOf()
+            ),
+            intArrayOf(
+                selectedColor,
+                unSelectedColor
+            )
+        )
+    }
+    
+    private fun observeCategory() {
+        //  progressDialog.show()
+        observe(viewModel.categories){
+            if(it.isNotEmpty()){
+                val width = (Resources.getSystem().displayMetrics.widthPixels - 64.px) / 3
+                val categoryList = it.sortedBy { category -> category.id }
+                categoryList.let { list ->
+                    list.forEachIndexed { _, category ->
+                        val newChip = addChip(category.categoryName, width).apply {
+                            tag = category.categoryName
+                        }
+                        binding.interestChipGroup.addView(newChip)
+                        userInterestList[category.categoryName] = 0
+                    }
+                }
+                binding.interestChipGroup.addView(addChip("   +   ",width).apply {
+                    tag = "+"
+                })
+                binding.interestChipGroup.forEach {
+                    val selectedChip = it as Chip
+                    selectedChip.setOnCheckedChangeListener { buttonView, isChecked ->
+                        userInterestList[buttonView.tag.toString()] = if (isChecked) 1 else 0
+                        if(buttonView.tag.toString().equals("+"))
+                        {
+                            requireContext().showToast("clicked")
+                        }
+                    }
+                }
+
+                // progressDialog.hide()
+            }
+        }
+    }
+    
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

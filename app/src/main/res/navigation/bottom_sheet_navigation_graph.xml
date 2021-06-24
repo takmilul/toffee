@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottom_sheet_navigation_graph"
+    app:startDestination="@id/partnershipBottomSheetFragment">
+
+
+    <fragment
+        android:id="@+id/partnershipBottomSheetFragment"
+        android:name="com.banglalink.toffee.ui.bottomsheet.PartnershipBottomSheetFragment"
+        android:label="PartnershipBottomSheetFragment"
+        tools:layout="@layout/bottom_sheet_partnership"
+        >
+        <action
+            android:id="@+id/action_partnershipBottomSheetFragment_to_photoUploadBottomSheetFragment"
+            app:destination="@id/photoUploadBottomSheetFragment" />
+        <action
+            android:id="@+id/action_partnershipBottomSheetFragment_to_htmlPageViewDialog"
+            app:destination="@id/htmlPageViewDialog" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/basicInfoBottomSheetFragment"
+        android:name="com.banglalink.toffee.ui.bottomsheet.BasicInfoBottomSheetFragment"
+        android:label="BasicInfoBottomSheetFragment"
+        tools:layout="@layout/bottom_sheet_basic_info"
+        >
+        <argument
+            android:name="photoUrl"
+            app:argType="string" />
+        <argument
+            android:name="channelName"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_basicInfoBottomSheetFragment_to_htmlPageViewDialog"
+            app:destination="@id/htmlPageViewDialog" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/photoUploadBottomSheetFragment"
+        android:name="com.banglalink.toffee.ui.bottomsheet.PhotoUploadBottomSheetFragment"
+        android:label="PhotoUploadBottomSheetFragment"
+        tools:layout="@layout/bottom_sheet_upload_photo"
+        >
+        <action
+            android:id="@+id/action_photoUploadBottomSheetFragment_to_basicInfoBottomSheetFragment"
+            app:destination="@id/basicInfoBottomSheetFragment" />
+        <action
+            android:id="@+id/action_photoUploadBottomSheetFragment_to_thumbnailSelectionMethodFragment"
+            app:destination="@id/thumbnailSelectionMethodFragment" />
+    </fragment>
+
+
+
+    <dialog
+        android:id="@+id/thumbnailSelectionMethodFragment"
+        android:name="com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment"
+        android:label="Thumbnail"
+        tools:layout="@layout/fragment_thumb_selection_method"
+        >
+        <argument
+            android:name="title"
+            app:argType="string" />
+        <argument
+            android:name="isProfileImage"
+            app:argType="boolean"
+            />
+    </dialog>
+
+
+
+    <dialog
+        android:id="@+id/htmlPageViewDialog"
+        tools:layout="@layout/dialog_html_page_view"
+        android:name="com.banglalink.toffee.ui.common.HtmlPageViewDialog">
+        <argument
+            android:name="myTitle"
+            app:argType="string"
+            />
+        <argument
+            android:name="url"
+            app:argType="string"/>
+    </dialog>
+
+</navigation>

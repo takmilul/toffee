@@ -82,6 +82,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         super.onCreate(savedInstanceState)
         progressDialog = VelBoxProgressDialog(requireContext())
         channelOwnerId = arguments?.getInt(CHANNEL_OWNER_ID) ?: mPref.customerId
+        if(channelOwnerId == 0) channelOwnerId = mPref.customerId
         isOwner = channelOwnerId == mPref.customerId
     }
     
@@ -169,10 +170,6 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             findNavController().navigate(R.id.action_myChannelHomeFragment_to_MyChannelEditDetailFragment,
                 Bundle().apply { putParcelable("myChannelDetail", myChannelDetail) })
         }
-        else if (findNavController().currentDestination?.id != R.id.myChannelEditDetailFragment && findNavController().currentDestination?.id == R.id.menu_channel) {
-            findNavController().navigate(R.id.action_menu_channel_to_myChannelEditFragment,
-                Bundle().apply { putParcelable("myChannelDetail", myChannelDetail) })
-        }
     }
     
     private fun showRatingDialog() {
@@ -244,18 +241,20 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             myRating = it.myRating
             isOwner = it.isOwner == 1
             isSubscribed = it.isSubscribed
+            mPref.isChannelDetailChecked = true
             subscriberCount = it.subscriberCount
             channelId = myChannelDetail?.id?.toInt() ?: 0
         }
         
         if (isOwner) {
-            myChannelDetail?.let { detail ->
-                if (! detail.profileUrl.isNullOrBlank()) {
-                    mPref.channelLogo = detail.profileUrl
-                }
-                if (! detail.channelName.isNullOrBlank()) {
-                    mPref.channelName = detail.channelName
-                }
+            myChannelDetail?.let {
+                mPref.channelLogo = it.profileUrl ?: ""
+                mPref.channelName = it.channelName ?: ""
+                mPref.customerName = it.name  ?: ""
+                mPref.customerEmail = it.email  ?: ""
+                mPref.customerAddress = it.address  ?: ""
+                mPref.customerDOB = it.dateOfBirth ?: ""
+                mPref.customerNID = it.nationalIdNo ?: ""
             }
         }
         

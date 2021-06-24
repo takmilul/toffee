@@ -16,6 +16,8 @@ import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.ui.bottomsheet.BasicInfoBottomSheetFragmentDirections
+import com.banglalink.toffee.ui.bottomsheet.PartnershipBottomSheetFragmentDirections
 import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
@@ -119,7 +121,7 @@ class LoginContentFragment2 : ChildDialogFragment(), TextWatcher {
             putString("myTitle", "Terms & Conditions")
             putString("url", mPref.termsAndConditionUrl)
         }
-        parentFragment?.parentFragment?.findNavController()?.navigate(R.id.termsAndConditionFragment, args)
+        findNavController().navigate(R.id.htmlPageViewDialog, args)
     }
     
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}

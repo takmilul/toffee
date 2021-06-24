@@ -27,7 +27,7 @@
         android:layout_marginHorizontal="36dp"
         android:layout_marginTop="24dp"
         android:fontFamily="@font/roboto_light"
-        android:text="Enter OTP"
+        android:text="@string/enter_otp_text"
         android:textColor="@color/cardTitleColor"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -52,13 +52,12 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:fontFamily="@font/roboto_medium"
-        android:text="Resend OTP in 59s"
+        android:text="@string/resend_otp_in_59s_text"
         android:textColor="@color/main_text_color"
         android:visibility="visible"
         app:layout_constraintStart_toStartOf="@id/otpEditText"
         app:layout_constraintEnd_toEndOf="@id/otpEditText"
-        app:layout_constraintTop_toBottomOf="@+id/otpEditText"
-        tools:text="Resend OTP in 59s" />
+        app:layout_constraintTop_toBottomOf="@+id/otpEditText"/>
 
     <TextView
         android:id="@+id/resendButton"

@@ -16,7 +16,8 @@ data class VelBoxAlertDialogBuilder(
         private var positiveButtonTitle: String = "Ok",
         private var negativeButtonTitle: String = "Cancel",
         private var positiveButtonListener: ((d: AlertDialog?) -> Unit)? = null,
-        private var negativeButtonListener: ((d: AlertDialog?) -> Unit)? = null
+        private var negativeButtonListener: ((d: AlertDialog?) -> Unit)? = null,
+        private var closeButtonListener: ((d: AlertDialog?) -> Unit)? = null
     ) {
         private var dialog: AlertDialog? = null
         private lateinit var binding: VelboxDialogLayoutBinding
@@ -34,6 +35,9 @@ data class VelBoxAlertDialogBuilder(
         fun setNegativeButtonListener(title: String, listener: (d: AlertDialog?)->Unit) = apply {
             this.negativeButtonTitle = title
             this.negativeButtonListener = listener
+        }
+        fun setCloseButtonListener(listener: (d: AlertDialog?)->Unit) = apply {
+            this.closeButtonListener = listener
         }
 
         fun setPositiveButtonListener(title: Int, listener: (d: AlertDialog?)->Unit) =
@@ -71,8 +75,12 @@ data class VelBoxAlertDialogBuilder(
                 } ?: run {
                     binding.dialogNegativeButton.visibility = View.GONE
                 }
-
-                binding.closeButton.setOnClickListener { dialog?.dismiss() }
+                
+                closeButtonListener?.let { 
+                    binding.closeButton.setOnClickListener { _ -> 
+                        it.invoke(dialog) 
+                    }
+                } ?: run { dialog?.dismiss() }
             }
             return dialogBuilder.create().apply {
                 window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))

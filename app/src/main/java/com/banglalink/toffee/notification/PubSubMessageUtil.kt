@@ -2,12 +2,13 @@ package com.banglalink.toffee.notification
 
 import android.content.Context
 import android.util.Log
+import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.google.api.client.extensions.android.http.AndroidHttp
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
 import com.google.api.client.googleapis.batch.json.JsonBatchCallback
 import com.google.api.client.googleapis.json.GoogleJsonError
 import com.google.api.client.http.HttpHeaders
+import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.pubsub.Pubsub
 import com.google.api.services.pubsub.PubsubScopes
@@ -27,11 +28,13 @@ const val BANDWIDTH_TRACK_TOPIC = "projects/$PROJECTID/topics/player_bandwidth"
 const val API_ERROR_TRACK_TOPIC = "projects/$PROJECTID/topics/api_error"
 const val FIREBASE_ERROR_TRACK_TOPIC = "projects/$PROJECTID/topics/firebase_connection_error"
 const val APP_LAUNCH_TOPIC = "projects/$PROJECTID/topics/app_launch"
+const val LOGIN_LOG_TOPIC = "projects/$PROJECTID/topics/login_log"
 const val REACTION_TOPIC = "projects/$PROJECTID/topics/ugc_reaction"
 const val SHARE_COUNT_TOPIC = "projects/$PROJECTID/topics/share_count"
 const val SUBSCRIPTION_TOPIC = "projects/$PROJECTID/topics/channels_subscribers"
 const val CONTENT_REPORT_TOPIC = "projects/$PROJECTID/topics/report_inappropriate_content"
 const val USER_INTEREST_TOPIC = "projects/$PROJECTID/topics/user_interest"
+const val USER_OTP_TOPIC = "projects/$PROJECTID/topics/user_otp_log"
 
 object PubSubMessageUtil {
 
@@ -41,7 +44,7 @@ object PubSubMessageUtil {
     private val coroutineScope = CoroutineScope(coroutineContext)
 
     fun init(context: Context){
-        val httpTransport = AndroidHttp.newCompatibleTransport()
+        val httpTransport = NetHttpTransport()//AndroidHttp.newCompatibleTransport()
         val json: JacksonFactory? = JacksonFactory.getDefaultInstance()
         val credential = GoogleCredential.fromStream(
             context.assets.open("toffee-261507-c7793c98cdfd.json")
@@ -90,12 +93,13 @@ object PubSubMessageUtil {
         }
 
     private fun getPubSubMessage(notificationId: String?, messageStatus: PUBSUBMessageStatus): String {
-        val jObj = JsonObject();
-        jObj.addProperty("notificationId", notificationId);
-        jObj.addProperty("userId", SessionPreference.getInstance().customerId);
-        jObj.addProperty("messageStatus", messageStatus.ordinal);
-
+        val jObj = JsonObject().apply { 
+            addProperty("notificationId", notificationId)
+            addProperty("userId", SessionPreference.getInstance().customerId)
+            addProperty("messageStatus", messageStatus.ordinal)
+            addProperty("device_id", CommonPreference.getInstance().deviceId)
+        }
         Log.i(TAG, jObj.toString())
-        return jObj.toString();
+        return jObj.toString()
     }
 }

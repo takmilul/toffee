@@ -1,12 +1,17 @@
 package com.banglalink.toffee.ui.mychannel
 
+import android.app.DatePickerDialog
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.AdapterView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
@@ -15,11 +20,14 @@ import com.banglalink.toffee.data.network.request.MyChannelEditRequest
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.FragmentMyChannelEditDetailBinding
+import com.banglalink.toffee.enums.InputType
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.MyChannelDetail
+import com.banglalink.toffee.model.Payment
 import com.banglalink.toffee.model.Resource.Failure
 import com.banglalink.toffee.model.Resource.Success
+import com.banglalink.toffee.ui.profile.ViewProfileViewModel
 import com.banglalink.toffee.ui.upload.ThumbnailSelectionMethodFragment
 import com.banglalink.toffee.ui.widget.ToffeeSpinnerAdapter
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
@@ -27,24 +35,33 @@ import com.banglalink.toffee.util.BindingUtil
 import com.banglalink.toffee.util.UtilsKt
 import com.banglalink.toffee.util.imagePathToBase64
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MyChannelEditDetailFragment : Fragment(), OnClickListener {
-    @Inject lateinit var mPref: SessionPreference
-    @Inject lateinit var cacheManager: CacheManager
-    @Inject lateinit var bindingUtil: BindingUtil
     private var isPosterClicked = false
-    private var myChannelDetail: MyChannelDetail? = null
     private var newBannerUrl: String? = null
+    @Inject lateinit var bindingUtil: BindingUtil
+    @Inject lateinit var mPref: SessionPreference
     private var newProfileImageUrl: String? = null
+    @Inject lateinit var cacheManager: CacheManager
+    private var myChannelDetail: MyChannelDetail? = null
     private lateinit var progressDialog: VelBoxProgressDialog
     private var _binding: FragmentMyChannelEditDetailBinding ? = null
     private val binding get() = _binding!!
-
     @Inject lateinit var viewModelAssistedFactory: MyChannelEditDetailViewModel.AssistedFactory
+    private val profileViewModel by activityViewModels<ViewProfileViewModel>()
     private val viewModel by viewModels<MyChannelEditDetailViewModel> { MyChannelEditDetailViewModel.provideFactory(viewModelAssistedFactory, myChannelDetail) }
 
+    private var channelName = ""
+    private var userName = ""
+    private var userAddress = ""
+    private var userDOB = ""
+    private var userEmail=""
+    private var userNID=""
+    private var paymentPhoneNumber=""
+    
     companion object {
         fun newInstance(): MyChannelEditDetailFragment {
             return MyChannelEditDetailFragment()
@@ -55,31 +72,114 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         super.onCreate(savedInstanceState)
         progressDialog = VelBoxProgressDialog(requireContext())
         val args = MyChannelEditDetailFragmentArgs.fromBundle(requireArguments())
-        myChannelDetail = args.myChannelDetail
+        myChannelDetail = args.myChannelDetail ?: MyChannelDetail(0)
+        val profileForm = profileViewModel.profileForm.value
+        myChannelDetail?.apply { 
+            if (name.isNullOrBlank()) name = profileForm?.fullName
+            if (email.isNullOrBlank()) email = profileForm?.email
+            if (address.isNullOrBlank()) address = profileForm?.address
+            if (paymentPhoneNo.isNullOrBlank()) paymentPhoneNo = if (mPref.phoneNumber.length == 11) mPref.phoneNumber else mPref.phoneNumber.substring(3)
+        }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentMyChannelEditDetailBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
         return binding.root
     }
+    
     override fun onDestroyView() {
         binding.categorySpinner.adapter = null
+        binding.categoryPaymentSpinner.adapter = null
         super.onDestroyView()
         _binding = null
     }
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.container.setOnClickListener(this)
         progressDialog.show()
         observeEditChannel()
-        observeThumbnailChange()
         setupCategorySpinner()
+        observeThumbnailChange()
+        setupPaymentCategorySpinner()
+        binding.saveButton.safeClick(this)
+        binding.cancelButton.safeClick(this)
         binding.bannerEditButton.safeClick(this)
         binding.profileImageEditButton.safeClick(this)
-        binding.cancelButton.safeClick(this)
-        binding.saveButton.safeClick(this)
+        binding.dateOfBirthTv.safeClick ({ showDatePicker() })
+
+        channelNameWatcher()
+        channelDesWatcher()
+    }
+
+
+    private fun channelNameWatcher() {
+        binding.channelName.addTextChangedListener(object : TextWatcher {
+
+            override fun afterTextChanged(s: Editable?) {
+                val lenght = s.toString().length
+                binding.channelNameCountTv.text=lenght.toString()
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+        })
+    }
+
+    private fun channelDesWatcher()
+    {
+        binding.description.addTextChangedListener(object : TextWatcher {
+
+            override fun afterTextChanged(s: Editable?) {
+                val lenght = s.toString().length
+                binding.channelDesCountTv.text=lenght.toString()
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+        })
+    }
+
+
+    private fun setupPaymentCategorySpinner() {
+        val paymentCategoryAdapter = ToffeeSpinnerAdapter<Payment>(requireContext(), "Select Payment Option")
+        binding.categoryPaymentSpinner.adapter = paymentCategoryAdapter
+        binding.categoryPaymentSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                if(position != 0 && viewModel.selectedPaymentPosition.value != position) {
+                    viewModel.selectedPaymentMethod = viewModel.paymentMethodList.value?.get(position - 1)
+                    viewModel.selectedPaymentPosition.value = position
+                }
+                else {
+                    binding.categoryPaymentSpinner.setSelection(viewModel.selectedPaymentPosition.value ?: 0)
+                }
+                binding.container.requestFocus()
+                UtilsKt.hideSoftKeyboard(requireActivity())
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
+        observe(viewModel.paymentMethodList) { paymentMethodList ->
+            progressDialog.dismiss()
+            if(!paymentMethodList.isNullOrEmpty()) {
+                paymentCategoryAdapter.setData(paymentMethodList)
+                viewModel.selectedPaymentMethod = paymentMethodList.find { it.id == myChannelDetail?.paymentMethodId }
+                viewModel.selectedPaymentPosition.value = paymentMethodList.indexOf(viewModel.selectedPaymentMethod) + 1
+            }
+        }
+
+        observe(viewModel.selectedPaymentPosition) {
+            paymentCategoryAdapter.selectedItemPosition = it
+            binding.categoryPaymentSpinner.setSelection(it)
+        }
     }
 
     private fun setupCategorySpinner() {
@@ -90,26 +190,22 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                 if(position != 0 && viewModel.selectedCategoryPosition.value != position) {
                     viewModel.selectedCategory = viewModel.categoryList.value?.get(position-1)
                     viewModel.selectedCategoryPosition.value = position
-                }
-                else {
+                } else {
                     binding.categorySpinner.setSelection(viewModel.selectedCategoryPosition.value ?: 1)
                 }
+                binding.nameEt.requestFocus()
+                binding.nameEt.setSelection(binding.nameEt.length())
             }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-
-            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
         observe(viewModel.categoryList) { categories ->
-            progressDialog.dismiss()
             if(!categories.isNullOrEmpty()) {
                 categoryAdapter.setData(categories)
                 viewModel.selectedCategory =
                     categories.find { it.id == myChannelDetail?.categoryId } ?: categories.first()
                 viewModel.selectedCategoryPosition.value =
-                    (categories.indexOf(categories.find { it.id == myChannelDetail?.categoryId })
-                        .takeIf { it > 0 } ?: 0) + 1
+                    (categories.indexOf(viewModel.selectedCategory).takeIf { it > 0 } ?: 0) + 1
             }
         }
 
@@ -149,9 +245,19 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             requireContext().showToast("Unable to load data!")
             findNavController().popBackStack()
         }
+        
         observe(viewModel.editDetailLiveData) {
             when (it) {
                 is Success -> {
+                    mPref.isChannelDetailChecked = true
+                    mPref.channelLogo = newProfileImageUrl ?: (myChannelDetail?.profileUrl ?: "")
+                    mPref.channelName = channelName
+                    mPref.customerName = userName
+                    mPref.customerEmail = userEmail
+                    mPref.customerAddress = userAddress
+                    mPref.customerDOB = userDOB
+                    mPref.customerNID = userNID
+
                     binding.saveButton.isClickable = true
                     progressDialog.dismiss()
                     cacheManager.clearCacheByUrl(GET_MY_CHANNEL_DETAILS)
@@ -228,36 +334,147 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             profileImageBase64 = null
         }
 
-        val channelName = binding.channelName.text.toString().trim()
+        channelName = binding.channelName.text.toString().trim()
         val description = binding.description.text.toString().trim()
         val isChannelLogoAvailable= !myChannelDetail?.profileUrl.isNullOrEmpty() or !profileImageBase64.isNullOrEmpty()
+
+         userName = binding.nameEt.text.toString().trim()
+         userAddress = binding.addressEt.text.toString().trim()
+         userDOB = binding.dateOfBirthTv.text.toString().trim()
+         userEmail=binding.emailEt.text.toString().trim()
+         userNID=binding.nidEt.text.toString().trim()
+         paymentPhoneNumber=binding.paymentPhoneNumberEditText.text.toString().trim()
         
         if (channelName.isNotBlank()) {
-
-            binding.saveButton.isClickable = true
-            progressDialog.dismiss()
             binding.channelName.setBackgroundResource(R.drawable.single_line_input_text_bg)
             binding.errorChannelNameTv.hide()
-        }
-        else {
-            binding.saveButton.isClickable = true
-            progressDialog.dismiss()
+        } else {
             binding.channelName.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
             binding.errorChannelNameTv.show()
-            //   binding.errorDescriptionTv.hide()
         }
         if (isChannelLogoAvailable) {
-            binding.saveButton.isClickable = true
-            progressDialog.dismiss()
             binding.errorThumTv.hide()
-        }
-        else {
+        } else {
             binding.saveButton.isClickable = true
-            progressDialog.dismiss()
             binding.errorThumTv.show()
         }
+        
+        if (userName.isBlank()) {
+            binding.errorNameTv.show()
+        } else {
+            binding.errorNameTv.hide()
+        }
 
-        if(channelName.isNotBlank() and isChannelLogoAvailable){
+        if (userAddress.isBlank()) {
+            binding.errorAddressTv.show()
+        } else {
+            binding.errorAddressTv.hide()
+        }
+    
+        val isDobValid =validateDOB()
+        
+        val notValidEmail = userEmail.isNotBlank() and !userEmail.isValid(InputType.EMAIL)
+
+        if (userEmail.isBlank()) {
+            binding.errorEmailTv.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.pink_to_accent_color
+                )
+            )
+            binding.errorEmailTv.text = getString(R.string.email_null_error_text)
+        }
+
+        if (notValidEmail) {
+            binding.errorEmailTv.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.pink_to_accent_color
+                )
+            )
+            binding.errorEmailTv.text = getString(R.string.email_error_text)
+        } else{
+            binding.errorEmailTv.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.main_text_color
+                )
+            )
+            binding.errorEmailTv.text = getString(R.string.verification_email_sent)
+        }
+
+        var validNID =false
+        if (userNID.isBlank()) {
+            binding.nidErrorTv.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.pink_to_accent_color
+                )
+            )
+            binding.nidErrorTv.text = getString(R.string.nid_null_error_text)
+        } else{
+            val nidLength = userNID.length
+            validNID = nidLength == 10 || nidLength == 13 || nidLength == 17
+            if (!validNID) {
+                binding.nidErrorTv.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.pink_to_accent_color
+                    )
+                )
+                binding.nidErrorTv.text = getString(R.string.invalid_nid_number)
+            } else{
+                binding.nidErrorTv.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.main_text_color
+                    )
+                )
+                binding.nidErrorTv.text = getString(R.string.your_nid_must_match)
+            }
+        }
+        
+        /*if(viewModel.selectedPaymentMethod?.id?:0 > 0) {
+            binding.errorPaymentOption.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.main_text_color
+                )
+            )
+            binding.errorPaymentOption.text = getString(R.string.this_account_will_be_used_to_send_payment)
+        } else{
+            binding.errorPaymentOption.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.pink_to_accent_color
+                )
+            )
+            binding.errorPaymentOption.text = getString(R.string.payment_option_required)
+        }*/
+
+        if (paymentPhoneNumber.isBlank() || paymentPhoneNumber.length!=11) {
+            binding.errorNumberTv.show()
+        } else {
+            binding.errorNumberTv.hide()
+        }
+    
+        if(channelName.isNotBlank() and isChannelLogoAvailable
+            && userName.isNotBlank()
+            && !notValidEmail
+            && userAddress.isNotBlank()
+            && isDobValid
+            && userNID.isNotBlank()
+            && paymentPhoneNumber.isNotBlank()
+//            && viewModel.selectedPaymentMethod?.id?:0 > 0
+            && paymentPhoneNumber.length==11
+            && validNID){
+
+            if (paymentPhoneNumber.startsWith("0")) {
+                paymentPhoneNumber = "+88$paymentPhoneNumber"
+            }
+
+            val selectedDate=UtilsKt.dateToStr(UtilsKt.strToDate(binding.dateOfBirthTv.text.toString(),"dd/MM/yyyy"),"yyyy-MM-dd")
+
             val ugcEditMyChannelRequest = MyChannelEditRequest(
                 mPref.customerId,
                 mPref.password,
@@ -268,13 +485,63 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                 myChannelDetail?.bannerUrl ?: "NULL",
                 bannerBase64 ?: "NULL",
                 myChannelDetail?.profileUrl ?: "NULL",
-                profileImageBase64 ?: "NULL"
+                profileImageBase64 ?: "NULL",
+                userName,
+                userEmail,
+                userAddress,
+                selectedDate ?: "",
+                userNID,
+                paymentPhoneNumber,
+                viewModel.selectedPaymentMethod?.id?.toInt() ?: 0,
+                !myChannelDetail?.nationalIdNo.isNullOrBlank(),
+                !(myChannelDetail?.channelName.isNullOrBlank() && myChannelDetail?.profileUrl.isNullOrBlank())
             )
-
             viewModel.editChannel(ugcEditMyChannelRequest)
         }
+        else {
+            progressDialog.dismiss()
+            binding.saveButton.isClickable = true
+        }
     }
-    
+
+    private fun validateDOB(): Boolean {
+        var isDobValid = false
+        if (binding.dateOfBirthTv.text.isBlank()) {
+            binding.errorDateTv.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.pink_to_accent_color
+                )
+            )
+            binding.errorDateTv.text = getString(R.string.date_error_text)
+        } else {
+            val date =UtilsKt.strToDate(binding.dateOfBirthTv.text.toString(),"dd/MM/yyyy") ?: Date()
+            val userAge= ageCalculate(date)
+
+            if (userAge < 18) {
+                binding.errorDateTv.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.pink_to_accent_color
+                    )
+                )
+                binding.errorDateTv.text = getString(R.string.Date_of_birth_must_be_match)
+            }
+            else {
+                isDobValid = true
+                binding.errorDateTv.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.main_text_color
+                    )
+                )
+                binding.errorDateTv.text = getString(R.string.Date_of_birth_must_be_match)
+            }
+        }
+
+        return isDobValid
+    }
+
     /*private fun convertImageFileToBase64(imageFile: File): String {
         return FileInputStream(imageFile).use { inputStream ->
             ByteArrayOutputStream().use { outputStream ->
@@ -286,4 +553,41 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             }
         }
     }*/
+    
+    private fun showDatePicker() {
+        binding.emailEt.requestFocus()
+        binding.emailEt.setSelection(binding.emailEt.length())
+        val date = UtilsKt.strToDate(binding.dateOfBirthTv.text.toString(),"dd/MM/yyyy") ?: Date()
+        val calendar = Calendar.getInstance()
+        calendar.time = date
+        val datePickerDialog = DatePickerDialog(requireContext(),
+            { view, year, monthOfYear, dayOfMonth ->
+                val calendarTwo=Calendar.getInstance()
+                calendarTwo.set(year, monthOfYear, dayOfMonth)
+                binding.dateOfBirthTv.text = UtilsKt.dateToStr(calendarTwo.time,"dd/MM/yyyy")
+                validateDOB()
+            },
+            calendar[Calendar.YEAR],
+            calendar[Calendar.MONTH],
+            calendar[Calendar.DAY_OF_MONTH]
+        )
+        datePickerDialog.show()
+        datePickerDialog.apply {
+            datePicker.maxDate = System.currentTimeMillis()
+            val buttonColor = ContextCompat.getColor(requireContext(), R.color.main_text_color)
+            getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(buttonColor)
+            getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(buttonColor)
+        }
+    }
+
+    private fun ageCalculate( date :Date):Int {
+        val dob = Calendar.getInstance()
+        dob.time=date
+        val today = Calendar.getInstance()
+        var userAge = today[Calendar.YEAR] - dob[Calendar.YEAR]
+        if (today[Calendar.MONTH] <= dob[Calendar.MONTH] && today[Calendar.DAY_OF_YEAR] < dob[Calendar.DAY_OF_YEAR]) {
+            userAge--
+        }
+        return userAge
+    }
 }

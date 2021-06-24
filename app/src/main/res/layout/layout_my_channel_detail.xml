@@ -6,6 +6,7 @@
     
     <data>
         <import type="android.view.View"/>
+        <import type="com.banglalink.toffee.util.Utils"/>
         <variable
             name="isOwner"
             type="Boolean" />
@@ -52,7 +53,7 @@
             android:layout_height="80dp"
             android:elevation="2dp"
             android:contentDescription="@string/txt_profile_image"
-            tools:src="@drawable/ic_profile_default"
+            tools:src="@drawable/ic_menu_profile"
             loadImageFromUrlRounded="@{data.myChannelDetail.profileUrl}"
             app:layout_constraintBottom_toBottomOf="@+id/posterView"
             app:layout_constraintEnd_toEndOf="parent"
@@ -140,7 +141,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:text="@{String.valueOf(subscriberCount)}"
+            android:text="@{Utils.getFormattedViewsText(String.valueOf(subscriberCount))}"
             android:textColor="@color/fixed_second_text_color"
             tools:text="565K"
             android:fontFamily="@font/roboto_regular"

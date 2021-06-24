@@ -1,9 +1,7 @@
 package com.banglalink.toffee.data.storage
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
-import android.provider.Settings
 import android.text.TextUtils
 import androidx.core.content.edit
 import androidx.lifecycle.MutableLiveData
@@ -20,35 +18,46 @@ import java.util.*
 
 const val PREF_NAME_IP_TV= "IP_TV"
 
-@SuppressLint("HardwareIds")
 class SessionPreference(private val pref: SharedPreferences, private val context: Context) {
-
-    val viewCountDbUrlLiveData = MutableLiveData<String>()
-    val reactionDbUrlLiveData = MutableLiveData<String>()
-    val reactionStatusDbUrlLiveData = MutableLiveData<String>()
-    val subscribeDbUrlLiveData = MutableLiveData<String>()
-    val subscriberStatusDbUrlLiveData = MutableLiveData<String>()
-    val shareCountDbUrlLiveData = MutableLiveData<String>()
+    
+    val viewCountDbUrlLiveData = SingleLiveEvent<String>()
+    val reactionDbUrlLiveData = SingleLiveEvent<String>()
+    val reactionStatusDbUrlLiveData = SingleLiveEvent<String>()
+    val subscribeDbUrlLiveData = SingleLiveEvent<String>()
+    val subscriberStatusDbUrlLiveData = SingleLiveEvent<String>()
+    val shareCountDbUrlLiveData = SingleLiveEvent<String>()
     val sessionTokenLiveData = MutableLiveData<String>()
     val profileImageUrlLiveData = MutableLiveData<String>()
     val customerNameLiveData = MutableLiveData<String>()
     val playerOverlayLiveData = SingleLiveEvent<PlayerOverlayData>()
     val forceLogoutUserLiveData = SingleLiveEvent<Boolean>()
-
-    val deviceId: String by lazy {
-        Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
-    }
-
+    
     var phoneNumber: String
         get() = pref.getString(PREF_PHONE_NUMBER, "") ?: ""
-        set(phoneNumber) = pref.edit{ putString(PREF_PHONE_NUMBER, phoneNumber) }
-
+        set(phoneNumber) = pref.edit { putString(PREF_PHONE_NUMBER, phoneNumber) }
+    
     var customerName: String
         get() = pref.getString(PREF_CUSTOMER_NAME, "") ?: ""
         set(customerName) {
             customerNameLiveData.postValue(customerName)
-            pref.edit{ putString(PREF_CUSTOMER_NAME, customerName) }
+            pref.edit { putString(PREF_CUSTOMER_NAME, customerName) }
         }
+    
+    var customerEmail: String
+        get() = pref.getString(PREF_CUSTOMER_EMAIL, "") ?: ""
+        set(email) = pref.edit { putString(PREF_CUSTOMER_EMAIL, email) }
+
+    var customerAddress: String
+        get() = pref.getString(PREF_CUSTOMER_ADDRESS, "") ?: ""
+        set(address) = pref.edit{ putString(PREF_CUSTOMER_ADDRESS, address) }
+
+    var customerDOB: String
+        get() = pref.getString(PREF_CUSTOMER_DOB, "") ?: ""
+        set(dob) = pref.edit{ putString(PREF_CUSTOMER_DOB, dob) }
+
+    var customerNID: String
+        get() = pref.getString(PREF_CUSTOMER_NID, "") ?: ""
+        set(nidNumber) = pref.edit{ putString(PREF_CUSTOMER_NID, nidNumber) }
 
     var customerId: Int
         get() = pref.getInt(PREF_CUSTOMER_ID, 0)
@@ -84,12 +93,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             pref.edit().putBoolean(PREF_VERFICATION,isVerified).apply()
         }
     
-    var logout:String
-        get() = pref.getString(PREF_LOGOUT,"0")?: ""
-        set(logout){
-            pref.edit().putString(PREF_LOGOUT,logout).apply()
-        }
-
     var balance: Int
         get() = pref.getInt(PREF_BALANCE, 0)
         set(balance) {
@@ -201,14 +204,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getBoolean(PREF_IS_CHANNEL_DETAIL_CHECKED, false)
         set(value) = pref.edit().putBoolean(PREF_IS_CHANNEL_DETAIL_CHECKED, value).apply()
     
-    fun hasChannelLogo(): Boolean{
-        return channelLogo.isNotBlank()
-    }
-    
-    fun hasChannelName(): Boolean{
-        return channelName.isNotBlank()
-    }
-    
     fun setSystemTime(systemTime: String) {
         pref.edit().putString(PREF_SYSTEM_TIME, systemTime).apply()
     }
@@ -276,7 +271,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     }
 
     fun defaultDataQuality(): Boolean {
-        return pref.getBoolean(PREF_DEFAULT_DATA_QUALITY_2, false)
+        return pref.getBoolean(PREF_DEFAULT_DATA_QUALITY_2, true)
     }
 
     fun setDefaultDataQuality(value: Boolean) {
@@ -302,6 +297,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var shouldOverrideHlsUrl: Boolean
         get() = pref.getBoolean(PREF_SHOULD_OVERRIDE, true)
         set(value) = pref.edit{ putBoolean(PREF_SHOULD_OVERRIDE, value) }
+    
+    var isAllTvChannelMenuEnabled: Boolean
+        get() = pref.getBoolean(PREF_ALL_TV_CHANNEL_MENU, false)
+        set(value) = pref.edit{ putBoolean(PREF_ALL_TV_CHANNEL_MENU, value) }
     
     fun setSessionTokenLifeSpanInMillis(tokenLifeSpanInMillis: Long) {
         pref.edit().putLong(PREF_DEVICE_TIME_IN_MILLISECONDS, System.currentTimeMillis()).apply()
@@ -381,9 +380,9 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             }
         }
     
-    var keepVideoAspectRatio: Boolean
-        get() = pref.getBoolean(PREF_KEEP_ASPECT_RATIO, true)
-        set(value) = pref.edit{ putBoolean(PREF_KEEP_ASPECT_RATIO, value) }
+    var keepAspectRatio: Boolean
+        get() = !pref.getBoolean(PREF_KEEP_ASPECT_RATIO, true)
+        set(value) = pref.edit{ putBoolean(PREF_KEEP_ASPECT_RATIO, !value) }
 
     var uploadStatus: Int
         get() = pref.getInt(PREF_TOFFEE_UPLOAD_STATUS, -1)
@@ -477,9 +476,20 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getString(PREF_YOUTUBE_PAGE_URL, "") ?: ""
         set(value) = pref.edit { putString(PREF_YOUTUBE_PAGE_URL, value) }
     
+    var geoCity: String
+        get() = pref.getString(PREF_GEO_CITY, "") ?: ""
+        set(value) = pref.edit { putString(PREF_GEO_CITY, value) }
+    
+    var geoLocation: String
+        get() = pref.getString(PREF_GEO_LOCATION, "") ?: ""
+        set(value) = pref.edit { putString(PREF_GEO_LOCATION, value) }
+    
+    var userIp: String
+        get() = pref.getString(PREF_USER_IP, "") ?: ""
+        set(value) = pref.edit { putString(PREF_USER_IP, value) }
+    
     fun saveCustomerInfo(customerInfoLogin:CustomerInfoLogin){
         balance = customerInfoLogin.balance
-        logout = "0"
         isVerifiedUser = customerInfoLogin.verified_status
         customerId = customerInfoLogin.customerId
         password = customerInfoLogin.password?:""
@@ -509,6 +519,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         subscribeDbUrl = customerInfoLogin.subscribeDbUrl ?: ""
         subscriberStatusDbUrl = customerInfoLogin.subscriberStatusDbUrl ?: ""
         shareCountDbUrl = customerInfoLogin.shareCountDbUrl ?: ""
+        isAllTvChannelMenuEnabled = customerInfoLogin.isAllTvChannelsMenuEnabled
         isFireworkActive = customerInfoLogin.isFireworkActive ?: "true"
         mqttHost = customerInfoLogin.mqttUrl?.let { EncryptionUtil.encryptRequest(it) } ?: ""
         mqttIsActive = customerInfoLogin.mqttIsActive == 1
@@ -526,11 +537,19 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         facebookPageUrl = customerInfoLogin.facebookPageUrl
         instagramPageUrl = customerInfoLogin.instagramPageUrl
         youtubePageUrl = customerInfoLogin.youtubePageUrl
+        
+        geoCity = customerInfoLogin.geoCity ?: ""
+        geoLocation = customerInfoLogin.geoLocation ?: ""
+        userIp = customerInfoLogin.userIp ?: ""
     }
 
     companion object {
         private const val PREF_PHONE_NUMBER = "p_number"
         private const val PREF_CUSTOMER_NAME = "customer_name"
+        private const val PREF_CUSTOMER_EMAIL = "customer_email"
+        private const val PREF_CUSTOMER_ADDRESS = "customer_address"
+        private const val PREF_CUSTOMER_DOB = "customer_dob"
+        private const val PREF_CUSTOMER_NID = "customer_nid"
         private const val PREF_CUSTOMER_ID = "customer_id"
         private const val PREF_PASSWORD = "passwd"
         private const val PREF_CHANNEL_ID = "channel_id"
@@ -563,6 +582,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_SESSION_TOKEN_HEADER= "sessionTokenHeader"
         private const val PREF_HLS_OVERRIDE_URL= "hlsOverrideUrl"
         private const val PREF_SHOULD_OVERRIDE= "shouldOverride"
+        private const val PREF_ALL_TV_CHANNEL_MENU= "isAllTvChannelMenuEnabled"
         private const val PREF_DEVICE_TIME_IN_MILLISECONDS= "deviceTimeInMillis"
         private const val PREF_TOKEN_LIFE_SPAN= "tokenLifeSpan"
         private const val PREF_VIEW_COUNT_DB_URL= "viewCountDbUrl"
@@ -598,6 +618,9 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_FACEBOOK_PAGE_URL = "facebook_page_url"
         private const val PREF_INSTAGRAM_PAGE_URL = "instagram_page_url"
         private const val PREF_YOUTUBE_PAGE_URL = "youtube_page_url"
+        private const val PREF_GEO_CITY = "geo_city"
+        private const val PREF_GEO_LOCATION = "geo_location"
+        private const val PREF_USER_IP = "user_ip"
 
         private const val PREF_NAME_IP_TV= "IP_TV"
 

@@ -1,10 +1,13 @@
 package com.banglalink.toffee.ui.landing
 
+import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.forEach
 import androidx.core.view.isVisible
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -15,10 +18,8 @@ import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentLandingUserChannelsBinding
-import com.banglalink.toffee.extension.checkVerification
-import com.banglalink.toffee.extension.observe
-import com.banglalink.toffee.extension.showLoadingAnimation
-import com.banglalink.toffee.extension.showToast
+import com.banglalink.toffee.databinding.PlaceholderUserChannelsBinding
+import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.listeners.LandingPopularChannelCallback
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.MyChannelNavParams
@@ -67,9 +68,22 @@ class LandingUserChannelsFragment : HomeBaseFragment(), LandingPopularChannelCal
         binding.viewAllButton.setOnClickListener {
             parentFragment?.findNavController()?.navigate(R.id.trendingChannelsFragment)
         }
-
+    
+        with(binding.placeholder) {
+            val calculatedSize = (Resources.getSystem().displayMetrics.widthPixels - (16.px * 4)) / 3.5    // 16dp margin
+            this.forEach { placeholderView ->
+                val binder = DataBindingUtil.bind<PlaceholderUserChannelsBinding>(placeholderView)
+                binder?.let {
+                    it.container.layoutParams.width = calculatedSize.toInt()
+                    it.iconHolder.layoutParams.apply {
+                        width = calculatedSize.toInt() - 16
+                        height = calculatedSize.toInt() - 16
+                    }
+                }
+            }
+        }
+    
         with(binding.userChannelList) {
-
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 mAdapter.loadStateFlow.collectLatest {
                     val isLoading = it.source.refresh is LoadState.Loading || !isInitialized

@@ -1,0 +1,16 @@
+<vector android:height="22.4dp" android:viewportHeight="84"
+    android:viewportWidth="90" android:width="24dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:fillColor="@color/cardTitleColor"
+        android:pathData="M60.857,79L29.142,79A24.169,24.169 0,0 1,4.997 54.857L4.997,29.143A24.169,24.169 0,0 1,29.142 5L60.857,5A24.17,24.17 0,0 1,84.997 29.143L84.997,54.857A24.17,24.17 0,0 1,60.857 79ZM29.142,11A18.163,18.163 0,0 0,10.997 29.143L10.997,54.857A18.163,18.163 0,0 0,29.142 73L60.857,73A18.164,18.164 0,0 0,78.997 54.857L78.997,29.143A18.164,18.164 0,0 0,60.857 11Z"
+        android:strokeColor="#00FF0000" android:strokeWidth="10"/>
+    <path android:fillColor="#00000000"
+        android:pathData="M47.329,34.498L65.947,34.498"
+        android:strokeColor="@color/cardTitleColor" android:strokeLineCap="round" android:strokeWidth="8"/>
+    <path android:fillColor="#00000000"
+        android:pathData="M24.496,55.498L65.947,55.498"
+        android:strokeColor="@color/cardTitleColor" android:strokeLineCap="round" android:strokeWidth="8"/>
+    <path android:fillColor="@color/cardTitleColor"
+        android:pathData="M27.996,26.998L27.996,26.998A8,8 0,0 1,35.996 34.998L35.996,34.998A8,8 0,0 1,27.996 42.998L27.996,42.998A8,8 0,0 1,19.996 34.998L19.996,34.998A8,8 0,0 1,27.996 26.998z"
+        android:strokeColor="#00FF0000" android:strokeWidth="10"/>
+</vector>

@@ -31,6 +31,9 @@ import javax.inject.Singleton
 annotation class EncryptedHttpClient
 
 @Qualifier
+annotation class SimpleHttpClient
+
+@Qualifier
 annotation class DefaultCache
 
 @Qualifier
@@ -83,12 +86,19 @@ object NetworkModule {
         return retrofit.create(ToffeeApi::class.java)
     }
 
+    @Provides
+    @Singleton
+    @SimpleHttpClient
+    fun providesSimpleHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder().build()
+    }
+
     @DbRetrofit
     @Singleton
     @Provides
-    fun providesDbRetrofit(): Retrofit {
+    fun providesDbRetrofit(@SimpleHttpClient httpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .client(OkHttpClient.Builder().build())
+            .client(httpClient)
             .baseUrl("https://real-db.toffeelive.com/")
             .build()
     }

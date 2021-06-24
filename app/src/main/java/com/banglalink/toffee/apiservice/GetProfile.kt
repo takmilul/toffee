@@ -22,9 +22,6 @@ class GetProfile @Inject constructor(
         }
         preference.userImageUrl = response.response.customer.profile.photoUrl ?: ""
         preference.balance = response.response.balance
-        response.response.customer.profile.name?.let {
-            preference.customerName = it
-        }
         return response.response.customer
     }
 }

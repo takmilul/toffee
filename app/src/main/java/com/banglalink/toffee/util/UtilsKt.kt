@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.provider.OpenableColumns
+import android.provider.Settings
 import android.util.Base64
 import android.util.Log
 import android.view.inputmethod.InputMethodManager
@@ -20,6 +21,10 @@ import coil.imageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
 import java.io.*
+import java.text.DateFormat
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -109,7 +114,7 @@ object UtilsKt {
                 mmr.setDataSource(filePath)
             }
             val bmp = mmr.frameAtTime
-            val isHorizontal = if(bmp.width >= bmp.height) 1 else 0
+            val isHorizontal = if(bmp.width > bmp.height) 1 else 0
 
             val scaledBmp = resizeBitmap(bmp, 1280, 720)
             val byteArrayOutputStream = ByteArrayOutputStream()
@@ -200,6 +205,39 @@ object UtilsKt {
         val maxHeight = maxWidth * 9 / 16
         return Point(maxWidth, maxHeight)
     }
+
+    fun isSystemRotationOn(ctx: Context) = Settings.System.getInt(ctx.contentResolver,
+        Settings.System.ACCELEROMETER_ROTATION, 0) == 1
+
+    fun strToDate(dateTime: String?, dateFormate: String = "yyyy-MM-d HH:mm:ss"):Date? {
+
+        val df: DateFormat = SimpleDateFormat(dateFormate)
+        try {
+            if (dateTime != null) {
+                return df.parse(dateTime)
+            }
+        } catch (e: ParseException) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
+
+    fun dateToStr(dateTime: Date?, dateFormate: String = "dd/MM/yyyy"):String? {
+
+        val formater: DateFormat = SimpleDateFormat(dateFormate)
+
+        try {
+            if (dateTime != null) {
+                return formater.format(dateTime)
+            }
+        } catch (e: ParseException) {
+            e.printStackTrace()
+        }
+
+        return null
+    }
+
 }
 
 

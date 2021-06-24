@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -42,20 +43,20 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class NewUploadMethodFragment : DialogFragment() {
     
-    @Inject lateinit var mpref: SessionPreference
-    @Inject lateinit var mUploadInfoRepository: UploadInfoRepository
-    private val homeViewModel by activityViewModels<HomeViewModel>()
     private var videoUri: Uri? = null
     private var alertDialog: AlertDialog? = null
+    @Inject lateinit var mpref: SessionPreference
     private var _binding: FragmentNewUploadMethodBinding ? = null
     private val binding get() = _binding!!
+    @Inject lateinit var mUploadInfoRepository: UploadInfoRepository
+    private val homeViewModel by activityViewModels<HomeViewModel>()
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         _binding = FragmentNewUploadMethodBinding.inflate(layoutInflater)
         binding.myChannelButton.setOnClickListener {
             openMyChannelFragment()
         }
-        binding.imageView11.setOnClickListener {
+        binding.closeButton.setOnClickListener {
             findNavController().popBackStack()
         }
         binding.openCameraButton.setOnClickListener {
@@ -72,10 +73,12 @@ class NewUploadMethodFragment : DialogFragment() {
             }
         return alertDialog!!
     }
+    
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+    
     private fun checkFileSystemPermission() {
         lifecycleScope.launch {
             try {
@@ -88,6 +91,14 @@ class NewUploadMethodFragment : DialogFragment() {
             }
             catch (e: NoActivityException){
                 ToffeeAnalytics.logBreadCrumb("Activity Not Found - filesystem(gallery)")
+                requireContext().showToast(getString(R.string.no_activity_msg))
+            }
+            catch (e: ActivityNotFoundException){
+                ToffeeAnalytics.logBreadCrumb("Activity Not Found - filesystem(gallery)")
+                requireContext().showToast(getString(R.string.no_activity_msg))
+            }
+            catch (e: Exception) {
+                ToffeeAnalytics.logBreadCrumb(e.message ?: "")
                 requireContext().showToast(getString(R.string.no_activity_msg))
             }
         }
@@ -105,6 +116,14 @@ class NewUploadMethodFragment : DialogFragment() {
             }
             catch (e: NoActivityException){
                 ToffeeAnalytics.logBreadCrumb("Activity Not Found - filesystem(camera)")
+                requireContext().showToast(getString(R.string.no_activity_msg))
+            }
+            catch (e: ActivityNotFoundException){
+                ToffeeAnalytics.logBreadCrumb("Activity Not Found - filesystem(camera)")
+                requireContext().showToast(getString(R.string.no_activity_msg))
+            }
+            catch (e: Exception) {
+                ToffeeAnalytics.logBreadCrumb(e.message ?: "")
                 requireContext().showToast(getString(R.string.no_activity_msg))
             }
         }

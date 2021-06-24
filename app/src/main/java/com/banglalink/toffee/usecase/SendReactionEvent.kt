@@ -1,6 +1,7 @@
 package com.banglalink.toffee.usecase
 
 import com.banglalink.toffee.data.database.entities.ReactionInfo
+import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.mqttservice.ToffeeMqttService
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.notification.REACTION_TOPIC
@@ -63,6 +64,8 @@ data class ReactionData(
     val reactionType: Int,
     @SerializedName("reaction_status")
     val reactionStatus: Int,
+    @SerializedName("device_id")
+    val deviceId: String = CommonPreference.getInstance().deviceId,
     @SerializedName("reaction_time")
     val reactionTime: String
 )

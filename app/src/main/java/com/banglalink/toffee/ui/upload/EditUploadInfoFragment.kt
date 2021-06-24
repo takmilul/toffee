@@ -1,13 +1,20 @@
 package com.banglalink.toffee.ui.upload
 
+import android.Manifest
+import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
 import android.text.InputType
+import android.text.TextWatcher
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.setPadding
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -15,6 +22,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.FragmentEditUploadInfoBinding
 import com.banglalink.toffee.di.AppCoroutineScope
@@ -27,6 +35,9 @@ import com.banglalink.toffee.ui.widget.ToffeeSpinnerAdapter
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.UtilsKt
+import com.github.florent37.runtimepermission.kotlin.NoActivityException
+import com.github.florent37.runtimepermission.kotlin.PermissionException
+import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.askPermission
 import com.pchmn.materialchips.ChipsInput
 import com.pchmn.materialchips.model.ChipInterface
 import dagger.hilt.android.AndroidEntryPoint
@@ -77,22 +88,13 @@ class EditUploadInfoFragment: BaseFragment() {
         })
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentEditUploadInfoBinding.inflate(
-            inflater,
-            container,
-            false
-        )
-
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentEditUploadInfoBinding.inflate(inflater, container, false)
         binding.setVariable(BR.viewmodel, viewModel)
         binding.lifecycleOwner = this
-
         return binding.root
     }
+    
     override fun onDestroyView() {
         viewModel.tags.value = binding.uploadTags.selectedChipList.joinToString(" | ") { it.label }
         binding.unbind()
@@ -109,7 +111,6 @@ class EditUploadInfoFragment: BaseFragment() {
         binding.container.setOnClickListener {
             UtilsKt.hideSoftKeyboard(requireActivity())
         }
-
         binding.cancelButton.setOnClickListener {
             VelBoxAlertDialogBuilder(requireContext()).apply {
                 setTitle("Cancel Uploading")
@@ -139,11 +140,15 @@ class EditUploadInfoFragment: BaseFragment() {
                 findNavController().navigate(action)
             }
         }
-
+        binding.copyrightLayout.uploadFileButton.safeClick({checkFileSystemPermission()})
+        binding.copyrightLayout.closeIv.safeClick({
+            it.hide()
+            viewModel.copyrightFileName.value = null
+            binding.copyrightLayout.uploadFileButton.show()
+        })
         setupCategorySpinner()
         setupSubcategorySpinner()
         setupAgeSpinner()
-
         setupTagView()
         observeStatus()
 //        observeUpload()
@@ -151,10 +156,85 @@ class EditUploadInfoFragment: BaseFragment() {
         observeThumbnailLoad()
         observeThumbnailChange()
         observeVideoDuration()
-
         observeExitFragment()
-
+    
+        binding.uploadTags.clearFocus()
         binding.uploadTitle.requestFocus()
+
+        titleWatcher()
+        descriptionDesWatcher()
+    }
+
+
+    private fun titleWatcher() {
+        binding.uploadTitle.addTextChangedListener(object : TextWatcher {
+
+            override fun afterTextChanged(s: Editable?) {
+                val lenght = s.toString().length
+                binding.uploadTitleCountTv.text=lenght.toString()
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+        })
+    }
+
+    private fun descriptionDesWatcher()
+    {
+        binding.uploadDescription.addTextChangedListener(object : TextWatcher {
+
+            override fun afterTextChanged(s: Editable?) {
+                val lenght = s.toString().length
+                binding.uploadDesCountTv.text=lenght.toString()
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+        })
+    }
+
+
+    
+    private fun checkFileSystemPermission() {
+        lifecycleScope.launch {
+            try {
+                if (askPermission(Manifest.permission.READ_EXTERNAL_STORAGE).isAccepted) {
+                    var chooseFile = Intent(Intent.ACTION_GET_CONTENT)
+                    chooseFile.type = "*/*"
+                    chooseFile = Intent.createChooser(chooseFile, "Choose a file")
+                    fileResultLauncher.launch(chooseFile)
+                }
+            } catch (e: PermissionException) {
+                ToffeeAnalytics.logBreadCrumb("Storage permission denied")
+                requireContext().showToast(getString(R.string.grant_storage_permission))
+            } catch (e: NoActivityException){
+                ToffeeAnalytics.logBreadCrumb("Activity Not Found - filesystem(gallery)")
+                requireContext().showToast(getString(R.string.no_activity_msg))
+            } catch (e: ActivityNotFoundException){
+                ToffeeAnalytics.logBreadCrumb("Activity Not Found - filesystem(gallery)")
+                requireContext().showToast(getString(R.string.no_activity_msg))
+            } catch (e: Exception) {
+                ToffeeAnalytics.logBreadCrumb(e.message ?: "")
+                requireContext().showToast(getString(R.string.no_activity_msg))
+            }
+        }
+    }
+    
+    private val fileResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (it.resultCode == Activity.RESULT_OK && it.data != null && it.data?.data != null) {
+            val uri = it.data!!.data!!
+            lifecycleScope.launch { viewModel.loadCopyrightFileName(uri) }
+            binding.copyrightLayout.uploadFileButton.hide()
+            binding.copyrightLayout.closeIv.show()
+        } else {
+            ToffeeAnalytics.logBreadCrumb("Camera/video picker returned without any data")
+        }
     }
 
     private fun observeExitFragment() {
@@ -412,7 +492,7 @@ class EditUploadInfoFragment: BaseFragment() {
                     subCategoryObj.id
                 } else -1
 
-                val tags = binding.uploadTags.selectedChipList.joinToString(" | ") { it.label }
+                val tags = binding.uploadTags.selectedChipList.joinToString(" | ") { it.label.replace("#", "") }
 
                 viewModel.saveUploadInfo(
                     tags,

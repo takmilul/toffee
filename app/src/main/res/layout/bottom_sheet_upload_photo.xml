@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/views"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/textView28"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/roboto_regular"
+            android:text="@string/lets_fill_some_basic_info_text"
+            android:textColor="@color/main_text_color"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@+id/textView29"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/textView29"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="19dp"
+            android:text="@string/set_your_channel_logo"
+            android:textColor="@color/main_text_color"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toTopOf="@+id/channel_logo_iv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView28" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/channel_logo_iv"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="6dp"
+            android:contentDescription="@string/txt_channel_logo"
+            android:src="@drawable/ic_channel_logo"
+            app:layout_constraintBottom_toTopOf="@+id/channel_name_et"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView29" />
+
+        <ImageView
+            android:id="@+id/edit_iv"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/txt_edit_channel_logo"
+            android:elevation="2dp"
+            android:padding="4dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_edit_btn"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/channel_logo_iv"
+            app:layout_constraintEnd_toEndOf="@+id/channel_logo_iv"
+            app:layout_constraintStart_toStartOf="@+id/channel_logo_iv"
+            app:layout_constraintTop_toBottomOf="@+id/channel_logo_iv"
+            tools:visibility="visible" />
+
+        <EditText
+            android:id="@+id/channel_name_et"
+            style="@style/SingleLineInputFieldStyle"
+            android:layout_marginTop="24dp"
+            android:drawableStart="@drawable/ic_channel_name_logo"
+            android:layout_marginEnd="12dp"
+            android:paddingEnd="48dp"
+            android:paddingStart="10dp"
+            android:maxLength="50"
+            android:hint="@string/channel_name_hint"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/channel_logo_iv" />
+
+        <TextView
+            android:id="@+id/channel_name_count_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_regular"
+            android:textColor="@color/switchUnCheckedColor"
+            android:textSize="12sp"
+            android:text="0"
+            app:layout_constraintBottom_toBottomOf="@+id/channel_name_count_limit_tv"
+            app:layout_constraintEnd_toStartOf="@+id/channel_name_count_limit_tv"
+            app:layout_constraintTop_toTopOf="@+id/channel_name_count_limit_tv" />
+
+        <TextView
+            android:id="@+id/channel_name_count_limit_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:fontFamily="@font/roboto_regular"
+            android:text="/50"
+            android:textColor="@color/switchUnCheckedColor"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="@+id/channel_name_et"
+            app:layout_constraintTop_toTopOf="@+id/channel_name_et" />
+
+<!--        <LinearLayout-->
+<!--            android:id="@+id/phone_number_layout"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginHorizontal="16dp"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:background="@drawable/single_line_input_text_bg"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:visibility="gone"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/channel_name_et">-->
+
+<!--            <ImageView-->
+<!--                android:id="@+id/image"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:contentDescription="@string/txt_phone_number"-->
+<!--                android:src="@drawable/ic_phone" />-->
+
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="10dp"-->
+<!--                android:background="@android:color/transparent"-->
+<!--                android:drawablePadding="3dp"-->
+<!--                android:fontFamily="@font/roboto_regular"-->
+<!--                android:gravity="center_vertical"-->
+<!--                android:text="+88"-->
+<!--                android:textColor="@color/switchUnCheckedColor"-->
+<!--                android:textSize="14sp"-->
+<!--                android:textStyle="normal"-->
+<!--                app:drawableStartCompat="@drawable/ic_bd_flag" />-->
+
+<!--            <ImageView-->
+<!--                android:layout_width="14dp"-->
+<!--                android:layout_height="12dp"-->
+<!--                android:layout_marginStart="5dp"-->
+<!--                android:layout_marginTop="3dp"-->
+<!--                android:contentDescription="@string/txt_down_arrow_flag"-->
+<!--                android:src="@drawable/ic_path_down_arrow" />-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/mobile_tv"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="8dp"-->
+<!--                android:background="@android:color/transparent"-->
+<!--                android:drawablePadding="10dp"-->
+<!--                android:fontFamily="@font/roboto_regular"-->
+<!--                android:gravity="center_vertical"-->
+<!--                android:hint="@string/phone_number_hint"-->
+<!--                android:textColor="@color/upload_number_color"-->
+<!--                android:textSize="14sp"-->
+<!--                android:textStyle="normal"-->
+<!--                app:drawableEndCompat="@drawable/ic_verified" />-->
+<!--        </LinearLayout>-->
+
+        <Button
+            android:id="@+id/next_btn"
+            style="@style/ButtonStyleSolidSave"
+            android:layout_marginStart="30dp"
+            android:enabled="false"
+            android:paddingStart="40dp"
+            android:paddingEnd="40dp"
+            android:text="@string/next"
+            android:textAllCaps="true"
+            app:layout_constraintBottom_toBottomOf="@+id/skipButton"
+            app:layout_constraintEnd_toEndOf="@+id/channel_name_et"
+            app:layout_constraintStart_toEndOf="@id/skipButton"
+            app:layout_constraintTop_toTopOf="@+id/skipButton" />
+
+        <Button
+            android:id="@+id/skipButton"
+            style="@style/EditChannelStyle"
+            android:layout_marginTop="20dp"
+            android:paddingStart="40dp"
+            android:paddingEnd="40dp"
+            android:text="@string/skip_text"
+            app:layout_constraintEnd_toStartOf="@+id/next_btn"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="@+id/channel_name_et"
+            app:layout_constraintTop_toBottomOf="@+id/channel_name_et" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/skipButton" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

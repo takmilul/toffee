@@ -5,5 +5,6 @@ data class MyChannelPlaylistCreateRequest (
     val password: String,
     val channelId: Int,
     val isChannelOwner: Int,
-    val playlistName: String?
+    val playlistName: String?,
+    val isUserPlaylist: Int = 0
 ): BaseRequest("ugcCreatePlaylistName")

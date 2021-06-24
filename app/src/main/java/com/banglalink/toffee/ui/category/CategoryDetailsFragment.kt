@@ -41,6 +41,7 @@ class CategoryDetailsFragment : BaseFragment() {
         landingViewModel.pageType.value = (PageType.Category)
         landingViewModel.checkedSubCategoryChipId.value = 0
         landingViewModel.categoryId.value = (category.id.toInt())
+        landingViewModel.subCategoryId.value = 0
         landingViewModel.isDramaSeries.value = false
     }
 }

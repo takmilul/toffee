@@ -4,6 +4,7 @@ import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.data.network.request.HeartBeatRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
+import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.notification.HEARTBEAT_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
@@ -104,6 +105,8 @@ class SendHeartBeat @Inject constructor(
         val netType: String,
         @SerializedName("session_token")
         val sessionToken: String,
+        @SerializedName("device_id")
+        val deviceId: String = CommonPreference.getInstance().deviceId,
         @SerializedName("date_time")
         val dateTime: String = Utils.getDateTime()
     )

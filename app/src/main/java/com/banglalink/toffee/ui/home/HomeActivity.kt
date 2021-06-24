@@ -57,11 +57,11 @@ import com.banglalink.toffee.ui.channels.AllChannelsViewModel
 import com.banglalink.toffee.ui.channels.ChannelFragmentNew
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.ui.landing.AllCategoriesFragment
-import com.banglalink.toffee.ui.mychannel.MyChannelHomeFragment
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
 import com.banglalink.toffee.ui.player.PlayerPageActivity
 import com.banglalink.toffee.ui.player.PlaylistItem
 import com.banglalink.toffee.ui.player.PlaylistManager
+import com.banglalink.toffee.ui.profile.ViewProfileViewModel
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.splash.SplashScreenActivity
 import com.banglalink.toffee.ui.upload.UploadProgressViewModel
@@ -70,10 +70,7 @@ import com.banglalink.toffee.ui.upload.UploadStatus
 import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.ui.widget.showSubscriptionDialog
-import com.banglalink.toffee.util.EncryptionUtil
-import com.banglalink.toffee.util.InAppMessageParser
-import com.banglalink.toffee.util.TAG
-import com.banglalink.toffee.util.Utils
+import com.banglalink.toffee.util.*
 import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.util.Util
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -98,7 +95,6 @@ import net.gotev.uploadservice.UploadService
 import org.xmlpull.v1.XmlPullParser
 import java.util.*
 import javax.inject.Inject
-
 
 const val ID_SUBSCRIPTIONS = 15
 const val ID_SUB_VIDEO = 16
@@ -129,7 +125,7 @@ class HomeActivity :
     private var searchView: SearchView? = null
     lateinit var binding: ActivityMainMenuBinding
     private lateinit var drawerHelper: DrawerHelper
-    private lateinit var inAppMessageParser: InAppMessageParser
+    @Inject lateinit var inAppMessageParser: InAppMessageParser
 //    private var mFirebaseAnalytics: FirebaseAnalytics? = null
     companion object {
         const val INTENT_REFERRAL_REDEEM_MSG = "REFERRAL_REDEEM_MSG"
@@ -140,6 +136,7 @@ class HomeActivity :
     private lateinit var appbarConfig: AppBarConfiguration
 
     private val viewModel: HomeViewModel by viewModels()
+    private val profileViewModel by viewModels<ViewProfileViewModel>()
     private val allChannelViewModel by viewModels<AllChannelsViewModel>()
     private val uploadViewModel by viewModels<UploadProgressViewModel>()
 
@@ -155,7 +152,6 @@ class HomeActivity :
                 WindowManager.LayoutParams.FLAG_SECURE
             )
         }
-        mPref.logout="0"
         cPref.isAlreadyForceLoggedOut = false
 //        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         binding = ActivityMainMenuBinding.inflate(layoutInflater)
@@ -175,7 +171,7 @@ class HomeActivity :
 
         binding.uploadButton.setOnClickListener {
             checkVerification {
-                showUploadDialog()
+                checkChannelDetailAndUpload()
             }
         }
         
@@ -185,10 +181,6 @@ class HomeActivity :
             mPref.mqttClientId = ""
             mPref.mqttUserName = ""
             mPref.mqttPassword = ""
-        }
-        
-        if (mPref.isVerifiedUser) {
-            initMqtt()
         }
         
         observe(viewModel.fragmentDetailsMutableLiveData) {
@@ -243,25 +235,17 @@ class HomeActivity :
             minimizePlayer()
         }*/
 
-        observe(viewModel.switchBottomTab) {
-//            drawerHelper.onMenuClick(NavigationMenu(ID_CHANNEL, "All Videos", 0, listOf(), false))
-            when(it) {
-                1 -> binding.tabNavigator.selectedItemId = R.id.menu_tv
-                3 -> binding.tabNavigator.selectedItemId = R.id.menu_explore
-            }
-//            binding.homeTabPager.currentItem = 1
-        }
 
-        observe(viewModel.viewAllCategories) {
-            val currentFragment = supportFragmentManager.findFragmentById(R.id.content_viewer)
-            if (currentFragment !is AllCategoriesFragment) {
-                loadFragmentById(
-                    R.id.content_viewer, AllCategoriesFragment(), AllCategoriesFragment::class.java.getName()
-                )
-            }
-            binding.drawerLayout.closeDrawers()
-            minimizePlayer()
-        }
+//        observe(viewModel.viewAllCategories) {
+//            val currentFragment = supportFragmentManager.findFragmentById(R.id.content_viewer)
+//            if (currentFragment !is AllCategoriesFragment) {
+//                loadFragmentById(
+//                    R.id.content_viewer, AllCategoriesFragment(), AllCategoriesFragment::class.java.getName()
+//                )
+//            }
+//            binding.drawerLayout.closeDrawers()
+//            minimizePlayer()
+//        }
 
 //        observe(viewModel.openCategoryLiveData) {
 //            val currentFragment = supportFragmentManager.findFragmentById(R.id.content_viewer)
@@ -349,8 +333,13 @@ class HomeActivity :
             viewModel.sendShareLog(channelInfo)
         }
         
-        if (!mPref.hasChannelName() && !mPref.hasChannelLogo() && !mPref.isChannelDetailChecked && mPref.isVerifiedUser) {
-            viewModel.getChannelDetail(1, 0, 0, mPref.customerId)
+        if (!isChannelComplete() && mPref.isVerifiedUser) {
+            viewModel.getChannelDetail(mPref.customerId)
+            observe(profileViewModel.loadCustomerProfile()) {
+                if (it is Success) {
+                    profileViewModel.profileForm.value = it.data
+                }
+            }
         }
         
         if(intent.hasExtra(INTENT_PACKAGE_SUBSCRIBED)){
@@ -368,8 +357,17 @@ class HomeActivity :
         inAppUpdate()
         customCrashReport()
     }
-    private fun customCrashReport()
-    {
+    
+    private fun isChannelComplete() = mPref.customerName.isNotBlank()
+            && mPref.customerEmail.isNotBlank()
+            && mPref.customerAddress.isNotBlank()
+            && mPref.customerDOB.isNotBlank()
+            && mPref.customerNID.isNotBlank()
+            && mPref.channelName.isNotBlank()
+            && mPref.channelLogo.isNotBlank()
+            && mPref.isChannelDetailChecked
+    
+    private fun customCrashReport() {
         val runtime = Runtime.getRuntime()
         val maxMemory = runtime.maxMemory()
         FirebaseCrashlytics.getInstance().setCustomKey("heap_size", "$maxMemory")
@@ -420,13 +418,13 @@ class HomeActivity :
 
     private lateinit var appUpdateManager: AppUpdateManager
     
-    val appUpdateListener = InstallStateUpdatedListener { state ->
+    private val appUpdateListener = InstallStateUpdatedListener { state ->
         if (state.installStatus() == InstallStatus.DOWNLOADED) {
             showToast("Toffee updated successfully")
         }
     }
 
-    fun inAppUpdate() {
+    private fun inAppUpdate() {
         appUpdateManager = AppUpdateManagerFactory.create(this)
         val appUpdateInfoTask: Task<AppUpdateInfo> = appUpdateManager.appUpdateInfo
         appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
@@ -458,8 +456,23 @@ class HomeActivity :
         }
     }
     
-    fun showUploadDialog(): Boolean {
-        if (mPref.hasChannelLogo() && mPref.hasChannelName()){
+    fun checkChannelDetailAndUpload() {
+        if (!mPref.isChannelDetailChecked) {
+            observe(viewModel.myChannelDetailResponse) {
+                when(it) {
+                    is Success -> showUploadDialog()
+                    is Failure -> showToast("Operation failed")
+                }
+            }
+            viewModel.getChannelDetail(mPref.customerId)
+        }
+        else {
+            showUploadDialog()
+        }
+    }
+    
+    private fun showUploadDialog(): Boolean {
+        if (isChannelComplete()){
             if (navController.currentDestination?.id == R.id.uploadMethodFragment) {
                 navController.popBackStack()
                 return true
@@ -469,29 +482,6 @@ class HomeActivity :
                 if (uploadRepo.getActiveUploadsList().isNotEmpty()) {
                     return@launch
                 }
-
-                //                mPref.uploadId?.let {
-                //                    val uploads = uploadRepo.getUploadById(UtilsKt.stringToUploadId(it))
-                //                    if(uploads == null || uploads.status !in listOf(0, 1, 2, 3)) {
-                //                        mPref.uploadId = null
-                //                        navController.navigate(R.id.uploadMethodFragment)
-                //                        return@launch
-                //
-                ////                    if(uploads.status in listOf(0, 1, 2, 3) && UploadService.taskList.isEmpty()) {
-                ////                        uploads.apply {
-                ////                            status = UploadStatus.ERROR.value
-                ////                            statusMessage = "Process killed"
-                ////                        }.also { info ->
-                ////                            uploadRepo.updateUploadInfo(info)
-                ////                        }
-                ////                        mPref.uploadId = null
-                ////                        navController.navigate(R.id.uploadMethodFragment)
-                ////                    }
-                //                    if(navController.currentDestination?.id != R.id.editUploadInfoFragment) {
-                //                        navController.navigate(R.id.editUploadInfoFragment)
-                //                    }
-                //                    return@launch
-                //                }
                 navController.navigate(R.id.uploadMethodFragment)
             }
         }
@@ -536,7 +526,7 @@ class HomeActivity :
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                if (newState == BottomSheetBehavior.STATE_COLLAPSED && binding.playerView.isControllerHidden) {
+                if (newState == BottomSheetBehavior.STATE_EXPANDED && binding.playerView.isControllerHidden) {
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 }
             }
@@ -591,6 +581,31 @@ class HomeActivity :
     fun getNavController() = navController
     fun getHomeViewModel() = viewModel
 
+    private val destinationChangeListener =
+        NavController.OnDestinationChangedListener { controller, _, _ ->
+//            supportFragmentManager.popBackStack(R.id.content_viewer, POP_BACK_STACK_INCLUSIVE)
+
+            if(binding.draggableView.isMaximized()) {
+                minimizePlayer()
+            }
+            closeSearchBarIfOpen()
+
+            // For firebase screenview logging
+            if (controller.currentDestination is FragmentNavigator.Destination) {
+                val currentFragmentClassName =
+                    (controller.currentDestination as FragmentNavigator.Destination)
+                        .className
+                        .substringAfterLast(".")
+
+                val bundle = Bundle()
+                bundle.putString(FirebaseAnalytics.Param.SCREEN_CLASS, currentFragmentClassName)
+                FirebaseAnalytics.getInstance(this@HomeActivity)
+                    .logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle)
+            }
+
+            binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
+        }
+
     private fun setupNavController() {
         Log.e("NAV", "SetupNavController")
 
@@ -602,7 +617,7 @@ class HomeActivity :
                 R.id.menu_feed,
                 R.id.menu_tv,
                 R.id.menu_activities,
-                R.id.menu_channel,
+                R.id.myChannelHomeFragment,
 
 //                R.id.menu_all_tv_channel,
                 R.id.menu_favorites,
@@ -624,37 +639,15 @@ class HomeActivity :
 //
 //        }
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.bottomAppBar) { _, insets ->
-            insets.consumeSystemWindowInsets()
+        ViewCompat.setOnApplyWindowInsetsListener(binding.bottomAppBar) { _, _ ->
+             WindowInsetsCompat.CONSUMED
         }
 
         binding.sideNavigation.setNavigationItemSelectedListener {
             drawerHelper.handleMenuItemById(it)
         }
 
-        navController.addOnDestinationChangedListener { controller, destination, arguments ->
-            supportFragmentManager.popBackStack(R.id.content_viewer, POP_BACK_STACK_INCLUSIVE)
-
-            if(binding.draggableView.isMaximized()) {
-                minimizePlayer()
-            }
-            closeSearchBarIfOpen()
-            ///
-            if (controller.currentDestination is FragmentNavigator.Destination)
-            {
-                val currentFragmentClassName =
-                    (controller.currentDestination as FragmentNavigator.Destination)
-                        .className
-                        .substringAfterLast(".")
-
-                val bundle = Bundle()
-                bundle.putString(FirebaseAnalytics.Param.SCREEN_CLASS, currentFragmentClassName)
-                FirebaseAnalytics.getInstance(this)
-                    .logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle)
-            }
-
-            binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
-        }
+        navController.addOnDestinationChangedListener(destinationChangeListener)
 
 //        binding.sideNavigation.setNavigationItemSelectedListener {
 //            binding.drawerLayout.closeDrawers()
@@ -706,6 +699,9 @@ class HomeActivity :
                 }
             )
         }
+        if (mPref.isVerifiedUser) {
+            initMqtt()
+        }
     }
 
     override fun resumeCastSession(info: ChannelInfo) {
@@ -718,6 +714,7 @@ class HomeActivity :
         if (Util.SDK_INT > 23) {
             binding.playerView.setPlayer(null)
         }
+        mqttService.destroy()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -737,7 +734,7 @@ class HomeActivity :
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             if(playlistManager.getCurrentChannel()?.isLive == true) {
                 binding.homeBottomSheet.bottomSheet.visibility = View.VISIBLE
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             } else {
                 binding.homeBottomSheet.bottomSheet.visibility = View.GONE
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -775,10 +772,10 @@ class HomeActivity :
         binding.playerView.onFullScreen(state)
         binding.playerView.resizeView(calculateScreenWidth(), state)
         Utils.setFullScreen(this, state)// || binding.playerView.channelType != "LIVE")
-        toggleNavigations(state)
+        toggleNavigation(state)
     }
 
-    private fun toggleNavigations(state: Boolean) {
+    private fun toggleNavigation(state: Boolean) {
         if(state) {
             supportActionBar?.hide()
             binding.bottomAppBar.hide()
@@ -805,45 +802,61 @@ class HomeActivity :
 
 
     private fun handleSharedUrl(intent: Intent) {
-        val uri = intent.data
-        if (uri != null) {
-            val strUri = uri.toString()
-             handleDeepLink(strUri)
+        lifecycleScope.launch {
+            var appLinkUriStr: String? = null
+            try{
+                val appLinkUri = AppLinks.getTargetUrlFromInboundIntent(this@HomeActivity, intent)
+                if(appLinkUri != null && appLinkUri.host != "toffeelive.com") {
+                    appLinkUriStr = viewModel.fetchRedirectedDeepLink(appLinkUri.toString())
+                }
+            } catch (ex: Exception) {
+                ToffeeAnalytics.logException(ex)
+            }
+            if(!appLinkUriStr.isNullOrEmpty()) {
+                handleDeepLink(appLinkUriStr)
+            }
+            else {
+                val uri = intent.data
+                if (uri != null) {
+                    val strUri = uri.toString()
+                    handleDeepLink(strUri)
+                }
+            }
         }
     }
 
     private fun handleDeepLink(url: String){
 //        https://toffeelive.com/#video/0d52770e16b19486d9914c81061cf2da
-        try{
-            var isDeepLinkHandled = false
-            val route = inAppMessageParser.parseUrl(url)
-            route?.drawerId?.let {
-                ToffeeAnalytics.logBreadCrumb("Trying to open menu item")
-//                drawerHelper.handleMenuItemById(it)
-                isDeepLinkHandled = true
-            }
-            route?.categoryId?.let {
-                ToffeeAnalytics.logBreadCrumb("Trying to open category item")
-////                drawerHelper.handleCategoryClick(ID_VIDEO, it, route.categoryName ?: "")
-                isDeepLinkHandled = true
-            }
+        lifecycleScope.launch {
+            try{
+                var isDeepLinkHandled = false
+                val route = inAppMessageParser.parseUrlV2(url)
+                route?.let {
+                    ToffeeAnalytics.logBreadCrumb("Trying to open ${it.name}")
+                    when(it.destId) {
+                        is Uri -> navController.navigate(it.destId, it.options, it.navExtra)
+                        is Int -> navController.navigate(it.destId, it.args, it.options, it.navExtra)
+                    }
+                    isDeepLinkHandled = true
+                }
 
-            if(!isDeepLinkHandled){
-                ToffeeAnalytics.logBreadCrumb("Trying to open individual item")
-                val hash = url.substring(url.lastIndexOf("/") + 1)
-                observe(viewModel.getShareableContent(hash)){ channelResource ->
-                    when(channelResource){
-                        is Success -> {
-                            channelResource.data?.let {
-                                onDetailsFragmentLoad(it)
+                if(!isDeepLinkHandled){
+                    ToffeeAnalytics.logBreadCrumb("Trying to open individual item")
+                    val hash = url.substring(url.lastIndexOf("/") + 1)
+                    observe(viewModel.getShareableContent(hash)){ channelResource ->
+                        when(channelResource){
+                            is Success -> {
+                                channelResource.data?.let {
+                                    onDetailsFragmentLoad(it)
+                                }
                             }
                         }
                     }
                 }
+            }catch (e: Exception){
+                ToffeeAnalytics.logBreadCrumb("2. Failed to handle depplink $url")
+                ToffeeAnalytics.logException(e)
             }
-        }catch (e: Exception){
-            ToffeeAnalytics.logBreadCrumb("Failed to handle depplink $url")
-            ToffeeAnalytics.logException(e)
         }
     }
     
@@ -863,22 +876,19 @@ class HomeActivity :
     private fun navigateToSearch(query: String?) {
 //        if(navController.currentDestination?.id != R.id.searchFragment) {
         navController.popBackStack(R.id.searchFragment, true)
-        navController.navigate(R.id.searchFragment, Bundle().apply {
-            putString(SearchFragment.SEARCH, query)
-        })
+        navController.navigate(Uri.parse("app.toffee://search/$query"))
+//        navController.navigate(R.id.searchFragment, Bundle().apply {
+//            putString(SearchFragment.SEARCH_KEYWORD, query)
+//        })
 //        }
     }
 
     private fun handleVoiceSearchEvent(query: String){
         if (!TextUtils.isEmpty(query)) {
             navigateToSearch(query)
-//            loadFragmentById(
-//                R.id.content_viewer, SearchFragment.createInstance(query),
-//                SearchFragment::class.java.name
-//            )
         }
         if (searchView != null) {
-            searchView!!.setQuery(query.toLowerCase(), false)
+            searchView!!.setQuery(query.lowercase(), false)
             searchView!!.clearFocus()
         }
     }
@@ -891,8 +901,8 @@ class HomeActivity :
             POP_BACK_STACK_INCLUSIVE
         )
         //Reload it again so that we can get updated VOD/Popular channels/Feature contents
-        supportFragmentManager.beginTransaction().replace(R.id.content_viewer, LandingPageFragment())
-            .addToBackStack(LandingPageFragment::class.java.name).commit()
+//        supportFragmentManager.beginTransaction().replace(R.id.content_viewer, LandingPageFragment())
+//            .addToBackStack(LandingPageFragment::class.java.name).commit()
     }
 
     private fun loadChannel(channelInfo: ChannelInfo) {
@@ -1071,7 +1081,7 @@ class HomeActivity :
 //            }
 //        }
     }
-    fun loadFragmentById(id: Int, fragment: Fragment, tag: String) {
+    private fun loadFragmentById(id: Int, fragment: Fragment, tag: String) {
         supportFragmentManager.popBackStack(
             LandingPageFragment::class.java.name,
             0
@@ -1104,6 +1114,7 @@ class HomeActivity :
             val subMenu = binding.sideNavigation.menu.findItem(R.id.ic_menu_internet_packs)
             subMenu?.isVisible = false
         }
+        binding.sideNavigation.menu.findItem(R.id.menu_tv).isVisible = mPref.isAllTvChannelMenuEnabled
         if (!mPref.isVerifiedUser) {
             val logout = binding.sideNavigation.menu.findItem(R.id.menu_logout)
             logout?.isVisible = false
@@ -1169,7 +1180,6 @@ class HomeActivity :
 
     private fun observeInAppMessage(){
         FirebaseAnalytics.getInstance(this).logEvent("trigger_inapp_messaging", null)
-        inAppMessageParser = InAppMessageParser()
         FirebaseInAppMessaging.getInstance().triggerEvent("trigger_inapp_messaging")
     }
 
@@ -1200,19 +1210,14 @@ class HomeActivity :
     override fun onControllerVisible() {
         if(playlistManager.getCurrentChannel()?.isLive == true &&
             resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         } else {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
     }
 
     override fun onControllerInVisible() {
-        if(bottomSheetBehavior.state == BottomSheetBehavior.STATE_DRAGGING ||
-            bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED
-                ) {
-
-        }
-        else if(bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
+        if(bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
     }
@@ -1226,7 +1231,9 @@ class HomeActivity :
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         observe(mPref.playerOverlayLiveData) {
-            it?.let { showPlayerOverlay(it) }
+            if (it?.contentId == "all" || it?.contentId == playlistManager.getCurrentChannel()?.id) {
+                it?.let { showPlayerOverlay(it) }
+            }
         }
 //        showPlayerOverlay()
     }
@@ -1237,6 +1244,7 @@ class HomeActivity :
             /*val playerOverlayData = Gson().fromJson("""
                     {
                         "id": 234,
+                        "content_id": "254896",
                         "function": "notification_on_top_of_player",
                         "timestamp": "2021-03-08 ",
                         "parameters": {
@@ -1308,6 +1316,7 @@ class HomeActivity :
     
     override fun onDestroy() {
 //        mqttService.destroy()
+        navController.removeOnDestinationChangedListener(destinationChangeListener)
         appUpdateManager.unregisterListener(appUpdateListener)
         super.onDestroy()
     }
@@ -1325,8 +1334,8 @@ class HomeActivity :
             ) { dialog, _ -> dialog.cancel() }
             .show()
     }
-    
-    fun observeLogout() {
+
+    private fun observeLogout() {
         observe(viewModel.logoutLiveData) {
             when(it) {
                 is Success -> {
@@ -1335,6 +1344,10 @@ class HomeActivity :
                         mPref.channelName = ""
                         mPref.channelLogo = ""
                         mPref.customerName = ""
+                        mPref.customerEmail = ""
+                        mPref.customerAddress = ""
+                        mPref.customerDOB = ""
+                        mPref.customerNID = ""
                         mPref.userImageUrl = null
                         mPref.isVerifiedUser = false
                         mPref.isChannelDetailChecked = false
@@ -1370,8 +1383,13 @@ class HomeActivity :
 
     override fun onFullScreenButtonPressed(): Boolean {
         super.onFullScreenButtonPressed()
-        if(!binding.playerView.isAutoRotationEnabled) {
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED
+        requestedOrientation =
+        if(!binding.playerView.isAutoRotationEnabled
+            || binding.playerView.isFullScreen
+            || binding.playerView.isVideoPortrait) {
+            ActivityInfo.SCREEN_ORIENTATION_LOCKED
+        } else {
+            ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
         }
         updateFullScreenState()
         return true
@@ -1387,7 +1405,7 @@ class HomeActivity :
         }
     }
 
-    fun closeSearchBarIfOpen() {
+    private fun closeSearchBarIfOpen() {
         if(searchView?.isIconified == false) {
             searchView?.onActionViewCollapsed()
         }
@@ -1422,12 +1440,12 @@ class HomeActivity :
         }
     }
 
-    fun minimizePlayer() {
+    private fun minimizePlayer() {
         binding.draggableView.minimize()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
 
-    fun destroyPlayer() {
+    private fun destroyPlayer() {
         binding.draggableView.destroyView()
         mPref.playerOverlayLiveData.removeObservers(this)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -1640,18 +1658,15 @@ class HomeActivity :
     private fun observeMyChannelNavigation(){
         observe(viewModel.myChannelNavLiveData) {
             if (navController.currentDestination?.id != R.id.myChannelHomeFragment || channelOwnerId != it.channelOwnerId) {
-                channelOwnerId = it.channelOwnerId
-                navController.navigate(R.id.myChannelHomeFragment, Bundle().apply {
-                    putString(MyChannelHomeFragment.PAGE_TITLE, it.pageTitle)
-                    putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, it.channelOwnerId)
-                })
+                navController.navigate(Uri.parse("app.toffee://ugc_channel/${it.channelOwnerId}"))
+//                channelOwnerId = it.channelOwnerId
+//                navController.navigate(R.id.myChannelHomeFragment, Bundle().apply {
+//                    putString(MyChannelHomeFragment.PAGE_TITLE, it.pageTitle)
+//                    putInt(MyChannelHomeFragment.CHANNEL_OWNER_ID, it.channelOwnerId)
+//                })
             } else{
                 minimizePlayer()
             }
         }
-    }
-    
-    fun showLoginDialog() {
-        
     }
 }

@@ -3,12 +3,15 @@ package com.banglalink.toffee.ui.widget
 import android.R.color
 import android.animation.ValueAnimator
 import android.content.Context
+import android.database.ContentObserver
 import android.graphics.Point
 import android.graphics.SurfaceTexture
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Message
+import android.provider.Settings
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.TextureView.SurfaceTextureListener
@@ -29,6 +32,7 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.PlayerOverlayData
 import com.banglalink.toffee.ui.player.PlayerOverlayView
 import com.banglalink.toffee.ui.widget.DraggerLayout.OnPositionChangedListener
+import com.banglalink.toffee.util.BindingUtil
 import com.banglalink.toffee.util.UtilsKt
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
@@ -76,12 +80,13 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     var isVideoPortrait = false
     var channelType: String? = null
     var isFullScreen = false
+    var isVideoScalable = false
 
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private var debugJob: Job? = null
 
-    @Inject
-    lateinit var mPref: SessionPreference
+    @Inject lateinit var bindingUtil: BindingUtil
+    @Inject lateinit var mPref: SessionPreference
 
     init {
         handler = MessageHandler()
@@ -103,6 +108,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     private fun initView() {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         binding = MediaControlLayout3Binding.inflate(inflater, this, true)
+        binding.playerContainer.setResizeMode(scaleType)
         binding.minimize.setOnClickListener(this)
         binding.play.setOnClickListener(this)
         binding.drawer.setOnClickListener(this)
@@ -119,12 +125,18 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         binding.progress.setOnSeekBarChangeListener(this)
         binding.videoOption.setOnClickListener(this)
         binding.fullscreen.setOnClickListener(this)
-        binding.preview.setOnClickListener(this)
+        binding.dtInterceptor.setOnClickListener(this)
         binding.share.setOnClickListener(this)
         mFormatBuilder = StringBuilder()
         mFormatter = Formatter(mFormatBuilder, Locale.getDefault())
         setupCastButton()
         setupOverlay()
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        setupRotationObserver()
+        updateRotationStatus(UtilsKt.isSystemRotationOn(context), false)
     }
 
     private fun setupOverlay() {
@@ -163,6 +175,25 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         }
     }
 
+    private val rotationObserver = object: ContentObserver(Handler()){
+        override fun onChange(selfChange: Boolean) {
+            super.onChange(selfChange)
+            updateRotationStatus(UtilsKt.isSystemRotationOn(context))
+        }
+    }
+
+    private fun setupRotationObserver(){
+        context.contentResolver.registerContentObserver(
+            Settings.System.getUriFor(Settings.System.ACCELEROMETER_ROTATION),
+            true,
+            rotationObserver
+        )
+    }
+
+    private fun removeRotationObserver() {
+        context.contentResolver.unregisterContentObserver(rotationObserver)
+    }
+
     fun showCastingText(show: Boolean, deviceName: String? = null) {
         if(show) {
             binding.controllerBg.visibility = View.VISIBLE
@@ -190,6 +221,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     override fun onDetachedFromWindow() {
         debugJob?.cancel()
         clearDebugWindow()
+        removeRotationObserver()
         super.onDetachedFromWindow()
     }
 
@@ -224,28 +256,15 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
 
         simpleExoPlayer?.currentMediaItem?.getChannelMetadata(simpleExoPlayer)?.let {
             isVideoPortrait = it.isHorizontal != 1
-            binding.rotation.visibility = if(isVideoPortrait) View.GONE else View.VISIBLE
+            binding.rotation.visibility = if(isVideoPortrait || !UtilsKt.isSystemRotationOn(context)) View.GONE else View.VISIBLE
             binding.share.visibility = if(it.isApproved == 1) View.VISIBLE else View.GONE
         }
     }
 
-    private fun forward() {
-        simpleExoPlayer?.let {
-            it.seekTo(min(it.currentPosition + FORWARD_BACKWARD_DURATION_IN_MILLIS, it.duration))
-        }
-    }
-
-    private fun backward() {
-        simpleExoPlayer?.let {
-            it.seekTo(max(0, it.currentPosition - FORWARD_BACKWARD_DURATION_IN_MILLIS))
-        }
-
-    }
-
     fun showWifiOnlyMessage() {
-        binding.preview.setImageResource(mipmap.watch_wifi_only_msg)
+        bindingUtil.loadImageFromResource(binding.preview, drawable.watch_wifi_only_msg)
         hideControls(0)
-        binding.preview.setOnClickListener(null)
+        binding.dtInterceptor.setOnClickListener(null)
     }
 
     val isControllerHidden: Boolean
@@ -368,13 +387,13 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
 
     override fun onViewMinimize() {
         isMinimize = true
-        binding.textureView.setOnClickListener(null)
+//        binding.textureView.setOnClickListener(null)
         hideControls(0)
     }
 
     override fun onViewMaximize() {
         isMinimize = false
-        binding.textureView.setOnClickListener(this)
+//        binding.textureView.setOnClickListener(this)
         if (simpleExoPlayer?.isPlaying == true) {
             hideControls(2000)
         }
@@ -405,9 +424,9 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         }
         binding.videoOption.isEnabled = false
         binding.share.isEnabled = false
-        binding.preview.setImageResource(drawable.content_expired)
+        bindingUtil.loadImageFromResource(binding.preview, drawable.content_expired)
         hideControls(0)
-        binding.preview.setOnClickListener(null)
+        binding.dtInterceptor.setOnClickListener(null)
     }
 
     private inner class MessageHandler : Handler() {
@@ -447,6 +466,17 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         } else {
             binding.playPrev.visibility = if(mPlayListListener?.hasPrevious() == true) View.VISIBLE else View.INVISIBLE
 //            binding.playPrev.isEnabled = mPlayListListener?.hasPrevious() == true
+        }
+    }
+
+    fun updateRotationStatus(status: Boolean, invokeListener: Boolean = true) {
+        binding.rotation.visibility = if(status && !isVideoPortrait) View.VISIBLE else View.GONE
+        isAutoRotationEnabled = status
+        binding.rotation.setImageResource(if (!isAutoRotationEnabled) mipmap.rotation_off else drawable.ic_screen_rotate)
+        if(invokeListener) {
+            onPlayerControllerChangedListeners.forEach {
+                it.onRotationLock(isAutoRotationEnabled)
+            }
         }
     }
 
@@ -504,7 +534,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
                     it.onDrawerButtonPressed()
                 }
             }
-            binding.preview -> {
+            binding.dtInterceptor -> {
                 if (showControls()) {
                     if (simpleExoPlayer?.isPlaying == true) {
                         hideControls(3000)
@@ -540,7 +570,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         //Log.e("CAST_T", "Player state changed")
         when (playbackState) {
             Player.STATE_BUFFERING -> {
-                binding.preview.setOnClickListener(this)
+                binding.dtInterceptor.setOnClickListener(this)
 //                binding.preview.setImageResource(color.black)
                 binding.play.visibility = GONE
                 nextButtonVisibility(false)
@@ -646,10 +676,8 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
 
             if((prevState && !isVideoPortrait) || (!prevState && isVideoPortrait)) isFullScreen = false
             resizeView(UtilsKt.getRealScreenSize(context))
-//            if(isVideoPortrait && simpleExoPlayer is SimpleExoPlayer) {
-//                (simpleExoPlayer as SimpleExoPlayer).videoScalingMode = Renderer.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
-//            }
-            binding.rotation.visibility = if(isVideoPortrait) View.GONE else View.VISIBLE
+
+            binding.rotation.visibility = if(isVideoPortrait || !UtilsKt.isSystemRotationOn(context)) View.GONE else View.VISIBLE
             binding.share.visibility = if(channelInfo.isApproved == 1) View.VISIBLE else View.GONE
         }
         onPlayerControllerChangedListeners.forEach {
@@ -687,23 +715,17 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
             if(!forceFullScreen) maxBound else size.y
         }
 
-        layoutParams = layoutParams.apply {
-            width = playerWidth
-            height = playerHeight
-        }
-        if(videoWidth > 0 && videoHeight > 0) {
-            binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.also {
-                it.width = videoWidth
-                it.height = videoHeight
-            }
-            adjustVideoBoundWithRatio(scaleType)
+        isFullScreen = forceFullScreen || size.x > size.y
+
+        if(!isFullScreen && playerWidth == layoutParams.width) {
+            setHeightWithAnim(playerHeight)
         } else {
-            binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.also {
-                it.width = playerWidth
-                it.height = playerHeight
+            layoutParams = layoutParams.apply {
+                width = playerWidth
+                height = playerHeight
             }
-            adjustVideoBoundWithRatio(scaleType)
         }
+        binding.playerContainer.setResizeMode(scaleType)
     }
 
     fun isClamped(): Boolean {
@@ -718,15 +740,23 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
 
     private val scaleType: Int
         get() {
-            return if (isVideoPortrait && !isFullScreenPortrait()) {
-                SCALE_TYPE_CENTER_CROP
-            } else {
-                if (mPref.keepVideoAspectRatio && isVideoPortrait) {// || channelType != "LIVE")) {
-                    SCALE_TYPE_ADJUST_RATIO
-                } else {
-                    SCALE_TYPE_SCALE_TO_FIT
+            if(!mPref.keepAspectRatio/* && maxBound == minBound*/) {
+                if(videoWidth > 0 && videoHeight > 0) {
+                    if(isFullScreen && videoWidth > videoHeight) {
+                        return AspectRatioFrameLayout.RESIZE_MODE_FILL
+                    }
+                } else if(isFullScreen && !isVideoPortrait) {
+                    return AspectRatioFrameLayout.RESIZE_MODE_FILL
                 }
+//                if(videoWidth > 0 && videoHeight > 0 && videoWidth > videoHeight
+//                    && isFullScreen) { // Horizontal
+//                    return AspectRatioFrameLayout.RESIZE_MODE_FILL
+//                }
             }
+            return if (isFullScreen)
+                AspectRatioFrameLayout.RESIZE_MODE_FIT
+            else
+                AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH
         }
 
     private val minVideoHeight: Int = screenWidth * 9 / 16
@@ -734,7 +764,16 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
 
     val minBound = minVideoHeight
     val maxBound: Int
-        get() = if(isVideoPortrait) maxVideoHeight else minBound
+        get() {
+            if(videoWidth > 0 && videoHeight > 0) {
+                return min(max(minVideoHeight, ((videoHeight / videoWidth.toFloat()) * screenWidth).toInt()), maxVideoHeight)
+            }
+            return if(isVideoPortrait) {
+                maxVideoHeight
+            } else {
+                minBound
+            }
+        }
 
     private var mActivePointerId = MotionEvent.INVALID_POINTER_ID
     private var mLastTouchX: Float = 0f
@@ -750,11 +789,13 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         setHeightWithAnim(if(isInTop) minBound else maxBound)
     }
 
-    fun setHeightWithAnim(height: Int, animDuration: Long = 300L) {
+    fun setHeightWithAnim(height: Int, animDuration: Long = 100L) {
+        if(height == layoutParams.height) return
+        heightAnim?.cancel()
         heightAnim = ValueAnimator.ofInt(layoutParams.height, height)
         heightAnim?.duration = animDuration
         heightAnim?.addUpdateListener {
-            setLayoutHeight(it.animatedValue as Int)
+            if(isAttachedToWindow) setLayoutHeight(it.animatedValue as Int)
         }
         heightAnim?.start()
     }
@@ -833,21 +874,6 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         layoutParams = layoutParams.also {
             it.height = h
         }
-        centerPlayerInView()
-    }
-
-    private fun centerPlayerInView() {
-        val viewportHeight = layoutParams.height
-        val playerHeight = binding.playerContainer.layoutParams.height
-
-        val halfTop = (playerHeight - viewportHeight) / 2f
-        binding.playerContainer.y = -halfTop
-
-        val viewportWidgh = layoutParams.width
-        val playerWidth = binding.playerContainer.layoutParams.width
-
-        val halfLeft = (playerWidth - viewportWidgh) / 2f
-        binding.playerContainer.x = -halfLeft
     }
 
     override fun onVideoSizeChanged(
@@ -857,37 +883,24 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         pixelWidthHeightRatio: Float
     ) {
         super.onVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio)
-        videoWidth = width
+        videoWidth = (width * pixelWidthHeightRatio).toInt()
         videoHeight = height
 
-        binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.also {
-            it.width = videoWidth
-            it.height = videoHeight
-        }
-        adjustVideoBoundWithRatio(scaleType)
-    }
+        Log.e("CONTROL_T", "Video resolution -> $videoWidth x $videoHeight, ratio -> $pixelWidthHeightRatio, min -> $minBound, max -> $maxBound")
 
-    private fun adjustVideoBoundWithRatio(mode: Int) {
-        val r1 = layoutParams.height / binding.playerContainer.layoutParams.height.toDouble()
-        val r2 = layoutParams.width / binding.playerContainer.layoutParams.width.toDouble()
-        val sc = when(mode) {
-            SCALE_TYPE_ADJUST_RATIO ->  min(r1, r2)
-            else -> max(r1, r2)
-        }
-        binding.playerContainer.layoutParams = binding.playerContainer.layoutParams.also {
-            it.width = if(mode == SCALE_TYPE_SCALE_TO_FIT) layoutParams.width else (it.width * sc).roundToInt()
-            it.height = if(mode == SCALE_TYPE_SCALE_TO_FIT) layoutParams.height else (it.height * sc).roundToInt()
-        }
-        centerPlayerInView()
+//        isVideoPortrait = videoWidth <= videoHeight
+        isVideoScalable = minBound != maxBound
+
+        if(!isFullScreen) setHeightWithAnim(maxBound)
+
+        binding.playerContainer.setResizeMode(scaleType)
+        binding.playerContainer.setAspectRatio(videoWidth/videoHeight.toFloat())
+        Log.e("CONTROL_T", "Aspect ratio -> ${binding.playerContainer.getAspectRatio()}")
     }
 
     companion object {
         private const val UPDATE_PROGRESS = 21
         private const val FORWARD_BACKWARD_DURATION_IN_MILLIS = 10000
         private const val AUTOPLAY_INTERVAL = 5000L
-
-        private const val SCALE_TYPE_ADJUST_RATIO = 1
-        private const val SCALE_TYPE_CENTER_CROP = 2
-        private const val SCALE_TYPE_SCALE_TO_FIT = 3
     }
 }

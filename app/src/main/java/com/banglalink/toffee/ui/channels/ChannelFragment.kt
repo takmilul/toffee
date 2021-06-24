@@ -89,7 +89,7 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
         
         val channelAdapter = ChannelStickyListAdapter(requireContext(), this, bindingUtil)
         
-        with(binding.gridView){
+        with(binding.listview){
             setHasFixedSize(true)
             val gridLayoutManager = StickyHeaderGridLayoutManager(3)
             gridLayoutManager.setHeaderBottomOverlapMargin(resources.getDimensionPixelSize(R.dimen.header_shadow_size))

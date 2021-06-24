@@ -18,6 +18,8 @@ import com.banglalink.toffee.data.network.util.resultLiveData
 import com.banglalink.toffee.data.repository.*
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.AppCoroutineScope
+import com.banglalink.toffee.di.SimpleHttpClient
+import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.player.AddToPlaylistData
@@ -25,16 +27,13 @@ import com.banglalink.toffee.ui.player.PlaylistManager
 import com.banglalink.toffee.usecase.*
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.banglalink.toffee.util.getError
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
-import com.google.firebase.iid.FirebaseInstanceId
-import com.google.firebase.iid.InstanceIdResult
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import javax.inject.Inject
 
 @HiltViewModel
@@ -47,6 +46,7 @@ class HomeViewModel @Inject constructor(
     private val cacheManager: CacheManager,
     private val logoutService: LogoutService,
     private val updateFavorite: UpdateFavorite,
+    private val sendOtpLogEvent: SendOTPLogEvent,
     private val tvChannelRepo: TVChannelRepository,
     @ApplicationContext private val mContext: Context,
     private val sendSubscribeEvent: SendSubscribeEvent,
@@ -54,6 +54,7 @@ class HomeViewModel @Inject constructor(
     private val sendShareCountEvent: SendShareCountEvent,
     private val shareCountRepository: ShareCountRepository,
     private val sendViewContentEvent: SendViewContentEvent,
+    @SimpleHttpClient private val httpClient: OkHttpClient,
     @AppCoroutineScope private val appScope: CoroutineScope,
     private val mqttCredentialService: MqttCredentialService,
     private val sendUserInterestEvent: SendUserInterestEvent,
@@ -62,24 +63,24 @@ class HomeViewModel @Inject constructor(
     private val contentFromShareableUrl: GetContentFromShareableUrl,
     private val myChannelDetailApiService: MyChannelGetDetailService,
     private val subscriptionCountRepository: SubscriptionCountRepository,
-) : ViewModel(), OnCompleteListener<InstanceIdResult> {
+) : ViewModel() {
 
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val fragmentDetailsMutableLiveData = SingleLiveEvent<Any>()
     val addToPlayListMutableLiveData = MutableLiveData<AddToPlaylistData>()
     val shareContentLiveData = SingleLiveEvent<ChannelInfo>()
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
-    val switchBottomTab = SingleLiveEvent<Int>()
-    //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val viewAllVideoLiveData = MutableLiveData<Boolean>()
-    val viewAllCategories = MutableLiveData<Boolean>()
+//    val viewAllCategories = MutableLiveData<Boolean>()
     val logoutLiveData = SingleLiveEvent<Resource<LogoutBean>>()
     val myChannelNavLiveData = SingleLiveEvent<MyChannelNavParams>()
     val notificationUrlLiveData = SingleLiveEvent<String>()
     val mqttCredentialLiveData = SingleLiveEvent<Resource<MqttBean?>>()
-    private val _channelDetail = MutableLiveData<Resource<MyChannelDetailBean?>>()
+    private val _channelDetail = MutableLiveData<MyChannelDetail>()
+    val myChannelDetailResponse = SingleLiveEvent<Resource<MyChannelDetailBean>>()
     private var _playlistManager = PlaylistManager()
     val subscriptionLiveData = SingleLiveEvent<Resource<MyChannelSubscribeBean>>()
+    val myChannelDetailLiveData = _channelDetail.toLiveData()
 
     fun getPlaylistManager() = _playlistManager
 
@@ -88,19 +89,16 @@ class HomeViewModel @Inject constructor(
         FirebaseMessaging.getInstance().subscribeToTopic("buzz")
         FirebaseMessaging.getInstance().subscribeToTopic("controls")
         FirebaseMessaging.getInstance().subscribeToTopic("cdn_control")
-        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener(this)
-    }
-
-    //overridden function for firebase token
-    override fun onComplete(task: Task<InstanceIdResult>) {
-        if (task.isSuccessful) {
-            val token = task.result?.token
-            if (token != null) {
-                setFcmToken(token)
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if(task.isSuccessful) {
+                val token = task.result
+                if(token != null) {
+                    setFcmToken(token)
+                }
             }
         }
-
     }
+    
     private fun setFcmToken(token: String) {
         viewModelScope.launch {
             try {
@@ -156,6 +154,22 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    suspend fun fetchRedirectedDeepLink(url: String?): String? {
+        if(url == null) return url
+        return withContext(Dispatchers.IO + Job()) {
+            try {
+                val resp = httpClient.newCall(Request.Builder().url(url).build()).execute()
+                val redirUrl = resp.request.url
+                if (redirUrl.host == "toffeelive.com") redirUrl.toString()
+                else null
+            }
+            catch (ex: Exception) {
+                ex.printStackTrace()
+                null
+            }
+        }
+    }
+
     fun getShareableContent(shareUrl: String): LiveData<Resource<ChannelInfo?>> {
         return resultLiveData {
             contentFromShareableUrl.execute(shareUrl)
@@ -187,23 +201,26 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getChannelDetail(isOwner: Int, isPublic: Int, channelId: Int, channelOwnerId: Int) {
+    fun getChannelDetail(channelOwnerId: Int) {
         viewModelScope.launch {
             val result = resultFromResponse { myChannelDetailApiService.execute(channelOwnerId) }
 
             if (result is Success) {
                 val myChannelDetail = result.data.myChannelDetail
                 myChannelDetail?.let {
+                    _channelDetail.value = it
                     mPref.isChannelDetailChecked = true
                     mPref.channelId = it.id.toInt()
-                    if (!it.profileUrl.isNullOrBlank()) {
-                        mPref.channelLogo = it.profileUrl
-                    }
-                    if (!it.channelName.isNullOrBlank()) {
-                        mPref.channelName = it.channelName
-                    }
+                    mPref.customerName = it.name ?: ""
+                    mPref.customerEmail = it.email ?: ""
+                    mPref.customerAddress = it.address ?: ""
+                    mPref.customerDOB = it.dateOfBirth ?: ""
+                    mPref.customerNID = it.nationalIdNo ?: ""
+                    mPref.channelLogo = it.profileUrl ?: ""
+                    mPref.channelName = it.channelName ?: ""
                 }
             }
+            myChannelDetailResponse.value = result
         }
     }
 
@@ -257,6 +274,12 @@ class HomeViewModel @Inject constructor(
     fun sendUserInterestData(interestList: Map<String, Int>) {
         viewModelScope.launch {
             sendUserInterestEvent.execute(interestList)
+        }
+    }
+    
+    fun sendOtpLogData(otpLogData: OTPLogData) {
+        viewModelScope.launch {
+            sendOtpLogEvent.execute(otpLogData)
         }
     }
 }
