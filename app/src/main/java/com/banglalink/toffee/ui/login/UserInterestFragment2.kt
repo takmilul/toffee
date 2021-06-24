@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.AlertDialogUserInterestBinding
 import com.banglalink.toffee.extension.observe
@@ -43,13 +44,13 @@ class UserInterestFragment2 : ChildDialogFragment() {
         userInterestList.clear()
         with(binding) {
             interestChipGroup.removeAllViews()
-            skipButton.safeClick({ reloadContent() })
+            skipButton.safeClick({ findNavController().navigate(R.id.verifySuccessFragment) })
             doneButton.safeClick({
                 val userInterestCount = userInterestList.values.count { it == 1 }
                 if (userInterestCount >= 3) {
                     homeViewModel.sendUserInterestData(userInterestList)
                     cPref.setUserInterestSubmitted(mPref.phoneNumber)
-                    reloadContent()
+                    findNavController().navigate(R.id.verifySuccessFragment)
                 }
                 else {
                     requireContext().showToast("Please select at least 3 interest or press skip to sign in")
@@ -65,18 +66,11 @@ class UserInterestFragment2 : ChildDialogFragment() {
                     userInterestList[interest] = 1
                     binding.otherEt.text.clear()
                 }
-//                val imm: InputMethodManager? = requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager?
-//                imm?.hideSoftInputFromWindow(binding.otherEt.windowToken, 0)
             })
         }
         observeCategory()
     }
     
-    private fun reloadContent() {
-        closeDialog()
-        requireActivity().recreate()
-    }
-
     private fun observeCategory() {
         progressDialog.show()
         observe(viewModel.categories){
@@ -103,6 +97,7 @@ class UserInterestFragment2 : ChildDialogFragment() {
             else {
                 progressDialog.hide()
                 closeDialog()
+                requireActivity().recreate()
                 requireContext().showToast("Unable to load data!")
             }
         }

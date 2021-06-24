@@ -24,6 +24,7 @@ import com.banglalink.toffee.di.databinding.CustomBindingComponentBuilder
 import com.banglalink.toffee.di.databinding.CustomBindingEntryPoint
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.ui.upload.UploadObserver
+import com.banglalink.toffee.usecase.SendFirebaseConnectionErrorEvent
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.EntryPoints
 import dagger.hilt.android.HiltAndroidApp
@@ -46,6 +47,7 @@ class ToffeeApplication : Application() {
     @Inject lateinit var heartBeatManager: HeartBeatManager
     @Inject @AppCoroutineScope lateinit var coroutineScope: CoroutineScope
     @Inject lateinit var bindingComponentProvider: Provider<CustomBindingComponentBuilder>
+    @Inject lateinit var sendFirebaseConnectionErrorEvent: SendFirebaseConnectionErrorEvent
 
     override fun onCreate() {
         super.onCreate()
@@ -77,8 +79,14 @@ class ToffeeApplication : Application() {
         SessionPreference.init(this)
         CommonPreference.init(this)
         PlayerPreference.init(this)
-        ToffeeAnalytics.initFireBaseAnalytics(this)
-        
+        try {
+            ToffeeAnalytics.initFireBaseAnalytics(this)
+        }
+        catch (e: Exception) {
+            coroutineScope.launch { 
+                sendFirebaseConnectionErrorEvent.execute()
+            }
+        }
         initCoil()
 
         val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

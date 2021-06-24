@@ -67,5 +67,9 @@
             android:name="url"
             app:argType="string"/>
     </dialog>
+    <fragment
+        android:id="@+id/verifySuccessFragment"
+        android:name="com.banglalink.toffee.ui.login.VerifySuccessFragment"
+        android:label="Verification Successful" />
 
 </navigation>

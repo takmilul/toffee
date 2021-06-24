@@ -85,7 +85,7 @@ class VerifyLoginFragment2 : ChildDialogFragment() {
                     mPref.phoneNumber = phoneNumber
                     viewModel.sendLoginLogData()
                     if (cPref.isUserInterestSubmitted(phoneNumber)) {
-                        reloadContent()
+                        findNavController().navigate(R.id.verifySuccessFragment)
                     }
                     else {
                         findNavController().navigate(R.id.userInterestFragment2)
@@ -99,11 +99,6 @@ class VerifyLoginFragment2 : ChildDialogFragment() {
         }
     }
     
-    private fun reloadContent() {
-        closeDialog()
-        requireActivity().recreate()
-    }
-
     private fun handleResendButton() {
         observe(viewModel.resendCodeResponse) {
             progressDialog.dismiss()
