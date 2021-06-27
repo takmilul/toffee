@@ -6,10 +6,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.AlertDialogUserInterestBinding
 import com.banglalink.toffee.extension.observe
@@ -25,7 +25,7 @@ import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class UserInterestFragment2 : ChildDialogFragment() {
+class UserInterestFragment : ChildDialogFragment() {
     private var chipWidth: Int = 0
     private var _binding: AlertDialogUserInterestBinding? = null
     private val homeViewModel: HomeViewModel by activityViewModels()
@@ -44,13 +44,13 @@ class UserInterestFragment2 : ChildDialogFragment() {
         userInterestList.clear()
         with(binding) {
             interestChipGroup.removeAllViews()
-            skipButton.safeClick({ findNavController().navigate(R.id.verifySuccessFragment) })
+            skipButton.safeClick({ reloadContent() })
             doneButton.safeClick({
                 val userInterestCount = userInterestList.values.count { it == 1 }
                 if (userInterestCount >= 3) {
                     homeViewModel.sendUserInterestData(userInterestList)
                     cPref.setUserInterestSubmitted(mPref.phoneNumber)
-                    findNavController().navigate(R.id.verifySuccessFragment)
+                    reloadContent()
                 }
                 else {
                     requireContext().showToast("Please select at least 3 interest or press skip to sign in")
@@ -100,6 +100,13 @@ class UserInterestFragment2 : ChildDialogFragment() {
                 requireActivity().recreate()
                 requireContext().showToast("Unable to load data!")
             }
+        }
+    }
+
+    private fun reloadContent() {
+        closeDialog()
+        requireActivity().showToast(getString(R.string.verify_success), Toast.LENGTH_LONG).also {
+            requireActivity().recreate()
         }
     }
 

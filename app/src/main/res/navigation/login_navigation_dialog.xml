@@ -10,26 +10,26 @@
         android:name="com.banglalink.toffee.ui.login.LoginIntroFragment"
         android:label="Login">
         <action
-            android:id="@+id/action_loginIntroFragment_to_loginContentFragment2"
-            app:destination="@id/loginContentFragment2" />
+            android:id="@+id/action_loginIntroFragment_to_loginContentFragment"
+            app:destination="@id/loginContentFragment" />
     </fragment>
     <fragment
-        android:id="@+id/loginContentFragment2"
+        android:id="@+id/loginContentFragment"
         tools:layout="@layout/alert_dialog_login"
-        android:name="com.banglalink.toffee.ui.login.LoginContentFragment2"
+        android:name="com.banglalink.toffee.ui.login.LoginContentFragment"
         android:label="Sign In" >
         <action
-            android:id="@+id/action_loginContentFragment_to_verifyLoginFragment2"
-            app:destination="@id/verifyLoginFragment2"
+            android:id="@+id/action_loginContentFragment_to_verifyLoginFragment"
+            app:destination="@id/verifyLoginFragment"
             app:popEnterAnim="@anim/slide_left_to_center" />
         <action
             android:id="@+id/action_loginContentFragment2_to_htmlPageViewDialog"
             app:destination="@id/htmlPageViewDialog" />
     </fragment>
     <fragment
-        android:id="@+id/verifyLoginFragment2"
+        android:id="@+id/verifyLoginFragment"
         tools:layout="@layout/alert_dialog_verify"
-        android:name="com.banglalink.toffee.ui.login.VerifyLoginFragment2"
+        android:name="com.banglalink.toffee.ui.login.VerifyLoginFragment"
         android:label="VerifyLoginFragment">
         <argument
             android:name="phoneNumber"
@@ -41,13 +41,13 @@
             android:name="regSessionToken"
             app:argType="string" />
         <action
-            android:id="@+id/action_verifyLoginFragment_to_userInterestFragment2"
-            app:destination="@id/userInterestFragment2" />
+            android:id="@+id/action_verifyLoginFragment_to_userInterestFragment"
+            app:destination="@id/userInterestFragment" />
     </fragment>
     <fragment
-        android:id="@+id/userInterestFragment2"
+        android:id="@+id/userInterestFragment"
         tools:layout="@layout/alert_dialog_user_interest"
-        android:name="com.banglalink.toffee.ui.login.UserInterestFragment2"
+        android:name="com.banglalink.toffee.ui.login.UserInterestFragment"
         android:label="Interests" >
 <!--        <argument-->
 <!--            android:name="verifiedUserData"-->
@@ -67,9 +67,5 @@
             android:name="url"
             app:argType="string"/>
     </dialog>
-    <fragment
-        android:id="@+id/verifySuccessFragment"
-        android:name="com.banglalink.toffee.ui.login.VerifySuccessFragment"
-        android:label="Verification Successful" />
-
+    
 </navigation>

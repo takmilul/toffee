@@ -137,26 +137,14 @@
                     android:id="@+id/channel_name_count_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto_regular"
-                    android:textColor="@color/switchUnCheckedColor"
-                    android:textSize="12sp"
-                    android:text="0"
-                    app:layout_constraintBottom_toBottomOf="@+id/channel_name_count_limit_tv"
-                    app:layout_constraintEnd_toStartOf="@+id/channel_name_count_limit_tv"
-                    app:layout_constraintTop_toTopOf="@+id/channel_name_count_limit_tv" />
-
-                <TextView
-                    android:id="@+id/channel_name_count_limit_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_marginEnd="12dp"
                     android:fontFamily="@font/roboto_regular"
-                    android:text="/50"
                     android:textColor="@color/switchUnCheckedColor"
                     android:textSize="12sp"
+                    android:text="@string/channel_name_limit"
                     app:layout_constraintEnd_toEndOf="@+id/channelName"
                     app:layout_constraintTop_toTopOf="@+id/channelName" />
-                
+
                 <TextView
                     android:id="@+id/error_channel_name_tv"
                     android:layout_width="wrap_content"
@@ -197,31 +185,18 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView17" />
-
-
+                
                 <TextView
                     android:id="@+id/channel_des_count_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto_regular"
-                    android:textColor="@color/switchUnCheckedColor"
-                    android:textSize="12sp"
-                    android:text="0"
-                    app:layout_constraintBottom_toBottomOf="@+id/channel_des_count_limit_tv"
-                    app:layout_constraintEnd_toStartOf="@+id/channel_des_count_limit_tv"
-                    app:layout_constraintTop_toTopOf="@+id/channel_des_count_limit_tv" />
-
-                <TextView
-                    android:id="@+id/channel_des_count_limit_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_marginEnd="12dp"
                     android:fontFamily="@font/roboto_regular"
-                    android:text="/200"
                     android:textColor="@color/switchUnCheckedColor"
                     android:textSize="12sp"
+                    android:text="@string/channel_description_limit"
                     app:layout_constraintEnd_toEndOf="@+id/description"
-                    app:layout_constraintTop_toTopOf="@+id/description" />
+                    app:layout_constraintTop_toTopOf="@+id/description"  />
 
                 <TextView
                     android:id="@+id/error_description_tv"
@@ -492,7 +467,7 @@
                         app:drawableStartCompat="@drawable/ic_bd_flag"
                         app:drawableEndCompat="@drawable/ic_path_down_arrow"/>
                     
-                    <EditText
+                    <TextView
                         android:id="@+id/paymentPhoneNumberEditText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -500,7 +475,7 @@
                         android:background="@android:color/transparent"
                         android:fontFamily="@font/roboto_regular"
                         android:gravity="center_vertical"
-                        android:textColor="@color/main_text_color"
+                        android:textColor="@color/switchUnCheckedColor"
                         android:inputType="number"
                         android:textSize="14sp"
                         android:text="@{viewModel.myChannelDetail.paymentPhoneNo.length()==11 ? viewModel.myChannelDetail.paymentPhoneNo : viewModel.myChannelDetail.paymentPhoneNo.substring(3)}"

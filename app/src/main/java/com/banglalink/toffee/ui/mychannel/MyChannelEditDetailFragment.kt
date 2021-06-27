@@ -60,7 +60,6 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     private var userDOB = ""
     private var userEmail=""
     private var userNID=""
-    private var paymentPhoneNumber=""
     
     companion object {
         fun newInstance(): MyChannelEditDetailFragment {
@@ -78,7 +77,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             if (name.isNullOrBlank()) name = profileForm?.fullName
             if (email.isNullOrBlank()) email = profileForm?.email
             if (address.isNullOrBlank()) address = profileForm?.address
-            if (paymentPhoneNo.isNullOrBlank()) paymentPhoneNo = if (mPref.phoneNumber.length == 11) mPref.phoneNumber else mPref.phoneNumber.substring(3)
+            paymentPhoneNo = if (mPref.phoneNumber.length == 11) mPref.phoneNumber else mPref.phoneNumber.substring(3)
         }
     }
 
@@ -104,51 +103,39 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         setupCategorySpinner()
         observeThumbnailChange()
         setupPaymentCategorySpinner()
-        binding.saveButton.safeClick(this)
-        binding.cancelButton.safeClick(this)
-        binding.bannerEditButton.safeClick(this)
-        binding.profileImageEditButton.safeClick(this)
-        binding.dateOfBirthTv.safeClick ({ showDatePicker() })
-
         channelNameWatcher()
         channelDesWatcher()
+        with(binding) {
+            channelNameCountTv.text = getString(R.string.channel_name_limit, "0")
+            channelDesCountTv.text = getString(R.string.channel_description_limit, "0")
+            dateOfBirthTv.safeClick ({ showDatePicker() })
+            saveButton.safeClick(this@MyChannelEditDetailFragment)
+            cancelButton.safeClick(this@MyChannelEditDetailFragment)
+            bannerEditButton.safeClick(this@MyChannelEditDetailFragment)
+            profileImageEditButton.safeClick(this@MyChannelEditDetailFragment)
+        }
     }
-
-
+    
     private fun channelNameWatcher() {
         binding.channelName.addTextChangedListener(object : TextWatcher {
-
             override fun afterTextChanged(s: Editable?) {
-                val lenght = s.toString().length
-                binding.channelNameCountTv.text=lenght.toString()
+                binding.channelNameCountTv.text = getString(R.string.channel_name_limit, s.toString().length)
             }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
         })
     }
-
-    private fun channelDesWatcher()
-    {
+    
+    private fun channelDesWatcher() {
         binding.description.addTextChangedListener(object : TextWatcher {
-
             override fun afterTextChanged(s: Editable?) {
-                val lenght = s.toString().length
-                binding.channelDesCountTv.text=lenght.toString()
+                binding.channelDesCountTv.text = getString(R.string.channel_description_limit, s.toString().length)
             }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
     }
-
-
+    
     private fun setupPaymentCategorySpinner() {
         val paymentCategoryAdapter = ToffeeSpinnerAdapter<Payment>(requireContext(), "Select Payment Option")
         binding.categoryPaymentSpinner.adapter = paymentCategoryAdapter
@@ -341,9 +328,8 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
          userName = binding.nameEt.text.toString().trim()
          userAddress = binding.addressEt.text.toString().trim()
          userDOB = binding.dateOfBirthTv.text.toString().trim()
-         userEmail=binding.emailEt.text.toString().trim()
-         userNID=binding.nidEt.text.toString().trim()
-         paymentPhoneNumber=binding.paymentPhoneNumberEditText.text.toString().trim()
+         userEmail = binding.emailEt.text.toString().trim()
+         userNID = binding.nidEt.text.toString().trim()
         
         if (channelName.isNotBlank()) {
             binding.channelName.setBackgroundResource(R.drawable.single_line_input_text_bg)
@@ -372,7 +358,6 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         }
     
         val isDobValid =validateDOB()
-        
         val notValidEmail = userEmail.isNotBlank() and !userEmail.isValid(InputType.EMAIL)
 
         if (userEmail.isBlank()) {
@@ -434,44 +419,13 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             }
         }
         
-        /*if(viewModel.selectedPaymentMethod?.id?:0 > 0) {
-            binding.errorPaymentOption.setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.main_text_color
-                )
-            )
-            binding.errorPaymentOption.text = getString(R.string.this_account_will_be_used_to_send_payment)
-        } else{
-            binding.errorPaymentOption.setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.pink_to_accent_color
-                )
-            )
-            binding.errorPaymentOption.text = getString(R.string.payment_option_required)
-        }*/
-
-        if (paymentPhoneNumber.isBlank() || paymentPhoneNumber.length!=11) {
-            binding.errorNumberTv.show()
-        } else {
-            binding.errorNumberTv.hide()
-        }
-    
         if(channelName.isNotBlank() and isChannelLogoAvailable
             && userName.isNotBlank()
             && !notValidEmail
             && userAddress.isNotBlank()
             && isDobValid
             && userNID.isNotBlank()
-            && paymentPhoneNumber.isNotBlank()
-//            && viewModel.selectedPaymentMethod?.id?:0 > 0
-            && paymentPhoneNumber.length==11
             && validNID){
-
-            if (paymentPhoneNumber.startsWith("0")) {
-                paymentPhoneNumber = "+88$paymentPhoneNumber"
-            }
 
             val selectedDate=UtilsKt.dateToStr(UtilsKt.strToDate(binding.dateOfBirthTv.text.toString(),"dd/MM/yyyy"),"yyyy-MM-dd")
 
@@ -491,7 +445,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                 userAddress,
                 selectedDate ?: "",
                 userNID,
-                paymentPhoneNumber,
+                mPref.phoneNumber,
                 viewModel.selectedPaymentMethod?.id?.toInt() ?: 0,
                 !myChannelDetail?.nationalIdNo.isNullOrBlank(),
                 !(myChannelDetail?.channelName.isNullOrBlank() && myChannelDetail?.profileUrl.isNullOrBlank())

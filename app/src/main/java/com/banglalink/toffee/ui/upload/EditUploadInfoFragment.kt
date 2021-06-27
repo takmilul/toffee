@@ -72,8 +72,7 @@ class EditUploadInfoFragment: BaseFragment() {
                 if(isEnabled) {
                     VelBoxAlertDialogBuilder(requireContext()).apply {
                         setTitle("Cancel Uploading")
-                        setText("Are you sure that you want to\n" +
-                                "cancel uploading video?")
+                        setText("Are you sure that you want to\n" + "cancel uploading video?")
                         setPositiveButtonListener("NO") {
                             it?.dismiss()
                         }
@@ -163,43 +162,30 @@ class EditUploadInfoFragment: BaseFragment() {
 
         titleWatcher()
         descriptionDesWatcher()
+        binding.uploadTitleCountTv.text = getString(R.string.video_title_limit, "0")
+        binding.uploadDesCountTv.text = getString(R.string.video_description_limit, "0")
     }
 
 
     private fun titleWatcher() {
         binding.uploadTitle.addTextChangedListener(object : TextWatcher {
-
             override fun afterTextChanged(s: Editable?) {
-                val lenght = s.toString().length
-                binding.uploadTitleCountTv.text=lenght.toString()
+                binding.uploadTitleCountTv.text = getString(R.string.video_title_limit, s.toString().length)
             }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
         })
     }
 
-    private fun descriptionDesWatcher()
-    {
+    private fun descriptionDesWatcher() {
         binding.uploadDescription.addTextChangedListener(object : TextWatcher {
-
             override fun afterTextChanged(s: Editable?) {
-                val lenght = s.toString().length
-                binding.uploadDesCountTv.text=lenght.toString()
+                binding.uploadDesCountTv.text = getString(R.string.video_description_limit, s.toString().length)
             }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
         })
     }
-
-
     
     private fun checkFileSystemPermission() {
         lifecycleScope.launch {
@@ -282,9 +268,7 @@ class EditUploadInfoFragment: BaseFragment() {
                 }
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-
-            }
+            override fun onNothingSelected(parent: AdapterView<*>?) { }
         }
 
         observe(viewModel.ageGroup) {
@@ -313,9 +297,7 @@ class EditUploadInfoFragment: BaseFragment() {
                 }
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-
-            }
+            override fun onNothingSelected(parent: AdapterView<*>?) { }
         }
 
         observe(viewModel.categories) {
@@ -340,10 +322,7 @@ class EditUploadInfoFragment: BaseFragment() {
                     binding.subCategorySpinner.setSelection(viewModel.subCategoryPosition.value ?: 1)
                 }
             }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-
-            }
+            override fun onNothingSelected(parent: AdapterView<*>?) { }
         }
 
         observe(viewModel.subCategories) {
@@ -352,8 +331,8 @@ class EditUploadInfoFragment: BaseFragment() {
         }
 
         observe(viewModel.subCategoryPosition) {
-                mSubCategoryAdapter.selectedItemPosition = it
-                binding.subCategorySpinner.setSelection(it)
+            mSubCategoryAdapter.selectedItemPosition = it
+            binding.subCategorySpinner.setSelection(it)
         }
     }
 
@@ -365,18 +344,12 @@ class EditUploadInfoFragment: BaseFragment() {
             inputType = InputType.TYPE_TEXT_FLAG_MULTI_LINE
         }
 
-        val chippRecycler = binding.uploadTags.findViewById<RecyclerView>(R.id.chips_recycler)
-        chippRecycler.setPadding(0)
+        val chipRecycler = binding.uploadTags.findViewById<RecyclerView>(R.id.chips_recycler)
+        chipRecycler.setPadding(0)
 
         binding.uploadTags.addChipsListener(object : ChipsInput.ChipsListener {
-            override fun onChipAdded(chip: ChipInterface?, newSize: Int) {
-
-            }
-
-            override fun onChipRemoved(chip: ChipInterface?, newSize: Int) {
-
-            }
-
+            override fun onChipAdded(chip: ChipInterface?, newSize: Int) { }
+            override fun onChipRemoved(chip: ChipInterface?, newSize: Int) { }
             override fun onTextChanged(text: CharSequence?) {
                 if (text?.endsWith(" ") == true) {
                     text.let {
@@ -424,22 +397,8 @@ class EditUploadInfoFragment: BaseFragment() {
             when(it){
                 is Resource.Success -> {
                     lifecycleScope.launch {
-//                        getUploadInfo()?.apply {
-//                            status = UploadStatus.SUBMITTED.value
-//                        }?.also {info ->
-//                            uploadRepo.updateUploadInfo(info)
-//                        }
                         progressDialog?.dismiss()
                         progressDialog = null
-//                        val dialog = VelBoxAlertDialogBuilder(
-//                            requireContext(),
-//                            text = it.data.message,
-//                            icon = R.drawable.subscription_success
-//                        ).create()
-//                        dialog.setOnDismissListener {
-//                            findNavController().popBackStack()
-//                        }
-//                        dialog.show()
                         findNavController().navigate(R.id.upload_minimize, Bundle().apply {
                             putString(MinimizeUploadFragment.UPLOAD_ID, it.data.first)
                             putLong(MinimizeUploadFragment.CONTENT_ID, it.data.second)
