@@ -28,6 +28,24 @@
         android:label="Activities"
         />
     <fragment
+        android:id="@+id/menu_playlist"
+        android:name="com.banglalink.toffee.ui.playlist.PlaylistsFragment"
+        android:label="Playlists"
+        >
+        <action
+            android:id="@+id/actionPlaylistsFragment_to_PlayListVideosFragment"
+            app:destination="@id/menu_playlist_videos" />
+    </fragment>
+    <fragment
+        android:id="@+id/menu_playlist_videos"
+        android:name="com.banglalink.toffee.ui.playlist.PlayListVideosFragment"
+        android:label="Playlists"
+        >
+        <argument
+            android:name="playlistInfo"
+            app:argType="com.banglalink.toffee.model.PlaylistPlaybackInfo" />
+    </fragment>
+    <fragment
         android:id="@+id/menu_favorites"
         android:name="com.banglalink.toffee.ui.favorite.FavoriteFragment"
         android:label="Favorites"

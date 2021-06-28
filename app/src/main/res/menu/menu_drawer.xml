@@ -18,6 +18,9 @@
     <item android:id="@+id/menu_activities"
         android:title="Activities"
         android:icon="@drawable/ic_menu_activites" />
+    <item android:id="@+id/menu_playlist"
+        android:title="Playlists"
+        android:icon="@drawable/ic_group_215" />
 
     <item android:id="@+id/menu_favorites"
         android:title="Favorites"

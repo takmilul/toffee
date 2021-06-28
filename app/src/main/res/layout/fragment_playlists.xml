@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.banglalink.toffee.ui.widget.SmartNestedScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/screen_bg">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/createPlaylistButton"
+            style="@style/ButtonStyleRingPurple"
+            android:layout_marginTop="4dp"
+            android:paddingHorizontal="16dp"
+            android:text="New Playlist"
+            app:icon="@drawable/ic_upload_menu_plus"
+            app:iconPadding="8dp"
+
+            app:iconTint="@color/colorButtonSecondary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.059"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/myChannelPlaylists"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            android:paddingTop="12dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/createPlaylistButton"
+            app:reverseLayout="false"
+            tools:listitem="@layout/list_item_my_channel_playlist" />
+
+        <pl.droidsonroids.gif.GifImageView
+            android:id="@+id/progress_bar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/gif_round_border"
+            android:elevation="2dp"
+            android:src="@drawable/content_loader"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:layout_marginTop="9dp"
+            android:id="@+id/empty_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/createPlaylistButtonNone"
+                style="@style/ButtonStyleRingPurple"
+                android:layout_marginTop="16dp"
+                android:paddingHorizontal="16dp"
+                android:text="New Playlist"
+                app:icon="@drawable/ic_upload_menu_plus"
+                app:iconPadding="8dp"
+                app:iconTint="@color/colorButtonSecondary" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/empty_view_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:adjustViewBounds="true"
+                android:maxWidth="144dp"
+                app:srcCompat="@drawable/ic_playlists_empty" />
+
+            <TextView
+                android:id="@+id/empty_view_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:fontFamily="@font/roboto_regular"
+                android:text="No item found"
+                android:textColor="@color/fixed_second_text_color"
+                android:textSize="16sp"
+                tools:text="No item found" />
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.banglalink.toffee.ui.widget.SmartNestedScrollView>
