@@ -102,15 +102,9 @@
 
             <TextView
                 android:id="@+id/error_title_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
+                style="@style/ErrorTextStyle"
                 android:text="@string/title_error_text"
-                android:textColor="@color/pink_to_accent_color"
-                android:textSize="12sp"
-                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="@+id/upload_title"
-                app:layout_constraintHorizontal_bias="0.05"
                 app:layout_constraintStart_toStartOf="@+id/upload_title"
                 app:layout_constraintTop_toBottomOf="@+id/upload_title"
                 tools:visibility="visible" />
@@ -165,15 +159,9 @@
 
             <TextView
                 android:id="@+id/error_description_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
+                style="@style/ErrorTextStyle"
                 android:text="@string/description_error_text"
-                android:textColor="@color/pink_to_accent_color"
-                android:textSize="12sp"
-                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="@+id/upload_description"
-                app:layout_constraintHorizontal_bias="0.05"
                 app:layout_constraintStart_toStartOf="@+id/upload_description"
                 app:layout_constraintTop_toBottomOf="@+id/upload_description"
                 tools:visibility="visible" />
@@ -222,15 +210,9 @@
 
             <TextView
                 android:id="@+id/error_tags_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
+                style="@style/ErrorTextStyle"
                 android:text="@string/tag_error_text"
-                android:textColor="@color/pink_to_accent_color"
-                android:textSize="12sp"
-                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="@+id/upload_tags"
-                app:layout_constraintHorizontal_bias="0.05"
                 app:layout_constraintStart_toStartOf="@+id/upload_tags"
                 app:layout_constraintTop_toBottomOf="@+id/upload_tags"
                 tools:visibility="visible" />
@@ -335,8 +317,6 @@
             <Button
                 android:id="@+id/cancel_button"
                 style="@style/ButtonStyleRingPurple"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="24dp"
@@ -348,8 +328,6 @@
             <Button
                 android:id="@+id/submit_button"
                 style="@style/ButtonStyleSolidPink"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="24dp"
