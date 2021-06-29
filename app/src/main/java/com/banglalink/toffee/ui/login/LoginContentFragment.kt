@@ -16,21 +16,19 @@ import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.ui.bottomsheet.BasicInfoBottomSheetFragmentDirections
-import com.banglalink.toffee.ui.bottomsheet.PartnershipBottomSheetFragmentDirections
 import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class LoginContentFragment2 : ChildDialogFragment(), TextWatcher {
+class LoginContentFragment : ChildDialogFragment(), TextWatcher {
     
     private var phoneNo: String = ""
     private var regSessionToken: String = ""
     private var _binding: AlertDialogLoginBinding? = null
     private val binding get() = _binding !!
-    private val viewModel by viewModels<LoginViewModel2>()
+    private val viewModel by viewModels<LoginViewModel>()
     private val progressDialog by unsafeLazy { VelBoxProgressDialog(requireContext()) }
     
     companion object {
@@ -56,7 +54,7 @@ class LoginContentFragment2 : ChildDialogFragment(), TextWatcher {
             termsAndConditionsCheckbox.setOnClickListener {
                 verifyButton.isEnabled = binding.termsAndConditionsCheckbox.isChecked && phoneNo.isNotBlank() && phoneNo.length >= 11
             }
-            phoneNumberEditText.addTextChangedListener(this@LoginContentFragment2)
+            phoneNumberEditText.addTextChangedListener(this@LoginContentFragment)
         }
     }
     
@@ -82,7 +80,7 @@ class LoginContentFragment2 : ChildDialogFragment(), TextWatcher {
                 is Resource.Success -> {
                     if (it.data is String) {
                         regSessionToken = it.data
-                        findNavController().navigate(R.id.verifyLoginFragment2,
+                        findNavController().navigate(R.id.verifyLoginFragment,
                             Bundle().apply { 
                                 putString(PHONE_NO_ARG, phoneNo)
                                 putString(REG_SESSION_TOKEN_ARG, regSessionToken)

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -26,7 +27,7 @@ import com.google.android.gms.auth.api.phone.SmsRetriever
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class VerifyLoginFragment2 : ChildDialogFragment() {
+class VerifyLoginFragment : ChildDialogFragment() {
     
     private var otp: String = ""
     private var phoneNumber: String = ""
@@ -43,8 +44,8 @@ class VerifyLoginFragment2 : ChildDialogFragment() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        phoneNumber = requireArguments().getString(LoginContentFragment2.PHONE_NO_ARG) ?: ""
-        regSessionToken = requireArguments().getString(LoginContentFragment2.REG_SESSION_TOKEN_ARG) ?: ""
+        phoneNumber = requireArguments().getString(LoginContentFragment.PHONE_NO_ARG) ?: ""
+        regSessionToken = requireArguments().getString(LoginContentFragment.REG_SESSION_TOKEN_ARG) ?: ""
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -85,10 +86,10 @@ class VerifyLoginFragment2 : ChildDialogFragment() {
                     mPref.phoneNumber = phoneNumber
                     viewModel.sendLoginLogData()
                     if (cPref.isUserInterestSubmitted(phoneNumber)) {
-                        findNavController().navigate(R.id.verifySuccessFragment)
+                        reloadContent()
                     }
                     else {
-                        findNavController().navigate(R.id.userInterestFragment2)
+                        findNavController().navigate(R.id.userInterestFragment)
                     }
                 }
                 is Resource.Failure -> {
@@ -96,6 +97,13 @@ class VerifyLoginFragment2 : ChildDialogFragment() {
                     requireContext().showToast(it.error.msg)
                 }
             }
+        }
+    }
+
+    private fun reloadContent() {
+        closeDialog()
+        requireActivity().showToast(getString(R.string.verify_success), Toast.LENGTH_LONG).also {
+            requireActivity().recreate()
         }
     }
     

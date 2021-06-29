@@ -76,11 +76,9 @@ data class VelBoxAlertDialogBuilder(
                     binding.dialogNegativeButton.visibility = View.GONE
                 }
                 
-                closeButtonListener?.let { 
-                    binding.closeButton.setOnClickListener { _ -> 
-                        it.invoke(dialog) 
-                    }
-                } ?: run { dialog?.dismiss() }
+                binding.closeButton.setOnClickListener { _ ->
+                    closeButtonListener?.invoke(dialog) ?: run { dialog?.dismiss() }
+                }
             }
             return dialogBuilder.create().apply {
                 window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))

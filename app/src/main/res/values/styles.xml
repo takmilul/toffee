@@ -550,6 +550,20 @@
         <item name="windowMinWidthMajor">90%</item>
         <item name="windowMinWidthMinor">90%</item>
     </style>
+
+    <style name="ErrorTextStyle" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginStart">12dp</item>
+        <item name="android:layout_marginEnd">12dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">@color/pink_to_accent_color</item>
+        <item name="android:textSize">@dimen/default_text_size</item>
+        <item name="android:visibility">gone</item>
+    </style>
+    
     
     <style name="fireworkVideoTitleStyle">
         <item name="android:lines">2</item>

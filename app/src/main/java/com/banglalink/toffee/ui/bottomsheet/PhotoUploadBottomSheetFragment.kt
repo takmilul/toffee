@@ -62,23 +62,16 @@ class PhotoUploadBottomSheetFragment : ChildDialogFragment(), TextWatcher {
             channelNameEt.addTextChangedListener(this@PhotoUploadBottomSheetFragment)
         }
         channelNameWatcher()
+        binding.channelNameCountTv.text = getString(R.string.channel_name_limit, "0")
     }
-
-
-
+    
     private fun channelNameWatcher() {
         binding.channelNameEt.addTextChangedListener(object : TextWatcher {
-
             override fun afterTextChanged(s: Editable?) {
-                val lenght = s.toString().length
-                binding.channelNameCountTv.text=lenght.toString()
+                binding.channelNameCountTv.text = getString(R.string.channel_name_limit, s.toString().length)
             }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
         })
     }
     

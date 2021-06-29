@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.NavController
@@ -13,6 +14,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.FragmentLoginDialogBinding
 import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.extension.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -37,7 +39,9 @@ class LoginFragment : DialogFragment() {
         binding.closeIv.safeClick({
             dismiss().let { 
                 if (mPref.isVerifiedUser) {
-                    requireActivity().recreate()
+                    requireActivity().showToast(getString(R.string.verify_success), Toast.LENGTH_LONG).also { 
+                        requireActivity().recreate()
+                    }
                 }
             }
         })
