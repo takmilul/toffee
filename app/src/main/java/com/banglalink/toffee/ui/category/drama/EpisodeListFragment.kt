@@ -30,6 +30,7 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.SeriesPlaybackInfo
 import com.banglalink.toffee.ui.common.*
 import com.banglalink.toffee.ui.home.ChannelHeaderAdapter
+import com.banglalink.toffee.ui.mychannel.MyChannelAddToPlaylistFragment
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.ui.widget.MyPopupWindow
@@ -307,6 +308,12 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
             when(it?.itemId){
                 R.id.menu_share->{
                     requireActivity().handleShare(channelInfo)
+                    return@setOnMenuItemClickListener true
+                }
+                R.id.menu_add_to_playlist->{
+                    val isUserPlaylist = if (mPref.customerId==channelInfo.channel_owner_id) 0 else 1
+                    val fragment = MyChannelAddToPlaylistFragment.newInstance(mPref.customerId, channelInfo, isUserPlaylist)
+                    fragment.show(requireActivity().supportFragmentManager, "add_to_playlist")
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_fav->{

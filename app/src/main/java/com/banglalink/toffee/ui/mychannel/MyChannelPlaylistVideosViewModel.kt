@@ -3,9 +3,7 @@ package com.banglalink.toffee.ui.mychannel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import com.banglalink.toffee.apiservice.MyChannelPlaylistContentParam
-import com.banglalink.toffee.apiservice.MyChannelPlaylistVideoDeleteService
-import com.banglalink.toffee.apiservice.MyChannelPlaylistVideosService
+import com.banglalink.toffee.apiservice.*
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
 import com.banglalink.toffee.data.database.entities.UserActivities
@@ -30,6 +28,7 @@ class MyChannelPlaylistVideosViewModel @Inject constructor(
     private val activitiesRepo: UserActivitiesRepository,
     private val playlistVideoDeleteApiService: MyChannelPlaylistVideoDeleteService,
     private val apiService: MyChannelPlaylistVideosService.AssistedFactory,
+    private val userPlaylistService: MyChannelUserPlaylistVideosService.AssistedFactory,
 ) : ViewModel() {
     
     private val _data = SingleLiveEvent<Resource<MyChannelDeletePlaylistVideoBean>>()
@@ -39,6 +38,14 @@ class MyChannelPlaylistVideosViewModel @Inject constructor(
         return BaseListRepositoryImpl({
             BaseNetworkPagingSource(
                 apiService.create(requestParams)
+            )
+        }).getList()
+    }
+
+    fun getMyChannelUserPlaylistVideos(requestParams: MyChannelPlaylistContentParam): Flow<PagingData<ChannelInfo>> {
+        return BaseListRepositoryImpl({
+            BaseNetworkPagingSource(
+                userPlaylistService.create(requestParams)
             )
         }).getList()
     }

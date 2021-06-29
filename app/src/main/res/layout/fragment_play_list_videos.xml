@@ -79,17 +79,17 @@
                 android:gravity="center"
                 android:orientation="vertical"
                 android:visibility="gone"
+                tools:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/backButton">
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/empty_view_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="128dp"
+                    android:layout_height="120dp"
                     android:layout_marginTop="40dp"
                     android:adjustViewBounds="true"
-                    android:maxWidth="144dp"
                     android:visibility="visible"
                     app:srcCompat="@drawable/ic_videos_empty" />
 

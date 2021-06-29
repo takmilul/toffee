@@ -42,7 +42,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_VIDEOS
+import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.repository.UploadInfoRepository
@@ -1636,7 +1636,7 @@ class HomeActivity :
                             binding.homeMiniProgressContainer.uploadSizeText.isInvisible = true
                             binding.homeMiniProgressContainer.miniUploadProgressText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_upload_done, 0, 0, 0)
                             binding.homeMiniProgressContainer.miniUploadProgressText.text = "Upload complete"
-                            cacheManager.clearCacheByUrl(GET_MY_CHANNEL_VIDEOS)
+                            cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_VIDEOS)
                         }
                         UploadStatus.ADDED.value,
                         UploadStatus.STARTED.value -> {

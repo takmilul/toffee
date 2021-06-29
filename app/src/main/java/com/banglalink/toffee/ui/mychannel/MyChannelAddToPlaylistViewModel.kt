@@ -28,9 +28,9 @@ class MyChannelAddToPlaylistViewModel @Inject constructor(
     private val _data = MutableLiveData<Resource<MyChannelAddToPlaylistBean>>()
     val liveData = _data.toLiveData()
     
-    fun addToPlaylist(playlistId: Int, contentId: Int, channelOwnerId: Int) {
+    fun addToPlaylist(playlistId: Int, contentId: Int, channelOwnerId: Int, isUserPlaylist:Int) {
         viewModelScope.launch {
-            _data.postValue(resultFromResponse { apiService.invoke(playlistId, contentId, channelOwnerId) })
+            _data.postValue(resultFromResponse { apiService.invoke(playlistId, contentId, channelOwnerId,isUserPlaylist) })
         }
     }
     

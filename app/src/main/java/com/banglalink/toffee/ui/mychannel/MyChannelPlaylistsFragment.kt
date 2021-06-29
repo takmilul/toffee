@@ -15,7 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import com.banglalink.toffee.R
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_PLAYLISTS
+import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.data.network.retrofit.CacheManager
@@ -251,7 +251,7 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
     }
     
     private fun reloadPlaylist() {
-        cacheManager.clearCacheByUrl(GET_MY_CHANNEL_PLAYLISTS)
+        cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_PLAYLISTS)
         mAdapter.refresh()
     }
 }

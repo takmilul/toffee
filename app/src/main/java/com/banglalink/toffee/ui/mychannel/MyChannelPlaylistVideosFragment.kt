@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -17,8 +18,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.ConcatAdapter
 import com.banglalink.toffee.R
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_PLAYLISTS
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_PLAYLIST_VIDEOS
+import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.apiservice.MyChannelPlaylistContentParam
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.data.database.LocalSync
@@ -306,8 +306,8 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
         observe(mViewModel.deletePlaylistVideoLiveData) {
             when (it) {
                 is Success -> {
-                    cacheManager.clearCacheByUrl(GET_MY_CHANNEL_PLAYLISTS)
-                    cacheManager.clearCacheByUrl(GET_MY_CHANNEL_PLAYLIST_VIDEOS)
+                    cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_PLAYLISTS)
+                    cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_PLAYLIST_VIDEOS)
                     playlistAdapter.refresh()
                     requireContext().showToast(it.data.message)
                 }
@@ -338,6 +338,16 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
                 }
                 R.id.menu_fav -> {
                     requireActivity().handleFavorite(channelInfo)
+                    return@setOnMenuItemClickListener true
+                }
+                R.id.menu_add_to_playlist->{
+                    val isUserPlaylist = if (mPref.customerId==channelInfo.channel_owner_id) 0 else 1
+                    val fragment = MyChannelAddToPlaylistFragment.newInstance(mPref.customerId, channelInfo, isUserPlaylist)
+                    fragment.show(requireActivity().supportFragmentManager, "add_to_playlist")
+                    return@setOnMenuItemClickListener true
+                }
+                R.id.menu_report -> {
+                    requireActivity().handleReport(channelInfo)
                     return@setOnMenuItemClickListener true
                 }
                 else -> {

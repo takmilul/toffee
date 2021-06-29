@@ -18,7 +18,7 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_PLAYLIST_VIDEOS
+import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.apiservice.MyChannelPlaylistContentParam
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
@@ -115,7 +115,6 @@ class PlayListVideosFragment : BaseFragment(), MyChannelPlaylistItemListener {
             binding.myChannelPlaylistVideos.updatePadding(top = 0.dp)
         }
         binding.emptyViewLabel.text = "No item found"
-        binding
         binding.playlistName.text = args.playlistInfo.playlistName
         binding.backButton.safeClick({ findNavController().popBackStack() })
         with(binding.myChannelPlaylistVideos) {
@@ -197,7 +196,7 @@ class PlayListVideosFragment : BaseFragment(), MyChannelPlaylistItemListener {
 
     private fun observeVideoList() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            mViewModel.getMyChannelPlaylistVideos(requestParams).collectLatest {
+            mViewModel.getMyChannelUserPlaylistVideos(requestParams).collectLatest {
                 playlistAdapter.submitData(it)
             }
         }
@@ -299,7 +298,7 @@ class PlayListVideosFragment : BaseFragment(), MyChannelPlaylistItemListener {
         observe(mViewModel.deletePlaylistVideoLiveData) {
             when (it) {
                 is Resource.Success -> {
-                    cacheManager.clearCacheByUrl(GET_MY_CHANNEL_PLAYLIST_VIDEOS)
+                    cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_PLAYLIST_VIDEOS)
                     playlistAdapter.refresh()
                     requireContext().showToast(it.data.message)
                 }
@@ -321,7 +320,6 @@ class PlayListVideosFragment : BaseFragment(), MyChannelPlaylistItemListener {
         }
 
         popupMenu.menu.findItem(R.id.menu_share).isVisible = channelInfo.isApproved == 1
-        popupMenu.menu.findItem(R.id.menu_report).isVisible = mPref.customerId != channelInfo.channel_owner_id
         popupMenu.setOnMenuItemClickListener {
             when (it?.itemId) {
                 R.id.menu_share -> {
@@ -334,7 +332,8 @@ class PlayListVideosFragment : BaseFragment(), MyChannelPlaylistItemListener {
                     })
                     return@setOnMenuItemClickListener true
                 }
-                R.id.menu_not_interested -> {
+                R.id.menu_report -> {
+                    requireActivity().handleReport(channelInfo)
                     return@setOnMenuItemClickListener true
                 }
                 else -> {

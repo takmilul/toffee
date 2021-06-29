@@ -15,7 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import com.banglalink.toffee.R
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_VIDEOS
+import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.network.retrofit.CacheManager
@@ -164,7 +164,8 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
                         }
                     }
                     R.id.menu_add_to_playlist -> {
-                        val fragment = MyChannelAddToPlaylistFragment.newInstance(channelOwnerId, item)
+                        val isUserPlaylist = if (isOwner) 0 else 1
+                        val fragment = MyChannelAddToPlaylistFragment.newInstance(mPref.customerId, item, isUserPlaylist)
                         fragment.show(requireActivity().supportFragmentManager, "add_to_playlist")
                     }
                     R.id.menu_share -> {
@@ -252,7 +253,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
     }
     
     private fun reloadVideosList() {
-        cacheManager.clearCacheByUrl(GET_MY_CHANNEL_VIDEOS)
+        cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_VIDEOS)
         mAdapter.refresh()
     }
 }

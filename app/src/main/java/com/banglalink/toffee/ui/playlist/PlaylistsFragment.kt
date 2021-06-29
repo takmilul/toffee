@@ -17,7 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import com.banglalink.toffee.R
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_PLAYLISTS
+import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.data.network.retrofit.CacheManager
@@ -47,7 +47,7 @@ class PlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChannelPlaylist
     val mViewModel by viewModels<MyChannelPlaylistViewModel>()
     private var _binding:FragmentPlaylistsBinding?=null
     private val binding get() = _binding!!
-    private val editPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
+
     private val deletePlaylistViewModel by viewModels<MyChannelPlaylistDeleteViewModel>()
     private val playlistReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
     private val createPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
@@ -87,8 +87,8 @@ class PlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChannelPlaylist
                         mAdapter.apply {
                             val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
                             binding.emptyView.isVisible = showEmpty
-                            binding.myChannelPlaylists.isVisible = !showEmpty
-                            binding.createPlaylistButton.isVisible = !showEmpty
+                            binding.myChannelPlaylists.isVisible = itemCount > 0
+                            binding.createPlaylistButton.isVisible = itemCount > 0
                        }
                     }
             }
@@ -100,23 +100,32 @@ class PlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChannelPlaylist
         observeEditPlaylist()
         observeDeletePlaylist()
         observeReloadPlaylist()
+
+        binding.createPlaylistButtonNone.setOnClickListener {
+            if (mPref.customerId > 0) {
+                showCreatePlaylistDialog()
+            }
+        }
+
+        binding.createPlaylistButton.setOnClickListener {
+            if (mPref.customerId > 0) {
+                showCreatePlaylistDialog()
+            }
+        }
     }
 
     private fun setEmptyView() {
         with(binding) {
             if (mPref.customerId>0) {
                 emptyViewLabel.text = "You haven't created any playlist yet"
-                createPlaylistButtonNone.setOnClickListener {
-                    if (mPref.customerId > 0) {
-                        showCreatePlaylistDialog()
-                    }
-                }
+                createPlaylistButton.visibility = View.GONE
             } else {
                 createPlaylistButton.visibility = View.GONE
                 emptyViewLabel.text = "This channel has no playlist yet"
             }
         }
     }
+
     fun showCreatePlaylistDialog() {
         val playlistBinding = AlertDialogMyChannelPlaylistCreateBinding.inflate(this.layoutInflater)
         val dialogBuilder = android.app.AlertDialog.Builder(requireContext()).setView(playlistBinding.root)
@@ -128,7 +137,7 @@ class PlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChannelPlaylist
         playlistBinding.createButton.setOnClickListener {
             if (!createPlaylistViewModel.playlistName.isNullOrBlank()) {
                 observeCreatePlaylist()
-                createPlaylistViewModel.createPlaylist(mPref.customerId)
+                createPlaylistViewModel.createPlaylist(mPref.customerId,1)
                 createPlaylistViewModel.playlistName = null
                 alertDialog.dismiss()
             } else {
@@ -142,6 +151,7 @@ class PlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChannelPlaylist
             when (it) {
                 is Resource.Success -> {
                     requireContext().showToast(it.data.message ?: "")
+                    cacheManager.clearCacheByUrl(ApiRoutes.GET_USER_PLAYLISTS)
                     playlistReloadViewModel.reloadPlaylist.value = true
                 }
                 is Resource.Failure -> {
@@ -154,7 +164,7 @@ class PlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChannelPlaylist
         Log.e("my","channel"+mPref.customerId)
         listJob?.cancel()
         listJob = viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            mViewModel.getMyChannelPlaylists(mPref.customerId).collectLatest {
+            mViewModel.getMyChannelUserPlaylists(mPref.customerId).collectLatest {
                 mAdapter.submitData(it)
             }
         }
@@ -201,10 +211,11 @@ class PlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChannelPlaylist
     }
 
     private fun observeEditPlaylist() {
-        observe(editPlaylistViewModel.editPlaylistLiveData) {
+        observe(createPlaylistViewModel.editPlaylistLiveData) {
             when (it) {
                 is Resource.Success -> {
                     requireContext().showToast(it.data.message)
+                    cacheManager.clearCacheByUrl(ApiRoutes.GET_USER_PLAYLISTS)
                     reloadPlaylist()
                 }
                 is Resource.Failure -> {
@@ -221,13 +232,13 @@ class PlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChannelPlaylist
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             show()
         }
-        playlistBinding.viewModel = editPlaylistViewModel
-        editPlaylistViewModel.playlistName = playlistName
+        playlistBinding.viewModel = createPlaylistViewModel
+        createPlaylistViewModel.playlistName = playlistName
         playlistBinding.dialogTitleTextView.text = "Edit Playlist"
         playlistBinding.createButton.text = "Save"
         playlistBinding.createButton.setOnClickListener {
-            if (!editPlaylistViewModel.playlistName.isNullOrBlank()) {
-                editPlaylistViewModel.editPlaylist(playlistId, mPref.customerId)
+            if (!createPlaylistViewModel.playlistName.isNullOrBlank()) {
+                createPlaylistViewModel.editPlaylist(playlistId, mPref.customerId)
                 alertDialog.dismiss()
             } else {
                 Toast.makeText(requireContext(), "Please give a playlist name", Toast.LENGTH_SHORT).show()
@@ -255,6 +266,7 @@ class PlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChannelPlaylist
             when (it) {
                 is Resource.Success -> {
                     requireContext().showToast(it.data.message)
+                    cacheManager.clearCacheByUrl(ApiRoutes.GET_USER_PLAYLISTS)
                     reloadPlaylist()
                 }
                 is Resource.Failure -> {
@@ -265,7 +277,7 @@ class PlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChannelPlaylist
     }
 
     private fun reloadPlaylist() {
-        cacheManager.clearCacheByUrl(GET_MY_CHANNEL_PLAYLISTS)
+        cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_PLAYLISTS)
         mAdapter.refresh()
     }
 

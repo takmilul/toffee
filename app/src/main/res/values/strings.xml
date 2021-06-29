@@ -363,6 +363,7 @@
     <string name="channel_description_limit">%s/200</string>
     <string name="video_title_limit">%s/200</string>
     <string name="video_description_limit">%s/600</string>
+    <string name="add_to_playlist">Add To Playlist</string>
     <!--    url    -->
 <!--    <string name="creators_policy_url">https://toffeelive.com/policies.php</string>-->
 <!--    <string name="tus_upload_server_url">https://ugc-upload.toffeelive.com/upload</string>-->
