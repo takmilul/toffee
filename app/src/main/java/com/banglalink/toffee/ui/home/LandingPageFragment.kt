@@ -34,8 +34,6 @@ class LandingPageFragment : HomeBaseFragment(), FwSDK.SdkStatusListener {
     private val binding get() = _binding!!
 
     companion object {
-        private const val CLIENT_ID = "9e320da50f69212461fd9528a6b3e6f6758537187097720fe71cf0b3f867415d"
-        
         fun newInstance(): LandingPageFragment {
             return LandingPageFragment()
         }
@@ -45,7 +43,7 @@ class LandingPageFragment : HomeBaseFragment(), FwSDK.SdkStatusListener {
         super.onCreate(savedInstanceState)
         if (mPref.isFireworkActive == "true" && !mPref.isFireworkInitialized) {
             try {
-                FwSDK.initialize(appContext, CLIENT_ID, "${UUID.randomUUID()}_${System.nanoTime()}", this)
+                FwSDK.initialize(appContext, getString(R.string.firework_oauth_id), "${UUID.randomUUID()}_${System.nanoTime()}", this)
             }
             catch (e: Exception) {
                 mPref.isFireworkInitialized = false
