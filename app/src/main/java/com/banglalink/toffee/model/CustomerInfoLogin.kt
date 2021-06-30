@@ -31,7 +31,7 @@ class CustomerInfoLogin(
     var referralStatusMessage: String? = null,
     @SerializedName("referralStatus")
     var referralStatus: String? = null,
-    
+
     @SerializedName("isBanglalinkNumber")
     val isBanglalinkNumber: String? = "false",
     @SerializedName("hlsUrlOverride")
@@ -44,7 +44,7 @@ class CustomerInfoLogin(
     var tokenLifeSpan: Int = 0,
     @SerializedName("isSubscriptionActive")
     var isSubscriptionActive: String? = "false",
-    
+
     @SerializedName("real_db_01_url")
     var viewCountDbUrl: String? = null,
     @SerializedName("reaction_db_01_url")
@@ -69,7 +69,6 @@ class CustomerInfoLogin(
     var isFireworkActive: String? = "true",
     var mqttIsActive: Int = 1,
     var mqttUrl: String? = null,
-    
     @SerializedName("isCastEnable")
     var isCastEnabled: Int = 0,
     @SerializedName("castRecieverId")
@@ -87,4 +86,5 @@ class CustomerInfoLogin(
     val facebookPageUrl: String = "https://www.facebook.com/100869298504557",
     val instagramPageUrl: String = "https://www.instagram.com/toffee.bangladesh/?hl=en",
     val youtubePageUrl: String = "https://www.youtube.com/channel/UCv9NYIjz4jhw-KSqdRulSuw",
+    val screenCaptureEnabledUsers: Set<String>? = null,
 ) : BodyResponse(), Parcelable
