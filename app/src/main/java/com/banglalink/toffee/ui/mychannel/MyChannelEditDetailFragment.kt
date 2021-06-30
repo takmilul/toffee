@@ -106,8 +106,8 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         channelNameWatcher()
         channelDesWatcher()
         with(binding) {
-            channelNameCountTv.text = getString(R.string.channel_name_limit, "0")
-            channelDesCountTv.text = getString(R.string.channel_description_limit, "0")
+            channelNameCountTv.text = getString(R.string.channel_name_limit, 0)
+            channelDesCountTv.text = getString(R.string.channel_description_limit, 0)
             dateOfBirthTv.safeClick ({ showDatePicker() })
             saveButton.safeClick(this@MyChannelEditDetailFragment)
             cancelButton.safeClick(this@MyChannelEditDetailFragment)
@@ -119,7 +119,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     private fun channelNameWatcher() {
         binding.channelName.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                binding.channelNameCountTv.text = getString(R.string.channel_name_limit, s.toString().length)
+                binding.channelNameCountTv.text = getString(R.string.channel_name_limit, s?.length ?: 0)
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
@@ -129,7 +129,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     private fun channelDesWatcher() {
         binding.description.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                binding.channelDesCountTv.text = getString(R.string.channel_description_limit, s.toString().length)
+                binding.channelDesCountTv.text = getString(R.string.channel_description_limit, s?.length ?: 0)
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
