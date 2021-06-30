@@ -5,7 +5,10 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.GetCategories
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.util.InAppMessageParser
-import io.mockk.*
+import io.mockk.coEvery
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkObject
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.junit.Before
@@ -47,7 +50,7 @@ class InAppMessageParserTest {
         Assert.assertTrue(ret2 is InAppMessageParser.RouteV2)
         Assert.assertEquals("Settings", ret2?.name)
 
-        val ret3 = inAppMessageParser.parseUrlV2("https://toffeelive.com?routing=internal&page=ugc_channel&ownerid=2233")
+        val ret3 = inAppMessageParser.parseUrlV2("https://toffeelive.com?routing=internal&page=ugc_channel&owner_id=2233")
         Assert.assertNotNull(ret3)
         Assert.assertTrue(ret3?.destId is Uri)
         Assert.assertEquals("app.toffee://ugc_channel/2233", (ret3?.destId as Uri).toString())

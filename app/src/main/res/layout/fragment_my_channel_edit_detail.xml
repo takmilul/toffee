@@ -93,13 +93,9 @@
 
                 <TextView
                     android:id="@+id/error_thum_tv"
+                    style="@style/ErrorTextStyle"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
                     android:text="@string/channel_logo_error_text"
-                    android:textColor="@color/pink_to_accent_color"
-                    android:textSize="@dimen/default_text_size"
-                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="@+id/profileImageView"
                     app:layout_constraintStart_toStartOf="@+id/profileImageView"
                     app:layout_constraintTop_toBottomOf="@+id/profileImageEditButton"
@@ -126,7 +122,6 @@
                     android:inputType="textCapWords"
                     android:maxLength="50"
                     android:paddingEnd="48dp"
-                    android:paddingStart="10dp"
                     android:fontFamily="@font/roboto_medium"
                     android:text="@{viewModel.myChannelDetail.channelName}"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -147,16 +142,9 @@
 
                 <TextView
                     android:id="@+id/error_channel_name_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:ellipsize="end"
+                    style="@style/ErrorTextStyle"
                     android:text="@string/channel_name_error_text"
-                    android:textColor="@color/pink_to_accent_color"
-                    android:textSize="@dimen/default_text_size"
-                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="@+id/channelName"
-                    app:layout_constraintHorizontal_bias="0.05"
                     app:layout_constraintStart_toStartOf="@+id/channelName"
                     app:layout_constraintTop_toBottomOf="@+id/channelName"
                     tools:visibility="visible" />
@@ -200,16 +188,9 @@
 
                 <TextView
                     android:id="@+id/error_description_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:ellipsize="end"
+                    style="@style/ErrorTextStyle"
                     android:text="@string/description_error_text"
-                    android:textColor="@color/pink_to_accent_color"
-                    android:textSize="@dimen/default_text_size"
-                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="@+id/description"
-                    app:layout_constraintHorizontal_bias="0.05"
                     app:layout_constraintStart_toStartOf="@+id/description"
                     app:layout_constraintTop_toBottomOf="@+id/description"
                     tools:visibility="visible" />
@@ -301,16 +282,9 @@
 
                 <TextView
                     android:id="@+id/error_name_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:ellipsize="end"
+                    style="@style/ErrorTextStyle"
                     android:text="@string/name_error_text"
-                    android:textColor="@color/pink_to_accent_color"
-                    android:textSize="@dimen/default_text_size"
-                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="@+id/name_et"
-                    app:layout_constraintHorizontal_bias="0.05"
                     app:layout_constraintStart_toStartOf="@+id/name_et"
                     app:layout_constraintTop_toBottomOf="@+id/name_et"
                     tools:visibility="visible" />
@@ -331,16 +305,9 @@
 
                 <TextView
                     android:id="@+id/error_address_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:ellipsize="end"
+                    style="@style/ErrorTextStyle"
                     android:text="@string/address_error_text"
-                    android:textColor="@color/pink_to_accent_color"
-                    android:textSize="@dimen/default_text_size"
-                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="@+id/address_et"
-                    app:layout_constraintHorizontal_bias="0.05"
                     app:layout_constraintStart_toStartOf="@+id/address_et"
                     app:layout_constraintTop_toBottomOf="@+id/address_et"
                     tools:visibility="visible" />
@@ -360,15 +327,10 @@
 
                 <TextView
                     android:id="@+id/error_date_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:ellipsize="end"
+                    style="@style/ErrorTextStyle"
                     android:text="@string/Date_of_birth_must_be_match"
                     android:textColor="@color/main_text_color"
-                    android:textSize="@dimen/default_text_size"
                     app:layout_constraintEnd_toEndOf="@+id/date_of_birth_tv"
-                    app:layout_constraintHorizontal_bias="0.05"
                     app:layout_constraintStart_toStartOf="@+id/date_of_birth_tv"
                     app:layout_constraintTop_toBottomOf="@+id/date_of_birth_tv"
                     tools:visibility="visible" />
@@ -390,15 +352,10 @@
 
                 <TextView
                     android:id="@+id/error_email_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:ellipsize="end"
+                    style="@style/ErrorTextStyle"
                     android:text="@string/verification_email_sent"
                     android:textColor="@color/main_text_color"
-                    android:textSize="@dimen/default_text_size"
                     app:layout_constraintEnd_toEndOf="@+id/email_et"
-                    app:layout_constraintHorizontal_bias="0.05"
                     app:layout_constraintStart_toStartOf="@+id/email_et"
                     app:layout_constraintTop_toBottomOf="@+id/email_et"
                     tools:visibility="visible" />
@@ -420,15 +377,10 @@
 
                 <TextView
                     android:id="@+id/nid_error_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
+                    style="@style/ErrorTextStyle"
                     android:text="@string/your_nid_must_match"
                     android:textColor="@color/main_text_color"
-                    android:textSize="@dimen/default_text_size"
-                    android:ellipsize="end"
                     app:layout_constraintEnd_toEndOf="@+id/nid_et"
-                    app:layout_constraintHorizontal_bias="0.05"
                     app:layout_constraintStart_toStartOf="@+id/nid_et"
                     app:layout_constraintTop_toBottomOf="@+id/nid_et"
                     tools:visibility="visible" />
@@ -486,16 +438,9 @@
 
                 <TextView
                     android:id="@+id/error_number_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:ellipsize="end"
+                    style="@style/ErrorTextStyle"
                     android:text="@string/phone_error_text"
-                    android:textColor="@color/pink_to_accent_color"
-                    android:textSize="@dimen/default_text_size"
-                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="@+id/phone_number_layout"
-                    app:layout_constraintHorizontal_bias="0.05"
                     app:layout_constraintStart_toStartOf="@+id/phone_number_layout"
                     app:layout_constraintTop_toBottomOf="@+id/phone_number_layout"
                     tools:visibility="visible" />
@@ -523,17 +468,13 @@
 
                 <TextView
                     android:id="@+id/error_payment_option"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:ellipsize="end"
+                    style="@style/ErrorTextStyle"
                     android:text="@string/this_account_will_be_used_to_send_payment"
-                    android:textSize="@dimen/default_text_size"
-                    android:layout_marginStart="8dp"
+                    android:textColor="@color/main_text_color"
                     app:layout_constraintEnd_toEndOf="@+id/categoryPaymentSpinnerWrap"
-                    app:layout_constraintHorizontal_bias="0.05"
                     app:layout_constraintStart_toStartOf="@+id/categoryPaymentSpinnerWrap"
-                    app:layout_constraintTop_toBottomOf="@+id/categoryPaymentSpinnerWrap" />
+                    app:layout_constraintTop_toBottomOf="@+id/categoryPaymentSpinnerWrap"
+                    tools:visibility="visible" />
                 
                 <Button
                     android:id="@+id/cancelButton"

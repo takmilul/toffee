@@ -70,15 +70,9 @@
 
                 <TextView
                     android:id="@+id/error_name_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
+                    style="@style/ErrorTextStyle"
                     android:text="@string/name_error_text"
-                    android:textColor="@color/pink_to_accent_color"
-                    android:textSize="12sp"
-                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="@+id/name_et"
-                    app:layout_constraintHorizontal_bias="0.05"
                     app:layout_constraintStart_toStartOf="@+id/name_et"
                     app:layout_constraintTop_toBottomOf="@+id/name_et"
                     tools:visibility="visible" />
@@ -99,15 +93,9 @@
 
                 <TextView
                     android:id="@+id/error_address_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
+                    style="@style/ErrorTextStyle"
                     android:text="@string/address_error_text"
-                    android:textColor="@color/pink_to_accent_color"
-                    android:textSize="12sp"
-                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="@+id/address_et"
-                    app:layout_constraintHorizontal_bias="0.05"
                     app:layout_constraintStart_toStartOf="@+id/address_et"
                     app:layout_constraintTop_toBottomOf="@+id/address_et"
                     tools:visibility="visible" />
@@ -128,15 +116,9 @@
 
                 <TextView
                     android:id="@+id/error_email_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
+                    style="@style/ErrorTextStyle"
                     android:text="@string/email_error_text"
-                    android:textColor="@color/pink_to_accent_color"
-                    android:textSize="12sp"
-                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="@+id/email_et"
-                    app:layout_constraintHorizontal_bias="0.05"
                     app:layout_constraintStart_toStartOf="@+id/email_et"
                     app:layout_constraintTop_toBottomOf="@+id/email_et"
                     tools:visibility="visible" />
@@ -192,15 +174,9 @@
                 
                 <TextView
                     android:id="@+id/error_number_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
+                    style="@style/ErrorTextStyle"
                     android:text="@string/phone_error_text"
-                    android:textColor="@color/pink_to_accent_color"
-                    android:textSize="12sp"
-                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="@+id/phone_number_layout"
-                    app:layout_constraintHorizontal_bias="0.05"
                     app:layout_constraintStart_toStartOf="@+id/phone_number_layout"
                     app:layout_constraintTop_toBottomOf="@+id/phone_number_layout"
                     tools:visibility="visible" />
