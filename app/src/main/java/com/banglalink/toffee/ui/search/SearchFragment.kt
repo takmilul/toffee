@@ -7,6 +7,7 @@ import androidx.fragment.app.viewModels
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.common.paging.ProviderIconCallback
+import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
@@ -22,6 +23,7 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
     override val itemMargin: Int = 12
     override val verticalPadding = Pair(16, 16)
     @Inject lateinit var factory: SearchViewModel.AssistedFactory
+    @Inject lateinit var favoriteDao: FavoriteItemDao
     private val homeViewModel by activityViewModels<HomeViewModel> ()
     override val mAdapter by lazy { SearchAdapter(this) }
     override val mViewModel by viewModels<SearchViewModel> {
@@ -86,7 +88,7 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_fav->{
-                    requireActivity().handleFavorite(channelInfo)
+                    requireActivity().handleFavorite(channelInfo, favoriteDao)
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_report -> {

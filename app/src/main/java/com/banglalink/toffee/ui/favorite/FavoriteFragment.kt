@@ -9,6 +9,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.data.database.LocalSync
+import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
@@ -23,6 +24,7 @@ class FavoriteFragment : BaseListFragment<ChannelInfo>(), ProviderIconCallback<C
 
     override val itemMargin: Int = 12
     @Inject lateinit var localSync: LocalSync
+    @Inject lateinit var favoriteDao: FavoriteItemDao
     override val verticalPadding = Pair(16, 16)
     override val mAdapter by lazy { FavoriteAdapter(this) }
     override val mViewModel by viewModels<FavoriteViewModel>()
@@ -66,7 +68,7 @@ class FavoriteFragment : BaseListFragment<ChannelInfo>(), ProviderIconCallback<C
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_fav->{
-                    requireActivity().handleFavorite(channelInfo, onRemoved = {
+                    requireActivity().handleFavorite(channelInfo, favoriteDao, onRemoved = {
                         mAdapter.refresh()
                     })
                     return@setOnMenuItemClickListener true

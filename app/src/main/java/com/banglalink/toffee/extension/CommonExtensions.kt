@@ -10,7 +10,10 @@ import android.view.ViewGroup
 import android.widget.EditText
 import androidx.core.view.forEach
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
+import com.banglalink.toffee.data.database.dao.FavoriteItemDao
+import com.banglalink.toffee.data.database.entities.FavoriteItem
 import com.banglalink.toffee.enums.InputType
 import com.banglalink.toffee.enums.InputType.*
 import com.banglalink.toffee.model.ChannelInfo
@@ -18,6 +21,7 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.ui.report.ReportPopupFragment
 import com.facebook.shimmer.ShimmerFrameLayout
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -57,6 +61,8 @@ val Int.px: Int get() {
     return (this * Resources.getSystem().displayMetrics.density).toInt()
 }
 
+fun ByteArray.toHex() = joinToString(separator = "") { byte -> "%02x".format(byte) }
+
 fun Long.toFormattedDate(): String{
     TimeZone.setDefault(TimeZone.getTimeZone("Asia/Dhaka"))
     val cal = Calendar.getInstance(TimeZone.getDefault())
@@ -93,13 +99,19 @@ fun Activity.handleShare(item: ChannelInfo) {
     }
 }
 
-fun Activity.handleFavorite(item: ChannelInfo, onAdded: (()->Unit)? = null, onRemoved: (()-> Unit)? = null) {
+fun Activity.handleFavorite(item: ChannelInfo, favoriteDao: FavoriteItemDao, onAdded: (()->Unit)? = null, onRemoved: (()-> Unit)? = null) {
     checkVerification {
         if(this is HomeActivity) {
             getHomeViewModel().updateFavorite(item).observe(this, {
                 when (it) {
                     is Resource.Success -> {
                         val channelInfo = it.data
+                        lifecycleScope.launch {
+                            favoriteDao.insert(FavoriteItem(
+                                channelId = item.id.toLong(),
+                                isFavorite = if(channelInfo.favorite == "1") 1 else 0
+                            ))
+                        }
                         when (channelInfo.favorite) {
                             "0" -> {
                                 onRemoved?.invoke()

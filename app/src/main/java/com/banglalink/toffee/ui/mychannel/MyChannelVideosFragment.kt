@@ -17,6 +17,7 @@ import androidx.paging.LoadState
 import com.banglalink.toffee.R
 import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_VIDEOS
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
+import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentMyChannelVideosBinding
@@ -43,6 +44,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
     private var isOwner: Boolean = false
     @Inject lateinit var reactionDao: ReactionDao
     @Inject lateinit var cacheManager: CacheManager
+    @Inject lateinit var favoriteDao: FavoriteItemDao
     private lateinit var mAdapter: MyChannelVideosAdapter
     val mViewModel by viewModels<MyChannelVideosViewModel>()
     private var _binding: FragmentMyChannelVideosBinding ? = null
@@ -171,7 +173,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
                         requireActivity().handleShare(item)
                     }
                     R.id.menu_fav -> {
-                        requireActivity().handleFavorite(item)
+                        requireActivity().handleFavorite(item, favoriteDao)
                     }
                     R.id.menu_report -> {
                         requireActivity().handleReport(item)
