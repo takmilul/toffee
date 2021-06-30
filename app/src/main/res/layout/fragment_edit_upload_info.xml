@@ -206,6 +206,7 @@
                 app:hint="Tags"
                 android:fontFamily="@font/roboto_regular"
                 android:textColor="@color/colorSecondaryDark"
+                android:textSize="@dimen/input_field_text_size"
                 android:background="@drawable/multiline_input_text_bg"
                 android:gravity="top|start"
                 app:textColor="@color/cardTitleColor"

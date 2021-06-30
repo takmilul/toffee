@@ -17,7 +17,8 @@
         android:background="@drawable/subscribe_bg_round"
         android:fontFamily="@font/roboto_bold"
         android:gravity="center"
-        android:textColor="@color/button_text_color" />
+        android:textColor="@color/button_text_color"
+        android:textSize="@dimen/default_text_size"/>
     
     <TextView
         android:id="@+id/subscription_amount"

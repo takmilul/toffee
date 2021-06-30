@@ -57,6 +57,10 @@ val Int.dp: Int get() {
     return (this/Resources.getSystem().displayMetrics.density).toInt()
 }
 
+val Float.dp: Float get() {
+    return (this/Resources.getSystem().displayMetrics.density)
+}
+
 val Int.px: Int get() {
     return (this * Resources.getSystem().displayMetrics.density).toInt()
 }

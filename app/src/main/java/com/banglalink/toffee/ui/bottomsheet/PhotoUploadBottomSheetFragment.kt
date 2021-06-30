@@ -61,7 +61,7 @@ class PhotoUploadBottomSheetFragment : ChildDialogFragment(), TextWatcher {
             nextBtn.safeClick({navigateToBasicInfoBottomSheet()})
             channelNameEt.addTextChangedListener(this@PhotoUploadBottomSheetFragment)
         }
-        binding.channelNameCountTv.text = getString(R.string.channel_name_limit, "0")
+        binding.channelNameCountTv.text = getString(R.string.channel_name_limit, 0)
     }
     
     private fun navigateToBasicInfoBottomSheet() {

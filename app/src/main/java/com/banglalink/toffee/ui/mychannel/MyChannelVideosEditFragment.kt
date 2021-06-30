@@ -71,15 +71,13 @@ class MyChannelVideosEditFragment : BaseFragment() {
     }
 
     override fun onDestroyView() {
-        binding.unbind()
         binding.ageGroupSpinner.adapter = null
         binding.categorySpinner.adapter = null
         binding.subCategorySpinner.adapter = null
         super.onDestroyView()
         _binding = null
     }
-
-
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         channelInfo = MyChannelVideosEditFragmentArgs.fromBundle(requireArguments()).channelInfo
