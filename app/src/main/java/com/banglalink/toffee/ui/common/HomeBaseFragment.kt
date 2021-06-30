@@ -3,14 +3,20 @@ package com.banglalink.toffee.ui.common
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
+import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.listeners.OptionCallBack
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.MyPopupWindow
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 abstract class HomeBaseFragment:BaseFragment(), OptionCallBack {
 
+    @Inject
+    lateinit var favoriteDao: FavoriteItemDao
     val homeViewModel by activityViewModels<HomeViewModel>()
 
     override fun onOptionClicked(anchor: View, channelInfo: ChannelInfo) {
@@ -31,7 +37,7 @@ abstract class HomeBaseFragment:BaseFragment(), OptionCallBack {
                     requireActivity().handleShare(channelInfo)
                 }
                 R.id.menu_fav->{
-                    requireActivity().handleFavorite(channelInfo)
+                    requireActivity().handleFavorite(channelInfo, favoriteDao)
                 }
                 R.id.menu_report -> {
                     requireActivity().handleReport(channelInfo)
