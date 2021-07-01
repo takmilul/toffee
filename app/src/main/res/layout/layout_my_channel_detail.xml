@@ -62,7 +62,7 @@
         
         <TextView
             android:id="@+id/channelNameTextView"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="4dp"
@@ -71,6 +71,7 @@
             tools:text="National Geographic"
             android:textColor="@color/cardTitleColor"
             android:textSize="18sp"
+            android:gravity="center"
             android:fontFamily="@font/roboto_medium"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -359,10 +359,10 @@
     <string name="copyright_approval">&#160;&#160;I hold relevant copyrights for the video content</string>
     <string name="copyright_doc">Copyright Document (Optional)</string>
     <string name="verify_success">Verification successful!</string>
-    <string name="channel_name_limit">%s/50</string>
-    <string name="channel_description_limit">%s/200</string>
-    <string name="video_title_limit">%s/200</string>
-    <string name="video_description_limit">%s/600</string>
+    <string name="channel_name_limit">%d/50</string>
+    <string name="channel_description_limit">%d/200</string>
+    <string name="video_title_limit">%d/200</string>
+    <string name="video_description_limit">%d/600</string>
     <string name="firework_channel_id">4Y9XaK0</string>
     <string name="firework_playlist_id">5aMPy5</string>
     <string name="firework_oauth_id">9e320da50f69212461fd9528a6b3e6f6758537187097720fe71cf0b3f867415d</string>

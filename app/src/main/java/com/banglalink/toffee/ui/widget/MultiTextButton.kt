@@ -31,20 +31,20 @@ class MultiTextButton @JvmOverloads constructor(mContext: Context, attrs: Attrib
             this.width = width.toInt()
             this.height = height.toInt()
         }
-        subStatusView.textSize = textSize.toInt().dp.toFloat()
+        subStatusView.textSize = textSize.dp
         setSubscriptionInfo(false, null)
     }
 
-    fun setMultitextButtonWidth(width: Int) {
+    fun setMultiTextButtonWidth(width: Int) {
         subStatusView.layoutParams.width = width
     }
     
-    fun setMultitextButtonHeight(height: Int) {
+    fun setMultiTextButtonHeight(height: Int) {
         subStatusView.layoutParams.height = height
     }
     
-    fun setMultitextButtonTextSize(textSize: Int) {
-        subStatusView.textSize = textSize.toFloat()
+    fun setMultiTextButtonTextSize(textSize: Float) {
+        subStatusView.textSize = textSize
     }
     
     fun setSubscriptionInfo(status: Boolean, amount: String? = null) {

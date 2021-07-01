@@ -71,15 +71,13 @@ class MyChannelVideosEditFragment : BaseFragment() {
     }
 
     override fun onDestroyView() {
-        binding.unbind()
         binding.ageGroupSpinner.adapter = null
         binding.categorySpinner.adapter = null
         binding.subCategorySpinner.adapter = null
         super.onDestroyView()
         _binding = null
     }
-
-
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         channelInfo = MyChannelVideosEditFragmentArgs.fromBundle(requireArguments()).channelInfo
@@ -114,8 +112,8 @@ class MyChannelVideosEditFragment : BaseFragment() {
                 }
             }
             
-            uploadTitleCountTv.text = getString(R.string.video_title_limit, "0")
-            uploadDesCountTv.text = getString(R.string.video_description_limit, "0")
+            uploadTitleCountTv.text = getString(R.string.video_title_limit, 0)
+            uploadDesCountTv.text = getString(R.string.video_description_limit, 0)
         }
         
         channelInfo?.let { info ->
@@ -176,7 +174,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
     private fun titleWatcher() {
         binding.uploadTitle.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                binding.uploadTitleCountTv.text = getString(R.string.video_title_limit, s.toString().length)
+                binding.uploadTitleCountTv.text = getString(R.string.video_title_limit, s?.length ?: 0)
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
@@ -186,7 +184,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
     private fun descriptionDesWatcher() {
         binding.uploadDescription.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                binding.uploadDesCountTv.text = getString(R.string.video_description_limit, s.toString().length)
+                binding.uploadDesCountTv.text = getString(R.string.video_description_limit, s?.length ?: 0)
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }

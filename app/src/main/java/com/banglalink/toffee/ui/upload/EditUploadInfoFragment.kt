@@ -142,6 +142,7 @@ class EditUploadInfoFragment: BaseFragment() {
         binding.copyrightLayout.uploadFileButton.safeClick({checkFileSystemPermission()})
         binding.copyrightLayout.closeIv.safeClick({
             it.hide()
+            viewModel.copyrightDocUri = null
             viewModel.copyrightFileName.value = null
             binding.copyrightLayout.uploadFileButton.show()
         })
@@ -162,15 +163,15 @@ class EditUploadInfoFragment: BaseFragment() {
 
         titleWatcher()
         descriptionDesWatcher()
-        binding.uploadTitleCountTv.text = getString(R.string.video_title_limit, "0")
-        binding.uploadDesCountTv.text = getString(R.string.video_description_limit, "0")
+        binding.uploadTitleCountTv.text = getString(R.string.video_title_limit, 0)
+        binding.uploadDesCountTv.text = getString(R.string.video_description_limit, 0)
     }
 
 
     private fun titleWatcher() {
         binding.uploadTitle.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                binding.uploadTitleCountTv.text = getString(R.string.video_title_limit, s.toString().length)
+                binding.uploadTitleCountTv.text = getString(R.string.video_title_limit, s?.length ?: 0)
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
@@ -180,7 +181,7 @@ class EditUploadInfoFragment: BaseFragment() {
     private fun descriptionDesWatcher() {
         binding.uploadDescription.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                binding.uploadDesCountTv.text = getString(R.string.video_description_limit, s.toString().length)
+                binding.uploadDesCountTv.text = getString(R.string.video_description_limit, s?.length ?: 0)
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }

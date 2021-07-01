@@ -32,16 +32,17 @@ import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.UtilsKt
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.material.chip.Chip
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class EditProfileFragment : BaseFragment() {
 
     private val TAG = "EditProfileActivity"
     private val progressDialog by unsafeLazy {
         VelBoxProgressDialog(requireContext())
     }
-    @Inject
-    lateinit var cacheManager: CacheManager
+    @Inject lateinit var cacheManager: CacheManager
     private var _binding: FragmentEditProfileBinding? = null
     private val binding get() = _binding!!
     private val args by navArgs<EditProfileFragmentArgs>()
@@ -135,12 +136,9 @@ class EditProfileFragment : BaseFragment() {
                     progressDialog.dismiss()
                     when (it) {
                         is Resource.Success -> {
-
+                            cacheManager.clearCacheByUrl(GET_MY_CHANNEL_DETAILS)
                             requireContext().showToast("Profile updated successfully")
-                            findNavController().popBackStack().apply {
-                                cacheManager.clearCacheByUrl(GET_MY_CHANNEL_DETAILS)
-                            }
-
+                            findNavController().popBackStack()
                         }
                         is Resource.Failure -> {
                             requireContext().showToast(it.error.msg)

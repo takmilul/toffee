@@ -69,7 +69,7 @@
             channelOwnerId="@{data.channelOwnerId}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:multitext_layout_width="80dp"
+            app:multitext_layout_width="@dimen/multitext_button_width"
             app:multitext_layout_height="@dimen/multitext_button_height"
             android:clickable="true"
             android:focusable="true"

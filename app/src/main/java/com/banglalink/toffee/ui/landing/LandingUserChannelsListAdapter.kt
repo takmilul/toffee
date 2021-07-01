@@ -21,9 +21,9 @@ class LandingUserChannelsListAdapter(cb: BaseListItemCallback<UserChannelInfo>)
         if (binding is ListItemLandingUserChannelsBinding) {
             val calculatedSize = (Resources.getSystem().displayMetrics.widthPixels - (16.px * 4)) / 3.5    // 16dp margin
             with(binding) {
-                multiTextButton.setMultitextButtonWidth(calculatedSize.toInt())
+                multiTextButton.setMultiTextButtonWidth(calculatedSize.toInt())
                 if (calculatedSize < 96.px) {
-                    multiTextButton.setMultitextButtonTextSize(10)
+                    multiTextButton.setMultiTextButtonTextSize(11F)
                 }
                 iconHolder.layoutParams.apply {
                     width = calculatedSize.toInt() - 16

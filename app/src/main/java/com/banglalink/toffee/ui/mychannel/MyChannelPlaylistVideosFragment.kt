@@ -15,6 +15,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
+import androidx.paging.map
 import androidx.recyclerview.widget.ConcatAdapter
 import com.banglalink.toffee.R
 import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_PLAYLISTS
@@ -22,6 +23,7 @@ import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_PLAYLIST_VIDEOS
 import com.banglalink.toffee.apiservice.MyChannelPlaylistContentParam
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.data.database.LocalSync
+import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.SubscriptionCountRepository
@@ -54,6 +56,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     private var currentItem: ChannelInfo? = null
     private lateinit var mAdapter: ConcatAdapter
     @Inject lateinit var cacheManager: CacheManager
+    @Inject lateinit var favoriteDao: FavoriteItemDao
     private lateinit var detailsAdapter: ChannelHeaderAdapter
     private lateinit var args: MyChannelPlaylistVideosFragmentArgs
     private lateinit var requestParams: MyChannelPlaylistContentParam
@@ -208,7 +211,10 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     private fun observeVideoList() {
         viewLifecycleOwner.lifecycleScope.launch {
             mViewModel.getMyChannelPlaylistVideos(requestParams).collectLatest {
-                playlistAdapter.submitData(it)
+                playlistAdapter.submitData(it.map { channel->
+                    localSync.syncData(channel, LocalSync.SYNC_FLAG_FAVORITE or LocalSync.SYNC_FLAG_VIEW_COUNT)
+                    channel
+                })
             }
         }
     }
@@ -337,7 +343,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_fav -> {
-                    requireActivity().handleFavorite(channelInfo)
+                    requireActivity().handleFavorite(channelInfo, favoriteDao)
                     return@setOnMenuItemClickListener true
                 }
                 else -> {
