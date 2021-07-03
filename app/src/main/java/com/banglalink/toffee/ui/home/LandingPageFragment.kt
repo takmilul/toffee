@@ -7,31 +7,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentLandingPage2Binding
 import com.banglalink.toffee.enums.PageType.Landing
-import com.banglalink.toffee.extension.hide
-import com.banglalink.toffee.extension.show
+import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.google.android.material.appbar.AppBarLayout
 import com.loopnow.fireworklibrary.FwSDK
 import com.loopnow.fireworklibrary.SdkStatus
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.launch
-import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class LandingPageFragment : HomeBaseFragment(), FwSDK.SdkStatusListener {
     private var appbarOffset = 0
-    @Inject @ApplicationContext lateinit var appContext: Context
-    private val landingViewModel by activityViewModels<LandingPageViewModel>()
     private var _binding: FragmentLandingPage2Binding ? = null
+    @Inject @ApplicationContext lateinit var appContext: Context
     private val binding get() = _binding!!
+    private val landingViewModel by activityViewModels<LandingPageViewModel>()
 
     companion object {
         fun newInstance(): LandingPageFragment {
@@ -41,12 +37,12 @@ class LandingPageFragment : HomeBaseFragment(), FwSDK.SdkStatusListener {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (mPref.isFireworkActive == "true" && !mPref.isFireworkInitialized) {
+        if (mPref.isFireworkActive == "true" && homeViewModel.isFireworkInitialized.value != true) {
             try {
-                FwSDK.initialize(appContext, getString(R.string.firework_oauth_id), "${UUID.randomUUID()}_${System.nanoTime()}", this)
+                FwSDK.initialize(appContext, getString(R.string.firework_oauth_id), mPref.getFireworkUserId(), this)
             }
             catch (e: Exception) {
-                mPref.isFireworkInitialized = false
+                Log.e("FwSDK", "onCreate: ${e.message}")
             }
         }
     }
@@ -69,12 +65,6 @@ class LandingPageFragment : HomeBaseFragment(), FwSDK.SdkStatusListener {
         return binding.root
     }
 
-    override fun onDestroyView() {
-        binding.landingAppbar.removeOnOffsetChangedListener(offsetListener)
-        super.onDestroyView()
-        _binding = null
-    }
-
     private val offsetListener = AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
         appbarOffset = verticalOffset
     }
@@ -86,43 +76,40 @@ class LandingPageFragment : HomeBaseFragment(), FwSDK.SdkStatusListener {
         landingViewModel.pageType.value = Landing
         landingViewModel.isDramaSeries.value = false
         binding.landingAppbar.addOnOffsetChangedListener(offsetListener)
+        observe(homeViewModel.isFireworkInitialized) {
+            _binding?.fireworkFragment?.isVisible = it
+        }
     }
     
     override fun currentStatus(status: SdkStatus, extra: String) {
         when(status){
             SdkStatus.Initialized -> {
-                mPref.isFireworkInitialized = true
-                _binding?.let { 
-                    viewLifecycleOwner.lifecycleScope.launch(Main) {
-                        it.fireworkFragment.show()
+                Log.e("FwSDK", "Initialized: $extra")
+                FwSDK.setBasePlayerUrl("https://toffeelive.com/")
+                homeViewModel.isFireworkInitialized.postValue(true)
+                try {
+                    val url = requireActivity().intent.data?.fragment?.removePrefix("fwplayer=")
+                    url?.let {
+                        FwSDK.play(it)
                     }
                 }
-                Log.d("FwSDK", "Initialized: $extra")
-            }
-            SdkStatus.InitializationFailed -> mPref.isFireworkInitialized = false
-            SdkStatus.LoadingContent -> Log.d("FwSDK", "LoadingContent: $extra")
-            SdkStatus.ContentLoaded -> {
-                _binding?.let { 
-                    viewLifecycleOwner.lifecycleScope.launch(Main) {
-                        if (extra.toInt() <= 0) {
-                            it.fireworkFragment.show()
-                        }
-                    }
+                catch (e: Exception) {
+                    Log.e("FwSDK", "FireworkDeeplinkPlayException")
                 }
-                Log.d("FwSDK", "ContentLoaded: $extra")
             }
-            SdkStatus.LoadingContentFailed -> {
-                _binding?.let { 
-                    viewLifecycleOwner.lifecycleScope.launch(Main) {
-                        binding.fireworkFragment.hide()
-                    }
-                }
-                Log.d("FwSDK", "LoadingContentFailed: $extra")
+            SdkStatus.InitializationFailed -> {
+                Log.e("FwSDK", "InitializationFailed: $extra")
+                homeViewModel.isFireworkInitialized.postValue(false)
             }
+            SdkStatus.LoadingContent -> Log.e("FwSDK", "LoadingContent: $extra")
+            SdkStatus.ContentLoaded -> Log.e("FwSDK", "ContentLoaded: $extra")
+            SdkStatus.LoadingContentFailed -> Log.e("FwSDK", "LoadingContentFailed: $extra")
         }
     }
     
-    fun onBackPressed(): Boolean {
-        return false
+    override fun onDestroyView() {
+        binding.landingAppbar.removeOnOffsetChangedListener(offsetListener)
+        super.onDestroyView()
+        _binding = null
     }
 }

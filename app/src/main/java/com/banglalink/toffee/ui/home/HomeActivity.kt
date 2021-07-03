@@ -86,6 +86,7 @@ import com.google.android.play.core.tasks.Task
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
+import com.loopnow.fireworklibrary.FwSDK
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -793,8 +794,7 @@ class HomeActivity :
         display.getRealSize(size)
         return size
     }
-
-
+    
     private fun handleSharedUrl(intent: Intent) {
         lifecycleScope.launch {
             var appLinkUriStr: String? = null
@@ -863,6 +863,16 @@ class HomeActivity :
         }
         if(intent.hasExtra(INTENT_PACKAGE_SUBSCRIBED)){
             handlePackageSubscribe()
+        }
+        try {
+            val url = intent.data?.fragment?.removePrefix("fwplayer=")
+            url?.let { 
+                FwSDK.play(it)
+                return
+            }
+        }
+        catch (e: Exception) {
+            Log.e("FwSDK", "FireworkDeeplinkPlayException")
         }
         handleSharedUrl(intent)
     }
@@ -1312,6 +1322,7 @@ class HomeActivity :
 //        mqttService.destroy()
         navController.removeOnDestinationChangedListener(destinationChangeListener)
         appUpdateManager.unregisterListener(appUpdateListener)
+        FwSDK.destroy()
         super.onDestroy()
     }
     

@@ -35,6 +35,7 @@ import net.gotev.uploadservice.UploadServiceConfig
 import net.gotev.uploadservice.data.RetryPolicyConfig
 import net.gotev.uploadservice.okhttp.OkHttpStack
 import okhttp3.OkHttpClient
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -94,7 +95,6 @@ class ToffeeApplication : Application() {
         connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), heartBeatManager)
         
         initUploader()
-        mPref.isFireworkInitialized = false
     }
     
     private fun initCoil() {
