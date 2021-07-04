@@ -10,6 +10,7 @@ import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.core.content.ContextCompat
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -54,6 +55,9 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     private val profileViewModel by activityViewModels<ViewProfileViewModel>()
     private val viewModel by viewModels<MyChannelEditDetailViewModel> { MyChannelEditDetailViewModel.provideFactory(viewModelAssistedFactory, myChannelDetail) }
 
+    private var nameWatcher: TextWatcher? = null
+    private var descWatcher: TextWatcher? = null
+
     private var channelName = ""
     private var userName = ""
     private var userAddress = ""
@@ -91,6 +95,10 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     override fun onDestroyView() {
         binding.categorySpinner.adapter = null
         binding.categoryPaymentSpinner.adapter = null
+        binding.channelName.removeTextChangedListener(nameWatcher)
+        binding.description.removeTextChangedListener(descWatcher)
+        nameWatcher = null
+        descWatcher = null
         super.onDestroyView()
         _binding = null
     }
@@ -117,23 +125,11 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     }
     
     private fun channelNameWatcher() {
-        binding.channelName.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                binding.channelNameCountTv.text = getString(R.string.channel_name_limit, s?.length ?: 0)
-            }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
-        })
+        nameWatcher = binding.channelName.doAfterTextChanged { s -> binding.channelNameCountTv.text = getString(R.string.channel_name_limit, s?.length ?: 0) }
     }
     
     private fun channelDesWatcher() {
-        binding.description.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                binding.channelDesCountTv.text = getString(R.string.channel_description_limit, s?.length ?: 0)
-            }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        })
+        descWatcher = binding.description.doAfterTextChanged { s -> binding.channelDesCountTv.text = getString(R.string.channel_description_limit, s?.length ?: 0) }
     }
     
     private fun setupPaymentCategorySpinner() {

@@ -16,6 +16,8 @@ import android.widget.AdapterView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.setPadding
+import androidx.core.widget.doAfterTextChanged
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -55,6 +57,11 @@ class EditUploadInfoFragment: BaseFragment() {
     @Inject lateinit var uploadRepo: UploadInfoRepository
     @AppCoroutineScope @Inject lateinit var appScope: CoroutineScope
     private lateinit var uploadFileUri: String
+
+    private var titleTextWatcher: TextWatcher? = null
+    private var descTextWatcher: TextWatcher? = null
+
+
     private val viewModel: EditUploadInfoViewModel by viewModels {
         EditUploadInfoViewModel.provideFactory(editUploadViewModelFactory, uploadFileUri)
     }
@@ -100,6 +107,10 @@ class EditUploadInfoFragment: BaseFragment() {
         binding.subCategorySpinner.adapter = null
         binding.categorySpinner.adapter = null
         binding.ageGroupSpinner.adapter = null
+        binding.uploadTitle.removeTextChangedListener(titleTextWatcher)
+        binding.uploadDescription.removeTextChangedListener(descTextWatcher)
+        titleTextWatcher = null
+        descTextWatcher = null
         super.onDestroyView()
         _binding = null
     }
@@ -169,23 +180,15 @@ class EditUploadInfoFragment: BaseFragment() {
 
 
     private fun titleWatcher() {
-        binding.uploadTitle.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                binding.uploadTitleCountTv.text = getString(R.string.video_title_limit, s?.length ?: 0)
-            }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
-        })
+        titleTextWatcher = binding.uploadTitle.doAfterTextChanged { s: Editable? ->
+            binding.uploadTitleCountTv.text = getString(R.string.video_title_limit, s?.length ?: 0)
+        }
     }
 
     private fun descriptionDesWatcher() {
-        binding.uploadDescription.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                binding.uploadDesCountTv.text = getString(R.string.video_description_limit, s?.length ?: 0)
-            }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
-        })
+        descTextWatcher = binding.uploadDescription.doAfterTextChanged { s: Editable? ->
+            binding.uploadDesCountTv.text = getString(R.string.video_description_limit, s?.length ?: 0)
+        }
     }
     
     private fun checkFileSystemPermission() {
