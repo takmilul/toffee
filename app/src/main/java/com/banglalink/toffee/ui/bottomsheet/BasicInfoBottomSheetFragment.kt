@@ -116,7 +116,6 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
                     R.color.pink_to_accent_color
                 )
             )
-            binding.errorEmailTv.show()
             binding.errorEmailTv.text = getString(R.string.email_null_error_text)
             binding.emailEt.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
         }
@@ -128,7 +127,6 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
                         R.color.pink_to_accent_color
                     )
                 )
-                binding.errorEmailTv.show()
                 binding.errorEmailTv.text = getString(R.string.email_error_text)
                 binding.emailEt.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
             } else {
@@ -138,7 +136,6 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
                         R.color.main_text_color
                     )
                 )
-                binding.errorEmailTv.hide()
                 binding.errorEmailTv.text = getString(R.string.verification_email_sent)
                 binding.emailEt.setBackgroundResource(R.drawable.single_line_input_text_bg)
             }
@@ -151,7 +148,6 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
                     R.color.pink_to_accent_color
                 )
             )
-            binding.nidWarningTv.show()
             binding.nidWarningTv.text = getString(R.string.nid_null_error_text)
             binding.nidEt.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
         } else {
@@ -164,7 +160,6 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
                         R.color.pink_to_accent_color
                     )
                 )
-                binding.nidWarningTv.show()
                 binding.nidWarningTv.text = getString(R.string.invalid_nid_number)
                 binding.nidEt.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
             } else{
@@ -174,7 +169,6 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
                         R.color.main_text_color
                     )
                 )
-                binding.nidWarningTv.hide()
                 binding.nidWarningTv.text = getString(R.string.your_nid_must_match)
                 binding.nidEt.setBackgroundResource(R.drawable.single_line_input_text_bg)
             }
@@ -307,7 +301,6 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
                     R.color.pink_to_accent_color
                 )
             )
-            binding.errorDateTv.show()
             binding.errorDateTv.text = getString(R.string.date_error_text)
             binding.dateOfBirthTv.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
         } else {
@@ -321,7 +314,6 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
                         R.color.pink_to_accent_color
                     )
                 )
-                binding.errorDateTv.show()
                 binding.errorDateTv.text = getString(R.string.Date_of_birth_must_be_match)
                 binding.dateOfBirthTv.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
             }
@@ -333,7 +325,6 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
                         R.color.main_text_color
                     )
                 )
-                binding.errorDateTv.hide()
                 binding.errorDateTv.text = getString(R.string.Date_of_birth_must_be_match)
                 binding.dateOfBirthTv.setBackgroundResource(R.drawable.single_line_input_text_bg)
             }
