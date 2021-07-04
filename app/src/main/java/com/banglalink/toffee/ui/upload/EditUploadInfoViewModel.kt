@@ -10,6 +10,7 @@ import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.exception.Error
+import com.banglalink.toffee.extension.toHex
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.SubCategory
@@ -23,6 +24,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.gotev.uploadservice.protocols.binary.BinaryUploadRequest
+import java.net.URLEncoder
+import java.security.MessageDigest
 import java.util.*
 
 class EditUploadInfoViewModel @AssistedInject constructor(
@@ -68,6 +71,10 @@ class EditUploadInfoViewModel @AssistedInject constructor(
 
     private var fileName: String = ""
     private var actualFileName: String? = null
+
+    var copyrightDocUri: String? = null
+
+//    private val workerContext
 
 //    val challengeSelectionList = MutableLiveData<List<String>>()
 //    val challengeSelectionPosition = MutableLiveData<Int>()
@@ -204,7 +211,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
 
     fun categoryIndexChanged(idx: Int) {
         categories.value?.getOrNull(idx)?.let {
-            subCategories.value = it.subcategories
+            subCategories.value = it.subcategories ?: emptyList()
 //            subCategoryPosition.value = 1
         }
     }
@@ -215,6 +222,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
     }
 
     suspend fun loadCopyrightFileName(fileUri: Uri) {
+        copyrightDocUri = fileUri.toString()
         val docFileName = withContext(Dispatchers.IO + Job()) {
             val fileSize = UtilsKt.fileSizeFromContentUri(appContext, fileUri)
             val actualFileSize = Utils.readableFileSize(fileSize)
@@ -301,6 +309,10 @@ class EditUploadInfoViewModel @AssistedInject constructor(
             return
         }
 
+        val md = MessageDigest.getInstance("MD5")
+        md.update(fileName.toByteArray())
+        val dirName = md.digest().toHex()
+
         val fn = withContext(Dispatchers.IO + Job()) {
             UtilsKt.fileNameFromContentUri(appContext, ipFileUri)
         }
@@ -318,13 +330,15 @@ class EditUploadInfoViewModel @AssistedInject constructor(
         }
 
         Log.e("UPLOAD", "$docFileName, $contentType")
-
-        val upId = uploadRepo.insertUploadInfo(upInfo)
+        val bucketPath = URLEncoder.encode("copyrights-documents/$dirName/$docFileName", "utf-8")
+        Log.e("BUCKET_T", "Bucket path - $bucketPath")
+        val upId = 1345L // uploadRepo.insertUploadInfo(upInfo)
         val uploadIdStr =
             withContext(Dispatchers.IO + Job()) {
                 BinaryUploadRequest(
                     appContext,
-                    "https://storage.googleapis.com/upload/storage/v1/b/ugc-content-storage/o?uploadType=media&name=${docFileName}"
+                    "https://storage.googleapis.com/upload/storage/v1/b/cdn-toffee-cms/" +
+                            "o?uploadType=media&name=${bucketPath}"
                 )
                     .setUploadID(UtilsKt.uploadIdToString(upId))
                     .setMethod("POST")

@@ -359,10 +359,10 @@
     <string name="copyright_approval">&#160;&#160;I hold relevant copyrights for the video content</string>
     <string name="copyright_doc">Copyright Document (Optional)</string>
     <string name="verify_success">Verification successful!</string>
-    <string name="channel_name_limit">%s/50</string>
-    <string name="channel_description_limit">%s/200</string>
-    <string name="video_title_limit">%s/200</string>
-    <string name="video_description_limit">%s/600</string>
+    <string name="channel_name_limit">%d/50</string>
+    <string name="channel_description_limit">%d/200</string>
+    <string name="video_title_limit">%d/200</string>
+    <string name="video_description_limit">%d/600</string>
     <string name="add_to_playlist">Add To Playlist</string>
     <!--    url    -->
 <!--    <string name="creators_policy_url">https://toffeelive.com/policies.php</string>-->

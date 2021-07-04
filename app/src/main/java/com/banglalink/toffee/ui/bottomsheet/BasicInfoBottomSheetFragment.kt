@@ -92,14 +92,18 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
         
         if (userName.isBlank()) {
             binding.errorNameTv.show()
+            binding.nameEt.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
         } else {
             binding.errorNameTv.hide()
+            binding.nameEt.setBackgroundResource(R.drawable.single_line_input_text_bg)
         }
 
         if (userAddress.isBlank()) {
             binding.errorAddressTv.show()
+            binding.addressEt.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
         } else {
             binding.errorAddressTv.hide()
+            binding.addressEt.setBackgroundResource(R.drawable.single_line_input_text_bg)
         }
 
         val isDobValid =validateDOB()
@@ -112,27 +116,33 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
                     R.color.pink_to_accent_color
                 )
             )
+            binding.errorEmailTv.show()
             binding.errorEmailTv.text = getString(R.string.email_null_error_text)
+            binding.emailEt.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
         }
-
-        if (notValidEmail) {
-            binding.errorEmailTv.setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.pink_to_accent_color
+        else {
+            if (notValidEmail) {
+                binding.errorEmailTv.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.pink_to_accent_color
+                    )
                 )
-            )
-            binding.errorEmailTv.text = getString(R.string.email_error_text)
-        } else{
-            binding.errorEmailTv.setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.main_text_color
+                binding.errorEmailTv.show()
+                binding.errorEmailTv.text = getString(R.string.email_error_text)
+                binding.emailEt.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
+            } else {
+                binding.errorEmailTv.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.main_text_color
+                    )
                 )
-            )
-            binding.errorEmailTv.text = getString(R.string.verification_email_sent)
+                binding.errorEmailTv.hide()
+                binding.errorEmailTv.text = getString(R.string.verification_email_sent)
+                binding.emailEt.setBackgroundResource(R.drawable.single_line_input_text_bg)
+            }
         }
-
         var validNID =false
         if (userNID.isBlank()) {
             binding.nidWarningTv.setTextColor(
@@ -141,9 +151,10 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
                     R.color.pink_to_accent_color
                 )
             )
+            binding.nidWarningTv.show()
             binding.nidWarningTv.text = getString(R.string.nid_null_error_text)
+            binding.nidEt.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
         } else {
-
             val nidLength = userNID.length
             validNID = nidLength == 10 || nidLength == 13 || nidLength == 17
             if (!validNID) {
@@ -153,7 +164,9 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
                         R.color.pink_to_accent_color
                     )
                 )
+                binding.nidWarningTv.show()
                 binding.nidWarningTv.text = getString(R.string.invalid_nid_number)
+                binding.nidEt.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
             } else{
                 binding.nidWarningTv.setTextColor(
                     ContextCompat.getColor(
@@ -161,7 +174,9 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
                         R.color.main_text_color
                     )
                 )
-            binding.nidWarningTv.text = getString(R.string.your_nid_must_match)
+                binding.nidWarningTv.hide()
+                binding.nidWarningTv.text = getString(R.string.your_nid_must_match)
+                binding.nidEt.setBackgroundResource(R.drawable.single_line_input_text_bg)
             }
         }
     
@@ -185,7 +200,7 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
                 is Resource.Success -> {
                     mPref.isChannelDetailChecked = true
 
-                    mPref.channelLogo = if (newChannelLogoUrl != "NULL") newChannelLogoUrl else myChannelDetail?.profileUrl ?: ""
+                    mPref.channelLogo = if (newChannelLogoUrl.isNotBlank()) newChannelLogoUrl else myChannelDetail?.profileUrl ?: ""
                     mPref.channelName = channelName
                     mPref.customerName = userName
                     mPref.customerEmail = userEmail
@@ -272,22 +287,17 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
         }
     }
 
-    private fun ageCalculate( date : Date):Int
-    {
-
+    private fun ageCalculate( date : Date):Int {
         val dob = Calendar.getInstance()
         dob.time=date
         val today = Calendar.getInstance()
-//        dob[year, monthOfYear-1] = dayOfMonth
         var userAge = today[Calendar.YEAR] - dob[Calendar.YEAR]
         if (today[Calendar.MONTH] <= dob[Calendar.MONTH] && today[Calendar.DAY_OF_YEAR] < dob[Calendar.DAY_OF_YEAR]) {
             userAge--
         }
         return userAge
     }
-
-
-
+    
     private fun validateDOB(): Boolean {
         var isDobValid = false
         if (binding.dateOfBirthTv.text.isBlank()) {
@@ -297,24 +307,23 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
                     R.color.pink_to_accent_color
                 )
             )
+            binding.errorDateTv.show()
             binding.errorDateTv.text = getString(R.string.date_error_text)
+            binding.dateOfBirthTv.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
         } else {
             val date =UtilsKt.strToDate(binding.dateOfBirthTv.text.toString(),"dd/MM/yyyy") ?: Date()
-
             val userAge= ageCalculate(date)
-            // selectedDate = "$year-$month-$day"
 
-            if (userAge < 18)
-            {
+            if (userAge < 18) {
                 binding.errorDateTv.setTextColor(
                     ContextCompat.getColor(
                         requireContext(),
                         R.color.pink_to_accent_color
                     )
                 )
+                binding.errorDateTv.show()
                 binding.errorDateTv.text = getString(R.string.Date_of_birth_must_be_match)
-//                binding.errorDateTv.text=getString(R.string.Date_of_birth_must_be_match)
-//                binding.errorDateTv.show()
+                binding.dateOfBirthTv.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
             }
             else {
                 isDobValid = true
@@ -324,43 +333,13 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
                         R.color.main_text_color
                     )
                 )
+                binding.errorDateTv.hide()
                 binding.errorDateTv.text = getString(R.string.Date_of_birth_must_be_match)
-                // binding.errorDateTv.hide()
+                binding.dateOfBirthTv.setBackgroundResource(R.drawable.single_line_input_text_bg)
             }
         }
-
         return isDobValid
     }
-    
-//    private fun showDatePicker() {
-//        val datePickerDialog = DatePickerDialog(
-//            requireContext(),
-//            { view, year, monthOfYear, dayOfMonth ->
-//                selectedDate = "$year-${monthOfYear + 1}-$dayOfMonth"
-////                selectedDate = "$dayOfMonth/${monthOfYear + 1}/$year"
-//                val selectedDateForTextView = "$dayOfMonth/${monthOfYear + 1}/$year"
-////                val selectedDateForTextView = "$year-${monthOfYear + 1}-$dayOfMonth"
-//                binding.dateOfBirthTv.text = selectedDateForTextView
-//                calendar.set(year, monthOfYear, dayOfMonth)
-//                val dob = getInstance()
-//                val today = getInstance()
-//                dob[year, monthOfYear] = dayOfMonth
-//                age = today[YEAR] - dob[YEAR]
-//                if (today[MONTH] <= dob[MONTH] && today[DAY_OF_YEAR] < dob[DAY_OF_YEAR]) {
-//                    age--
-//                }
-//            },
-//            calendar[YEAR],
-//            calendar[MONTH],
-//            calendar[DAY_OF_MONTH]
-//        )
-//        datePickerDialog.show()
-//        datePickerDialog.apply {
-//            val buttonColor = ContextCompat.getColor(requireContext(), R.color.main_text_color)
-//            getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(buttonColor)
-//            getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(buttonColor)
-//        }
-//    }
     
     override fun onDestroyView() {
         super.onDestroyView()

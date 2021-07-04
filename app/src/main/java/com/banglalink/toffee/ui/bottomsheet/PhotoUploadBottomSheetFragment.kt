@@ -25,7 +25,7 @@ class PhotoUploadBottomSheetFragment : ChildDialogFragment(), TextWatcher {
     private var channelName: String = ""
     private var channelLogoUrl: String = ""
     private var isNewChannelLogo: Boolean = false
-    private var newChannelLogoUrl: String = "NULL"
+    private var newChannelLogoUrl: String = ""
     @Inject lateinit var cacheManager: CacheManager
     private lateinit var progressDialog: VelBoxProgressDialog
     private var _binding: BottomSheetUploadPhotoBinding? = null
@@ -61,18 +61,7 @@ class PhotoUploadBottomSheetFragment : ChildDialogFragment(), TextWatcher {
             nextBtn.safeClick({navigateToBasicInfoBottomSheet()})
             channelNameEt.addTextChangedListener(this@PhotoUploadBottomSheetFragment)
         }
-        channelNameWatcher()
-        binding.channelNameCountTv.text = getString(R.string.channel_name_limit, "0")
-    }
-    
-    private fun channelNameWatcher() {
-        binding.channelNameEt.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                binding.channelNameCountTv.text = getString(R.string.channel_name_limit, s.toString().length)
-            }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
-        })
+        binding.channelNameCountTv.text = getString(R.string.channel_name_limit, 0)
     }
     
     private fun navigateToBasicInfoBottomSheet() {
@@ -138,6 +127,7 @@ class PhotoUploadBottomSheetFragment : ChildDialogFragment(), TextWatcher {
 
     override fun afterTextChanged(s: Editable?) {
         channelName = s.toString().trim()
+        binding.channelNameCountTv.text = getString(R.string.channel_name_limit, s.toString().length)
         saveButtonStateChange()
     }
 }

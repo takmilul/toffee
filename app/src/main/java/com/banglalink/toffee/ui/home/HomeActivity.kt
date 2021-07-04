@@ -43,6 +43,7 @@ import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.ApiRoutes
+import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.repository.UploadInfoRepository
@@ -56,7 +57,6 @@ import com.banglalink.toffee.ui.category.drama.EpisodeListFragment
 import com.banglalink.toffee.ui.channels.AllChannelsViewModel
 import com.banglalink.toffee.ui.channels.ChannelFragmentNew
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
-import com.banglalink.toffee.ui.landing.AllCategoriesFragment
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
 import com.banglalink.toffee.ui.player.PlayerPageActivity
 import com.banglalink.toffee.ui.player.PlaylistItem
@@ -96,12 +96,6 @@ import org.xmlpull.v1.XmlPullParser
 import java.util.*
 import javax.inject.Inject
 
-const val ID_SUBSCRIPTIONS = 15
-const val ID_SUB_VIDEO = 16
-const val ID_SETTINGS = 17
-const val ID_FAQ = 22
-const val ID_INVITE_FRIEND = 23
-const val ID_REDEEM_CODE = 24
 const val PLAY_IN_WEB_VIEW = 1
 const val OPEN_IN_EXTERNAL_BROWSER = 2
 const val IN_APP_UPDATE_REQUEST_CODE = 0x100
@@ -109,44 +103,44 @@ const val IN_APP_UPDATE_REQUEST_CODE = 0x100
 @AndroidEntryPoint
 class HomeActivity :
     PlayerPageActivity(),
-    FragmentManager.OnBackStackChangedListener,
+    SearchView.OnQueryTextListener,
     DraggerLayout.OnPositionChangedListener,
-    SearchView.OnQueryTextListener
+    FragmentManager.OnBackStackChangedListener
 {
-    @Inject lateinit var uploadRepo: UploadInfoRepository
-    @Inject lateinit var notificationRepo: NotificationInfoRepository
-    @Inject lateinit var uploadManager: UploadStateManager
-    @Inject lateinit var cacheManager: CacheManager
-    @Inject lateinit var mqttService: ToffeeMqttService
-    @Inject @AppCoroutineScope lateinit var appScope: CoroutineScope
     private var channelOwnerId: Int = 0
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
-    private var notificationBadge: View? = null
     private var searchView: SearchView? = null
+    private var notificationBadge: View? = null
     lateinit var binding: ActivityMainMenuBinding
     private lateinit var drawerHelper: DrawerHelper
+    @Inject lateinit var cacheManager: CacheManager
+    private lateinit var navController: NavController
+    @Inject lateinit var favoriteDao: FavoriteItemDao
+    @Inject lateinit var mqttService: ToffeeMqttService
+    private val viewModel: HomeViewModel by viewModels()
+    @Inject lateinit var uploadRepo: UploadInfoRepository
+    private lateinit var appbarConfig: AppBarConfiguration
+    @Inject lateinit var uploadManager: UploadStateManager
     @Inject lateinit var inAppMessageParser: InAppMessageParser
-//    private var mFirebaseAnalytics: FirebaseAnalytics? = null
+    @Inject @AppCoroutineScope lateinit var appScope: CoroutineScope
+    @Inject lateinit var notificationRepo: NotificationInfoRepository
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+    private val profileViewModel by viewModels<ViewProfileViewModel>()
+    private val allChannelViewModel by viewModels<AllChannelsViewModel>()
+    private val uploadViewModel by viewModels<UploadProgressViewModel>()
+    
     companion object {
         const val INTENT_REFERRAL_REDEEM_MSG = "REFERRAL_REDEEM_MSG"
         const val INTENT_PACKAGE_SUBSCRIBED = "PACKAGE_SUBSCRIBED"
     }
-
-    private lateinit var navController: NavController
-    private lateinit var appbarConfig: AppBarConfiguration
-
-    private val viewModel: HomeViewModel by viewModels()
-    private val profileViewModel by viewModels<ViewProfileViewModel>()
-    private val allChannelViewModel by viewModels<AllChannelsViewModel>()
-    private val uploadViewModel by viewModels<UploadProgressViewModel>()
-
+    
     override val playlistManager: PlaylistManager
         get() = viewModel.getPlaylistManager()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val isDisableScreenshot = !(mPref.screenCaptureEnabledUsers.contains(cPref.deviceId) || mPref.screenCaptureEnabledUsers.contains(mPref.customerId.toString()))
         //disable screen capture
-        if (! BuildConfig.DEBUG) {
+        if (! BuildConfig.DEBUG && isDisableScreenshot) {
             window.setFlags(
                 WindowManager.LayoutParams.FLAG_SECURE,
                 WindowManager.LayoutParams.FLAG_SECURE
@@ -1356,6 +1350,8 @@ class HomeActivity :
                         mPref.mqttClientId = ""
                         mPref.mqttUserName = ""
                         mPref.mqttPassword = ""
+                        cacheManager.clearAllCache()
+                        appScope.launch { favoriteDao.deleteAll() }
                         navController.popBackStack(R.id.menu_feed, false).let { 
                             recreate()
                         }

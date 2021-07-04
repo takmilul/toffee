@@ -23,14 +23,13 @@ class PartnershipBottomSheetFragment :ChildDialogFragment(){
         super.onViewCreated(view, savedInstanceState)
 
         with(binding){
-            okayBtn.safeClick({navigateToUploadPhoto()})
-            learnMoreTv.safeClick({navigateToCreatorsPolicy()})
             cancelButton.safeClick({closeDialog()})
+            learnMoreTv.safeClick({navigateToCreatorsPolicy()})
+            okayBtn.safeClick({findNavController().navigate(R.id.photoUploadBottomSheetFragment)})
         }
     }
 
-    private fun navigateToCreatorsPolicy()
-    {
+    private fun navigateToCreatorsPolicy() {
         val args = Bundle().apply {
             putString("myTitle", "Creators Policy")
             putString("url", mPref.creatorsPolicyUrl)
@@ -38,18 +37,8 @@ class PartnershipBottomSheetFragment :ChildDialogFragment(){
         findNavController().navigate(R.id.htmlPageViewDialog, args)
     }
 
-    private fun navigateToUploadPhoto()
-    {
-        if (findNavController().currentDestination?.id != R.id.photoUploadBottomSheetFragment && findNavController().currentDestination?.id == R.id.partnershipBottomSheetFragment) {
-            val action =
-                PartnershipBottomSheetFragmentDirections.actionPartnershipBottomSheetFragmentToPhotoUploadBottomSheetFragment()
-             findNavController().navigate(action)
-        }
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-
     }
 }

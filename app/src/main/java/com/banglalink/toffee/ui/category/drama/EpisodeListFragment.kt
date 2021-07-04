@@ -18,6 +18,7 @@ import com.banglalink.toffee.apiservice.DramaSeasonRequestParam
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.data.database.LocalSync
+import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.repository.SubscriptionCountRepository
 import com.banglalink.toffee.data.repository.SubscriptionInfoRepository
@@ -317,7 +318,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_fav->{
-                    requireActivity().handleFavorite(channelInfo)
+                    requireActivity().handleFavorite(channelInfo, favoriteDao)
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_report -> {
