@@ -1,8 +1,8 @@
 package com.banglalink.toffee.ui.widget
 
 import android.content.Context
-import android.graphics.Color
 import android.text.Spanned
+import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatEditText
@@ -13,22 +13,13 @@ import com.banglalink.toffee.R
 class HashTagEditText @JvmOverloads constructor(mContext: Context,
                                                 attrs: AttributeSet? = null,
                                                 defStyleAttr: Int = androidx.appcompat.R.attr.editTextStyle): AppCompatEditText(mContext, attrs, defStyleAttr) {
+    private var textWatcher: TextWatcher? = null
+
     private val hashTagColor: Int = ContextCompat.getColor(mContext, R.color.colorAccent2)
-//        set(value) {
-//            field = value
-//            text = text
-//        }
 
-    init {
-        //
-//        val a = context.obtainStyledAttributes(attrs, intArrayOf(R.attr.colorAccent))
-//        try {
-//            this.hashTagColor = a.getColor(0, Color.parseColor("#448aff"))
-//        } finally {
-//            a.recycle()
-//        }
-
-        addTextChangedListener {
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        textWatcher = addTextChangedListener {
             val text = it?.toString() ?: return@addTextChangedListener
             if(text.isBlank()) return@addTextChangedListener
 //            if(text.isBlank() || !text.last().isWhitespace()) return@addTextChangedListener
@@ -49,5 +40,10 @@ class HashTagEditText @JvmOverloads constructor(mContext: Context,
                 }
             }
         }
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        removeTextChangedListener(textWatcher)
     }
 }
