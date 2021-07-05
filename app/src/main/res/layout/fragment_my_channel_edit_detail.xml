@@ -330,6 +330,7 @@
                 <TextView
                     android:id="@+id/error_date_tv"
                     style="@style/ErrorTextStyle"
+                    android:visibility="visible"
                     android:text="@string/Date_of_birth_must_be_match"
                     android:textColor="@color/main_text_color"
                     app:layout_constraintEnd_toEndOf="@+id/date_of_birth_tv"
@@ -356,6 +357,7 @@
                 <TextView
                     android:id="@+id/error_email_tv"
                     style="@style/ErrorTextStyle"
+                    android:visibility="visible"
                     android:text="@string/verification_email_sent"
                     android:textColor="@color/main_text_color"
                     app:layout_constraintEnd_toEndOf="@+id/email_et"
@@ -382,6 +384,7 @@
                 <TextView
                     android:id="@+id/nid_error_tv"
                     style="@style/ErrorTextStyle"
+                    android:visibility="visible"
                     android:text="@string/your_nid_must_match"
                     android:textColor="@color/main_text_color"
                     app:layout_constraintEnd_toEndOf="@+id/nid_et"
@@ -473,6 +476,7 @@
                 <TextView
                     android:id="@+id/error_payment_option"
                     style="@style/ErrorTextStyle"
+                    android:visibility="visible"
                     android:text="@string/this_account_will_be_used_to_send_payment"
                     android:textColor="@color/main_text_color"
                     app:layout_constraintEnd_toEndOf="@+id/categoryPaymentSpinnerWrap"
