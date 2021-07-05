@@ -136,8 +136,8 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         binding.categoryPaymentSpinner.adapter = paymentCategoryAdapter
         binding.categoryPaymentSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                if(viewModel.selectedPaymentPosition.value != position) {
-                    viewModel.selectedPaymentMethod = if(position == 0) null else viewModel.paymentMethodList.value?.get(position - 1)
+                if(position != 0 && viewModel.selectedPaymentPosition.value != position) {
+                    viewModel.selectedPaymentMethod = viewModel.paymentMethodList.value?.get(position - 1)
                     viewModel.selectedPaymentPosition.value = position
                 }
                 else {
