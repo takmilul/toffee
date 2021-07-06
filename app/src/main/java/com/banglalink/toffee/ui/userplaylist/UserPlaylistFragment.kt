@@ -1,9 +1,8 @@
-package com.banglalink.toffee.ui.playlist
+package com.banglalink.toffee.ui.userplaylist
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,12 +16,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import com.banglalink.toffee.R
+import com.banglalink.toffee.R.string
 import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBinding
-import com.banglalink.toffee.databinding.FragmentPlaylistsBinding
+import com.banglalink.toffee.databinding.FragmentUserPlaylistBinding
+import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.MyChannelPlaylist
@@ -36,97 +37,63 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
+
 @AndroidEntryPoint
-class PlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChannelPlaylist> {
+class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlaylist> {
     private var listJob: Job? = null
-
-    private var isOwner: Boolean = false
-    @Inject
-    lateinit var cacheManager: CacheManager
+    @Inject lateinit var cacheManager: CacheManager
     private lateinit var mAdapter: MyChannelPlaylistAdapter
-    val mViewModel by viewModels<MyChannelPlaylistViewModel>()
-    private var _binding:FragmentPlaylistsBinding?=null
+    private var _binding: FragmentUserPlaylistBinding? = null
     private val binding get() = _binding!!
-
-    private val deletePlaylistViewModel by viewModels<MyChannelPlaylistDeleteViewModel>()
+    val mViewModel by viewModels<MyChannelPlaylistViewModel>()
     private val playlistReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
     private val createPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
-    companion object {
-        const val CHANNEL_OWNER_ID = "mPref.customerId"
-        const val PLAYLIST_INFO = "playlistInfo"
+    private val deletePlaylistViewModel by viewModels<MyChannelPlaylistDeleteViewModel>()
 
+    companion object {
+        const val PLAYLIST_INFO = "playlistInfo"
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         mAdapter = MyChannelPlaylistAdapter(this)
-
     }
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        _binding = FragmentPlaylistsBinding.inflate(inflater, container, false)
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentUserPlaylistBinding.inflate(inflater, container, false)
         return binding.root
     }
-    override fun onDestroyView() {
-        binding.myChannelPlaylists.adapter = null
-        super.onDestroyView()
-        _binding = null
-    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setEmptyView()
-
-        with(binding.myChannelPlaylists) {
-            addItemDecoration(MarginItemDecoration(12))
-
+        with(binding) {
+            var isInitialized = false
+            myChannelPlaylists.addItemDecoration(MarginItemDecoration(12))
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-                mAdapter.loadStateFlow
-//                    .distinctUntilChangedBy { it.refresh }
-                    .collectLatest {
-                        binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
-                        mAdapter.apply {
-                            val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
-                            binding.emptyView.isVisible = showEmpty
-                            binding.myChannelPlaylists.isVisible = itemCount > 0
-                            binding.createPlaylistButton.isVisible = itemCount > 0
-                       }
+                mAdapter.loadStateFlow.collectLatest {
+                    mAdapter.apply {
+                        val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
+                        val isEmpty = mAdapter.itemCount <= 0 && !it.source.refresh.endOfPaginationReached
+                        progressBar.isVisible = isLoading
+                        emptyView.isVisible = isEmpty && !isLoading
+                        myChannelPlaylists.isVisible = !isEmpty && !isLoading
+                        createPlaylistButton.isVisible = !isEmpty && !isLoading
+                        isInitialized = true
                     }
+                }
             }
-            adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
-            setHasFixedSize(true)
+            myChannelPlaylists.setHasFixedSize(true)
+            myChannelPlaylists.adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
+            createPlaylistButton.setOnClickListener { requireActivity().checkVerification { showCreatePlaylistDialog() } }
+            createPlaylistButtonNone.setOnClickListener { requireActivity().checkVerification { showCreatePlaylistDialog() } }
         }
-
         observeMyChannelPlaylists()
         observeEditPlaylist()
         observeDeletePlaylist()
         observeReloadPlaylist()
-
-        binding.createPlaylistButtonNone.setOnClickListener {
-            if (mPref.customerId > 0) {
-                showCreatePlaylistDialog()
-            }
-        }
-
-        binding.createPlaylistButton.setOnClickListener {
-            if (mPref.customerId > 0) {
-                showCreatePlaylistDialog()
-            }
-        }
     }
 
-    private fun setEmptyView() {
-        with(binding) {
-            if (mPref.customerId>0) {
-                emptyViewLabel.text = "You haven't created any playlist yet"
-                createPlaylistButton.visibility = View.GONE
-            } else {
-                createPlaylistButton.visibility = View.GONE
-                emptyViewLabel.text = "This channel has no playlist yet"
-            }
-        }
-    }
-
-    fun showCreatePlaylistDialog() {
+    private fun showCreatePlaylistDialog() {
         val playlistBinding = AlertDialogMyChannelPlaylistCreateBinding.inflate(this.layoutInflater)
         val dialogBuilder = android.app.AlertDialog.Builder(requireContext()).setView(playlistBinding.root)
         val alertDialog: android.app.AlertDialog = dialogBuilder.create().apply {
@@ -137,15 +104,16 @@ class PlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChannelPlaylist
         playlistBinding.createButton.setOnClickListener {
             if (!createPlaylistViewModel.playlistName.isNullOrBlank()) {
                 observeCreatePlaylist()
-                createPlaylistViewModel.createPlaylist(mPref.customerId,1)
+                createPlaylistViewModel.createPlaylist(mPref.customerId, 1)
                 createPlaylistViewModel.playlistName = null
                 alertDialog.dismiss()
             } else {
-                Toast.makeText(requireContext(), "Please give a playlist name", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(string.playlist_name_reqired_msg), Toast.LENGTH_SHORT).show()
             }
         }
         playlistBinding.closeIv.setOnClickListener { alertDialog.dismiss() }
     }
+
     private fun observeCreatePlaylist() {
         observe(createPlaylistViewModel.createPlaylistLiveData) {
             when (it) {
@@ -160,8 +128,8 @@ class PlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChannelPlaylist
             }
         }
     }
+    
     private fun observeMyChannelPlaylists() {
-        Log.e("my","channel"+mPref.customerId)
         listJob?.cancel()
         listJob = viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             mViewModel.getMyChannelUserPlaylists(mPref.customerId).collectLatest {
@@ -180,34 +148,9 @@ class PlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChannelPlaylist
 
     override fun onItemClicked(item: MyChannelPlaylist) {
         super.onItemClicked(item)
-
-        if (findNavController().currentDestination?.id != R.id.menu_playlist_videos && findNavController().currentDestination?.id == R.id.menu_playlist) {
-            findNavController().navigate(R.id.actionPlaylistsFragment_to_PlayListVideosFragment, Bundle().apply {
-                putParcelable(PLAYLIST_INFO, PlaylistPlaybackInfo(item.id, mPref.customerId, item.name, item.totalContent))
-            })
-        }
-    }
-
-    override fun onOpenMenu(view: View, item: MyChannelPlaylist) {
-        super.onOpenMenu(view, item)
-
-        if (mPref.customerId>0) {
-            PopupMenu(requireContext(), view).apply {
-                inflate(R.menu.menu_channel_playlist)
-                setOnMenuItemClickListener {
-                    when (it.itemId) {
-                        R.id.menu_edit_playlist -> {
-                            showEditPlaylistDialog(item.id, item.name)
-                        }
-                        R.id.menu_delete_playlist -> {
-                            showDeletePlaylistDialog(item.id)
-                        }
-                    }
-                    return@setOnMenuItemClickListener true
-                }
-                show()
-            }
-        }
+        findNavController().navigate(R.id.userPlaylistVideos, Bundle().apply {
+            putParcelable(PLAYLIST_INFO, PlaylistPlaybackInfo(item.id, mPref.customerId, item.name, item.totalContent, true))
+        })
     }
 
     private fun observeEditPlaylist() {
@@ -228,31 +171,33 @@ class PlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChannelPlaylist
     private fun showEditPlaylistDialog(playlistId: Int, playlistName: String) {
         val playlistBinding = AlertDialogMyChannelPlaylistCreateBinding.inflate(this.layoutInflater)
         val dialogBuilder = AlertDialog.Builder(requireContext()).setView(playlistBinding.root)
-        val alertDialog: AlertDialog = dialogBuilder.create().apply {
+        val alertDialog = dialogBuilder.create().apply {
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             show()
         }
-        playlistBinding.viewModel = createPlaylistViewModel
         createPlaylistViewModel.playlistName = playlistName
-        playlistBinding.dialogTitleTextView.text = "Edit Playlist"
-        playlistBinding.createButton.text = "Save"
-        playlistBinding.createButton.setOnClickListener {
-            if (!createPlaylistViewModel.playlistName.isNullOrBlank()) {
-                createPlaylistViewModel.editPlaylist(playlistId, mPref.customerId)
-                alertDialog.dismiss()
-            } else {
-                Toast.makeText(requireContext(), "Please give a playlist name", Toast.LENGTH_SHORT).show()
+        with(playlistBinding) {
+            viewModel = createPlaylistViewModel
+            dialogTitleTextView.text = getString(string.edit_playlist)
+            createButton.text = getString(string.save_text)
+            createButton.setOnClickListener {
+                if (!createPlaylistViewModel.playlistName.isNullOrBlank()) {
+                    createPlaylistViewModel.editPlaylist(playlistId, mPref.customerId)
+                    alertDialog.dismiss()
+                } else {
+                    Toast.makeText(requireContext(), getString(string.playlist_name_reqired_msg), Toast.LENGTH_SHORT).show()
+                }
             }
+            closeIv.setOnClickListener { alertDialog.dismiss() }
         }
-        playlistBinding.closeIv.setOnClickListener { alertDialog.dismiss() }
     }
 
     private fun showDeletePlaylistDialog(playlistId: Int) {
         VelBoxAlertDialogBuilder(
             requireContext(),
-            text = "Are you sure to delete?",
-            positiveButtonTitle = "No",
-            negativeButtonTitle = "Delete",
+            text = getString(string.delete_confirmation),
+            positiveButtonTitle = getString(string.no_text),
+            negativeButtonTitle = getString(string.delete_text),
             positiveButtonListener = { it?.dismiss() },
             negativeButtonListener = {
                 deletePlaylistViewModel.deletePlaylistName(playlistId)
@@ -277,8 +222,32 @@ class PlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChannelPlaylist
     }
 
     private fun reloadPlaylist() {
-        cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_PLAYLISTS)
+        cacheManager.clearCacheByUrl(ApiRoutes.GET_USER_PLAYLISTS)
         mAdapter.refresh()
     }
 
+    override fun onOpenMenu(view: View, item: MyChannelPlaylist) {
+        super.onOpenMenu(view, item)
+        PopupMenu(requireContext(), view).apply {
+            inflate(R.menu.menu_channel_playlist)
+            setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.menu_edit_playlist -> {
+                        showEditPlaylistDialog(item.id, item.name)
+                    }
+                    R.id.menu_delete_playlist -> {
+                        showDeletePlaylistDialog(item.id)
+                    }
+                }
+                return@setOnMenuItemClickListener true
+            }
+            show()
+        }
+    }
+
+    override fun onDestroyView() {
+        binding.myChannelPlaylists.adapter = null
+        super.onDestroyView()
+        _binding = null
+    }
 }

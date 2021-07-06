@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import com.banglalink.toffee.R
+import com.banglalink.toffee.R.string
 import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
@@ -44,12 +45,12 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
     private var isOwner: Boolean = false
     @Inject lateinit var cacheManager: CacheManager
     private lateinit var mAdapter: MyChannelPlaylistAdapter
-    val mViewModel by viewModels<MyChannelPlaylistViewModel>()
     private var _binding: FragmentMyChannelPlaylistsBinding ? = null
     private val binding get() = _binding!!
+    val mViewModel by viewModels<MyChannelPlaylistViewModel>()
+    private val playlistReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
     private val editPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
     private val deletePlaylistViewModel by viewModels<MyChannelPlaylistDeleteViewModel>()
-    private val playlistReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
     
     companion object {
         const val CHANNEL_OWNER_ID = "channelOwnerId"
@@ -66,7 +67,6 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
         mAdapter = MyChannelPlaylistAdapter(this)
         channelOwnerId = arguments?.getInt(CHANNEL_OWNER_ID) ?: 0
         isOwner = channelOwnerId == mPref.customerId
@@ -77,23 +77,13 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
         return binding.root
     }
     
-    override fun onDestroyView() {
-        binding.myChannelPlaylists.adapter = null
-        super.onDestroyView()
-        _binding = null
-    }
-    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
         setEmptyView()
-        
         with(binding.myChannelPlaylists) {
             addItemDecoration(MarginItemDecoration(12))
-
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 mAdapter.loadStateFlow
-//                    .distinctUntilChangedBy { it.refresh }
                     .collectLatest {
                     binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
                     mAdapter.apply {
@@ -118,7 +108,7 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
     private fun setEmptyView() {
         with(binding) {
             if (isOwner) {
-                emptyViewLabel.text = "You haven't created any playlist yet"
+                emptyViewLabel.text = getString(string.empty_playlist_msg_owner)
                 createPlaylistButton.setOnClickListener {
                     requireActivity().checkVerification {
                         if (mPref.channelId > 0) {
@@ -126,13 +116,13 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
                                 (parentFragment?.parentFragment?.parentFragment as? MyChannelHomeFragment)?.showCreatePlaylistDialog()
                             }
                         } else {
-                            requireContext().showToast("Please create channel first")
+                            requireContext().showToast(getString(string.create_channel_msg))
                         }
                     }
                 }
             } else {
                 createPlaylistButton.visibility = View.GONE
-                emptyViewLabel.text = "This channel has no playlist yet"
+                emptyViewLabel.text = getString(string.empty_playlist_msg_user)
             }
         }
     }
@@ -156,7 +146,6 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
     
     override fun onItemClicked(item: MyChannelPlaylist) {
         super.onItemClicked(item)
-        
         if (findNavController().currentDestination?.id != R.id.myChannelPlaylistVideosFragment && findNavController().currentDestination?.id == R.id.myChannelPlaylistsFragment) {
             findNavController().navigate(R.id.action_myChannelPlaylistsFragment_to_myChannelPlaylistVideosFragment, Bundle().apply {
                 putParcelable(PLAYLIST_INFO, PlaylistPlaybackInfo(item.id, channelOwnerId, item.name, item.totalContent))
@@ -166,7 +155,6 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
     
     override fun onOpenMenu(view: View, item: MyChannelPlaylist) {
         super.onOpenMenu(view, item)
-        
         if (isOwner) {
             PopupMenu(requireContext(), view).apply {
                 inflate(R.menu.menu_channel_playlist)
@@ -253,5 +241,11 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
     private fun reloadPlaylist() {
         cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_PLAYLISTS)
         mAdapter.refresh()
+    }
+
+    override fun onDestroyView() {
+        binding.myChannelPlaylists.adapter = null
+        super.onDestroyView()
+        _binding = null
     }
 }

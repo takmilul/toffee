@@ -2,14 +2,12 @@ package com.banglalink.toffee.ui.common
 
 import android.view.View
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.listeners.OptionCallBack
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.home.HomeViewModel
-import com.banglalink.toffee.ui.mychannel.MyChannelAddToPlaylistFragment
 import com.banglalink.toffee.ui.widget.MyPopupWindow
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -42,9 +40,7 @@ abstract class HomeBaseFragment:BaseFragment(), OptionCallBack {
                     requireActivity().handleFavorite(channelInfo, favoriteDao)
                 }
                 R.id.menu_add_to_playlist->{
-                    val isUserPlaylist = if (mPref.customerId==channelInfo.channel_owner_id) 0 else 1
-                    val fragment = MyChannelAddToPlaylistFragment.newInstance(mPref.customerId, channelInfo, isUserPlaylist)
-                    fragment.show(requireActivity().supportFragmentManager, "add_to_playlist")
+                    requireActivity().handleAddToPlaylist(channelInfo)
                 }
                 R.id.menu_report -> {
                     requireActivity().handleReport(channelInfo)

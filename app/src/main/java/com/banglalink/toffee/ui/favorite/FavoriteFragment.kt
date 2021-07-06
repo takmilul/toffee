@@ -14,7 +14,6 @@ import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.ui.home.HomeViewModel
-import com.banglalink.toffee.ui.mychannel.MyChannelAddToPlaylistFragment
 import com.banglalink.toffee.ui.widget.MyPopupWindow
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -75,9 +74,7 @@ class FavoriteFragment : BaseListFragment<ChannelInfo>(), ProviderIconCallback<C
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_add_to_playlist->{
-                    val isUserPlaylist = if (mPref.customerId==channelInfo.channel_owner_id) 0 else 1
-                    val fragment = MyChannelAddToPlaylistFragment.newInstance(mPref.customerId, channelInfo, isUserPlaylist)
-                    fragment.show(requireActivity().supportFragmentManager, "add_to_playlist")
+                    requireActivity().handleAddToPlaylist(channelInfo)
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_report -> {

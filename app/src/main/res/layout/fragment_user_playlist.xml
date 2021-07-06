@@ -15,7 +15,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/createPlaylistButton"
             style="@style/ButtonStyleRingPurple"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="16dp"
             android:paddingHorizontal="16dp"
             android:text="New Playlist"
             app:icon="@drawable/ic_upload_menu_plus"
@@ -34,7 +34,7 @@
             android:layout_height="0dp"
             android:clipToPadding="false"
             android:orientation="vertical"
-            android:paddingTop="12dp"
+            android:layout_marginTop="12dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -57,7 +57,6 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
-            android:layout_marginTop="9dp"
             android:id="@+id/empty_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -94,10 +93,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:fontFamily="@font/roboto_regular"
-                android:text="No item found"
+                android:text="@string/empty_playlist_msg_owner"
                 android:textColor="@color/fixed_second_text_color"
-                android:textSize="16sp"
-                tools:text="No item found" />
+                android:textSize="16sp" />
 
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -85,16 +85,11 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
         setEmptyView()
-        
         with(binding.myChannelVideos) {
             addItemDecoration(MarginItemDecoration(12))
-
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-                mAdapter.loadStateFlow
-//                    .distinctUntilChangedBy { it.refresh }
-                    .collectLatest {
+                mAdapter.loadStateFlow.collectLatest {
                     binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
                     mAdapter.apply {
                         val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
@@ -167,8 +162,12 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
                     }
                     R.id.menu_add_to_playlist -> {
                         val isUserPlaylist = if (isOwner) 0 else 1
-                        val fragment = MyChannelAddToPlaylistFragment.newInstance(mPref.customerId, item, isUserPlaylist)
-                        fragment.show(requireActivity().supportFragmentManager, "add_to_playlist")
+                        val args = Bundle().also {
+                            it.putInt(MyChannelAddToPlaylistFragment.CHANNEL_OWNER_ID, mPref.customerId)
+                            it.putParcelable(MyChannelAddToPlaylistFragment.CHANNEL_INFO, item)
+                            it.putInt(MyChannelAddToPlaylistFragment.IS_USER_PLAYLIST, isUserPlaylist)
+                        }
+                        findNavController().navigate(R.id.myChannelAddToPlaylistFragment, args)
                     }
                     R.id.menu_share -> {
                         requireActivity().handleShare(item)

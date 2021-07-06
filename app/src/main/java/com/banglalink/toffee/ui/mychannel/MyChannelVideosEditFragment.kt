@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.mychannel
 
 import android.os.Bundle
-import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
 import android.view.Gravity
@@ -265,7 +264,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
 
         val chipRecycler = binding.uploadTags.findViewById<RecyclerView>(R.id.chips_recycler)
         chipRecycler.setPadding(0)
-
+        
         binding.uploadTags.addChipsListener(object : ChipsInput.ChipsListener {
             override fun onChipAdded(chip: ChipInterface?, newSize: Int) { }
             override fun onChipRemoved(chip: ChipInterface?, newSize: Int) { }

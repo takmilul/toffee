@@ -8,10 +8,13 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.widget.RadioButton
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
+import com.banglalink.toffee.R.string
 import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -50,9 +53,9 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
     private lateinit var alertDialog: AlertDialog
     
     companion object {
-        private const val CHANNEL_OWNER_ID = "channelOwnerId"
-        private const val CHANNEL_INFO = "channelInfo"
-        private const val IS_USER_PLAYLIST="isUserPlaylist"
+        const val CHANNEL_OWNER_ID = "channelOwnerId"
+        const val CHANNEL_INFO = "channelInfo"
+        const val IS_USER_PLAYLIST="isUserPlaylist"
         
         fun newInstance(channelId: Int, channelInfo: ChannelInfo, isUserPlaylist: Int=0): MyChannelAddToPlaylistFragment {
             return MyChannelAddToPlaylistFragment().apply {
@@ -74,12 +77,10 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
     
     private fun observePlaylist() {
         lifecycleScope.launchWhenStarted {
-            if(isUserPlaylist==1)
-            {
+            if(isUserPlaylist==1) {
                 playlistViewModel.getMyChannelUserPlaylists(channelOwnerId).collectLatest {
                     mAdapter.submitData(it)
                 }
-
             } else {
                 playlistViewModel.getMyChannelPlaylists(channelOwnerId).collectLatest {
                     mAdapter.submitData(it)
@@ -89,21 +90,34 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
     }
     
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        
         _binding = AlertDialogMyChannelAddToPlaylistBinding.inflate(this.layoutInflater)
         val dialogBuilder = AlertDialog.Builder(requireContext()).setView(binding.root)
         alertDialog = dialogBuilder.create().apply {
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }
-        binding.listview.adapter = mAdapter
-        binding.viewModel = createPlaylistViewModel
         cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_PLAYLISTS)
+        with(binding) {
+            var isInitialized = false
+            lifecycleScope.launchWhenStarted {
+                mAdapter.loadStateFlow.collectLatest {
+                    val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
+                    val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
+                    emptyViewLabel.isVisible = isEmpty && !isLoading
+                    progressBar.isVisible = isLoading
+                    listview.isVisible = !isEmpty && !isLoading
+                    isInitialized = true
+                }
+            }
+            listview.adapter = mAdapter
+            viewModel = createPlaylistViewModel
+            listview.setHasFixedSize(true)
+            addButton.safeClick(this@MyChannelAddToPlaylistFragment)
+            doneButton.safeClick(this@MyChannelAddToPlaylistFragment)
+            cancelButton.safeClick(this@MyChannelAddToPlaylistFragment)
+            createButton.safeClick(this@MyChannelAddToPlaylistFragment)
+            closeIv.safeClick(this@MyChannelAddToPlaylistFragment)
+        }
         observePlaylist()
-        binding.addButton.safeClick(this)
-        binding.doneButton.safeClick(this)
-        binding.cancelButton.safeClick(this)
-        binding.createButton.safeClick(this)
-        binding.closeIv.safeClick(this)
         return alertDialog
     }
     
@@ -119,19 +133,13 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
             binding.closeIv -> alertDialog.dismiss()
         }
     }
-
-    override fun onDestroyView() {
-        binding.listview.adapter = null
-        super.onDestroyView()
-        _binding = null
-    }
     
     private fun createPlaylist() {
         if (!createPlaylistViewModel.playlistName.isNullOrBlank()) {
             observeCreatePlaylist()
             createPlaylistViewModel.createPlaylist(channelOwnerId,isUserPlaylist)
         } else {
-            requireContext().showToast("Please give a playlist name")
+            requireContext().showToast(getString(string.playlist_name_reqired_msg))
         }
     }
     
@@ -152,7 +160,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
     
     private fun addToPlaylist(isCreate: Boolean) {
         if (mAdapter.selectedPosition < 0 && playlistId == 0) {
-            requireContext().showToast("Please select a playlist")
+            requireContext().showToast(getString(string.select_playlist_msg))
         } else {
             var isAlreadyAdded = false
             if (mAdapter.selectedPosition >= 0 && !isCreate) {
@@ -161,7 +169,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
                 isAlreadyAdded = selectedItem.playlistContentIdList?.contains(MyChannelPlaylistContentId(channelInfo.id)) ?: false
             }
             if (isAlreadyAdded) {
-                requireContext().showToast("This content is already added in this playlist")
+                requireContext().showToast(getString(string.duplicate_playlist_msg))
             } else {
                 observeAddToPlaylist()
                 viewModel.addToPlaylist(playlistId, channelInfo.id.toInt(), channelOwnerId, isUserPlaylist)
@@ -207,5 +215,11 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
                 }
             }
         }
+    }
+
+    override fun onDestroyView() {
+        binding.listview.adapter = null
+        super.onDestroyView()
+        _binding = null
     }
 }

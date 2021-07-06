@@ -18,7 +18,6 @@ import com.banglalink.toffee.apiservice.DramaSeasonRequestParam
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.data.database.LocalSync
-import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.repository.SubscriptionCountRepository
 import com.banglalink.toffee.data.repository.SubscriptionInfoRepository
@@ -31,7 +30,6 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.SeriesPlaybackInfo
 import com.banglalink.toffee.ui.common.*
 import com.banglalink.toffee.ui.home.ChannelHeaderAdapter
-import com.banglalink.toffee.ui.mychannel.MyChannelAddToPlaylistFragment
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.ui.widget.MyPopupWindow
@@ -312,9 +310,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_add_to_playlist->{
-                    val isUserPlaylist = if (mPref.customerId==channelInfo.channel_owner_id) 0 else 1
-                    val fragment = MyChannelAddToPlaylistFragment.newInstance(mPref.customerId, channelInfo, isUserPlaylist)
-                    fragment.show(requireActivity().supportFragmentManager, "add_to_playlist")
+                    requireActivity().handleAddToPlaylist(channelInfo)
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_fav->{

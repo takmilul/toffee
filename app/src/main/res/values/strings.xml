@@ -101,8 +101,7 @@
     <string name="menu_faqs_text">FAQs</string>
     <string name="views">views</string>
     <string name="refer_a_friend_txt">Refer a Friend</string>
-    <string name="redeem_code_txt">Enter Referral Code</string>
-    <string name="invite_friends_txt">Refer Friends</string>
+    <string name="redeem_code_txt">Redeem Code</string>
     <string name="redeem_button">Redeem</string>
     <string name="share_button">Share</string>
     <string name="copy_button">Copy</string>
@@ -364,6 +363,14 @@
     <string name="video_title_limit">%d/200</string>
     <string name="video_description_limit">%d/600</string>
     <string name="add_to_playlist">Add To Playlist</string>
+    <string name="empty_playlist_msg_owner">You haven\'t created any playlist yet</string>
+    <string name="empty_playlist_msg_user">This channel has no playlist yet</string>
+    <string name="create_channel_msg">Please create channel first</string>
+    <string name="duplicate_playlist_msg">This content is already added in this playlist</string>
+    <string name="select_playlist_msg">Please select a playlist</string>
+    <string name="playlist_name_reqired_msg">Please give a playlist name</string>
+    <string name="edit_playlist">Edit Playlist</string>
+    <string name="delete_confirmation">Are you sure to delete?</string>
     <!--    url    -->
 <!--    <string name="creators_policy_url">https://toffeelive.com/policies.php</string>-->
 <!--    <string name="tus_upload_server_url">https://ugc-upload.toffeelive.com/upload</string>-->
