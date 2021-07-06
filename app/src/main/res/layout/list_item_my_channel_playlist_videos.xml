@@ -107,6 +107,7 @@
             android:paddingStart="12dp"
             android:paddingEnd="16dp"
             android:onClick="@{(v) -> callback.onOpenMenu(v, data)}"
+            android:visibility="@{selectedItem != null &amp;&amp; selectedItem.id.equals(data.id) ? View.GONE : View.VISIBLE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/title"
             app:srcCompat="@drawable/ic_menu_more" />
