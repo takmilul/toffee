@@ -80,7 +80,10 @@ data class ChannelInfo(
     @SerializedName("is_horizontal")
     val is_horizontal: Int? = null,
     @SerializedName("landscape_feature_1280_720")
-    val ugcFeaturedImage: String? = null
+    val ugcFeaturedImage: String? = null,
+
+    @SerializedName("is_ugc")
+    val is_ugc: Int = 0
 ) :Parcelable
 {
     val isApproved: Int
