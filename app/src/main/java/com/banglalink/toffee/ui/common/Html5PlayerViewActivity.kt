@@ -22,27 +22,27 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
     private val progressDialog by lazy {
         VelBoxProgressDialog(this)
     }
-    lateinit var mWebView: HTML5WebView
-    private var htmlUrl: String? = ""
+    private lateinit var mWebView: HTML5WebView
+    private lateinit var htmlUrl: String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val extras = intent.extras
         if (extras != null) {
-            htmlUrl = extras.getString(CONTENT_URL)
+            htmlUrl = extras.getString(CONTENT_URL)!!
         }
-        mWebView = HTML5WebView(this);
+        mWebView = HTML5WebView(this)
 
         if (savedInstanceState != null) {
             mWebView.restoreState(savedInstanceState);
         } else {
             val headerMap: MutableMap<String, String> = HashMap()
             headerMap["MSISDN"] = SessionPreference.getInstance().phoneNumber
-            mWebView.loadUrl(htmlUrl,headerMap);
+            mWebView.loadUrl(htmlUrl, headerMap)
         }
 
-        setContentView(mWebView.layout);
+        setContentView(mWebView.layout)
         observe(mWebView.showProgressLiveData){
             when(it){
                 true->progressDialog.show()

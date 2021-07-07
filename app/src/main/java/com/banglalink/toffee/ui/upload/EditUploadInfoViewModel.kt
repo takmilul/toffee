@@ -143,7 +143,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
                 it.first?.let { thumb ->
                     thumbnailData.value = thumb
                 }
-                orientationData.value = it.second
+                orientationData.value = it.second ?: 1
             }
         }
     }

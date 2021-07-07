@@ -27,7 +27,7 @@ class HtmlPageViewDialog : DialogFragment() {
     private var _binding: DialogHtmlPageViewBinding ? = null
     private val binding get() = _binding!!
 
-    private var htmlUrl: String? = ""
+    private lateinit var htmlUrl: String
     private var header: String? = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,7 +46,7 @@ class HtmlPageViewDialog : DialogFragment() {
         _binding = DialogHtmlPageViewBinding.inflate(layoutInflater)
 
         ///
-        htmlUrl= arguments?.getString("url")
+        htmlUrl= arguments?.getString("url")!!
         header= arguments?.getString("header")
 
         binding.titleTv.text = arguments?.getString("myTitle"," ") ?: " "
@@ -73,7 +73,7 @@ class HtmlPageViewDialog : DialogFragment() {
             javaScriptEnabled = true
             setSupportZoom(true)
             setNeedInitialFocus(false)
-            setAppCacheEnabled(true)
+            cacheMode = WebSettings.LOAD_DEFAULT
             databaseEnabled = true
             useWideViewPort = true
             builtInZoomControls = true
@@ -114,10 +114,10 @@ class HtmlPageViewDialog : DialogFragment() {
             stopLoading()
             onPause()
             webChromeClient = null
-            webViewClient = null
+//            webViewClient = null
             clearHistory()
             removeAllViews()
-            destroyDrawingCache()
+//            destroyDrawingCache()
             destroy()
         }
         super.onDestroyView()

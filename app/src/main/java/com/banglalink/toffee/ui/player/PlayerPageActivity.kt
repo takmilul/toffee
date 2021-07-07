@@ -458,7 +458,7 @@ abstract class PlayerPageActivity :
         val channelInfo = playlistManager.getCurrentChannel() ?: return
         val uri = Channel.createChannel(channelInfo).getContentUri(this, mPref, connectionWatcher)
         //Log.e("PLAY_T", "${channelInfo.hlsLinks?.first()?.hls_url_mobile}")
-        //Log.e("PLAY_T", "$uri;;${mPref.sessionToken};;$TOFFEE_HEADER;;$TOFFEE_HEADER")
+        //Log.e("PLAY_T", "$uri;;${mPref.getHeaderSessionToken()};;$TOFFEE_HEADER;;$TOFFEE_HEADER")
         if (uri == null) { //in this case settings does not allow us to play content. So stop player and trigger event viewing stop
             player?.stop()
             player?.clearMediaItems()

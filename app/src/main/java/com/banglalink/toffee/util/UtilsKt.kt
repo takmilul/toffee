@@ -114,13 +114,16 @@ object UtilsKt {
                 mmr.setDataSource(filePath)
             }
             val bmp = mmr.frameAtTime
-            val isHorizontal = if(bmp.width > bmp.height) 1 else 0
+            if(bmp != null) {
+                val isHorizontal = if (bmp.width > bmp.height) 1 else 0
 
-            val scaledBmp = resizeBitmap(bmp, 1280, 720)
-            val byteArrayOutputStream = ByteArrayOutputStream()
-            scaledBmp?.compress(JPEG, 70, byteArrayOutputStream)
-            val byteArray = byteArrayOutputStream.toByteArray()
-            Pair(Base64.encodeToString(byteArray, Base64.NO_WRAP), isHorizontal)
+                val scaledBmp = resizeBitmap(bmp, 1280, 720)
+                val byteArrayOutputStream = ByteArrayOutputStream()
+                scaledBmp?.compress(JPEG, 70, byteArrayOutputStream)
+                val byteArray = byteArrayOutputStream.toByteArray()
+                Pair(Base64.encodeToString(byteArray, Base64.NO_WRAP), isHorizontal)
+            }
+            null
         } catch (ex: Exception) {
             ex.printStackTrace()
             null
@@ -138,7 +141,7 @@ object UtilsKt {
             val duration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
 //            TimeUnit.MILLISECONDS
 //                .toSeconds(
-            duration.toLong()
+            duration?.toLong() ?: 0L
 //                )
         } catch (ex: Exception) {
             ex.printStackTrace()
