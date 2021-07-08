@@ -870,11 +870,10 @@ class HomeActivity :
     private fun navigateToSearch(query: String?) {
 //        if(navController.currentDestination?.id != R.id.searchFragment) {
         navController.popBackStack(R.id.searchFragment, true)
-        navController.navigate(Uri.parse("app.toffee://search/$query"))
-//        navController.navigate(R.id.searchFragment, Bundle().apply {
-//            putString(SearchFragment.SEARCH_KEYWORD, query)
-//        })
-//        }
+//        navController.navigate(Uri.parse("app.toffee://search/$query"))
+        navController.navigate(R.id.searchFragment, Bundle().apply {
+            putString(SearchFragment.SEARCH_KEYWORD, query)
+        })
     }
 
     private fun handleVoiceSearchEvent(query: String){
