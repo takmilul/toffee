@@ -346,7 +346,7 @@ Day 21 - AUS vs IND" />
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:paddingBottom="16dp"
-            android:text='@{data.descriptionDecoded == null ? "" : data.descriptionDecoded}'
+            setContentDescription='@{data}'
             android:textSize="@dimen/default_text_size"
             android:textColor="@color/fixed_second_text_color"
             android:fontFamily="@font/roboto_regular"

@@ -33,7 +33,7 @@ import com.banglalink.toffee.ui.common.*
 import com.banglalink.toffee.ui.mychannel.MyChannelVideosViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
-import com.suke.widget.SwitchButton
+import com.banglalink.toffee.util.BindingUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
@@ -44,6 +44,7 @@ import javax.inject.Inject
 class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<ChannelInfo> {
     @Inject lateinit var localSync: LocalSync
     private lateinit var mAdapter: ConcatAdapter
+    @Inject lateinit var bindingUtil: BindingUtil
     private lateinit var currentItem: ChannelInfo
     private var _binding: FragmentCatchupBinding ? = null
     private lateinit var detailsAdapter: ChannelHeaderAdapter
@@ -80,31 +81,24 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        
-        initAdapter()
-
         lifecycleScope.launch {
             localSync.syncData(currentItem)
-            detailsAdapter.notifyDataSetChanged()
+            initAdapter()
+            
+            with(binding.listview) {
+                addItemDecoration(MarginItemDecoration(12))
+                layoutManager = LinearLayoutManager(context)
+                adapter = mAdapter
+            }
+    
+            if (currentItem.channel_owner_id == mPref.customerId){
+                observeMyChannelVideos()
+            } else {
+                observeList()
+            }
+            observeListState()
+    //        observeSubscribeChannel()
         }
-        
-        with(binding.listview) {
-            addItemDecoration(MarginItemDecoration(12))
-            layoutManager = LinearLayoutManager(context)
-            adapter = mAdapter
-        }
-
-        if (currentItem.channel_owner_id == mPref.customerId){
-            observeMyChannelVideos()
-        } else {
-            observeList()
-        }
-        observeListState()
-//        observeSubscribeChannel()
-    }
-
-    fun isAutoPlayEnabled(): Boolean {
-        return view?.findViewById<SwitchButton>(R.id.autoPlaySwitch)?.isChecked == true
     }
 
     override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
@@ -112,11 +106,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
         requireActivity().checkVerification {
             if (item.isSubscribed == 0) {
                 homeViewModel.sendSubscriptionStatus(
-                    SubscriptionInfo(
-                        null,
-                        item.channel_owner_id,
-                        mPref.customerId
-                    ), 1
+                    SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), 1
                 )
                 currentItem.isSubscribed = 1
                 currentItem.subscriberCount = ++item.subscriberCount
@@ -124,11 +114,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
             } else {
                 UnSubscribeDialog.show(requireContext()) {
                     homeViewModel.sendSubscriptionStatus(
-                        SubscriptionInfo(
-                            null,
-                            item.channel_owner_id,
-                            mPref.customerId
-                        ), -1
+                        SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), -1
                     )
                     currentItem.isSubscribed = 0
                     currentItem.subscriberCount = --item.subscriberCount
@@ -160,19 +146,14 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
 
     private fun observeListState() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            catchupAdapter
-                .loadStateFlow
-//                .distinctUntilChangedBy {
-//                    it.refresh
-//                }
-                .collect {
-                    val list = catchupAdapter.snapshot()
-                    if(list.size > 0) {
-                        homeViewModel.addToPlayListMutableLiveData.postValue(
-                            AddToPlaylistData(-1, listOf(currentItem, list.items[0]))
-                        )
-                    }
+            catchupAdapter.loadStateFlow.collect {
+                val list = catchupAdapter.snapshot()
+                if(list.size > 0) {
+                    homeViewModel.addToPlayListMutableLiveData.postValue(
+                        AddToPlaylistData(-1, listOf(currentItem, list.items[0]))
+                    )
                 }
+            }
         }
     }
 
@@ -209,7 +190,7 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
                         }
                         homeViewModel.updateSubscriptionCountTable(SubscriptionInfo(null, it.channel_owner_id, mPref.customerId), status)
                     }
-                    detailsAdapter.notifyDataSetChanged()
+                    detailsAdapter.notifyItemChanged(0)
                 }
                 is Resource.Failure -> {
                     requireContext().showToast(response.error.msg)

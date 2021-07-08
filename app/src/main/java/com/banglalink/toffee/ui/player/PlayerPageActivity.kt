@@ -51,9 +51,13 @@ import com.google.android.gms.cast.MediaQueueItem
 import com.google.android.gms.cast.framework.*
 import com.google.android.gms.common.images.WebImage
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.net.*
 import java.util.*
@@ -394,6 +398,26 @@ abstract class PlayerPageActivity :
         .createMediaSource(mediaItem)
     }
 
+    private fun prepareMedia2(mediaItem: MediaItem): MediaSource {
+        return ProgressiveMediaSource.Factory {val dataSource: HttpDataSource = DefaultHttpDataSource.Factory().setUserAgent(TOFFEE_HEADER).createDataSource()
+            dataSource.setRequestProperty("Authorization", "Bearer ${getAccessToken()}")
+            dataSource
+        }
+        .createMediaSource(mediaItem)
+    }
+    
+    private fun getAccessToken(): String = runBlocking {
+        val accessToken = withContext(Dispatchers.IO) {
+                val credential = GoogleCredential.fromStream(
+                    assets.open("toffee-261507-60ca3e5405df.json")
+                ).createScoped(listOf("https://www.googleapis.com/auth/devstorage.read_write"))
+                credential.refreshToken()
+                credential.accessToken
+            }
+        Log.d("TOK_", "prepareMedia2: $accessToken")
+        accessToken
+    }
+    
     protected fun setPlayList(data: AddToPlaylistData) {
         playlistManager.setPlayList(data)
     }
@@ -457,6 +481,7 @@ abstract class PlayerPageActivity :
     private fun playChannel(isReload: Boolean) {
         val channelInfo = playlistManager.getCurrentChannel() ?: return
         val uri = Channel.createChannel(channelInfo).getContentUri(this, mPref, connectionWatcher)
+//        val uri = "https://storage.googleapis.com/storage/v1/b/ugc-content-storage/o/18_aab9687b-a56a-44e1-ad66-46f1ffbd83a8.mp4?alt=media"
         //Log.e("PLAY_T", "${channelInfo.hlsLinks?.first()?.hls_url_mobile}")
         //Log.e("PLAY_T", "$uri;;${mPref.sessionToken};;$TOFFEE_HEADER;;$TOFFEE_HEADER")
         if (uri == null) { //in this case settings does not allow us to play content. So stop player and trigger event viewing stop
