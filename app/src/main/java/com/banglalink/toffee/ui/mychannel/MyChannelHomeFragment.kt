@@ -140,7 +140,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                 if (channelId > 0) {
                     showCreatePlaylistDialog()
                 } else {
-                    requireContext().showToast("Please create your channel first)
+                    requireContext().showToast("Please create your channel first")
                    // requireContext().showToast("Please create channel first")
                 }
             }
