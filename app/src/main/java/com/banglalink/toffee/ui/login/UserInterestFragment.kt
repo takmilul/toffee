@@ -54,6 +54,7 @@ class UserInterestFragment : ChildDialogFragment() {
                 }
                 else {
                     requireContext().showToast("Please select at least 3 interest or press skip to sign in")
+                    requireContext().showToast("Please select at least 3 interests or skip to sign-in")
                 }
             })
             addButton.safeClick({
@@ -98,7 +99,8 @@ class UserInterestFragment : ChildDialogFragment() {
                 progressDialog.hide()
                 closeDialog()
                 requireActivity().recreate()
-                requireContext().showToast("Unable to load data!")
+                //requireContext().showToast("Unable to load data!")
+                requireContext().showToast("Oops! Something went wrong.")
             }
         }
     }

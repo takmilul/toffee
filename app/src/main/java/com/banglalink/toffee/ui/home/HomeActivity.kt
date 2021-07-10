@@ -455,7 +455,8 @@ class HomeActivity :
             observe(viewModel.myChannelDetailResponse) {
                 when(it) {
                     is Success -> showUploadDialog()
-                    is Failure -> showToast("Operation failed")
+                   // is Failure -> showToast("Operation failed")
+                    is Failure -> showToast("Oops! Something went wrong.")
                 }
             }
             viewModel.getChannelDetail(mPref.customerId)

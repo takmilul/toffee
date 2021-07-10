@@ -140,7 +140,8 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                 if (channelId > 0) {
                     showCreatePlaylistDialog()
                 } else {
-                    requireContext().showToast("Please create channel first")
+                    requireContext().showToast("Please create your channel first)
+                   // requireContext().showToast("Please create channel first")
                 }
             }
             binding.channelDetailView.subscriptionButton -> {
@@ -216,6 +217,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                 alertDialog.dismiss()
             } else {
                 requireContext().showToast("Please give a playlist name")
+                requireContext().showToast("Playlist name empty!")
             }
         }
         playlistBinding.closeIv.setOnClickListener { alertDialog.dismiss() }

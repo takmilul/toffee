@@ -120,7 +120,8 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
             observeCreatePlaylist()
             createPlaylistViewModel.createPlaylist(channelOwnerId)
         } else {
-            requireContext().showToast("Please give a playlist name")
+           // requireContext().showToast("Please give a playlist name")
+            requireContext().showToast("Playlist name empty!")
         }
     }
     
