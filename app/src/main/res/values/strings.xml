@@ -133,8 +133,8 @@
     <string name="subscription_text">You have successfully subscribed to </string>
     <string name="back_to_home">Back to Home</string>
     <string name="subscribe_pack">You need to subscribe premium pack to view this channel</string>
-    <string name="grant_camera_permission">Please grant camera permission</string>
-    <string name="no_activity_msg">Operation failed</string>
+    <string name="grant_camera_permission">This feature needs Camera permission</string>
+    <string name="no_activity_msg">Something went wrong. Please try again.</string>
     <string name="auto_rotation_on">Auto rotation on</string>
     <string name="auto_rotation_off">Auto rotation off</string>
     <string name="refer_policy">Refer toffee to a friend and enjoy up to 1GB of free internet</string>
@@ -142,7 +142,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
-    <string name="grant_storage_permission">Please grant storage permission</string>
+    <string name="grant_storage_permission">This feature needs Storage permission</string>
     <string name="text_unsubscribe_title">Are You Sure to Unsubscribe?</string>
     <string name="upload_selection_heading">Upload FREE from\nBanglalink Internet!</string>
     <string name="thumb_selection_heading">Set Video Thumbnail</string>

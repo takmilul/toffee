@@ -17,7 +17,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.setPadding
 import androidx.core.widget.doAfterTextChanged
-import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -230,7 +229,8 @@ class EditUploadInfoFragment: BaseFragment() {
     private fun observeExitFragment() {
         observe(viewModel.exitFragment) {
             if(it) {
-                requireContext().showToast("Unable to load data!")
+                requireContext().showToast("Oops! Something went wrong.")
+                //requireContext().showToast("Unable to load data!")
                 findNavController().popBackStack()
             }
         }
@@ -410,7 +410,8 @@ class EditUploadInfoFragment: BaseFragment() {
                     }
                 }
                 else -> {
-                    context?.showToast("Unable to submit the video.")
+                    context?.showToast("Something went wrong. Please try again.")
+                    //context?.showToast("Unable to submit the video.")
                 }
             }
         }
@@ -439,7 +440,8 @@ class EditUploadInfoFragment: BaseFragment() {
         }
 
         if (viewModel.thumbnailData.value.isNullOrBlank()){
-            context?.showToast("Missing thumbnail field")
+           // context?.showToast("Missing thumbnail field")
+            context?.showToast("Thumbnail is missing!")
             return
         }
 

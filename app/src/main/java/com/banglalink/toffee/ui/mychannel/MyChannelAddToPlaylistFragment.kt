@@ -120,7 +120,8 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
             observeCreatePlaylist()
             createPlaylistViewModel.createPlaylist(channelOwnerId)
         } else {
-            requireContext().showToast("Please give a playlist name")
+           // requireContext().showToast("Please give a playlist name")
+            requireContext().showToast("Playlist name empty!")
         }
     }
     
@@ -140,7 +141,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
     
     private fun addToPlaylist(isCreate: Boolean) {
         if (mAdapter.selectedPosition < 0 && playlistId == 0) {
-            requireContext().showToast("Please select a playlist")
+            requireContext().showToast("Please select a playlist.")
         } else {
             var isAlreadyAdded = false
             if (mAdapter.selectedPosition >= 0 && !isCreate) {
