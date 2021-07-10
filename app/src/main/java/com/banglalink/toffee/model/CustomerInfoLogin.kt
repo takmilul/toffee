@@ -87,4 +87,7 @@ class CustomerInfoLogin(
     val instagramPageUrl: String = "https://www.instagram.com/toffee.bangladesh/?hl=en",
     val youtubePageUrl: String = "https://www.youtube.com/channel/UCv9NYIjz4jhw-KSqdRulSuw",
     val screenCaptureEnabledUsers: Set<String>? = null,
+
+    @SerializedName("android_in_app_update_version_codes")
+    val forceUpdateVersionCodes: String? = null
 ) : BodyResponse(), Parcelable

@@ -480,7 +480,11 @@ abstract class PlayerPageActivity :
 
     private fun playChannel(isReload: Boolean) {
         val channelInfo = playlistManager.getCurrentChannel() ?: return
-        val uri = Channel.createChannel(channelInfo).getContentUri(this, mPref, connectionWatcher)
+        val hlsLink = channelInfo.hlsLinks?.get(0)?.hls_url_mobile ?: run {
+            ToffeeAnalytics.logException(NullPointerException("Channel url is null for id -> ${channelInfo.id}, name -> ${channelInfo.program_name}"))
+            return
+        }
+        val uri = Channel.createChannel(channelInfo.program_name, hlsLink).getContentUri(mPref, connectionWatcher)
 //        val uri = "https://storage.googleapis.com/storage/v1/b/ugc-content-storage/o/18_aab9687b-a56a-44e1-ad66-46f1ffbd83a8.mp4?alt=media"
         //Log.e("PLAY_T", "${channelInfo.hlsLinks?.first()?.hls_url_mobile}")
         //Log.e("PLAY_T", "$uri;;${mPref.sessionToken};;$TOFFEE_HEADER;;$TOFFEE_HEADER")
@@ -604,7 +608,7 @@ abstract class PlayerPageActivity :
 
     private fun getMediaInfo(info: ChannelInfo): MediaQueueItem {
         val mediaMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE )
-        mediaMetadata.putString( MediaMetadata.KEY_TITLE , info.program_name)
+        mediaMetadata.putString( MediaMetadata.KEY_TITLE , info.program_name ?: "")
         if(info.isLive) {
             mediaMetadata.addImage(WebImage(Uri.parse(info.channel_logo)))
         }
@@ -612,12 +616,12 @@ abstract class PlayerPageActivity :
             mediaMetadata.addImage(WebImage(Uri.parse(info.landscape_ratio_1280_720)))
         }
 
-        val channelUrl = Channel.createChannel(info).getContentUri(this, mPref, connectionWatcher)?.let {
+        val channelUrl = Channel.createChannel(info.program_name, info.getHlsLink()!!).getContentUri(mPref, connectionWatcher)?.let {
             getCastUrl(it)
         }
 
         val mediaInfo = if (info.isLive) {
-            MediaInfo.Builder(channelUrl).apply {
+            MediaInfo.Builder(channelUrl!!).apply {
                 setContentType(MimeTypes.APPLICATION_M3U8)//"application/x-mpegurl")
                 setStreamType( MediaInfo.STREAM_TYPE_LIVE )
                 setMetadata( mediaMetadata )
@@ -625,7 +629,7 @@ abstract class PlayerPageActivity :
     //                    .setStreamDuration(0) // 0 for Infinity
                 .build()
         } else {
-            MediaInfo.Builder(channelUrl)
+            MediaInfo.Builder(channelUrl!!)
                 .setContentType(MimeTypes.APPLICATION_M3U8)//"application/x-mpegurl")
                 .setStreamType( MediaInfo.STREAM_TYPE_BUFFERED )
                 .setMetadata( mediaMetadata )
