@@ -126,7 +126,7 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
                                 (parentFragment?.parentFragment?.parentFragment as? MyChannelHomeFragment)?.showCreatePlaylistDialog()
                             }
                         } else {
-                            requireContext().showToast("Please create your channel first")
+                            requireContext().showToast("Please create your channel first.")
                           //  requireContext().showToast("Please create channel first")
                         }
                     }
