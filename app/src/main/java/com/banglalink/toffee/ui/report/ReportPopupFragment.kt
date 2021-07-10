@@ -89,7 +89,8 @@ class ReportPopupFragment : DialogFragment(),
                     val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
                     val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
                     if (isEmpty && !isLoading) {
-                        requireContext().showToast("Unable to load data!")
+                        //requireContext().showToast("Unable to load data!")
+                        requireContext().showToast("Oops! Something went wrong.")
                         alertDialog.dismiss()
                     }
                     isInitialized = true

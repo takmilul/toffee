@@ -34,7 +34,7 @@ class Channel(
         putString("imageurl", imageUrl)
     }
 
-    fun getContentUri(context: Context, pref: SessionPreference, connectionWatcher: ConnectionWatcher): String? {
+    fun getContentUri(pref: SessionPreference, connectionWatcher: ConnectionWatcher): String? {
         val isWifiConnected = connectionWatcher.isOverWifi
         if (!isWifiConnected && pref.watchOnlyWifi()) {
             return null
@@ -70,8 +70,8 @@ class Channel(
 
     companion object {
         @JvmStatic
-        fun createChannel(channelInfo: ChannelInfo): Channel {
-            return Channel(channelInfo.program_name, uri = channelInfo.hlsLinks!![0].hls_url_mobile)
+        fun createChannel(programName: String?, hlsLink: String): Channel {
+            return Channel(programName, uri = hlsLink)
         }
 
         fun create(bundle: Bundle): Channel {

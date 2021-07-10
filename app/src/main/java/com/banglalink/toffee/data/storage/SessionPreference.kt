@@ -485,7 +485,18 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var screenCaptureEnabledUsers: Set<String>
         get() = pref.getStringSet(PREF_SCREEN_CAPTURE_USERS, setOf()) ?: setOf()
         set(value) = pref.edit { putStringSet(PREF_SCREEN_CAPTURE_USERS, value) }
-    
+
+    private var forcedUpdateVersions: String?
+        get() = pref.getString(PREF_FORCE_UPDATE_VERSIONS, null)
+        set(value) = pref.edit { putString(PREF_FORCE_UPDATE_VERSIONS, value) }
+
+    fun shouldForceUpdate(versionCode: Int): Boolean {
+        forcedUpdateVersions?.let {
+            if(versionCode.toString() in it.split(",")) return true
+        }
+        return false
+    }
+
     fun saveCustomerInfo(customerInfoLogin:CustomerInfoLogin){
         balance = customerInfoLogin.balance
         isVerifiedUser = customerInfoLogin.verified_status
@@ -539,6 +550,8 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         geoCity = customerInfoLogin.geoCity ?: ""
         geoLocation = customerInfoLogin.geoLocation ?: ""
         userIp = customerInfoLogin.userIp ?: ""
+
+        forcedUpdateVersions = customerInfoLogin.forceUpdateVersionCodes
         
         screenCaptureEnabledUsers = if (customerInfoLogin.screenCaptureEnabledUsers.isNullOrEmpty()) {
             SCREEN_CAPTURE_DISABLED_USERS
@@ -626,7 +639,8 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_USER_IP = "user_ip"
         private const val PREF_SCREEN_CAPTURE_USERS = "screenCaptureEnabledUsers"
         private const val PREF_NAME_IP_TV= "IP_TV"
-        
+        private const val PREF_FORCE_UPDATE_VERSIONS= "pref_force_update_versions"
+
         private val SCREEN_CAPTURE_DISABLED_USERS = setOf("7cd171cf93c9236b", "206c06aaf38fffe9", "21587c9c6447e992", "a25df4f9bc3754de", "4ec3c91fc4f4b8c0", "4fe54e7c960e391b", "c4b82aedaf88eaac")
         
         private var instance: SessionPreference? = null
