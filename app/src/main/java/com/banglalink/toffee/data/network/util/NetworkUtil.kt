@@ -42,13 +42,13 @@ suspend fun <T : BaseResponse> tryIO2(block: suspend () -> T): T {
         response.status == 1 ->{//server suffered a serious error
             throw ApiException(
                 response.errorCode,
-                response.errorMsg ?:"Something went wrong. Please try again"
+                response.errorMsg ?:"Something went wrong. Please try again."
             )
         }
         response.errorCode != 0 ->{//hmmm....error occurred ....throw it
             throw ApiException(
                 response.errorCode,
-                response.errorMsg ?:"Something went wrong. Please try again"
+                response.errorMsg ?:"Something went wrong. Please try again."
             )
         }
         else->{
