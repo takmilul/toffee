@@ -35,7 +35,7 @@ class CommonPreference(private val pref: SharedPreferences, private val context:
         set(value) = pref.edit { putInt(APP_VERSION, value) }
     
     val deviceId: String by lazy {
-        Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+        Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID) ?: ""
     }
     
     var appThemeMode: Int
