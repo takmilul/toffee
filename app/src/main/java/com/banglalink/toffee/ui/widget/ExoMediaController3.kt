@@ -675,6 +675,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
             val prevState = isVideoPortrait
             isVideoPortrait = channelInfo.isHorizontal != 1
             channelType = channelInfo.type
+            isUgc = channelInfo.is_ugc == 1
 
             if((prevState && !isVideoPortrait) || (!prevState && isVideoPortrait)) isFullScreen = false
             resizeView(UtilsKt.getRealScreenSize(context))
@@ -742,6 +743,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
 
     private val scaleType: Int
         get() {
+            if(channelType == "LIVE" || !isUgc) return AspectRatioFrameLayout.RESIZE_MODE_FILL
             if(!mPref.keepAspectRatio/* && maxBound == minBound*/) {
                 if(videoWidth > 0 && videoHeight > 0) {
                     if(isFullScreen && videoWidth > videoHeight) {
@@ -767,6 +769,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
     val minBound = minVideoHeight
     val maxBound: Int
         get() {
+            if(channelType == "LIVE" || !isUgc) return minBound
             if(videoWidth > 0 && videoHeight > 0) {
                 return min(max(minVideoHeight, ((videoHeight / videoWidth.toFloat()) * screenWidth).toInt()), maxVideoHeight)
             }

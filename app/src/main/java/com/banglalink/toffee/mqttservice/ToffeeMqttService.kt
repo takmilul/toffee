@@ -1,6 +1,7 @@
 package com.banglalink.toffee.mqttservice
 
 import android.content.Context
+import android.net.Uri
 import android.util.Log
 import com.banglalink.toffee.data.database.entities.ReactionStatusItem
 import com.banglalink.toffee.data.database.entities.ShareCount
@@ -55,13 +56,12 @@ class ToffeeMqttService @Inject constructor(
                 val clientId = EncryptionUtil.decryptResponse(mPref.mqttClientId)
                 val userName = EncryptionUtil.decryptResponse(mPref.mqttUserName)
                 val password = EncryptionUtil.decryptResponse(mPref.mqttPassword)
-                
+                Uri.parse(host)
                 client = MqttAndroidClient(context, host, clientId).apply {
                     setCallback(this@ToffeeMqttService)
                     connect(getMqttConnectionOption(userName, password), null, this@ToffeeMqttService)
                     Log.e("MQTT_", "initialize: connecting...")
                 }
-                
 //                repeat(100){
 //                    shareStatusList.add(ShareCount(it, 1))
 //                    subscriptionStatusList.add(SubscriptionCount(it+50, 1))
@@ -142,20 +142,23 @@ class ToffeeMqttService @Inject constructor(
     }
     
     override fun onSuccess(token: IMqttToken?) {
-        if(token?.client?.isConnected == true && token.topics.isNullOrEmpty()) {
-            Log.e("MQTT_", "onSuccess: Connected")
-            val disconnectedBufferOptions = DisconnectedBufferOptions().apply {
-                isBufferEnabled = true
-                bufferSize = 100
-                isPersistBuffer = false
-                isDeleteOldestMessages = false
+        try {
+            if (token?.client?.isConnected == true && token.topics.isNullOrEmpty()) {
+                Log.e("MQTT_", "onSuccess: Connected")
+                val disconnectedBufferOptions = DisconnectedBufferOptions().apply {
+                    isBufferEnabled = true
+                    bufferSize = 100
+                    isPersistBuffer = false
+                    isDeleteOldestMessages = false
+                }
+                client?.setBufferOpts(disconnectedBufferOptions)
+                client?.subscribe(arrayOf(REACTION_TOPIC, SHARE_COUNT_TOPIC, SUBSCRIPTION_TOPIC), intArrayOf(2, 2, 2), null, this@ToffeeMqttService)
+            } else {
+                gson = gson ?: Gson()
+                Log.e("MQTT_", "onSuccess - subscribed: ${token?.topics}")
             }
-            client?.setBufferOpts(disconnectedBufferOptions)
-            client?.subscribe(arrayOf(REACTION_TOPIC, SHARE_COUNT_TOPIC, SUBSCRIPTION_TOPIC), intArrayOf(2, 2, 2), null, this@ToffeeMqttService)
-        }
-        else {
-            gson = gson ?: Gson()
-            Log.e("MQTT_", "onSuccess - subscribed: ${token?.topics}")
+        } catch (e: Exception) {
+            Log.e("MQTT_", "onSuccess - Exception: ${e.message}")
         }
     }
     

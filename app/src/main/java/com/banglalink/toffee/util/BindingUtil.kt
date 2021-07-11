@@ -28,6 +28,7 @@ import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Package
 import com.banglalink.toffee.ui.widget.MultiTextButton
+import com.banglalink.toffee.ui.widget.ReadMoreTextView
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.math.min
@@ -399,5 +400,13 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
     @BindingAdapter("app:onSafeClick")
     fun onSafeClick(view: View, listener: View.OnClickListener) {
         view.safeClick(listener)
+    }
+    
+    @BindingAdapter("setContentDescription")
+    fun setDescription(view: ReadMoreTextView, item: ChannelInfo?) {
+        view.text = ""
+        item?.let {
+            view.text = it.getDescriptionDecoded()
+        }
     }
 }

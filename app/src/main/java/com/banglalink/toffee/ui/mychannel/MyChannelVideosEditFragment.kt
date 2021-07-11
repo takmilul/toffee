@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.mychannel
 
 import android.os.Bundle
-import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
 import android.view.Gravity
@@ -147,7 +146,9 @@ class MyChannelVideosEditFragment : BaseFragment() {
             }
         }
         observe(viewModel.exitFragment) {
-            requireContext().showToast("Unable to load data!")
+         //   requireContext().showToast("Unable to load data!")
+            requireContext().showToast("Oops! Something went wrong.")
+
             findNavController().popBackStack()
         }
     }

@@ -103,7 +103,6 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
     }
 
     private fun refreshLineEndIndex() {
-        Log.i(TAG, "refreshLineEndIndex: ")
         try {
             lineEndIndex = when (trimLines) {
                 0 -> {
@@ -116,6 +115,7 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
                     INVALID_END_INDEX
                 }
             }
+            Log.i(TAG, "refreshLineEndIndex: ${layout.lineCount}")
         }
         catch (e: Exception) {
             e.printStackTrace()
@@ -123,7 +123,7 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
     }
 
     private fun setText() {
-        Log.i(TAG, "setText: Pri")
+        Log.i(TAG, "setText-main: ${getTrimmedText()}")
         getTrimmedText()?.let { 
             super.setText(it, bufferType)
             movementMethod = LinkMovementMethod.getInstance()
@@ -134,7 +134,7 @@ class ReadMoreTextView constructor(context: Context, attrs: AttributeSet?) : App
     override fun setText(text: CharSequence, type: BufferType) {
         Log.i(TAG, "setText: ")
 //        this.mainText = text
-        this.mainText = text.toString().replace("\n".toRegex(), " ")
+        this.mainText = text.toString().trim()/*.replace("\n".toRegex(), " ")*/
         bufferType = type
         setText()
     }

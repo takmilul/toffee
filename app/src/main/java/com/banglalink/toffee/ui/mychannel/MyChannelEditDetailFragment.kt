@@ -224,7 +224,8 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     
     private fun observeEditChannel() {
         observe(viewModel.exitFragment) {
-            requireContext().showToast("Unable to load data!")
+            //requireContext().showToast("Unable to load data!")
+            requireContext().showToast("Oops! Something went wrong.")
             findNavController().popBackStack()
         }
         

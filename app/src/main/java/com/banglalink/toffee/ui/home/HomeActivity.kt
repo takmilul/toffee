@@ -423,17 +423,19 @@ class HomeActivity :
         appUpdateManager = AppUpdateManagerFactory.create(this)
         val appUpdateInfoTask: Task<AppUpdateInfo> = appUpdateManager.appUpdateInfo
         appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+            val updateType = if(mPref.shouldForceUpdate(BuildConfig.VERSION_CODE))  AppUpdateType.IMMEDIATE else AppUpdateType.FLEXIBLE
             if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-                && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
+                && appUpdateInfo.isUpdateTypeAllowed(updateType)) {
                 try {
                     appUpdateManager.startUpdateFlowForResult(
                         appUpdateInfo,
-                        AppUpdateType.FLEXIBLE,
+                        updateType,
                         this,
                         IN_APP_UPDATE_REQUEST_CODE)
                 }
                 catch (e: SendIntentException) {
                     e.printStackTrace()
+                    ToffeeAnalytics.logException(e)
                 }
             }
         }
@@ -456,7 +458,8 @@ class HomeActivity :
             observe(viewModel.myChannelDetailResponse) {
                 when(it) {
                     is Success -> showUploadDialog()
-                    is Failure -> showToast("Operation failed")
+                   // is Failure -> showToast("Operation failed")
+                    is Failure -> showToast("Oops! Something went wrong.")
                 }
             }
             viewModel.getChannelDetail(mPref.customerId)
@@ -917,11 +920,10 @@ class HomeActivity :
     private fun navigateToSearch(query: String?) {
 //        if(navController.currentDestination?.id != R.id.searchFragment) {
         navController.popBackStack(R.id.searchFragment, true)
-        navController.navigate(Uri.parse("app.toffee://search/$query"))
-//        navController.navigate(R.id.searchFragment, Bundle().apply {
-//            putString(SearchFragment.SEARCH_KEYWORD, query)
-//        })
-//        }
+//        navController.navigate(Uri.parse("app.toffee://search/$query"))
+        navController.navigate(R.id.searchFragment, Bundle().apply {
+            putString(SearchFragment.SEARCH_KEYWORD, query)
+        })
     }
 
     private fun handleVoiceSearchEvent(query: String){
@@ -986,22 +988,26 @@ class HomeActivity :
         channelInfo?.let {
             when{
                 it.urlType == PLAY_IN_WEB_VIEW->{
-                    heartBeatManager.triggerEventViewingContentStart(it.id.toInt(), it.type ?: "VOD")
-                    viewModel.sendViewContentEvent(it)
-                    launchActivity<Html5PlayerViewActivity> {
-                        putExtra(
-                            Html5PlayerViewActivity.CONTENT_URL,
-                            it.getHlsLink()
-                        )
-                    }
+                    it.getHlsLink()?.let { url->
+                        heartBeatManager.triggerEventViewingContentStart(it.id.toInt(), it.type ?: "VOD")
+                        viewModel.sendViewContentEvent(it)
+                        launchActivity<Html5PlayerViewActivity> {
+                            putExtra(
+                                Html5PlayerViewActivity.CONTENT_URL,
+                                url
+                            )
+                        }
+                    } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
                 }
                 it.urlType == OPEN_IN_EXTERNAL_BROWSER ->{
-                    startActivity(
-                        Intent(
-                            Intent.ACTION_VIEW,
-                            Uri.parse(it.getHlsLink())
+                    it.getHlsLink()?.let { url->
+                        startActivity(
+                            Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse(url)
+                            )
                         )
-                    )
+                    } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
                 }
                 !((it.isPurchased || it.isPaidSubscribed) && !it.isExpired(Date())) && mPref.isSubscriptionActive == "true" ->{
                     showSubscribePackDialog()
