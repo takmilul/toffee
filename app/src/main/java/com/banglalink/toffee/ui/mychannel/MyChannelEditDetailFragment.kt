@@ -9,6 +9,7 @@ import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -132,7 +133,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     }
     
     private fun setupPaymentCategorySpinner() {
-        val paymentCategoryAdapter = ToffeeSpinnerAdapter<Payment>(requireContext(), "Select Payment Option")
+        val paymentCategoryAdapter = ToffeeSpinnerAdapter<Payment>(requireContext(), getString(R.string.select_payment_option))
         binding.categoryPaymentSpinner.adapter = paymentCategoryAdapter
         binding.categoryPaymentSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -165,7 +166,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     }
 
     private fun setupCategorySpinner() {
-        val categoryAdapter = ToffeeSpinnerAdapter<Category>(requireContext(), "Select Category")
+        val categoryAdapter = ToffeeSpinnerAdapter<Category>(requireContext(), getString(R.string.select_category))
         binding.categorySpinner.adapter = categoryAdapter
         binding.categorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -224,8 +225,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
     
     private fun observeEditChannel() {
         observe(viewModel.exitFragment) {
-            //requireContext().showToast("Unable to load data!")
-            requireContext().showToast("Oops! Something went wrong.")
+            requireContext().showToast(getString(R.string.unable_to_load_data))
             findNavController().popBackStack()
         }
         
@@ -269,26 +269,18 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                 updateChannelInfo()
             }
             binding.bannerEditButton -> {
-                if(findNavController().currentDestination?.id != R.id.thumbnailSelectionMethodFragment && findNavController().currentDestination?.id ==R.id.myChannelEditDetailFragment) {
-                    isPosterClicked = true
-                    val action =
-                        MyChannelEditDetailFragmentDirections.actionMyChannelEditFragmentToThumbnailSelectionMethodFragment(
-                            "Set Channel Cover Photo",
-                            false
-                        )
-                    findNavController().navigate(action)
-                }
+                isPosterClicked = true
+                findNavController().navigate(R.id.thumbnailSelectionMethodFragment, bundleOf(
+                    ThumbnailSelectionMethodFragment.TITLE to getString(R.string.set_channel_cover_photo),
+                    ThumbnailSelectionMethodFragment.IS_PROFILE_IMAGE to false
+                ))
             }
             binding.profileImageEditButton -> {
-                if (findNavController().currentDestination?.id != R.id.thumbnailSelectionMethodFragment && findNavController().currentDestination?.id == R.id.myChannelEditDetailFragment) {
-                    isPosterClicked = false
-                    val action =
-                        MyChannelEditDetailFragmentDirections.actionMyChannelEditFragmentToThumbnailSelectionMethodFragment(
-                            "Set Channel Photo",
-                            true
-                        )
-                    findNavController().navigate(action)
-                }
+                isPosterClicked = false
+                findNavController().navigate(R.id.thumbnailSelectionMethodFragment, bundleOf(
+                    ThumbnailSelectionMethodFragment.TITLE to getString(R.string.set_channel_photo),
+                    ThumbnailSelectionMethodFragment.IS_PROFILE_IMAGE to true
+                ))
             }
         }
     }
@@ -524,7 +516,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
         val calendar = Calendar.getInstance()
         calendar.time = date
         val datePickerDialog = DatePickerDialog(requireContext(),
-            { view, year, monthOfYear, dayOfMonth ->
+            { _, year, monthOfYear, dayOfMonth ->
                 val calendarTwo=Calendar.getInstance()
                 calendarTwo.set(year, monthOfYear, dayOfMonth)
                 binding.dateOfBirthTv.text = UtilsKt.dateToStr(calendarTwo.time,"dd/MM/yyyy")

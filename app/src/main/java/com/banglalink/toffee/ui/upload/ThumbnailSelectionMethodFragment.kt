@@ -40,6 +40,8 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
     private val binding get() = _binding!!
     companion object {
         const val THUMB_URI = "thumb-uri"
+        const val TITLE = "title"
+        const val IS_PROFILE_IMAGE = "isProfileImage"
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -47,13 +49,8 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
         isProfileImage = ThumbnailSelectionMethodFragmentArgs.fromBundle(requireArguments()).isProfileImage
         _binding = FragmentThumbSelectionMethodBinding.inflate(layoutInflater)
         binding.heading.text = title
-        binding.openGalleryButton.setOnClickListener {
-            checkFileSystemPermission()
-        }
-        binding.openCameraButton.setOnClickListener {
-            checkCameraPermissions()
-        }
-
+        binding.openGalleryButton.setOnClickListener { checkFileSystemPermission() }
+        binding.openCameraButton.setOnClickListener { checkCameraPermissions() }
         alertDialog = AlertDialog
             .Builder(requireContext())
             .setView(binding.root).create()
@@ -62,10 +59,7 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
             }
         return alertDialog!!
     }
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
+    
     private fun checkFileSystemPermission() {
         lifecycleScope.launch {
             try{
@@ -210,5 +204,10 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
         else {
             ToffeeAnalytics.logBreadCrumb("Camera/image picker returned without any data")
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

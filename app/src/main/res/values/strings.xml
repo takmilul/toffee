@@ -363,6 +363,24 @@
     <string name="channel_description_limit">%d/200</string>
     <string name="video_title_limit">%d/200</string>
     <string name="video_description_limit">%d/600</string>
+    <string name="create_channel_msg">Please create your channel first.</string>
+    <string name="playlist_name_required_msg">Please give a playlist name</string>
+    <string name="playlist_name_empty_msg">Playlist name empty!</string>
+    <string name="set_channel_cover_photo">Set Channel Cover Photo</string>
+    <string name="set_channel_photo">Set Channel Photo</string>
+    <string name="unable_to_load_data">Oops! Something went wrong.</string>
+    <string name="select_category">Select Category</string>
+    <string name="select_payment_option">Select Payment Option</string>
+    <string name="update_channel_photo">Update Your Channel Logo</string>
+    <string name="set_video_cover_photo">Set Video Cover Photo</string>
+    <string name="select_age">Select Age</string>
+    <string name="select_sub_category">Select Sub Category</string>
+    <string name="try_again_msg">Something went wrong. Please try again.</string>
+    <string name="thumbnail_missing_msg">Thumbnail is missing!</string>
+    <string name="cancel_upload_title">Cancel Uploading</string>
+    <string name="cancel_upload_msg">Are you sure that you want to\ncancel uploading video?</string>
+    <string name="owner_video_empty_msg">You haven\'t uploaded any video yet</string>
+    <string name="public_video_empty_msg">This channel has no video yet</string>
     <!--    url    -->
 <!--    <string name="creators_policy_url">https://toffeelive.com/policies.php</string>-->
 <!--    <string name="tus_upload_server_url">https://ugc-upload.toffeelive.com/upload</string>-->

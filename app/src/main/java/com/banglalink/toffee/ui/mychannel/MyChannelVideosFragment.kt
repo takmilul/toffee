@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
@@ -46,10 +47,10 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
     @Inject lateinit var cacheManager: CacheManager
     @Inject lateinit var favoriteDao: FavoriteItemDao
     private lateinit var mAdapter: MyChannelVideosAdapter
-    val mViewModel by viewModels<MyChannelVideosViewModel>()
     private var _binding: FragmentMyChannelVideosBinding ? = null
     private val binding get() = _binding!!
     private val homeViewModel by activityViewModels<HomeViewModel>()
+    val mViewModel by viewModels<MyChannelVideosViewModel>()
     private val videosReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
     
     companion object {
@@ -57,9 +58,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
         
         fun newInstance(channelOwnerId: Int): MyChannelVideosFragment {
             return MyChannelVideosFragment().apply {
-                arguments = Bundle().apply {
-                    putInt(CHANNEL_OWNER_ID, channelOwnerId)
-                }
+                arguments = bundleOf(CHANNEL_OWNER_ID to channelOwnerId)
             }
         }
     }
@@ -72,7 +71,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
         isOwner = channelOwnerId == mPref.customerId
     }
     
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentMyChannelVideosBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -90,11 +89,8 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
         
         with(binding.myChannelVideos) {
             addItemDecoration(MarginItemDecoration(12))
-
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-                mAdapter.loadStateFlow
-//                    .distinctUntilChangedBy { it.refresh }
-                    .collectLatest {
+                mAdapter.loadStateFlow.collectLatest {
                     binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
                     mAdapter.apply {
                         val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
@@ -126,7 +122,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
     private fun setEmptyView() {
         with(binding) {
             if (isOwner) {
-                emptyViewLabel.text = "You haven't uploaded any video yet"
+                emptyViewLabel.text = getString(R.string.owner_video_empty_msg)
                 uploadVideoButton.setOnClickListener {
                     requireActivity().checkVerification {
                         requireActivity().let {
@@ -143,7 +139,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
             } else {
                 uploadVideoButton.hide()
                 creatorsPolicyButton.hide()
-                emptyViewLabel.text = "This channel has no video yet"
+                emptyViewLabel.text = getString(R.string.public_video_empty_msg)
                 (emptyViewIcon.layoutParams as ViewGroup.MarginLayoutParams).topMargin = 32.px
             }
         }
@@ -161,9 +157,9 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_edit_content -> {
-                        if (findNavController().currentDestination?.id != R.id.myChannelVideosEditFragment && findNavController().currentDestination?.id == R.id.myChannelHomeFragment) {
-                            parentFragment?.findNavController()?.navigate(R.id.action_myChannelHomeFragment_to_myChannelVideosEditFragment, Bundle().apply{ putParcelable(MyChannelVideosEditFragment.CHANNEL_INFO, item) })
-                        }
+                        parentFragment?.findNavController()?.navigate(R.id.myChannelVideosEditFragment, bundleOf(
+                            MyChannelVideosEditFragment.CHANNEL_INFO to item
+                        ))
                     }
                     R.id.menu_add_to_playlist -> {
                         val fragment = MyChannelAddToPlaylistFragment.newInstance(channelOwnerId, item)
