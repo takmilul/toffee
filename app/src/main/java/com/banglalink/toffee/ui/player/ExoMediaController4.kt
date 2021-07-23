@@ -10,13 +10,14 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.core.view.GestureDetectorCompat
 import com.banglalink.toffee.ui.widget.ExoMediaController3
+import com.banglalink.toffee.ui.widget.ToffeeStyledPlayerView
 
 /**
  * Custom player class for Double-Tapping listening
  */
 class ExoMediaController4 @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : ExoMediaController3(context, attrs, defStyleAttr) {
+) : ToffeeStyledPlayerView(context, attrs, defStyleAttr) {
 
     private val gestureDetector: GestureDetectorCompat
     private val gestureListener: DoubleTapGestureListener
@@ -31,10 +32,10 @@ class ExoMediaController4 @JvmOverloads constructor(
     private var controllerRef: Int = -1
 
     init {
-        gestureListener = DoubleTapGestureListener(binding.dtInterceptor)
+        gestureListener = DoubleTapGestureListener(doubleTapInterceptor)
         gestureDetector = GestureDetectorCompat(context, gestureListener)
 
-        controller = binding.playerOverlay
+        controller = playerOverlay
     }
 
     /**

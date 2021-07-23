@@ -52,7 +52,7 @@
                 android:background="@color/backgroundDarkAlpha"
                 android:visibility="@{selectedItem != null &amp;&amp; selectedItem.id.equals(data.id) ? View.VISIBLE : View.GONE}"
                 android:padding="20dp"
-                app:srcCompat="@drawable/ic_player_play" />
+                app:srcCompat="@drawable/exo_styled_controls_play" />
         </FrameLayout>
         
         <ProgressBar

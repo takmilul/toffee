@@ -73,6 +73,8 @@
                 <com.banglalink.toffee.ui.player.ExoMediaController4
                     android:id="@+id/player_view"
                     android:layout_width="match_parent"
+                    app:surface_type="texture_view"
+                    app:show_buffering="always"
                     android:layout_height="wrap_content"
                     android:background="@android:color/black" />
 

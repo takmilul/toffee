@@ -115,7 +115,7 @@ dependencies {
     implementation "com.google.android.exoplayer:exoplayer-core:$exoVersion"
     implementation "com.google.android.exoplayer:exoplayer-hls:$exoVersion"
     implementation "com.google.android.exoplayer:extension-cast:$exoVersion"
-//    implementation 'com.google.android.exoplayer:exoplayer-ui:2.12.0'
+    implementation "com.google.android.exoplayer:exoplayer-ui:$exoVersion"
 
     // Cast
     implementation 'androidx.mediarouter:mediarouter:1.2.3'
