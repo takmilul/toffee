@@ -4,7 +4,6 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.database.ContentObserver
 import android.graphics.Point
-import android.media.session.PlaybackState
 import android.os.CountDownTimer
 import android.os.Handler
 import android.provider.Settings
@@ -15,6 +14,7 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.Space
+import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.mediarouter.app.MediaRouteButton
 import com.banglalink.toffee.R
@@ -33,6 +33,7 @@ import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
+import com.google.android.exoplayer2.ui.DefaultTimeBar
 import com.google.android.exoplayer2.ui.StyledPlayerControlView
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.video.VideoListener
@@ -79,6 +80,11 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     private lateinit var fullscreenButton: ImageView
     private lateinit var controllerBg: View
 
+    private lateinit var exoPosition: TextView
+    private lateinit var exoTimeSeperator: TextView
+    private lateinit var exoDuration: TextView
+    private lateinit var exoProgress: DefaultTimeBar
+
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private var debugJob: Job? = null
 
@@ -111,6 +117,11 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         doubleTapInterceptor = findViewById(R.id.dtInterceptor)
         fullscreenButton = findViewById(R.id.fullscreen)
         controllerBg = findViewById(R.id.controller_bg)
+
+        exoDuration = findViewById(R.id.exo_duration)
+        exoTimeSeperator = findViewById(R.id.time_seperator)
+        exoPosition = findViewById(R.id.exo_position)
+        exoProgress = findViewById(R.id.exo_progress)
 
         drawerButton.setOnClickListener(this)
         videoOption.setOnClickListener(this)
@@ -245,6 +256,28 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         if(!isControllerFullyVisible && !isMinimize) {
             super.showController()
             controllerBg.visibility = View.VISIBLE
+            updateControllerUI()
+        }
+    }
+
+    private fun updateControllerUI() {
+        changeTimerVisibility(player?.isCurrentWindowLive == true || channelType == "LIVE")
+    }
+
+    private fun changeTimerVisibility(state: Boolean) {
+        when(state) {
+            false -> {
+                exoPosition.visibility = View.VISIBLE
+                exoDuration.visibility = View.VISIBLE
+                exoTimeSeperator.visibility = View.VISIBLE
+                exoProgress.visibility = View.VISIBLE
+            }
+            else -> {
+                exoPosition.visibility = View.INVISIBLE
+                exoDuration.visibility = View.INVISIBLE
+                exoTimeSeperator.visibility = View.INVISIBLE
+                exoProgress.visibility = View.GONE
+            }
         }
     }
 
@@ -613,7 +646,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
 
     override fun setPlayer(newPlayer: Player?) {
         super.setPlayer(newPlayer)
-
+        playerOverlay.player(newPlayer)
         val oldPlayer = this.player //get reference of old player which attached previously
         if (oldPlayer != null) { //if old player not null then clear it
             oldPlayer.removeListener(this)
