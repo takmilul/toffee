@@ -72,6 +72,7 @@ import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.ui.widget.showSubscriptionDialog
 import com.banglalink.toffee.util.*
 import com.google.android.exoplayer2.ext.cast.CastPlayer
+import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.util.Util
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.switchmaterial.SwitchMaterial
@@ -512,6 +513,8 @@ class HomeActivity :
             }
         }
     }
+
+    override fun getPlayerView(): StyledPlayerView = binding.playerView
 
     private fun configureBottomSheet() {
         bottomSheetBehavior = BottomSheetBehavior.from(binding.homeBottomSheet.bottomSheet)

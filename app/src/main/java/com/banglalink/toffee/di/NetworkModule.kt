@@ -53,7 +53,7 @@ object NetworkModule {
             retryOnConnectionFailure(false)
             if (BuildConfig.DEBUG) {
                 addInterceptor(HttpLoggingInterceptor().also {
-                    it.level = HttpLoggingInterceptor.Level.BODY
+                    it.level = HttpLoggingInterceptor.Level.BASIC
                 })
             }
             cache(cache)

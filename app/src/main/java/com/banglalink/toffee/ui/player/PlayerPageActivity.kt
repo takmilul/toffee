@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.player
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.Uri
@@ -33,6 +34,7 @@ import com.google.android.exoplayer2.analytics.AnalyticsListener.EventTime
 import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.ext.cast.MediaItemConverter
 import com.google.android.exoplayer2.ext.cast.SessionAvailabilityListener
+import com.google.android.exoplayer2.ext.ima.ImaAdsLoader
 import com.google.android.exoplayer2.source.*
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
@@ -40,6 +42,8 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.Parameters
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.ParametersBuilder
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
+import com.google.android.exoplayer2.ui.StyledPlayerView
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.upstream.HttpDataSource
 import com.google.android.exoplayer2.util.EventLogger
@@ -90,6 +94,8 @@ abstract class PlayerPageActivity :
 
     protected var castContext: CastContext? = null
     private var sessionManager: SessionManager? = null
+
+    private var adsLoader: ImaAdsLoader? = null
 
     private var exoPlayer: SimpleExoPlayer? = null
     private var castPlayer: CastPlayer? = null
@@ -161,9 +167,14 @@ abstract class PlayerPageActivity :
 
                 }
             }
+
+        adsLoader = ImaAdsLoader.Builder(this)
+//            .setAdMediaMimeTypes(listOf(MimeTypes.VIDEO_MP4))
+            .build()
     }
 
     abstract val playlistManager: PlaylistManager
+    abstract fun getPlayerView(): StyledPlayerView
 
     protected open fun onContentExpired() {
         //hook for subclass
@@ -197,7 +208,14 @@ abstract class PlayerPageActivity :
         }
     }
 
-    public override fun onSaveInstanceState(outState: Bundle) {
+    override fun onDestroy() {
+        super.onDestroy()
+        adsLoader?.release()
+        adsLoader = null
+    }
+
+    @SuppressLint("MissingSuperCall")
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         updateTrackSelectorParameters()
         updateStartPosition()
@@ -239,7 +257,23 @@ abstract class PlayerPageActivity :
             lastSeenTrackGroupArray = null
             playerAnalyticsListener = PlayerAnalyticsListener()
 
-            exoPlayer = Builder(this)
+            val httpDataSourceFactory = DefaultHttpDataSource.Factory()
+                .setUserAgent(TOFFEE_HEADER)
+                .setDefaultRequestProperties(mapOf("TOFFEE-SESSION-TOKEN" to mPref.getHeaderSessionToken()!!))
+
+            val dataSourceFactory = DefaultDataSourceFactory(this, httpDataSourceFactory)
+
+//            val renderersFactory = DefaultRenderersFactory(this)
+//            renderersFactory.setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON)
+
+            val mediaSourceFactory = DefaultMediaSourceFactory(dataSourceFactory)
+                .setAdsLoaderProvider{
+                    adsLoader
+                }
+                .setAdViewProvider(getPlayerView())
+
+            exoPlayer = Builder(this/*, renderersFactory*/)
+                .setMediaSourceFactory(mediaSourceFactory)
                 .setTrackSelector(defaultTrackSelector!!)
                 .setLoadControl(DefaultLoadControl.Builder().setBufferDurationsMs(60_000, 120_000, 2_500, 5_000).build())
                 .build().apply {
@@ -250,6 +284,7 @@ abstract class PlayerPageActivity :
                         addAnalyticsListener(EventLogger(defaultTrackSelector))
                     }
                 }
+            adsLoader?.setPlayer(exoPlayer)
         }
     }
 
@@ -328,6 +363,7 @@ abstract class PlayerPageActivity :
                 PlayerPreference.getInstance().savePlayerSessionBandWidth(pal.durationInSeconds, pal.getTotalBytesInMB())
             }
         }
+        adsLoader?.setPlayer(null)
         exoPlayer = null
     }
 
@@ -514,8 +550,13 @@ abstract class PlayerPageActivity :
 
             heartBeatManager.triggerEventViewingContentStart(channelInfo.id.toInt(), channelInfo.type ?: "VOD")
             it.playWhenReady = !isReload || it.playWhenReady
-            val mediaItem = MediaItem.Builder().setUri(uri).setTag(channelInfo).build()
-            val mediaSource = prepareMedia(mediaItem)
+            val mediaItem = MediaItem.Builder()
+                .setUri(uri)
+                .setMimeType(MimeTypes.APPLICATION_M3U8)
+                .setAdTagUri(Uri.parse("https://drm-pkg.toffeelive.com/vast/sample_01.xml"))
+                .setTag(channelInfo)
+                .build()
+
             if (isReload) { //We need to start where we left off for VODs
                 if(channelInfo.viewProgress > 0L) {
                     startPosition = if(channelInfo.viewProgressPercent() >= 990) {
@@ -527,7 +568,7 @@ abstract class PlayerPageActivity :
                 val haveStartPosition = startWindow != C.INDEX_UNSET
                 if (haveStartPosition && !channelInfo.isLive) {
                     if(it is SimpleExoPlayer) {
-                        it.setMediaSource(mediaSource, false)
+                        it.setMediaItem(mediaItem, false)
                         //                    player.prepare(mediaSource, false, false);
                     } else if(it is CastPlayer){
                         if(mPref.isCastUrlOverride) {
@@ -553,7 +594,7 @@ abstract class PlayerPageActivity :
                 }
             }
             if(it is SimpleExoPlayer) {
-                it.setMediaSource(mediaSource, startPosition)
+                it.setMediaItem(mediaItem, startPosition)
                 it.prepare()
             } else if(it is CastPlayer) {
                 if(mPref.isCastUrlOverride) {
