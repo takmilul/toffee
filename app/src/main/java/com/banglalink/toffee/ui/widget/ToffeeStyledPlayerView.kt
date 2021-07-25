@@ -27,6 +27,7 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.PlayerOverlayData
 import com.banglalink.toffee.ui.player.PlayerOverlayView
 import com.banglalink.toffee.ui.player.PlayerPreview
+import com.banglalink.toffee.util.BindingUtil
 import com.banglalink.toffee.util.UtilsKt
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
@@ -79,6 +80,10 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     private lateinit var playerControlView: StyledPlayerControlView
     private lateinit var fullscreenButton: ImageView
     private lateinit var controllerBg: View
+    private lateinit var playNext: ImageView
+    private lateinit var playPrev: ImageView
+    private lateinit var playPause: ImageView
+    private lateinit var previewImage: ImageView
 
     private lateinit var exoPosition: TextView
     private lateinit var exoTimeSeperator: TextView
@@ -87,6 +92,9 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
 
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private var debugJob: Job? = null
+
+    @Inject
+    lateinit var bindingUtil: BindingUtil
 
     @Inject
     lateinit var mPref: SessionPreference
@@ -108,6 +116,11 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
             rotateButton.setImageResource(R.mipmap.rotation_off)
         }
 
+        setShowNextButton(false)
+        setShowPreviousButton(false)
+        setShowFastForwardButton(false)
+        setShowRewindButton(false)
+
         minimizeButton = findViewById(R.id.minimize)
         castButton = findViewById(R.id.cast_button)
         playerOverlay = findViewById(R.id.playerOverlay)
@@ -117,6 +130,11 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         doubleTapInterceptor = findViewById(R.id.dtInterceptor)
         fullscreenButton = findViewById(R.id.fullscreen)
         controllerBg = findViewById(R.id.controller_bg)
+        playPause = findViewById(R.id.exo_play_pause)
+        previewImage = findViewById(R.id.preview)
+
+        playNext = findViewById(R.id.play_next)
+        playPrev = findViewById(R.id.play_prev)
 
         exoDuration = findViewById(R.id.exo_duration)
         exoTimeSeperator = findViewById(R.id.time_seperator)
@@ -130,6 +148,9 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         minimizeButton.setOnClickListener(this)
         doubleTapInterceptor.setOnClickListener(this)
         fullscreenButton.setOnClickListener(this)
+
+        playNext.setOnClickListener(this)
+        playPrev.setOnClickListener(this)
 
         playerControlView.isAnimationEnabled = false
 
@@ -210,6 +231,12 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
                     it.onMinimizeButtonPressed()
                 }
             }
+            R.id.play_next-> {
+                mPlayListListener?.playNext()
+            }
+            R.id.play_prev-> {
+                mPlayListListener?.playPrevious()
+            }
             R.id.drawer-> {
                 onPlayerControllerChangedListeners.forEach {
                     it.onDrawerButtonPressed()
@@ -261,7 +288,18 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     }
 
     private fun updateControllerUI() {
-        changeTimerVisibility(player?.isCurrentWindowLive == true || channelType == "LIVE")
+        val isChannelLive = player?.isCurrentWindowLive == true || channelType == "LIVE"
+        changeTimerVisibility(isChannelLive)
+
+        player?.let {
+            if(it.duration > 0 && !isChannelLive) {
+                nextButtonVisibility(player?.playbackState == Player.STATE_READY)
+                prevButtonVisibility(player?.playbackState == Player.STATE_READY)
+            } else {
+                nextButtonVisibility(false)
+                prevButtonVisibility(false)
+            }
+        }
     }
 
     private fun changeTimerVisibility(state: Boolean) {
@@ -330,6 +368,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         debugJob?.cancel()
         clearDebugWindow()
         removeRotationObserver()
+        stopAutoplayTimer()
         super.onDetachedFromWindow()
     }
 
@@ -356,6 +395,18 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
             CastButtonFactory.setUpMediaRouteButton(context.applicationContext, castButton)
         } else {
             castButton.visibility = View.GONE
+        }
+    }
+
+    private fun nextButtonVisibility(visible: Boolean) {
+        playNext.visibility = if(!visible) View.INVISIBLE else {
+            if(mPlayListListener?.hasNext() == true) View.VISIBLE else View.INVISIBLE
+        }
+    }
+
+    private fun prevButtonVisibility(visible: Boolean) {
+        playPrev.visibility = if(!visible) View.INVISIBLE else {
+            if(mPlayListListener?.hasPrevious() == true) View.VISIBLE else View.INVISIBLE
         }
     }
 
@@ -551,8 +602,62 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         resizeMode = scaleType
     }
 
-    fun showWifiOnlyMessage() {}
-    fun showContentExpiredMessage() {}
+    fun showWifiOnlyMessage() {
+        bindingUtil.loadImageFromResource(previewImage, R.drawable.watch_wifi_only_msg)
+        hideController()
+        doubleTapInterceptor.setOnClickListener(null)
+    }
+
+    fun showContentExpiredMessage() {
+        bindingUtil.loadImageFromResource(previewImage, R.drawable.content_expired)
+        hideController()
+        doubleTapInterceptor.setOnClickListener(null)
+    }
+
+    override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+        when(playbackState) {
+            Player.STATE_BUFFERING-> {
+                playPause.visibility = View.GONE
+                doubleTapInterceptor.setOnClickListener(this)
+                nextButtonVisibility(false)
+                prevButtonVisibility(false)
+                autoplayProgress.visibility = View.GONE
+                stopAutoplayTimer()
+            }
+            Player.STATE_IDLE-> {
+                previewImage.setImageResource(0)
+                playPause.visibility = View.VISIBLE
+                nextButtonVisibility(false)
+                prevButtonVisibility(false)
+                autoplayProgress.visibility = View.GONE
+                stopAutoplayTimer()
+            }
+            Player.STATE_READY-> {
+                previewImage.setImageResource(0)
+                playPause.visibility = View.VISIBLE
+                val isChannelLive = player?.isCurrentWindowLive == true || channelType == "LIVE"
+                nextButtonVisibility(!isChannelLive)
+                prevButtonVisibility(!isChannelLive)
+                autoplayProgress.visibility = View.GONE
+                stopAutoplayTimer()
+            }
+            Player.STATE_ENDED-> {
+                playPause.visibility = View.VISIBLE
+                playNext.visibility = if (mPlayListListener?.hasNext() == false) View.INVISIBLE else View.VISIBLE
+                playPrev.visibility = if (mPlayListListener?.hasPrevious() == false) View.INVISIBLE else VISIBLE
+
+                if (mPlayListListener?.isAutoplayEnabled() == true &&
+                    mPlayListListener?.hasNext() == true
+                ) {
+                    autoplayProgress.visibility = VISIBLE
+                    startAutoPlayTimer()
+                }
+                else {
+                    autoplayProgress.visibility = GONE
+                }
+            }
+        }
+    }
 
     fun moveController(offset: Float) {
         val intOffset = if (offset < 0.0f) {
