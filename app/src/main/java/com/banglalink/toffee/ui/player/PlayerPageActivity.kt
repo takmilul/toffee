@@ -36,6 +36,7 @@ import com.google.android.exoplayer2.ext.cast.MediaItemConverter
 import com.google.android.exoplayer2.ext.cast.SessionAvailabilityListener
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader
 import com.google.android.exoplayer2.source.*
+import com.google.android.exoplayer2.source.hls.DefaultHlsExtractorFactory
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
@@ -94,6 +95,8 @@ abstract class PlayerPageActivity :
 
     protected var castContext: CastContext? = null
     private var sessionManager: SessionManager? = null
+
+    private var httpDataSourceFactory: DefaultHttpDataSource.Factory? = null
 
     private var adsLoader: ImaAdsLoader? = null
 
@@ -257,22 +260,17 @@ abstract class PlayerPageActivity :
             lastSeenTrackGroupArray = null
             playerAnalyticsListener = PlayerAnalyticsListener()
 
-            val httpDataSourceFactory = DefaultHttpDataSource.Factory()
+            httpDataSourceFactory = DefaultHttpDataSource.Factory()
                 .setUserAgent(TOFFEE_HEADER)
                 .setDefaultRequestProperties(mapOf("TOFFEE-SESSION-TOKEN" to mPref.getHeaderSessionToken()!!))
 
-            val dataSourceFactory = DefaultDataSourceFactory(this, httpDataSourceFactory)
-
-//            val renderersFactory = DefaultRenderersFactory(this)
-//            renderersFactory.setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON)
-
-            val mediaSourceFactory = DefaultMediaSourceFactory(dataSourceFactory)
+            val mediaSourceFactory = DefaultMediaSourceFactory(httpDataSourceFactory!!)
                 .setAdsLoaderProvider{
                     adsLoader
                 }
                 .setAdViewProvider(getPlayerView())
 
-            exoPlayer = Builder(this/*, renderersFactory*/)
+            exoPlayer = Builder(this)
                 .setMediaSourceFactory(mediaSourceFactory)
                 .setTrackSelector(defaultTrackSelector!!)
                 .setLoadControl(DefaultLoadControl.Builder().setBufferDurationsMs(60_000, 120_000, 2_500, 5_000).build())
@@ -550,11 +548,17 @@ abstract class PlayerPageActivity :
 
             heartBeatManager.triggerEventViewingContentStart(channelInfo.id.toInt(), channelInfo.type ?: "VOD")
             it.playWhenReady = !isReload || it.playWhenReady
-            val mediaItem = MediaItem.Builder()
+
+            httpDataSourceFactory?.setDefaultRequestProperties(mapOf("TOFFEE-SESSION-TOKEN" to mPref.getHeaderSessionToken()!!))
+
+            val mediaItem2 = MediaItem.Builder()
                 .setUri(uri)
                 .setMimeType(MimeTypes.APPLICATION_M3U8)
-                .setAdTagUri(Uri.parse("https://drm-pkg.toffeelive.com/vast/sample_01.xml"))
                 .setTag(channelInfo)
+                .build()
+
+            val mediaItem = mediaItem2.buildUpon()
+                .setAdTagUri(Uri.parse("https://drm-pkg.toffeelive.com/vast/sample_01.xml"))
                 .build()
 
             if (isReload) { //We need to start where we left off for VODs
