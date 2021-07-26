@@ -69,7 +69,6 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.math.max
 
-
 @AndroidEntryPoint
 abstract class PlayerPageActivity :
     BaseAppCompatActivity(),
@@ -85,7 +84,7 @@ abstract class PlayerPageActivity :
     private var lastSeenTrackGroupArray: TrackGroupArray? = null
 
     private val playerViewModel by viewModels<PlayerViewModel>()
-
+    private var playCounter: Int = 0
     private var startAutoPlay = false
     private var startWindow = 0
     private var startPosition: Long = 0
@@ -558,12 +557,15 @@ abstract class PlayerPageActivity :
                 .setTag(channelInfo)
                 .build()
 
-            homeViewModel.vastTagsMutableLiveData.value?.randomOrNull()?.let { 
-                mediaItem = mediaItem.buildUpon()
-//                    .setAdTagUri(Uri.parse("https://drm-pkg.toffeelive.com/vast/sample_01.xml"))
-                    .setAdTagUri(Uri.parse(it.url))
-                    .build()
+            homeViewModel.vastTagsMutableLiveData.value?.randomOrNull()?.let {
+                if (mPref.isVastActive && playCounter % mPref.vastFrequency == 0) {
+                    mediaItem = mediaItem.buildUpon()
+    //                    .setAdTagUri(Uri.parse("https://drm-pkg.toffeelive.com/vast/sample_01.xml"))
+                        .setAdTagUri(Uri.parse(it.url))
+                        .build()
+                }
             }
+            playCounter++
 
             if (isReload) { //We need to start where we left off for VODs
                 if(channelInfo.viewProgress > 0L) {

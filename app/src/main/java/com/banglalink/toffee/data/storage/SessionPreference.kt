@@ -497,6 +497,14 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         return false
     }
 
+    var isVastActive: Boolean
+        get() = pref.getBoolean(PREF_TOFFEE_IS_VAST_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_TOFFEE_IS_VAST_ACTIVE, value) }
+    
+    var vastFrequency: Int
+        get() = pref.getInt(PREF_TOFFEE_VAST_FREQUENCY, 1)
+        set(value) = pref.edit { putInt(PREF_TOFFEE_VAST_FREQUENCY, value) }
+
     fun saveCustomerInfo(customerInfoLogin:CustomerInfoLogin){
         balance = customerInfoLogin.balance
         isVerifiedUser = customerInfoLogin.verified_status
@@ -552,7 +560,8 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         userIp = customerInfoLogin.userIp ?: ""
 
         forcedUpdateVersions = customerInfoLogin.forceUpdateVersionCodes
-        
+        isVastActive = customerInfoLogin.isVastActive == 1
+        vastFrequency = customerInfoLogin.vastFrequency
         screenCaptureEnabledUsers = if (customerInfoLogin.screenCaptureEnabledUsers.isNullOrEmpty()) {
             SCREEN_CAPTURE_DISABLED_USERS
         } else {
@@ -640,7 +649,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_SCREEN_CAPTURE_USERS = "screenCaptureEnabledUsers"
         private const val PREF_NAME_IP_TV= "IP_TV"
         private const val PREF_FORCE_UPDATE_VERSIONS= "pref_force_update_versions"
-
+        private const val PREF_TOFFEE_IS_VAST_ACTIVE= "pref_is_vast_active"
+        private const val PREF_TOFFEE_VAST_FREQUENCY= "pref_vast_frequency"
+        
+        
         private val SCREEN_CAPTURE_DISABLED_USERS = setOf("7cd171cf93c9236b", "206c06aaf38fffe9", "21587c9c6447e992", "a25df4f9bc3754de", "4ec3c91fc4f4b8c0", "4fe54e7c960e391b", "c4b82aedaf88eaac")
         
         private var instance: SessionPreference? = null
