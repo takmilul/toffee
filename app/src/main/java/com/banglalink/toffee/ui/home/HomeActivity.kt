@@ -351,6 +351,7 @@ class HomeActivity :
         observeMyChannelNavigation()
         inAppUpdate()
         customCrashReport()
+        viewModel.getVastTags()
     }
     
     private fun isChannelComplete() = mPref.customerName.isNotBlank()

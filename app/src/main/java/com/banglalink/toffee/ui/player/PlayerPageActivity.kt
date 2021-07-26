@@ -26,6 +26,7 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.TOFFEE_HEADER
 import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
+import com.banglalink.toffee.ui.home.HomeViewModel
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.Player.*
 import com.google.android.exoplayer2.SimpleExoPlayer.Builder
@@ -36,7 +37,6 @@ import com.google.android.exoplayer2.ext.cast.MediaItemConverter
 import com.google.android.exoplayer2.ext.cast.SessionAvailabilityListener
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader
 import com.google.android.exoplayer2.source.*
-import com.google.android.exoplayer2.source.hls.DefaultHlsExtractorFactory
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
@@ -44,7 +44,6 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.Paramet
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.ParametersBuilder
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.ui.StyledPlayerView
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.upstream.HttpDataSource
 import com.google.android.exoplayer2.util.EventLogger
@@ -112,6 +111,7 @@ abstract class PlayerPageActivity :
     lateinit var connectionWatcher: ConnectionWatcher
     
     @Inject lateinit var heartBeatManager: HeartBeatManager
+    private val homeViewModel by viewModels<HomeViewModel>()
 
     init {
         defaultCookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER)
@@ -537,6 +537,7 @@ abstract class PlayerPageActivity :
 //            isReload = true;//that means we have reload situation. We need to start where we left for VODs
 //        }
 //        Log.e("MEDIA_T", "Player is -> ${player?.javaClass?.name}")
+        adsLoader?.skipAd()
         player?.let {
 //            Log.e("MEDIA_T", "${it.currentMediaItem?.playbackProperties?.tag}")
             val oldChannelInfo = getCurrentChannelInfo()
@@ -551,15 +552,18 @@ abstract class PlayerPageActivity :
 
             httpDataSourceFactory?.setDefaultRequestProperties(mapOf("TOFFEE-SESSION-TOKEN" to mPref.getHeaderSessionToken()!!))
 
-            val mediaItem2 = MediaItem.Builder()
+            var mediaItem = MediaItem.Builder()
                 .setUri(uri)
                 .setMimeType(MimeTypes.APPLICATION_M3U8)
                 .setTag(channelInfo)
                 .build()
 
-            val mediaItem = mediaItem2.buildUpon()
-                .setAdTagUri(Uri.parse("https://drm-pkg.toffeelive.com/vast/sample_01.xml"))
-                .build()
+            homeViewModel.vastTagsMutableLiveData.value?.randomOrNull()?.let { 
+                mediaItem = mediaItem.buildUpon()
+//                    .setAdTagUri(Uri.parse("https://drm-pkg.toffeelive.com/vast/sample_01.xml"))
+                    .setAdTagUri(Uri.parse(it.url))
+                    .build()
+            }
 
             if (isReload) { //We need to start where we left off for VODs
                 if(channelInfo.viewProgress > 0L) {
