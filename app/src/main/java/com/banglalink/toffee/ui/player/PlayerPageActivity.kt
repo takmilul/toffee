@@ -578,7 +578,7 @@ abstract class PlayerPageActivity :
                 val haveStartPosition = startWindow != C.INDEX_UNSET
                 if (haveStartPosition && !channelInfo.isLive) {
                     if(it is SimpleExoPlayer) {
-                        getPlayerView().adViewGroup.removeAllViews()
+//                        getPlayerView().adViewGroup.removeAllViews()
                         it.setMediaItem(mediaItem, false)
                         //                    player.prepare(mediaSource, false, false);
                     } else if(it is CastPlayer){
