@@ -139,7 +139,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
             observeCreatePlaylist()
             createPlaylistViewModel.createPlaylist(channelOwnerId,isUserPlaylist)
         } else {
-            requireContext().showToast(getString(string.playlist_name_reqired_msg))
+            requireContext().showToast(getString(string.playlist_name_empty_msg))
         }
     }
     

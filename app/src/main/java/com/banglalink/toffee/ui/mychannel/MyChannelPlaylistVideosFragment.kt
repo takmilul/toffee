@@ -40,7 +40,6 @@ import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.ui.widget.MyPopupWindow
-import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -75,10 +74,6 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     }
     
     fun getPlaylistId(): Long = args.playlistInfo.getPlaylistIdLong()
-    
-    fun isAutoPlayEnabled(): Boolean {
-        return view?.findViewById<SwitchButton>(R.id.autoPlaySwitch)?.isChecked == true
-    }
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -257,8 +252,16 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     private fun reloadPlaylistVideos() {
         cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_PLAYLIST_VIDEOS)
         playlistAdapter.refresh()
-        args.playlistInfo.playlistItemCount--
-        detailsAdapter.notifyDataSetChanged()
+        playlistAdapter.refresh().let {
+            lifecycleScope.launch {
+                playlistAdapter.loadStateFlow.collectLatest {
+                    if (args.playlistInfo.playlistItemCount != playlistAdapter.itemCount) {
+                        args.playlistInfo.playlistItemCount = playlistAdapter.itemCount
+                        detailsAdapter.notifyDataSetChanged()
+                    }
+                }
+            }
+        }
     }
 
     private fun observeSubscribeChannel() {

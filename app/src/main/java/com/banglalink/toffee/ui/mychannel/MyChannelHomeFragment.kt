@@ -202,7 +202,6 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                 createPlaylistViewModel.playlistName = null
                 alertDialog.dismiss()
             } else {
-                requireContext().showToast(getString(R.string.playlist_name_required_msg))
                 requireContext().showToast(getString(R.string.playlist_name_empty_msg))
             }
         }

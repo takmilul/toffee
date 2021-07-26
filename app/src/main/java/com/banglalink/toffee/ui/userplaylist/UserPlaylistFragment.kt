@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isVisible
@@ -108,7 +107,7 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
                 createPlaylistViewModel.playlistName = null
                 alertDialog.dismiss()
             } else {
-                Toast.makeText(requireContext(), getString(string.playlist_name_reqired_msg), Toast.LENGTH_SHORT).show()
+                requireContext().showToast(getString(string.playlist_name_empty_msg))
             }
         }
         playlistBinding.closeIv.setOnClickListener { alertDialog.dismiss() }
@@ -185,7 +184,7 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
                     createPlaylistViewModel.editPlaylist(playlistId, mPref.customerId)
                     alertDialog.dismiss()
                 } else {
-                    Toast.makeText(requireContext(), getString(string.playlist_name_reqired_msg), Toast.LENGTH_SHORT).show()
+                    requireContext().showToast(getString(string.playlist_name_empty_msg))
                 }
             }
             closeIv.setOnClickListener { alertDialog.dismiss() }
@@ -211,7 +210,6 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
             when (it) {
                 is Resource.Success -> {
                     requireContext().showToast(it.data.message)
-                    cacheManager.clearCacheByUrl(ApiRoutes.GET_USER_PLAYLISTS)
                     reloadPlaylist()
                 }
                 is Resource.Failure -> {

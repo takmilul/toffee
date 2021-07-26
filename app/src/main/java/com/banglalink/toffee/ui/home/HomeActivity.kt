@@ -458,8 +458,7 @@ class HomeActivity :
             observe(viewModel.myChannelDetailResponse) {
                 when(it) {
                     is Success -> showUploadDialog()
-                   // is Failure -> showToast("Operation failed")
-                    is Failure -> showToast("Oops! Something went wrong.")
+                    is Failure -> showToast(getString(R.string.unable_to_load_data))
                 }
             }
             viewModel.getChannelDetail(mPref.customerId)
@@ -476,7 +475,6 @@ class HomeActivity :
                 return true
             }
             lifecycleScope.launch {
-
                 if (uploadRepo.getActiveUploadsList().isNotEmpty()) {
                     return@launch
                 }

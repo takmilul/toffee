@@ -364,7 +364,6 @@
     <string name="video_title_limit">%d/200</string>
     <string name="video_description_limit">%d/600</string>
     <string name="create_channel_msg">Please create your channel first.</string>
-    <string name="playlist_name_required_msg">Please give a playlist name</string>
     <string name="playlist_name_empty_msg">Playlist name empty!</string>
     <string name="set_channel_cover_photo">Set Channel Cover Photo</string>
     <string name="set_channel_photo">Set Channel Photo</string>
@@ -386,7 +385,6 @@
     <string name="empty_playlist_msg_user">This channel has no playlist yet</string>
     <string name="duplicate_playlist_msg">This content is already added in this playlist</string>
     <string name="select_playlist_msg">Please select a playlist</string>
-    <string name="playlist_name_reqired_msg">Please give a playlist name</string>
     <string name="edit_playlist">Edit Playlist</string>
     <string name="delete_confirmation">Are you sure to delete?</string>
     <!--    url    -->
