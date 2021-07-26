@@ -37,6 +37,7 @@ import com.google.android.exoplayer2.ext.cast.MediaItemConverter
 import com.google.android.exoplayer2.ext.cast.SessionAvailabilityListener
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader
 import com.google.android.exoplayer2.source.*
+import com.google.android.exoplayer2.source.ads.AdsLoader
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
@@ -97,7 +98,7 @@ abstract class PlayerPageActivity :
 
     private var httpDataSourceFactory: DefaultHttpDataSource.Factory? = null
 
-    private var adsLoader: ImaAdsLoader? = null
+    private var adsLoader: AdsLoader? = null
 
     private var exoPlayer: SimpleExoPlayer? = null
     private var castPlayer: CastPlayer? = null
@@ -537,7 +538,6 @@ abstract class PlayerPageActivity :
 //            isReload = true;//that means we have reload situation. We need to start where we left for VODs
 //        }
 //        Log.e("MEDIA_T", "Player is -> ${player?.javaClass?.name}")
-        adsLoader?.skipAd()
         player?.let {
 //            Log.e("MEDIA_T", "${it.currentMediaItem?.playbackProperties?.tag}")
             val oldChannelInfo = getCurrentChannelInfo()
@@ -576,6 +576,7 @@ abstract class PlayerPageActivity :
                 val haveStartPosition = startWindow != C.INDEX_UNSET
                 if (haveStartPosition && !channelInfo.isLive) {
                     if(it is SimpleExoPlayer) {
+                        getPlayerView().adViewGroup.removeAllViews()
                         it.setMediaItem(mediaItem, false)
                         //                    player.prepare(mediaSource, false, false);
                     } else if(it is CastPlayer){
@@ -602,6 +603,7 @@ abstract class PlayerPageActivity :
                 }
             }
             if(it is SimpleExoPlayer) {
+                getPlayerView().adViewGroup.removeAllViews()
                 it.setMediaItem(mediaItem, startPosition)
                 it.prepare()
             } else if(it is CastPlayer) {
