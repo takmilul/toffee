@@ -131,7 +131,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         fullscreenButton = findViewById(R.id.fullscreen)
         controllerBg = findViewById(R.id.controller_bg)
         playPause = findViewById(R.id.exo_play_pause)
-        previewImage = findViewById(R.id.preview)
+        previewImage = findViewById(R.id.exo_shutter)
 
         playNext = findViewById(R.id.play_next)
         playPrev = findViewById(R.id.play_prev)
@@ -617,6 +617,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
         when(playbackState) {
             Player.STATE_BUFFERING-> {
+                previewImage.setImageResource(0)
                 playPause.visibility = View.GONE
                 doubleTapInterceptor.setOnClickListener(this)
                 nextButtonVisibility(false)

@@ -13,21 +13,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center">
-        <pl.droidsonroids.gif.GifImageView
-            android:id="@+id/exo_buffering"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="center"
-            android:background="@drawable/gif_round_border"
-            android:src="@drawable/player_loader"
-            android:visibility="gone" />
-    </com.google.android.exoplayer2.ui.AspectRatioFrameLayout>
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/preview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@null" />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/exo_shutter"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@null" />
+
+    </com.google.android.exoplayer2.ui.AspectRatioFrameLayout>
 
     <FrameLayout android:id="@id/exo_ad_overlay"
         android:layout_width="match_parent"
@@ -65,6 +58,15 @@
         android:id="@+id/playerOverlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/exo_buffering"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:background="@drawable/gif_round_border"
+        android:src="@drawable/player_loader"
         android:visibility="gone" />
 
     <View

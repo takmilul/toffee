@@ -36,16 +36,14 @@ import com.google.android.exoplayer2.ext.cast.MediaItemConverter
 import com.google.android.exoplayer2.ext.cast.SessionAvailabilityListener
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader
 import com.google.android.exoplayer2.source.*
-import com.google.android.exoplayer2.source.hls.DefaultHlsExtractorFactory
+import com.google.android.exoplayer2.source.ads.AdsLoader
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.Parameters
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.ParametersBuilder
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
-import com.google.android.exoplayer2.ui.StyledPlayerView
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
+import com.google.android.exoplayer2.ui.StyledPlayerViewimport com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.upstream.HttpDataSource
 import com.google.android.exoplayer2.util.EventLogger
 import com.google.android.exoplayer2.util.MimeTypes
@@ -98,7 +96,7 @@ abstract class PlayerPageActivity :
 
     private var httpDataSourceFactory: DefaultHttpDataSource.Factory? = null
 
-    private var adsLoader: ImaAdsLoader? = null
+    private var adsLoader: AdsLoader? = null
 
     private var exoPlayer: SimpleExoPlayer? = null
     private var castPlayer: CastPlayer? = null
@@ -572,6 +570,7 @@ abstract class PlayerPageActivity :
                 val haveStartPosition = startWindow != C.INDEX_UNSET
                 if (haveStartPosition && !channelInfo.isLive) {
                     if(it is SimpleExoPlayer) {
+                        getPlayerView().adViewGroup.removeAllViews()
                         it.setMediaItem(mediaItem, false)
                         //                    player.prepare(mediaSource, false, false);
                     } else if(it is CastPlayer){
@@ -598,6 +597,7 @@ abstract class PlayerPageActivity :
                 }
             }
             if(it is SimpleExoPlayer) {
+                getPlayerView().adViewGroup.removeAllViews()
                 it.setMediaItem(mediaItem, startPosition)
                 it.prepare()
             } else if(it is CastPlayer) {
