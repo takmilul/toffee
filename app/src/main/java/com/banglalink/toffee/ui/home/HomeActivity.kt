@@ -42,7 +42,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_VIDEOS
+import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
@@ -67,6 +67,7 @@ import com.banglalink.toffee.ui.splash.SplashScreenActivity
 import com.banglalink.toffee.ui.upload.UploadProgressViewModel
 import com.banglalink.toffee.ui.upload.UploadStateManager
 import com.banglalink.toffee.ui.upload.UploadStatus
+import com.banglalink.toffee.ui.userplaylist.UserPlaylistVideosFragment
 import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.ui.widget.showSubscriptionDialog
@@ -1044,19 +1045,35 @@ class HomeActivity :
             }
         } else if(info is PlaylistPlaybackInfo) {
             val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
-            if (fragment !is MyChannelPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) {
-                loadFragmentById(
-                    R.id.details_viewer, MyChannelPlaylistVideosFragment.newInstance(info)
-                )
-            } else {
-                fragment.setCurrentChannel(info.currentItem)
+            when {
+                (fragment !is MyChannelPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) && !info.isUserPlaylist -> {
+                    loadFragmentById(
+                        R.id.details_viewer, MyChannelPlaylistVideosFragment.newInstance(info)
+                    )
+                }
+                (fragment !is UserPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) && info.isUserPlaylist -> {
+                    loadFragmentById(
+                        R.id.details_viewer, UserPlaylistVideosFragment.newInstance(info)
+                    )
+                }
+                fragment is MyChannelPlaylistVideosFragment -> {
+                    fragment.setCurrentChannel(info.currentItem)
+                }
+                fragment is UserPlaylistVideosFragment -> {
+                    fragment.setCurrentChannel(info.currentItem)
+                }
             }
         } else if(info is PlaylistItem) {
-            val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
-            if (fragment is MyChannelPlaylistVideosFragment) {
-                fragment.setCurrentChannel(info.channelInfo)
-            } else if(fragment is EpisodeListFragment) {
-                fragment.setCurrentChannel(info.channelInfo)
+            when (val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)) {
+                is MyChannelPlaylistVideosFragment -> {
+                    fragment.setCurrentChannel(info.channelInfo)
+                }
+                is UserPlaylistVideosFragment -> {
+                    fragment.setCurrentChannel(info.channelInfo)
+                }
+                is EpisodeListFragment -> {
+                    fragment.setCurrentChannel(info.channelInfo)
+                }
             }
         } else if(info is SeriesPlaybackInfo) {
             val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
@@ -1081,6 +1098,7 @@ class HomeActivity :
 //            }
 //        }
     }
+    
     private fun loadFragmentById(id: Int, fragment: Fragment, tag: String) {
         supportFragmentManager.popBackStack(
             LandingPageFragment::class.java.name,
@@ -1291,10 +1309,10 @@ class HomeActivity :
     }
     
     override fun onRotationLock(isAutoRotationEnabled: Boolean) {
-       if(isAutoRotationEnabled && !binding.playerView.isVideoPortrait){
+        if(isAutoRotationEnabled && !binding.playerView.isVideoPortrait){
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
             showToast(getString(R.string.auto_rotation_on))
-        } else{
+        } else {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED
             showToast(getString(R.string.auto_rotation_off))
         }
@@ -1638,7 +1656,7 @@ class HomeActivity :
                             binding.homeMiniProgressContainer.uploadSizeText.isInvisible = true
                             binding.homeMiniProgressContainer.miniUploadProgressText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_upload_done, 0, 0, 0)
                             binding.homeMiniProgressContainer.miniUploadProgressText.text = "Upload complete"
-                            cacheManager.clearCacheByUrl(GET_MY_CHANNEL_VIDEOS)
+                            cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_VIDEOS)
                         }
                         UploadStatus.ADDED.value,
                         UploadStatus.STARTED.value -> {

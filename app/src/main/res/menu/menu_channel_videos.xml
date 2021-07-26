@@ -7,19 +7,19 @@
         android:id="@+id/menu_fav"
         android:title="@string/menu_add_to_fav"
         app:showAsAction="never" />
-
+    
+    <item
+        android:id="@+id/menu_add_to_playlist"
+        android:title="@string/add_to_playlist"
+        app:showAsAction="never" />
+    
     <item
         android:id="@+id/menu_share"
         android:title="@string/menu_share"
         app:showAsAction="never" />
-
-    <item android:id="@+id/menu_report"
-        android:title="Report"
-        app:showAsAction="never"
-        />
     
-    <!--<item
-        android:id="@+id/menu_not_interested"
-        android:title="@string/menu_not_interested"
-        app:showAsAction="never" />-->
+    <item
+        android:id="@+id/menu_report"
+        android:title="Report"
+        app:showAsAction="never" />
 </menu>

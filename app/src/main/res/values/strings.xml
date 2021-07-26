@@ -381,6 +381,14 @@
     <string name="cancel_upload_msg">Are you sure that you want to\ncancel uploading video?</string>
     <string name="owner_video_empty_msg">You haven\'t uploaded any video yet</string>
     <string name="public_video_empty_msg">This channel has no video yet</string>
+    <string name="add_to_playlist">Add To Playlist</string>
+    <string name="empty_playlist_msg_owner">You haven\'t created any playlist yet</string>
+    <string name="empty_playlist_msg_user">This channel has no playlist yet</string>
+    <string name="duplicate_playlist_msg">This content is already added in this playlist</string>
+    <string name="select_playlist_msg">Please select a playlist</string>
+    <string name="playlist_name_reqired_msg">Please give a playlist name</string>
+    <string name="edit_playlist">Edit Playlist</string>
+    <string name="delete_confirmation">Are you sure to delete?</string>
     <!--    url    -->
 <!--    <string name="creators_policy_url">https://toffeelive.com/policies.php</string>-->
 <!--    <string name="tus_upload_server_url">https://ugc-upload.toffeelive.com/upload</string>-->

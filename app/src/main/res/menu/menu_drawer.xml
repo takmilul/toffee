@@ -2,75 +2,69 @@
 <menu
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
-<!--    <item android:id="@+id/ic_menu_user_profile"-->
-<!--        android:actionLayout="@layout/prof"-->
-<!--        android:icon="@drawable/ic_menu_internet_packs" />-->
-
-    <item android:id="@+id/ic_menu_internet_packs"
-        android:title="@string/menu_internet_pack"
-        android:icon="@drawable/ic_menu_internet_packs" />
-
-    <item android:id="@+id/menu_tv"
-        android:title="All TV Channels"
-        android:icon="@drawable/ic_menu_tv_normal" />
-
-    <item android:id="@+id/menu_activities"
-        android:title="Activities"
-        android:icon="@drawable/ic_menu_activites" />
-
-    <item android:id="@+id/menu_favorites"
-        android:title="Favorites"
-        android:icon="@drawable/ic_menu_favorites" />
-
-<!--    <item android:id="@+id/menu_create"-->
-<!--        android:title="@string/menu_create_text"-->
-<!--        android:icon="@mipmap/ic_menu_create" />-->
-
-    <item android:id="@+id/menu_subscriptions"
-        android:title="Subscriptions"
-        android:icon="@drawable/ic_menu_subscriptions" />
-
-    <item android:id="@+id/menu_invite"
-        android:title="@string/invite_friends_txt"
-        android:icon="@drawable/ic_menu_invite" />
-
-    <item android:id="@+id/menu_redeem"
-        android:title="@string/redeem_code_txt"
-        android:icon="@drawable/ic_menu_redeem" />
-
-    <item android:id="@+id/menu_creators_policy"
-        android:title="Creators Policy"
-        android:icon="@drawable/ic_side_menu_creators_policy" />
-    <!--<item android:id="@+id/menu_code"
-        android:title="Generate Code"
-        android:icon="@drawable/ic_menu_redeem" />-->
-
-<!--    <item android:id="@+id/menu_verfication"-->
-<!--        android:title="Verify"-->
-<!--        android:icon="@drawable/ic_menu_invite" />-->
-
-    <item android:id="@+id/menu_settings"
-        android:title="Settings"
-        android:icon="@drawable/ic_side_menu_settings" />
-
-<!--    <item android:id="@+id/menu_about"-->
-<!--        android:title="About"-->
-<!--        android:icon="@mipmap/ic_menu_about" />-->
-
-<!--    <item android:id="@+id/menu_faq"-->
-<!--        android:title="@string/menu_faqs_text"-->
-<!--        android:icon="@drawable/ic_menu_faq" />-->
-
-    <item android:id="@+id/menu_logout"
-        android:title="Logout"
-        android:icon="@drawable/ic_menu_exit" />
-
-    <item android:id="@+id/menu_change_theme"
+    
+    <item
+        android:id="@+id/ic_menu_internet_packs"
+        android:icon="@drawable/ic_menu_internet_packs"
+        android:title="@string/menu_internet_pack" />
+    
+    <item
+        android:id="@+id/menu_tv"
+        android:icon="@drawable/ic_menu_tv_normal"
+        android:title="All TV Channels" />
+    
+    <item
+        android:id="@+id/menu_activities"
+        android:icon="@drawable/ic_menu_activites"
+        android:title="Activities" />
+    
+    <item
+        android:id="@+id/menu_playlist"
+        android:icon="@drawable/ic_group_215"
+        android:title="Playlists" />
+    
+    <item
+        android:id="@+id/menu_favorites"
+        android:icon="@drawable/ic_menu_favorites"
+        android:title="Favorites" />
+    
+    <item
+        android:id="@+id/menu_subscriptions"
+        android:icon="@drawable/ic_menu_subscriptions"
+        android:title="Subscriptions" />
+    
+    <item
+        android:id="@+id/menu_invite"
+        android:icon="@drawable/ic_menu_invite"
+        android:title="@string/refer_a_friend_txt" />
+    
+    <item
+        android:id="@+id/menu_redeem"
+        android:icon="@drawable/ic_menu_redeem"
+        android:title="@string/redeem_code_txt" />
+    
+    <item
+        android:id="@+id/menu_creators_policy"
+        android:icon="@drawable/ic_side_menu_creators_policy"
+        android:title="Creators Policy" />
+    
+    <item
+        android:id="@+id/menu_settings"
+        android:icon="@drawable/ic_side_menu_settings"
+        android:title="Settings" />
+    
+    <item
+        android:id="@+id/menu_logout"
+        android:icon="@drawable/ic_menu_exit"
+        android:title="Logout" />
+    
+    <item
+        android:id="@+id/menu_change_theme"
         android:icon="@drawable/ic_menu_dark_mode"
         android:title="Dark Mode" />
     
-    <item android:id="@+id/menu_follow_us"
+    <item
+        android:id="@+id/menu_follow_us"
         app:actionLayout="@layout/follow_us_action_layout"
         app:showAsAction="always">
     </item>

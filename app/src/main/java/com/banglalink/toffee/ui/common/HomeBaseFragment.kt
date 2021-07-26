@@ -39,6 +39,9 @@ abstract class HomeBaseFragment:BaseFragment(), OptionCallBack {
                 R.id.menu_fav->{
                     requireActivity().handleFavorite(channelInfo, favoriteDao)
                 }
+                R.id.menu_add_to_playlist->{
+                    requireActivity().handleAddToPlaylist(channelInfo)
+                }
                 R.id.menu_report -> {
                     requireActivity().handleReport(channelInfo)
                 }

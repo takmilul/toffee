@@ -8,12 +8,14 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.widget.RadioButton
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_PLAYLISTS
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_PLAYLIST_VIDEOS
+import androidx.paging.LoadState
+import com.banglalink.toffee.R.string
+import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.AlertDialogMyChannelAddToPlaylistBinding
@@ -37,6 +39,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
     private var channelOwnerId: Int = 0
     private var playlistId: Int = 0
     private lateinit var channelInfo: ChannelInfo
+    private var isUserPlaylist:Int = 0
     @Inject lateinit var mPref: SessionPreference
     @Inject lateinit var cacheManager: CacheManager
     private var _binding: AlertDialogMyChannelAddToPlaylistBinding ? = null
@@ -50,14 +53,16 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
     private lateinit var alertDialog: AlertDialog
     
     companion object {
-        private const val CHANNEL_OWNER_ID = "channelOwnerId"
-        private const val CHANNEL_INFO = "channelInfo"
+        const val CHANNEL_OWNER_ID = "channelOwnerId"
+        const val CHANNEL_INFO = "channelInfo"
+        const val IS_USER_PLAYLIST="isUserPlaylist"
         
-        fun newInstance(channelId: Int, channelInfo: ChannelInfo): MyChannelAddToPlaylistFragment {
+        fun newInstance(channelId: Int, channelInfo: ChannelInfo, isUserPlaylist: Int=0): MyChannelAddToPlaylistFragment {
             return MyChannelAddToPlaylistFragment().apply {
                 arguments = Bundle().apply {
                     putInt(CHANNEL_OWNER_ID, channelId)
                     putParcelable(CHANNEL_INFO, channelInfo)
+                    putInt(IS_USER_PLAYLIST,isUserPlaylist)
                 }
             }
         }
@@ -67,32 +72,52 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
         super.onCreate(savedInstanceState)
         channelInfo = arguments?.getParcelable(CHANNEL_INFO)!!
         channelOwnerId = arguments?.getInt(CHANNEL_OWNER_ID) ?: mPref.customerId
+        isUserPlaylist= arguments?.getInt(IS_USER_PLAYLIST) ?: 0
     }
     
     private fun observePlaylist() {
         lifecycleScope.launchWhenStarted {
-            playlistViewModel.getMyChannelPlaylists(channelOwnerId).collectLatest {
-                mAdapter.submitData(it)
+            if(isUserPlaylist==1) {
+                playlistViewModel.getMyChannelUserPlaylists(channelOwnerId).collectLatest {
+                    mAdapter.submitData(it)
+                }
+            } else {
+                playlistViewModel.getMyChannelPlaylists(channelOwnerId).collectLatest {
+                    mAdapter.submitData(it)
+                }
             }
         }
     }
     
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        
         _binding = AlertDialogMyChannelAddToPlaylistBinding.inflate(this.layoutInflater)
         val dialogBuilder = AlertDialog.Builder(requireContext()).setView(binding.root)
         alertDialog = dialogBuilder.create().apply {
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }
-        binding.listview.adapter = mAdapter
-        binding.viewModel = createPlaylistViewModel
-        cacheManager.clearCacheByUrl(GET_MY_CHANNEL_PLAYLISTS)
+        cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_PLAYLISTS)
+        with(binding) {
+            var isInitialized = false
+            lifecycleScope.launchWhenStarted {
+                mAdapter.loadStateFlow.collectLatest {
+                    val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
+                    val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
+                    emptyViewLabel.isVisible = isEmpty && !isLoading
+                    progressBar.isVisible = isLoading
+                    listview.isVisible = !isEmpty && !isLoading
+                    isInitialized = true
+                }
+            }
+            listview.adapter = mAdapter
+            viewModel = createPlaylistViewModel
+            listview.setHasFixedSize(true)
+            addButton.safeClick(this@MyChannelAddToPlaylistFragment)
+            doneButton.safeClick(this@MyChannelAddToPlaylistFragment)
+            cancelButton.safeClick(this@MyChannelAddToPlaylistFragment)
+            createButton.safeClick(this@MyChannelAddToPlaylistFragment)
+            closeIv.safeClick(this@MyChannelAddToPlaylistFragment)
+        }
         observePlaylist()
-        binding.addButton.safeClick(this)
-        binding.doneButton.safeClick(this)
-        binding.cancelButton.safeClick(this)
-        binding.createButton.safeClick(this)
-        binding.closeIv.safeClick(this)
         return alertDialog
     }
     
@@ -108,20 +133,13 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
             binding.closeIv -> alertDialog.dismiss()
         }
     }
-
-    override fun onDestroyView() {
-        binding.listview.adapter = null
-        super.onDestroyView()
-        _binding = null
-    }
     
     private fun createPlaylist() {
         if (!createPlaylistViewModel.playlistName.isNullOrBlank()) {
             observeCreatePlaylist()
-            createPlaylistViewModel.createPlaylist(channelOwnerId)
+            createPlaylistViewModel.createPlaylist(channelOwnerId,isUserPlaylist)
         } else {
-           // requireContext().showToast("Please give a playlist name")
-            requireContext().showToast("Playlist name empty!")
+            requireContext().showToast(getString(string.playlist_name_reqired_msg))
         }
     }
     
@@ -130,6 +148,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
             when (it) {
                 is Success -> {
                     playlistId = it.data.playlistNameId
+                    if(isUserPlaylist==1) cacheManager.clearCacheByUrl(ApiRoutes.GET_USER_PLAYLISTS)
                     addToPlaylist(true)
                 }
                 is Failure -> {
@@ -141,7 +160,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
     
     private fun addToPlaylist(isCreate: Boolean) {
         if (mAdapter.selectedPosition < 0 && playlistId == 0) {
-            requireContext().showToast("Please select a playlist.")
+            requireContext().showToast(getString(string.select_playlist_msg))
         } else {
             var isAlreadyAdded = false
             if (mAdapter.selectedPosition >= 0 && !isCreate) {
@@ -150,10 +169,10 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
                 isAlreadyAdded = selectedItem.playlistContentIdList?.contains(MyChannelPlaylistContentId(channelInfo.id)) ?: false
             }
             if (isAlreadyAdded) {
-                requireContext().showToast("This content is already added in this playlist")
+                requireContext().showToast(getString(string.duplicate_playlist_msg))
             } else {
                 observeAddToPlaylist()
-                viewModel.addToPlaylist(playlistId, channelInfo.id.toInt(), channelOwnerId)
+                viewModel.addToPlaylist(playlistId, channelInfo.id.toInt(), channelOwnerId, isUserPlaylist)
                 viewModel.insertActivity(channelInfo, Reaction.Add.value)
             }
         }
@@ -165,7 +184,14 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
                 is Success -> {
                     alertDialog.dismiss()
                     requireContext().showToast(it.data.message)
-                    cacheManager.clearCacheByUrl(GET_MY_CHANNEL_PLAYLIST_VIDEOS)
+                    if(isUserPlaylist==1)
+                    {
+                        cacheManager.clearCacheByUrl(ApiRoutes.GET_USER_PLAYLISTS)
+                        cacheManager.clearCacheByUrl(ApiRoutes.GET_USER_PLAYLIST_VIDEOS)
+                    }
+                    else {
+                        cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_PLAYLIST_VIDEOS)
+                    }
                     playlistReloadViewModel.reloadPlaylist.value = true
                 }
                 is Failure -> {
@@ -189,5 +215,11 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
                 }
             }
         }
+    }
+
+    override fun onDestroyView() {
+        binding.listview.adapter = null
+        super.onDestroyView()
+        _binding = null
     }
 }

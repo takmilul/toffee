@@ -16,7 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import com.banglalink.toffee.R
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_VIDEOS
+import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.database.dao.ReactionDao
@@ -84,9 +84,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
         setEmptyView()
-        
         with(binding.myChannelVideos) {
             addItemDecoration(MarginItemDecoration(12))
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
@@ -162,8 +160,13 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
                         ))
                     }
                     R.id.menu_add_to_playlist -> {
-                        val fragment = MyChannelAddToPlaylistFragment.newInstance(channelOwnerId, item)
-                        fragment.show(requireActivity().supportFragmentManager, "add_to_playlist")
+                        val isUserPlaylist = if (isOwner) 0 else 1
+                        val args = Bundle().also {
+                            it.putInt(MyChannelAddToPlaylistFragment.CHANNEL_OWNER_ID, mPref.customerId)
+                            it.putParcelable(MyChannelAddToPlaylistFragment.CHANNEL_INFO, item)
+                            it.putInt(MyChannelAddToPlaylistFragment.IS_USER_PLAYLIST, isUserPlaylist)
+                        }
+                        findNavController().navigate(R.id.myChannelAddToPlaylistFragment, args)
                     }
                     R.id.menu_share -> {
                         requireActivity().handleShare(item)
@@ -250,7 +253,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
     }
     
     private fun reloadVideosList() {
-        cacheManager.clearCacheByUrl(GET_MY_CHANNEL_VIDEOS)
+        cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_VIDEOS)
         mAdapter.refresh()
     }
 }

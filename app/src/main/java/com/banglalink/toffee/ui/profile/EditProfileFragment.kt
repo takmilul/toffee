@@ -19,7 +19,7 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_DETAILS
+import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentEditProfileBinding
 import com.banglalink.toffee.enums.InputType
@@ -136,7 +136,7 @@ class EditProfileFragment : BaseFragment() {
                     progressDialog.dismiss()
                     when (it) {
                         is Resource.Success -> {
-                            cacheManager.clearCacheByUrl(GET_MY_CHANNEL_DETAILS)
+                            cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_DETAILS)
                             requireContext().showToast("Profile updated successfully")
                             findNavController().popBackStack()
                         }
