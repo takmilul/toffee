@@ -14,9 +14,8 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.PlayerOverlayLayoutBinding
 import com.banglalink.toffee.extension.getChannelMetadata
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.ui.widget.ToffeeStyledPlayerView
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.ext.cast.CastPlayer
-import com.google.gson.Gson
 
 
 /**
@@ -103,7 +102,7 @@ class PlayerOverlayView(context: Context, private val attrs: AttributeSet?) :
             // Seconds icon
             icon = a.getResourceId(
                 R.styleable.PlayerOverlayView_icon,
-                R.drawable.ic_player_play
+                R.drawable.exo_styled_controls_play
             )
 
             a.recycle()

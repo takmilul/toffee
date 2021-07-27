@@ -40,6 +40,7 @@ import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.Player.EventListener
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ext.cast.CastPlayer
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.video.VideoListener
 import com.google.android.gms.cast.framework.CastButtonFactory
 import dagger.hilt.android.AndroidEntryPoint
@@ -50,7 +51,6 @@ import javax.inject.Inject
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.math.roundToInt
 
 @AndroidEntryPoint
 open class ExoMediaController3 @JvmOverloads constructor(context: Context,
@@ -444,12 +444,12 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         if (state) { //fullscreen
             binding.minimize.visibility = GONE
             binding.drawer.visibility = INVISIBLE
-            binding.fullscreen.setImageResource(drawable.ic_fullscreen_exit)
+            binding.fullscreen.setImageResource(drawable.exo_styled_controls_fullscreen_exit)
         }
         else {
             binding.minimize.visibility = VISIBLE
             binding.drawer.visibility = VISIBLE
-            binding.fullscreen.setImageResource(drawable.ic_fullscreen_enter)
+            binding.fullscreen.setImageResource(drawable.exo_styled_controls_fullscreen_enter)
         }
     }
 
@@ -613,7 +613,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
             }
             Player.STATE_IDLE -> {
                 binding.preview.setImageResource(color.black)
-                binding.play.setImageResource(drawable.ic_player_play)
+                binding.play.setImageResource(drawable.exo_styled_controls_play)
                 binding.buffering.visibility = GONE
                 binding.play.visibility = VISIBLE
                 nextButtonVisibility(false)
@@ -632,7 +632,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
                 binding.share.isEnabled = true
                 binding.autoplayProgress.visibility = GONE
                 if (playWhenReady) {
-                    binding.play.setImageResource(drawable.ic_player_pause)
+                    binding.play.setImageResource(drawable.exo_styled_controls_pause)
                     binding.buffering.visibility = GONE
                     binding.play.visibility = VISIBLE
                     if (simpleExoPlayer?.isCurrentWindowLive == true) {
@@ -647,7 +647,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
                     hideControls(3000)
                 }
                 else {
-                    binding.play.setImageResource(drawable.ic_player_play)
+                    binding.play.setImageResource(drawable.exo_styled_controls_play)
                     binding.buffering.visibility = GONE
                     binding.play.visibility = VISIBLE
                     if (simpleExoPlayer?.isCurrentWindowLive == true) {
@@ -900,7 +900,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
 
         binding.playerContainer.setResizeMode(scaleType)
         binding.playerContainer.setAspectRatio(videoWidth/videoHeight.toFloat())
-        Log.e("CONTROL_T", "Aspect ratio -> ${binding.playerContainer.getAspectRatio()}")
+//        Log.e("CONTROL_T", "Aspect ratio -> ${binding.playerContainer.getAspectRatio()}")
     }
 
     companion object {

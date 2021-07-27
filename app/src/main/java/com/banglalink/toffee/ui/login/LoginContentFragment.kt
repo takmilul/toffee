@@ -1,12 +1,20 @@
 package com.banglalink.toffee.ui.login
 
+import android.app.Activity.RESULT_OK
 import android.os.Bundle
-import android.text.*
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.TextPaint
+import android.text.TextWatcher
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.os.bundleOf
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
@@ -19,14 +27,18 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.ChildDialogFragment
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.unsafeLazy
+import com.google.android.gms.auth.api.credentials.Credential
+import com.google.android.gms.auth.api.credentials.Credentials
+import com.google.android.gms.auth.api.credentials.HintRequest
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class LoginContentFragment : ChildDialogFragment(), TextWatcher {
+class LoginContentFragment : ChildDialogFragment() {
     
     private var phoneNo: String = ""
     private var regSessionToken: String = ""
     private var _binding: AlertDialogLoginBinding? = null
+    private var phoneNumberTextWatcher: TextWatcher? = null
     private val binding get() = _binding !!
     private val viewModel by viewModels<LoginViewModel>()
     private val progressDialog by unsafeLazy { VelBoxProgressDialog(requireContext()) }
@@ -43,7 +55,7 @@ class LoginContentFragment : ChildDialogFragment(), TextWatcher {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setSpannableTermsAndConditions()
-        
+        getHintPhoneNumber()
         with(binding) {
             verifyButton.safeClick({
                 progressDialog.show()
@@ -54,21 +66,21 @@ class LoginContentFragment : ChildDialogFragment(), TextWatcher {
             termsAndConditionsCheckbox.setOnClickListener {
                 verifyButton.isEnabled = binding.termsAndConditionsCheckbox.isChecked && phoneNo.isNotBlank() && phoneNo.length >= 11
             }
-            phoneNumberEditText.addTextChangedListener(this@LoginContentFragment)
+            phoneNumberTextWatcher = phoneNumberEditText.doAfterTextChanged {
+                phoneNo = it.toString()
+                binding.verifyButton.isEnabled = binding.termsAndConditionsCheckbox.isChecked && phoneNo.isNotBlank() && phoneNo.length >= 11
+            }
         }
     }
     
     private fun handleLogin() {
         phoneNo = binding.phoneNumberEditText.text.toString().trim()
-        
         if (phoneNo.startsWith("0")) {
             phoneNo = "+88$phoneNo"
         }
-        
         if (! phoneNo.startsWith("+")) {
             phoneNo = "+$phoneNo"
         }
-        
         binding.phoneNumberEditText.setText(phoneNo)
         binding.phoneNumberEditText.setSelection(phoneNo.length)
     }
@@ -115,23 +127,37 @@ class LoginContentFragment : ChildDialogFragment(), TextWatcher {
     }
     
     private fun showTermsAndConditionDialog() {
-        val args = Bundle().apply {
-            putString("myTitle", "Terms & Conditions")
-            putString("url", mPref.termsAndConditionUrl)
-        }
-        findNavController().navigate(R.id.htmlPageViewDialog, args)
+        findNavController().navigate(R.id.htmlPageViewDialog, bundleOf(
+            "myTitle" to getString(R.string.terms_and_conditions),
+            "url" to mPref.termsAndConditionUrl
+        ))
     }
     
-    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+    private fun getHintPhoneNumber() {
+        try{
+            val hintRequest = HintRequest.Builder().setPhoneNumberIdentifierSupported(true).build()
+            val intent = Credentials.getClient(requireContext()).getHintPickerIntent(hintRequest)
+            resultLauncher.launch(IntentSenderRequest.Builder(intent).build())
+        }catch (e:Exception){
+            ToffeeAnalytics.logException(e)
+            ToffeeAnalytics.logBreadCrumb("Could not retrieve phone number")
+        }
+    }
     
-    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-    
-    override fun afterTextChanged(s: Editable?) {
-        phoneNo = s.toString()
-        binding.verifyButton.isEnabled = binding.termsAndConditionsCheckbox.isChecked && phoneNo.isNotBlank() && phoneNo.length >= 11
+    private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val credential: Credential? = result.data?.getParcelableExtra(Credential.EXTRA_KEY)
+            credential?.let {
+                binding.phoneNumberEditText.setText(it.id)
+                binding.phoneNumberEditText.setSelection(it.id.length)
+            }
+        }
     }
     
     override fun onDestroyView() {
+        binding.phoneNumberEditText.removeTextChangedListener(phoneNumberTextWatcher)
+        phoneNumberTextWatcher = null
+        resultLauncher.unregister()
         super.onDestroyView()
         _binding = null
     }

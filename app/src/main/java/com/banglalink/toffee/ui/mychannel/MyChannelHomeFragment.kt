@@ -12,6 +12,7 @@ import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.text.toSpannable
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -51,29 +52,26 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     private var channelOwnerId: Int = 0
     private var isOwner: Boolean = false
     private var subscriberCount: Long = 0
-    @Inject lateinit var cacheManager: CacheManager
     @Inject lateinit var bindingUtil: BindingUtil
+    @Inject lateinit var cacheManager: CacheManager
     private var myChannelDetail: MyChannelDetail? = null
     private lateinit var viewPagerAdapter: ViewPagerAdapter
-    val homeViewModel by activityViewModels<HomeViewModel>()
     private lateinit var progressDialog: VelBoxProgressDialog
     private var _binding: FragmentMyChannelHomeBinding ? = null
     private val binding get() = _binding!!
     private var _bindingRating: AlertDialogMyChannelRatingBinding ? = null
+    val homeViewModel by activityViewModels<HomeViewModel>()
     private val bindingRating get() = _bindingRating!!
     private val viewModel by viewModels<MyChannelHomeViewModel>()
-    private val createPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
     private val playlistReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
+    private val createPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
     
     companion object {
-        const val PAGE_TITLE = "title"
         const val CHANNEL_OWNER_ID = "channelOwnerId"
         
         fun newInstance(channelOwnerId: Int): MyChannelHomeFragment {
             return MyChannelHomeFragment().apply {
-                arguments = Bundle().apply {
-                    putInt(CHANNEL_OWNER_ID, channelOwnerId)
-                }
+                arguments = bundleOf(CHANNEL_OWNER_ID to channelOwnerId)
             }
         }
     }
@@ -125,23 +123,14 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
 
     private fun handleClick(v: View?) {
         when (v) {
-            binding.channelDetailView.addBioButton -> {
-                navigateToEditChannel()
-            }
-
-            binding.channelDetailView.editButton -> {
-                navigateToEditChannel()
-            }
-
-            binding.channelDetailView.ratingButton -> {
-                showRatingDialog()
-            }
+            binding.channelDetailView.addBioButton -> { navigateToEditChannel() }
+            binding.channelDetailView.editButton -> { navigateToEditChannel() }
+            binding.channelDetailView.ratingButton -> { showRatingDialog() }
             binding.channelDetailView.analyticsButton -> {
                 if (channelId > 0) {
                     showCreatePlaylistDialog()
                 } else {
-                    requireContext().showToast("Please create your channel first.")
-                   // requireContext().showToast("Please create channel first")
+                    requireContext().showToast(getString(R.string.create_channel_msg))
                 }
             }
             binding.channelDetailView.subscriptionButton -> {
@@ -167,10 +156,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     }
     
     private fun navigateToEditChannel() {
-        if (findNavController().currentDestination?.id != R.id.myChannelEditDetailFragment && findNavController().currentDestination?.id == R.id.myChannelHomeFragment) {
-            findNavController().navigate(R.id.action_myChannelHomeFragment_to_MyChannelEditDetailFragment,
-                Bundle().apply { putParcelable("myChannelDetail", myChannelDetail) })
-        }
+        findNavController().navigate(R.id.myChannelEditDetailFragment, bundleOf("myChannelDetail" to myChannelDetail))
     }
     
     private fun showRatingDialog() {
@@ -216,8 +202,8 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                 createPlaylistViewModel.playlistName = null
                 alertDialog.dismiss()
             } else {
-                requireContext().showToast("Please give a playlist name")
-                requireContext().showToast("Playlist name empty!")
+                requireContext().showToast(getString(R.string.playlist_name_required_msg))
+                requireContext().showToast(getString(R.string.playlist_name_empty_msg))
             }
         }
         playlistBinding.closeIv.setOnClickListener { alertDialog.dismiss() }
@@ -278,9 +264,6 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             binding.isSubscribed = 0
             binding.myRating = 0
         }
-//        else if (!isOwner && mPref.isVerifiedUser) {
-//             //do nothing
-//        }
         loadBody()
     }
     
