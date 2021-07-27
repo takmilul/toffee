@@ -25,6 +25,8 @@ import com.banglalink.toffee.di.databinding.CustomBindingEntryPoint
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.ui.upload.UploadObserver
 import com.banglalink.toffee.usecase.SendFirebaseConnectionErrorEvent
+import com.facebook.FacebookSdk
+import com.facebook.LoggingBehavior
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.EntryPoints
 import dagger.hilt.android.HiltAndroidApp
@@ -82,11 +84,16 @@ class ToffeeApplication : Application() {
         try {
             ToffeeAnalytics.initFireBaseAnalytics(this)
         }
+
         catch (e: Exception) {
             coroutineScope.launch { 
                 sendFirebaseConnectionErrorEvent.execute()
             }
         }
+
+        FacebookSdk.setIsDebugEnabled(true);
+        FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS);
+
         initCoil()
 
         val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
