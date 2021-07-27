@@ -555,7 +555,7 @@ abstract class PlayerPageActivity :
                 .setTag(channelInfo)
                 .build()
 
-            if (!isReload) playCounter = ++playCounter % mPref.vastFrequency
+            if (!isReload && player is SimpleExoPlayer) playCounter = ++playCounter % mPref.vastFrequency
             homeViewModel.vastTagsMutableLiveData.value?.randomOrNull()?.let { tag ->
                 val shouldPlayAd = mPref.isVastActive && playCounter == 0 && !channelInfo.isLive
                 val vastTag = if(isReload) currentlyPlayingVastUrl else tag.url
