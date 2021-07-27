@@ -966,9 +966,10 @@ class HomeActivity :
                         )
                     } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
                 }
+                /* TODO: Uncomment for subscription
                 !((it.isPurchased || it.isPaidSubscribed) && !it.isExpired(Date())) && mPref.isSubscriptionActive == "true" ->{
                     showSubscribePackDialog()
-                }
+                } */
                 else ->{
                     if(player is CastPlayer) {
                         maximizePlayer()

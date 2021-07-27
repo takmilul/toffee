@@ -171,7 +171,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = if (Utils.checkWifiOnAndConnected(context)) PREF_WIFI else PREF_CELLULAR
 
     var isSubscriptionActive: String
-        get() = pref.getString(PREF_SUBSCRIPTION_ACTIVE, "") ?: ""
+        get() = "false" // TODO: Uncomment for subscription: pref.getString(PREF_SUBSCRIPTION_ACTIVE, "") ?: ""
         set(phoneNumber) {
             pref.edit().putString(PREF_SUBSCRIPTION_ACTIVE, phoneNumber).apply()
         }

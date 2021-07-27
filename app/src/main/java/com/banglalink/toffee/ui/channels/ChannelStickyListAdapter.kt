@@ -147,6 +147,7 @@ class ChannelStickyListAdapter(
             liveTvViewHolder.icon.borderWidth = 0
         }
 
+/* TODO: Uncomment for Subscription
         if(!item.isExpired(SessionPreference.getInstance().getSystemTime())){
             liveTvViewHolder.premimumIcon.visibility = View.INVISIBLE
         }
@@ -156,7 +157,7 @@ class ChannelStickyListAdapter(
         else{
             liveTvViewHolder.premimumIcon.visibility = View.VISIBLE
         }
-
+*/
     }
 
     internal class TvTitleViewHolder(itemView: View):
