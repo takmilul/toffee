@@ -2,6 +2,7 @@ package com.banglalink.toffee.di
 
 import android.app.Application
 import android.content.Context
+import coil.util.CoilUtils
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.data.network.interceptor.AuthInterceptor
 import com.banglalink.toffee.data.network.interceptor.GetTracker
@@ -37,6 +38,9 @@ annotation class SimpleHttpClient
 annotation class DefaultCache
 
 @Qualifier
+annotation class CoilCache
+
+@Qualifier
 annotation class DbRetrofit
 
 @InstallIn(SingletonComponent::class)
@@ -53,7 +57,7 @@ object NetworkModule {
             retryOnConnectionFailure(false)
             if (BuildConfig.DEBUG) {
                 addInterceptor(HttpLoggingInterceptor().also {
-                    it.level = HttpLoggingInterceptor.Level.BASIC
+                    it.level = HttpLoggingInterceptor.Level.BODY
                 })
             }
             cache(cache)
@@ -68,6 +72,13 @@ object NetworkModule {
     fun getCacheIterator(@ApplicationContext ctx: Context): Cache{
         val cacheSize = 25 * 1024 * 1024 // 25 MB
         return Cache(ctx.cacheDir, cacheSize.toLong())
+    }
+
+    @Provides
+    @Singleton
+    @CoilCache
+    fun getCoilCache(@ApplicationContext ctx: Context): Cache {
+        return CoilUtils.createDefaultCache(ctx)
     }
     
     @Provides
