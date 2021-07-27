@@ -512,6 +512,8 @@ abstract class PlayerPageActivity :
         playChannel(isReload)
     }
 
+    abstract fun maximizePlayer()
+
     private fun playChannel(isReload: Boolean) {
         val channelInfo = playlistManager.getCurrentChannel() ?: return
         val hlsLink = channelInfo.hlsLinks?.get(0)?.hls_url_mobile ?: run {
@@ -525,7 +527,9 @@ abstract class PlayerPageActivity :
         if (uri == null) { //in this case settings does not allow us to play content. So stop player and trigger event viewing stop
             player?.stop()
             player?.clearMediaItems()
+            getPlayerView().adViewGroup.removeAllViews()
             channelCannotBePlayedDueToSettings() //notify hook/subclass
+            maximizePlayer()
             heartBeatManager.triggerEventViewingContentStop()
             return
         }

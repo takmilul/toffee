@@ -570,9 +570,9 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
 //            hideControls(2000)
             hideController()
         }
-        else {
-            showController()
-        }
+//        else {
+//            showController()
+//        }
     }
 
     override fun onViewDestroy() {

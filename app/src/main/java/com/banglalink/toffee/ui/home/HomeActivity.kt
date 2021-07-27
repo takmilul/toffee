@@ -1457,7 +1457,7 @@ class HomeActivity :
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
 
-    private fun maximizePlayer() {
+    override fun maximizePlayer() {
         binding.draggableView.maximize()
         binding.draggableView.visibility = View.VISIBLE
 //        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
