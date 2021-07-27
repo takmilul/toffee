@@ -20,6 +20,7 @@ import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.PlayerPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.AppCoroutineScope
+import com.banglalink.toffee.di.CoilCache
 import com.banglalink.toffee.di.databinding.CustomBindingComponentBuilder
 import com.banglalink.toffee.di.databinding.CustomBindingEntryPoint
 import com.banglalink.toffee.notification.PubSubMessageUtil
@@ -34,6 +35,7 @@ import kotlinx.coroutines.launch
 import net.gotev.uploadservice.UploadServiceConfig
 import net.gotev.uploadservice.data.RetryPolicyConfig
 import net.gotev.uploadservice.okhttp.OkHttpStack
+import okhttp3.Cache
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 import javax.inject.Provider
@@ -45,6 +47,8 @@ class ToffeeApplication : Application() {
     @Inject lateinit var mUploadObserver: UploadObserver
     @Inject lateinit var commonPreference: CommonPreference
     @Inject lateinit var heartBeatManager: HeartBeatManager
+    @Inject lateinit var coilInterceptor: CoilInterceptor
+    @Inject @CoilCache lateinit var coilCache: Cache
     @Inject @AppCoroutineScope lateinit var coroutineScope: CoroutineScope
     @Inject lateinit var bindingComponentProvider: Provider<CustomBindingComponentBuilder>
     @Inject lateinit var sendFirebaseConnectionErrorEvent: SendFirebaseConnectionErrorEvent
@@ -103,8 +107,8 @@ class ToffeeApplication : Application() {
 //            bitmapPoolPercentage(0.4)
             okHttpClient {
                 OkHttpClient.Builder()
-                    .cache(CoilUtils.createDefaultCache(this@ToffeeApplication))
-                    .addInterceptor(CoilInterceptor())
+                    .cache(coilCache)
+                    .addInterceptor(coilInterceptor)
                     .build()
             }
 
