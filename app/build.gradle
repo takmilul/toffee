@@ -14,8 +14,8 @@ android {
         applicationId "com.banglalink.toffee"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 57
-        versionName "2.0.2"
+        versionCode 58
+        versionName "2.0.3"
         testInstrumentationRunner "com.banglalink.toffee.HiltTestRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -196,7 +196,7 @@ dependencies {
 //    implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
 
     //mqtt library
-    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5'
+    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.1'
     implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
 
 

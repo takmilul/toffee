@@ -80,7 +80,10 @@ data class ChannelInfo(
     @SerializedName("is_horizontal")
     val is_horizontal: Int? = null,
     @SerializedName("landscape_feature_1280_720")
-    val ugcFeaturedImage: String? = null
+    val ugcFeaturedImage: String? = null,
+
+    @SerializedName("is_ugc")
+    val is_ugc: Int = 0
 ) :Parcelable
 {
     val isApproved: Int
@@ -120,7 +123,7 @@ data class ChannelInfo(
         }
     }
 
-    fun getHlsLink(): String = hlsLinks!![0].hls_url_mobile
+    fun getHlsLink(): String? = hlsLinks?.get(0)?.hls_url_mobile
 
     fun formattedShareCount(): String = Utils.getFormattedViewsText(shareCount.toString())
 
@@ -137,30 +140,6 @@ data class ChannelInfo(
         }
     }
 
-    companion object {
-        fun getHlsArrayList(links: List<String?>?): List<HlsLinks> {
-            val hlsLinks: MutableList<HlsLinks> = ArrayList()
-            if (links != null) {
-                for (link in links) {
-                    val hlsLink = HlsLinks()
-                    hlsLink.hls_url_mobile = link
-                    hlsLinks.add(hlsLink)
-                }
-            }
-            return hlsLinks
-        }
-
-        fun getStringArrayList(hlsLinks: List<HlsLinks>?): List<String> {
-            val list: MutableList<String> = ArrayList()
-            if (hlsLinks != null) {
-                for (hls in hlsLinks) {
-                    list.add(hls.hls_url_mobile)
-                }
-            }
-            return list
-        }
-    }
-    
     fun formattedViewCount(): String = getFormattedViewsText(view_count)
     fun formattedDuration(): String = discardZeroFromDuration(duration)
     fun formattedCreateTime(): String = if(!created_at.isNullOrBlank()) Utils.getDateDiffInDayOrHourOrMinute(Utils.getDate(created_at).time) else "0"

@@ -13,7 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.storage.CommonPreference
-import com.banglalink.toffee.databinding.FragmentSplashScreen2Binding
+import com.banglalink.toffee.databinding.FragmentSplashScreenBinding
 import com.banglalink.toffee.exception.AppDeprecatedError
 import com.banglalink.toffee.exception.CustomerNotFoundError
 import com.banglalink.toffee.extension.*
@@ -28,22 +28,22 @@ import pl.droidsonroids.gif.GifDrawable
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class SplashScreenFragment2 : BaseFragment() {
+class SplashScreenFragment : BaseFragment() {
     private var logoGifDrawable: GifDrawable? = null
     private var isOperationCompleted: Boolean = false
     @Inject lateinit var commonPreference: CommonPreference
-    private var _binding: FragmentSplashScreen2Binding? = null
+    private var _binding: FragmentSplashScreenBinding? = null
     private val binding get() = _binding !!
     private val viewModel by activityViewModels<SplashViewModel>()
     
     companion object {
         @JvmStatic
-        fun newInstance() = SplashScreenFragment2()
+        fun newInstance() = SplashScreenFragment()
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         viewModel.reportAppLaunch()
-        _binding = FragmentSplashScreen2Binding.inflate(inflater, container, false)
+        _binding = FragmentSplashScreenBinding.inflate(inflater, container, false)
         return binding.root
     }
     

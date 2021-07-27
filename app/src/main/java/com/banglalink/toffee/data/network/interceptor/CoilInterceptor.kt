@@ -13,7 +13,11 @@ class CoilInterceptor: Interceptor {
             return chain.proceed(request)
         }
         catch (ex: Exception) {
-            if (ex is IllegalArgumentException) ToffeeAnalytics.logException(IllegalArgumentException("Invalid url: ${request.url}"))
+            if (ex is IllegalArgumentException) {
+                ToffeeAnalytics.logException(
+                    IllegalArgumentException("Invalid url: ${request.url}. Original msg -> ${ex.message}")
+                )
+            }
             throw IOException(ex.message)
         }
     }

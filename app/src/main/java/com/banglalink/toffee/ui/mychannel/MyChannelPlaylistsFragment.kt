@@ -126,7 +126,8 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
                                 (parentFragment?.parentFragment?.parentFragment as? MyChannelHomeFragment)?.showCreatePlaylistDialog()
                             }
                         } else {
-                            requireContext().showToast("Please create channel first")
+                            requireContext().showToast("Please create your channel first")
+                          //  requireContext().showToast("Please create channel first")
                         }
                     }
                 }
@@ -216,7 +217,8 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
                 editPlaylistViewModel.editPlaylist(playlistId, channelOwnerId)
                 alertDialog.dismiss()
             } else {
-                requireContext().showToast("Please give a playlist name")
+              //  requireContext().showToast("Please give a playlist name")
+                requireContext().showToast("Playlist name empty!")
             }
         }
         playlistBinding.closeIv.setOnClickListener { alertDialog.dismiss() }

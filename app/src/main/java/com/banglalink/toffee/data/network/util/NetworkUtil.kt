@@ -22,14 +22,14 @@ suspend fun <T : BaseResponse> tryIO2(block: suspend () -> T): T {
             EventProvider.post(UnEthicalActivitiesException(response.errorMsg ?: "You are trying to do unethical activities"))
             throw ApiException(
                 response.errorCode,
-                response.errorMsg ?: "You are trying to do unethical activities"
+                response.errorMsg ?: "You are trying to do unethical activity"
             )
         }
         response.errorCode == OUTSIDE_OF_BD_ERROR_CODE -> {
             EventProvider.post(OutsideOfBDException(response.errorMsg ?: "You are trying to connect out of Bangladesh"))
             throw ApiException(
                 response.errorCode,
-                response.errorMsg ?: "You are trying to connect out of Bangladesh"
+                response.errorMsg ?: "Toffee is available only in Bangladesh"
             )
         }
         response.errorCode == MULTI_DEVICE_LOGIN_ERROR_CODE -> {
@@ -42,13 +42,13 @@ suspend fun <T : BaseResponse> tryIO2(block: suspend () -> T): T {
         response.status == 1 ->{//server suffered a serious error
             throw ApiException(
                 response.errorCode,
-                response.errorMsg ?:"Something went wrong. Please try again later"
+                response.errorMsg ?:"Something went wrong. Please try again."
             )
         }
         response.errorCode != 0 ->{//hmmm....error occurred ....throw it
             throw ApiException(
                 response.errorCode,
-                response.errorMsg ?:"Unknown error occurred"
+                response.errorMsg ?:"Something went wrong. Please try again."
             )
         }
         else->{

@@ -45,15 +45,9 @@
     
         <TextView
             android:id="@+id/error_name_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            style="@style/ErrorTextStyle"
             android:text="@string/name_error_text"
-            android:textColor="@color/pink_to_accent_color"
-            android:textSize="@dimen/default_text_size"
-            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="@+id/name_et"
-            app:layout_constraintHorizontal_bias="0.05"
             app:layout_constraintStart_toStartOf="@+id/name_et"
             app:layout_constraintTop_toBottomOf="@+id/name_et"
             tools:visibility="visible" />
@@ -74,15 +68,9 @@
     
         <TextView
             android:id="@+id/error_address_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            style="@style/ErrorTextStyle"
             android:text="@string/address_null_error_text"
-            android:textColor="@color/pink_to_accent_color"
-            android:textSize="@dimen/default_text_size"
-            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="@+id/address_et"
-            app:layout_constraintHorizontal_bias="0.05"
             app:layout_constraintStart_toStartOf="@+id/address_et"
             app:layout_constraintTop_toBottomOf="@+id/address_et"
             tools:visibility="visible" />
@@ -100,17 +88,13 @@
     
         <TextView
             android:id="@+id/error_date_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            style="@style/ErrorTextStyle"
+            android:visibility="visible"
             android:text="@string/Date_of_birth_must_be_match"
             android:textColor="@color/main_text_color"
-            android:textSize="@dimen/default_text_size"
             app:layout_constraintEnd_toEndOf="@+id/date_of_birth_tv"
-            app:layout_constraintHorizontal_bias="0.05"
             app:layout_constraintStart_toStartOf="@+id/date_of_birth_tv"
-            app:layout_constraintTop_toBottomOf="@+id/date_of_birth_tv"
-            tools:visibility="visible" />
+            app:layout_constraintTop_toBottomOf="@+id/date_of_birth_tv" />
     
         <EditText
             android:id="@+id/email_et"
@@ -129,14 +113,11 @@
     
         <TextView
             android:id="@+id/error_email_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            style="@style/ErrorTextStyle"
+            android:visibility="visible"
             android:text="@string/verification_email_sent"
             android:textColor="@color/main_text_color"
-            android:textSize="@dimen/default_text_size"
             app:layout_constraintEnd_toEndOf="@+id/email_et"
-            app:layout_constraintHorizontal_bias="0.05"
             app:layout_constraintStart_toStartOf="@+id/email_et"
             app:layout_constraintTop_toBottomOf="@+id/email_et" />
     
@@ -157,14 +138,11 @@
     
         <TextView
             android:id="@+id/nid_warning_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            style="@style/ErrorTextStyle"
+            android:visibility="visible"
             android:text="@string/your_nid_must_match"
             android:textColor="@color/main_text_color"
-            android:textSize="@dimen/default_text_size"
             app:layout_constraintEnd_toEndOf="@+id/nid_et"
-            app:layout_constraintHorizontal_bias="0.05"
             app:layout_constraintStart_toStartOf="@+id/nid_et"
             app:layout_constraintTop_toBottomOf="@+id/nid_et" />
         
