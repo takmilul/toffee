@@ -78,51 +78,41 @@ abstract class PlayerPageActivity :
     AnalyticsListener,
     SessionAvailabilityListener
 {
-    protected var player: Player? = null
-    private var defaultTrackSelector: DefaultTrackSelector? = null
-    private var trackSelectorParameters: Parameters? = null
-    private var lastSeenTrackGroupArray: TrackGroupArray? = null
-
-    private val playerViewModel by viewModels<PlayerViewModel>()
-    private var playCounter: Int = 0
-    private var startAutoPlay = false
     private var startWindow = 0
+    private var playCounter: Int = -1
+    private var startAutoPlay = false
     private var startPosition: Long = 0
-    private val playerEventListener: PlayerEventListener = PlayerEventListener()
-    private var playerAnalyticsListener: PlayerAnalyticsListener? = null
-    private var defaultCookieManager = CookieManager()
-
-    protected var castContext: CastContext? = null
-    private var sessionManager: SessionManager? = null
-
-    private var httpDataSourceFactory: DefaultHttpDataSource.Factory? = null
-
+    protected var player: Player? = null
     private var adsLoader: AdsLoader? = null
-
-    private var exoPlayer: SimpleExoPlayer? = null
     private var castPlayer: CastPlayer? = null
-    @Inject
-    lateinit var contentViewRepo: ContentViewPorgressRepsitory
-
-    @Inject
-    lateinit var continueWatchingRepo: ContinueWatchingRepository
-
-    @Inject
-    lateinit var connectionWatcher: ConnectionWatcher
-    
+    private var exoPlayer: SimpleExoPlayer? = null
+    protected var castContext: CastContext? = null
+    private var currentlyPlayingVastUrl: String = ""
+    private var defaultCookieManager = CookieManager()
+    private var trackSelectorParameters: Parameters? = null
     @Inject lateinit var heartBeatManager: HeartBeatManager
+    @Inject lateinit var connectionWatcher: ConnectionWatcher
+    private var lastSeenTrackGroupArray: TrackGroupArray? = null
+    private var defaultTrackSelector: DefaultTrackSelector? = null
+    @Inject lateinit var contentViewRepo: ContentViewPorgressRepsitory
+    private var playerAnalyticsListener: PlayerAnalyticsListener? = null
+    @Inject lateinit var continueWatchingRepo: ContinueWatchingRepository
     private val homeViewModel by viewModels<HomeViewModel>()
+    private var httpDataSourceFactory: DefaultHttpDataSource.Factory? = null
+    private val playerViewModel by viewModels<PlayerViewModel>()
+    private val playerEventListener: PlayerEventListener = PlayerEventListener()
 
     init {
         defaultCookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER)
     }
 
     companion object {
-        private const val KEY_TRACK_SELECTOR_PARAMETERS = "track_selector_parameters"
         private const val KEY_WINDOW = "window"
         private const val KEY_POSITION = "position"
+        private const val KEY_VAST_URL = "vast_url"
         private const val KEY_AUTO_PLAY = "auto_play"
-
+        private const val KEY_PLAY_COUNTER = "play_counter"
+        private const val KEY_TRACK_SELECTOR_PARAMETERS = "track_selector_parameters"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -141,10 +131,12 @@ abstract class PlayerPageActivity :
         }
 
         if (savedInstanceState != null) {
-            trackSelectorParameters = savedInstanceState.getParcelable(KEY_TRACK_SELECTOR_PARAMETERS)
-            startAutoPlay = savedInstanceState.getBoolean(KEY_AUTO_PLAY)
             startWindow = savedInstanceState.getInt(KEY_WINDOW)
             startPosition = savedInstanceState.getLong(KEY_POSITION)
+            playCounter = savedInstanceState.getInt(KEY_PLAY_COUNTER)
+            startAutoPlay = savedInstanceState.getBoolean(KEY_AUTO_PLAY)
+            currentlyPlayingVastUrl = savedInstanceState.getString(KEY_VAST_URL) ?: ""
+            trackSelectorParameters = savedInstanceState.getParcelable(KEY_TRACK_SELECTOR_PARAMETERS)
         }
         else {
             val builder = ParametersBuilder( /* context= */this)
@@ -225,10 +217,12 @@ abstract class PlayerPageActivity :
         if(player?.isPlaying == true) {
             playlistManager.getCurrentChannel()?.viewProgress = player?.currentPosition ?: 0
         }
-        outState.putParcelable(KEY_TRACK_SELECTOR_PARAMETERS, trackSelectorParameters)
-        outState.putBoolean(KEY_AUTO_PLAY, startAutoPlay)
         outState.putInt(KEY_WINDOW, startWindow)
         outState.putLong(KEY_POSITION, startPosition)
+        outState.putInt(KEY_PLAY_COUNTER, playCounter)
+        outState.putBoolean(KEY_AUTO_PLAY, startAutoPlay)
+        outState.putString(KEY_VAST_URL, currentlyPlayingVastUrl)
+        outState.putParcelable(KEY_TRACK_SELECTOR_PARAMETERS, trackSelectorParameters)
     }
 
     private fun initializePlayer() {
@@ -557,16 +551,17 @@ abstract class PlayerPageActivity :
                 .setTag(channelInfo)
                 .build()
 
-            homeViewModel.vastTagsMutableLiveData.value?.randomOrNull()?.let {
-                if (mPref.isVastActive && playCounter % mPref.vastFrequency == 0) {
+            if (!isReload) playCounter = ++playCounter % mPref.vastFrequency
+            homeViewModel.vastTagsMutableLiveData.value?.randomOrNull()?.let { tag ->
+                val shouldPlayAd = mPref.isVastActive && playCounter == 0 && !channelInfo.isLive
+                val vastTag = if(isReload) currentlyPlayingVastUrl else tag.url
+                if (shouldPlayAd && vastTag.isNotBlank()) {
                     mediaItem = mediaItem.buildUpon()
-    //                    .setAdTagUri(Uri.parse("https://drm-pkg.toffeelive.com/vast/sample_01.xml"))
-                        .setAdTagUri(Uri.parse(it.url))
+                        .setAdTagUri(Uri.parse(vastTag))
                         .build()
+                    if (!isReload) currentlyPlayingVastUrl = tag.url
                 }
             }
-            playCounter++
-
             if (isReload) { //We need to start where we left off for VODs
                 if(channelInfo.viewProgress > 0L) {
                     startPosition = if(channelInfo.viewProgressPercent() >= 990) {
