@@ -8,6 +8,7 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Package
 import com.banglalink.toffee.notification.API_ERROR_TRACK_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
+import com.facebook.appevents.AppEventsLogger
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
@@ -69,8 +70,10 @@ object ToffeeAnalytics {
         FirebaseCrashlytics.getInstance().log(msg)
     }
 
-    fun logEvent(event: String, params: Bundle? = null) {
+    fun logEvent(event: String, params: Bundle? = null,context: Context) {
 //        firebaseAnalytics.logEvent(event, params)
+        val logger = AppEventsLogger.newLogger(context)
+        logger.logEvent(event)
     }
 
     class ApiFailData(
