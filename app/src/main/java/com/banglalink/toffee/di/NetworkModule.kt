@@ -6,6 +6,7 @@ import coil.util.CoilUtils
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.data.network.interceptor.AuthInterceptor
 import com.banglalink.toffee.data.network.interceptor.GetTracker
+import com.banglalink.toffee.data.network.interceptor.ToffeeDns
 import com.banglalink.toffee.data.network.retrofit.AuthApi
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.network.retrofit.DbApi
@@ -20,7 +21,9 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import okhttp3.Cache
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
+import okhttp3.dnsoverhttps.DnsOverHttps
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -33,6 +36,9 @@ annotation class EncryptedHttpClient
 
 @Qualifier
 annotation class SimpleHttpClient
+
+@Qualifier
+annotation class DnsHttpClient
 
 @Qualifier
 annotation class DefaultCache
@@ -50,7 +56,7 @@ object NetworkModule {
     @Provides
     @Singleton
     @EncryptedHttpClient
-    fun providesEncryptedHttpClient(@DefaultCache cache: Cache): OkHttpClient {
+    fun providesEncryptedHttpClient(@DefaultCache cache: Cache, toffeeDns: ToffeeDns): OkHttpClient {
         val clientBuilder = OkHttpClient.Builder().apply {
             connectTimeout(15, TimeUnit.SECONDS)
             readTimeout(30, TimeUnit.SECONDS)
@@ -61,6 +67,7 @@ object NetworkModule {
                 })
             }
             cache(cache)
+//            dns(toffeeDns)
             addInterceptor(AuthInterceptor(GetTracker()))
         }
         return clientBuilder.build()
@@ -99,9 +106,29 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun providesToffeeDns(@SimpleHttpClient httpClient: OkHttpClient): DnsOverHttps {
+        return DnsOverHttps.Builder()
+            .client(httpClient)
+            .url("https://dns.google/dns-query".toHttpUrl())
+            .build()
+    }
+
+    @Provides
+    @Singleton
     @SimpleHttpClient
-    fun providesSimpleHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder().build()
+    fun providesSimpleHttpClient(@DefaultCache cache: Cache): OkHttpClient {
+        return OkHttpClient.Builder()
+            .cache(cache)
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    @DnsHttpClient
+    fun providesDnsHttpClient(@SimpleHttpClient simpleHttpClient: OkHttpClient, toffeeDns: ToffeeDns): OkHttpClient {
+        return simpleHttpClient.newBuilder()
+//            .dns(toffeeDns)
+            .build()
     }
 
     @DbRetrofit
