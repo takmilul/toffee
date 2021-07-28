@@ -3,7 +3,7 @@
     <string name="app_name_short">Toffee</string>
 
     <string name="retry">Retry</string>
-
+    <string name="exit_from_app_msg">Are you sure to logout from the %s app?</string>
     <!-- Strings related to login -->
     <string name="action_sign_in">Sign In</string>
     <string name="action_subscribe">SUBSCRIBE</string>

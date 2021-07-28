@@ -13,7 +13,6 @@ import com.banglalink.toffee.data.network.retrofit.DbApi
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.model.TOFFEE_BASE_URL
 import com.banglalink.toffee.receiver.ConnectionWatcher
-import com.facebook.FacebookSdk
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -63,7 +62,7 @@ object NetworkModule {
             retryOnConnectionFailure(false)
             if (BuildConfig.DEBUG) {
                 addInterceptor(HttpLoggingInterceptor().also {
-                    it.level = HttpLoggingInterceptor.Level.BODY
+                    it.level = HttpLoggingInterceptor.Level.BASIC
                 })
             }
             cache(cache)

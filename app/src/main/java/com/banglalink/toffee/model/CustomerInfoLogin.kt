@@ -92,4 +92,5 @@ class CustomerInfoLogin(
     val forceUpdateVersionCodes: String? = null,
     val isVastActive: Int = 0,
     val vastFrequency: Int = 0,
+    val gcpVodBucketDirectory: String? = null,
 ) : BodyResponse(), Parcelable

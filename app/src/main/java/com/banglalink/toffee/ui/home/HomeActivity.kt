@@ -1344,7 +1344,7 @@ class HomeActivity :
     
     fun handleExitApp() {
         AlertDialog.Builder(this, R.style.AlertDialogTheme)
-            .setMessage(String.format(EXIT_FROM_APP_MSG, getString(R.string.app_name)))
+            .setMessage(String.format(getString(R.string.exit_from_app_msg), getString(R.string.app_name)))
             .setCancelable(false)
             .setPositiveButton("Yes") { _, _ ->
                 observeLogout()
