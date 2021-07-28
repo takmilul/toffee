@@ -76,6 +76,7 @@ dependencies {
     //Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
+    implementation 'com.squareup.okhttp3:okhttp-dnsoverhttps:4.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     //LifeCycle Extensions
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"
@@ -118,6 +119,7 @@ dependencies {
     implementation "com.google.android.exoplayer:extension-cast:$exoVersion"
     implementation "com.google.android.exoplayer:exoplayer-ui:$exoVersion"
     implementation "com.google.android.exoplayer:extension-ima:$exoVersion"
+    implementation "com.google.android.exoplayer:extension-okhttp:$exoVersion"
 
     // Cast
     implementation 'androidx.mediarouter:mediarouter:1.2.3'

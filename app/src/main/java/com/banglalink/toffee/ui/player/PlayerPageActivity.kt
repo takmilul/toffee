@@ -16,6 +16,7 @@ import com.banglalink.toffee.data.database.entities.ContinueWatchingItem
 import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
 import com.banglalink.toffee.data.repository.ContinueWatchingRepository
 import com.banglalink.toffee.data.storage.PlayerPreference
+import com.banglalink.toffee.di.DnsHttpClient
 import com.banglalink.toffee.exception.ContentExpiredException
 import com.banglalink.toffee.extension.getChannelMetadata
 import com.banglalink.toffee.extension.showToast
@@ -36,6 +37,7 @@ import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.ext.cast.MediaItemConverter
 import com.google.android.exoplayer2.ext.cast.SessionAvailabilityListener
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader
+import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
 import com.google.android.exoplayer2.source.*
 import com.google.android.exoplayer2.source.ads.AdsLoader
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
@@ -63,6 +65,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
 import org.json.JSONObject
 import java.net.*
 import java.util.*
@@ -98,9 +101,10 @@ abstract class PlayerPageActivity :
     private var playerAnalyticsListener: PlayerAnalyticsListener? = null
     @Inject lateinit var continueWatchingRepo: ContinueWatchingRepository
     private val homeViewModel by viewModels<HomeViewModel>()
-    private var httpDataSourceFactory: DefaultHttpDataSource.Factory? = null
+    private var httpDataSourceFactory: OkHttpDataSource.Factory? = null
     private val playerViewModel by viewModels<PlayerViewModel>()
     private val playerEventListener: PlayerEventListener = PlayerEventListener()
+    @DnsHttpClient @Inject lateinit var dnsHttpClient: OkHttpClient
 
     init {
         defaultCookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER)
@@ -254,7 +258,7 @@ abstract class PlayerPageActivity :
             lastSeenTrackGroupArray = null
             playerAnalyticsListener = PlayerAnalyticsListener()
 
-            httpDataSourceFactory = DefaultHttpDataSource.Factory()
+            httpDataSourceFactory = OkHttpDataSource.Factory(dnsHttpClient)
                 .setUserAgent(TOFFEE_HEADER)
                 .setDefaultRequestProperties(mapOf("TOFFEE-SESSION-TOKEN" to mPref.getHeaderSessionToken()!!))
 
