@@ -52,7 +52,7 @@
             app:layout_constraintStart_toStartOf="@+id/poster"
             app:layout_constraintTop_toTopOf="@+id/poster"
             app:layout_constraintEnd_toEndOf="@+id/poster"
-            app:srcCompat="@drawable/ic_player_play" />
+            app:srcCompat="@drawable/exo_styled_controls_play" />
     
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline13"

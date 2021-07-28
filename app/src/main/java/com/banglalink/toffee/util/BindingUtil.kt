@@ -259,6 +259,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
         }
     }
 
+/* TODO: Uncomment for subscription
     @BindingAdapter("togglePremiumIcon")
     fun bindPremiumIcon(imageView: ImageView, channelInfo: ChannelInfo) {
         if (!channelInfo.isExpired(mPref.getSystemTime())) {
@@ -268,7 +269,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
         } else {
             imageView.visibility = View.VISIBLE
         }
-    }
+    }*/
 
     @BindingAdapter("bindActivityType")
     fun bindActivityType(view: TextView, item: UserActivities) {

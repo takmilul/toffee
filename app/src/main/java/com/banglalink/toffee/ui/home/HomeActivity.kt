@@ -73,6 +73,7 @@ import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.ui.widget.showSubscriptionDialog
 import com.banglalink.toffee.util.*
 import com.google.android.exoplayer2.ext.cast.CastPlayer
+import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.util.Util
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.switchmaterial.SwitchMaterial
@@ -351,6 +352,7 @@ class HomeActivity :
         observeMyChannelNavigation()
         inAppUpdate()
         customCrashReport()
+        viewModel.getVastTags()
     }
     
     private fun isChannelComplete() = mPref.customerName.isNotBlank()
@@ -512,6 +514,8 @@ class HomeActivity :
         }
     }
 
+    override fun getPlayerView(): StyledPlayerView = binding.playerView
+
     private fun configureBottomSheet() {
         bottomSheetBehavior = BottomSheetBehavior.from(binding.homeBottomSheet.bottomSheet)
         if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
@@ -522,7 +526,7 @@ class HomeActivity :
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                if (newState == BottomSheetBehavior.STATE_EXPANDED && binding.playerView.isControllerHidden) {
+                if (newState == BottomSheetBehavior.STATE_EXPANDED && !binding.playerView.isControllerFullyVisible) {
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 }
             }
@@ -961,9 +965,10 @@ class HomeActivity :
                         )
                     } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
                 }
+                /* TODO: Uncomment for subscription
                 !((it.isPurchased || it.isPaidSubscribed) && !it.isExpired(Date())) && mPref.isSubscriptionActive == "true" ->{
                     showSubscribePackDialog()
-                }
+                } */
                 else ->{
                     if(player is CastPlayer) {
                         maximizePlayer()
@@ -1469,7 +1474,7 @@ class HomeActivity :
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
 
-    private fun maximizePlayer() {
+    override fun maximizePlayer() {
         binding.draggableView.maximize()
         binding.draggableView.visibility = View.VISIBLE
 //        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR

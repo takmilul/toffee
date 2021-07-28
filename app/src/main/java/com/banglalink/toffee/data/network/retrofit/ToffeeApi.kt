@@ -382,4 +382,11 @@ interface ToffeeApi {
     suspend fun unVerifyUser(
         @Body logoutRequest: LogoutRequest
     ): LogoutResponse
+
+    @POST("vast-tags-list/1/{dbVersion}")
+    suspend fun getVastTagLists(
+        @Path("dbVersion") dbVersion: Int,
+        @Body paymentMethodRequest: VastTagRequest
+    ): VastTagResponse
+
 }
