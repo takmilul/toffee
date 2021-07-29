@@ -16,16 +16,14 @@ class ToffeeDns @Inject constructor(private val httpsDns: DnsOverHttps): Dns {
         return try {
 //            if(hostname.contains("streamer")) throw UnknownHostException(hostname)
             Dns.SYSTEM.lookup(hostname)
-//                .apply {
-//                Log.e("DNS_T", "Resolved by system DNS -> $hostname")
+//                .also {
+//                Log.e("DNS_T", "Resolved by System Dns ${hostname}, Response entry -> ${it.size}")
 //            }
         } catch (ex: UnknownHostException) {
             httpsDns.lookup(hostname).also {
 //                Log.e("DNS_T", "Resolved by HTTPS DNS -> $hostname")
 //                Log.e("DNS_T", "Resolved IPs -> $it")
-                if(it.isNotEmpty()) {
-                    ToffeeAnalytics.logException(ToffeeDnsException("Resolved by HttpsDns ${hostname}, Response entry -> ${it.size}"))
-                }
+                ToffeeAnalytics.logException(ToffeeDnsException("Resolved by HttpsDns ${hostname}, Response size -> ${it.size}"))
             }
         }
     }
