@@ -144,7 +144,7 @@ class HomeActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), heartBeatManager)
 
         val isDisableScreenshot = !(mPref.screenCaptureEnabledUsers.contains(cPref.deviceId) || mPref.screenCaptureEnabledUsers.contains(mPref.customerId.toString()))
