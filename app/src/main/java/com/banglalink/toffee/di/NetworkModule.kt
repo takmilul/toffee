@@ -66,7 +66,7 @@ object NetworkModule {
                 })
             }
             cache(cache)
-//            dns(toffeeDns)
+            dns(toffeeDns)
             addInterceptor(AuthInterceptor(GetTracker()))
         }
         return clientBuilder.build()
@@ -126,7 +126,7 @@ object NetworkModule {
     @DnsHttpClient
     fun providesDnsHttpClient(@SimpleHttpClient simpleHttpClient: OkHttpClient, toffeeDns: ToffeeDns): OkHttpClient {
         return simpleHttpClient.newBuilder()
-//            .dns(toffeeDns)
+            .dns(toffeeDns)
             .build()
     }
 
