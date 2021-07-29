@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.databinding.AlertDialogVerifyBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
@@ -112,6 +113,7 @@ class VerifyLoginFragment : ChildDialogFragment() {
             progressDialog.dismiss()
             when (it) {
                 is Resource.Success -> {
+                    ToffeeAnalytics.logEvent(ToffeeEvents.RESEND_OTP,requireContext())
                     regSessionToken = it.data//update reg session token
                     resendBtnPressCount++
                     binding.resendButton.visibility = View.GONE

@@ -70,7 +70,7 @@ object ToffeeAnalytics {
         FirebaseCrashlytics.getInstance().log(msg)
     }
 
-    fun logEvent(event: String, params: Bundle? = null,context: Context) {
+    fun logEvent(event: String,context: Context) {
 //        firebaseAnalytics.logEvent(event, params)
         val logger = AppEventsLogger.newLogger(context)
         logger.logEvent(event)

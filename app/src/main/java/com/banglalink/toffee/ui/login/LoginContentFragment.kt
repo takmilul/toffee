@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.databinding.AlertDialogLoginBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
@@ -49,6 +50,7 @@ class LoginContentFragment : ChildDialogFragment(), TextWatcher {
                 progressDialog.show()
                 handleLogin()
                 observeLogin()
+                ToffeeAnalytics.logEvent(ToffeeEvents.OTP_REQUESTED,requireContext())
                 viewModel.login(phoneNo)
             })
             termsAndConditionsCheckbox.setOnClickListener {
@@ -79,6 +81,7 @@ class LoginContentFragment : ChildDialogFragment(), TextWatcher {
             when (it) {
                 is Resource.Success -> {
                     if (it.data is String) {
+                        ToffeeAnalytics.logEvent(ToffeeEvents.OTP_INPUT,requireContext())
                         regSessionToken = it.data
                         findNavController().navigate(R.id.verifyLoginFragment,
                             Bundle().apply { 
