@@ -17,6 +17,7 @@ import coil.load
 import coil.request.CachePolicy
 import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.database.entities.UserActivities
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.ActivityType
@@ -169,8 +170,13 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
     }
 
     @BindingAdapter("bindDuration")
-    fun bindDuration(view: TextView, channelInfo: ChannelInfo) {
-        view.text = channelInfo.formattedDuration()
+    fun bindDuration(view: TextView, channelInfo: ChannelInfo?) {
+        try {
+            view.text = channelInfo?.formattedDuration() ?: "00:00"
+        } catch (ex: Exception) {
+            view.text = "00:00"
+            ToffeeAnalytics.logException(NullPointerException("Error getting duration info for id ${channelInfo?.id}, ${channelInfo?.program_name}"))
+        }
     }
 
     @BindingAdapter("bindButtonState")
