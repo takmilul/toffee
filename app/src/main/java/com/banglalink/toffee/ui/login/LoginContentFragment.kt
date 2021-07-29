@@ -15,6 +15,7 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.core.widget.doAfterTextChanged
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
@@ -25,7 +26,9 @@ import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.ChildDialogFragment
+import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.usecase.OTPLogData
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.Credentials
@@ -40,6 +43,7 @@ class LoginContentFragment : ChildDialogFragment() {
     private var _binding: AlertDialogLoginBinding? = null
     private var phoneNumberTextWatcher: TextWatcher? = null
     private val binding get() = _binding !!
+    private val homeViewModel: HomeViewModel by activityViewModels()
     private val viewModel by viewModels<LoginViewModel>()
     private val progressDialog by unsafeLazy { VelBoxProgressDialog(requireContext()) }
     
@@ -92,6 +96,7 @@ class LoginContentFragment : ChildDialogFragment() {
                 is Resource.Success -> {
                     if (it.data is String) {
                         regSessionToken = it.data
+                        homeViewModel.sendOtpLogData(OTPLogData("", 1, 0, 0), phoneNo)
                         findNavController().navigate(R.id.verifyLoginFragment,
                             Bundle().apply { 
                                 putString(PHONE_NO_ARG, phoneNo)

@@ -26,7 +26,7 @@ class VerifyCodeViewModel @Inject constructor(
     fun verifyCode(code: String, regSessionToken: String, referralCode: String){
         viewModelScope.launch {
             val response = resultFromResponse {verifyCode.execute(code, regSessionToken, referralCode)}
-             verifyResponse.value= response
+            verifyResponse.value= response
         }
     }
 

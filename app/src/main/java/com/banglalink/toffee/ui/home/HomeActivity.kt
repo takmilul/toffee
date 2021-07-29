@@ -12,6 +12,8 @@ import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Path
 import android.graphics.Point
+import android.net.ConnectivityManager
+import android.net.NetworkRequest
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
@@ -123,6 +125,7 @@ class HomeActivity :
     private lateinit var appbarConfig: AppBarConfiguration
     @Inject lateinit var uploadManager: UploadStateManager
     @Inject lateinit var inAppMessageParser: InAppMessageParser
+    private lateinit var connectivityManager: ConnectivityManager
     @Inject @AppCoroutineScope lateinit var appScope: CoroutineScope
     @Inject lateinit var notificationRepo: NotificationInfoRepository
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
@@ -140,6 +143,10 @@ class HomeActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), heartBeatManager)
+
         val isDisableScreenshot = !(mPref.screenCaptureEnabledUsers.contains(cPref.deviceId) || mPref.screenCaptureEnabledUsers.contains(mPref.customerId.toString()))
         //disable screen capture
         if (! BuildConfig.DEBUG && isDisableScreenshot) {
@@ -1337,8 +1344,9 @@ class HomeActivity :
     
     override fun onDestroy() {
 //        mqttService.destroy()
-        navController.removeOnDestinationChangedListener(destinationChangeListener)
         appUpdateManager.unregisterListener(appUpdateListener)
+        connectivityManager.unregisterNetworkCallback(heartBeatManager)
+        navController.removeOnDestinationChangedListener(destinationChangeListener)
         super.onDestroy()
     }
     

@@ -4,14 +4,11 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkRequest
 import android.os.Build
 import androidx.databinding.DataBindingUtil
 import coil.Coil
 import coil.ImageLoader
 import coil.imageLoader
-import coil.util.CoilUtils
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.network.interceptor.CoilInterceptor
@@ -92,11 +89,6 @@ class ToffeeApplication : Application() {
             }
         }
         initCoil()
-
-        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), heartBeatManager)
-
-
         initUploader()
     }
     
@@ -114,12 +106,6 @@ class ToffeeApplication : Application() {
 
         }.build()
         Coil.setImageLoader(imageLoader)
-    }
-
-    override fun onTerminate() {
-        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        connectivityManager.unregisterNetworkCallback(heartBeatManager)
-        super.onTerminate()
     }
 
     override fun onTrimMemory(level: Int) {

@@ -279,9 +279,9 @@ class HomeViewModel @Inject constructor(
         }
     }
     
-    fun sendOtpLogData(otpLogData: OTPLogData) {
+    fun sendOtpLogData(otpLogData: OTPLogData, phoneNumber: String) {
         viewModelScope.launch {
-            sendOtpLogEvent.execute(otpLogData)
+            sendOtpLogEvent.execute(otpLogData, phoneNumber)
         }
     }
     

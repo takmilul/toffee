@@ -211,7 +211,7 @@ class DrawerHelper(
                     return true
                 }
             }
-            R.id.menu_add_to_playlist -> {
+            R.id.menu_playlist -> {
                 if (!mPref.isVerifiedUser) {
                     activity.checkVerification()
                     binding.drawerLayout.closeDrawers()
