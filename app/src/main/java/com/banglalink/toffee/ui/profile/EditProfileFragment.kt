@@ -19,6 +19,7 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_DETAILS
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentEditProfileBinding
@@ -118,13 +119,16 @@ class EditProfileFragment : BaseFragment() {
 
             if (notValidEmail) {
                 progressDialog.hide()
+                ToffeeAnalytics.logEvent(ToffeeEvents.EMAIL_ADDED,requireContext())
                 binding.emailEt.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
                 binding.errorEmailTv.show()
             } else {
                 binding.emailEt.setBackgroundResource(R.drawable.single_line_input_text_bg)
                 binding.errorEmailTv.hide()
             }
-
+            if (it.address.isNotBlank()) {
+                ToffeeAnalytics.logEvent(ToffeeEvents.ADDRESS_ADDED,requireContext())
+            }
             if (it.fullName.isNotBlank() && !notValidEmail) {
                 it.apply {
                     fullName = fullName.trim()
