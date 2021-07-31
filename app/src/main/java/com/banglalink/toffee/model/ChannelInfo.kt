@@ -82,7 +82,7 @@ data class ChannelInfo(
     @SerializedName("landscape_feature_1280_720")
     val ugcFeaturedImage: String? = null,
     @SerializedName("is_encoded")
-    val isEncoded: Int = 1,
+    val isEncoded: Int? = null,
     @SerializedName("is_ugc")
     val is_ugc: Int = 0
 ) :Parcelable
@@ -100,7 +100,7 @@ data class ChannelInfo(
     val isCatchup: Boolean
         get() = "CATCHUP".equals(type, ignoreCase = true)
     val isBucketUrl: Boolean
-        get() = isEncoded != 1
+        get() = isEncoded == 0
     
     fun getCategory(category: String, subCategory: String): String {
         var itemCategory = "Channels>$category"
