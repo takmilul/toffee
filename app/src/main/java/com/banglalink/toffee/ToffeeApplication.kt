@@ -4,14 +4,11 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkRequest
 import android.os.Build
 import androidx.databinding.DataBindingUtil
 import coil.Coil
 import coil.ImageLoader
 import coil.imageLoader
-import coil.util.CoilUtils
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.network.interceptor.CoilInterceptor
@@ -20,6 +17,7 @@ import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.PlayerPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.AppCoroutineScope
+import com.banglalink.toffee.di.CoilCache
 import com.banglalink.toffee.di.databinding.CustomBindingComponentBuilder
 import com.banglalink.toffee.di.databinding.CustomBindingEntryPoint
 import com.banglalink.toffee.notification.PubSubMessageUtil
@@ -34,19 +32,20 @@ import kotlinx.coroutines.launch
 import net.gotev.uploadservice.UploadServiceConfig
 import net.gotev.uploadservice.data.RetryPolicyConfig
 import net.gotev.uploadservice.okhttp.OkHttpStack
+import okhttp3.Cache
 import okhttp3.OkHttpClient
-import java.util.*
 import javax.inject.Inject
 import javax.inject.Provider
 
 @HiltAndroidApp
 class ToffeeApplication : Application() {
 
-    @Inject lateinit var mPref: SessionPreference
     @Inject lateinit var cacheManager: CacheManager
     @Inject lateinit var mUploadObserver: UploadObserver
     @Inject lateinit var commonPreference: CommonPreference
     @Inject lateinit var heartBeatManager: HeartBeatManager
+    @Inject lateinit var coilInterceptor: CoilInterceptor
+    @Inject @CoilCache lateinit var coilCache: Cache
     @Inject @AppCoroutineScope lateinit var coroutineScope: CoroutineScope
     @Inject lateinit var bindingComponentProvider: Provider<CustomBindingComponentBuilder>
     @Inject lateinit var sendFirebaseConnectionErrorEvent: SendFirebaseConnectionErrorEvent
@@ -90,10 +89,6 @@ class ToffeeApplication : Application() {
             }
         }
         initCoil()
-
-        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), heartBeatManager)
-        
         initUploader()
     }
     
@@ -104,19 +99,13 @@ class ToffeeApplication : Application() {
 //            bitmapPoolPercentage(0.4)
             okHttpClient {
                 OkHttpClient.Builder()
-                    .cache(CoilUtils.createDefaultCache(this@ToffeeApplication))
-                    .addInterceptor(CoilInterceptor())
+                    .cache(coilCache)
+                    .addInterceptor(coilInterceptor)
                     .build()
             }
 
         }.build()
         Coil.setImageLoader(imageLoader)
-    }
-
-    override fun onTerminate() {
-        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        connectivityManager.unregisterNetworkCallback(heartBeatManager)
-        super.onTerminate()
     }
 
     override fun onTrimMemory(level: Int) {

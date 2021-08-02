@@ -73,6 +73,10 @@ class FavoriteFragment : BaseListFragment<ChannelInfo>(), ProviderIconCallback<C
                     })
                     return@setOnMenuItemClickListener true
                 }
+                R.id.menu_add_to_playlist->{
+                    requireActivity().handleAddToPlaylist(channelInfo)
+                    return@setOnMenuItemClickListener true
+                }
                 R.id.menu_report -> {
                     requireActivity().handleReport(channelInfo)
                     return@setOnMenuItemClickListener true

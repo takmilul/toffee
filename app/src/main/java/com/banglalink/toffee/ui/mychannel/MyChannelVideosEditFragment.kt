@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import androidx.core.os.bundleOf
 import androidx.core.view.setPadding
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.activityViewModels
@@ -53,9 +54,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
         
         fun newInstance(channelInfo: ChannelInfo): MyChannelVideosEditFragment {
             return MyChannelVideosEditFragment().apply { 
-                arguments = Bundle().apply {
-                    putParcelable(CHANNEL_INFO, channelInfo)
-                }
+                arguments = bundleOf(CHANNEL_INFO to channelInfo)
             }
         }
     }
@@ -65,7 +64,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
         progressDialog = VelBoxProgressDialog(requireContext())
     }
     
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentMyChannelVideosEditBinding.inflate(inflater)
         binding.setVariable(BR.viewmodel, viewModel)
         binding.lifecycleOwner = this
@@ -108,14 +107,10 @@ class MyChannelVideosEditFragment : BaseFragment() {
                 updateVideoInfo()
             }
             thumbEditButton.setOnClickListener {
-                if (findNavController().currentDestination?.id != R.id.thumbnailSelectionMethodFragment &&findNavController().currentDestination?.id == R.id.myChannelVideosEditFragment) {
-                    val action =
-                        MyChannelVideosEditFragmentDirections.actionMyChannelVideosEditFragmentToThumbnailSelectionMethodFragment(
-                            "Set Video Cover Photo",
-                            false
-                        )
-                    findNavController().navigate(action)
-                }
+                findNavController().navigate(R.id.thumbnailSelectionMethodFragment, bundleOf(
+                    ThumbnailSelectionMethodFragment.TITLE to getString(R.string.set_video_cover_photo),
+                    ThumbnailSelectionMethodFragment.IS_PROFILE_IMAGE to false
+                ))
             }
             
             uploadTitleCountTv.text = getString(R.string.video_title_limit, 0)
@@ -146,15 +141,13 @@ class MyChannelVideosEditFragment : BaseFragment() {
             }
         }
         observe(viewModel.exitFragment) {
-         //   requireContext().showToast("Unable to load data!")
-            requireContext().showToast("Oops! Something went wrong.")
-
+            requireContext().showToast(getString(R.string.unable_to_load_data))
             findNavController().popBackStack()
         }
     }
 
     private fun setupAgeSpinner(){
-        val mAgeAdapter = ToffeeSpinnerAdapter<String>(requireContext(), "Select Age")
+        val mAgeAdapter = ToffeeSpinnerAdapter<String>(requireContext(), getString(R.string.select_age))
         binding.ageGroupSpinner.adapter = mAgeAdapter
         binding.ageGroupSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -188,7 +181,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
     }
     
     private fun setCategorySpinner() {
-        val mCategoryAdapter = ToffeeSpinnerAdapter<Category>(requireContext(), "Select Category")
+        val mCategoryAdapter = ToffeeSpinnerAdapter<Category>(requireContext(), getString(R.string.select_category))
         binding.categorySpinner.adapter = mCategoryAdapter
         binding.categorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -217,7 +210,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
     }
 
     private fun setupSubcategorySpinner() {
-        val mSubCategoryAdapter = ToffeeSpinnerAdapter<SubCategory>(requireContext(), "Select Sub Category")
+        val mSubCategoryAdapter = ToffeeSpinnerAdapter<SubCategory>(requireContext(), getString(R.string.select_sub_category))
         binding.subCategorySpinner.adapter = mSubCategoryAdapter
         binding.subCategorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -266,7 +259,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
 
         val chipRecycler = binding.uploadTags.findViewById<RecyclerView>(R.id.chips_recycler)
         chipRecycler.setPadding(0)
-
+        
         binding.uploadTags.addChipsListener(object : ChipsInput.ChipsListener {
             override fun onChipAdded(chip: ChipInterface?, newSize: Int) { }
             override fun onChipRemoved(chip: ChipInterface?, newSize: Int) { }
@@ -297,7 +290,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
             binding.uploadTitle.setBackgroundResource(R.drawable.single_line_input_text_bg)
             binding.errorTitleTv.hide()
         }
-         if(description.isBlank()) {
+        if(description.isBlank()) {
             progressDialog.dismiss()
             binding.uploadDescription.setBackgroundResource(R.drawable.error_multiline_input_text_bg)
             binding.errorDescriptionTv.show()

@@ -15,7 +15,7 @@
             android:layout_height="match_parent"
         />
 
-        <com.banglalink.toffee.ui.widget.AspectRatioFrameLayout
+        <com.google.android.exoplayer2.ui.AspectRatioFrameLayout
             android:id="@+id/playerContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -37,7 +37,7 @@
                 android:layout_height="match_parent"
                 android:src="@null" />
 
-        </com.banglalink.toffee.ui.widget.AspectRatioFrameLayout>
+        </com.google.android.exoplayer2.ui.AspectRatioFrameLayout>
 
         <View
             android:id="@+id/controller_bg"
@@ -143,7 +143,7 @@
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/txt_play"
                 android:padding="2dp"
-                app:srcCompat="@drawable/ic_player_pause"
+                app:srcCompat="@drawable/exo_styled_controls_pause"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -175,7 +175,7 @@
                 android:contentDescription="@string/txt_play_next"
                 android:focusable="true"
                 android:padding="2dp"
-                app:srcCompat="@drawable/ic_player_control_next"
+                app:srcCompat="@drawable/exo_styled_controls_next"
                 app:layout_constraintBottom_toBottomOf="@+id/play"
                 app:layout_constraintStart_toEndOf="@+id/play"
                 app:layout_constraintTop_toTopOf="@+id/play" />
@@ -206,7 +206,7 @@
                 android:contentDescription="@string/txt_play_previous"
                 android:focusable="true"
                 android:padding="2dp"
-                app:srcCompat="@drawable/ic_player_previous"
+                app:srcCompat="@drawable/exo_styled_controls_previous"
                 app:layout_constraintBottom_toBottomOf="@+id/play"
                 app:layout_constraintEnd_toStartOf="@+id/play"
                 app:layout_constraintTop_toTopOf="@+id/play" />
@@ -280,7 +280,7 @@
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/txt_full_screen"
                 android:padding="8dp"
-                android:src="@drawable/ic_fullscreen_enter"
+                android:src="@drawable/exo_styled_controls_fullscreen_enter"
                 app:layout_constraintBottom_toTopOf="@+id/progress"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_goneMarginBottom="8dp" />

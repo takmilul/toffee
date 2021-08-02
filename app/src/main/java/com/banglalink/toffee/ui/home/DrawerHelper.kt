@@ -211,6 +211,13 @@ class DrawerHelper(
                     return true
                 }
             }
+            R.id.menu_playlist -> {
+                if (!mPref.isVerifiedUser) {
+                    activity.checkVerification()
+                    binding.drawerLayout.closeDrawers()
+                    return true
+                }
+            }
             R.id.menu_invite -> {
                 if (!mPref.isVerifiedUser) {
                     activity.checkVerification()

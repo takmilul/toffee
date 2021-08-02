@@ -3,6 +3,7 @@ package com.banglalink.toffee.mqttservice
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.database.entities.ReactionStatusItem
 import com.banglalink.toffee.data.database.entities.ShareCount
 import com.banglalink.toffee.data.database.entities.SubscriptionCount
@@ -57,6 +58,7 @@ class ToffeeMqttService @Inject constructor(
                 val userName = EncryptionUtil.decryptResponse(mPref.mqttUserName)
                 val password = EncryptionUtil.decryptResponse(mPref.mqttPassword)
                 Uri.parse(host)
+                ToffeeAnalytics.logBreadCrumb("creating mqtt because null")
                 client = MqttAndroidClient(context, host, clientId).apply {
                     setCallback(this@ToffeeMqttService)
                     connect(getMqttConnectionOption(userName, password), null, this@ToffeeMqttService)
@@ -72,6 +74,7 @@ class ToffeeMqttService @Inject constructor(
             }
         }
         catch (e: Exception) {
+            ToffeeAnalytics.logBreadCrumb("exception when creating mqtt -> ${e.message}")
             Log.e("MQTT_", "initialize: ${e.message}")
         }
     }
@@ -145,6 +148,7 @@ class ToffeeMqttService @Inject constructor(
         try {
             if (token?.client?.isConnected == true && token.topics.isNullOrEmpty()) {
                 Log.e("MQTT_", "onSuccess: Connected")
+                ToffeeAnalytics.logBreadCrumb("mqtt connected")
                 val disconnectedBufferOptions = DisconnectedBufferOptions().apply {
                     isBufferEnabled = true
                     bufferSize = 100
@@ -158,6 +162,7 @@ class ToffeeMqttService @Inject constructor(
                 Log.e("MQTT_", "onSuccess - subscribed: ${token?.topics}")
             }
         } catch (e: Exception) {
+            ToffeeAnalytics.logBreadCrumb("mqtt exception onsuccess -> ${e.message}")
             Log.e("MQTT_", "onSuccess - Exception: ${e.message}")
         }
     }
@@ -211,10 +216,12 @@ class ToffeeMqttService @Inject constructor(
     }
     
     override fun onFailure(token: IMqttToken?, error: Throwable?) {
+        ToffeeAnalytics.logBreadCrumb("mqtt failure -> ${error?.message}")
         Log.e("MQTT_", "onFailure: ${error?.message}")
     }
     
     override fun connectionLost(error: Throwable?) {
+        ToffeeAnalytics.logBreadCrumb("mqtt connection lost -> ${error?.message}")
         Log.e("MQTT_", "connectionLost: $error")
     }
     
@@ -231,9 +238,11 @@ class ToffeeMqttService @Inject constructor(
             client = null
             coroutineScope.cancel()
             Log.e("MQTT_", "destroyed")
+            ToffeeAnalytics.logBreadCrumb("mqtt destroyed")
         }
         catch (e: Exception) {
             Log.e("MQTT_", "disconnectionError: $e")
+            ToffeeAnalytics.logBreadCrumb("mqtt disconnect error -> ${e.message}")
         }
     }
 }

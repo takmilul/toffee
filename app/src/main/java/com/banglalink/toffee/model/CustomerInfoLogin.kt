@@ -89,5 +89,8 @@ class CustomerInfoLogin(
     val screenCaptureEnabledUsers: Set<String>? = null,
 
     @SerializedName("android_in_app_update_version_codes")
-    val forceUpdateVersionCodes: String? = null
+    val forceUpdateVersionCodes: String? = null,
+    val isVastActive: Int = 0,
+    val vastFrequency: Int = 0,
+    val gcpVodBucketDirectory: String? = null,
 ) : BodyResponse(), Parcelable

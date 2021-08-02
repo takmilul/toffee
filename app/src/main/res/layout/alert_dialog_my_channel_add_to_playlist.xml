@@ -53,23 +53,67 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_close" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/listview"
-                    style="@style/ScrollBarStyle"
+                
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/contentLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginHorizontal="24dp"
-                    android:layout_marginTop="8dp"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constrainedHeight="true"
+                    android:layout_height="wrap_content"
                     app:layout_constraintBottom_toTopOf="@id/view"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHeight_default="wrap"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/dialogTitleTextView"
-                    tools:listitem="@layout/list_item_my_channel_playlist_dialog" />
+                    app:layout_constraintTop_toBottomOf="@+id/dialogTitleTextView" >
+                    
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/listview"
+                        style="@style/ScrollBarStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_marginHorizontal="24dp"
+                        android:layout_marginTop="8dp"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        app:layout_constrainedHeight="true"
+                        app:layout_constraintHeight_default="wrap"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        tools:listitem="@layout/list_item_my_channel_playlist_dialog" />
+    
+                    <TextView
+                        android:id="@+id/empty_view_label"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="24dp"
+                        android:layout_marginHorizontal="16dp"
+                        android:fontFamily="@font/roboto_regular"
+                        android:text="@string/empty_playlist_msg_owner"
+                        android:textColor="@color/fixed_second_text_color"
+                        android:textSize="16sp"
+                        android:maxLines="2"
+                        android:gravity="center"
+                        android:visibility="gone"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+    
+                    <pl.droidsonroids.gif.GifImageView
+                        android:id="@+id/progress_bar"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginVertical="24dp"
+                        android:layout_marginHorizontal="16dp"
+                        android:elevation="2dp"
+                        android:visibility="gone"
+                        android:src="@drawable/content_loader"
+                        android:background="@drawable/gif_round_border"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
 
+                </androidx.constraintlayout.widget.ConstraintLayout>
+                
                 <LinearLayout
                     android:id="@+id/view"
                     android:layout_width="match_parent"
@@ -79,7 +123,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/listview">
+                    app:layout_constraintTop_toBottomOf="@+id/contentLayout">
 
                     <RelativeLayout
                         android:id="@+id/addToPlaylistGroup"

@@ -14,8 +14,8 @@ android {
         applicationId "com.banglalink.toffee"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 58
-        versionName "2.0.3"
+        versionCode 59
+        versionName "2.0.4"
         testInstrumentationRunner "com.banglalink.toffee.HiltTestRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -58,6 +58,7 @@ android {
         pickFirst 'META-INF/LICENSE'
         pickFirst 'META-INF/io.netty.versions.properties'
         pickFirst 'META-INF/INDEX.LIST'
+        exclude("META-INF/*.kotlin_module")
         pickFirst 'META-INF/annotation-experimental_release.kotlin_module'
     }
 }
@@ -76,6 +77,7 @@ dependencies {
     //Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
+    implementation 'com.squareup.okhttp3:okhttp-dnsoverhttps:4.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     //LifeCycle Extensions
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"
@@ -116,7 +118,9 @@ dependencies {
     implementation "com.google.android.exoplayer:exoplayer-core:$exoVersion"
     implementation "com.google.android.exoplayer:exoplayer-hls:$exoVersion"
     implementation "com.google.android.exoplayer:extension-cast:$exoVersion"
-//    implementation 'com.google.android.exoplayer:exoplayer-ui:2.12.0'
+    implementation "com.google.android.exoplayer:exoplayer-ui:$exoVersion"
+    implementation "com.google.android.exoplayer:extension-ima:$exoVersion"
+    implementation "com.google.android.exoplayer:extension-okhttp:$exoVersion"
 
     // Cast
     implementation 'androidx.mediarouter:mediarouter:1.2.3'

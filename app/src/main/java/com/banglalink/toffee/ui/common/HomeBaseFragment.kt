@@ -34,13 +34,16 @@ abstract class HomeBaseFragment:BaseFragment(), OptionCallBack {
         popupMenu.setOnMenuItemClickListener{
             when(it?.itemId){
                 R.id.menu_share->{
-                    requireActivity().handleShare(channelInfo)
+                    activity?.handleShare(channelInfo)
                 }
                 R.id.menu_fav->{
-                    requireActivity().handleFavorite(channelInfo, favoriteDao)
+                    activity?.handleFavorite(channelInfo, favoriteDao)
+                }
+                R.id.menu_add_to_playlist->{
+                    activity?.handleAddToPlaylist(channelInfo)
                 }
                 R.id.menu_report -> {
-                    requireActivity().handleReport(channelInfo)
+                    activity?.handleReport(channelInfo)
                 }
             }
             return@setOnMenuItemClickListener true

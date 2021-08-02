@@ -10,7 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_DETAILS
+import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.data.network.request.MyChannelEditRequest
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.BottomSheetBasicInfoBinding
@@ -203,7 +203,7 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
                     mPref.customerNID = userNID
                     progressDialog.dismiss()
                     requireContext().showToast(it.data.message)
-                    cacheManager.clearCacheByUrl(GET_MY_CHANNEL_DETAILS)
+                    cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_DETAILS)
                     parentFragment?.parentFragment?.let {
                         if (it is BottomSheetDialogFragment) {
                             it.findNavController().popBackStack().let { _ ->

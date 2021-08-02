@@ -19,7 +19,7 @@
             android:id="@+id/icon_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_player_play"
+            app:srcCompat="@drawable/exo_styled_controls_play"
             tools:alpha="0.18" />
 
         <ImageView
@@ -27,7 +27,7 @@
             android:id="@+id/icon_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_player_play"
+            app:srcCompat="@drawable/exo_styled_controls_play"
             tools:alpha="0.5" />
 
         <ImageView
@@ -35,7 +35,7 @@
             android:id="@+id/icon_3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_player_play"
+            app:srcCompat="@drawable/exo_styled_controls_play"
             tools:alpha="1" />
 
     </LinearLayout>

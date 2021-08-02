@@ -94,3 +94,9 @@
 -keepclassmembers class com.google.android.exoplayer2.ext.cast.CastPlayer {
     private com.google.android.exoplayer2.ext.cast.CastPlayer$StatusListener statusListener;
 }
+
+-keep class com.google.obf.** { *; }
+-keep interface com.google.obf.** { *; }
+
+-keep class com.google.ads.interactivemedia.** { *; }
+-keep interface com.google.ads.interactivemedia.** { *; }

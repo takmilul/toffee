@@ -21,7 +21,7 @@ open class PubSubBaseRequest {
     val customerId:Long = SessionPreference.getInstance().customerId.toLong()
 
     @SerializedName("msisdn")
-    val phoneNumber: String = SessionPreference.getInstance().phoneNumber
+    open var phoneNumber: String = SessionPreference.getInstance().phoneNumber
 
     @SerializedName("reportingTime")
     val reportingTime = Utils.getDateTime()

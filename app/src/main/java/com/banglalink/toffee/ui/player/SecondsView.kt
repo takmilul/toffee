@@ -68,7 +68,7 @@ class SecondsView(context: Context, attrs: AttributeSet?) :
         get() = binding.tvSeconds
 
     @DrawableRes
-    var icon: Int = R.drawable.ic_player_play
+    var icon: Int = R.drawable.exo_styled_controls_play
         set(value) {
             if (value > 0) {
                 binding.icon1.setImageResource(value)
