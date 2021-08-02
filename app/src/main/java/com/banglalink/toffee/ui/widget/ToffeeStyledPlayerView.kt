@@ -165,6 +165,9 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
                     }
                 }
                 View.GONE-> {
+                    if(textCasting.visibility != View.VISIBLE) {
+                        controllerBg.visibility = View.GONE
+                    }
                     onPlayerControllerChangedListeners.forEach {
                         it.onControllerInVisible()
                     }
@@ -316,13 +319,6 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
                 exoTimeSeperator.visibility = View.INVISIBLE
                 exoProgress.visibility = View.GONE
             }
-        }
-    }
-
-    override fun hideController() {
-        super.hideController()
-        if(textCasting.visibility != View.VISIBLE) {
-            controllerBg.visibility = View.GONE
         }
     }
 
