@@ -2,6 +2,7 @@ package com.banglalink.toffee.analytics
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import com.banglalink.toffee.data.network.request.PubSubBaseRequest
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ChannelInfo
@@ -75,9 +76,9 @@ object ToffeeAnalytics {
     }
 
     fun logEvent(event: String,bundle: Bundle?) {
-//        firebaseAnalytics.logEvent(event, params)
-
-        appEventsLogger.logEvent(event)
+       //firebaseAnalytics.logEvent(event, params)
+       Log.e("event","app : "+event)
+       // appEventsLogger.logEvent(event)
     }
 
     class ApiFailData(
@@ -86,4 +87,4 @@ object ToffeeAnalytics {
         @SerializedName("errorMsg")
         val apiError: String
     ) : PubSubBaseRequest()
-}
+} 

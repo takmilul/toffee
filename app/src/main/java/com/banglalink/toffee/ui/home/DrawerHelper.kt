@@ -202,18 +202,21 @@ class DrawerHelper(
             }
             R.id.menu_favorites -> {
                 if (!mPref.isVerifiedUser) {
-                    ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_FAVORITES,null)
                     activity.checkVerification()
                     binding.drawerLayout.closeDrawers()
                     return true
                 }
+                else{
+                    ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_FAVORITES,null)
+                }
             }
             R.id.menu_activities -> {
                 if (!mPref.isVerifiedUser) {
-                    ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_ACTIVITIES,null)
                     activity.checkVerification()
                     binding.drawerLayout.closeDrawers()
                     return true
+                }else{
+                    ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_ACTIVITIES,null)
                 }
             }
             R.id.menu_invite -> {
@@ -225,10 +228,12 @@ class DrawerHelper(
             }
             R.id.menu_redeem -> {
                 if (!mPref.isVerifiedUser) {
-                    ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_REFERRAL,null)
                     activity.checkVerification()
                     binding.drawerLayout.closeDrawers()
                     return true
+                }
+                else{
+                    ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_REFERRAL,null)
                 }
             }
         }
