@@ -17,10 +17,14 @@ import com.google.gson.annotations.SerializedName
 object ToffeeAnalytics {
 
     private lateinit var firebaseAnalytics: FirebaseAnalytics
+    private lateinit var appEventsLogger: AppEventsLogger
     private val gson = Gson()
 
     fun initFireBaseAnalytics(context: Context) {
         firebaseAnalytics = FirebaseAnalytics.getInstance(context)
+    }
+    fun initAppEventsLogger(context: Context) {
+        appEventsLogger = AppEventsLogger.newLogger(context)
     }
 
     fun updateCustomerId(customerId: Int) {
@@ -70,10 +74,10 @@ object ToffeeAnalytics {
         FirebaseCrashlytics.getInstance().log(msg)
     }
 
-    fun logEvent(event: String,context: Context) {
+    fun logEvent(event: String,bundle: Bundle?) {
 //        firebaseAnalytics.logEvent(event, params)
-        val logger = AppEventsLogger.newLogger(context)
-        logger.logEvent(event)
+
+        appEventsLogger.logEvent(event)
     }
 
     class ApiFailData(

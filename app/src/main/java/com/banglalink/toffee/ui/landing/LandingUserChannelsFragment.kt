@@ -14,6 +14,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.map
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
@@ -152,6 +154,7 @@ class LandingUserChannelsFragment : HomeBaseFragment(), LandingPopularChannelCal
         requireActivity().checkVerification {
 //                channelInfo = info
             if (info.isSubscribed == 0) {
+                ToffeeAnalytics.logEvent(ToffeeEvents.CHANNEL_SUBSCRIPTION,null)
                 channelInfo = info.also { userChannelInfo ->
                     userChannelInfo.isSubscribed = 1
                     userChannelInfo.subscriberCount++

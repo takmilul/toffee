@@ -13,6 +13,8 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.ui.NavigationUI
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
 import com.banglalink.toffee.extension.*
@@ -190,6 +192,7 @@ class DrawerHelper(
             R.id.menu_change_theme -> {
                 when (val switch = item.actionView) {
                     is SwitchButton -> {
+                        ToffeeAnalytics.logEvent(ToffeeEvents.DARK_MODE_THEME,null)
                         switch.isChecked = !switch.isChecked
                     }
                     is SwitchMaterial -> {
@@ -199,6 +202,7 @@ class DrawerHelper(
             }
             R.id.menu_favorites -> {
                 if (!mPref.isVerifiedUser) {
+                    ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_FAVORITES,null)
                     activity.checkVerification()
                     binding.drawerLayout.closeDrawers()
                     return true
@@ -206,6 +210,7 @@ class DrawerHelper(
             }
             R.id.menu_activities -> {
                 if (!mPref.isVerifiedUser) {
+                    ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_ACTIVITIES,null)
                     activity.checkVerification()
                     binding.drawerLayout.closeDrawers()
                     return true
@@ -220,6 +225,7 @@ class DrawerHelper(
             }
             R.id.menu_redeem -> {
                 if (!mPref.isVerifiedUser) {
+                    ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_REFERRAL,null)
                     activity.checkVerification()
                     binding.drawerLayout.closeDrawers()
                     return true

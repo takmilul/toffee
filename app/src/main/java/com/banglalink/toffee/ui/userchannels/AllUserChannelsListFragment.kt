@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentAllUserChannelsListBinding
@@ -14,7 +16,10 @@ import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.LandingPopularChannelCallback
-import com.banglalink.toffee.model.*
+import com.banglalink.toffee.model.Category
+import com.banglalink.toffee.model.MyChannelNavParams
+import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.model.UserChannelInfo
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.common.UnSubscribeDialog
@@ -47,6 +52,7 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         categoryInfo = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)
+        ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_SUBSCRIPTION_LIST,null)
 
         mAdapter = AllUserChannelsListAdapter(object : LandingPopularChannelCallback<UserChannelInfo> {
             override fun onItemClicked(item: UserChannelInfo) {
@@ -57,6 +63,7 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
                 requireActivity().checkVerification {
 //                trendingChannelInfo = info
                     if (info.isSubscribed == 0) {
+                        ToffeeAnalytics.logEvent(ToffeeEvents.CHANNEL_SUBSCRIPTION,null)
                         trendingChannelInfo = info.also {
                             it.isSubscribed = 1
                             it.subscriberCount++

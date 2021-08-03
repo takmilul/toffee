@@ -83,7 +83,12 @@ data class ChannelInfo(
     val ugcFeaturedImage: String? = null,
 
     @SerializedName("is_ugc")
-    val is_ugc: Int = 0
+    val is_ugc: Int = 0,
+    @SerializedName("fcm_event_name")
+    val fcmEventName:  String? = null,
+    @SerializedName("fcm_is_active")
+    val fcmIsActive: Int = 0
+
 ) :Parcelable
 {
     val isApproved: Int

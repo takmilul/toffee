@@ -119,27 +119,31 @@ class EditProfileFragment : BaseFragment() {
 
             if (notValidEmail) {
                 progressDialog.hide()
-                ToffeeAnalytics.logEvent(ToffeeEvents.EMAIL_ADDED,requireContext())
                 binding.emailEt.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
                 binding.errorEmailTv.show()
             } else {
                 binding.emailEt.setBackgroundResource(R.drawable.single_line_input_text_bg)
                 binding.errorEmailTv.hide()
             }
-            if (it.address.isNotBlank()) {
-                ToffeeAnalytics.logEvent(ToffeeEvents.ADDRESS_ADDED,requireContext())
-            }
+
             if (it.fullName.isNotBlank() && !notValidEmail) {
                 it.apply {
                     fullName = fullName.trim()
                     email = email.trim()
                     address = address.trim()
                 }
-
+                val eventEmail=it.email.equals(binding.emailEt.text.toString())
+                val eventAddress=it.address.equals(binding.addressEt.text.toString())
                 observe(viewModel.updateProfile(it)) {
                     progressDialog.dismiss()
                     when (it) {
                         is Resource.Success -> {
+                            if(!eventEmail){
+                                ToffeeAnalytics.logEvent(ToffeeEvents.EMAIL_ADDED,null)
+                            }
+                            if(!eventAddress){
+                                ToffeeAnalytics.logEvent(ToffeeEvents.ADDRESS_ADDED,null)
+                            }
                             cacheManager.clearCacheByUrl(GET_MY_CHANNEL_DETAILS)
                             requireContext().showToast("Profile updated successfully")
                             findNavController().popBackStack()

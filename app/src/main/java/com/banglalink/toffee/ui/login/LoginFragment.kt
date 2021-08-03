@@ -11,6 +11,8 @@ import androidx.fragment.app.DialogFragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.FragmentLoginDialogBinding
 import com.banglalink.toffee.extension.safeClick
@@ -32,10 +34,9 @@ class LoginFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val binding = FragmentLoginDialogBinding.inflate(layoutInflater)
-
         val navHostFragment = childFragmentManager.findFragmentById(R.id.loginFragmentContainerView) as NavHostFragment
         navController = navHostFragment.navController
-
+        ToffeeAnalytics.logEvent(ToffeeEvents.SIGN_IN_DIALOG,null)
         binding.closeIv.safeClick({
             dismiss().let { 
                 if (mPref.isVerifiedUser) {

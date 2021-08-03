@@ -84,13 +84,16 @@ class ToffeeApplication : Application() {
         try {
             ToffeeAnalytics.initFireBaseAnalytics(this)
         }
-
         catch (e: Exception) {
             coroutineScope.launch { 
                 sendFirebaseConnectionErrorEvent.execute()
             }
         }
-
+        try{
+            ToffeeAnalytics.initAppEventsLogger(this)
+        }
+        catch (e: Exception) {
+        }
         FacebookSdk.setIsDebugEnabled(true);
         FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS);
 

@@ -50,7 +50,7 @@ class LoginContentFragment : ChildDialogFragment(), TextWatcher {
                 progressDialog.show()
                 handleLogin()
                 observeLogin()
-                ToffeeAnalytics.logEvent(ToffeeEvents.OTP_REQUESTED,requireContext())
+                ToffeeAnalytics.logEvent(ToffeeEvents.OTP_REQUESTED,null)
                 viewModel.login(phoneNo)
             })
             termsAndConditionsCheckbox.setOnClickListener {
@@ -81,7 +81,7 @@ class LoginContentFragment : ChildDialogFragment(), TextWatcher {
             when (it) {
                 is Resource.Success -> {
                     if (it.data is String) {
-                        ToffeeAnalytics.logEvent(ToffeeEvents.OTP_INPUT,requireContext())
+                        ToffeeAnalytics.logEvent(ToffeeEvents.OTP_INPUT,null)
                         regSessionToken = it.data
                         findNavController().navigate(R.id.verifyLoginFragment,
                             Bundle().apply { 

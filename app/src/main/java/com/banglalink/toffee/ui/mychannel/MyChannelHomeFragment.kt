@@ -18,6 +18,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.color
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_DETAILS
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
@@ -84,6 +86,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         channelOwnerId = arguments?.getInt(CHANNEL_OWNER_ID) ?: mPref.customerId
         if(channelOwnerId == 0) channelOwnerId = mPref.customerId
         isOwner = channelOwnerId == mPref.customerId
+        ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_MY_CHANNEL,null)
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -146,6 +149,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             }
             binding.channelDetailView.subscriptionButton -> {
                 if (isSubscribed == 0) {
+                    ToffeeAnalytics.logEvent(ToffeeEvents.CHANNEL_SUBSCRIPTION,null)
                     binding.channelDetailView.subscriptionButton.isEnabled = false
                     homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, channelOwnerId, mPref.customerId), 1)
                     isSubscribed = 1
