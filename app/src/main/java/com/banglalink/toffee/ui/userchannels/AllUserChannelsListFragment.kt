@@ -52,7 +52,7 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         categoryInfo = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)
-        ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_SUBSCRIPTION_LIST,null)
+        ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_SUBSCRIPTION_LIST)
 
         mAdapter = AllUserChannelsListAdapter(object : LandingPopularChannelCallback<UserChannelInfo> {
             override fun onItemClicked(item: UserChannelInfo) {
@@ -63,7 +63,7 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
                 requireActivity().checkVerification {
 //                trendingChannelInfo = info
                     if (info.isSubscribed == 0) {
-                        ToffeeAnalytics.logEvent(ToffeeEvents.CHANNEL_SUBSCRIPTION,null)
+                        ToffeeAnalytics.logEvent(ToffeeEvents.CHANNEL_SUBSCRIPTION)
                         trendingChannelInfo = info.also {
                             it.isSubscribed = 1
                             it.subscriberCount++

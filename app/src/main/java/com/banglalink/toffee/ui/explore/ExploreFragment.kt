@@ -22,6 +22,6 @@ class ExploreFragment: BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.title = "Explore"
-        ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_EXPLORE,null)
+        ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_EXPLORE)
     }
 }

@@ -113,7 +113,7 @@ class VerifyLoginFragment : ChildDialogFragment() {
             progressDialog.dismiss()
             when (it) {
                 is Resource.Success -> {
-                    ToffeeAnalytics.logEvent(ToffeeEvents.RESEND_OTP,null)
+                    ToffeeAnalytics.logEvent(ToffeeEvents.RESEND_OTP)
                     regSessionToken = it.data//update reg session token
                     resendBtnPressCount++
                     binding.resendButton.visibility = View.GONE

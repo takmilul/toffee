@@ -70,7 +70,7 @@ class SettingsFragment : BaseFragment() {
         binding.cellularProfileStateBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 mPref.cellularProfileStatus = progress + 1
-                ToffeeAnalytics.logEvent(ToffeeEvents.SETTINGS_VIDEO_RESOLUTION,null)
+                ToffeeAnalytics.logEvent(ToffeeEvents.SETTINGS_VIDEO_RESOLUTION)
                 binding.cellularProfileDescTxt.text = getString(cellularProfileBWRequiredTxt[progress])
                 binding.cellularProfileStatusTv.text = getString(R.string.txt_video_resolution, cellularProfileRes[progress])
             }

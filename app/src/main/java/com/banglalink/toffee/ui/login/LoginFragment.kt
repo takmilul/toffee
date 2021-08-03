@@ -36,7 +36,7 @@ class LoginFragment : DialogFragment() {
         val binding = FragmentLoginDialogBinding.inflate(layoutInflater)
         val navHostFragment = childFragmentManager.findFragmentById(R.id.loginFragmentContainerView) as NavHostFragment
         navController = navHostFragment.navController
-        ToffeeAnalytics.logEvent(ToffeeEvents.SIGN_IN_DIALOG,null)
+        ToffeeAnalytics.logEvent(ToffeeEvents.SIGN_IN_DIALOG)
         binding.closeIv.safeClick({
             dismiss().let { 
                 if (mPref.isVerifiedUser) {

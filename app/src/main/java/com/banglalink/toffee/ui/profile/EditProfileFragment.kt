@@ -139,10 +139,10 @@ class EditProfileFragment : BaseFragment() {
                     when (it) {
                         is Resource.Success -> {
                             if(!eventEmail){
-                                ToffeeAnalytics.logEvent(ToffeeEvents.EMAIL_ADDED,null)
+                                ToffeeAnalytics.logEvent(ToffeeEvents.EMAIL_ADDED)
                             }
                             if(!eventAddress){
-                                ToffeeAnalytics.logEvent(ToffeeEvents.ADDRESS_ADDED,null)
+                                ToffeeAnalytics.logEvent(ToffeeEvents.ADDRESS_ADDED)
                             }
                             cacheManager.clearCacheByUrl(GET_MY_CHANNEL_DETAILS)
                             requireContext().showToast("Profile updated successfully")

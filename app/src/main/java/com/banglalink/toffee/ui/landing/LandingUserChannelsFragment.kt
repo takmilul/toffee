@@ -154,7 +154,7 @@ class LandingUserChannelsFragment : HomeBaseFragment(), LandingPopularChannelCal
         requireActivity().checkVerification {
 //                channelInfo = info
             if (info.isSubscribed == 0) {
-                ToffeeAnalytics.logEvent(ToffeeEvents.CHANNEL_SUBSCRIPTION,null)
+                ToffeeAnalytics.logEvent(ToffeeEvents.CHANNEL_SUBSCRIPTION)
                 channelInfo = info.also { userChannelInfo ->
                     userChannelInfo.isSubscribed = 1
                     userChannelInfo.subscriberCount++

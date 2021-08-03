@@ -192,7 +192,7 @@ class DrawerHelper(
             R.id.menu_change_theme -> {
                 when (val switch = item.actionView) {
                     is SwitchButton -> {
-                        ToffeeAnalytics.logEvent(ToffeeEvents.DARK_MODE_THEME,null)
+                        ToffeeAnalytics.logEvent(ToffeeEvents.DARK_MODE_THEME)
                         switch.isChecked = !switch.isChecked
                     }
                     is SwitchMaterial -> {
@@ -207,7 +207,7 @@ class DrawerHelper(
                     return true
                 }
                 else{
-                    ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_FAVORITES,null)
+                    ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_FAVORITES)
                 }
             }
             R.id.menu_activities -> {
@@ -216,7 +216,7 @@ class DrawerHelper(
                     binding.drawerLayout.closeDrawers()
                     return true
                 }else{
-                    ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_ACTIVITIES,null)
+                    ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_ACTIVITIES)
                 }
             }
             R.id.menu_invite -> {
@@ -233,7 +233,7 @@ class DrawerHelper(
                     return true
                 }
                 else{
-                    ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_REFERRAL,null)
+                    ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_REFERRAL)
                 }
             }
         }
