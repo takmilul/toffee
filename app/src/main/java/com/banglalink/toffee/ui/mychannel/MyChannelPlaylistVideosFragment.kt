@@ -18,6 +18,8 @@ import androidx.paging.LoadState
 import androidx.paging.map
 import androidx.recyclerview.widget.ConcatAdapter
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.apiservice.MyChannelPlaylistContentParam
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
@@ -122,6 +124,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
             override fun onReactionClicked(view: View, reactionCountView: View, item: ChannelInfo) {
                 super.onReactionClicked(view, reactionCountView, item)
                 val iconLocation = IntArray(2)
+                ToffeeAnalytics.logEvent(ToffeeEvents.REACT_CLICK)
                 view.getLocationOnScreen(iconLocation)
                 val reactionPopupFragment = ReactionPopup.newInstance(item, iconLocation, view.height, true).apply {
                     setCallback(object : ReactionIconCallback {
@@ -142,6 +145,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     
             override fun onShareClicked(view: View, item: ChannelInfo) {
                 homeViewModel.shareContentLiveData.postValue(item)
+                ToffeeAnalytics.logEvent(ToffeeEvents.SHARE_CLICK)
             }
     
             override fun onSubscribeButtonClicked(view: View, item: ChannelInfo) {
@@ -341,6 +345,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
             inflate(R.menu.menu_catchup_item)
             if (channelInfo.favorite == null || channelInfo.favorite == "0") {
                 menu.getItem(0).title = "Add to Favorites"
+                ToffeeAnalytics.logEvent(ToffeeEvents.ADD_TO_FAVORITE)
             } else {
                 menu.getItem(0).title = "Remove from Favorites"
             }

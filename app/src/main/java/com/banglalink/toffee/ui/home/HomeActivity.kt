@@ -44,6 +44,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.network.retrofit.CacheManager
@@ -474,6 +475,8 @@ class HomeActivity :
         }
         else {
             showUploadDialog()
+            ToffeeAnalytics.logEvent(ToffeeEvents.UPLOAD_CLICK)
+
         }
     }
     

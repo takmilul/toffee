@@ -5,6 +5,8 @@ import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
@@ -75,6 +77,7 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
 
         if (channelInfo.favorite == null || channelInfo.favorite == "0") {
             popupMenu.menu.getItem(0).title = "Add to Favorites"
+            ToffeeAnalytics.logEvent(ToffeeEvents.ADD_TO_FAVORITE)
         }
         else {
             popupMenu.menu.getItem(0).title = "Remove from Favorites"

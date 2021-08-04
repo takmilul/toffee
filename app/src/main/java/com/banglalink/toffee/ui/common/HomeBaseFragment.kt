@@ -3,6 +3,8 @@ package com.banglalink.toffee.ui.common
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.listeners.OptionCallBack
@@ -25,6 +27,7 @@ abstract class HomeBaseFragment:BaseFragment(), OptionCallBack {
 
         if (channelInfo.favorite == null || channelInfo.favorite == "0" || !mPref.isVerifiedUser) {
             popupMenu.menu.getItem(0).title = "Add to Favorites"
+            ToffeeAnalytics.logEvent(ToffeeEvents.ADD_TO_FAVORITE)
         } else {
             popupMenu.menu.getItem(0).title = "Remove from Favorites"
         }
