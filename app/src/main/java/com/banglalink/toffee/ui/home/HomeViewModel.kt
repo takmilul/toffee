@@ -45,6 +45,7 @@ class HomeViewModel @Inject constructor(
     private val reactionDao: ReactionDao,
     private val cacheManager: CacheManager,
     private val logoutService: LogoutService,
+    private val vastTagService: VastTagService,
     private val updateFavorite: UpdateFavorite,
     private val sendOtpLogEvent: SendOTPLogEvent,
     private val tvChannelRepo: TVChannelRepository,
@@ -81,6 +82,7 @@ class HomeViewModel @Inject constructor(
     private var _playlistManager = PlaylistManager()
     val subscriptionLiveData = SingleLiveEvent<Resource<MyChannelSubscribeBean>>()
     val myChannelDetailLiveData = _channelDetail.toLiveData()
+    val vastTagsMutableLiveData = MutableLiveData<List<VastTag>?>()
 
     fun getPlaylistManager() = _playlistManager
 
@@ -234,7 +236,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             val response = resultFromResponse { sendSubscribeEvent.execute(subscriptionInfo, status, true) }
             if (response is Success) {
-                cacheManager.clearCacheByUrl(GET_SUBSCRIBED_CHANNELS)
+                cacheManager.clearCacheByUrl(ApiRoutes.GET_SUBSCRIBED_CHANNELS)
             }
             subscriptionLiveData.value = response
         }
@@ -277,9 +279,19 @@ class HomeViewModel @Inject constructor(
         }
     }
     
-    fun sendOtpLogData(otpLogData: OTPLogData) {
+    fun sendOtpLogData(otpLogData: OTPLogData, phoneNumber: String) {
         viewModelScope.launch {
-            sendOtpLogEvent.execute(otpLogData)
+            sendOtpLogEvent.execute(otpLogData, phoneNumber)
+        }
+    }
+    
+    fun getVastTags() {
+        viewModelScope.launch { 
+            try {
+                vastTagsMutableLiveData.value = vastTagService.execute().response.tags
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 }

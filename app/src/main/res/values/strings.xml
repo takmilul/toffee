@@ -3,7 +3,7 @@
     <string name="app_name_short">Toffee</string>
 
     <string name="retry">Retry</string>
-
+    <string name="exit_from_app_msg">Are you sure to logout from the %s app?</string>
     <!-- Strings related to login -->
     <string name="action_sign_in">Sign In</string>
     <string name="action_subscribe">SUBSCRIBE</string>
@@ -327,7 +327,7 @@
     <string name="mobile_data_profile_text">Mobile Data Profile</string>
     <string name="need_1mbps_connections">Need 1 Mbps Connection</string>
     <string name="floating_player_text">Floating Player</string>
-    <string name="keep_aspect_ratio">Keep Video Aspect Ratio</string>
+    <string name="keep_aspect_ratio">Keep Aspect Ratio (User Videos)</string>
     <string name="clear_activities_text">Clear Activities</string>
     <string name="subscribed_channel_text">Subscribed Channels</string>
     <string name="watched_text">Watched</string>
@@ -364,6 +364,30 @@
     <string name="channel_description_limit">%d/200</string>
     <string name="video_title_limit">%d/200</string>
     <string name="video_description_limit">%d/600</string>
+    <string name="create_channel_msg">Please create your channel first.</string>
+    <string name="playlist_name_empty_msg">Playlist name empty!</string>
+    <string name="set_channel_cover_photo">Set Channel Cover Photo</string>
+    <string name="set_channel_photo">Set Channel Photo</string>
+    <string name="unable_to_load_data">Oops! Something went wrong.</string>
+    <string name="select_category">Select Category</string>
+    <string name="select_payment_option">Select Payment Option</string>
+    <string name="update_channel_photo">Update Your Channel Logo</string>
+    <string name="set_video_cover_photo">Set Video Cover Photo</string>
+    <string name="select_age">Select Age</string>
+    <string name="select_sub_category">Select Sub Category</string>
+    <string name="try_again_msg">Something went wrong. Please try again.</string>
+    <string name="thumbnail_missing_msg">Thumbnail is missing!</string>
+    <string name="cancel_upload_title">Cancel Uploading</string>
+    <string name="cancel_upload_msg">Are you sure that you want to\ncancel uploading video?</string>
+    <string name="owner_video_empty_msg">You haven\'t uploaded any video yet</string>
+    <string name="public_video_empty_msg">This channel has no video yet</string>
+    <string name="add_to_playlist">Add To Playlist</string>
+    <string name="empty_playlist_msg_owner">You haven\'t created any playlist yet</string>
+    <string name="empty_playlist_msg_user">This channel has no playlist yet</string>
+    <string name="duplicate_playlist_msg">This content is already added in this playlist</string>
+    <string name="select_playlist_msg">Please select a playlist</string>
+    <string name="edit_playlist">Edit Playlist</string>
+    <string name="delete_confirmation">Are you sure to delete?</string>
     <!--    url    -->
 <!--    <string name="creators_policy_url">https://toffeelive.com/policies.php</string>-->
 <!--    <string name="tus_upload_server_url">https://ugc-upload.toffeelive.com/upload</string>-->

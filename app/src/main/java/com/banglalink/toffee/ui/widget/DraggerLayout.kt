@@ -28,7 +28,7 @@ class DraggerLayout @JvmOverloads constructor(context: Context?,
 ):RelativeLayout(context, attrs, defStyle) {
     private var dragViewId = 0
     private var bottomViewId = 0
-    private lateinit var dragView: ExoMediaController3
+    private lateinit var dragView: ToffeeStyledPlayerView
     private lateinit var bottomView: View
     private var lastAction = 0
     private val bottomMargin = (52 + 72).px

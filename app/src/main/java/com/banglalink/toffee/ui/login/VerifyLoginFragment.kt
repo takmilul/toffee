@@ -80,12 +80,12 @@ class VerifyLoginFragment : ChildDialogFragment() {
     private fun observeVerifyCode() {
         observe(viewModel.verifyResponse) {
             progressDialog.dismiss()
-            homeViewModel.sendOtpLogData(OTPLogData(otp, 0, 1))
             when (it) {
                 is Resource.Success -> {
                     verifiedUserData = it.data
                     mPref.phoneNumber = phoneNumber
                     viewModel.sendLoginLogData()
+                    homeViewModel.sendOtpLogData(OTPLogData(otp, 0, 0, 1), phoneNumber)
                     if (cPref.isUserInterestSubmitted(phoneNumber)) {
                         reloadContent()
                     }
@@ -158,7 +158,7 @@ class VerifyLoginFragment : ChildDialogFragment() {
             binding.otpEditText.setText(it)
             binding.otpEditText.setSelection(it.length)
             otp = binding.otpEditText.text.toString().trim()
-            homeViewModel.sendOtpLogData(OTPLogData(otp, 1, 0))
+            homeViewModel.sendOtpLogData(OTPLogData(otp, 0, 1, 0), phoneNumber)
             viewModel.verifyCode(otp, regSessionToken, "")
         }
         

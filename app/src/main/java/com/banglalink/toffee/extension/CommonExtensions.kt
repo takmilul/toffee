@@ -3,6 +3,7 @@ package com.banglalink.toffee.extension
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.res.Resources
+import android.os.Bundle
 import android.util.Patterns
 import android.view.MotionEvent
 import android.view.View
@@ -19,6 +20,7 @@ import com.banglalink.toffee.enums.InputType.*
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.home.HomeActivity
+import com.banglalink.toffee.ui.mychannel.MyChannelAddToPlaylistFragment
 import com.banglalink.toffee.ui.report.ReportPopupFragment
 import com.facebook.shimmer.ShimmerFrameLayout
 import kotlinx.coroutines.launch
@@ -94,6 +96,20 @@ fun Activity.handleReport(item: ChannelInfo) {
                 )
             }
         fragment?.show((this as FragmentActivity).supportFragmentManager, "report_video")
+    }
+}
+
+fun Activity.handleAddToPlaylist(item: ChannelInfo) {
+    checkVerification {
+        if (this is HomeActivity) {
+            val isUserPlaylist = if (mPref.customerId == item.channel_owner_id) 0 else 1
+            val args = Bundle().also {
+                it.putInt(MyChannelAddToPlaylistFragment.CHANNEL_OWNER_ID, mPref.customerId)
+                it.putParcelable(MyChannelAddToPlaylistFragment.CHANNEL_INFO, item)
+                it.putInt(MyChannelAddToPlaylistFragment.IS_USER_PLAYLIST, isUserPlaylist)
+            }
+            this.getNavController().navigate(R.id.myChannelAddToPlaylistFragment, args)
+        }
     }
 }
 

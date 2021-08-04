@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
@@ -15,7 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import com.banglalink.toffee.R
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_VIDEOS
+import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.database.dao.ReactionDao
@@ -46,10 +47,10 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
     @Inject lateinit var cacheManager: CacheManager
     @Inject lateinit var favoriteDao: FavoriteItemDao
     private lateinit var mAdapter: MyChannelVideosAdapter
-    val mViewModel by viewModels<MyChannelVideosViewModel>()
     private var _binding: FragmentMyChannelVideosBinding ? = null
     private val binding get() = _binding!!
     private val homeViewModel by activityViewModels<HomeViewModel>()
+    val mViewModel by viewModels<MyChannelVideosViewModel>()
     private val videosReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
     
     companion object {
@@ -57,9 +58,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
         
         fun newInstance(channelOwnerId: Int): MyChannelVideosFragment {
             return MyChannelVideosFragment().apply {
-                arguments = Bundle().apply {
-                    putInt(CHANNEL_OWNER_ID, channelOwnerId)
-                }
+                arguments = bundleOf(CHANNEL_OWNER_ID to channelOwnerId)
             }
         }
     }
@@ -72,7 +71,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
         isOwner = channelOwnerId == mPref.customerId
     }
     
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentMyChannelVideosBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -85,16 +84,11 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
         setEmptyView()
-        
         with(binding.myChannelVideos) {
             addItemDecoration(MarginItemDecoration(12))
-
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-                mAdapter.loadStateFlow
-//                    .distinctUntilChangedBy { it.refresh }
-                    .collectLatest {
+                mAdapter.loadStateFlow.collectLatest {
                     binding.progressBar.isVisible = it.source.refresh is LoadState.Loading
                     mAdapter.apply {
                         val showEmpty = itemCount <= 0 && !it.source.refresh.endOfPaginationReached && it.source.refresh !is LoadState.Loading
@@ -126,7 +120,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
     private fun setEmptyView() {
         with(binding) {
             if (isOwner) {
-                emptyViewLabel.text = "You haven't uploaded any video yet"
+                emptyViewLabel.text = getString(R.string.owner_video_empty_msg)
                 uploadVideoButton.setOnClickListener {
                     requireActivity().checkVerification {
                         requireActivity().let {
@@ -143,7 +137,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
             } else {
                 uploadVideoButton.hide()
                 creatorsPolicyButton.hide()
-                emptyViewLabel.text = "This channel has no video yet"
+                emptyViewLabel.text = getString(R.string.public_video_empty_msg)
                 (emptyViewIcon.layoutParams as ViewGroup.MarginLayoutParams).topMargin = 32.px
             }
         }
@@ -161,13 +155,18 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_edit_content -> {
-                        if (findNavController().currentDestination?.id != R.id.myChannelVideosEditFragment && findNavController().currentDestination?.id == R.id.myChannelHomeFragment) {
-                            parentFragment?.findNavController()?.navigate(R.id.action_myChannelHomeFragment_to_myChannelVideosEditFragment, Bundle().apply{ putParcelable(MyChannelVideosEditFragment.CHANNEL_INFO, item) })
-                        }
+                        parentFragment?.findNavController()?.navigate(R.id.myChannelVideosEditFragment, bundleOf(
+                            MyChannelVideosEditFragment.CHANNEL_INFO to item
+                        ))
                     }
                     R.id.menu_add_to_playlist -> {
-                        val fragment = MyChannelAddToPlaylistFragment.newInstance(channelOwnerId, item)
-                        fragment.show(requireActivity().supportFragmentManager, "add_to_playlist")
+                        val isUserPlaylist = if (isOwner) 0 else 1
+                        val args = Bundle().also {
+                            it.putInt(MyChannelAddToPlaylistFragment.CHANNEL_OWNER_ID, mPref.customerId)
+                            it.putParcelable(MyChannelAddToPlaylistFragment.CHANNEL_INFO, item)
+                            it.putInt(MyChannelAddToPlaylistFragment.IS_USER_PLAYLIST, isUserPlaylist)
+                        }
+                        findNavController().navigate(R.id.myChannelAddToPlaylistFragment, args)
                     }
                     R.id.menu_share -> {
                         requireActivity().handleShare(item)
@@ -254,7 +253,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
     }
     
     private fun reloadVideosList() {
-        cacheManager.clearCacheByUrl(GET_MY_CHANNEL_VIDEOS)
+        cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_VIDEOS)
         mAdapter.refresh()
     }
 }

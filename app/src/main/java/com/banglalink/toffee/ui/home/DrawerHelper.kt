@@ -219,6 +219,13 @@ class DrawerHelper(
                     ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_ACTIVITIES)
                 }
             }
+            R.id.menu_playlist -> {
+                if (!mPref.isVerifiedUser) {
+                    activity.checkVerification()
+                    binding.drawerLayout.closeDrawers()
+                    return true
+                }
+            }
             R.id.menu_invite -> {
                 if (!mPref.isVerifiedUser) {
                     activity.checkVerification()

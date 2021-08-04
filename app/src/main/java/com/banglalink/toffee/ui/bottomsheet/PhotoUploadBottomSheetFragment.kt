@@ -1,11 +1,12 @@
 package com.banglalink.toffee.ui.bottomsheet
 
 import android.os.Bundle
-import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
+import androidx.core.widget.doAfterTextChanged
 import androidx.navigation.fragment.findNavController
 import coil.load
 import coil.request.CachePolicy
@@ -20,13 +21,14 @@ import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.imagePathToBase64
 import javax.inject.Inject
 
-class PhotoUploadBottomSheetFragment : ChildDialogFragment(), TextWatcher {
+class PhotoUploadBottomSheetFragment : ChildDialogFragment() {
 
     private var channelName: String = ""
     private var channelLogoUrl: String = ""
-    private var isNewChannelLogo: Boolean = false
     private var newChannelLogoUrl: String = ""
+    private var isNewChannelLogo: Boolean = false
     @Inject lateinit var cacheManager: CacheManager
+    private var channelNameTextWatcher: TextWatcher? = null
     private lateinit var progressDialog: VelBoxProgressDialog
     private var _binding: BottomSheetUploadPhotoBinding? = null
     private val binding get() = _binding!!
@@ -34,11 +36,6 @@ class PhotoUploadBottomSheetFragment : ChildDialogFragment(), TextWatcher {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = BottomSheetUploadPhotoBinding.inflate(layoutInflater)
         return binding.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -59,32 +56,28 @@ class PhotoUploadBottomSheetFragment : ChildDialogFragment(), TextWatcher {
             editIv.safeClick({ showImagePickerDialog() })
             channelLogoIv.safeClick({ showImagePickerDialog() })
             nextBtn.safeClick({navigateToBasicInfoBottomSheet()})
-            channelNameEt.addTextChangedListener(this@PhotoUploadBottomSheetFragment)
+            channelNameTextWatcher = channelNameEt.doAfterTextChanged {
+                channelName = it.toString().trim()
+                binding.channelNameCountTv.text = getString(R.string.channel_name_limit, it.toString().length)
+                saveButtonStateChange()
+            }
+            channelNameCountTv.text = getString(R.string.channel_name_limit, 0)
         }
-        binding.channelNameCountTv.text = getString(R.string.channel_name_limit, 0)
     }
     
     private fun navigateToBasicInfoBottomSheet() {
-        if (findNavController().currentDestination?.id != R.id.basicInfoBottomSheetFragment && findNavController().currentDestination?.id == R.id.photoUploadBottomSheetFragment) {
-            findNavController().navigate(R.id.basicInfoBottomSheetFragment, Bundle().apply { 
-                arguments.apply { 
-                    putString("channelName", channelName)
-                    putString("newChannelLogoUrl", newChannelLogoUrl)
-                }
-            })
-        }
+        findNavController().navigate(R.id.basicInfoBottomSheetFragment, bundleOf(
+            "channelName" to channelName,
+            "newChannelLogoUrl" to newChannelLogoUrl
+        ))
     }
 
     private fun showImagePickerDialog() {
-        if (findNavController().currentDestination?.id != R.id.thumbnailSelectionMethodFragment && findNavController().currentDestination?.id == R.id.photoUploadBottomSheetFragment) {
-            val action =
-                PhotoUploadBottomSheetFragmentDirections.actionPhotoUploadBottomSheetFragmentToThumbnailSelectionMethodFragment(
-                    "Update Your Channel Logo",
-                    true
-                )
-            findNavController().navigate(action)
-            isNewChannelLogo = true
-        }
+        findNavController().navigate(R.id.thumbnailSelectionMethodFragment, bundleOf(
+            ThumbnailSelectionMethodFragment.TITLE to getString(R.string.update_channel_photo),
+            ThumbnailSelectionMethodFragment.IS_PROFILE_IMAGE to true
+        ))
+        isNewChannelLogo = true
     }
 
     override fun onResume() {
@@ -121,13 +114,10 @@ class PhotoUploadBottomSheetFragment : ChildDialogFragment(), TextWatcher {
         binding.channelLogoIv.isClickable = false
     }
 
-    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
-    override fun afterTextChanged(s: Editable?) {
-        channelName = s.toString().trim()
-        binding.channelNameCountTv.text = getString(R.string.channel_name_limit, s.toString().length)
-        saveButtonStateChange()
+    override fun onDestroyView() {
+        binding.channelNameEt.removeTextChangedListener(channelNameTextWatcher)
+        channelNameTextWatcher = null
+        super.onDestroyView()
+        _binding = null
     }
 }

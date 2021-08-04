@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/splash_gradient_bg"
-    app:layoutDescription="@xml/splash_screen_motion_scene2">
+    app:layoutDescription="@xml/splash_screen_motion_scene">
     
     <ImageView
         android:id="@+id/splashLineImageView"

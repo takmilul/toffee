@@ -88,9 +88,9 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     }
 
     var isVerifiedUser: Boolean
-        get() = pref.getBoolean(PREF_VERFICATION,false)
+        get() = pref.getBoolean(PREF_VERIFICATION,false)
         set(isVerified){
-            pref.edit().putBoolean(PREF_VERFICATION,isVerified).apply()
+            pref.edit().putBoolean(PREF_VERIFICATION,isVerified).apply()
         }
     
     var balance: Int
@@ -171,7 +171,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = if (Utils.checkWifiOnAndConnected(context)) PREF_WIFI else PREF_CELLULAR
 
     var isSubscriptionActive: String
-        get() = pref.getString(PREF_SUBSCRIPTION_ACTIVE, "") ?: ""
+        get() = "false" // TODO: Uncomment for subscription: pref.getString(PREF_SUBSCRIPTION_ACTIVE, "") ?: ""
         set(phoneNumber) {
             pref.edit().putString(PREF_SUBSCRIPTION_ACTIVE, phoneNumber).apply()
         }
@@ -497,6 +497,18 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         return false
     }
 
+    var isVastActive: Boolean
+        get() = pref.getBoolean(PREF_TOFFEE_IS_VAST_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_TOFFEE_IS_VAST_ACTIVE, value) }
+    
+    var vastFrequency: Int
+        get() = pref.getInt(PREF_TOFFEE_VAST_FREQUENCY, 1)
+        set(value) = pref.edit { putInt(PREF_TOFFEE_VAST_FREQUENCY, value) }
+
+    private var bucketDirectory: String?
+        get() = pref.getString(PREF_BUCKET_DIRECTORY, null)
+        set(value) = pref.edit { putString(PREF_BUCKET_DIRECTORY, value) }
+
     fun saveCustomerInfo(customerInfoLogin:CustomerInfoLogin){
         balance = customerInfoLogin.balance
         isVerifiedUser = customerInfoLogin.verified_status
@@ -552,7 +564,9 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         userIp = customerInfoLogin.userIp ?: ""
 
         forcedUpdateVersions = customerInfoLogin.forceUpdateVersionCodes
-        
+        isVastActive = customerInfoLogin.isVastActive == 1
+        vastFrequency = customerInfoLogin.vastFrequency
+        bucketDirectory = customerInfoLogin.gcpVodBucketDirectory
         screenCaptureEnabledUsers = if (customerInfoLogin.screenCaptureEnabledUsers.isNullOrEmpty()) {
             SCREEN_CAPTURE_DISABLED_USERS
         } else {
@@ -572,8 +586,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_CHANNEL_ID = "channel_id"
         private const val PREF_SESSION_TOKEN = "session_token"
         private const val PREF_BANGLALINK_NUMBER = "banglalink_number"
-        private const val PREF_VERFICATION = "VER"
-        private const val PREF_LOGOUT= "LOGIYT"
+        private const val PREF_VERIFICATION = "VER"
         private const val PREF_BALANCE = "balance"
         private const val PREF_LATITUDE= "latitude"
         private const val PREF_LONGITUDE= "Longitude"
@@ -640,8 +653,11 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_SCREEN_CAPTURE_USERS = "screenCaptureEnabledUsers"
         private const val PREF_NAME_IP_TV= "IP_TV"
         private const val PREF_FORCE_UPDATE_VERSIONS= "pref_force_update_versions"
-
-        private val SCREEN_CAPTURE_DISABLED_USERS = setOf("7cd171cf93c9236b", "206c06aaf38fffe9", "21587c9c6447e992", "a25df4f9bc3754de", "4ec3c91fc4f4b8c0", "4fe54e7c960e391b", "c4b82aedaf88eaac")
+        private const val PREF_TOFFEE_IS_VAST_ACTIVE= "pref_is_vast_active"
+        private const val PREF_TOFFEE_VAST_FREQUENCY= "pref_vast_frequency"
+        private const val PREF_BUCKET_DIRECTORY= "pref_bucket_directory"
+        
+        private val SCREEN_CAPTURE_DISABLED_USERS = setOf("7cd171cf93c9236b", "206c06aaf38fffe9", "21587c9c6447e992", "a25df4f9bc3754de", "4ec3c91fc4f4b8c0", "4fe54e7c960e391b", "c4b82aedaf88eaac", "53e9079df4cae882")
         
         private var instance: SessionPreference? = null
 

@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.os.bundleOf
 import androidx.core.view.setPadding
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
@@ -24,9 +25,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.FragmentEditUploadInfoBinding
-import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.Resource
@@ -42,28 +41,22 @@ import com.github.florent37.runtimepermission.kotlin.coroutines.experimental.ask
 import com.pchmn.materialchips.ChipsInput
 import com.pchmn.materialchips.model.ChipInterface
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class EditUploadInfoFragment: BaseFragment() {
     
+    private lateinit var uploadFileUri: String
+    private var descTextWatcher: TextWatcher? = null
+    private var titleTextWatcher: TextWatcher? = null
+    private var progressDialog: VelBoxProgressDialog? = null
     private var _binding: FragmentEditUploadInfoBinding ? = null
     private val binding get() = _binding!!
-    private var progressDialog: VelBoxProgressDialog? = null
-    @Inject lateinit var editUploadViewModelFactory: EditUploadInfoViewModel.AssistedFactory
-    @Inject lateinit var uploadRepo: UploadInfoRepository
-    @AppCoroutineScope @Inject lateinit var appScope: CoroutineScope
-    private lateinit var uploadFileUri: String
-
-    private var titleTextWatcher: TextWatcher? = null
-    private var descTextWatcher: TextWatcher? = null
-
-
     private val viewModel: EditUploadInfoViewModel by viewModels {
         EditUploadInfoViewModel.provideFactory(editUploadViewModelFactory, uploadFileUri)
     }
+    @Inject lateinit var editUploadViewModelFactory: EditUploadInfoViewModel.AssistedFactory
 
     companion object {
         const val UPLOAD_FILE_URI = "UPLOAD_FILE_URI"
@@ -77,8 +70,8 @@ class EditUploadInfoFragment: BaseFragment() {
             override fun handleOnBackPressed() {
                 if(isEnabled) {
                     VelBoxAlertDialogBuilder(requireContext()).apply {
-                        setTitle("Cancel Uploading")
-                        setText("Are you sure that you want to\n" + "cancel uploading video?")
+                        setTitle(getString(R.string.cancel_upload_title))
+                        setText(getString(R.string.cancel_upload_msg))
                         setPositiveButtonListener("NO") {
                             it?.dismiss()
                         }
@@ -122,9 +115,8 @@ class EditUploadInfoFragment: BaseFragment() {
         }
         binding.cancelButton.setOnClickListener {
             VelBoxAlertDialogBuilder(requireContext()).apply {
-                setTitle("Cancel Uploading")
-                setText("Are you sure that you want to\n" +
-                        "cancel uploading video?")
+                setTitle(getString(R.string.cancel_upload_title))
+                setText(getString(R.string.cancel_upload_msg))
                 setPositiveButtonListener("NO") {
                     it?.dismiss()
                 }
@@ -140,14 +132,10 @@ class EditUploadInfoFragment: BaseFragment() {
         }
 
         binding.thumbEditButton.setOnClickListener {
-            if (findNavController().currentDestination?.id != R.id.thumbnailSelectionMethodFragment && findNavController().currentDestination?.id == R.id.editUploadInfoFragment) {
-                val action =
-                    EditUploadInfoFragmentDirections.actionEditUploadInfoFragmentToThumbnailSelectionMethodFragment(
-                        "Set Video Cover Photo",
-                        false
-                    )
-                findNavController().navigate(action)
-            }
+            findNavController().navigate(R.id.thumbnailSelectionMethodFragment, bundleOf(
+                ThumbnailSelectionMethodFragment.TITLE to getString(R.string.set_video_cover_photo),
+                ThumbnailSelectionMethodFragment.IS_PROFILE_IMAGE to false
+            ))
         }
         binding.copyrightLayout.uploadFileButton.safeClick({checkFileSystemPermission()})
         binding.copyrightLayout.closeIv.safeClick({
@@ -229,8 +217,7 @@ class EditUploadInfoFragment: BaseFragment() {
     private fun observeExitFragment() {
         observe(viewModel.exitFragment) {
             if(it) {
-                requireContext().showToast("Oops! Something went wrong.")
-                //requireContext().showToast("Unable to load data!")
+                requireContext().showToast(getString(R.string.unable_to_load_data))
                 findNavController().popBackStack()
             }
         }
@@ -261,7 +248,7 @@ class EditUploadInfoFragment: BaseFragment() {
     }
 
     private fun setupAgeSpinner(){
-        val mAgeAdapter = ToffeeSpinnerAdapter<String>(requireContext(), "Select Age")
+        val mAgeAdapter = ToffeeSpinnerAdapter<String>(requireContext(), getString(R.string.select_age))
         binding.ageGroupSpinner.adapter = mAgeAdapter
         binding.ageGroupSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -287,7 +274,7 @@ class EditUploadInfoFragment: BaseFragment() {
     }
 
     private fun setupCategorySpinner() {
-        val mCategoryAdapter = ToffeeSpinnerAdapter<Category>(requireContext(), "Select Category")
+        val mCategoryAdapter = ToffeeSpinnerAdapter<Category>(requireContext(), getString(R.string.select_category))
         binding.categorySpinner.adapter = mCategoryAdapter
         binding.categorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -316,7 +303,7 @@ class EditUploadInfoFragment: BaseFragment() {
     }
 
     private fun setupSubcategorySpinner() {
-        val mSubCategoryAdapter = ToffeeSpinnerAdapter<SubCategory>(requireContext(), "Select Sub Category")
+        val mSubCategoryAdapter = ToffeeSpinnerAdapter<SubCategory>(requireContext(), getString(R.string.select_sub_category))
         binding.subCategorySpinner.adapter = mSubCategoryAdapter
         binding.subCategorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -403,15 +390,14 @@ class EditUploadInfoFragment: BaseFragment() {
                     lifecycleScope.launch {
                         progressDialog?.dismiss()
                         progressDialog = null
-                        findNavController().navigate(R.id.upload_minimize, Bundle().apply {
-                            putString(MinimizeUploadFragment.UPLOAD_ID, it.data.first)
-                            putLong(MinimizeUploadFragment.CONTENT_ID, it.data.second)
-                        })
+                        findNavController().navigate(R.id.upload_minimize, bundleOf(
+                            MinimizeUploadFragment.UPLOAD_ID to it.data.first,
+                            MinimizeUploadFragment.CONTENT_ID to it.data.second
+                        ))
                     }
                 }
                 else -> {
-                    context?.showToast("Something went wrong. Please try again.")
-                    //context?.showToast("Unable to submit the video.")
+                    context?.showToast(getString(R.string.try_again_msg))
                 }
             }
         }
@@ -440,8 +426,7 @@ class EditUploadInfoFragment: BaseFragment() {
         }
 
         if (viewModel.thumbnailData.value.isNullOrBlank()){
-           // context?.showToast("Missing thumbnail field")
-            context?.showToast("Thumbnail is missing!")
+            context?.showToast(getString(R.string.thumbnail_missing_msg))
             return
         }
 

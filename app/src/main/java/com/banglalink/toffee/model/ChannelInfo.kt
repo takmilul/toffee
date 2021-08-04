@@ -81,7 +81,8 @@ data class ChannelInfo(
     val is_horizontal: Int? = null,
     @SerializedName("landscape_feature_1280_720")
     val ugcFeaturedImage: String? = null,
-
+    @SerializedName("is_encoded")
+    val isEncoded: Int = 1,
     @SerializedName("is_ugc")
     val is_ugc: Int = 0,
     @SerializedName("fcm_event_name")
@@ -103,7 +104,9 @@ data class ChannelInfo(
         get() = "VOD".equals(type, ignoreCase = true)
     val isCatchup: Boolean
         get() = "CATCHUP".equals(type, ignoreCase = true)
-
+    val isBucketUrl: Boolean
+        get() = isEncoded != 1
+    
     fun getCategory(category: String, subCategory: String): String {
         var itemCategory = "Channels>$category"
         if (subCategory.isNotEmpty()) {

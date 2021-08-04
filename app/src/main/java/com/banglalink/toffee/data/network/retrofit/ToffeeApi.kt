@@ -258,9 +258,9 @@ interface ToffeeApi {
         @Body channelPlaylistVideosRequest: MyChannelPlaylistVideosRequest
     ): MyChannelPlaylistVideosResponse
 
-    @POST("ugc-content-by-user-playlist/1/{channelOwnerId}/{isOwner}/{playlistId}/{limit}/{offset}/{dbVersion}")
+    @POST("ugc-content-by-user-playlist/1/{channelOwnerUserId}/{isOwner}/{playlistId}/{limit}/{offset}/{dbVersion}")
     suspend fun getMyChannelUserPlaylistVideos(
-        @Path("channelOwnerId") channelOwnerId: Int,
+        @Path("channelOwnerUserId") channelOwnerId: Int,
         @Path("isOwner") isOwner: Int,
         @Path("playlistId") playlistId: Int,
         @Path("limit") limit: Int,
@@ -382,4 +382,11 @@ interface ToffeeApi {
     suspend fun unVerifyUser(
         @Body logoutRequest: LogoutRequest
     ): LogoutResponse
+
+    @POST("vast-tags-list/1/{dbVersion}")
+    suspend fun getVastTagLists(
+        @Path("dbVersion") dbVersion: Int,
+        @Body paymentMethodRequest: VastTagRequest
+    ): VastTagResponse
+
 }

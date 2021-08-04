@@ -12,6 +12,8 @@ import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Path
 import android.graphics.Point
+import android.net.ConnectivityManager
+import android.net.NetworkRequest
 import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
@@ -42,7 +44,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_VIDEOS
+import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
@@ -67,11 +69,13 @@ import com.banglalink.toffee.ui.splash.SplashScreenActivity
 import com.banglalink.toffee.ui.upload.UploadProgressViewModel
 import com.banglalink.toffee.ui.upload.UploadStateManager
 import com.banglalink.toffee.ui.upload.UploadStatus
+import com.banglalink.toffee.ui.userplaylist.UserPlaylistVideosFragment
 import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.ui.widget.showSubscriptionDialog
 import com.banglalink.toffee.util.*
 import com.google.android.exoplayer2.ext.cast.CastPlayer
+import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.util.Util
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.switchmaterial.SwitchMaterial
@@ -121,6 +125,7 @@ class HomeActivity :
     private lateinit var appbarConfig: AppBarConfiguration
     @Inject lateinit var uploadManager: UploadStateManager
     @Inject lateinit var inAppMessageParser: InAppMessageParser
+    private lateinit var connectivityManager: ConnectivityManager
     @Inject @AppCoroutineScope lateinit var appScope: CoroutineScope
     @Inject lateinit var notificationRepo: NotificationInfoRepository
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
@@ -138,6 +143,10 @@ class HomeActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), heartBeatManager)
+
         val isDisableScreenshot = !(mPref.screenCaptureEnabledUsers.contains(cPref.deviceId) || mPref.screenCaptureEnabledUsers.contains(mPref.customerId.toString()))
         //disable screen capture
         if (! BuildConfig.DEBUG && isDisableScreenshot) {
@@ -350,6 +359,7 @@ class HomeActivity :
         observeMyChannelNavigation()
         inAppUpdate()
         customCrashReport()
+        viewModel.getVastTags()
     }
     
     private fun isChannelComplete() = mPref.customerName.isNotBlank()
@@ -457,8 +467,7 @@ class HomeActivity :
             observe(viewModel.myChannelDetailResponse) {
                 when(it) {
                     is Success -> showUploadDialog()
-                   // is Failure -> showToast("Operation failed")
-                    is Failure -> showToast("Oops! Something went wrong.")
+                    is Failure -> showToast(getString(R.string.unable_to_load_data))
                 }
             }
             viewModel.getChannelDetail(mPref.customerId)
@@ -475,7 +484,6 @@ class HomeActivity :
                 return true
             }
             lifecycleScope.launch {
-
                 if (uploadRepo.getActiveUploadsList().isNotEmpty()) {
                     return@launch
                 }
@@ -513,6 +521,8 @@ class HomeActivity :
         }
     }
 
+    override fun getPlayerView(): StyledPlayerView = binding.playerView
+
     private fun configureBottomSheet() {
         bottomSheetBehavior = BottomSheetBehavior.from(binding.homeBottomSheet.bottomSheet)
         if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
@@ -523,7 +533,7 @@ class HomeActivity :
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                if (newState == BottomSheetBehavior.STATE_EXPANDED && binding.playerView.isControllerHidden) {
+                if (newState == BottomSheetBehavior.STATE_EXPANDED && !binding.playerView.isControllerFullyVisible) {
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 }
             }
@@ -962,9 +972,10 @@ class HomeActivity :
                         )
                     } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
                 }
+                /* TODO: Uncomment for subscription
                 !((it.isPurchased || it.isPaidSubscribed) && !it.isExpired(Date())) && mPref.isSubscriptionActive == "true" ->{
                     showSubscribePackDialog()
-                }
+                } */
                 else ->{
                     if(player is CastPlayer) {
                         maximizePlayer()
@@ -1044,19 +1055,35 @@ class HomeActivity :
             }
         } else if(info is PlaylistPlaybackInfo) {
             val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
-            if (fragment !is MyChannelPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) {
-                loadFragmentById(
-                    R.id.details_viewer, MyChannelPlaylistVideosFragment.newInstance(info)
-                )
-            } else {
-                fragment.setCurrentChannel(info.currentItem)
+            when {
+                (fragment !is MyChannelPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) && !info.isUserPlaylist -> {
+                    loadFragmentById(
+                        R.id.details_viewer, MyChannelPlaylistVideosFragment.newInstance(info)
+                    )
+                }
+                (fragment !is UserPlaylistVideosFragment || fragment.getPlaylistId() != info.getPlaylistIdLong()) && info.isUserPlaylist -> {
+                    loadFragmentById(
+                        R.id.details_viewer, UserPlaylistVideosFragment.newInstance(info)
+                    )
+                }
+                fragment is MyChannelPlaylistVideosFragment -> {
+                    fragment.setCurrentChannel(info.currentItem)
+                }
+                fragment is UserPlaylistVideosFragment -> {
+                    fragment.setCurrentChannel(info.currentItem)
+                }
             }
         } else if(info is PlaylistItem) {
-            val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
-            if (fragment is MyChannelPlaylistVideosFragment) {
-                fragment.setCurrentChannel(info.channelInfo)
-            } else if(fragment is EpisodeListFragment) {
-                fragment.setCurrentChannel(info.channelInfo)
+            when (val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)) {
+                is MyChannelPlaylistVideosFragment -> {
+                    fragment.setCurrentChannel(info.channelInfo)
+                }
+                is UserPlaylistVideosFragment -> {
+                    fragment.setCurrentChannel(info.channelInfo)
+                }
+                is EpisodeListFragment -> {
+                    fragment.setCurrentChannel(info.channelInfo)
+                }
             }
         } else if(info is SeriesPlaybackInfo) {
             val fragment = supportFragmentManager.findFragmentById(R.id.details_viewer)
@@ -1081,6 +1108,7 @@ class HomeActivity :
 //            }
 //        }
     }
+    
     private fun loadFragmentById(id: Int, fragment: Fragment, tag: String) {
         supportFragmentManager.popBackStack(
             LandingPageFragment::class.java.name,
@@ -1291,10 +1319,10 @@ class HomeActivity :
     }
     
     override fun onRotationLock(isAutoRotationEnabled: Boolean) {
-       if(isAutoRotationEnabled && !binding.playerView.isVideoPortrait){
+        if(isAutoRotationEnabled && !binding.playerView.isVideoPortrait){
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
             showToast(getString(R.string.auto_rotation_on))
-        } else{
+        } else {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED
             showToast(getString(R.string.auto_rotation_off))
         }
@@ -1316,14 +1344,15 @@ class HomeActivity :
     
     override fun onDestroy() {
 //        mqttService.destroy()
-        navController.removeOnDestinationChangedListener(destinationChangeListener)
         appUpdateManager.unregisterListener(appUpdateListener)
+        connectivityManager.unregisterNetworkCallback(heartBeatManager)
+        navController.removeOnDestinationChangedListener(destinationChangeListener)
         super.onDestroy()
     }
     
     fun handleExitApp() {
         AlertDialog.Builder(this, R.style.AlertDialogTheme)
-            .setMessage(String.format(EXIT_FROM_APP_MSG, getString(R.string.app_name)))
+            .setMessage(String.format(getString(R.string.exit_from_app_msg), getString(R.string.app_name)))
             .setCancelable(false)
             .setPositiveButton("Yes") { _, _ ->
                 observeLogout()
@@ -1453,7 +1482,7 @@ class HomeActivity :
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
 
-    private fun maximizePlayer() {
+    override fun maximizePlayer() {
         binding.draggableView.maximize()
         binding.draggableView.visibility = View.VISIBLE
 //        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
@@ -1638,7 +1667,7 @@ class HomeActivity :
                             binding.homeMiniProgressContainer.uploadSizeText.isInvisible = true
                             binding.homeMiniProgressContainer.miniUploadProgressText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_upload_done, 0, 0, 0)
                             binding.homeMiniProgressContainer.miniUploadProgressText.text = "Upload complete"
-                            cacheManager.clearCacheByUrl(GET_MY_CHANNEL_VIDEOS)
+                            cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_VIDEOS)
                         }
                         UploadStatus.ADDED.value,
                         UploadStatus.STARTED.value -> {

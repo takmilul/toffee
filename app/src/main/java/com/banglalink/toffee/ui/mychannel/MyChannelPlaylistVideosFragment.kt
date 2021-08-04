@@ -18,16 +18,13 @@ import androidx.paging.LoadState
 import androidx.paging.map
 import androidx.recyclerview.widget.ConcatAdapter
 import com.banglalink.toffee.R
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_PLAYLISTS
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_PLAYLIST_VIDEOS
+import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.apiservice.MyChannelPlaylistContentParam
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
-import com.banglalink.toffee.data.repository.SubscriptionCountRepository
-import com.banglalink.toffee.data.repository.SubscriptionInfoRepository
 import com.banglalink.toffee.databinding.FragmentMyChannelPlaylistVideosBinding
 import com.banglalink.toffee.enums.Reaction
 import com.banglalink.toffee.extension.*
@@ -43,7 +40,6 @@ import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.ui.widget.MyPopupWindow
-import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -63,10 +59,9 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     private lateinit var playlistAdapter: MyChannelPlaylistVideosAdapter
     private var _binding: FragmentMyChannelPlaylistVideosBinding ? = null
     private val binding get() = _binding!!
-    @Inject lateinit var subscriptionInfoRepository: SubscriptionInfoRepository
-    @Inject lateinit var subscriptionCountRepository: SubscriptionCountRepository
     private val homeViewModel by activityViewModels<HomeViewModel>()
-    val mViewModel by viewModels<MyChannelPlaylistVideosViewModel>()
+    private val mViewModel by viewModels<MyChannelPlaylistVideosViewModel>()
+    private val reloadViewModel by activityViewModels<MyChannelReloadViewModel>()
     
     companion object {
         fun newInstance(info: PlaylistPlaybackInfo): MyChannelPlaylistVideosFragment {
@@ -80,10 +75,6 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
     
     fun getPlaylistId(): Long = args.playlistInfo.getPlaylistIdLong()
     
-    fun isAutoPlayEnabled(): Boolean {
-        return view?.findViewById<SwitchButton>(R.id.autoPlaySwitch)?.isChecked == true
-    }
-    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         args = MyChannelPlaylistVideosFragmentArgs.fromBundle(requireArguments())
@@ -96,17 +87,13 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
         return binding.root
     }
 
-    override fun onDestroyView() {
-        binding.myChannelPlaylistVideos.adapter = null
-        super.onDestroyView()
-        _binding = null
-    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
         initAdapter()
         observeListState()
         observeVideoList()
+        observeListReload()
         setSubscriptionStatus()
 //        observeSubscribeChannel()
         
@@ -161,11 +148,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
                 requireActivity().checkVerification {
                     if (item.isSubscribed == 0) {
                         homeViewModel.sendSubscriptionStatus(
-                            SubscriptionInfo(
-                                null,
-                                item.channel_owner_id,
-                                mPref.customerId
-                            ), 1
+                            SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), 1
                         )
                         currentItem?.let { 
                             it.isSubscribed = 1
@@ -175,11 +158,7 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
                     } else {
                         UnSubscribeDialog.show(requireContext()) {
                             homeViewModel.sendSubscriptionStatus(
-                                SubscriptionInfo(
-                                    null,
-                                    item.channel_owner_id,
-                                    mPref.customerId
-                                ), -1
+                                SubscriptionInfo(null, item.channel_owner_id, mPref.customerId), -1
                             )
                             currentItem?.let {
                                 it.isSubscribed = 0
@@ -197,6 +176,13 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
             }
         }, mPref)
         mAdapter = ConcatAdapter(detailsAdapter, playlistAdapter.withLoadStateFooter(ListLoadStateAdapter { playlistAdapter.retry() }))
+    }
+    
+    fun setCurrentChannel(channelInfo: ChannelInfo?) {
+        currentItem = channelInfo
+        detailsAdapter.setChannelInfo(channelInfo)
+        playlistAdapter.setSelectedItem(channelInfo)
+        setSubscriptionStatus()
     }
     
     private fun setSubscriptionStatus() {
@@ -219,6 +205,65 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
         }
     }
     
+    private fun observeListState() {
+        var isInitialized = false
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            playlistAdapter.loadStateFlow.collectLatest {
+                val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
+                val isEmpty = playlistAdapter.itemCount <= 0 && !it.source.refresh.endOfPaginationReached && !isLoading
+                binding.progressBar.isVisible = isLoading
+                binding.emptyView.isVisible = isEmpty
+                binding.myChannelPlaylistVideos.isVisible = !isEmpty
+                if (!isEmpty) {
+                    val list = playlistAdapter.snapshot()
+                    homeViewModel.addToPlayListMutableLiveData.postValue(
+                        AddToPlaylistData(getPlaylistId(), list.items, false)
+                    )
+                }
+                isInitialized = true
+            }
+        }
+    }
+    
+    private fun observeDeletePlaylistVideo() {
+        observe(mViewModel.deletePlaylistVideoLiveData) {
+            when (it) {
+                is Success -> {
+                    requireContext().showToast(it.data.message)
+                    reloadPlaylistVideos()
+                    reloadViewModel.reloadVideos.value = true
+                    reloadViewModel.reloadPlaylist.value = true
+                }
+                is Failure -> {
+                    requireContext().showToast(it.error.msg)
+                }
+            }
+        }
+    }
+    
+    private fun observeListReload() {
+        observe(reloadViewModel.reloadVideos) {
+            if (it) {
+                reloadPlaylistVideos()
+            }
+        }
+    }
+
+    private fun reloadPlaylistVideos() {
+        cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_PLAYLIST_VIDEOS)
+        playlistAdapter.refresh()
+        playlistAdapter.refresh().let {
+            lifecycleScope.launch {
+                playlistAdapter.loadStateFlow.collectLatest {
+                    if (args.playlistInfo.playlistItemCount != playlistAdapter.itemCount) {
+                        args.playlistInfo.playlistItemCount = playlistAdapter.itemCount
+                        detailsAdapter.notifyDataSetChanged()
+                    }
+                }
+            }
+        }
+    }
+
     private fun observeSubscribeChannel() {
         observe(homeViewModel.subscriptionLiveData) { response ->
             when(response) {
@@ -244,31 +289,11 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
         }
     }
     
-    private fun observeListState() {
-        var isInitialized = false
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            playlistAdapter.loadStateFlow.collectLatest {
-                val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
-                val isEmpty = playlistAdapter.itemCount <= 0 && !it.source.refresh.endOfPaginationReached && !isLoading
-                binding.progressBar.isVisible = isLoading
-                binding.emptyView.isVisible = isEmpty
-                binding.myChannelPlaylistVideos.isVisible = !isEmpty
-                if (!isEmpty) {
-                    val list = playlistAdapter.snapshot()
-                    homeViewModel.addToPlayListMutableLiveData.postValue(
-                        AddToPlaylistData(getPlaylistId(), list.items, false)
-                    )
-                }
-                isInitialized = true
-            }
-        }
-    }
-    
     override fun onProviderIconClicked(item: ChannelInfo) {
         super.onProviderIconClicked(item)
         homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channel_owner_id)
     }
-    
+
     override fun onItemClickAtPosition(position: Int, item: ChannelInfo) {
         if (item == currentItem || item.id == currentItem?.id) {
             return
@@ -287,7 +312,10 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
         if (requestParams.channelOwnerId == mPref.customerId) {
             PopupMenu(requireContext(), view).apply {
                 inflate(R.menu.menu_delete_playlist_video)
+                menu.findItem(R.id.menu_fav).isVisible = false
+                menu.findItem(R.id.menu_report).isVisible = false
                 menu.findItem(R.id.menu_share).isVisible = item.isApproved == 1
+                menu.findItem(R.id.menu_delete_playlist_video).isVisible = currentItem?.id != item.id
                 setOnMenuItemClickListener {
                     when (it.itemId) {
                         R.id.menu_share -> {
@@ -307,57 +335,41 @@ class MyChannelPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemLis
             openMenu(view, item)
         }
     }
-    
-    private fun observeDeletePlaylistVideo() {
-        observe(mViewModel.deletePlaylistVideoLiveData) {
-            when (it) {
-                is Success -> {
-                    cacheManager.clearCacheByUrl(GET_MY_CHANNEL_PLAYLISTS)
-                    cacheManager.clearCacheByUrl(GET_MY_CHANNEL_PLAYLIST_VIDEOS)
-                    playlistAdapter.refresh()
-                    requireContext().showToast(it.data.message)
-                }
-                is Failure -> {
-                    requireContext().showToast(it.error.msg)
-                }
-            }
-        }
-    }
-    
+
     private fun openMenu(anchor: View, channelInfo: ChannelInfo) {
-        val popupMenu = MyPopupWindow(requireContext(), anchor)
-        popupMenu.inflate(R.menu.menu_catchup_item)
-        
-        if (channelInfo.favorite == null || channelInfo.favorite == "0") {
-            popupMenu.menu.getItem(0).title = "Add to Favorites"
-        } else {
-            popupMenu.menu.getItem(0).title = "Remove from Favorites"
-        }
-        
-        popupMenu.menu.findItem(R.id.menu_share).isVisible = channelInfo.isApproved == 1
-        popupMenu.menu.findItem(R.id.menu_report).isVisible = mPref.customerId != channelInfo.channel_owner_id
-        popupMenu.setOnMenuItemClickListener {
-            when (it?.itemId) {
-                R.id.menu_share -> {
-                    requireActivity().handleShare(channelInfo)
-                    return@setOnMenuItemClickListener true
-                }
-                R.id.menu_fav -> {
-                    requireActivity().handleFavorite(channelInfo, favoriteDao)
-                    return@setOnMenuItemClickListener true
-                }
-                else -> {
-                    return@setOnMenuItemClickListener false
-                }
+        MyPopupWindow(requireContext(), anchor).apply {
+            inflate(R.menu.menu_catchup_item)
+            if (channelInfo.favorite == null || channelInfo.favorite == "0") {
+                menu.getItem(0).title = "Add to Favorites"
+            } else {
+                menu.getItem(0).title = "Remove from Favorites"
             }
+            menu.findItem(R.id.menu_share).isVisible = channelInfo.isApproved == 1
+            menu.findItem(R.id.menu_report).isVisible = mPref.customerId != channelInfo.channel_owner_id
+            setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.menu_share -> {
+                        requireActivity().handleShare(channelInfo)
+                    }
+                    R.id.menu_fav -> {
+                        requireActivity().handleFavorite(channelInfo, favoriteDao, onAdded = {playlistAdapter.refresh()}, onRemoved = {playlistAdapter.refresh()})
+                    }
+                    R.id.menu_add_to_playlist->{
+                        requireActivity().handleAddToPlaylist(channelInfo)
+                    }
+                    R.id.menu_report -> {
+                        requireActivity().handleReport(channelInfo)
+                    }
+                }
+                return@setOnMenuItemClickListener true
+            }
+            show()
         }
-        popupMenu.show()
     }
 
-    fun setCurrentChannel(channelInfo: ChannelInfo?) {
-        currentItem = channelInfo
-        detailsAdapter.setChannelInfo(channelInfo)
-        playlistAdapter.setSelectedItem(channelInfo)
-        setSubscriptionStatus()
+    override fun onDestroyView() {
+        binding.myChannelPlaylistVideos.adapter = null
+        super.onDestroyView()
+        _binding = null
     }
 }
