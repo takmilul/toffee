@@ -549,6 +549,7 @@ abstract class PlayerPageActivity :
                 }
             }
             if(!channelInfo.fcmEventName.isNullOrBlank()){
+                if(channelInfo.fcmIsActive==1)
                 for (event in channelInfo.fcmEventName.split(",")) {
                     ToffeeAnalytics.logEvent(event)
                 }
