@@ -519,7 +519,7 @@ abstract class PlayerPageActivity :
             ToffeeAnalytics.logException(NullPointerException("Channel url is null for id -> ${channelInfo.id}, name -> ${channelInfo.program_name}"))
             return
         }
-        val uri = Channel.createChannel(channelInfo.program_name, hlsLink).getContentUri(mPref, connectionWatcher)
+        val uri = if (channelInfo.isBucketUrl) hlsLink else Channel.createChannel(channelInfo.program_name, hlsLink).getContentUri(mPref, connectionWatcher)
 //        val uri = "https://storage.googleapis.com/storage/v1/b/ugc-content-storage/o/18_aab9687b-a56a-44e1-ad66-46f1ffbd83a8.mp4?alt=media"
         //Log.e("PLAY_T", "${channelInfo.hlsLinks?.first()?.hls_url_mobile}")
         //Log.e("PLAY_T", "$uri;;${mPref.sessionToken};;$TOFFEE_HEADER;;$TOFFEE_HEADER")
@@ -560,11 +560,11 @@ abstract class PlayerPageActivity :
 
             httpDataSourceFactory?.setDefaultRequestProperties(mapOf("TOFFEE-SESSION-TOKEN" to mPref.getHeaderSessionToken()!!))
 
-            var mediaItem = MediaItem.Builder()
-                .setUri(uri)
-                .setMimeType(MimeTypes.APPLICATION_M3U8)
-                .setTag(channelInfo)
-                .build()
+            var mediaItem = MediaItem.Builder().apply { 
+                setUri(uri)
+                if (!channelInfo.isBucketUrl) setMimeType(MimeTypes.APPLICATION_M3U8)
+                setTag(channelInfo)
+            }.build()
 
             if (!isReload && player is SimpleExoPlayer) playCounter = ++playCounter % mPref.vastFrequency
             homeViewModel.vastTagsMutableLiveData.value?.randomOrNull()?.let { tag ->
