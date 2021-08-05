@@ -184,10 +184,10 @@ class EditUploadInfoViewModel @AssistedInject constructor(
 
         val idx = actualFileName?.lastIndexOf(".") ?: -1
         val ext = if (idx >= 0) {
-            actualFileName?.substring(idx) ?: ""
-        } else ""
+            actualFileName?.substring(idx) ?: ".mp4"
+        } else ".mp4"
 //
-        fileName = preference.customerId.toString() + "_" + UUID.randomUUID().toString() + ext
+        fileName = preference.customerId.toString() + "_" + UUID.randomUUID().toString() + if(ext.isNotBlank()) ext else ".mp4"
 //        val upInfo = UploadInfo(fileUri = uploadFileUri, fileName = fileName)
 //
 //        val contentType = withContext(Dispatchers.IO + Job()) {
@@ -252,7 +252,11 @@ class EditUploadInfoViewModel @AssistedInject constructor(
             Log.e("RESP", resp.toString())
             if (resp.contentId > 0L) {
                 val uploadId = startUpload(resp.contentId)
-                resultLiveData.value = Resource.Success(Pair(uploadId, resp.contentId))
+                if(uploadId != null) {
+                    resultLiveData.value = Resource.Success(Pair(uploadId, resp.contentId))
+                } else {
+                    resultLiveData.value = Resource.Failure(Error(-1, "Unknown error occured"))
+                }
                 progressDialog.value = false
                 return
             }
@@ -273,7 +277,23 @@ class EditUploadInfoViewModel @AssistedInject constructor(
         }
     }
 
-    private suspend fun startUpload(serverContentId: Long): String {
+    private suspend fun startUpload(serverContentId: Long): String? {
+
+        val fileUri = Uri.parse(uploadFileUri)
+        val accessToken = withContext(Dispatchers.IO) {
+            val credential = GoogleCredential.fromStream(
+                appContext.assets.open("toffee-261507-60ca3e5405df.json")
+            ).createScoped(listOf("https://www.googleapis.com/auth/devstorage.read_write"))
+            credential.refreshToken()
+            credential.accessToken
+        }
+
+        if (accessToken.isNullOrEmpty()) return null
+
+        val contentType = withContext(Dispatchers.IO + Job()) {
+            UtilsKt.contentTypeFromContentUri(appContext, fileUri)
+        }
+
         var upInfo = UploadInfo(
             serverContentId = serverContentId,
             fileUri = uploadFileUri,
@@ -282,15 +302,22 @@ class EditUploadInfoViewModel @AssistedInject constructor(
         val upId = uploadRepo.insertUploadInfo(upInfo)
         upInfo = upInfo.copy(uploadId = upId)
 
+        val bucketPath = preference.bucketDirectory ?: return null
+        val bucketSubPath = if(bucketPath.contains("/")) bucketPath.substringAfter('/').also {
+            URLEncoder.encode("$it/$fileName", "utf-8")
+        } else fileName
+
         return withContext(Dispatchers.IO + Job()) {
-            TusUploadRequest(
+            BinaryUploadRequest(
                 appContext,
-                preference.tusUploadServerUrl,
+                "https://storage.googleapis.com/upload/storage/v1/b/${bucketPath}/" +
+                        "o?uploadType=media&name=$bucketSubPath"
             )
-                .setResumeInfo(upInfo.getFingerprint()!!, null)
-                .setMetadata(upInfo.getFileNameMetadata())
                 .setUploadID(upInfo.getUploadIdStr()!!)
+                .setMethod("POST")
+                .addHeader("Content-Type", contentType)
                 .setFileToUpload(uploadFileUri)
+                .setBearerAuth(accessToken)
                 .startUpload()
         }
     }
