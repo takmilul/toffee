@@ -98,7 +98,7 @@ class CustomerInfoLogin(
     val isGlobalDrmActive: Int = 0,
     val defaultDrmCastReceiver: String? = null,
 
-    @SerializedName("widevineLicense_Url")
+    @SerializedName("widevineLicenseUrl")
     val widevineLicenseUrl: String? = null,
     val fpsLicenseUrl: String? = null,
     val playreadyLicenseUrl: String? = null,

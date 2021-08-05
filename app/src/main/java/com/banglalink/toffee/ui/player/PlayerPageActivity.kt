@@ -34,8 +34,6 @@ import com.google.android.exoplayer2.Player.*
 import com.google.android.exoplayer2.SimpleExoPlayer.Builder
 import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.analytics.AnalyticsListener.EventTime
-import com.google.android.exoplayer2.drm.DefaultDrmSessionManager
-import com.google.android.exoplayer2.drm.DrmSessionManager
 import com.google.android.exoplayer2.drm.HttpMediaDrmCallback
 import com.google.android.exoplayer2.drm.OfflineLicenseHelper
 import com.google.android.exoplayer2.ext.cast.CastPlayer
@@ -562,23 +560,24 @@ abstract class PlayerPageActivity :
             val drmActivated: Boolean
             if(isDrmActive && channelInfo.drmCid != null && channelInfo.drmDashUrl != null) {
                 val token = try {
-                    drmTokenApi.execute(channelInfo.drmCid)
-                    "eyJkcm1fdHlwZSI6IldpZGV2aW5lIiwic2l0ZV9pZCI6IjBRRVQiLCJ1c2VyX2lkIjoiODgxMTIyNTUiLCJjaWQiOiJha2FzaF9hYXRoX3Rlc3QiLCJwb2xpY3kiOiJFSU81YkU1eTcxVk9hNlNRa21aV3BRRUFacFc2cGk4eDR4OE1vVVpJMUVibTcrd3oxcHF2VWNZMlNjSkNSMU01d1Q5MWpxTXdTYUVwTGYrM0lGMk1kTTB1enFDRGRJdVM0M0JETUU1cjFTSlRiZ0JsOWFYM2hUXC95RFFhU2haNG1Mc2FiZkw0bTQrUlFqeVlRVnNKMWtGTlA3czhGSlJaWFwvN0ozTzJvOWZSRjJ3RVVpQXlFb1FnUFwvY3Rqekgyc0Q2bGF1WW55bG5ObDlpVVZhclZlM2FRPT0iLCJ0aW1lc3RhbXAiOiIyMDIxLTA4LTA1VDEzOjMzOjM3WiIsImhhc2giOiJvaUt1XC9ORDNHeDZ6S0NwOVBHQkNqSm0zTzVTWHpSMXhrOWg3RlJJUmFWcz0iLCJyZXNwb25zZV9mb3JtYXQiOiJvcmlnaW5hbCIsImtleV9yb3RhdGlvbiI6ZmFsc2V9"
+//                    drmTokenApi.execute(channelInfo.drmCid)
+                    "eyJkcm1fdHlwZSI6IldpZGV2aW5lIiwic2l0ZV9pZCI6IjBRRVQiLCJ1c2VyX2lkIjoidGVzdC11c2VyLTAyIiwiY2lkIjoiYWthc2hfYWF0aF90ZXN0IiwicG9saWN5IjoiRUlPNWJFNXk3MVZPYTZTUWttWldwUUVBWnBXNnBpOHg0eDhNb1VaSTFFYm03K3d6MXBxdlVjWTJTY0pDUjFNNXdUOTFqcU13U2FFcExmKzNJRjJNZE0wdXpxQ0RkSXVTNDNCRE1FNXIxU0pUYmdCbDlhWDNoVFwveURRYVNoWjRtTHNhYmZMNG00K1JRanlZUVZzSjFrRk5QN3M4RkpSWlhcLzdKM08ybzlmUkYyd0VVaUF5RW9RZ1BcL2N0anpIMnNENmxhdVlueWxuTmw5aVVWYXJWZTNhUT09IiwidGltZXN0YW1wIjoiMjAyMS0wOC0wNVQxNToyNDo1NVoiLCJoYXNoIjoiSGt0MGdUWXNHZHhrdXdRXC9vNmtcL1Vmd1V5MXg5Mmk1ZTNOVER3Q0pyRERjPSIsInJlc3BvbnNlX2Zvcm1hdCI6Im9yaWdpbmFsIiwia2V5X3JvdGF0aW9uIjpmYWxzZX0="
                 } catch (ex: Exception) {
                     ex.printStackTrace()
                     null
                 }
-
+                val licenseUrl = mPref.drmWidevineLicenseUrl  // "https://license.pallycon.com/ri/licenseManager.do"
+                val uri = channelInfo.drmDashUrl              // "https://cdn-01.toffeelive.com/origin-01/live-origin/smil:akash_aath.smil/manifest.mpd"
                 Log.e("DRM_T", "Token -> $token")
                 if(token != null) {
                     drmActivated = true
                     setDrmUuid(C.WIDEVINE_UUID)
                     setMimeType(MimeTypes.APPLICATION_MPD)
-                    setDrmForceDefaultLicenseUri(true)
-                    setDrmLicenseUri(mPref.drmWidevineLicenseUrl)
+                    setDrmForceDefaultLicenseUri(false)
+                    setDrmLicenseUri(licenseUrl)
                     setDrmMultiSession(false)
                     setDrmLicenseRequestHeaders(mapOf("pallycon-customdata-v2" to token))
-                    setUri(channelInfo.drmDashUrl)
+                    setUri(uri)
                 } else {
                     drmActivated = false
                 }
