@@ -1,18 +1,22 @@
 package com.banglalink.toffee.ui.player
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.banglalink.toffee.apiservice.DrmTokenService
 import com.banglalink.toffee.apiservice.ReportLastPlayerSession
 import com.banglalink.toffee.data.storage.PlayerPreference
 import com.banglalink.toffee.di.AppCoroutineScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class PlayerViewModel @Inject constructor(
+    private val drmTokenService: DrmTokenService,
     @AppCoroutineScope private val appScope: CoroutineScope,
 ) : ViewModel() {
 
@@ -26,6 +30,19 @@ class PlayerViewModel @Inject constructor(
                 PlayerPreference.getInstance().savePlayerSessionBandWidth(durationInSec, totalBytesInMB)
                 reportLastPlayerSession.execute()
             }
+        }
+    }
+    
+    fun getDrmToken(contentId: String) {
+        try {
+            appScope.launch {
+                withContext(IO) {
+                    val drmToken = drmTokenService.execute(contentId)
+                    Log.e("DRM_", "getDrmToken: $drmToken",)
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("DRM_", "getDrmToken: ${e.message}",)
         }
     }
 }

@@ -508,7 +508,23 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     private var bucketDirectory: String?
         get() = pref.getString(PREF_BUCKET_DIRECTORY, null)
         set(value) = pref.edit { putString(PREF_BUCKET_DIRECTORY, value) }
-
+    
+    var isFcmEventActive: Boolean
+        get() = pref.getBoolean(PREF_TOFFEE_IS_FCM_EVENT_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_TOFFEE_IS_FCM_EVENT_ACTIVE, value) }
+    
+    var isFbEventActive: Boolean
+        get() = pref.getBoolean(PREF_TOFFEE_IS_FB_EVENT_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_TOFFEE_IS_FB_EVENT_ACTIVE, value) }
+    
+    var isDrmActive: Boolean
+        get() = pref.getBoolean(PREF_TOFFEE_IS_GLOBAL_DRM_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_TOFFEE_IS_GLOBAL_DRM_ACTIVE, value) }
+    
+    private var drmCastReceiver: String?
+        get() = pref.getString(PREF_TOFFEE_DEFAULT_DRM_CAST_RECEIVER, null)
+        set(value) = pref.edit { putString(PREF_TOFFEE_DEFAULT_DRM_CAST_RECEIVER, value) }
+    
     fun saveCustomerInfo(customerInfoLogin:CustomerInfoLogin){
         balance = customerInfoLogin.balance
         isVerifiedUser = customerInfoLogin.verified_status
@@ -567,6 +583,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         isVastActive = customerInfoLogin.isVastActive == 1
         vastFrequency = customerInfoLogin.vastFrequency
         bucketDirectory = customerInfoLogin.gcpVodBucketDirectory
+        isFcmEventActive = customerInfoLogin.isFcmEventActive == 1
+        isFbEventActive = customerInfoLogin.isFbEventActive == 1
+        isDrmActive = customerInfoLogin.isGlobalDrmActive == 1
+        drmCastReceiver = customerInfoLogin.defaultDrmCastReceiver
         screenCaptureEnabledUsers = if (customerInfoLogin.screenCaptureEnabledUsers.isNullOrEmpty()) {
             SCREEN_CAPTURE_DISABLED_USERS
         } else {
@@ -654,6 +674,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_NAME_IP_TV= "IP_TV"
         private const val PREF_FORCE_UPDATE_VERSIONS= "pref_force_update_versions"
         private const val PREF_TOFFEE_IS_VAST_ACTIVE= "pref_is_vast_active"
+        private const val PREF_TOFFEE_IS_FCM_EVENT_ACTIVE= "pref_is_fcm_event_active"
+        private const val PREF_TOFFEE_IS_FB_EVENT_ACTIVE= "pref_is_fb_event_active"
+        private const val PREF_TOFFEE_IS_GLOBAL_DRM_ACTIVE= "pref_is_global_drm_active"
+        private const val PREF_TOFFEE_DEFAULT_DRM_CAST_RECEIVER= "pref_default_drm_cast_receiver"
         private const val PREF_TOFFEE_VAST_FREQUENCY= "pref_vast_frequency"
         private const val PREF_BUCKET_DIRECTORY= "pref_bucket_directory"
         

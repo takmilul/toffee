@@ -93,4 +93,8 @@ class CustomerInfoLogin(
     val isVastActive: Int = 0,
     val vastFrequency: Int = 0,
     val gcpVodBucketDirectory: String? = null,
+    val isFcmEventActive: Int = 0,
+    val isFbEventActive: Int = 0,
+    val isGlobalDrmActive: Int = 0,
+    val defaultDrmCastReceiver: String? = null,
 ) : BodyResponse(), Parcelable
