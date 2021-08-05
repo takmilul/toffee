@@ -525,6 +525,18 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getString(PREF_TOFFEE_DEFAULT_DRM_CAST_RECEIVER, null)
         set(value) = pref.edit { putString(PREF_TOFFEE_DEFAULT_DRM_CAST_RECEIVER, value) }
     
+    private var drmWidevineLicenseUrl: String?
+        get() = pref.getString(PREF_WIDEVINE_LICENSE_URL, null)
+        set(value) = pref.edit { putString(PREF_WIDEVINE_LICENSE_URL, value) }
+    
+    private var drmFpsLicenseUrl: String?
+        get() = pref.getString(PREF_FPS_LICENSE_URL, null)
+        set(value) = pref.edit { putString(PREF_FPS_LICENSE_URL, value) }
+    
+    private var drmPlayreadyLicenseUrl: String?
+        get() = pref.getString(PREF_PLAYREADY_LICENSE_URL, null)
+        set(value) = pref.edit { putString(PREF_PLAYREADY_LICENSE_URL, value) }
+    
     fun saveCustomerInfo(customerInfoLogin:CustomerInfoLogin){
         balance = customerInfoLogin.balance
         isVerifiedUser = customerInfoLogin.verified_status
@@ -587,6 +599,9 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         isFbEventActive = customerInfoLogin.isFbEventActive == 1
         isDrmActive = customerInfoLogin.isGlobalDrmActive == 1
         drmCastReceiver = customerInfoLogin.defaultDrmCastReceiver
+        drmWidevineLicenseUrl = customerInfoLogin.widevineLicense_Url
+        drmFpsLicenseUrl = customerInfoLogin.fpsLicenseUrl
+        drmPlayreadyLicenseUrl = customerInfoLogin.playreadyLicenseUrl
         screenCaptureEnabledUsers = if (customerInfoLogin.screenCaptureEnabledUsers.isNullOrEmpty()) {
             SCREEN_CAPTURE_DISABLED_USERS
         } else {
@@ -671,15 +686,18 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_GEO_LOCATION = "geo_location"
         private const val PREF_USER_IP = "user_ip"
         private const val PREF_SCREEN_CAPTURE_USERS = "screenCaptureEnabledUsers"
-        private const val PREF_NAME_IP_TV= "IP_TV"
-        private const val PREF_FORCE_UPDATE_VERSIONS= "pref_force_update_versions"
-        private const val PREF_TOFFEE_IS_VAST_ACTIVE= "pref_is_vast_active"
-        private const val PREF_TOFFEE_IS_FCM_EVENT_ACTIVE= "pref_is_fcm_event_active"
-        private const val PREF_TOFFEE_IS_FB_EVENT_ACTIVE= "pref_is_fb_event_active"
-        private const val PREF_TOFFEE_IS_GLOBAL_DRM_ACTIVE= "pref_is_global_drm_active"
-        private const val PREF_TOFFEE_DEFAULT_DRM_CAST_RECEIVER= "pref_default_drm_cast_receiver"
-        private const val PREF_TOFFEE_VAST_FREQUENCY= "pref_vast_frequency"
-        private const val PREF_BUCKET_DIRECTORY= "pref_bucket_directory"
+        private const val PREF_NAME_IP_TV = "IP_TV"
+        private const val PREF_FORCE_UPDATE_VERSIONS = "pref_force_update_versions"
+        private const val PREF_TOFFEE_IS_VAST_ACTIVE = "pref_is_vast_active"
+        private const val PREF_TOFFEE_IS_FCM_EVENT_ACTIVE = "pref_is_fcm_event_active"
+        private const val PREF_TOFFEE_IS_FB_EVENT_ACTIVE = "pref_is_fb_event_active"
+        private const val PREF_TOFFEE_IS_GLOBAL_DRM_ACTIVE = "pref_is_global_drm_active"
+        private const val PREF_TOFFEE_DEFAULT_DRM_CAST_RECEIVER = "pref_default_drm_cast_receiver"
+        private const val PREF_TOFFEE_VAST_FREQUENCY = "pref_vast_frequency"
+        private const val PREF_BUCKET_DIRECTORY = "pref_bucket_directory"
+        private const val PREF_WIDEVINE_LICENSE_URL = "pref_widevine_license_url"
+        private const val PREF_FPS_LICENSE_URL = "pref_fps_license_url"
+        private const val PREF_PLAYREADY_LICENSE_URL = "pref_playready_license_url"
         
         private val SCREEN_CAPTURE_DISABLED_USERS = setOf("7cd171cf93c9236b", "206c06aaf38fffe9", "21587c9c6447e992", "a25df4f9bc3754de", "4ec3c91fc4f4b8c0", "4fe54e7c960e391b", "c4b82aedaf88eaac", "53e9079df4cae882")
         
