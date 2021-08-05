@@ -7,8 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
-import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentAllUserChannelsListBinding
@@ -52,7 +50,6 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         categoryInfo = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)
-        ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_SUBSCRIPTION_LIST)
 
         mAdapter = AllUserChannelsListAdapter(object : LandingPopularChannelCallback<UserChannelInfo> {
             override fun onItemClicked(item: UserChannelInfo) {
@@ -63,7 +60,6 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
                 requireActivity().checkVerification {
 //                trendingChannelInfo = info
                     if (info.isSubscribed == 0) {
-                        ToffeeAnalytics.logEvent(ToffeeEvents.CHANNEL_SUBSCRIPTION)
                         trendingChannelInfo = info.also {
                             it.isSubscribed = 1
                             it.subscriberCount++

@@ -80,6 +80,7 @@ class VerifyLoginFragment : ChildDialogFragment() {
     private fun observeVerifyCode() {
         observe(viewModel.verifyResponse) {
             progressDialog.dismiss()
+            ToffeeAnalytics.logEvent(ToffeeEvents.OTP_INPUT)
             when (it) {
                 is Resource.Success -> {
                     verifiedUserData = it.data
@@ -111,9 +112,9 @@ class VerifyLoginFragment : ChildDialogFragment() {
     private fun handleResendButton() {
         observe(viewModel.resendCodeResponse) {
             progressDialog.dismiss()
+            ToffeeAnalytics.logEvent(ToffeeEvents.RESEND_OTP)
             when (it) {
                 is Resource.Success -> {
-                    ToffeeAnalytics.logEvent(ToffeeEvents.RESEND_OTP)
                     regSessionToken = it.data//update reg session token
                     resendBtnPressCount++
                     binding.resendButton.visibility = View.GONE

@@ -192,7 +192,6 @@ class DrawerHelper(
             R.id.menu_change_theme -> {
                 when (val switch = item.actionView) {
                     is SwitchButton -> {
-                        ToffeeAnalytics.logEvent(ToffeeEvents.DARK_MODE_THEME)
                         switch.isChecked = !switch.isChecked
                     }
                     is SwitchMaterial -> {
@@ -201,22 +200,19 @@ class DrawerHelper(
                 }
             }
             R.id.menu_favorites -> {
+                ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_FAVORITES)
                 if (!mPref.isVerifiedUser) {
                     activity.checkVerification()
                     binding.drawerLayout.closeDrawers()
                     return true
-                }
-                else{
-                    ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_FAVORITES)
                 }
             }
             R.id.menu_activities -> {
+                ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_ACTIVITIES)
                 if (!mPref.isVerifiedUser) {
                     activity.checkVerification()
                     binding.drawerLayout.closeDrawers()
                     return true
-                }else{
-                    ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_ACTIVITIES)
                 }
             }
             R.id.menu_playlist -> {
@@ -234,13 +230,11 @@ class DrawerHelper(
                 }
             }
             R.id.menu_redeem -> {
+                ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_REFERRAL)
                 if (!mPref.isVerifiedUser) {
                     activity.checkVerification()
                     binding.drawerLayout.closeDrawers()
                     return true
-                }
-                else{
-                    ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_REFERRAL)
                 }
             }
         }

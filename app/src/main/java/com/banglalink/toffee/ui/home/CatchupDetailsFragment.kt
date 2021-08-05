@@ -15,8 +15,6 @@ import androidx.paging.filter
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.banglalink.toffee.R
-import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.CatchupParams
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.common.paging.ProviderIconCallback
@@ -204,7 +202,6 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
     override fun onReactionClicked(view: View, reactionCountView: View, item: ChannelInfo) {
         super.onReactionClicked(view, reactionCountView, item)
         val iconLocation = IntArray(2)
-        ToffeeAnalytics.logEvent(ToffeeEvents.REACT_CLICK)
         view.getLocationOnScreen(iconLocation)
         val reactionPopupFragment = ReactionPopup.newInstance(item, iconLocation, view.height, true).apply { setCallback(object : ReactionIconCallback {
             override fun onReactionChange(reactionCount: String, reactionText: String, reactionIcon: Int) {
@@ -232,7 +229,6 @@ class CatchupDetailsFragment:HomeBaseFragment(), ContentReactionCallback<Channel
     override fun onShareClicked(view: View, item: ChannelInfo) {
         super.onShareClicked(view, item)
         requireActivity().handleShare(item)
-        ToffeeAnalytics.logEvent(ToffeeEvents.SHARE_CLICK)
     }
     
     override fun onOpenMenu(view: View, item: ChannelInfo) {

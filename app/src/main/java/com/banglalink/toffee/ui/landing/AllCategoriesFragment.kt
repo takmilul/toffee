@@ -71,8 +71,8 @@ class AllCategoriesFragment: BaseFragment(), BaseListItemCallback<Category> {
         val args = Bundle().apply {
             putParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM, item)
             putString(CategoryDetailsFragment.ARG_TITLE, item.categoryName)
-            ToffeeAnalytics.logEvent(ToffeeEvents.CATEGORY_EVENT+item.categoryName.lowercase().replace(" ", "_"))
         }
+        ToffeeAnalytics.logEvent(ToffeeEvents.CATEGORY_EVENT+item.categoryName.lowercase().replace(" ", "_"))
         when(item.id.toInt()) {
             1 -> {
                 parentFragment?.findNavController()?.navigate(R.id.movieFragment, args)

@@ -27,7 +27,6 @@ abstract class HomeBaseFragment:BaseFragment(), OptionCallBack {
 
         if (channelInfo.favorite == null || channelInfo.favorite == "0" || !mPref.isVerifiedUser) {
             popupMenu.menu.getItem(0).title = "Add to Favorites"
-            ToffeeAnalytics.logEvent(ToffeeEvents.ADD_TO_FAVORITE)
         } else {
             popupMenu.menu.getItem(0).title = "Remove from Favorites"
         }

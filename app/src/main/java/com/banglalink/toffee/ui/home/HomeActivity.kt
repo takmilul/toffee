@@ -174,6 +174,7 @@ class HomeActivity :
         showRedeemMessageIfPossible()
 
         binding.uploadButton.setOnClickListener {
+            ToffeeAnalytics.logEvent(ToffeeEvents.UPLOAD_CLICK)
             checkVerification {
                 checkChannelDetailAndUpload()
             }
@@ -475,7 +476,6 @@ class HomeActivity :
         }
         else {
             showUploadDialog()
-            ToffeeAnalytics.logEvent(ToffeeEvents.UPLOAD_CLICK)
 
         }
     }
@@ -1200,6 +1200,7 @@ class HomeActivity :
     }
 
     private fun changeAppTheme(isDarkEnabled: Boolean){
+        ToffeeAnalytics.logEvent(ToffeeEvents.DARK_MODE_THEME)
         if (isDarkEnabled) {
             cPref.appThemeMode = Configuration.UI_MODE_NIGHT_YES
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)

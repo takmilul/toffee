@@ -23,8 +23,6 @@ import com.banglalink.toffee.di.databinding.CustomBindingEntryPoint
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.ui.upload.UploadObserver
 import com.banglalink.toffee.usecase.SendFirebaseConnectionErrorEvent
-import com.facebook.FacebookSdk
-import com.facebook.LoggingBehavior
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.EntryPoints
 import dagger.hilt.android.HiltAndroidApp
@@ -95,8 +93,8 @@ class ToffeeApplication : Application() {
         }
         catch (e: Exception) {
         }
-        FacebookSdk.setIsDebugEnabled(true);
-        FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS);
+//        FacebookSdk.setIsDebugEnabled(true);
+//        FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS);
 
         initCoil()
         initUploader()

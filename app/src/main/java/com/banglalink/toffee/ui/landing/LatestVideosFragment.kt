@@ -22,8 +22,6 @@ import androidx.paging.LoadState
 import androidx.paging.map
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.string
-import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
 import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.databinding.FragmentLandingLatestVideosBinding
@@ -220,7 +218,6 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     override fun onReactionClicked(view: View, reactionCountView: View, item: ChannelInfo) {
         super.onReactionClicked(view, reactionCountView, item)
         val iconLocation = IntArray(2)
-        ToffeeAnalytics.logEvent(ToffeeEvents.REACT_CLICK)
         view.getLocationOnScreen(iconLocation)
         val reactionPopupFragment = ReactionPopup.newInstance(item, iconLocation, view.height).apply {
             setCallback(object : ReactionIconCallback {
@@ -244,7 +241,6 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     override fun onShareClicked(view: View, item: ChannelInfo) {
         super.onShareClicked(view, item)
         requireActivity().handleShare(item)
-        ToffeeAnalytics.logEvent(ToffeeEvents.SHARE_CLICK)
     }
 
     override fun onProviderIconClicked(item: ChannelInfo) {

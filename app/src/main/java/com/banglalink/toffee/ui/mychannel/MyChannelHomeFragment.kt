@@ -84,7 +84,6 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         channelOwnerId = arguments?.getInt(CHANNEL_OWNER_ID) ?: mPref.customerId
         if(channelOwnerId == 0) channelOwnerId = mPref.customerId
         isOwner = channelOwnerId == mPref.customerId
-        ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_MY_CHANNEL)
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -103,6 +102,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
+        if (isOwner) ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_MY_CHANNEL)
         progressDialog.show()
         binding.contentBody.hide()
         
@@ -138,7 +138,6 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
             }
             binding.channelDetailView.subscriptionButton -> {
                 if (isSubscribed == 0) {
-                    ToffeeAnalytics.logEvent(ToffeeEvents.CHANNEL_SUBSCRIPTION)
                     binding.channelDetailView.subscriptionButton.isEnabled = false
                     homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, channelOwnerId, mPref.customerId), 1)
                     isSubscribed = 1

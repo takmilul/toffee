@@ -75,9 +75,9 @@ object ToffeeAnalytics {
         FirebaseCrashlytics.getInstance().log(msg)
     }
 
-    fun logEvent(event: String,bundle: Bundle?=null) {
+    fun logEvent(event: String, params: Bundle? = null) {
        //firebaseAnalytics.logEvent(event, params)
-       Log.e("event","app : "+event)
+       Log.e("EVENT_","app : "+event)
        // appEventsLogger.logEvent(event)
     }
 

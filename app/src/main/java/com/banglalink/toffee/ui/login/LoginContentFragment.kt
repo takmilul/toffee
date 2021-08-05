@@ -97,7 +97,6 @@ class LoginContentFragment : ChildDialogFragment() {
             when (it) {
                 is Resource.Success -> {
                     if (it.data is String) {
-                        ToffeeAnalytics.logEvent(ToffeeEvents.OTP_INPUT)
                         regSessionToken = it.data
                         homeViewModel.sendOtpLogData(OTPLogData("", 1, 0, 0), phoneNo)
                         findNavController().navigate(R.id.verifyLoginFragment,

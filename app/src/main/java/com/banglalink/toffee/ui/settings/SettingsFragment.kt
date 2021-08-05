@@ -60,6 +60,7 @@ class SettingsFragment : BaseFragment() {
         binding.wifiProfileStateBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 mPref.wifiProfileStatus = progress + 1
+                ToffeeAnalytics.logEvent(ToffeeEvents.SETTINGS_VIDEO_RESOLUTION)
                 binding.wifiProfileStatusTv.text = getString(R.string.txt_video_resolution, wifiProfileRes[progress])
                 binding.wifiProfileDescTxt.text = getString(wifiProfileBWRequiredTxt[progress])
             }

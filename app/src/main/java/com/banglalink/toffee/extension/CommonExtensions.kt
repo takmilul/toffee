@@ -13,6 +13,8 @@ import androidx.core.view.forEach
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.database.entities.FavoriteItem
 import com.banglalink.toffee.enums.InputType
@@ -114,6 +116,7 @@ fun Activity.handleAddToPlaylist(item: ChannelInfo) {
 }
 
 fun Activity.handleShare(item: ChannelInfo) {
+    ToffeeAnalytics.logEvent(ToffeeEvents.SHARE_CLICK)
     if(this is HomeActivity) {
         getHomeViewModel().shareContentLiveData.postValue(item)
     }
@@ -121,6 +124,7 @@ fun Activity.handleShare(item: ChannelInfo) {
 
 fun Activity.handleFavorite(item: ChannelInfo, favoriteDao: FavoriteItemDao, onAdded: (()->Unit)? = null, onRemoved: (()-> Unit)? = null) {
     checkVerification {
+        ToffeeAnalytics.logEvent(ToffeeEvents.ADD_TO_FAVORITE)
         if(this is HomeActivity) {
             getHomeViewModel().updateFavorite(item).observe(this, {
                 when (it) {
