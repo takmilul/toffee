@@ -525,7 +525,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getString(PREF_TOFFEE_DEFAULT_DRM_CAST_RECEIVER, null)
         set(value) = pref.edit { putString(PREF_TOFFEE_DEFAULT_DRM_CAST_RECEIVER, value) }
     
-    private var drmWidevineLicenseUrl: String?
+    var drmWidevineLicenseUrl: String?
         get() = pref.getString(PREF_WIDEVINE_LICENSE_URL, null)
         set(value) = pref.edit { putString(PREF_WIDEVINE_LICENSE_URL, value) }
     
@@ -599,7 +599,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         isFbEventActive = customerInfoLogin.isFbEventActive == 1
         isDrmActive = customerInfoLogin.isGlobalDrmActive == 1
         drmCastReceiver = customerInfoLogin.defaultDrmCastReceiver
-        drmWidevineLicenseUrl = customerInfoLogin.widevineLicense_Url
+        drmWidevineLicenseUrl = customerInfoLogin.widevineLicenseUrl
         drmFpsLicenseUrl = customerInfoLogin.fpsLicenseUrl
         drmPlayreadyLicenseUrl = customerInfoLogin.playreadyLicenseUrl
         screenCaptureEnabledUsers = if (customerInfoLogin.screenCaptureEnabledUsers.isNullOrEmpty()) {

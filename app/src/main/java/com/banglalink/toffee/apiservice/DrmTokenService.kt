@@ -10,9 +10,9 @@ class DrmTokenService  @Inject constructor(private val pref: SessionPreference, 
     suspend fun execute(contentId: String): String? {
         val response = tryIO2 {
             toffeeApi.getDrmToken(
-                DrmTokenRequest(contentId, pref.customerId)
+                DrmTokenRequest(contentId, pref.customerId.toString())
             )
         }
-        return response.response
+        return response.response?.drmToken
     }
 }

@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.apiservice.DrmTokenService
 import com.banglalink.toffee.data.database.entities.ContentViewProgress
 import com.banglalink.toffee.data.database.entities.ContinueWatchingItem
 import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
@@ -33,6 +34,10 @@ import com.google.android.exoplayer2.Player.*
 import com.google.android.exoplayer2.SimpleExoPlayer.Builder
 import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.analytics.AnalyticsListener.EventTime
+import com.google.android.exoplayer2.drm.DefaultDrmSessionManager
+import com.google.android.exoplayer2.drm.DrmSessionManager
+import com.google.android.exoplayer2.drm.HttpMediaDrmCallback
+import com.google.android.exoplayer2.drm.OfflineLicenseHelper
 import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.ext.cast.MediaItemConverter
 import com.google.android.exoplayer2.ext.cast.SessionAvailabilityListener
@@ -66,6 +71,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONObject
 import java.net.*
 import java.util.*
@@ -105,6 +111,11 @@ abstract class PlayerPageActivity :
     private val playerViewModel by viewModels<PlayerViewModel>()
     private val playerEventListener: PlayerEventListener = PlayerEventListener()
     @DnsHttpClient @Inject lateinit var dnsHttpClient: OkHttpClient
+
+    private val drmLicenseUri = "https://license.pallycon.com/ri/licenseManager.do"
+    private var mOfflineLicenseHelper: OfflineLicenseHelper? = null
+
+    @Inject lateinit var drmTokenApi: DrmTokenService
 
     init {
         defaultCookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER)
@@ -258,7 +269,14 @@ abstract class PlayerPageActivity :
             lastSeenTrackGroupArray = null
             playerAnalyticsListener = PlayerAnalyticsListener()
 
-            httpDataSourceFactory = OkHttpDataSource.Factory(dnsHttpClient)
+            httpDataSourceFactory = OkHttpDataSource.Factory(dnsHttpClient
+                    .newBuilder()
+                    .addNetworkInterceptor(
+                        HttpLoggingInterceptor()
+                            .setLevel(HttpLoggingInterceptor.Level.HEADERS)
+                    )
+                    .build()
+                )
                 .setUserAgent(TOFFEE_HEADER)
                 .setDefaultRequestProperties(mapOf("TOFFEE-SESSION-TOKEN" to mPref.getHeaderSessionToken()!!))
 
@@ -266,6 +284,7 @@ abstract class PlayerPageActivity :
                 .setAdsLoaderProvider{
                     adsLoader
                 }
+//                .setDrmSessionManagerProvider(this::getDrmSessionManager)
                 .setAdViewProvider(getPlayerView())
 
             exoPlayer = Builder(this)
@@ -282,6 +301,32 @@ abstract class PlayerPageActivity :
                 }
             adsLoader?.setPlayer(exoPlayer)
         }
+    }
+
+    private fun createMediaDrmCallback(licenseUrl: String, requestProperty: Map<String, String>): HttpMediaDrmCallback {
+        val drmCallback = HttpMediaDrmCallback(licenseUrl, httpDataSourceFactory!!)
+        requestProperty.entries.forEach {
+            drmCallback.setKeyRequestProperty(it.key, it.value)
+        }
+        return drmCallback
+    }
+
+//    private fun getDrmSessionManager(mediaItem: MediaItem): DrmSessionManager {
+//        return DefaultDrmSessionManager
+//            .Builder()
+//            .setMultiSession(false)
+//            .build(createMediaDrmCallback(mPref.drmWidevineLicenseUrl!!, mapOf("")))
+//    }
+
+    private fun isLicenseValid(keysetId: ByteArray?): Boolean {
+        return try {
+            keysetId?.let {
+                val remainintSec = mOfflineLicenseHelper?.getLicenseDurationRemainingSec(it)?.first
+                remainintSec != null && remainintSec > 0
+            }
+        } catch (ex: Exception) {
+            false
+        } ?: false
     }
 
     private val castSessionListener = object: SessionManagerListener<CastSession> {
@@ -510,13 +555,65 @@ abstract class PlayerPageActivity :
         playChannel(isReload)
     }
 
+    private suspend fun buildMediaItem(uri: String, channelInfo: ChannelInfo, isReload: Boolean): MediaItem {
+        val isDrmActive = mPref.isDrmActive && channelInfo.isDrmActive
+        Log.e("DRM_T", "Drm Active -> ${mPref.isDrmActive}, ${channelInfo.isDrmActive}")
+        var mediaItem = MediaItem.Builder().apply {
+            val drmActivated: Boolean
+            if(isDrmActive && channelInfo.drmCid != null && channelInfo.drmDashUrl != null) {
+                val token = try {
+                    drmTokenApi.execute(channelInfo.drmCid)
+                    "eyJkcm1fdHlwZSI6IldpZGV2aW5lIiwic2l0ZV9pZCI6IjBRRVQiLCJ1c2VyX2lkIjoiODgxMTIyNTUiLCJjaWQiOiJha2FzaF9hYXRoX3Rlc3QiLCJwb2xpY3kiOiJFSU81YkU1eTcxVk9hNlNRa21aV3BRRUFacFc2cGk4eDR4OE1vVVpJMUVibTcrd3oxcHF2VWNZMlNjSkNSMU01d1Q5MWpxTXdTYUVwTGYrM0lGMk1kTTB1enFDRGRJdVM0M0JETUU1cjFTSlRiZ0JsOWFYM2hUXC95RFFhU2haNG1Mc2FiZkw0bTQrUlFqeVlRVnNKMWtGTlA3czhGSlJaWFwvN0ozTzJvOWZSRjJ3RVVpQXlFb1FnUFwvY3Rqekgyc0Q2bGF1WW55bG5ObDlpVVZhclZlM2FRPT0iLCJ0aW1lc3RhbXAiOiIyMDIxLTA4LTA1VDEzOjMzOjM3WiIsImhhc2giOiJvaUt1XC9ORDNHeDZ6S0NwOVBHQkNqSm0zTzVTWHpSMXhrOWg3RlJJUmFWcz0iLCJyZXNwb25zZV9mb3JtYXQiOiJvcmlnaW5hbCIsImtleV9yb3RhdGlvbiI6ZmFsc2V9"
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                    null
+                }
+
+                Log.e("DRM_T", "Token -> $token")
+                if(token != null) {
+                    drmActivated = true
+                    setDrmUuid(C.WIDEVINE_UUID)
+                    setMimeType(MimeTypes.APPLICATION_MPD)
+                    setDrmForceDefaultLicenseUri(true)
+                    setDrmLicenseUri(mPref.drmWidevineLicenseUrl)
+                    setDrmMultiSession(false)
+                    setDrmLicenseRequestHeaders(mapOf("pallycon-customdata-v2" to token))
+                    setUri(channelInfo.drmDashUrl)
+                } else {
+                    drmActivated = false
+                }
+            } else {
+                drmActivated = false
+            }
+            if(!drmActivated){
+                Log.e("DRM_T", "Drm deactivated")
+                setMimeType(MimeTypes.APPLICATION_M3U8)
+                setUri(uri)
+            }
+            setTag(channelInfo)
+        }.build()
+
+        if (!isReload && player is SimpleExoPlayer) playCounter = ++playCounter % mPref.vastFrequency
+        homeViewModel.vastTagsMutableLiveData.value?.randomOrNull()?.let { tag ->
+            val shouldPlayAd = mPref.isVastActive && playCounter == 0 && !channelInfo.isLive
+            val vastTag = if(isReload) currentlyPlayingVastUrl else tag.url
+            if (shouldPlayAd && vastTag.isNotBlank()) {
+                mediaItem = mediaItem.buildUpon()
+                    .setAdTagUri(Uri.parse(vastTag))
+                    .build()
+                if (!isReload) currentlyPlayingVastUrl = tag.url
+            }
+        }
+        return mediaItem
+    }
+
     abstract fun maximizePlayer()
 
-    private fun playChannel(isReload: Boolean) {
-        val channelInfo = playlistManager.getCurrentChannel() ?: return
+    private fun playChannel(isReload: Boolean) = lifecycleScope.launch {
+        val channelInfo = playlistManager.getCurrentChannel() ?: return@launch
         val hlsLink = channelInfo.hlsLinks?.get(0)?.hls_url_mobile ?: run {
             ToffeeAnalytics.logException(NullPointerException("Channel url is null for id -> ${channelInfo.id}, name -> ${channelInfo.program_name}"))
-            return
+            return@launch
         }
         val uri = Channel.createChannel(channelInfo.program_name, hlsLink).getContentUri(mPref, connectionWatcher)
 //        val uri = "https://storage.googleapis.com/storage/v1/b/ugc-content-storage/o/18_aab9687b-a56a-44e1-ad66-46f1ffbd83a8.mp4?alt=media"
@@ -529,7 +626,7 @@ abstract class PlayerPageActivity :
             channelCannotBePlayedDueToSettings() //notify hook/subclass
             maximizePlayer()
             heartBeatManager.triggerEventViewingContentStop()
-            return
+            return@launch
         }
         //Checking whether we need to reload or not. Reload happens because of network switch or re-initialization of player
 //        boolean isReload = false;
@@ -553,23 +650,8 @@ abstract class PlayerPageActivity :
 
             httpDataSourceFactory?.setDefaultRequestProperties(mapOf("TOFFEE-SESSION-TOKEN" to mPref.getHeaderSessionToken()!!))
 
-            var mediaItem = MediaItem.Builder()
-                .setUri(uri)
-                .setMimeType(MimeTypes.APPLICATION_M3U8)
-                .setTag(channelInfo)
-                .build()
+            val mediaItem = buildMediaItem(uri, channelInfo, isReload)
 
-            if (!isReload && player is SimpleExoPlayer) playCounter = ++playCounter % mPref.vastFrequency
-            homeViewModel.vastTagsMutableLiveData.value?.randomOrNull()?.let { tag ->
-                val shouldPlayAd = mPref.isVastActive && playCounter == 0 && !channelInfo.isLive
-                val vastTag = if(isReload) currentlyPlayingVastUrl else tag.url
-                if (shouldPlayAd && vastTag.isNotBlank()) {
-                    mediaItem = mediaItem.buildUpon()
-                        .setAdTagUri(Uri.parse(vastTag))
-                        .build()
-                    if (!isReload) currentlyPlayingVastUrl = tag.url
-                }
-            }
             if (isReload) { //We need to start where we left off for VODs
                 if(channelInfo.viewProgress > 0L) {
                     startPosition = if(channelInfo.viewProgressPercent() >= 990) {
@@ -596,7 +678,7 @@ abstract class PlayerPageActivity :
                     it.playWhenReady = true
                     it.seekTo(startWindow, startPosition) //we seek to where we left for VODs
 //                    it.prepare()
-                    return
+                    return@launch
                 }
             }
             startPosition = C.TIME_UNSET

@@ -116,6 +116,7 @@ dependencies {
     def exoVersion = '2.13.3'
     implementation "com.google.android.exoplayer:exoplayer-core:$exoVersion"
     implementation "com.google.android.exoplayer:exoplayer-hls:$exoVersion"
+    implementation "com.google.android.exoplayer:exoplayer-dash:$exoVersion"
     implementation "com.google.android.exoplayer:extension-cast:$exoVersion"
     implementation "com.google.android.exoplayer:exoplayer-ui:$exoVersion"
     implementation "com.google.android.exoplayer:extension-ima:$exoVersion"

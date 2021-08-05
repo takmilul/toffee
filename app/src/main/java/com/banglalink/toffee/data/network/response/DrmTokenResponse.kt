@@ -1,3 +1,5 @@
 package com.banglalink.toffee.data.network.response
 
-data class DrmTokenResponse(val response: String?):BaseResponse()
+import com.banglalink.toffee.model.DrmToken
+
+data class DrmTokenResponse(val response: DrmToken?):BaseResponse()

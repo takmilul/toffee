@@ -97,7 +97,9 @@ class CustomerInfoLogin(
     val isFbEventActive: Int = 0,
     val isGlobalDrmActive: Int = 0,
     val defaultDrmCastReceiver: String? = null,
-    val widevineLicense_Url: String? = null,
+
+    @SerializedName("widevineLicense_Url")
+    val widevineLicenseUrl: String? = null,
     val fpsLicenseUrl: String? = null,
     val playreadyLicenseUrl: String? = null,
 ) : BodyResponse(), Parcelable
