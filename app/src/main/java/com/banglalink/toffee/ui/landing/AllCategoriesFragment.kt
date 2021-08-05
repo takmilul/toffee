@@ -71,7 +71,7 @@ class AllCategoriesFragment: BaseFragment(), BaseListItemCallback<Category> {
         val args = Bundle().apply {
             putParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM, item)
             putString(CategoryDetailsFragment.ARG_TITLE, item.categoryName)
-            ToffeeAnalytics.logEvent(ToffeeEvents.CATEGORY_EVENT+item.categoryName)
+            ToffeeAnalytics.logEvent(ToffeeEvents.CATEGORY_EVENT+item.categoryName.lowercase().replace(" ", "_"))
         }
         when(item.id.toInt()) {
             1 -> {

@@ -548,7 +548,7 @@ abstract class PlayerPageActivity :
                     insertContentViewProgress(oldInfo, it.currentPosition)
                 }
             }
-            if(channelInfo.fcmEventName!=null){
+            if(!channelInfo.fcmEventName.isNullOrBlank()){
                 for (event in channelInfo.fcmEventName.split(",")) {
                     ToffeeAnalytics.logEvent(event)
                 }
