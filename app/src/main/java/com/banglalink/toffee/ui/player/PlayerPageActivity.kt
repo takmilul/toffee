@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.database.entities.ContentViewProgress
 import com.banglalink.toffee.data.database.entities.ContinueWatchingItem
 import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
@@ -547,7 +548,11 @@ abstract class PlayerPageActivity :
                     insertContentViewProgress(oldInfo, it.currentPosition)
                 }
             }
-
+            if(channelInfo.fcmEventName!=null){
+                for (event in channelInfo.fcmEventName.split(",")) {
+                    ToffeeAnalytics.logEvent(event)
+                }
+            }
             heartBeatManager.triggerEventViewingContentStart(channelInfo.id.toInt(), channelInfo.type ?: "VOD")
             it.playWhenReady = !isReload || it.playWhenReady
 
