@@ -1,6 +1,9 @@
 package com.banglalink.toffee.usecase
 
 import android.util.Log
+import androidx.core.os.bundleOf
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.database.entities.SubscriptionCount
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.request.MyChannelSubscribeRequest
@@ -31,6 +34,7 @@ class SendSubscribeEvent @Inject constructor(
     suspend fun execute(subscriptionInfo: SubscriptionInfo, status: Int, sendToPubSub:Boolean = true): MyChannelSubscribeBean {
         sendToPubSub(subscriptionInfo, status)
         updateSubscriptionCountDb(subscriptionInfo, status)
+        ToffeeAnalytics.logEvent(ToffeeEvents.CHANNEL_SUBSCRIPTION, bundleOf("isSubscribed" to status))
         return sendToToffeeServer(subscriptionInfo, status)
     }
 

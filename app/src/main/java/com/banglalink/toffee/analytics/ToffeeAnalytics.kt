@@ -2,12 +2,14 @@ package com.banglalink.toffee.analytics
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import com.banglalink.toffee.data.network.request.PubSubBaseRequest
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Package
 import com.banglalink.toffee.notification.API_ERROR_TRACK_TOPIC
 import com.banglalink.toffee.notification.PubSubMessageUtil
+import com.facebook.appevents.AppEventsLogger
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
@@ -16,10 +18,14 @@ import com.google.gson.annotations.SerializedName
 object ToffeeAnalytics {
 
     private lateinit var firebaseAnalytics: FirebaseAnalytics
+    private lateinit var appEventsLogger: AppEventsLogger
     private val gson = Gson()
 
     fun initFireBaseAnalytics(context: Context) {
         firebaseAnalytics = FirebaseAnalytics.getInstance(context)
+    }
+    fun initAppEventsLogger(context: Context) {
+        appEventsLogger = AppEventsLogger.newLogger(context)
     }
 
     fun updateCustomerId(customerId: Int) {
@@ -70,7 +76,9 @@ object ToffeeAnalytics {
     }
 
     fun logEvent(event: String, params: Bundle? = null) {
-//        firebaseAnalytics.logEvent(event, params)
+       //firebaseAnalytics.logEvent(event, params)
+       Log.e("EVENT_","app : "+event)
+       // appEventsLogger.logEvent(event)
     }
 
     class ApiFailData(
@@ -79,4 +87,4 @@ object ToffeeAnalytics {
         @SerializedName("errorMsg")
         val apiError: String
     ) : PubSubBaseRequest()
-}
+} 

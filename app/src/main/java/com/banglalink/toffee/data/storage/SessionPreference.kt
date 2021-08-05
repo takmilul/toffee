@@ -505,7 +505,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getInt(PREF_TOFFEE_VAST_FREQUENCY, 1)
         set(value) = pref.edit { putInt(PREF_TOFFEE_VAST_FREQUENCY, value) }
 
-    private var bucketDirectory: String?
+    var bucketDirectory: String?
         get() = pref.getString(PREF_BUCKET_DIRECTORY, null)
         set(value) = pref.edit { putString(PREF_BUCKET_DIRECTORY, value) }
     

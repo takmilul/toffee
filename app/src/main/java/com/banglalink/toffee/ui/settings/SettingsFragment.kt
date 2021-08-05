@@ -10,6 +10,8 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.repository.UserActivitiesRepository
 import com.banglalink.toffee.databinding.FragmentSettingsBinding
 import com.banglalink.toffee.extension.showToast
@@ -58,6 +60,7 @@ class SettingsFragment : BaseFragment() {
         binding.wifiProfileStateBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 mPref.wifiProfileStatus = progress + 1
+                ToffeeAnalytics.logEvent(ToffeeEvents.SETTINGS_VIDEO_RESOLUTION)
                 binding.wifiProfileStatusTv.text = getString(R.string.txt_video_resolution, wifiProfileRes[progress])
                 binding.wifiProfileDescTxt.text = getString(wifiProfileBWRequiredTxt[progress])
             }
@@ -68,6 +71,7 @@ class SettingsFragment : BaseFragment() {
         binding.cellularProfileStateBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 mPref.cellularProfileStatus = progress + 1
+                ToffeeAnalytics.logEvent(ToffeeEvents.SETTINGS_VIDEO_RESOLUTION)
                 binding.cellularProfileDescTxt.text = getString(cellularProfileBWRequiredTxt[progress])
                 binding.cellularProfileStatusTv.text = getString(R.string.txt_video_resolution, cellularProfileRes[progress])
             }

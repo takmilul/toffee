@@ -44,6 +44,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.network.retrofit.CacheManager
@@ -173,6 +174,7 @@ class HomeActivity :
         showRedeemMessageIfPossible()
 
         binding.uploadButton.setOnClickListener {
+            ToffeeAnalytics.logEvent(ToffeeEvents.UPLOAD_CLICK)
             checkVerification {
                 checkChannelDetailAndUpload()
             }
@@ -474,6 +476,7 @@ class HomeActivity :
         }
         else {
             showUploadDialog()
+
         }
     }
     
@@ -1197,6 +1200,7 @@ class HomeActivity :
     }
 
     private fun changeAppTheme(isDarkEnabled: Boolean){
+        ToffeeAnalytics.logEvent(ToffeeEvents.DARK_MODE_THEME)
         if (isDarkEnabled) {
             cPref.appThemeMode = Configuration.UI_MODE_NIGHT_YES
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)

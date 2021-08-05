@@ -14,6 +14,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentLandingCategoriesBinding
 import com.banglalink.toffee.databinding.PlaceholderCategoriesBinding
@@ -113,6 +115,7 @@ class LandingCategoriesFragment: BaseFragment(), BaseListItemCallback<Category> 
             putParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM, item)
             putString(CategoryDetailsFragment.ARG_TITLE, item.categoryName)
         }
+        ToffeeAnalytics.logEvent(ToffeeEvents.CATEGORY_EVENT+item.categoryName.lowercase().replace(" ", "_"))
         when(item.id.toInt()) {
             1 -> {
                 if (findNavController().currentDestination?.id != R.id.movieFragment && findNavController().currentDestination?.id==

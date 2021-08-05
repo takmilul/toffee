@@ -11,6 +11,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.ReactionInfo
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -108,6 +110,7 @@ class ReactionPopup: Fragment() {
     }
 
     private fun react(reaction: Reaction, reactIcon: Int) {
+        ToffeeAnalytics.logEvent(ToffeeEvents.REACT_CLICK)
         requireActivity().checkVerification {
             reactionPopupWindow?.dismiss()
             channelInfo?.let { info ->

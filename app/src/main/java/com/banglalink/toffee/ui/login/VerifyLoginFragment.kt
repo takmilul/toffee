@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.databinding.AlertDialogVerifyBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
@@ -79,6 +80,7 @@ class VerifyLoginFragment : ChildDialogFragment() {
     private fun observeVerifyCode() {
         observe(viewModel.verifyResponse) {
             progressDialog.dismiss()
+            ToffeeAnalytics.logEvent(ToffeeEvents.OTP_INPUT)
             when (it) {
                 is Resource.Success -> {
                     verifiedUserData = it.data
@@ -110,6 +112,7 @@ class VerifyLoginFragment : ChildDialogFragment() {
     private fun handleResendButton() {
         observe(viewModel.resendCodeResponse) {
             progressDialog.dismiss()
+            ToffeeAnalytics.logEvent(ToffeeEvents.RESEND_OTP)
             when (it) {
                 is Resource.Success -> {
                     regSessionToken = it.data//update reg session token

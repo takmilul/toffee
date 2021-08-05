@@ -19,7 +19,9 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiRoutes
+import com.banglalink.toffee.apiservice.ApiRoutes.GET_MY_CHANNEL_DETAILS
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentEditProfileBinding
 import com.banglalink.toffee.enums.InputType
@@ -48,6 +50,8 @@ class EditProfileFragment : BaseFragment() {
     private val args by navArgs<EditProfileFragmentArgs>()
     private val viewModel by viewModels<EditProfileViewModel>()
     private val userInterestList: MutableMap<String, Int> = mutableMapOf()
+    private var previousEmail: String = ""
+    private var previousAddress: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentEditProfileBinding.inflate(inflater, container, false)
@@ -60,6 +64,8 @@ class EditProfileFragment : BaseFragment() {
         observeCategory()
         with(binding) {
             profileForm = args.data
+            previousEmail = profileForm.email
+            previousAddress = profileForm.address
             container.setOnClickListener {
                 UtilsKt.hideSoftKeyboard(requireActivity())
             }
@@ -103,9 +109,9 @@ class EditProfileFragment : BaseFragment() {
 
     private fun handleSaveButton() {
         progressDialog.show()
-        binding.profileForm?.let {
-
-            if (it.fullName.isBlank()) {
+        binding.profileForm?.let { form ->
+    
+            if (form.fullName.isBlank()) {
                 progressDialog.hide()
                 binding.nameEt.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
                 binding.errorNameTv.show()
@@ -114,7 +120,7 @@ class EditProfileFragment : BaseFragment() {
                 binding.errorNameTv.hide()
             }
 
-            val notValidEmail = it.email.isNotBlank() and !it.email.isValid(InputType.EMAIL)
+            val notValidEmail = form.email.isNotBlank() and !form.email.isValid(InputType.EMAIL)
 
             if (notValidEmail) {
                 progressDialog.hide()
@@ -125,17 +131,21 @@ class EditProfileFragment : BaseFragment() {
                 binding.errorEmailTv.hide()
             }
 
-            if (it.fullName.isNotBlank() && !notValidEmail) {
-                it.apply {
+            if (form.fullName.isNotBlank() && !notValidEmail) {
+                form.apply {
                     fullName = fullName.trim()
                     email = email.trim()
                     address = address.trim()
                 }
-
-                observe(viewModel.updateProfile(it)) {
+                observe(viewModel.updateProfile(form)) {
                     progressDialog.dismiss()
                     when (it) {
                         is Resource.Success -> {
+                            if (previousEmail != form.email) ToffeeAnalytics.logEvent(ToffeeEvents.EMAIL_ADDED)
+                            if(form.address.isNotBlank() && previousAddress != form.address){
+                                ToffeeAnalytics.logEvent(ToffeeEvents.ADDRESS_ADDED)
+                            }
+                            cacheManager.clearCacheByUrl(GET_MY_CHANNEL_DETAILS)
                             cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_DETAILS)
                             requireContext().showToast("Profile updated successfully")
                             findNavController().popBackStack()
