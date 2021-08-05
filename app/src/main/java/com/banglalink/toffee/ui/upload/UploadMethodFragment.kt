@@ -196,7 +196,13 @@ class UploadMethodFragment : DialogFragment() {
             val fileName = UtilsKt.fileNameFromContentUri(requireContext(), videoUri)
 
             Log.e("UPLOAD_T", "Type ->> $contentType, Name ->> $fileName")
-
+            
+//            withContext(Dispatchers.Default + Job()) {
+//                UtilsKt.getVideoDuration(requireContext(), videoUri.toString())
+//            }.let {
+//                val duration = it
+//            }
+            
             if(contentType == "video/mp4" || fileName.substringAfterLast(".", "") == "mp4") {
                 openEditUpload(videoUri.toString())
             } else {

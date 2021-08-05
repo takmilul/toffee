@@ -64,8 +64,8 @@ class EditProfileFragment : BaseFragment() {
         observeCategory()
         with(binding) {
             profileForm = args.data
-            previousEmail = profileForm.email
-            previousAddress = profileForm.address
+            previousEmail = profileForm?.email ?: ""
+            previousAddress = profileForm?.address ?: ""
             container.setOnClickListener {
                 UtilsKt.hideSoftKeyboard(requireActivity())
             }

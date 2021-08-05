@@ -12,7 +12,6 @@ import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.DrmTokenService
-import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.database.entities.ContentViewProgress
 import com.banglalink.toffee.data.database.entities.ContinueWatchingItem
 import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
@@ -561,8 +560,7 @@ abstract class PlayerPageActivity :
             val drmActivated: Boolean
             if(isDrmActive && channelInfo.drmCid != null && channelInfo.drmDashUrl != null) {
                 val token = try {
-//                    drmTokenApi.execute(channelInfo.drmCid)
-                    "eyJkcm1fdHlwZSI6IldpZGV2aW5lIiwic2l0ZV9pZCI6IjBRRVQiLCJ1c2VyX2lkIjoidGVzdC11c2VyLTAyIiwiY2lkIjoiYWthc2hfYWF0aF90ZXN0IiwicG9saWN5IjoiRUlPNWJFNXk3MVZPYTZTUWttWldwUUVBWnBXNnBpOHg0eDhNb1VaSTFFYm03K3d6MXBxdlVjWTJTY0pDUjFNNXdUOTFqcU13U2FFcExmKzNJRjJNZE0wdXpxQ0RkSXVTNDNCRE1FNXIxU0pUYmdCbDlhWDNoVFwveURRYVNoWjRtTHNhYmZMNG00K1JRanlZUVZzSjFrRk5QN3M4RkpSWlhcLzdKM08ybzlmUkYyd0VVaUF5RW9RZ1BcL2N0anpIMnNENmxhdVlueWxuTmw5aVVWYXJWZTNhUT09IiwidGltZXN0YW1wIjoiMjAyMS0wOC0wNVQxNToyNDo1NVoiLCJoYXNoIjoiSGt0MGdUWXNHZHhrdXdRXC9vNmtcL1Vmd1V5MXg5Mmk1ZTNOVER3Q0pyRERjPSIsInJlc3BvbnNlX2Zvcm1hdCI6Im9yaWdpbmFsIiwia2V5X3JvdGF0aW9uIjpmYWxzZX0="
+                    drmTokenApi.execute(channelInfo.drmCid)
                 } catch (ex: Exception) {
                     ex.printStackTrace()
                     null
@@ -587,7 +585,7 @@ abstract class PlayerPageActivity :
             }
             if(!drmActivated){
                 Log.e("DRM_T", "Drm deactivated")
-                setMimeType(MimeTypes.APPLICATION_M3U8)
+                if (!channelInfo.isBucketUrl) setMimeType(MimeTypes.APPLICATION_M3U8)
                 setUri(uri)
             }
             setTag(channelInfo)
@@ -645,7 +643,7 @@ abstract class PlayerPageActivity :
                 }
             }
             if(!channelInfo.fcmEventName.isNullOrBlank()){
-                if(channelInfo.fcmIsActive==1){
+                if(channelInfo.isFcmEventActive){
                     for (event in channelInfo.fcmEventName.split(",")) {
                         ToffeeAnalytics.logEvent(event)
                     }
@@ -657,11 +655,6 @@ abstract class PlayerPageActivity :
             httpDataSourceFactory?.setDefaultRequestProperties(mapOf("TOFFEE-SESSION-TOKEN" to mPref.getHeaderSessionToken()!!))
 
             val mediaItem = buildMediaItem(uri, channelInfo, isReload)
-//            var mediaItem = MediaItem.Builder().apply { 
-//                setUri(uri)
-//                if (!channelInfo.isBucketUrl) setMimeType(MimeTypes.APPLICATION_M3U8)
-//                setTag(channelInfo)
-//            }.build()
 
             if (isReload) { //We need to start where we left off for VODs
                 if(channelInfo.viewProgress > 0L) {

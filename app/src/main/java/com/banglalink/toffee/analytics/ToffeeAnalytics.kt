@@ -2,7 +2,6 @@ package com.banglalink.toffee.analytics
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import com.banglalink.toffee.data.network.request.PubSubBaseRequest
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ChannelInfo
@@ -76,9 +75,12 @@ object ToffeeAnalytics {
     }
 
     fun logEvent(event: String, params: Bundle? = null) {
-       //firebaseAnalytics.logEvent(event, params)
-       Log.e("EVENT_","app : "+event)
-       // appEventsLogger.logEvent(event)
+        if (SessionPreference.getInstance().isFcmEventActive) {
+            firebaseAnalytics.logEvent(event, params)
+        }
+        if (SessionPreference.getInstance().isFbEventActive) {
+            appEventsLogger.logEvent(event)
+        }
     }
 
     class ApiFailData(
