@@ -102,4 +102,5 @@ class CustomerInfoLogin(
     val widevineLicenseUrl: String? = null,
     val fpsLicenseUrl: String? = null,
     val playreadyLicenseUrl: String? = null,
+    val drmTokenUrl: String? = null,
 ) : BodyResponse(), Parcelable
