@@ -299,7 +299,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
     fun bindViewProgress(view: ProgressBar, item: ChannelInfo?) {
         if (item != null && item.viewProgressPercent() > 0) {
             view.visibility = View.VISIBLE
-            view.progress = item.viewProgressPercent()
+            view.progress = item?.viewProgressPercent() ?: 0
         } else {
             view.visibility = View.GONE
         }

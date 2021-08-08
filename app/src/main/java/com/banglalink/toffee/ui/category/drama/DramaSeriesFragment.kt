@@ -4,9 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
-import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentDramaSeriesBinding
 import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.model.Category
@@ -28,7 +26,17 @@ class DramaSeriesFragment: BaseFragment() {
             }
         }
     }
-
+    
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        category = requireArguments().getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)!!
+        activity?.title = category.categoryName
+        landingViewModel.pageType.value = PageType.Category
+        landingViewModel.categoryId.value = category.id.toInt()
+        landingViewModel.checkedSubCategoryChipId.value = 0
+        landingViewModel.isDramaSeries.value = true
+    }
+    
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentDramaSeriesBinding.inflate(inflater, container, false)
         return binding.root
@@ -38,15 +46,4 @@ class DramaSeriesFragment: BaseFragment() {
         super.onDestroyView()
         _binding = null
     }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        category = requireArguments().getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)!!
-        activity?.title = category.categoryName
-        landingViewModel.pageType.value = PageType.Category
-        landingViewModel.categoryId.value = category.id.toInt()
-        landingViewModel.checkedSubCategoryChipId.value = 0
-        landingViewModel.isDramaSeries.value = true
-    }
-
 }
