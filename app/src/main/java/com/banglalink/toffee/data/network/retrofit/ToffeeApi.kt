@@ -390,7 +390,7 @@ interface ToffeeApi {
         @Body paymentMethodRequest: VastTagRequest
     ): VastTagResponse
 
-    @PUT("/create-upload-signed-url")
+    @POST("/create-upload-signed-url")
     suspend fun uploadSignedUrl(
         @Body uploadSignedUrlRequest: UploadSignedUrlRequest
     ): UploadSignedUrlResponse
