@@ -4,6 +4,7 @@ import com.banglalink.toffee.data.network.request.*
 import com.banglalink.toffee.data.network.response.*
 import retrofit2.http.Body
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface ToffeeApi {
@@ -388,5 +389,10 @@ interface ToffeeApi {
         @Path("dbVersion") dbVersion: Int,
         @Body paymentMethodRequest: VastTagRequest
     ): VastTagResponse
+
+    @PUT("/create-upload-signed-url")
+    suspend fun uploadSignedUrl(
+        @Body uploadSignedUrlRequest: UploadSignedUrlRequest
+    ): UploadSignedUrlResponse
 
 }
