@@ -377,6 +377,7 @@
     <string name="select_sub_category">Select Sub Category</string>
     <string name="try_again_msg">Something went wrong. Please try again.</string>
     <string name="thumbnail_missing_msg">Thumbnail is missing!</string>
+    <string name="upload_limit"> By default, you can upload Video Content that are up to 10 seconds to 2 hours long </string>
     <string name="cancel_upload_title">Cancel Uploading</string>
     <string name="cancel_upload_msg">Are you sure that you want to\ncancel uploading video?</string>
     <string name="owner_video_empty_msg">You haven\'t uploaded any video yet</string>

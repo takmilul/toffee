@@ -190,7 +190,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
         } else ".mp4"
 //
         fileName = preference.customerId.toString() + "_" + UUID.randomUUID().toString() + if(ext.isNotBlank()) ext else ".mp4"
-        getServerToken()
+
 //        val upInfo = UploadInfo(fileUri = uploadFileUri, fileName = fileName)
 //
 //        val contentType = withContext(Dispatchers.IO + Job()) {
@@ -238,6 +238,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
     suspend fun saveUploadInfo(tags: String?, categoryId: Long, subcategoryId: Long, duration: Long, isHorizontal: Int) {
         progressDialog.value = true
         val ageGroupId = ageGroupPosition.value ?: -1
+        getServerToken()
         try {
             val resp = contentUploadApi(
                 fileName,

@@ -158,6 +158,15 @@ object UtilsKt {
             String.format("%02d:%02d", minutes, seconds)
         }
     }
+    fun getVideoUploadLimit(timeMs: Long?): Boolean {
+        val totalSeconds = timeMs!! / 1000
+        val seconds = (totalSeconds % 60).toInt()
+        val hours = (totalSeconds / 3600).toInt()
+        return if(hours>=2 && seconds>0){
+            true
+        } else hours==0 && seconds<10
+    }
+
 
     fun getLongDuration(str: String?): Long {
         if(str.isNullOrBlank()) return 0L

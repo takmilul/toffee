@@ -429,7 +429,11 @@ class EditUploadInfoFragment: BaseFragment() {
             context?.showToast(getString(R.string.thumbnail_missing_msg))
             return
         }
-
+        if (UtilsKt.getVideoUploadLimit(viewModel.durationData.value)){
+            context?.showToast(getString(R.string.upload_limit  ))
+            findNavController().popBackStack(R.id.menu_feed, false)
+            return
+        }
         if (title.isNotBlank() and description.isNotBlank()) {
             lifecycleScope.launch {
                 val categoryObj = binding.categorySpinner.selectedItem
