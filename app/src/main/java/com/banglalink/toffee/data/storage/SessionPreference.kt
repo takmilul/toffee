@@ -36,6 +36,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getString(PREF_PHONE_NUMBER, "") ?: ""
         set(phoneNumber) = pref.edit { putString(PREF_PHONE_NUMBER, phoneNumber) }
     
+    var hePhoneNumber: String
+        get() = pref.getString(PREF_HE_PHONE_NUMBER, "") ?: ""
+        set(phoneNumber) = pref.edit { putString(PREF_HE_PHONE_NUMBER, phoneNumber) }
+    
     var customerName: String
         get() = pref.getString(PREF_CUSTOMER_NAME, "") ?: ""
         set(customerName) {
@@ -81,12 +85,19 @@ class SessionPreference(private val pref: SharedPreferences, private val context
                 sessionTokenLiveData.postValue(sessionToken)//post if there is mismatch of session token
             }
         }
+    
     var isBanglalinkNumber:String
-    get() = pref.getString(PREF_BANGLALINK_NUMBER,"false")?:"false"
-    set(isBanglalinkNumber){
-        pref.edit().putString(PREF_BANGLALINK_NUMBER,isBanglalinkNumber).apply()
-    }
+        get() = pref.getString(PREF_BANGLALINK_NUMBER,"false")?:"false"
+        set(isBanglalinkNumber){
+            pref.edit().putString(PREF_BANGLALINK_NUMBER,isBanglalinkNumber).apply()
+        }
 
+    var isHeBanglalinkNumber: Boolean
+        get() = pref.getBoolean(PREF_HE_BANGLALINK_NUMBER,false)
+        set(isVerified){
+            pref.edit().putBoolean(PREF_HE_BANGLALINK_NUMBER,isVerified).apply()
+        }
+    
     var isVerifiedUser: Boolean
         get() = pref.getBoolean(PREF_VERIFICATION,false)
         set(isVerified){
@@ -611,6 +622,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
 
     companion object {
         private const val PREF_PHONE_NUMBER = "p_number"
+        private const val PREF_HE_PHONE_NUMBER = "he_p_number"
         private const val PREF_CUSTOMER_NAME = "customer_name"
         private const val PREF_CUSTOMER_EMAIL = "customer_email"
         private const val PREF_CUSTOMER_ADDRESS = "customer_address"
@@ -621,6 +633,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_CHANNEL_ID = "channel_id"
         private const val PREF_SESSION_TOKEN = "session_token"
         private const val PREF_BANGLALINK_NUMBER = "banglalink_number"
+        private const val PREF_HE_BANGLALINK_NUMBER = "he_banglalink_number"
         private const val PREF_VERIFICATION = "VER"
         private const val PREF_BALANCE = "balance"
         private const val PREF_LATITUDE= "latitude"

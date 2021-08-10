@@ -18,6 +18,7 @@ import com.banglalink.toffee.exception.AppDeprecatedError
 import com.banglalink.toffee.exception.CustomerNotFoundError
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeActivity
 import com.facebook.appevents.AppEventsLogger
@@ -29,11 +30,13 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class SplashScreenFragment : BaseFragment() {
+    private var isNewUser: Boolean = true
+    private val binding get() = _binding !!
     private var logoGifDrawable: GifDrawable? = null
     private var isOperationCompleted: Boolean = false
     @Inject lateinit var commonPreference: CommonPreference
     private var _binding: FragmentSplashScreenBinding? = null
-    private val binding get() = _binding !!
+    @Inject lateinit var connectionWatcher: ConnectionWatcher
     private val viewModel by activityViewModels<SplashViewModel>()
     
     companion object {
@@ -56,9 +59,11 @@ class SplashScreenFragment : BaseFragment() {
                 seekToFrame(0)
             }
         }
-        
+        isNewUser = mPref.customerId == 0 || mPref.password.isBlank()
         observeApiLogin()
-        requestAppLaunch()
+        observeHeaderEnrichment()
+        requestHeaderEnrichment()
+        
         binding.splashScreenMotionLayout.onTransitionCompletedListener {
             if (it == R.id.firstEnd) {
                 lifecycleScope.launch {
@@ -89,12 +94,33 @@ class SplashScreenFragment : BaseFragment() {
         }
     }
     
-    private fun requestAppLaunch() {
-        if (mPref.customerId != 0 && mPref.password.isNotEmpty()) {
-            viewModel.loginResponse()
+    private fun requestHeaderEnrichment() {
+        try {
+            if (isNewUser && connectionWatcher.isOverCellular) {
+                viewModel.getHeaderEnrichment()
+            } else {
+                requestAppLaunch()
+            }
+        } catch (e: Exception) {
+            requestAppLaunch()
         }
-        else {
+    }
+    
+    private fun observeHeaderEnrichment() {
+        observe(viewModel.headerEnrichmentResponse) {
+            if(it is Resource.Success) {
+                mPref.hePhoneNumber = it.data.phoneNumber
+                mPref.isHeBanglalinkNumber = it.data.isBanglalinkNumber
+            }
+            requestAppLaunch()
+        }
+    }
+    
+    private fun requestAppLaunch() {
+        if (isNewUser) {
             viewModel.credentialResponse()
+        } else {
+            viewModel.loginResponse()
         }
     }
     

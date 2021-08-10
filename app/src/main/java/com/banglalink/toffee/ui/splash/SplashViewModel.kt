@@ -7,10 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.apiservice.ApiLogin
-import com.banglalink.toffee.apiservice.CheckUpdate
-import com.banglalink.toffee.apiservice.CredentialService
-import com.banglalink.toffee.apiservice.ReportAppLaunch
+import com.banglalink.toffee.apiservice.*
+import com.banglalink.toffee.data.network.response.HeaderEnrichmentResponse
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.AppCoroutineScope
@@ -31,9 +29,11 @@ class SplashViewModel @Inject constructor(
     private val credential: CredentialService,
     private val sendLoginLogEvent: SendLoginLogEvent,
     @AppCoroutineScope private val appScope: CoroutineScope,
+    private val headerEnrichmentService: HeaderEnrichmentService,
 ) : ViewModel() {
 
     val apiLoginResponse = SingleLiveEvent<Resource<Any>>()
+    val headerEnrichmentResponse = SingleLiveEvent<Resource<HeaderEnrichmentResponse>>()
     
     init {
         appScope.launch {
@@ -70,7 +70,13 @@ class SplashViewModel @Inject constructor(
             apiLoginResponse.value=response
         }
     }
-
+    
+    fun getHeaderEnrichment() {
+        viewModelScope.launch {
+            headerEnrichmentResponse.value = resultFromResponse { headerEnrichmentService.execute() }!!
+        }
+    }
+    
     fun reportAppLaunch() {
         appScope.launch {
             try {
