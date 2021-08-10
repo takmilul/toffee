@@ -2,8 +2,9 @@ package com.banglalink.toffee.data.database.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 
-@Entity
+@Entity(indices = [Index(value = ["channelId"], unique = true)])
 data class DrmLicenseEntity(
     val channelId: Long,
     val contentId: String,

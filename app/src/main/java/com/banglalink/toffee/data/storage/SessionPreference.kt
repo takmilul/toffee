@@ -537,7 +537,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getString(PREF_PLAYREADY_LICENSE_URL, null)
         set(value) = pref.edit { putString(PREF_PLAYREADY_LICENSE_URL, value) }
     
-    private var drmTokenUrl: String?
+    var drmTokenUrl: String?
         get() = pref.getString(PREF_DRM_TOKEN_URL, null)
         set(value) = pref.edit { putString(PREF_DRM_TOKEN_URL, value) }
     

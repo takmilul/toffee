@@ -160,7 +160,9 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         setControllerVisibilityListener { ctrlVisibility->
             when(ctrlVisibility) {
                 View.VISIBLE-> {
-                    playerControlView.setShowMultiWindowTimeBar(player?.isCurrentWindowLive == false)
+                    val isLive = player?.isCurrentWindowLive == true || channelType == "LIVE"
+                    changeTimerVisibility(isLive)
+//                    playerControlView.setShowMultiWindowTimeBar(player?.isCurrentWindowLive == false)
                     onPlayerControllerChangedListeners.forEach {
                         it.onControllerVisible()
                     }
@@ -180,7 +182,10 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         setupCastButton()
 
         videoSurfaceView?.let {
-            if(it is SurfaceView) it.setSecure(true)
+            if(it is SurfaceView) {
+//                it.holder.setFixedSize()
+                it.setSecure(true)
+            }
         }
     }
 
@@ -736,6 +741,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
             val prevState = isVideoPortrait
             isVideoPortrait = channelInfo.isHorizontal != 1
             channelType = channelInfo.type
+            changeTimerVisibility(channelType == "LIVE")
             isUgc = channelInfo.is_ugc == 1
 
             if ((prevState && !isVideoPortrait) || (!prevState && isVideoPortrait)) isFullScreen =
