@@ -75,7 +75,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
     private var actualFileName: String? = null
 
     var copyrightDocUri: String? = null
-    var serverToken: String? = ""
+
 //    private val workerContext
 
 //    val challengeSelectionList = MutableLiveData<List<String>>()
@@ -238,7 +238,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
     suspend fun saveUploadInfo(tags: String?, categoryId: Long, subcategoryId: Long, duration: Long, isHorizontal: Int) {
         progressDialog.value = true
         val ageGroupId = ageGroupPosition.value ?: -1
-        getServerToken()
+
         try {
             val resp = contentUploadApi(
                 fileName,
@@ -271,15 +271,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
         progressDialog.value = false
     }
 
-    fun getServerToken(){
-        viewModelScope.launch {
-            try {
-                serverToken = uploadSignedUrlService.execute(fileName).response.uploadSignedUrl
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
+
     fun saveThumbnail(uri: String?) {
         if (uri == null) return
         viewModelScope.launch {
@@ -290,23 +282,13 @@ class EditUploadInfoViewModel @AssistedInject constructor(
         }
     }
 
-    private suspend fun startUpload(serverContentId: Long): String? {
-
-        val fileUri = Uri.parse(uploadFileUri)
-        val accessToken = withContext(Dispatchers.IO) {
-            val credential = GoogleCredential.fromStream(
-                appContext.assets.open("toffee-261507-60ca3e5405df.json")
-            ).createScoped(listOf("https://www.googleapis.com/auth/devstorage.read_write"))
-            credential.refreshToken()
-            credential.accessToken
+    private suspend fun startUpload(serverContentId: Long): String {
+        var serverToken: String? = ""
+        try {
+            serverToken = uploadSignedUrlService.execute(fileName).response.uploadSignedUrl
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-
-        if (accessToken.isNullOrEmpty()) return null
-
-        val contentType = withContext(Dispatchers.IO + Job()) {
-            UtilsKt.contentTypeFromContentUri(appContext, fileUri)
-        }
-
         var upInfo = UploadInfo(
             serverContentId = serverContentId,
             fileUri = uploadFileUri,
@@ -314,12 +296,6 @@ class EditUploadInfoViewModel @AssistedInject constructor(
         )
         val upId = uploadRepo.insertUploadInfo(upInfo)
         upInfo = upInfo.copy(uploadId = upId)
-
-        val bucketPath = preference.bucketDirectory ?: return null
-        val bucketSubPath = if(bucketPath.contains("/")) bucketPath.substringAfter('/').also {
-            URLEncoder.encode("$it/$fileName", "utf-8")
-        } else fileName
-
         return withContext(Dispatchers.IO + Job()) {
             BinaryUploadRequest(
                 appContext,

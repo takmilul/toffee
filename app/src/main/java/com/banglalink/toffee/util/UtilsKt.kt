@@ -159,12 +159,7 @@ object UtilsKt {
         }
     }
     fun getVideoUploadLimit(timeMs: Long?): Boolean {
-        val totalSeconds = timeMs!! / 1000
-        val seconds = (totalSeconds % 60).toInt()
-        val hours = (totalSeconds / 3600).toInt()
-        return if(hours>=2 && seconds>0){
-            true
-        } else hours==0 && seconds<10
+        return (10 > timeMs!! / 1000 || timeMs / 1000 > 7200)
     }
 
 
