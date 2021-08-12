@@ -78,7 +78,6 @@ class LoginContentFragment : ChildDialogFragment() {
             if (mPref.isHeBanglalinkNumber) {
                 phoneNumberEditText.setText(mPref.hePhoneNumber)
                 phoneNumberEditText.setSelection(mPref.hePhoneNumber.length)
-            
             } else {
                 getHintPhoneNumber()
             }

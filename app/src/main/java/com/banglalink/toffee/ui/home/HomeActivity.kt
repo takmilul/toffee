@@ -1314,14 +1314,12 @@ class HomeActivity :
                         mPref.mqttUserName = ""
                         mPref.mqttPassword = ""
                         mPref.customerName = ""
-                        mPref.hePhoneNumber = ""
                         mPref.customerEmail = ""
                         mPref.userImageUrl = null
                         mPref.customerAddress = ""
                         mPref.mqttIsActive = false
                         cacheManager.clearAllCache()
                         mPref.isVerifiedUser = false
-                        mPref.isHeBanglalinkNumber = false
                         mPref.isChannelDetailChecked = false
                         appScope.launch { favoriteDao.deleteAll() }
                         navController.popBackStack(R.id.menu_feed, false).let { 

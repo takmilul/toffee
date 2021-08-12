@@ -21,6 +21,8 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeActivity
+import com.banglalink.toffee.usecase.HeaderEnrichmentLogData
+import com.banglalink.toffee.util.today
 import com.facebook.appevents.AppEventsLogger
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -30,7 +32,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class SplashScreenFragment : BaseFragment() {
-    private var isNewUser: Boolean = true
     private val binding get() = _binding !!
     private var logoGifDrawable: GifDrawable? = null
     private var isOperationCompleted: Boolean = false
@@ -59,7 +60,6 @@ class SplashScreenFragment : BaseFragment() {
                 seekToFrame(0)
             }
         }
-        isNewUser = mPref.customerId == 0 || mPref.password.isBlank()
         observeApiLogin()
         observeHeaderEnrichment()
         requestHeaderEnrichment()
@@ -96,28 +96,46 @@ class SplashScreenFragment : BaseFragment() {
     
     private fun requestHeaderEnrichment() {
         try {
-            if (isNewUser && connectionWatcher.isOverCellular) {
+            if (mPref.heUpdateDate != today && connectionWatcher.isOverCellular) {
                 viewModel.getHeaderEnrichment()
             } else {
                 requestAppLaunch()
             }
         } catch (e: Exception) {
             requestAppLaunch()
+            e.printStackTrace()
         }
     }
     
     private fun observeHeaderEnrichment() {
-        observe(viewModel.headerEnrichmentResponse) {
-            if(it is Resource.Success) {
-                mPref.hePhoneNumber = it.data.phoneNumber
-                mPref.isHeBanglalinkNumber = it.data.isBanglalinkNumber
+        observe(viewModel.headerEnrichmentResponse) { response ->
+            when (response) {
+                is Resource.Success -> {
+                    val data = response.data
+                    mPref.heUpdateDate = today
+                    mPref.latitude = data.lat ?: ""
+                    mPref.longitude = data.lon ?: ""
+                    mPref.userIp = data.userIp ?: ""
+                    mPref.geoCity = data.geoCity ?: ""
+                    mPref.geoLocation = data.geoLocation ?: ""
+                    mPref.hePhoneNumber = data.phoneNumber
+                    mPref.isHeBanglalinkNumber = data.isBanglalinkNumber
+                    viewModel.sendHeLogData(HeaderEnrichmentLogData().also { 
+                        it.phoneNumber = mPref.hePhoneNumber
+                        it.isBlNumber = mPref.isHeBanglalinkNumber.toString()
+                    })
+                }
+                is Resource.Failure -> {
+                    mPref.hePhoneNumber = ""
+                    mPref.isHeBanglalinkNumber = false
+                }
             }
             requestAppLaunch()
         }
     }
     
     private fun requestAppLaunch() {
-        if (isNewUser) {
+        if (mPref.customerId == 0 || mPref.password.isBlank()) {
             viewModel.credentialResponse()
         } else {
             viewModel.loginResponse()
