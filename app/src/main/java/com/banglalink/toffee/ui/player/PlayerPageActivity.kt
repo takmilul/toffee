@@ -3,6 +3,7 @@ package com.banglalink.toffee.ui.player
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.media.MediaDrm
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -299,10 +300,19 @@ abstract class PlayerPageActivity :
         }
     }
 
+    private fun isDrmActiveForChannel(channelInfo: ChannelInfo) = MediaDrm.isCryptoSchemeSupported(C.WIDEVINE_UUID) &&
+        mPref.isDrmActive &&
+        channelInfo.isDrmActive &&
+        !channelInfo.drmCid.isNullOrBlank() &&
+        !channelInfo.drmDashUrl.isNullOrBlank() &&
+        !mPref.drmWidevineLicenseUrl.isNullOrBlank()
+
     private fun getDrmSessionManager(mediaItem: MediaItem): DrmSessionManager {
         val channelInfo = mediaItem.getChannelMetadata(player) ?: return DrmSessionManager.DRM_UNSUPPORTED
-        val isDrmActive = mPref.isDrmActive && channelInfo.isDrmActive
-        if(!isDrmActive || channelInfo.drmCid.isNullOrBlank()) {
+
+        val isDrmActive = isDrmActiveForChannel(channelInfo)
+
+        if(!isDrmActive) {
             return DrmSessionManager.DRM_UNSUPPORTED
         }
         return DefaultDrmSessionManager
@@ -631,9 +641,9 @@ abstract class PlayerPageActivity :
             showPlayerError()
             return@launch
         }
-        val isDrmActive = mPref.isDrmActive && channelInfo.isDrmActive && channelInfo.drmCid != null && channelInfo.drmDashUrl != null
+        val isDrmActive = isDrmActiveForChannel(channelInfo)
         val mediaItem = if(isDrmActive) {
-            getDrmMediaItem(channelInfo)
+            getDrmMediaItem(channelInfo) //?: getHlsMediaItem(channelInfo, isWifiConnected)
         } else {
             getHlsMediaItem(channelInfo, isWifiConnected)
         }?.let {
@@ -779,7 +789,7 @@ abstract class PlayerPageActivity :
     }
 
     private fun getMediaInfo(info: ChannelInfo): MediaQueueItem {
-        val isDrmActive = info.isDrmActive && mPref.isDrmActive && info.drmDashUrl != null
+        val isDrmActive = isDrmActiveForChannel(info)
         val mediaMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE )
         mediaMetadata.putString( MediaMetadata.KEY_TITLE , info.program_name ?: "")
         if(info.isLive) {
