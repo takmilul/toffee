@@ -55,6 +55,7 @@ import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.*
 import com.banglalink.toffee.mqttservice.ToffeeMqttService
+import com.banglalink.toffee.receiver.NotificationActionReceiver.Companion.ROW_ID
 import com.banglalink.toffee.ui.category.drama.EpisodeListFragment
 import com.banglalink.toffee.ui.channels.AllChannelsViewModel
 import com.banglalink.toffee.ui.channels.ChannelFragmentNew
@@ -769,6 +770,10 @@ class HomeActivity :
                     val strUri = uri.toString()
                     handleDeepLink(strUri)
                 }
+            }
+            val id = intent.getLongExtra(ROW_ID, 0L)
+            if (id != 0L) {
+                notificationRepo.updateSeenStatus(id, true, System.currentTimeMillis())
             }
         }
     }
