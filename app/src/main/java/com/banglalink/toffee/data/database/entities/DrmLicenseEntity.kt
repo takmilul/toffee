@@ -8,7 +8,7 @@ import androidx.room.Index
 data class DrmLicenseEntity(
     val channelId: Long,
     val contentId: String,
-    @ColumnInfo(name = "lic", typeAffinity = ColumnInfo.BLOB)
+    @ColumnInfo(name = "data", typeAffinity = ColumnInfo.BLOB)
     val license: ByteArray,
     val expiryTime: Long
 ): BaseEntity() {

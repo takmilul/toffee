@@ -318,9 +318,13 @@ abstract class PlayerPageActivity :
         return DefaultDrmSessionManager
             .Builder()
             .setMultiSession(false)
-            .build(ToffeeMediaDrmCallback())
-            .apply {
-                setMode(DefaultDrmSessionManager.MODE_PLAYBACK, mediaItem.playbackProperties?.drmConfiguration?.keySetId)
+            .build(ToffeeMediaDrmCallback2(
+                mPref.drmWidevineLicenseUrl!!, httpDataSourceFactory!!, drmTokenApi, channelInfo.drmCid!!
+            )).apply {
+                mediaItem.playbackProperties?.drmConfiguration?.keySetId?.let {
+                    Log.e("DRM_T", "Using offline key")
+                    setMode(DefaultDrmSessionManager.MODE_PLAYBACK, it)
+                }
             }
     }
 
@@ -506,13 +510,13 @@ abstract class PlayerPageActivity :
         playChannel(isReload)
     }
 
-    private val LICENSE_EXPIRE_BEFORE = /*95_000L */ 86_400_1000L
+    private val LICENSE_EXPIRE_BEFORE = /*95_000L */ 604_800_000L // 7 days
 
     private fun isLicenseAlmostExpired(exp: Long): Boolean {
         return exp - LICENSE_EXPIRE_BEFORE < System.currentTimeMillis()
     }
 
-    private fun isLicenseExpired(exp: Long) = exp - /*80_000L*/ 3600_000L < System.currentTimeMillis()
+    private fun isLicenseExpired(exp: Long) = exp - /*80_000L*/ 21_600_000L < System.currentTimeMillis() // 6 hours
 
     private suspend fun getLicense(channelInfo: ChannelInfo): ByteArray? {
         val existingLicense = drmLicenseDao.getByChannelId(channelInfo.id.toLong())
@@ -529,10 +533,10 @@ abstract class PlayerPageActivity :
             return existingLicense.license
         }
         Log.e("DRM_T", "Requesting new license and using that one.")
-
-        return withContext(Dispatchers.IO + Job()) {
+        lifecycleScope.launch(Dispatchers.IO + Job()) {
             downloadLicense(channelInfo)
         }
+        return null
     }
 
     private suspend fun downloadLicense(channelInfo: ChannelInfo): ByteArray? {
@@ -592,12 +596,16 @@ abstract class PlayerPageActivity :
     }
 
     private suspend fun getDrmMediaItem(channelInfo: ChannelInfo): MediaItem? {
-        val license = getLicense(channelInfo) ?: return null
+        val license = getLicense(channelInfo)
         return MediaItem.Builder().apply {
 //            httpDataSourceFactory?.setDefaultRequestProperties(emptyMap())
             showToast("Playing DRM -> ${channelInfo.drmCid}\n${channelInfo.drmDashUrl}")
             setMimeType(MimeTypes.APPLICATION_MPD)
             setDrmUuid(C.WIDEVINE_UUID)
+//            setDrmLicenseRequestHeaders(mapOf("pallycon-customdata-v2" to token))
+//            setDrmLicenseUri(mPref.drmWidevineLicenseUrl!!)
+//            setDrmMultiSession(false)
+//            setDrmForceDefaultLicenseUri(false)
             setDrmKeySetId(license)
             setUri(channelInfo.drmDashUrl)
             setTag(channelInfo)
@@ -637,6 +645,7 @@ abstract class PlayerPageActivity :
             showPlayerError(true)
             return@launch
         }
+//        val oldChannelInfo = player?.currentMediaItem?.getChannelMetadata(player)
         val channelInfo = playlistManager.getCurrentChannel() ?: run{
             showPlayerError()
             return@launch
@@ -956,6 +965,11 @@ abstract class PlayerPageActivity :
                 clearStartPosition()
                 reloadChannel()
             }
+
+            if(e.cause?.cause?.cause is ToffeeMediaDrmException) {
+                reloadChannel()
+            }
+
             getCurrentChannelInfo()?.let { cinfo->
                 if(!cinfo.isLive) {
                     insertContentViewProgress(cinfo, player?.duration ?: -1)

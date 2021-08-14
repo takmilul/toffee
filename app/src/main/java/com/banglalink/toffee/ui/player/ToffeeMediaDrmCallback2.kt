@@ -15,14 +15,12 @@ import okio.IOException
 import java.lang.IllegalStateException
 import java.util.*
 
-class ToffeeMediaDrmException(msg: String): Exception(msg)
-
-class ToffeeMediaDrmCallback(/*private val licenseUri: String,
+class ToffeeMediaDrmCallback2(private val licenseUri: String,
                              dataSourceFactory: OkHttpDataSource.Factory,
                              private val drmTokenApi: DrmTokenService,
-                             private val contentId: String*/): MediaDrmCallback {
+                             private val contentId: String): MediaDrmCallback {
 
-//    private val httpMediaDrmCallback = HttpMediaDrmCallback(licenseUri, false, dataSourceFactory)
+    private val httpMediaDrmCallback = HttpMediaDrmCallback(licenseUri, false, dataSourceFactory)
 
     override fun executeProvisionRequest(
         uuid: UUID,
@@ -40,10 +38,9 @@ class ToffeeMediaDrmCallback(/*private val licenseUri: String,
     }
 
     override fun executeKeyRequest(uuid: UUID, request: ExoMediaDrm.KeyRequest): ByteArray {
-//        val token = runBlocking {
-//            drmTokenApi.execute(contentId, 120)
-//        } ?:
-        Log.e("DRM_T", "Key request from media drm callback")
+        val token = runBlocking {
+            drmTokenApi.execute(contentId)
+        } ?:
         throw MediaDrmCallbackException(
                 DataSpec.Builder().setUri(Uri.EMPTY).build(),
                 Uri.EMPTY,  /* responseHeaders= */
@@ -51,9 +48,8 @@ class ToffeeMediaDrmCallback(/*private val licenseUri: String,
                 0,  /* cause= */
                 ToffeeMediaDrmException("Drm token request ignored")
             )
-//        Log.e("DRM_T", "Requesting auth + key from media drm callback")
-//
-//        httpMediaDrmCallback.setKeyRequestProperty("pallycon-customdata-v2", token)
-//        return httpMediaDrmCallback.executeKeyRequest(uuid, request)
+
+        httpMediaDrmCallback.setKeyRequestProperty("pallycon-customdata-v2", token)
+        return httpMediaDrmCallback.executeKeyRequest(uuid, request)
     }
 }
