@@ -15,6 +15,7 @@ import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.usecase.SendDrmUnavailableLogEvent
 import com.banglalink.toffee.usecase.SendLoginLogEvent
 import com.banglalink.toffee.util.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,6 +32,7 @@ class SplashViewModel @Inject constructor(
     private val credential: CredentialService,
     private val sendLoginLogEvent: SendLoginLogEvent,
     @AppCoroutineScope private val appScope: CoroutineScope,
+    private val sendDrmUnavailableLogEvent: SendDrmUnavailableLogEvent,
 ) : ViewModel() {
 
     val apiLoginResponse = SingleLiveEvent<Resource<Any>>()
@@ -98,6 +100,12 @@ class SplashViewModel @Inject constructor(
     fun sendLoginLogData() {
         viewModelScope.launch {
             sendLoginLogEvent.execute()
+        }
+    }
+    
+    fun sendDrmUnavailableLogData() {
+        viewModelScope.launch {
+            sendDrmUnavailableLogEvent.execute()
         }
     }
 }
