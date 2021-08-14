@@ -1,6 +1,5 @@
 package com.banglalink.toffee.data.network.interceptor
 
-import android.util.Log
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.exception.ToffeeDnsException
 import okhttp3.Dns
@@ -14,16 +13,15 @@ import javax.inject.Singleton
 class ToffeeDns @Inject constructor(private val httpsDns: DnsOverHttps): Dns {
     override fun lookup(hostname: String): List<InetAddress> {
         return try {
-//            if(hostname.contains("streamer")) throw UnknownHostException(hostname)
             Dns.SYSTEM.lookup(hostname)
-//                .also {
-//                Log.e("DNS_T", "Resolved by System Dns ${hostname}, Response entry -> ${it.size}")
-//            }
         } catch (ex: UnknownHostException) {
-            httpsDns.lookup(hostname).also {
-//                Log.e("DNS_T", "Resolved by HTTPS DNS -> $hostname")
-//                Log.e("DNS_T", "Resolved IPs -> $it")
-                ToffeeAnalytics.logException(ToffeeDnsException("Resolved by HttpsDns ${hostname}, Response size -> ${it.size}"))
+            try {
+                httpsDns.lookup(hostname).also {
+                    ToffeeAnalytics.logException(ToffeeDnsException("Resolved by HttpsDns ${hostname}, Response size -> ${it.size}"))
+                }
+            } catch (ex2: UnknownHostException) {
+                ex2.printStackTrace()
+                throw ex
             }
         }
     }

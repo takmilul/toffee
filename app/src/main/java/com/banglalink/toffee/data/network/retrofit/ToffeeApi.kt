@@ -387,8 +387,10 @@ interface ToffeeApi {
         @Body paymentMethodRequest: VastTagRequest
     ): VastTagResponse
 
-    @POST("drm-token")
+    @POST
     suspend fun getDrmToken(
+        @Url url: String,
+        @Header("DRM-API-HEADER") drmHeader: String,
         @Body drmTokenRequest: DrmTokenRequest
     ): DrmTokenResponse
     

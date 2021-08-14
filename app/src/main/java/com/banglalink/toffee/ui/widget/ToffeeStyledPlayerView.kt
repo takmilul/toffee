@@ -10,6 +10,7 @@ import android.provider.Settings
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
+import android.view.SurfaceView
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -159,7 +160,9 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         setControllerVisibilityListener { ctrlVisibility->
             when(ctrlVisibility) {
                 View.VISIBLE-> {
-                    playerControlView.setShowMultiWindowTimeBar(player?.isCurrentWindowLive == false)
+                    val isLive = player?.isCurrentWindowLive == true || channelType == "LIVE"
+                    changeTimerVisibility(isLive)
+//                    playerControlView.setShowMultiWindowTimeBar(player?.isCurrentWindowLive == false)
                     onPlayerControllerChangedListeners.forEach {
                         it.onControllerVisible()
                     }
@@ -177,6 +180,13 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
 
         setupOverlay()
         setupCastButton()
+
+        videoSurfaceView?.let {
+            if(it is SurfaceView) {
+//                it.holder.setFixedSize()
+                it.setSecure(true)
+            }
+        }
     }
 
     fun addPlayerControllerChangeListener(listener: OnPlayerControllerChangedListener) {
@@ -731,6 +741,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
             val prevState = isVideoPortrait
             isVideoPortrait = channelInfo.isHorizontal != 1
             channelType = channelInfo.type
+            changeTimerVisibility(channelType == "LIVE")
             isUgc = channelInfo.is_ugc == 1
 
             if ((prevState && !isVideoPortrait) || (!prevState && isVideoPortrait)) isFullScreen =

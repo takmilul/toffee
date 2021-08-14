@@ -551,6 +551,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getString(PREF_HE_UPDATE_DATE, null)
         set(value) = pref.edit { putString(PREF_HE_UPDATE_DATE, value) }
     
+    var drmTokenUrl: String?
+        get() = pref.getString(PREF_DRM_TOKEN_URL, null)
+        set(value) = pref.edit { putString(PREF_DRM_TOKEN_URL, value) }
+    
     fun saveCustomerInfo(customerInfoLogin:CustomerInfoLogin){
         balance = customerInfoLogin.balance
         isVerifiedUser = customerInfoLogin.verified_status
@@ -616,6 +620,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         drmWidevineLicenseUrl = customerInfoLogin.widevineLicenseUrl
         drmFpsLicenseUrl = customerInfoLogin.fpsLicenseUrl
         drmPlayreadyLicenseUrl = customerInfoLogin.playreadyLicenseUrl
+        drmTokenUrl = customerInfoLogin.drmTokenUrl
         screenCaptureEnabledUsers = if (customerInfoLogin.screenCaptureEnabledUsers.isNullOrEmpty()) {
             SCREEN_CAPTURE_DISABLED_USERS
         } else {
@@ -715,6 +720,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_FPS_LICENSE_URL = "pref_fps_license_url"
         private const val PREF_PLAYREADY_LICENSE_URL = "pref_playready_license_url"
         private const val PREF_HE_UPDATE_DATE = "pref_he_update_date"
+        private const val PREF_DRM_TOKEN_URL = "pref_drm_token_url"
         
         private val SCREEN_CAPTURE_DISABLED_USERS = setOf("7cd171cf93c9236b", "206c06aaf38fffe9", "21587c9c6447e992", "a25df4f9bc3754de", "4ec3c91fc4f4b8c0", "4fe54e7c960e391b", "c4b82aedaf88eaac", "53e9079df4cae882")
         
