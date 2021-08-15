@@ -20,8 +20,16 @@ object MigrationProvider {
             database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_ReactionStatusItem_contentId_reactionType` ON `ReactionStatusItem` (`contentId`, `reactionType`)")
         }
     }
+
+    private val MIGRAION_3_4 = object: Migration(3,4) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("CREATE TABLE IF NOT EXISTS `DrmLicenseEntity` (`channelId` INTEGER NOT NULL, `contentId` TEXT NOT NULL, `data` BLOB NOT NULL, `expiryTime` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `createTime` INTEGER NOT NULL, `updateTime` INTEGER NOT NULL)")
+            database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_DrmLicenseEntity_channelId` ON `DrmLicenseEntity` (`channelId`)")
+            database.execSQL("CREATE TABLE IF NOT EXISTS `SessionPrefData` (`prefName` TEXT NOT NULL, `prefValue` TEXT, PRIMARY KEY(`prefName`))")
+        }
+    }
     
     fun getMigrationList(): List<Migration> {
-        return listOf(MIGRATION_1_2, MIGRATION_2_3)
+        return listOf(MIGRATION_1_2, MIGRATION_2_3, MIGRAION_3_4)
     }
 }
