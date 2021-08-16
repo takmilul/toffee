@@ -207,4 +207,10 @@ object DatabaseModule {
     fun providesSessionPrefRepository(dao: SessionPrefDao): SessionPrefRepository {
         return SessionPrefRepositoryImpl(dao)
     }
+
+    @Singleton
+    @Provides
+    fun providesDrmLicenseRepository(dao: DrmLicenseDao): DrmLicenseRepository {
+        return DrmLicenseRepositoryImpl(dao)
+    }
 }

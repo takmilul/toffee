@@ -13,12 +13,12 @@ import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.DrmTokenService
-import com.banglalink.toffee.data.database.dao.DrmLicenseDao
 import com.banglalink.toffee.data.database.entities.ContentViewProgress
 import com.banglalink.toffee.data.database.entities.ContinueWatchingItem
 import com.banglalink.toffee.data.database.entities.DrmLicenseEntity
 import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
 import com.banglalink.toffee.data.repository.ContinueWatchingRepository
+import com.banglalink.toffee.data.repository.DrmLicenseRepository
 import com.banglalink.toffee.data.storage.PlayerPreference
 import com.banglalink.toffee.di.DnsHttpClient
 import com.banglalink.toffee.exception.ContentExpiredException
@@ -109,7 +109,7 @@ abstract class PlayerPageActivity :
 //    private var mOfflineLicenseHelper: OfflineLicenseHelper? = null
 
     @Inject lateinit var drmTokenApi: DrmTokenService
-    @Inject lateinit var drmLicenseDao: DrmLicenseDao
+    @Inject lateinit var drmLicenseRepo: DrmLicenseRepository
 
     init {
         defaultCookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER)
@@ -519,7 +519,7 @@ abstract class PlayerPageActivity :
     private fun isLicenseExpired(exp: Long) = exp - /*80_000L*/ 21_600_000L < System.currentTimeMillis() // 6 hours
 
     private suspend fun getLicense(channelInfo: ChannelInfo): ByteArray? {
-        val existingLicense = drmLicenseDao.getByChannelId(channelInfo.id.toLong())
+        val existingLicense = drmLicenseRepo.getByChannelId(channelInfo.id.toLong())
         Log.e("DRM_T", "Existing -> $existingLicense")
         if(existingLicense != null && !isLicenseAlmostExpired(existingLicense.expiryTime)) {
             Log.e("DRM_T", "Using existing license")
@@ -586,7 +586,7 @@ abstract class PlayerPageActivity :
                 channelInfo.id.toLong(), channelInfo.drmCid,
                 licenseData, licenseExpiration
             )
-            drmLicenseDao.insert(newDrmLicense)
+            drmLicenseRepo.insert(newDrmLicense)
             offlineLicenseHelper.release()
             return newDrmLicense.license
         } catch (ex: Exception) {
