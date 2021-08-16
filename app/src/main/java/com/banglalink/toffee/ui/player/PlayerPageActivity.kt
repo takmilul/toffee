@@ -599,7 +599,7 @@ abstract class PlayerPageActivity :
         val license = getLicense(channelInfo)
         return MediaItem.Builder().apply {
 //            httpDataSourceFactory?.setDefaultRequestProperties(emptyMap())
-            showToast("Playing DRM -> ${channelInfo.drmCid}\n${channelInfo.drmDashUrl}")
+//            showToast("Playing DRM -> ${channelInfo.drmCid}\n${channelInfo.drmDashUrl}")
             setMimeType(MimeTypes.APPLICATION_MPD)
             setDrmUuid(C.WIDEVINE_UUID)
 //            setDrmLicenseRequestHeaders(mapOf("pallycon-customdata-v2" to token))
