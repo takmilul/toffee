@@ -68,7 +68,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="36dp"
-        android:text="@string/terms_and_conditions"
+        android:text="@string/terms_of_use"
         android:textColor="@color/colorAccent"
         android:textColorLink="@drawable/text_selector2"
         android:textSize="16sp"

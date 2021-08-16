@@ -53,6 +53,7 @@
     <string name="featured">Featured</string>
     <string name="vod">Videos</string>
     <string name="latest_video">Feed</string>
+    <string name="terms_of_use">Terms of Use</string>
     <string name="terms_and_conditions">Terms &amp; Conditions</string>
     <string name="terms_and_conditions_text">I agree to the Terms and Conditions</string>
     <string name="privacy_policy">Privacy Policy</string>
@@ -246,7 +247,7 @@
     <string name="sign_in_intro_desc">like- Reaction, Upload, Referral etc.</string>
     <string name="sign_in_intro_title">Sign in to Access All Features</string>
     <string name="login_with_phone_text">Login with Phone</string>
-    <string name="i_agree_to_the_text">&#160;&#160;I agree to the&#160;</string>
+    <string name="i_agree_to_the_text">&#160;&#160;I agree to the Creators\'&#160;</string>
     <string name="enter_otp_text">Enter OTP</string>
     <string name="resend_otp_in_59s_text">Resend OTP in 59s</string>
     <string name="successfully_loged_in_text">Successfully Logged In!</string>
@@ -331,7 +332,7 @@
     <string name="clear_activities_text">Clear Activities</string>
     <string name="subscribed_channel_text">Subscribed Channels</string>
     <string name="watched_text">Watched</string>
-    <string name="lets_fill_some_basic_info_text">Let\'s fill in some basics to start off…</string>
+    <string name="lets_fill_some_basic_info_text">Lets\' fill in some basics to start off…</string>
     <string name="set_your_channel_logo">Set Your Channel Logo</string>
     <string name="save_text">Save</string>
     <string name="please_fill_up_all_fields_text">*Please fill up all fields to continue</string>
