@@ -5,7 +5,7 @@ import com.banglalink.toffee.data.database.entities.NotificationInfo
 import kotlinx.coroutines.flow.Flow
 
 interface NotificationInfoRepository {
-    suspend fun insert(notificationInfo: NotificationInfo)
+    suspend fun insert(notificationInfo: NotificationInfo): Long
     suspend fun delete(notificationInfo: NotificationInfo)
     fun getAllNotification(): PagingSource<Int, NotificationInfo>
     fun getUnseenNotificationCount(): Flow<Int>
