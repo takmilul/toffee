@@ -1,6 +1,7 @@
 package com.banglalink.toffee.util
 
 import android.util.Base64
+import com.banglalink.toffee.model.HE_KEY
 import com.banglalink.toffee.model.TOFFEE_KEY
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
@@ -8,6 +9,7 @@ import javax.crypto.spec.SecretKeySpec
 object EncryptionUtil {
     private val TRANSFORMATION = "AES/ECB/PKCS5Padding"
     private val secretKeySpec = SecretKeySpec(TOFFEE_KEY.toByteArray(), "AES")
+    private val headerEnrichmentKeySpec = SecretKeySpec(HE_KEY.toByteArray(), "AES")
 
     fun encryptRequest(jsonRequest: String): String {
         val cipher = encrypt(jsonRequest.toByteArray())
@@ -15,7 +17,17 @@ object EncryptionUtil {
     }
 
     fun decryptResponse(response: String): String {
-        return String(decrypt(Base64.decode(response, Base64.DEFAULT)))
+        return try {
+            String(decrypt(Base64.decode(response, Base64.DEFAULT)))
+        } catch (e: Exception) {
+            String(decryptHeaderEnrichment(Base64.decode(response, Base64.DEFAULT)))
+        }
+    }
+
+    private fun decryptHeaderEnrichment(data: ByteArray): ByteArray {
+        val cipherInstance = Cipher.getInstance(TRANSFORMATION)
+        cipherInstance.init(Cipher.DECRYPT_MODE, headerEnrichmentKeySpec)
+        return cipherInstance.doFinal(data)
     }
 
     private fun decrypt(data: ByteArray): ByteArray {

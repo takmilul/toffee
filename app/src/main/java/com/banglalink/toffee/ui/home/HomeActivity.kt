@@ -1309,23 +1309,23 @@ class HomeActivity :
             when(it) {
                 is Success -> {
                     if (!it.data.verifyStatus) {
+                        mPref.mqttHost = ""
                         mPref.phoneNumber = ""
                         mPref.channelName = ""
                         mPref.channelLogo = ""
-                        mPref.customerName = ""
-                        mPref.customerEmail = ""
-                        mPref.customerAddress = ""
                         mPref.customerDOB = ""
                         mPref.customerNID = ""
-                        mPref.userImageUrl = null
-                        mPref.isVerifiedUser = false
-                        mPref.isChannelDetailChecked = false
-                        mPref.mqttIsActive = false
-                        mPref.mqttHost = ""
                         mPref.mqttClientId = ""
                         mPref.mqttUserName = ""
                         mPref.mqttPassword = ""
+                        mPref.customerName = ""
+                        mPref.customerEmail = ""
+                        mPref.userImageUrl = null
+                        mPref.customerAddress = ""
+                        mPref.mqttIsActive = false
                         cacheManager.clearAllCache()
+                        mPref.isVerifiedUser = false
+                        mPref.isChannelDetailChecked = false
                         appScope.launch { favoriteDao.deleteAll() }
                         navController.popBackStack(R.id.menu_feed, false).let { 
                             recreate()

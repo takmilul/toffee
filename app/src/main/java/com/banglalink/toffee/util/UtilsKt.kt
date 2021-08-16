@@ -317,3 +317,12 @@ fun imagePathToBase64(ctx: Context, imagePath: String, requiredImageByteSize: In
     val byteArray = byteArrayOutputStream.toByteArray()
     return Base64.encodeToString(byteArray, Base64.NO_WRAP)
 }
+
+val today: String
+    get() {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Dhaka"))
+        val cal = Calendar.getInstance(TimeZone.getDefault())
+        val dateGMT = cal.time
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+        return sdf.format(dateGMT)
+    }

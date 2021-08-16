@@ -26,6 +26,7 @@ import com.banglalink.toffee.ui.mychannel.MyChannelAddToPlaylistFragment
 import com.banglalink.toffee.ui.report.ReportPopupFragment
 import com.facebook.shimmer.ShimmerFrameLayout
 import kotlinx.coroutines.launch
+import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -187,4 +188,13 @@ fun EditText.setDrawableRightTouch(setClickListener: () -> Unit) {
         }
         false
     })
+}
+
+fun String.toMD5(): String {
+    return try {
+        val bytes = MessageDigest.getInstance("MD5").digest(this.toByteArray())
+        bytes.joinToString("") { "%02x".format(it) }
+    } catch (e: Exception) {
+        ""
+    }
 }

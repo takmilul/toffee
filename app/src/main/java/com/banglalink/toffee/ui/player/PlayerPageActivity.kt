@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.ConnectivityManager
+import android.media.MediaDrm
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -13,8 +14,10 @@ import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.DrmTokenService
+import com.banglalink.toffee.data.database.dao.DrmLicenseDao
 import com.banglalink.toffee.data.database.entities.ContentViewProgress
 import com.banglalink.toffee.data.database.entities.ContinueWatchingItem
+import com.banglalink.toffee.data.database.entities.DrmLicenseEntity
 import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
 import com.banglalink.toffee.data.repository.ContinueWatchingRepository
 import com.banglalink.toffee.data.storage.PlayerPreference
@@ -35,8 +38,7 @@ import com.google.android.exoplayer2.Player.*
 import com.google.android.exoplayer2.SimpleExoPlayer.Builder
 import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.analytics.AnalyticsListener.EventTime
-import com.google.android.exoplayer2.drm.HttpMediaDrmCallback
-import com.google.android.exoplayer2.drm.OfflineLicenseHelper
+import com.google.android.exoplayer2.drm.*
 import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.ext.cast.MediaItemConverter
 import com.google.android.exoplayer2.ext.cast.SessionAvailabilityListener
@@ -44,15 +46,13 @@ import com.google.android.exoplayer2.ext.ima.ImaAdsLoader
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
 import com.google.android.exoplayer2.source.*
 import com.google.android.exoplayer2.source.ads.AdsLoader
-import com.google.android.exoplayer2.source.hls.HlsMediaSource
+import com.google.android.exoplayer2.source.dash.DashUtil
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.Parameters
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.ParametersBuilder
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.ui.StyledPlayerView
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
-import com.google.android.exoplayer2.upstream.HttpDataSource
 import com.google.android.exoplayer2.util.EventLogger
 import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.exoplayer2.util.Util
@@ -62,13 +62,9 @@ import com.google.android.gms.cast.MediaQueueItem
 import com.google.android.gms.cast.framework.*
 import com.google.android.gms.common.images.WebImage
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONObject
@@ -112,10 +108,10 @@ abstract class PlayerPageActivity :
     private val playerEventListener: PlayerEventListener = PlayerEventListener()
     @DnsHttpClient @Inject lateinit var dnsHttpClient: OkHttpClient
 
-    private val drmLicenseUri = "https://license.pallycon.com/ri/licenseManager.do"
-    private var mOfflineLicenseHelper: OfflineLicenseHelper? = null
+//    private var mOfflineLicenseHelper: OfflineLicenseHelper? = null
 
     @Inject lateinit var drmTokenApi: DrmTokenService
+    @Inject lateinit var drmLicenseDao: DrmLicenseDao
 
     init {
         defaultCookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER)
@@ -220,8 +216,11 @@ abstract class PlayerPageActivity :
 
     override fun onDestroy() {
         super.onDestroy()
+        playChannelJob?.cancel()
         adsLoader?.release()
         adsLoader = null
+//        mOfflineLicenseHelper?.release()
+//        mOfflineLicenseHelper = null
     }
 
     @SuppressLint("MissingSuperCall")
@@ -278,13 +277,13 @@ abstract class PlayerPageActivity :
                     .build()
                 )
                 .setUserAgent(TOFFEE_HEADER)
-                .setDefaultRequestProperties(mapOf("TOFFEE-SESSION-TOKEN" to mPref.getHeaderSessionToken()!!))
+//                .setDefaultRequestProperties(mapOf("TOFFEE-SESSION-TOKEN" to mPref.getHeaderSessionToken()!!))
 
             val mediaSourceFactory = DefaultMediaSourceFactory(httpDataSourceFactory!!)
                 .setAdsLoaderProvider{
                     adsLoader
                 }
-//                .setDrmSessionManagerProvider(this::getDrmSessionManager)
+                .setDrmSessionManagerProvider(this::getDrmSessionManager)
                 .setAdViewProvider(getPlayerView())
 
             exoPlayer = Builder(this)
@@ -303,30 +302,28 @@ abstract class PlayerPageActivity :
         }
     }
 
-    private fun createMediaDrmCallback(licenseUrl: String, requestProperty: Map<String, String>): HttpMediaDrmCallback {
-        val drmCallback = HttpMediaDrmCallback(licenseUrl, httpDataSourceFactory!!)
-        requestProperty.entries.forEach {
-            drmCallback.setKeyRequestProperty(it.key, it.value)
+    private fun isDrmActiveForChannel(channelInfo: ChannelInfo) = MediaDrm.isCryptoSchemeSupported(C.WIDEVINE_UUID) &&
+        mPref.isDrmActive &&
+        channelInfo.isDrmActive &&
+        !channelInfo.drmCid.isNullOrBlank() &&
+        !channelInfo.drmDashUrl.isNullOrBlank() &&
+        !mPref.drmWidevineLicenseUrl.isNullOrBlank()
+
+    private fun getDrmSessionManager(mediaItem: MediaItem): DrmSessionManager {
+        val channelInfo = mediaItem.getChannelMetadata(player) ?: return DrmSessionManager.DRM_UNSUPPORTED
+
+        val isDrmActive = isDrmActiveForChannel(channelInfo)
+
+        if(!isDrmActive) {
+            return DrmSessionManager.DRM_UNSUPPORTED
         }
-        return drmCallback
-    }
-
-//    private fun getDrmSessionManager(mediaItem: MediaItem): DrmSessionManager {
-//        return DefaultDrmSessionManager
-//            .Builder()
-//            .setMultiSession(false)
-//            .build(createMediaDrmCallback(mPref.drmWidevineLicenseUrl!!, mapOf("")))
-//    }
-
-    private fun isLicenseValid(keysetId: ByteArray?): Boolean {
-        return try {
-            keysetId?.let {
-                val remainintSec = mOfflineLicenseHelper?.getLicenseDurationRemainingSec(it)?.first
-                remainintSec != null && remainintSec > 0
+        return DefaultDrmSessionManager
+            .Builder()
+            .setMultiSession(false)
+            .build(ToffeeMediaDrmCallback())
+            .apply {
+                setMode(DefaultDrmSessionManager.MODE_PLAYBACK, mediaItem.playbackProperties?.drmConfiguration?.keySetId)
             }
-        } catch (ex: Exception) {
-            false
-        } ?: false
     }
 
     private val castSessionListener = object: SessionManagerListener<CastSession> {
@@ -462,38 +459,6 @@ abstract class PlayerPageActivity :
         startWindow = C.INDEX_UNSET
         startPosition = C.TIME_UNSET
     }
-
-    private fun prepareMedia(mediaItem: MediaItem): MediaSource {
-//        val dataSourceFactory: Factory = DefaultHttpDataSource.Factory().setUserAgent(TOFFEE_HEADER)
-//        val hlsDataSourceFactory = HlsMediaSource.Factory(dataSourceFactory)
-//        hlsDataSourceFactory.setAllowChunklessPreparation(true)
-        return HlsMediaSource.Factory { _: Int ->
-            val dataSource: HttpDataSource = DefaultHttpDataSource.Factory().setUserAgent(TOFFEE_HEADER).createDataSource()
-            dataSource.setRequestProperty("TOFFEE-SESSION-TOKEN", mPref.getHeaderSessionToken()!!)
-            dataSource
-        }
-        .createMediaSource(mediaItem)
-    }
-
-    private fun prepareMedia2(mediaItem: MediaItem): MediaSource {
-        return ProgressiveMediaSource.Factory {val dataSource: HttpDataSource = DefaultHttpDataSource.Factory().setUserAgent(TOFFEE_HEADER).createDataSource()
-            dataSource.setRequestProperty("Authorization", "Bearer ${getAccessToken()}")
-            dataSource
-        }
-        .createMediaSource(mediaItem)
-    }
-    
-    private fun getAccessToken(): String = runBlocking {
-        val accessToken = withContext(Dispatchers.IO) {
-                val credential = GoogleCredential.fromStream(
-                    assets.open("toffee-261507-60ca3e5405df.json")
-                ).createScoped(listOf("https://www.googleapis.com/auth/devstorage.read_write"))
-                credential.refreshToken()
-                credential.accessToken
-            }
-        Log.d("TOK_", "prepareMedia2: $accessToken")
-        accessToken
-    }
     
     protected fun setPlayList(data: AddToPlaylistData) {
         playlistManager.setPlayList(data)
@@ -519,18 +484,6 @@ abstract class PlayerPageActivity :
 
     override fun isAutoplayEnabled(): Boolean {
         return mPref.isAutoplayForRecommendedVideos
-//        return when (val fragment = supportFragmentManager.findFragmentById(id.details_viewer)) {
-//            is MyChannelPlaylistVideosFragment -> {
-//                fragment.isAutoplayEnabled()
-//            }
-//            is EpisodeListFragment -> {
-//                fragment.isAutoplayEnabled()
-//            }
-//            is CatchupDetailsFragment -> {
-//                fragment.isAutoplayEnabled()
-//            }
-//            else -> false
-//        }
     }
 
     override fun playNext() {
@@ -555,89 +508,169 @@ abstract class PlayerPageActivity :
         playChannel(isReload)
     }
 
-    private suspend fun buildMediaItem(uri: String, channelInfo: ChannelInfo, isReload: Boolean): MediaItem {
-        val isDrmActive = mPref.isDrmActive && channelInfo.isDrmActive
-        Log.e("DRM_T", "Drm Active -> ${mPref.isDrmActive}, ${channelInfo.isDrmActive}")
-        var mediaItem = MediaItem.Builder().apply {
-            val drmActivated: Boolean
-            if(isDrmActive && channelInfo.drmCid != null && channelInfo.drmDashUrl != null) {
-                val token = try {
-                    drmTokenApi.execute(channelInfo.drmCid)
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                    null
-                }
-                val licenseUrl = mPref.drmWidevineLicenseUrl  // "https://license.pallycon.com/ri/licenseManager.do"
-                val uri = channelInfo.drmDashUrl              // "https://cdn-01.toffeelive.com/origin-01/live-origin/smil:akash_aath.smil/manifest.mpd"
-                Log.e("DRM_T", "Token -> $token")
-                if(token != null) {
-                    drmActivated = true
-                    setDrmUuid(C.WIDEVINE_UUID)
-                    setMimeType(MimeTypes.APPLICATION_MPD)
-                    setDrmForceDefaultLicenseUri(false)
-                    setDrmLicenseUri(licenseUrl)
-                    setDrmMultiSession(false)
-                    setDrmLicenseRequestHeaders(mapOf("pallycon-customdata-v2" to token))
-                    setUri(uri)
-                } else {
-                    drmActivated = false
-                }
+    private val LICENSE_EXPIRE_BEFORE = /*95_000L */ 86_400_1000L
+
+    private fun isLicenseAlmostExpired(exp: Long): Boolean {
+        return exp - LICENSE_EXPIRE_BEFORE < System.currentTimeMillis()
+    }
+
+    private fun isLicenseExpired(exp: Long) = exp - /*80_000L*/ 3600_000L < System.currentTimeMillis()
+
+    private suspend fun getLicense(channelInfo: ChannelInfo): ByteArray? {
+        val existingLicense = drmLicenseDao.getByChannelId(channelInfo.id.toLong())
+        Log.e("DRM_T", "Existing -> $existingLicense")
+        if(existingLicense != null && !isLicenseAlmostExpired(existingLicense.expiryTime)) {
+            Log.e("DRM_T", "Using existing license")
+            return existingLicense.license
+        }
+        else if(existingLicense != null && !isLicenseExpired(existingLicense.expiryTime)) {
+            Log.e("DRM_T", "License almost expired. requesting new one, but using old one.")
+            lifecycleScope.launch(Dispatchers.IO + Job()) {
+                downloadLicense(channelInfo)
+            }
+            return existingLicense.license
+        }
+        Log.e("DRM_T", "Requesting new license and using that one.")
+
+        return withContext(Dispatchers.IO + Job()) {
+            downloadLicense(channelInfo)
+        }
+    }
+
+    private suspend fun downloadLicense(channelInfo: ChannelInfo): ByteArray? {
+        var offlineLicenseHelper: OfflineLicenseHelper? = null
+        try {
+            val token =
+                drmTokenApi.execute(channelInfo.drmCid!!, 2_592_000 /* 30 days*/) ?: return null
+            Log.e("DRM_T", "Downloading offline license")
+            val offlineDataSourceFactory = OkHttpDataSource.Factory(
+                dnsHttpClient
+                    .newBuilder()
+                    .addNetworkInterceptor(
+                        HttpLoggingInterceptor()
+                            .setLevel(HttpLoggingInterceptor.Level.HEADERS)
+                    )
+                    .build()
+            )
+            offlineDataSourceFactory.setDefaultRequestProperties(mapOf("pallycon-customdata-v2" to token))
+
+            offlineLicenseHelper = OfflineLicenseHelper.newWidevineInstance(
+                    mPref.drmWidevineLicenseUrl!!,
+                    false,
+                    offlineDataSourceFactory,
+                    DrmSessionEventListener.EventDispatcher()
+                )
+
+            val dataSource = httpDataSourceFactory!!.createDataSource()
+            val dashManifest = DashUtil.loadManifest(dataSource, Uri.parse(channelInfo.drmDashUrl))
+            val drmInitData =
+                DashUtil.loadFormatWithDrmInitData(dataSource, dashManifest.getPeriod(0))
+                    ?: run{
+                        offlineLicenseHelper.release()
+                        return null
+                    }
+            val licenseData = offlineLicenseHelper.downloadLicense(drmInitData)
+            Log.e("DRM_T", "License size -> ${licenseData.size}")
+            val remainingTime = offlineLicenseHelper.getLicenseDurationRemainingSec(licenseData).first
+            Log.e("DRM_T", "Drm expiry time -> $remainingTime")
+            val licenseExpiration = if (remainingTime == Long.MAX_VALUE) {
+                remainingTime
             } else {
-                drmActivated = false
+                System.currentTimeMillis() + (remainingTime * 1000)
             }
-            if(!drmActivated){
-                Log.e("DRM_T", "Drm deactivated")
-                if (!channelInfo.isBucketUrl) setMimeType(MimeTypes.APPLICATION_M3U8)
-                setUri(uri)
-            }
+
+            Log.e("DRM_T", "Saving offline license")
+            val newDrmLicense = DrmLicenseEntity(
+                channelInfo.id.toLong(), channelInfo.drmCid,
+                licenseData, licenseExpiration
+            )
+            drmLicenseDao.insert(newDrmLicense)
+            offlineLicenseHelper.release()
+            return newDrmLicense.license
+        } catch (ex: Exception) {
+            offlineLicenseHelper?.release()
+            return null
+        }
+    }
+
+    private suspend fun getDrmMediaItem(channelInfo: ChannelInfo): MediaItem? {
+        val license = getLicense(channelInfo) ?: return null
+        return MediaItem.Builder().apply {
+//            httpDataSourceFactory?.setDefaultRequestProperties(emptyMap())
+            showToast("Playing DRM -> ${channelInfo.drmCid}\n${channelInfo.drmDashUrl}")
+            setMimeType(MimeTypes.APPLICATION_MPD)
+            setDrmUuid(C.WIDEVINE_UUID)
+            setDrmKeySetId(license)
+            setUri(channelInfo.drmDashUrl)
             setTag(channelInfo)
         }.build()
+    }
 
-        if (!isReload && player is SimpleExoPlayer) playCounter = ++playCounter % mPref.vastFrequency
-        homeViewModel.vastTagsMutableLiveData.value?.randomOrNull()?.let { tag ->
-            val shouldPlayAd = mPref.isVastActive && playCounter == 0 && !channelInfo.isLive
-            val vastTag = if(isReload) currentlyPlayingVastUrl else tag.url
-            if (shouldPlayAd && vastTag.isNotBlank()) {
-                mediaItem = mediaItem.buildUpon()
-                    .setAdTagUri(Uri.parse(vastTag))
-                    .build()
-                if (!isReload) currentlyPlayingVastUrl = tag.url
-            }
+    private fun getHlsMediaItem(channelInfo: ChannelInfo, isWifiConnected: Boolean): MediaItem? {
+        val hlsUrl = channelInfo.hlsLinks?.get(0)?.hls_url_mobile ?: return null
+
+        val uri = if (channelInfo.isBucketUrl) {
+            hlsUrl
+        } else {
+            Channel.createChannel(channelInfo.program_name, hlsUrl).getContentUri(mPref, isWifiConnected)
         }
-        return mediaItem
+
+        return MediaItem.Builder().apply {
+            httpDataSourceFactory?.setDefaultRequestProperties(mapOf("TOFFEE-SESSION-TOKEN" to mPref.getHeaderSessionToken()!!))
+            if (!channelInfo.isBucketUrl) setMimeType(MimeTypes.APPLICATION_M3U8)
+            setUri(uri)
+            setTag(channelInfo)
+        }.build()
     }
 
     abstract fun maximizePlayer()
 
-    private fun playChannel(isReload: Boolean) = lifecycleScope.launch {
-        val channelInfo = playlistManager.getCurrentChannel() ?: return@launch
-        val hlsLink = channelInfo.hlsLinks?.get(0)?.hls_url_mobile ?: run {
+    private var playChannelJob: Job? = null
+    private fun playChannel(isReload: Boolean) {
+        playChannelJob?.cancel()
+        Log.e("DRM_T", "New play request")
+        playChannelJob = playChannelImpl(isReload)
+    }
+
+    private fun playChannelImpl(isReload: Boolean) = lifecycleScope.launch {
+        maximizePlayer()
+        val isWifiConnected = connectionWatcher.isOverWifi
+        if (!isWifiConnected && mPref.watchOnlyWifi()) {
+            showPlayerError(true)
+            return@launch
+        }
+        val channelInfo = playlistManager.getCurrentChannel() ?: run{
+            showPlayerError()
+            return@launch
+        }
+        val isDrmActive = isDrmActiveForChannel(channelInfo)
+        val mediaItem = if(isDrmActive) {
+            getDrmMediaItem(channelInfo) //?: getHlsMediaItem(channelInfo, isWifiConnected)
+        } else {
+            getHlsMediaItem(channelInfo, isWifiConnected)
+        }?.let {
+            if (!isReload && player is SimpleExoPlayer) playCounter = ++playCounter % mPref.vastFrequency
+            homeViewModel.vastTagsMutableLiveData.value?.randomOrNull()?.let { tag ->
+                val shouldPlayAd = mPref.isVastActive && playCounter == 0 && !channelInfo.isLive
+                val vastTag = if(isReload) currentlyPlayingVastUrl else tag.url
+                if (shouldPlayAd && vastTag.isNotBlank()) {
+                    it.buildUpon()
+                        .setAdTagUri(Uri.parse(vastTag))
+                        .build()
+                    if (!isReload) currentlyPlayingVastUrl = tag.url
+                    it
+                } else {
+                    it
+                }
+            }
+            it
+        } ?: run {
+            showPlayerError()
             ToffeeAnalytics.logException(NullPointerException("Channel url is null for id -> ${channelInfo.id}, name -> ${channelInfo.program_name}"))
             return@launch
         }
-        val uri = if (channelInfo.isBucketUrl) hlsLink else Channel.createChannel(channelInfo.program_name, hlsLink).getContentUri(mPref, connectionWatcher)
-//        val uri = "https://storage.googleapis.com/storage/v1/b/ugc-content-storage/o/18_aab9687b-a56a-44e1-ad66-46f1ffbd83a8.mp4?alt=media"
-        //Log.e("PLAY_T", "${channelInfo.hlsLinks?.first()?.hls_url_mobile}")
-        //Log.e("PLAY_T", "$uri;;${mPref.sessionToken};;$TOFFEE_HEADER;;$TOFFEE_HEADER")
-        if (uri == null) { //in this case settings does not allow us to play content. So stop player and trigger event viewing stop
-            player?.stop()
-            player?.clearMediaItems()
-            getPlayerView().adViewGroup.removeAllViews()
-            channelCannotBePlayedDueToSettings() //notify hook/subclass
-            maximizePlayer()
-            heartBeatManager.triggerEventViewingContentStop()
-            return@launch
-        }
-        //Checking whether we need to reload or not. Reload happens because of network switch or re-initialization of player
-//        boolean isReload = false;
-//        ChannelInfo oldChannelInfo = this.channelInfo;
-//        this.channelInfo = channelInfo;
-//        if(oldChannelInfo != null && oldChannelInfo.getId().equalsIgnoreCase(this.channelInfo.getId())){
-//            isReload = true;//that means we have reload situation. We need to start where we left for VODs
-//        }
-//        Log.e("MEDIA_T", "Player is -> ${player?.javaClass?.name}")
+
         player?.let {
-//            Log.e("MEDIA_T", "${it.currentMediaItem?.playbackProperties?.tag}")
             val oldChannelInfo = getCurrentChannelInfo()
             oldChannelInfo?.let { oldInfo ->
                 if(oldInfo.id != channelInfo.id && it.playbackState != STATE_ENDED) {
@@ -653,10 +686,6 @@ abstract class PlayerPageActivity :
             }
             heartBeatManager.triggerEventViewingContentStart(channelInfo.id.toInt(), channelInfo.type ?: "VOD")
             it.playWhenReady = !isReload || it.playWhenReady
-
-            httpDataSourceFactory?.setDefaultRequestProperties(mapOf("TOFFEE-SESSION-TOKEN" to mPref.getHeaderSessionToken()!!))
-
-            val mediaItem = buildMediaItem(uri, channelInfo, isReload)
 
             if (isReload) { //We need to start where we left off for VODs
                 if(channelInfo.viewProgress > 0L) {
@@ -674,9 +703,9 @@ abstract class PlayerPageActivity :
                         //                    player.prepare(mediaSource, false, false);
                     } else if(it is CastPlayer){
                         if(mPref.isCastUrlOverride) {
-                            mediaItem.buildUpon()
-                                .setUri(getCastUrl(uri))
-                                .build()
+//                            mediaItem.buildUpon()
+//                                .setUri(getCastUrl(uri))
+//                                .build()
                         }
                         it.setMediaItem(mediaItem, startPosition)
                     }
@@ -701,9 +730,9 @@ abstract class PlayerPageActivity :
                 it.prepare()
             } else if(it is CastPlayer) {
                 if(mPref.isCastUrlOverride) {
-                    mediaItem.buildUpon()
-                        .setUri(getCastUrl(uri))
-                        .build()
+//                    mediaItem.buildUpon()
+//                        .setUri(getCastUrl(uri))
+//                        .build()
                 }
                 it.setMediaItem(mediaItem, startPosition)
                 it.playWhenReady = true
@@ -711,6 +740,17 @@ abstract class PlayerPageActivity :
             }
             //            player.prepare(mediaSource);//Non reload event or reload for live. Just prepare the media and play it
         }
+    }
+
+    private fun showPlayerError(showMessage: Boolean = false) {
+        player?.stop()
+        player?.clearMediaItems()
+        getPlayerView().adViewGroup.removeAllViews()
+        if(showMessage) {
+            channelCannotBePlayedDueToSettings() //notify hook/subclass
+        }
+        maximizePlayer()
+        heartBeatManager.triggerEventViewingContentStop()
     }
 
     private fun getCastUrl(uri: String): String {
@@ -744,13 +784,14 @@ abstract class PlayerPageActivity :
                         .setTitle(mediaQueueItem.media.metadata.getString(MediaMetadata.KEY_TITLE))
                         .build()
                 )
-                .setMimeType(MimeTypes.APPLICATION_M3U8)
+                .setMimeType(mediaQueueItem.media.contentType)
                 .setTag(jsonToChannelInfo(mediaQueueItem.customData!!))
                 .build()
         }
     }
 
     private fun getMediaInfo(info: ChannelInfo): MediaQueueItem {
+        val isDrmActive = isDrmActiveForChannel(info)
         val mediaMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE )
         mediaMetadata.putString( MediaMetadata.KEY_TITLE , info.program_name ?: "")
         if(info.isLive) {
@@ -760,13 +801,13 @@ abstract class PlayerPageActivity :
             mediaMetadata.addImage(WebImage(Uri.parse(info.landscape_ratio_1280_720)))
         }
 
-        val channelUrl = Channel.createChannel(info.program_name, info.getHlsLink()!!).getContentUri(mPref, connectionWatcher)?.let {
+        val channelUrl = Channel.createChannel(info.program_name, info.getHlsLink()!!).getContentUri(mPref, connectionWatcher.isOverWifi)?.let {
             getCastUrl(it)
         }
 
         val mediaInfo = if (info.isLive) {
             MediaInfo.Builder(channelUrl!!).apply {
-                setContentType(MimeTypes.APPLICATION_M3U8)//"application/x-mpegurl")
+                setContentType(if(isDrmActive) MimeTypes.APPLICATION_MPD else MimeTypes.APPLICATION_M3U8)//"application/x-mpegurl")
                 setStreamType( MediaInfo.STREAM_TYPE_LIVE )
                 setMetadata( mediaMetadata )
             }
@@ -774,13 +815,15 @@ abstract class PlayerPageActivity :
                 .build()
         } else {
             MediaInfo.Builder(channelUrl!!)
-                .setContentType(MimeTypes.APPLICATION_M3U8)//"application/x-mpegurl")
+                .setContentType(if(isDrmActive) MimeTypes.APPLICATION_MPD else MimeTypes.APPLICATION_M3U8)//"application/x-mpegurl")
                 .setStreamType( MediaInfo.STREAM_TYPE_BUFFERED )
                 .setMetadata( mediaMetadata )
     //                    .setStreamDuration(MediaInfo.STREAM_TYPE_LIVE)
                 .build()
         }
-        return MediaQueueItem.Builder(mediaInfo).setCustomData(channelInfoToJson(info)/*.apply { Log.e("CAST_T",
+        return MediaQueueItem.Builder(mediaInfo)
+            .setCustomData(channelInfoToJson(info)/*.apply { Log.e("CAST_T",
+
             this.toString(4)
         ) }*/).build()
     }

@@ -40,10 +40,10 @@ import dagger.hilt.android.AndroidEntryPoint
 class LoginContentFragment : ChildDialogFragment() {
     
     private var phoneNo: String = ""
+    private val binding get() = _binding !!
     private var regSessionToken: String = ""
     private var _binding: AlertDialogLoginBinding? = null
     private var phoneNumberTextWatcher: TextWatcher? = null
-    private val binding get() = _binding !!
     private val homeViewModel: HomeViewModel by activityViewModels()
     private val viewModel by viewModels<LoginViewModel>()
     private val progressDialog by unsafeLazy { VelBoxProgressDialog(requireContext()) }
@@ -60,7 +60,6 @@ class LoginContentFragment : ChildDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setSpannableTermsAndConditions()
-        getHintPhoneNumber()
         with(binding) {
             verifyButton.safeClick({
                 progressDialog.show()
@@ -70,11 +69,17 @@ class LoginContentFragment : ChildDialogFragment() {
                 viewModel.login(phoneNo)
             })
             termsAndConditionsCheckbox.setOnClickListener {
-                verifyButton.isEnabled = binding.termsAndConditionsCheckbox.isChecked && phoneNo.isNotBlank() && phoneNo.length >= 11
+                verifyButton.isEnabled = termsAndConditionsCheckbox.isChecked && phoneNo.isNotBlank() && phoneNo.length >= 11
             }
             phoneNumberTextWatcher = phoneNumberEditText.doAfterTextChanged {
                 phoneNo = it.toString()
-                binding.verifyButton.isEnabled = binding.termsAndConditionsCheckbox.isChecked && phoneNo.isNotBlank() && phoneNo.length >= 11
+                verifyButton.isEnabled = termsAndConditionsCheckbox.isChecked && phoneNo.isNotBlank() && phoneNo.length >= 11
+            }
+            if (mPref.isHeBanglalinkNumber) {
+                phoneNumberEditText.setText(mPref.hePhoneNumber)
+                phoneNumberEditText.setSelection(mPref.hePhoneNumber.length)
+            } else {
+                getHintPhoneNumber()
             }
         }
     }
