@@ -399,4 +399,10 @@ interface ToffeeApi {
         @HeaderMap headerMap: Map<String, String>,
         @Url url: String? = "http://bl-he.toffeelive.com/getMsisdn.php",
     ): HeaderEnrichmentResponse
+    
+    @POST("/create-upload-signed-url")
+    suspend fun uploadSignedUrl(
+        @Body uploadSignedUrlRequest: UploadSignedUrlRequest
+    ): UploadSignedUrlResponse
+
 }

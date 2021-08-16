@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.banglalink.toffee.apiservice.ContentUpload
 import com.banglalink.toffee.apiservice.GetContentCategories
+import com.banglalink.toffee.apiservice.UploadSignedUrlService
 import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -34,6 +35,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
     private val contentUploadApi: ContentUpload,
     private val preference: SessionPreference,
     private val categoryApi: GetContentCategories,
+    private val uploadSignedUrlService: UploadSignedUrlService,
     @Assisted private val uploadFileUri: String
 ) : ViewModel() {
 
@@ -188,6 +190,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
         } else ".mp4"
 //
         fileName = preference.customerId.toString() + "_" + UUID.randomUUID().toString() + if(ext.isNotBlank()) ext else ".mp4"
+
 //        val upInfo = UploadInfo(fileUri = uploadFileUri, fileName = fileName)
 //
 //        val contentType = withContext(Dispatchers.IO + Job()) {
@@ -231,7 +234,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
         }
         copyrightFileName.value = docFileName
     }
-    
+
     suspend fun saveUploadInfo(tags: String?, categoryId: Long, subcategoryId: Long, duration: Long, isHorizontal: Int) {
         progressDialog.value = true
         val ageGroupId = ageGroupPosition.value ?: -1
@@ -252,6 +255,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
             Log.e("RESP", resp.toString())
             if (resp.contentId > 0L) {
                 val uploadId = startUpload(resp.contentId)
+                Log.e("uploadId", uploadId)
                 if(uploadId != null) {
                     resultLiveData.value = Resource.Success(Pair(uploadId, resp.contentId))
                 } else {
@@ -267,6 +271,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
         progressDialog.value = false
     }
 
+
     fun saveThumbnail(uri: String?) {
         if (uri == null) return
         viewModelScope.launch {
@@ -277,23 +282,13 @@ class EditUploadInfoViewModel @AssistedInject constructor(
         }
     }
 
-    private suspend fun startUpload(serverContentId: Long): String? {
-
-        val fileUri = Uri.parse(uploadFileUri)
-        val accessToken = withContext(Dispatchers.IO) {
-            val credential = GoogleCredential.fromStream(
-                appContext.assets.open("toffee-261507-60ca3e5405df.json")
-            ).createScoped(listOf("https://www.googleapis.com/auth/devstorage.read_write"))
-            credential.refreshToken()
-            credential.accessToken
+    private suspend fun startUpload(serverContentId: Long): String {
+        var serverToken: String? = ""
+        try {
+            serverToken = uploadSignedUrlService.execute(fileName).response.uploadSignedUrl
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-
-        if (accessToken.isNullOrEmpty()) return null
-
-        val contentType = withContext(Dispatchers.IO + Job()) {
-            UtilsKt.contentTypeFromContentUri(appContext, fileUri)
-        }
-
         var upInfo = UploadInfo(
             serverContentId = serverContentId,
             fileUri = uploadFileUri,
@@ -301,23 +296,15 @@ class EditUploadInfoViewModel @AssistedInject constructor(
         )
         val upId = uploadRepo.insertUploadInfo(upInfo)
         upInfo = upInfo.copy(uploadId = upId)
-
-        val bucketPath = preference.bucketDirectory ?: return null
-        val bucketSubPath = if(bucketPath.contains("/")) bucketPath.substringAfter('/').also {
-            URLEncoder.encode("$it/$fileName", "utf-8")
-        } else fileName
-
         return withContext(Dispatchers.IO + Job()) {
             BinaryUploadRequest(
                 appContext,
-                "https://storage.googleapis.com/upload/storage/v1/b/${bucketPath}/" +
-                        "o?uploadType=media&name=$bucketSubPath"
+                serverToken.toString()
             )
                 .setUploadID(upInfo.getUploadIdStr()!!)
-                .setMethod("POST")
-                .addHeader("Content-Type", contentType)
+                .setMethod("PUT")
+                .addHeader("Content-Type", "application/octet-stream")
                 .setFileToUpload(uploadFileUri)
-                .setBearerAuth(accessToken)
                 .startUpload()
         }
     }
@@ -325,10 +312,10 @@ class EditUploadInfoViewModel @AssistedInject constructor(
     private suspend fun startUploadToBucket(ipFileUri: Uri) {
         val accessToken = withContext(Dispatchers.IO) {
             val credential = GoogleCredential.fromStream(
-                    appContext.assets.open("toffee-261507-60ca3e5405df.json")
-                ).createScoped(listOf("https://www.googleapis.com/auth/devstorage.read_write"))
-                credential.refreshToken()
-                credential.accessToken
+                appContext.assets.open("toffee-261507-60ca3e5405df.json")
+            ).createScoped(listOf("https://www.googleapis.com/auth/devstorage.read_write"))
+            credential.refreshToken()
+            credential.accessToken
         }
 
         if (accessToken.isNullOrEmpty()) {

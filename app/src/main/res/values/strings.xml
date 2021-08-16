@@ -331,7 +331,7 @@
     <string name="clear_activities_text">Clear Activities</string>
     <string name="subscribed_channel_text">Subscribed Channels</string>
     <string name="watched_text">Watched</string>
-    <string name="lets_fill_some_basic_info_text">Lets fill in some basics to start off...</string>
+    <string name="lets_fill_some_basic_info_text">Let\'s fill in some basics to start off…</string>
     <string name="set_your_channel_logo">Set Your Channel Logo</string>
     <string name="save_text">Save</string>
     <string name="please_fill_up_all_fields_text">*Please fill up all fields to continue</string>
@@ -377,6 +377,7 @@
     <string name="select_sub_category">Select Sub Category</string>
     <string name="try_again_msg">Something went wrong. Please try again.</string>
     <string name="thumbnail_missing_msg">Thumbnail is missing!</string>
+    <string name="upload_limit"> By default, you can upload Video Content that are up to 10 seconds to 2 hours long </string>
     <string name="cancel_upload_title">Cancel Uploading</string>
     <string name="cancel_upload_msg">Are you sure that you want to\ncancel uploading video?</string>
     <string name="owner_video_empty_msg">You haven\'t uploaded any video yet</string>

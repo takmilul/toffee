@@ -429,7 +429,6 @@ class EditUploadInfoFragment: BaseFragment() {
             context?.showToast(getString(R.string.thumbnail_missing_msg))
             return
         }
-
         if (title.isNotBlank() and description.isNotBlank()) {
             lifecycleScope.launch {
                 val categoryObj = binding.categorySpinner.selectedItem
