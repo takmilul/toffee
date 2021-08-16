@@ -3,6 +3,7 @@ package com.banglalink.toffee.ui.splash
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.media.MediaDrm
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -24,6 +25,7 @@ import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.usecase.HeaderEnrichmentLogData
 import com.banglalink.toffee.util.today
 import com.facebook.appevents.AppEventsLogger
+import com.google.android.exoplayer2.C
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -147,6 +149,10 @@ class SplashScreenFragment : BaseFragment() {
             when (it) {
                 is Resource.Success -> {
                     viewModel.sendLoginLogData()
+                    val isDrmAvailable = MediaDrm.isCryptoSchemeSupported(C.WIDEVINE_UUID)
+                    if (!isDrmAvailable) {
+                        viewModel.sendDrmUnavailableLogData()
+                    }
                     if (isOperationCompleted) {
                         launchHomePage()
                     }

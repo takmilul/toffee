@@ -14,6 +14,7 @@ import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.usecase.HeaderEnrichmentLogData
 import com.banglalink.toffee.usecase.SendHeaderEnrichmentLogEvent
+import com.banglalink.toffee.usecase.SendDrmUnavailableLogEvent
 import com.banglalink.toffee.usecase.SendLoginLogEvent
 import com.banglalink.toffee.util.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,6 +33,7 @@ class SplashViewModel @Inject constructor(
     @AppCoroutineScope private val appScope: CoroutineScope,
     private val sendHeLogEvent: SendHeaderEnrichmentLogEvent,
     private val headerEnrichmentService: HeaderEnrichmentService,
+    private val sendDrmUnavailableLogEvent: SendDrmUnavailableLogEvent,
 ) : ViewModel() {
 
     val apiLoginResponse = SingleLiveEvent<Resource<Any>>()
@@ -104,6 +106,7 @@ class SplashViewModel @Inject constructor(
             }
         }
     }
+    
     fun sendHeLogData(heLogData: HeaderEnrichmentLogData) {
         viewModelScope.launch {
             try {
@@ -111,6 +114,12 @@ class SplashViewModel @Inject constructor(
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+        }
+    }
+    
+    fun sendDrmUnavailableLogData() {
+        viewModelScope.launch {
+            sendDrmUnavailableLogEvent.execute()
         }
     }
 }
