@@ -40,7 +40,6 @@ import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.analytics.AnalyticsListener.EventTime
 import com.google.android.exoplayer2.drm.*
 import com.google.android.exoplayer2.ext.cast.CastPlayer
-import com.google.android.exoplayer2.ext.cast.MediaItemConverter
 import com.google.android.exoplayer2.ext.cast.SessionAvailabilityListener
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
@@ -56,18 +55,13 @@ import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.util.EventLogger
 import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.exoplayer2.util.Util
-import com.google.android.gms.cast.MediaInfo
-import com.google.android.gms.cast.MediaMetadata
-import com.google.android.gms.cast.MediaQueueItem
 import com.google.android.gms.cast.framework.*
-import com.google.android.gms.common.images.WebImage
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.json.JSONObject
 import java.net.*
 import java.util.*
 import javax.inject.Inject
@@ -356,7 +350,8 @@ abstract class PlayerPageActivity :
         override fun onSessionResumed(p0: CastSession?, p1: Boolean) {
             p0?.let {
                 val cinfo = try {
-                    jsonToChannelInfo(it.remoteMediaClient.currentItem.customData!!)
+                    val customData = it.remoteMediaClient.currentItem.customData!!
+                    Gson().fromJson(customData.getString("channel_info"), ChannelInfo::class.java)
                 } catch (ex: Exception) {
                     ex.printStackTrace()
                     null
@@ -378,8 +373,8 @@ abstract class PlayerPageActivity :
         castContext?.let {
             it.sessionManager.addSessionManagerListener(castSessionListener, CastSession::class.java)
 
-            Log.e("CAST", "Castplayer init")
-            castPlayer = CastPlayer(it, ToffeeMediaItemConverter()).apply {
+            Log.e("CAST_T", "Castplayer init")
+            castPlayer = CastPlayer(it, ToffeeMediaItemConverter(mPref, connectionWatcher.isOverWifi)).apply {
                 addListener(playerEventListener)
                 playWhenReady = true
                 setSessionAvailabilityListener(this@PlayerPageActivity)
@@ -711,12 +706,18 @@ abstract class PlayerPageActivity :
                         it.setMediaItem(mediaItem, false)
                         //                    player.prepare(mediaSource, false, false);
                     } else if(it is CastPlayer){
-                        if(mPref.isCastUrlOverride) {
-//                            mediaItem.buildUpon()
-//                                .setUri(getCastUrl(uri))
-//                                .build()
+                        val newMediaItem = if(isDrmActive) {
+                            val drmToken = drmTokenApi.execute(channelInfo.drmCid!!) ?: return@launch
+                            mediaItem.buildUpon()
+                                .setDrmLicenseUri(mPref.drmWidevineLicenseUrl!!)
+                                .setDrmMultiSession(false)
+                                .setDrmForceDefaultLicenseUri(false)
+                                .setDrmLicenseRequestHeaders(mapOf("pallycon-customdata-v2" to drmToken))
+                                .build()
+                        } else {
+                            mediaItem
                         }
-                        it.setMediaItem(mediaItem, startPosition)
+                        it.setMediaItem(newMediaItem, startPosition)
                     }
                     it.prepare()
                     it.playWhenReady = true
@@ -738,12 +739,18 @@ abstract class PlayerPageActivity :
                 it.setMediaItem(mediaItem, startPosition)
                 it.prepare()
             } else if(it is CastPlayer) {
-                if(mPref.isCastUrlOverride) {
-//                    mediaItem.buildUpon()
-//                        .setUri(getCastUrl(uri))
-//                        .build()
+                val newMediaItem = if(isDrmActive) {
+                    val drmToken = drmTokenApi.execute(channelInfo.drmCid!!) ?: return@launch
+                    mediaItem.buildUpon()
+                        .setDrmMultiSession(false)
+                        .setDrmForceDefaultLicenseUri(false)
+                        .setDrmLicenseUri(mPref.drmWidevineLicenseUrl!!)
+                        .setDrmLicenseRequestHeaders(mapOf("pallycon-customdata-v2" to drmToken))
+                        .build()
+                } else {
+                    mediaItem
                 }
-                it.setMediaItem(mediaItem, startPosition)
+                it.setMediaItem(newMediaItem, startPosition)
                 it.playWhenReady = true
                 it.prepare()
             }
@@ -760,91 +767,6 @@ abstract class PlayerPageActivity :
         }
         maximizePlayer()
         heartBeatManager.triggerEventViewingContentStop()
-    }
-
-    private fun getCastUrl(uri: String): String {
-        var newUrl = uri
-        if (mPref.isCastUrlOverride && mPref.castOverrideUrl.isNotBlank()) {
-            try {
-                val url = URL(uri)
-                var path = url.path
-                if (!url.query.isNullOrEmpty()) {
-                    path = path + "?" + url.query
-                }
-                newUrl = mPref.castOverrideUrl + path
-            } catch (e: MalformedURLException) {
-                e.printStackTrace()
-            }
-        }
-        return newUrl
-    }
-
-    private inner class ToffeeMediaItemConverter: MediaItemConverter {
-        override fun toMediaQueueItem(mediaItem: MediaItem): MediaQueueItem {
-            return getMediaInfo(mediaItem.getChannelMetadata(castPlayer)!!)
-        }
-
-        override fun toMediaItem(mediaQueueItem: MediaQueueItem): MediaItem {
-//            Log.e("MEDIA_T", "CustomData -> ${mediaQueueItem.customData}")
-            return MediaItem.Builder().setUri(mediaQueueItem.media.contentUrl)
-                .setMediaMetadata(
-                    com.google.android.exoplayer2.MediaMetadata
-                        .Builder()
-                        .setTitle(mediaQueueItem.media.metadata.getString(MediaMetadata.KEY_TITLE))
-                        .build()
-                )
-                .setMimeType(mediaQueueItem.media.contentType)
-                .setTag(jsonToChannelInfo(mediaQueueItem.customData!!))
-                .build()
-        }
-    }
-
-    private fun getMediaInfo(info: ChannelInfo): MediaQueueItem {
-        val isDrmActive = isDrmActiveForChannel(info)
-        val mediaMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE )
-        mediaMetadata.putString( MediaMetadata.KEY_TITLE , info.program_name ?: "")
-        if(info.isLive) {
-            mediaMetadata.addImage(WebImage(Uri.parse(info.channel_logo)))
-        }
-        else {
-            mediaMetadata.addImage(WebImage(Uri.parse(info.landscape_ratio_1280_720)))
-        }
-
-        val channelUrl = Channel.createChannel(info.program_name, info.getHlsLink()!!).getContentUri(mPref, connectionWatcher.isOverWifi)?.let {
-            getCastUrl(it)
-        }
-
-        val mediaInfo = if (info.isLive) {
-            MediaInfo.Builder(channelUrl!!).apply {
-                setContentType(if(isDrmActive) MimeTypes.APPLICATION_MPD else MimeTypes.APPLICATION_M3U8)//"application/x-mpegurl")
-                setStreamType( MediaInfo.STREAM_TYPE_LIVE )
-                setMetadata( mediaMetadata )
-            }
-    //                    .setStreamDuration(0) // 0 for Infinity
-                .build()
-        } else {
-            MediaInfo.Builder(channelUrl!!)
-                .setContentType(if(isDrmActive) MimeTypes.APPLICATION_MPD else MimeTypes.APPLICATION_M3U8)//"application/x-mpegurl")
-                .setStreamType( MediaInfo.STREAM_TYPE_BUFFERED )
-                .setMetadata( mediaMetadata )
-    //                    .setStreamDuration(MediaInfo.STREAM_TYPE_LIVE)
-                .build()
-        }
-        return MediaQueueItem.Builder(mediaInfo)
-            .setCustomData(channelInfoToJson(info)/*.apply { Log.e("CAST_T",
-
-            this.toString(4)
-        ) }*/).build()
-    }
-
-    private fun channelInfoToJson(info: ChannelInfo): JSONObject {
-        return JSONObject().apply {
-            put("channel_info", Gson().toJson(info))
-        }
-    }
-
-    private fun jsonToChannelInfo(json: JSONObject): ChannelInfo {
-        return Gson().fromJson(json.getString("channel_info"), ChannelInfo::class.java)
     }
 
     //This will be called due to session token change while playing content or after init of player
