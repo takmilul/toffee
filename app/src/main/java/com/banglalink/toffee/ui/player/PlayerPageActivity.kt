@@ -707,7 +707,11 @@ abstract class PlayerPageActivity :
                         //                    player.prepare(mediaSource, false, false);
                     } else if(it is CastPlayer){
                         val newMediaItem = if(isDrmActive) {
-                            val drmToken = drmTokenApi.execute(channelInfo.drmCid!!) ?: return@launch
+                            val drmToken = try{
+                                drmTokenApi.execute(channelInfo.drmCid!!)
+                            } catch (ex: Exception) {
+                                null
+                            } ?: return@launch
                             mediaItem.buildUpon()
                                 .setDrmLicenseUri(mPref.drmWidevineLicenseUrl!!)
                                 .setDrmMultiSession(false)
@@ -740,7 +744,11 @@ abstract class PlayerPageActivity :
                 it.prepare()
             } else if(it is CastPlayer) {
                 val newMediaItem = if(isDrmActive) {
-                    val drmToken = drmTokenApi.execute(channelInfo.drmCid!!) ?: return@launch
+                    val drmToken = try{
+                        drmTokenApi.execute(channelInfo.drmCid!!)
+                    } catch (ex: Exception) {
+                        null
+                    } ?: return@launch
                     mediaItem.buildUpon()
                         .setDrmMultiSession(false)
                         .setDrmForceDefaultLicenseUri(false)
