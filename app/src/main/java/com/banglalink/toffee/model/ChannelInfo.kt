@@ -87,7 +87,7 @@ data class ChannelInfo(
     val is_ugc: Int = 0,
 
     @SerializedName("is_drm_active")
-    val is_drm_active: Int = 0,
+    var is_drm_active: Int = 0,
     @SerializedName("drm_dash_url")
     val drmDashUrl: String? = null,
     @SerializedName("drm_hls_url")
