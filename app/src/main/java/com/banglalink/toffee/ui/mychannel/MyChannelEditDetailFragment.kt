@@ -16,7 +16,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_DETAILS
+import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.data.network.request.MyChannelEditRequest
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -81,7 +81,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             if (name.isNullOrBlank()) name = profileForm?.fullName
             if (email.isNullOrBlank()) email = profileForm?.email
             if (address.isNullOrBlank()) address = profileForm?.address
-            paymentPhoneNo = if (mPref.phoneNumber.length == 11) mPref.phoneNumber else mPref.phoneNumber.substring(3)
+            paymentPhoneNo = if (mPref.phoneNumber.length > 11) mPref.phoneNumber.substring(3) else mPref.phoneNumber
         }
     }
 
@@ -243,7 +243,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
 
                     binding.saveButton.isClickable = true
                     progressDialog.dismiss()
-                    cacheManager.clearCacheByUrl(GET_MY_CHANNEL_DETAILS)
+                    cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_DETAILS)
                     findNavController().navigateUp()
                     requireContext().showToast(it.data.message)
                 }

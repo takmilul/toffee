@@ -3,6 +3,7 @@ package com.banglalink.toffee.ui.splash
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.media.MediaDrm
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -18,9 +19,13 @@ import com.banglalink.toffee.exception.AppDeprecatedError
 import com.banglalink.toffee.exception.CustomerNotFoundError
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource
+import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeActivity
+import com.banglalink.toffee.usecase.HeaderEnrichmentLogData
+import com.banglalink.toffee.util.today
 import com.facebook.appevents.AppEventsLogger
+import com.google.android.exoplayer2.C
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -29,11 +34,12 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class SplashScreenFragment : BaseFragment() {
+    private val binding get() = _binding !!
     private var logoGifDrawable: GifDrawable? = null
     private var isOperationCompleted: Boolean = false
     @Inject lateinit var commonPreference: CommonPreference
     private var _binding: FragmentSplashScreenBinding? = null
-    private val binding get() = _binding !!
+    @Inject lateinit var connectionWatcher: ConnectionWatcher
     private val viewModel by activityViewModels<SplashViewModel>()
     
     companion object {
@@ -56,9 +62,10 @@ class SplashScreenFragment : BaseFragment() {
                 seekToFrame(0)
             }
         }
-        
         observeApiLogin()
-        requestAppLaunch()
+        observeHeaderEnrichment()
+        requestHeaderEnrichment()
+        
         binding.splashScreenMotionLayout.onTransitionCompletedListener {
             if (it == R.id.firstEnd) {
                 lifecycleScope.launch {
@@ -89,12 +96,51 @@ class SplashScreenFragment : BaseFragment() {
         }
     }
     
-    private fun requestAppLaunch() {
-        if (mPref.customerId != 0 && mPref.password.isNotEmpty()) {
-            viewModel.loginResponse()
+    private fun requestHeaderEnrichment() {
+        try {
+            if (mPref.heUpdateDate != today && connectionWatcher.isOverCellular) {
+                viewModel.getHeaderEnrichment()
+            } else {
+                requestAppLaunch()
+            }
+        } catch (e: Exception) {
+            requestAppLaunch()
+            e.printStackTrace()
         }
-        else {
+    }
+    
+    private fun observeHeaderEnrichment() {
+        observe(viewModel.headerEnrichmentResponse) { response ->
+            when (response) {
+                is Resource.Success -> {
+                    val data = response.data
+                    mPref.heUpdateDate = today
+                    mPref.latitude = data.lat ?: ""
+                    mPref.longitude = data.lon ?: ""
+                    mPref.userIp = data.userIp ?: ""
+                    mPref.geoCity = data.geoCity ?: ""
+                    mPref.geoLocation = data.geoLocation ?: ""
+                    mPref.hePhoneNumber = data.phoneNumber
+                    mPref.isHeBanglalinkNumber = data.isBanglalinkNumber
+                    viewModel.sendHeLogData(HeaderEnrichmentLogData().also { 
+                        it.phoneNumber = mPref.hePhoneNumber
+                        it.isBlNumber = mPref.isHeBanglalinkNumber.toString()
+                    })
+                }
+                is Resource.Failure -> {
+                    mPref.hePhoneNumber = ""
+                    mPref.isHeBanglalinkNumber = false
+                }
+            }
+            requestAppLaunch()
+        }
+    }
+    
+    private fun requestAppLaunch() {
+        if (mPref.customerId == 0 || mPref.password.isBlank()) {
             viewModel.credentialResponse()
+        } else {
+            viewModel.loginResponse()
         }
     }
     
@@ -103,6 +149,10 @@ class SplashScreenFragment : BaseFragment() {
             when (it) {
                 is Resource.Success -> {
                     viewModel.sendLoginLogData()
+                    val isDrmAvailable = MediaDrm.isCryptoSchemeSupported(C.WIDEVINE_UUID)
+                    if (!isDrmAvailable) {
+                        viewModel.sendDrmUnavailableLogData()
+                    }
                     if (isOperationCompleted) {
                         launchHomePage()
                     }

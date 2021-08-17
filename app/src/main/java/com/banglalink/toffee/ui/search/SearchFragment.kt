@@ -87,6 +87,10 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
                     requireActivity().handleShare(channelInfo)
                     return@setOnMenuItemClickListener true
                 }
+                R.id.menu_add_to_playlist->{
+                    requireActivity().handleAddToPlaylist(channelInfo)
+                    return@setOnMenuItemClickListener true
+                }
                 R.id.menu_fav->{
                     requireActivity().handleFavorite(channelInfo, favoriteDao)
                     return@setOnMenuItemClickListener true
@@ -102,14 +106,4 @@ class SearchFragment: BaseListFragment<ChannelInfo>(), ProviderIconCallback<Chan
         }
         popupMenu.show()
     }
-
-
-//    override fun onDestroy() {
-//        super.onDestroy()
-//        activity?.let {
-//            if(it is HomeActivity){
-//                it.closeSearchBarIfOpen()
-//            }
-//        }
-//    }
 }

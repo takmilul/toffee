@@ -38,22 +38,22 @@ class MovieFragment : BaseFragment() {
         }
     }
     
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentMovieBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         category = requireArguments().getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)!!
         activity?.title = category.categoryName
         landingViewModel.pageType.value = PageType.Category
         landingViewModel.categoryId.value = category.id.toInt()
         landingViewModel.isDramaSeries.value = false
+    }
+    
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentMovieBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+    
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setCategoryIcon()
         observeCardsVisibility()
         viewModel.loadMovieCategoryDetail(category.id.toInt())
@@ -89,5 +89,10 @@ class MovieFragment : BaseFragment() {
     override fun onStop() {
         viewModel.moviesContentCards.removeObservers(viewLifecycleOwner)
         super.onStop()
+    }
+    
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

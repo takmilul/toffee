@@ -19,7 +19,9 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.color
-import com.banglalink.toffee.apiservice.GET_MY_CHANNEL_DETAILS
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBinding
@@ -100,6 +102,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
+        if (isOwner) ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_MY_CHANNEL)
         progressDialog.show()
         binding.contentBody.hide()
         
@@ -202,7 +205,6 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                 createPlaylistViewModel.playlistName = null
                 alertDialog.dismiss()
             } else {
-                requireContext().showToast(getString(R.string.playlist_name_required_msg))
                 requireContext().showToast(getString(R.string.playlist_name_empty_msg))
             }
         }
@@ -355,7 +357,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                     binding.myRating = myRating
                     bindingUtil.bindButtonState(binding.channelDetailView.ratingButton, myRating > 0)
                     binding.channelDetailView.ratingCountTextView.text = it.data.ratingCount.toString()
-                    cacheManager.clearCacheByUrl(GET_MY_CHANNEL_DETAILS)
+                    cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_DETAILS)
                 }
                 is Failure -> {
                     requireContext().showToast(it.error.msg)

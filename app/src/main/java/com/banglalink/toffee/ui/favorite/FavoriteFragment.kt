@@ -6,6 +6,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.common.paging.BaseListFragment
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.data.database.LocalSync
@@ -71,6 +73,10 @@ class FavoriteFragment : BaseListFragment<ChannelInfo>(), ProviderIconCallback<C
                     requireActivity().handleFavorite(channelInfo, favoriteDao, onRemoved = {
                         mAdapter.refresh()
                     })
+                    return@setOnMenuItemClickListener true
+                }
+                R.id.menu_add_to_playlist->{
+                    requireActivity().handleAddToPlaylist(channelInfo)
                     return@setOnMenuItemClickListener true
                 }
                 R.id.menu_report -> {

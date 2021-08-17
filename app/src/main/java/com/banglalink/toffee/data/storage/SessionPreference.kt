@@ -36,6 +36,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getString(PREF_PHONE_NUMBER, "") ?: ""
         set(phoneNumber) = pref.edit { putString(PREF_PHONE_NUMBER, phoneNumber) }
     
+    var hePhoneNumber: String
+        get() = pref.getString(PREF_HE_PHONE_NUMBER, "") ?: ""
+        set(phoneNumber) = pref.edit { putString(PREF_HE_PHONE_NUMBER, phoneNumber) }
+    
     var customerName: String
         get() = pref.getString(PREF_CUSTOMER_NAME, "") ?: ""
         set(customerName) {
@@ -81,16 +85,23 @@ class SessionPreference(private val pref: SharedPreferences, private val context
                 sessionTokenLiveData.postValue(sessionToken)//post if there is mismatch of session token
             }
         }
+    
     var isBanglalinkNumber:String
-    get() = pref.getString(PREF_BANGLALINK_NUMBER,"false")?:"false"
-    set(isBanglalinkNumber){
-        pref.edit().putString(PREF_BANGLALINK_NUMBER,isBanglalinkNumber).apply()
-    }
+        get() = pref.getString(PREF_BANGLALINK_NUMBER,"false")?:"false"
+        set(isBanglalinkNumber){
+            pref.edit().putString(PREF_BANGLALINK_NUMBER,isBanglalinkNumber).apply()
+        }
 
-    var isVerifiedUser: Boolean
-        get() = pref.getBoolean(PREF_VERFICATION,false)
+    var isHeBanglalinkNumber: Boolean
+        get() = pref.getBoolean(PREF_HE_BANGLALINK_NUMBER,false)
         set(isVerified){
-            pref.edit().putBoolean(PREF_VERFICATION,isVerified).apply()
+            pref.edit().putBoolean(PREF_HE_BANGLALINK_NUMBER,isVerified).apply()
+        }
+    
+    var isVerifiedUser: Boolean
+        get() = pref.getBoolean(PREF_VERIFICATION,false)
+        set(isVerified){
+            pref.edit().putBoolean(PREF_VERIFICATION,isVerified).apply()
         }
     
     var balance: Int
@@ -246,8 +257,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     fun clear() {
         pref.edit().clear().apply()
     }
-
-
+    
     fun watchOnlyWifi(): Boolean {
         return pref.getBoolean(PREF_WATCH_ONLY_WIFI, false)
     }
@@ -505,6 +515,46 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getInt(PREF_TOFFEE_VAST_FREQUENCY, 1)
         set(value) = pref.edit { putInt(PREF_TOFFEE_VAST_FREQUENCY, value) }
 
+    var bucketDirectory: String?
+        get() = pref.getString(PREF_BUCKET_DIRECTORY, null)
+        set(value) = pref.edit { putString(PREF_BUCKET_DIRECTORY, value) }
+    
+    var isFcmEventActive: Boolean
+        get() = pref.getBoolean(PREF_TOFFEE_IS_FCM_EVENT_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_TOFFEE_IS_FCM_EVENT_ACTIVE, value) }
+    
+    var isFbEventActive: Boolean
+        get() = pref.getBoolean(PREF_TOFFEE_IS_FB_EVENT_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_TOFFEE_IS_FB_EVENT_ACTIVE, value) }
+    
+    var isDrmActive: Boolean
+        get() = pref.getBoolean(PREF_TOFFEE_IS_GLOBAL_DRM_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_TOFFEE_IS_GLOBAL_DRM_ACTIVE, value) }
+    
+    var drmCastReceiver: String?
+        get() = pref.getString(PREF_TOFFEE_DEFAULT_DRM_CAST_RECEIVER, null)
+        set(value) = pref.edit { putString(PREF_TOFFEE_DEFAULT_DRM_CAST_RECEIVER, value) }
+    
+    var drmWidevineLicenseUrl: String?
+        get() = pref.getString(PREF_WIDEVINE_LICENSE_URL, null)
+        set(value) = pref.edit { putString(PREF_WIDEVINE_LICENSE_URL, value) }
+    
+    var drmFpsLicenseUrl: String?
+        get() = pref.getString(PREF_FPS_LICENSE_URL, null)
+        set(value) = pref.edit { putString(PREF_FPS_LICENSE_URL, value) }
+    
+    var drmPlayreadyLicenseUrl: String?
+        get() = pref.getString(PREF_PLAYREADY_LICENSE_URL, null)
+        set(value) = pref.edit { putString(PREF_PLAYREADY_LICENSE_URL, value) }
+    
+    var heUpdateDate: String?
+        get() = pref.getString(PREF_HE_UPDATE_DATE, null)
+        set(value) = pref.edit { putString(PREF_HE_UPDATE_DATE, value) }
+    
+    var drmTokenUrl: String?
+        get() = pref.getString(PREF_DRM_TOKEN_URL, null)
+        set(value) = pref.edit { putString(PREF_DRM_TOKEN_URL, value) }
+    
     fun saveCustomerInfo(customerInfoLogin:CustomerInfoLogin){
         balance = customerInfoLogin.balance
         isVerifiedUser = customerInfoLogin.verified_status
@@ -562,6 +612,15 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         forcedUpdateVersions = customerInfoLogin.forceUpdateVersionCodes
         isVastActive = customerInfoLogin.isVastActive == 1
         vastFrequency = customerInfoLogin.vastFrequency
+        bucketDirectory = customerInfoLogin.gcpVodBucketDirectory
+        isFcmEventActive = customerInfoLogin.isFcmEventActive == 1
+        isFbEventActive = customerInfoLogin.isFbEventActive == 1
+        isDrmActive = customerInfoLogin.isGlobalDrmActive == 1
+        drmCastReceiver = customerInfoLogin.defaultDrmCastReceiver
+        drmWidevineLicenseUrl = customerInfoLogin.widevineLicenseUrl
+        drmFpsLicenseUrl = customerInfoLogin.fpsLicenseUrl
+        drmPlayreadyLicenseUrl = customerInfoLogin.playreadyLicenseUrl
+        drmTokenUrl = customerInfoLogin.drmTokenUrl
         screenCaptureEnabledUsers = if (customerInfoLogin.screenCaptureEnabledUsers.isNullOrEmpty()) {
             SCREEN_CAPTURE_DISABLED_USERS
         } else {
@@ -571,6 +630,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
 
     companion object {
         private const val PREF_PHONE_NUMBER = "p_number"
+        private const val PREF_HE_PHONE_NUMBER = "he_p_number"
         private const val PREF_CUSTOMER_NAME = "customer_name"
         private const val PREF_CUSTOMER_EMAIL = "customer_email"
         private const val PREF_CUSTOMER_ADDRESS = "customer_address"
@@ -581,8 +641,8 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_CHANNEL_ID = "channel_id"
         private const val PREF_SESSION_TOKEN = "session_token"
         private const val PREF_BANGLALINK_NUMBER = "banglalink_number"
-        private const val PREF_VERFICATION = "VER"
-        private const val PREF_LOGOUT= "LOGIYT"
+        private const val PREF_HE_BANGLALINK_NUMBER = "he_banglalink_number"
+        private const val PREF_VERIFICATION = "VER"
         private const val PREF_BALANCE = "balance"
         private const val PREF_LATITUDE= "latitude"
         private const val PREF_LONGITUDE= "Longitude"
@@ -647,13 +707,22 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_GEO_LOCATION = "geo_location"
         private const val PREF_USER_IP = "user_ip"
         private const val PREF_SCREEN_CAPTURE_USERS = "screenCaptureEnabledUsers"
-        private const val PREF_NAME_IP_TV= "IP_TV"
-        private const val PREF_FORCE_UPDATE_VERSIONS= "pref_force_update_versions"
-        private const val PREF_TOFFEE_IS_VAST_ACTIVE= "pref_is_vast_active"
-        private const val PREF_TOFFEE_VAST_FREQUENCY= "pref_vast_frequency"
+        private const val PREF_NAME_IP_TV = "IP_TV"
+        private const val PREF_FORCE_UPDATE_VERSIONS = "pref_force_update_versions"
+        private const val PREF_TOFFEE_IS_VAST_ACTIVE = "pref_is_vast_active"
+        private const val PREF_TOFFEE_IS_FCM_EVENT_ACTIVE = "pref_is_fcm_event_active"
+        private const val PREF_TOFFEE_IS_FB_EVENT_ACTIVE = "pref_is_fb_event_active"
+        private const val PREF_TOFFEE_IS_GLOBAL_DRM_ACTIVE = "pref_is_global_drm_active"
+        private const val PREF_TOFFEE_DEFAULT_DRM_CAST_RECEIVER = "pref_default_drm_cast_receiver"
+        private const val PREF_TOFFEE_VAST_FREQUENCY = "pref_vast_frequency"
+        private const val PREF_BUCKET_DIRECTORY = "pref_bucket_directory"
+        private const val PREF_WIDEVINE_LICENSE_URL = "pref_widevine_license_url"
+        private const val PREF_FPS_LICENSE_URL = "pref_fps_license_url"
+        private const val PREF_PLAYREADY_LICENSE_URL = "pref_playready_license_url"
+        private const val PREF_HE_UPDATE_DATE = "pref_he_update_date"
+        private const val PREF_DRM_TOKEN_URL = "pref_drm_token_url"
         
-        
-        private val SCREEN_CAPTURE_DISABLED_USERS = setOf("7cd171cf93c9236b", "206c06aaf38fffe9", "21587c9c6447e992", "a25df4f9bc3754de", "4ec3c91fc4f4b8c0", "4fe54e7c960e391b", "c4b82aedaf88eaac")
+        private val SCREEN_CAPTURE_DISABLED_USERS = setOf("7cd171cf93c9236b", "206c06aaf38fffe9", "21587c9c6447e992", "a25df4f9bc3754de", "4ec3c91fc4f4b8c0", "4fe54e7c960e391b", "c4b82aedaf88eaac", "53e9079df4cae882")
         
         private var instance: SessionPreference? = null
 

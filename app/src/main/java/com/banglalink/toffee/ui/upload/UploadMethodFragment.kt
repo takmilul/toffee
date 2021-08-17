@@ -153,6 +153,7 @@ class UploadMethodFragment : DialogFragment() {
                 requireContext(),
                 "${requireContext().packageName}.provider",
                 videoFile!!
+
             )
             ToffeeAnalytics.logBreadCrumb("Video uri set")
             videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, videoUri)
@@ -184,7 +185,20 @@ class UploadMethodFragment : DialogFragment() {
         if (it.resultCode == Activity.RESULT_OK && videoFile != null) {
             println("CaptureAbsolutePath${videoFile!!.absolutePath}")
             println("CapturePath${videoFile!!.path}")
-            openEditUpload(videoFile!!.absolutePath)
+            if (UtilsKt.getVideoUploadLimit(UtilsKt.getVideoDuration(requireContext(), videoUri.toString()))){
+
+                VelBoxAlertDialogBuilder(requireContext()).apply {
+                    setTitle("Video Content Limit")
+                    setText(getString(R.string.upload_limit))
+                    setPositiveButtonListener("Got It!") {
+                        it?.dismiss()
+                    }
+                }.create().show()
+            }
+            else{
+                openEditUpload(videoFile!!.absolutePath)
+            }
+
         } else {
             ToffeeAnalytics.logBreadCrumb("Camera/video capture result not returned")
         }
@@ -196,9 +210,29 @@ class UploadMethodFragment : DialogFragment() {
             val fileName = UtilsKt.fileNameFromContentUri(requireContext(), videoUri)
 
             Log.e("UPLOAD_T", "Type ->> $contentType, Name ->> $fileName")
-
+            
+//            withContext(Dispatchers.Default + Job()) {
+//                UtilsKt.getVideoDuration(requireContext(), videoUri.toString())
+//            }.let {
+//                val duration = it
+//            }
+            
             if(contentType == "video/mp4" || fileName.substringAfterLast(".", "") == "mp4") {
-                openEditUpload(videoUri.toString())
+
+                if (UtilsKt.getVideoUploadLimit(UtilsKt.getVideoDuration(requireContext(), videoUri.toString()))){
+
+                    VelBoxAlertDialogBuilder(requireContext()).apply {
+                        setTitle("Video Content Limit")
+                        setText(getString(R.string.upload_limit))
+                        setPositiveButtonListener("Got It!") {
+                            it?.dismiss()
+                        }
+                    }.create().show()
+                }
+                else{
+                    openEditUpload(videoUri.toString())
+                }
+
             } else {
                 VelBoxAlertDialogBuilder(requireContext()).apply {
                     setTitle("Select mp4 file")

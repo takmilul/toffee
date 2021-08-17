@@ -15,17 +15,21 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.core.widget.doAfterTextChanged
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.databinding.AlertDialogLoginBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.ChildDialogFragment
+import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.banglalink.toffee.usecase.OTPLogData
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.Credentials
@@ -36,10 +40,11 @@ import dagger.hilt.android.AndroidEntryPoint
 class LoginContentFragment : ChildDialogFragment() {
     
     private var phoneNo: String = ""
+    private val binding get() = _binding !!
     private var regSessionToken: String = ""
     private var _binding: AlertDialogLoginBinding? = null
     private var phoneNumberTextWatcher: TextWatcher? = null
-    private val binding get() = _binding !!
+    private val homeViewModel: HomeViewModel by activityViewModels()
     private val viewModel by viewModels<LoginViewModel>()
     private val progressDialog by unsafeLazy { VelBoxProgressDialog(requireContext()) }
     
@@ -55,20 +60,26 @@ class LoginContentFragment : ChildDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setSpannableTermsAndConditions()
-        getHintPhoneNumber()
         with(binding) {
             verifyButton.safeClick({
                 progressDialog.show()
                 handleLogin()
                 observeLogin()
+                ToffeeAnalytics.logEvent(ToffeeEvents.OTP_REQUESTED)
                 viewModel.login(phoneNo)
             })
             termsAndConditionsCheckbox.setOnClickListener {
-                verifyButton.isEnabled = binding.termsAndConditionsCheckbox.isChecked && phoneNo.isNotBlank() && phoneNo.length >= 11
+                verifyButton.isEnabled = termsAndConditionsCheckbox.isChecked && phoneNo.isNotBlank() && phoneNo.length >= 11
             }
             phoneNumberTextWatcher = phoneNumberEditText.doAfterTextChanged {
                 phoneNo = it.toString()
-                binding.verifyButton.isEnabled = binding.termsAndConditionsCheckbox.isChecked && phoneNo.isNotBlank() && phoneNo.length >= 11
+                verifyButton.isEnabled = termsAndConditionsCheckbox.isChecked && phoneNo.isNotBlank() && phoneNo.length >= 11
+            }
+            if (mPref.isHeBanglalinkNumber) {
+                phoneNumberEditText.setText(mPref.hePhoneNumber)
+                phoneNumberEditText.setSelection(mPref.hePhoneNumber.length)
+            } else {
+                getHintPhoneNumber()
             }
         }
     }
@@ -92,6 +103,7 @@ class LoginContentFragment : ChildDialogFragment() {
                 is Resource.Success -> {
                     if (it.data is String) {
                         regSessionToken = it.data
+                        homeViewModel.sendOtpLogData(OTPLogData("", 1, 0, 0), phoneNo)
                         findNavController().navigate(R.id.verifyLoginFragment,
                             Bundle().apply { 
                                 putString(PHONE_NO_ARG, phoneNo)
@@ -109,7 +121,7 @@ class LoginContentFragment : ChildDialogFragment() {
     }
     
     private fun setSpannableTermsAndConditions() {
-        val ss = SpannableString(getString(R.string.terms_and_conditions))
+        val ss = SpannableString(getString(R.string.terms_of_use))
         val clickableSpan = object : ClickableSpan() {
             override fun onClick(textView: View) {
                 showTermsAndConditionDialog()

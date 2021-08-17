@@ -17,6 +17,7 @@ import coil.load
 import coil.request.CachePolicy
 import coil.transform.CircleCropTransformation
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.database.entities.UserActivities
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.ActivityType
@@ -169,8 +170,13 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
     }
 
     @BindingAdapter("bindDuration")
-    fun bindDuration(view: TextView, channelInfo: ChannelInfo) {
-        view.text = channelInfo.formattedDuration()
+    fun bindDuration(view: TextView, channelInfo: ChannelInfo?) {
+        try {
+            view.text = channelInfo?.formattedDuration() ?: "00:00"
+        } catch (ex: Exception) {
+            view.text = "00:00"
+            ToffeeAnalytics.logException(NullPointerException("Error getting duration info for id ${channelInfo?.id}, ${channelInfo?.program_name}"))
+        }
     }
 
     @BindingAdapter("bindButtonState")
@@ -192,8 +198,8 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
     }
 
     @BindingAdapter("bindViewCount")
-    fun bindViewCount(view: TextView, channelInfo: ChannelInfo) {
-        view.text = channelInfo.formattedViewCount()
+    fun bindViewCount(view: TextView, channelInfo: ChannelInfo?) {
+        view.text = channelInfo?.formattedViewCount() ?: ""
     }
 
     @BindingAdapter("packageExpiryText")
@@ -290,10 +296,10 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
     }
 
     @BindingAdapter("bindViewProgress")
-    fun bindViewProgress(view: ProgressBar, item: ChannelInfo) {
-        if (item.viewProgressPercent() > 0) {
+    fun bindViewProgress(view: ProgressBar, item: ChannelInfo?) {
+        if (item != null && item.viewProgressPercent() > 0) {
             view.visibility = View.VISIBLE
-            view.progress = item.viewProgressPercent()
+            view.progress = item?.viewProgressPercent() ?: 0
         } else {
             view.visibility = View.GONE
         }

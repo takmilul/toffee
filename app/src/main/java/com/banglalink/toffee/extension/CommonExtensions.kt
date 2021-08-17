@@ -3,6 +3,7 @@ package com.banglalink.toffee.extension
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.res.Resources
+import android.os.Bundle
 import android.util.Patterns
 import android.view.MotionEvent
 import android.view.View
@@ -12,6 +13,8 @@ import androidx.core.view.forEach
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.database.entities.FavoriteItem
 import com.banglalink.toffee.enums.InputType
@@ -19,9 +22,11 @@ import com.banglalink.toffee.enums.InputType.*
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.home.HomeActivity
+import com.banglalink.toffee.ui.mychannel.MyChannelAddToPlaylistFragment
 import com.banglalink.toffee.ui.report.ReportPopupFragment
 import com.facebook.shimmer.ShimmerFrameLayout
 import kotlinx.coroutines.launch
+import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -97,7 +102,22 @@ fun Activity.handleReport(item: ChannelInfo) {
     }
 }
 
+fun Activity.handleAddToPlaylist(item: ChannelInfo) {
+    checkVerification {
+        if (this is HomeActivity) {
+            val isUserPlaylist = if (mPref.customerId == item.channel_owner_id) 0 else 1
+            val args = Bundle().also {
+                it.putInt(MyChannelAddToPlaylistFragment.CHANNEL_OWNER_ID, mPref.customerId)
+                it.putParcelable(MyChannelAddToPlaylistFragment.CHANNEL_INFO, item)
+                it.putInt(MyChannelAddToPlaylistFragment.IS_USER_PLAYLIST, isUserPlaylist)
+            }
+            this.getNavController().navigate(R.id.myChannelAddToPlaylistFragment, args)
+        }
+    }
+}
+
 fun Activity.handleShare(item: ChannelInfo) {
+    ToffeeAnalytics.logEvent(ToffeeEvents.SHARE_CLICK)
     if(this is HomeActivity) {
         getHomeViewModel().shareContentLiveData.postValue(item)
     }
@@ -105,6 +125,7 @@ fun Activity.handleShare(item: ChannelInfo) {
 
 fun Activity.handleFavorite(item: ChannelInfo, favoriteDao: FavoriteItemDao, onAdded: (()->Unit)? = null, onRemoved: (()-> Unit)? = null) {
     checkVerification {
+        ToffeeAnalytics.logEvent(ToffeeEvents.ADD_TO_FAVORITE)
         if(this is HomeActivity) {
             getHomeViewModel().updateFavorite(item).observe(this, {
                 when (it) {
@@ -167,4 +188,13 @@ fun EditText.setDrawableRightTouch(setClickListener: () -> Unit) {
         }
         false
     })
+}
+
+fun String.toMD5(): String {
+    return try {
+        val bytes = MessageDigest.getInstance("MD5").digest(this.toByteArray())
+        bytes.joinToString("") { "%02x".format(it) }
+    } catch (e: Exception) {
+        ""
+    }
 }

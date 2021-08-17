@@ -15,5 +15,5 @@ class Credential : BodyResponse() {
     var customerId: Int = 0
 
     @SerializedName("isVerifiedUser")
-    var isVerifiedUser: Boolean? = true
+    var isVerifiedUser: Boolean? = false
 }

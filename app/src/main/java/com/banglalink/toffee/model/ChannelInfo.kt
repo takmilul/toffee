@@ -81,9 +81,29 @@ data class ChannelInfo(
     val is_horizontal: Int? = null,
     @SerializedName("landscape_feature_1280_720")
     val ugcFeaturedImage: String? = null,
-
+    @SerializedName("is_encoded")
+    val isEncoded: Int? = null,
     @SerializedName("is_ugc")
-    val is_ugc: Int = 0
+    val is_ugc: Int = 0,
+
+    @SerializedName("is_drm_active")
+    val is_drm_active: Int = 0,
+    @SerializedName("drm_dash_url")
+    val drmDashUrl: String? = null,
+    @SerializedName("drm_hls_url")
+    val drmHlsUrl: String? = null,
+    @SerializedName("drm_cast_receiver")
+    val drmCastReceiver: String? = null,
+    @SerializedName("plain_cast_receiver")
+    val plainCastReceiver: String? = null,
+    @SerializedName("is_ad_active")
+    val is_ad_active: Int = 0,
+    @SerializedName("drm_cid")
+    val drmCid: String? = null,
+    @SerializedName("fcm_event_name")
+    val fcmEventName: String? = null,
+    @SerializedName("fcm_event_is_active")
+    val fcm_event_is_active: Int = 0,
 ) :Parcelable
 {
     val isApproved: Int
@@ -98,7 +118,15 @@ data class ChannelInfo(
         get() = "VOD".equals(type, ignoreCase = true)
     val isCatchup: Boolean
         get() = "CATCHUP".equals(type, ignoreCase = true)
-
+    val isBucketUrl: Boolean
+        get() = isEncoded == 0
+    val isDrmActive: Boolean
+        get() = is_drm_active == 1
+    val isAdActive: Boolean
+        get() = is_ad_active == 1
+    val isFcmEventActive: Boolean
+        get() = fcm_event_is_active == 1
+    
     fun getCategory(category: String, subCategory: String): String {
         var itemCategory = "Channels>$category"
         if (subCategory.isNotEmpty()) {

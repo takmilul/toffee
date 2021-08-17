@@ -236,7 +236,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             val response = resultFromResponse { sendSubscribeEvent.execute(subscriptionInfo, status, true) }
             if (response is Success) {
-                cacheManager.clearCacheByUrl(GET_SUBSCRIBED_CHANNELS)
+                cacheManager.clearCacheByUrl(ApiRoutes.GET_SUBSCRIBED_CHANNELS)
             }
             subscriptionLiveData.value = response
         }
@@ -279,9 +279,9 @@ class HomeViewModel @Inject constructor(
         }
     }
     
-    fun sendOtpLogData(otpLogData: OTPLogData) {
+    fun sendOtpLogData(otpLogData: OTPLogData, phoneNumber: String) {
         viewModelScope.launch {
-            sendOtpLogEvent.execute(otpLogData)
+            sendOtpLogEvent.execute(otpLogData, phoneNumber)
         }
     }
     

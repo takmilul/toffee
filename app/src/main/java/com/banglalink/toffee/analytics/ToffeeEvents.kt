@@ -20,7 +20,7 @@ object ToffeeEvents {
     const val REACT_CLICK = "react_event"
     const val SHARE_CLICK = "share_event"
     const val UPLOAD_CLICK = "upload_event"
-    const val CATEGORY_EVENT = "category_%s"
+    const val CATEGORY_EVENT = "category_"
     const val TV_CATEGORY_EVENT = "tv_category_%s"
     const val KURULUS_SINGLE_EPISODE = "kurulus_episode_%d"
     const val TURKISH_MEGA_SERIAL = "turkish_mega_serial"

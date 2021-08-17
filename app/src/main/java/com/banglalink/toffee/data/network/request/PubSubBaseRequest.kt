@@ -12,7 +12,7 @@ open class PubSubBaseRequest {
     val appVersion : String = BuildConfig.VERSION_NAME
     val osVersion :String = "android "+Build.VERSION.RELEASE
     val netType:String = SessionPreference.getInstance().netType
-    val isBlNumber = SessionPreference.getInstance().isBanglalinkNumber
+    open var isBlNumber = SessionPreference.getInstance().isBanglalinkNumber
 
     @SerializedName("deviceId")
     val deviceId: String = CommonPreference.getInstance().deviceId
@@ -21,7 +21,7 @@ open class PubSubBaseRequest {
     val customerId:Long = SessionPreference.getInstance().customerId.toLong()
 
     @SerializedName("msisdn")
-    val phoneNumber: String = SessionPreference.getInstance().phoneNumber
+    open var phoneNumber: String = SessionPreference.getInstance().phoneNumber
 
     @SerializedName("reportingTime")
     val reportingTime = Utils.getDateTime()

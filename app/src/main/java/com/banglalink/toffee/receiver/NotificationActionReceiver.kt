@@ -9,57 +9,52 @@ import com.banglalink.toffee.notification.PUBSUBMessageStatus
 import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.ui.home.HomeActivity
 
-/**
- * @author tushar
- */
 class NotificationActionReceiver : BroadcastReceiver() {
-
+    
     companion object {
-        const val NOTIFICATION_ID = "notification_id"
+        const val ROW_ID = "id"
+        const val DISMISS = 300
+        const val WATCH_NOW = 100
+        const val WATCH_LATER = 200
+        const val CONTENT_VIEW = 400
         const val PUB_SUB_ID = "pub-sub_id"
         const val ACTION_NAME = "action_name"
         const val RESOURCE_URL = "resource_url"
-        const val WATCH_NOW = 100
-        const val WATCH_LATER = 200
-        const val DISMISS = 300
-        const val CONTENT_VIEW = 400
-
+        const val NOTIFICATION_ID = "notification_id"
     }
-
-
+    
     override fun onReceive(context: Context?, intent: Intent?) {
-
-        val closeIntent =
-            Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
-        context?.sendBroadcast(closeIntent)
-
-        val notificationId = intent?.getIntExtra(NOTIFICATION_ID, -1) ?: -1
-        val actionName = intent?.getIntExtra(ACTION_NAME, DISMISS) ?: DISMISS
-        val notificationManager =
-            context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.cancel(notificationId)
-
-        val pusubId = intent?.getStringExtra(PUB_SUB_ID) ?: "0"
-
-        val resourceUrl = intent?.getStringExtra(RESOURCE_URL)
-        if (actionName == WATCH_NOW && !resourceUrl.isNullOrBlank()) {
-            val intent = Intent(context, HomeActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-            intent.data = Uri.parse(resourceUrl)
-            context.startActivity(intent)
-
-            PubSubMessageUtil.sendNotificationStatus(pusubId, PUBSUBMessageStatus.OPEN)
-
-        } else if (actionName == CONTENT_VIEW && !resourceUrl.isNullOrBlank()) {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(resourceUrl))
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-            context.startActivity(intent)
-            PubSubMessageUtil.sendNotificationStatus(pusubId, PUBSUBMessageStatus.OPEN)
-        }else {
-            PubSubMessageUtil.sendNotificationStatus(pusubId, PUBSUBMessageStatus.LATER)
+        with(intent?.extras) {
+            val closeIntent = Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
+            val rowId = this?.getLong(ROW_ID) ?: 0L
+            val id = intent?.getLongExtra(ROW_ID, 0L) ?: 0L
+            val pubSubId = this?.getString(PUB_SUB_ID) ?: "0"
+            val resourceUrl = this?.getString(RESOURCE_URL)
+            val resource = intent?.getStringExtra(RESOURCE_URL)
+            val notificationId = this?.getInt(NOTIFICATION_ID, -1) ?: -1
+            val actionName = this?.getInt(ACTION_NAME, DISMISS) ?: DISMISS
+            val notificationManager = context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.cancel(notificationId)
+            
+            context.sendBroadcast(closeIntent)
+            if (actionName == WATCH_NOW && !resourceUrl.isNullOrBlank()) {
+                val newIntent = Intent(context, HomeActivity::class.java).apply {
+                    putExtra(ROW_ID, rowId)
+                    data = Uri.parse(resourceUrl)
+                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+                context.startActivity(newIntent)
+                PubSubMessageUtil.sendNotificationStatus(pubSubId, PUBSUBMessageStatus.OPEN)
+            } else if (actionName == CONTENT_VIEW && !resourceUrl.isNullOrBlank()) {
+                val newIntent = Intent(Intent.ACTION_VIEW, Uri.parse(resourceUrl)).apply {
+                    putExtra(ROW_ID, rowId)
+                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+                context.startActivity(newIntent)
+                PubSubMessageUtil.sendNotificationStatus(pubSubId, PUBSUBMessageStatus.OPEN)
+            } else {
+                PubSubMessageUtil.sendNotificationStatus(pubSubId, PUBSUBMessageStatus.LATER)
+            }
         }
-
-
     }
-
 }

@@ -35,6 +35,8 @@ const val SUBSCRIPTION_TOPIC = "projects/$PROJECTID/topics/channels_subscribers"
 const val CONTENT_REPORT_TOPIC = "projects/$PROJECTID/topics/report_inappropriate_content"
 const val USER_INTEREST_TOPIC = "projects/$PROJECTID/topics/user_interest"
 const val USER_OTP_TOPIC = "projects/$PROJECTID/topics/user_otp_log"
+const val HE_REPORT_TOPIC = "projects/$PROJECTID/topics/toffee_he_log"
+const val DRM_UNAVAILABLE_TOPIC = "projects/$PROJECTID/topics/drm_unavailable_devices"
 
 object PubSubMessageUtil {
 
@@ -59,27 +61,26 @@ object PubSubMessageUtil {
             sendMessage(getPubSubMessage(notificationId, messageStatus), NOTIFICATION_TOPIC)
         }
     }
-
-    fun sendMessage(jsonMessage: String, topic:String) {
-         coroutineScope.launch {
-             withContext(Dispatchers.IO){
-                 try {
-                     val batch = client.batch()
-                     Log.d("PUBSUB - $topic",  jsonMessage)
-                     val pubsubMessage = PubsubMessage()
-                     pubsubMessage.encodeData(jsonMessage.toByteArray(charset("UTF-8")))
-                     val publishRequest = PublishRequest()
-                     publishRequest.messages = ImmutableList.of(
-                         pubsubMessage
-                     )
-                client.projects().topics().publish(topic, publishRequest).queue(batch, callback)
-                batch?.execute()
-
+    
+    fun sendMessage(jsonMessage: String, topic: String) {
+        coroutineScope.launch {
+            withContext(Dispatchers.IO) {
+                try {
+                    val batch = client.batch()
+                    Log.d("PUBSUB - $topic", jsonMessage)
+                    val pubsubMessage = PubsubMessage()
+                    pubsubMessage.encodeData(jsonMessage.toByteArray(charset("UTF-8")))
+                    val publishRequest = PublishRequest()
+                    publishRequest.messages = ImmutableList.of(
+                        pubsubMessage
+                    )
+                    client.projects().topics().publish(topic, publishRequest).queue(batch, callback)
+                    batch?.execute()
                 } catch (ex: Exception) {
                     Log.e("PUBSUB - $topic", ex.message, ex)
                 }
-            } 
-         }
+            }
+        }
     }
 
     var callback: JsonBatchCallback<PublishResponse?> =

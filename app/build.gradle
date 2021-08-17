@@ -14,8 +14,8 @@ android {
         applicationId "com.banglalink.toffee"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 58
-        versionName "2.0.3"
+        versionCode 60
+        versionName "2.0.5"
         testInstrumentationRunner "com.banglalink.toffee.HiltTestRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -76,6 +76,7 @@ dependencies {
     //Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
+    implementation 'com.squareup.okhttp3:okhttp-dnsoverhttps:4.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     //LifeCycle Extensions
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"
@@ -114,9 +115,11 @@ dependencies {
     def exoVersion = '2.13.3'
     implementation "com.google.android.exoplayer:exoplayer-core:$exoVersion"
     implementation "com.google.android.exoplayer:exoplayer-hls:$exoVersion"
+    implementation "com.google.android.exoplayer:exoplayer-dash:$exoVersion"
     implementation "com.google.android.exoplayer:extension-cast:$exoVersion"
     implementation "com.google.android.exoplayer:exoplayer-ui:$exoVersion"
     implementation "com.google.android.exoplayer:extension-ima:$exoVersion"
+    implementation "com.google.android.exoplayer:extension-okhttp:$exoVersion"
 
     // Cast
     implementation 'androidx.mediarouter:mediarouter:1.2.4'
@@ -194,9 +197,8 @@ dependencies {
 //    implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
 
     //mqtt library
-    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.1'
+    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5'
     implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
-
 
     def espresso_version = '3.4.0'
     def test_core = '1.4.0'

@@ -3,7 +3,7 @@
     <string name="app_name_short">Toffee</string>
 
     <string name="retry">Retry</string>
-
+    <string name="exit_from_app_msg">Are you sure to logout from the %s app?</string>
     <!-- Strings related to login -->
     <string name="action_sign_in">Sign In</string>
     <string name="action_subscribe">SUBSCRIBE</string>
@@ -53,6 +53,7 @@
     <string name="featured">Featured</string>
     <string name="vod">Videos</string>
     <string name="latest_video">Feed</string>
+    <string name="terms_of_use">Terms of Use</string>
     <string name="terms_and_conditions">Terms &amp; Conditions</string>
     <string name="terms_and_conditions_text">I agree to the Terms and Conditions</string>
     <string name="privacy_policy">Privacy Policy</string>
@@ -128,6 +129,7 @@
     <string name="track_selection_title">Track Title</string>
     <string name="otp_hint">OTP</string>
     <string name="facebook_app_id">1116781388516653</string>
+<!--    <string name="fb_login_protocol_scheme">1116781388516653</string>-->
     <string name="topic_msg_subscribed">"Topic subscribed successfully "</string>
     <string name="topic_msg_subscribe_failed">Topic subscribe failed</string>
     <string name="subscription_text">You have successfully subscribed to </string>
@@ -245,7 +247,7 @@
     <string name="sign_in_intro_desc">like- Reaction, Upload, Referral etc.</string>
     <string name="sign_in_intro_title">Sign in to Access All Features</string>
     <string name="login_with_phone_text">Login with Phone</string>
-    <string name="i_agree_to_the_text">&#160;&#160;I agree to the&#160;</string>
+    <string name="i_agree_to_the_text">&#160;&#160;I agree to the Creators\'&#160;</string>
     <string name="enter_otp_text">Enter OTP</string>
     <string name="resend_otp_in_59s_text">Resend OTP in 59s</string>
     <string name="successfully_loged_in_text">Successfully Logged In!</string>
@@ -330,7 +332,7 @@
     <string name="clear_activities_text">Clear Activities</string>
     <string name="subscribed_channel_text">Subscribed Channels</string>
     <string name="watched_text">Watched</string>
-    <string name="lets_fill_some_basic_info_text">Lets fill in some basics to start off...</string>
+    <string name="lets_fill_some_basic_info_text">Lets\' fill in some basics to start off…</string>
     <string name="set_your_channel_logo">Set Your Channel Logo</string>
     <string name="save_text">Save</string>
     <string name="please_fill_up_all_fields_text">*Please fill up all fields to continue</string>
@@ -364,7 +366,6 @@
     <string name="video_title_limit">%d/200</string>
     <string name="video_description_limit">%d/600</string>
     <string name="create_channel_msg">Please create your channel first.</string>
-    <string name="playlist_name_required_msg">Please give a playlist name</string>
     <string name="playlist_name_empty_msg">Playlist name empty!</string>
     <string name="set_channel_cover_photo">Set Channel Cover Photo</string>
     <string name="set_channel_photo">Set Channel Photo</string>
@@ -377,10 +378,18 @@
     <string name="select_sub_category">Select Sub Category</string>
     <string name="try_again_msg">Something went wrong. Please try again.</string>
     <string name="thumbnail_missing_msg">Thumbnail is missing!</string>
+    <string name="upload_limit"> By default, you can upload Video Content that are up to 10 seconds to 2 hours long </string>
     <string name="cancel_upload_title">Cancel Uploading</string>
     <string name="cancel_upload_msg">Are you sure that you want to\ncancel uploading video?</string>
     <string name="owner_video_empty_msg">You haven\'t uploaded any video yet</string>
     <string name="public_video_empty_msg">This channel has no video yet</string>
+    <string name="add_to_playlist">Add To Playlist</string>
+    <string name="empty_playlist_msg_owner">You haven\'t created any playlist yet</string>
+    <string name="empty_playlist_msg_user">This channel has no playlist yet</string>
+    <string name="duplicate_playlist_msg">This content is already added in this playlist</string>
+    <string name="select_playlist_msg">Please select a playlist</string>
+    <string name="edit_playlist">Edit Playlist</string>
+    <string name="delete_confirmation">Are you sure to delete?</string>
     <!--    url    -->
 <!--    <string name="creators_policy_url">https://toffeelive.com/policies.php</string>-->
 <!--    <string name="tus_upload_server_url">https://ugc-upload.toffeelive.com/upload</string>-->

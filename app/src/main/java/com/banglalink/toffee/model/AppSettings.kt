@@ -8,21 +8,18 @@ import com.google.android.exoplayer2.ExoPlayerLibraryInfo
 
 const val LOGIN_ERROR = 103
 const val USER_ACTIVITIES_LIMIT = 150
+const val DEVICE_ID_HEADER = "DEVICE-ID"
 const val OUTSIDE_OF_BD_ERROR_CODE = 403
 const val INVALID_REFERRAL_ERROR_CODE = -100
 const val MULTI_DEVICE_LOGIN_ERROR_CODE = 109
 const val UN_ETHICAL_ACTIVITIES_ERROR_CODE = 402
 const val CLIENT_API_HEADER = "CLIENT-API-HEADER"
+const val HE_SESSION_TOKEN_HEADER = "ENRICHMENT-SESSION-TOKEN"
 
 //const val TOFFEE_BASE_URL = "https://mapi.toffeelive.com/"
 //const val TOFFEE_BASE_URL = "https://staging.toffee-cms.com/"
 //const val TOFFEE_BASE_URL = "https://ugc-staging.toffeelive.com/"
 const val TOFFEE_BASE_URL = "https://j1-staging.toffeelive.com/"
-
-val TIME_OUT_MSG = "Time out occurred. Please try later" // Need to change the message later.
-val EXIT_FROM_APP_MSG = "Are you sure to logout from the %s app?"
-val SERVER_ERROR_MSG = "Server not responding right now. Please try later." // Need to change the message later.
-val NO_INTERNET_MSG = "No internet found. Please check your internet settings" // Need to change the message later.
 
 val TOFFEE_HEADER=("Toffee" + "/" + BuildConfig.VERSION_NAME + " (Linux;Android " + Build.VERSION.RELEASE + ") " + ExoPlayerLibraryInfo.VERSION_SLASHY + "/" + SessionPreference.getInstance().customerId + "/" + CommonPreference.getInstance().deviceId)
 
@@ -63,6 +60,46 @@ val TOFFEE_KEY = object : Any() {
         buf[14] = (t ushr 9).toByte()
         t = -958150212
         buf[15] = (t ushr 3).toByte()
+        return String(buf)
+    }
+}.toString()
+
+val HE_KEY = object : Any() {
+    var t = 0
+    override fun toString(): String {
+        val buf = ByteArray(16)
+        t = 1491333727
+        buf[0] = (t ushr 17).toByte()
+        t = -1906451371
+        buf[1] = (t ushr 10).toByte()
+        t = 1708768173
+        buf[2] = (t ushr 24).toByte()
+        t = -1952310088
+        buf[3] = (t ushr 6).toByte()
+        t = 1442244974
+        buf[4] = (t ushr 9).toByte()
+        t = 1916285900
+        buf[5] = (t ushr 3).toByte()
+        t = -1914384722
+        buf[6] = (t ushr 5).toByte()
+        t = 276207619
+        buf[7] = (t ushr 12).toByte()
+        t = -1161896255
+        buf[8] = (t ushr 9).toByte()
+        t = 745598406
+        buf[9] = (t ushr 16).toByte()
+        t = 1187200402
+        buf[10] = (t ushr 20).toByte()
+        t = 2050354488
+        buf[11] = (t ushr 15).toByte()
+        t = -626910532
+        buf[12] = (t ushr 6).toByte()
+        t = -384464058
+        buf[13] = (t ushr 3).toByte()
+        t = -428062792
+        buf[14] = (t ushr 20).toByte()
+        t = 682937630
+        buf[15] = (t ushr 9).toByte()
         return String(buf)
     }
 }.toString()

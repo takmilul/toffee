@@ -161,6 +161,10 @@ object UtilsKt {
             String.format("%02d:%02d", minutes, seconds)
         }
     }
+    fun getVideoUploadLimit(timeMs: Long?): Boolean {
+        return (10 > timeMs!! / 1000 || timeMs / 1000 > 7200)
+    }
+
 
     fun getLongDuration(str: String?): Long {
         if(str.isNullOrBlank()) return 0L
@@ -320,3 +324,12 @@ fun imagePathToBase64(ctx: Context, imagePath: String, requiredImageByteSize: In
     val byteArray = byteArrayOutputStream.toByteArray()
     return Base64.encodeToString(byteArray, Base64.NO_WRAP)
 }
+
+val today: String
+    get() {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Dhaka"))
+        val cal = Calendar.getInstance(TimeZone.getDefault())
+        val dateGMT = cal.time
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+        return sdf.format(dateGMT)
+    }
