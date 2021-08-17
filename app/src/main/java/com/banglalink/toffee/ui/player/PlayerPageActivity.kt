@@ -301,7 +301,8 @@ abstract class PlayerPageActivity :
         channelInfo.isDrmActive &&
         !channelInfo.drmCid.isNullOrBlank() &&
         !channelInfo.drmDashUrl.isNullOrBlank() &&
-        !mPref.drmWidevineLicenseUrl.isNullOrBlank()
+        !mPref.drmWidevineLicenseUrl.isNullOrBlank() &&
+        player is SimpleExoPlayer
 
     private fun getDrmSessionManager(mediaItem: MediaItem): DrmSessionManager {
         val channelInfo = mediaItem.getChannelMetadata(player) ?: return DrmSessionManager.DRM_UNSUPPORTED
@@ -899,6 +900,7 @@ abstract class PlayerPageActivity :
             }
 
             if(e.cause?.cause?.cause is ToffeeMediaDrmException) {
+                playlistManager.getCurrentChannel()?.is_drm_active = 0
                 reloadChannel()
             }
 
