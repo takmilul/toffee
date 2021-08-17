@@ -52,7 +52,7 @@ class ToffeeMediaItemConverter(private val mPref: SessionPreference,
         val mediaInfo: MediaInfo = mediaQueueItem.media!!
         val customData = mediaQueueItem.customData
         Assertions.checkNotNull(mediaInfo)
-        return getMediaItem(Assertions.checkNotNull(mediaInfo.customData), customData)!!
+        return getMediaItem(Assertions.checkNotNull(mediaInfo.customData), customData!!)!!
 //
 //
 //        Log.e("MEDIA_T", "toMediaItem")
@@ -79,13 +79,6 @@ class ToffeeMediaItemConverter(private val mPref: SessionPreference,
     }
 
     private fun getMediaInfo(mediaItem: MediaItem, info: ChannelInfo): MediaQueueItem {
-        val isDrmActive = MediaDrm.isCryptoSchemeSupported(C.WIDEVINE_UUID) &&
-                mPref.isDrmActive &&
-                info.isDrmActive &&
-                !info.drmCid.isNullOrBlank() &&
-                !info.drmDashUrl.isNullOrBlank() &&
-                !mPref.drmWidevineLicenseUrl.isNullOrBlank()
-
         val mediaMetadata = MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE )
         mediaMetadata.putString( MediaMetadata.KEY_TITLE , info.program_name ?: "")
         if(info.isLive) {
@@ -95,10 +88,10 @@ class ToffeeMediaItemConverter(private val mPref: SessionPreference,
             mediaMetadata.addImage(WebImage(Uri.parse(info.landscape_ratio_1280_720)))
         }
 
-        val channelUrl = if(isDrmActive) info.drmDashUrl else {
-            Channel.createChannel(info.program_name, info.getHlsLink()!!).getContentUri(mPref, isOverWifi)?.let {
+        val channelUrl = mediaItem.playbackProperties!!.uri.toString().let {
+            if(mediaItem.playbackProperties!!.drmConfiguration == null) {
                 getCastUrl(it)
-            }
+            } else it
         }
 
         Log.e("MEDIA_T", "Channel Url -> $channelUrl")
@@ -107,24 +100,12 @@ class ToffeeMediaItemConverter(private val mPref: SessionPreference,
             Log.e("MEDIA_T", "Custom data -> $this")
         }
 
-        val mediaInfo = if (info.isLive) {
-            MediaInfo.Builder(channelUrl!!).apply {
-                setContentType(if(isDrmActive) MimeTypes.APPLICATION_MPD else MimeTypes.APPLICATION_M3U8)//"application/x-mpegurl")
-                setStreamType( MediaInfo.STREAM_TYPE_LIVE )
-                setMetadata( mediaMetadata )
-                setCustomData(customData)
-            }
-                //                    .setStreamDuration(0) // 0 for Infinity
-                .build()
-        } else {
-            MediaInfo.Builder(channelUrl!!)
-                .setContentType(if(isDrmActive) MimeTypes.APPLICATION_MPD else MimeTypes.APPLICATION_M3U8)//"application/x-mpegurl")
+        val mediaInfo = MediaInfo.Builder(channelUrl)
+                .setContentType(mediaItem.playbackProperties!!.mimeType!!)//"application/x-mpegurl")
                 .setStreamType( MediaInfo.STREAM_TYPE_BUFFERED )
                 .setMetadata( mediaMetadata )
                 .setCustomData(customData)
-                //                    .setStreamDuration(MediaInfo.STREAM_TYPE_LIVE)
                 .build()
-        }
 
         return MediaQueueItem.Builder(mediaInfo)
             .setCustomData(channelInfoToJson(info))
@@ -221,7 +202,11 @@ class ToffeeMediaItemConverter(private val mPref: SessionPreference,
         Assertions.checkNotNull(mediaItem.playbackProperties)
         val json = JSONObject()
         json.put(KEY_TITLE, mediaItem.mediaMetadata.title)
-        json.put(KEY_URI, mediaItem.playbackProperties!!.uri.toString())
+        json.put(KEY_URI, mediaItem.playbackProperties!!.uri.toString().let {
+            if(mediaItem.playbackProperties!!.drmConfiguration == null) {
+                getCastUrl(it)
+            } else it
+        })
         json.put(KEY_MIME_TYPE, mediaItem.playbackProperties!!.mimeType)
         if (mediaItem.playbackProperties!!.drmConfiguration != null) {
             json.put(
