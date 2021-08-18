@@ -183,20 +183,22 @@ class UploadMethodFragment : DialogFragment() {
     
     private val cameraResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         if (it.resultCode == Activity.RESULT_OK && videoFile != null) {
-            println("CaptureAbsolutePath${videoFile!!.absolutePath}")
-            println("CapturePath${videoFile!!.path}")
-            if (UtilsKt.getVideoUploadLimit(UtilsKt.getVideoDuration(requireContext(), videoUri.toString()))){
+            lifecycleScope.launch {
+                println("CaptureAbsolutePath${videoFile!!.absolutePath}")
+                println("CapturePath${videoFile!!.path}")
+                if (UtilsKt.getVideoUploadLimit(UtilsKt.getVideoDuration(requireContext(), videoUri.toString()))){
 
-                VelBoxAlertDialogBuilder(requireContext()).apply {
-                    setTitle("Video Content Limit")
-                    setText(getString(R.string.upload_limit))
-                    setPositiveButtonListener("Got It!") {
-                        it?.dismiss()
-                    }
-                }.create().show()
-            }
-            else{
-                openEditUpload(videoFile!!.absolutePath)
+                    VelBoxAlertDialogBuilder(requireContext()).apply {
+                        setTitle(R.string.txt_video_length)
+                        setText(R.string.txt_video_length_msg)
+                        setPositiveButtonListener(getString(R.string.btn_got_it)) {
+                            it?.dismiss()
+                        }
+                    }.create().show()
+                }
+                else{
+                    openEditUpload(videoFile!!.absolutePath)
+                }
             }
 
         } else {
@@ -217,14 +219,14 @@ class UploadMethodFragment : DialogFragment() {
 //                val duration = it
 //            }
             
-            if(contentType == "video/mp4" || fileName.substringAfterLast(".", "") == "mp4") {
+            if(contentType == "video/mp4" && fileName.substringAfterLast(".", "mp4") == "mp4") {
 
                 if (UtilsKt.getVideoUploadLimit(UtilsKt.getVideoDuration(requireContext(), videoUri.toString()))){
 
                     VelBoxAlertDialogBuilder(requireContext()).apply {
-                        setTitle("Video Content Limit")
-                        setText(getString(R.string.upload_limit))
-                        setPositiveButtonListener("Got It!") {
+                        setTitle(R.string.txt_video_length)
+                        setText(R.string.txt_video_length_msg)
+                        setPositiveButtonListener(getString(R.string.btn_got_it)) {
                             it?.dismiss()
                         }
                     }.create().show()
@@ -235,9 +237,9 @@ class UploadMethodFragment : DialogFragment() {
 
             } else {
                 VelBoxAlertDialogBuilder(requireContext()).apply {
-                    setTitle("Select mp4 file")
-                    setText("Only mp4 file uploading is supported.")
-                    setPositiveButtonListener("Got It!") {
+                    setTitle(R.string.txt_video_format)
+                    setText(R.string.txt_video_format_msg)
+                    setPositiveButtonListener(getString(R.string.btn_got_it)) {
                         it?.dismiss()
                     }
                 }.create().show()
