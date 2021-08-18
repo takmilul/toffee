@@ -627,7 +627,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             customerInfoLogin.screenCaptureEnabledUsers
         }
         if (customerInfoLogin.customerId == 0 || customerInfoLogin.password.isNullOrBlank()) {
-            ToffeeAnalytics.logException(NullPointerException("customerId: ${customerInfoLogin.customerId}, password: ${customerInfoLogin.password}, " + "msisdn: $phoneNumber"))
+            ToffeeAnalytics.logException(NullPointerException("customerId: ${customerInfoLogin.customerId}, password: ${customerInfoLogin.password}, msisdn: $phoneNumber, deviceId: ${CommonPreference.getInstance().deviceId}, isVerified: $isVerifiedUser, hasSessionToken: ${sessionToken.isNotBlank()}"))
         }
     }
 
