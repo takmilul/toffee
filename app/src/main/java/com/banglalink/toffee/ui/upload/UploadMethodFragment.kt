@@ -189,7 +189,7 @@ class UploadMethodFragment : DialogFragment() {
 
                 VelBoxAlertDialogBuilder(requireContext()).apply {
                     setTitle("Video Content Limit")
-                    setText(getString(R.string.upload_limit))
+                    setText(getString(R.string.video_length_text))
                     setPositiveButtonListener("Got It!") {
                         it?.dismiss()
                     }
@@ -218,12 +218,10 @@ class UploadMethodFragment : DialogFragment() {
 //            }
             
             if(contentType == "video/mp4" || fileName.substringAfterLast(".", "") == "mp4") {
-
                 if (UtilsKt.getVideoUploadLimit(UtilsKt.getVideoDuration(requireContext(), videoUri.toString()))){
-
                     VelBoxAlertDialogBuilder(requireContext()).apply {
-                        setTitle("Video Content Limit")
-                        setText(getString(R.string.upload_limit))
+                        setTitle(getString(R.string.video_length_title))
+                        setText(getString(R.string.video_length_text))
                         setPositiveButtonListener("Got It!") {
                             it?.dismiss()
                         }
@@ -232,11 +230,10 @@ class UploadMethodFragment : DialogFragment() {
                 else{
                     openEditUpload(videoUri.toString())
                 }
-
             } else {
                 VelBoxAlertDialogBuilder(requireContext()).apply {
-                    setTitle("Select mp4 file")
-                    setText("Only mp4 file uploading is supported.")
+                    setTitle(getString(R.string.video_format_title))
+                    setText(getString(R.string.video_format_text))
                     setPositiveButtonListener("Got It!") {
                         it?.dismiss()
                     }

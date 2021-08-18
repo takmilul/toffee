@@ -559,7 +559,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         balance = customerInfoLogin.balance
         isVerifiedUser = customerInfoLogin.verified_status
         customerId = customerInfoLogin.customerId
-        password = customerInfoLogin.password?:""
+        password = customerInfoLogin.password ?: ""
         if (customerName.isBlank()) {
             customerName = customerInfoLogin.customerName?:""
         }
@@ -625,6 +625,9 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             SCREEN_CAPTURE_DISABLED_USERS
         } else {
             customerInfoLogin.screenCaptureEnabledUsers
+        }
+        if (customerInfoLogin.customerId == 0 || customerInfoLogin.password.isNullOrBlank()) {
+            ToffeeAnalytics.logException(NullPointerException("customerId: ${customerInfoLogin.customerId}, password: ${customerInfoLogin.password}, " + "msisdn: $phoneNumber"))
         }
     }
 

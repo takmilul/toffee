@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.mychannel
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.apiservice.MyChannelPlaylistCreateService
@@ -27,15 +26,16 @@ class MyChannelPlaylistCreateViewModel @Inject constructor(
     private val _editPlaylistData = SingleLiveEvent<Resource<MyChannelPlaylistEditBean>>()
     val editPlaylistLiveData = _editPlaylistData.toLiveData()
     
-    fun createPlaylist(channelOwnerId: Int,isUserPlaylist:Int=0) {
+    fun createPlaylist(channelOwnerId: Int,isUserPlaylist:Int = 0) {
         viewModelScope.launch {
             _createPlaylistData.postValue(resultFromResponse { createPlaylistApiService.execute(channelOwnerId, playlistName!!.trim(),isUserPlaylist) }!!)
         }
     }
     
-    fun editPlaylist(playlistId: Int, channelOwnerId: Int) {
+    fun editPlaylist(playlistId: Int, channelOwnerId: Int, isUserPlaylist: Int = 0) {
         viewModelScope.launch {
-            _editPlaylistData.postValue(resultFromResponse { editPlaylistApiService.execute(playlistId, playlistName!!.trim(), channelOwnerId) })
+            _editPlaylistData.postValue(resultFromResponse { editPlaylistApiService.execute(playlistId, playlistName!!.trim(), channelOwnerId, 
+                isUserPlaylist) }!!)
         }
     }
 }
