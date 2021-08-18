@@ -378,10 +378,6 @@
     <string name="select_sub_category">Select Sub Category</string>
     <string name="try_again_msg">Something went wrong. Please try again.</string>
     <string name="thumbnail_missing_msg">Thumbnail is missing!</string>
-    <string name="video_format_title">Video Format</string>
-    <string name="video_format_text">Only MP4 video format is supported</string>
-    <string name="video_length_title">Video Length</string>
-    <string name="video_length_text">Video Length Accepted video length is between 10 second and 2 hours</string>
     <string name="cancel_upload_title">Cancel Uploading</string>
     <string name="cancel_upload_msg">Are you sure that you want to\ncancel uploading video?</string>
     <string name="owner_video_empty_msg">You haven\'t uploaded any video yet</string>
@@ -393,6 +389,12 @@
     <string name="select_playlist_msg">Please select a playlist</string>
     <string name="edit_playlist">Edit Playlist</string>
     <string name="delete_confirmation">Are you sure to delete?</string>
+    <string name="edittext_hint_tags">Tags</string>
+    <string name="btn_got_it">Got It!</string>
+    <string name="txt_video_format">Video Format</string>
+    <string name="txt_video_format_msg">Only MP4 video format is supported</string>
+    <string name="txt_video_length">Video Length</string>
+    <string name="txt_video_length_msg">Accepted video length is between 10 second and 2 hours</string>
     <!--    url    -->
 <!--    <string name="creators_policy_url">https://toffeelive.com/policies.php</string>-->
 <!--    <string name="tus_upload_server_url">https://ugc-upload.toffeelive.com/upload</string>-->
