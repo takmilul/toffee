@@ -198,8 +198,8 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
     }
 
     @BindingAdapter("bindViewCount")
-    fun bindViewCount(view: TextView, channelInfo: ChannelInfo) {
-        view.text = channelInfo.formattedViewCount()
+    fun bindViewCount(view: TextView, channelInfo: ChannelInfo?) {
+        view.text = channelInfo?.formattedViewCount() ?: ""
     }
 
     @BindingAdapter("packageExpiryText")
@@ -296,10 +296,10 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
     }
 
     @BindingAdapter("bindViewProgress")
-    fun bindViewProgress(view: ProgressBar, item: ChannelInfo) {
-        if (item.viewProgressPercent() > 0) {
+    fun bindViewProgress(view: ProgressBar, item: ChannelInfo?) {
+        if (item != null && item.viewProgressPercent() > 0) {
             view.visibility = View.VISIBLE
-            view.progress = item.viewProgressPercent()
+            view.progress = item?.viewProgressPercent() ?: 0
         } else {
             view.visibility = View.GONE
         }

@@ -1,5 +1,6 @@
 package com.banglalink.toffee.model
 
+import com.banglalink.toffee.enums.PageType
 import com.google.gson.annotations.SerializedName
 
 data class FeatureContentBean(
@@ -13,5 +14,16 @@ data class FeatureContentBean(
     val isFollowed: Int = 0,
     val count: Int,
     val totalCount: Int = 0,
-    val systemTime: String?=null
-)
+    val systemTime: String? = null,
+    val featureType: Int? = null
+) {
+    val pageType: PageType
+        get() {
+            return when(featureType) {
+                PageType.Landing.value -> PageType.Landing
+                PageType.Category.value -> PageType.Category
+                PageType.Channel.value -> PageType.Channel
+                else -> PageType.Landing
+            }
+        }
+}

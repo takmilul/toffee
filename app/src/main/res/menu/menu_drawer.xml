@@ -18,10 +18,10 @@
         android:icon="@drawable/ic_menu_activites"
         android:title="Activities" />
     
-<!--    <item-->
-<!--        android:id="@+id/menu_playlist"-->
-<!--        android:icon="@drawable/ic_group_215"-->
-<!--        android:title="Playlists" />-->
+    <item
+        android:id="@+id/menu_playlist"
+        android:icon="@drawable/ic_group_215"
+        android:title="Playlists" />
     
     <item
         android:id="@+id/menu_favorites"

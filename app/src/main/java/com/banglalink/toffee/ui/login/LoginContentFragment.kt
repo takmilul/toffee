@@ -20,6 +20,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.databinding.AlertDialogLoginBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
@@ -39,10 +40,10 @@ import dagger.hilt.android.AndroidEntryPoint
 class LoginContentFragment : ChildDialogFragment() {
     
     private var phoneNo: String = ""
+    private val binding get() = _binding !!
     private var regSessionToken: String = ""
     private var _binding: AlertDialogLoginBinding? = null
     private var phoneNumberTextWatcher: TextWatcher? = null
-    private val binding get() = _binding !!
     private val homeViewModel: HomeViewModel by activityViewModels()
     private val viewModel by viewModels<LoginViewModel>()
     private val progressDialog by unsafeLazy { VelBoxProgressDialog(requireContext()) }
@@ -59,20 +60,26 @@ class LoginContentFragment : ChildDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setSpannableTermsAndConditions()
-        getHintPhoneNumber()
         with(binding) {
             verifyButton.safeClick({
                 progressDialog.show()
                 handleLogin()
                 observeLogin()
+                ToffeeAnalytics.logEvent(ToffeeEvents.OTP_REQUESTED)
                 viewModel.login(phoneNo)
             })
             termsAndConditionsCheckbox.setOnClickListener {
-                verifyButton.isEnabled = binding.termsAndConditionsCheckbox.isChecked && phoneNo.isNotBlank() && phoneNo.length >= 11
+                verifyButton.isEnabled = termsAndConditionsCheckbox.isChecked && phoneNo.isNotBlank() && phoneNo.length >= 11
             }
             phoneNumberTextWatcher = phoneNumberEditText.doAfterTextChanged {
                 phoneNo = it.toString()
-                binding.verifyButton.isEnabled = binding.termsAndConditionsCheckbox.isChecked && phoneNo.isNotBlank() && phoneNo.length >= 11
+                verifyButton.isEnabled = termsAndConditionsCheckbox.isChecked && phoneNo.isNotBlank() && phoneNo.length >= 11
+            }
+            if (mPref.isHeBanglalinkNumber) {
+                phoneNumberEditText.setText(mPref.hePhoneNumber)
+                phoneNumberEditText.setSelection(mPref.hePhoneNumber.length)
+            } else {
+                getHintPhoneNumber()
             }
         }
     }
@@ -114,7 +121,7 @@ class LoginContentFragment : ChildDialogFragment() {
     }
     
     private fun setSpannableTermsAndConditions() {
-        val ss = SpannableString(getString(R.string.terms_and_conditions))
+        val ss = SpannableString(getString(R.string.terms_of_use))
         val clickableSpan = object : ClickableSpan() {
             override fun onClick(textView: View) {
                 showTermsAndConditionDialog()

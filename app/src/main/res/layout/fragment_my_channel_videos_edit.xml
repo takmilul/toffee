@@ -165,7 +165,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/upload_description" />
 
-            <com.pchmn.materialchips.ChipsInput
+            <com.banglalink.toffee.ui.widget.ToffeeChipsInput
                 android:id="@+id/upload_tags"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -177,7 +177,6 @@
                 android:background="@drawable/multiline_input_text_bg"
                 android:gravity="top|start"
                 app:textColor="@color/cardTitleColor"
-                android:textSize="@dimen/input_field_text_size"
                 app:chip_labelColor="@color/colorSecondaryDark"
                 app:chip_backgroundColor="@color/colorSecondaryAccent"
                 app:chip_deletable="true"

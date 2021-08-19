@@ -15,5 +15,5 @@ open class BaseRequest(val apiName: String) {
     val appVersion : String = BuildConfig.VERSION_NAME
     val osVersion :String = "android "+Build.VERSION.RELEASE
     val netType:String = SessionPreference.getInstance().netType
-    val isBlNumber = SessionPreference.getInstance().isBanglalinkNumber
+    open var isBlNumber = SessionPreference.getInstance().isBanglalinkNumber
 }

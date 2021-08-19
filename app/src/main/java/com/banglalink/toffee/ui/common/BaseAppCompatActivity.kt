@@ -56,4 +56,11 @@ open class BaseAppCompatActivity : AppCompatActivity() {
             }
         }
     }
+    
+//    override fun attachBaseContext(newBase: Context?) {
+//        super.attachBaseContext(newBase)
+//        val config = Configuration(newBase?.resources?.configuration)
+//        config.fontScale = 1f
+//        applyOverrideConfiguration(config)
+//    }
 }

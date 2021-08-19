@@ -14,6 +14,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.os.bundleOf
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.database.entities.NotificationInfo
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
@@ -22,6 +23,14 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.NotificationType
 import com.banglalink.toffee.model.PlayerOverlayData
 import com.banglalink.toffee.receiver.NotificationActionReceiver
+import com.banglalink.toffee.receiver.NotificationActionReceiver.Companion.ACTION_NAME
+import com.banglalink.toffee.receiver.NotificationActionReceiver.Companion.CONTENT_VIEW
+import com.banglalink.toffee.receiver.NotificationActionReceiver.Companion.NOTIFICATION_ID
+import com.banglalink.toffee.receiver.NotificationActionReceiver.Companion.PUB_SUB_ID
+import com.banglalink.toffee.receiver.NotificationActionReceiver.Companion.RESOURCE_URL
+import com.banglalink.toffee.receiver.NotificationActionReceiver.Companion.ROW_ID
+import com.banglalink.toffee.receiver.NotificationActionReceiver.Companion.WATCH_LATER
+import com.banglalink.toffee.receiver.NotificationActionReceiver.Companion.WATCH_NOW
 import com.banglalink.toffee.util.UtilsKt
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -35,26 +44,26 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class ToffeeMessagingService : FirebaseMessagingService() {
-
+    
     private var notificationId = 1
     private val gson: Gson = Gson()
     private val TAG = "ToffeeMessagingService"
     @Inject lateinit var mPref: SessionPreference
     @Inject lateinit var commonPreference: CommonPreference
     private val NOTIFICATION_CHANNEL_NAME = "Toffee Channel"
-    @Inject lateinit var notificationInfoRepository: NotificationInfoRepository
     private val coroutineContext = Dispatchers.IO + SupervisorJob()
     private val imageCoroutineScope = CoroutineScope(coroutineContext)
+    @Inject lateinit var notificationInfoRepository: NotificationInfoRepository
     
     override fun onNewToken(s: String) {
         super.onNewToken(s)
         Log.i(TAG, "Token: $s")
     }
-
+    
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         Log.d(TAG, "From: " + remoteMessage.from!!)
         
-        if (remoteMessage.data.isNullOrEmpty()){
+        if (remoteMessage.data.isNullOrEmpty()) {
             imageCoroutineScope.launch {
                 handleDefaultNotification(
                     remoteMessage.notification?.title,
@@ -62,17 +71,15 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                     remoteMessage.notification?.imageUrl
                 )
             }
-        }
-        else {
+        } else {
             val data: Map<String, String> = remoteMessage.data
             Log.i("NOT_", "onMessageReceived: $data")
-            when(data["notificationType"]!!.lowercase()) {
+            when (data["notificationType"]!!.lowercase()) {
                 NotificationType.OVERLAY.type -> {
                     try {
                         gson.fromJson(remoteMessage.data["notificationText"]?.trimIndent(), PlayerOverlayData::class.java)
                             ?.let { mPref.playerOverlayLiveData.postValue(it) }
-                    }
-                    catch (e: Exception) {
+                    } catch (e: Exception) {
                         Log.e(TAG, "playerOverlay: ${e.message}")
                     }
                 }
@@ -95,8 +102,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             if (mPref.shouldOverrideHlsUrl && notificationData["url_id"].equals("1")) {
                 mPref.setHlsOverrideUrl(notificationData["hls_override_url"])
             }
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             Log.e(TAG, "changeHlsUrl: ${e.message}")
         }
     }
@@ -108,22 +114,12 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                 var decryptedData = Base64.decode(value, Base64.DEFAULT)
                 repeat(2) { decryptedData = Base64.decode(decryptedData, Base64.DEFAULT) }
                 when (String(decryptedData)) {
-                    mPref.customerId.toString() -> {
+                    mPref.customerId.toString(), commonPreference.deviceId, mPref.phoneNumber -> {
                         mPref.forceLogoutUserLiveData.postValue(true)
-                        return
-                    }
-                    commonPreference.deviceId -> {
-                        mPref.forceLogoutUserLiveData.postValue(true)
-                        return
-                    }
-                    mPref.phoneNumber -> {
-                        mPref.forceLogoutUserLiveData.postValue(true)
-                        return
                     }
                 }
             }
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             Log.e(TAG, "kickOutUser: ${e.message}")
         }
     }
@@ -131,7 +127,6 @@ class ToffeeMessagingService : FirebaseMessagingService() {
     private fun prepareNotification(data: Map<String, String>) {
         try {
             val notificationType = data["notificationType"]
-
             when {
                 notificationType!!.equals("SMALL", ignoreCase = true) -> {
                     imageCoroutineScope.launch {
@@ -143,35 +138,24 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                         val imageUrl = data["image"]
                         if (imageUrl.isNullOrBlank()) {
                             handleNotificationWithOutImage(data)
-                        }
-                        else {
+                        } else {
                             handleNotificationWithImage(data)
                         }
                     }
                 }
-//                notificationType.equals("LOGOUT", ignoreCase = true) -> EventBus.getDefault()
-//                    .post(MessageEvent(content, MessageEvent.NOTIFICATION_LOGOUT_EVENT))
             }
-
-            //sending pub-sub message
             val id = data["notificationId"]
-            //Message Status Meaning : /*0=Delivered,1=open, 2=later */
             PubSubMessageUtil.sendNotificationStatus(id, PUBSUBMessageStatus.DELIVERED)
-
         } catch (e: Exception) {
             Log.e(TAG, e.message, e)
         }
     }
     
-    private suspend fun handleDefaultNotification(
-        title: String?,
-        content: String?,
-        imageUrl: Uri? = null
-    ) {
-
-        val sound =
-            Uri.parse("android.resource://" + packageName + "/" + R.raw.velbox_notificaiton)
-
+    private suspend fun handleDefaultNotification(title: String?, content: String?, imageUrl: Uri? = null) {
+        val notificationInfo = NotificationInfo(null, 0, "DefaultNotificationType", "DefaultNotificationId", 0, 0, title, content, null, null, null, null, null, null)
+        val rowId = notificationInfoRepository.insert(notificationInfo)
+        val sound = Uri.parse("android.resource://" + packageName + "/" + R.raw.velbox_notificaiton)
+        
         val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_NAME)
             .setSmallIcon(R.drawable.ic_notification)
             .setAutoCancel(true)
@@ -179,42 +163,32 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             .setContentTitle(title)
             .setContentText(content)
             .setStyle(NotificationCompat.BigTextStyle().bigText(content))
-
+        
         val drawable = imageUrl?.let { UtilsKt.coilExecuteGet(this, it) }
         if (drawable != null)
             builder.setLargeIcon(drawable.toBitmap(48, 48))
-
-        val intent = Intent("com.toffee.notification_receiver")
-        intent.putExtra(NotificationActionReceiver.NOTIFICATION_ID, notificationId)
-        intent.putExtra(
-            NotificationActionReceiver.ACTION_NAME,
-            NotificationActionReceiver.DISMISS
+        
+        val intent = Intent("com.toffee.notification_receiver").putExtras(
+            bundleOf(
+                ROW_ID to rowId,
+                NOTIFICATION_ID to notificationId,
+                ACTION_NAME to CONTENT_VIEW
+            )
         )
-
-        val pendingIntent = PendingIntent.getBroadcast(
-            applicationContext,
-            0,
-            intent,
-            PendingIntent.FLAG_CANCEL_CURRENT
-        )
-
+        val pendingIntent = PendingIntent.getBroadcast(applicationContext, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
         builder.setContentIntent(pendingIntent)
         showNotification(builder.build())
-
-        val notificationInfo = NotificationInfo(null, 0,  "DefaultNotificationType", "DefaultNotificationId", 0, 0, title, content, null, null, null, null, null, null)
-        notificationInfoRepository.insert(notificationInfo)
     }
-
+    
     private suspend fun handleSmallImage(data: Map<String, String>) {
         val title = data["notificationHeader"]
         val content = data["notificationText"]
         val resourceUrl = data["resourceUrl"]
         val thumbnailUrl = data["thumbnail"]
         val customerId: Int = data["customerId"]?.toInt() ?: 0
-
-        val sound =
-            Uri.parse("android.resource://" + packageName + "/" + R.raw.velbox_notificaiton)
-
+        val notificationInfo = NotificationInfo(null, customerId, data["notificationType"], data["notificationId"], 0, 0, title, content, null, thumbnailUrl, null, resourceUrl)
+        val rowId = notificationInfoRepository.insert(notificationInfo)
+        val sound = Uri.parse("android.resource://" + packageName + "/" + R.raw.velbox_notificaiton)
         var thumbnailImage: Bitmap? = null
         if (!thumbnailUrl.isNullOrBlank()) {
             val thumbnailDrawable = try {
@@ -226,10 +200,10 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         }
         
         val intent = resourceUrl?.let { Intent(Intent.ACTION_VIEW, Uri.parse(it)) } ?: Intent(Intent.ACTION_VIEW)
+        intent.putExtras(bundleOf(ROW_ID to rowId))
         
         val pendingIntent = PendingIntent.getActivity(applicationContext, 0, intent, 0)
         val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_NAME)
-
             .setSmallIcon(R.drawable.ic_notification)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
@@ -240,17 +214,13 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                 NotificationCompat.BigTextStyle()
                     .bigText(content)
             )
-
+        
         if (thumbnailImage != null) {
             builder.setLargeIcon(thumbnailImage)
         }
-
         showNotification(builder.build())
-
-        val notificationInfo = NotificationInfo(null, customerId, data["notificationType"], data["notificationId"], 0, 0, title, content, null, thumbnailUrl, null, resourceUrl)
-        notificationInfoRepository.insert(notificationInfo)
     }
-
+    
     private suspend fun handleNotificationWithImage(data: Map<String, String>) {
         val imageUrl = data["image"]
         val title = data["notificationHeader"]
@@ -262,15 +232,16 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         val button = data["button"]
         val pubSubId = data["notificationId"]
         val customerId: Int = data["customerId"]?.toInt() ?: 0
-
+        val notificationInfo = NotificationInfo(null, customerId, data["notificationType"], pubSubId, 0, 0, title, content, null, thumbnailUrl, imageUrl, resourceUrl, playNowUrl, watchLaterUrl)
+        val rowId = notificationInfoRepository.insert(notificationInfo)
+        
         val drawable = try {
             UtilsKt.coilExecuteGet(this, imageUrl)
         } catch (e: Exception) {
             null
         }
-
+        
         val image = drawable?.toBitmap()
-
         var thumbnailImage: Bitmap? = image
         if (!thumbnailUrl.isNullOrBlank()) {
             val thumbnailDrawable = try {
@@ -280,31 +251,20 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             }
             thumbnailImage = thumbnailDrawable?.toBitmap(48, 48)
         }
-
-        val sound =
-            Uri.parse("android.resource://" + packageName + "/" + R.raw.velbox_notificaiton)
-
-//        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(resourceUrl))
-//        val pendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
-
-        val intent = Intent("com.toffee.notification_receiver")
-        intent.setClass(this, NotificationActionReceiver::class.java)
-        intent.putExtra(NotificationActionReceiver.NOTIFICATION_ID, notificationId)
-        intent.putExtra(NotificationActionReceiver.PUB_SUB_ID, pubSubId)
-        intent.putExtra(NotificationActionReceiver.RESOURCE_URL, resourceUrl)
-        intent.putExtra(
-            NotificationActionReceiver.ACTION_NAME,
-            NotificationActionReceiver.CONTENT_VIEW
-        )
-        val pendingIntent = PendingIntent.getBroadcast(
-            this,
-            0,
-            intent,
-            PendingIntent.FLAG_CANCEL_CURRENT
-        )
-
+        
+        val sound = Uri.parse("android.resource://" + packageName + "/" + R.raw.velbox_notificaiton)
+        val intent = Intent("com.toffee.notification_receiver").putExtras(
+            bundleOf(
+                ROW_ID to rowId,
+                PUB_SUB_ID to pubSubId,
+                RESOURCE_URL to resourceUrl,
+                NOTIFICATION_ID to notificationId,
+                ACTION_NAME to CONTENT_VIEW
+            )
+        ).setClass(this, NotificationActionReceiver::class.java)
+        
+        val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
         val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_NAME)
-
         builder.setSmallIcon(R.drawable.ic_notification)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
@@ -315,59 +275,33 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             .setContentText(content)
             .priority = NotificationCompat.PRIORITY_MAX
         builder.color = ContextCompat.getColor(applicationContext, R.color.colorAccent2)
-
+        
         if (button == "true") {
-
-            val watchNowIntent = Intent("com.toffee.notification_receiver")
-            watchNowIntent.setClass(this, NotificationActionReceiver::class.java)
-            watchNowIntent.putExtra(NotificationActionReceiver.NOTIFICATION_ID, notificationId)
-            watchNowIntent.putExtra(NotificationActionReceiver.PUB_SUB_ID, pubSubId)
-            watchNowIntent.putExtra(
-                NotificationActionReceiver.ACTION_NAME,
-                NotificationActionReceiver.WATCH_NOW
-            )
-            watchNowIntent.putExtra(NotificationActionReceiver.RESOURCE_URL, playNowUrl)
-            val watchNowPendingIntent = PendingIntent.getBroadcast(
-                this,
-                1,
-                watchNowIntent,
-                PendingIntent.FLAG_CANCEL_CURRENT
-            )
-            builder.addAction(
-                android.R.drawable.ic_media_play,
-                "Watch Now",
-                watchNowPendingIntent
-            )
-
-            val watchLaterIntent = Intent("com.toffee.notification_receiver")
-            watchLaterIntent.setClass(this, NotificationActionReceiver::class.java)
-            watchLaterIntent.putExtra(
-                NotificationActionReceiver.NOTIFICATION_ID,
-                notificationId
-            )
-            watchLaterIntent.putExtra(NotificationActionReceiver.PUB_SUB_ID, pubSubId)
-            watchLaterIntent.putExtra(
-                NotificationActionReceiver.ACTION_NAME,
-                NotificationActionReceiver.WATCH_LATER
-            )
-            val watchLaterPendingIntent = PendingIntent.getBroadcast(
-                applicationContext,
-                2,
-                watchLaterIntent,
-                PendingIntent.FLAG_CANCEL_CURRENT
-            )
-            builder.addAction(
-                android.R.drawable.ic_delete,
-                "Watch Later",
-                watchLaterPendingIntent
-            )
+            val watchNowIntent = Intent("com.toffee.notification_receiver").putExtras(
+                bundleOf(
+                    PUB_SUB_ID to pubSubId,
+                    ACTION_NAME to WATCH_NOW,
+                    RESOURCE_URL to playNowUrl,
+                    NOTIFICATION_ID to notificationId,
+                )
+            ).setClass(this, NotificationActionReceiver::class.java)
+            
+            val watchLaterIntent = Intent("com.toffee.notification_receiver").putExtras(
+                bundleOf(
+                    PUB_SUB_ID to pubSubId,
+                    ACTION_NAME to WATCH_LATER,
+                    NOTIFICATION_ID to notificationId,
+                )
+            ).setClass(this, NotificationActionReceiver::class.java)
+            
+            val watchNowPendingIntent = PendingIntent.getBroadcast(this, 1, watchNowIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+            builder.addAction(android.R.drawable.ic_media_play, "Watch Now", watchNowPendingIntent)
+            val watchLaterPendingIntent = PendingIntent.getBroadcast(applicationContext, 2, watchLaterIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+            builder.addAction(android.R.drawable.ic_delete, "Watch Later", watchLaterPendingIntent)
         }
         showNotification(builder.build())
-        
-        val notificationInfo = NotificationInfo(null, customerId, data["notificationType"], pubSubId, 0, 0, title, content, null, thumbnailUrl, imageUrl, resourceUrl, playNowUrl, watchLaterUrl)
-        notificationInfoRepository.insert(notificationInfo)
     }
-
+    
     private suspend fun handleNotificationWithOutImage(data: Map<String, String>) {
         val title = data["notificationHeader"]
         val content = data["notificationText"]
@@ -379,25 +313,22 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         val pubSubId = data["notificationId"]
         val sound = Uri.parse("android.resource://" + packageName + "/" + R.raw.velbox_notificaiton)
         val customerId: Int = data["customerId"]?.toInt() ?: 0
-
-        val intent = Intent("com.toffee.notification_receiver")
-        intent.setClass(this, NotificationActionReceiver::class.java)
-        intent.putExtra(NotificationActionReceiver.NOTIFICATION_ID, notificationId)
-        intent.putExtra(NotificationActionReceiver.PUB_SUB_ID, pubSubId)
-        intent.putExtra(NotificationActionReceiver.RESOURCE_URL, resourceUrl)
-        intent.putExtra(
-            NotificationActionReceiver.ACTION_NAME,
-            NotificationActionReceiver.CONTENT_VIEW
-        )
-        val pendingIntent = PendingIntent.getBroadcast(
-            this,
-            0,
-            intent,
-            PendingIntent.FLAG_CANCEL_CURRENT
-        )
-
+        val notificationInfo = NotificationInfo(null, customerId, data["notificationType"], pubSubId, 0, 0, title, content, null, thumbnailUrl, null, resourceUrl, playNowUrl, watchLaterUrl)
+        val rowId = notificationInfoRepository.insert(notificationInfo)
+        
+        val intent = Intent("com.toffee.notification_receiver").putExtras(
+            bundleOf(
+                ROW_ID to rowId,
+                PUB_SUB_ID to pubSubId,
+                RESOURCE_URL to resourceUrl,
+                NOTIFICATION_ID to notificationId,
+                ACTION_NAME to CONTENT_VIEW
+            )
+        ).setClass(this, NotificationActionReceiver::class.java)
+        
+        val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
         val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_NAME)
-
+        
         builder.setSmallIcon(R.drawable.ic_notification)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
@@ -407,59 +338,33 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             .setContentText(content)
             .priority = NotificationCompat.PRIORITY_MAX
         builder.color = ContextCompat.getColor(applicationContext, R.color.colorAccent2)
-
+        
         if (button == "true") {
-            val watchNowIntent = Intent("com.toffee.notification_receiver")
-            watchNowIntent.setClass(this, NotificationActionReceiver::class.java)
-            watchNowIntent.putExtra(NotificationActionReceiver.NOTIFICATION_ID, notificationId)
-            watchNowIntent.putExtra(NotificationActionReceiver.PUB_SUB_ID, pubSubId)
-            watchNowIntent.putExtra(
-                NotificationActionReceiver.ACTION_NAME,
-                NotificationActionReceiver.WATCH_NOW
-            )
-            watchNowIntent.putExtra(NotificationActionReceiver.RESOURCE_URL, playNowUrl)
-            val watchNowPendingIntent = PendingIntent.getBroadcast(
-                this,
-                1,
-                watchNowIntent,
-                PendingIntent.FLAG_CANCEL_CURRENT
-            )
-            builder.addAction(
-                android.R.drawable.ic_media_play,
-                "Watch Now",
-                watchNowPendingIntent
-            )
-
-            val watchLaterIntent = Intent("com.toffee.notification_receiver")
-            watchLaterIntent.setClass(this, NotificationActionReceiver::class.java)
-            watchLaterIntent.putExtra(
-                NotificationActionReceiver.NOTIFICATION_ID,
-                notificationId
-            )
-            watchLaterIntent.putExtra(NotificationActionReceiver.PUB_SUB_ID, pubSubId)
-            watchLaterIntent.putExtra(
-                NotificationActionReceiver.ACTION_NAME,
-                NotificationActionReceiver.WATCH_LATER
-            )
-            val watchLaterPendingIntent = PendingIntent.getBroadcast(
-                applicationContext,
-                2,
-                watchLaterIntent,
-                PendingIntent.FLAG_CANCEL_CURRENT
-            )
-            builder.addAction(
-                android.R.drawable.ic_delete,
-                "Watch Later",
-                watchLaterPendingIntent
-            )
+            val watchNowIntent = Intent("com.toffee.notification_receiver").putExtras(
+                bundleOf(
+                    PUB_SUB_ID to pubSubId,
+                    ACTION_NAME to WATCH_NOW,
+                    RESOURCE_URL to playNowUrl,
+                    NOTIFICATION_ID to notificationId,
+                )
+            ).setClass(this, NotificationActionReceiver::class.java)
+            
+            val watchLaterIntent = Intent("com.toffee.notification_receiver").putExtras(
+                bundleOf(
+                    PUB_SUB_ID to pubSubId,
+                    ACTION_NAME to WATCH_LATER,
+                    NOTIFICATION_ID to notificationId,
+                )
+            ).setClass(this, NotificationActionReceiver::class.java)
+            
+            val watchNowPendingIntent = PendingIntent.getBroadcast(this, 1, watchNowIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+            builder.addAction(android.R.drawable.ic_media_play, "Watch Now", watchNowPendingIntent)
+            val watchLaterPendingIntent = PendingIntent.getBroadcast(applicationContext, 2, watchLaterIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+            builder.addAction(android.R.drawable.ic_delete, "Watch Later", watchLaterPendingIntent)
         }
         showNotification(builder.build())
-        
-        val notificationInfo = NotificationInfo(null, customerId, data["notificationType"], pubSubId, 0, 0, title, content, null, thumbnailUrl, null, resourceUrl,
-            playNowUrl, watchLaterUrl)
-        notificationInfoRepository.insert(notificationInfo)
     }
-
+    
     private fun showNotification(notification: Notification) {
         if (mPref.isNotificationEnabled()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -473,12 +378,11 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                 val notificationManager = getSystemService(NotificationManager::class.java)
                 notificationManager?.createNotificationChannel(channel)
                 notificationManager?.notify(notificationId, notification)
-            }
-            else {
+            } else {
                 val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                 notificationManager.notify(notificationId, notification)
             }
         }
-        notificationId ++
+        notificationId++
     }
 }

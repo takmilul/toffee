@@ -81,7 +81,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
             if (name.isNullOrBlank()) name = profileForm?.fullName
             if (email.isNullOrBlank()) email = profileForm?.email
             if (address.isNullOrBlank()) address = profileForm?.address
-            paymentPhoneNo = if (mPref.phoneNumber.length == 11) mPref.phoneNumber else mPref.phoneNumber.substring(3)
+            paymentPhoneNo = if (mPref.phoneNumber.length > 11) mPref.phoneNumber.substring(3) else mPref.phoneNumber
         }
     }
 

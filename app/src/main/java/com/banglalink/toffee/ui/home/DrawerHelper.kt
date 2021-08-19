@@ -13,6 +13,8 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.ui.NavigationUI
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
 import com.banglalink.toffee.extension.*
@@ -198,6 +200,7 @@ class DrawerHelper(
                 }
             }
             R.id.menu_favorites -> {
+                ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_FAVORITES)
                 if (!mPref.isVerifiedUser) {
                     activity.checkVerification()
                     binding.drawerLayout.closeDrawers()
@@ -205,6 +208,7 @@ class DrawerHelper(
                 }
             }
             R.id.menu_activities -> {
+                ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_ACTIVITIES)
                 if (!mPref.isVerifiedUser) {
                     activity.checkVerification()
                     binding.drawerLayout.closeDrawers()
@@ -226,6 +230,7 @@ class DrawerHelper(
                 }
             }
             R.id.menu_redeem -> {
+                ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_REFERRAL)
                 if (!mPref.isVerifiedUser) {
                     activity.checkVerification()
                     binding.drawerLayout.closeDrawers()

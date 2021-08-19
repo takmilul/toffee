@@ -50,11 +50,11 @@ class UploadStateManager(
                         UploadStatus.STARTED.value,
                         UploadStatus.ERROR.value,
                     ) -> {
-                        if(fromNetwork || !it.fileUri.startsWith("content://")) {
-                            restartUploadTask(it)
-                        } else {
-                            sendStatusToServer(it, false)
-                        }
+//                        if(fromNetwork || !it.fileUri.startsWith("content://")) {
+//                            restartUploadTask(it)
+//                        } else {
+                        sendStatusToServer(it, false)
+//                        }
                     }
                 }
             }
@@ -134,13 +134,13 @@ class UploadStateManager(
         val newStatus = if(exception is UserCancelledUploadException)
             UploadStatus.CANCELED.value
         else {
-            if(networkRetryCount <= 0 && retryUploadId == item.uploadId) {
-                networkRetryCount = MAX_RETRY_COUNT
-                retryUploadId = -1L
+//            if(networkRetryCount <= 0 && retryUploadId == item.uploadId) {
+//                networkRetryCount = MAX_RETRY_COUNT
+//                retryUploadId = -1L
                 UploadStatus.ERROR_CONFIRMED.value
-            } else {
-                UploadStatus.ERROR.value
-            }
+//            } else {
+//                UploadStatus.ERROR.value
+//            }
         }
 
         uploadRepo.updateUploadInfo(item.apply {

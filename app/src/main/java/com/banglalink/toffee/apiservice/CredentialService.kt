@@ -8,14 +8,17 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import javax.inject.Inject
 
 class CredentialService @Inject constructor(private val pref: SessionPreference, private val authApi: AuthApi) {
-
+    
     suspend fun execute(): CredentialResponse {
-        val response = tryIO2 { authApi.apiExistingLogin(CredentialRequest(1, fcmToken = pref.fcmToken)) }
+        val response = tryIO2 {
+            authApi.apiExistingLogin(CredentialRequest(1, pref.fcmToken, pref.hePhoneNumber).also {
+                it.isBlNumber = pref.isHeBanglalinkNumber.toString()
+            })
+        }
         response.credential?.let { customerInfoSignIn ->
-            pref.customerId=customerInfoSignIn.customerId
-            pref.password=customerInfoSignIn.password!!
+            pref.customerId = customerInfoSignIn.customerId
+            pref.password = customerInfoSignIn.password!!
         }
         return response
     }
-
 }

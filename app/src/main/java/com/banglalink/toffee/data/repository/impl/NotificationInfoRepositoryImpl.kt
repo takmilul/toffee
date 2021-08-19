@@ -11,8 +11,8 @@ class NotificationInfoRepositoryImpl(
     private val notificationDao: NotificationDao,
     private val mPref: SessionPreference
     ): NotificationInfoRepository {
-    override suspend fun insert(notificationInfo: NotificationInfo) {
-        notificationDao.insert(notificationInfo)
+    override suspend fun insert(notificationInfo: NotificationInfo): Long {
+        return notificationDao.insert(notificationInfo)
     }
 
     override suspend fun delete(notificationInfo: NotificationInfo) {

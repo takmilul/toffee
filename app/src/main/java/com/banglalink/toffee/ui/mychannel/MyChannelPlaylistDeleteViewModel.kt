@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.mychannel
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.apiservice.MyChannelPlaylistDeleteService
@@ -21,9 +20,9 @@ class MyChannelPlaylistDeleteViewModel @Inject constructor(
     private val _data = SingleLiveEvent<Resource<MyChannelDeletePlaylistBean>>()
     val liveData = _data.toLiveData()
     
-    fun deletePlaylistName(playlistId: Int) {
+    fun deletePlaylistName(playlistId: Int, isUserPlaylist: Int = 0) {
         viewModelScope.launch {
-            _data.postValue(resultFromResponse { apiService.invoke(playlistId) })
+            _data.postValue(resultFromResponse { apiService.invoke(playlistId, isUserPlaylist) }!!)
         }
     }
 }

@@ -34,11 +34,7 @@ class Channel(
         putString("imageurl", imageUrl)
     }
 
-    fun getContentUri(pref: SessionPreference, connectionWatcher: ConnectionWatcher): String? {
-        val isWifiConnected = connectionWatcher.isOverWifi
-        if (!isWifiConnected && pref.watchOnlyWifi()) {
-            return null
-        }
+    fun getContentUri(pref: SessionPreference, isWifiConnected: Boolean): String? {
         val text = if (isWifiConnected) {
             if (pref.wifiProfileStatus == 6) {
                 "/auto"

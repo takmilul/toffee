@@ -2,9 +2,7 @@ package com.banglalink.toffee.data.network.retrofit
 
 import com.banglalink.toffee.data.network.request.*
 import com.banglalink.toffee.data.network.response.*
-import retrofit2.http.Body
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 
 interface ToffeeApi {
     
@@ -388,5 +386,23 @@ interface ToffeeApi {
         @Path("dbVersion") dbVersion: Int,
         @Body paymentMethodRequest: VastTagRequest
     ): VastTagResponse
+
+    @POST
+    suspend fun getDrmToken(
+        @Url url: String,
+        @Header("DRM-API-HEADER") drmHeader: String,
+        @Body drmTokenRequest: DrmTokenRequest
+    ): DrmTokenResponse
+    
+    @POST
+    suspend fun getHeaderEnrichment(
+        @HeaderMap headerMap: Map<String, String>,
+        @Url url: String? = "http://bl-he.toffeelive.com/getMsisdn.php",
+    ): HeaderEnrichmentResponse
+    
+    @POST("/create-upload-signed-url")
+    suspend fun uploadSignedUrl(
+        @Body uploadSignedUrlRequest: UploadSignedUrlRequest
+    ): UploadSignedUrlResponse
 
 }

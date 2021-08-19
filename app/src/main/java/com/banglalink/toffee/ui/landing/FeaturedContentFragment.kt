@@ -42,11 +42,11 @@ class FeaturedContentFragment : HomeBaseFragment(), BaseListItemCallback<Channel
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
+        viewModel.featuredJob?.cancel()
+        viewModel.featuredJob = null
         mAdapter = FeaturedContentAdapter(this)
         binding.featuredViewpager.adapter = mAdapter
         TabLayoutMediator(binding.featuredIndicator, binding.featuredViewpager, true) { tab_, position -> }.attach()
-        
         observeList()
         viewModel.loadFeaturedContentList()
     }

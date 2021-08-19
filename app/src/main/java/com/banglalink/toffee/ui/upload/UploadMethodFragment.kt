@@ -153,6 +153,7 @@ class UploadMethodFragment : DialogFragment() {
                 requireContext(),
                 "${requireContext().packageName}.provider",
                 videoFile!!
+
             )
             ToffeeAnalytics.logBreadCrumb("Video uri set")
             videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, videoUri)
@@ -182,9 +183,24 @@ class UploadMethodFragment : DialogFragment() {
     
     private val cameraResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         if (it.resultCode == Activity.RESULT_OK && videoFile != null) {
-            println("CaptureAbsolutePath${videoFile!!.absolutePath}")
-            println("CapturePath${videoFile!!.path}")
-            openEditUpload(videoFile!!.absolutePath)
+            lifecycleScope.launch {
+                println("CaptureAbsolutePath${videoFile!!.absolutePath}")
+                println("CapturePath${videoFile!!.path}")
+                if (UtilsKt.getVideoUploadLimit(UtilsKt.getVideoDuration(requireContext(), videoUri.toString()))){
+
+                    VelBoxAlertDialogBuilder(requireContext()).apply {
+                        setTitle(R.string.txt_video_length)
+                        setText(R.string.txt_video_length_msg)
+                        setPositiveButtonListener(getString(R.string.btn_got_it)) {
+                            it?.dismiss()
+                        }
+                    }.create().show()
+                }
+                else{
+                    openEditUpload(videoFile!!.absolutePath)
+                }
+            }
+
         } else {
             ToffeeAnalytics.logBreadCrumb("Camera/video capture result not returned")
         }
@@ -196,14 +212,34 @@ class UploadMethodFragment : DialogFragment() {
             val fileName = UtilsKt.fileNameFromContentUri(requireContext(), videoUri)
 
             Log.e("UPLOAD_T", "Type ->> $contentType, Name ->> $fileName")
+            
+//            withContext(Dispatchers.Default + Job()) {
+//                UtilsKt.getVideoDuration(requireContext(), videoUri.toString())
+//            }.let {
+//                val duration = it
+//            }
+            
+            if(contentType == "video/mp4" && fileName.substringAfterLast(".", "mp4") == "mp4") {
 
-            if(contentType == "video/mp4" || fileName.substringAfterLast(".", "") == "mp4") {
-                openEditUpload(videoUri.toString())
+                if (UtilsKt.getVideoUploadLimit(UtilsKt.getVideoDuration(requireContext(), videoUri.toString()))){
+
+                    VelBoxAlertDialogBuilder(requireContext()).apply {
+                        setTitle(R.string.txt_video_length)
+                        setText(R.string.txt_video_length_msg)
+                        setPositiveButtonListener(getString(R.string.btn_got_it)) {
+                            it?.dismiss()
+                        }
+                    }.create().show()
+                }
+                else{
+                    openEditUpload(videoUri.toString())
+                }
+
             } else {
                 VelBoxAlertDialogBuilder(requireContext()).apply {
-                    setTitle("Select mp4 file")
-                    setText("Only mp4 file uploading is supported.")
-                    setPositiveButtonListener("Got It!") {
+                    setTitle(R.string.txt_video_format)
+                    setText(R.string.txt_video_format_msg)
+                    setPositiveButtonListener(getString(R.string.btn_got_it)) {
                         it?.dismiss()
                     }
                 }.create().show()

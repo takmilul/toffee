@@ -181,7 +181,7 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
             createButton.text = getString(string.save_text)
             createButton.setOnClickListener {
                 if (!createPlaylistViewModel.playlistName.isNullOrBlank()) {
-                    createPlaylistViewModel.editPlaylist(playlistId, mPref.customerId)
+                    createPlaylistViewModel.editPlaylist(playlistId, mPref.customerId, 1)
                     alertDialog.dismiss()
                 } else {
                     requireContext().showToast(getString(string.playlist_name_empty_msg))
@@ -199,7 +199,7 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
             negativeButtonTitle = getString(string.delete_text),
             positiveButtonListener = { it?.dismiss() },
             negativeButtonListener = {
-                deletePlaylistViewModel.deletePlaylistName(playlistId)
+                deletePlaylistViewModel.deletePlaylistName(playlistId, 1)
                 it?.dismiss()
             }
         ).create().show()

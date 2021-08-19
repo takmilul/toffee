@@ -88,6 +88,14 @@ class ToffeeApplication : Application() {
                 sendFirebaseConnectionErrorEvent.execute()
             }
         }
+        try{
+            ToffeeAnalytics.initAppEventsLogger(this)
+        }
+        catch (e: Exception) {
+        }
+//        FacebookSdk.setIsDebugEnabled(true);
+//        FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS);
+
         initCoil()
         initUploader()
     }

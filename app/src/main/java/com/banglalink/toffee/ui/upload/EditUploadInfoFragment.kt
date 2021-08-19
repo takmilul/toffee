@@ -328,13 +328,6 @@ class EditUploadInfoFragment: BaseFragment() {
     }
 
     private fun setupTagView() {
-        with(binding.uploadTags.editText) {
-            gravity = Gravity.START or Gravity.TOP
-            setLines(2)
-            maxLines = 2
-            inputType = InputType.TYPE_TEXT_FLAG_MULTI_LINE
-        }
-
         val chipRecycler = binding.uploadTags.findViewById<RecyclerView>(R.id.chips_recycler)
         chipRecycler.setPadding(0)
 
@@ -429,7 +422,6 @@ class EditUploadInfoFragment: BaseFragment() {
             context?.showToast(getString(R.string.thumbnail_missing_msg))
             return
         }
-
         if (title.isNotBlank() and description.isNotBlank()) {
             lifecycleScope.launch {
                 val categoryObj = binding.categorySpinner.selectedItem

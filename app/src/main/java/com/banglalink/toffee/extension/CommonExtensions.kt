@@ -13,6 +13,8 @@ import androidx.core.view.forEach
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.database.entities.FavoriteItem
 import com.banglalink.toffee.enums.InputType
@@ -24,6 +26,7 @@ import com.banglalink.toffee.ui.mychannel.MyChannelAddToPlaylistFragment
 import com.banglalink.toffee.ui.report.ReportPopupFragment
 import com.facebook.shimmer.ShimmerFrameLayout
 import kotlinx.coroutines.launch
+import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -63,8 +66,20 @@ val Float.dp: Float get() {
     return (this/Resources.getSystem().displayMetrics.density)
 }
 
+val Int.sp: Int get() {
+    return (this/Resources.getSystem().displayMetrics.scaledDensity).toInt()
+}
+
+val Float.sp: Float get() {
+    return (this/Resources.getSystem().displayMetrics.scaledDensity)
+}
+
 val Int.px: Int get() {
     return (this * Resources.getSystem().displayMetrics.density).toInt()
+}
+
+val Float.px: Float get() {
+    return (this * Resources.getSystem().displayMetrics.density)
 }
 
 fun ByteArray.toHex() = joinToString(separator = "") { byte -> "%02x".format(byte) }
@@ -114,6 +129,7 @@ fun Activity.handleAddToPlaylist(item: ChannelInfo) {
 }
 
 fun Activity.handleShare(item: ChannelInfo) {
+    ToffeeAnalytics.logEvent(ToffeeEvents.SHARE_CLICK)
     if(this is HomeActivity) {
         getHomeViewModel().shareContentLiveData.postValue(item)
     }
@@ -121,6 +137,7 @@ fun Activity.handleShare(item: ChannelInfo) {
 
 fun Activity.handleFavorite(item: ChannelInfo, favoriteDao: FavoriteItemDao, onAdded: (()->Unit)? = null, onRemoved: (()-> Unit)? = null) {
     checkVerification {
+        ToffeeAnalytics.logEvent(ToffeeEvents.ADD_TO_FAVORITE)
         if(this is HomeActivity) {
             getHomeViewModel().updateFavorite(item).observe(this, {
                 when (it) {
@@ -183,4 +200,13 @@ fun EditText.setDrawableRightTouch(setClickListener: () -> Unit) {
         }
         false
     })
+}
+
+fun String.toMD5(): String {
+    return try {
+        val bytes = MessageDigest.getInstance("MD5").digest(this.toByteArray())
+        bytes.joinToString("") { "%02x".format(it) }
+    } catch (e: Exception) {
+        ""
+    }
 }

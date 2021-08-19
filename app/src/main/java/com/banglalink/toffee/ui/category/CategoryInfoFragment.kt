@@ -29,19 +29,20 @@ class CategoryInfoFragment: HomeBaseFragment() {
     private lateinit var categoryInfo: Category
     private var _binding: FragmentCategoryInfoBinding ? = null
     private val binding get() = _binding!!
-
+    
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        categoryInfo = requireParentFragment().requireArguments().getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)!!
+    }
+    
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentCategoryInfoBinding.inflate(inflater, container, false)
         return binding.root
     }
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        categoryInfo = requireParentFragment().requireArguments().getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)!!
-        observeCategoryData()
+        setCategoryUiInfo()
         observeHashTags()
         observeSubCategories()
     }
@@ -135,7 +136,7 @@ class CategoryInfoFragment: HomeBaseFragment() {
         return chip
     }
 
-    private fun observeCategoryData() {
+    private fun setCategoryUiInfo() {
         categoryInfo.let {
             binding.categoryName.text = it.categoryName
             bindingUtil.bindCategoryImage(binding.categoryIcon, categoryInfo)
@@ -154,5 +155,10 @@ class CategoryInfoFragment: HomeBaseFragment() {
                 unSelectedColor
             )
         )
+    }
+    
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

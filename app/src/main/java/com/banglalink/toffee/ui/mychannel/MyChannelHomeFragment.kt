@@ -19,6 +19,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.color
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
@@ -100,12 +102,16 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-        progressDialog.show()
+        if (isOwner) ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_MY_CHANNEL)
         binding.contentBody.hide()
-        
-        observeChannelDetail()
-//        observeSubscribeChannel()
-        viewModel.getChannelDetail(channelOwnerId)
+        if(mPref.isVerifiedUser) {
+            progressDialog.show()
+            observeChannelDetail()
+    //        observeSubscribeChannel()
+            viewModel.getChannelDetail(channelOwnerId)
+        } else {
+            setBindingData()
+        }
         
         binding.channelDetailView.subscriptionButton.isEnabled = true
         binding.channelDetailView.addBioButton.safeClick(this)

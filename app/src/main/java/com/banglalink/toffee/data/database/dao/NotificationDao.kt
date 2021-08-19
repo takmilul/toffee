@@ -43,4 +43,7 @@ interface NotificationDao {
         deleteZeroUserRows()
         return ret
     }
+    
+    @Query("SELECT isSeen FROM NotificationInfo WHERE id == :id")
+    suspend fun isSeen(id: Long): Boolean
 }

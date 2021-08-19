@@ -186,7 +186,31 @@ object DatabaseModule {
 
     @Provides
     @Singleton
+    fun providesDrmLicenseDao(db: ToffeeDatabase): DrmLicenseDao {
+        return db.getDrmLicenseDao()
+    }
+
+    @Provides
+    @Singleton
     fun providesShareCountRepository(db: ToffeeDatabase, dao: ShareCountDao): ShareCountRepository {
         return ShareCountRepositoryImpl(db, dao)
+    }
+
+    @Singleton
+    @Provides
+    fun providesSessionPrefDao(db: ToffeeDatabase): SessionPrefDao {
+        return db.getSessionPrefDao()
+    }
+
+    @Singleton
+    @Provides
+    fun providesSessionPrefRepository(dao: SessionPrefDao): SessionPrefRepository {
+        return SessionPrefRepositoryImpl(dao)
+    }
+
+    @Singleton
+    @Provides
+    fun providesDrmLicenseRepository(dao: DrmLicenseDao): DrmLicenseRepository {
+        return DrmLicenseRepositoryImpl(dao)
     }
 }
