@@ -17,6 +17,7 @@ import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.google.android.material.appbar.AppBarLayout
 import com.loopnow.fireworklibrary.FwSDK
 import com.loopnow.fireworklibrary.SdkStatus
+import com.loopnow.fireworklibrary.VideoPlayerProperties
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -85,6 +86,9 @@ class LandingPageFragment : HomeBaseFragment(), FwSDK.SdkStatusListener {
         when(status){
             SdkStatus.Initialized -> {
                 Log.e("FwSDK", "Initialized: $extra")
+                VideoPlayerProperties.share = false
+                VideoPlayerProperties.branding = false
+                VideoPlayerProperties.fullScreenPlayer = true
                 FwSDK.setBasePlayerUrl("https://toffeelive.com/")
                 homeViewModel.isFireworkInitialized.postValue(true)
                 try {
