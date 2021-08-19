@@ -39,14 +39,18 @@ class ToffeeMediaDrmCallback2(private val licenseUri: String,
 
     override fun executeKeyRequest(uuid: UUID, request: ExoMediaDrm.KeyRequest): ByteArray {
         val token = runBlocking {
-            drmTokenApi.execute(contentId)
+            try {
+                drmTokenApi.execute(contentId)
+            } catch (ex: Exception) {
+                null
+            }
         } ?:
         throw MediaDrmCallbackException(
                 DataSpec.Builder().setUri(Uri.EMPTY).build(),
                 Uri.EMPTY,  /* responseHeaders= */
                 ImmutableMap.of(),  /* bytesLoaded= */
                 0,  /* cause= */
-                ToffeeMediaDrmException("Drm token request ignored")
+                ToffeeMediaDrmException("Drm token request failed")
             )
 
         httpMediaDrmCallback.setKeyRequestProperty("pallycon-customdata-v2", token)

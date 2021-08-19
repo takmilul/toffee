@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.common
 
-import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -58,10 +57,10 @@ open class BaseAppCompatActivity : AppCompatActivity() {
         }
     }
     
-    override fun attachBaseContext(newBase: Context?) {
-        super.attachBaseContext(newBase)
-        val config = Configuration(newBase?.resources?.configuration)
-        config.fontScale = 1f
-        applyOverrideConfiguration(config)
-    }
+//    override fun attachBaseContext(newBase: Context?) {
+//        super.attachBaseContext(newBase)
+//        val config = Configuration(newBase?.resources?.configuration)
+//        config.fontScale = 1f
+//        applyOverrideConfiguration(config)
+//    }
 }

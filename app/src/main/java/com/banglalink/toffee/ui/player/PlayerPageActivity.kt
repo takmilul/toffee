@@ -301,7 +301,8 @@ abstract class PlayerPageActivity :
         channelInfo.isDrmActive &&
         !channelInfo.drmCid.isNullOrBlank() &&
         !channelInfo.drmDashUrl.isNullOrBlank() &&
-        !mPref.drmWidevineLicenseUrl.isNullOrBlank()
+        !mPref.drmWidevineLicenseUrl.isNullOrBlank() &&
+        player is SimpleExoPlayer
 
     private fun getDrmSessionManager(mediaItem: MediaItem): DrmSessionManager {
         val channelInfo = mediaItem.getChannelMetadata(player) ?: return DrmSessionManager.DRM_UNSUPPORTED
@@ -707,7 +708,11 @@ abstract class PlayerPageActivity :
                         //                    player.prepare(mediaSource, false, false);
                     } else if(it is CastPlayer){
                         val newMediaItem = if(isDrmActive) {
-                            val drmToken = drmTokenApi.execute(channelInfo.drmCid!!) ?: return@launch
+                            val drmToken = try{
+                                drmTokenApi.execute(channelInfo.drmCid!!)
+                            } catch (ex: Exception) {
+                                null
+                            } ?: return@launch
                             mediaItem.buildUpon()
                                 .setDrmLicenseUri(mPref.drmWidevineLicenseUrl!!)
                                 .setDrmMultiSession(false)
@@ -740,7 +745,11 @@ abstract class PlayerPageActivity :
                 it.prepare()
             } else if(it is CastPlayer) {
                 val newMediaItem = if(isDrmActive) {
-                    val drmToken = drmTokenApi.execute(channelInfo.drmCid!!) ?: return@launch
+                    val drmToken = try{
+                        drmTokenApi.execute(channelInfo.drmCid!!)
+                    } catch (ex: Exception) {
+                        null
+                    } ?: return@launch
                     mediaItem.buildUpon()
                         .setDrmMultiSession(false)
                         .setDrmForceDefaultLicenseUri(false)
@@ -891,6 +900,7 @@ abstract class PlayerPageActivity :
             }
 
             if(e.cause?.cause?.cause is ToffeeMediaDrmException) {
+                playlistManager.getCurrentChannel()?.is_drm_active = 0
                 reloadChannel()
             }
 

@@ -103,12 +103,15 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         super.onViewCreated(view, savedInstanceState)
         
         if (isOwner) ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_MY_CHANNEL)
-        progressDialog.show()
         binding.contentBody.hide()
-        
-        observeChannelDetail()
-//        observeSubscribeChannel()
-        viewModel.getChannelDetail(channelOwnerId)
+        if(mPref.isVerifiedUser) {
+            progressDialog.show()
+            observeChannelDetail()
+    //        observeSubscribeChannel()
+            viewModel.getChannelDetail(channelOwnerId)
+        } else {
+            setBindingData()
+        }
         
         binding.channelDetailView.subscriptionButton.isEnabled = true
         binding.channelDetailView.addBioButton.safeClick(this)

@@ -152,11 +152,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
 
     private fun loadVideoDuration() {
         viewModelScope.launch {
-            withContext(Dispatchers.Default + Job()) {
-                UtilsKt.getVideoDuration(appContext, uploadFileUri)
-            }.let {
-                durationData.value = it
-            }
+            durationData.value = UtilsKt.getVideoDuration(appContext, uploadFileUri)
         }
     }
 
@@ -174,13 +170,8 @@ class EditUploadInfoViewModel @AssistedInject constructor(
 //            return@launch
 //        }
 
-        actualFileName = withContext(Dispatchers.IO + Job()) {
-            UtilsKt.fileNameFromContentUri(appContext, Uri.parse(uploadFileUri))
-        }
-
-        val fileSize = withContext(Dispatchers.IO + Job()) {
-            UtilsKt.fileSizeFromContentUri(appContext, Uri.parse(uploadFileUri))
-        }
+        actualFileName = UtilsKt.fileNameFromContentUri(appContext, Uri.parse(uploadFileUri))
+        val fileSize = UtilsKt.fileSizeFromContentUri(appContext, Uri.parse(uploadFileUri))
 
         uploadStatusText.value = "$actualFileName \u2022 ${Utils.readableFileSize(fileSize)}"
 
@@ -226,12 +217,10 @@ class EditUploadInfoViewModel @AssistedInject constructor(
 
     suspend fun loadCopyrightFileName(fileUri: Uri) {
         copyrightDocUri = fileUri.toString()
-        val docFileName = withContext(Dispatchers.IO + Job()) {
-            val fileSize = UtilsKt.fileSizeFromContentUri(appContext, fileUri)
-            val actualFileSize = Utils.readableFileSize(fileSize)
-            val contentFileName = UtilsKt.fileNameFromContentUri(appContext, Uri.parse(fileUri.toString()))
-            "$contentFileName ($actualFileSize)"
-        }
+        val fileSize = UtilsKt.fileSizeFromContentUri(appContext, fileUri)
+        val actualFileSize = Utils.readableFileSize(fileSize)
+        val contentFileName = UtilsKt.fileNameFromContentUri(appContext, Uri.parse(fileUri.toString()))
+        val docFileName = "$contentFileName ($actualFileSize)"
         copyrightFileName.value = docFileName
     }
 

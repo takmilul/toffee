@@ -328,13 +328,6 @@ class EditUploadInfoFragment: BaseFragment() {
     }
 
     private fun setupTagView() {
-        with(binding.uploadTags.editText) {
-            gravity = Gravity.START or Gravity.TOP
-            setLines(2)
-            maxLines = 2
-            inputType = InputType.TYPE_TEXT_FLAG_MULTI_LINE
-        }
-
         val chipRecycler = binding.uploadTags.findViewById<RecyclerView>(R.id.chips_recycler)
         chipRecycler.setPadding(0)
 

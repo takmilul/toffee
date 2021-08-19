@@ -20,6 +20,9 @@ import android.view.inputmethod.InputMethodManager
 import coil.imageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.withContext
 import java.io.*
 import java.text.DateFormat
 import java.text.ParseException
@@ -52,10 +55,10 @@ object UtilsKt {
         }
     }
 
-    fun contentTypeFromContentUri(context: Context, uri: Uri): String {
+    suspend fun contentTypeFromContentUri(context: Context, uri: Uri): String = withContext(Dispatchers.IO + Job()) {
         val type = context.contentResolver.getType(uri)
 
-        return if (type.isNullOrBlank()) {
+        if (type.isNullOrBlank()) {
             "application/octet-stream"
         }
         else {
@@ -63,8 +66,8 @@ object UtilsKt {
         }
     }
 
-    fun fileNameFromContentUri(context: Context, uri: Uri): String {
-        return context.contentResolver.query(uri, null, null, null, null)?.use {
+    suspend fun fileNameFromContentUri(context: Context, uri: Uri): String = withContext(Dispatchers.IO + Job()) {
+        context.contentResolver.query(uri, null, null, null, null)?.use {
             if (it.moveToFirst()) {
                 it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME))
             }
@@ -74,18 +77,20 @@ object UtilsKt {
         } ?: uri.toString().split(File.separator).last()
     }
 
-    fun fileSizeFromContentUri(context: Context, uri: Uri): Long {
+    suspend fun fileSizeFromContentUri(context: Context, uri: Uri): Long = withContext(Dispatchers.IO + Job()) {
         if(uri.scheme != "content") {
-            return File(uri.toString()).length()
+            File(uri.toString()).length()
         }
-        return context.contentResolver.query(uri, null, null, null, null)?.use {
-            if(it.moveToFirst()) {
-                it.getLong(it.getColumnIndex(OpenableColumns.SIZE))
-            }
-            else {
-                0L
-            }
-        } ?: 0L
+        else {
+            context.contentResolver.query(uri, null, null, null, null)?.use {
+                if(it.moveToFirst()) {
+                    it.getLong(it.getColumnIndex(OpenableColumns.SIZE))
+                }
+                else {
+                    0L
+                }
+            } ?: 0L
+        }
     }
 
     suspend fun coilExecuteGet(ctx: Context, url: Any?): Drawable? {
@@ -130,8 +135,8 @@ object UtilsKt {
         }
     }
 
-    fun getVideoDuration(context: Context, filePath: String): Long {
-        return try{
+    suspend fun getVideoDuration(context: Context, filePath: String): Long = withContext(Dispatchers.IO + Job()) {
+        try{
             val mmr = MediaMetadataRetriever()
             if(filePath.startsWith("content://")) {
                 mmr.setDataSource(context, Uri.parse(filePath))

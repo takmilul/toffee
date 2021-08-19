@@ -66,8 +66,20 @@ val Float.dp: Float get() {
     return (this/Resources.getSystem().displayMetrics.density)
 }
 
+val Int.sp: Int get() {
+    return (this/Resources.getSystem().displayMetrics.scaledDensity).toInt()
+}
+
+val Float.sp: Float get() {
+    return (this/Resources.getSystem().displayMetrics.scaledDensity)
+}
+
 val Int.px: Int get() {
     return (this * Resources.getSystem().displayMetrics.density).toInt()
+}
+
+val Float.px: Float get() {
+    return (this * Resources.getSystem().displayMetrics.density)
 }
 
 fun ByteArray.toHex() = joinToString(separator = "") { byte -> "%02x".format(byte) }
