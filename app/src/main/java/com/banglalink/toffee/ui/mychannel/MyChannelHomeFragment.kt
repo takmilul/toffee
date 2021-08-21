@@ -104,7 +104,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         
         if (isOwner) ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_MY_CHANNEL)
         binding.contentBody.hide()
-        if(mPref.isVerifiedUser) {
+        if(mPref.isVerifiedUser || !isOwner) {
             progressDialog.show()
             observeChannelDetail()
     //        observeSubscribeChannel()
