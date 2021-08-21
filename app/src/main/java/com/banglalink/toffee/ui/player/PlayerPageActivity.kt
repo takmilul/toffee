@@ -263,12 +263,12 @@ abstract class PlayerPageActivity :
             playerAnalyticsListener = PlayerAnalyticsListener()
 
             httpDataSourceFactory = OkHttpDataSource.Factory(dnsHttpClient
-                    .newBuilder()
-                    .addNetworkInterceptor(
-                        HttpLoggingInterceptor()
-                            .setLevel(HttpLoggingInterceptor.Level.HEADERS)
-                    )
-                    .build()
+//                    .newBuilder()
+//                    .addNetworkInterceptor(
+//                        HttpLoggingInterceptor()
+//                            .setLevel(HttpLoggingInterceptor.Level.HEADERS)
+//                    )
+//                    .build()
                 )
                 .setUserAgent(TOFFEE_HEADER)
 //                .setDefaultRequestProperties(mapOf("TOFFEE-SESSION-TOKEN" to mPref.getHeaderSessionToken()!!))
@@ -545,12 +545,12 @@ abstract class PlayerPageActivity :
             Log.e("DRM_T", "Downloading offline license")
             val offlineDataSourceFactory = OkHttpDataSource.Factory(
                 dnsHttpClient
-                    .newBuilder()
-                    .addNetworkInterceptor(
-                        HttpLoggingInterceptor()
-                            .setLevel(HttpLoggingInterceptor.Level.HEADERS)
-                    )
-                    .build()
+//                    .newBuilder()
+//                    .addNetworkInterceptor(
+//                        HttpLoggingInterceptor()
+//                            .setLevel(HttpLoggingInterceptor.Level.HEADERS)
+//                    )
+//                    .build()
             )
             offlineDataSourceFactory.setDefaultRequestProperties(mapOf("pallycon-customdata-v2" to token))
 

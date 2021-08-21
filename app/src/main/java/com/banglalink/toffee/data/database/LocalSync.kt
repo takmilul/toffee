@@ -37,7 +37,7 @@ class LocalSync @Inject constructor(
         }
         if(syncFlag and SYNC_FLAG_SHARE_COUNT == SYNC_FLAG_SHARE_COUNT) {
             channelInfo.shareCount =
-                shareCountRepository.getShareCountByContentId(channelInfo.id.toInt()) ?: 0
+                shareCountRepository.getShareCountByContentId(channelInfo.id.toInt()) ?: channelInfo.shareCount
         }
         if(syncFlag and SYNC_FLAG_REACT == SYNC_FLAG_REACT) {
             val reactionList =
@@ -79,7 +79,7 @@ class LocalSync @Inject constructor(
         else {
             userChannel.isSubscribed = 0
         }
-        userChannel.subscriberCount = subscriptionCountRepository.getSubscriberCount(userChannel.channelOwnerId)
+        userChannel.subscriberCount = maxOf(subscriptionCountRepository.getSubscriberCount(userChannel.channelOwnerId), userChannel.subscriberCount)
     }
     
     /*suspend fun syncTrendingChannel(userChannel: TrendingChannelInfo){
