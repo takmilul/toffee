@@ -71,18 +71,20 @@ class HeartBeatManager @Inject constructor(
                         is Resource.Success -> {
                             val data = response.data
                             mPref.heUpdateDate = today
-                            mPref.latitude = data.lat ?: ""
-                            mPref.longitude = data.lon ?: ""
-                            mPref.userIp = data.userIp ?: ""
-                            mPref.geoCity = data.geoCity ?: ""
-                            mPref.geoLocation = data.geoLocation ?: ""
-                            mPref.hePhoneNumber = data.phoneNumber
-                            mPref.isHeBanglalinkNumber = data.isBanglalinkNumber
                             try {
-                                sendHeLogEvent.execute(HeaderEnrichmentLogData().also {
-                                    it.phoneNumber = mPref.hePhoneNumber
-                                    it.isBlNumber = mPref.isHeBanglalinkNumber.toString()
-                                })
+                                if (data.isBanglalinkNumber && data.phoneNumber.isNotBlank()) {
+                                    mPref.latitude = data.lat ?: ""
+                                    mPref.longitude = data.lon ?: ""
+                                    mPref.userIp = data.userIp ?: ""
+                                    mPref.geoCity = data.geoCity ?: ""
+                                    mPref.geoLocation = data.geoLocation ?: ""
+                                    mPref.hePhoneNumber = data.phoneNumber
+                                    mPref.isHeBanglalinkNumber = data.isBanglalinkNumber
+                                    sendHeLogEvent.execute(HeaderEnrichmentLogData().also {
+                                        it.phoneNumber = mPref.hePhoneNumber
+                                        it.isBlNumber = mPref.isHeBanglalinkNumber.toString()
+                                    })
+                                }
                             } catch (e: Exception) {
                                 e.printStackTrace()
                             }
