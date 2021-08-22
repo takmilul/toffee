@@ -3,8 +3,8 @@ package com.banglalink.toffee.ui.player
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.net.ConnectivityManager
 import android.media.MediaDrm
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -61,7 +61,6 @@ import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import java.net.*
 import java.util.*
 import javax.inject.Inject
@@ -899,10 +898,10 @@ abstract class PlayerPageActivity :
                 reloadChannel()
             }
 
-            if(e.cause?.cause?.cause is ToffeeMediaDrmException) {
-                playlistManager.getCurrentChannel()?.is_drm_active = 0
-                reloadChannel()
-            }
+//            if(e.cause?.cause?.cause is ToffeeMediaDrmException) {
+//                playlistManager.getCurrentChannel()?.is_drm_active = 0
+//                reloadChannel()
+//            }
 
             getCurrentChannelInfo()?.let { cinfo->
                 if(!cinfo.isLive) {
