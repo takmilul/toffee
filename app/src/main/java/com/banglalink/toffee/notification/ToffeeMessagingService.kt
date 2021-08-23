@@ -17,6 +17,7 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.core.os.bundleOf
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.database.entities.NotificationInfo
+import com.banglalink.toffee.data.repository.DrmLicenseRepository
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -54,6 +55,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
     private val coroutineContext = Dispatchers.IO + SupervisorJob()
     private val imageCoroutineScope = CoroutineScope(coroutineContext)
     @Inject lateinit var notificationInfoRepository: NotificationInfoRepository
+    @Inject lateinit var drmLicenseRepo: DrmLicenseRepository
     
     override fun onNewToken(s: String) {
         super.onNewToken(s)
@@ -86,6 +88,11 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                 NotificationType.LOGOUT.type -> {
                     kickOutUser(data)
                 }
+                NotificationType.DRM_LICENSE_RELEASE.type -> {
+                    imageCoroutineScope.launch {
+                        releaseAllLicense()
+                    }
+                }
                 NotificationType.CHANGE_URL.type -> {
                     changeHlsUrl(data)
                 }
@@ -94,6 +101,10 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                 }
             }
         }
+    }
+
+    private suspend fun releaseAllLicense() {
+        drmLicenseRepo.deleteAll()
     }
     
     private fun changeHlsUrl(notificationData: Map<String, String>) {

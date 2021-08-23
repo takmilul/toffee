@@ -91,7 +91,10 @@ class HomeViewModel @Inject constructor(
         FirebaseMessaging.getInstance().subscribeToTopic("buzz")
 
         // Disable this in production.
-        FirebaseMessaging.getInstance().subscribeToTopic("beta")
+//        FirebaseMessaging.getInstance().subscribeToTopic("beta")
+
+        FirebaseMessaging.getInstance().subscribeToTopic("DRM-LICENSE-RELEASE")
+
         FirebaseMessaging.getInstance().subscribeToTopic("controls")
         FirebaseMessaging.getInstance().subscribeToTopic("cdn_control")
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->

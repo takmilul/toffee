@@ -17,6 +17,10 @@ class DrmLicenseRepositoryImpl(private val dao: DrmLicenseDao): DrmLicenseReposi
         dao.delete(item)
     }
 
+    override suspend fun deleteAll() {
+        dao.deleteAll()
+    }
+
     override suspend fun getByChannelId(channelId: Long): DrmLicenseEntity? {
         return dao.getByChannelId(channelId)?.let {
             it.copy(license = it.license.sliceArray(2..it.license.size - 4).reversedArray())
