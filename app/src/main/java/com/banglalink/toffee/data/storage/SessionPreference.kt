@@ -528,7 +528,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         set(value) = pref.edit { putBoolean(PREF_TOFFEE_IS_FB_EVENT_ACTIVE, value) }
     
     var isDrmActive: Boolean
-        get() = pref.getBoolean(PREF_TOFFEE_IS_GLOBAL_DRM_ACTIVE, false)
+        get() = false//pref.getBoolean(PREF_TOFFEE_IS_GLOBAL_DRM_ACTIVE, false)
         set(value) = pref.edit { putBoolean(PREF_TOFFEE_IS_GLOBAL_DRM_ACTIVE, value) }
     
     var drmCastReceiver: String?
