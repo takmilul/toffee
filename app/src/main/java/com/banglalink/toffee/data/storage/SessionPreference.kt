@@ -530,7 +530,15 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     var isDrmActive: Boolean
         get() = pref.getBoolean(PREF_TOFFEE_IS_GLOBAL_DRM_ACTIVE, false)
         set(value) = pref.edit { putBoolean(PREF_TOFFEE_IS_GLOBAL_DRM_ACTIVE, value) }
+
+    var isGlobalCidActive: Boolean
+        get() = pref.getBoolean(PREF_IS_GLOBAL_CID_ACTIVE, false)
+        set(value) = pref.edit { putBoolean(PREF_IS_GLOBAL_CID_ACTIVE, value) }
     
+    var globalCidName: String?
+        get() = pref.getString(PREF_GLOBAL_CID_NAME, null)
+        set(value) = pref.edit { putString(PREF_GLOBAL_CID_NAME, value) }
+
     var drmCastReceiver: String?
         get() = pref.getString(PREF_TOFFEE_DEFAULT_DRM_CAST_RECEIVER, null)
         set(value) = pref.edit { putString(PREF_TOFFEE_DEFAULT_DRM_CAST_RECEIVER, value) }
@@ -621,6 +629,8 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         drmFpsLicenseUrl = customerInfoLogin.fpsLicenseUrl
         drmPlayreadyLicenseUrl = customerInfoLogin.playreadyLicenseUrl
         drmTokenUrl = customerInfoLogin.drmTokenUrl
+        isGlobalCidActive = customerInfoLogin.isGlobalCidActive == 1
+        globalCidName = customerInfoLogin.globalCidName
         screenCaptureEnabledUsers = if (customerInfoLogin.screenCaptureEnabledUsers.isNullOrEmpty()) {
             SCREEN_CAPTURE_DISABLED_USERS
         } else {
@@ -724,7 +734,9 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_PLAYREADY_LICENSE_URL = "pref_playready_license_url"
         private const val PREF_HE_UPDATE_DATE = "pref_he_update_date"
         private const val PREF_DRM_TOKEN_URL = "pref_drm_token_url"
-        
+        private const val PREF_IS_GLOBAL_CID_ACTIVE = "pref_is_global_cid_active"
+        private const val PREF_GLOBAL_CID_NAME = "pref_global_cid_name"
+
         private val SCREEN_CAPTURE_DISABLED_USERS = setOf("7cd171cf93c9236b", "206c06aaf38fffe9", "21587c9c6447e992", "a25df4f9bc3754de", "4ec3c91fc4f4b8c0", "4fe54e7c960e391b", "c4b82aedaf88eaac", "53e9079df4cae882")
         
         private var instance: SessionPreference? = null

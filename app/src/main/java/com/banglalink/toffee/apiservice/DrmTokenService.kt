@@ -16,7 +16,12 @@ class DrmTokenService  @Inject constructor(private val pref: SessionPreference, 
             toffeeApi.getDrmToken(
                 "${pref.drmTokenUrl!!}/drm-token",
                 base64,
-                DrmTokenRequest(contentId, pref.customerId.toString(), pref.password, licenseDuration = duration)
+                DrmTokenRequest(
+                    if(pref.isGlobalCidActive) pref.globalCidName!! else contentId,
+                    pref.customerId.toString(),
+                    pref.password,
+                    licenseDuration = duration
+                )
             )
         }
         return response.response?.drmToken

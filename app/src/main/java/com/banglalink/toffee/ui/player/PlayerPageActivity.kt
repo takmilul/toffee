@@ -61,6 +61,7 @@ import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import java.net.*
 import java.util.*
 import javax.inject.Inject
@@ -298,7 +299,7 @@ abstract class PlayerPageActivity :
     private fun isDrmActiveForChannel(channelInfo: ChannelInfo) = MediaDrm.isCryptoSchemeSupported(C.WIDEVINE_UUID) &&
         mPref.isDrmActive &&
         channelInfo.isDrmActive &&
-        !channelInfo.drmCid.isNullOrBlank() &&
+//        !channelInfo.drmCid.isNullOrBlank() &&
         !channelInfo.drmDashUrl.isNullOrBlank() &&
         !mPref.drmWidevineLicenseUrl.isNullOrBlank() &&
         player is SimpleExoPlayer
@@ -516,7 +517,9 @@ abstract class PlayerPageActivity :
     private fun isLicenseExpired(exp: Long) = exp - /*80_000L*/ 21_600_000L < System.currentTimeMillis() // 6 hours
 
     private suspend fun getLicense(channelInfo: ChannelInfo): ByteArray? {
-        val existingLicense = drmLicenseRepo.getByChannelId(channelInfo.id.toLong())
+        val channelId = if(mPref.isGlobalCidActive) -1 else channelInfo.id.toLong()
+
+        val existingLicense = drmLicenseRepo.getByChannelId(channelId)
         Log.e("DRM_T", "Existing -> $existingLicense")
         if(existingLicense != null && !isLicenseAlmostExpired(existingLicense.expiryTime)) {
             Log.e("DRM_T", "Using existing license")
@@ -539,8 +542,9 @@ abstract class PlayerPageActivity :
     private suspend fun downloadLicense(channelInfo: ChannelInfo): ByteArray? {
         var offlineLicenseHelper: OfflineLicenseHelper? = null
         try {
+            val drmCid = if(mPref.isGlobalCidActive) mPref.globalCidName else channelInfo.drmCid
             val token =
-                drmTokenApi.execute(channelInfo.drmCid!!, 2_592_000 /* 30 days*/) ?: return null
+                drmTokenApi.execute(drmCid!!, 2_592_000 /* 30 days*/) ?: return null
             Log.e("DRM_T", "Downloading offline license")
             val offlineDataSourceFactory = OkHttpDataSource.Factory(
                 dnsHttpClient
@@ -580,8 +584,10 @@ abstract class PlayerPageActivity :
 
             Log.e("DRM_T", "Saving offline license")
             val newDrmLicense = DrmLicenseEntity(
-                channelInfo.id.toLong(), channelInfo.drmCid,
-                licenseData, licenseExpiration
+                if(mPref.isGlobalCidActive) -1 else channelInfo.id.toLong(),
+                drmCid,
+                licenseData,
+                licenseExpiration
             )
             drmLicenseRepo.insert(newDrmLicense)
             offlineLicenseHelper.release()
@@ -596,7 +602,7 @@ abstract class PlayerPageActivity :
         val license = getLicense(channelInfo)
         return MediaItem.Builder().apply {
 //            httpDataSourceFactory?.setDefaultRequestProperties(emptyMap())
-//            showToast("Playing DRM -> ${channelInfo.drmCid}\n${channelInfo.drmDashUrl}")
+//            showToast("Playing DRM -> ${if(license == null) "Requesting new license" else "Using cached license"}\n${channelInfo.drmDashUrl}")
             setMimeType(MimeTypes.APPLICATION_MPD)
             setDrmUuid(C.WIDEVINE_UUID)
 //            setDrmLicenseRequestHeaders(mapOf("pallycon-customdata-v2" to token))
