@@ -93,9 +93,9 @@ class HomeViewModel @Inject constructor(
 
         // Disable this in production.
         if(mPref.betaVersionCodes?.split(",")?.contains(BuildConfig.VERSION_CODE.toString()) == true) {
-            FirebaseMessaging.getInstance().subscribeToTopic("beta")
+            FirebaseMessaging.getInstance().subscribeToTopic("beta-user-detection")
         } else {
-            FirebaseMessaging.getInstance().unsubscribeFromTopic("beta")
+            FirebaseMessaging.getInstance().unsubscribeFromTopic("beta-user-detection")
         }
 
         FirebaseMessaging.getInstance().subscribeToTopic("DRM-LICENSE-RELEASE")
