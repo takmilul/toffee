@@ -153,7 +153,7 @@
     <string name="btn_open_gallery">Gallery</string>
     <string name="upload_status_text">%1$s %2$s</string>
     <string name="live_watching_text">%1$s Watching</string>
-    <string name="minimize_panel_description">Your video will be submitted for approval before being published in your channel, usually it takes less than 12 hours.</string>
+    <string name="minimize_panel_description">Your video will be submitted for review. Once approved, it will be published in your channel soon.</string>
     <string name="latestVideos">Latest Videos</string>
     <string name="trendingVideos">Trending Videos</string>
 
