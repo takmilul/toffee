@@ -18,24 +18,29 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
     
-    <com.loopnow.fireworklibrary.views.VideoFeedView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+    <FrameLayout
+        android:id="@+id/feedFrameView"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
         android:layout_marginTop="8dp"
-        android:clipToPadding="false"
         android:paddingHorizontal="8dp"
-        app:autoPlayOnComplete="true"
-        app:feedLayout="horizontal"
-        app:feedType="playlist"
-        app:channelId="@string/firework_channel_id"
-        app:playlistId="@string/firework_playlist_id"
-        app:imageStyle="@style/fireworkImageStyle"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0.68"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fireworkHeader"
-        app:showTitle="true"
-        app:textStyle="@style/fireworkVideoTitleStyle" />
-
+        app:layout_constraintTop_toBottomOf="@+id/fireworkHeader">
+        
+        <com.loopnow.fireworklibrary.views.VideoFeedView
+            android:id="@+id/feedView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            app:autoPlayOnComplete="true"
+            app:channelId="@string/firework_channel_id"
+            app:feedLayout="horizontal"
+            app:feedType="playlist"
+            app:imageStyle="@style/fireworkImageStyle"
+            app:playlistId="@string/firework_playlist_id"
+            app:showTitle="true"
+            app:textStyle="@style/fireworkVideoTitleStyle" />
+    </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
