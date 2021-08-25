@@ -15,8 +15,10 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.os.bundleOf
+import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.database.entities.NotificationInfo
+import com.banglalink.toffee.data.repository.DrmLicenseRepository
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
@@ -54,6 +56,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
     private val coroutineContext = Dispatchers.IO + SupervisorJob()
     private val imageCoroutineScope = CoroutineScope(coroutineContext)
     @Inject lateinit var notificationInfoRepository: NotificationInfoRepository
+    @Inject lateinit var drmLicenseRepo: DrmLicenseRepository
     
     override fun onNewToken(s: String) {
         super.onNewToken(s)
@@ -86,14 +89,57 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                 NotificationType.LOGOUT.type -> {
                     kickOutUser(data)
                 }
+                NotificationType.DRM_LICENSE_RELEASE.type -> {
+                    imageCoroutineScope.launch {
+                        releaseAllLicense()
+                    }
+                }
                 NotificationType.CHANGE_URL.type -> {
                     changeHlsUrl(data)
+                }
+                NotificationType.BETA_USER_DETECTION.type -> {
+                    handleBetaNotification(data)
                 }
                 else -> {
                     prepareNotification(data)
                 }
             }
         }
+    }
+    
+    private fun handleBetaNotification(data: Map<String, String>) {
+        try {
+            val isBeta = mPref.betaVersionCodes?.split(",")?.contains(BuildConfig.VERSION_CODE.toString()) == true
+            val notificationId = data["notificationId"]
+            val title = data["title"]
+            val message = data["message"]
+            val betaVersionCode = data["betaVersionCode"]
+            val isLocalBeta = betaVersionCode?.split(",")?.contains(BuildConfig.VERSION_CODE.toString()) == true
+            if (isBeta && isLocalBeta) {
+                val sound = Uri.parse("android.resource://" + packageName + "/" + R.raw.velbox_notificaiton)
+                val intent = Intent("com.toffee.notification_receiver").putExtras(
+                    bundleOf(
+                        NOTIFICATION_ID to notificationId,
+                    )
+                )
+                val pendingIntent = PendingIntent.getBroadcast(applicationContext, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+                val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_NAME)
+                    .setSmallIcon(R.drawable.ic_notification)
+                    .setAutoCancel(true)
+                    .setSound(sound)
+                    .setContentText(message)
+                    .setContentTitle(title)
+                    .setContentIntent(pendingIntent)
+                    .setStyle(NotificationCompat.BigTextStyle().bigText(message))
+                showNotification(builder.build())
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, e.message, e)
+        }
+    }
+    
+    private suspend fun releaseAllLicense() {
+        drmLicenseRepo.deleteAll()
     }
     
     private fun changeHlsUrl(notificationData: Map<String, String>) {

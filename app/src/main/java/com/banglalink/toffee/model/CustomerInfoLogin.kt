@@ -103,4 +103,7 @@ class CustomerInfoLogin(
     val fpsLicenseUrl: String? = null,
     val playreadyLicenseUrl: String? = null,
     val drmTokenUrl: String? = null,
+    val isGlobalCidActive: Int = 0,
+    val globalCidName: String? = null,
+    val androidBetaVersionCode: String? = null,
 ) : BodyResponse(), Parcelable

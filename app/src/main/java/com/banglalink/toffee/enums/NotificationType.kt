@@ -6,4 +6,6 @@ enum class NotificationType(val type: String) {
     LOGOUT("logout"),
     OVERLAY("overlay"),
     CHANGE_URL("change_cdn"),
+    DRM_LICENSE_RELEASE("drmlicenserelease"),
+    BETA_USER_DETECTION("beta_user_detection"),
 }

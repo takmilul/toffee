@@ -375,6 +375,8 @@
                     android:paddingEnd="10dp"
                     android:maxLength="20"
                     android:text="@{viewModel.myChannelDetail.nationalIdNo}"
+                    android:enabled="@{!viewModel.myChannelDetail.isNIDVerified}"
+                    android:textColor="@{viewModel.myChannelDetail.isNIDVerified ? @color/switchUnCheckedColor : @color/cardTitleColor}"
                     android:drawablePadding="10dp"
                     android:inputType="number"
                     app:layout_constraintEnd_toEndOf="parent"
