@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.*
 import com.banglalink.toffee.data.database.dao.ReactionDao
@@ -89,6 +90,16 @@ class HomeViewModel @Inject constructor(
     init {
         getProfile()
         FirebaseMessaging.getInstance().subscribeToTopic("buzz")
+
+        // Disable this in production.
+        if(mPref.betaVersionCodes?.split(",")?.contains(BuildConfig.VERSION_CODE.toString()) == true) {
+            FirebaseMessaging.getInstance().subscribeToTopic("beta-user-detection")
+        } else {
+            FirebaseMessaging.getInstance().unsubscribeFromTopic("beta-user-detection")
+        }
+
+        FirebaseMessaging.getInstance().subscribeToTopic("DRM-LICENSE-RELEASE")
+
         FirebaseMessaging.getInstance().subscribeToTopic("controls")
         FirebaseMessaging.getInstance().subscribeToTopic("cdn_control")
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
