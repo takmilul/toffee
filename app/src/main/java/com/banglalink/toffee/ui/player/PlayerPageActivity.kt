@@ -20,6 +20,7 @@ import com.banglalink.toffee.data.database.entities.DrmLicenseEntity
 import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
 import com.banglalink.toffee.data.repository.ContinueWatchingRepository
 import com.banglalink.toffee.data.repository.DrmLicenseRepository
+import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.PlayerPreference
 import com.banglalink.toffee.di.DnsHttpClient
 import com.banglalink.toffee.exception.ContentExpiredException
@@ -299,7 +300,7 @@ abstract class PlayerPageActivity :
     }
 
     private fun isDrmActiveForChannel(channelInfo: ChannelInfo) =
-        cPref.isDrmModuleAvailable &&
+        cPref.isDrmModuleAvailable == CommonPreference.DRM_AVAILABLE &&
         mPref.isDrmActive &&
         channelInfo.isDrmActive &&
 //        !channelInfo.drmCid.isNullOrBlank() &&
@@ -662,7 +663,8 @@ abstract class PlayerPageActivity :
         } else {
             if(mPref.isDrmActive && channelInfo.isDrmActive && channelInfo.isLive) {
                 val drmMsg = when {
-                    !cPref.isDrmModuleAvailable-> "Drm module unavailable"
+                    cPref.isDrmModuleAvailable == CommonPreference.DRM_TIMEOUT -> "Drm timeout"
+                    cPref.isDrmModuleAvailable == CommonPreference.DRM_UNAVAILABLE-> "Drm module unavailable"
                     mPref.drmWidevineLicenseUrl == null -> "License url null"
                     channelInfo.drmDashUrl == null -> "Dash url null"
                     else -> "Unknown"
@@ -922,6 +924,7 @@ abstract class PlayerPageActivity :
 //            }
             if(e.cause is DrmSession.DrmSessionException && e.cause?.cause is IllegalArgumentException && e.cause?.cause?.message == "Failed to restore keys") {
                 lifecycleScope.launch {
+                    ToffeeAnalytics.logBreadCrumb("Failed to restore key -> ${playlistManager.getCurrentChannel()?.id}, Reloading")
                     if(mPref.isDrmActive) {
                         drmLicenseRepo.deleteByChannelId(-1L)
                         reloadChannel()

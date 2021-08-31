@@ -122,12 +122,12 @@ class SplashViewModel @Inject constructor(
     
     fun sendDrmUnavailableLogData() {
         appScope.launch {
-            cPref.isDrmModuleAvailable = false
+            cPref.isDrmModuleAvailable = CommonPreference.DRM_TIMEOUT
             withTimeout(1000) {
                 withContext(Dispatchers.IO + Job()) {
                     MediaDrm.isCryptoSchemeSupported(C.WIDEVINE_UUID)
                 }.also {
-                    cPref.isDrmModuleAvailable = it
+                    cPref.isDrmModuleAvailable = if(it) CommonPreference.DRM_AVAILABLE else CommonPreference.DRM_UNAVAILABLE
                     if(!it) {
                         sendDrmUnavailableLogEvent.execute()
                     }
