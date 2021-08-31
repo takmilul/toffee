@@ -14,6 +14,7 @@ class CommonPreference(private val pref: SharedPreferences, private val context:
         private const val PREF_APP_THEME= "app_theme"
         private const val PREF_FORCE_LOGGED_OUT = "is_force_logged_out"
         private const val PREF_IS_USER_INTEREST_SUBMITTED = "_isUserInterestSubmitted"
+        private const val PREF_DRM_AVAILABLE = "pref_is_drm_module_available"
         private var instance: CommonPreference? = null
         
         fun init(mContext: Context) {
@@ -48,6 +49,12 @@ class CommonPreference(private val pref: SharedPreferences, private val context:
         get() = pref.getBoolean(PREF_FORCE_LOGGED_OUT, false)
         set(isVerified) {
             pref.edit().putBoolean(PREF_FORCE_LOGGED_OUT, isVerified).apply()
+        }
+
+    var isDrmModuleAvailable: Boolean
+        get() = pref.getBoolean(PREF_DRM_AVAILABLE, false)
+        set(value) {
+            pref.edit { putBoolean(PREF_DRM_AVAILABLE, value) }
         }
     
     fun isUserInterestSubmitted(key: String): Boolean = pref.getBoolean(key + PREF_IS_USER_INTEREST_SUBMITTED, false)

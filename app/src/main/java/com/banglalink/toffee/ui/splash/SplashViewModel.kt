@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.splash
 
 import android.database.sqlite.SQLiteDatabase
+import android.media.MediaDrm
 import android.os.Environment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,6 +10,7 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.*
 import com.banglalink.toffee.data.network.response.HeaderEnrichmentResponse
 import com.banglalink.toffee.data.network.util.resultFromResponse
+import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.model.Resource
@@ -17,15 +19,16 @@ import com.banglalink.toffee.usecase.SendHeaderEnrichmentLogEvent
 import com.banglalink.toffee.usecase.SendDrmUnavailableLogEvent
 import com.banglalink.toffee.usecase.SendLoginLogEvent
 import com.banglalink.toffee.util.SingleLiveEvent
+import com.google.android.exoplayer2.C
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
     val mPref: SessionPreference,
+    val cPref: CommonPreference,
     private val apiLogin: ApiLogin,
     private val checkUpdate: CheckUpdate,
     private val credential: CredentialService,
@@ -98,7 +101,7 @@ class SplashViewModel @Inject constructor(
     }
     
     fun sendLoginLogData() {
-        viewModelScope.launch {
+        appScope.launch {
             try {
                 sendLoginLogEvent.execute()
             } catch (e: Exception) {
@@ -108,7 +111,7 @@ class SplashViewModel @Inject constructor(
     }
     
     fun sendHeLogData(heLogData: HeaderEnrichmentLogData) {
-        viewModelScope.launch {
+        appScope.launch {
             try {
                 sendHeLogEvent.execute(heLogData)
             } catch (e: Exception) {
@@ -118,8 +121,18 @@ class SplashViewModel @Inject constructor(
     }
     
     fun sendDrmUnavailableLogData() {
-        viewModelScope.launch {
-            sendDrmUnavailableLogEvent.execute()
+        appScope.launch {
+            cPref.isDrmModuleAvailable = false
+            withTimeout(1000) {
+                withContext(Dispatchers.IO + Job()) {
+                    MediaDrm.isCryptoSchemeSupported(C.WIDEVINE_UUID)
+                }.also {
+                    cPref.isDrmModuleAvailable = it
+                    if(!it) {
+                        sendDrmUnavailableLogEvent.execute()
+                    }
+                }
+            }
         }
     }
 }

@@ -33,6 +33,7 @@ import com.banglalink.toffee.model.TOFFEE_HEADER
 import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
+import com.banglalink.toffee.usecase.SendDrmFallbackEvent
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.Player.*
 import com.google.android.exoplayer2.SimpleExoPlayer.Builder
@@ -101,6 +102,7 @@ abstract class PlayerPageActivity :
     private val playerViewModel by viewModels<PlayerViewModel>()
     private val playerEventListener: PlayerEventListener = PlayerEventListener()
     @DnsHttpClient @Inject lateinit var dnsHttpClient: OkHttpClient
+    @Inject lateinit var drmFallbackService: SendDrmFallbackEvent
 
 //    private var mOfflineLicenseHelper: OfflineLicenseHelper? = null
 
@@ -296,7 +298,8 @@ abstract class PlayerPageActivity :
         }
     }
 
-    private fun isDrmActiveForChannel(channelInfo: ChannelInfo) = MediaDrm.isCryptoSchemeSupported(C.WIDEVINE_UUID) &&
+    private fun isDrmActiveForChannel(channelInfo: ChannelInfo) =
+        cPref.isDrmModuleAvailable &&
         mPref.isDrmActive &&
         channelInfo.isDrmActive &&
 //        !channelInfo.drmCid.isNullOrBlank() &&
@@ -657,6 +660,15 @@ abstract class PlayerPageActivity :
         val mediaItem = if(isDrmActive) {
             getDrmMediaItem(channelInfo) //?: getHlsMediaItem(channelInfo, isWifiConnected)
         } else {
+            if(mPref.isDrmActive && channelInfo.isDrmActive && channelInfo.isLive) {
+                val drmMsg = when {
+                    !cPref.isDrmModuleAvailable-> "Drm module unavailable"
+                    mPref.drmWidevineLicenseUrl == null -> "License url null"
+                    channelInfo.drmDashUrl == null -> "Dash url null"
+                    else -> "Unknown"
+                }
+                drmFallbackService.execute(channelInfo.id.toLong(), drmMsg)
+            }
             getHlsMediaItem(channelInfo, isWifiConnected)
         }?.let {
             if (!isReload && player is SimpleExoPlayer) playCounter = ++playCounter % mPref.vastFrequency
