@@ -920,6 +920,19 @@ abstract class PlayerPageActivity :
 //                playlistManager.getCurrentChannel()?.is_drm_active = 0
 //                reloadChannel()
 //            }
+            if(e.cause is DrmSession.DrmSessionException && e.cause?.cause is IllegalArgumentException && e.cause?.cause?.message == "Failed to restore keys") {
+                lifecycleScope.launch {
+                    if(mPref.isDrmActive) {
+                        drmLicenseRepo.deleteByChannelId(-1L)
+                        reloadChannel()
+                    } else {
+                        playlistManager.getCurrentChannel()?.id?.let {
+                            drmLicenseRepo.deleteByChannelId(it.toLong())
+                            reloadChannel()
+                        }
+                    }
+                }
+            }
 
             getCurrentChannelInfo()?.let { cinfo->
                 if(!cinfo.isLive) {
