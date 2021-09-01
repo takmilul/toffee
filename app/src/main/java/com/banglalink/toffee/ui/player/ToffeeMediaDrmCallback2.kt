@@ -2,6 +2,7 @@ package com.banglalink.toffee.ui.player
 
 import android.net.Uri
 import android.util.Log
+import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.DrmTokenService
 import com.google.android.exoplayer2.drm.ExoMediaDrm
 import com.google.android.exoplayer2.drm.HttpMediaDrmCallback
@@ -27,14 +28,22 @@ class ToffeeMediaDrmCallback2(private val licenseUri: String,
         request: ExoMediaDrm.ProvisionRequest
     ): ByteArray {
         Log.e("DRM_T", "Provision request from media drm callback")
-        throw MediaDrmCallbackException(
-            DataSpec.Builder().setUri(Uri.EMPTY).build(),
-            Uri.EMPTY,  /* responseHeaders= */
-            ImmutableMap.of(),  /* bytesLoaded= */
-            0,  /* cause= */
-            IOException("Drm provision request ignored")
-        )
-//        return httpMediaDrmCallback.executeProvisionRequest(uuid, request)//ExoMediaDrm.ProvisionRequest(request.data, licenseUri))
+        try {
+            return httpMediaDrmCallback.executeProvisionRequest(
+                uuid,
+                request
+            ).apply {
+                ToffeeAnalytics.logException(Exception("Provision request success -> ${request.defaultUrl}"))
+            }
+        } catch (ex: Exception) {
+            throw MediaDrmCallbackException(
+                DataSpec.Builder().setUri(Uri.EMPTY).build(),
+                Uri.EMPTY,  /* responseHeaders= */
+                ImmutableMap.of(),  /* bytesLoaded= */
+                0,  /* cause= */
+                ex
+            )
+        }
     }
 
     override fun executeKeyRequest(uuid: UUID, request: ExoMediaDrm.KeyRequest): ByteArray {

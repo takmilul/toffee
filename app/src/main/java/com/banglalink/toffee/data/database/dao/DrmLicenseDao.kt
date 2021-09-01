@@ -11,6 +11,9 @@ interface DrmLicenseDao {
     @Delete
     suspend fun delete(item: DrmLicenseEntity)
 
+    @Query("DELETE FROM DrmLicenseEntity WHERE channelId=:channelId")
+    suspend fun deleteByChannelId(channelId: Long)
+
     @Query("DELETE FROM DrmLicenseEntity")
     suspend fun deleteAll()
 
