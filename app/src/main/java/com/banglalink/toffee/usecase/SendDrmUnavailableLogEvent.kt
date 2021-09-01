@@ -24,7 +24,7 @@ class SendDrmUnavailableLogEvent @Inject constructor(private val mPref: SessionP
 data class DrmUnavailableLogData(
     val lat: String = SessionPreference.getInstance().latitude,
     val lon: String = SessionPreference.getInstance().longitude,
-    val deviceManufacturer: String = Build.MANUFACTURER,
+    val device: String = Build.MANUFACTURER,
     val deviceModel: String = Build.MODEL,
 ) : PubSubBaseRequest() {
     override var phoneNumber: String
