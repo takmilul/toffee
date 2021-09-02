@@ -135,7 +135,11 @@ class DrawerHelper(
             }
         }
         header.findViewById<LinearLayout>(R.id.menu_profile).setOnClickListener {
-            activity.getNavController().navigate(R.id.profileFragment)
+            activity.getNavController().let {
+                if(it.currentDestination?.id != R.id.profileFragment) {
+                    it.navigate(R.id.profileFragment)
+                }
+            }
             binding.drawerLayout.closeDrawers()
         }
     }

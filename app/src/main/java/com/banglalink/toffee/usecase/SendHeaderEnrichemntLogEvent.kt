@@ -18,9 +18,13 @@ class SendHeaderEnrichmentLogEvent @Inject constructor() {
 }
 
 data class HeaderEnrichmentLogData(
+    @SerializedName("device")
     val device: String = Build.MANUFACTURER,
+    @SerializedName("deviceModel")
     val deviceModel: String = Build.MODEL,
+    @SerializedName("lat")
     val lat: String = SessionPreference.getInstance().latitude,
+    @SerializedName("lon")
     val lon: String = SessionPreference.getInstance().longitude,
     @SerializedName("user_ip")
     val userIp: String = SessionPreference.getInstance().userIp,

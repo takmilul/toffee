@@ -20,6 +20,7 @@ class SendFirebaseConnectionErrorEvent @Inject constructor(
 }
 
 data class FirebaseConnectionErrorData(
+    @SerializedName("apiName")
     val apiName: String = "",
     @SerializedName("phoneNumber")
     val phoneNo: String = SessionPreference.getInstance().phoneNumber,

@@ -23,6 +23,7 @@ class SendLoginLogEvent @Inject constructor() {
 }
 
 data class LoginLogData(
+    @SerializedName("id")
     val id: Long = System.nanoTime(),
     @SerializedName("app_version")
     val appVersion : String = BuildConfig.VERSION_NAME,
@@ -32,7 +33,9 @@ data class LoginLogData(
     val deviceId: String = CommonPreference.getInstance().deviceId,
     @SerializedName("is_bl_number")
     val isBlNumber: Int = if(SessionPreference.getInstance().isBanglalinkNumber == "false") 0 else 1,
+    @SerializedName("lat")
     val lat: String = SessionPreference.getInstance().latitude,
+    @SerializedName("lon")
     val lon: String = SessionPreference.getInstance().longitude,
     @SerializedName("geo_city")
     val geoCity: String = SessionPreference.getInstance().geoCity,
