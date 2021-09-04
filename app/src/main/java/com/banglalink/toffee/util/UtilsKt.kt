@@ -16,6 +16,7 @@ import android.provider.OpenableColumns
 import android.provider.Settings
 import android.util.Base64
 import android.util.Log
+import android.view.Display
 import android.view.inputmethod.InputMethodManager
 import coil.imageLoader
 import coil.request.ImageRequest
@@ -191,12 +192,21 @@ object UtilsKt {
     fun getScreenHeight(): Int = Resources.getSystem().displayMetrics.heightPixels
     fun getRealScreenSize(ctx: Context): Point {
         return if (ctx is Activity) {
-            val display = ctx.windowManager.defaultDisplay
+            val display = getDisplay(ctx)
             val pt = Point()
-            display.getRealSize(pt)
+            display?.getRealSize(pt)
             pt
         } else {
             Point(getScreenWidth(), getScreenHeight())
+        }
+    }
+
+    private fun getDisplay(context: Activity): Display? {
+        return if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            context.display
+        } else {
+            @Suppress("DEPRECATION")
+            context.windowManager.defaultDisplay
         }
     }
 

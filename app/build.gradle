@@ -99,11 +99,11 @@ dependencies {
     //Firebase Push Notification
     implementation 'com.google.firebase:firebase-messaging:22.0.0'
     //Firebase in app messaging
-    implementation 'com.google.firebase:firebase-inappmessaging-display:20.0.0'
+    implementation 'com.google.firebase:firebase-inappmessaging-display:20.1.0'
     //Firebase core
-    implementation 'com.google.firebase:firebase-core:19.0.0'
+    implementation 'com.google.firebase:firebase-core:19.0.1'
     // Recommended: Add the Firebase SDK for Google Analytics.
-    implementation 'com.google.firebase:firebase-analytics:19.0.0'
+    implementation 'com.google.firebase:firebase-analytics:19.0.1'
 
     // Add the Firebase SDK for Crashlytics.
     implementation 'com.google.firebase:firebase-crashlytics:18.2.1'
@@ -122,7 +122,7 @@ dependencies {
     implementation "com.google.android.exoplayer:extension-okhttp:$exoVersion"
 
     // Cast
-    implementation 'androidx.mediarouter:mediarouter:1.2.4'
+    implementation 'androidx.mediarouter:mediarouter:1.2.5'
     implementation 'com.google.android.gms:play-services-cast-framework:20.0.0'
 
     //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
@@ -131,7 +131,7 @@ dependencies {
     implementation 'androidx.paging:paging-runtime-ktx:3.0.1'
 
     // Hilt
-    def hilt_android_ver = "2.37"
+    def hilt_android_ver = "2.38.1"
     implementation "com.google.dagger:hilt-android:$hilt_android_ver"
     androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_android_ver"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_android_ver"
@@ -210,7 +210,7 @@ dependencies {
 
     // AndroidJUnitRunner and JUnit Rules
     androidTestImplementation("androidx.test:runner:$test_core")
-    testImplementation 'org.robolectric:robolectric:4.5.1'
+    testImplementation 'org.robolectric:robolectric:4.6.1'
     androidTestImplementation("androidx.test:rules:$test_core")
 
     // Assertions

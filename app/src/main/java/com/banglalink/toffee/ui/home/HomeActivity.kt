@@ -794,10 +794,7 @@ class HomeActivity :
     }
 
     private fun calculateScreenWidth(): Point {
-        val display: Display = windowManager.defaultDisplay
-        val size = Point()
-        display.getRealSize(size)
-        return size
+        return UtilsKt.getRealScreenSize(this)
     }
     
     private fun handleSharedUrl(intent: Intent) {
