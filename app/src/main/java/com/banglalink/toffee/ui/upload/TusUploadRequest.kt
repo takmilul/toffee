@@ -6,6 +6,7 @@ import net.gotev.uploadservice.HttpUploadRequest
 import net.gotev.uploadservice.UploadTask
 import net.gotev.uploadservice.data.UploadFile
 import net.gotev.uploadservice.logger.UploadServiceLogger
+import net.gotev.uploadservice.persistence.PersistableData
 import net.gotev.uploadservice.protocols.binary.BinaryUploadRequest
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -74,5 +75,5 @@ class TusUploadRequest(context: Context, serverUrl: String)
         }
     }
 
-    override fun getAdditionalParameters(): Parcelable = tusUploadParams
+    override fun getAdditionalParameters(): PersistableData = tusUploadParams
 }
