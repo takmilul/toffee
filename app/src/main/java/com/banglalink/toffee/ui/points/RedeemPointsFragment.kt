@@ -68,8 +68,8 @@ class RedeemPointsFragment : Fragment(), BaseListItemCallback<RedeemPoints> {
             "This is a default content"
         )
         
-        OnBoarding(activity as Activity, 3, false)
-            .build(viewList, titleList, contentList)
+//        OnBoarding(activity as Activity, 3, false)
+//            .build(viewList, titleList, contentList)
             
     }
     
