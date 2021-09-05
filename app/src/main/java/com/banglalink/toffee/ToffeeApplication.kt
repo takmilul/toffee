@@ -1,10 +1,6 @@
 package com.banglalink.toffee
 
 import android.app.Application
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
-import android.os.Build
 import androidx.databinding.DataBindingUtil
 import coil.Coil
 import coil.ImageLoader
@@ -29,9 +25,6 @@ import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
-import net.gotev.uploadservice.UploadServiceConfig
-import net.gotev.uploadservice.data.RetryPolicyConfig
-import net.gotev.uploadservice.okhttp.OkHttpStack
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import javax.inject.Inject
@@ -97,7 +90,7 @@ class ToffeeApplication : Application() {
 //        FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS);
 
         initCoil()
-        initUploader()
+        mUploadObserver.start()
     }
     
     private fun initCoil() {
@@ -123,37 +116,6 @@ class ToffeeApplication : Application() {
             bitmapPool.clear()
             memoryCache.clear()
         }
-    }
-
-    private fun initUploader() {
-
-        createNotificationChannel()
-
-        UploadServiceConfig.initialize(this, notificationChannelID, BuildConfig.DEBUG)
-        UploadServiceConfig.httpStack = OkHttpStack()
-        UploadServiceConfig.retryPolicy = RetryPolicyConfig(
-            initialWaitTimeSeconds = 5,
-            maxWaitTimeSeconds = 30,
-            multiplier = 1,
-            defaultMaxRetries = 6
-        )
-        mUploadObserver.start()
-    }
-
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= 26) {
-            val channel = NotificationChannel(
-                notificationChannelID,
-                "Toffee Upload Channel",
-                NotificationManager.IMPORTANCE_LOW
-            )
-            val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            manager.createNotificationChannel(channel)
-        }
-    }
-
-    companion object {
-        const val notificationChannelID = "Toffee Upload"
     }
 }
 
