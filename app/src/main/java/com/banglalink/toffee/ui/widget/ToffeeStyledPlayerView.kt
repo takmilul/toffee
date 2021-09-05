@@ -39,13 +39,12 @@ import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.DefaultTimeBar
 import com.google.android.exoplayer2.ui.StyledPlayerControlView
 import com.google.android.exoplayer2.ui.StyledPlayerView
-import com.google.android.exoplayer2.video.VideoListener
+import com.google.android.exoplayer2.video.VideoSize
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.mikhaellopez.circularprogressbar.CircularProgressBar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import javax.inject.Inject
-import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
@@ -53,9 +52,8 @@ import kotlin.math.min
 open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     :StyledPlayerView(context, attrs, defStyleAttr),
     View.OnClickListener,
-    Player.EventListener,
-    DraggerLayout.OnPositionChangedListener,
-    VideoListener {
+    Player.Listener,
+    DraggerLayout.OnPositionChangedListener {
 
     private val onPlayerControllerChangedListeners = mutableListOf<OnPlayerControllerChangedListener>()
     private var mPlayListListener: PlaylistListener? = null
@@ -693,18 +691,12 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     var isFullScreen = false
     var isAutoRotationEnabled = true
 
-    override fun onVideoSizeChanged(
-        width: Int,
-        height: Int,
-        unappliedRotationDegrees: Int,
-        pixelWidthHeightRatio: Float
-    ) {
-        super.onVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio)
-
-        videoWidth = (width * pixelWidthHeightRatio).toInt()
+    override fun onVideoSizeChanged(videoSize: VideoSize) {
+        super.onVideoSizeChanged(videoSize)
+        videoWidth = (width * videoSize.pixelWidthHeightRatio).toInt()
         videoHeight = height
 
-        Log.e("CONTROL_T", "Video resolution -> $videoWidth x $videoHeight, ratio -> $pixelWidthHeightRatio, min -> $minBound, max -> $maxBound")
+        Log.e("CONTROL_T", "Video resolution -> $videoWidth x $videoHeight, ratio -> $videoSize.pixelWidthHeightRatio, min -> $minBound, max -> $maxBound")
 
         isVideoScalable = minBound != maxBound
 
@@ -759,21 +751,11 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     }
 
     override fun setPlayer(newPlayer: Player?) {
+        val oldPlayer = this.player //get reference of old player which attached previously
         super.setPlayer(newPlayer)
         playerOverlay.player(newPlayer)
-        val oldPlayer = this.player //get reference of old player which attached previously
-        if (oldPlayer != null) { //if old player not null then clear it
-            oldPlayer.removeListener(this)
-            if(oldPlayer is SimpleExoPlayer) {
-                oldPlayer.removeVideoListener(this)
-            }
-        }
-        if (this.player != null) {
-            this.player?.addListener(this)
-            this.player?.let {
-                if(it is SimpleExoPlayer) it.addVideoListener(this)
-            }
-        }
+        oldPlayer?.removeListener(this)
+        this.player?.addListener(this)
 
         player?.currentMediaItem?.getChannelMetadata(player)?.let {
             isVideoPortrait = it.isHorizontal != 1

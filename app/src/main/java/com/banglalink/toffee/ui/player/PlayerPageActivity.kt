@@ -36,7 +36,7 @@ import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.usecase.SendDrmFallbackEvent
 import com.google.android.exoplayer2.*
-import com.google.android.exoplayer2.Player.*
+import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer.Builder
 import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.analytics.AnalyticsListener.EventTime
@@ -73,7 +73,7 @@ import kotlin.math.max
 abstract class PlayerPageActivity :
     BaseAppCompatActivity(),
     OnPlayerControllerChangedListener,
-    Player.EventListener,
+    Player.Listener,
     PlaylistListener,
     AnalyticsListener,
     SessionAvailabilityListener
@@ -697,7 +697,7 @@ abstract class PlayerPageActivity :
         player?.let {
             val oldChannelInfo = getCurrentChannelInfo()
             oldChannelInfo?.let { oldInfo ->
-                if(oldInfo.id != channelInfo.id && it.playbackState != STATE_ENDED) {
+                if(oldInfo.id != channelInfo.id && it.playbackState != Player.STATE_ENDED) {
                     insertContentViewProgress(oldInfo, it.currentPosition)
                 }
             }
@@ -909,7 +909,7 @@ abstract class PlayerPageActivity :
         return false
     }
 
-    private inner class PlayerEventListener : Player.EventListener {
+    private inner class PlayerEventListener : Player.Listener {
         override fun onPlayerError(e: ExoPlaybackException) {
             e.printStackTrace()
             ToffeeAnalytics.logException(e)
@@ -992,7 +992,7 @@ abstract class PlayerPageActivity :
 //            mPref.savedCastInfo = null
 //        }
         playlistManager.getCurrentChannel()?.let {
-            if(player?.playbackState != STATE_ENDED) {
+            if(player?.playbackState != Player.STATE_ENDED) {
                 insertContentViewProgress(it, player?.currentPosition ?: -1)
             }
         }
@@ -1005,7 +1005,7 @@ abstract class PlayerPageActivity :
     override fun onCastSessionUnavailable() {
         updateStartPosition()
         playlistManager.getCurrentChannel()?.let {
-            if(player?.playbackState != STATE_ENDED) {
+            if(player?.playbackState != Player.STATE_ENDED) {
                 insertContentViewProgress(it, player?.currentPosition ?: -1)
             }
         }

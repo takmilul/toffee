@@ -112,7 +112,7 @@ dependencies {
     implementation 'com.github.pchmn:MaterialChipsInput:1.0.8'
 
 
-    def exoVersion = '2.13.3'
+    def exoVersion = '2.14.2'
     implementation "com.google.android.exoplayer:exoplayer-core:$exoVersion"
     implementation "com.google.android.exoplayer:exoplayer-hls:$exoVersion"
     implementation "com.google.android.exoplayer:exoplayer-dash:$exoVersion"
