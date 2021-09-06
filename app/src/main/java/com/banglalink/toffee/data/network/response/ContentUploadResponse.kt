@@ -1,3 +1,5 @@
 package com.banglalink.toffee.data.network.response
 
-data class ContentUploadResponse(val response: ContentUploadResponseBean):BaseResponse()
+import com.google.gson.annotations.SerializedName
+
+data class ContentUploadResponse(@SerializedName("response") val response: ContentUploadResponseBean):BaseResponse()
