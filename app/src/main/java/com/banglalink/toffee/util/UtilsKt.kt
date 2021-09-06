@@ -35,6 +35,7 @@ import kotlin.math.sqrt
 
 object UtilsKt {
     fun uploadIdToString(id: Long) = "Toffee_Upload_$id"
+    fun isCopyrightUploadId(id: String) = id.contains("_copyright")
     fun stringToUploadId(uploadId: String) = uploadId.filter { it.isDigit() }.toLong()
 
     fun resizeBitmap(image: Bitmap, maxWidth: Int, maxHeight: Int): Bitmap? {
