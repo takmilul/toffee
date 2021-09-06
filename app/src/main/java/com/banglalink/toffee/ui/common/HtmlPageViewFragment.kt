@@ -1,15 +1,11 @@
 package com.banglalink.toffee.ui.common
 
 import android.graphics.Bitmap
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebChromeClient
-import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.webkit.*
 import com.banglalink.toffee.databinding.FragmentHtmlPageViewBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -64,6 +60,8 @@ class HtmlPageViewFragment : BaseFragment() {
             setSupportMultipleWindows(true)
             javaScriptCanOpenWindowsAutomatically = true
             domStorageEnabled = true
+            CookieManager.getInstance().setAcceptCookie(true)
+            userAgentString = "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Mobile Safari/537.36"
         }
         if(header.isNullOrEmpty()){
             binding.webview.loadUrl(htmlUrl)
@@ -72,7 +70,6 @@ class HtmlPageViewFragment : BaseFragment() {
             headerMap["MSISDN"] = header!!
             binding.webview.loadUrl(htmlUrl,headerMap)
         }
-
     }
 
     override fun onDestroyView() {

@@ -2,6 +2,8 @@ package com.banglalink.toffee.data.network.retrofit
 
 import com.banglalink.toffee.data.network.request.*
 import com.banglalink.toffee.data.network.response.*
+import com.banglalink.toffee.model.FeaturedPartnerRequest
+import com.banglalink.toffee.model.FeaturedPartnerResponse
 import retrofit2.http.*
 
 interface ToffeeApi {
@@ -404,5 +406,14 @@ interface ToffeeApi {
     suspend fun uploadSignedUrl(
         @Body uploadSignedUrlRequest: UploadSignedUrlRequest
     ): UploadSignedUrlResponse
+
+    @POST("/ugc-feature-partner-list/1/{type}/{limit}/{offset}/{dbVersion}")
+    suspend fun getFeaturedPartners(
+        @Path("type") type: String,
+        @Path("limit") limit: Int,
+        @Path("offset") offset: Int,
+        @Path("dbVersion") dbVersion: Int,
+        @Body featuredPartnerRequest: FeaturedPartnerRequest
+    ): FeaturedPartnerResponse
 
 }

@@ -38,6 +38,7 @@ class LandingPageViewModel @Inject constructor(
     private val mostPopularApi: GetMostPopularContents.AssistedFactory,
     private val relativeContentsFactory: GetRelativeContents.AssistedFactory,
     private val popularChannelAssistedFactory: GetPopularUserChannels.AssistedFactory,
+    private val featuredPartnerAssistedFactory: FeaturedPartnerService.AssistedFactory,
     private val editorsChoiceAssistedFactory: GetUgcTrendingNowContents.AssistedFactory,
 ) : ViewModel() {
     var featuredJob: Job? = null
@@ -186,6 +187,14 @@ class LandingPageViewModel @Inject constructor(
                 relativeContentsFactory.create(
                     CatchupParams("null", hashTag, categoryId, subCategoryId)
                 )
+            )
+        }).getList()
+    }
+    
+    val loadFeaturedPartners by lazy {
+        BaseListRepositoryImpl({
+            BaseNetworkPagingSource(
+                featuredPartnerAssistedFactory.create("VOD")
             )
         }).getList()
     }

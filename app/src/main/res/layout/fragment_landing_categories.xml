@@ -6,16 +6,6 @@
     android:layout_height="wrap_content"
     android:background="@color/screen_bg">
 
-    <View
-        android:id="@+id/categoriesBg"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="@drawable/fragment_bg_top"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline15"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
     <TextView
         android:id="@+id/categoriesHeader"
         style="@style/SectionTitleTextStyle"

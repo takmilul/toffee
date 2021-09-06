@@ -1,28 +1,18 @@
-package com.banglalink.toffee.ui.widget;
+package com.banglalink.toffee.ui.widget
 
-import android.content.Context;
-import android.util.AttributeSet;
-import android.widget.ImageView;
+import android.content.Context
+import android.util.AttributeSet
+import android.widget.ImageView
 
-
-public class CustomImageView extends ImageView {
-    public CustomImageView(Context context) {
-        super(context);
-    }
-
-    public CustomImageView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    public CustomImageView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int width = getMeasuredWidth();
-        int height=(width * 9) / 16;
-        setMeasuredDimension(width, height);
+class CustomImageView : ImageView {
+    constructor(context: Context?) : super(context) {}
+    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {}
+    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {}
+    
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        val width = measuredWidth
+        val height = width * 9 / 16
+        setMeasuredDimension(width, height)
     }
 }

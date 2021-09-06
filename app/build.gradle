@@ -110,6 +110,7 @@ dependencies {
 
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.github.pchmn:MaterialChipsInput:1.0.8'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
 
     def exoVersion = '2.13.3'

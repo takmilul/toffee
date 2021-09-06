@@ -7,16 +7,15 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
-import com.banglalink.toffee.databinding.FragmentLandingPage2Binding
+import com.banglalink.toffee.databinding.FragmentLandingPageBinding
 import com.banglalink.toffee.enums.PageType.Landing
-import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.google.android.material.appbar.AppBarLayout
 
 class LandingPageFragment : HomeBaseFragment() {
     
     private var appbarOffset = 0
-    private var _binding: FragmentLandingPage2Binding ? = null
+    private var _binding: FragmentLandingPageBinding ? = null
     private val binding get() = _binding!!
     private val landingViewModel by activityViewModels<LandingPageViewModel>()
 
@@ -27,7 +26,7 @@ class LandingPageFragment : HomeBaseFragment() {
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentLandingPage2Binding.inflate(inflater, container, false)
+        _binding = FragmentLandingPageBinding.inflate(inflater, container, false)
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (isEnabled) {
