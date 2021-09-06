@@ -10,7 +10,6 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.view.GestureDetectorCompat
-import com.banglalink.toffee.ui.widget.ExoMediaController3
 import com.banglalink.toffee.ui.widget.ToffeeStyledPlayerView
 
 /**
