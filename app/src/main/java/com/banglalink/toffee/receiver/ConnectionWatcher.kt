@@ -128,7 +128,7 @@ constructor(
             .build()
 
         val callback = object : ConnectivityManager.NetworkCallback() {
-            override fun onLost(network: Network?) {
+            override fun onLost(network: Network) {
                 trySend(false)
             }
 
@@ -136,11 +136,11 @@ constructor(
                 trySend(false)
             }
 
-            override fun onLosing(network: Network?, maxMsToLive: Int) {
+            override fun onLosing(network: Network, maxMsToLive: Int) {
                 // do nothing
             }
 
-            override fun onAvailable(network: Network?) {
+            override fun onAvailable(network: Network) {
                 trySend(true)
             }
         }

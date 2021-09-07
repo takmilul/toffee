@@ -20,6 +20,7 @@ import com.banglalink.toffee.data.database.entities.DrmLicenseEntity
 import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
 import com.banglalink.toffee.data.repository.ContinueWatchingRepository
 import com.banglalink.toffee.data.repository.DrmLicenseRepository
+import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.PlayerPreference
 import com.banglalink.toffee.di.DnsHttpClient
 import com.banglalink.toffee.exception.ContentExpiredException
@@ -33,6 +34,7 @@ import com.banglalink.toffee.model.TOFFEE_HEADER
 import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
+import com.banglalink.toffee.usecase.SendDrmFallbackEvent
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.Player.*
 import com.google.android.exoplayer2.SimpleExoPlayer.Builder
@@ -101,6 +103,7 @@ abstract class PlayerPageActivity :
     private val playerViewModel by viewModels<PlayerViewModel>()
     private val playerEventListener: PlayerEventListener = PlayerEventListener()
     @DnsHttpClient @Inject lateinit var dnsHttpClient: OkHttpClient
+    @Inject lateinit var drmFallbackService: SendDrmFallbackEvent
 
 //    private var mOfflineLicenseHelper: OfflineLicenseHelper? = null
 
@@ -296,7 +299,8 @@ abstract class PlayerPageActivity :
         }
     }
 
-    private fun isDrmActiveForChannel(channelInfo: ChannelInfo) = MediaDrm.isCryptoSchemeSupported(C.WIDEVINE_UUID) &&
+    private fun isDrmActiveForChannel(channelInfo: ChannelInfo) =
+        cPref.isDrmModuleAvailable == CommonPreference.DRM_AVAILABLE &&
         mPref.isDrmActive &&
         channelInfo.isDrmActive &&
 //        !channelInfo.drmCid.isNullOrBlank() &&
@@ -657,6 +661,16 @@ abstract class PlayerPageActivity :
         val mediaItem = if(isDrmActive) {
             getDrmMediaItem(channelInfo) //?: getHlsMediaItem(channelInfo, isWifiConnected)
         } else {
+            if(mPref.isDrmActive && channelInfo.isDrmActive && channelInfo.isLive) {
+                val drmMsg = when {
+                    cPref.isDrmModuleAvailable == CommonPreference.DRM_TIMEOUT -> "Drm timeout"
+                    cPref.isDrmModuleAvailable == CommonPreference.DRM_UNAVAILABLE-> "Drm module unavailable"
+                    mPref.drmWidevineLicenseUrl == null -> "License url null"
+                    channelInfo.drmDashUrl == null -> "Dash url null"
+                    else -> "Unknown"
+                }
+                drmFallbackService.execute(channelInfo.id.toLong(), drmMsg)
+            }
             getHlsMediaItem(channelInfo, isWifiConnected)
         }?.let {
             if (!isReload && player is SimpleExoPlayer) playCounter = ++playCounter % mPref.vastFrequency
@@ -908,6 +922,20 @@ abstract class PlayerPageActivity :
 //                playlistManager.getCurrentChannel()?.is_drm_active = 0
 //                reloadChannel()
 //            }
+            if(e.cause is DrmSession.DrmSessionException && e.cause?.cause is IllegalArgumentException && e.cause?.cause?.message == "Failed to restore keys") {
+                lifecycleScope.launch {
+                    ToffeeAnalytics.logBreadCrumb("Failed to restore key -> ${playlistManager.getCurrentChannel()?.id}, Reloading")
+                    if(mPref.isDrmActive) {
+                        drmLicenseRepo.deleteByChannelId(-1L)
+                        reloadChannel()
+                    } else {
+                        playlistManager.getCurrentChannel()?.id?.let {
+                            drmLicenseRepo.deleteByChannelId(it.toLong())
+                            reloadChannel()
+                        }
+                    }
+                }
+            }
 
             getCurrentChannelInfo()?.let { cinfo->
                 if(!cinfo.isLive) {

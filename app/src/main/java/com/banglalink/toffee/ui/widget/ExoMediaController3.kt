@@ -8,6 +8,7 @@ import android.graphics.Point
 import android.graphics.SurfaceTexture
 import android.os.CountDownTimer
 import android.os.Handler
+import android.os.Looper
 import android.os.Message
 import android.provider.Settings
 import android.util.AttributeSet
@@ -176,7 +177,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         }
     }
 
-    private val rotationObserver = object: ContentObserver(Handler()){
+    private val rotationObserver = object: ContentObserver(Handler(Looper.getMainLooper())){
         override fun onChange(selfChange: Boolean) {
             super.onChange(selfChange)
             updateRotationStatus(UtilsKt.isSystemRotationOn(context))
@@ -430,7 +431,7 @@ open class ExoMediaController3 @JvmOverloads constructor(context: Context,
         binding.dtInterceptor.setOnClickListener(null)
     }
 
-    private inner class MessageHandler : Handler() {
+    private inner class MessageHandler : Handler(Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
                 UPDATE_PROGRESS -> updateSeekBar()

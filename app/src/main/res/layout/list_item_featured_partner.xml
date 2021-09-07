@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    
+    <data>
+        <variable
+            name="data"
+            type="com.banglalink.toffee.model.FeaturedPartner" />
+        <variable
+            name="callback"
+            type="com.banglalink.toffee.common.paging.BaseListItemCallback" />
+    </data>
+    
+    <androidx.cardview.widget.CardView
+        android:id="@+id/featuredPartnerCardView"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp"
+        android:layout_margin="8dp"
+        app:cardUseCompatPadding="false"
+        android:onClick="@{()->callback.onItemClicked(data)}">
+        
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            
+            <FrameLayout
+                android:id="@+id/imageFrameLayout"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" >
+                
+                <ImageView
+                    android:id="@+id/partnerBanner"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    loadPartnerImageFromUrl="@{data.bannerUrl}"
+                    android:scaleType="centerCrop"
+                    android:layout_gravity="end"
+                    android:contentDescription="@string/featured_partner_banner"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                
+            </FrameLayout>
+            
+            <ImageView
+                android:id="@+id/icon"
+                loadImageFromUrlRounded="@{data.profileUrl}"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_margin="8dp"
+                android:contentDescription="@string/txt_icon"
+                android:src="@drawable/ic_profile"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+            
+            <TextView
+                android:id="@+id/text"
+                style="@style/programNameTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_marginEnd="16dp"
+                android:maxLines="1"
+                android:textSize="@dimen/input_field_text_size"
+                android:text="@{data.featurePartnerName}"
+                android:textColor="@android:color/white"
+                app:layout_constraintBottom_toBottomOf="@+id/icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toEndOf="@id/icon"
+                app:layout_constraintTop_toTopOf="@+id/icon"
+                tools:text="Imagine Radio" />
+        
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</layout>

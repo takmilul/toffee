@@ -3,6 +3,7 @@ package com.banglalink.toffee.ui.player
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Handler
+import android.os.Looper
 import android.util.AttributeSet
 import android.util.Log
 import android.view.GestureDetector
@@ -138,7 +139,7 @@ class ExoMediaController4 @JvmOverloads constructor(
      */
     private class DoubleTapGestureListener(private val rootView: View) : GestureDetector.SimpleOnGestureListener() {
 
-        private val mHandler = Handler()
+        private val mHandler = Handler(Looper.getMainLooper())
         private val mRunnable = Runnable {
             if (DEBUG) Log.d(TAG, "Runnable called")
             isDoubleTapping = false

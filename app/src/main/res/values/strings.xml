@@ -1,7 +1,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Toffee</string>
     <string name="app_name_short">Toffee</string>
-
+    
     <string name="retry">Retry</string>
     <string name="exit_from_app_msg">Are you sure to logout from the %s app?</string>
     <!-- Strings related to login -->
@@ -10,10 +10,10 @@
     <string name="sign_in_text">Sign In</string>
     <string name="without_sign_in_text">Continue without Sign In</string>
     <string name="sign_in_top_text">To get started, please provide the following information</string>
-
+    
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
+    
     <string name="resend_code_text">Resend Code </string>
     <string name="default_settings">Default Data and Quality Settings</string>
     <string name="data_usage_message">Higher quality video uses more data. Data usage may vary based on network conditions.</string>
@@ -24,24 +24,24 @@
     <string name="profile_480x320">Need 384kbps+ bandwidth</string>
     <string name="profile_320x240">Need 256kbps+ bandwidth</string>
     <string name="profile_240x160">Need 128kbps+ bandwidth</string>
-
+    
     <string name="menu_add_to_fav">Add to Favorites</string>
     <string name="menu_share">Share</string>
     <string name="menu_not_interested">Not Interested</string>
-
+    
     <string name="app_id">F78B8DE7</string>
     <!--<string name="app_id">08D0944E</string>-->
-
+    
     <!--validation message-->
     <string name="phone_no_required_title">Phone Number Required!</string>
-
+    
     <string name="signin_using_password_text">Sign in using Password</string>
-
+    
     <!--success messages-->
-
+    
     <string name="view_all">View All</string>
     <string name="edit_profile_button">EDIT</string>
-
+    
     //Landing Screen Category Titles
     <string name="channel">Popular TV Channels</string>
     <string name="recent_channels">Recently Viewed</string>
@@ -108,10 +108,10 @@
     <string name="share_button">Share</string>
     <string name="copy_button">Copy</string>
     <string name="copy_to_clipboard">Copy to clipboard successfully</string>
-
+    
     <string name="invalid_referral_code_txt">Your referral code is invalid</string>
     <string name="do_you_continue_txt">Continue without code</string>
-
+    
     <string name="referral_code">Referral Code</string>
     <string name="have_referral_code">Have Referral Code?</string>
     <string name="tab_feed_label">Home</string>
@@ -121,15 +121,15 @@
     <string name="tab_mychannel_label">My Channel</string>
     <string name="try_again_txt">Try again</string>
     <string name="continue_sign_in_txt">Continue signing in</string>
-
+    
     <string name="selection_disabled">Disabled</string>
-
+    
     <string name="selection_default">Default</string>
     <string name="enable_random_adaptation">Enable random adaptation</string>
     <string name="track_selection_title">Track Title</string>
     <string name="otp_hint">OTP</string>
     <string name="facebook_app_id">1116781388516653</string>
-<!--    <string name="fb_login_protocol_scheme">1116781388516653</string>-->
+    <!--    <string name="fb_login_protocol_scheme">1116781388516653</string>-->
     <string name="topic_msg_subscribed">"Topic subscribed successfully "</string>
     <string name="topic_msg_subscribe_failed">Topic subscribe failed</string>
     <string name="subscription_text">You have successfully subscribed to </string>
@@ -143,7 +143,7 @@
     <string name="menu_internet_pack">Buy Internet Packs</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
+    
     <string name="grant_storage_permission">This feature needs Storage permission</string>
     <string name="text_unsubscribe_title">Are You Sure to Unsubscribe?</string>
     <string name="upload_selection_heading">Upload FREE from\nBanglalink Internet!</string>
@@ -156,7 +156,7 @@
     <string name="minimize_panel_description">Your video will be submitted for review. Once approved, it will be published in your channel soon.</string>
     <string name="latestVideos">Latest Videos</string>
     <string name="trendingVideos">Trending Videos</string>
-
+    
     <string name="read_more">Show More</string>
     <string name="read_less">Show Less</string>
     <string name="terms">Terms &amp; Conditions</string>
@@ -278,7 +278,7 @@
     <string name="bullet_4_text">Access to 100+ TV, live sports, international mega series</string>
     <string name="bullet_5_text">Opportunity to earn money through user generated contents</string>
     <string name="bullet_6_text">FREE access for all users from any network!</string>
-
+    
     <string name="tv_subscriptions_text">TV Subscriptions</string>
     <string name="are_you_sure_to_delete_text">Are You Sure to Delete?</string>
     <string name="no_text">No</string>
@@ -292,6 +292,7 @@
     <string name="rate_this_channel_text">Rate This Channel</string>
     <string name="follow_us_text">Follow Us</string>
     <string name="users_channel_text">User Channels</string>
+    <string name="featured_partner_title">Featured Partner</string>
     <string name="continue_watching_text">Continue Watching</string>
     <string name="name_text">Name</string>
     <string name="name_error_text">*Name is required</string>
@@ -395,14 +396,15 @@
     <string name="txt_video_format_msg">Only MP4 video format is supported</string>
     <string name="txt_video_length">Video Length</string>
     <string name="txt_video_length_msg">Accepted video length is between 10 second and 2 hours</string>
+    <string name="featured_partner_banner">featured partner banner</string>
     <string name="firework_channel_id">4Y9XaK0</string>
     <string name="firework_playlist_id">5aMPy5</string>
     <string name="firework_oauth_id">9e320da50f69212461fd9528a6b3e6f6758537187097720fe71cf0b3f867415d</string>
     <!--    url    -->
-<!--    <string name="creators_policy_url">https://toffeelive.com/policies.php</string>-->
-<!--    <string name="tus_upload_server_url">https://ugc-upload.toffeelive.com/upload</string>-->
-<!--    <string name="privacy_policy_url">https://www.banglalink.net/en/legal</string>-->
-<!--    <string name="terms_and_conditions_url">https://www.banglalink.net/en/legal</string>-->
-<!--    <string name="internet_pack_url">https://www.banglalink.net/en/apps-and-services/other-details/53</string>-->
+    <!--    <string name="creators_policy_url">https://toffeelive.com/policies.php</string>-->
+    <!--    <string name="tus_upload_server_url">https://ugc-upload.toffeelive.com/upload</string>-->
+    <!--    <string name="privacy_policy_url">https://www.banglalink.net/en/legal</string>-->
+    <!--    <string name="terms_and_conditions_url">https://www.banglalink.net/en/legal</string>-->
+    <!--    <string name="internet_pack_url">https://www.banglalink.net/en/apps-and-services/other-details/53</string>-->
     <!--    url    -->
 </resources>

@@ -6,6 +6,7 @@ import android.database.ContentObserver
 import android.graphics.Point
 import android.os.CountDownTimer
 import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.util.AttributeSet
 import android.util.Log
@@ -207,7 +208,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         updateRotationStatus(UtilsKt.isSystemRotationOn(context), false)
     }
 
-    private val rotationObserver = object: ContentObserver(Handler()){
+    private val rotationObserver = object: ContentObserver(Handler(Looper.getMainLooper())){
         override fun onChange(selfChange: Boolean) {
             super.onChange(selfChange)
             updateRotationStatus(UtilsKt.isSystemRotationOn(context))
@@ -539,7 +540,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 mActivePointerId = MotionEvent.INVALID_POINTER_ID
-                val changeY = abs(ev.getY(ev.actionIndex) - startY)
+//                val changeY = abs(ev.getY(ev.actionIndex) - startY)
                 clampOrFullHeight()
 //                if(changeY < 5) {
 //                    return false

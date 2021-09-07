@@ -1,24 +1,21 @@
 package com.banglalink.toffee.ui.common
 
 import android.graphics.Bitmap
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebChromeClient
-import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.webkit.*
 import com.banglalink.toffee.databinding.FragmentHtmlPageViewBinding
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class HtmlPageViewFragment : BaseFragment() {
 
     private var _binding: FragmentHtmlPageViewBinding ? = null
     private val binding get() = _binding!!
 
-    private var htmlUrl: String? = ""
+    private lateinit var htmlUrl: String
     private var header: String? = ""
 
     override fun onCreateView(
@@ -32,7 +29,7 @@ class HtmlPageViewFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        htmlUrl= arguments?.getString("url")
+        htmlUrl= arguments?.getString("url")!!
         header= arguments?.getString("header")
 
         binding.webview.webViewClient = object : WebViewClient() {
@@ -51,13 +48,11 @@ class HtmlPageViewFragment : BaseFragment() {
         }
 
         with(binding.webview.settings) {
-            if (Build.VERSION.SDK_INT >= 21) {
-                mixedContentMode =  WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-            }
+            mixedContentMode =  WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
             javaScriptEnabled = true
             setSupportZoom(true)
             setNeedInitialFocus(false)
-            setAppCacheEnabled(true)
+            cacheMode = WebSettings.LOAD_DEFAULT
             databaseEnabled = true
             useWideViewPort = true
             builtInZoomControls = true
@@ -65,6 +60,8 @@ class HtmlPageViewFragment : BaseFragment() {
             setSupportMultipleWindows(true)
             javaScriptCanOpenWindowsAutomatically = true
             domStorageEnabled = true
+            CookieManager.getInstance().setAcceptCookie(true)
+            userAgentString = "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Mobile Safari/537.36"
         }
         if(header.isNullOrEmpty()){
             binding.webview.loadUrl(htmlUrl)
@@ -73,7 +70,6 @@ class HtmlPageViewFragment : BaseFragment() {
             headerMap["MSISDN"] = header!!
             binding.webview.loadUrl(htmlUrl,headerMap)
         }
-
     }
 
     override fun onDestroyView() {
@@ -83,10 +79,10 @@ class HtmlPageViewFragment : BaseFragment() {
             stopLoading()
             onPause()
             webChromeClient = null
-            webViewClient = null
+//            webViewClient = null
             clearHistory()
             removeAllViews()
-            destroyDrawingCache()
+//            destroyDrawingCache()
             destroy()
         }
 

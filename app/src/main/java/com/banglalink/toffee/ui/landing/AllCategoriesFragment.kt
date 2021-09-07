@@ -44,7 +44,6 @@ class AllCategoriesFragment: BaseFragment(), BaseListItemCallback<Category> {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-        binding.categoriesBg.isVisible = false
         binding.viewAllButton.isVisible = false
         binding.placeholder.hide()
         binding.categoriesList.show()

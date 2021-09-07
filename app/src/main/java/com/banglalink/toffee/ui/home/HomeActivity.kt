@@ -15,6 +15,7 @@ import android.graphics.Point
 import android.net.ConnectivityManager
 import android.net.NetworkRequest
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.AttributeSet
@@ -501,13 +502,25 @@ class HomeActivity :
             }
         })
 
-        window.decorView.setOnSystemUiVisibilityChangeListener {
-//            toggleNavigations(it and View.SYSTEM_UI_FLAG_FULLSCREEN == View.SYSTEM_UI_FLAG_FULLSCREEN)
-            val isFullScreen = it and View.SYSTEM_UI_FLAG_FULLSCREEN == View.SYSTEM_UI_FLAG_FULLSCREEN
-            if(!isFullScreen) {
-                updateFullScreenState()
-            }
-        }
+//        ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
+//            if(insets.hasInsets()) {
+//                Log.e("INSET_T", "Has inset")
+//                val isFullScreen = requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+//                if(!isFullScreen) {
+//                    updateFullScreenState()
+//                }
+//                WindowInsetsCompat.CONSUMED
+//            } else {
+//                insets
+//            }
+//        }
+//        window.decorView.setOnSystemUiVisibilityChangeListener {
+////            toggleNavigations(it and View.SYSTEM_UI_FLAG_FULLSCREEN == View.SYSTEM_UI_FLAG_FULLSCREEN)
+//            val isFullScreen = it and View.SYSTEM_UI_FLAG_FULLSCREEN == View.SYSTEM_UI_FLAG_FULLSCREEN
+//            if(!isFullScreen) {
+//                updateFullScreenState()
+//            }
+//        }
     }
 
     private fun observeNotification() {
@@ -725,8 +738,42 @@ class HomeActivity :
 
         binding.playerView.onFullScreen(state)
         binding.playerView.resizeView(calculateScreenWidth(), state)
-        Utils.setFullScreen(this, state)// || binding.playerView.channelType != "LIVE")
+        setFullScreen(state)// || binding.playerView.channelType != "LIVE")
         toggleNavigation(state)
+    }
+
+    private fun setFullScreen(visible: Boolean) {
+        if(visible) {
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+            WindowInsetsControllerCompat(window, window.decorView).let { controller ->
+                controller.hide(WindowInsetsCompat.Type.statusBars()
+                        or WindowInsetsCompat.Type.navigationBars()
+//                        or WindowInsetsCompat.Type.displayCutout()
+                )
+                controller.systemBarsBehavior =
+                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                window.attributes = window.attributes.apply {
+                    layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+                }
+            }
+        } else {
+            WindowCompat.setDecorFitsSystemWindows(window, true)
+            WindowInsetsControllerCompat(window, window.decorView).let { controller->
+                controller.show(WindowInsetsCompat.Type.statusBars()
+                        or WindowInsetsCompat.Type.navigationBars()
+//                        or WindowInsetsCompat.Type.displayCutout()
+                )
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                window.attributes = window.attributes.apply {
+                    layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT
+                }
+            }
+        }
     }
 
     private fun toggleNavigation(state: Boolean) {
@@ -748,10 +795,7 @@ class HomeActivity :
     }
 
     private fun calculateScreenWidth(): Point {
-        val display: Display = windowManager.defaultDisplay
-        val size = Point()
-        display.getRealSize(size)
-        return size
+        return UtilsKt.getRealScreenSize(this)
     }
     
     private fun handleSharedUrl(intent: Intent) {

@@ -16,6 +16,7 @@ import android.provider.OpenableColumns
 import android.provider.Settings
 import android.util.Base64
 import android.util.Log
+import android.view.Display
 import android.view.inputmethod.InputMethodManager
 import coil.imageLoader
 import coil.request.ImageRequest
@@ -119,13 +120,16 @@ object UtilsKt {
                 mmr.setDataSource(filePath)
             }
             val bmp = mmr.frameAtTime
-            val isHorizontal = if(bmp.width > bmp.height) 1 else 0
+            if(bmp != null) {
+                val isHorizontal = if (bmp.width > bmp.height) 1 else 0
 
-            val scaledBmp = resizeBitmap(bmp, 1280, 720)
-            val byteArrayOutputStream = ByteArrayOutputStream()
-            scaledBmp?.compress(JPEG, 70, byteArrayOutputStream)
-            val byteArray = byteArrayOutputStream.toByteArray()
-            Pair(Base64.encodeToString(byteArray, Base64.NO_WRAP), isHorizontal)
+                val scaledBmp = resizeBitmap(bmp, 1280, 720)
+                val byteArrayOutputStream = ByteArrayOutputStream()
+                scaledBmp?.compress(JPEG, 70, byteArrayOutputStream)
+                val byteArray = byteArrayOutputStream.toByteArray()
+                Pair(Base64.encodeToString(byteArray, Base64.NO_WRAP), isHorizontal)
+            }
+            null
         } catch (ex: Exception) {
             ex.printStackTrace()
             null
@@ -143,7 +147,7 @@ object UtilsKt {
             val duration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
 //            TimeUnit.MILLISECONDS
 //                .toSeconds(
-            duration.toLong()
+            duration?.toLong() ?: 0L
 //                )
         } catch (ex: Exception) {
             ex.printStackTrace()
@@ -188,12 +192,21 @@ object UtilsKt {
     fun getScreenHeight(): Int = Resources.getSystem().displayMetrics.heightPixels
     fun getRealScreenSize(ctx: Context): Point {
         return if (ctx is Activity) {
-            val display = ctx.windowManager.defaultDisplay
+            val display = getDisplay(ctx)
             val pt = Point()
-            display.getRealSize(pt)
+            display?.getRealSize(pt)
             pt
         } else {
             Point(getScreenWidth(), getScreenHeight())
+        }
+    }
+
+    private fun getDisplay(context: Activity): Display? {
+        return if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            context.display
+        } else {
+            @Suppress("DEPRECATION")
+            context.windowManager.defaultDisplay
         }
     }
 

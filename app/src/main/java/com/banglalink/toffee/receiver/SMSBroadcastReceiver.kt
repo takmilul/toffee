@@ -22,7 +22,7 @@ class SMSBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         try {
             if (SmsRetriever.SMS_RETRIEVED_ACTION == intent?.action) {
-                val extras: Bundle? = intent?.extras
+                val extras: Bundle? = intent.extras
                 val mStatus =
                     extras?.get(SmsRetriever.EXTRA_STATUS) as Status?
                 when (mStatus!!.statusCode) {
@@ -31,8 +31,8 @@ class SMSBroadcastReceiver : BroadcastReceiver() {
                         val message =
                             extras?.get(SmsRetriever.EXTRA_SMS_MESSAGE) as String?
                         Log.d(TAG, "onReceive: failure $message")
-                        val start = message!!.indexOf(":") + 1;
-                        val otp = message!!.substring(start, start + 6)
+                        val start = message!!.indexOf(":") + 1
+                        val otp = message.substring(start, start + 6)
                         _otpLiveData.postValue(otp)
                     }
                     CommonStatusCodes.TIMEOUT -> {

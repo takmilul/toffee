@@ -1,2 +1,2 @@
-include ':app', ':showcase_view'
+include ':app'//, ':showcase_view'
 rootProject.name='ToffeeKotlin'

@@ -416,4 +416,26 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
             view.text = it.getDescriptionDecoded()
         }
     }
+    
+    @BindingAdapter("loadPartnerImageFromUrl")
+    fun bindPartnerImageFromUrl(view: ImageView, imageUrl: String?) {
+        imageUrl?.let {
+            view.load(imageUrl) {
+                fallback(R.drawable.placeholder)
+                placeholder(R.drawable.placeholder)
+                error(R.drawable.placeholder)
+                diskCachePolicy(CachePolicy.ENABLED)
+                crossfade(false)
+//                listener(onSuccess = { _, _ ->
+//                    val matrix = view.imageMatrix
+//                    val imageWidth = view.drawable.intrinsicWidth
+//                    val imageHeight = view.drawable.intrinsicHeight
+//                    val scaleRatio = 1.2
+//                    matrix.postTranslate((view.measuredWidth - imageWidth).toFloat(), 1f)
+////                    matrix.postScale(-0.2f, 1f)
+//                    view.imageMatrix = matrix
+//                })
+            }
+        }
+    }
 }
