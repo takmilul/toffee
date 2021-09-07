@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.landing
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +12,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
-import androidx.paging.map
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
@@ -71,10 +69,7 @@ class FeaturedPartnerFragment : Fragment(), BaseListItemCallback<FeaturedPartner
     private fun observeFeaturedPartner() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted { 
             viewModel.loadFeaturedPartners.collectLatest {
-                mAdapter.submitData(it.map {
-                    Log.e("FEP_", "observeFeaturedPartner: ${it.featurePartnerName}")
-                    it
-                })
+                mAdapter.submitData(it)
             }
         }
     }
