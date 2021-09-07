@@ -172,12 +172,12 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:19.2.0'
     implementation 'com.google.android.gms:play-services-auth-api-phone:17.5.1'
     implementation 'com.google.android.play:core:1.10.1'
-    implementation 'com.google.android.play:core:1.10.0'
     
     //firework sdk
+    def fireworkExoPlayerVersion = '2.13.3'
     implementation 'com.github.loopsocial:firework_sdk:v5.5.8'
     implementation 'com.github.loopsocial:AndroidAdsService:v19.5.0'
-    implementation "com.github.loopsocial:AndroidFireworkPlayer:$exoVersion"
+    implementation "com.github.loopsocial:AndroidFireworkPlayer:$fireworkExoPlayerVersion"
 
     implementation ('com.google.apis:google-api-services-pubsub:v1-rev452-1.25.0') {
         exclude group: 'com.google.code.findbugs'
