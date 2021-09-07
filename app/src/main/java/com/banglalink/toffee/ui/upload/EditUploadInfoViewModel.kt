@@ -3,6 +3,7 @@ package com.banglalink.toffee.ui.upload
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import android.webkit.MimeTypeMap
 import androidx.lifecycle.*
 import com.banglalink.toffee.apiservice.ContentUpload
 import com.banglalink.toffee.apiservice.GetContentCategories
@@ -75,6 +76,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
     private var actualFileName: String? = null
 
     var copyrightDocUri: String? = null
+    var copyrightDocExt: String? = null
 
 //    private val workerContext
 
@@ -157,19 +159,6 @@ class EditUploadInfoViewModel @AssistedInject constructor(
     }
 
     private suspend fun initUpload() {
-//        val accessToken = withContext(Dispatchers.IO) {
-//            val credential = GoogleCredential.fromStream(
-//                appContext.assets.open("toffee-261507-60ca3e5405df.json")
-//            ).createScoped(listOf("https://www.googleapis.com/auth/devstorage.read_write"))
-//            credential.refreshToken()
-//            credential.accessToken
-//        }
-
-//        if (accessToken.isNullOrEmpty()) {
-//            open_gallery_button.snack("Error uploading file. Please try again later.") {}
-//            return@launch
-//        }
-
         actualFileName = UtilsKt.fileNameFromContentUri(appContext, Uri.parse(uploadFileUri))
         val fileSize = UtilsKt.fileSizeFromContentUri(appContext, Uri.parse(uploadFileUri))
 
@@ -189,20 +178,6 @@ class EditUploadInfoViewModel @AssistedInject constructor(
 //        }
     }
 
-//    private fun initUploadInfo(uploadInfo: UploadInfo) {
-//        title.value = uploadInfo.title
-//        description.value = uploadInfo.description
-//        tags.value = uploadInfo.tags
-//
-//        submitButtonStatus.value = uploadInfo.status == UploadStatus.SUCCESS.value
-//        thumbnailData.value = uploadInfo.thumbUri
-//        categoryPosition.value = uploadInfo.categoryIndex
-//        ageGroupPosition.value = uploadInfo.ageGroupIndex
-
-
-//        challengeSelectionPosition.value = uploadInfo.submitToChallengeIndex
-//    }
-
     fun categoryIndexChanged(idx: Int) {
         categories.value?.getOrNull(idx)?.let {
             subCategories.value = it.subcategories ?: emptyList()
@@ -220,6 +195,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
         val fileSize = UtilsKt.fileSizeFromContentUri(appContext, fileUri)
         val actualFileSize = Utils.readableFileSize(fileSize)
         val contentFileName = UtilsKt.fileNameFromContentUri(appContext, Uri.parse(fileUri.toString()))
+        copyrightDocExt = contentFileName.substringAfterLast(".")
         val docFileName = "$contentFileName ($actualFileSize)"
         copyrightFileName.value = docFileName
     }
@@ -227,6 +203,9 @@ class EditUploadInfoViewModel @AssistedInject constructor(
     suspend fun saveUploadInfo(tags: String?, categoryId: Long, subcategoryId: Long, duration: Long, isHorizontal: Int) {
         progressDialog.value = true
         val ageGroupId = ageGroupPosition.value ?: -1
+
+        val copyrightDir = fileName.substringBeforeLast(".", fileName)
+        val copyrightFileName = "${System.currentTimeMillis()}.${copyrightDocExt}"
 
         try {
             val resp = contentUploadApi(
@@ -239,11 +218,12 @@ class EditUploadInfoViewModel @AssistedInject constructor(
                 subcategoryId,
                 thumbnailData.value,
                 (duration / 1000).toString(),
-                isHorizontal
+                isHorizontal,
+                "${copyrightDir}/${copyrightFileName}"
             )
             Log.e("RESP", resp.toString())
             if (resp.contentId > 0L) {
-                val uploadId = startUpload(resp.contentId)
+                val uploadId = startUpload(resp.contentId, resp.uploadVODSignedUrl, resp.uploadCopyrightSignedUrl)
                 Log.e("uploadId", uploadId)
                 if(uploadId != null) {
                     resultLiveData.value = Resource.Success(Pair(uploadId, resp.contentId))
@@ -271,13 +251,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
         }
     }
 
-    private suspend fun startUpload(serverContentId: Long): String {
-        var serverToken: String? = ""
-        try {
-            serverToken = uploadSignedUrlService.execute(fileName).response.uploadSignedUrl
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+    private suspend fun startUpload(serverContentId: Long, vodSignedUrl: String, copyrightSignedUrl: String? = null): String {
         var upInfo = UploadInfo(
             serverContentId = serverContentId,
             fileUri = uploadFileUri,
@@ -288,67 +262,21 @@ class EditUploadInfoViewModel @AssistedInject constructor(
         return withContext(Dispatchers.IO + Job()) {
             BinaryUploadRequest(
                 appContext,
-                serverToken.toString()
+                vodSignedUrl
             )
                 .setUploadID(upInfo.getUploadIdStr()!!)
                 .setMethod("PUT")
                 .addHeader("Content-Type", "application/octet-stream")
                 .setFileToUpload(uploadFileUri)
-                .startUpload()
+                .startUpload().also {
+                    if(!copyrightSignedUrl.isNullOrBlank()) {
+                        BinaryUploadRequest(appContext, copyrightSignedUrl)
+                            .setMethod("PUT")
+                            .addHeader("Content-Type", "application/octet-stream")
+                            .setFileToUpload(copyrightDocUri!!)
+                            .startUpload()
+                    }
+                }
         }
-    }
-
-    private suspend fun startUploadToBucket(ipFileUri: Uri) {
-        val accessToken = withContext(Dispatchers.IO) {
-            val credential = GoogleCredential.fromStream(
-                appContext.assets.open("toffee-261507-60ca3e5405df.json")
-            ).createScoped(listOf("https://www.googleapis.com/auth/devstorage.read_write"))
-            credential.refreshToken()
-            credential.accessToken
-        }
-
-        if (accessToken.isNullOrEmpty()) {
-//            open_gallery_button.snack("Error uploading file. Please try again later.") {}
-            return
-        }
-
-        val md = MessageDigest.getInstance("MD5")
-        md.update(fileName.toByteArray())
-        val dirName = md.digest().toHex()
-
-        val fn = withContext(Dispatchers.IO + Job()) {
-            UtilsKt.fileNameFromContentUri(appContext, ipFileUri)
-        }
-        val idx = fn.lastIndexOf(".")
-        val ext = if (idx >= 0) {
-            fn.substring(idx)
-        }
-        else ""
-
-        val docFileName = preference.customerId.toString() + "_" + UUID.randomUUID().toString() + ext
-        val upInfo = UploadInfo(serverContentId = 0L, fileUri = ipFileUri.toString(), fileName = docFileName)
-
-        val contentType = withContext(Dispatchers.IO + Job()) {
-            UtilsKt.contentTypeFromContentUri(appContext, ipFileUri)
-        }
-
-        Log.e("UPLOAD", "$docFileName, $contentType")
-        val bucketPath = URLEncoder.encode("copyrights-documents/$dirName/$docFileName", "utf-8")
-        Log.e("BUCKET_T", "Bucket path - $bucketPath")
-        val upId = 1345L // uploadRepo.insertUploadInfo(upInfo)
-        val uploadIdStr =
-            withContext(Dispatchers.IO + Job()) {
-                BinaryUploadRequest(
-                    appContext,
-                    "https://storage.googleapis.com/upload/storage/v1/b/cdn-toffee-cms/" +
-                            "o?uploadType=media&name=${bucketPath}"
-                )
-                    .setUploadID(UtilsKt.uploadIdToString(upId))
-                    .setMethod("POST")
-                    .addHeader("Content-Type", contentType)
-                    .setFileToUpload(ipFileUri.toString())
-                    .setBearerAuth(accessToken)
-                    .startUpload()
-            }
     }
 }

@@ -13,7 +13,8 @@ class UploadConfirmation @Inject constructor(
 ) {
     suspend operator fun invoke(
         contentId: Long,
-        isConfirm: Boolean
+        isConfirm: Boolean,
+        isCopyrightConfirm: Boolean
     ): ResponseBean {
         val response = tryIO2 {
             toffeeApi.uploadConfirmation(
@@ -21,7 +22,8 @@ class UploadConfirmation @Inject constructor(
                     mPref.customerId,
                     mPref.password,
                     contentId,
-                    isConfirm.toString()
+                    isConfirm.toString(),
+                    if(isCopyrightConfirm) 1 else 0
                 )
             )
         }

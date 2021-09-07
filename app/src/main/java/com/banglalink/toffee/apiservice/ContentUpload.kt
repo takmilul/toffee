@@ -22,6 +22,7 @@ class ContentUpload @Inject constructor(
         base64Image: String? = null,
         duration: String? = null,
         isHorizontal: Int,
+        copyrightFileName: String? = null
     ): ContentUploadResponseBean {
         val response = tryIO2 {
             toffeeApi.uploadContent(
@@ -31,6 +32,8 @@ class ContentUpload @Inject constructor(
                     title,
                     fileName,
                     description = description,
+                    copyrightFileName = copyrightFileName,
+                    isCopyright = if(copyrightFileName.isNullOrBlank()) 0 else 1,
                     categoryId = categoryId.toInt(),
                     subCategoryId = subcategoryId.toInt(),
                     ageRestriction = ageGroup,
