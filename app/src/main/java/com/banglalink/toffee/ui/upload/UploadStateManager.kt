@@ -1,6 +1,7 @@
 package com.banglalink.toffee.ui.upload
 
 import android.app.Application
+import android.util.Log
 import com.banglalink.toffee.apiservice.UploadConfirmation
 import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.repository.UploadInfoRepository
@@ -32,7 +33,7 @@ class UploadStateManager(
                     UploadStatus.CANCELED.value,
                     UploadStatus.ERROR_CONFIRMED.value,
                     UploadStatus.RETRY_FAILED.value -> {
-                        sendStatusToServer(it, false)
+                        sendStatusToServer(it, false, copyrightStatus = false)
                     }
                     UploadStatus.CLEARED.value,
                     UploadStatus.SUBMITTED.value,
@@ -43,7 +44,7 @@ class UploadStateManager(
                         UploadStatus.SUCCESS.value,
                         UploadStatus.RETRY_SUCCESS.value
                     ) -> {
-                        sendStatusToServer(it, true)
+                        sendStatusToServer(it, true, copyrightStatus = false)
                     }
                     in listOf(
                         UploadStatus.ADDED.value,
@@ -53,7 +54,7 @@ class UploadStateManager(
 //                        if(fromNetwork || !it.fileUri.startsWith("content://")) {
 //                            restartUploadTask(it)
 //                        } else {
-                        sendStatusToServer(it, false)
+                        sendStatusToServer(it, false, copyrightStatus = false)
 //                        }
                     }
                 }
@@ -61,7 +62,7 @@ class UploadStateManager(
         }
     }
 
-    suspend fun sendStatusToServer(item: UploadInfo, status: Boolean) {
+    private suspend fun sendStatusToServer(item: UploadInfo, status: Boolean, copyrightStatus: Boolean) {
 
         if(item.status == UploadStatus.ERROR_CONFIRMED.value) {
             VelBoxAlertDialogBuilder(app, "Can't uplaod video", "Upload error. Please try again later.").apply {
@@ -72,7 +73,7 @@ class UploadStateManager(
         }
 
         val newStatus = try {
-            uploadConfirmApi(item.serverContentId, status)
+            uploadConfirmApi(item.serverContentId, status, copyrightStatus)
             if(status) {
                 UploadStatus.SUBMITTED.value
             } else {
@@ -116,6 +117,10 @@ class UploadStateManager(
     }
 
     suspend fun handleSuccess(uploadId: String, serverResponse: ServerResponse) {
+        if(UtilsKt.isCopyrightUploadId(uploadId)) {
+            handleCopyrightUploadSuccess(uploadId, serverResponse)
+            return
+        }
         val item = uploadRepo.getUploadById(UtilsKt.stringToUploadId(uploadId)) ?: return
 
         uploadRepo.updateUploadInfo(item.apply {
@@ -125,10 +130,25 @@ class UploadStateManager(
             completedSize = fileSize
         })
 
-        sendStatusToServer(item, true)
+//        sendStatusToServer(item, true)
+    }
+
+    private suspend fun handleCopyrightUploadSuccess(uploadId: String, serverResponse: ServerResponse) {
+        val item = uploadRepo.getUploadById(UtilsKt.stringToUploadId(uploadId)) ?: return
+        sendStatusToServer(item, true, copyrightStatus = true)
+    }
+
+    private suspend fun handleCopyrightUploadError(uploadId: String, exception: Throwable) {
+        val item = uploadRepo.getUploadById(UtilsKt.stringToUploadId(uploadId)) ?: return
+        sendStatusToServer(item, true, copyrightStatus = false)
     }
 
     suspend fun handleError(uploadId: String, exception: Throwable) {
+        if(UtilsKt.isCopyrightUploadId(uploadId)) {
+            handleCopyrightUploadError(uploadId, exception)
+            return
+        }
+
         val item = uploadRepo.getUploadById(UtilsKt.stringToUploadId(uploadId)) ?: return
 
         val newStatus = if(exception is UserCancelledUploadException)
@@ -148,9 +168,12 @@ class UploadStateManager(
             status = newStatus
         })
 
-        if(newStatus != UploadStatus.ERROR.value) {
-            sendStatusToServer(item, false)
-        }
+        // Video upload failed. Stop copyright uploading.
+        UploadService.stopAllUploads()
+
+//        if(newStatus != UploadStatus.ERROR.value) {
+//            sendStatusToServer(item, false, copyrightStatus = false)
+//        }
     }
 
     suspend fun handleProgress(
@@ -160,6 +183,7 @@ class UploadStateManager(
         progressPercent: Int,
         uploadUri: String?
     ) {
+        if(UtilsKt.isCopyrightUploadId(uploadId)) return
         uploadRepo.updateProgressById(UtilsKt.stringToUploadId(uploadId),
             uploadedBytes,
             progressPercent,

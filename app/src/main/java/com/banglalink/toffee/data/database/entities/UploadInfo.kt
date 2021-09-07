@@ -47,5 +47,11 @@ data class UploadInfo(
         } else null
     }
 
+    fun getCopyrightUploadIdStr(): String? {
+        return if(uploadId != null && uploadId >= 0L) {
+            UtilsKt.uploadIdToString(uploadId) + "_copyright"
+        } else null
+    }
+
     fun getFileNameMetadata() = "filename " + Base64.encodeToString(fileName.toByteArray(), Base64.NO_WRAP)
 }
