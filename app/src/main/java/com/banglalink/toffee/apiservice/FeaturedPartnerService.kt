@@ -1,6 +1,5 @@
 package com.banglalink.toffee.apiservice
 
-import android.util.Log
 import com.banglalink.toffee.common.paging.BaseApiService
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
@@ -29,7 +28,6 @@ class FeaturedPartnerService @AssistedInject constructor(
                 )
             )
         }
-        Log.e("FEP_", "loadData: ${response.response}")
         return response.response.featuredPartners ?: emptyList()
     }
     
