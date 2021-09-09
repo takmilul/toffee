@@ -10,6 +10,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.databinding.FragmentLandingPageBinding
 import com.banglalink.toffee.enums.PageType.Landing
 import com.banglalink.toffee.extension.observe
@@ -104,11 +105,15 @@ class LandingPageFragment : HomeBaseFragment(), FwSDK.SdkStatusListener {
             }
             SdkStatus.InitializationFailed -> {
                 Log.e("FwSDK", "InitializationFailed: $extra")
+                ToffeeAnalytics.logException(java.lang.Exception("FwSDK InitializationFailed: $extra"))
                 homeViewModel.isFireworkInitialized.postValue(false)
             }
             SdkStatus.LoadingContent -> Log.e("FwSDK", "LoadingContent: $extra")
             SdkStatus.ContentLoaded -> Log.e("FwSDK", "ContentLoaded: $extra")
-            SdkStatus.LoadingContentFailed -> Log.e("FwSDK", "LoadingContentFailed: $extra")
+            SdkStatus.LoadingContentFailed -> {
+                Log.e("FwSDK", "LoadingContentFailed: $extra")
+                ToffeeAnalytics.logException(java.lang.Exception("FwSDK LoadingContentFailed: $extra"))
+            }
         }
     }
     
