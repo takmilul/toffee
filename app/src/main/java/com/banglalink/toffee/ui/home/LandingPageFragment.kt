@@ -77,6 +77,7 @@ class LandingPageFragment : HomeBaseFragment(), FwSDK.SdkStatusListener {
         landingViewModel.pageType.value = Landing
         landingViewModel.isDramaSeries.value = false
         binding.landingAppbar.addOnOffsetChangedListener(offsetListener)
+        binding.featuredPartnerFragment.isVisible = mPref.isFeaturePartnerActive == "true"
         observe(homeViewModel.isFireworkInitialized) {
             _binding?.fireworkFragment?.isVisible = it
         }

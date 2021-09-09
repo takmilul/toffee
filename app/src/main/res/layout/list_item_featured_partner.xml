@@ -26,37 +26,25 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            
-            <FrameLayout
-                android:id="@+id/imageFrameLayout"
+
+            <ImageView
+                android:id="@+id/partnerBanner"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:scaleType="centerCrop"
+                loadPartnerImageFromUrl="@{data.bannerUrl}"
+                android:contentDescription="@string/featured_partner_banner"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" >
-                
-                <ImageView
-                    android:id="@+id/partnerBanner"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    loadPartnerImageFromUrl="@{data.bannerUrl}"
-                    android:scaleType="centerCrop"
-                    android:layout_gravity="end"
-                    android:contentDescription="@string/featured_partner_banner"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-                
-            </FrameLayout>
-            
+                app:layout_constraintTop_toTopOf="parent" />
+
             <ImageView
                 android:id="@+id/icon"
                 loadImageFromUrlRounded="@{data.profileUrl}"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:layout_margin="8dp"
+                android:layout_marginStart="8dp"
                 android:contentDescription="@string/txt_icon"
                 android:src="@drawable/ic_profile"
                 app:layout_constraintBottom_toBottomOf="parent"

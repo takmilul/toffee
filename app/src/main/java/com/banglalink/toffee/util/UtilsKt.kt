@@ -30,6 +30,7 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.pow
+import kotlin.math.round
 import kotlin.math.sqrt
 
 
@@ -129,8 +130,9 @@ object UtilsKt {
                 scaledBmp?.compress(JPEG, 70, byteArrayOutputStream)
                 val byteArray = byteArrayOutputStream.toByteArray()
                 Pair(Base64.encodeToString(byteArray, Base64.NO_WRAP), isHorizontal)
+            } else {
+                null
             }
-            null
         } catch (ex: Exception) {
             ex.printStackTrace()
             null
@@ -157,7 +159,7 @@ object UtilsKt {
     }
 
     fun getDurationLongToString(timeMs: Long): String {
-        val totalSeconds = timeMs / 1000
+        val totalSeconds = round(timeMs / 1000F)
         val seconds = (totalSeconds % 60).toInt()
         val minutes = (totalSeconds / 60 % 60).toInt()
         val hours = (totalSeconds / 3600).toInt()
@@ -168,10 +170,10 @@ object UtilsKt {
             String.format("%02d:%02d", minutes, seconds)
         }
     }
-    fun getVideoUploadLimit(timeMs: Long?): Boolean {
-        return (10 > timeMs!! / 1000 || timeMs / 1000 > 7200)
+    
+    fun getVideoUploadLimit(timeMs: Long): Boolean {
+        return (10 > round(timeMs / 1000F) || round(timeMs / 1000F) > 7200)
     }
-
 
     fun getLongDuration(str: String?): Long {
         if(str.isNullOrBlank()) return 0L
