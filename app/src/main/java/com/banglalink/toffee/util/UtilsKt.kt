@@ -130,8 +130,9 @@ object UtilsKt {
                 scaledBmp?.compress(JPEG, 70, byteArrayOutputStream)
                 val byteArray = byteArrayOutputStream.toByteArray()
                 Pair(Base64.encodeToString(byteArray, Base64.NO_WRAP), isHorizontal)
+            } else {
+                null
             }
-            null
         } catch (ex: Exception) {
             ex.printStackTrace()
             null
