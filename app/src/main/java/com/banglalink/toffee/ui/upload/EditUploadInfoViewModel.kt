@@ -271,6 +271,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
                 .startUpload().also {
                     if(!copyrightSignedUrl.isNullOrBlank()) {
                         BinaryUploadRequest(appContext, copyrightSignedUrl)
+                            .setUploadID(upInfo.getCopyrightUploadIdStr()!!)
                             .setMethod("PUT")
                             .addHeader("Content-Type", "application/octet-stream")
                             .setFileToUpload(copyrightDocUri!!)
