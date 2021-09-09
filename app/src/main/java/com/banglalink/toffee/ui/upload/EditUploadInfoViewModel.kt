@@ -3,7 +3,6 @@ package com.banglalink.toffee.ui.upload
 import android.content.Context
 import android.net.Uri
 import android.util.Log
-import android.webkit.MimeTypeMap
 import androidx.lifecycle.*
 import com.banglalink.toffee.apiservice.ContentUpload
 import com.banglalink.toffee.apiservice.GetContentCategories
@@ -12,12 +11,10 @@ import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.exception.Error
-import com.banglalink.toffee.extension.toHex
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.SubCategory
 import com.banglalink.toffee.util.*
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -26,8 +23,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.gotev.uploadservice.protocols.binary.BinaryUploadRequest
-import java.net.URLEncoder
-import java.security.MessageDigest
 import java.util.*
 
 class EditUploadInfoViewModel @AssistedInject constructor(
@@ -200,7 +195,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
         copyrightFileName.value = docFileName
     }
 
-    suspend fun saveUploadInfo(tags: String?, categoryId: Long, subcategoryId: Long, duration: Long, isHorizontal: Int) {
+    suspend fun saveUploadInfo(tags: String?, categoryId: Long, subcategoryId: Long, duration: Long, isHorizontal: Int, isUploadCopyrightFile: Boolean) {
         progressDialog.value = true
         val ageGroupId = ageGroupPosition.value ?: -1
 
@@ -219,11 +214,11 @@ class EditUploadInfoViewModel @AssistedInject constructor(
                 thumbnailData.value,
                 (duration / 1000).toString(),
                 isHorizontal,
-                "${copyrightDir}/${copyrightFileName}"
+                if (isUploadCopyrightFile) "${copyrightDir}/${copyrightFileName}" else ""
             )
             Log.e("RESP", resp.toString())
             if (resp.contentId > 0L) {
-                val uploadId = startUpload(resp.contentId, resp.uploadVODSignedUrl, resp.uploadCopyrightSignedUrl)
+                val uploadId = startUpload(resp.contentId, resp.uploadVODSignedUrl, resp.uploadCopyrightSignedUrl, isUploadCopyrightFile)
                 Log.e("uploadId", uploadId)
                 if(uploadId != null) {
                     resultLiveData.value = Resource.Success(Pair(uploadId, resp.contentId))
@@ -251,7 +246,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
         }
     }
 
-    private suspend fun startUpload(serverContentId: Long, vodSignedUrl: String, copyrightSignedUrl: String? = null): String {
+    private suspend fun startUpload(serverContentId: Long, vodSignedUrl: String, copyrightSignedUrl: String? = null, isUploadCopyrightFile: Boolean): String {
         var upInfo = UploadInfo(
             serverContentId = serverContentId,
             fileUri = uploadFileUri,
@@ -269,7 +264,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
                 .addHeader("Content-Type", "application/octet-stream")
                 .setFileToUpload(uploadFileUri)
                 .startUpload().also {
-                    if(!copyrightSignedUrl.isNullOrBlank()) {
+                    if(isUploadCopyrightFile && !copyrightSignedUrl.isNullOrBlank()) {
                         BinaryUploadRequest(appContext, copyrightSignedUrl)
                             .setMethod("PUT")
                             .addHeader("Content-Type", "application/octet-stream")

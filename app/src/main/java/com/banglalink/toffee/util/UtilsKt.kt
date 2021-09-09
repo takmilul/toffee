@@ -30,6 +30,7 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.pow
+import kotlin.math.round
 import kotlin.math.sqrt
 
 
@@ -168,10 +169,10 @@ object UtilsKt {
             String.format("%02d:%02d", minutes, seconds)
         }
     }
-    fun getVideoUploadLimit(timeMs: Long?): Boolean {
-        return (10 > timeMs!! / 1000 || timeMs / 1000 > 7200)
+    
+    fun getVideoUploadLimit(timeMs: Long): Boolean {
+        return (10 > round(timeMs / 1000F) || round(timeMs / 1000F) > 7200)
     }
-
 
     fun getLongDuration(str: String?): Long {
         if(str.isNullOrBlank()) return 0L

@@ -335,7 +335,7 @@
         <item name="strokeWidth">1dp</item>
         <item name="rippleColor">@color/colorButtonSecondary</item>
         <item name="strokeColor">@color/button_bgcolor_purple</item>
-        <item name="android:textColor">@color/colorButtonSecondary</item>
+        <item name="android:textColor">@color/button_bgcolor_purple</item>
     </style>
     
     <style name="EditChannelStyle" parent="ButtonStyleRingPurple">

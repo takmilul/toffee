@@ -193,6 +193,12 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             pref.edit().putString(PREF_FIREWORK_ACTIVE, isActive).apply()
         }
 
+    var isFeaturePartnerActive: String
+        get() = pref.getString(PREF_FEATURE_PARTNER_ACTIVE, "true") ?: "true"
+        set(isActive) {
+            pref.edit().putString(PREF_FEATURE_PARTNER_ACTIVE, isActive).apply()
+        }
+
     var channelId: Int
         get() = pref.getInt(PREF_CHANNEL_ID, 0)
         set(channelId) = pref.edit().putInt(PREF_CHANNEL_ID, channelId).apply()
@@ -600,6 +606,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         shareCountDbUrl = customerInfoLogin.shareCountDbUrl ?: ""
         isAllTvChannelMenuEnabled = customerInfoLogin.isAllTvChannelsMenuEnabled
         isFireworkActive = customerInfoLogin.isFireworkActive ?: "true"
+        isFeaturePartnerActive = customerInfoLogin.isFeaturePartnerActive ?: "true"
         mqttHost = customerInfoLogin.mqttUrl?.let { EncryptionUtil.encryptRequest(it) } ?: ""
         mqttIsActive = customerInfoLogin.mqttIsActive == 1
 
@@ -678,6 +685,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_CELLULAR= "CELLULAR"
         private const val PREF_SUBSCRIPTION_ACTIVE= "subscription_active"
         private const val PREF_FIREWORK_ACTIVE= "firework_active"
+        private const val PREF_FEATURE_PARTNER_ACTIVE= "is_feature_partner_active"
         private const val PREF_SYSTEM_TIME= "systemTime"
         private const val PREF_WATCH_ONLY_WIFI= "WatchOnlyWifi"
         private const val PREF_KEY_NOTIFICATION= "pref_key_notification"
