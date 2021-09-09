@@ -158,7 +158,7 @@ object UtilsKt {
     }
 
     fun getDurationLongToString(timeMs: Long): String {
-        val totalSeconds = timeMs / 1000
+        val totalSeconds = round(timeMs / 1000F)
         val seconds = (totalSeconds % 60).toInt()
         val minutes = (totalSeconds / 60 % 60).toInt()
         val hours = (totalSeconds / 3600).toInt()

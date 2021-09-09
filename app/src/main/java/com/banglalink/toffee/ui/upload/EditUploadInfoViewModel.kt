@@ -24,6 +24,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.gotev.uploadservice.protocols.binary.BinaryUploadRequest
 import java.util.*
+import kotlin.math.round
 
 class EditUploadInfoViewModel @AssistedInject constructor(
     @ApplicationContext private val appContext: Context,
@@ -212,7 +213,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
                 categoryId,
                 subcategoryId,
                 thumbnailData.value,
-                (duration / 1000).toString(),
+                round(duration / 1000F).toString(),
                 isHorizontal,
                 if (isUploadCopyrightFile) "${copyrightDir}/${copyrightFileName}" else ""
             )
