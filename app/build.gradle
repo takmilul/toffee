@@ -14,8 +14,8 @@ android {
         applicationId "com.banglalink.toffee"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 66
-        versionName "2.0.6"
+        versionCode 67
+        versionName "2.0.7"
         testInstrumentationRunner "com.banglalink.toffee.HiltTestRunner"
         vectorDrawables.useSupportLibrary = true
     }
