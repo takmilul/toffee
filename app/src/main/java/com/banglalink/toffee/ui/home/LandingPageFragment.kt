@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentLandingPageBinding
@@ -60,6 +61,7 @@ class LandingPageFragment : HomeBaseFragment() {
         landingViewModel.pageType.value = Landing
         landingViewModel.isDramaSeries.value = false
         binding.landingAppbar.addOnOffsetChangedListener(offsetListener)
+        binding.featuredPartnerFragment.isVisible = mPref.isFeaturePartnerActive == "true"
     }
     
     fun onBackPressed(): Boolean {

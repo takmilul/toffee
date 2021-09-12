@@ -129,8 +129,10 @@ class UploadStateManager(
             completedPercent = 100
             completedSize = fileSize
         })
-
-//        sendStatusToServer(item, true)
+        val hasCopyrightDoc = UploadService.taskList.isEmpty()
+        if(!hasCopyrightDoc) {
+            sendStatusToServer(item, true, copyrightStatus = false)
+        }
     }
 
     private suspend fun handleCopyrightUploadSuccess(uploadId: String, serverResponse: ServerResponse) {
@@ -171,9 +173,9 @@ class UploadStateManager(
         // Video upload failed. Stop copyright uploading.
         UploadService.stopAllUploads()
 
-//        if(newStatus != UploadStatus.ERROR.value) {
-//            sendStatusToServer(item, false, copyrightStatus = false)
-//        }
+        if(newStatus != UploadStatus.ERROR.value) {
+            sendStatusToServer(item, false, copyrightStatus = false)
+        }
     }
 
     suspend fun handleProgress(

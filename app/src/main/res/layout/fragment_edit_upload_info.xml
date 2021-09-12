@@ -356,7 +356,16 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/copyrightCheckbox" />
-            
+    
+            <TextView
+                android:id="@+id/error_copyright_tv"
+                style="@style/ErrorTextStyle"
+                android:text="*Title required"
+                app:layout_constraintEnd_toEndOf="@+id/copyrightLayout"
+                app:layout_constraintStart_toStartOf="@+id/copyrightLayout"
+                app:layout_constraintTop_toBottomOf="@+id/copyrightLayout"
+                tools:visibility="visible" />
+    
             <Button
                 android:id="@+id/cancel_button"
                 style="@style/ButtonStyleRingPurple"
@@ -366,7 +375,7 @@
                 android:text="@string/cancel"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/guideline9"
-                app:layout_constraintTop_toBottomOf="@+id/copyrightLayout" />
+                app:layout_constraintTop_toBottomOf="@+id/error_copyright_tv" />
 
             <Button
                 android:id="@+id/submit_button"
@@ -377,7 +386,7 @@
                 android:text="@string/submit_button_text"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/guideline9"
-                app:layout_constraintTop_toBottomOf="@+id/copyrightLayout" />
+                app:layout_constraintTop_toBottomOf="@+id/error_copyright_tv" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
