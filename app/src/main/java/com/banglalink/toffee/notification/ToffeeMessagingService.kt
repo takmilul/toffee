@@ -237,11 +237,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         val sound = Uri.parse("android.resource://" + packageName + "/" + R.raw.velbox_notificaiton)
         var thumbnailImage: Bitmap? = null
         if (!thumbnailUrl.isNullOrBlank()) {
-            val thumbnailDrawable = try {
-                UtilsKt.coilExecuteGet(this, thumbnailUrl)
-            } catch (e: Exception) {
-                null
-            }
+            val thumbnailDrawable = UtilsKt.coilExecuteGet(this, thumbnailUrl)
             thumbnailImage = thumbnailDrawable?.toBitmap(48, 48)
         }
         
@@ -281,20 +277,12 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         val notificationInfo = NotificationInfo(null, customerId, data["notificationType"], pubSubId, 0, 0, title, content, null, thumbnailUrl, imageUrl, resourceUrl, playNowUrl, watchLaterUrl)
         val rowId = notificationInfoRepository.insert(notificationInfo)
         
-        val drawable = try {
-            UtilsKt.coilExecuteGet(this, imageUrl)
-        } catch (e: Exception) {
-            null
-        }
+        val drawable = UtilsKt.coilExecuteGet(this, imageUrl)
         
         val image = drawable?.toBitmap()
         var thumbnailImage: Bitmap? = image
         if (!thumbnailUrl.isNullOrBlank()) {
-            val thumbnailDrawable = try {
-                UtilsKt.coilExecuteGet(this, thumbnailUrl)
-            } catch (e: Exception) {
-                drawable
-            }
+            val thumbnailDrawable = UtilsKt.coilExecuteGet(this, thumbnailUrl) ?: drawable
             thumbnailImage = thumbnailDrawable?.toBitmap(48, 48)
         }
         

@@ -21,6 +21,7 @@ import android.view.inputmethod.InputMethodManager
 import coil.imageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
+import com.banglalink.toffee.analytics.ToffeeAnalytics
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
@@ -96,12 +97,18 @@ object UtilsKt {
         }
     }
 
-    suspend fun coilExecuteGet(ctx: Context, url: Any?): Drawable? {
+    suspend fun coilExecuteGet(ctx: Context, url: Any?): Drawable? = try{
         val request = ImageRequest.Builder(ctx)
             .data(url)
             .allowHardware(false) // Disable hardware bitmaps.
             .build()
-        return (ctx.imageLoader.execute(request) as SuccessResult).drawable
+        ctx.imageLoader.execute(request).let {
+            if(it is SuccessResult) it.drawable
+            else null
+        }
+    } catch (ex: Exception) {
+        ToffeeAnalytics.logException(ex)
+        null
     }
 
     fun hideSoftKeyboard(activity: Activity) {

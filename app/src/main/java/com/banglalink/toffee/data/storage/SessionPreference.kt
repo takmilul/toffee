@@ -574,6 +574,10 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         get() = pref.getString(PREF_HE_UPDATE_DATE, null)
         set(value) = pref.edit { putString(PREF_HE_UPDATE_DATE, value) }
     
+    var adIdUpdateDate: String?
+        get() = pref.getString(PREF_AD_ID_UPDATE_DATE, null)
+        set(value) = pref.edit { putString(PREF_AD_ID_UPDATE_DATE, value) }
+    
     var drmTokenUrl: String?
         get() = pref.getString(PREF_DRM_TOKEN_URL, null)
         set(value) = pref.edit { putString(PREF_DRM_TOKEN_URL, value) }
@@ -756,6 +760,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_FPS_LICENSE_URL = "pref_fps_license_url"
         private const val PREF_PLAYREADY_LICENSE_URL = "pref_playready_license_url"
         private const val PREF_HE_UPDATE_DATE = "pref_he_update_date"
+        private const val PREF_AD_ID_UPDATE_DATE = "pref_ad_id_update_date"
         private const val PREF_DRM_TOKEN_URL = "pref_drm_token_url"
         private const val PREF_IS_GLOBAL_CID_ACTIVE = "pref_is_global_cid_active"
         private const val PREF_GLOBAL_CID_NAME = "pref_global_cid_name"

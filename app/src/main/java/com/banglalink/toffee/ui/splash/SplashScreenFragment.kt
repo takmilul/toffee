@@ -2,6 +2,7 @@ package com.banglalink.toffee.ui.splash
 
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -21,10 +22,15 @@ import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeActivity
+import com.banglalink.toffee.usecase.AdvertisingIdLogData
 import com.banglalink.toffee.usecase.HeaderEnrichmentLogData
 import com.banglalink.toffee.util.today
 import com.facebook.appevents.AppEventsLogger
+import com.google.android.gms.ads.identifier.AdvertisingIdClient
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pl.droidsonroids.gif.GifDrawable
@@ -35,6 +41,7 @@ class SplashScreenFragment : BaseFragment() {
     private val binding get() = _binding !!
     private var logoGifDrawable: GifDrawable? = null
     private var isOperationCompleted: Boolean = false
+    @Inject @ApplicationContext lateinit var appContext: Context
     @Inject lateinit var commonPreference: CommonPreference
     private var _binding: FragmentSplashScreenBinding? = null
     @Inject lateinit var connectionWatcher: ConnectionWatcher
@@ -60,6 +67,7 @@ class SplashScreenFragment : BaseFragment() {
                 seekToFrame(0)
             }
         }
+        sendAdIdLog()
         observeApiLogin()
         observeHeaderEnrichment()
         requestHeaderEnrichment()
@@ -91,6 +99,23 @@ class SplashScreenFragment : BaseFragment() {
         AppEventsLogger.newLogger(requireContext()).run { 
             logEvent("app_launch")
             flush()
+        }
+    }
+    
+    private fun sendAdIdLog() {
+        if (mPref.adIdUpdateDate != today) {
+            lifecycleScope.launch(IO + Job()) {
+                kotlin.runCatching { 
+                    val adId = AdvertisingIdClient.getAdvertisingIdInfo(appContext).id
+                    adId?.let { 
+                        viewModel.sendAdvertisingIdLogData(AdvertisingIdLogData(adId).also {
+                            it.phoneNumber = mPref.phoneNumber
+                            it.isBlNumber = mPref.isBanglalinkNumber.toString()
+                        })
+                    }
+                    mPref.adIdUpdateDate = today
+                }
+            }
         }
     }
     

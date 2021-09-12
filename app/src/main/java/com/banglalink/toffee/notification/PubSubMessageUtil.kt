@@ -38,6 +38,7 @@ const val USER_OTP_TOPIC = "projects/$PROJECTID/topics/user_otp_log"
 const val HE_REPORT_TOPIC = "projects/$PROJECTID/topics/toffee_he_log"
 const val DRM_UNAVAILABLE_TOPIC = "projects/$PROJECTID/topics/drm_unavailable_devices"
 const val DRM_FALLBACK_TOPIC = "projects/$PROJECTID/topics/drm_fallback_log"
+const val ADVERTISING_ID_TOPIC = "projects/$PROJECTID/topics/advertising_id_log"
 
 object PubSubMessageUtil {
 
