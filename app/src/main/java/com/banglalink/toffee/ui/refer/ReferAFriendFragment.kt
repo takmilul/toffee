@@ -112,13 +112,19 @@ class ReferAFriendFragment : BaseFragment() {
 
     private fun setShareBtnClick(shareableText: String) {
         binding.shareBtn.setOnClickListener {
-            val shareIntent: Intent = ShareCompat.IntentBuilder(requireContext())
-                .setType("text/plan")
-                .setText(shareableText)
-                .intent
-            if (shareIntent.resolveActivity(requireContext().packageManager) != null) {
-                startActivity(shareIntent)
+            val sharingIntent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, shareableText)
             }
+            startActivity(Intent.createChooser(sharingIntent, "Share via"))
+
+//            val shareIntent: Intent = ShareCompat.IntentBuilder(requireContext())
+//                .setType("text/plan")
+//                .setText(shareableText)
+//                .intent
+//            if (shareIntent.resolveActivity(requireContext().packageManager) != null) {
+//                startActivity(shareIntent)
+//            }
         }
     }
 
