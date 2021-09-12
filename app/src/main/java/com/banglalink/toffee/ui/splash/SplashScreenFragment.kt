@@ -67,7 +67,6 @@ class SplashScreenFragment : BaseFragment() {
                 seekToFrame(0)
             }
         }
-        sendAdIdLog()
         observeApiLogin()
         observeHeaderEnrichment()
         requestHeaderEnrichment()
@@ -173,6 +172,7 @@ class SplashScreenFragment : BaseFragment() {
         observe(viewModel.apiLoginResponse) {
             when (it) {
                 is Resource.Success -> {
+                    sendAdIdLog()
                     viewModel.sendLoginLogData()
                     viewModel.sendDrmUnavailableLogData()
                     if (isOperationCompleted) {
