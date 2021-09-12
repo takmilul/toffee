@@ -1,5 +1,6 @@
 package com.banglalink.toffee.analytics
 
+import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import androidx.lifecycle.Lifecycle
@@ -12,13 +13,14 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.toLiveData
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.receiver.ConnectionWatcher
-import com.banglalink.toffee.usecase.HeaderEnrichmentLogData
-import com.banglalink.toffee.usecase.SendHeaderEnrichmentLogEvent
-import com.banglalink.toffee.usecase.SendHeartBeat
+import com.banglalink.toffee.usecase.*
 import com.banglalink.toffee.util.getError
 import com.banglalink.toffee.util.today
+import com.google.android.gms.ads.identifier.AdvertisingIdClient
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.Default
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -28,6 +30,8 @@ class HeartBeatManager @Inject constructor(
     private val mPref: SessionPreference,
     private val sendHeartBeat: SendHeartBeat,
     private var connectionWatcher: ConnectionWatcher,
+    @ApplicationContext private val appContext: Context,
+    private val sendAdIdLogEvent: SendAdvertisingIdLogEvent,
     private val sendHeLogEvent: SendHeaderEnrichmentLogEvent,
     private val headerEnrichmentService: HeaderEnrichmentService
 ) : LifecycleObserver, ConnectivityManager.NetworkCallback() {
@@ -35,8 +39,9 @@ class HeartBeatManager @Inject constructor(
     private var contentId = 0;
     private var contentType = ""
     private var isAppForeGround = false
-    private val coroutineScope2 = CoroutineScope(Main)
     private lateinit var coroutineScope :CoroutineScope
+    private lateinit var coroutineScope3 :CoroutineScope
+    private val coroutineScope2 = CoroutineScope(Main)
     private val _heartBeatEventLiveData = MutableLiveData<Boolean>()
     val heartBeatEventLiveData = _heartBeatEventLiveData.toLiveData()
     
@@ -49,17 +54,37 @@ class HeartBeatManager @Inject constructor(
     fun onAppBackGround() {
         isAppForeGround = false
         coroutineScope.cancel()
+        coroutineScope3.cancel()
     }
     
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onAppForeGround() {
         isAppForeGround = true
         coroutineScope = CoroutineScope(Default)
+        coroutineScope3 = CoroutineScope(IO + Job())
         coroutineScope.launch {
             sendHeartBeat(sendToPubSub = false)
             execute()
         }
+        sendAdIdLog()
         sendHeaderEnrichmentLog()
+    }
+    
+    private fun sendAdIdLog() {
+        if (mPref.adIdUpdateDate != today) {
+            coroutineScope3.launch {
+                kotlin.runCatching {
+                    val adId = AdvertisingIdClient.getAdvertisingIdInfo(appContext).id
+                    adId?.let {
+                        sendAdIdLogEvent.execute(AdvertisingIdLogData(adId).also {
+                            it.phoneNumber = mPref.phoneNumber
+                            it.isBlNumber = mPref.isBanglalinkNumber
+                        })
+                    }
+                    mPref.heUpdateDate = today
+                }
+            }
+        }
     }
     
     private fun sendHeaderEnrichmentLog() {

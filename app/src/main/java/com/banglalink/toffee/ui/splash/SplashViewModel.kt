@@ -14,10 +14,7 @@ import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.usecase.HeaderEnrichmentLogData
-import com.banglalink.toffee.usecase.SendHeaderEnrichmentLogEvent
-import com.banglalink.toffee.usecase.SendDrmUnavailableLogEvent
-import com.banglalink.toffee.usecase.SendLoginLogEvent
+import com.banglalink.toffee.usecase.*
 import com.banglalink.toffee.util.SingleLiveEvent
 import com.google.android.exoplayer2.C
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,6 +31,7 @@ class SplashViewModel @Inject constructor(
     private val credential: CredentialService,
     private val sendLoginLogEvent: SendLoginLogEvent,
     @AppCoroutineScope private val appScope: CoroutineScope,
+    private val sendAdIdLogEvent: SendAdvertisingIdLogEvent,
     private val sendHeLogEvent: SendHeaderEnrichmentLogEvent,
     private val headerEnrichmentService: HeaderEnrichmentService,
     private val sendDrmUnavailableLogEvent: SendDrmUnavailableLogEvent,
@@ -132,6 +130,16 @@ class SplashViewModel @Inject constructor(
                         sendDrmUnavailableLogEvent.execute()
                     }
                 }
+            }
+        }
+    }
+    
+    fun sendAdvertisingIdLogData(adIdData: AdvertisingIdLogData) {
+        appScope.launch {
+            try {
+                sendAdIdLogEvent.execute(adIdData)
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }

@@ -17,7 +17,7 @@ class SendHeaderEnrichmentLogEvent @Inject constructor() {
     }
 }
 
-data class HeaderEnrichmentLogData(
+open class HeaderEnrichmentLogData(
     @SerializedName("device")
     val device: String = Build.MANUFACTURER,
     @SerializedName("deviceModel")
