@@ -13,7 +13,6 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.databinding.FragmentLandingPageBinding
 import com.banglalink.toffee.enums.PageType.Landing
-import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.google.android.material.appbar.AppBarLayout
 import com.loopnow.fireworklibrary.FwSDK
@@ -79,8 +78,11 @@ class LandingPageFragment : HomeBaseFragment(), FwSDK.SdkStatusListener {
         landingViewModel.isDramaSeries.value = false
         binding.landingAppbar.addOnOffsetChangedListener(offsetListener)
         binding.featuredPartnerFragment.isVisible = mPref.isFeaturePartnerActive == "true"
-        observe(homeViewModel.isFireworkInitialized) {
-            _binding?.fireworkFragment?.isVisible = it
+//        observe(homeViewModel.isFireworkInitialized) {
+//            _binding?.fireworkFragment?.isVisible = it
+//        }
+        if (mPref.isFireworkActive == "true") {
+            binding.fireworkFragment.isVisible = true
         }
     }
     
