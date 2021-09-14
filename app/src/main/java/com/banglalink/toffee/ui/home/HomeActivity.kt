@@ -1371,6 +1371,7 @@ class HomeActivity :
                         mPref.isVerifiedUser = false
                         mPref.isChannelDetailChecked = false
                         appScope.launch { favoriteDao.deleteAll() }
+                        this.viewModelStore.clear()
                         navController.popBackStack(R.id.menu_feed, false).let { 
                             recreate()
                         }
