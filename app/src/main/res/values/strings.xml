@@ -397,6 +397,11 @@
     <string name="txt_video_length">Video Length</string>
     <string name="txt_video_length_msg">Accepted video length is between 10 second and 2 hours</string>
     <string name="featured_partner_banner">featured partner banner</string>
+    <string name="empty_copyright_file_msg">Please choose a copyright file</string>
+    <string name="file_size_title">File Size</string>
+    <string name="file_format_title">File Format</string>
+    <string name="file_size_msg">File size is too big. Please select a file within 5MB</string>
+    <string name="file_format_msg">Selected file format is unsupported. please select any one from txt/pdf/doc/docx/rtf/png/jpg format</string>
     <!--    url    -->
     <!--    <string name="creators_policy_url">https://toffeelive.com/policies.php</string>-->
     <!--    <string name="tus_upload_server_url">https://ugc-upload.toffeelive.com/upload</string>-->

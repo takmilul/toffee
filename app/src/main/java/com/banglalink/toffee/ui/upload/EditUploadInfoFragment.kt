@@ -44,30 +44,30 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class EditUploadInfoFragment: BaseFragment() {
+class EditUploadInfoFragment : BaseFragment() {
     
     private lateinit var uploadFileUri: String
     private var descTextWatcher: TextWatcher? = null
     private var titleTextWatcher: TextWatcher? = null
     private var progressDialog: VelBoxProgressDialog? = null
-    private var _binding: FragmentEditUploadInfoBinding ? = null
+    private var _binding: FragmentEditUploadInfoBinding? = null
     private val binding get() = _binding!!
     private val viewModel: EditUploadInfoViewModel by viewModels {
         EditUploadInfoViewModel.provideFactory(editUploadViewModelFactory, uploadFileUri)
     }
     @Inject lateinit var editUploadViewModelFactory: EditUploadInfoViewModel.AssistedFactory
-
+    
     companion object {
         const val UPLOAD_FILE_URI = "UPLOAD_FILE_URI"
     }
-
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         uploadFileUri = requireArguments().getString(UPLOAD_FILE_URI, "")
-
-        requireActivity().onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+        
+        requireActivity().onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if(isEnabled) {
+                if (isEnabled) {
                     VelBoxAlertDialogBuilder(requireContext()).apply {
                         setTitle(getString(R.string.cancel_upload_title))
                         setText(getString(R.string.cancel_upload_msg))
@@ -84,7 +84,7 @@ class EditUploadInfoFragment: BaseFragment() {
             }
         })
     }
-
+    
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentEditUploadInfoBinding.inflate(inflater, container, false)
         binding.setVariable(BR.viewmodel, viewModel)
@@ -105,10 +105,10 @@ class EditUploadInfoFragment: BaseFragment() {
         super.onDestroyView()
         _binding = null
     }
-
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        
         binding.container.setOnClickListener {
             UtilsKt.hideSoftKeyboard(requireActivity())
         }
@@ -125,31 +125,31 @@ class EditUploadInfoFragment: BaseFragment() {
                 }
             }.create().show()
         }
-
+        
         binding.submitButton.setOnClickListener {
             submitVideo()
         }
-
+        
         binding.thumbEditButton.setOnClickListener {
-            findNavController().navigate(R.id.thumbnailSelectionMethodFragment, bundleOf(
-                ThumbnailSelectionMethodFragment.TITLE to getString(R.string.set_video_cover_photo),
-                ThumbnailSelectionMethodFragment.IS_PROFILE_IMAGE to false
-            ))
+            findNavController().navigate(
+                R.id.thumbnailSelectionMethodFragment, bundleOf(
+                    ThumbnailSelectionMethodFragment.TITLE to getString(R.string.set_video_cover_photo),
+                    ThumbnailSelectionMethodFragment.IS_PROFILE_IMAGE to false
+                )
+            )
         }
-        binding.copyrightCheckbox.setOnCheckedChangeListener { buttonView, isChecked ->
-            binding.copyrightLayout.uploadFileButton.isEnabled = isChecked
-            val shouldShow = (isChecked and (viewModel.copyrightDocExt.isNullOrBlank() or viewModel.copyrightFileName.value.isNullOrBlank())) or (!isChecked and !viewModel.copyrightDocExt.isNullOrBlank() and !viewModel.copyrightFileName.value.isNullOrBlank())
-            val msg = "Please select a copyright file or uncheck the checkbox"
+        binding.copyrightCheckbox.setOnCheckedChangeListener { _, isChecked ->
+            val shouldShow = isChecked and (viewModel.copyrightDocExt.isNullOrBlank() or viewModel.copyrightFileName.value.isNullOrBlank())
+            val msg = getString(R.string.empty_copyright_file_msg)
             showCopyrightErrorMsg(shouldShow, msg)
         }
-        binding.copyrightLayout.uploadFileButton.safeClick({checkFileSystemPermission()})
+        binding.copyrightLayout.uploadFileButton.safeClick({ checkFileSystemPermission() })
         binding.copyrightLayout.closeIv.safeClick({
             it.hide()
             viewModel.copyrightDocUri = null
             viewModel.copyrightFileName.value = null
+            binding.copyrightCheckbox.isChecked = false
             binding.copyrightLayout.uploadFileButton.show()
-            val msg = "Please select a copyright file or uncheck the checkbox"
-            showCopyrightErrorMsg(binding.copyrightCheckbox.isChecked, msg)
         })
         setupCategorySpinner()
         setupSubcategorySpinner()
@@ -162,37 +162,40 @@ class EditUploadInfoFragment: BaseFragment() {
         observeThumbnailChange()
         observeVideoDuration()
         observeExitFragment()
-    
+        
         binding.uploadTags.clearFocus()
         binding.uploadTitle.requestFocus()
-
+        
         titleWatcher()
         descriptionDesWatcher()
         binding.uploadTitleCountTv.text = getString(R.string.video_title_limit, 0)
         binding.uploadDesCountTv.text = getString(R.string.video_description_limit, 0)
     }
-
+    
     private fun showCopyrightErrorMsg(shouldShow: Boolean, msg: String? = null) {
-        if(shouldShow) {
+        if (shouldShow) {
             binding.copyrightLayout.layout.setBackgroundResource(R.drawable.error_multiline_input_text_bg)
             binding.errorCopyrightTv.text = msg ?: "Please check the agreement checkbox and select a copyright file."
             binding.errorCopyrightTv.show()
-        }
-        else {
+        } else {
             binding.copyrightLayout.layout.setBackgroundResource(R.drawable.multiline_input_text_bg)
             binding.errorCopyrightTv.hide()
         }
     }
-
+    
     private fun titleWatcher() {
         titleTextWatcher = binding.uploadTitle.doAfterTextChanged { s: Editable? ->
             binding.uploadTitleCountTv.text = getString(R.string.video_title_limit, s?.length ?: 0)
+            binding.uploadTitle.setBackgroundResource(R.drawable.single_line_input_text_bg)
+            binding.errorTitleTv.hide()
         }
     }
-
+    
     private fun descriptionDesWatcher() {
         descTextWatcher = binding.uploadDescription.doAfterTextChanged { s: Editable? ->
             binding.uploadDesCountTv.text = getString(R.string.video_description_limit, s?.length ?: 0)
+            binding.uploadDescription.setBackgroundResource(R.drawable.multiline_input_text_bg)
+            binding.errorDescriptionTv.hide()
         }
     }
     
@@ -208,10 +211,10 @@ class EditUploadInfoFragment: BaseFragment() {
             } catch (e: PermissionException) {
                 ToffeeAnalytics.logBreadCrumb("Storage permission denied")
                 requireContext().showToast(getString(R.string.grant_storage_permission))
-            } catch (e: NoActivityException){
+            } catch (e: NoActivityException) {
                 ToffeeAnalytics.logBreadCrumb("Activity Not Found - filesystem(gallery)")
                 requireContext().showToast(getString(R.string.no_activity_msg))
-            } catch (e: ActivityNotFoundException){
+            } catch (e: ActivityNotFoundException) {
                 ToffeeAnalytics.logBreadCrumb("Activity Not Found - filesystem(gallery)")
                 requireContext().showToast(getString(R.string.no_activity_msg))
             } catch (e: Exception) {
@@ -231,24 +234,23 @@ class EditUploadInfoFragment: BaseFragment() {
     }
     
     private fun checkFileValidity(uri: Uri) {
-        lifecycleScope.launch { 
+        lifecycleScope.launch {
             val contentType = UtilsKt.contentTypeFromContentUri(requireContext(), uri)
             val fileName = UtilsKt.fileNameFromContentUri(requireContext(), uri)
             val fileSize = UtilsKt.fileSizeFromContentUri(requireContext(), uri)
-            when(fileName.substringAfterLast(".")) {
+            when (fileName.substringAfterLast(".")) {
                 "txt", "pdf", "doc", "docx", "rtf", "png", "jpg" -> {
-                    if (fileSize <= 5*1024*1024) {
-                        binding.copyrightLayout.uploadFileButton.hide()
+                    if (fileSize <= 5 * 1024 * 1024) {
+                        lifecycleScope.launch { viewModel.loadCopyrightFileName(uri) }
                         binding.copyrightLayout.closeIv.show()
-                        if (binding.copyrightCheckbox.isChecked) {
-                            binding.copyrightLayout.layout.setBackgroundResource(R.drawable.multiline_input_text_bg)
-                            binding.errorCopyrightTv.hide()
-                            lifecycleScope.launch { viewModel.loadCopyrightFileName(uri) }
-                        }
+                        binding.copyrightLayout.uploadFileButton.hide()
+                        binding.copyrightCheckbox.isChecked = true
+                        binding.errorCopyrightTv.hide()
+                        binding.copyrightLayout.layout.setBackgroundResource(R.drawable.multiline_input_text_bg)
                     } else {
                         VelBoxAlertDialogBuilder(requireContext()).apply {
-                            setTitle("File Size")
-                            setText("File size is too big. Please select a file within 5MB")
+                            setTitle(getString(R.string.file_size_title))
+                            setText(getString(R.string.file_size_msg))
                             setPositiveButtonListener(getString(R.string.btn_got_it)) {
                                 it?.dismiss()
                             }
@@ -257,8 +259,8 @@ class EditUploadInfoFragment: BaseFragment() {
                 }
                 else -> {
                     VelBoxAlertDialogBuilder(requireContext()).apply {
-                        setTitle("File Format")
-                        setText("Selected file format is unsupported. please select any one from txt/pdf/doc/docx/rtf/png/jpg format.")
+                        setTitle(getString(R.string.file_format_title))
+                        setText(getString(R.string.file_format_msg))
                         setPositiveButtonListener(getString(R.string.btn_got_it)) {
                             it?.dismiss()
                         }
@@ -270,13 +272,13 @@ class EditUploadInfoFragment: BaseFragment() {
     
     private fun observeExitFragment() {
         observe(viewModel.exitFragment) {
-            if(it) {
+            if (it) {
                 requireContext().showToast(getString(R.string.unable_to_load_data))
                 findNavController().popBackStack()
             }
         }
     }
-
+    
     private fun observeThumbnailLoad() {
         observe(viewModel.thumbnailData) {
             it?.let { thumb ->
@@ -284,115 +286,112 @@ class EditUploadInfoFragment: BaseFragment() {
             }
         }
     }
-
+    
     private fun observeVideoDuration() {
         observe(viewModel.durationData) {
             binding.duration.text = UtilsKt.getDurationLongToString(it)
         }
     }
-
+    
     private fun observeThumbnailChange() {
-        findNavController().
-            currentBackStackEntry?.
-            savedStateHandle?.
-            getLiveData<String?>(ThumbnailSelectionMethodFragment.THUMB_URI)?.
-            observe(viewLifecycleOwner, {
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String?>(ThumbnailSelectionMethodFragment.THUMB_URI)
+            ?.observe(viewLifecycleOwner, {
                 viewModel.saveThumbnail(it)
             })
     }
-
-    private fun setupAgeSpinner(){
+    
+    private fun setupAgeSpinner() {
         val mAgeAdapter = ToffeeSpinnerAdapter<String>(requireContext(), getString(R.string.select_age))
         binding.ageGroupSpinner.adapter = mAgeAdapter
         binding.ageGroupSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                if(position != 0 && viewModel.ageGroupPosition.value != position) {
+                if (position != 0 && viewModel.ageGroupPosition.value != position) {
                     viewModel.ageGroupPosition.value = position
-                }else {
+                } else {
                     binding.ageGroupSpinner.setSelection(viewModel.ageGroupPosition.value ?: 1)
                 }
             }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) { }
+            
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
-
+        
         observe(viewModel.ageGroup) {
             mAgeAdapter.setData(it)
             viewModel.ageGroupPosition.value = 1
         }
-
+        
         observe(viewModel.ageGroupPosition) {
             mAgeAdapter.selectedItemPosition = it
             binding.ageGroupSpinner.setSelection(it)
         }
     }
-
+    
     private fun setupCategorySpinner() {
         val mCategoryAdapter = ToffeeSpinnerAdapter<Category>(requireContext(), getString(R.string.select_category))
         binding.categorySpinner.adapter = mCategoryAdapter
         binding.categorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                if(position != 0 && viewModel.categoryPosition.value != position) {
+                if (position != 0 && viewModel.categoryPosition.value != position) {
                     viewModel.categoryPosition.value = position
-                    viewModel.categoryIndexChanged(position-1)
-                }else {
-                    val previousValue=viewModel.categoryPosition.value ?: 1
+                    viewModel.categoryIndexChanged(position - 1)
+                } else {
+                    val previousValue = viewModel.categoryPosition.value ?: 1
                     binding.categorySpinner.setSelection(previousValue)
-                    viewModel.categoryIndexChanged(previousValue-1)
+                    viewModel.categoryIndexChanged(previousValue - 1)
                 }
             }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) { }
+            
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
-
+        
         observe(viewModel.categories) {
             mCategoryAdapter.setData(it)
             viewModel.categoryPosition.value = 1
         }
-
+        
         observe(viewModel.categoryPosition) {
-                mCategoryAdapter.selectedItemPosition = it
-                binding.categorySpinner.setSelection(it)
+            mCategoryAdapter.selectedItemPosition = it
+            binding.categorySpinner.setSelection(it)
         }
     }
-
+    
     private fun setupSubcategorySpinner() {
         val mSubCategoryAdapter = ToffeeSpinnerAdapter<SubCategory>(requireContext(), getString(R.string.select_sub_category))
         binding.subCategorySpinner.adapter = mSubCategoryAdapter
         binding.subCategorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                if(position != 0 && viewModel.subCategoryPosition.value != position) {
+                if (position != 0 && viewModel.subCategoryPosition.value != position) {
                     viewModel.subCategoryPosition.value = position
-                }else {
+                } else {
                     binding.subCategorySpinner.setSelection(viewModel.subCategoryPosition.value ?: 1)
                 }
             }
-            override fun onNothingSelected(parent: AdapterView<*>?) { }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
-
+        
         observe(viewModel.subCategories) {
             mSubCategoryAdapter.setData(it)
             viewModel.subCategoryPosition.value = 1
         }
-
+        
         observe(viewModel.subCategoryPosition) {
             mSubCategoryAdapter.selectedItemPosition = it
             binding.subCategorySpinner.setSelection(it)
         }
     }
-
+    
     private fun setupTagView() {
         val chipRecycler = binding.uploadTags.findViewById<RecyclerView>(R.id.chips_recycler)
         chipRecycler.setPadding(0)
-
+        
         binding.uploadTags.addChipsListener(object : ChipsInput.ChipsListener {
-            override fun onChipAdded(chip: ChipInterface?, newSize: Int) { }
-            override fun onChipRemoved(chip: ChipInterface?, newSize: Int) { }
+            override fun onChipAdded(chip: ChipInterface?, newSize: Int) {}
+            override fun onChipRemoved(chip: ChipInterface?, newSize: Int) {}
             override fun onTextChanged(text: CharSequence?) {
                 if (text?.endsWith(" ") == true) {
                     text.let {
                         val chipText = it.toString().trim().capitalize()
-                        if(chipText.isNotEmpty()) {
+                        if (chipText.isNotEmpty()) {
                             binding.uploadTags.addChip(chipText, null)
                         }
                     }
@@ -400,12 +399,12 @@ class EditUploadInfoFragment: BaseFragment() {
             }
         })
     }
-
+    
     private fun observeProgressDialog() {
         observe(viewModel.progressDialog) {
-            when(it) {
+            when (it) {
                 true -> {
-                    if(progressDialog != null) {
+                    if (progressDialog != null) {
                         progressDialog?.dismiss()
                         progressDialog = null
                     }
@@ -419,28 +418,30 @@ class EditUploadInfoFragment: BaseFragment() {
             }
         }
     }
-
+    
     private fun observeStatus() {
         observe(viewModel.tags) { tags ->
             tags?.split(" | ")?.filter { it.isNotBlank() }?.forEach {
                 binding.uploadTags.addChip(it, null)
             }
         }
-
+        
         observe(viewModel.submitButtonStatus) {
             binding.submitButton.isEnabled = it
         }
-
+        
         observe(viewModel.resultLiveData) {
-            when(it){
+            when (it) {
                 is Resource.Success -> {
                     lifecycleScope.launch {
                         progressDialog?.dismiss()
                         progressDialog = null
-                        findNavController().navigate(R.id.upload_minimize, bundleOf(
-                            MinimizeUploadFragment.UPLOAD_ID to it.data.first,
-                            MinimizeUploadFragment.CONTENT_ID to it.data.second
-                        ))
+                        findNavController().navigate(
+                            R.id.upload_minimize, bundleOf(
+                                MinimizeUploadFragment.UPLOAD_ID to it.data.first,
+                                MinimizeUploadFragment.CONTENT_ID to it.data.second
+                            )
+                        )
                     }
                 }
                 else -> {
@@ -449,35 +450,33 @@ class EditUploadInfoFragment: BaseFragment() {
             }
         }
     }
-
+    
     private fun submitVideo() {
         val title = binding.uploadTitle.text.toString().trim()
         val description = binding.uploadDescription.text.toString().trim()
         val orientation = viewModel.orientationData.value ?: 1
         
-        if(title.isBlank()){
+        if (title.isBlank()) {
             binding.uploadTitle.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
             binding.errorTitleTv.show()
-        }
-        else{
+        } else {
             binding.uploadTitle.setBackgroundResource(R.drawable.single_line_input_text_bg)
             binding.errorTitleTv.hide()
         }
-        if(description.isBlank()){
+        if (description.isBlank()) {
             binding.uploadDescription.setBackgroundResource(R.drawable.error_multiline_input_text_bg)
             binding.errorDescriptionTv.show()
-        }
-        else{
+        } else {
             binding.uploadDescription.setBackgroundResource(R.drawable.multiline_input_text_bg)
             binding.errorDescriptionTv.hide()
         }
-
-        val isCopyrightInvalid = (binding.copyrightCheckbox.isChecked and (viewModel.copyrightDocUri.isNullOrBlank() or viewModel.copyrightFileName.value.isNullOrBlank())) or (!binding.copyrightCheckbox
-            .isChecked and !viewModel.copyrightDocUri.isNullOrBlank() and !viewModel.copyrightFileName.value.isNullOrBlank())
-        val msg = "Please select a copyright file or uncheck the checkbox"
+        
+        val isCopyrightInvalid =
+            binding.copyrightCheckbox.isChecked and (viewModel.copyrightDocUri.isNullOrBlank() or viewModel.copyrightFileName.value.isNullOrBlank())
+        val msg = getString(R.string.empty_copyright_file_msg)
         showCopyrightErrorMsg(isCopyrightInvalid, msg)
         
-        if (viewModel.thumbnailData.value.isNullOrBlank()){
+        if (viewModel.thumbnailData.value.isNullOrBlank()) {
             context?.showToast(getString(R.string.thumbnail_missing_msg))
             return
         }
@@ -487,15 +486,15 @@ class EditUploadInfoFragment: BaseFragment() {
                 val categoryId = if (categoryObj is Category) {
                     categoryObj.id
                 } else -1
-
+                
                 val subCategoryObj = binding.subCategorySpinner.selectedItem
                 val subcategoryId = if (subCategoryObj is SubCategory) {
                     subCategoryObj.id
                 } else -1
-
+                
                 val tags = binding.uploadTags.selectedChipList.joinToString(" | ") { it.label.replace("#", "") }
-                val isUploadCopyrightFile = binding.copyrightCheckbox.isChecked && !viewModel.copyrightDocUri.isNullOrBlank() and !viewModel.copyrightFileName.value.isNullOrBlank()
-
+                val isUploadCopyrightFile = binding.copyrightCheckbox.isChecked and !viewModel.copyrightDocUri.isNullOrBlank() and !viewModel.copyrightFileName.value.isNullOrBlank()
+                
                 viewModel.saveUploadInfo(
                     tags,
                     categoryId,
