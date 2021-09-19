@@ -3,7 +3,6 @@ package com.banglalink.toffee.ui.player
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.media.MediaDrm
 import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
@@ -36,7 +35,6 @@ import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.usecase.SendDrmFallbackEvent
 import com.google.android.exoplayer2.*
-import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer.Builder
 import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.analytics.AnalyticsListener.EventTime
@@ -63,7 +61,6 @@ import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import java.net.*
 import java.util.*
 import javax.inject.Inject
@@ -661,16 +658,16 @@ abstract class PlayerPageActivity :
         val mediaItem = if(isDrmActive) {
             getDrmMediaItem(channelInfo) //?: getHlsMediaItem(channelInfo, isWifiConnected)
         } else {
-            if(mPref.isDrmActive && channelInfo.isDrmActive && channelInfo.isLive) {
-                val drmMsg = when {
-                    cPref.isDrmModuleAvailable == CommonPreference.DRM_TIMEOUT -> "Drm timeout"
-                    cPref.isDrmModuleAvailable == CommonPreference.DRM_UNAVAILABLE-> "Drm module unavailable"
-                    mPref.drmWidevineLicenseUrl == null -> "License url null"
-                    channelInfo.drmDashUrl == null -> "Dash url null"
-                    else -> "Unknown"
-                }
-                drmFallbackService.execute(channelInfo.id.toLong(), drmMsg)
-            }
+//            if(mPref.isDrmActive && channelInfo.isDrmActive && channelInfo.isLive) {
+//                val drmMsg = when {
+//                    cPref.isDrmModuleAvailable == CommonPreference.DRM_TIMEOUT -> "Drm timeout"
+//                    cPref.isDrmModuleAvailable == CommonPreference.DRM_UNAVAILABLE-> "Drm module unavailable"
+//                    mPref.drmWidevineLicenseUrl == null -> "License url null"
+//                    channelInfo.drmDashUrl == null -> "Dash url null"
+//                    else -> "Unknown"
+//                }
+//                drmFallbackService.execute(channelInfo.id.toLong(), drmMsg)
+//            }
             getHlsMediaItem(channelInfo, isWifiConnected)
         }?.let {
             if (!isReload && player is SimpleExoPlayer) playCounter = ++playCounter % mPref.vastFrequency
