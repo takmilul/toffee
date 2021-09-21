@@ -2,10 +2,12 @@ package com.banglalink.toffee.ui.common
 
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.*
+import androidx.activity.OnBackPressedCallback
 import com.banglalink.toffee.databinding.FragmentHtmlPageViewBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -29,6 +31,7 @@ class HtmlPageViewFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        listenBackStack()
         htmlUrl= arguments?.getString("url")!!
         header= arguments?.getString("header")
 
@@ -71,7 +74,23 @@ class HtmlPageViewFragment : BaseFragment() {
             binding.webview.loadUrl(htmlUrl,headerMap)
         }
     }
-
+    
+    private fun listenBackStack() {
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                Log.e("HTM_", "url: ${binding.webview.url}")
+                if (binding.webview.canGoBack() /*&& binding.webview.url?.split("/")?.contains("home") != true*/) {
+                    binding.webview.goBack()
+                } else {
+                    OnBackPressedCallback@ this.isEnabled = false
+                    requireActivity().onBackPressed()
+                }
+            }
+        }
+        
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+    }
+    
     override fun onDestroyView() {
         binding.webview.run {
             clearCache(false)

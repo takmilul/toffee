@@ -335,7 +335,7 @@
                 android:layout_marginTop="8dp"
                 android:background="@null"
                 android:button="@drawable/custom_checkbox"
-                android:checked="true"
+                android:checked="false"
                 android:gravity="center_vertical"
                 android:text="@string/copyright_approval"
                 android:textColor="@color/main_text_color"

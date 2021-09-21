@@ -397,6 +397,11 @@
     <string name="txt_video_length">Video Length</string>
     <string name="txt_video_length_msg">Accepted video length is between 10 second and 2 hours</string>
     <string name="featured_partner_banner">featured partner banner</string>
+    <string name="empty_copyright_file_msg">Please choose a copyright file</string>
+    <string name="file_size_title">File Size</string>
+    <string name="file_format_title">File Format</string>
+    <string name="file_size_msg">File size is too big. Please select a file within 5MB</string>
+    <string name="file_format_msg">Selected file format is unsupported. please select any one from txt/pdf/doc/docx/rtf/png/jpg format</string>
     <string name="firework_channel_id">4Y9XaK0</string>
     <string name="firework_playlist_id">5aMPy5</string>
     <string name="firework_oauth_id">9e320da50f69212461fd9528a6b3e6f6758537187097720fe71cf0b3f867415d</string>
