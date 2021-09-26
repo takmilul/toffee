@@ -202,18 +202,18 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        setupRotationObserver()
-        updateRotationStatus(UtilsKt.isSystemRotationOn(context), false)
+//        setupRotationObserver()
+        updateRotationStatus(status = true, false)
     }
 
-    private val rotationObserver = object: ContentObserver(Handler(Looper.getMainLooper())){
-        override fun onChange(selfChange: Boolean) {
-            super.onChange(selfChange)
-            updateRotationStatus(UtilsKt.isSystemRotationOn(context))
-        }
-    }
+//    private val rotationObserver = object: ContentObserver(Handler(Looper.getMainLooper())){
+//        override fun onChange(selfChange: Boolean) {
+//            super.onChange(selfChange)
+//            updateRotationStatus(UtilsKt.isSystemRotationOn(context))
+//        }
+//    }
 
-    fun updateRotationStatus(status: Boolean, invokeListener: Boolean = true) {
+    private fun updateRotationStatus(status: Boolean, invokeListener: Boolean = true) {
         rotateButton.visibility = if(status && !isVideoPortrait) View.VISIBLE else View.GONE
         isAutoRotationEnabled = status
         rotateButton.setImageResource(if (!isAutoRotationEnabled) R.mipmap.rotation_off else R.drawable.ic_screen_rotate)
@@ -283,13 +283,13 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         }
     }
 
-    private fun setupRotationObserver(){
-        context.contentResolver.registerContentObserver(
-            Settings.System.getUriFor(Settings.System.ACCELEROMETER_ROTATION),
-            true,
-            rotationObserver
-        )
-    }
+//    private fun setupRotationObserver(){
+//        context.contentResolver.registerContentObserver(
+//            Settings.System.getUriFor(Settings.System.ACCELEROMETER_ROTATION),
+//            true,
+//            rotationObserver
+//        )
+//    }
 
     override fun showController() {
         if(!isControllerFullyVisible && !isMinimize) {
@@ -372,14 +372,14 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     override fun onDetachedFromWindow() {
         debugJob?.cancel()
         clearDebugWindow()
-        removeRotationObserver()
+//        removeRotationObserver()
         stopAutoplayTimer()
         super.onDetachedFromWindow()
     }
 
-    private fun removeRotationObserver() {
-        context.contentResolver.unregisterContentObserver(rotationObserver)
-    }
+//    private fun removeRotationObserver() {
+//        context.contentResolver.unregisterContentObserver(rotationObserver)
+//    }
 
     private fun setupOverlay() {
         playerOverlay.performListener(object : PlayerOverlayView.PerformListener {
@@ -742,7 +742,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
             resizeView(UtilsKt.getRealScreenSize(context))
 
             rotateButton.visibility =
-                if (isVideoPortrait || !UtilsKt.isSystemRotationOn(context)) View.GONE else View.VISIBLE
+                if (isVideoPortrait/* || !UtilsKt.isSystemRotationOn(context)*/) View.GONE else View.VISIBLE
             shareButton.visibility = if (channelInfo.isApproved == 1) View.VISIBLE else View.GONE
         }
         onPlayerControllerChangedListeners.forEach {
@@ -759,7 +759,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
 
         player?.currentMediaItem?.getChannelMetadata(player)?.let {
             isVideoPortrait = it.isHorizontal != 1
-            rotateButton.visibility = if(isVideoPortrait || !UtilsKt.isSystemRotationOn(context)) View.GONE else View.VISIBLE
+            rotateButton.visibility = if(isVideoPortrait /*|| !UtilsKt.isSystemRotationOn(context)*/) View.GONE else View.VISIBLE
             shareButton.visibility = if(it.isApproved == 1) View.VISIBLE else View.GONE
         }
     }
