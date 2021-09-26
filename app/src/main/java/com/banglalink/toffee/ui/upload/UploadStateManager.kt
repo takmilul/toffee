@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.upload
 
 import android.app.Application
-import android.util.Log
 import com.banglalink.toffee.apiservice.UploadConfirmation
 import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.repository.UploadInfoRepository
@@ -129,7 +128,7 @@ class UploadStateManager(
             completedPercent = 100
             completedSize = fileSize
         })
-        val hasCopyrightDoc = UploadService.taskList.isEmpty()
+        val hasCopyrightDoc = UploadService.taskList.isNotEmpty()
         if(!hasCopyrightDoc) {
             sendStatusToServer(item, true, copyrightStatus = false)
         }
