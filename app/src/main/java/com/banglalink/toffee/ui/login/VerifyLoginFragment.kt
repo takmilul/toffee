@@ -161,11 +161,13 @@ class VerifyLoginFragment : ChildDialogFragment() {
     private fun initSmsBroadcastReceiver() {
         mSmsBroadcastReceiver = SMSBroadcastReceiver()
         observe(mSmsBroadcastReceiver!!.otpLiveData) {
-            binding.otpEditText.setText(it)
-            binding.otpEditText.setSelection(it.length)
-            otp = binding.otpEditText.text.toString().trim()
-            homeViewModel.sendOtpLogData(OTPLogData(otp, 0, 1, 0), phoneNumber)
-            viewModel.verifyCode(otp, regSessionToken, "")
+            if (it.isNotBlank()) {
+                binding.otpEditText.setText(it)
+                binding.otpEditText.setSelection(it.length)
+                otp = binding.otpEditText.text.toString().trim()
+                homeViewModel.sendOtpLogData(OTPLogData(otp, 0, 1, 0), phoneNumber)
+                viewModel.verifyCode(otp, regSessionToken, "")
+            }
         }
         
         val intentFilter = IntentFilter()

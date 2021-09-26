@@ -1285,7 +1285,7 @@ class HomeActivity :
                                     moveTo(0f, 0f)
                                     lineTo(binding.playerView.measuredWidth.toFloat() - width, 0f /*binding.playerView.measuredHeight.toFloat() - height*/)
                                 }
-                                ObjectAnimator.ofFloat(it.parent as View, View.X, View.Y, path).apply {
+                                ObjectAnimator.ofFloat(it, View.X, View.Y, path).apply {
                                     duration = playerOverlayData.params.duration * 1_000
                                     repeatMode = ValueAnimator.REVERSE
                                     repeatCount = 2
