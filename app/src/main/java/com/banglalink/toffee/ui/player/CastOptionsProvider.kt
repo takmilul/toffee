@@ -16,7 +16,7 @@ internal class CastOptionsProvider : OptionsProvider {
                     if (it.isNotBlank()) {
                         setReceiverApplicationId(SessionPreference.getInstance().castReceiverId)
                     } else {
-                        setReceiverApplicationId(CastMediaControlIntent.DEFAULT_MEDIA_RECEIVER_APPLICATION_ID)
+                        setReceiverApplicationId(APP_ID_DEFAULT_RECEIVER_WITH_DRM)
                     }
                 }
 //            .setSupportedNamespaces(supportedNamespaces)
@@ -26,8 +26,8 @@ internal class CastOptionsProvider : OptionsProvider {
     override fun getAdditionalSessionProviders(context: Context?): List<SessionProvider>? {
         return null
     }
-
     companion object {
+        const val APP_ID_DEFAULT_RECEIVER_WITH_DRM = "A12D4273"
         const val CUSTOM_NAMESPACE = "urn:x-cast:toffee"
     }
 }

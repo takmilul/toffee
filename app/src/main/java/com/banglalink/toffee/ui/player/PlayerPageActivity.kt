@@ -302,8 +302,8 @@ abstract class PlayerPageActivity :
         channelInfo.isDrmActive &&
 //        !channelInfo.drmCid.isNullOrBlank() &&
         !channelInfo.drmDashUrl.isNullOrBlank() &&
-        !mPref.drmWidevineLicenseUrl.isNullOrBlank() &&
-        player is SimpleExoPlayer
+        !mPref.drmWidevineLicenseUrl.isNullOrBlank() //&&
+//        player is SimpleExoPlayer
 
     private fun getDrmSessionManager(mediaItem: MediaItem): DrmSessionManager {
         val channelInfo = mediaItem.getChannelMetadata(player) ?: return DrmSessionManager.DRM_UNSUPPORTED
@@ -600,16 +600,19 @@ abstract class PlayerPageActivity :
     }
 
     private suspend fun getDrmMediaItem(channelInfo: ChannelInfo): MediaItem? {
+        if(player is CastPlayer) {
+            return MediaItem.Builder().apply {
+                setMimeType(MimeTypes.APPLICATION_MPD)
+                setDrmUuid(C.WIDEVINE_UUID)
+                setUri(channelInfo.drmDashUrl)
+                setTag(channelInfo)
+            }.build()
+        }
         val license = getLicense(channelInfo)
         return MediaItem.Builder().apply {
-//            httpDataSourceFactory?.setDefaultRequestProperties(emptyMap())
 //            showToast("Playing DRM -> ${if(license == null) "Requesting new license" else "Using cached license"}\n${channelInfo.drmDashUrl}")
             setMimeType(MimeTypes.APPLICATION_MPD)
             setDrmUuid(C.WIDEVINE_UUID)
-//            setDrmLicenseRequestHeaders(mapOf("pallycon-customdata-v2" to token))
-//            setDrmLicenseUri(mPref.drmWidevineLicenseUrl!!)
-//            setDrmMultiSession(false)
-//            setDrmForceDefaultLicenseUri(false)
             setDrmKeySetId(license)
             setUri(channelInfo.drmDashUrl)
             setTag(channelInfo)
