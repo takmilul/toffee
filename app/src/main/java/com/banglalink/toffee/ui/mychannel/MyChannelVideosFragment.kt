@@ -246,6 +246,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
                 is Success -> {
                     requireContext().showToast(it.data.message)
                     reloadVideosList()
+                    videosReloadViewModel.reloadPlaylist.value = true
                 }
                 is Failure -> requireContext().showToast(it.error.msg)
             }

@@ -582,11 +582,11 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         isVerifiedUser = customerInfoLogin.verified_status
         customerId = customerInfoLogin.customerId
         password = customerInfoLogin.password ?: ""
-        if (customerName.isBlank()) {
-            customerName = customerInfoLogin.customerName?:""
+        if (!customerInfoLogin.customerName.isNullOrBlank()) {
+            customerName = customerInfoLogin.customerName!!
         }
         sessionToken = (customerInfoLogin.sessionToken?:"")
-        if (userImageUrl.isNullOrBlank()) {
+        if (!customerInfoLogin.profileImage.isNullOrBlank()) {
             userImageUrl = customerInfoLogin.profileImage
         }
         setHeaderSessionToken(customerInfoLogin.headerSessionToken)

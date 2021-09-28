@@ -20,6 +20,7 @@ class GetProfile @Inject constructor(
                 )
             )
         }
+        preference.customerName = response.response.customer.profile.name ?: ""
         preference.userImageUrl = response.response.customer.profile.photoUrl ?: ""
         preference.balance = response.response.balance
         return response.response.customer

@@ -119,6 +119,8 @@ class DrawerHelper(
         val header = binding.sideNavigation.getHeaderView(0)
         val profileName = header.findViewById(R.id.profile_name) as TextView
         val profilePicture = header.findViewById(R.id.profile_picture) as ImageView
+        if (mPref.customerName.isNotBlank()) profileName.text = mPref.customerName
+        if (!mPref.userImageUrl.isNullOrBlank())profilePicture.loadProfileImage(mPref.userImageUrl!!)
 
         if (mPref.isVerifiedUser) {
             activity.observe(mPref.customerNameLiveData) {
