@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentLandingPageBinding
 import com.banglalink.toffee.enums.PageType.Landing
@@ -18,7 +18,7 @@ class LandingPageFragment : HomeBaseFragment() {
     private var appbarOffset = 0
     private var _binding: FragmentLandingPageBinding ? = null
     private val binding get() = _binding!!
-    private val landingViewModel by activityViewModels<LandingPageViewModel>()
+    private val landingViewModel by viewModels<LandingPageViewModel>()
 
     companion object {
         fun newInstance(): LandingPageFragment {

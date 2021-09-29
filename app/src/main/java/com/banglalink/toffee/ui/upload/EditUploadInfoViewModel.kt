@@ -213,7 +213,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
                 categoryId,
                 subcategoryId,
                 thumbnailData.value,
-                round(duration / 1000F).toString(),
+                round(duration / 1000F).toInt().toString(),
                 isHorizontal,
                 if (isUploadCopyrightFile) "${copyrightDir}/${copyrightFileName}" else ""
             )
@@ -235,8 +235,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
         }
         progressDialog.value = false
     }
-
-
+    
     fun saveThumbnail(uri: String?) {
         if (uri == null) return
         viewModelScope.launch {
