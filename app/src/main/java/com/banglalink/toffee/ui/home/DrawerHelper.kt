@@ -191,11 +191,11 @@ class DrawerHelper(
                 activity.handleExitApp()
                 return true
             }
-//            R.id.menu_verfication -> {
-//                binding.drawerLayout.closeDrawers()
-//                activity.checkVerification()
-//                return true
-//            }
+            R.id.menu_login -> {
+                binding.drawerLayout.closeDrawers()
+                activity.checkVerification()
+                return true
+            }
             R.id.menu_change_theme -> {
                 when (val switch = item.actionView) {
                     is SwitchButton -> {

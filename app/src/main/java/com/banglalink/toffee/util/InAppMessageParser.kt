@@ -25,6 +25,7 @@ class InAppMessageParser @Inject constructor(
 //    https://toffeelive.com?routing=internal&page=invite
 //    https://toffeelive.com?routing=internal&page=redeem
 //    https://toffeelive.com?routing=internal&page=settings
+//    https://toffeelive.com?routing=internal&page=login
 //    https://toffeelive.com?routing=internal&page=search&keyword=natok
 //    https://toffeelive.com?routing=internal&page=ugc_channel&ownerid=6417560
 //    https://toffeelive.com?routing=internal&page=categories&catid=1
@@ -115,6 +116,9 @@ class InAppMessageParser @Inject constructor(
                     }
                     "ugc_all_channel" -> {
                         return RouteV2(R.id.trendingChannelsFragment, "All UGC Channels")
+                    }
+                    "login" -> {
+                        return RouteV2(R.id.loginDialog, "Login")
                     }
                     else -> null
                 }

@@ -1135,7 +1135,10 @@ class HomeActivity :
             subMenu?.isVisible = false
         }
         binding.sideNavigation.menu.findItem(R.id.menu_tv).isVisible = mPref.isAllTvChannelMenuEnabled
-        if (!mPref.isVerifiedUser) {
+        if (mPref.isVerifiedUser) {
+            val login = binding.sideNavigation.menu.findItem(R.id.menu_login)
+            login?.isVisible = false
+        } else {
             val logout = binding.sideNavigation.menu.findItem(R.id.menu_logout)
             logout?.isVisible = false
         }

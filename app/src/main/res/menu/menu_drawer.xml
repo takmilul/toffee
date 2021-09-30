@@ -54,6 +54,11 @@
         android:title="Settings" />
     
     <item
+        android:id="@+id/menu_login"
+        android:icon="@drawable/ic_user"
+        android:title="Login" />
+    
+    <item
         android:id="@+id/menu_logout"
         android:icon="@drawable/ic_menu_exit"
         android:title="Logout" />
