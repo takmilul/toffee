@@ -402,6 +402,9 @@
     <string name="file_format_title">File Format</string>
     <string name="file_size_msg">File size is too big. Please select a file within 5MB</string>
     <string name="file_format_msg">Selected file format is unsupported. please select any one from txt/pdf/doc/docx/rtf/png/jpg format</string>
+    <string name="firework_channel_id">4Y9XaK0</string>
+    <string name="firework_playlist_id">5aMPy5</string>
+    <string name="firework_oauth_id">9e320da50f69212461fd9528a6b3e6f6758537187097720fe71cf0b3f867415d</string>
     <string name="medallia_api_key"></string>
     <!--    url    -->
     <!--    <string name="creators_policy_url">https://toffeelive.com/policies.php</string>-->

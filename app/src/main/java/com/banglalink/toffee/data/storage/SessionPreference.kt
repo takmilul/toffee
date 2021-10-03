@@ -199,6 +199,15 @@ class SessionPreference(private val pref: SharedPreferences, private val context
             pref.edit().putString(PREF_FEATURE_PARTNER_ACTIVE, isActive).apply()
         }
 
+    fun getFireworkUserId(): String {
+        var userId = pref.getString(PREF_FIREWORK_USER_ID, null)
+        if (userId.isNullOrBlank()) {
+            userId = "${UUID.randomUUID()}_${System.nanoTime()}"
+            pref.edit().putString(PREF_FIREWORK_USER_ID, userId).apply()
+        }
+        return userId
+    }
+
     var channelId: Int
         get() = pref.getInt(PREF_CHANNEL_ID, 0)
         set(channelId) = pref.edit().putInt(PREF_CHANNEL_ID, channelId).apply()
@@ -690,6 +699,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_SUBSCRIPTION_ACTIVE= "subscription_active"
         private const val PREF_FIREWORK_ACTIVE= "firework_active"
         private const val PREF_FEATURE_PARTNER_ACTIVE= "is_feature_partner_active"
+        private const val PREF_FIREWORK_USER_ID= "firework_user_id"
         private const val PREF_SYSTEM_TIME= "systemTime"
         private const val PREF_WATCH_ONLY_WIFI= "WatchOnlyWifi"
         private const val PREF_KEY_NOTIFICATION= "pref_key_notification"

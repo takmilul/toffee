@@ -93,6 +93,7 @@ import com.google.android.play.core.tasks.Task
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
+import com.loopnow.fireworklibrary.FwSDK
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -870,6 +871,16 @@ class HomeActivity :
         if(intent.hasExtra(INTENT_PACKAGE_SUBSCRIBED)){
             handlePackageSubscribe()
         }
+        try {
+            val url = intent.data?.fragment?.removePrefix("fwplayer=")
+            url?.let { 
+                FwSDK.play(it)
+                return
+            }
+        }
+        catch (e: Exception) {
+            Log.e("FwSDK", "FireworkDeeplinkPlayException")
+        }
         handleSharedUrl(intent)
     }
 
@@ -1334,6 +1345,7 @@ class HomeActivity :
             ToffeeAnalytics.logBreadCrumb("connectivity manager unregister error -> ${e.message}")
         }
         navController.removeOnDestinationChangedListener(destinationChangeListener)
+        FwSDK.destroy()
         super.onDestroy()
     }
     
