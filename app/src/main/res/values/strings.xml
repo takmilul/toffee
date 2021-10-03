@@ -405,7 +405,7 @@
     <string name="firework_channel_id">4Y9XaK0</string>
     <string name="firework_playlist_id">5aMPy5</string>
     <string name="firework_oauth_id">9e320da50f69212461fd9528a6b3e6f6758537187097720fe71cf0b3f867415d</string>
-    <string name="medallia_api_key"></string>
+    <string name="medallia_api_key">1234</string>
     <!--    url    -->
     <!--    <string name="creators_policy_url">https://toffeelive.com/policies.php</string>-->
     <!--    <string name="tus_upload_server_url">https://ugc-upload.toffeelive.com/upload</string>-->

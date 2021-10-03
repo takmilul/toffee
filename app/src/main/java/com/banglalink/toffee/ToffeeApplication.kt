@@ -99,13 +99,13 @@ class ToffeeApplication : Application() {
     }
     
     private fun initMedalliaSdk() {
-        MedalliaDigital.init(this, getString(R.string.medallia_api_key), object : MDResultCallback{
+        MedalliaDigital.init(this, getString(R.string.medallia_api_key), object : MDResultCallback {
             override fun onSuccess() {
                 Log.e("MED_", "onSuccess: ")
             }
 
             override fun onError(error: MDExternalError?) {
-                ToffeeAnalytics.logException(java.lang.Exception(error?.message))
+                ToffeeAnalytics.logException(Exception(error?.message))
                 Log.e("MED_", "onError: ${error?.message}")
             }
         })
