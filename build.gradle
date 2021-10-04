@@ -26,7 +26,7 @@ allprojects {
         jcenter()
         maven { url "https://jitpack.io" }
         maven { url "https://repo.eclipse.org/content/repositories/paho-releases/" }
-        maven { url "https://repository.medallia.com/digital-maven/" }
+//        maven { url "https://repository.medallia.com/digital-maven/" }
     }
 }
 
