@@ -1,7 +1,5 @@
 package com.banglalink.toffee.ui.subscription
 
-import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.Spanned
@@ -9,6 +7,8 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.StrikethroughSpan
 import android.view.View
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import coil.load
 import coil.transform.CircleCropTransformation
@@ -133,7 +133,7 @@ class PackageChannelListActivity : AppCompatActivity() {
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
             )
             spannable.setSpan(
-                ForegroundColorSpan(Color.parseColor(getString(R.string.strike_through_color_code))),
+                ForegroundColorSpan(ContextCompat.getColor(this, R.color.strike_through_color)),
                 0,
                 mPackage.discount.toString().length,
                 Spanned.SPAN_INCLUSIVE_INCLUSIVE

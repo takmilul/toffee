@@ -5,6 +5,7 @@ import android.text.Spanned
 import android.util.Base64
 import androidx.core.text.HtmlCompat
 import com.banglalink.toffee.enums.Reaction
+import com.banglalink.toffee.ui.player.DrmHlsLinks
 import com.banglalink.toffee.ui.player.HlsLinks
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.Utils.discardZeroFromDuration
@@ -36,6 +37,22 @@ data class ChannelInfo(
     var individual_purchase: Boolean = false,
     var expireTime: String? = null,
     var hlsLinks: List<HlsLinks>? = null,
+    
+    @SerializedName("drm_hls_url_extended")
+    var drmHlsUrlExt: List<DrmHlsLinks>? = null,
+    @SerializedName("drm_dash_url_extended")
+    var drmDashUrlExt: List<DrmHlsLinks>? = null,
+    @SerializedName("drm_hls_url_extended_sd")
+    var drmHlsUrlExtSd: List<DrmHlsLinks>? = null,
+    @SerializedName("drm_dash_url_extended_sd")
+    var drmDashUrlExtSd: List<DrmHlsLinks>? = null,
+    @SerializedName("drm_hls_url_sd")
+    var drmHlsUrlSd: String? = null,
+    @SerializedName("drm_dash_url_sd")
+    var drmDashUrlSd: String? = null,
+    @SerializedName("content_expire")
+    var contentExpiryTime: String? = null,
+    
     var channel_logo: String? = null,
     var category: String? = null,
     var subCategory: String? = null,
