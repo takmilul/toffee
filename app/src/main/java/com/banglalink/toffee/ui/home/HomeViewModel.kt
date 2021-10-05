@@ -77,7 +77,6 @@ class HomeViewModel @Inject constructor(
 //    val viewAllCategories = MutableLiveData<Boolean>()
     val logoutLiveData = SingleLiveEvent<Resource<LogoutBean>>()
     val myChannelNavLiveData = SingleLiveEvent<MyChannelNavParams>()
-    val notificationUrlLiveData = SingleLiveEvent<String>()
     val mqttCredentialLiveData = SingleLiveEvent<Resource<MqttBean?>>()
     private val _channelDetail = MutableLiveData<MyChannelDetail>()
     val myChannelDetailResponse = SingleLiveEvent<Resource<MyChannelDetailBean>>()

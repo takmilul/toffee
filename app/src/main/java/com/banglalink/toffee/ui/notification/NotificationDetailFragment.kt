@@ -5,15 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.data.database.entities.NotificationInfo
 import com.banglalink.toffee.databinding.FragmentNotificationDetailBinding
 import com.banglalink.toffee.extension.safeClick
+import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
 
-class NotificationDetailFragment : Fragment(), OnClickListener {
+class NotificationDetailFragment : BaseFragment(), OnClickListener {
     private var notificationInfo: NotificationInfo? = null
     private var _binding: FragmentNotificationDetailBinding ? = null
     private val binding get() = _binding!!
@@ -44,10 +44,10 @@ class NotificationDetailFragment : Fragment(), OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.posterView.safeClick({
-            homeViewModel.notificationUrlLiveData.value = notificationInfo?.resourceUrl
+            mPref.shareableUrlLiveData.value = notificationInfo?.resourceUrl
         })
         binding.detailTextView.safeClick({
-            homeViewModel.notificationUrlLiveData.value = notificationInfo?.resourceUrl
+            mPref.shareableUrlLiveData.value = notificationInfo?.resourceUrl
         })
         binding.backButton.setOnClickListener(this)
     }

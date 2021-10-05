@@ -31,6 +31,9 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val customerNameLiveData = MutableLiveData<String>()
     val playerOverlayLiveData = SingleLiveEvent<PlayerOverlayData>()
     val forceLogoutUserLiveData = SingleLiveEvent<Boolean>()
+    val loginDialogLiveData = SingleLiveEvent<Boolean>()
+    val messageDialogLiveData = SingleLiveEvent<String>()
+    val shareableUrlLiveData = SingleLiveEvent<String>()
     
     var phoneNumber: String
         get() = pref.getString(PREF_PHONE_NUMBER, "") ?: ""

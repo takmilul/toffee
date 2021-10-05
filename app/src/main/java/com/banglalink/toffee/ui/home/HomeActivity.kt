@@ -74,6 +74,7 @@ import com.banglalink.toffee.ui.upload.UploadStateManager
 import com.banglalink.toffee.ui.upload.UploadStatus
 import com.banglalink.toffee.ui.userplaylist.UserPlaylistVideosFragment
 import com.banglalink.toffee.ui.widget.DraggerLayout
+import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.ui.widget.showSubscriptionDialog
 import com.banglalink.toffee.util.*
@@ -280,7 +281,7 @@ class HomeActivity :
 
             setPlayList(item)
         }
-        observe(viewModel.notificationUrlLiveData){
+        observe(mPref.shareableUrlLiveData){
             handleDeepLink(it)
         }
         observe(viewModel.shareContentLiveData) { channelInfo ->
@@ -307,7 +308,21 @@ class HomeActivity :
         if (mPref.isVerifiedUser) {
             initMqtt()
         }
-        
+        observe(mPref.loginDialogLiveData) {
+            if (it) {
+                navController.navigate(R.id.loginDialog)
+            }
+        }
+        observe(mPref.messageDialogLiveData) { message ->
+            VelBoxAlertDialogBuilder(
+                this,
+                title = "Notice",
+                text = message,
+                positiveButtonListener = { 
+                    it?.dismiss()
+                }
+            ).create().show()
+        }
         initSideNav()
         lifecycle.addObserver(heartBeatManager)
         observeInAppMessage()
