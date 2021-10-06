@@ -38,16 +38,10 @@ data class ChannelInfo(
     var expireTime: String? = null,
     var hlsLinks: List<HlsLinks>? = null,
     
-    @SerializedName("drm_hls_url_extended")
-    var drmHlsUrlExt: List<DrmHlsLinks>? = null,
     @SerializedName("drm_dash_url_extended")
     var drmDashUrlExt: List<DrmHlsLinks>? = null,
-    @SerializedName("drm_hls_url_extended_sd")
-    var drmHlsUrlExtSd: List<DrmHlsLinks>? = null,
     @SerializedName("drm_dash_url_extended_sd")
     var drmDashUrlExtSd: List<DrmHlsLinks>? = null,
-    @SerializedName("drm_hls_url_sd")
-    var drmHlsUrlSd: String? = null,
     @SerializedName("drm_dash_url_sd")
     var drmDashUrlSd: String? = null,
     @SerializedName("content_expire")
@@ -107,8 +101,6 @@ data class ChannelInfo(
     var is_drm_active: Int = 0,
     @SerializedName("drm_dash_url")
     val drmDashUrl: String? = null,
-    @SerializedName("drm_hls_url")
-    val drmHlsUrl: String? = null,
     @SerializedName("drm_cast_receiver")
     val drmCastReceiver: String? = null,
     @SerializedName("plain_cast_receiver")
@@ -169,6 +161,12 @@ data class ChannelInfo(
     }
 
     fun getHlsLink(): String? = hlsLinks?.get(0)?.hls_url_mobile
+    
+    fun getPlayUrl(isDataConnection: Boolean) = if (isDataConnection) {
+        drmDashUrlExtSd?.get(0)?.urlList()?.random() ?: drmDashUrlExt?.get(0)?.urlList()?.random() ?: drmDashUrl
+    } else {
+        drmDashUrlExt?.get(0)?.urlList()?.random() ?: drmDashUrlExtSd?.get(0)?.urlList()?.random() ?: drmDashUrl
+    }
 
     fun formattedShareCount(): String = Utils.getFormattedViewsText(shareCount.toString())
 

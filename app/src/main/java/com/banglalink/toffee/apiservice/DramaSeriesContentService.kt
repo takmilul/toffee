@@ -8,6 +8,7 @@ import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.util.Utils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
@@ -36,7 +37,13 @@ class DramaSeriesContentService @AssistedInject constructor(
         }
 
         return if (response.response.channels != null) {
-            response.response.channels.map {
+            response.response.channels.filter {
+                try {
+                    Utils.getDate(it.contentExpiryTime).after(preference.getSystemTime())
+                } catch (e: Exception) {
+                    true
+                }
+            }.map {
                 localSync.syncData(it)
                 it
             }

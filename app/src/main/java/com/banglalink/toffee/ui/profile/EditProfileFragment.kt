@@ -98,9 +98,6 @@ class EditProfileFragment : BaseFragment() {
                 it?.let { photoData ->
                     ToffeeAnalytics.logBreadCrumb("Got result from crop lib")
                     ToffeeAnalytics.logBreadCrumb("Handling crop image")
-                    binding.profileIv.load(photoData) {
-                        transformations(CircleCropTransformation())
-                    }
                     handleUploadImage(photoData.toUri())
 
                 }
@@ -166,6 +163,11 @@ class EditProfileFragment : BaseFragment() {
                 progressDialog.dismiss()
                 when (it) {
                     is Resource.Success -> {
+                        it.data.userPhoto?.let { url ->
+                            binding.profileIv.load(url) {
+                                transformations(CircleCropTransformation())
+                            }
+                        }
                         requireContext().showToast(getString(R.string.photo_update_success))
                     }
                     is Resource.Failure -> {

@@ -6,6 +6,7 @@ import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.util.Utils
 import com.google.gson.Gson
 import javax.inject.Inject
 
@@ -28,7 +29,13 @@ class GetChannelWithCategory @Inject constructor(
         val dbList = mutableListOf<TVChannelItem>()
         val upTime = System.currentTimeMillis()
         response.response.channelCategoryList.forEachIndexed { index, channelCategory ->
-            channelCategory.channels?.forEach { channelInfo->
+            channelCategory.channels?.filter {
+                try {
+                    Utils.getDate(it.contentExpiryTime).after(preference.getSystemTime())
+                } catch (e: Exception) {
+                    true
+                }
+            }?.forEach { channelInfo->
                 dbList.add(TVChannelItem(
                     channelInfo.id.toLong(),
                     channelInfo.type ?: "LIVE",
