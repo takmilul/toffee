@@ -78,6 +78,7 @@ import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
 import com.banglalink.toffee.ui.widget.showSubscriptionDialog
 import com.banglalink.toffee.util.*
+import com.google.ads.interactivemedia.v3.internal.it
 import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.util.Util
@@ -866,6 +867,7 @@ class HomeActivity :
                         when(channelResource){
                             is Success -> {
                                 channelResource.data?.let {
+                                    Log.e(TAG, "shareable: $it")
                                     onDetailsFragmentLoad(it)
                                 }
                             }
@@ -890,7 +892,7 @@ class HomeActivity :
             handlePackageSubscribe()
         }
         try {
-            val url = intent.data?.fragment?.removePrefix("fwplayer=")
+            val url = intent.data?.fragment?.takeIf { it.contains("fwplayer=") }?.removePrefix("fwplayer=")
             url?.let { 
                 FwSDK.play(it)
                 return
