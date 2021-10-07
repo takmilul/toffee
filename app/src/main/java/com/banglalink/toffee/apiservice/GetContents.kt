@@ -7,6 +7,7 @@ import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ChannelInfo
+import com.banglalink.toffee.util.Utils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
@@ -38,7 +39,13 @@ class GetContents @AssistedInject constructor(
         }
 
         if (response.response.channels != null) {
-            return response.response.channels.map {
+            return response.response.channels.filter {
+                try {
+                    Utils.getDate(it.contentExpiryTime).after(preference.getSystemTime())
+                } catch (e: Exception) {
+                    true
+                }
+            }.map {
                 it.category = requestParams.category
                 it.categoryId = requestParams.categoryId
                 it.subCategoryId = requestParams.subcategoryId

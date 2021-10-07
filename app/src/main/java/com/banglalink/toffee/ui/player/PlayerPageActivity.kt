@@ -301,7 +301,7 @@ abstract class PlayerPageActivity :
         mPref.isDrmActive &&
         channelInfo.isDrmActive &&
 //        !channelInfo.drmCid.isNullOrBlank() &&
-        !channelInfo.drmDashUrl.isNullOrBlank() &&
+        (!channelInfo.drmDashUrl.isNullOrBlank() || !channelInfo.drmDashUrlExt?.get(0)?.urlList().isNullOrEmpty() || !channelInfo.drmDashUrlExtSd?.get(0)?.urlList().isNullOrEmpty()) &&
         !mPref.drmWidevineLicenseUrl.isNullOrBlank() //&&
 //        player is SimpleExoPlayer
 
@@ -609,12 +609,16 @@ abstract class PlayerPageActivity :
             }.build()
         }
         val license = getLicense(channelInfo)
+        
+        val isDataConnection = connectionWatcher.isOverCellular
+        val drmUrl = channelInfo.getPlayUrl(isDataConnection)
+        
         return MediaItem.Builder().apply {
 //            showToast("Playing DRM -> ${if(license == null) "Requesting new license" else "Using cached license"}\n${channelInfo.drmDashUrl}")
             setMimeType(MimeTypes.APPLICATION_MPD)
             setDrmUuid(C.WIDEVINE_UUID)
             setDrmKeySetId(license)
-            setUri(channelInfo.drmDashUrl)
+            setUri(drmUrl)
             setTag(channelInfo)
         }.build()
     }

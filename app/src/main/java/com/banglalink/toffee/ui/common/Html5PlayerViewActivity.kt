@@ -13,23 +13,22 @@ import com.banglalink.toffee.ui.widget.HTML5WebView
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlin.system.exitProcess
 
 @AndroidEntryPoint
 class Html5PlayerViewActivity : BaseAppCompatActivity() {
     
+    private lateinit var htmlUrl: String
+    private lateinit var mWebView: HTML5WebView
+    private val progressDialog by lazy {
+        VelBoxProgressDialog(this)
+    }
     @Inject lateinit var heartBeatManager: HeartBeatManager
     
     companion object {
         const val CONTENT_URL = "content_url"
     }
-
-    private val progressDialog by lazy {
-        VelBoxProgressDialog(this)
-    }
-    private lateinit var mWebView: HTML5WebView
-    private lateinit var htmlUrl: String
-
-
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val extras = intent.extras
@@ -49,7 +48,7 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
         setContentView(mWebView.layout)
 
         with(mWebView.settings) {
-            mixedContentMode =  WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+            mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
             javaScriptEnabled = true
             setSupportZoom(true)
             setNeedInitialFocus(false)
@@ -67,11 +66,11 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
         
         mWebView.addJavascriptInterface(this, "Android")
         
-        observe(mWebView.showProgressLiveData){
-            when(it){
-                true->progressDialog.show()
-                false->{
-                    if(progressDialog.isShowing)
+        observe(mWebView.showProgressLiveData) {
+            when (it) {
+                true -> progressDialog.show()
+                false -> {
+                    if (progressDialog.isShowing)
                         progressDialog.dismiss()
                 }
             }
@@ -79,14 +78,36 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
     }
     
     @JavascriptInterface
-    fun callback(type: Int, message: String? = null, url: String? = null) {
-        when(type) {
-            LOGIN_DIALOG.value -> { mPref.loginDialogLiveData.value = true }
-            MESSAGE_DIALOG.value -> { message?.let { mPref.messageDialogLiveData.value = it } }
-            PLAY_CONTENT.value -> { url?.let { mPref.shareableUrlLiveData.value = it } }
-            TV_CHANNELS.value -> { mPref.shareableUrlLiveData.value = "https://toffeelive.com?routing=internal&page=tv_channels" }
+    fun webCallback(type: Int, message: String? = null, url: String? = null) {
+        when (type) {
+            LOGIN_DIALOG.value -> {
+                mPref.loginDialogLiveData.postValue(true)
+            }
+            MESSAGE_DIALOG.value -> {
+                message?.let {
+                    mPref.messageDialogLiveData.postValue(it)
+                }
+            }
+            PLAY_CONTENT.value -> {
+                url?.let {
+                    mPref.shareableUrlLiveData.postValue(it)
+                }
+            }
+            TV_CHANNELS.value -> {
+                mPref.shareableUrlLiveData.postValue("https://toffeelive.com?routing=internal&page=tv_channels")
+            }
+            PROFILE_SCREEN.value -> {
+                mPref.shareableUrlLiveData.postValue("https://toffeelive.com?routing=internal&page=profile")
+            }
+            CLOSE_APP.value -> {
+                finishAffinity()
+                exitProcess(0)
+            }
+            FORCE_LOGOUT.value -> {
+                mPref.forceLogoutUserLiveData.postValue(true)
+            }
         }
-        this.finish()
+        finish()
     }
     
     override fun onBackPressed() {
@@ -96,15 +117,15 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
             super.onBackPressed()
         }
     }
+
+    //For Android 5.0.0 webkit UI bug fix
+    override fun getAssets(): AssetManager {
+        return resources.assets
+    }
     
     override fun onDestroy() {
         progressDialog.dismiss()
         heartBeatManager.triggerEventViewingContentStop()
         super.onDestroy()
-    }
-
-    //For Android 5.0.0 webkit UI bug fix
-    override fun getAssets(): AssetManager {
-        return resources.assets
     }
 }

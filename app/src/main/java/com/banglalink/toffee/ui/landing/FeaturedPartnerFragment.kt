@@ -78,10 +78,10 @@ class FeaturedPartnerFragment : Fragment(), BaseListItemCallback<FeaturedPartner
         super.onItemClicked(item)
         
         item.webViewUrl?.let { url->
-            heartBeatManager.triggerEventViewingContentStart(item.id, "VOD")
+//            heartBeatManager.triggerEventViewingContentStart(item.id, "VOD")
 //            homeViewModel.sendViewContentEvent(item)
             findNavController().navigate(R.id.htmlPageViewFragment, bundleOf("myTitle" to item.featurePartnerName, "url" to url))
-//            launchActivity<Html5PlayerViewActivity> {
+//            requireActivity().launchActivity<Html5PlayerViewActivity> {
 //                putExtra(
 //                    Html5PlayerViewActivity.CONTENT_URL,
 //                    url
