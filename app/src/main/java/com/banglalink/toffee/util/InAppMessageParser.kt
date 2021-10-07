@@ -4,6 +4,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
+import androidx.navigation.navOptions
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.GetCategories
@@ -119,6 +120,13 @@ class InAppMessageParser @Inject constructor(
                     }
                     "login" -> {
                         return RouteV2(R.id.loginDialog, "Login")
+                    }
+                    "home" -> {
+                        return RouteV2(R.id.menu_feed, "Home", options = navOptions { 
+                            popUpTo(R.id.menu_feed) {
+                                inclusive = true
+                            }
+                        })
                     }
                     else -> null
                 }
