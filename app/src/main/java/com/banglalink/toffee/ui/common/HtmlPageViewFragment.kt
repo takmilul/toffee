@@ -48,6 +48,17 @@ class HtmlPageViewFragment : BaseFragment() {
                     binding.progressBar.visibility = View.GONE
                 }
             }
+
+            override fun onPermissionRequest(request: PermissionRequest) {
+                val resources = request.resources
+                for (i in resources.indices) {
+                    if (PermissionRequest.RESOURCE_PROTECTED_MEDIA_ID == resources[i]) {
+                        request.grant(resources)
+                        return
+                    }
+                }
+                super.onPermissionRequest(request)
+            }
         }
 
         with(binding.webview.settings) {

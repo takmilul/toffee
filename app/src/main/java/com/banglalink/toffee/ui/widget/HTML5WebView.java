@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.GeolocationPermissions;
+import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -155,6 +156,19 @@ public class HTML5WebView extends WebView {
         @Override
         public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
             callback.invoke(origin, true, false);
+        }
+
+        @Override
+        public void onPermissionRequest(PermissionRequest request) {
+            String[] resources = request.getResources();
+            for (String resource : resources) {
+                if (PermissionRequest.RESOURCE_PROTECTED_MEDIA_ID.equals(resource)) {
+                    request.grant(resources);
+                    return;
+                }
+            }
+
+            super.onPermissionRequest(request);
         }
     }
 
