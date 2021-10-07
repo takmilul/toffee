@@ -88,16 +88,10 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
                     mPref.messageDialogLiveData.postValue(it)
                 }
             }
-            PLAY_CONTENT.value -> {
+            PLAY_CONTENT.value, DEEP_LINK.value -> {
                 url?.let {
                     mPref.shareableUrlLiveData.postValue(it)
                 }
-            }
-            TV_CHANNELS.value -> {
-                mPref.shareableUrlLiveData.postValue("https://toffeelive.com?routing=internal&page=tv_channels")
-            }
-            PROFILE_SCREEN.value -> {
-                mPref.shareableUrlLiveData.postValue("https://toffeelive.com?routing=internal&page=profile")
             }
             CLOSE_APP.value -> {
                 finishAffinity()
