@@ -105,6 +105,9 @@ import org.xmlpull.v1.XmlPullParser
 import java.util.*
 import javax.inject.Inject
 
+const val NON_PAYMENT = 0
+const val PAYMENT = 1
+const val PLAY_IN_NATIVE_PLAYER = 0
 const val PLAY_IN_WEB_VIEW = 1
 const val OPEN_IN_EXTERNAL_BROWSER = 2
 const val IN_APP_UPDATE_REQUEST_CODE = 0x100
@@ -968,53 +971,71 @@ class HomeActivity :
 
         channelInfo?.let {
             when{
-                it.urlType == PLAY_IN_WEB_VIEW->{
-                    it.getHlsLink()?.let { url->
-                        heartBeatManager.triggerEventViewingContentStart(it.id.toInt(), it.type ?: "VOD")
-                        viewModel.sendViewContentEvent(it)
-                        launchActivity<Html5PlayerViewActivity> {
-                            putExtra(
-                                Html5PlayerViewActivity.CONTENT_URL,
-                                url
-                            )
-                        }
-                    } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
-                }
-                it.urlType == OPEN_IN_EXTERNAL_BROWSER ->{
-                    it.getHlsLink()?.let { url->
-                        startActivity(
-                            Intent(
-                                Intent.ACTION_VIEW,
-                                Uri.parse(url)
-                            )
-                        )
-                    } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
-                }
-                /* TODO: Uncomment for subscription
-                !((it.isPurchased || it.isPaidSubscribed) && !it.isExpired(Date())) && mPref.isSubscriptionActive == "true" ->{
-                    showSubscribePackDialog()
-                } */
-                else ->{
-                    if(player is CastPlayer) {
-                        maximizePlayer()
-                    }
-                    when (detailsInfo) {
-                        is PlaylistPlaybackInfo -> {
-                            loadPlayListItem(detailsInfo)
-                        }
-                        is SeriesPlaybackInfo -> {
-                            loadDramaSeasonInfo(detailsInfo)
-                        }
-                        else -> {
-                            loadChannel(it)
+                it.urlTypeExt == PAYMENT -> {
+                    if(!mPref.isVerifiedUser) {
+                        navController.navigate(R.id.loginDialog)
+                    } else {
+                        if (mPref.isPaidUser) playInNativePlayer(detailsInfo, it) 
+                        else {
+                            if (it.urlType == PLAY_IN_WEB_VIEW) playInWebView(it) else if (it.urlType == OPEN_IN_EXTERNAL_BROWSER) openInExternalBrowser(it)
                         }
                     }
-                    loadDetailFragment(detailsInfo)
+                }
+                it.urlType == PLAY_IN_WEB_VIEW && it.urlTypeExt == NON_PAYMENT -> {
+                    playInWebView(it)
+                }
+                it.urlType == OPEN_IN_EXTERNAL_BROWSER && it.urlTypeExt == NON_PAYMENT -> {
+                    openInExternalBrowser(it)
+                }
+                it.urlType == PLAY_IN_NATIVE_PLAYER && it.urlTypeExt == NON_PAYMENT -> {
+                    playInNativePlayer(detailsInfo, it)
                 }
             }
         }
     }
-
+    
+    private fun playInNativePlayer(detailsInfo: Any?, it: ChannelInfo) {
+        if (player is CastPlayer) {
+            maximizePlayer()
+        }
+        when (detailsInfo) {
+            is PlaylistPlaybackInfo -> {
+                loadPlayListItem(detailsInfo)
+            }
+            is SeriesPlaybackInfo -> {
+                loadDramaSeasonInfo(detailsInfo)
+            }
+            else -> {
+                loadChannel(it)
+            }
+        }
+        loadDetailFragment(detailsInfo)
+    }
+    
+    private fun openInExternalBrowser(it: ChannelInfo) {
+        it.getHlsLink()?.let { url ->
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(url)
+                )
+            )
+        } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
+    }
+    
+    private fun playInWebView(it: ChannelInfo) {
+        it.getHlsLink()?.let { url ->
+            heartBeatManager.triggerEventViewingContentStart(it.id.toInt(), it.type ?: "VOD")
+            viewModel.sendViewContentEvent(it)
+            launchActivity<Html5PlayerViewActivity> {
+                putExtra(
+                    Html5PlayerViewActivity.CONTENT_URL,
+                    url
+                )
+            }
+        } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
+    }
+    
     private fun showSubscribePackDialog(){
         showSubscriptionDialog(this) {
 //            launchActivity<PackageListFragment>()
@@ -1397,6 +1418,7 @@ class HomeActivity :
                         mPref.userImageUrl = null
                         mPref.customerAddress = ""
                         mPref.mqttIsActive = false
+                        mPref.isPaidUser = false
                         cacheManager.clearAllCache()
                         mPref.isVerifiedUser = false
                         mPref.isChannelDetailChecked = false

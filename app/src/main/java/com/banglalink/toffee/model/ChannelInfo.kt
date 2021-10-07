@@ -85,6 +85,8 @@ data class ChannelInfo(
     val channelProfileUrl: String? = null,
     @SerializedName("url_type")
     val urlType: Int = 0,
+    @SerializedName("url_type_extended")
+    val urlTypeExt: Int = 0,
     @SerializedName("is_approved")
     val is_approved: Int? = null,
     val created_at: String? = null,
@@ -163,9 +165,9 @@ data class ChannelInfo(
     fun getHlsLink(): String? = hlsLinks?.get(0)?.hls_url_mobile
     
     fun getPlayUrl(isDataConnection: Boolean) = if (isDataConnection) {
-        drmDashUrlExtSd?.get(0)?.urlList()?.random() ?: drmDashUrlExt?.get(0)?.urlList()?.random() ?: drmDashUrl
+        drmDashUrlExtSd?.firstOrNull()?.urlList()?.randomOrNull() ?: drmDashUrlExt?.firstOrNull()?.urlList()?.randomOrNull() ?: drmDashUrl
     } else {
-        drmDashUrlExt?.get(0)?.urlList()?.random() ?: drmDashUrlExtSd?.get(0)?.urlList()?.random() ?: drmDashUrl
+        drmDashUrlExt?.firstOrNull()?.urlList()?.randomOrNull() ?: drmDashUrlExtSd?.firstOrNull()?.urlList()?.randomOrNull() ?: drmDashUrl
     }
 
     fun formattedShareCount(): String = Utils.getFormattedViewsText(shareCount.toString())
