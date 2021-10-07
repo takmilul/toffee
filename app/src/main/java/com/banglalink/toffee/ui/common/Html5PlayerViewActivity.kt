@@ -38,7 +38,7 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
         mWebView = HTML5WebView(this)
 
         if (savedInstanceState != null) {
-            mWebView.restoreState(savedInstanceState);
+            mWebView.restoreState(savedInstanceState)
         } else {
             val headerMap: MutableMap<String, String> = HashMap()
             headerMap["MSISDN"] = SessionPreference.getInstance().phoneNumber
@@ -88,7 +88,13 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
                     mPref.messageDialogLiveData.postValue(it)
                 }
             }
-            PLAY_CONTENT.value, DEEP_LINK.value -> {
+            PLAY_CONTENT.value -> {
+                url?.let {
+                    mPref.isPaidUser = true
+                    mPref.shareableUrlLiveData.postValue(it)
+                }
+            }
+            DEEP_LINK.value -> {
                 url?.let {
                     mPref.shareableUrlLiveData.postValue(it)
                 }

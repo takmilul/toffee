@@ -107,4 +107,6 @@ class CustomerInfoLogin(
     val isGlobalCidActive: Int = 0,
     val globalCidName: String? = null,
     val androidBetaVersionCode: String? = null,
+    @SerializedName("paymentStatus")
+    var paymentStatus: Boolean = false,
 ) : BodyResponse(), Parcelable
