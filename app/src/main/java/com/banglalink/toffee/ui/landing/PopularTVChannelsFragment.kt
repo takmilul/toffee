@@ -24,6 +24,7 @@ import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.facebook.shimmer.ShimmerFrameLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class PopularTVChannelsFragment : HomeBaseFragment(), BaseListItemCallback<ChannelInfo> {
@@ -101,7 +102,7 @@ class PopularTVChannelsFragment : HomeBaseFragment(), BaseListItemCallback<Chann
     }
     
     private fun observeList() {
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.loadChannels.collectLatest {
                 mAdapter.submitData(it)
             }
