@@ -15,7 +15,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="@{()-> callback.onItemClicked(data)}"
+        app:onSafeClick="@{()-> callback.onItemClicked(data)}"
         android:background="?selectableItemBackgroundBorderless"
         xmlns:tools="http://schemas.android.com/tools">
         
