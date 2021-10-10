@@ -1,178 +1,153 @@
-package com.banglalink.toffee.ui.widget;
+package com.banglalink.toffee.ui.widget
 
-import android.app.Activity;
-import android.content.Context;
-import android.util.AttributeSet;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.webkit.GeolocationPermissions;
-import android.webkit.PermissionRequest;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.FrameLayout;
+import android.app.Activity
+import android.content.Context
+import android.content.pm.ActivityInfo
+import android.util.AttributeSet
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.webkit.*
+import android.webkit.WebChromeClient.CustomViewCallback
+import android.widget.FrameLayout
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.banglalink.toffee.R
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-
-import com.banglalink.toffee.R;
-
-public class HTML5WebView extends WebView {
-
-    private Context                             mContext;
-    private MyWebChromeClient                   mWebChromeClient;
-    private View                                mCustomView;
-    private FrameLayout                         mCustomViewContainer;
-    private WebChromeClient.CustomViewCallback  mCustomViewCallback;
-
-    private FrameLayout                         mLayout;
-
-    static final String LOGTAG = "HTML5WebView";
-
-    private final MutableLiveData<Boolean> _showProgressMutableLiveData = new MutableLiveData<Boolean>();
-
-    public LiveData<Boolean>  showProgressLiveData = _showProgressMutableLiveData;
-
-    private void init(Context context) {
-        mContext = context;
-        Activity a = (Activity) mContext;
-        mLayout = new FrameLayout(context);
-
-        FrameLayout mBrowserFrameLayout = (FrameLayout) LayoutInflater.from(a).inflate(R.layout.custom_screen, null);
-        FrameLayout mContentView = (FrameLayout) mBrowserFrameLayout.findViewById(R.id.main_content);
-        mCustomViewContainer = (FrameLayout) mBrowserFrameLayout.findViewById(R.id.fullscreen_custom_content);
-
-        mLayout.addView(mBrowserFrameLayout, COVER_SCREEN_PARAMS);
-
+class HTML5WebView : WebView {
+    lateinit var layout: FrameLayout
+        private set
+    private var mContext: Context? = null
+    private var mCustomView: View? = null
+    private lateinit var mCustomViewContainer: FrameLayout
+    private lateinit var mWebChromeClient: MyWebChromeClient
+    private lateinit var mCustomViewCallback: CustomViewCallback
+    private val _showProgressMutableLiveData = MutableLiveData<Boolean>()
+    var showProgressLiveData: LiveData<Boolean> = _showProgressMutableLiveData
+    
+    private fun init(context: Context) {
+        mContext = context
+        val activity = mContext as Activity?
+        layout = FrameLayout(context)
+        val param = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        val mBrowserFrameLayout = LayoutInflater.from(activity).inflate(R.layout.custom_screen, null) as FrameLayout
+        val mContentView = mBrowserFrameLayout.findViewById<View>(R.id.main_content) as FrameLayout
+        mCustomViewContainer = mBrowserFrameLayout.findViewById<View>(R.id.fullscreen_custom_content) as FrameLayout
+        layout.addView(mBrowserFrameLayout, param)
+        
         // Configure the webview
-        WebSettings s = getSettings();
-        s.setUseWideViewPort(true);
-        s.setLoadWithOverviewMode(true);
-        s.setJavaScriptEnabled(true);
-        mWebChromeClient = new MyWebChromeClient();
-        setWebChromeClient(mWebChromeClient);
-        setWebViewClient(new Html5WebViewClient());
-
-        setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-        s.setDomStorageEnabled(true);
-
-        mContentView.addView(this);
-
-        _showProgressMutableLiveData.postValue(true);
+        settings.apply {
+            useWideViewPort = true
+            loadWithOverviewMode = true
+            javaScriptEnabled = true
+            mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+            setSupportZoom(true)
+            setNeedInitialFocus(false)
+            cacheMode = WebSettings.LOAD_DEFAULT
+            databaseEnabled = true
+            builtInZoomControls = true
+            displayZoomControls = false
+            setSupportMultipleWindows(true)
+            javaScriptCanOpenWindowsAutomatically = true
+            domStorageEnabled = true
+            CookieManager.getInstance().setAcceptCookie(true)
+            userAgentString = "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Mobile " +
+                "Safari/537.36"
+        }
+        mWebChromeClient = MyWebChromeClient()
+        webChromeClient = mWebChromeClient
+        webViewClient = Html5WebViewClient()
+        scrollBarStyle = SCROLLBARS_INSIDE_OVERLAY
+        mContentView.addView(this)
+        _showProgressMutableLiveData.postValue(true)
     }
-
-    public HTML5WebView(Context context) {
-        super(context);
-        init(context);
+    
+    constructor(context: Context) : super(context) {
+        init(context)
     }
-
-    public HTML5WebView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context);
+    
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+        init(context)
     }
-
-    public HTML5WebView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        init(context);
+    
+    constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(context, attrs, defStyle) {
+        init(context)
     }
-
-    public FrameLayout getLayout() {
-        return mLayout;
+    
+    fun inCustomView(): Boolean {
+        return mCustomView != null
     }
-
-    public boolean inCustomView() {
-        return (mCustomView != null);
+    
+    fun hideCustomView() {
+        mWebChromeClient.onHideCustomView()
     }
-
-    public void hideCustomView() {
-        mWebChromeClient.onHideCustomView();
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if ((mCustomView == null) && canGoBack()){
-                goBack();
-                return true;
+            if (mCustomView == null && canGoBack()) {
+                goBack()
+                return true
             }
         }
-        return super.onKeyDown(keyCode, event);
+        return super.onKeyDown(keyCode, event)
     }
-
-    private class MyWebChromeClient extends WebChromeClient {
-
-        @Override
-        public void onShowCustomView(View view, WebChromeClient.CustomViewCallback callback)
-        {
+    
+    private inner class MyWebChromeClient : WebChromeClient() {
+        override fun onShowCustomView(view: View, callback: CustomViewCallback) {
             //Log.i(LOGTAG, "here in on ShowCustomView");
-            HTML5WebView.this.setVisibility(View.GONE);
-
+            this@HTML5WebView.visibility = GONE
+            
             // if a view already exists then immediately terminate the new one
             if (mCustomView != null) {
-                callback.onCustomViewHidden();
-                return;
+                callback.onCustomViewHidden()
+                return
             }
-
-            mCustomViewContainer.addView(view);
-            mCustomView = view;
-            mCustomViewCallback = callback;
-            mCustomViewContainer.setVisibility(View.VISIBLE);
+            (mContext as Activity?)?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+            mCustomViewContainer.addView(view)
+            mCustomView = view
+            mCustomViewCallback = callback
+            mCustomViewContainer.visibility = VISIBLE
         }
-
-        @Override
-        public void onHideCustomView() {
-            if (mCustomView == null)
-                return;
-
+        
+        override fun onHideCustomView() {
+            if (mCustomView == null) return
+            (mContext as Activity?)?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
             // Hide the custom view.
-            mCustomView.setVisibility(View.GONE);
-
+            mCustomView!!.visibility = GONE
+            
             // Remove the custom view from its container.
-            mCustomViewContainer.removeView(mCustomView);
-            mCustomView = null;
-            mCustomViewContainer.setVisibility(View.GONE);
-            mCustomViewCallback.onCustomViewHidden();
-
-            HTML5WebView.this.setVisibility(View.VISIBLE);
-            HTML5WebView.this.goBack();
+            mCustomViewContainer.removeView(mCustomView)
+            mCustomView = null
+            mCustomViewContainer.visibility = GONE
+            mCustomViewCallback.onCustomViewHidden()
+            this@HTML5WebView.visibility = VISIBLE
+            goBack()
         }
-
-
-        @Override
-        public void onReceivedTitle(WebView view, String title) {
-            ((Activity) mContext).setTitle(title);
+        
+        override fun onReceivedTitle(view: WebView, title: String) {
+            (mContext as Activity?)!!.title = title
         }
-
-        @Override
-        public void onProgressChanged(WebView view, int newProgress) {
-           if(newProgress > 30){
-               _showProgressMutableLiveData.postValue(false);
-           }
+        
+        override fun onProgressChanged(view: WebView, newProgress: Int) {
+            if (newProgress > 30) {
+                _showProgressMutableLiveData.postValue(false)
+            }
         }
-
-        @Override
-        public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
-            callback.invoke(origin, true, false);
+        
+        override fun onGeolocationPermissionsShowPrompt(origin: String, callback: GeolocationPermissions.Callback) {
+            callback.invoke(origin, true, false)
         }
-
-        @Override
-        public void onPermissionRequest(PermissionRequest request) {
-            String[] resources = request.getResources();
-            for (String resource : resources) {
-                if (PermissionRequest.RESOURCE_PROTECTED_MEDIA_ID.equals(resource)) {
-                    request.grant(resources);
-                    return;
+        
+        override fun onPermissionRequest(request: PermissionRequest) {
+            val resources = request.resources
+            for (resource in resources) {
+                if (PermissionRequest.RESOURCE_PROTECTED_MEDIA_ID == resource) {
+                    request.grant(resources)
+                    return
                 }
             }
-
-            super.onPermissionRequest(request);
+            super.onPermissionRequest(request)
         }
     }
-
-
-    static final FrameLayout.LayoutParams COVER_SCREEN_PARAMS =
-            new FrameLayout.LayoutParams( ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 }
