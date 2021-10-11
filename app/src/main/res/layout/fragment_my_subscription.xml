@@ -1,42 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-android:layout_width="match_parent"
-xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_height="match_parent">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/movieAppBar"
-        app:layout_behavior="com.banglalink.toffee.ui.widget.AppBarLayoutBehavior"
+<com.banglalink.toffee.ui.widget.SmartNestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/movieLatestScroller"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+    
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/subscribedChannels"
+        android:name="com.banglalink.toffee.ui.subscription.SubscribedChannelsFragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@color/screen_bg"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/tv_subscriptions"
-                android:name="com.banglalink.toffee.ui.subscription.PackageListFragment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </RelativeLayout>
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <com.banglalink.toffee.ui.widget.SmartNestedScrollView
-        android:id="@+id/movieLatestScroller"
-        android:fillViewport="true"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/subscribedChannels"
-            android:name="com.banglalink.toffee.ui.subscription.SubscribedChannelsFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </com.banglalink.toffee.ui.widget.SmartNestedScrollView>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        android:layout_height="match_parent" />
+    
+</com.banglalink.toffee.ui.widget.SmartNestedScrollView>
