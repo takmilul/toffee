@@ -76,9 +76,7 @@ import com.banglalink.toffee.ui.userplaylist.UserPlaylistVideosFragment
 import com.banglalink.toffee.ui.widget.DraggerLayout
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
-import com.banglalink.toffee.ui.widget.showSubscriptionDialog
 import com.banglalink.toffee.util.*
-import com.google.ads.interactivemedia.v3.internal.it
 import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.util.Util
@@ -972,14 +970,13 @@ class HomeActivity :
         }
 
         channelInfo?.let {
-            when{
+            when {
                 it.urlTypeExt == PAYMENT -> {
-                    if(!mPref.isVerifiedUser) {
-                        navController.navigate(R.id.loginDialog)
-                    } else {
-                        if (mPref.isPaidUser) playInNativePlayer(detailsInfo, it) 
-                        else {
-                            if (it.urlType == PLAY_IN_WEB_VIEW) playInWebView(it) else if (it.urlType == OPEN_IN_EXTERNAL_BROWSER) openInExternalBrowser(it)
+                    checkVerification {
+                        when {
+                            mPref.isPaidUser -> playInNativePlayer(detailsInfo, it)
+                            it.urlType == PLAY_IN_WEB_VIEW -> playInWebView(it)
+                            it.urlType == OPEN_IN_EXTERNAL_BROWSER -> openInExternalBrowser(it)
                         }
                     }
                 }
@@ -1038,15 +1035,6 @@ class HomeActivity :
         } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
     }
     
-    private fun showSubscribePackDialog(){
-        showSubscriptionDialog(this) {
-//            launchActivity<PackageListFragment>()
-            if(navController.currentDestination?.id != R.id.menu_subscriptions) {
-                navController.navigate(R.id.menu_subscriptions)
-            }
-        }
-    }
-
     override fun playNext() {
         super.playNext()
         if(playlistManager.playlistId == -1L) {

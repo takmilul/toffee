@@ -2,9 +2,7 @@ package com.banglalink.toffee.ui.common
 
 import android.content.res.AssetManager
 import android.os.Bundle
-import android.webkit.CookieManager
 import android.webkit.JavascriptInterface
-import android.webkit.WebSettings
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.WebActionType.*
@@ -47,23 +45,6 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
 
         setContentView(mWebView.layout)
 
-        with(mWebView.settings) {
-            mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-            javaScriptEnabled = true
-            setSupportZoom(true)
-            setNeedInitialFocus(false)
-            cacheMode = WebSettings.LOAD_DEFAULT
-            databaseEnabled = true
-            useWideViewPort = true
-            builtInZoomControls = true
-            displayZoomControls = false
-            setSupportMultipleWindows(true)
-            javaScriptCanOpenWindowsAutomatically = true
-            domStorageEnabled = true
-            CookieManager.getInstance().setAcceptCookie(true)
-            userAgentString = "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Mobile Safari/537.36"
-        }
-        
         mWebView.addJavascriptInterface(this, "Android")
         
         observe(mWebView.showProgressLiveData) {
@@ -110,14 +91,11 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
         finish()
     }
     
-    override fun onBackPressed() {
-        if (mWebView.canGoBack()) {
-            mWebView.goBack()
-        } else {
-            super.onBackPressed()
-        }
+    @JavascriptInterface
+    fun isBlNumber(): Boolean {
+        return mPref.isHeBanglalinkNumber
     }
-
+    
     //For Android 5.0.0 webkit UI bug fix
     override fun getAssets(): AssetManager {
         return resources.assets

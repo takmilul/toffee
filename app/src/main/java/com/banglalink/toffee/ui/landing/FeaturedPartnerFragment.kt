@@ -23,6 +23,7 @@ import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -67,7 +68,7 @@ class FeaturedPartnerFragment : Fragment(), BaseListItemCallback<FeaturedPartner
     }
     
     private fun observeFeaturedPartner() {
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted { 
+        viewLifecycleOwner.lifecycleScope.launch { 
             viewModel.loadFeaturedPartners.collectLatest {
                 mAdapter.submitData(it)
             }

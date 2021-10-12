@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.banglalink.toffee">
-
+    
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -14,7 +15,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-
+    
     <queries>
         <intent>
             <action android:name="android.media.action.IMAGE_CAPTURE" />
@@ -23,8 +24,7 @@
             <action android:name="android.media.action.VIDEO_CAPTURE" />
         </intent>
     </queries>
-
-
+    
     <application
         android:name=".ToffeeApplication"
         android:allowAudioPlaybackCapture="false"
@@ -38,38 +38,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
-        <activity
-            android:name=".ui.subscription.SubscriptionResultActivity"
-            android:label="@string/subscriptions"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ui.home.ContentPurchaseActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:label="Content Purchase"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ui.subscription.PackageChannelListActivity"
-            android:label="@string/all_channels"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ui.subscription.SubscribePackageActivity"
-            android:label="@string/confirm_purchase"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-<!--        <activity-->
-<!--            android:name=".ui.subscription.PackageListActivity"-->
-<!--            android:configChanges="orientation|screenSize|keyboardHidden"-->
-<!--            android:label="@string/subscriptions"-->
-<!--            android:screenOrientation="portrait"-->
-<!--            android:theme="@style/AppTheme.NoActionBar" />-->
-        <activity
-            android:name=".ui.subscription.MySubscriptionActivity"
-            android:label="@string/subscriptions"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+        
         <activity
             android:name=".ui.home.HomeActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -86,10 +55,8 @@
                 android:label="@string/app_name"
                 tools:targetApi="m">
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
                 <data
                     android:host="toffeelive.com"
                     android:scheme="http" />
@@ -97,31 +64,32 @@
                     android:host="toffeelive.com"
                     android:scheme="https" />
             </intent-filter>
-
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
+        
         <activity
             android:name=".ui.splash.SplashScreenActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
         <activity
             android:name=".ui.common.Html5PlayerViewActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:screenOrientation="fullSensor"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+        
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
+        
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -131,54 +99,60 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
+        
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
+        
         <meta-data
             android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
             android:value="com.banglalink.toffee.ui.player.CastOptionsProvider" />
+        
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent2" />
+        
 <!--        <meta-data android:name="com.facebook.sdk.AdvertiserIDCollectionEnabled"-->
+<!--            android:value="false" />-->
+        
+<!--        <meta-data-->
+<!--            android:name="com.facebook.sdk.AutoInitEnabled"-->
 <!--            android:value="false"/>-->
-<!--        <meta-data android:name="com.facebook.sdk.AutoInitEnabled"-->
-<!--            android:value="false"/>-->
+        
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_notification" />
         
         <meta-data
             android:name="com.google.android.gms.ads.AD_MANAGER_APP"
-            android:value="true"/>
+            android:value="true" />
         
         <service android:name=".notification.ToffeeMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
+        
         <receiver android:name=".receiver.NotificationActionReceiver">
             <intent-filter android:priority="999">
                 <action android:name="com.toffee.notification_receiver" />
             </intent-filter>
         </receiver>
-    
+        
         <service android:name="org.eclipse.paho.android.service.MqttService" />
         
         <!-- Activity needed for video playback-->
         <activity
             android:name="com.loopnow.fireworklibrary.PlaybackActivity" />
-    
+        
         <!-- Activity needed for starting a web browser , when CTA on the advertisement is clicked.-->
         <activity
             android:name="com.loopnow.fireworklibrary.views.FireworkWebClientActivity"
             android:theme="@style/FireworkSDK.NoActionBar.FullScreen" />
         
         <!-- Service used for prefetching of next video , if all data for currently playing video is fetched.-->
-<!--        <service android:name="com.loopnow.fireworklibrary.views.CacheService" />-->
-    
+        <!--        <service android:name="com.loopnow.fireworklibrary.views.CacheService" />-->
+        
         <!-- Instead of providing app_id in VideoFeedFragment xml , you can specify it in AndroidManifest.xml-->
         <meta-data
             android:name="Firework:AppID"
@@ -191,5 +165,4 @@
             android:value="true" />
         
     </application>
-
 </manifest>
