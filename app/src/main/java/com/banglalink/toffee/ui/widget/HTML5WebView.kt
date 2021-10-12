@@ -15,23 +15,22 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.banglalink.toffee.R
 
-class HTML5WebView : WebView {
-    lateinit var layout: FrameLayout
-        private set
-    private var mContext: Context? = null
+class HTML5WebView @JvmOverloads constructor(
+    private val mContext: Context,
+    attrs: AttributeSet? = null,
+    defStyle: Int = 0)
+:WebView(mContext, attrs, defStyle) {
+    val layout: FrameLayout = FrameLayout(context)
     private var mCustomView: View? = null
-    private lateinit var mCustomViewContainer: FrameLayout
-    private lateinit var mWebChromeClient: MyWebChromeClient
+    private val mCustomViewContainer: FrameLayout
+    private val mWebChromeClient: MyWebChromeClient
     private lateinit var mCustomViewCallback: CustomViewCallback
     private val _showProgressMutableLiveData = MutableLiveData<Boolean>()
     var showProgressLiveData: LiveData<Boolean> = _showProgressMutableLiveData
     
-    private fun init(context: Context) {
-        mContext = context
-        val activity = mContext as Activity?
-        layout = FrameLayout(context)
+    init {
         val param = FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        val mBrowserFrameLayout = LayoutInflater.from(activity).inflate(R.layout.custom_screen, null) as FrameLayout
+        val mBrowserFrameLayout = LayoutInflater.from(mContext).inflate(R.layout.custom_screen, null, false) as FrameLayout
         val mContentView = mBrowserFrameLayout.findViewById<View>(R.id.main_content) as FrameLayout
         mCustomViewContainer = mBrowserFrameLayout.findViewById<View>(R.id.fullscreen_custom_content) as FrameLayout
         layout.addView(mBrowserFrameLayout, param)
@@ -61,18 +60,6 @@ class HTML5WebView : WebView {
         scrollBarStyle = SCROLLBARS_INSIDE_OVERLAY
         mContentView.addView(this)
         _showProgressMutableLiveData.postValue(true)
-    }
-    
-    constructor(context: Context) : super(context) {
-        init(context)
-    }
-    
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
-        init(context)
-    }
-    
-    constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(context, attrs, defStyle) {
-        init(context)
     }
     
     fun inCustomView(): Boolean {

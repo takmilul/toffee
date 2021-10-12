@@ -3,6 +3,8 @@ package com.banglalink.toffee.ui.widget
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
+import android.webkit.WebResourceError
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import java.net.URISyntaxException
@@ -29,6 +31,23 @@ class Html5WebViewClient:WebViewClient() {
         }
 
         return false
+    }
+
+    override fun onReceivedError(
+        view: WebView?,
+        request: WebResourceRequest?,
+        error: WebResourceError?
+    ) {
+        view?.let {
+            it.loadUrl("about:blank")
+            it.loadDataWithBaseURL(null,
+                "Something went wrong! Try again later.",
+                "text/html",
+                "UTF-8",
+                null)
+//            it.loadUrl("file:///android_asset/error.html") TODO:// load custom error page from asset
+            it.invalidate()
+        }
     }
 }
 
