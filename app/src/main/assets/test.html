@@ -1,0 +1,19 @@
+<html>
+    <head>
+        <script language="JavaScript" type="text/javascript">
+            function closeWindow() {
+                Android.webCallback(5, null, null);
+            }
+
+            function openTV() {
+                Android.webCallback(4, null, "https://toffeelive.com?routing=internal&page=tv_channels");
+            }
+        </script>
+    </head>
+    <body>
+        <button onclick="closeWindow()">Close</button><br/><br/>
+        <button onclick="openTV()">TV</button><br/><br/>
+        <button onclick="closeWindow()">Close</button><br/><br/>
+        <button onclick="closeWindow()">Close</button><br/><br/>
+    </body>
+</html>
