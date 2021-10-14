@@ -40,11 +40,11 @@ class Html5WebViewClient:WebViewClient() {
     ) {
         view?.let {
             it.loadUrl("about:blank")
-            it.loadDataWithBaseURL(null,
-                "Something went wrong! Try again later.",
-                "text/html",
-                "UTF-8",
-                null)
+//            it.loadDataWithBaseURL(null,
+//                "Something went wrong! Try again later.",
+//                "text/html",
+//                "UTF-8",
+//                null)
 //            it.loadUrl("file:///android_asset/error.html") TODO:// load custom error page from asset
             it.invalidate()
         }
