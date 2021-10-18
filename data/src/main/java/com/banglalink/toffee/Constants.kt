@@ -103,3 +103,4 @@ object Constants {
 }
 
 val TOFFEE_HEADER=("Toffee" + "/" + Constants.VERSION_NAME + " (Linux;Android " + Build.VERSION.RELEASE + ") " + "ExoPlayerLib/${BuildConfig.EXO_VERSION}" + "/" + SessionPreference.getInstance().customerId + "/" + CommonPreference.getInstance().deviceId)
+const val TOFFEE_BASE_URL = "https://j1-staging.toffeelive.com/"
