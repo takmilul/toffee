@@ -40,7 +40,7 @@ class AboutPointsFragment : Fragment() {
         binding.listView.adapter = adapter
         binding.listView.setHasFixedSize(true)
         
-        observe(viewModel.setAboutPoints()){
+        observe(viewModel.setAboutPoints()!!){
             when(it){
                 is Resource.Success ->{
                     adapter.addAll(it.data.aboutPoints)

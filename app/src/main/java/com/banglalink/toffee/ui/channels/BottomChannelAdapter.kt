@@ -21,8 +21,8 @@ class BottomChannelAdapter( private val callback: BaseListItemCallback<TVChannel
         val obj = getItem(position)
         obj?.let {
             if(it.channelInfo != null) {
-                bindingUtil.bindChannel(holder.imageView, it.channelInfo)
-                if (it.channelInfo.id == selectedItem?.id.toString()) {
+                bindingUtil.bindChannel(holder.imageView, it.channelInfo!!)
+                if (it.channelInfo!!.id == selectedItem?.id.toString()) {
                     holder.imageView.borderWidth = 4.px
                 } else {
                     holder.imageView.borderWidth = 0

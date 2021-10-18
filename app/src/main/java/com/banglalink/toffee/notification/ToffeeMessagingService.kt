@@ -33,6 +33,7 @@ import com.banglalink.toffee.receiver.NotificationActionReceiver.Companion.RESOU
 import com.banglalink.toffee.receiver.NotificationActionReceiver.Companion.ROW_ID
 import com.banglalink.toffee.receiver.NotificationActionReceiver.Companion.WATCH_LATER
 import com.banglalink.toffee.receiver.NotificationActionReceiver.Companion.WATCH_NOW
+import com.banglalink.toffee.util.CoilUtils
 import com.banglalink.toffee.util.UtilsKt
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -210,7 +211,8 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             .setContentText(content)
             .setStyle(NotificationCompat.BigTextStyle().bigText(content))
         
-        val drawable = imageUrl?.let { UtilsKt.coilExecuteGet(this, it) }
+        val drawable = imageUrl?.let { CoilUtils.
+        coilExecuteGet(this, it) }
         if (drawable != null)
             builder.setLargeIcon(drawable.toBitmap(48, 48))
         
@@ -237,7 +239,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         val sound = Uri.parse("android.resource://" + packageName + "/" + R.raw.velbox_notificaiton)
         var thumbnailImage: Bitmap? = null
         if (!thumbnailUrl.isNullOrBlank()) {
-            val thumbnailDrawable = UtilsKt.coilExecuteGet(this, thumbnailUrl)
+            val thumbnailDrawable = CoilUtils.coilExecuteGet(this, thumbnailUrl)
             thumbnailImage = thumbnailDrawable?.toBitmap(48, 48)
         }
         
@@ -277,12 +279,12 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         val notificationInfo = NotificationInfo(null, customerId, data["notificationType"], pubSubId, 0, 0, title, content, null, thumbnailUrl, imageUrl, resourceUrl, playNowUrl, watchLaterUrl)
         val rowId = notificationInfoRepository.insert(notificationInfo)
         
-        val drawable = UtilsKt.coilExecuteGet(this, imageUrl)
+        val drawable = CoilUtils.coilExecuteGet(this, imageUrl)
         
         val image = drawable?.toBitmap()
         var thumbnailImage: Bitmap? = image
         if (!thumbnailUrl.isNullOrBlank()) {
-            val thumbnailDrawable = UtilsKt.coilExecuteGet(this, thumbnailUrl) ?: drawable
+            val thumbnailDrawable = CoilUtils.coilExecuteGet(this, thumbnailUrl) ?: drawable
             thumbnailImage = thumbnailDrawable?.toBitmap(48, 48)
         }
         

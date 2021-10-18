@@ -8,10 +8,9 @@ import com.banglalink.toffee.data.network.interceptor.AuthInterceptor
 import com.banglalink.toffee.data.network.interceptor.GetTracker
 import com.banglalink.toffee.data.network.interceptor.ToffeeDns
 import com.banglalink.toffee.data.network.retrofit.AuthApi
-import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.network.retrofit.DbApi
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
-import com.banglalink.toffee.model.TOFFEE_BASE_URL
+import com.banglalink.toffee.TOFFEE_BASE_URL
 import com.banglalink.toffee.receiver.ConnectionWatcher
 import dagger.Module
 import dagger.Provides
@@ -27,26 +26,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
-import javax.inject.Qualifier
 import javax.inject.Singleton
-
-@Qualifier
-annotation class EncryptedHttpClient
-
-@Qualifier
-annotation class SimpleHttpClient
-
-@Qualifier
-annotation class DnsHttpClient
-
-@Qualifier
-annotation class DefaultCache
-
-@Qualifier
-annotation class CoilCache
-
-@Qualifier
-annotation class DbRetrofit
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -157,11 +137,5 @@ object NetworkModule {
     @Provides
     fun providesConnectionWatcher(app: Application): ConnectionWatcher {
         return ConnectionWatcher(app)
-    }
-    
-    @Provides
-    @Singleton
-    fun providesCacheManager(@DefaultCache retrofitCache: Cache): CacheManager{
-        return CacheManager(retrofitCache)
     }
 }

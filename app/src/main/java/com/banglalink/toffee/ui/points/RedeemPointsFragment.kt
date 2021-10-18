@@ -17,7 +17,6 @@ import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.EndlessRecyclerViewScrollListener
 import com.banglalink.toffee.model.RedeemPoints
 import com.banglalink.toffee.model.Resource
-import com.banglalink.toffee.onboarding.OnBoarding
 
 class RedeemPointsFragment : Fragment(), BaseListItemCallback<RedeemPoints> {
     

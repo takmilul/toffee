@@ -2,6 +2,7 @@ package com.banglalink.toffee.common.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.banglalink.toffee.apiservice.BaseApiService
 
 class BaseNetworkPagingSource<T: Any>(private val service: BaseApiService<T>): PagingSource<Int, T>() {
     override fun getRefreshKey(state: PagingState<Int, T>): Int? = null

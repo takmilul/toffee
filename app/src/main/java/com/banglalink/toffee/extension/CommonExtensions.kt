@@ -82,17 +82,6 @@ val Float.px: Float get() {
     return (this * Resources.getSystem().displayMetrics.density)
 }
 
-fun ByteArray.toHex() = joinToString(separator = "") { byte -> "%02x".format(byte) }
-
-fun Long.toFormattedDate(): String{
-    TimeZone.setDefault(TimeZone.getTimeZone("Asia/Dhaka"))
-    val cal = Calendar.getInstance(TimeZone.getDefault())
-    cal.timeInMillis = this
-    val dateGMT = cal.time
-    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
-    return sdf.format(dateGMT)
-}
-
 fun Activity.checkVerification(block: (()-> Unit)? = null) {
     if (this is HomeActivity && !mPref.isVerifiedUser) {
         this.getNavController().navigate(R.id.loginDialog)
@@ -202,11 +191,3 @@ fun ViewGroup.showLoadingAnimation(isStart: Boolean) {
 //    })
 //}
 
-fun String.toMD5(): String {
-    return try {
-        val bytes = MessageDigest.getInstance("MD5").digest(this.toByteArray())
-        bytes.joinToString("") { "%02x".format(it) }
-    } catch (e: Exception) {
-        ""
-    }
-}

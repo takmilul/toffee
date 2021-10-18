@@ -5,6 +5,7 @@ import com.banglalink.toffee.apiservice.UploadConfirmation
 import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.enums.UploadStatus
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.util.UtilsKt
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +21,7 @@ class UploadStateManager(
     private val uploadRepo: UploadInfoRepository,
     private val uploadConfirmApi: UploadConfirmation
 ) {
-    
+
     private var retryUploadId: Long = -1L
     private var networkRetryCount: Int = MAX_RETRY_COUNT
 

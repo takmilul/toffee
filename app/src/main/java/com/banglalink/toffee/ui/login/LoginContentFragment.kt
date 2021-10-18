@@ -102,7 +102,7 @@ class LoginContentFragment : ChildDialogFragment() {
             when (it) {
                 is Resource.Success -> {
                     if (it.data is String) {
-                        regSessionToken = it.data
+                        regSessionToken = it.data as String
                         homeViewModel.sendOtpLogData(OTPLogData("", 1, 0, 0), phoneNo)
                         findNavController().navigate(R.id.verifyLoginFragment,
                             Bundle().apply { 

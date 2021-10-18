@@ -10,6 +10,7 @@ import android.util.Log
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.BuildConfig
+import com.banglalink.toffee.TOFFEE_HEADER
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.DrmTokenService
@@ -29,7 +30,6 @@ import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener
 import com.banglalink.toffee.listeners.PlaylistListener
 import com.banglalink.toffee.model.Channel
 import com.banglalink.toffee.model.ChannelInfo
-import com.banglalink.toffee.model.TOFFEE_HEADER
 import com.banglalink.toffee.receiver.ConnectionWatcher
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
@@ -707,7 +707,7 @@ abstract class PlayerPageActivity :
             }
             if(!channelInfo.fcmEventName.isNullOrBlank()){
                 if(channelInfo.isFcmEventActive){
-                    for (event in channelInfo.fcmEventName.split(",")) {
+                    for (event in channelInfo.fcmEventName!!.split(",")) {
                         ToffeeAnalytics.logEvent(event)
                     }
                 }

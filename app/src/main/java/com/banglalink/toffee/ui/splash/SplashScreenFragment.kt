@@ -183,7 +183,9 @@ class SplashScreenFragment : BaseFragment() {
                 is Resource.Failure -> {
                     when (it.error) {
                         is AppDeprecatedError -> {
-                            showUpdateDialog(it.error.title, it.error.updateMsg, it.error.forceUpdate)
+                            (it.error as AppDeprecatedError).let { ade->
+                                showUpdateDialog(ade.title, ade.updateMsg, ade.forceUpdate)
+                            }
                         }
                         is CustomerNotFoundError -> {
                             mPref.clear()

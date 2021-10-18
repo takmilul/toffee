@@ -22,13 +22,6 @@ import kotlinx.coroutines.SupervisorJob
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
-@Qualifier
-annotation class AppCoroutineScope
-@Qualifier
-annotation class SessionPreference
-@Qualifier
-annotation class CommonPreference
-
 @InstallIn(SingletonComponent::class)
 @Module
 object AppModule {

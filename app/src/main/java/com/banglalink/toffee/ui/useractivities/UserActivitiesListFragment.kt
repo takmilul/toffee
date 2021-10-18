@@ -60,7 +60,7 @@ class UserActivitiesListFragment: BaseListFragment<UserActivities>(),
     override fun onItemClicked(item: UserActivities) {
         lifecycleScope.launch {
             item.channelInfo?.let {
-                localSync.syncData(item.channelInfo)
+                localSync.syncData(it)
                 homeViewModel.fragmentDetailsMutableLiveData.postValue(item.channelInfo)
             }
         }

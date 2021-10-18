@@ -1,0 +1,128 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'kotlin-parcelize'
+    id 'dagger.hilt.android.plugin'
+}
+
+android {
+    compileSdk 31
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 31
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+
+        def appVersionCode = rootProject.appVersionCode
+        def appVersionName = '\"' + rootProject.appVersionName +'\"'
+        def exoVersionName = '\"' + rootProject.exoVersion +'\"'
+
+        versionCode appVersionCode
+        versionName appVersionName
+
+        //This part to get version code and name in library/module BuildConfig file
+
+        buildConfigField 'int', 'APP_VERSION_CODE', "$appVersionCode"
+        buildConfigField 'String', 'APP_VERSION_NAME', appVersionName
+        buildConfigField 'String', 'EXO_VERSION', exoVersionName
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    kapt {
+        correctErrorTypes true
+    }
+}
+
+dependencies {
+
+    //Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
+    implementation 'com.squareup.okhttp3:okhttp-dnsoverhttps:4.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
+    implementation 'com.facebook.android:facebook-android-sdk:11.2.0'
+
+    //Firebase Push Notification
+    implementation 'com.google.firebase:firebase-messaging:22.0.0'
+    //Firebase in app messaging
+    implementation 'com.google.firebase:firebase-inappmessaging-display:20.1.0'
+    //Firebase core
+    implementation 'com.google.firebase:firebase-core:19.0.1'
+    // Recommended: Add the Firebase SDK for Google Analytics.
+    implementation 'com.google.firebase:firebase-analytics:19.0.1'
+
+    // Add the Firebase SDK for Crashlytics.
+    implementation 'com.google.firebase:firebase-crashlytics:18.2.1'
+
+    // Room database
+    def room_version = "2.3.0"
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+
+    // Hilt
+    def hilt_android_ver = "2.38.1"
+    implementation "com.google.dagger:hilt-android:$hilt_android_ver"
+    androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_android_ver"
+    kapt "com.google.dagger:hilt-android-compiler:$hilt_android_ver"
+    kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_android_ver"
+    kapt "com.google.dagger:hilt-compiler:$hilt_android_ver"
+
+    def hilt_ver = "1.0.0"
+//    implementation "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03"
+    kapt "androidx.hilt:hilt-compiler:$hilt_ver"
+
+    // Paging
+    implementation 'androidx.paging:paging-runtime-ktx:3.0.1'
+
+    implementation 'com.google.code.gson:gson:2.8.8'
+
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1"
+
+    implementation ('com.google.apis:google-api-services-pubsub:v1-rev452-1.25.0') {
+        exclude group: 'com.google.code.findbugs'
+        exclude group: 'org.apache.httpcomponents'
+        exclude group: 'org.json'
+        exclude module: 'support-annotations'
+        exclude group: 'com.google.guava'
+//        exclude module: 'google-http-client-jackson2'
+    }
+    implementation ('com.google.api-client:google-api-client-android:1.31.5') {
+        exclude module: 'httpclient'
+        exclude group: 'com.google.code.findbugs'
+        exclude module: 'support-annotations'
+        exclude group: 'com.google.guava'
+    }
+    implementation ('com.google.http-client:google-http-client-gson:1.39.2') {
+        exclude module: 'httpclient'
+        exclude group: 'com.google.code.findbugs'
+        exclude module: 'support-annotations'
+        exclude group: 'com.google.guava'
+    }
+
+    //mqtt library
+    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5'
+    implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
+
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+}
