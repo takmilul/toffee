@@ -64,21 +64,22 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$rootProject.kotlin_version"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$rootProject.kotlinCoroutineVersion"
     implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'androidx.core:core-ktx:1.6.0'
     implementation "androidx.fragment:fragment-ktx:1.3.6"
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
     implementation "net.gotev:uploadservice:4.6.0"
     implementation "net.gotev:uploadservice-okhttp:4.6.0"
 
     //Retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
-    implementation 'com.squareup.okhttp3:okhttp-dnsoverhttps:4.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"
+    implementation "com.squareup.okhttp3:logging-interceptor:$rootProject.okHttpVersion"
+    implementation "com.squareup.okhttp3:okhttp-dnsoverhttps:$rootProject.okHttpVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$rootProject.retrofitVersion"
+
     //LifeCycle Extensions
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"
 //    implementation "android.arch.lifecycle:extensions:2.1.0"
@@ -95,24 +96,21 @@ dependencies {
     implementation 'com.xfinity:dahdit:0.9.3'
 
     //Coil image Lib
-    implementation 'io.coil-kt:coil:1.3.2'
-    implementation 'jp.wasabeef.transformers:coil:1.0.3'
-    implementation 'jp.wasabeef.transformers:core:1.0.3'
+    implementation 'io.coil-kt:coil:1.4.0'
+    implementation "jp.wasabeef.transformers:coil:1.0.5"
+    implementation "jp.wasabeef.transformers:core:1.0.5"
 
     //Firebase Push Notification
     implementation 'com.google.firebase:firebase-messaging:22.0.0'
     //Firebase in app messaging
     implementation 'com.google.firebase:firebase-inappmessaging-display:20.1.0'
     //Firebase core
-    implementation 'com.google.firebase:firebase-core:19.0.1'
-    // Recommended: Add the Firebase SDK for Google Analytics.
-    implementation 'com.google.firebase:firebase-analytics:19.0.1'
-
-    // Add the Firebase SDK for Crashlytics.
-    implementation 'com.google.firebase:firebase-crashlytics:18.2.1'
+    implementation "com.google.firebase:firebase-core:$rootProject.firebaseCoreVersion"
+    implementation "com.google.firebase:firebase-analytics:$rootProject.firebaseAnalyticsVersion"
+    implementation "com.google.firebase:firebase-crashlytics:$rootProject.firebaseCrashlyticsVersion"
 
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'com.github.pchmn:MaterialChipsInput:1.0.8'
+//    implementation 'com.github.pchmn:MaterialChipsInput:1.0.8'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
 
@@ -135,14 +133,14 @@ dependencies {
     implementation 'androidx.paging:paging-runtime-ktx:3.0.1'
 
     // Hilt
-    def hilt_android_ver = "2.38.1"
+    def hilt_android_ver = rootProject.hiltAndroidVersion
     implementation "com.google.dagger:hilt-android:$hilt_android_ver"
     androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_android_ver"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_android_ver"
     kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_android_ver"
     kapt "com.google.dagger:hilt-compiler:$hilt_android_ver"
 
-    def hilt_ver = "1.0.0"
+    def hilt_ver = rootProject.hiltVersion
 //    implementation "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03"
     kapt "androidx.hilt:hilt-compiler:$hilt_ver"
 
@@ -151,7 +149,7 @@ dependencies {
 //    kapt 'com.squareup.inject:assisted-inject-processor-dagger2:0.6.0'
 
     // Room database
-    def room_version = "2.3.0"
+    def room_version = rootProject.roomDbVersion
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
@@ -162,9 +160,9 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
     //Permission extension
-    implementation 'com.github.florent37:runtime-permission-kotlin:1.1.2'
+//    implementation 'com.github.florent37:runtime-permission-kotlin:1.1.2'
     //Facebook SDK
-    implementation 'com.facebook.android:facebook-android-sdk:11.2.0'
+    implementation "com.facebook.android:facebook-android-sdk:$rootProject.facebookSdkVersion"
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
 
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.3.1"
@@ -173,11 +171,13 @@ dependencies {
 	implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'com.google.android.gms:play-services-auth:19.2.0'
     implementation 'com.google.android.gms:play-services-auth-api-phone:17.5.1'
-    implementation 'com.google.android.play:core:1.10.1'
+    implementation 'com.google.android.play:core:1.10.2'
     
     //firework sdk
     def fireworkExoPlayerVersion = '2.13.3'
-    implementation 'com.github.loopsocial:firework_sdk:v5.5.8'
+    implementation ('com.github.loopsocial:firework_sdk:v5.5.8') {
+        exclude module: "picasso-transformations"
+    }
     implementation 'com.github.loopsocial:AndroidAdsService:v19.5.0'
     implementation "com.github.loopsocial:AndroidFireworkPlayer:$fireworkExoPlayerVersion"
 
@@ -210,7 +210,7 @@ dependencies {
     implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5'
     implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
 
-    implementation 'com.google.android.gms:play-services-ads-identifier:17.0.1'
+    implementation 'com.google.android.gms:play-services-ads-identifier:17.1.0'
 //    implementation("androidx.ads:ads-identifier:1.0.0-alpha04")
     
     //medallia

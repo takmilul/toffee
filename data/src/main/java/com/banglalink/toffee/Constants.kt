@@ -3,6 +3,7 @@ package com.banglalink.toffee
 import android.os.Build
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
+import com.banglalink.toffee.lib.BuildConfig
 
 object Constants {
     const val VERSION_CODE = BuildConfig.APP_VERSION_CODE

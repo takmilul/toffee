@@ -2,7 +2,6 @@ package com.banglalink.toffee.di
 
 import android.app.Application
 import android.content.Context
-import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.TOFFEE_BASE_URL
 import com.banglalink.toffee.data.network.interceptor.AuthInterceptor
 import com.banglalink.toffee.data.network.interceptor.GetTracker
@@ -10,6 +9,7 @@ import com.banglalink.toffee.data.network.interceptor.ToffeeDns
 import com.banglalink.toffee.data.network.retrofit.AuthApi
 import com.banglalink.toffee.data.network.retrofit.DbApi
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi
+import com.banglalink.toffee.lib.BuildConfig
 import com.banglalink.toffee.receiver.ConnectionWatcher
 import dagger.Module
 import dagger.Provides

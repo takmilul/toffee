@@ -1,6 +1,5 @@
 package com.banglalink.toffee.data.network.retrofit
 
-import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.Constants
 import com.banglalink.toffee.data.network.request.ApiLoginRequest
 import com.banglalink.toffee.data.network.request.CheckUpdateRequest

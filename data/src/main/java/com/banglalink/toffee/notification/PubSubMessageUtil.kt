@@ -15,7 +15,6 @@ import com.google.api.services.pubsub.PubsubScopes
 import com.google.api.services.pubsub.model.PublishRequest
 import com.google.api.services.pubsub.model.PublishResponse
 import com.google.api.services.pubsub.model.PubsubMessage
-import com.google.common.collect.ImmutableList
 import com.google.gson.JsonObject
 import kotlinx.coroutines.*
 
@@ -73,9 +72,7 @@ object PubSubMessageUtil {
                     val pubsubMessage = PubsubMessage()
                     pubsubMessage.encodeData(jsonMessage.toByteArray(charset("UTF-8")))
                     val publishRequest = PublishRequest()
-                    publishRequest.messages = ImmutableList.of(
-                        pubsubMessage
-                    )
+                    publishRequest.messages = listOf(pubsubMessage)
                     client.projects().topics().publish(topic, publishRequest).queue(batch, callback)
                     batch?.execute()
                 } catch (ex: Exception) {

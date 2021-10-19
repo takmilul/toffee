@@ -251,8 +251,13 @@ object UtilsKt {
         return null
     }
 
+    @Throws(IOException::class)
+    fun readFileToBytes(file: File): ByteArray {
+        val bytes = ByteArray(file.length().toInt())
+        FileInputStream(file).use { fis -> fis.read(bytes) }
+        return bytes
+    }
 }
-
 
 const val IMAGE_MAX_SIZE = 500000 // 500KB
 const val TAG = "SCALE_IMAGE"

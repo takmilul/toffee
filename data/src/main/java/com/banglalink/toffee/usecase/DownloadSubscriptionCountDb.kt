@@ -5,11 +5,11 @@ import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.database.entities.SubscriptionCount
 import com.banglalink.toffee.data.network.retrofit.DbApi
 import com.banglalink.toffee.data.repository.SubscriptionCountRepository
-import com.google.common.io.Files
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.nio.ByteBuffer
+import java.nio.file.Files
 import java.util.zip.CRC32
 
 class DownloadSubscriptionCountDb(
@@ -41,7 +41,7 @@ class DownloadSubscriptionCountDb(
             return false
         }
         ToffeeAnalytics.logBreadCrumb("Processing subscription count file")
-        val fileBytes = Files.toByteArray(file)
+        val fileBytes = Files.readAllBytes(file.toPath())
         val byteBuffer = ByteBuffer.wrap(fileBytes)
         val checksum = CRC32()
         checksum.update(fileBytes, 0, fileBytes.size)

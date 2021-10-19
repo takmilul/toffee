@@ -1,7 +1,6 @@
 package com.banglalink.toffee.usecase
 
 import android.os.Build
-import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.Constants
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference

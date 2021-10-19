@@ -1,6 +1,5 @@
 package com.banglalink.toffee.usecase
 
-import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.Constants
 import com.banglalink.toffee.data.network.request.HeartBeatRequest
 import com.banglalink.toffee.data.network.retrofit.ToffeeApi

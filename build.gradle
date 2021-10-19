@@ -3,10 +3,10 @@
 buildscript {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.2'
+        classpath 'com.android.tools.build:gradle:7.0.3'
         classpath 'com.google.gms:google-services:4.3.10'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.31"
 
@@ -22,7 +22,7 @@ buildscript {
 allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
         maven { url "https://jitpack.io" }
         maven { url "https://repo.eclipse.org/content/repositories/paho-releases/" }
 //        maven { url "https://repository.medallia.com/digital-maven/" }
@@ -36,7 +36,17 @@ task clean(type: Delete) {
 ext {
     appVersionCode = 67
     appVersionName = '2.1.0'
-    kotlin_version = '1.5.30'
+    kotlin_version = '1.5.31'
+    kotlinCoroutineVersion = "1.5.2"
 
     exoVersion = "2.14.2"
+    firebaseCoreVersion = "19.0.2"
+    firebaseAnalyticsVersion = "19.0.2"
+    firebaseCrashlyticsVersion = "18.2.3"
+    roomDbVersion = "2.3.0"
+    hiltAndroidVersion = "2.39.1"
+    hiltVersion = "1.0.0"
+    retrofitVersion = "2.9.0"
+    okHttpVersion = "4.9.0"
+    facebookSdkVersion = "11.2.0"
 }
