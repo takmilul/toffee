@@ -108,7 +108,7 @@ class VerifyLoginFragment : ChildDialogFragment() {
     private fun reloadContent() {
         closeDialog()
         cacheManager.clearAllCache()
-        requireActivity().viewModelStore.clear()
+//        requireActivity().viewModelStore.clear()
         requireActivity().showToast(getString(R.string.verify_success), Toast.LENGTH_LONG).also {
             requireActivity().recreate()
         }

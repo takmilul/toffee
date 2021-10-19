@@ -1368,6 +1368,7 @@ class HomeActivity :
     
     override fun onDestroy() {
         mqttService.destroy()
+        viewModelStore.clear()
         appUpdateManager.unregisterListener(appUpdateListener)
         try {
             connectivityManager.unregisterNetworkCallback(heartBeatManager)

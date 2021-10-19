@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.databinding.FragmentLandingPageBinding
@@ -29,7 +29,7 @@ class LandingPageFragment : HomeBaseFragment(), FwSDK.SdkStatusListener {
     private var _binding: FragmentLandingPageBinding ? = null
     @Inject @ApplicationContext lateinit var appContext: Context
     private val binding get() = _binding!!
-    private val landingViewModel by viewModels<LandingPageViewModel>()
+    private val landingViewModel by activityViewModels<LandingPageViewModel>()
 
     companion object {
         fun newInstance(): LandingPageFragment {
