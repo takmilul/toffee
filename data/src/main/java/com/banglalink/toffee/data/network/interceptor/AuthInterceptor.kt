@@ -2,7 +2,7 @@ package com.banglalink.toffee.data.network.interceptor
 
 import android.util.Log
 import com.banglalink.toffee.Constants.CLIENT_API_HEADER
-import com.banglalink.toffee.TOFFEE_HEADER
+import com.banglalink.toffee.di.ToffeeHeader
 import com.banglalink.toffee.exception.AuthEncodeDecodeException
 import com.banglalink.toffee.exception.AuthInterceptorException
 import com.banglalink.toffee.util.EncryptionUtil
@@ -13,8 +13,15 @@ import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
 import okio.Buffer
 import java.io.IOException
+import javax.inject.Inject
+import javax.inject.Provider
+import javax.inject.Singleton
 
-class AuthInterceptor (private val iGetMethodTracker: IGetMethodTracker): Interceptor {
+@Singleton
+class AuthInterceptor @Inject constructor(
+    private val iGetMethodTracker: IGetMethodTracker,
+    @ToffeeHeader private val headerProvider: Provider<String>,
+    ): Interceptor {
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
@@ -27,10 +34,10 @@ class AuthInterceptor (private val iGetMethodTracker: IGetMethodTracker): Interc
             builder.addEncoded("data", string)
         }
 
-        Log.i("Header",TOFFEE_HEADER)
+//        Log.i("Header",toffeeHeader)
         val newRequest = request.newBuilder()
             .headers(request.headers)
-            .addHeader("User-Agent", TOFFEE_HEADER)
+            .addHeader("User-Agent", headerProvider.get())
             .method(if(convertToGet) "GET" else "POST", if(convertToGet) null else builder.build())
         if(convertToGet){
             newRequest.addHeader(CLIENT_API_HEADER,string)

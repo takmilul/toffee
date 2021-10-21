@@ -12,8 +12,8 @@ open class BaseRequest(val apiName: String) {
     @SerializedName("version") val version : Double = 1.01
     @SerializedName("appId") val appId: String = "NexViewersentTV"
     @SerializedName("appSecurityCode") val appSecurityCode : String = "eee80f834a6e15b47db06fb70e75bada"
-    @SerializedName("deviceType") val deviceType :Int = 1
-    @SerializedName("appVersion") val appVersion : String = Constants.VERSION_NAME
+    @SerializedName("deviceType") val deviceType :Int = Constants.DEVICE_TYPE
+    @SerializedName("appVersion") val appVersion : String = CommonPreference.getInstance().appVersionName
     @SerializedName("osVersion") val osVersion :String = "android "+Build.VERSION.RELEASE
     @SerializedName("netType") val netType:String = SessionPreference.getInstance().netType
     @SerializedName("isBlNumber") open var isBlNumber = SessionPreference.getInstance().isBanglalinkNumber

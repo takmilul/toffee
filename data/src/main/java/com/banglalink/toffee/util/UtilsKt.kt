@@ -3,6 +3,8 @@ package com.banglalink.toffee.util
 import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Bitmap.CompressFormat.JPEG
@@ -17,6 +19,7 @@ import android.util.Base64
 import android.util.Log
 import android.view.Display
 import android.view.inputmethod.InputMethodManager
+import androidx.core.content.pm.PackageInfoCompat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
@@ -256,6 +259,18 @@ object UtilsKt {
         val bytes = ByteArray(file.length().toInt())
         FileInputStream(file).use { fis -> fis.read(bytes) }
         return bytes
+    }
+
+    fun getVersionInfo(context: Context): Pair<String, Long>? {
+        try {
+            val pInfo: PackageInfo =
+                context.packageManager.getPackageInfo(context.packageName, 0)
+            val version: String = pInfo.versionName
+            return Pair(version, PackageInfoCompat.getLongVersionCode(pInfo))
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+        }
+        return null
     }
 }
 

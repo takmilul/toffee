@@ -8,8 +8,8 @@ import com.banglalink.toffee.util.Utils
 import com.google.gson.annotations.SerializedName
 
 open class PubSubBaseRequest {
-    val deviceType :Int = 1
-    val appVersion : String = Constants.VERSION_NAME
+    val deviceType :Int = Constants.DEVICE_TYPE
+    val appVersion : String = CommonPreference.getInstance().appVersionName
     val osVersion :String = "android "+Build.VERSION.RELEASE
     val netType:String = SessionPreference.getInstance().netType
     open var isBlNumber = SessionPreference.getInstance().isBanglalinkNumber

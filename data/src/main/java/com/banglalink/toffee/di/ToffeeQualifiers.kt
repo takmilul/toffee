@@ -28,3 +28,6 @@ annotation class SessionPreference
 
 @Qualifier
 annotation class CommonPreference
+
+@Qualifier
+annotation class ToffeeHeader

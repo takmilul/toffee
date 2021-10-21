@@ -86,7 +86,7 @@ class SendHeartBeat @Inject constructor(
         @SerializedName("customer_id")
         val customerId: Int,
         @SerializedName("device_type")
-        val deviceType: Int = 1,
+        val deviceType: Int = Constants.DEVICE_TYPE,
         @SerializedName("content_id")
         val contentId: Int,
         @SerializedName("content_type")
@@ -98,7 +98,7 @@ class SendHeartBeat @Inject constructor(
         @SerializedName("os_name")
         val os: String = "android",
         @SerializedName("app_version")
-        val appVersion: String = Constants.VERSION_NAME,
+        val appVersion: String = CommonPreference.getInstance().appVersionName,
         @SerializedName("is_bl_number")
         val isBlNumber: Int,
         @SerializedName("net_type")

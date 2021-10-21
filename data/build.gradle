@@ -17,19 +17,18 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+    }
 
-        def appVersionCode = rootProject.appVersionCode
-        def appVersionName = '\"' + rootProject.appVersionName +'\"'
-        def exoVersionName = '\"' + rootProject.exoVersion +'\"'
-
-        versionCode appVersionCode
-        versionName appVersionName
-
-        //This part to get version code and name in library/module BuildConfig file
-
-        buildConfigField 'int', 'APP_VERSION_CODE', "$appVersionCode"
-        buildConfigField 'String', 'APP_VERSION_NAME', appVersionName
-        buildConfigField 'String', 'EXO_VERSION', exoVersionName
+    flavorDimensions "lib"
+    productFlavors {
+        mobile {
+            dimension "lib"
+            buildConfigField 'int', 'DEVICE_TYPE', "1"
+        }
+        tv {
+            dimension "lib"
+            buildConfigField 'int', 'DEVICE_TYPE', "4"
+        }
     }
 
     buildTypes {

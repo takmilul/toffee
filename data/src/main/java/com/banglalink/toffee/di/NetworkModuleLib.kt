@@ -5,6 +5,7 @@ import android.content.Context
 import com.banglalink.toffee.TOFFEE_BASE_URL
 import com.banglalink.toffee.data.network.interceptor.AuthInterceptor
 import com.banglalink.toffee.data.network.interceptor.GetTracker
+import com.banglalink.toffee.data.network.interceptor.IGetMethodTracker
 import com.banglalink.toffee.data.network.interceptor.ToffeeDns
 import com.banglalink.toffee.data.network.retrofit.AuthApi
 import com.banglalink.toffee.data.network.retrofit.DbApi
@@ -34,19 +35,22 @@ object NetworkModuleLib {
     @Provides
     @Singleton
     @EncryptedHttpClient
-    fun providesEncryptedHttpClient(@DefaultCache cache: Cache, toffeeDns: ToffeeDns): OkHttpClient {
+    fun providesEncryptedHttpClient(@DefaultCache cache: Cache,
+                                    toffeeDns: ToffeeDns,
+                                    authInterceptor: AuthInterceptor
+    ): OkHttpClient {
         val clientBuilder = OkHttpClient.Builder().apply {
             connectTimeout(15, TimeUnit.SECONDS)
             readTimeout(30, TimeUnit.SECONDS)
             retryOnConnectionFailure(false)
             if (BuildConfig.DEBUG) {
-                addInterceptor(HttpLoggingInterceptor().also {
+                addNetworkInterceptor(HttpLoggingInterceptor().also {
                     it.level = HttpLoggingInterceptor.Level.BODY
                 })
             }
             cache(cache)
             dns(toffeeDns)
-            addInterceptor(AuthInterceptor(GetTracker()))
+            addInterceptor(authInterceptor)
         }
         return clientBuilder.build()
     }
@@ -129,5 +133,11 @@ object NetworkModuleLib {
     @Provides
     fun providesConnectionWatcher(app: Application): ConnectionWatcher {
         return ConnectionWatcher(app)
+    }
+
+    @Provides
+    @Singleton
+    fun providesGetTracker(): IGetMethodTracker {
+        return GetTracker()
     }
 }

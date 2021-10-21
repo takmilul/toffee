@@ -1,8 +1,5 @@
 package com.banglalink.toffee
 
-import android.os.Build
-import com.banglalink.toffee.data.storage.CommonPreference
-import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.lib.BuildConfig
 
 const val TOFFEE_BASE_URL = "https://mapi.toffeelive.com/"
@@ -11,9 +8,7 @@ const val TOFFEE_BASE_URL = "https://mapi.toffeelive.com/"
 //const val TOFFEE_BASE_URL = "https://j1-staging.toffeelive.com/"
 
 object Constants {
-    const val VERSION_CODE = BuildConfig.APP_VERSION_CODE
-    const val VERSION_NAME = BuildConfig.APP_VERSION_NAME
-
+    const val DEVICE_TYPE = BuildConfig.DEVICE_TYPE
 
     const val LOGIN_ERROR = 103
     const val USER_ACTIVITIES_LIMIT = 150
@@ -107,5 +102,3 @@ object Constants {
         }
     }.toString()
 }
-
-val TOFFEE_HEADER=("Toffee" + "/" + Constants.VERSION_NAME + " (Linux;Android " + Build.VERSION.RELEASE + ") " + "ExoPlayerLib/${BuildConfig.EXO_VERSION}" + "/" + SessionPreference.getInstance().customerId + "/" + CommonPreference.getInstance().deviceId)

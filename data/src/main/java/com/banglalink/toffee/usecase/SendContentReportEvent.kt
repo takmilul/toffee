@@ -41,11 +41,11 @@ data class ReportInAppropriateVideoData(
     @SerializedName("report_time")
     val reportTime: String = System.currentTimeMillis().toFormattedDate(),
     @SerializedName("device_type")
-    val deviceType :Int = 1,
+    val deviceType :Int = Constants.DEVICE_TYPE,
     @SerializedName("device_id")
     val deviceId: String = CommonPreference.getInstance().deviceId,
     @SerializedName("app_version")
-    val appVersion : String = Constants.VERSION_NAME,
+    val appVersion : String = CommonPreference.getInstance().appVersionName,
     @SerializedName("os_version")
     val osVersion :String = "android "+ Build.VERSION.RELEASE
 )

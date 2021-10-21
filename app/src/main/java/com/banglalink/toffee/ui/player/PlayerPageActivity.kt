@@ -10,7 +10,6 @@ import android.util.Log
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.BuildConfig
-import com.banglalink.toffee.TOFFEE_HEADER
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.DrmTokenService
@@ -23,6 +22,7 @@ import com.banglalink.toffee.data.repository.DrmLicenseRepository
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.PlayerPreference
 import com.banglalink.toffee.di.DnsHttpClient
+import com.banglalink.toffee.di.ToffeeHeader
 import com.banglalink.toffee.exception.ContentExpiredException
 import com.banglalink.toffee.extension.getChannelMetadata
 import com.banglalink.toffee.extension.showToast
@@ -101,6 +101,7 @@ abstract class PlayerPageActivity :
     private val playerEventListener: PlayerEventListener = PlayerEventListener()
     @DnsHttpClient @Inject lateinit var dnsHttpClient: OkHttpClient
     @Inject lateinit var drmFallbackService: SendDrmFallbackEvent
+    @ToffeeHeader @Inject lateinit var toffeeHeader: String
 
 //    private var mOfflineLicenseHelper: OfflineLicenseHelper? = null
 
@@ -270,7 +271,7 @@ abstract class PlayerPageActivity :
 //                    )
 //                    .build()
                 )
-                .setUserAgent(TOFFEE_HEADER)
+                .setUserAgent(toffeeHeader)
 //                .setDefaultRequestProperties(mapOf("TOFFEE-SESSION-TOKEN" to mPref.getHeaderSessionToken()!!))
 
             val mediaSourceFactory = DefaultMediaSourceFactory(httpDataSourceFactory!!)

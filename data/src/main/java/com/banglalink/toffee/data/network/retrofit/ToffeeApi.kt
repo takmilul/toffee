@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.network.retrofit
 
+import com.banglalink.toffee.Constants
 import com.banglalink.toffee.data.network.request.*
 import com.banglalink.toffee.data.network.response.*
 import com.banglalink.toffee.model.FeaturedPartnerRequest
@@ -19,13 +20,13 @@ interface ToffeeApi {
     @POST("subscriber-profile")
     suspend fun getCustomerProfile(@Body profileRequest: ProfileRequest):ProfileResponse
 
-    @POST("categories-v2/1/{dbVersion}")//https://staging.toffee-cms.com/categories-v2/deviceType/dbVersion
+    @POST("categories-v2/${Constants.DEVICE_TYPE}/{dbVersion}")//https://staging.toffee-cms.com/categories-v2/deviceType/dbVersion
     suspend fun getCategory(
         @Path("dbVersion") dbVersion: Int,
         @Body navCategoryRequest: NavCategoryRequest
     ):NavCategoryResponse
 
-    @POST("ugc-contents-v5/1/{type}/1/{categoryId}/{subcategoryId}/{limit}/{offset}/{dbVersion}")//https://staging.toffee-cms.com/contents-v5/deviceType/type/telcoId/categoryId/subCategoryId/limit/offset/dbVersion
+    @POST("ugc-contents-v5/${Constants.DEVICE_TYPE}/{type}/1/{categoryId}/{subcategoryId}/{limit}/{offset}/{dbVersion}")//https://staging.toffee-cms.com/contents-v5/deviceType/type/telcoId/categoryId/subCategoryId/limit/offset/dbVersion
     suspend fun getContents(
         @Path("type") type: String,
         @Path("categoryId") categoryId: Int,
@@ -42,7 +43,7 @@ interface ToffeeApi {
     @POST("ugc-favorite-contents")
     suspend fun getFavoriteContents(@Body favoriteContentRequest: FavoriteContentRequest):FavoriteContentResponse
 
-    @POST("ugc-app-home-page-content-toffee-v2/1/0/1/200/{dbVersion}")//https://staging.toffee-cms.com/app-home-page-content-toffee-v2/deviceType/subCategoryId/telc oId/limit/dbVesion
+    @POST("ugc-app-home-page-content-toffee-v2/${Constants.DEVICE_TYPE}/0/1/200/{dbVersion}")//https://staging.toffee-cms.com/app-home-page-content-toffee-v2/deviceType/subCategoryId/telc oId/limit/dbVesion
     suspend fun getChannels(
         @Path("dbVersion") dbVersion: Int,
         @Body allChannelRequest: AllChannelRequest
@@ -103,7 +104,7 @@ interface ToffeeApi {
     suspend fun getReferrerPolicy(@Body referrerPolicyRequest: ReferrerPolicyRequest):ReferrerPolicyResponse
 
     //*************** UGC APIS **********************//
-    @POST("ugc-most-popular-contents/1/{type}/{isSerialContent}/{categoryId}/{subCategoryId}/{limit}/{offset}/{dbVersion}")
+    @POST("ugc-most-popular-contents/${Constants.DEVICE_TYPE}/{type}/{isSerialContent}/{categoryId}/{subCategoryId}/{limit}/{offset}/{dbVersion}")
     suspend fun getUgcMostPopularContents(
         @Path("type") type: String,
         @Path("isSerialContent") isDramaSeries: Int = 0,
@@ -115,13 +116,13 @@ interface ToffeeApi {
         @Body mostPopularContentRequest: MostPopularContentRequest
     ): MostPopularContentResponse
 
-    @POST("ugc-categories/1/{dbVersion}")
+    @POST("ugc-categories/${Constants.DEVICE_TYPE}/{dbVersion}")
     suspend fun getUgcCategoryList(
         @Path("dbVersion") dbVersion: Int,
         @Body categoryRequest: CategoryRequest
     ): CategoryResponse
 
-    @POST("ugc-payment-method-list/1/{limit}/{offset}/{dbVersion}")
+    @POST("ugc-payment-method-list/${Constants.DEVICE_TYPE}/{limit}/{offset}/{dbVersion}")
     suspend fun getPaymentMethodList(
         @Path("limit") limit:Int,
         @Path("offset") offset:Int,
@@ -129,13 +130,13 @@ interface ToffeeApi {
         @Body paymentMethodRequest: PaymentMethodRequest
     ): PaymentMethodResponse
     
-    @POST("ugc-active-inactive-categories/1/{dbVersion}")
+    @POST("ugc-active-inactive-categories/${Constants.DEVICE_TYPE}/{dbVersion}")
     suspend fun getUgcContentCategoryList(
         @Path("dbVersion") dbVersion: Int,
         @Body categoryRequest: ContentCategoryRequest
     ): CategoryResponse
 
-    @POST("ugc-category-wise-editors-choice/1/{type}/{editorChoiceType}/{categoryId}/{dbVersion}")
+    @POST("ugc-category-wise-editors-choice/${Constants.DEVICE_TYPE}/{type}/{editorChoiceType}/{categoryId}/{dbVersion}")
     suspend fun getUgcEditorsChoice(
         @Path("type") type: String,
         @Path("editorChoiceType") isCategory: Int = 1,
@@ -144,7 +145,7 @@ interface ToffeeApi {
         @Body allUserChannelsEditorsChoiceRequest: AllUserChannelsEditorsChoiceRequest
     ): AllUserChannelsEditorsChoiceResponse
 
-    @POST("ugc-category-featured-contents/1/{type}/{featureType}/{categoryId}/{dbVersion}")
+    @POST("ugc-category-featured-contents/${Constants.DEVICE_TYPE}/{type}/{featureType}/{categoryId}/{dbVersion}")
     suspend fun getUgcFeatureContents(
         @Path("type") type: String,
         @Path("featureType") featureType: Int = 1,
@@ -153,7 +154,7 @@ interface ToffeeApi {
         @Body featureRequest: FeatureContentRequest
     ): FeatureContentResponse
 
-    @POST("ugc-popular-channel/1/{isCategory}/{categoryId}/{limit}/{offset}/{dbVersion}")
+    @POST("ugc-popular-channel/${Constants.DEVICE_TYPE}/{isCategory}/{categoryId}/{limit}/{offset}/{dbVersion}")
     suspend fun getUgcPopularChannels(
         @Path("isCategory") isCategory: Int = 0,
         @Path("categoryId") categoryId: Int = 0,
@@ -178,7 +179,7 @@ interface ToffeeApi {
         @Body uploadConfirmationRequest: UploadConfirmationRequest
     ): UploadConfirmationResponse
 
-    @POST("ugc-popular-playlist-names/1/{dbVersion}")
+    @POST("ugc-popular-playlist-names/${Constants.DEVICE_TYPE}/{dbVersion}")
     suspend fun getMostPopularPlaylists(
         @Path("dbVersion") dbVersion: Int,
         @Body mostPopularPlaylistsRequest: MostPopularPlaylistsRequest
@@ -199,7 +200,7 @@ interface ToffeeApi {
     @POST("ugc-add-content-to-playlist")
     suspend fun addToMyChannelPlayList(@Body myChannelAddToPlaylistRequest: MyChannelAddToPlaylistRequest): MyChannelAddToPlaylistResponse
 
-    @POST("ugc-channel-details/1/{channelOwnerId}/{isOwner}/{isPublic}/{channelId}/{dbVersion}")
+    @POST("ugc-channel-details/${Constants.DEVICE_TYPE}/{channelOwnerId}/{isOwner}/{isPublic}/{channelId}/{dbVersion}")
     suspend fun getMyChannelDetails(
         @Path("channelOwnerId") channelOwnerId: Int,
         @Path("isOwner") isOwner: Int,
@@ -209,7 +210,7 @@ interface ToffeeApi {
         @Body channelDetailRequest: MyChannelDetailRequest
     ): MyChannelDetailResponse
 
-    @POST("ugc-channel-all-content/1/{type}/{isOwner}/{channelOwnerId}/{categoryId}/{subcategoryId}/{isPublic}/{limit}/{offset}/{dbVersion}")
+    @POST("ugc-channel-all-content/${Constants.DEVICE_TYPE}/{type}/{isOwner}/{channelOwnerId}/{categoryId}/{subcategoryId}/{isPublic}/{limit}/{offset}/{dbVersion}")
     //ugc-channel-all-content/deviceType/type/isOwner/channelId/categoryId/subCategoryId/limit/offset/dbVersion
     suspend fun getMyChannelVideos(
         @Path("type") type: String,
@@ -227,7 +228,7 @@ interface ToffeeApi {
     @POST("ugc-content-delete")
     suspend fun deleteMyChannelVideo(@Body myChannelVideoDeleteRequest: MyChannelVideoDeleteRequest): MyChannelVideoDeleteResponse
 
-    @POST("ugc-playlist-names/1/{isOwner}/{channelOwnerId}/{limit}/{offset}/{dbVersion}")
+    @POST("ugc-playlist-names/${Constants.DEVICE_TYPE}/{isOwner}/{channelOwnerId}/{limit}/{offset}/{dbVersion}")
     suspend fun getMyChannelPlaylist(
         @Path("isOwner") isOwner: Int,
         @Path("channelOwnerId") channelOwnerId: Int,
@@ -237,7 +238,7 @@ interface ToffeeApi {
         @Body channelPlaylistRequest: MyChannelPlaylistRequest
     ): MyChannelPlaylistResponse
 
-    @POST("ugc-user-playlist-names/1/{isOwner}/{channelOwnerId}/{limit}/{offset}/{dbVersion}")
+    @POST("ugc-user-playlist-names/${Constants.DEVICE_TYPE}/{isOwner}/{channelOwnerId}/{limit}/{offset}/{dbVersion}")
     suspend fun getMyChannelUserPlaylist(
         @Path("isOwner") isOwner: Int,
         @Path("channelOwnerId") channelOwnerId: Int,
@@ -247,7 +248,7 @@ interface ToffeeApi {
         @Body channelUserPlaylistRequest: MyChannelUserPlaylistRequest
     ): MyChannelPlaylistResponse
 
-    @POST("ugc-content-by-playlist/1/{channelOwnerId}/{isOwner}/{playlistId}/{limit}/{offset}/{dbVersion}")
+    @POST("ugc-content-by-playlist/${Constants.DEVICE_TYPE}/{channelOwnerId}/{isOwner}/{playlistId}/{limit}/{offset}/{dbVersion}")
     suspend fun getMyChannelPlaylistVideos(
         @Path("channelOwnerId") channelOwnerId: Int,
         @Path("isOwner") isOwner: Int,
@@ -258,7 +259,7 @@ interface ToffeeApi {
         @Body channelPlaylistVideosRequest: MyChannelPlaylistVideosRequest
     ): MyChannelPlaylistVideosResponse
 
-    @POST("ugc-content-by-user-playlist/1/{channelOwnerUserId}/{isOwner}/{playlistId}/{limit}/{offset}/{dbVersion}")
+    @POST("ugc-content-by-user-playlist/${Constants.DEVICE_TYPE}/{channelOwnerUserId}/{isOwner}/{playlistId}/{limit}/{offset}/{dbVersion}")
     suspend fun getMyChannelUserPlaylistVideos(
         @Path("channelOwnerUserId") channelOwnerId: Int,
         @Path("isOwner") isOwner: Int,
@@ -278,7 +279,7 @@ interface ToffeeApi {
     @POST("/ugc-channel-edit")
     suspend fun editMyChannelDetail(@Body createPlaylistEditRequest: MyChannelEditRequest): MyChannelEditResponse
 
-    @POST("ugc-terms-and-conditions/1/{dbVersion}")
+    @POST("ugc-terms-and-conditions/${Constants.DEVICE_TYPE}/{dbVersion}")
     suspend fun getVideoTermsAndCondition(
         @Path("dbVersion") dbVersion: Int,
         @Body termsConditionRequest: TermsConditionRequest
@@ -287,7 +288,7 @@ interface ToffeeApi {
     @POST("/ugc-rating-on-channel")
     suspend fun rateMyChannel(@Body myChannelRatingRequest: MyChannelRatingRequest): MyChannelRatingResponse
     
-    @POST("/ugc-all-user-channel/1/{limit}/{offset}/{dbVersion}")
+    @POST("/ugc-all-user-channel/${Constants.DEVICE_TYPE}/{limit}/{offset}/{dbVersion}")
     suspend fun getAllUserChannels(
         @Path("limit") limit: Int,
         @Path("offset") offset: Int,
@@ -295,7 +296,7 @@ interface ToffeeApi {
         @Body allUserChannelsRequest: AllUserChannelsRequest
     ): AllUserChannelsResponse
     
-    @POST("/ugc-channel-subscription-list/1/{limit}/{offset}/{dbVersion}")
+    @POST("/ugc-channel-subscription-list/${Constants.DEVICE_TYPE}/{limit}/{offset}/{dbVersion}")
     suspend fun getSubscribedUserChannels(
         @Path("limit") limit: Int,
         @Path("offset") offset: Int,
@@ -303,7 +304,7 @@ interface ToffeeApi {
         @Body subscribedUserChannelsRequest: SubscribedUserChannelsRequest
     ): SubscribedUserChannelsResponse
     
-    @POST("/ugc-movie-category-details/1/{type}/{categoryId}/{limit}/{offset}/{dbVersion}")
+    @POST("/ugc-movie-category-details/${Constants.DEVICE_TYPE}/{type}/{categoryId}/{limit}/{offset}/{dbVersion}")
     suspend fun getMovieCategoryDetail(
         @Path("type") type: String,
         @Path("categoryId") categoryId: Int,
@@ -313,7 +314,7 @@ interface ToffeeApi {
         @Body categoryDetailRequest: MovieCategoryDetailRequest
     ): MovieCategoryDetailResponse
     
-    @POST("/ugc-movie-preview/1/{type}/{categoryId}/{subCategoryId}/{limit}/{offset}/{dbVersion}")
+    @POST("/ugc-movie-preview/${Constants.DEVICE_TYPE}/{type}/{categoryId}/{subCategoryId}/{limit}/{offset}/{dbVersion}")
     suspend fun getMoviePreviews(
         @Path("type") type: String,
         @Path("categoryId") categoryId: Int,
@@ -324,7 +325,7 @@ interface ToffeeApi {
         @Body moviesPreviewRequest: MoviesPreviewRequest
     ): MoviesPreviewResponse
     
-    @POST("/ugc-coming-soon/1/{type}/{categoryId}/{subCategoryId}/{limit}/{offset}/{dbVersion}")
+    @POST("/ugc-coming-soon/${Constants.DEVICE_TYPE}/{type}/{categoryId}/{subCategoryId}/{limit}/{offset}/{dbVersion}")
     suspend fun getComingSoonPosters(
         @Path("type") type: String,
         @Path("categoryId") categoryId: Int,
@@ -335,7 +336,7 @@ interface ToffeeApi {
         @Body moviesComingSoonRequest: MoviesComingSoonRequest
     ): MoviesComingSoonResponse
     
-    @POST("/ugc-latest-drama-serial/1/{type}/{subCategoryId}/{isFilter}/{hashTags}/{limit}/{offset}/{dbVersion}")
+    @POST("/ugc-latest-drama-serial/${Constants.DEVICE_TYPE}/{type}/{subCategoryId}/{isFilter}/{hashTags}/{limit}/{offset}/{dbVersion}")
     suspend fun getDramaSeriesContents(
         @Path("type") type: String,
         @Path("subCategoryId") subCategoryId: Int,
@@ -347,7 +348,7 @@ interface ToffeeApi {
         @Body dramaSeriesContentRequest: DramaSeriesContentRequest
     ): DramaSeriesContentResponse
 
-    @POST("/ugc-drama-serial-by-season/1/{type}/{serialSummaryId}/{seasonNo}/{limit}/{offset}/{dbVersion}")
+    @POST("/ugc-drama-serial-by-season/${Constants.DEVICE_TYPE}/{type}/{serialSummaryId}/{seasonNo}/{limit}/{offset}/{dbVersion}")
     suspend fun getDramaEpisodsBySeason(
         @Path("type") type: String,
         @Path("serialSummaryId") serialSummaryId: Int,
@@ -358,7 +359,7 @@ interface ToffeeApi {
         @Body dramaEpisodesBySeasonRequest: DramaEpisodesBySeasonRequest
     ): DramaEpisodesBySeasonResponse
     
-    @POST("/ugc-partner-list/1/{type}/{limit}/{offset}/{dbVersion}")
+    @POST("/ugc-partner-list/${Constants.DEVICE_TYPE}/{type}/{limit}/{offset}/{dbVersion}")
     suspend fun getPartnersList(
         @Path("type") type: String,
         @Path("limit") limit: Int,
@@ -370,7 +371,7 @@ interface ToffeeApi {
     @POST("/mqtt-credential")
     suspend fun getMqttCredential(@Body mqttRequest: MqttRequest): MqttResponse
     
-    @POST("/ugc-inappropriate-head-list/1/{limit}/{offset}/{dbVersion}")
+    @POST("/ugc-inappropriate-head-list/${Constants.DEVICE_TYPE}/{limit}/{offset}/{dbVersion}")
     suspend fun getOffenseList(
         @Path("limit") limit: Int,
         @Path("offset") offset: Int,
@@ -383,7 +384,7 @@ interface ToffeeApi {
         @Body logoutRequest: LogoutRequest
     ): LogoutResponse
 
-    @POST("vast-tags-list/1/{dbVersion}")
+    @POST("vast-tags-list/${Constants.DEVICE_TYPE}/{dbVersion}")
     suspend fun getVastTagLists(
         @Path("dbVersion") dbVersion: Int,
         @Body paymentMethodRequest: VastTagRequest
@@ -407,7 +408,7 @@ interface ToffeeApi {
         @Body uploadSignedUrlRequest: UploadSignedUrlRequest
     ): UploadSignedUrlResponse
 
-    @POST("/ugc-feature-partner-list/1/{type}/{limit}/{offset}/{dbVersion}")
+    @POST("/ugc-feature-partner-list/${Constants.DEVICE_TYPE}/{type}/{limit}/{offset}/{dbVersion}")
     suspend fun getFeaturedPartners(
         @Path("type") type: String,
         @Path("limit") limit: Int,

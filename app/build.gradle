@@ -19,7 +19,15 @@ android {
         testInstrumentationRunner "com.banglalink.toffee.HiltTestRunner"
         vectorDrawables.useSupportLibrary = true
     }
-    
+
+    flavorDimensions "lib"
+    productFlavors {
+        mobile {
+            dimension "lib"
+            buildConfigField 'int', 'DEVICE_TYPE', "1"
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

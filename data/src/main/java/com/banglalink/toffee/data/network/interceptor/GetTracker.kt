@@ -1,43 +1,47 @@
 package com.banglalink.toffee.data.network.interceptor
 
 import android.util.Log
+import com.banglalink.toffee.Constants
 import okhttp3.internal.immutableListOf
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class GetTracker:IGetMethodTracker {
+@Singleton
+class GetTracker @Inject constructor():IGetMethodTracker {
 
     private val getUrlList = immutableListOf(
-        "/categories-v2/1/",
-        "/ugc-contents-v5/1/",
-        "/feature-contents-v2/1/",
+        "/categories-v2/${Constants.DEVICE_TYPE}/",
+        "/ugc-contents-v5/${Constants.DEVICE_TYPE}/",
+        "/feature-contents-v2/${Constants.DEVICE_TYPE}/",
         "/check-for-update-v2/Android/",
         "/ugc-app-home-page-content-toffee-v2/",
-        "/ugc-most-popular-contents/1",
-        "/ugc-category-wise-editors-choice/1",
-        "/ugc-category-featured-contents/1",
-        "/ugc-categories/1",
-        "/ugc-popular-channel/1",
-        "/ugc-channel-details/1",
-        "/ugc-channel-all-content/1",
-        "/ugc-playlist-names/1",
-        "/ugc-content-by-playlist/1",
-        "/ugc-popular-playlist-names/1",
-        "/ugc-sub-category/1",
-        "/ugc-all-user-channel/1",
-        "/ugc-movie-category-details/1",
-        "/ugc-movie-preview/1",
-        "/ugc-coming-soon/1",
-        "/ugc-latest-drama-serial/1",
-        "/ugc-drama-serial-by-season/1",
-        "/ugc-partner-list/1",
-        "/ugc-terms-and-conditions/1",
-        "/ugc-channel-subscription-list/1",
-        "/ugc-inappropriate-head-list/1",
-        "/ugc-active-inactive-categories/1",
-        "/ugc-user-playlist-names/1",
-        "/ugc-content-by-user-playlist/1",
-        "/ugc-payment-method-list/1",
-        "/vast-tags-list/1",
-        "/ugc-feature-partner-list/1"
+        "/ugc-most-popular-contents/${Constants.DEVICE_TYPE}",
+        "/ugc-category-wise-editors-choice/${Constants.DEVICE_TYPE}",
+        "/ugc-category-featured-contents/${Constants.DEVICE_TYPE}",
+        "/ugc-categories/${Constants.DEVICE_TYPE}",
+        "/ugc-popular-channel/${Constants.DEVICE_TYPE}",
+        "/ugc-channel-details/${Constants.DEVICE_TYPE}",
+        "/ugc-channel-all-content/${Constants.DEVICE_TYPE}",
+        "/ugc-playlist-names/${Constants.DEVICE_TYPE}",
+        "/ugc-content-by-playlist/${Constants.DEVICE_TYPE}",
+        "/ugc-popular-playlist-names/${Constants.DEVICE_TYPE}",
+        "/ugc-sub-category/${Constants.DEVICE_TYPE}",
+        "/ugc-all-user-channel/${Constants.DEVICE_TYPE}",
+        "/ugc-movie-category-details/${Constants.DEVICE_TYPE}",
+        "/ugc-movie-preview/${Constants.DEVICE_TYPE}",
+        "/ugc-coming-soon/${Constants.DEVICE_TYPE}",
+        "/ugc-latest-drama-serial/${Constants.DEVICE_TYPE}",
+        "/ugc-drama-serial-by-season/${Constants.DEVICE_TYPE}",
+        "/ugc-partner-list/${Constants.DEVICE_TYPE}",
+        "/ugc-terms-and-conditions/${Constants.DEVICE_TYPE}",
+        "/ugc-channel-subscription-list/${Constants.DEVICE_TYPE}",
+        "/ugc-inappropriate-head-list/${Constants.DEVICE_TYPE}",
+        "/ugc-active-inactive-categories/${Constants.DEVICE_TYPE}",
+        "/ugc-user-playlist-names/${Constants.DEVICE_TYPE}",
+        "/ugc-content-by-user-playlist/${Constants.DEVICE_TYPE}",
+        "/ugc-payment-method-list/${Constants.DEVICE_TYPE}",
+        "/vast-tags-list/${Constants.DEVICE_TYPE}",
+        "/ugc-feature-partner-list/${Constants.DEVICE_TYPE}"
     )
 
     override fun shouldConvertToGetRequest(urlEncodedFragmentString: String):Boolean {

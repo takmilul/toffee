@@ -26,9 +26,9 @@ data class LoginLogData(
     @SerializedName("id")
     val id: Long = System.nanoTime(),
     @SerializedName("app_version")
-    val appVersion : String = Constants.VERSION_NAME,
+    val appVersion : String = CommonPreference.getInstance().appVersionName,
     @SerializedName("device_type")
-    val deviceType :String = "1",
+    val deviceType :String = "${Constants.DEVICE_TYPE}",
     @SerializedName("device_id")
     val deviceId: String = CommonPreference.getInstance().deviceId,
     @SerializedName("is_bl_number")
