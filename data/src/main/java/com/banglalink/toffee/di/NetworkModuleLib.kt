@@ -35,16 +35,13 @@ object NetworkModuleLib {
     @Provides
     @Singleton
     @EncryptedHttpClient
-    fun providesEncryptedHttpClient(@DefaultCache cache: Cache,
-                                    toffeeDns: ToffeeDns,
-                                    authInterceptor: AuthInterceptor
-    ): OkHttpClient {
+    fun providesEncryptedHttpClient(@DefaultCache cache: Cache, toffeeDns: ToffeeDns, authInterceptor: AuthInterceptor): OkHttpClient {
         val clientBuilder = OkHttpClient.Builder().apply {
             connectTimeout(15, TimeUnit.SECONDS)
             readTimeout(30, TimeUnit.SECONDS)
             retryOnConnectionFailure(false)
             if (BuildConfig.DEBUG) {
-                addNetworkInterceptor(HttpLoggingInterceptor().also {
+                addInterceptor(HttpLoggingInterceptor().also {
                     it.level = HttpLoggingInterceptor.Level.BODY
                 })
             }

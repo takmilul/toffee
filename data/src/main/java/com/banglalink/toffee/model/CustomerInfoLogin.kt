@@ -66,8 +66,8 @@ class CustomerInfoLogin(
     var geoLocation: String? = null,
     @SerializedName("user_ip")
     var userIp: String? = null,
-    var isFireworkActive: String? = "true",
-    val isFeaturePartnerActive: String? = "true",
+    var isFireworkActive: String? = "false",
+    val isFeaturePartnerActive: String? = "false",
     var mqttIsActive: Int = 1,
     var mqttUrl: String? = null,
     @SerializedName("isCastEnable")

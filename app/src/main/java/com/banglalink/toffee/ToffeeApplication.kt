@@ -1,6 +1,7 @@
 package com.banglalink.toffee
 
 import android.app.Application
+import android.util.Log
 import androidx.databinding.DataBindingUtil
 import coil.Coil
 import coil.ImageLoader
@@ -20,6 +21,9 @@ import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.ui.upload.UploadObserver
 import com.banglalink.toffee.usecase.SendFirebaseConnectionErrorEvent
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.medallia.digital.mobilesdk.MDExternalError
+import com.medallia.digital.mobilesdk.MDResultCallback
+import com.medallia.digital.mobilesdk.MedalliaDigital
 import dagger.hilt.EntryPoints
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
@@ -95,16 +99,16 @@ class ToffeeApplication : Application() {
     }
     
     private fun initMedalliaSdk() {
-//        MedalliaDigital.init(this, getString(R.string.medallia_api_key), object : MDResultCallback {
-//            override fun onSuccess() {
-//                Log.e("MED_", "onSuccess: Medallia initialized")
-//            }
-//
-//            override fun onError(error: MDExternalError?) {
-//                ToffeeAnalytics.logException(Exception(error?.message))
-//                Log.e("MED_", "onError: ${error?.message}")
-//            }
-//        })
+        MedalliaDigital.init(this, getString(R.string.medallia_api_key), object : MDResultCallback {
+            override fun onSuccess() {
+                Log.e("MED_", "onSuccess: Medallia initialized")
+            }
+
+            override fun onError(error: MDExternalError?) {
+                ToffeeAnalytics.logException(Exception(error?.message))
+                Log.e("MED_", "onError: ${error?.message}")
+            }
+        })
     }
     
     private fun initCoil() {

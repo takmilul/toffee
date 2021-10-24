@@ -101,5 +101,5 @@
 -keep class com.google.ads.interactivemedia.** { *; }
 -keep interface com.google.ads.interactivemedia.** { *; }
 
-#-keep class com.medallia.** { *; } 
-#-dontwarn com.medallia.**
+-keep class com.medallia.** { *; } 
+-dontwarn com.medallia.**

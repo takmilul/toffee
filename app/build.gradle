@@ -223,7 +223,7 @@ dependencies {
 //    implementation("androidx.ads:ads-identifier:1.0.0-alpha04")
     
     //medallia
-//    implementation 'com.medallia.digital.mobilesdk:android-sdk:3.9.1'
+    implementation 'com.medallia.digital.mobilesdk:android-sdk:3.9.1'
     
     def espresso_version = '3.4.0'
     def test_core = '1.4.0'

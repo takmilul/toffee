@@ -191,13 +191,13 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         }
 
     var isFireworkActive: String
-        get() = pref.getString(PREF_FIREWORK_ACTIVE, "true") ?: "true"
+        get() = pref.getString(PREF_FIREWORK_ACTIVE, "false") ?: "false"
         set(isActive) {
             pref.edit().putString(PREF_FIREWORK_ACTIVE, isActive).apply()
         }
 
     var isFeaturePartnerActive: String
-        get() = pref.getString(PREF_FEATURE_PARTNER_ACTIVE, "true") ?: "true"
+        get() = pref.getString(PREF_FEATURE_PARTNER_ACTIVE, "false") ?: "false"
         set(isActive) {
             pref.edit().putString(PREF_FEATURE_PARTNER_ACTIVE, isActive).apply()
         }
@@ -625,8 +625,8 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         subscriberStatusDbUrl = customerInfoLogin.subscriberStatusDbUrl ?: ""
         shareCountDbUrl = customerInfoLogin.shareCountDbUrl ?: ""
         isAllTvChannelMenuEnabled = customerInfoLogin.isAllTvChannelsMenuEnabled
-        isFireworkActive = customerInfoLogin.isFireworkActive ?: "true"
-        isFeaturePartnerActive = customerInfoLogin.isFeaturePartnerActive ?: "true"
+        isFireworkActive = customerInfoLogin.isFireworkActive ?: "false"
+        isFeaturePartnerActive = customerInfoLogin.isFeaturePartnerActive ?: "false"
         mqttHost = customerInfoLogin.mqttUrl?.let { EncryptionUtil.encryptRequest(it) } ?: ""
         mqttIsActive = customerInfoLogin.mqttIsActive == 1
 
