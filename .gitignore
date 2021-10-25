@@ -8,3 +8,5 @@
 .externalNativeBuild
 .cxx
 /app/release
+/app/mobile/release
+/app/tv/release
