@@ -1376,7 +1376,6 @@ class HomeActivity :
             ToffeeAnalytics.logBreadCrumb("connectivity manager unregister error -> ${e.message}")
         }
         navController.removeOnDestinationChangedListener(destinationChangeListener)
-        FwSDK.destroy()
         super.onDestroy()
     }
     
