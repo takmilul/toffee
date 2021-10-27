@@ -140,6 +140,8 @@
         android:background="@color/window_background"
         app:headerLayout="@layout/nav_header_main"
         app:insetForeground="@null"
+        app:itemTextAppearance="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:menu="@menu/menu_drawer" />
 
 </com.banglalink.toffee.ui.widget.ToffeeDrawerLayout>
