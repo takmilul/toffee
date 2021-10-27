@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.network.retrofit
 
+import com.banglalink.toffee.Constants
 import com.banglalink.toffee.data.network.request.ApiLoginRequest
 import com.banglalink.toffee.data.network.request.CheckUpdateRequest
 import com.banglalink.toffee.data.network.request.CredentialRequest
@@ -16,7 +17,7 @@ interface AuthApi{
     @POST("check-for-update")
     suspend fun checkForUpdate(@Body checkUpdateRequest: CheckUpdateRequest): CheckUpdateResponse
 
-    @POST("check-for-update-v2/Android/{appVersionCode}/1/{dbVersion}")
+    @POST("check-for-update-v2/Android/{appVersionCode}/${Constants.DEVICE_TYPE}/{dbVersion}")
     suspend fun checkForUpdateV2(
         @Path("dbVersion")dbVersion:Int,
         @Path("appVersionCode") appVersionCode: Long = CommonPreference.getInstance().appVersionCode,
