@@ -10,7 +10,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.nio.ByteBuffer
-import java.nio.file.Files
 import java.util.zip.CRC32
 
 class DownloadSubscriptionCountDb(
