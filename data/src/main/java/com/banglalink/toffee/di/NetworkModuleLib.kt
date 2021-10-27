@@ -2,7 +2,7 @@ package com.banglalink.toffee.di
 
 import android.app.Application
 import android.content.Context
-import com.banglalink.toffee.TOFFEE_BASE_URL
+import com.banglalink.toffee.data.ToffeeConfig
 import com.banglalink.toffee.data.network.interceptor.AuthInterceptor
 import com.banglalink.toffee.data.network.interceptor.GetTracker
 import com.banglalink.toffee.data.network.interceptor.IGetMethodTracker
@@ -62,10 +62,11 @@ object NetworkModuleLib {
     
     @Provides
     @Singleton
-    fun providesRetrofit(@EncryptedHttpClient httpClient: OkHttpClient): Retrofit {
+    fun providesRetrofit(@EncryptedHttpClient httpClient: OkHttpClient,
+                         toffeeConfig: ToffeeConfig): Retrofit {
         return Retrofit.Builder()
             .client(httpClient)
-            .baseUrl(TOFFEE_BASE_URL)
+            .baseUrl(toffeeConfig.toffeeBaseUrl)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

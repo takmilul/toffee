@@ -2,11 +2,6 @@ package com.banglalink.toffee
 
 import com.banglalink.toffee.lib.BuildConfig
 
-const val TOFFEE_BASE_URL = "https://mapi.toffeelive.com/"
-//const val TOFFEE_BASE_URL = "https://staging.toffee-cms.com/"
-//const val TOFFEE_BASE_URL = "https://ugc-staging.toffeelive.com/"
-//const val TOFFEE_BASE_URL = "https://j1-staging.toffeelive.com/"
-
 object Constants {
     const val DEVICE_TYPE = BuildConfig.DEVICE_TYPE
 
