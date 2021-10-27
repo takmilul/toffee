@@ -21,6 +21,9 @@ import com.banglalink.toffee.notification.PubSubMessageUtil
 import com.banglalink.toffee.ui.upload.UploadObserver
 import com.banglalink.toffee.usecase.SendFirebaseConnectionErrorEvent
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.loopnow.fireworklibrary.FwSDK
+import com.loopnow.fireworklibrary.SdkStatus
+import com.loopnow.fireworklibrary.VideoPlayerProperties
 import com.medallia.digital.mobilesdk.MDExternalError
 import com.medallia.digital.mobilesdk.MDResultCallback
 import com.medallia.digital.mobilesdk.MedalliaDigital
@@ -38,29 +41,18 @@ import javax.inject.Provider
 class ToffeeApplication : Application() {
 
     @Inject lateinit var cacheManager: CacheManager
-    @Inject lateinit var mUploadObserver: UploadObserver
-    @Inject lateinit var commonPreference: CommonPreference
-    @Inject lateinit var heartBeatManager: HeartBeatManager
-    @Inject lateinit var coilInterceptor: CoilInterceptor
     @Inject @CoilCache lateinit var coilCache: Cache
+    @Inject lateinit var mUploadObserver: UploadObserver
+    @Inject lateinit var coilInterceptor: CoilInterceptor
+    @Inject lateinit var heartBeatManager: HeartBeatManager
+    @Inject lateinit var commonPreference: CommonPreference
+    @Inject lateinit var sessionPreference: SessionPreference
     @Inject @AppCoroutineScope lateinit var coroutineScope: CoroutineScope
     @Inject lateinit var bindingComponentProvider: Provider<CustomBindingComponentBuilder>
     @Inject lateinit var sendFirebaseConnectionErrorEvent: SendFirebaseConnectionErrorEvent
 
     override fun onCreate() {
         super.onCreate()
-
-        if (commonPreference.versionCode < BuildConfig.VERSION_CODE) {
-            try {
-                coroutineScope.launch(IO) { 
-                    cacheManager.clearAllCache()
-                    commonPreference.versionCode = BuildConfig.VERSION_CODE
-                }
-            }
-            catch (e: Exception) {
-                ToffeeAnalytics.logException(e)
-            }
-        }
         
         if (BuildConfig.DEBUG) {
             FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(false)
@@ -90,12 +82,59 @@ class ToffeeApplication : Application() {
         }
         catch (e: Exception) {
         }
+        
+        if (commonPreference.versionCode < BuildConfig.VERSION_CODE) {
+            try {
+                coroutineScope.launch(IO) { 
+                    cacheManager.clearAllCache()
+                    commonPreference.versionCode = BuildConfig.VERSION_CODE
+                }
+            }
+            catch (e: Exception) {
+                ToffeeAnalytics.logException(e)
+            }
+        }
+        
 //        FacebookSdk.setIsDebugEnabled(true);
 //        FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS);
 
         initCoil()
+        initFireworkSdk()
 //        initMedalliaSdk()
         mUploadObserver.start()
+    }
+    
+    private fun initFireworkSdk() {
+        try {
+            FwSDK.initialize(this, getString(R.string.firework_oauth_id), sessionPreference.getFireworkUserId(), object : FwSDK.SdkStatusListener{
+                override fun currentStatus(status: SdkStatus, extra: String) {
+                    when(status){
+                        SdkStatus.Initialized -> {
+                            Log.e("FwSDK", "Initialized: $extra")
+                            VideoPlayerProperties.share = false
+                            VideoPlayerProperties.branding = false
+                            VideoPlayerProperties.fullScreenPlayer = true
+                            FwSDK.setBasePlayerUrl("https://toffeelive.com/")
+                            sessionPreference.isFireworkInitialized.postValue(true)
+                        }
+                        SdkStatus.InitializationFailed -> {
+                            Log.e("FwSDK", "InitializationFailed: $extra")
+                            ToffeeAnalytics.logException(java.lang.Exception("FwSDK InitializationFailed: $extra"))
+                            sessionPreference.isFireworkInitialized.postValue(false)
+                        }
+                        SdkStatus.LoadingContent -> Log.e("FwSDK", "LoadingContent: $extra")
+                        SdkStatus.ContentLoaded -> Log.e("FwSDK", "ContentLoaded: $extra")
+                        SdkStatus.LoadingContentFailed -> {
+                            Log.e("FwSDK", "LoadingContentFailed: $extra")
+                            ToffeeAnalytics.logException(java.lang.Exception("FwSDK LoadingContentFailed: $extra"))
+                        }
+                    }
+                }
+            })
+        }
+        catch (e: Exception) {
+            Log.e("FwSDK", "onCreate: ${e.message}")
+        }
     }
     
     private fun initMedalliaSdk() {

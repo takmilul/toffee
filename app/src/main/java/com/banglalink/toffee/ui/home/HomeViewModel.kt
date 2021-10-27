@@ -67,7 +67,6 @@ class HomeViewModel @Inject constructor(
     private val subscriptionCountRepository: SubscriptionCountRepository,
 ) : ViewModel() {
 
-    val isFireworkInitialized = MutableLiveData<Boolean>()
     //this will be updated by fragments which are hosted in HomeActivity to communicate with HomeActivity
     val fragmentDetailsMutableLiveData = SingleLiveEvent<Any>()
     val addToPlayListMutableLiveData = MutableLiveData<AddToPlaylistData>()
