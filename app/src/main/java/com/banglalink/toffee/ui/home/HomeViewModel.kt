@@ -101,6 +101,7 @@ class HomeViewModel @Inject constructor(
 
         FirebaseMessaging.getInstance().subscribeToTopic("controls")
         FirebaseMessaging.getInstance().subscribeToTopic("cdn_control")
+        FirebaseMessaging.getInstance().subscribeToTopic("clear_cache")
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if(task.isSuccessful) {
                 val token = task.result

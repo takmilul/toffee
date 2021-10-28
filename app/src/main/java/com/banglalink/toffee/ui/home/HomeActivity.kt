@@ -4,6 +4,8 @@ import android.animation.LayoutTransition
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.app.SearchManager
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender.SendIntentException
@@ -154,7 +156,7 @@ class HomeActivity :
         connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), heartBeatManager)
 
-        val isDisableScreenshot = !(mPref.screenCaptureEnabledUsers.contains(cPref.deviceId) || mPref.screenCaptureEnabledUsers.contains(mPref.customerId.toString()))
+        val isDisableScreenshot = !(mPref.screenCaptureEnabledUsers.contains(cPref.deviceId) || mPref.screenCaptureEnabledUsers.contains(mPref.customerId.toString()) || mPref.screenCaptureEnabledUsers.contains(mPref.phoneNumber))
         //disable screen capture
         if (! BuildConfig.DEBUG && isDisableScreenshot) {
             window.setFlags(
@@ -336,6 +338,18 @@ class HomeActivity :
         inAppUpdate()
         customCrashReport()
         viewModel.getVastTags()
+    
+//        showDeviceId()
+    }
+    
+    private fun showDeviceId() {
+        VelBoxAlertDialogBuilder(this, title = "Device Id", text = cPref.deviceId, positiveButtonTitle = "copy", positiveButtonListener = {
+            val clipboard: ClipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+            val clip: ClipData = ClipData.newPlainText("DeviceId", cPref.deviceId)
+            clipboard.setPrimaryClip(clip)
+            showToast("copied to clipboard")
+            it?.dismiss()
+        }, negativeButtonTitle = "Close", negativeButtonListener = { it?.dismiss() }).create().show()
     }
     
     private fun isChannelComplete() = mPref.customerName.isNotBlank()

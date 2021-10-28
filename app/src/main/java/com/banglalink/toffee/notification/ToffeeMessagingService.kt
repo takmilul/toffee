@@ -18,6 +18,7 @@ import androidx.core.os.bundleOf
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.database.entities.NotificationInfo
+import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.DrmLicenseRepository
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.storage.CommonPreference
@@ -34,7 +35,6 @@ import com.banglalink.toffee.receiver.NotificationActionReceiver.Companion.ROW_I
 import com.banglalink.toffee.receiver.NotificationActionReceiver.Companion.WATCH_LATER
 import com.banglalink.toffee.receiver.NotificationActionReceiver.Companion.WATCH_NOW
 import com.banglalink.toffee.util.CoilUtils
-import com.banglalink.toffee.util.UtilsKt
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
@@ -52,12 +52,13 @@ class ToffeeMessagingService : FirebaseMessagingService() {
     private val gson: Gson = Gson()
     private val TAG = "ToffeeMessagingService"
     @Inject lateinit var mPref: SessionPreference
+    @Inject lateinit var cacheManager: CacheManager
     @Inject lateinit var commonPreference: CommonPreference
     private val NOTIFICATION_CHANNEL_NAME = "Toffee Channel"
+    @Inject lateinit var drmLicenseRepo: DrmLicenseRepository
     private val coroutineContext = Dispatchers.IO + SupervisorJob()
     private val imageCoroutineScope = CoroutineScope(coroutineContext)
     @Inject lateinit var notificationInfoRepository: NotificationInfoRepository
-    @Inject lateinit var drmLicenseRepo: DrmLicenseRepository
     
     override fun onNewToken(s: String) {
         super.onNewToken(s)
@@ -97,6 +98,16 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                 }
                 NotificationType.CHANGE_URL.type -> {
                     changeHlsUrl(data)
+                }
+                NotificationType.CLEAR_CACHE.type -> {
+                    val route = data["apiRoute"]?.trim()
+                    route?.let {
+                        if (route == "all") {
+                            cacheManager.clearAllCache()
+                        } else {
+                            cacheManager.clearCacheByUrl(route)
+                        }
+                    }
                 }
                 NotificationType.BETA_USER_DETECTION.type -> {
                     handleBetaNotification(data)
