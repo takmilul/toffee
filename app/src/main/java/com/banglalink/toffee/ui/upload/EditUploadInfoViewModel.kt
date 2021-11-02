@@ -221,11 +221,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
             if (resp.contentId > 0L) {
                 val uploadId = startUpload(resp.contentId, resp.uploadVODSignedUrl, resp.uploadCopyrightSignedUrl, isUploadCopyrightFile)
                 Log.e("uploadId", uploadId)
-                if(uploadId != null) {
-                    resultLiveData.value = Resource.Success(Pair(uploadId, resp.contentId))
-                } else {
-                    resultLiveData.value = Resource.Failure(Error(-1, "Unknown error occured"))
-                }
+                resultLiveData.value = Resource.Success(Pair(uploadId, resp.contentId))
                 progressDialog.value = false
                 return
             }

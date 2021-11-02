@@ -1,14 +1,13 @@
 package com.banglalink.toffee.extension
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.res.Resources
 import android.os.Bundle
 import android.util.Patterns
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
@@ -26,9 +25,6 @@ import com.banglalink.toffee.ui.mychannel.MyChannelAddToPlaylistFragment
 import com.banglalink.toffee.ui.report.ReportPopupFragment
 import com.facebook.shimmer.ShimmerFrameLayout
 import kotlinx.coroutines.launch
-import java.security.MessageDigest
-import java.text.SimpleDateFormat
-import java.util.*
 
 private const val TITLE_PATTERN = "^[\\w\\d_.-]+$"
 //private const val EMAIL_PATTERN = "^[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+\\.[a-z]{2,4}$"
@@ -171,6 +167,17 @@ fun ViewGroup.showLoadingAnimation(isStart: Boolean) {
             }
         }
     }
+}
+
+fun View.validateInput(messageTextView: TextView, messageResource: Int, messageColorResource: Int, viewBackgroundResource: Int) {
+    messageTextView.setTextColor(
+        ContextCompat.getColor(
+            context,
+            messageColorResource
+        )
+    )
+    messageTextView.text = context.getString(messageResource)
+    this.setBackgroundResource(viewBackgroundResource)
 }
 
 //@SuppressLint("ClickableViewAccessibility")

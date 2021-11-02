@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
-import android.view.ViewGroup.MarginLayoutParams
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.text.toSpannable
@@ -38,7 +37,6 @@ import com.banglalink.toffee.ui.common.ViewPagerAdapter
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
 import com.banglalink.toffee.util.BindingUtil
-import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.regex.Pattern
@@ -64,7 +62,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
     private var _bindingRating: AlertDialogMyChannelRatingBinding ? = null
     val homeViewModel by activityViewModels<HomeViewModel>()
     private val bindingRating get() = _bindingRating!!
-    private val viewModel by viewModels<MyChannelHomeViewModel>()
+    private val viewModel by activityViewModels<MyChannelHomeViewModel>()
     private val playlistReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
     private val createPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
     
@@ -112,7 +110,6 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         } else {
             setBindingData()
         }
-        
         binding.channelDetailView.subscriptionButton.isEnabled = true
         binding.channelDetailView.addBioButton.safeClick(this)
         binding.channelDetailView.editButton.safeClick(this)
@@ -120,7 +117,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
         binding.channelDetailView.ratingButton.safeClick(this)
         binding.channelDetailView.subscriptionButton.safeClick(this)
     }
-
+    
     override fun onClick(v: View?) {
         requireActivity().checkVerification {
             handleClick(v)
@@ -305,21 +302,6 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                 spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(requireContext(), color.colorAccent2)), matcher.start(), matcher.end(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
             binding.channelDetailView.channelDescriptionTextView.text = spannable
-        }
-    }
-    
-    private fun reduceMarginsInTabs(tabLayout: TabLayout, marginOffset: Int) {
-        val tabStrip = tabLayout.getChildAt(0)
-        if (tabStrip is ViewGroup) {
-            for (i in 0 until tabStrip.childCount) {
-                val tabView = tabStrip.getChildAt(i)
-                
-                if (tabView.layoutParams is MarginLayoutParams) {
-                    (tabView.layoutParams as MarginLayoutParams).leftMargin = marginOffset
-                    (tabView.layoutParams as MarginLayoutParams).rightMargin = marginOffset
-                }
-            }
-            tabLayout.requestLayout()
         }
     }
     

@@ -139,16 +139,19 @@ class EditUploadInfoFragment : BaseFragment() {
             )
         }
         binding.copyrightCheckbox.setOnCheckedChangeListener { _, isChecked ->
-            val shouldShow = isChecked and (viewModel.copyrightDocExt.isNullOrBlank() or viewModel.copyrightFileName.value.isNullOrBlank())
-            val msg = getString(R.string.empty_copyright_file_msg)
-            showCopyrightErrorMsg(shouldShow, msg)
+            if (isChecked) {
+                binding.errorCopyrightTv.hide()
+                binding.copyrightCheckboxLayout.setBackgroundResource(R.drawable.multiline_input_text_bg)
+            } else {
+                binding.errorCopyrightTv.show()
+                binding.copyrightCheckboxLayout.setBackgroundResource(R.drawable.error_multiline_input_text_bg)
+            }
         }
         binding.copyrightLayout.uploadFileButton.safeClick({ checkFileSystemPermission() })
         binding.copyrightLayout.closeIv.safeClick({
             it.hide()
             viewModel.copyrightDocUri = null
             viewModel.copyrightFileName.value = null
-            binding.copyrightCheckbox.isChecked = false
             binding.copyrightLayout.uploadFileButton.show()
         })
         setupCategorySpinner()
@@ -170,17 +173,6 @@ class EditUploadInfoFragment : BaseFragment() {
         descriptionDesWatcher()
         binding.uploadTitleCountTv.text = getString(R.string.video_title_limit, 0)
         binding.uploadDesCountTv.text = getString(R.string.video_description_limit, 0)
-    }
-    
-    private fun showCopyrightErrorMsg(shouldShow: Boolean, msg: String? = null) {
-        if (shouldShow) {
-            binding.copyrightLayout.layout.setBackgroundResource(R.drawable.error_multiline_input_text_bg)
-            binding.errorCopyrightTv.text = msg ?: "Please check the agreement checkbox and select a copyright file."
-            binding.errorCopyrightTv.show()
-        } else {
-            binding.copyrightLayout.layout.setBackgroundResource(R.drawable.multiline_input_text_bg)
-            binding.errorCopyrightTv.hide()
-        }
     }
     
     private fun titleWatcher() {
@@ -244,9 +236,6 @@ class EditUploadInfoFragment : BaseFragment() {
                         lifecycleScope.launch { viewModel.loadCopyrightFileName(uri) }
                         binding.copyrightLayout.closeIv.show()
                         binding.copyrightLayout.uploadFileButton.hide()
-                        binding.copyrightCheckbox.isChecked = true
-                        binding.errorCopyrightTv.hide()
-                        binding.copyrightLayout.layout.setBackgroundResource(R.drawable.multiline_input_text_bg)
                     } else {
                         VelBoxAlertDialogBuilder(requireContext()).apply {
                             setTitle(getString(R.string.file_size_title))
@@ -425,11 +414,9 @@ class EditUploadInfoFragment : BaseFragment() {
                 binding.uploadTags.addChip(it, null)
             }
         }
-        
         observe(viewModel.submitButtonStatus) {
             binding.submitButton.isEnabled = it
         }
-        
         observe(viewModel.resultLiveData) {
             when (it) {
                 is Resource.Success -> {
@@ -470,17 +457,19 @@ class EditUploadInfoFragment : BaseFragment() {
             binding.uploadDescription.setBackgroundResource(R.drawable.multiline_input_text_bg)
             binding.errorDescriptionTv.hide()
         }
-        
-        val isCopyrightInvalid =
-            binding.copyrightCheckbox.isChecked and (viewModel.copyrightDocUri.isNullOrBlank() or viewModel.copyrightFileName.value.isNullOrBlank())
-        val msg = getString(R.string.empty_copyright_file_msg)
-        showCopyrightErrorMsg(isCopyrightInvalid, msg)
-        
+        val isAgreed = binding.copyrightCheckbox.isChecked
+        if (isAgreed) {
+            binding.errorCopyrightTv.hide()
+            binding.copyrightCheckboxLayout.setBackgroundResource(R.drawable.multiline_input_text_bg)
+        } else {
+            binding.errorCopyrightTv.show()
+            binding.copyrightCheckboxLayout.setBackgroundResource(R.drawable.error_multiline_input_text_bg)
+        }
         if (viewModel.thumbnailData.value.isNullOrBlank()) {
             context?.showToast(getString(R.string.thumbnail_missing_msg))
             return
         }
-        if (title.isNotBlank() and description.isNotBlank() and !isCopyrightInvalid) {
+        if (title.isNotBlank() and description.isNotBlank() and isAgreed) {
             lifecycleScope.launch {
                 val categoryObj = binding.categorySpinner.selectedItem
                 val categoryId = if (categoryObj is Category) {
@@ -493,7 +482,7 @@ class EditUploadInfoFragment : BaseFragment() {
                 } else -1
                 
                 val tags = binding.uploadTags.selectedChipList.joinToString(" | ") { it.label.replace("#", "") }
-                val isUploadCopyrightFile = binding.copyrightCheckbox.isChecked and !viewModel.copyrightDocUri.isNullOrBlank() and !viewModel.copyrightFileName.value.isNullOrBlank()
+                val isUploadCopyrightFile = !viewModel.copyrightDocUri.isNullOrBlank() and !viewModel.copyrightFileName.value.isNullOrBlank()
                 
                 viewModel.saveUploadInfo(
                     tags,

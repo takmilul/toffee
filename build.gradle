@@ -34,8 +34,8 @@ task clean(type: Delete) {
 }
 
 ext {
-    appVersionCode = 68
-    appVersionName = '2.1.1'
+    appVersionCode = 69
+    appVersionName = '2.1.2'
     kotlin_version = '1.5.31'
     kotlinCoroutineVersion = "1.5.2"
 

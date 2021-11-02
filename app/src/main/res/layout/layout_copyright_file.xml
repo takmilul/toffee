@@ -24,6 +24,7 @@
             android:layout_marginEnd="16dp"
             android:maxLines="2"
             android:text="@{viewModel.copyrightFileName == null ? @string/copyright_doc : viewModel.copyrightFileName}"
+            android:textColor="@{viewModel.copyrightFileName == null ? @color/main_text_color : @color/cardTitleColor}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/uploadFileButton"
             app:layout_constraintStart_toStartOf="parent"

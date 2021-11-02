@@ -67,7 +67,7 @@
     <string name="profile_edit">Profile - Edit</string>
     <string name="cancel">Cancel</string>
     <string name="save_changes">Save Changes</string>
-    <string name="update">Check Update</string>
+    <string name="check_update">Check Update</string>
     <string name="all_channels">All Channels</string>
     <string name="free_trial_text">You are enjoying free trial</string>
     <string name="free_trial">Free Trial</string>
@@ -306,7 +306,7 @@
     <string name="channel_name_error_text">*Channel name is required</string>
     <string name="description_text">Description</string>
     <string name="channel_description_error_text">*Channel Description is not valid</string>
-    <string name="description_error_text">*Description is required</string>
+    <string name="description_error_text">*Description required</string>
     <string name="save_changes_text">Save Changes</string>
     <string name="upload_video_text">Upload Video</string>
     <string name="no_item_found_text">No item found</string>
@@ -358,7 +358,7 @@
     <string name="payment_option_required">Payment Option is Required</string>
     <string name="invalid_nid_number">*Invalid NID Number</string>
     <string name="this_account_will_be_used_to_send_payment">"*This account will be used to send payments if you are eligible"</string>
-    <string name="copyright_approval">&#160;&#160;I hold relevant copyrights for the video content</string>
+    <string name="copyright_approval">I hold relevant copyrights for the video content</string>
     <string name="copyright_doc">Copyright Document (Optional)</string>
     <string name="verify_success">Verification successful!</string>
     <string name="channel_name_limit">%d/50</string>
@@ -389,7 +389,7 @@
     <string name="select_playlist_msg">Please select a playlist</string>
     <string name="edit_playlist">Edit Playlist</string>
     <string name="delete_confirmation">Are you sure to delete?</string>
-    <string name="edittext_hint_tags">Tags</string>
+    <string name="tags_text">Tags</string>
     <string name="btn_got_it">Got It!</string>
     <string name="txt_video_format">Video Format</string>
     <string name="txt_video_format_msg">Only MP4 video format is supported</string>
@@ -416,6 +416,15 @@
     <string name="menu_log_out">Log out</string>
     <string name="menu_dark_mode">Dark Mode</string>
     <string name="show_offline_message">You\'re offline. Please check your connection.</string>
+    <string name="description_mandatory">Description*</string>
+    <string name="description_hint">Description...</string>
+    <string name="title_text">Title</string>
+    <string name="txt_sub_category">Sub Category</string>
+    <string name="txt_age_group">Age Group</string>
+    <string name="copyright_confirmation_required">*Copyright confirmation required</string>
+    <string name="title_mandatory">Title*</string>
+    <string name="update">Update</string>
+    <string name="copyright_confirmation_mandatory">Copyright Confirmation*</string>
     <!--    url    -->
     <!--    <string name="creators_policy_url">https://toffeelive.com/policies.php</string>-->
     <!--    <string name="tus_upload_server_url">https://ugc-upload.toffeelive.com/upload</string>-->

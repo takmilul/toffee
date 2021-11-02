@@ -3,10 +3,10 @@ package com.banglalink.toffee.di
 import android.content.Context
 import android.os.Build
 import coil.util.CoilUtils
-import com.banglalink.toffee.data.storage.CommonPreference
-import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.data.ToffeeConfig
+import com.banglalink.toffee.data.storage.CommonPreference
+import com.banglalink.toffee.data.storage.SessionPreference
 import com.google.android.exoplayer2.ExoPlayerLibraryInfo
 import dagger.Module
 import dagger.Provides
@@ -21,9 +21,9 @@ import javax.inject.Singleton
 object NetworkModule {
 
     private const val TOFFEE_BASE_URL = "https://mapi.toffeelive.com/"
-//const val TOFFEE_BASE_URL = "https://staging.toffee-cms.com/"
-//const val TOFFEE_BASE_URL = "https://ugc-staging.toffeelive.com/"
-//const val TOFFEE_BASE_URL = "https://j1-staging.toffeelive.com/"
+//    const val TOFFEE_BASE_URL = "https://staging.toffee-cms.com/"
+//    const val TOFFEE_BASE_URL = "https://ugc-staging.toffeelive.com/"
+//    const val TOFFEE_BASE_URL = "https://j1-staging.toffeelive.com/"
 
     @Provides
     @Singleton

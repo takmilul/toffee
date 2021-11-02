@@ -121,7 +121,6 @@
                     android:hint="@string/channel_name_text"
                     android:inputType="textCapWords"
                     android:maxLength="50"
-                    android:paddingEnd="48dp"
                     android:fontFamily="@font/roboto_medium"
                     android:text="@{viewModel.myChannelDetail.channelName}"
                     app:layout_constraintEnd_toEndOf="parent"
