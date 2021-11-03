@@ -462,7 +462,6 @@ class HomeActivity :
         }
         else {
             showUploadDialog()
-
         }
     }
     
@@ -479,20 +478,21 @@ class HomeActivity :
                 navController.navigate(R.id.uploadMethodFragment)
             }
         }
-        else{
+        else {
             if (navController.currentDestination?.id == R.id.bottomSheetUploadFragment) {
                 navController.popBackStack()
                 return true
             }
             lifecycleScope.launch {
-
                 if (uploadRepo.getActiveUploadsList().isNotEmpty()) {
                     return@launch
+                }
+                if (navController.currentDestination?.id == R.id.myChannelEditDetailFragment) {
+                    navController.popBackStack()
                 }
                 navController.navigate(R.id.bottomSheetUploadFragment)
             }
         }
-
         return false
     }
 
