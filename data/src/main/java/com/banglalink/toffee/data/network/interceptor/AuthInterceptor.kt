@@ -62,10 +62,10 @@ class AuthInterceptor @Inject constructor(
             return response.newBuilder().removeHeader("Pragma").build()
         }
         if(response.cacheResponse!=null){
-            Log.i("Network","FROM CACHE, ${response.request.url}")
+            Log.i("Network","FROM CACHE")
         }
         if(response.networkResponse!=null){
-            Log.i("Network","FROM NETWORK, ${response.request.url}")
+            Log.i("Network","FROM NETWORK")
         }
         try {
             val jsonString =  EncryptionUtil.decryptResponse(response.body!!.string())
