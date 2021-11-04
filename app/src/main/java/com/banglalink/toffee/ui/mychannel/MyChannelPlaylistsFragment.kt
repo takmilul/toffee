@@ -33,21 +33,20 @@ import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChannelPlaylist> {
     
-    private var listJob: Job? = null
     private var channelOwnerId: Int = 0
     private var isOwner: Boolean = false
     @Inject lateinit var cacheManager: CacheManager
     private lateinit var mAdapter: MyChannelPlaylistAdapter
     private var _binding: FragmentMyChannelPlaylistsBinding ? = null
     private val binding get() = _binding!!
-    val mViewModel by viewModels<MyChannelPlaylistViewModel>()
+    private val mViewModel by activityViewModels<MyChannelPlaylistViewModel>()
     private val playlistReloadViewModel by activityViewModels<MyChannelReloadViewModel>()
     private val editPlaylistViewModel by viewModels<MyChannelPlaylistCreateViewModel>()
     private val deletePlaylistViewModel by viewModels<MyChannelPlaylistDeleteViewModel>()
@@ -127,8 +126,7 @@ class MyChannelPlaylistsFragment : BaseFragment(), BaseListItemCallback<MyChanne
     }
     
     private fun observeMyChannelPlaylists() {
-        listJob?.cancel()
-        listJob = viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launch {
             mViewModel.getMyChannelPlaylists(channelOwnerId).collectLatest {
                 mAdapter.submitData(it)
             }

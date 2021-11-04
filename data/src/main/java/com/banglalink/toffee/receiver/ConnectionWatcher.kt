@@ -9,14 +9,13 @@ import android.net.NetworkRequest
 import android.os.Build
 import androidx.annotation.IntRange
 import androidx.annotation.RequiresPermission
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
 
 //https://stackoverflow.com/questions/53532406/activenetworkinfo-type-is-deprecated-in-api-level-28
-@ExperimentalCoroutinesApi
+
 class ConnectionWatcher
 @RequiresPermission(android.Manifest.permission.ACCESS_NETWORK_STATE)
 constructor(

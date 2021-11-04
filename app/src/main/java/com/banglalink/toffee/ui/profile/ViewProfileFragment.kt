@@ -87,10 +87,7 @@ class ViewProfileFragment : BaseFragment() {
 
     private fun addChip(name: String, width:Int): Chip {
         val intColor = ContextCompat.getColor(requireContext(), R.color.colorSecondaryDark)
-        val selectedTextColor = ContextCompat.getColor(requireContext(), R.color.main_text_color)
-        val unSelectedTextColor = ContextCompat.getColor(requireContext(), R.color.cardTitleColor)
         val chipColor = createStateColor(intColor,intColor)
-        val strokeColor = createStateColor( unSelectedTextColor,unSelectedTextColor)
         val chip = layoutInflater.inflate(R.layout.interest_chip_layout, binding.interestChipGroup, false) as Chip
         chip.layoutParams.width = width
         chip.text = name

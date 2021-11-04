@@ -28,14 +28,15 @@ class MyChannelPlaylistCreateViewModel @Inject constructor(
     
     fun createPlaylist(channelOwnerId: Int,isUserPlaylist:Int = 0) {
         viewModelScope.launch {
-            _createPlaylistData.postValue(resultFromResponse { createPlaylistApiService.execute(channelOwnerId, playlistName!!.trim(),isUserPlaylist) }!!)
+            val response = resultFromResponse { createPlaylistApiService.execute(channelOwnerId, playlistName!!.trim(),isUserPlaylist) }
+            _createPlaylistData.postValue(response)
         }
     }
     
     fun editPlaylist(playlistId: Int, channelOwnerId: Int, isUserPlaylist: Int = 0) {
         viewModelScope.launch {
-            _editPlaylistData.postValue(resultFromResponse { editPlaylistApiService.execute(playlistId, playlistName!!.trim(), channelOwnerId, 
-                isUserPlaylist) }!!)
+            val response = resultFromResponse { editPlaylistApiService.execute(playlistId, playlistName!!.trim(), channelOwnerId, isUserPlaylist) }
+            _editPlaylistData.postValue(response)
         }
     }
 }

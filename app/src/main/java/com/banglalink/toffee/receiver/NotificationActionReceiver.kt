@@ -27,10 +27,8 @@ class NotificationActionReceiver : BroadcastReceiver() {
         with(intent?.extras) {
             val closeIntent = Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
             val rowId = this?.getLong(ROW_ID) ?: 0L
-            val id = intent?.getLongExtra(ROW_ID, 0L) ?: 0L
             val pubSubId = this?.getString(PUB_SUB_ID) ?: "0"
             val resourceUrl = this?.getString(RESOURCE_URL)
-            val resource = intent?.getStringExtra(RESOURCE_URL)
             val notificationId = this?.getInt(NOTIFICATION_ID, -1) ?: -1
             val actionName = this?.getInt(ACTION_NAME, DISMISS) ?: DISMISS
             val notificationManager = context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

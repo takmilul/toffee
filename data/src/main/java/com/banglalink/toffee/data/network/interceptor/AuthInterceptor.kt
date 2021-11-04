@@ -21,7 +21,8 @@ import javax.inject.Singleton
 class AuthInterceptor @Inject constructor(
     private val iGetMethodTracker: IGetMethodTracker,
     @ToffeeHeader private val headerProvider: Provider<String>,
-    ): Interceptor {
+): Interceptor {
+    
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
@@ -58,13 +59,13 @@ class AuthInterceptor @Inject constructor(
                     .message(msg)
                     .build()
             }
-            return response
+            return response.newBuilder().removeHeader("Pragma").build()
         }
         if(response.cacheResponse!=null){
-            Log.i("Network","FROM CACHE")
+            Log.i("Network","FROM CACHE, ${response.request.url}")
         }
         if(response.networkResponse!=null){
-            Log.i("Network","FROM NETWORK")
+            Log.i("Network","FROM NETWORK, ${response.request.url}")
         }
         try {
             val jsonString =  EncryptionUtil.decryptResponse(response.body!!.string())

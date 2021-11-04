@@ -79,7 +79,8 @@ class MyChannelEditDetailViewModel @AssistedInject constructor(
     
     fun editChannel(myChannelEditRequest: MyChannelEditRequest) {
         viewModelScope.launch {
-            _data.postValue(resultFromResponse { myChannelDetailApiService.execute(myChannelEditRequest) }!!)
+            val response = resultFromResponse { myChannelDetailApiService.execute(myChannelEditRequest) }
+            _data.postValue(response)
         }
     }
     

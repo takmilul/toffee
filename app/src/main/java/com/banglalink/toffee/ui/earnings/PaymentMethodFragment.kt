@@ -36,8 +36,8 @@ class PaymentMethodFragment : SingleListFragmentV2<PaymentMethod>(), BaseListIte
         return Pair(R.drawable.ic_payment_methods_empty, "Add payment method to withdraw money")
     }
 
-    override fun onOpenMenu(anchor: View, item: PaymentMethod) {
-        super.onOpenMenu(anchor, item)
+    override fun onOpenMenu(view: View, item: PaymentMethod) {
+        super.onOpenMenu(view, item)
         findNavController().navigate(R.id.action_earningsFragment_to_addNewPaymentMethodFragment)
     }
 }

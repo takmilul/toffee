@@ -102,9 +102,6 @@ abstract class PlayerPageActivity :
     @DnsHttpClient @Inject lateinit var dnsHttpClient: OkHttpClient
     @Inject lateinit var drmFallbackService: SendDrmFallbackEvent
     @ToffeeHeader @Inject lateinit var toffeeHeader: String
-
-//    private var mOfflineLicenseHelper: OfflineLicenseHelper? = null
-
     @Inject lateinit var drmTokenApi: DrmTokenService
     @Inject lateinit var drmLicenseRepo: DrmLicenseRepository
 
@@ -353,7 +350,7 @@ abstract class PlayerPageActivity :
         override fun onSessionResumed(p0: CastSession?, p1: Boolean) {
             p0?.let {
                 val cinfo = try {
-                    val customData = it.remoteMediaClient.currentItem.customData!!
+                    val customData = it.remoteMediaClient?.currentItem?.customData!!
                     Gson().fromJson(customData.getString("channel_info"), ChannelInfo::class.java)
                 } catch (ex: Exception) {
                     ex.printStackTrace()
@@ -642,8 +639,8 @@ abstract class PlayerPageActivity :
     }
 
     abstract fun maximizePlayer()
-
     private var playChannelJob: Job? = null
+    
     private fun playChannel(isReload: Boolean) {
         playChannelJob?.cancel()
         Log.e("DRM_T", "New play request")

@@ -3,7 +3,10 @@ package com.banglalink.toffee.ui.mychannel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import com.banglalink.toffee.apiservice.*
+import com.banglalink.toffee.apiservice.MyChannelPlaylistContentParam
+import com.banglalink.toffee.apiservice.MyChannelPlaylistVideoDeleteService
+import com.banglalink.toffee.apiservice.MyChannelPlaylistVideosService
+import com.banglalink.toffee.apiservice.MyChannelUserPlaylistVideosService
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
 import com.banglalink.toffee.data.database.entities.UserActivities
@@ -52,7 +55,8 @@ class MyChannelPlaylistVideosViewModel @Inject constructor(
     
     fun deletePlaylistVideo(channelId: Int, playlistContentId: Int, playlistId: Int) {
         viewModelScope.launch {
-            _data.postValue(resultFromResponse { playlistVideoDeleteApiService.invoke(channelId, playlistContentId, playlistId) })
+            val response = resultFromResponse { playlistVideoDeleteApiService.invoke(channelId, playlistContentId, playlistId) }
+            _data.postValue(response)
         }
     }
     

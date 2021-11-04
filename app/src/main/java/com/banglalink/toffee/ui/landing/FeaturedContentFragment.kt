@@ -46,7 +46,7 @@ class FeaturedContentFragment : HomeBaseFragment(), BaseListItemCallback<Channel
         viewModel.featuredJob = null
         mAdapter = FeaturedContentAdapter(this)
         binding.featuredViewpager.adapter = mAdapter
-        TabLayoutMediator(binding.featuredIndicator, binding.featuredViewpager, true) { tab_, position -> }.attach()
+        TabLayoutMediator(binding.featuredIndicator, binding.featuredViewpager, true) { _, _ -> }.attach()
         observeList()
         viewModel.loadFeaturedContentList()
     }

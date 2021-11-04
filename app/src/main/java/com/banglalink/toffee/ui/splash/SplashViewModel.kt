@@ -76,7 +76,8 @@ class SplashViewModel @Inject constructor(
     
     fun getHeaderEnrichment() {
         viewModelScope.launch {
-            headerEnrichmentResponse.value = resultFromResponse { headerEnrichmentService.execute() }!!
+            val response = resultFromResponse { headerEnrichmentService.execute() }
+            headerEnrichmentResponse.value = response
         }
     }
     

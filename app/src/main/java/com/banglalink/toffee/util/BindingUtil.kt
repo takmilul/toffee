@@ -404,7 +404,7 @@ class BindingUtil @Inject constructor(private val mPref: SessionPreference) {
         )
     }
 
-    @BindingAdapter("app:onSafeClick")
+    @BindingAdapter("onSafeClick")
     fun onSafeClick(view: View, listener: View.OnClickListener) {
         view.safeClick(listener)
     }

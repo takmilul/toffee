@@ -45,9 +45,9 @@ object NetworkModuleLib {
                     it.level = HttpLoggingInterceptor.Level.BODY
                 })
             }
-            cache(cache)
-            dns(toffeeDns)
             addInterceptor(authInterceptor)
+            dns(toffeeDns)
+            cache(cache)
         }
         return clientBuilder.build()
     }
@@ -55,18 +55,17 @@ object NetworkModuleLib {
     @Provides
     @Singleton
     @DefaultCache
-    fun getCacheIterator(@ApplicationContext ctx: Context): Cache{
+    fun getCacheIterator(@ApplicationContext ctx: Context): Cache {
         val cacheSize = 25 * 1024 * 1024 // 25 MB
         return Cache(ctx.cacheDir, cacheSize.toLong())
     }
     
     @Provides
     @Singleton
-    fun providesRetrofit(@EncryptedHttpClient httpClient: OkHttpClient,
-                         toffeeConfig: ToffeeConfig): Retrofit {
+    fun providesRetrofit(@EncryptedHttpClient httpClient: OkHttpClient, toffeeConfig: ToffeeConfig): Retrofit {
         return Retrofit.Builder()
-            .client(httpClient)
             .baseUrl(toffeeConfig.toffeeBaseUrl)
+            .client(httpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
@@ -81,8 +80,8 @@ object NetworkModuleLib {
     @Singleton
     fun providesToffeeDns(@SimpleHttpClient httpClient: OkHttpClient): DnsOverHttps {
         return DnsOverHttps.Builder()
-            .client(httpClient)
             .url("https://dns.google/dns-query".toHttpUrl())
+            .client(httpClient)
             .build()
     }
 
@@ -109,8 +108,8 @@ object NetworkModuleLib {
     @Provides
     fun providesDbRetrofit(@SimpleHttpClient httpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .client(httpClient)
             .baseUrl("https://real-db.toffeelive.com/")
+            .client(httpClient)
             .build()
     }
 

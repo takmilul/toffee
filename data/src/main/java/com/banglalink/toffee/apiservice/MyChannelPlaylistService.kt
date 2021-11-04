@@ -8,8 +8,6 @@ import com.banglalink.toffee.model.MyChannelPlaylist
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
-data class MyChannelPlaylistParams(val isOwner: Int, val channelOwnerId: Int)
-
 class MyChannelPlaylistService @AssistedInject constructor(
     private val preference: SessionPreference,
     private val toffeeApi: ToffeeApi,

@@ -31,6 +31,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import com.banglalink.toffee.R;
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.RendererCapabilities;
 import com.google.android.exoplayer2.source.TrackGroup;
@@ -219,8 +220,7 @@ public class TrackSelectionView extends LinearLayout {
                 TextView trackView = (TextView) inflater.inflate(R.layout.list_item_quality, this, false);
                 Format format = group.getFormat(trackIndex);
                 trackView.setText(format.width + "x" + format.height);
-                if (mappedTrackInfo.getTrackSupport(rendererIndex, groupIndex, trackIndex)
-                        == RendererCapabilities.FORMAT_HANDLED) {
+                if (mappedTrackInfo.getTrackSupport(rendererIndex, groupIndex, trackIndex) == C.FORMAT_HANDLED) {
                     trackView.setFocusable(true);
                     trackView.setTag(Pair.create(groupIndex, trackIndex));
                     trackView.setOnClickListener(componentListener);

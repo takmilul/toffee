@@ -33,14 +33,13 @@ import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelInfo> {
     
-    private var listJob: Job? = null
     private var channelOwnerId: Int = 0
     private var isOwner: Boolean = false
     @Inject lateinit var reactionDao: ReactionDao
@@ -109,8 +108,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
     }
     
     private fun observeMyChannelVideos() {
-        listJob?.cancel()
-        listJob = viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launch {
             mViewModel.getMyChannelVideos(channelOwnerId).collectLatest {
                 mAdapter.submitData(it)
             }

@@ -194,47 +194,7 @@ class HomeActivity :
         }
         
         observe(viewModel.fragmentDetailsMutableLiveData) {
-            val cp = player
-//            if(cp is CastPlayer) {
-//                cp.getItem()
-//            }
-//            if(player is CastPlayer &&
-//                !(player?.playbackState != Player.STATE_ENDED &&
-//                        player?.playbackState != Player.STATE_IDLE)) {
-//                val channelInfo = when (it) {
-//                    is ChannelInfo -> {
-//                        it
-//                    }
-//                    is PlaylistPlaybackInfo -> {
-//                        it.currentItem
-//                    }
-//                    is SeriesPlaybackInfo -> {
-//                        it.currentItem
-//                    }
-//                    else -> null
-//                }
-//
-//                Log.e("CAST_T", "${player?.currentMediaItem?.playbackProperties?.tag}")
-//
-//                VelBoxAlertDialogBuilder(this).apply {
-//                    setTitle("Remote play")
-//                    setText("Play ${channelInfo?.program_name} on remote player?")
-//                    setPositiveButtonListener("Play") { dialog->
-//                        onDetailsFragmentLoad(it)
-//                        dialog?.dismiss()
-//                    }
-//                    setNegativeButtonListener("Cancel") { dialog->
-//                        dialog?.dismiss()
-//                    }
-//                }
-//                .create()
-//                .show()
-//            } else {
-                onDetailsFragmentLoad(it)
-//            }
-        }
-        observe(viewModel.viewAllVideoLiveData) {
-//            drawerHelper.onMenuClick(NavigationMenu(ID_VIDEO, "All Videos", 0, listOf(), false))
+            onDetailsFragmentLoad(it)
         }
         observe(mPref.sessionTokenLiveData){
             if(binding.draggableView.visibility == View.VISIBLE){
@@ -496,7 +456,6 @@ class HomeActivity :
         return false
     }
 
-    @ExperimentalCoroutinesApi
     private fun watchConnectionChange() {
         lifecycleScope.launch {
             uploadManager.checkUploadStatus(false)
@@ -1337,7 +1296,6 @@ class HomeActivity :
                         override fun onGlobalLayout() {
                             if (it.measuredWidth > 0) {
                                 val width = it.measuredWidth.toFloat() + (10.px * 2)
-                                val height = it.measuredHeight.toFloat() + (10.px * 2)
                             
                                 val path = Path().apply {
                                     moveTo(0f, 0f)

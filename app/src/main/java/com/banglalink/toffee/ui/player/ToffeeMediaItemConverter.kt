@@ -1,17 +1,14 @@
 package com.banglalink.toffee.ui.player
 
-import android.media.MediaDrm
 import android.net.Uri
 import android.util.Log
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.model.Channel
 import com.banglalink.toffee.model.ChannelInfo
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.MediaItem.DrmConfiguration
 import com.google.android.exoplayer2.ext.cast.MediaItemConverter
 import com.google.android.exoplayer2.util.Assertions
-import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.gms.cast.MediaInfo
 import com.google.android.gms.cast.MediaMetadata
 import com.google.android.gms.cast.MediaQueueItem
@@ -140,7 +137,7 @@ class ToffeeMediaItemConverter(private val mPref: SessionPreference,
     }
 
     // Deserialization.
-    fun getMediaItem(customData: JSONObject, channelData: JSONObject): MediaItem? {
+    private fun getMediaItem(customData: JSONObject, channelData: JSONObject): MediaItem? {
         return try {
             val mediaItemJson = customData.getJSONObject(KEY_MEDIA_ITEM)
             val builder = MediaItem.Builder()
@@ -182,7 +179,7 @@ class ToffeeMediaItemConverter(private val mPref: SessionPreference,
     }
 
     // Serialization.
-    fun getCustomData(mediaItem: MediaItem?, channelInfo: ChannelInfo): JSONObject? {
+    private fun getCustomData(mediaItem: MediaItem?, channelInfo: ChannelInfo): JSONObject? {
         val json = JSONObject()
         try {
             json.put(KEY_MEDIA_ITEM, getMediaItemJson(mediaItem!!))

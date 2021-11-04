@@ -105,9 +105,7 @@ class HomeViewModel @Inject constructor(
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if(task.isSuccessful) {
                 val token = task.result
-                if(token != null) {
-                    setFcmToken(token)
-                }
+                setFcmToken(token)
             }
         }
     }
@@ -267,8 +265,9 @@ class HomeViewModel @Inject constructor(
     }
     
     fun getMqttCredential() {
-        viewModelScope.launch { 
-            mqttCredentialLiveData.postValue(resultFromResponse { mqttCredentialService.execute() }!!)
+        viewModelScope.launch {
+            val response = resultFromResponse { mqttCredentialService.execute() }
+            mqttCredentialLiveData.postValue(response)
         }
     }
     
@@ -279,8 +278,9 @@ class HomeViewModel @Inject constructor(
     }
     
     fun logoutUser() {
-        viewModelScope.launch { 
-            logoutLiveData.postValue(resultFromResponse { logoutService.execute() }!!)
+        viewModelScope.launch {
+            val response = resultFromResponse { logoutService.execute() }
+            logoutLiveData.postValue(response)
         }
     }
     
