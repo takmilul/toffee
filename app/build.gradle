@@ -89,7 +89,9 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:$rootProject.retrofitVersion"
 
     //LifeCycle Extensions
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$rootProject.lifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$rootProject.lifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$rootProject.lifecycleVersion"
 //    implementation "android.arch.lifecycle:extensions:2.1.0"
 
     implementation 'com.google.android.material:material:1.4.0'
@@ -109,11 +111,11 @@ dependencies {
     implementation "jp.wasabeef.transformers:core:1.0.5"
 
     //Firebase Push Notification
-    implementation 'com.google.firebase:firebase-messaging:22.0.0'
+    implementation "com.google.firebase:firebase-messaging:$rootProject.firebaseMessagingVersion"
     //Firebase in app messaging
-    implementation 'com.google.firebase:firebase-inappmessaging-display:20.1.0'
+    implementation 'com.google.firebase:firebase-inappmessaging-display:20.1.1'
     //Firebase core
-    implementation "com.google.firebase:firebase-core:$rootProject.firebaseCoreVersion"
+//    implementation "com.google.firebase:firebase-core:$rootProject.firebaseCoreVersion"
     implementation "com.google.firebase:firebase-analytics:$rootProject.firebaseAnalyticsVersion"
     implementation "com.google.firebase:firebase-crashlytics:$rootProject.firebaseCrashlyticsVersion"
 
@@ -173,10 +175,7 @@ dependencies {
     //Facebook SDK
     implementation "com.facebook.android:facebook-android-sdk:$rootProject.facebookSdkVersion"
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
-
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.3.1"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.3.1"
-
+    
 	implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'com.google.android.gms:play-services-auth:19.2.0'
     implementation 'com.google.android.gms:play-services-auth-api-phone:17.5.1'

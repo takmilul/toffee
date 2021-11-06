@@ -41,8 +41,10 @@ ext {
 
     exoVersion = "2.14.2"
     firebaseCoreVersion = "19.0.2"
-    firebaseAnalyticsVersion = "19.0.2"
-    firebaseCrashlyticsVersion = "18.2.3"
+    firebaseMessagingVersion = "23.0.0"
+    firebaseAnalyticsVersion = "20.0.0"
+    firebaseCrashlyticsVersion = "18.2.4"
+    lifecycleVersion = "2.3.1"
     roomDbVersion = "2.3.0"
     hiltAndroidVersion = "2.39.1"
     hiltVersion = "1.0.0"

@@ -604,6 +604,7 @@ abstract class PlayerPageActivity :
                 setDrmUuid(C.WIDEVINE_UUID)
                 setUri(channelInfo.drmDashUrl)
                 setTag(channelInfo)
+                setDrmSessionForClearPeriods(true)
             }.build()
         }
         val license = getLicense(channelInfo)
@@ -618,6 +619,7 @@ abstract class PlayerPageActivity :
             setDrmKeySetId(license)
             setUri(drmUrl)
             setTag(channelInfo)
+            setDrmSessionForClearPeriods(true)
         }.build()
     }
 
