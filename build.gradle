@@ -39,7 +39,7 @@ ext {
     kotlin_version = '1.5.31'
     kotlinCoroutineVersion = "1.5.2"
 
-    exoVersion = "2.14.2"
+    exoVersion = "2.14.0"
     firebaseCoreVersion = "19.0.2"
     firebaseMessagingVersion = "23.0.0"
     firebaseAnalyticsVersion = "20.0.0"
