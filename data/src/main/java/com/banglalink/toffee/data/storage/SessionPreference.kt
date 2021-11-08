@@ -133,7 +133,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         }
 
     var cellularProfileStatus: Int
-        get() = pref.getInt(PREF_CELLULAR_PROFILE_STATUS4, 3)
+        get() = pref.getInt(PREF_CELLULAR_PROFILE_STATUS4, 5)
         set(value) {
             pref.edit().putInt(PREF_CELLULAR_PROFILE_STATUS4, value).apply()
         }
