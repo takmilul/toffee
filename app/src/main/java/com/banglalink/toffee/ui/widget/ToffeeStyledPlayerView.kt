@@ -2,12 +2,8 @@ package com.banglalink.toffee.ui.widget
 
 import android.animation.ValueAnimator
 import android.content.Context
-import android.database.ContentObserver
 import android.graphics.Point
 import android.os.CountDownTimer
-import android.os.Handler
-import android.os.Looper
-import android.provider.Settings
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
@@ -33,7 +29,6 @@ import com.banglalink.toffee.util.BindingUtil
 import com.banglalink.toffee.util.UtilsKt
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.DefaultTimeBar
@@ -159,7 +154,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         setControllerVisibilityListener { ctrlVisibility->
             when(ctrlVisibility) {
                 View.VISIBLE-> {
-                    val isLive = player?.isCurrentWindowLive == true || channelType == "LIVE"
+                    val isLive = player?.isCurrentMediaItemLive == true || channelType == "LIVE"
                     changeTimerVisibility(isLive)
 //                    playerControlView.setShowMultiWindowTimeBar(player?.isCurrentWindowLive == false)
                     onPlayerControllerChangedListeners.forEach {
@@ -300,7 +295,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     }
 
     private fun updateControllerUI() {
-        val isChannelLive = player?.isCurrentWindowLive == true || channelType == "LIVE"
+        val isChannelLive = player?.isCurrentMediaItemLive == true || channelType == "LIVE"
         changeTimerVisibility(isChannelLive)
 
         player?.let {
@@ -641,7 +636,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
             Player.STATE_READY-> {
                 previewImage.setImageResource(0)
                 playPause.visibility = View.VISIBLE
-                val isChannelLive = player?.isCurrentWindowLive == true || channelType == "LIVE"
+                val isChannelLive = player?.isCurrentMediaItemLive == true || channelType == "LIVE"
                 nextButtonVisibility(!isChannelLive)
                 prevButtonVisibility(!isChannelLive)
                 autoplayProgress.visibility = View.GONE

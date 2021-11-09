@@ -28,7 +28,7 @@ public final class TrackSelectionDialog extends BottomSheetDialog implements Lif
         bottomView.init(defaultTrackSelector.getCurrentMappedTrackInfo(), 0, false, initialOverride == null
                 ? Collections.emptyList()
                 : Collections.singletonList(initialOverride), (isDisabled, overrides) -> {
-            if(defaultTrackSelector!=null && defaultTrackSelector.getCurrentMappedTrackInfo()!=null){
+            if(defaultTrackSelector.getCurrentMappedTrackInfo() != null){
                 DefaultTrackSelector.ParametersBuilder builder = defaultTrackSelector.getParameters().buildUpon();
 
                 builder.clearSelectionOverrides(0);

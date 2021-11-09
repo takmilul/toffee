@@ -38,7 +38,7 @@ class ToffeeMediaItemConverter(private val mPref: SessionPreference,
 
 
     override fun toMediaQueueItem(mediaItem: MediaItem): MediaQueueItem {
-        val tag = mediaItem.playbackProperties?.tag as ChannelInfo?
+        val tag = mediaItem.localConfiguration?.tag as ChannelInfo?
         Log.e("MEDIA_T", "Tag -> $tag")
         return getMediaInfo(mediaItem, tag!!)
     }
@@ -85,8 +85,8 @@ class ToffeeMediaItemConverter(private val mPref: SessionPreference,
             mediaMetadata.addImage(WebImage(Uri.parse(info.landscape_ratio_1280_720)))
         }
 
-        val channelUrl = mediaItem.playbackProperties!!.uri.toString().let {
-            if(mediaItem.playbackProperties!!.drmConfiguration == null) {
+        val channelUrl = mediaItem.localConfiguration!!.uri.toString().let {
+            if(mediaItem.localConfiguration!!.drmConfiguration == null) {
                 getCastUrl(it)
             } else it
         }
@@ -98,7 +98,7 @@ class ToffeeMediaItemConverter(private val mPref: SessionPreference,
         }
 
         val mediaInfo = MediaInfo.Builder(channelUrl)
-                .setContentType(mediaItem.playbackProperties!!.mimeType!!)//"application/x-mpegurl")
+                .setContentType(mediaItem.localConfiguration!!.mimeType!!)//"application/x-mpegurl")
                 .setStreamType( MediaInfo.STREAM_TYPE_BUFFERED )
                 .setMetadata( mediaMetadata )
                 .setCustomData(customData)
@@ -166,8 +166,6 @@ class ToffeeMediaItemConverter(private val mPref: SessionPreference,
 
     @Throws(JSONException::class)
     private fun populateDrmConfiguration(json: JSONObject, builder: MediaItem.Builder) {
-        builder.setDrmUuid(UUID.fromString(json.getString(KEY_UUID)))
-        builder.setDrmLicenseUri(json.getString(KEY_LICENSE_URI))
         val requestHeadersJson = json.getJSONObject(KEY_REQUEST_HEADERS)
         val requestHeaders = HashMap<String, String>()
         val iterator = requestHeadersJson.keys()
@@ -175,7 +173,12 @@ class ToffeeMediaItemConverter(private val mPref: SessionPreference,
             val key = iterator.next()
             requestHeaders[key] = requestHeadersJson.getString(key)
         }
-        builder.setDrmLicenseRequestHeaders(requestHeaders)
+        builder.setDrmConfiguration(DrmConfiguration
+            .Builder(UUID.fromString(json.getString(KEY_UUID)))
+            .setLicenseUri(json.getString(KEY_LICENSE_URI))
+            .setLicenseRequestHeaders(requestHeaders)
+            .build()
+        )
     }
 
     // Serialization.
@@ -195,20 +198,20 @@ class ToffeeMediaItemConverter(private val mPref: SessionPreference,
     }
 
     @Throws(JSONException::class)
-    fun getMediaItemJson(mediaItem: MediaItem): JSONObject? {
-        Assertions.checkNotNull(mediaItem.playbackProperties)
+    fun getMediaItemJson(mediaItem: MediaItem): JSONObject {
+        Assertions.checkNotNull(mediaItem.localConfiguration)
         val json = JSONObject()
         json.put(KEY_TITLE, mediaItem.mediaMetadata.title)
-        json.put(KEY_URI, mediaItem.playbackProperties!!.uri.toString().let {
-            if(mediaItem.playbackProperties!!.drmConfiguration == null) {
+        json.put(KEY_URI, mediaItem.localConfiguration!!.uri.toString().let {
+            if(mediaItem.localConfiguration!!.drmConfiguration == null) {
                 getCastUrl(it)
             } else it
         })
-        json.put(KEY_MIME_TYPE, mediaItem.playbackProperties!!.mimeType)
-        if (mediaItem.playbackProperties!!.drmConfiguration != null) {
+        json.put(KEY_MIME_TYPE, mediaItem.localConfiguration!!.mimeType)
+        if (mediaItem.localConfiguration!!.drmConfiguration != null) {
             json.put(
                 KEY_DRM_CONFIGURATION,
-                getDrmConfigurationJson(mediaItem.playbackProperties!!.drmConfiguration!!)
+                getDrmConfigurationJson(mediaItem.localConfiguration!!.drmConfiguration!!)
             )
         }
         return json
@@ -217,28 +220,28 @@ class ToffeeMediaItemConverter(private val mPref: SessionPreference,
     @Throws(JSONException::class)
     fun getDrmConfigurationJson(drmConfiguration: DrmConfiguration): JSONObject? {
         val json = JSONObject()
-        json.put(KEY_UUID, drmConfiguration.uuid)
+        json.put(KEY_UUID, drmConfiguration.scheme)
         json.put(KEY_LICENSE_URI, drmConfiguration.licenseUri)
         json.put(
             KEY_REQUEST_HEADERS,
-            JSONObject(drmConfiguration.requestHeaders as Map<*, *>)
+            JSONObject(drmConfiguration.licenseRequestHeaders as Map<*, *>)
         )
         return json
     }
 
     @Throws(JSONException::class)
     private fun getPlayerConfigJson(mediaItem: MediaItem): JSONObject? {
-        if (mediaItem.playbackProperties == null
-            || mediaItem.playbackProperties!!.drmConfiguration == null
+        if (mediaItem.localConfiguration == null
+            || mediaItem.localConfiguration!!.drmConfiguration == null
         ) {
             return null
         }
-        val drmConfiguration = mediaItem.playbackProperties!!.drmConfiguration
+        val drmConfiguration = mediaItem.localConfiguration!!.drmConfiguration
         val drmScheme: String = when {
-            C.WIDEVINE_UUID == drmConfiguration!!.uuid -> {
+            C.WIDEVINE_UUID == drmConfiguration!!.scheme -> {
                 "widevine"
             }
-            C.PLAYREADY_UUID == drmConfiguration.uuid -> {
+            C.PLAYREADY_UUID == drmConfiguration.scheme -> {
                 "playready"
             }
             else -> {
@@ -251,8 +254,8 @@ class ToffeeMediaItemConverter(private val mPref: SessionPreference,
         if (drmConfiguration.licenseUri != null) {
             exoPlayerConfigJson.put("licenseUrl", drmConfiguration.licenseUri)
         }
-        if (drmConfiguration.requestHeaders.isNotEmpty()) {
-            exoPlayerConfigJson.put("headers", JSONObject(drmConfiguration.requestHeaders as Map<*, *>))
+        if (drmConfiguration.licenseRequestHeaders.isNotEmpty()) {
+            exoPlayerConfigJson.put("headers", JSONObject(drmConfiguration.licenseRequestHeaders as Map<*, *>))
         }
         return exoPlayerConfigJson
     }

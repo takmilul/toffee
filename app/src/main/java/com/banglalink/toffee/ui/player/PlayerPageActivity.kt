@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.DrmTokenService
@@ -35,7 +34,7 @@ import com.banglalink.toffee.ui.common.BaseAppCompatActivity
 import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.usecase.SendDrmFallbackEvent
 import com.google.android.exoplayer2.*
-import com.google.android.exoplayer2.SimpleExoPlayer.Builder
+import com.google.android.exoplayer2.ExoPlayer.Builder
 import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.analytics.AnalyticsListener.EventTime
 import com.google.android.exoplayer2.drm.*
@@ -82,7 +81,7 @@ abstract class PlayerPageActivity :
     protected var player: Player? = null
     private var adsLoader: AdsLoader? = null
     private var castPlayer: CastPlayer? = null
-    private var exoPlayer: SimpleExoPlayer? = null
+    private var exoPlayer: ExoPlayer? = null
     protected var castContext: CastContext? = null
     private var currentlyPlayingVastUrl: String = ""
     private var defaultCookieManager = CookieManager()
@@ -139,10 +138,10 @@ abstract class PlayerPageActivity :
             playCounter = savedInstanceState.getInt(KEY_PLAY_COUNTER)
             startAutoPlay = savedInstanceState.getBoolean(KEY_AUTO_PLAY)
             currentlyPlayingVastUrl = savedInstanceState.getString(KEY_VAST_URL) ?: ""
-            trackSelectorParameters = savedInstanceState.getParcelable(KEY_TRACK_SELECTOR_PARAMETERS)
+            trackSelectorParameters = savedInstanceState.getBundle(KEY_TRACK_SELECTOR_PARAMETERS)?.let { Parameters.CREATOR.fromBundle(it) }
         }
         else {
-            val builder = ParametersBuilder( /* context= */this)
+            val builder = ParametersBuilder(this)
             trackSelectorParameters = builder.build()
             clearStartPosition()
         }
@@ -162,7 +161,6 @@ abstract class PlayerPageActivity :
                         it.getTotalBytesInMB()
                     )
                     playerAnalyticsListener?.resetData()
-
                 }
             }
 
@@ -228,7 +226,7 @@ abstract class PlayerPageActivity :
         outState.putInt(KEY_PLAY_COUNTER, playCounter)
         outState.putBoolean(KEY_AUTO_PLAY, startAutoPlay)
         outState.putString(KEY_VAST_URL, currentlyPlayingVastUrl)
-        outState.putParcelable(KEY_TRACK_SELECTOR_PARAMETERS, trackSelectorParameters)
+        outState.putBundle(KEY_TRACK_SELECTOR_PARAMETERS, trackSelectorParameters?.toBundle())
     }
 
     private fun initializePlayer() {
@@ -317,7 +315,7 @@ abstract class PlayerPageActivity :
             .build(ToffeeMediaDrmCallback2(
                 mPref.drmWidevineLicenseUrl!!, httpDataSourceFactory!!, drmTokenApi, channelInfo.drmCid!!
             )).apply {
-                mediaItem.playbackProperties?.drmConfiguration?.keySetId?.let {
+                mediaItem.localConfiguration?.drmConfiguration?.keySetId?.let {
                     Log.e("DRM_T", "Using offline key")
                     setMode(DefaultDrmSessionManager.MODE_PLAYBACK, it)
                 }
@@ -448,7 +446,7 @@ abstract class PlayerPageActivity :
     protected fun updateStartPosition() {
         player?.let {
             startAutoPlay = it.playWhenReady
-            startWindow = it.currentWindowIndex
+            startWindow = it.currentMediaItemIndex
             startPosition = max(0, it.contentPosition)
         }
     }
@@ -601,10 +599,9 @@ abstract class PlayerPageActivity :
         if(player is CastPlayer) {
             return MediaItem.Builder().apply {
                 setMimeType(MimeTypes.APPLICATION_MPD)
-                setDrmUuid(C.WIDEVINE_UUID)
                 setUri(channelInfo.drmDashUrl)
                 setTag(channelInfo)
-                setDrmSessionForClearPeriods(true)
+                setDrmConfiguration(MediaItem.DrmConfiguration.Builder(C.WIDEVINE_UUID).build())
             }.build()
         }
         val license = getLicense(channelInfo)
@@ -615,11 +612,14 @@ abstract class PlayerPageActivity :
         return MediaItem.Builder().apply {
 //            showToast("Playing DRM -> ${if(license == null) "Requesting new license" else "Using cached license"}\n${channelInfo.drmDashUrl}")
             setMimeType(MimeTypes.APPLICATION_MPD)
-            setDrmUuid(C.WIDEVINE_UUID)
-            setDrmKeySetId(license)
             setUri(drmUrl)
             setTag(channelInfo)
-            setDrmSessionForClearPeriods(true)
+            setDrmConfiguration(
+                MediaItem
+                    .DrmConfiguration
+                    .Builder(C.WIDEVINE_UUID)
+                    .setKeySetId(license)
+                    .build())
         }.build()
     }
 
@@ -677,13 +677,13 @@ abstract class PlayerPageActivity :
 //            }
             getHlsMediaItem(channelInfo, isWifiConnected)
         }?.let {
-            if (!isReload && player is SimpleExoPlayer) playCounter = ++playCounter % mPref.vastFrequency
+            if (!isReload && player is ExoPlayer) playCounter = ++playCounter % mPref.vastFrequency
             homeViewModel.vastTagsMutableLiveData.value?.randomOrNull()?.let { tag ->
                 val shouldPlayAd = mPref.isVastActive && playCounter == 0 && !channelInfo.isLive
                 val vastTag = if(isReload) currentlyPlayingVastUrl else tag.url
                 if (shouldPlayAd && vastTag.isNotBlank()) {
                     it.buildUpon()
-                        .setAdTagUri(Uri.parse(vastTag))
+                        .setAdsConfiguration(MediaItem.AdsConfiguration.Builder(Uri.parse(vastTag)).build())
                         .build()
                     if (!isReload) currentlyPlayingVastUrl = tag.url
                     it
@@ -725,7 +725,7 @@ abstract class PlayerPageActivity :
                 }
                 val haveStartPosition = startWindow != C.INDEX_UNSET
                 if (haveStartPosition && !channelInfo.isLive) {
-                    if(it is SimpleExoPlayer) {
+                    if(it is ExoPlayer) {
 //                        getPlayerView().adViewGroup.removeAllViews()
                         it.setMediaItem(mediaItem, false)
                         //                    player.prepare(mediaSource, false, false);
@@ -737,10 +737,16 @@ abstract class PlayerPageActivity :
                                 null
                             } ?: return@launch
                             mediaItem.buildUpon()
-                                .setDrmLicenseUri(mPref.drmWidevineLicenseUrl!!)
-                                .setDrmMultiSession(false)
-                                .setDrmForceDefaultLicenseUri(false)
-                                .setDrmLicenseRequestHeaders(mapOf("pallycon-customdata-v2" to drmToken))
+                                .setDrmConfiguration(mediaItem
+                                    .localConfiguration
+                                    ?.drmConfiguration
+                                    ?.buildUpon()
+                                    ?.apply {
+                                        setLicenseUri(mPref.drmWidevineLicenseUrl!!)
+                                        setMultiSession(false)
+                                        setForceDefaultLicenseUri(false)
+                                        setLicenseRequestHeaders(mapOf("pallycon-customdata-v2" to drmToken)) }
+                                    ?.build())
                                 .build()
                         } else {
                             mediaItem
@@ -762,7 +768,7 @@ abstract class PlayerPageActivity :
                     channelInfo.viewProgress
                 }
             }
-            if(it is SimpleExoPlayer) {
+            if(it is ExoPlayer) {
                 getPlayerView().adViewGroup.removeAllViews()
                 it.setMediaItem(mediaItem, startPosition)
                 it.prepare()
@@ -774,10 +780,16 @@ abstract class PlayerPageActivity :
                         null
                     } ?: return@launch
                     mediaItem.buildUpon()
-                        .setDrmMultiSession(false)
-                        .setDrmForceDefaultLicenseUri(false)
-                        .setDrmLicenseUri(mPref.drmWidevineLicenseUrl!!)
-                        .setDrmLicenseRequestHeaders(mapOf("pallycon-customdata-v2" to drmToken))
+                        .setDrmConfiguration(mediaItem
+                            .localConfiguration
+                            ?.drmConfiguration
+                            ?.buildUpon()
+                            ?.apply {
+                                setLicenseUri(mPref.drmWidevineLicenseUrl!!)
+                                setMultiSession(false)
+                                setForceDefaultLicenseUri(false)
+                                setLicenseRequestHeaders(mapOf("pallycon-customdata-v2" to drmToken)) }
+                            ?.build())
                         .build()
                 } else {
                     mediaItem
@@ -914,7 +926,7 @@ abstract class PlayerPageActivity :
     }
 
     private inner class PlayerEventListener : Player.Listener {
-        override fun onPlayerError(e: ExoPlaybackException) {
+        override fun onPlayerError(e: PlaybackException) {
             e.printStackTrace()
             ToffeeAnalytics.logException(e)
             if (isBehindLiveWindow(e)) {
@@ -954,18 +966,8 @@ abstract class PlayerPageActivity :
             }
         }
 
-        private fun isBehindLiveWindow(e: ExoPlaybackException): Boolean {
-            if (e.type != ExoPlaybackException.TYPE_SOURCE) {
-                return false
-            }
-            var cause: Throwable? = e.sourceException
-            while (cause != null) {
-                if (cause is BehindLiveWindowException) {
-                    return true
-                }
-                cause = cause.cause
-            }
-            return false
+        private fun isBehindLiveWindow(e: PlaybackException): Boolean {
+            return e.errorCode == PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW
         }
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
