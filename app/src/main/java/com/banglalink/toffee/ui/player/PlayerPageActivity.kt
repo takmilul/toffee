@@ -57,6 +57,7 @@ import com.google.android.exoplayer2.util.Util
 import com.google.android.gms.cast.framework.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
+import com.medallia.digital.mobilesdk.MedalliaDigital
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
@@ -230,6 +231,7 @@ abstract class PlayerPageActivity :
     }
 
     private fun initializePlayer() {
+        MedalliaDigital.disableIntercept()
         initializeLocalPlayer()
         initializeRemotePlayer()
         player = if(castPlayer?.isCastSessionAvailable == true) castPlayer else exoPlayer
@@ -385,6 +387,7 @@ abstract class PlayerPageActivity :
         releaseRemotePlayer()
         castContext?.sessionManager?.removeSessionManagerListener(castSessionListener, CastSession::class.java)
         player = null
+        MedalliaDigital.enableIntercept()
     }
 
     private fun releaseLocalPlayer() {

@@ -1,53 +1,41 @@
-package com.banglalink.toffee.ui.player;
+package com.banglalink.toffee.ui.player
 
-import android.content.Context;
+import android.content.Context
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
+import com.banglalink.toffee.R
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.SelectionOverride
+import com.google.android.material.bottomsheet.BottomSheetDialog
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.OnLifecycleEvent;
-
-import com.banglalink.toffee.R;
-import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-
-import java.util.Collections;
-
-/** Dialog to select tracks. */
-public final class TrackSelectionDialog extends BottomSheetDialog implements LifecycleObserver {
-
-    public TrackSelectionDialog(@NonNull Context context) {
-        super(context);
-    }
-
-    public void init(DefaultTrackSelector defaultTrackSelector){
-        TrackGroupArray trackGroupArray = defaultTrackSelector.getCurrentMappedTrackInfo().getTrackGroups(0);
-        DefaultTrackSelector.SelectionOverride initialOverride  =  defaultTrackSelector.getParameters().getSelectionOverride(/* rendererIndex= */ 0, trackGroupArray);
-        TrackSelectionView bottomView = (TrackSelectionView) getLayoutInflater().inflate(R.layout.track_selection_dialog,null);
-        bottomView.init(defaultTrackSelector.getCurrentMappedTrackInfo(), 0, false, initialOverride == null
-                ? Collections.emptyList()
-                : Collections.singletonList(initialOverride), (isDisabled, overrides) -> {
-            if(defaultTrackSelector.getCurrentMappedTrackInfo() != null){
-                DefaultTrackSelector.ParametersBuilder builder = defaultTrackSelector.getParameters().buildUpon();
-
-                builder.clearSelectionOverrides(0);
-                builder.setRendererDisabled(0, isDisabled);
-                if (!overrides.isEmpty()) {
+class TrackSelectionDialog(context: Context) : BottomSheetDialog(context), LifecycleObserver {
+    fun init(defaultTrackSelector: DefaultTrackSelector?) {
+        val trackGroupArray = defaultTrackSelector?.currentMappedTrackInfo?.getTrackGroups(0)
+        val initialOverride = trackGroupArray?.let { defaultTrackSelector.parameters.getSelectionOverride(0, it) }
+        val bottomView = layoutInflater.inflate(R.layout.track_selection_dialog, null) as TrackSelectionView
+        bottomView.init(defaultTrackSelector?.currentMappedTrackInfo,
+            0,
+            false,
+            initialOverride?.let { listOf(it) } ?: emptyList()) { isDisabled: Boolean, overrides: List<SelectionOverride?> ->
+            defaultTrackSelector?.currentMappedTrackInfo?.let {
+                val builder = defaultTrackSelector.parameters.buildUpon()
+                builder.clearSelectionOverrides(0)
+                builder.setRendererDisabled(0, isDisabled)
+                if (overrides.isNotEmpty()) {
                     builder.setSelectionOverride(0,
-                            defaultTrackSelector.getCurrentMappedTrackInfo().getTrackGroups(0),
-                            overrides.get(0));
+                        defaultTrackSelector.currentMappedTrackInfo!!.getTrackGroups(0),
+                        overrides[0])
                 }
-                defaultTrackSelector.setParameters(builder);
+                defaultTrackSelector.setParameters(builder)
             }
-            dismiss();
-
-        });
-        setContentView(bottomView);
+            dismiss()
+        }
+        setContentView(bottomView)
     }
-
+    
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    public void dismissDialog(){
-        dismiss();
+    fun dismissDialog() {
+        dismiss()
     }
 }

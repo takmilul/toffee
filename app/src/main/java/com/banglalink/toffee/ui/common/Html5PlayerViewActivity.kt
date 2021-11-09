@@ -9,6 +9,7 @@ import com.banglalink.toffee.enums.WebActionType.*
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.ui.widget.HTML5WebView
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
+import com.medallia.digital.mobilesdk.MedalliaDigital
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlin.system.exitProcess
@@ -29,6 +30,7 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        MedalliaDigital.disableIntercept()
         val extras = intent.extras
         if (extras != null) {
             htmlUrl = extras.getString(CONTENT_URL)!!
@@ -103,6 +105,7 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
     
     override fun onDestroy() {
         progressDialog.dismiss()
+        MedalliaDigital.enableIntercept()
         heartBeatManager.triggerEventViewingContentStop()
         super.onDestroy()
     }

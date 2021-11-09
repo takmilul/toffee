@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.webkit.*
 import androidx.activity.OnBackPressedCallback
 import com.banglalink.toffee.databinding.FragmentHtmlPageViewBinding
+import com.medallia.digital.mobilesdk.MedalliaDigital
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -24,13 +25,13 @@ class HtmlPageViewFragment : BaseFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        MedalliaDigital.disableIntercept()
         _binding = FragmentHtmlPageViewBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         listenBackStack()
         htmlUrl= arguments?.getString("url")!!
         header= arguments?.getString("header")
@@ -115,7 +116,7 @@ class HtmlPageViewFragment : BaseFragment() {
 //            destroyDrawingCache()
             destroy()
         }
-
+        MedalliaDigital.enableIntercept()
         super.onDestroyView()
         _binding = null
     }
