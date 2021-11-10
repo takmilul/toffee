@@ -6,31 +6,25 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import com.banglalink.toffee.R
-import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentFeaturedPartnerBinding
 import com.banglalink.toffee.extension.showLoadingAnimation
 import com.banglalink.toffee.model.FeaturedPartner
-import com.banglalink.toffee.ui.home.HomeViewModel
+import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class FeaturedPartnerFragment : Fragment(), BaseListItemCallback<FeaturedPartner> {
-    private val homeViewModel: HomeViewModel by viewModels()
+class FeaturedPartnerFragment : BaseFragment(), BaseListItemCallback<FeaturedPartner> {
     private lateinit var mAdapter: FeaturedPartnerAdapter
-    @Inject lateinit var heartBeatManager: HeartBeatManager
     private var _binding: FragmentFeaturedPartnerBinding? = null
     private val binding get() = _binding!!
     private val viewModel by activityViewModels<LandingPageViewModel>()
@@ -64,7 +58,9 @@ class FeaturedPartnerFragment : Fragment(), BaseListItemCallback<FeaturedPartner
             adapter = mAdapter
             setHasFixedSize(true)
         }
-        observeFeaturedPartner()
+        if (mPref.isFeaturePartnerActive == "true") {
+            observeFeaturedPartner()
+        }
     }
     
     private fun observeFeaturedPartner() {

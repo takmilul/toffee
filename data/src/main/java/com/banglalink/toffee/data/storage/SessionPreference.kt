@@ -35,6 +35,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
     val messageDialogLiveData = SingleLiveEvent<String>()
     val shareableUrlLiveData = SingleLiveEvent<String>()
     val isFireworkInitialized = MutableLiveData<Boolean>()
+    val shareableHashLiveData = MutableLiveData<String?>()
     
     var phoneNumber: String
         get() = pref.getString(PREF_PHONE_NUMBER, "") ?: ""
@@ -133,7 +134,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         }
 
     var cellularProfileStatus: Int
-        get() = pref.getInt(PREF_CELLULAR_PROFILE_STATUS4, 5)
+        get() = pref.getInt(PREF_CELLULAR_PROFILE_STATUS4, 6)
         set(value) {
             pref.edit().putInt(PREF_CELLULAR_PROFILE_STATUS4, value).apply()
         }

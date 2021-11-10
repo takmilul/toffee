@@ -9,13 +9,16 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceView
 import android.view.View
+import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.Space
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.mediarouter.app.MediaRouteButton
+import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
+import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.getChannelMetadata
 import com.banglalink.toffee.extension.px
@@ -88,11 +91,9 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private var debugJob: Job? = null
 
-    @Inject
-    lateinit var bindingUtil: BindingUtil
-
-    @Inject
-    lateinit var mPref: SessionPreference
+    @Inject lateinit var cPref: CommonPreference
+    @Inject lateinit var mPref: SessionPreference
+    @Inject lateinit var bindingUtil: BindingUtil
 
     init {
         initView()
@@ -178,7 +179,11 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         videoSurfaceView?.let {
             if(it is SurfaceView) {
 //                it.holder.setFixedSize()
-                it.setSecure(true)
+                val isDisableScreenshot = !(mPref.screenCaptureEnabledUsers.contains(cPref.deviceId) || mPref.screenCaptureEnabledUsers.contains(mPref.customerId.toString()) || mPref.screenCaptureEnabledUsers.contains(mPref.phoneNumber))
+                //disable screen capture
+                if (! BuildConfig.DEBUG && isDisableScreenshot) {
+                    it.setSecure(true)
+                }
             }
         }
     }

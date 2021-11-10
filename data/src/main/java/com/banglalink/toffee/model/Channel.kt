@@ -37,7 +37,11 @@ class Channel(
                 "/" + pref.wifiProfileStatus
             }
         } else {
-            "/" + pref.cellularProfileStatus
+            if (pref.cellularProfileStatus == 6) {
+                "/auto"
+            } else {
+                "/" + pref.cellularProfileStatus
+            }
         }
         if (pref.shouldOverrideHlsUrl) {
             try {

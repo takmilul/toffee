@@ -298,7 +298,9 @@ class HomeActivity :
         inAppUpdate()
         customCrashReport()
         viewModel.getVastTags()
-    
+        observe(mPref.shareableHashLiveData) {
+            it?.let { observeShareableContent(it) }
+        }
 //        showDeviceId()
     }
     
@@ -834,20 +836,23 @@ class HomeActivity :
                 if(!isDeepLinkHandled){
                     ToffeeAnalytics.logBreadCrumb("Trying to open individual item")
                     val hash = url.substring(url.lastIndexOf("/") + 1)
-                    observe(viewModel.getShareableContent(hash)){ channelResource ->
-                        when(channelResource){
-                            is Success -> {
-                                channelResource.data?.let {
-                                    Log.e(TAG, "shareable: $it")
-                                    onDetailsFragmentLoad(it)
-                                }
-                            }
-                        }
-                    }
+                    mPref.shareableHashLiveData.value = hash
+                    observeShareableContent(hash)
                 }
             }catch (e: Exception){
                 ToffeeAnalytics.logBreadCrumb("2. Failed to handle depplink $url")
                 ToffeeAnalytics.logException(e)
+            }
+        }
+    }
+    
+    private fun observeShareableContent(hash: String) {
+        observe(viewModel.getShareableContent(hash)) { channelResource ->
+            if (channelResource is Success) {
+                channelResource.data?.let {
+                    onDetailsFragmentLoad(it)
+                }
+                mPref.shareableHashLiveData.value = null
             }
         }
     }

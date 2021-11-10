@@ -38,6 +38,7 @@ import com.google.android.exoplayer2.ExoPlayer.Builder
 import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.analytics.AnalyticsListener.EventTime
 import com.google.android.exoplayer2.drm.*
+import com.google.android.exoplayer2.drm.DrmSession.*
 import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.ext.cast.SessionAvailabilityListener
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader
@@ -77,6 +78,7 @@ abstract class PlayerPageActivity :
 {
     private var startWindow = 0
     private var playCounter: Int = -1
+    private var reloadCounter: Int = 0
     private var startAutoPlay = false
     private var startPosition: Long = 0
     protected var player: Player? = null
@@ -232,6 +234,7 @@ abstract class PlayerPageActivity :
 
     private fun initializePlayer() {
         MedalliaDigital.disableIntercept()
+        reloadCounter = 0
         initializeLocalPlayer()
         initializeRemotePlayer()
         player = if(castPlayer?.isCastSessionAvailable == true) castPlayer else exoPlayer
@@ -387,6 +390,7 @@ abstract class PlayerPageActivity :
         releaseRemotePlayer()
         castContext?.sessionManager?.removeSessionManagerListener(castSessionListener, CastSession::class.java)
         player = null
+        reloadCounter = 0
         MedalliaDigital.enableIntercept()
     }
 
@@ -941,21 +945,27 @@ abstract class PlayerPageActivity :
 //                playlistManager.getCurrentChannel()?.is_drm_active = 0
 //                reloadChannel()
 //            }
-            if(e.cause is DrmSession.DrmSessionException && e.cause?.cause is IllegalArgumentException && e.cause?.cause?.message == "Failed to restore keys") {
-                lifecycleScope.launch {
-                    ToffeeAnalytics.logBreadCrumb("Failed to restore key -> ${playlistManager.getCurrentChannel()?.id}, Reloading")
-                    if(mPref.isDrmActive) {
-                        drmLicenseRepo.deleteByChannelId(-1L)
-                        reloadChannel()
-                    } else {
-                        playlistManager.getCurrentChannel()?.id?.let {
-                            drmLicenseRepo.deleteByChannelId(it.toLong())
+            if(e.cause is DrmSessionException && reloadCounter < 3) {
+                if (e.cause?.cause is IllegalArgumentException && e.cause?.cause?.message == "Failed to restore keys") {
+                    lifecycleScope.launch {
+                        ToffeeAnalytics.logBreadCrumb("Failed to restore key -> ${playlistManager.getCurrentChannel()?.id}, Reloading")
+                        if (mPref.isDrmActive) {
+                            drmLicenseRepo.deleteByChannelId(-1L)
                             reloadChannel()
+                        } else {
+                            playlistManager.getCurrentChannel()?.id?.let {
+                                drmLicenseRepo.deleteByChannelId(it.toLong())
+                                reloadChannel()
+                            }
                         }
                     }
+                } else {
+                    ToffeeAnalytics.logBreadCrumb("Failed to restore key -> ${playlistManager.getCurrentChannel()?.id}, Reloading")
+                    reloadChannel()
                 }
+                reloadCounter++
             }
-
+            
             getCurrentChannelInfo()?.let { cinfo->
                 if(!cinfo.isLive) {
                     insertContentViewProgress(cinfo, player?.duration ?: -1)
@@ -975,11 +985,14 @@ abstract class PlayerPageActivity :
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             super.onIsPlayingChanged(isPlaying)
-            if(isPlaying) return
-            val cinfo = getCurrentChannelInfo()
-            if(cinfo is ChannelInfo) {
+            if(isPlaying) {
+                reloadCounter = 0
+                return
+            }
+            val channelInfo = getCurrentChannelInfo()
+            if(channelInfo is ChannelInfo) {
                 if(player?.currentPosition ?: 0 > 0L) {
-                    insertContentViewProgress(cinfo, player?.currentPosition ?: -1)
+                    insertContentViewProgress(channelInfo, player?.currentPosition ?: -1)
                 }
             }
         }
