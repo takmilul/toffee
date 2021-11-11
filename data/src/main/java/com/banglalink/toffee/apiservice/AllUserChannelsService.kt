@@ -6,7 +6,6 @@ import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.UserChannelInfo
-import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 class AllUserChannelsService @Inject constructor(
@@ -16,7 +15,7 @@ class AllUserChannelsService @Inject constructor(
 ): BaseApiService<UserChannelInfo> {
 
     override suspend fun loadData(offset: Int, limit: Int): List<UserChannelInfo> {
-        delay(5000)
+        
         val request =  AllUserChannelsRequest(
             preference.customerId,
             preference.password

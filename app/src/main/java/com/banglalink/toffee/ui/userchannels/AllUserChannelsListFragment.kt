@@ -105,19 +105,20 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
             }
         })
 
-        with(binding.userChannelList) {
+        with(binding) {
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 mAdapter.loadStateFlow.collectLatest {
-                    val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
                     val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
-                    binding.emptyView.isVisible = isEmpty && !isLoading
-                    binding.progressBar.isVisible = isLoading
-                    isVisible = !isEmpty && !isLoading
+                    val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
+                    footerLoader.isVisible = it.source.append is LoadState.Loading
+                    emptyView.isVisible = isEmpty && !isLoading
+                    progressBar.isVisible = isLoading
+                    userChannelList.isVisible = !isEmpty && !isLoading
                     isInitialized = true
                 }
             }
-            adapter = mAdapter/*.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })*/
-            setHasFixedSize(true)
+            userChannelList.adapter = mAdapter
+            userChannelList.setHasFixedSize(true)
         }
         observeList()
 //        observeSubscribeChannel()
