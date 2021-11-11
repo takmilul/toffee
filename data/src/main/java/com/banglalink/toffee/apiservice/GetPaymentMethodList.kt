@@ -12,7 +12,7 @@ class GetPaymentMethodList @Inject constructor(
     private val toffeeApi: ToffeeApi
 ): BaseApiService<Payment> {
     override suspend fun loadData(offset: Int, limit: Int): List<Payment> {
-        if(offset > 0) return emptyList()
+        
         val response = tryIO2 {
             toffeeApi.getPaymentMethodList(
                 limit,

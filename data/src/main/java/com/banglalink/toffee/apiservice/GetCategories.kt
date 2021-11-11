@@ -13,7 +13,7 @@ class GetCategories @Inject constructor(
 ): BaseApiService<Category> {
 
     override suspend fun loadData(offset: Int, limit: Int): List<Category> {
-        if(offset > 0) return emptyList()
+        
         val response = tryIO2 {
             toffeeApi.getUgcCategoryList(
                 preference.getDBVersionByApiName("getUgcCategories"),

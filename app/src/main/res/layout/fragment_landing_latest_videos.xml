@@ -14,8 +14,7 @@
         android:text="@string/latest_video"
         app:layout_constraintEnd_toStartOf="@+id/filterButton"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/subCategoryChipGroup"/>
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <ImageButton
         android:id="@+id/filterButton"

@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.util.AttributeSet
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,12 +46,11 @@ class HTML5WebView @JvmOverloads constructor(
             databaseEnabled = true
             builtInZoomControls = true
             displayZoomControls = false
-            setSupportMultipleWindows(true)
+            setSupportMultipleWindows(false)
             javaScriptCanOpenWindowsAutomatically = true
             domStorageEnabled = true
             CookieManager.getInstance().setAcceptCookie(true)
-            userAgentString = "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Mobile " +
-                "Safari/537.36"
+            userAgentString = "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Mobile Safari/537.36"
         }
         mWebChromeClient = MyWebChromeClient()
         webChromeClient = mWebChromeClient
@@ -68,16 +66,6 @@ class HTML5WebView @JvmOverloads constructor(
     
     fun hideCustomView() {
         mWebChromeClient.onHideCustomView()
-    }
-    
-    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (mCustomView == null && canGoBack()) {
-                goBack()
-                return true
-            }
-        }
-        return super.onKeyDown(keyCode, event)
     }
     
     private inner class MyWebChromeClient : WebChromeClient() {

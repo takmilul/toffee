@@ -25,7 +25,7 @@ class GetUgcTrendingNowContents @AssistedInject constructor(
 ) : BaseApiService<ChannelInfo> {
 
     override suspend fun loadData(offset: Int, limit: Int): List<ChannelInfo> {
-        if (offset > 0) return emptyList()
+        
         val request = AllUserChannelsEditorsChoiceRequest(
             preference.customerId,
             preference.password

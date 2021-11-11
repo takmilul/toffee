@@ -15,7 +15,7 @@ class MyChannelUserPlaylistService @AssistedInject constructor(
 ) : BaseApiService<MyChannelPlaylist> {
 
     override suspend fun loadData(offset: Int, limit: Int): List<MyChannelPlaylist> {
-        if (offset > 0) return emptyList()
+        
         val isOwner = if (preference.customerId == channelOwnerId) 1 else 0
         val response = tryIO2 {
 

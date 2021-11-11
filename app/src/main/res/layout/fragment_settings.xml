@@ -45,8 +45,7 @@
             android:animateLayoutChanges="true"
             android:background="@color/screen_bg"
             android:orientation="vertical"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp">
+            android:paddingHorizontal="16dp">
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 style="@style/PrefItemStyle"
@@ -68,6 +67,16 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/notifications_text" />
+
+                <TextView
+                    android:id="@+id/switchStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:layout_marginHorizontal="6dp"
+                    android:textColor="@color/fixed_second_text_color"
+                    android:text='@{enableNotification == true ? "On" : "Off"}' />
 
                 <com.suke.widget.SwitchButton
                     android:id="@+id/notificationSwitch"
@@ -165,11 +174,11 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:max="5"
-                    android:paddingStart="6dp"
-                    android:paddingEnd="6dp"
+                    android:max="6"
                     android:minHeight="4dp"
                     android:maxHeight="4dp"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
                     android:progressDrawable="@drawable/seek_bar_track"
                     android:thumb="@drawable/seek_bar_thumb"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -250,11 +259,11 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:max="4"
-                    android:paddingStart="6dp"
-                    android:paddingEnd="6dp"
+                    android:max="6"
                     android:minHeight="4dp"
                     android:maxHeight="4dp"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
                     android:progressDrawable="@drawable/seek_bar_track"
                     android:thumb="@drawable/seek_bar_thumb"
                     app:layout_constraintEnd_toEndOf="parent"

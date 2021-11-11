@@ -17,7 +17,7 @@ class GetPopularUserChannels @AssistedInject constructor(
 ) : BaseApiService<UserChannelInfo> {
 
     override suspend fun loadData(offset: Int, limit: Int): List<UserChannelInfo> {
-        if (offset > 0) return emptyList()
+        
         val request = PopularChannelsRequest(
             preference.customerId,
             preference.password

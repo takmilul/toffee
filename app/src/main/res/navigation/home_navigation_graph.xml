@@ -19,9 +19,6 @@
         <action
             android:id="@+id/action_allCategoriesFragment_to_dramaSeriesFragment"
             app:destination="@id/dramaSeriesFragment" />
-        <!--        <action-->
-        <!--            android:id="@+id/action_menu_activities_to_channelRatingFragment"-->
-        <!--            app:destination="@id/channelRatingFragment" />-->
     </fragment>
     <fragment
         android:id="@+id/menu_activities"
@@ -81,12 +78,6 @@
         android:name="com.banglalink.toffee.ui.refer.ReferAFriendFragment"
         android:label="Refer A Friend" />
     
-    <!--    <fragment-->
-    <!--        android:id="@+id/menu_creators_policy"-->
-    <!--        android:name="com.banglalink.toffee.ui.common.PrivacyPolicyFragment"-->
-    <!--        android:label="Creators Policy"-->
-    <!--        />-->
-    
     <fragment
         android:id="@+id/menu_creators_policy"
         android:name="com.banglalink.toffee.ui.common.HtmlPageViewFragment"
@@ -105,9 +96,6 @@
         android:id="@+id/menu_feed"
         android:name="com.banglalink.toffee.ui.home.LandingPageFragment"
         android:label="Toffee">
-        <!--        <action-->
-        <!--            android:id="@+id/action_landingPageFragment_to_allCategoriesFragment"-->
-        <!--            app:destination="@id/allCategoriesFragment" />-->
         <action
             android:id="@+id/action_landingPageFragment_to_categoryDetailsFragment"
             app:destination="@id/categoryDetailsFragment" />
@@ -134,7 +122,7 @@
             app:destination="@id/catchupDetailsFragment" />
         <action
             android:id="@+id/action_menu_feed_to_trendingChannelsFragment"
-            app:destination="@id/trendingChannelsFragment" />
+            app:destination="@id/allUserChannelsFragment" />
         <action
             android:id="@+id/action_landingCategoriesFragment_to_movieFragment"
             app:destination="@id/movieFragment" />
@@ -312,11 +300,6 @@
             android:id="@+id/action_editUploadInfoFragment_to_thumbnailSelectionMethodFragment"
             app:destination="@id/thumbnailSelectionMethodFragment" />
     </fragment>
-    <!--    <fragment-->
-    <!--        android:id="@+id/allCategoriesFragment"-->
-    <!--        android:name="com.banglalink.toffee.ui.landing.AllCategoriesFragment"-->
-    <!--        android:label="AllCategoriesFragment" >-->
-    <!--    </fragment>-->
     <fragment
         android:id="@+id/categoryDetailsFragment"
         android:name="com.banglalink.toffee.ui.category.CategoryDetailsFragment"
@@ -333,9 +316,9 @@
             app:destination="@id/myChannelHomeFragment" />
     </fragment>
     <fragment
-        android:id="@+id/trendingChannelsFragment"
-        android:name="com.banglalink.toffee.ui.userchannels.AllUserChannelsFragment"
-        android:label="Trending Channels" />
+        android:id="@+id/allUserChannelsFragment"
+        android:name="com.banglalink.toffee.ui.userchannels.AllUserChannelsListFragment"
+        android:label="User Channels" />
     <fragment
         android:id="@+id/myChannelEditDetailFragment"
         android:name="com.banglalink.toffee.ui.mychannel.MyChannelEditDetailFragment"
@@ -348,9 +331,6 @@
             android:id="@+id/action_MyChannelEditFragment_to_thumbnailSelectionMethodFragment"
             app:destination="@id/thumbnailSelectionMethodFragment" />
     </fragment>
-    
-    <!--    <include-->
-    <!--        app:graph="@navigation/drawer_navigation_grapg" />-->
     <fragment
         android:id="@+id/myChannelHomeFragment"
         android:name="com.banglalink.toffee.ui.mychannel.MyChannelHomeFragment"
@@ -397,47 +377,6 @@
             />
     </dialog>
     <fragment
-        android:id="@+id/earningsFragment"
-        android:name="com.banglalink.toffee.ui.earnings.EarningsFragment"
-        android:label="Earnings">
-        <action
-            android:id="@+id/action_earningsFragment_to_addNewPaymentMethodFragment"
-            app:destination="@id/addNewPaymentMethodFragment" />
-        <action
-            android:id="@+id/action_earningsFragment_to_reviewWithdrawalFragment"
-            app:destination="@id/reviewWithdrawalFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/addNewPaymentMethodFragment"
-        android:name="com.banglalink.toffee.ui.earnings.AddNewPaymentMethodFragment"
-        android:label="Add Payment Method"
-        tools:layout="@layout/fragment_add_new_payment_method" />
-    <fragment
-        android:id="@+id/reviewWithdrawalFragment"
-        android:name="com.banglalink.toffee.ui.earnings.ReviewWithdrawalFragment"
-        android:label="fragment_review_withdrawal"
-        tools:layout="@layout/fragment_review_withdrawal">
-        <argument
-            android:name="withdrawalAmount"
-            app:argType="string" />
-        <argument
-            android:name="paymentMethod"
-            app:argType="com.banglalink.toffee.model.PaymentMethod" />
-        <action
-            android:id="@+id/action_reviewWithdrawalFragment_to_withdrawalSuccessFragment"
-            app:destination="@id/withdrawalSuccessFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/withdrawalSuccessFragment"
-        android:name="com.banglalink.toffee.ui.earnings.WithdrawalSuccessFragment"
-        android:label="fragment_withdrawal_success"
-        tools:layout="@layout/fragment_withdrawal_success">
-        <action
-            android:id="@+id/action_withdrawalSuccessFragment_to_earningsFragment"
-            app:destination="@id/earningsFragment"
-            app:popUpTo="@id/earningsFragment" />
-    </fragment>
-    <fragment
         android:id="@+id/notificationDropdownFragment"
         android:name="com.banglalink.toffee.ui.notification.NotificationDropdownFragment"
         android:label="Notification">
@@ -458,26 +397,6 @@
             android:name="notificationInfo"
             app:argType="com.banglalink.toffee.data.database.entities.NotificationInfo" />
     </fragment>
-    <fragment
-        android:id="@+id/challengesFragment"
-        android:name="com.banglalink.toffee.ui.challenge.ChallengeFragment"
-        android:label="Challenges">
-        <action
-            android:id="@+id/action_challengesFragment_to_challengeResultFragment"
-            app:destination="@id/challengeResultFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/challengeResultFragment"
-        android:name="com.banglalink.toffee.ui.challenge.ChallengeResultFragment"
-        android:label="ChallengeResultFragment">
-        <action
-            android:id="@+id/action_challengeResultFragment_to_challengeDetailFragment"
-            app:destination="@id/challengeDetailFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/challengeDetailFragment"
-        android:name="com.banglalink.toffee.ui.challenge.ChallengeDetailFragment"
-        android:label="ChallengeDetailFragment" />
     <fragment
         android:id="@+id/favoriteFragment"
         android:name="com.banglalink.toffee.ui.favorite.FavoriteFragment"

@@ -128,13 +128,13 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         }
 
     var wifiProfileStatus: Int
-        get() = pref.getInt(PREF_WIFI_PROFILE_STATUS1, 6)
+        get() = pref.getInt(PREF_WIFI_PROFILE_STATUS1, 7)
         set(value) {
             pref.edit().putInt(PREF_WIFI_PROFILE_STATUS1, value).apply()
         }
 
     var cellularProfileStatus: Int
-        get() = pref.getInt(PREF_CELLULAR_PROFILE_STATUS4, 6)
+        get() = pref.getInt(PREF_CELLULAR_PROFILE_STATUS4, 7)
         set(value) {
             pref.edit().putInt(PREF_CELLULAR_PROFILE_STATUS4, value).apply()
         }

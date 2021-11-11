@@ -15,7 +15,7 @@ class GetMostPopularPlaylists @Inject constructor(
 ): BaseApiService<MyChannelPlaylist> {
 
     override suspend fun loadData(offset: Int, limit: Int): List<MyChannelPlaylist> {
-        if(offset > 0)  return emptyList()
+        
         val response = tryIO2 {
             toffeeApi.getMostPopularPlaylists(
                 preference.getDBVersionByApiName("getUgcPopularPlaylistNames"),

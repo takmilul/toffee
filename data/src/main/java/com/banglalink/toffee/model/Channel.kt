@@ -31,13 +31,13 @@ class Channel(
 
     fun getContentUri(pref: SessionPreference, isWifiConnected: Boolean): String? {
         val text = if (isWifiConnected) {
-            if (pref.wifiProfileStatus == 6) {
+            if (pref.wifiProfileStatus == 7) {
                 "/auto"
             } else {
                 "/" + pref.wifiProfileStatus
             }
         } else {
-            if (pref.cellularProfileStatus == 6) {
+            if (pref.cellularProfileStatus == 7) {
                 "/auto"
             } else {
                 "/" + pref.cellularProfileStatus

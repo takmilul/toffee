@@ -103,6 +103,14 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
         return resources.assets
     }
     
+    override fun onBackPressed() {
+        if (mWebView.canGoBack()) {
+            mWebView.goBack()
+        } else {
+            super.onBackPressed()
+        }
+    }
+    
     override fun onDestroy() {
         progressDialog.dismiss()
         MedalliaDigital.enableIntercept()

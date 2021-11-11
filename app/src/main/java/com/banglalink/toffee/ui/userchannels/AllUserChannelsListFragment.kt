@@ -4,12 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.paging.LoadState
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentAllUserChannelsListBinding
+import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.showToast
@@ -21,8 +24,10 @@ import com.banglalink.toffee.model.UserChannelInfo
 import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.common.UnSubscribeDialog
+import com.banglalink.toffee.ui.home.LandingPageViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -34,6 +39,7 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
     private lateinit var mAdapter: AllUserChannelsListAdapter
     private var _binding: FragmentAllUserChannelsListBinding ? = null
     private val binding get() = _binding!!
+    private val landingViewModel by activityViewModels<LandingPageViewModel>()
     private val viewModel by viewModels<AllUserChannelsListViewModel>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -48,9 +54,12 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        var isInitialized = false
+        requireActivity().title = "User Channels"
+        landingViewModel.pageType.value = PageType.Channel
+        landingViewModel.categoryId.value = 0
+        
         categoryInfo = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)
-
         mAdapter = AllUserChannelsListAdapter(object : LandingPopularChannelCallback<UserChannelInfo> {
             override fun onItemClicked(item: UserChannelInfo) {
                 homeViewModel.myChannelNavLiveData.value = MyChannelNavParams(item.channelOwnerId)
@@ -97,17 +106,26 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
         })
 
         with(binding.userChannelList) {
-            layoutManager = GridLayoutManager(context, 3)
-            adapter = mAdapter
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                mAdapter.loadStateFlow.collectLatest {
+                    val isLoading = it.source.refresh is LoadState.Loading || !isInitialized
+                    val isEmpty = mAdapter.itemCount <= 0 && ! it.source.refresh.endOfPaginationReached
+                    binding.emptyView.isVisible = isEmpty && !isLoading
+                    binding.progressBar.isVisible = isLoading
+                    isVisible = !isEmpty && !isLoading
+                    isInitialized = true
+                }
+            }
+            adapter = mAdapter/*.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })*/
+            setHasFixedSize(true)
         }
         observeList()
 //        observeSubscribeChannel()
     }
 
     private fun observeList() {
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            val content = viewModel.loadUserChannels()
-            content.collectLatest {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.userChannels.collectLatest {
                 mAdapter.submitData(it)
             }
         }

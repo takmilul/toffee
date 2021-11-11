@@ -2,7 +2,6 @@ package com.banglalink.toffee.ui.widget
 
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.pm.ResolveInfo
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
@@ -28,8 +27,11 @@ class Html5WebViewClient:WebViewClient() {
             } catch (e: URISyntaxException) {
                 e.printStackTrace()
             }
+        } else {
+            view?.loadUrl(url)
+            return true
         }
-
+        
         return false
     }
 

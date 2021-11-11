@@ -15,7 +15,7 @@ class SubscribedUserChannelsService @Inject constructor(
 ): BaseApiService<UserChannelInfo> {
 
     override suspend fun loadData(offset: Int, limit: Int): List<UserChannelInfo> {
-        if(offset > 0) return emptyList()
+        
         val request =  SubscribedUserChannelsRequest(
             preference.customerId,
             preference.password

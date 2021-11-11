@@ -28,23 +28,25 @@ class SettingsFragment : BaseFragment() {
     private val binding get() = _binding!!
     @Inject lateinit var userActivitiesRepository: UserActivitiesRepository
     
-    var wifiProfileRes = arrayOf("240x160", "320x240", "480x320", "720x576", "1280x720", "Auto")
+    var wifiProfileRes = arrayOf("240x160", "320x240", "480x320", "720x576", "1280x720", "1920x1080", "Auto")
     var wifiProfileBWRequiredTxt = intArrayOf(
         R.string.profile_240x160,
         R.string.profile_320x240,
         R.string.profile_480x320,
         R.string.profile_720x576,
         R.string.profile_1280x720,
-        R.string.profile_1920x1080
+        R.string.profile_1920x1080,
+        R.string.profile_1920x1080,
     )
-    var cellularProfileRes = arrayOf("240x160", "320x240", "480x320", "720x480", "1280x720", "Auto")
+    var cellularProfileRes = arrayOf("240x160", "320x240", "480x320", "720x480", "1280x720", "1920x1080", "Auto")
     var cellularProfileBWRequiredTxt = intArrayOf(
         R.string.profile_240x160,
         R.string.profile_320x240,
         R.string.profile_480x320,
         R.string.profile_720x576,
         R.string.profile_1280x720,
-        R.string.profile_1920x1080
+        R.string.profile_1920x1080,
+        R.string.profile_1920x1080,
     )
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

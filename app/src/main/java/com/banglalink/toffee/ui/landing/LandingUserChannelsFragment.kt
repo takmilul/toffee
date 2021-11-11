@@ -67,7 +67,7 @@ class LandingUserChannelsFragment : HomeBaseFragment(), LandingPopularChannelCal
         mAdapter = LandingUserChannelsListAdapter(this)
 
         binding.viewAllButton.setOnClickListener {
-            parentFragment?.findNavController()?.navigate(R.id.trendingChannelsFragment)
+            parentFragment?.findNavController()?.navigate(R.id.allUserChannelsFragment)
         }
     
         with(binding.placeholder) {

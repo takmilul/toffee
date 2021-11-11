@@ -15,7 +15,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     
     <string name="resend_code_text">Resend Code </string>
-    <string name="default_settings">Default Data and Quality Settings</string>
+    <string name="default_settings">Default Data and Video Quality</string>
     <string name="data_usage_message">Higher quality video uses more data. Data usage may vary based on network conditions.</string>
     <string name="txt_video_resolution">Video Resolution: %s</string>
     <string name="profile_1920x1080">Need 2Mbps+ bandwidth</string>
@@ -323,8 +323,8 @@
     <string name="additional_details_text">Additional Details</string>
     <string name="report_text">Report</string>
     <string name="notifications_text">Notifications</string>
-    <string name="wifi_profile_text">Wi-Fi Profile</string>
-    <string name="watch_only_when_wifi_available_text">Watch only when Wifi is available</string>
+    <string name="wifi_profile_text">WiFi Profile</string>
+    <string name="watch_only_when_wifi_available_text">Watch video only when Wifi is available</string>
     <string name="mobile_data_profile_text">Mobile Data Profile</string>
     <string name="need_1mbps_connections">Need 1 Mbps Connection</string>
     <string name="floating_player_text">Floating Player</string>
