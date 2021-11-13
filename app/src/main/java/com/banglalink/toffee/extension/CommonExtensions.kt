@@ -1,8 +1,12 @@
 package com.banglalink.toffee.extension
 
 import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.content.res.Resources
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.view.ViewGroup
@@ -178,6 +182,17 @@ fun View.validateInput(messageTextView: TextView, messageResource: Int, messageC
     )
     messageTextView.text = context.getString(messageResource)
     this.setBackgroundResource(viewBackgroundResource)
+}
+
+fun Context.openUrlToExternalApp(url: String): Boolean {
+    return try {
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        return true
+    }
+    catch (e: Exception) {
+        Log.e("EXT_APP", "Url is not valid")
+        false
+    }
 }
 
 //@SuppressLint("ClickableViewAccessibility")

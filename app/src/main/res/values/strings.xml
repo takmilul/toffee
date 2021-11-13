@@ -425,11 +425,5 @@
     <string name="title_mandatory">Title*</string>
     <string name="update">Update</string>
     <string name="copyright_confirmation_mandatory">Copyright Confirmation*</string>
-    <!--    url    -->
-    <!--    <string name="creators_policy_url">https://toffeelive.com/policies.php</string>-->
-    <!--    <string name="tus_upload_server_url">https://ugc-upload.toffeelive.com/upload</string>-->
-    <!--    <string name="privacy_policy_url">https://www.banglalink.net/en/legal</string>-->
-    <!--    <string name="terms_and_conditions_url">https://www.banglalink.net/en/legal</string>-->
-    <!--    <string name="internet_pack_url">https://www.banglalink.net/en/apps-and-services/other-details/53</string>-->
-    <!--    url    -->
+    <string name="web_error_text"><![CDATA[<p style="margin:auto; width:95%; text-align: center;"><b>Something went wrong! Please try again later.</b></p>]]></string>
 </resources>

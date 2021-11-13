@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.widget
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.pm.ActivityInfo
@@ -14,11 +15,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.banglalink.toffee.R
 
+@SuppressLint("SetJavaScriptEnabled")
 class HTML5WebView @JvmOverloads constructor(
-    private val mContext: Context,
-    attrs: AttributeSet? = null,
-    defStyle: Int = 0)
-:WebView(mContext, attrs, defStyle) {
+    private val mContext: Context, 
+    attrs: AttributeSet? = null, 
+    defStyle: Int = 0
+) : WebView(mContext, attrs, defStyle) {
+    
     val layout: FrameLayout = FrameLayout(context)
     private var mCustomView: View? = null
     private val mCustomViewContainer: FrameLayout
@@ -33,23 +36,20 @@ class HTML5WebView @JvmOverloads constructor(
         val mContentView = mBrowserFrameLayout.findViewById<View>(R.id.main_content) as FrameLayout
         mCustomViewContainer = mBrowserFrameLayout.findViewById<View>(R.id.fullscreen_custom_content) as FrameLayout
         layout.addView(mBrowserFrameLayout, param)
-        
-        // Configure the webview
         settings.apply {
-            useWideViewPort = true
-            loadWithOverviewMode = true
-            javaScriptEnabled = true
-            mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
             setSupportZoom(true)
-            setNeedInitialFocus(false)
-            cacheMode = WebSettings.LOAD_DEFAULT
             databaseEnabled = true
+            useWideViewPort = true
+            domStorageEnabled = true
+            javaScriptEnabled = true
+            setNeedInitialFocus(false)
             builtInZoomControls = true
             displayZoomControls = false
-            setSupportMultipleWindows(false)
+            setSupportMultipleWindows(true)
+            cacheMode = WebSettings.LOAD_DEFAULT
             javaScriptCanOpenWindowsAutomatically = true
-            domStorageEnabled = true
             CookieManager.getInstance().setAcceptCookie(true)
+            mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
             userAgentString = "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Mobile Safari/537.36"
         }
         mWebChromeClient = MyWebChromeClient()
@@ -70,7 +70,6 @@ class HTML5WebView @JvmOverloads constructor(
     
     private inner class MyWebChromeClient : WebChromeClient() {
         override fun onShowCustomView(view: View, callback: CustomViewCallback) {
-            //Log.i(LOGTAG, "here in on ShowCustomView");
             this@HTML5WebView.visibility = GONE
             
             // if a view already exists then immediately terminate the new one
