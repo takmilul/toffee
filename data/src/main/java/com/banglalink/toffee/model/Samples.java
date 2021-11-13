@@ -15,6 +15,8 @@
  */
 package com.banglalink.toffee.model;
 
+import com.google.gson.annotations.*;
+
 import java.util.Locale;
 
 /**
@@ -30,10 +32,15 @@ import java.util.Locale;
 
   public static class Sample {
 
+    @SerializedName("name")
     public final String name;
+    @SerializedName("contentId")
     public final String contentId;
+    @SerializedName("provider")
     public final String provider;
+    @SerializedName("uri")
     public  String uri;
+    @SerializedName("type")
     public final int type;
 
     public Sample(String name, String uri, int type) {

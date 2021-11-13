@@ -2,10 +2,13 @@ package com.banglalink.toffee.model
 
 import com.google.gson.annotations.SerializedName
 
-data class PartnersBean (
+data class PartnersBean(
     @SerializedName(value = "channels", alternate = ["channelInfo"])
     val channels: List<ChannelInfo>?,
+    @SerializedName("count")
     val count: Int,
+    @SerializedName("totalCount")
     val totalCount: Int = 0,
-    val systemTime: String?=null
+    @SerializedName("systemTime")
+    val systemTime: String? = null
 )

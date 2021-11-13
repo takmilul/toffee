@@ -9,31 +9,53 @@ import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.Utils.discardZeroFromDuration
 import com.banglalink.toffee.util.UtilsKt
 import com.banglalink.toffee.util.getFormattedViewsText
+import com.google.android.gms.common.annotation.KeepName
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 import java.util.*
 
+@KeepName
 @Parcelize
 data class ChannelInfo(
+    @SerializedName("id")
     var id: String,
+    @SerializedName("program_name")
     var program_name: String? = null,
+    @SerializedName("video_share_url")
     var video_share_url: String? = null,
+    @SerializedName("video_trailer_url")
     var video_trailer_url: String? = null,
+    @SerializedName("description")
     var description: String? = null,
+    @SerializedName("water_mark_url")
     var water_mark_url: String? = null,
+    @SerializedName("type")
     var type: String? = null,
+    @SerializedName("view_count")
     var view_count: String? = null,
+    @SerializedName("lcn")
     var lcn: String? = null,
+    @SerializedName("individual_price")
     var individual_price: String? = null,
+    @SerializedName("video_tags")
     var video_tags: String? = null,
+    @SerializedName("duration")
     var duration: String? = null,
+    @SerializedName("age_restriction")
     var age_restriction: String? = null,
+    @SerializedName("service_operator_id")
     var service_operator_id: String? = null,
+    @SerializedName("logo_mobile_url")
     var logo_mobile_url: String? = null,
+    @SerializedName("poster_url_mobile")
     var poster_url_mobile: String? = null,
+    @SerializedName("subscription")
     var subscription:Boolean = false,
+    @SerializedName("individual_purchase")
     var individual_purchase: Boolean = false,
+    @SerializedName("expireTime")
     var expireTime: String? = null,
+    @SerializedName("hlsLinks")
     var hlsLinks: List<HlsLinks>? = null,
     
     @SerializedName("drm_dash_url_extended")
@@ -45,21 +67,35 @@ data class ChannelInfo(
     @SerializedName("content_expire")
     var contentExpiryTime: String? = null,
     
+    @SerializedName("channel_logo")
     var channel_logo: String? = null,
+    @SerializedName("category")
     var category: String? = null,
+    @SerializedName("subCategory")
     var subCategory: String? = null,
+    @SerializedName("categoryId")
     var categoryId: Int = 0,
+    @SerializedName("subCategoryId")
     var subCategoryId: Int = 0,
+    @SerializedName("favorite")
     var favorite: String? = null,
+    @SerializedName("potrait_ratio_800_1200")
     var potrait_ratio_800_1200: String? = null,
+    @SerializedName("landscape_ratio_1280_720")
     var landscape_ratio_1280_720: String? = null,
+    @SerializedName("feature_image")
     var feature_image: String? = null,
+    @SerializedName("content_provider_name")
     var content_provider_name: String? = null,
+    @SerializedName("content_provider_id")
     var content_provider_id: String? = null,
+    @SerializedName("channel_owner_id")
     val channel_owner_id: Int = 0,
+    @SerializedName("isSubscribed")
     var isSubscribed: Int = 0,
+    @SerializedName("subscriberCount")
     var subscriberCount: Int = 0,
-
+    
     @SerializedName("serial_name")
     val seriesName: String? = null,
     @SerializedName("total_season_no")
@@ -72,10 +108,14 @@ data class ChannelInfo(
     val totalEpisode: Int = 0,
     @SerializedName("episode_no")
     val episodeNo: Int = 0,
-
+    
+    @SerializedName("is_available")
     var is_available: Int = 0,
+    @SerializedName("reaction")
     var reaction: ReactionStatus? = null,   //individual reaction count from server
+    @SerializedName("myReaction")
     var myReaction: Int = Reaction.None.value, //enum value (Reaction.Like.value) etc...
+    @SerializedName("shareCount")
     var shareCount: Long = 0L,
     @SerializedName("playlist_content_id")
     val playlistContentId: Int = 0,
@@ -87,6 +127,7 @@ data class ChannelInfo(
     val urlTypeExt: Int = 0,
     @SerializedName("is_approved")
     val is_approved: Int? = null,
+    @SerializedName("created_at")
     val created_at: String? = null,
     @SerializedName("is_horizontal")
     val is_horizontal: Int? = null,
@@ -96,7 +137,7 @@ data class ChannelInfo(
     val isEncoded: Int? = null,
     @SerializedName("is_ugc")
     val is_ugc: Int = 0,
-
+    
     @SerializedName("is_drm_active")
     var is_drm_active: Int = 0,
     @SerializedName("drm_dash_url")
@@ -115,24 +156,33 @@ data class ChannelInfo(
     val fcm_event_is_active: Int = 0,
 ) :Parcelable
 {
+    @get:SerializedName("isApproved")
     val isApproved: Int
         get() = if (is_approved == null || is_approved == 1) 1 else 0
     
+    @get:SerializedName("isHorizontal")
     val isHorizontal: Int
         get() = if (is_horizontal == null || is_horizontal == 1) 1 else 0
 
+    @get:SerializedName("isLive")
     val isLive: Boolean
         get() = "LIVE".equals(type, ignoreCase = true)
+    @get:SerializedName("isVOD")
     val isVOD: Boolean
         get() = "VOD".equals(type, ignoreCase = true)
+    @get:SerializedName("isCatchup")
     val isCatchup: Boolean
         get() = "CATCHUP".equals(type, ignoreCase = true)
+    @get:SerializedName("isBucketUrl")
     val isBucketUrl: Boolean
         get() = isEncoded == 0
+    @get:SerializedName("isDrmActive")
     val isDrmActive: Boolean
         get() = is_drm_active == 1
+    @get:SerializedName("isAdActive")
     val isAdActive: Boolean
         get() = is_ad_active == 1
+    @get:SerializedName("isFcmEventActive")
     val isFcmEventActive: Boolean
         get() = fcm_event_is_active == 1
     
@@ -144,7 +194,9 @@ data class ChannelInfo(
         return itemCategory
     }
 
+    @SerializedName("viewProgress")
     var viewProgress: Long = -1L
+    
     fun viewProgressPercent(): Int {
         val durationInt = UtilsKt.getLongDuration(duration)
         if(viewProgress < 0L || durationInt <= 0L || isLive) return 0
@@ -170,8 +222,10 @@ data class ChannelInfo(
 
     fun formattedShareCount(): String = Utils.getFormattedViewsText(shareCount.toString())
 
+    @get:SerializedName("isPurchased")
     val isPurchased: Boolean
         get() = individual_price?.toInt() ?: 0 > 0 && individual_purchase
+    @get:SerializedName("isPaidSubscribed")
     val isPaidSubscribed: Boolean
         get() = individual_price?.toInt() == 0 && subscription
 

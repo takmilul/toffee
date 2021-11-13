@@ -1,7 +1,12 @@
 package com.banglalink.toffee.model
 
-data class TermsAndCondition (
+import com.google.gson.annotations.SerializedName
+
+data class TermsAndCondition(
+    @SerializedName("terms_and_conditions_white")
     val terms_and_conditions_white: String?,
+    @SerializedName("terms_and_conditions_black")
     val terms_and_conditions_black: String?,
-    val code: Int=0
+    @SerializedName("code")
+    val code: Int = 0
 )

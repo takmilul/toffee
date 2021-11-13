@@ -4,16 +4,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.BR
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.common.paging.BasePagingDataAdapter
 import com.banglalink.toffee.common.paging.BaseViewHolder
 import com.banglalink.toffee.common.paging.ItemComparator
-import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.OffenseType
-import com.banglalink.toffee.model.ReportListModel
 
 class ReportListAdapter (private val cb: BaseListItemCallback<OffenseType>)
     : BasePagingDataAdapter<OffenseType>(cb, ItemComparator())  {

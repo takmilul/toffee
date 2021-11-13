@@ -31,7 +31,7 @@ class CustomerInfoLogin(
     var referralStatusMessage: String? = null,
     @SerializedName("referralStatus")
     var referralStatus: String? = null,
-
+    
     @SerializedName("isBanglalinkNumber")
     val isBanglalinkNumber: String? = "false",
     @SerializedName("hlsUrlOverride")
@@ -44,7 +44,7 @@ class CustomerInfoLogin(
     var tokenLifeSpan: Int = 0,
     @SerializedName("isSubscriptionActive")
     var isSubscriptionActive: String? = "false",
-
+    
     @SerializedName("real_db_01_url")
     var viewCountDbUrl: String? = null,
     @SerializedName("reaction_db_01_url")
@@ -59,6 +59,7 @@ class CustomerInfoLogin(
     var subscribeDbUrl: String? = null,
     @SerializedName("real_db_01_crc32")
     var viewCountDBVersion: String? = null,
+    @SerializedName("isAllTvChannelsMenuEnabled")
     val isAllTvChannelsMenuEnabled: Boolean = false,
     @SerializedName("geo_city")
     var geoCity: String? = null,
@@ -66,9 +67,13 @@ class CustomerInfoLogin(
     var geoLocation: String? = null,
     @SerializedName("user_ip")
     var userIp: String? = null,
+    @SerializedName("isFireworkActive")
     var isFireworkActive: String? = "false",
+    @SerializedName("isFeaturePartnerActive")
     val isFeaturePartnerActive: String? = "false",
+    @SerializedName("mqttIsActive")
     var mqttIsActive: Int = 1,
+    @SerializedName("mqttUrl")
     var mqttUrl: String? = null,
     @SerializedName("isCastEnable")
     var isCastEnabled: Int = 0,
@@ -78,34 +83,57 @@ class CustomerInfoLogin(
     var isCastUrlOverride: Int = 0,
     @SerializedName("castOverrideUrl")
     var castOverrideUrl: String? = null,
+    @SerializedName("verified_status")
     var verified_status: Boolean = false,
+    @SerializedName("internetPackUrl")
     val internetPackUrl: String? = null,
+    @SerializedName("tusUploadServerUrl")
     val tusUploadServerUrl: String? = null,
+    @SerializedName("privacyPolicyUrl")
     val privacyPolicyUrl: String? = null,
+    @SerializedName("creatorsPolicyUrl")
     val creatorsPolicyUrl: String? = null,
+    @SerializedName("termsAndConditionsUrl")
     val termsAndConditionsUrl: String? = null,
+    @SerializedName("facebookPageUrl")
     val facebookPageUrl: String = "https://www.facebook.com/100869298504557",
+    @SerializedName("instagramPageUrl")
     val instagramPageUrl: String = "https://www.instagram.com/toffee.bangladesh/?hl=en",
+    @SerializedName("youtubePageUrl")
     val youtubePageUrl: String = "https://www.youtube.com/channel/UCv9NYIjz4jhw-KSqdRulSuw",
+    @SerializedName("screenCaptureEnabledUsers")
     val screenCaptureEnabledUsers: Set<String>? = null,
-
+    
     @SerializedName("android_in_app_update_version_codes")
     val forceUpdateVersionCodes: String? = null,
+    @SerializedName("isVastActive")
     val isVastActive: Int = 0,
+    @SerializedName("vastFrequency")
     val vastFrequency: Int = 0,
+    @SerializedName("gcpVodBucketDirectory")
     val gcpVodBucketDirectory: String? = null,
+    @SerializedName("isFcmEventActive")
     val isFcmEventActive: Int = 0,
+    @SerializedName("isFbEventActive")
     val isFbEventActive: Int = 0,
+    @SerializedName("isGlobalDrmActive")
     val isGlobalDrmActive: Int = 0,
+    @SerializedName("defaultDrmCastReceiver")
     val defaultDrmCastReceiver: String? = null,
-
+    
     @SerializedName("widevineLicenseUrl")
     val widevineLicenseUrl: String? = null,
+    @SerializedName("fpsLicenseUrl")
     val fpsLicenseUrl: String? = null,
+    @SerializedName("playreadyLicenseUrl")
     val playreadyLicenseUrl: String? = null,
+    @SerializedName("drmTokenUrl")
     val drmTokenUrl: String? = null,
+    @SerializedName("isGlobalCidActive")
     val isGlobalCidActive: Int = 0,
+    @SerializedName("globalCidName")
     val globalCidName: String? = null,
+    @SerializedName("androidBetaVersionCode")
     val androidBetaVersionCode: String? = null,
     @SerializedName("paymentStatus")
     var paymentStatus: Boolean = false,

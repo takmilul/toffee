@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class PlayerSessionDetails(
     @SerializedName("durationInSec")
-    val durationInSec:Long,
+    val durationInSec: Long,
     @SerializedName("bandWidthInMB")
-    val bandWidthInMB:Double)
+    val bandWidthInMB: Double
+)

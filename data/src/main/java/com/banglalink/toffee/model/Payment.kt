@@ -6,7 +6,9 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Payment(
+    @SerializedName("id")
     val id: Long = 0L,
+    @SerializedName("method")
     val method: String = "",
 ): Parcelable {
     override fun toString(): String = method

@@ -13,7 +13,6 @@
 -keep class com.banglalink.toffee.data.network.request.** { <fields>; }
 -keep class com.banglalink.toffee.data.database.entities.** { <fields>; }
 -keep class com.banglalink.toffee.data.network.response.** { <fields>; }
--keep class com.banglalink.toffee.model.** { <fields>; }
 
 
 # Pubsub & Google apis

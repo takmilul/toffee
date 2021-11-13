@@ -23,6 +23,7 @@ import com.banglalink.toffee.usecase.SendFirebaseConnectionErrorEvent
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.loopnow.fireworklibrary.FwSDK
 import com.loopnow.fireworklibrary.SdkStatus
+import com.loopnow.fireworklibrary.SdkStatus.*
 import com.loopnow.fireworklibrary.VideoPlayerProperties
 import com.medallia.digital.mobilesdk.MDExternalError
 import com.medallia.digital.mobilesdk.MDResultCallback
@@ -109,7 +110,7 @@ class ToffeeApplication : Application() {
             FwSDK.initialize(this, getString(R.string.firework_oauth_id), sessionPreference.getFireworkUserId(), object : FwSDK.SdkStatusListener{
                 override fun currentStatus(status: SdkStatus, extra: String) {
                     when(status){
-                        SdkStatus.Initialized -> {
+                        Initialized -> {
                             Log.e("FwSDK", "Initialized: $extra")
                             VideoPlayerProperties.share = false
                             VideoPlayerProperties.branding = false
@@ -117,14 +118,14 @@ class ToffeeApplication : Application() {
                             FwSDK.setBasePlayerUrl("https://toffeelive.com/")
                             sessionPreference.isFireworkInitialized.postValue(true)
                         }
-                        SdkStatus.InitializationFailed -> {
+                        InitializationFailed -> {
                             Log.e("FwSDK", "InitializationFailed: $extra")
                             ToffeeAnalytics.logException(java.lang.Exception("FwSDK InitializationFailed: $extra"))
                             sessionPreference.isFireworkInitialized.postValue(false)
                         }
-                        SdkStatus.LoadingContent -> Log.e("FwSDK", "LoadingContent: $extra")
-                        SdkStatus.ContentLoaded -> Log.e("FwSDK", "ContentLoaded: $extra")
-                        SdkStatus.LoadingContentFailed -> {
+                        LoadingContent -> Log.e("FwSDK", "LoadingContent: $extra")
+                        ContentLoaded -> Log.e("FwSDK", "ContentLoaded: $extra")
+                        LoadingContentFailed -> {
                             Log.e("FwSDK", "LoadingContentFailed: $extra")
                             ToffeeAnalytics.logException(java.lang.Exception("FwSDK LoadingContentFailed: $extra"))
                         }

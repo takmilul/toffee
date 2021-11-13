@@ -4,15 +4,15 @@ import com.google.gson.annotations.SerializedName
 
 data class ReferrerPolicyBean(
     @SerializedName("isPromotionMessageEnabled")
-    val isPromotionMessageEnabled:Boolean,
+    val isPromotionMessageEnabled: Boolean,
     @SerializedName("promotionMessage")
-    val promotionMessage:String?,
+    val promotionMessage: String?,
     @SerializedName("messageReadMoreEnabled")
-    val messageReadMoreEnabled:Boolean,
+    val messageReadMoreEnabled: Boolean,
     @SerializedName("readMoreDetails")
-    val readMoreDetails:String?,
+    val readMoreDetails: String?,
     @SerializedName("fontSize")
-    val fontSize:Int,
+    val fontSize: Int,
     @SerializedName("fontColor")
-    val fontColor:String
+    val fontColor: String
 )

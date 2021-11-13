@@ -45,7 +45,7 @@ class HTML5WebView @JvmOverloads constructor(
             setNeedInitialFocus(false)
             builtInZoomControls = true
             displayZoomControls = false
-            setSupportMultipleWindows(true)
+            setSupportMultipleWindows(false)
             cacheMode = WebSettings.LOAD_DEFAULT
             javaScriptCanOpenWindowsAutomatically = true
             CookieManager.getInstance().setAcceptCookie(true)

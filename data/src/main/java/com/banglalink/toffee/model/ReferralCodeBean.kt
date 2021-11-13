@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class ReferralCodeBean(
     @SerializedName("referralCode")
-    val referralCode:String,
+    val referralCode: String,
     @SerializedName("sharableText")
-    val sharableText:String)
+    val sharableText: String
+)

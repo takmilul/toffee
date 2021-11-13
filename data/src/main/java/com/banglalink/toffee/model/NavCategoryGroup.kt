@@ -1,3 +1,12 @@
 package com.banglalink.toffee.model
 
-data class NavCategoryGroup(val channels:List<NavCategory>, val vod:List<NavCategory>, val catchup: List<NavCategory>)
+import com.google.gson.annotations.SerializedName
+
+data class NavCategoryGroup(
+    @SerializedName("channels")
+    val channels: List<NavCategory>,
+    @SerializedName("vod")
+    val vod: List<NavCategory>,
+    @SerializedName("catchup")
+    val catchup: List<NavCategory>
+)

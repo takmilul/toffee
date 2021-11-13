@@ -29,6 +29,7 @@ data class FeaturedPartnerRequest(
 ): BaseRequest("getUgcFeaturePartnerList")
 
 data class FeaturedPartnerResponse(
+    @SerializedName("response")
     val response: FeaturedPartnerBean
 ): BaseResponse()
 

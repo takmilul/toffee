@@ -12,6 +12,8 @@ data class NavCategory(
     val categoryName:String,
     @SerializedName("sub_categorie")
     val subCategoryList: List<NavSubcategory>?,
+    @SerializedName("bgColor")
     val bgColor: String,
+    @SerializedName("icon")
     val icon: Int
 ): Parcelable

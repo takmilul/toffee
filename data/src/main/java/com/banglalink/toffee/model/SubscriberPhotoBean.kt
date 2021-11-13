@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class SubscriberPhotoBean(
     @SerializedName("message")
-    val message:String?,
+    val message: String?,
     @SerializedName("user_photo")
-    val userPhoto:String?)
+    val userPhoto: String?
+)

@@ -1,7 +1,6 @@
 package com.banglalink.toffee.model
 
 import com.google.gson.annotations.SerializedName
-import java.io.Serializable
 
 data class Package(
     @SerializedName("id")
@@ -52,5 +51,4 @@ data class Package(
     var isAutoRenewable: Int = 0,
     @SerializedName("auto_renew_button")
     val autoRenewButton: Int = 0
-
-) : Serializable
+)

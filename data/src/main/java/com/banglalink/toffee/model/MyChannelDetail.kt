@@ -1,11 +1,14 @@
 package com.banglalink.toffee.model
 
 import android.os.Parcelable
+import com.google.android.gms.common.annotation.KeepName
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
+@KeepName
 @Parcelize
 data class MyChannelDetail(
+    @SerializedName("id")
     val id: Long,
     @SerializedName("channel_name")
     val channelName: String? = null,

@@ -10,7 +10,7 @@ data class ReportInfo(
     @SerializedName("time_stamp")
     val timeStamp: String,
     @SerializedName("additional_detail")
-    val additionalDetail: String?=null,
+    val additionalDetail: String? = null,
     @SerializedName("offense_id")
-    val offenseId: Int=0,
+    val offenseId: Int = 0,
 )

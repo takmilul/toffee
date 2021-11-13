@@ -1,3 +1,8 @@
 package com.banglalink.toffee.model
 
-data class NavCategoryBean(val categories:NavCategoryGroup)
+import com.google.gson.annotations.SerializedName
+
+data class NavCategoryBean(
+    @SerializedName("categories")
+    val categories: NavCategoryGroup
+)

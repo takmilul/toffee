@@ -10,7 +10,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.extension.openUrlToExternalApp
 import java.net.URISyntaxException
 
-open class Html5WebViewClient:WebViewClient() {
+open class Html5WebViewClient: WebViewClient() {
     
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
         if (view != null) {
@@ -39,7 +39,7 @@ open class Html5WebViewClient:WebViewClient() {
                         context.openUrlToExternalApp(fbUrl)
                     }
                     it.contains("www.instagram.com", true) ||
-                        it.contains("www.youtube.com", true) -> {
+                    it.contains("www.youtube.com", true) -> {
                         context.openUrlToExternalApp(it)
                     }
                     else -> {

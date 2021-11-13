@@ -6,14 +6,12 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class OffenseType(
+    @SerializedName("id")
     val id: Long = 0L,
-
     @SerializedName("head_name")
     val type: String,
-    
     @SerializedName("head_sorting")
     val sorting: Int,
-
     @SerializedName("subHeads")
     val offenseList: List<Offense>? = null
 ): Parcelable {
