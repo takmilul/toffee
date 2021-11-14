@@ -129,6 +129,7 @@ class ToffeeApplication : Application() {
                             Log.e("FwSDK", "LoadingContentFailed: $extra")
                             ToffeeAnalytics.logException(java.lang.Exception("FwSDK LoadingContentFailed: $extra"))
                         }
+                        RefreshTokenFailed -> Log.e("FwSDK", "RefreshTokenFailed: $extra")
                     }
                 }
             })
