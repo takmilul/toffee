@@ -1,9 +1,16 @@
 package com.banglalink.toffee.data.network.request
 
+import com.google.gson.annotations.SerializedName
+
 data class SearchContentRequest(
+    @SerializedName("keyword")
     val keyword: String,
+    @SerializedName("customerId")
     val customerId: Int,
+    @SerializedName("password")
     val password: String,
-    override val offset: Int,
-    override val limit: Int
-):BasePagingRequest("getUgcSearchContents")
+    @SerializedName("offset")
+    val offset: Int,
+    @SerializedName("limit")
+    val limit: Int = 30
+) : BaseRequest("getUgcSearchContents")

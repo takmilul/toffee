@@ -19,8 +19,8 @@ class GetChannelSubscriptions @Inject constructor(
                 HistoryContentRequest(
                     preference.customerId,
                     preference.password,
-                    offset = offset,
-                    limit = limit
+                    offset,
+                    limit
                 )
             )
         }

@@ -6,7 +6,7 @@ import com.banglalink.toffee.extension.toFormattedDate
 import com.google.gson.annotations.SerializedName
 
 @Entity
-data class ReactionInfo (
+data class ReactionInfo(
     @PrimaryKey(autoGenerate = true)
     @SerializedName("id")
     val id: Long? = null,
@@ -18,7 +18,7 @@ data class ReactionInfo (
     val reactionType: Int,
     @SerializedName("reaction_time")
     val reactionTime: Long = System.currentTimeMillis()
-){
+) {
     fun getReactionDate(): String {
         return reactionTime.toFormattedDate()
     }

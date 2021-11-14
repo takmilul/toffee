@@ -1,6 +1,10 @@
 package com.banglalink.toffee.data.network.request
 
-data class MoviesComingSoonRequest (
-    val customerId:Int,
-    val password:String,
-): BaseRequest("getUgcComingSoon")
+import com.google.gson.annotations.SerializedName
+
+data class MoviesComingSoonRequest(
+    @SerializedName("customerId")
+    val customerId: Int,
+    @SerializedName("password")
+    val password: String,
+) : BaseRequest("getUgcComingSoon")

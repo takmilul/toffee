@@ -1,6 +1,10 @@
 package com.banglalink.toffee.data.network.request
 
-data class TermsConditionRequest (
-    var customerId:Int,
-    var password:String
-): BaseRequest("getUgcTermsAndConditions")
+import com.google.gson.annotations.SerializedName
+
+data class TermsConditionRequest(
+    @SerializedName("customerId")
+    var customerId: Int,
+    @SerializedName("password")
+    var password: String
+) : BaseRequest("getUgcTermsAndConditions")

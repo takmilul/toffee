@@ -1,6 +1,10 @@
 package com.banglalink.toffee.data.network.request
 
-data class DramaEpisodesBySeasonRequest (
-    val customerId:Int,
-    val password:String,
-): BaseRequest("getUgcDramaSerialBySeason")
+import com.google.gson.annotations.SerializedName
+
+data class DramaEpisodesBySeasonRequest(
+    @SerializedName("customerId")
+    val customerId: Int,
+    @SerializedName("password")
+    val password: String,
+) : BaseRequest("getUgcDramaSerialBySeason")

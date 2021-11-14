@@ -10,8 +10,6 @@
 #-keep class com.google.gson.stream.** { *; }
 
 # Application classes that will be serialized/deserialized over Gson
--keep class com.banglalink.toffee.data.network.request.** { <fields>; }
--keep class com.banglalink.toffee.data.database.entities.** { <fields>; }
 -keep class com.banglalink.toffee.data.network.response.** { <fields>; }
 
 

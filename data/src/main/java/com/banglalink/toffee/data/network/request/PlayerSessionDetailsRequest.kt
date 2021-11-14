@@ -7,8 +7,7 @@ import com.google.gson.annotations.SerializedName
 class PlayerSessionDetailsRequest(
     @SerializedName("playerSessionList")
     val playerSessionList: List<PlayerSessionDetails>
-) :
-    PubSubBaseRequest() {
+) : PubSubBaseRequest() {
     @SerializedName("initialTime")
     var initialTime = Utils.getDateTime()
 }

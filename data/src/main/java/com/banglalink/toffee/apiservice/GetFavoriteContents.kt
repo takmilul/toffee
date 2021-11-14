@@ -21,8 +21,8 @@ class GetFavoriteContents @Inject constructor(
                 FavoriteContentRequest(
                     preference.customerId,
                     preference.password,
-                    offset = offset,
-                    limit = limit
+                    offset,
+                    limit
                 )
             )
         }

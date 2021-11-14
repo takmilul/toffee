@@ -3,10 +3,12 @@ package com.banglalink.toffee.data.database.entities
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.android.gms.common.annotation.KeepName
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Entity
+@KeepName
 @Parcelize
 data class NotificationInfo(
     @SerializedName("id")

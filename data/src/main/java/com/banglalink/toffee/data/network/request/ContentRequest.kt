@@ -1,12 +1,12 @@
 package com.banglalink.toffee.data.network.request
 
+import com.google.gson.annotations.SerializedName
+
 data class ContentRequest(
-    val categoryId: Int,
-    val subCategoryId: Int,
-    val type:String,
-    val customerId:Int,
-    val password:String,
+    @SerializedName("customerId")
+    val customerId: Int,
+    @SerializedName("password")
+    val password: String,
+    @SerializedName("telcoId")
     val telcoId: Int = 1,
-    override val offset:Int,
-    override val limit:Int=10
-) : BasePagingRequest("getUgcContentsV5")
+) : BaseRequest("getUgcContentsV5")

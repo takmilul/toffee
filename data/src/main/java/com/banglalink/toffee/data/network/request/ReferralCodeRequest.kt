@@ -1,4 +1,10 @@
 package com.banglalink.toffee.data.network.request
 
-data class ReferralCodeRequest(val customerId: Int, val password: String) :
-    BaseRequest("getMyReferralCode")
+import com.google.gson.annotations.SerializedName
+
+data class ReferralCodeRequest(
+    @SerializedName("customerId")
+    val customerId: Int,
+    @SerializedName("password")
+    val password: String
+) : BaseRequest("getMyReferralCode")

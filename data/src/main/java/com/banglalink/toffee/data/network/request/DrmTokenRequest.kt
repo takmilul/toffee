@@ -1,9 +1,16 @@
 package com.banglalink.toffee.data.network.request
 
+import com.google.gson.annotations.SerializedName
+
 data class DrmTokenRequest(
+    @SerializedName("contentID")
     val contentID: String,
+    @SerializedName("userID")
     val userID: String,
+    @SerializedName("password")
     val password: String,
-    val drmType:String = "Widevine",
+    @SerializedName("drmType")
+    val drmType: String = "Widevine",
+    @SerializedName("licenseDuration")
     val licenseDuration: Int = 0
-): BaseRequest("drmToken")
+) : BaseRequest("drmToken")

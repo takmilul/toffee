@@ -9,7 +9,6 @@ data class ShareCount(
     @PrimaryKey
     @SerializedName("content_id")
     val contentId: Int,
-
     @SerializedName("count")
     var count: Long = 0L,
 )

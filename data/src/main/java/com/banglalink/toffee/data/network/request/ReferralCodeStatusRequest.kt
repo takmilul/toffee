@@ -6,5 +6,5 @@ data class ReferralCodeStatusRequest(
     @SerializedName("phoneNo")
     val phoneNumber: String,
     @SerializedName("referralCode")
-    val referralCode: String) :
-    BaseRequest("getReferralCodeStatus")
+    val referralCode: String
+) : BaseRequest("getReferralCodeStatus")

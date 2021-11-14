@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 @Entity
-data class SubscriptionCount (
+data class SubscriptionCount(
     @PrimaryKey
     @SerializedName("channel_id")
     val channelId: Int,

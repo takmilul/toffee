@@ -1,5 +1,14 @@
 package com.banglalink.toffee.data.network.request
 
-data class UploadProfileImageRequest(val profilePhoto: String,
-                                     val customerId: Int, val password: String, val isDeletePhoto: Boolean = false) :
-    BaseRequest("subscriberProfilePhoto")
+import com.google.gson.annotations.SerializedName
+
+data class UploadProfileImageRequest(
+    @SerializedName("profilePhoto")
+    val profilePhoto: String,
+    @SerializedName("customerId")
+    val customerId: Int,
+    @SerializedName("password")
+    val password: String,
+    @SerializedName("isDeletePhoto")
+    val isDeletePhoto: Boolean = false
+) : BaseRequest("subscriberProfilePhoto")

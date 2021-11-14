@@ -1,6 +1,10 @@
 package com.banglalink.toffee.data.network.request
 
-data class MovieCategoryDetailRequest (
-    val customerId:Int,
-    val password:String,
-): BaseRequest("getUgcMovieCategoryDetails")
+import com.google.gson.annotations.SerializedName
+
+data class MovieCategoryDetailRequest(
+    @SerializedName("customerId")
+    val customerId: Int,
+    @SerializedName("password")
+    val password: String,
+) : BaseRequest("getUgcMovieCategoryDetails")

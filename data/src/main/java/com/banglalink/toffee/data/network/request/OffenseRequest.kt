@@ -1,6 +1,10 @@
 package com.banglalink.toffee.data.network.request
 
+import com.google.gson.annotations.SerializedName
+
 data class OffenseRequest(
-    val customerId:Int,
-    val password:String,
+    @SerializedName("customerId")
+    val customerId: Int,
+    @SerializedName("password")
+    val password: String,
 ) : BaseRequest("getUgcInappropriateHeadList")

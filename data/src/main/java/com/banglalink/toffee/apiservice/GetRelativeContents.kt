@@ -33,8 +33,8 @@ class GetRelativeContents @AssistedInject constructor(
                     preference.password,
                     catchupParams.categoryId,
                     catchupParams.subCategoryId,
-                    offset = offset,
-                    limit = limit
+                    offset,
+                    limit
                 )
             )
         }

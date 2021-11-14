@@ -26,13 +26,8 @@ class GetContents @AssistedInject constructor(
                 limit,
                 preference.getDBVersionByApiName("getUgcContentsV5"),
                 ContentRequest(
-                    requestParams.categoryId,
-                    requestParams.subcategoryId,
-                    requestParams.type,
                     preference.customerId,
                     preference.password,
-                    offset = offset,
-                    limit = limit
                 )
             )
         }

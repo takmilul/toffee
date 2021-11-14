@@ -1,3 +1,10 @@
 package com.banglalink.toffee.data.network.request
 
-data class FcmTokenRequest(val token:String,val customerId:Int):BaseRequest("setFcmToken")
+import com.google.gson.annotations.SerializedName
+
+data class FcmTokenRequest(
+    @SerializedName("token")
+    val token: String,
+    @SerializedName("customerId")
+    val customerId: Int
+) : BaseRequest("setFcmToken")
