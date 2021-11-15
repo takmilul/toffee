@@ -5,5 +5,5 @@ import com.google.gson.annotations.SerializedName
 
 data class ApiLoginResponse(
     @SerializedName("response")
-    val customerInfoLogin: CustomerInfoLogin?)
-    :BaseResponse()
+    val customerInfoLogin: CustomerInfoLogin?
+) : BaseResponse()

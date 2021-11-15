@@ -1,3 +1,8 @@
 package com.banglalink.toffee.data.network.response
 
-data class VastTagResponse(val response: VastTagBean):BaseResponse()
+import com.google.gson.annotations.SerializedName
+
+data class VastTagResponse(
+    @SerializedName("response")
+    val response: VastTagBean
+) : BaseResponse()

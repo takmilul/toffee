@@ -1,3 +1,3 @@
 package com.banglalink.toffee.data.network.response
 
-class ViewingContentResponse:BaseResponse()
+class ViewingContentResponse : BaseResponse()

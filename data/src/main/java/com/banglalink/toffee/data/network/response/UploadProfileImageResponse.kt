@@ -5,4 +5,5 @@ import com.google.gson.annotations.SerializedName
 
 class UploadProfileImageResponse(
     @SerializedName("response")
-    val response:SubscriberPhotoBean):BaseResponse()
+    val response: SubscriberPhotoBean
+) : BaseResponse()

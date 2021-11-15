@@ -1,4 +1,8 @@
 package com.banglalink.toffee.data.network.response
 
-class SubscribePackageResponse(val response:BodyResponse):BaseResponse() {
-}
+import com.google.gson.annotations.SerializedName
+
+class SubscribePackageResponse(
+    @SerializedName("response")
+    val response: BodyResponse
+) : BaseResponse()

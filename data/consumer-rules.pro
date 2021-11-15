@@ -9,10 +9,6 @@
 -dontwarn sun.misc.**
 #-keep class com.google.gson.stream.** { *; }
 
-# Application classes that will be serialized/deserialized over Gson
--keep class com.banglalink.toffee.data.network.response.** { <fields>; }
-
-
 # Pubsub & Google apis
 -keep class com.google.api.services.pubsub.** { <fields>; }
 -keep class com.google.api.client.** { <fields>; }

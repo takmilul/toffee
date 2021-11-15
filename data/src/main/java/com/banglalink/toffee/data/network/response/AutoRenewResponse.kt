@@ -4,5 +4,6 @@ import com.google.gson.annotations.SerializedName
 
 class AutoRenewResponse(
     @SerializedName("response")
-    val response:BodyResponse):BaseResponse() {
+    val response: BodyResponse
+) : BaseResponse() {
 }

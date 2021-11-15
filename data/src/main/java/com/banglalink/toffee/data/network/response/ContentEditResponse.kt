@@ -1,3 +1,8 @@
 package com.banglalink.toffee.data.network.response
 
-data class ContentEditResponse(val response: ResponseBean):BaseResponse()
+import com.google.gson.annotations.SerializedName
+
+data class ContentEditResponse(
+    @SerializedName("response")
+    val response: ResponseBean
+) : BaseResponse()
