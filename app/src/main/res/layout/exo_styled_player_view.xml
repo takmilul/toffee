@@ -39,7 +39,9 @@
     <FrameLayout
         android:id="@+id/debug_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_margin="8dp"
+        android:background="@android:color/transparent"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_casting"

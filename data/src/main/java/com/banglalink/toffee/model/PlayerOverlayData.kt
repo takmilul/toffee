@@ -32,6 +32,10 @@ data class OverlayParams(
     val position: String, // constant/floating
     @SerializedName("duration")
     val duration: Long,
+    @SerializedName("from_position")
+    val fromPosition: List<Float>? = listOf(0.0F, 0.0F),
+    @SerializedName("to_position")
+    val toPosition: List<Float>? = listOf(1.0F, 0.0F),
 )
 
 /**

@@ -9,7 +9,6 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceView
 import android.view.View
-import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.Space
@@ -39,6 +38,7 @@ import com.google.android.exoplayer2.ui.StyledPlayerControlView
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.video.VideoSize
 import com.google.android.gms.cast.framework.CastButtonFactory
+import com.medallia.digital.mobilesdk.MedalliaDigital
 import com.mikhaellopez.circularprogressbar.CircularProgressBar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -581,6 +581,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     }
 
     override fun onViewDestroy() {
+        MedalliaDigital.enableIntercept()
         if(player !is CastPlayer) {
             player?.stop()
         }

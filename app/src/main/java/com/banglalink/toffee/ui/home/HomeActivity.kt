@@ -96,6 +96,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.loopnow.fireworklibrary.FwSDK
+import com.medallia.digital.mobilesdk.MedalliaDigital
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -1256,6 +1257,7 @@ class HomeActivity :
     }
 
     override fun onViewMaximize() {
+        MedalliaDigital.disableIntercept()
         requestedOrientation = if(binding.playerView.isAutoRotationEnabled
             && !binding.playerView.isVideoPortrait)
             ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
@@ -1273,7 +1275,6 @@ class HomeActivity :
     
     private fun showPlayerOverlay(playerOverlayData: PlayerOverlayData? = null) {
         lifecycleScope.launch {
-            delay(1_000)
             /*val playerOverlayData = Gson().fromJson("""
                     {
                         "id": 234,
@@ -1288,30 +1289,55 @@ class HomeActivity :
                             "font_size": "10px",
                             "opacity": "",
                             "position": "floating",
-                            "duration": 30
+                            "duration": 30,
+                            "from_position": [0.0,0.0],
+                            "to_position": [1.0,1.0]
                         }
                     }
                 """.trimIndent(), PlayerOverlayData::class.java)*/
             binding.playerView.showDebugOverlay(playerOverlayData!!, playlistManager.getCurrentChannel()?.id ?: "")
         
+            val debugOverlayView = binding.playerView.getDebugOverLay()
+//            debugOverlayView?.parent?.let { 
+//                if (it is View) {
+//                    it.setBackgroundColor(Color.TRANSPARENT)
+//                }
+//            }
             if (playerOverlayData.params.position == "floating") {
-                val debugOverlayView = binding.playerView.getDebugOverLay()
                 debugOverlayView?.let {
                     val observer = object : ViewTreeObserver.OnGlobalLayoutListener {
                         override fun onGlobalLayout() {
                             if (it.measuredWidth > 0) {
-                                val width = it.measuredWidth.toFloat() + (10.px * 2)
-                            
+                                val viewWidth = it.measuredWidth.toFloat() + (8.px * 2)
+                                val viewHeight = it.measuredHeight.toFloat() + (8.px * 2)
+                                
+                                val playerWidth = binding.playerView.measuredWidth.toFloat()
+                                val playerHeight = binding.playerView.measuredHeight.toFloat()
+                                
+                                val fromPosition = playerOverlayData.params.fromPosition ?: listOf(0.0F, 0.0F)
+                                val toPosition = playerOverlayData.params.toPosition ?: listOf(1.0F, 0.0F)
+                                
+                                val fromPositionX = fromPosition.first().coerceAtMost(1.0F)
+                                val fromPositionY = fromPosition.last().coerceAtMost(1.0F)
+                                
+                                val toPositionX = toPosition.first().coerceAtMost(1.0F)
+                                val toPositionY = toPosition.last().coerceAtMost(1.0F)
+                                
+                                val startX = playerWidth * fromPositionX
+                                val startY = playerHeight * fromPositionY
+                                
+                                val endX = (playerWidth - viewWidth) * toPositionX
+                                val endY = (playerHeight - viewHeight) * toPositionY
+                                
                                 val path = Path().apply {
-                                    moveTo(0f, 0f)
-                                    lineTo(binding.playerView.measuredWidth.toFloat() - width, 0f /*binding.playerView.measuredHeight.toFloat() - height*/)
+                                    moveTo(startX, startY)
+                                    lineTo(endX, endY)
                                 }
                                 ObjectAnimator.ofFloat(it, View.X, View.Y, path).apply {
                                     duration = playerOverlayData.params.duration * 1_000
                                     repeatMode = ValueAnimator.REVERSE
                                     repeatCount = 2
-                                    start()
-                                }
+                                }.start()
                                 it.viewTreeObserver.removeOnGlobalLayoutListener(this)
                             }
                         }
