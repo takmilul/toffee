@@ -24,11 +24,12 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class CategoryInfoFragment: HomeBaseFragment() {
-    @Inject lateinit var bindingUtil: BindingUtil
-    private val landingViewModel by activityViewModels<LandingPageViewModel>()
+    private var selectedSubCategoryId: Int = 0
     private lateinit var categoryInfo: Category
+    @Inject lateinit var bindingUtil: BindingUtil
     private var _binding: FragmentCategoryInfoBinding ? = null
     private val binding get() = _binding!!
+    private val landingViewModel by activityViewModels<LandingPageViewModel>()
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,6 +68,7 @@ class CategoryInfoFragment: HomeBaseFragment() {
                     val selectedChip = group.findViewById<Chip>(checkedId)
                     if(selectedChip != null) {
                         val selectedSub = selectedChip.tag as SubCategory
+                        selectedSubCategoryId = selectedSub.id.toInt()
                         landingViewModel.subCategoryId.value = selectedSub.id.toInt()
                         landingViewModel.isDramaSeries.value = selectedSub.categoryId.toInt() == 9
                     }
@@ -87,6 +89,8 @@ class CategoryInfoFragment: HomeBaseFragment() {
                     if(selectedHashTag != null) {
                         val hashTag = selectedHashTag.tag as String
                         landingViewModel.selectedHashTag.value = hashTag.removePrefix("#")
+                    } else {
+                        landingViewModel.subCategoryId.value = selectedSubCategoryId
                     }
                 }
                 it.let { list ->

@@ -112,6 +112,11 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                 NotificationType.BETA_USER_DETECTION.type -> {
                     handleBetaNotification(data)
                 }
+                NotificationType.CONTENT_REFRESH.type -> {
+                    imageCoroutineScope.launch { 
+                        handleNotificationWithOutImage(data)
+                    }
+                }
                 else -> {
                     prepareNotification(data)
                 }

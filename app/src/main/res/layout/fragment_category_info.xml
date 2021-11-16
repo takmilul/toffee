@@ -93,7 +93,7 @@
                 android:layout_height="match_parent"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                app:selectionRequired="true"
+                app:selectionRequired="false"
                 app:singleLine="true"
                 app:singleSelection="true" />
 
