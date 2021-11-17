@@ -16,17 +16,13 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class HtmlPageViewFragment : BaseFragment() {
-
+    
+    private var header: String? = ""
+    private lateinit var htmlUrl: String
     private var _binding: FragmentHtmlPageViewBinding ? = null
     private val binding get() = _binding!!
 
-    private lateinit var htmlUrl: String
-    private var header: String? = ""
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         MedalliaDigital.disableIntercept()
         _binding = FragmentHtmlPageViewBinding.inflate(inflater, container, false)
         return binding.root

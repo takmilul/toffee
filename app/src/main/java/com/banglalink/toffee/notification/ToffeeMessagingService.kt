@@ -17,6 +17,7 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.core.os.bundleOf
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
+import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.data.database.entities.NotificationInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.DrmLicenseRepository
@@ -113,6 +114,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                     handleBetaNotification(data)
                 }
                 NotificationType.CONTENT_REFRESH.type -> {
+                    cacheManager.clearCacheByUrl(ApiRoutes.GET_HOME_FEED_VIDEOS)
                     imageCoroutineScope.launch { 
                         handleNotificationWithOutImage(data)
                     }

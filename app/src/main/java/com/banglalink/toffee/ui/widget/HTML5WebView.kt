@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.pm.ActivityInfo
+import android.os.Build
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -36,6 +37,12 @@ class HTML5WebView @JvmOverloads constructor(
         val mContentView = mBrowserFrameLayout.findViewById<View>(R.id.main_content) as FrameLayout
         mCustomViewContainer = mBrowserFrameLayout.findViewById<View>(R.id.fullscreen_custom_content) as FrameLayout
         layout.addView(mBrowserFrameLayout, param)
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            focusable = FOCUSABLE_AUTO
+        }
+        isFocusableInTouchMode = true
+        
         settings.apply {
             setSupportZoom(true)
             databaseEnabled = true
