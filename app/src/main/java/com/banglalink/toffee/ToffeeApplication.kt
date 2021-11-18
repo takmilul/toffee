@@ -1,6 +1,12 @@
 package com.banglalink.toffee
 
+import android.Manifest
 import android.app.Application
+import android.content.Context
+import android.content.pm.PackageManager
+import android.net.ConnectivityManager
+import android.net.NetworkRequest
+import android.os.Build
 import android.util.Log
 import androidx.databinding.DataBindingUtil
 import coil.Coil
@@ -48,6 +54,7 @@ class ToffeeApplication : Application() {
     @Inject lateinit var heartBeatManager: HeartBeatManager
     @Inject lateinit var commonPreference: CommonPreference
     @Inject lateinit var sessionPreference: SessionPreference
+    private lateinit var connectivityManager: ConnectivityManager
     @Inject @AppCoroutineScope lateinit var coroutineScope: CoroutineScope
     @Inject lateinit var bindingComponentProvider: Provider<CustomBindingComponentBuilder>
     @Inject lateinit var sendFirebaseConnectionErrorEvent: SendFirebaseConnectionErrorEvent
@@ -98,7 +105,22 @@ class ToffeeApplication : Application() {
         
 //        FacebookSdk.setIsDebugEnabled(true);
 //        FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS);
-
+        
+        try {
+            connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (checkSelfPermission(Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED) {
+                    connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), heartBeatManager)
+                } else {
+                    Log.e("CONN_", "Watcher - Connectivity registration failed: network permission denied")
+                }
+            } else {
+                connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), heartBeatManager)
+            }
+        } catch (e: Exception) {
+            Log.e("CONN_", "Connectivity registration failed: ${e.message}")
+        }
+        
         initCoil()
         initFireworkSdk()
 //        initMedalliaSdk()
@@ -167,6 +189,15 @@ class ToffeeApplication : Application() {
         Coil.setImageLoader(imageLoader)
     }
 
+    override fun onTerminate() {
+        try {
+            connectivityManager.unregisterNetworkCallback(heartBeatManager)
+        } catch (e: Exception) {
+            ToffeeAnalytics.logBreadCrumb("connectivity manager unregister error -> ${e.message}")
+        }
+        super.onTerminate()
+    }
+    
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
 

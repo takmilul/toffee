@@ -14,8 +14,6 @@ import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Path
 import android.graphics.Point
-import android.net.ConnectivityManager
-import android.net.NetworkRequest
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -153,9 +151,6 @@ class HomeActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), heartBeatManager)
 
         val isDisableScreenshot = !(mPref.screenCaptureEnabledUsers.contains(cPref.deviceId) || mPref.screenCaptureEnabledUsers.contains(mPref.customerId.toString()) || mPref.screenCaptureEnabledUsers.contains(mPref.phoneNumber))
         //disable screen capture
@@ -1373,11 +1368,6 @@ class HomeActivity :
         mqttService.destroy()
         viewModelStore.clear()
         appUpdateManager.unregisterListener(appUpdateListener)
-        try {
-            connectivityManager.unregisterNetworkCallback(heartBeatManager)
-        } catch (e: Exception) {
-            ToffeeAnalytics.logBreadCrumb("connectivity manager unregister error -> ${e.message}")
-        }
         navController.removeOnDestinationChangedListener(destinationChangeListener)
         super.onDestroy()
     }

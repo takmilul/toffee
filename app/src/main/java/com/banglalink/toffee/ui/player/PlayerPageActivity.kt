@@ -3,7 +3,6 @@ package com.banglalink.toffee.ui.player
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -92,7 +91,6 @@ abstract class PlayerPageActivity :
     @Inject lateinit var connectionWatcher: ConnectionWatcher
     private var lastSeenTrackGroupArray: TrackGroupArray? = null
     private var defaultTrackSelector: DefaultTrackSelector? = null
-    protected lateinit var connectivityManager: ConnectivityManager
     @Inject lateinit var contentViewRepo: ContentViewPorgressRepsitory
     private var playerAnalyticsListener: PlayerAnalyticsListener? = null
     @Inject lateinit var continueWatchingRepo: ContinueWatchingRepository
