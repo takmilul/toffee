@@ -666,42 +666,28 @@ abstract class PlayerPageActivity :
             return@launch
         }
         val isDrmActive = isDrmActiveForChannel(channelInfo)
-        val mediaItem = if(isDrmActive) {
+        var mediaItem = if(isDrmActive) {
             getDrmMediaItem(channelInfo) //?: getHlsMediaItem(channelInfo, isWifiConnected)
         } else {
-//            if(mPref.isDrmActive && channelInfo.isDrmActive && channelInfo.isLive) {
-//                val drmMsg = when {
-//                    cPref.isDrmModuleAvailable == CommonPreference.DRM_TIMEOUT -> "Drm timeout"
-//                    cPref.isDrmModuleAvailable == CommonPreference.DRM_UNAVAILABLE-> "Drm module unavailable"
-//                    mPref.drmWidevineLicenseUrl == null -> "License url null"
-//                    channelInfo.drmDashUrl == null -> "Dash url null"
-//                    else -> "Unknown"
-//                }
-//                drmFallbackService.execute(channelInfo.id.toLong(), drmMsg)
-//            }
             getHlsMediaItem(channelInfo, isWifiConnected)
-        }?.let {
-            if (!isReload && player is ExoPlayer) playCounter = ++playCounter % mPref.vastFrequency
-            homeViewModel.vastTagsMutableLiveData.value?.randomOrNull()?.let { tag ->
-                val shouldPlayAd = mPref.isVastActive && playCounter == 0 && !channelInfo.isLive
-                val vastTag = if(isReload) currentlyPlayingVastUrl else tag.url
-                if (shouldPlayAd && vastTag.isNotBlank()) {
-                    it.buildUpon()
-                        .setAdsConfiguration(MediaItem.AdsConfiguration.Builder(Uri.parse(vastTag)).build())
-                        .build()
-                    if (!isReload) currentlyPlayingVastUrl = tag.url
-                    it
-                } else {
-                    it
-                }
-            }
-            it
         } ?: run {
             showPlayerError()
             ToffeeAnalytics.logException(NullPointerException("Channel url is null for id -> ${channelInfo.id}, name -> ${channelInfo.program_name}"))
             return@launch
         }
-
+        
+        if (!isReload && player is ExoPlayer) playCounter = ++playCounter % mPref.vastFrequency
+        homeViewModel.vastTagsMutableLiveData.value?.randomOrNull()?.let { tag ->
+            val shouldPlayAd = mPref.isVastActive && playCounter == 0 && !channelInfo.isLive
+            val vastTag = if (isReload) currentlyPlayingVastUrl else tag.url
+            if (shouldPlayAd && vastTag.isNotBlank()) {
+                mediaItem = mediaItem.buildUpon()
+                        .setAdsConfiguration(MediaItem.AdsConfiguration.Builder(Uri.parse(vastTag)).build())
+                        .build()
+                if (!isReload) currentlyPlayingVastUrl = tag.url
+            }
+        }
+        
         player?.let {
             val oldChannelInfo = getCurrentChannelInfo()
             oldChannelInfo?.let { oldInfo ->

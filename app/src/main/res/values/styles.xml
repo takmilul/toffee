@@ -460,11 +460,12 @@
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
-
-    <style name="ZoomAnimation">
+    
+    <style name="ZoomAnimation" parent="android:Animation">
         <item name="android:windowEnterAnimation">@anim/zoom_in_animation</item>
         <item name="android:windowExitAnimation">@anim/zoom_out_animation</item>
     </style>
+    
     <style name="SheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowContentOverlay">@null</item>
