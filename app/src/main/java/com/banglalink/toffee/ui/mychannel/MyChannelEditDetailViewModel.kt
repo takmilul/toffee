@@ -71,7 +71,7 @@ class MyChannelEditDetailViewModel @AssistedInject constructor(
             assistedFactory: AssistedFactory,
             myChannelDetail: MyChannelDetail?,
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 return assistedFactory.create(myChannelDetail) as T
             }
         }

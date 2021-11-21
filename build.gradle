@@ -1,6 +1,25 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
+    ext {
+        appVersionCode = 70
+        appVersionName = '2.1.3'
+        kotlinVersion = '1.6.0'
+        kotlinCoroutineVersion = "1.5.2"
+
+        exoVersion = "2.16.1"
+        firebaseCoreVersion = "19.0.2"
+        firebaseMessagingVersion = "23.0.0"
+        firebaseAnalyticsVersion = "20.0.0"
+        firebaseCrashlyticsVersion = "18.2.4"
+        lifecycleVersion = "2.4.0"
+        roomDbVersion = "2.3.0"
+        hiltAndroidVersion = "2.39.1"
+        hiltVersion = "1.0.0"
+        retrofitVersion = "2.9.0"
+        okHttpVersion = "4.9.0"
+        facebookSdkVersion = "11.2.0"
+    }
     repositories {
         google()
         mavenCentral()
@@ -8,7 +27,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:7.0.3'
         classpath 'com.google.gms:google-services:4.3.10'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.31"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         def nav_version = "2.3.0"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
@@ -31,24 +50,4 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
-}
-
-ext {
-    appVersionCode = 70
-    appVersionName = '2.1.3'
-    kotlin_version = '1.5.31'
-    kotlinCoroutineVersion = "1.5.2"
-
-    exoVersion = "2.16.0"
-    firebaseCoreVersion = "19.0.2"
-    firebaseMessagingVersion = "23.0.0"
-    firebaseAnalyticsVersion = "20.0.0"
-    firebaseCrashlyticsVersion = "18.2.4"
-    lifecycleVersion = "2.3.1"
-    roomDbVersion = "2.3.0"
-    hiltAndroidVersion = "2.39.1"
-    hiltVersion = "1.0.0"
-    retrofitVersion = "2.9.0"
-    okHttpVersion = "4.9.0"
-    facebookSdkVersion = "11.2.0"
 }

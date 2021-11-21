@@ -99,7 +99,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
     companion object {
         fun provideFactory(assistedFactory: AssistedFactory, uploadFileUri: String): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {
-                override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
                     return assistedFactory.create(uploadFileUri) as T
                 }
             }

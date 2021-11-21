@@ -141,7 +141,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                         NOTIFICATION_ID to notificationId,
                     )
                 )
-                val pendingIntent = PendingIntent.getBroadcast(applicationContext, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+                val pendingIntent = PendingIntent.getBroadcast(applicationContext, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
                 val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_NAME)
                     .setSmallIcon(R.drawable.ic_notification)
                     .setAutoCancel(true)
@@ -241,7 +241,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                 ACTION_NAME to CONTENT_VIEW
             )
         )
-        val pendingIntent = PendingIntent.getBroadcast(applicationContext, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+        val pendingIntent = PendingIntent.getBroadcast(applicationContext, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         builder.setContentIntent(pendingIntent)
         showNotification(builder.build())
     }
@@ -264,7 +264,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         val intent = resourceUrl?.let { Intent(Intent.ACTION_VIEW, Uri.parse(it)) } ?: Intent(Intent.ACTION_VIEW)
         intent.putExtras(bundleOf(ROW_ID to rowId))
         
-        val pendingIntent = PendingIntent.getActivity(applicationContext, 0, intent, 0)
+        val pendingIntent = PendingIntent.getActivity(applicationContext, 0, intent, 0 or PendingIntent.FLAG_IMMUTABLE)
         val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_NAME)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentIntent(pendingIntent)
@@ -317,7 +317,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             )
         ).setClass(this, NotificationActionReceiver::class.java)
         
-        val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+        val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_NAME)
         builder.setSmallIcon(R.drawable.ic_notification)
             .setContentIntent(pendingIntent)
@@ -348,9 +348,9 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                 )
             ).setClass(this, NotificationActionReceiver::class.java)
             
-            val watchNowPendingIntent = PendingIntent.getBroadcast(this, 1, watchNowIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+            val watchNowPendingIntent = PendingIntent.getBroadcast(this, 1, watchNowIntent, PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
             builder.addAction(android.R.drawable.ic_media_play, "Watch Now", watchNowPendingIntent)
-            val watchLaterPendingIntent = PendingIntent.getBroadcast(applicationContext, 2, watchLaterIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+            val watchLaterPendingIntent = PendingIntent.getBroadcast(applicationContext, 2, watchLaterIntent, PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
             builder.addAction(android.R.drawable.ic_delete, "Watch Later", watchLaterPendingIntent)
         }
         showNotification(builder.build())
@@ -380,7 +380,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             )
         ).setClass(this, NotificationActionReceiver::class.java)
         
-        val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+        val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_NAME)
         
         builder.setSmallIcon(R.drawable.ic_notification)
@@ -411,9 +411,9 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                 )
             ).setClass(this, NotificationActionReceiver::class.java)
             
-            val watchNowPendingIntent = PendingIntent.getBroadcast(this, 1, watchNowIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+            val watchNowPendingIntent = PendingIntent.getBroadcast(this, 1, watchNowIntent, PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
             builder.addAction(android.R.drawable.ic_media_play, "Watch Now", watchNowPendingIntent)
-            val watchLaterPendingIntent = PendingIntent.getBroadcast(applicationContext, 2, watchLaterIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+            val watchLaterPendingIntent = PendingIntent.getBroadcast(applicationContext, 2, watchLaterIntent, PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
             builder.addAction(android.R.drawable.ic_delete, "Watch Later", watchLaterPendingIntent)
         }
         showNotification(builder.build())

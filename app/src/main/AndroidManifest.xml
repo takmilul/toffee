@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.banglalink.toffee">
     
+    <uses-permission android:name="android.permission.BROADCAST_CLOSE_SYSTEM_DIALOGS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -46,7 +47,8 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
@@ -72,7 +74,8 @@
         <activity
             android:name=".ui.splash.SplashScreenActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -83,12 +86,14 @@
             android:name=".ui.common.Html5PlayerViewActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:exported="false" />
         
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:exported="false" />
         
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -127,23 +132,27 @@
             android:name="com.google.android.gms.ads.AD_MANAGER_APP"
             android:value="true" />
         
-        <service android:name=".notification.ToffeeMessagingService">
+        <service android:name=".notification.ToffeeMessagingService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
         
-        <receiver android:name=".receiver.NotificationActionReceiver">
+        <receiver android:name=".receiver.NotificationActionReceiver"
+            android:exported="false">
             <intent-filter android:priority="999">
                 <action android:name="com.toffee.notification_receiver" />
             </intent-filter>
         </receiver>
         
-        <service android:name="org.eclipse.paho.android.service.MqttService" />
+        <service android:name="org.eclipse.paho.android.service.MqttService"
+            android:exported="false" />
         
         <!-- Activity needed for video playback-->
         <activity
-            android:name="com.loopnow.fireworklibrary.PlaybackActivity" />
+            android:name="com.loopnow.fireworklibrary.PlaybackActivity"
+            android:exported="false" />
         
         <!-- Instead of providing app_id in VideoFeedFragment xml , you can specify it in AndroidManifest.xml-->
         <meta-data
