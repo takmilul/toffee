@@ -12,6 +12,7 @@ import com.banglalink.toffee.util.getFormattedViewsText
 import com.google.android.gms.common.annotation.KeepName
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import java.util.*
 
 @KeepName
 @Parcelize
@@ -237,13 +238,13 @@ data class ChannelInfo(
     val isPaidSubscribed: Boolean
         get() = individual_price?.toInt() == 0 && subscription
 
-//    fun isExpired(serverDate: Date): Boolean {
-//        return try {
-//            serverDate.after(Utils.getDate(expireTime))
-//        } catch (ne: NullPointerException) {
-//            true
-//        }
-//    }
+    fun isExpired(serverDate: Date): Boolean {
+        return try {
+            serverDate.after(Utils.getDate(expireTime))
+        } catch (ne: NullPointerException) {
+            true
+        }
+    }
 
     fun formattedViewCount(): String = getFormattedViewsText(view_count)
     fun formattedDuration(): String = discardZeroFromDuration(duration)
