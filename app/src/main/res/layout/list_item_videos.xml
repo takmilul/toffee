@@ -19,6 +19,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="@{data.isExpired ? View.GONE : View.VISIBLE}"
         android:background="@drawable/bottom_round_white_bg">
         
         <com.banglalink.toffee.ui.widget.CustomImageView
