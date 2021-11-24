@@ -11,6 +11,7 @@ interface UploadInfoRepository {
     suspend fun getUploads(): List<UploadInfo>
     fun getActiveUploads(): Flow<List<UploadInfo>>
     suspend fun getActiveUploadsList(): List<UploadInfo>
+    suspend fun getUnFinishedUploadsList(): List<UploadInfo>
     suspend fun getUploadById(uploadId: Long): UploadInfo?
     fun getUploadFlowById(uploadId: Long): Flow<UploadInfo?>
     suspend fun updateProgressById(

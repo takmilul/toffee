@@ -28,6 +28,9 @@ interface UploadDao {
     @Query("SELECT * FROM UploadInfo WHERE status in (0, 1, 2, 5) ORDER BY uploadId DESC")
     suspend fun getActiveUploadsList(): List<UploadInfo>
 
+    @Query("SELECT * FROM UploadInfo WHERE status in (0, 1) ORDER BY uploadId DESC")
+    suspend fun getUnFinishedUploadsList(): List<UploadInfo>
+
     @Query("SELECT * from UploadInfo WHERE uploadId=:uploadId")
     suspend fun getUploadById(uploadId: Long): UploadInfo?
 

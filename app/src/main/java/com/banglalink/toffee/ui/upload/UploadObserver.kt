@@ -81,16 +81,13 @@ class UploadObserver(
 
             }
 
-            override fun onError(context: Context,
-                                 uploadInfo: UploadInfo,
-                                 exception: Throwable) {
+            override fun onError(context: Context, uploadInfo: UploadInfo, exception: Throwable) {
                 coroutineScope.launch {
                     uploadManager.handleError(uploadInfo.uploadId, exception)
                 }
             }
 
-            override fun onProgress(context: Context,
-                                    uploadInfo: UploadInfo) {
+            override fun onProgress(context: Context, uploadInfo: UploadInfo) {
                 coroutineScope.launch {
                     val tusUploadUri = if(uploadInfo.files.isNotEmpty()) uploadInfo.files.first().properties[TusUploadTaskParameters.TUS_UPLOAD_URL] else null
                     uploadManager.handleProgress(
@@ -103,11 +100,7 @@ class UploadObserver(
                 }
             }
 
-            override fun onSuccess(
-                context: Context,
-                uploadInfo: UploadInfo,
-                serverResponse: ServerResponse
-            ) {
+            override fun onSuccess(context: Context, uploadInfo: UploadInfo, serverResponse: ServerResponse) {
                 coroutineScope.launch {
                     cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_VIDEOS)
                     uploadManager.handleSuccess(uploadInfo.uploadId, serverResponse)

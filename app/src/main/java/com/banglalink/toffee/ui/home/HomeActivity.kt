@@ -68,6 +68,7 @@ import com.banglalink.toffee.ui.channels.AllChannelsViewModel
 import com.banglalink.toffee.ui.channels.ChannelFragmentNew
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
+import com.banglalink.toffee.ui.mychannel.MyChannelReloadViewModel
 import com.banglalink.toffee.ui.player.PlayerPageActivity
 import com.banglalink.toffee.ui.player.PlaylistItem
 import com.banglalink.toffee.ui.player.PlaylistManager
@@ -142,6 +143,7 @@ class HomeActivity :
     @Inject @AppCoroutineScope lateinit var appScope: CoroutineScope
     @Inject lateinit var notificationRepo: NotificationInfoRepository
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+    private val myChannelReloadViewModel by viewModels<MyChannelReloadViewModel>()
     private val profileViewModel by viewModels<ViewProfileViewModel>()
     private val allChannelViewModel by viewModels<AllChannelsViewModel>()
     private val uploadViewModel by viewModels<UploadProgressViewModel>()
@@ -440,7 +442,7 @@ class HomeActivity :
                 return true
             }
             lifecycleScope.launch {
-                if (uploadRepo.getActiveUploadsList().isNotEmpty()) {
+                if (uploadRepo.getUnFinishedUploadsList().isNotEmpty()) {
                     return@launch
                 }
                 navController.navigate(R.id.uploadMethodFragment)
@@ -452,7 +454,7 @@ class HomeActivity :
                 return true
             }
             lifecycleScope.launch {
-                if (uploadRepo.getActiveUploadsList().isNotEmpty()) {
+                if (uploadRepo.getUnFinishedUploadsList().isNotEmpty()) {
                     return@launch
                 }
                 if (navController.currentDestination?.id == R.id.myChannelEditDetailFragment) {
@@ -1605,6 +1607,7 @@ class HomeActivity :
     private fun observeUpload2() {
         binding.homeMiniProgressContainer.addUploadInfoButton.setOnClickListener {
             viewModel.myChannelNavLiveData.value = MyChannelNavParams(mPref.customerId)
+            binding.homeMiniProgressContainer.root.isVisible = false
         }
 
         binding.homeMiniProgressContainer.closeButton.setOnClickListener {
@@ -1635,6 +1638,9 @@ class HomeActivity :
                             binding.homeMiniProgressContainer.miniUploadProgressText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_upload_done, 0, 0, 0)
                             binding.homeMiniProgressContainer.miniUploadProgressText.text = "Upload complete"
                             cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_VIDEOS)
+//                            if (navController.currentDestination?.id == R.id.myChannelHomeFragment) {
+//                                myChannelReloadViewModel.reloadVideos.postValue(true)
+//                            }
                         }
                         UploadStatus.ADDED.value,
                         UploadStatus.STARTED.value -> {

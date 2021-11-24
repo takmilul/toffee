@@ -65,7 +65,7 @@ class UploadStateManager(
     private suspend fun sendStatusToServer(item: UploadInfo, status: Boolean, copyrightStatus: Boolean) {
 
         if(item.status == UploadStatus.ERROR_CONFIRMED.value) {
-            VelBoxAlertDialogBuilder(app, "Can't uplaod video", "Upload error. Please try again later.").apply {
+            VelBoxAlertDialogBuilder(app, "Can't upload video", "Upload error. Please try again later.").apply {
                 setPositiveButtonListener("OK") {
                     it?.dismiss()
                 }
