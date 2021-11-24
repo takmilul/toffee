@@ -1,5 +1,7 @@
 package com.banglalink.toffee.ui.category.drama
 
+import android.widget.LinearLayout
+import androidx.core.view.isVisible
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.common.paging.BasePagingDataAdapter
@@ -20,6 +22,12 @@ class EpisodeListAdapter(
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         val obj = getItem(position)
         obj?.let {
+            if (it.isExpired) {
+                with (holder.binding.root) {
+                    isVisible = false
+                    layoutParams = LinearLayout.LayoutParams(0, 0)
+                }
+            }
             holder.bind(obj, callback, position, selectedChannel)
         }
     }

@@ -25,12 +25,13 @@ class GetChannelSubscriptions @Inject constructor(
             )
         }
         
-        return response.response.channels?.filter {
-            try {
-                Utils.getDate(it.contentExpiryTime).after(preference.getSystemTime())
+        return response.response.channels?.map {
+            it.isExpired = try {
+                Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
             } catch (e: Exception) {
-                true
+                false
             }
+            it
         } ?: emptyList()
     }
 }

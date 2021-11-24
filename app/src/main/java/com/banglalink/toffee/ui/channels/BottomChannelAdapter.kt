@@ -2,6 +2,8 @@ package com.banglalink.toffee.ui.channels
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
@@ -11,9 +13,10 @@ import com.banglalink.toffee.extension.px
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.util.BindingUtil
 
-class BottomChannelAdapter( private val callback: BaseListItemCallback<TVChannelItem>,
-                            private val bindingUtil: BindingUtil)
-    :PagingDataAdapter<TVChannelItem, BottomChannelViewHolder>(ItemComparator()) {
+class BottomChannelAdapter(
+    private val callback: BaseListItemCallback<TVChannelItem>,
+    private val bindingUtil: BindingUtil
+) :PagingDataAdapter<TVChannelItem, BottomChannelViewHolder>(ItemComparator()) {
 
     private var selectedItem: ChannelInfo? = null
 
@@ -21,6 +24,12 @@ class BottomChannelAdapter( private val callback: BaseListItemCallback<TVChannel
         val obj = getItem(position)
         obj?.let {
             if(it.channelInfo != null) {
+                if (it.channelInfo!!.isExpired) {
+                    with (holder.imageView) {
+                        isVisible = false
+                        layoutParams = LinearLayout.LayoutParams(0, 0)
+                    }
+                }
                 bindingUtil.bindChannel(holder.imageView, it.channelInfo!!)
                 if (it.channelInfo!!.id == selectedItem?.id.toString()) {
                     holder.imageView.borderWidth = 4.px

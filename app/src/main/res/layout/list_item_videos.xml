@@ -5,8 +5,6 @@
     xmlns:bind="http://schemas.android.com/apk/res-auto">
     
     <data>
-        <import type="android.view.View" />
-        
         <variable
             name="data"
             type="com.banglalink.toffee.model.ChannelInfo" />
@@ -19,7 +17,6 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="@{data.isExpired ? View.GONE : View.VISIBLE}"
         android:background="@drawable/bottom_round_white_bg">
         
         <com.banglalink.toffee.ui.widget.CustomImageView
