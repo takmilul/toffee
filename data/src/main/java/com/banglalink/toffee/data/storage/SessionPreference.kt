@@ -666,11 +666,7 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         globalCidName = customerInfoLogin.globalCidName
         betaVersionCodes = customerInfoLogin.androidBetaVersionCode
         isPaidUser = customerInfoLogin.paymentStatus
-        screenCaptureEnabledUsers = if (customerInfoLogin.screenCaptureEnabledUsers.isNullOrEmpty()) {
-            SCREEN_CAPTURE_DISABLED_USERS
-        } else {
-            customerInfoLogin.screenCaptureEnabledUsers
-        }
+        screenCaptureEnabledUsers = customerInfoLogin.screenCaptureEnabledUsers ?: setOf()
         if (customerInfoLogin.customerId == 0 || customerInfoLogin.password.isNullOrBlank()) {
             ToffeeAnalytics.logException(NullPointerException("customerId: ${customerInfoLogin.customerId}, password: ${customerInfoLogin.password}, msisdn: $phoneNumber, deviceId: ${CommonPreference.getInstance().deviceId}, isVerified: $isVerifiedUser, hasSessionToken: ${sessionToken.isNotBlank()}"))
         }
@@ -777,8 +773,6 @@ class SessionPreference(private val pref: SharedPreferences, private val context
         private const val PREF_BETA_VERSION_CODES = "pref_beta_version_codes"
         private const val PREF_PAYMENT_STATUS = "pref_payment_status"
 
-        private val SCREEN_CAPTURE_DISABLED_USERS = setOf("7cd171cf93c9236b", "206c06aaf38fffe9", "21587c9c6447e992", "a25df4f9bc3754de", "4ec3c91fc4f4b8c0", "4fe54e7c960e391b", "c4b82aedaf88eaac", "53e9079df4cae882")
-        
         private var instance: SessionPreference? = null
 
         fun init(mContext: Context) {

@@ -103,10 +103,13 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                 NotificationType.CLEAR_CACHE.type -> {
                     val route = data["apiRoute"]?.trim()
                     route?.let {
-                        if (route == "all") {
+                        if (it == "all") {
                             cacheManager.clearAllCache()
                         } else {
-                            cacheManager.clearCacheByUrl(route)
+                            val apiRoutes = it.split(",")
+                            apiRoutes.forEach { route ->
+                                cacheManager.clearCacheByUrl(route.trim())
+                            }
                         }
                     }
                 }
