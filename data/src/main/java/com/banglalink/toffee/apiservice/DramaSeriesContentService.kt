@@ -36,13 +36,12 @@ class DramaSeriesContentService @AssistedInject constructor(
         }
 
         return if (response.response.channels != null) {
-            response.response.channels.filter {
-                try {
-                    Utils.getDate(it.contentExpiryTime).after(preference.getSystemTime())
+            response.response.channels.map {
+                it.isExpired = try {
+                    Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
                 } catch (e: Exception) {
-                    true
+                    false
                 }
-            }.map {
                 localSync.syncData(it)
                 it
             }

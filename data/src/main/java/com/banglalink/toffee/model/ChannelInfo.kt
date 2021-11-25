@@ -167,24 +167,33 @@ data class ChannelInfo(
     @get:SerializedName("isLive")
     val isLive: Boolean
         get() = "LIVE".equals(type, ignoreCase = true)
+    
     @get:SerializedName("isVOD")
     val isVOD: Boolean
         get() = "VOD".equals(type, ignoreCase = true)
+    
     @get:SerializedName("isCatchup")
     val isCatchup: Boolean
         get() = "CATCHUP".equals(type, ignoreCase = true)
+    
     @get:SerializedName("isBucketUrl")
     val isBucketUrl: Boolean
         get() = isEncoded == 0
+    
     @get:SerializedName("isDrmActive")
     val isDrmActive: Boolean
         get() = is_drm_active == 1
+    
     @get:SerializedName("isAdActive")
     val isAdActive: Boolean
         get() = is_ad_active == 1
+    
     @get:SerializedName("isFcmEventActive")
     val isFcmEventActive: Boolean
         get() = fcm_event_is_active == 1
+    
+    @SerializedName("isExpired")
+    var isExpired: Boolean = false
     
     fun getCategory(category: String, subCategory: String): String {
         var itemCategory = "Channels>$category"

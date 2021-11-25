@@ -14,12 +14,13 @@ class GetPackageChannels @Inject constructor(private val preference: SessionPref
         val response = tryIO2 {
             toffeeApi.getPackageChannelList(PackageChannelListRequest(packageId,preference.customerId,preference.password))
         }
-        return response.response.packageDetails.programs.filter {
-            try {
-                Utils.getDate(it.contentExpiryTime).after(preference.getSystemTime())
+        return response.response.packageDetails.programs.map {
+            it.isExpired = try {
+                Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
             } catch (e: Exception) {
-                true
+                false
             }
+            it
         }
 
     }

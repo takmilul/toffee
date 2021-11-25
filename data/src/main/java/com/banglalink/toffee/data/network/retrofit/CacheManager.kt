@@ -1,6 +1,5 @@
 package com.banglalink.toffee.data.network.retrofit
 
-import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.di.DefaultCache
 import okhttp3.Cache
 import javax.inject.Inject
@@ -12,19 +11,9 @@ class CacheManager @Inject constructor(@DefaultCache private val retrofitCache: 
     fun clearCacheByUrl(apiUrl: String) {
         val urlIterator = retrofitCache.urls()
         while (urlIterator.hasNext()) {
-            if (urlIterator.next().contains(apiUrl)) {
+            if (urlIterator.next().contains(apiUrl.trim())) {
                 urlIterator.remove()
-            }
-        }
-    }
-    
-    fun clearSubscriptionCache() {
-        val urlIterator = retrofitCache.urls()
-        while (urlIterator.hasNext()) {
-            val next = urlIterator.next()
-            if (next.contains(ApiRoutes.GET_ALL_CHANNELS) || next.contains(ApiRoutes.GET_TRENDING_CHANNELS) || next.contains
-                    (ApiRoutes.GET_MY_CHANNEL_DETAILS) || next.contains(ApiRoutes.GET_SUBSCRIBED_CHANNELS)) {
-                urlIterator.remove()
+                break
             }
         }
     }

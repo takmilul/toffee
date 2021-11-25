@@ -33,13 +33,12 @@ class GetContents @AssistedInject constructor(
         }
 
         if (response.response.channels != null) {
-            return response.response.channels.filter {
-                try {
-                    Utils.getDate(it.contentExpiryTime).after(preference.getSystemTime())
+            return response.response.channels.map {
+                it.isExpired = try {
+                    Utils.getDate(it.contentExpiryTime).before(preference.getSystemTime())
                 } catch (e: Exception) {
-                    true
+                    false
                 }
-            }.map {
                 it.category = requestParams.category
                 it.categoryId = requestParams.categoryId
                 it.subCategoryId = requestParams.subcategoryId

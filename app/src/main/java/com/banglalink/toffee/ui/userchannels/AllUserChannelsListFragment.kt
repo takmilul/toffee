@@ -47,11 +47,6 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
         return binding.root    
     }
     
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var isInitialized = false
@@ -126,7 +121,7 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
 
     private fun observeList() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.userChannels.collectLatest {
+            viewModel.loadUserChannels().collectLatest {
                 mAdapter.submitData(it)
             }
         }
@@ -155,5 +150,10 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
                 }
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

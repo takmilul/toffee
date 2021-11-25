@@ -75,15 +75,7 @@ class FeaturedPartnerFragment : BaseFragment(), BaseListItemCallback<FeaturedPar
         super.onItemClicked(item)
         
         item.webViewUrl?.let { url->
-//            heartBeatManager.triggerEventViewingContentStart(item.id, "VOD")
-//            homeViewModel.sendViewContentEvent(item)
             findNavController().navigate(R.id.htmlPageViewFragment, bundleOf("myTitle" to item.featurePartnerName, "url" to url))
-//            requireActivity().launchActivity<Html5PlayerViewActivity> {
-//                putExtra(
-//                    Html5PlayerViewActivity.CONTENT_URL,
-//                    url
-//                )
-//            }
         } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
     }
     

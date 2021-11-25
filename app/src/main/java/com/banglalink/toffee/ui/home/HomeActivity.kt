@@ -1,5 +1,6 @@
 package com.banglalink.toffee.ui.home
 
+import android.Manifest
 import android.animation.LayoutTransition
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
@@ -10,10 +11,13 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender.SendIntentException
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Path
 import android.graphics.Point
+import android.net.ConnectivityManager
+import android.net.NetworkRequest
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -64,6 +68,7 @@ import com.banglalink.toffee.ui.channels.AllChannelsViewModel
 import com.banglalink.toffee.ui.channels.ChannelFragmentNew
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
+import com.banglalink.toffee.ui.mychannel.MyChannelReloadViewModel
 import com.banglalink.toffee.ui.player.PlayerPageActivity
 import com.banglalink.toffee.ui.player.PlaylistItem
 import com.banglalink.toffee.ui.player.PlaylistManager
@@ -134,12 +139,14 @@ class HomeActivity :
     @Inject lateinit var uploadManager: UploadStateManager
     private lateinit var appUpdateManager: AppUpdateManager
     @Inject lateinit var inAppMessageParser: InAppMessageParser
+    private lateinit var connectivityManager: ConnectivityManager
     @Inject @AppCoroutineScope lateinit var appScope: CoroutineScope
     @Inject lateinit var notificationRepo: NotificationInfoRepository
-    private val profileViewModel by viewModels<ViewProfileViewModel>()
-    private val uploadViewModel by viewModels<UploadProgressViewModel>()
-    private val allChannelViewModel by viewModels<AllChannelsViewModel>()
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+    private val myChannelReloadViewModel by viewModels<MyChannelReloadViewModel>()
+    private val profileViewModel by viewModels<ViewProfileViewModel>()
+    private val allChannelViewModel by viewModels<AllChannelsViewModel>()
+    private val uploadViewModel by viewModels<UploadProgressViewModel>()
     
     companion object {
         const val INTENT_REFERRAL_REDEEM_MSG = "REFERRAL_REDEEM_MSG"
@@ -151,7 +158,21 @@ class HomeActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        try {
+            connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (checkSelfPermission(Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED) {
+                    connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), heartBeatManager)
+                } else {
+                    Log.e("CONN_", "Connectivity registration failed: network permission denied")
+                }
+            } else {
+                connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), heartBeatManager)
+            }
+        } catch (e: Exception) {
+            Log.e("CONN_", "Connectivity registration failed: ${e.message}")
+        }
+        
         val isDisableScreenshot = !(mPref.screenCaptureEnabledUsers.contains(cPref.deviceId) || mPref.screenCaptureEnabledUsers.contains(mPref.customerId.toString()) || mPref.screenCaptureEnabledUsers.contains(mPref.phoneNumber))
         //disable screen capture
         if (! BuildConfig.DEBUG && isDisableScreenshot) {
@@ -161,7 +182,6 @@ class HomeActivity :
             )
         }
         cPref.isAlreadyForceLoggedOut = false
-//        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         binding = ActivityMainMenuBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.tbar.toolbar)
@@ -232,13 +252,6 @@ class HomeActivity :
 //        }
 //        }
         observe(viewModel.addToPlayListMutableLiveData) { item ->
-//            val playListItems = item.filter {
-//                !it.isLive
-//            }.map {
-//                val uriStr = Channel.createChannel(it).getContentUri(this)
-//                MediaItem.fromUri(uriStr)
-//            }
-
             setPlayList(item)
         }
         observe(mPref.shareableUrlLiveData){
@@ -394,7 +407,6 @@ class HomeActivity :
                 }
             }
         }
-
         appUpdateManager.registerListener(appUpdateListener)
     }
     
@@ -430,7 +442,7 @@ class HomeActivity :
                 return true
             }
             lifecycleScope.launch {
-                if (uploadRepo.getActiveUploadsList().isNotEmpty()) {
+                if (uploadRepo.getUnFinishedUploadsList().isNotEmpty()) {
                     return@launch
                 }
                 navController.navigate(R.id.uploadMethodFragment)
@@ -442,7 +454,7 @@ class HomeActivity :
                 return true
             }
             lifecycleScope.launch {
-                if (uploadRepo.getActiveUploadsList().isNotEmpty()) {
+                if (uploadRepo.getUnFinishedUploadsList().isNotEmpty()) {
                     return@launch
                 }
                 if (navController.currentDestination?.id == R.id.myChannelEditDetailFragment) {
@@ -546,30 +558,26 @@ class HomeActivity :
     fun getNavController() = navController
     fun getHomeViewModel() = viewModel
 
-    private val destinationChangeListener =
-        NavController.OnDestinationChangedListener { controller, _, _ ->
-//            supportFragmentManager.popBackStack(R.id.content_viewer, POP_BACK_STACK_INCLUSIVE)
-
-            if(binding.draggableView.isMaximized()) {
-                minimizePlayer()
-            }
-            closeSearchBarIfOpen()
-
-            // For firebase screenview logging
-            if (controller.currentDestination is FragmentNavigator.Destination) {
-                val currentFragmentClassName =
-                    (controller.currentDestination as FragmentNavigator.Destination)
-                        .className
-                        .substringAfterLast(".")
-
-                val bundle = Bundle()
-                bundle.putString(FirebaseAnalytics.Param.SCREEN_CLASS, currentFragmentClassName)
-                FirebaseAnalytics.getInstance(this@HomeActivity)
-                    .logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle)
-            }
-
-            binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
+    private val destinationChangeListener = NavController.OnDestinationChangedListener { controller, _, _ ->
+        if (binding.draggableView.isMaximized()) {
+            minimizePlayer()
         }
+        closeSearchBarIfOpen()
+
+        // For firebase screenview logging
+        if (controller.currentDestination is FragmentNavigator.Destination) {
+            val currentFragmentClassName = (controller.currentDestination as FragmentNavigator.Destination)
+                .className
+                .substringAfterLast(".")
+
+            val bundle = Bundle()
+            bundle.putString(FirebaseAnalytics.Param.SCREEN_CLASS, currentFragmentClassName)
+            FirebaseAnalytics.getInstance(this@HomeActivity)
+                .logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle)
+        }
+
+        binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
+    }
 
     private fun setupNavController() {
         Log.e("NAV", "SetupNavController")
@@ -583,7 +591,6 @@ class HomeActivity :
                 R.id.menu_tv,
                 R.id.menu_activities,
                 R.id.myChannelHomeFragment,
-
 //                R.id.menu_all_tv_channel,
                 R.id.menu_favorites,
                 R.id.menu_settings,
@@ -600,10 +607,7 @@ class HomeActivity :
         binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
         binding.sideNavigation.setupWithNavController(navController)
         binding.tabNavigator.setupWithNavController(navController)
-//        binding.tabNavigator.setOnNavigationItemReselectedListener {
-//
-//        }
-
+        
         ViewCompat.setOnApplyWindowInsetsListener(binding.bottomAppBar) { _, _ ->
              WindowInsetsCompat.CONSUMED
         }
@@ -630,7 +634,7 @@ class HomeActivity :
     }
 
     override fun resetPlayer() {
-        binding.playerView.setPlayer(player)
+        binding.playerView.player = player
         if(player is CastPlayer) {
             val deviceName = castContext?.sessionManager?.currentCastSession?.castDevice?.friendlyName
             binding.playerView.showCastingText(true, deviceName)
@@ -639,16 +643,11 @@ class HomeActivity :
         }
     }
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-//        setupNavController()
-    }
-
     override fun onPause() {
         super.onPause()
         binding.playerView.clearListeners()
         if (Util.SDK_INT <= 23) {
-            binding.playerView.setPlayer(null)
+            binding.playerView.player = null
         }
     }
 
@@ -674,7 +673,7 @@ class HomeActivity :
     override fun onStop() {
         super.onStop()
         if (Util.SDK_INT > 23) {
-            binding.playerView.setPlayer(null)
+            binding.playerView.player = null
         }
     }
 
@@ -715,15 +714,11 @@ class HomeActivity :
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        return NavigationUI.navigateUp(navController, appbarConfig)
-                || super.onSupportNavigateUp()
+        return NavigationUI.navigateUp(navController, appbarConfig) || super.onSupportNavigateUp()
     }
 
     private fun updateFullScreenState() {
-        val state =
-            resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE ||
-                    binding.playerView.isFullScreen
-
+        val state = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE || binding.playerView.isFullScreen
         binding.playerView.onFullScreen(state)
         binding.playerView.resizeView(calculateScreenWidth(), state)
         setFullScreen(state)// || binding.playerView.channelType != "LIVE")
@@ -734,14 +729,11 @@ class HomeActivity :
         if(visible) {
             WindowCompat.setDecorFitsSystemWindows(window, false)
             WindowInsetsControllerCompat(window, window.decorView).let { controller ->
-                controller.hide(WindowInsetsCompat.Type.statusBars()
-                        or WindowInsetsCompat.Type.navigationBars()
-//                        or WindowInsetsCompat.Type.displayCutout()
+                controller.hide(WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars()
+//                  or WindowInsetsCompat.Type.displayCutout()
                 )
-                controller.systemBarsBehavior =
-                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             }
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 window.attributes = window.attributes.apply {
                     layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
@@ -750,9 +742,8 @@ class HomeActivity :
         } else {
             WindowCompat.setDecorFitsSystemWindows(window, true)
             WindowInsetsControllerCompat(window, window.decorView).let { controller->
-                controller.show(WindowInsetsCompat.Type.statusBars()
-                        or WindowInsetsCompat.Type.navigationBars()
-//                        or WindowInsetsCompat.Type.displayCutout()
+                controller.show(WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars()
+//                  or WindowInsetsCompat.Type.displayCutout()
                 )
             }
 
@@ -858,7 +849,6 @@ class HomeActivity :
         if (Intent.ACTION_SEARCH == intent.action) {
             val query = intent.getStringExtra(SearchManager.QUERY)
             query?.let { handleVoiceSearchEvent(it) }
-
         }
         if(intent.hasExtra(INTENT_PACKAGE_SUBSCRIBED)){
             handlePackageSubscribe()
@@ -895,15 +885,11 @@ class HomeActivity :
     }
 
     private fun handlePackageSubscribe(){
-//        viewModel.getChannelByCategory(0)//reload the channels
         //Clean up stack upto landingPageFragment inclusive
         supportFragmentManager.popBackStack(
             LandingPageFragment::class.java.name,
             POP_BACK_STACK_INCLUSIVE
         )
-        //Reload it again so that we can get updated VOD/Popular channels/Feature contents
-//        supportFragmentManager.beginTransaction().replace(R.id.content_viewer, LandingPageFragment())
-//            .addToBackStack(LandingPageFragment::class.java.name).commit()
     }
 
     private fun loadChannel(channelInfo: ChannelInfo) {
@@ -1105,15 +1091,6 @@ class HomeActivity :
                 fragment.setCurrentChannel(info.currentItem)
             }
         }
-//        val frag = supportFragmentManager.findFragmentById(R.id.details_viewer)
-//        if(frag !is ChannelViewFragment) {
-//            supportFragmentManager.commit {
-//                replace(
-//                    R.id.details_viewer,
-//                    ChannelViewFragment.newInstance(channelInfo)
-//                )
-//            }
-//        }
     }
     
     private fun loadFragmentById(id: Int, fragment: Fragment, tag: String) {
@@ -1126,14 +1103,12 @@ class HomeActivity :
     }
 
     private fun loadFragmentById(id: Int, fragment: Fragment) {
-        supportFragmentManager.beginTransaction()
-            .replace(id, fragment).commit()
+        supportFragmentManager.beginTransaction().replace(id, fragment).commit()
     }
 
     private fun initializeDraggableView() {
         binding.draggableView.addOnPositionChangedListener(this)
         binding.draggableView.addOnPositionChangedListener(binding.playerView)
-
         binding.draggableView.visibility = View.GONE
         binding.draggableView.isClickable = true
     }
@@ -1253,10 +1228,9 @@ class HomeActivity :
 
     override fun onViewMaximize() {
         MedalliaDigital.disableIntercept()
-        requestedOrientation = if(binding.playerView.isAutoRotationEnabled
-            && !binding.playerView.isVideoPortrait)
+        requestedOrientation = if(binding.playerView.isAutoRotationEnabled && !binding.playerView.isVideoPortrait)
             ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
-        else{
+        else {
             ActivityInfo.SCREEN_ORIENTATION_LOCKED
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -1369,6 +1343,11 @@ class HomeActivity :
         viewModelStore.clear()
         appUpdateManager.unregisterListener(appUpdateListener)
         navController.removeOnDestinationChangedListener(destinationChangeListener)
+        try {
+            connectivityManager.unregisterNetworkCallback(heartBeatManager)
+        } catch (e: Exception) {
+            ToffeeAnalytics.logBreadCrumb("connectivity manager unregister error -> ${e.message}")
+        }
         super.onDestroy()
     }
     
@@ -1380,9 +1359,9 @@ class HomeActivity :
                 observeLogout()
                 viewModel.logoutUser()
             }
-            .setNegativeButton(
-                "No"
-            ) { dialog, _ -> dialog.cancel() }
+            .setNegativeButton("No") { dialog, _ -> 
+                dialog.cancel() 
+            }
             .show()
     }
 
@@ -1438,9 +1417,7 @@ class HomeActivity :
     override fun onFullScreenButtonPressed(): Boolean {
         super.onFullScreenButtonPressed()
         requestedOrientation =
-        if(!binding.playerView.isAutoRotationEnabled
-            || binding.playerView.isFullScreen
-            || binding.playerView.isVideoPortrait) {
+        if(!binding.playerView.isAutoRotationEnabled || binding.playerView.isFullScreen || binding.playerView.isVideoPortrait) {
             ActivityInfo.SCREEN_ORIENTATION_LOCKED
         } else {
             ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
@@ -1482,8 +1459,7 @@ class HomeActivity :
             }
         } else if(searchView?.isIconified == false) {
             closeSearchBarIfOpen()
-        }
-        else {
+        } else {
             super.onBackPressed()
         }
     }
@@ -1508,8 +1484,7 @@ class HomeActivity :
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         if (mPref.isVerifiedUser) {
             observe(mPref.profileImageUrlLiveData) {
-                menu?.findItem(R.id.action_avatar)
-                    ?.actionView?.findViewById<ImageView>(R.id.view_avatar)?.loadProfileImage(it)
+                menu?.findItem(R.id.action_avatar)?.actionView?.findViewById<ImageView>(R.id.view_avatar)?.loadProfileImage(it)
             }
         }
         return super.onPrepareOptionsMenu(menu)
@@ -1556,13 +1531,10 @@ class HomeActivity :
         val searchIv = searchView!!.findViewById(androidx.appcompat.R.id.search_button) as ImageView
         searchIv.setImageResource(R.drawable.ic_menu_search)
 
-        val searchBadgeTv =
-            searchView?.findViewById(androidx.appcompat.R.id.search_badge) as TextView
-        searchBadgeTv.background =
-            ContextCompat.getDrawable(this@HomeActivity, R.drawable.ic_menu_search)
+        val searchBadgeTv = searchView?.findViewById(androidx.appcompat.R.id.search_badge) as TextView
+        searchBadgeTv.background = ContextCompat.getDrawable(this@HomeActivity, R.drawable.ic_menu_search)
 
-        val searchAutoComplete: AutoCompleteTextView =
-            searchView!!.findViewById(androidx.appcompat.R.id.search_src_text)
+        val searchAutoComplete: AutoCompleteTextView = searchView!!.findViewById(androidx.appcompat.R.id.search_src_text)
         searchAutoComplete.apply {
             textSize = 18f
             setTextColor(
@@ -1571,8 +1543,7 @@ class HomeActivity :
                     R.color.searchview_input_text_color
                 )
             )
-            background =
-                ContextCompat.getDrawable(this@HomeActivity, R.drawable.searchview_input_bg)
+            background = ContextCompat.getDrawable(this@HomeActivity, R.drawable.searchview_input_bg)
             hint = null
             setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_menu_search, 0)
 
@@ -1636,6 +1607,7 @@ class HomeActivity :
     private fun observeUpload2() {
         binding.homeMiniProgressContainer.addUploadInfoButton.setOnClickListener {
             viewModel.myChannelNavLiveData.value = MyChannelNavParams(mPref.customerId)
+            binding.homeMiniProgressContainer.root.isVisible = false
         }
 
         binding.homeMiniProgressContainer.closeButton.setOnClickListener {
@@ -1666,6 +1638,9 @@ class HomeActivity :
                             binding.homeMiniProgressContainer.miniUploadProgressText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_upload_done, 0, 0, 0)
                             binding.homeMiniProgressContainer.miniUploadProgressText.text = "Upload complete"
                             cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_VIDEOS)
+//                            if (navController.currentDestination?.id == R.id.myChannelHomeFragment) {
+//                                myChannelReloadViewModel.reloadVideos.postValue(true)
+//                            }
                         }
                         UploadStatus.ADDED.value,
                         UploadStatus.STARTED.value -> {

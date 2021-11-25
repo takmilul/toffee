@@ -70,7 +70,7 @@ class MinimizeUploadFragment: BaseFragment() {
                 }
                 setNegativeButtonListener("YES") {
                     UploadService.stopAllUploads()
-                    findNavController().popBackStack(R.id.menu_feed, false)
+                    parentFragment?.findNavController()?.popBackStack(R.id.menu_feed, false)
                     it?.dismiss()
                 }
             }.create().show()

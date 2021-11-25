@@ -16,13 +16,13 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.home.HomeViewModel
 
-abstract class SingleListFragmentV2<T: Any> : Fragment() {
+abstract class SingleListFragment<T: Any> : Fragment() {
 
     private lateinit var scrollListener: EndlessRecyclerViewScrollListener
     private var _binding: FragmentCommonSingleListV2Binding ? = null
     private val binding get() = _binding!!
 
-    protected lateinit var mAdapter: MyBaseAdapterV2<T>
+    protected lateinit var mAdapter: MyBaseAdapter<T>
     protected lateinit var mViewModel: SingleListViewModel<T>
     private val mHomeViewModel by activityViewModels<HomeViewModel>()
 
