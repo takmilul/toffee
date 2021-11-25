@@ -18,6 +18,7 @@ import androidx.core.os.bundleOf
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
 import com.banglalink.toffee.apiservice.ApiRoutes
+import com.banglalink.toffee.apiservice.SetFcmToken
 import com.banglalink.toffee.data.database.entities.NotificationInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.DrmLicenseRepository
@@ -52,25 +53,33 @@ class ToffeeMessagingService : FirebaseMessagingService() {
     private var notificationId = 1
     private val gson: Gson = Gson()
     private val TAG = "ToffeeMessagingService"
+    @Inject lateinit var setFcmToken: SetFcmToken
     @Inject lateinit var mPref: SessionPreference
     @Inject lateinit var cacheManager: CacheManager
     @Inject lateinit var commonPreference: CommonPreference
     private val NOTIFICATION_CHANNEL_NAME = "Toffee Channel"
     @Inject lateinit var drmLicenseRepo: DrmLicenseRepository
     private val coroutineContext = Dispatchers.IO + SupervisorJob()
-    private val imageCoroutineScope = CoroutineScope(coroutineContext)
+    private val coroutineScope = CoroutineScope(coroutineContext)
     @Inject lateinit var notificationInfoRepository: NotificationInfoRepository
     
-    override fun onNewToken(s: String) {
-        super.onNewToken(s)
-        Log.i(TAG, "Token: $s")
+    override fun onNewToken(token: String) {
+        super.onNewToken(token)
+        coroutineScope.launch {
+            try {
+                setFcmToken.execute(token)
+            } catch (e: Exception) {
+                Log.e(TAG, "onNewToken: ${e.message}")
+            }
+        }
+        Log.i(TAG, "Token: $token")
     }
     
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         Log.d(TAG, "From: " + remoteMessage.from!!)
         
         if (remoteMessage.data.isNullOrEmpty()) {
-            imageCoroutineScope.launch {
+            coroutineScope.launch {
                 handleDefaultNotification(
                     remoteMessage.notification?.title,
                     remoteMessage.notification?.body,
@@ -93,7 +102,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                     kickOutUser(data)
                 }
                 NotificationType.DRM_LICENSE_RELEASE.type -> {
-                    imageCoroutineScope.launch {
+                    coroutineScope.launch {
                         releaseAllLicense()
                     }
                 }
@@ -118,7 +127,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                 }
                 NotificationType.CONTENT_REFRESH.type -> {
                     cacheManager.clearCacheByUrl(ApiRoutes.GET_HOME_FEED_VIDEOS)
-                    imageCoroutineScope.launch { 
+                    coroutineScope.launch { 
                         handleNotificationWithOutImage(data)
                     }
                 }
@@ -197,12 +206,12 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             val notificationType = data["notificationType"]
             when {
                 notificationType!!.equals("SMALL", ignoreCase = true) -> {
-                    imageCoroutineScope.launch {
+                    coroutineScope.launch {
                         handleSmallImage(data)
                     }
                 }
                 notificationType.equals("LARGE", ignoreCase = true) -> {
-                    imageCoroutineScope.launch {
+                    coroutineScope.launch {
                         val imageUrl = data["image"]
                         if (imageUrl.isNullOrBlank()) {
                             handleNotificationWithOutImage(data)
@@ -439,7 +448,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                 val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                 notificationManager.notify(notificationId, notification)
             }
+            notificationId++
         }
-        notificationId++
     }
 }
