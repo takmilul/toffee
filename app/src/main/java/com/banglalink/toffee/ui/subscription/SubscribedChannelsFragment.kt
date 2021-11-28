@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.filter
@@ -24,6 +24,7 @@ import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -34,7 +35,7 @@ class SubscribedChannelsFragment : HomeBaseFragment() {
     private var subscribedChannelInfo: UserChannelInfo? = null
     private var _binding: FragmentSubscribedChannelsBinding ? = null
     private val binding get() = _binding!!
-    private val viewModel by viewModels<SubscribedChannelsViewModel>()
+    private val viewModel by activityViewModels<SubscribedChannelsViewModel>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSubscribedChannelsBinding.inflate(inflater, container, false)
@@ -100,8 +101,8 @@ class SubscribedChannelsFragment : HomeBaseFragment() {
     }
 
     private fun observeList() {
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            val content = viewModel.loadUserChannels().map{
+        viewLifecycleOwner.lifecycleScope.launch {
+            val content = viewModel.loadSubscribedChannels().map{
                 it.filter { item -> item.isSubscribed==1 }
             }
             content.collectLatest {

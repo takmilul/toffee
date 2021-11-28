@@ -32,7 +32,7 @@ class SubscribedUserChannelsService @Inject constructor(
 
         return if (response.response.channels != null) {
             response.response.channels.map { 
-                localSync.syncUserChannel(it)
+                localSync.syncSubscribedUserChannels(it)
                 it
             }
         } else emptyList()

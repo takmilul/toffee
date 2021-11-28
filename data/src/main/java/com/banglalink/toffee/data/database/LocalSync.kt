@@ -3,6 +3,7 @@ package com.banglalink.toffee.data.database
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.ReactionStatusItem
+import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.repository.*
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.Reaction
@@ -82,10 +83,18 @@ class LocalSync @Inject constructor(
         userChannel.subscriberCount = maxOf(subscriptionCountRepository.getSubscriberCount(userChannel.channelOwnerId), userChannel.subscriberCount)
     }
     
-    /*suspend fun syncTrendingChannel(userChannel: TrendingChannelInfo){
-        userChannel.isSubscribed = if(subscriptionInfoRepository.getSubscriptionInfoByChannelId(userChannel.channelOwnerId, preference.customerId) != null) 1 else 0
-        userChannel.subscriberCount = subscriptionCountRepository.getSubscriberCount(userChannel.channelOwnerId)
-    }*/
+    suspend fun syncSubscribedUserChannels(userChannel: UserChannelInfo){
+        if(subscriptionInfoRepository.getSubscriptionInfoByChannelId(userChannel.channelOwnerId, preference.customerId) == null) {
+            if (userChannel.isSubscribed == 1) {
+                subscriptionInfoRepository.insert(SubscriptionInfo(null, userChannel.channelOwnerId, preference.customerId))
+            }
+        } else {
+            if (userChannel.isSubscribed == 0) {
+                subscriptionInfoRepository.delete(SubscriptionInfo(null, userChannel.channelOwnerId, preference.customerId))
+            }
+        }
+        userChannel.subscriberCount = maxOf(subscriptionCountRepository.getSubscriberCount(userChannel.channelOwnerId), userChannel.subscriberCount)
+    }
     
     private fun getReactionStatus(channelInfo: ChannelInfo, rl: List<ReactionStatusItem>): ReactionStatus? {
         val reactionStatus = ReactionStatus(0, channelInfo.id.toLong())
