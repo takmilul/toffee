@@ -17,15 +17,11 @@ class AllUserChannelsListViewModel @Inject constructor(
     private val popularChannelApiService: AllUserChannelsService,
 ) : ViewModel() {
     
-    fun loadUserChannels(): Flow<PagingData<UserChannelInfo>> {
-        return userChannelRepo.getList().cachedIn(viewModelScope)
-    }
-    
-    private val userChannelRepo by lazy {
-        BaseListRepositoryImpl({
+    fun loadUserChannels(initialPage: Int = 0): Flow<PagingData<UserChannelInfo>> {
+        return BaseListRepositoryImpl({
             BaseNetworkPagingSource(
-                popularChannelApiService
+                popularChannelApiService, initialPage
             )
-        })
+        }).getList().cachedIn(viewModelScope)
     }
 }
