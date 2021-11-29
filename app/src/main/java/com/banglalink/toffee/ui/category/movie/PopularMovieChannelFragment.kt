@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.filter
 import androidx.paging.map
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
@@ -20,6 +21,7 @@ import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.landing.ChannelAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 
 @AndroidEntryPoint
 class PopularMovieChannelFragment : BaseFragment() {
@@ -65,7 +67,9 @@ class PopularMovieChannelFragment : BaseFragment() {
 
     private fun observeList() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.loadPopularMovieChannels.collectLatest {
+            viewModel.loadPopularMovieChannels.map { 
+                it.filter { it.channelInfo?.isExpired == false }
+            }.collectLatest {
                 val channelList = it.map { tvItem ->
                     tvItem.channelInfo!!
                 }

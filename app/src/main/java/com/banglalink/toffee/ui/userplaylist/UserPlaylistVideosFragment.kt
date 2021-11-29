@@ -14,6 +14,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
+import androidx.paging.filter
 import androidx.paging.map
 import androidx.recyclerview.widget.ConcatAdapter
 import com.banglalink.toffee.R
@@ -44,6 +45,7 @@ import com.banglalink.toffee.ui.widget.MyPopupWindow
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -197,7 +199,9 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
 
     private fun observeVideoList() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            mViewModel.getMyChannelUserPlaylistVideos(requestParams).collectLatest {
+            mViewModel.getMyChannelUserPlaylistVideos(requestParams).map {
+                it.filter { !it.isExpired }
+            }.collectLatest {
                 playlistAdapter.submitData(it.map { channel ->
                     localSync.syncData(channel, LocalSync.SYNC_FLAG_FAVORITE or LocalSync.SYNC_FLAG_VIEW_COUNT)
                     channel

@@ -102,10 +102,9 @@ class SubscribedChannelsFragment : HomeBaseFragment() {
 
     private fun observeList() {
         viewLifecycleOwner.lifecycleScope.launch {
-            val content = viewModel.loadSubscribedChannels().map{
+            viewModel.loadSubscribedChannels().map{
                 it.filter { item -> item.isSubscribed==1 }
-            }
-            content.collectLatest {
+            }.collectLatest {
                 mAdapter.submitData(it)
             }
             binding.totalSubscriptionsTextView.setText(mAdapter.itemCount)

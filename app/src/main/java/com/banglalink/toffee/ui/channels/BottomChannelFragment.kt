@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.filter
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.databinding.FragmentBottomTvChannelsBinding
@@ -15,6 +16,7 @@ import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.util.BindingUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -56,7 +58,9 @@ class BottomChannelFragment: BaseFragment() {
 
     private fun observeList() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.loadAllChannels().collectLatest {
+            viewModel.loadAllChannels().map {
+                it.filter { it.channelInfo?.isExpired == false }
+            }.collectLatest {
                 mAdapter.submitData(it)
             }
         }

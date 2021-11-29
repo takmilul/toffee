@@ -70,7 +70,7 @@ class MovieViewModel @Inject constructor(
             )
 
             thrillerMoviesResponse.value = response?.subCategoryWiseContent?.find { it.subCategoryName == "Thriller" }?.let {
-                it.channels?.map { cinfo->
+                it.channels?.filter { !it.isExpired }?.map { cinfo->
                     cinfo.categoryId = 1
                     cinfo.viewProgress = viewProgressRepo.getProgressByContent(cinfo.id.toLong())?.progress ?: 0L
                     cinfo
@@ -83,7 +83,7 @@ class MovieViewModel @Inject constructor(
             }
 
             actionMoviesResponse.value = response?.subCategoryWiseContent?.find { it.subCategoryName == "Action" }?.let {
-                it.channels?.map { cinfo->
+                it.channels?.filter { !it.isExpired }?.map { cinfo->
                     cinfo.categoryId = 1
                     cinfo.viewProgress = viewProgressRepo.getProgressByContent(cinfo.id.toLong())?.progress ?: 0L
                     cinfo
@@ -96,7 +96,7 @@ class MovieViewModel @Inject constructor(
             }
 
             romanticMoviesResponse.value = response?.subCategoryWiseContent?.find { it.subCategoryName == "Romance" }?.let {
-                it.channels?.map { cinfo->
+                it.channels?.filter { !it.isExpired }?.map { cinfo->
                     cinfo.categoryId = 1
                     cinfo.viewProgress = viewProgressRepo.getProgressByContent(cinfo.id.toLong())?.progress ?: 0L
                     cinfo
@@ -109,7 +109,7 @@ class MovieViewModel @Inject constructor(
             }
 
             banglaMoviesResponse.value = response?.subCategoryWiseContent?.find { it.subCategoryName == "Bangla" }?.let {
-                it.channels?.map { cinfo->
+                it.channels?.filter { !it.isExpired }?.map { cinfo->
                     cinfo.categoryId = 1
                     cinfo.viewProgress = viewProgressRepo.getProgressByContent(cinfo.id.toLong())?.progress ?: 0L
                     cinfo
@@ -122,7 +122,7 @@ class MovieViewModel @Inject constructor(
             }
 
             englishMoviesResponse.value = response?.subCategoryWiseContent?.find { it.subCategoryName == "English" }?.let {
-                it.channels?.map { cinfo->
+                it.channels?.filter { !it.isExpired }?.map { cinfo->
                     cinfo.categoryId = 1
                     cinfo.viewProgress = viewProgressRepo.getProgressByContent(cinfo.id.toLong())?.progress ?: 0L
                     cinfo
@@ -139,7 +139,7 @@ class MovieViewModel @Inject constructor(
     val loadMoviePreviews by lazy{
         viewModelScope.launch {
             moviePreviewsResponse.value = try {
-                moviePreviewsService.loadData("VOD", 0, 0, 10, 0).map {
+                moviePreviewsService.loadData("VOD", 0, 0, 10, 0).filter { !it.isExpired }.map {
                     it.categoryId = 1
                     it.viewProgress = viewProgressRepo.getProgressByContent(it.id.toLong())?.progress ?: 0L
                     it
@@ -162,7 +162,7 @@ class MovieViewModel @Inject constructor(
         viewModelScope.launch {
             trendingNowMoviesResponse.value = try {
                 val response = trendingNowService.create(LandingUserChannelsRequestParam("VOD", 1, 0, false)).loadData(0, 10)
-                response.map {
+                response.filter { !it.isExpired }.map {
                     it.categoryId = 1
                     it.viewProgress = viewProgressRepo.getProgressByContent(it.id.toLong())?.progress ?: 0L
                     it
@@ -187,7 +187,7 @@ class MovieViewModel @Inject constructor(
             telefilmsResponse.value =  try{
                 getContentAssistedFactory.create(
                     ChannelRequestParams("", 1, "", 90, "VOD")
-                ).loadData(0,10).map {
+                ).loadData(0,10).filter { !it.isExpired }.map {
                     it.categoryId = 1
                     it.viewProgress = viewProgressRepo.getProgressByContent(it.id.toLong())?.progress ?: 0L
                     it
@@ -227,7 +227,7 @@ class MovieViewModel @Inject constructor(
     fun getContinueWatchingFlow(catId: Int): Flow<List<ChannelInfo>> {
         return continueWatchingRepo.getAllItemsByCategory(catId).map {
             it.mapNotNull { item ->
-                item.channelInfo
+                if(item.channelInfo?.isExpired == false) item.channelInfo else null
             }.apply {
                 continueWatchingFlag = isNotEmpty()
                 moviesContentCardsResponse.value = moviesContentCardsResponse.value?.apply { 

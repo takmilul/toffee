@@ -21,6 +21,7 @@ import com.banglalink.toffee.util.BindingUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEmpty
 import javax.inject.Inject
 
@@ -104,6 +105,9 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             with(channelViewModel(0)){
+                map {
+                    it.filter { it.channelInfo?.isExpired == false }
+                }
                 collectLatest { tvList ->
                     val res = tvList.groupBy { it.categoryName }.map {
                         val categoryName = it.key

@@ -113,12 +113,12 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
         top = topView.top - binding.userChannelList.paddingTop
     }
     
-    override fun onResume() {
-        super.onResume()
-        if (index != -1) {
-            binding.userChannelList.smoothScrollToPosition(index)
-        }
-    }
+//    override fun onResume() {
+//        super.onResume()
+//        if (index != -1) {
+//            binding.userChannelList.smoothScrollToPosition(index)
+//        }
+//    }
     
     private fun observeList(index: Int) {
         viewLifecycleOwner.lifecycleScope.launch {

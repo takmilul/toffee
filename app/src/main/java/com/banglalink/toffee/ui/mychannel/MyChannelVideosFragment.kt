@@ -15,6 +15,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
+import androidx.paging.filter
 import com.banglalink.toffee.R
 import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
@@ -34,6 +35,7 @@ import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -109,7 +111,9 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
     
     private fun observeMyChannelVideos() {
         viewLifecycleOwner.lifecycleScope.launch {
-            mViewModel.getMyChannelVideos(channelOwnerId).collectLatest {
+            mViewModel.getMyChannelVideos(channelOwnerId).map {
+                it.filter { !it.isExpired }
+            }.collectLatest {
                 mAdapter.submitData(it)
             }
         }
