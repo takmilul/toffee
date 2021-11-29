@@ -16,7 +16,6 @@ import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.util.BindingUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -58,10 +57,8 @@ class BottomChannelFragment: BaseFragment() {
 
     private fun observeList() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.loadAllChannels().map {
-                it.filter { it.channelInfo?.isExpired == false }
-            }.collectLatest {
-                mAdapter.submitData(it)
+            viewModel.loadAllChannels().collectLatest {
+                mAdapter.submitData(it.filter { it.channelInfo?.isExpired == false })
             }
         }
 

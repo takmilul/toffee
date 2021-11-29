@@ -21,7 +21,6 @@ import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.landing.ChannelAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.map
 
 @AndroidEntryPoint
 class PopularMovieChannelFragment : BaseFragment() {
@@ -67,13 +66,10 @@ class PopularMovieChannelFragment : BaseFragment() {
 
     private fun observeList() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.loadPopularMovieChannels.map { 
-                it.filter { it.channelInfo?.isExpired == false }
-            }.collectLatest {
-                val channelList = it.map { tvItem ->
+            viewModel.loadPopularMovieChannels.collectLatest {
+                mAdapter.submitData(it.filter { it.channelInfo?.isExpired == false }.map { tvItem ->
                     tvItem.channelInfo!!
-                }
-                mAdapter.submitData(channelList)
+                })
             }
         }
     }

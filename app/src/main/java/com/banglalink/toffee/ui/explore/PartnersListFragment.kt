@@ -16,7 +16,6 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.map
 
 class PartnersListFragment : BaseFragment(), BaseListItemCallback<ChannelInfo> {
     private lateinit var mAdapter: PartnersListAdapter
@@ -61,10 +60,8 @@ class PartnersListFragment : BaseFragment(), BaseListItemCallback<ChannelInfo> {
     
     private fun observePartners() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.getPartnersList.map {
-                it.filter { !it.isExpired }
-            }.collectLatest {
-                mAdapter.submitData(it)
+            viewModel.getPartnersList.collectLatest {
+                mAdapter.submitData(it.filter { !it.isExpired })
             }
         }
     }

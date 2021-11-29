@@ -35,7 +35,6 @@ import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -111,10 +110,8 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
     
     private fun observeMyChannelVideos() {
         viewLifecycleOwner.lifecycleScope.launch {
-            mViewModel.getMyChannelVideos(channelOwnerId).map {
-                it.filter { !it.isExpired }
-            }.collectLatest {
-                mAdapter.submitData(it)
+            mViewModel.getMyChannelVideos(channelOwnerId).collectLatest {
+                mAdapter.submitData(it.filter { !it.isExpired })
             }
         }
     }

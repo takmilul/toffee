@@ -23,7 +23,6 @@ import com.banglalink.toffee.ui.common.UnSubscribeDialog
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -102,10 +101,8 @@ class SubscribedChannelsFragment : HomeBaseFragment() {
 
     private fun observeList() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.loadSubscribedChannels().map{
-                it.filter { item -> item.isSubscribed==1 }
-            }.collectLatest {
-                mAdapter.submitData(it)
+            viewModel.loadSubscribedChannels().collectLatest {
+                mAdapter.submitData(it.filter { item -> item.isSubscribed==1 })
             }
             binding.totalSubscriptionsTextView.setText(mAdapter.itemCount)
         }

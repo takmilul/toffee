@@ -28,7 +28,6 @@ import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.map
 
 class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<ChannelInfo> {
 
@@ -127,20 +126,16 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
 
     private fun observeTrendingVideosList(categoryId: Int, subCategoryId: Int = 0) {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            landingPageViewModel.loadMostPopularVideos(categoryId, subCategoryId).map { 
-                it.filter { !it.isExpired }
-            }.collectLatest {
-                mAdapter.submitData(it)
+            landingPageViewModel.loadMostPopularVideos(categoryId, subCategoryId).collectLatest {
+                mAdapter.submitData(it.filter { !it.isExpired })
             }
         }
     }
 
     private fun observeLatestVideosList(categoryId: Int, subCategoryId: Int = 0, isFilter: Int = 0, hashTag: String = "null") {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.loadDramaSeriesContents(categoryId, subCategoryId, isFilter, hashTag).map { 
-                it.filter { !it.isExpired }
-            }.collectLatest {
-                mAdapter.submitData(it)
+            viewModel.loadDramaSeriesContents(categoryId, subCategoryId, isFilter, hashTag).collectLatest {
+                mAdapter.submitData(it.filter { !it.isExpired })
             }
         }
     }

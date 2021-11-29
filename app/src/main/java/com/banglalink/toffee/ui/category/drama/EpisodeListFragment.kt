@@ -252,10 +252,8 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
                     seriesInfo.seriesId,
                     currentSeasonNo
                 )
-            ).map {
-                it.filter { !it.isExpired }
-            }.collectLatest {
-                mAdapter.submitData(it)
+            ).collectLatest {
+                mAdapter.submitData(it.filter { !it.isExpired })
             }
         }
     }

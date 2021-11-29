@@ -18,7 +18,6 @@ import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.map
 
 abstract class BaseListFragment<T: Any>: BaseFragment() {
     protected abstract val mAdapter: BasePagingDataAdapter<T>
@@ -120,10 +119,8 @@ abstract class BaseListFragment<T: Any>: BaseFragment() {
 
     private fun observeList() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            mViewModel.getListData.map {
-                it.filter { !(it is ChannelInfo && it.isExpired) }
-            }.collectLatest {
-                mAdapter.submitData(it)
+            mViewModel.getListData.collectLatest {
+                mAdapter.submitData(it.filter { !(it is ChannelInfo && it.isExpired) })
             }
         }
     }

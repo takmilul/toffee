@@ -45,7 +45,6 @@ import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -179,20 +178,16 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         listJob?.cancel()
         listJob = viewLifecycleOwner.lifecycleScope.launch {
             if (categoryId == 0) {
-                viewModel.loadLatestVideos().map {
-                    it.filter { !it.isExpired }
-                }.collectLatest {
-                    mAdapter.submitData(it.map { channel->
+                viewModel.loadLatestVideos().collectLatest {
+                    mAdapter.submitData(it.filter { !it.isExpired }.map { channel->
                         localSync.syncData(channel)
                         channel
                     })
                 }
             }
             else {
-                viewModel.loadLatestVideosByCategory(categoryId, subCategoryId).map { 
-                    it.filter { !it.isExpired }
-                }.collectLatest {
-                    mAdapter.submitData(it.map { channel->
+                viewModel.loadLatestVideosByCategory(categoryId, subCategoryId).collectLatest {
+                    mAdapter.submitData(it.filter { !it.isExpired }.map { channel->
                         localSync.syncData(channel)
                         channel
                     })
@@ -204,10 +199,8 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
     private fun observeTrendingVideosList(categoryId: Int, subCategoryId: Int = 0) {
         listJob?.cancel()
         listJob = viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.loadMostPopularVideos(categoryId, subCategoryId).map {
-                it.filter { !it.isExpired }
-            }.collectLatest {
-                mAdapter.submitData(it.map { channel->
+            viewModel.loadMostPopularVideos(categoryId, subCategoryId).collectLatest {
+                mAdapter.submitData(it.filter { !it.isExpired }.map { channel->
                     localSync.syncData(channel)
                     channel
                 })
