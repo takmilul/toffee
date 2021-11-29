@@ -24,12 +24,6 @@ abstract class MyBaseAdapter<T: Any>(val callback: BaseListItemCallback<T>? = nu
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val obj = getObjForPosition(position)
-        if (obj is ChannelInfo && obj.isExpired) {
-            with (holder.binding.root) {
-                isVisible = false
-                layoutParams = LinearLayout.LayoutParams(0, 0)
-            }
-        }
         holder.bind(obj, callback, position)
     }
 

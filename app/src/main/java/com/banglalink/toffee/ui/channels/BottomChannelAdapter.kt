@@ -24,12 +24,6 @@ class BottomChannelAdapter(
         val obj = getItem(position)
         obj?.let {
             if(it.channelInfo != null) {
-                if (it.channelInfo!!.isExpired) {
-                    with (holder.imageView) {
-                        isVisible = false
-                        layoutParams = LinearLayout.LayoutParams(0, 0)
-                    }
-                }
                 bindingUtil.bindChannel(holder.imageView, it.channelInfo!!)
                 if (it.channelInfo!!.id == selectedItem?.id.toString()) {
                     holder.imageView.borderWidth = 4.px
