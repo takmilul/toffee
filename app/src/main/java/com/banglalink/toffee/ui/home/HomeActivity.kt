@@ -54,7 +54,6 @@ import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
-import com.banglalink.toffee.data.repository.SubscriptionInfoRepository
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
 import com.banglalink.toffee.di.AppCoroutineScope
@@ -76,7 +75,6 @@ import com.banglalink.toffee.ui.player.PlaylistManager
 import com.banglalink.toffee.ui.profile.ViewProfileViewModel
 import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.splash.SplashScreenActivity
-import com.banglalink.toffee.ui.subscription.SubscribedChannelsViewModel
 import com.banglalink.toffee.ui.upload.UploadProgressViewModel
 import com.banglalink.toffee.ui.upload.UploadStateManager
 import com.banglalink.toffee.ui.userplaylist.UserPlaylistVideosFragment
@@ -145,12 +143,10 @@ class HomeActivity :
     @Inject @AppCoroutineScope lateinit var appScope: CoroutineScope
     @Inject lateinit var notificationRepo: NotificationInfoRepository
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
-    @Inject lateinit var subscriptionInfoRepository: SubscriptionInfoRepository
     private val profileViewModel by viewModels<ViewProfileViewModel>()
     private val allChannelViewModel by viewModels<AllChannelsViewModel>()
     private val uploadViewModel by viewModels<UploadProgressViewModel>()
     private val myChannelReloadViewModel by viewModels<MyChannelReloadViewModel>()
-    private val subscribedChannelsViewModel by viewModels<SubscribedChannelsViewModel>()
     
     companion object {
         const val INTENT_REFERRAL_REDEEM_MSG = "REFERRAL_REDEEM_MSG"
@@ -297,11 +293,6 @@ class HomeActivity :
                     it?.dismiss()
                 }
             ).create().show()
-        }
-        lifecycleScope.launch {
-            if (mPref.isVerifiedUser && subscriptionInfoRepository.getAllSubscriptionInfo().isNullOrEmpty()) {
-                subscribedChannelsViewModel.syncSubscribedChannels()
-            }
         }
         initSideNav()
         lifecycle.addObserver(heartBeatManager)
