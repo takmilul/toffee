@@ -14,6 +14,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
+import androidx.paging.filter
 import androidx.paging.map
 import androidx.recyclerview.widget.ConcatAdapter
 import com.banglalink.toffee.R
@@ -198,7 +199,7 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
     private fun observeVideoList() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             mViewModel.getMyChannelUserPlaylistVideos(requestParams).collectLatest {
-                playlistAdapter.submitData(it.map { channel ->
+                playlistAdapter.submitData(it.filter { !it.isExpired }.map { channel ->
                     localSync.syncData(channel, LocalSync.SYNC_FLAG_FAVORITE or LocalSync.SYNC_FLAG_VIEW_COUNT)
                     channel
                 })

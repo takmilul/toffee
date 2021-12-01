@@ -9,6 +9,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentAllUserChannelsListBinding
@@ -32,7 +34,8 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class AllUserChannelsListFragment : HomeBaseFragment() {
-    
+    private var top = -1
+    private var index = -1
     private var categoryInfo: Category? = null
     @Inject lateinit var cacheManager: CacheManager
     private var trendingChannelInfo: UserChannelInfo? = null
@@ -62,38 +65,21 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
 
             override fun onSubscribeButtonClicked(view: View, info: UserChannelInfo) {
                 requireActivity().checkVerification {
-//                trendingChannelInfo = info
                     if (info.isSubscribed == 0) {
                         trendingChannelInfo = info.also {
                             it.isSubscribed = 1
                             it.subscriberCount++
                         }
                         mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, trendingChannelInfo)
-                        homeViewModel.sendSubscriptionStatus(
-                            SubscriptionInfo(
-                                null,
-                                info.channelOwnerId,
-                                mPref.customerId
-                            ), 1
-                        )
+                        homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId), 1)
                     } else {
                         UnSubscribeDialog.show(requireContext()) {
                             trendingChannelInfo = info.also {
                                 it.isSubscribed = 0
                                 it.subscriberCount--
                             }
-                            mAdapter.notifyItemRangeChanged(
-                                0,
-                                mAdapter.itemCount,
-                                trendingChannelInfo
-                            )
-                            homeViewModel.sendSubscriptionStatus(
-                                SubscriptionInfo(
-                                    null,
-                                    info.channelOwnerId,
-                                    mPref.customerId
-                                ), -1
-                            )
+                            mAdapter.notifyItemRangeChanged(0, mAdapter.itemCount, trendingChannelInfo)
+                            homeViewModel.sendSubscriptionStatus(SubscriptionInfo(null, info.channelOwnerId, mPref.customerId), -1)
                         }
                     }
                 }
@@ -114,14 +100,29 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
             }
             userChannelList.adapter = mAdapter
             userChannelList.setHasFixedSize(true)
+            userChannelList.adapter?.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         }
-        observeList()
+        observeList(index)
 //        observeSubscribeChannel()
     }
 
-    private fun observeList() {
+    override fun onPause() {
+        super.onPause()
+        index = (binding.userChannelList.layoutManager as GridLayoutManager).findFirstVisibleItemPosition()
+        val topView: View = binding.userChannelList.getChildAt(0)
+        top = topView.top - binding.userChannelList.paddingTop
+    }
+    
+//    override fun onResume() {
+//        super.onResume()
+//        if (index != -1) {
+//            binding.userChannelList.smoothScrollToPosition(index)
+//        }
+//    }
+    
+    private fun observeList(index: Int) {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.loadUserChannels().collectLatest {
+            viewModel.loadUserChannels(index.div(30)).collectLatest {
                 mAdapter.submitData(it)
             }
         }

@@ -29,12 +29,6 @@ open class BasePagingDataAdapter<T: Any>(
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         val obj = getItem(position)
         obj?.let {
-            if (it is ChannelInfo && it.isExpired) {
-                with (holder.binding.root) {
-                    isVisible = false
-                    layoutParams = LinearLayout.LayoutParams(0, 0)
-                }
-            }
             holder.bind(obj, callback, position)
         }
     }

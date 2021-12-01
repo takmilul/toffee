@@ -4,11 +4,11 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.banglalink.toffee.apiservice.BaseApiService
 
-class BaseNetworkPagingSource<T: Any>(private val service: BaseApiService<T>): PagingSource<Int, T>() {
+class BaseNetworkPagingSource<T: Any>(private val service: BaseApiService<T>, private val initialPage: Int = 0): PagingSource<Int, T>() {
     override fun getRefreshKey(state: PagingState<Int, T>): Int? = null
     
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, T> {
-        val page = params.key ?: 0
+        val page = params.key ?: initialPage
         return try {
             val resp = service.loadData(page * params.loadSize, params.loadSize)
             LoadResult.Page(

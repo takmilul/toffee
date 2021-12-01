@@ -13,6 +13,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
+import androidx.paging.filter
 import com.banglalink.toffee.R
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentLandingTvChannelsBinding
@@ -104,7 +105,7 @@ class PopularTVChannelsFragment : HomeBaseFragment(), BaseListItemCallback<Chann
     private fun observeList() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.loadChannels.collectLatest {
-                mAdapter.submitData(it)
+                mAdapter.submitData(it.filter { !it.isExpired })
             }
         }
     }

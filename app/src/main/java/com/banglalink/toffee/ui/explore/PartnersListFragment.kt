@@ -8,6 +8,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.filter
 import androidx.recyclerview.widget.GridLayoutManager
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentPartnersListBinding
@@ -60,7 +61,7 @@ class PartnersListFragment : BaseFragment(), BaseListItemCallback<ChannelInfo> {
     private fun observePartners() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.getPartnersList.collectLatest {
-                mAdapter.submitData(it)
+                mAdapter.submitData(it.filter { !it.isExpired })
             }
         }
     }

@@ -143,10 +143,10 @@ class HomeActivity :
     @Inject @AppCoroutineScope lateinit var appScope: CoroutineScope
     @Inject lateinit var notificationRepo: NotificationInfoRepository
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
-    private val myChannelReloadViewModel by viewModels<MyChannelReloadViewModel>()
     private val profileViewModel by viewModels<ViewProfileViewModel>()
     private val allChannelViewModel by viewModels<AllChannelsViewModel>()
     private val uploadViewModel by viewModels<UploadProgressViewModel>()
+    private val myChannelReloadViewModel by viewModels<MyChannelReloadViewModel>()
     
     companion object {
         const val INTENT_REFERRAL_REDEEM_MSG = "REFERRAL_REDEEM_MSG"
@@ -172,7 +172,6 @@ class HomeActivity :
         } catch (e: Exception) {
             Log.e("CONN_", "Connectivity registration failed: ${e.message}")
         }
-        
         val isDisableScreenshot = !(mPref.screenCaptureEnabledUsers.contains(cPref.deviceId) || mPref.screenCaptureEnabledUsers.contains(mPref.customerId.toString()) || mPref.screenCaptureEnabledUsers.contains(mPref.phoneNumber))
         //disable screen capture
         if (! BuildConfig.DEBUG && isDisableScreenshot) {
@@ -208,7 +207,6 @@ class HomeActivity :
             mPref.mqttUserName = ""
             mPref.mqttPassword = ""
         }
-        
         observe(viewModel.fragmentDetailsMutableLiveData) {
             onDetailsFragmentLoad(it)
         }

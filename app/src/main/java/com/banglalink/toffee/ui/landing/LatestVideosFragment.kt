@@ -19,6 +19,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
+import androidx.paging.filter
 import androidx.paging.map
 import com.banglalink.toffee.R
 import com.banglalink.toffee.R.string
@@ -178,7 +179,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         listJob = viewLifecycleOwner.lifecycleScope.launch {
             if (categoryId == 0) {
                 viewModel.loadLatestVideos().collectLatest {
-                    mAdapter.submitData(it.map { channel->
+                    mAdapter.submitData(it.filter { !it.isExpired }.map { channel->
                         localSync.syncData(channel)
                         channel
                     })
@@ -186,7 +187,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
             }
             else {
                 viewModel.loadLatestVideosByCategory(categoryId, subCategoryId).collectLatest {
-                    mAdapter.submitData(it.map { channel->
+                    mAdapter.submitData(it.filter { !it.isExpired }.map { channel->
                         localSync.syncData(channel)
                         channel
                     })
@@ -199,7 +200,7 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
         listJob?.cancel()
         listJob = viewLifecycleOwner.lifecycleScope.launch {
             viewModel.loadMostPopularVideos(categoryId, subCategoryId).collectLatest {
-                mAdapter.submitData(it.map { channel->
+                mAdapter.submitData(it.filter { !it.isExpired }.map { channel->
                     localSync.syncData(channel)
                     channel
                 })

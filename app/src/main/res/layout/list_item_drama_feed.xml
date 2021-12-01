@@ -90,6 +90,7 @@
             android:text="@{data.formattedDuration}"
             android:textColor="@android:color/white"
             android:textSize="@dimen/duration_text_size"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/progress"
             app:layout_constraintEnd_toEndOf="@+id/poster"
             tools:text="00:00" />

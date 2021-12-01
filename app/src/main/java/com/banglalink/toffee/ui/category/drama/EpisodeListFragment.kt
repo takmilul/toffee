@@ -12,6 +12,7 @@ import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
+import androidx.paging.filter
 import androidx.recyclerview.widget.ConcatAdapter
 import com.banglalink.toffee.R
 import com.banglalink.toffee.apiservice.DramaSeasonRequestParam
@@ -250,10 +251,10 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
                     seriesInfo.type,
                     seriesInfo.seriesId,
                     currentSeasonNo
-                ))
-                .collectLatest {
-                    mAdapter.submitData(it)
-                }
+                )
+            ).collectLatest {
+                mAdapter.submitData(it.filter { !it.isExpired })
+            }
         }
     }
 

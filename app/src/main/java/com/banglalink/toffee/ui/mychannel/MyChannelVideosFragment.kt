@@ -15,6 +15,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
+import androidx.paging.filter
 import com.banglalink.toffee.R
 import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
@@ -110,7 +111,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
     private fun observeMyChannelVideos() {
         viewLifecycleOwner.lifecycleScope.launch {
             mViewModel.getMyChannelVideos(channelOwnerId).collectLatest {
-                mAdapter.submitData(it)
+                mAdapter.submitData(it.filter { !it.isExpired })
             }
         }
     }

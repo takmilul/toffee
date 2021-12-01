@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.filter
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.data.database.entities.TVChannelItem
 import com.banglalink.toffee.databinding.FragmentBottomTvChannelsBinding
@@ -57,7 +58,7 @@ class BottomChannelFragment: BaseFragment() {
     private fun observeList() {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.loadAllChannels().collectLatest {
-                mAdapter.submitData(it)
+                mAdapter.submitData(it.filter { it.channelInfo?.isExpired == false })
             }
         }
 

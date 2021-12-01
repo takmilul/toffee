@@ -10,6 +10,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
+import androidx.paging.filter
 import com.banglalink.toffee.R.string
 import com.banglalink.toffee.common.paging.ProviderIconCallback
 import com.banglalink.toffee.databinding.FragmentDramaSeriesContentBinding
@@ -126,7 +127,7 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
     private fun observeTrendingVideosList(categoryId: Int, subCategoryId: Int = 0) {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             landingPageViewModel.loadMostPopularVideos(categoryId, subCategoryId).collectLatest {
-                mAdapter.submitData(it)
+                mAdapter.submitData(it.filter { !it.isExpired })
             }
         }
     }
@@ -134,7 +135,7 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
     private fun observeLatestVideosList(categoryId: Int, subCategoryId: Int = 0, isFilter: Int = 0, hashTag: String = "null") {
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.loadDramaSeriesContents(categoryId, subCategoryId, isFilter, hashTag).collectLatest {
-                mAdapter.submitData(it)
+                mAdapter.submitData(it.filter { !it.isExpired })
             }
         }
     }
