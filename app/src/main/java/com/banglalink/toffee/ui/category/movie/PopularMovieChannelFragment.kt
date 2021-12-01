@@ -21,6 +21,7 @@ import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.landing.ChannelAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class PopularMovieChannelFragment : BaseFragment() {
@@ -65,7 +66,7 @@ class PopularMovieChannelFragment : BaseFragment() {
     }
 
     private fun observeList() {
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.loadPopularMovieChannels.collectLatest {
                 mAdapter.submitData(it.filter { it.channelInfo?.isExpired == false }.map { tvItem ->
                     tvItem.channelInfo!!

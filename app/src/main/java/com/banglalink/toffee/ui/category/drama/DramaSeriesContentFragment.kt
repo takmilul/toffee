@@ -28,6 +28,7 @@ import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.ui.player.AddToPlaylistData
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<ChannelInfo> {
 
@@ -70,9 +71,7 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
             }
         }
         observe(landingPageViewModel.selectedHashTag) {
-            lifecycleScope.launchWhenCreated {
-                observeLatestVideosList(category?.id?.toInt() ?: 9, landingPageViewModel.subCategoryId.value ?: 0, 1, it)
-            }
+            observeLatestVideosList(category?.id?.toInt() ?: 9, landingPageViewModel.subCategoryId.value ?: 0, 1, it)
         }
         observeLatestVideosList(category?.id?.toInt() ?: 0)
         
@@ -125,7 +124,7 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
     }
 
     private fun observeTrendingVideosList(categoryId: Int, subCategoryId: Int = 0) {
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launch {
             landingPageViewModel.loadMostPopularVideos(categoryId, subCategoryId).collectLatest {
                 mAdapter.submitData(it.filter { !it.isExpired })
             }
@@ -133,7 +132,7 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
     }
 
     private fun observeLatestVideosList(categoryId: Int, subCategoryId: Int = 0, isFilter: Int = 0, hashTag: String = "null") {
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.loadDramaSeriesContents(categoryId, subCategoryId, isFilter, hashTag).collectLatest {
                 mAdapter.submitData(it.filter { !it.isExpired })
             }

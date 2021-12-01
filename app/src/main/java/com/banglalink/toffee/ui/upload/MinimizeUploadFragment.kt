@@ -16,6 +16,7 @@ import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.UtilsKt
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import net.gotev.uploadservice.UploadService
 import javax.inject.Inject
 
@@ -84,7 +85,7 @@ class MinimizeUploadFragment: BaseFragment() {
     }
 
     private fun observeUpload() {
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launch {
             uploadRepo.getUploadFlowById(uploadIdLong).collectLatest { uploadInfo ->
                 when(uploadInfo?.status) {
                     UploadStatus.SUCCESS.value,

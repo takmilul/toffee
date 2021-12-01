@@ -197,7 +197,7 @@ class UserPlaylistVideosFragment : BaseFragment(), MyChannelPlaylistItemListener
     }
 
     private fun observeVideoList() {
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launch {
             mViewModel.getMyChannelUserPlaylistVideos(requestParams).collectLatest {
                 playlistAdapter.submitData(it.filter { !it.isExpired }.map { channel ->
                     localSync.syncData(channel, LocalSync.SYNC_FLAG_FAVORITE or LocalSync.SYNC_FLAG_VIEW_COUNT)
