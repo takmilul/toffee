@@ -108,7 +108,7 @@ class LandingUserChannelsFragment : HomeBaseFragment(), LandingPopularChannelCal
     
     private fun observeSubscribedChannels() {
         lifecycleScope.launch {
-            if (mPref.isVerifiedUser && subscriptionInfoRepository.getAllSubscriptionInfo().isNullOrEmpty()) {
+            if (mPref.isVerifiedUser && subscribedChannelsViewModel.subscribedChannelLiveData.value == null) {
                 observe(subscribedChannelsViewModel.subscribedChannelLiveData) {
                     observeList()
                 }
