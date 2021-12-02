@@ -18,7 +18,7 @@ import com.banglalink.toffee.model.OffenseType
 import com.banglalink.toffee.ui.common.CheckedChangeListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ReportPopupFragment : DialogFragment(),
@@ -75,7 +75,7 @@ class ReportPopupFragment : DialogFragment(),
         binding.listview.adapter = mAdapter
 
         //https://stackoverflow.com/questions/59521691/use-viewlifecycleowner-as-the-lifecycleowner (Comment)
-        lifecycleScope.launchWhenStarted {
+        lifecycleScope.launch {
             viewModel.loadReportList().collectLatest {
                 mAdapter.submitData(it)
             }

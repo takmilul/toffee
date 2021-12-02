@@ -15,6 +15,7 @@ import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.util.UtilsKt
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 class RecentChannelsFragment: BaseFragment() {
     private lateinit var mAdapter: RecentChannelsAdapter
@@ -82,7 +83,7 @@ class RecentChannelsFragment: BaseFragment() {
     }
 
     private fun observeList() {
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.loadRecentTvChannels().map {
                 it.filter { it.channelInfo?.isExpired == false }
             }.collectLatest {

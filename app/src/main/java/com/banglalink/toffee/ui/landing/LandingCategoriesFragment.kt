@@ -28,6 +28,7 @@ import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LandingCategoriesFragment: BaseFragment(), BaseListItemCallback<Category> {
@@ -103,7 +104,7 @@ class LandingCategoriesFragment: BaseFragment(), BaseListItemCallback<Category> 
     }
     
     private fun observeList() {
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.loadCategories.collectLatest {
                 mAdapter.submitData(it)
             }

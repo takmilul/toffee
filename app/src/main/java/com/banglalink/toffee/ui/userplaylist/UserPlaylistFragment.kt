@@ -36,6 +36,7 @@ import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -131,7 +132,7 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
     
     private fun observeMyChannelPlaylists() {
         listJob?.cancel()
-        listJob = viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        listJob = viewLifecycleOwner.lifecycleScope.launch {
             mViewModel.getMyChannelUserPlaylists(mPref.customerId).collectLatest {
                 mAdapter.submitData(it)
             }

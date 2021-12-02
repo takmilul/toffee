@@ -245,7 +245,7 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
 
     private fun observeList(currentSeasonNo: Int) {
         seasonListJob?.cancel()
-        seasonListJob = viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        seasonListJob = viewLifecycleOwner.lifecycleScope.launch {
             mViewModel.getEpisodesBySeason(
                 DramaSeasonRequestParam(
                     seriesInfo.type,

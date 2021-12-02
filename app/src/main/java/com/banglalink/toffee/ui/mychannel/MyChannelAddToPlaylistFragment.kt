@@ -31,6 +31,7 @@ import com.banglalink.toffee.model.Resource.Success
 import com.banglalink.toffee.ui.common.CheckedChangeListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -76,7 +77,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
     }
     
     private fun observePlaylist() {
-        lifecycleScope.launchWhenStarted {
+        lifecycleScope.launch {
             if(isUserPlaylist==1) {
                 playlistViewModel.getMyChannelUserPlaylists(channelOwnerId).collectLatest {
                     mAdapter.submitData(it)
@@ -190,6 +191,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
                         cacheManager.clearCacheByUrl(ApiRoutes.GET_USER_PLAYLIST_VIDEOS)
                     }
                     else {
+                        cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_PLAYLISTS)
                         cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_PLAYLIST_VIDEOS)
                     }
                     playlistReloadViewModel.reloadPlaylist.value = true
