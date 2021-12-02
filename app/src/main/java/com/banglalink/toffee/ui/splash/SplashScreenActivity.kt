@@ -3,6 +3,7 @@ package com.banglalink.toffee.ui.splash
 import android.os.Bundle
 import com.banglalink.toffee.databinding.ActivitySplashScreenBinding
 import com.banglalink.toffee.ui.common.BaseAppCompatActivity
+import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 
 class SplashScreenActivity : BaseAppCompatActivity() {
     
@@ -11,6 +12,7 @@ class SplashScreenActivity : BaseAppCompatActivity() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FirebaseInAppMessaging.getInstance().setMessagesSuppressed(true)
         _binding = ActivitySplashScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
     }

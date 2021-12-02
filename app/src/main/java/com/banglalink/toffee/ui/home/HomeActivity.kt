@@ -155,9 +155,10 @@ class HomeActivity :
     
     override val playlistManager: PlaylistManager
         get() = viewModel.getPlaylistManager()
-
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FirebaseInAppMessaging.getInstance().setMessagesSuppressed(false)
         try {
             connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

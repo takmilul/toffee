@@ -6,12 +6,11 @@ buildscript {
         appVersionName = '2.1.3'
         kotlinVersion = '1.6.0'
         kotlinCoroutineVersion = "1.5.2"
-
         exoVersion = "2.16.1"
         firebaseCoreVersion = "19.0.2"
         firebaseMessagingVersion = "23.0.0"
         firebaseAnalyticsVersion = "20.0.0"
-        firebaseCrashlyticsVersion = "18.2.4"
+        firebaseCrashlyticsVersion = "18.2.5"
         lifecycleVersion = "2.4.0"
         roomDbVersion = "2.3.0"
         hiltAndroidVersion = "2.39.1"
@@ -28,12 +27,12 @@ buildscript {
         classpath 'com.android.tools.build:gradle:7.0.3'
         classpath 'com.google.gms:google-services:4.3.10'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-
+        
         def nav_version = "2.3.0"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
-
+        
         // Add the Crashlytics Gradle plugin.
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.8.0'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.8.1'
         classpath 'com.google.dagger:hilt-android-gradle-plugin:2.37'
     }
 }
