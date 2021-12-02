@@ -96,7 +96,9 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$rootProject.lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$rootProject.lifecycleVersion"
 //    implementation "android.arch.lifecycle:extensions:2.1.0"
-
+    
+    implementation 'androidx.work:work-runtime-ktx:2.7.1'
+    
     implementation 'com.google.android.material:material:1.4.0'
     //Switch Lib
     implementation 'com.github.zcweng:switch-button:0.0.3@aar'
