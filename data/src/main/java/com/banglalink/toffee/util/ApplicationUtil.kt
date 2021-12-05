@@ -1,7 +1,7 @@
 package com.banglalink.toffee.util
 
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.exception.*
+import com.banglalink.toffee.data.exception.*
 import retrofit2.HttpException
 import java.io.IOException
 import java.net.SocketTimeoutException

@@ -2,7 +2,7 @@ package com.banglalink.toffee.usecase
 
 import com.banglalink.toffee.data.network.request.ReferralCodeStatusRequest
 import com.banglalink.toffee.data.network.response.ReferralCodeStatusResponse
-import com.banglalink.toffee.exception.ApiException
+import com.banglalink.toffee.data.exception.ApiException
 import com.banglalink.toffee.model.INVALID_REFERRAL_ERROR_CODE
 import com.banglalink.toffee.model.ReferralCodeStatusBean
 import com.banglalink.toffee.apiservice.CheckReferralCodeStatus

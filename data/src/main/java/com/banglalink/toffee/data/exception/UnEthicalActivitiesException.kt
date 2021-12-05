@@ -1,3 +1,3 @@
-package com.banglalink.toffee.exception
+package com.banglalink.toffee.data.exception
 
-class UnEthicalActivitiesException(val errorMessage:String):Exception(errorMessage)
+class UnEthicalActivitiesException(errorMessage:String):Exception(errorMessage)

@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.banglalink.toffee.exception.Error
+import com.banglalink.toffee.data.exception.Error
 import com.banglalink.toffee.model.Resource
 
 fun <T> LifecycleOwner.observe(liveData: LiveData<T>, body: (T) -> Unit = {}) {
@@ -18,5 +18,5 @@ fun <T> MutableLiveData<Resource<T>>.setSuccess(data: T) =
     postValue(Resource.Success(data))
 
 
-fun <T> MutableLiveData<Resource<T>>.setError(error:Error) =
+fun <T> MutableLiveData<Resource<T>>.setError(error: Error) =
     postValue(Resource.Failure(error))

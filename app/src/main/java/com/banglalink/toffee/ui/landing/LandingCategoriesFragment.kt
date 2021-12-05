@@ -105,7 +105,7 @@ class LandingCategoriesFragment: BaseFragment(), BaseListItemCallback<Category> 
     
     private fun observeList() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.loadCategories.collectLatest {
+            viewModel.loadCategories().collectLatest {
                 mAdapter.submitData(it)
             }
         }

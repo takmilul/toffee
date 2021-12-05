@@ -1,7 +1,7 @@
 package com.banglalink.toffee.data.network.interceptor
 
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.exception.ToffeeDnsException
+import com.banglalink.toffee.data.exception.ToffeeDnsException
 import okhttp3.Dns
 import okhttp3.dnsoverhttps.DnsOverHttps
 import java.net.InetAddress

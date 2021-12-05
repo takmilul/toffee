@@ -4,7 +4,7 @@ import com.banglalink.toffee.data.network.request.CheckUpdateRequest
 import com.banglalink.toffee.data.network.retrofit.AuthApi
 import com.banglalink.toffee.data.network.util.tryIO2
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.exception.UpdateRequiredException
+import com.banglalink.toffee.data.exception.UpdateRequiredException
 import javax.inject.Inject
 
 class CheckUpdate @Inject constructor(private val preference: SessionPreference, private val authApi: AuthApi) {

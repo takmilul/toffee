@@ -3,7 +3,7 @@ package com.banglalink.toffee
 import com.banglalink.toffee.data.network.request.CheckUpdateRequest
 import com.banglalink.toffee.data.network.response.CheckUpdateResponse
 import com.banglalink.toffee.data.network.retrofit.AuthApi
-import com.banglalink.toffee.exception.UpdateRequiredException
+import com.banglalink.toffee.data.exception.UpdateRequiredException
 import com.banglalink.toffee.model.CheckUpdateBean
 import com.banglalink.toffee.apiservice.CheckUpdate
 import com.banglalink.toffee.data.storage.SessionPreference

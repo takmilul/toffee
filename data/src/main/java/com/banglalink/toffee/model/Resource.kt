@@ -1,6 +1,6 @@
 package com.banglalink.toffee.model
 
-import com.banglalink.toffee.exception.Error
+import com.banglalink.toffee.data.exception.Error
 import com.google.gson.annotations.SerializedName
 
 
