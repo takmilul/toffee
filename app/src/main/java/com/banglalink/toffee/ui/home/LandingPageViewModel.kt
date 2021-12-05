@@ -14,7 +14,7 @@ import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.enums.PageType.Landing
-import com.banglalink.toffee.exception.JobCanceledError
+import com.banglalink.toffee.data.exception.JobCanceledError
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.Failure
@@ -52,8 +52,8 @@ class LandingPageViewModel @Inject constructor(
     val subCategories = SingleLiveEvent<List<SubCategory>>()
     val featuredContents = SingleLiveEvent<List<ChannelInfo>>()
 
-    val loadChannels by lazy {
-        channelRepo.getList().cachedIn(viewModelScope)
+    fun loadChannels(): Flow<PagingData<ChannelInfo>> {
+        return channelRepo.getList().cachedIn(viewModelScope)
     }
 
     fun loadFeaturedContentList() {
@@ -81,20 +81,20 @@ class LandingPageViewModel @Inject constructor(
         }
     }
 
-    val loadCategories by lazy {
-        categoryListRepo.getList().cachedIn(viewModelScope)
+    fun loadCategories(): Flow<PagingData<Category>> {
+        return categoryListRepo.getList().cachedIn(viewModelScope)
     }
 
-    val loadLandingEditorsChoiceContent by lazy {
-        editorsChoiceRepo.getList().cachedIn(viewModelScope)
+    fun loadLandingEditorsChoiceContent(): Flow<PagingData<ChannelInfo>> {
+        return editorsChoiceRepo.getList().cachedIn(viewModelScope)
     }
     
     fun loadEditorsChoiceContent(): Flow<PagingData<ChannelInfo>> {
         return editorsChoiceRepo.getList()
     }
     
-    val loadUserChannels by lazy {
-        userChannelRepo.getList().cachedIn(viewModelScope)
+    fun loadUserChannels(): Flow<PagingData<UserChannelInfo>> {
+        return userChannelRepo.getList().cachedIn(viewModelScope)
     }
 
     private val userChannelRepo by lazy {

@@ -10,7 +10,7 @@ import com.banglalink.toffee.apiservice.UploadSignedUrlService
 import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.exception.Error
+import com.banglalink.toffee.data.exception.Error
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.SubCategory

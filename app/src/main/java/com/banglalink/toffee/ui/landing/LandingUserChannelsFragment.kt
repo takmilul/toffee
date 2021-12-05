@@ -122,7 +122,7 @@ class LandingUserChannelsFragment : HomeBaseFragment(), LandingPopularChannelCal
     private fun observeList() {
         viewLifecycleOwner.lifecycleScope.launch {
             val content = if (categoryInfo == null) {
-                viewModel.loadUserChannels
+                viewModel.loadUserChannels()
             }
             else {
                 viewModel.loadUserChannelsByCategory(categoryInfo!!)

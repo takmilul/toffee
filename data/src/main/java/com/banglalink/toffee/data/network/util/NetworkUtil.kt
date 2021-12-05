@@ -6,10 +6,10 @@ import com.banglalink.toffee.Constants.MULTI_DEVICE_LOGIN_ERROR_CODE
 import com.banglalink.toffee.Constants.OUTSIDE_OF_BD_ERROR_CODE
 import com.banglalink.toffee.Constants.UN_ETHICAL_ACTIVITIES_ERROR_CODE
 import com.banglalink.toffee.data.network.response.BaseResponse
-import com.banglalink.toffee.exception.ApiException
-import com.banglalink.toffee.exception.CustomerNotFoundException
-import com.banglalink.toffee.exception.OutsideOfBDException
-import com.banglalink.toffee.exception.UnEthicalActivitiesException
+import com.banglalink.toffee.data.exception.ApiException
+import com.banglalink.toffee.data.exception.CustomerNotFoundException
+import com.banglalink.toffee.data.exception.OutsideOfBDException
+import com.banglalink.toffee.data.exception.UnEthicalActivitiesException
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.util.EventProvider
 import com.banglalink.toffee.util.getError

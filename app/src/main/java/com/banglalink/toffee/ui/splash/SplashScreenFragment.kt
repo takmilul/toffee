@@ -15,8 +15,8 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.databinding.FragmentSplashScreenBinding
-import com.banglalink.toffee.exception.AppDeprecatedError
-import com.banglalink.toffee.exception.CustomerNotFoundError
+import com.banglalink.toffee.data.exception.AppDeprecatedError
+import com.banglalink.toffee.data.exception.CustomerNotFoundError
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.receiver.ConnectionWatcher

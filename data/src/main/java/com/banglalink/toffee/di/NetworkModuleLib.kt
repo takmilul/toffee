@@ -25,7 +25,7 @@ import okhttp3.dnsoverhttps.DnsOverHttps
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.*
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
@@ -90,6 +90,8 @@ object NetworkModuleLib {
     @SimpleHttpClient
     fun providesSimpleHttpClient(@DefaultCache cache: Cache): OkHttpClient {
         return OkHttpClient.Builder()
+            .connectTimeout(15, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
             .cache(cache)
             .build()
     }

@@ -3,7 +3,7 @@ package com.banglalink.toffee.usecase
 import com.banglalink.toffee.data.network.request.UpdateProfileRequest
 import com.banglalink.toffee.data.network.response.UpdateProfileResponse
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.exception.ApiException
+import com.banglalink.toffee.data.exception.ApiException
 import com.banglalink.toffee.apiservice.UpdateProfile
 import com.nhaarman.mockitokotlin2.*
 import junit.framework.Assert.assertEquals

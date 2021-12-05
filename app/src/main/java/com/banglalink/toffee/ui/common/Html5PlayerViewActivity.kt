@@ -17,7 +17,7 @@ import kotlin.system.exitProcess
 @AndroidEntryPoint
 class Html5PlayerViewActivity : BaseAppCompatActivity() {
     
-    private lateinit var htmlUrl: String
+    private var htmlUrl: String? = null
     private lateinit var mWebView: HTML5WebView
     private val progressDialog by lazy {
         VelBoxProgressDialog(this)
@@ -42,7 +42,7 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
         } else {
             val headerMap: MutableMap<String, String> = HashMap()
             headerMap["MSISDN"] = SessionPreference.getInstance().phoneNumber
-            mWebView.loadUrl(htmlUrl, headerMap)
+            htmlUrl?.let { mWebView.loadUrl(htmlUrl!!, headerMap) }
         }
 
         setContentView(mWebView.layout)

@@ -109,8 +109,8 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
     override fun onPause() {
         super.onPause()
         index = (binding.userChannelList.layoutManager as GridLayoutManager).findFirstVisibleItemPosition()
-        val topView: View = binding.userChannelList.getChildAt(0)
-        top = topView.top - binding.userChannelList.paddingTop
+//        val topView: View = binding.userChannelList.getChildAt(0)
+//        top = topView.top - binding.userChannelList.paddingTop
     }
     
 //    override fun onResume() {

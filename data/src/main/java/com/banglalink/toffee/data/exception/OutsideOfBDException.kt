@@ -1,3 +1,3 @@
-package com.banglalink.toffee.exception
+package com.banglalink.toffee.data.exception
 
-class OutsideOfBDException(val errorMessage:String):Exception(errorMessage)
+class OutsideOfBDException(errorMessage:String):Exception(errorMessage)
