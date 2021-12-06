@@ -13,24 +13,29 @@ import android.graphics.BitmapFactory.Options
 import android.graphics.Point
 import android.media.MediaMetadataRetriever
 import android.net.Uri
+import android.net.wifi.WifiManager
+import android.os.Build
 import android.provider.OpenableColumns
 import android.provider.Settings
+import android.text.TextUtils
 import android.util.Base64
 import android.util.Log
 import android.view.Display
+import android.view.View
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.pm.PackageInfoCompat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import java.io.*
 import java.text.DateFormat
+import java.text.DecimalFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.math.pow
-import kotlin.math.round
-import kotlin.math.sqrt
+import kotlin.math.*
 
 
 object UtilsKt {
@@ -225,9 +230,8 @@ object UtilsKt {
     fun isSystemRotationOn(ctx: Context) = Settings.System.getInt(ctx.contentResolver,
         Settings.System.ACCELEROMETER_ROTATION, 0) == 1
 
-    fun strToDate(dateTime: String?, dateFormate: String = "yyyy-MM-d HH:mm:ss"):Date? {
-
-        val df: DateFormat = SimpleDateFormat(dateFormate)
+    fun strToDate(dateTime: String?, dateFormat: String = "yyyy-MM-d HH:mm:ss"):Date? {
+        val df: DateFormat = SimpleDateFormat(dateFormat, Locale.US)
         try {
             if (dateTime != null) {
                 return df.parse(dateTime)
@@ -239,18 +243,15 @@ object UtilsKt {
     }
 
 
-    fun dateToStr(dateTime: Date?, dateFormate: String = "dd/MM/yyyy"):String? {
-
-        val formater: DateFormat = SimpleDateFormat(dateFormate)
-
+    fun dateToStr(dateTime: Date?, dateFormat: String = "dd/MM/yyyy"):String? {
+        val formatter: DateFormat = SimpleDateFormat(dateFormat, Locale.US)
         try {
             if (dateTime != null) {
-                return formater.format(dateTime)
+                return formatter.format(dateTime)
             }
         } catch (e: ParseException) {
             e.printStackTrace()
         }
-
         return null
     }
 
@@ -359,3 +360,196 @@ val today: String
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.US)
         return sdf.format(dateGMT)
     }
+
+
+fun getDateTimeText(dateTime: String): String? {
+    if (TextUtils.isEmpty(dateTime)) {
+        return ""
+    }
+    var dateTimeNew: String? = ""
+    val currentFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US) //2016-10-20 06:45:29
+    dateTimeNew = try {
+        val dateObj = currentFormatter.parse(dateTime)
+        val postFormatter = SimpleDateFormat("MMM dd, yyyy hh:mm aaa", Locale.US)
+        val newDateStr = postFormatter.format(dateObj!!)
+        newDateStr
+    } catch (e: java.lang.Exception) {
+        e.printStackTrace()
+        dateTime
+    }
+    return dateTimeNew
+}
+
+fun formatValidityText(date: Date): String? {
+    val currentFormatter = SimpleDateFormat("dd MMMM hh:mm aa", Locale.US) //2020-04-25 23:59:59
+    return currentFormatter.format(date)
+}
+
+fun getDate(dateTime: String?): Date {
+    val currentFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US) //2020-04-25 23:59:59
+    return try {
+        currentFormatter.parse(dateTime) ?: Date()
+    } catch (e: ParseException) {
+        e.printStackTrace()
+        Date()
+    }
+}
+
+fun getDateDiffInDayOrHourOrMinute(stopDate: Long): String {
+    val date = Date(stopDate)
+    val diff = Date().time - date.time
+    var diffMinutes = diff / 60000
+    diffMinutes = max(0, diffMinutes)
+    if (diffMinutes >= 365 * 24 * 60) {
+        return (diffMinutes / (365 * 24 * 60)).toString() + "y"
+    }
+    if (diffMinutes >= 30 * 24 * 60) {
+        return (diffMinutes / (30 * 24 * 60)).toString() + "m"
+    }
+    if (diffMinutes >= 24 * 60) {
+        return (diffMinutes / (24 * 60)).toString() + "d"
+    }
+    return if (diffMinutes >= 60) {
+        (diffMinutes / 60).toString() + "h"
+    } else "Just Now!"
+    /*if (diffMinutes > 0) {
+            return diffMinutes + " minutes";
+        }*/
+}
+
+fun getDateDiffInDayOrHour(stopDate: Date): String {
+    val diff = stopDate.time - Date().time
+    var diffHours = diff / 3600000
+    diffHours = max(0, diffHours)
+    return if (diffHours >= 24) {
+        (diffHours / 24).toString() + " days"
+    } else "$diffHours hours"
+}
+
+fun getFormattedViewsText(viewCount: String): String? {
+    if (TextUtils.isEmpty(viewCount) || !TextUtils.isDigitsOnly(viewCount)) return viewCount
+    val count = viewCount.toLong()
+    return if (count < 1000) viewCount else viewCountFormat(count.toDouble(), 0)
+}
+
+fun checkWifiOnAndConnected(context: Context): Boolean {
+    val wifiMgr: WifiManager = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
+    return if (wifiMgr.isWifiEnabled) { // Wi-Fi adapter is ON
+        val wifiInfo = wifiMgr.connectionInfo
+        wifiInfo.networkId != -1
+        // Connected to an access point
+    } else {
+        false // Wi-Fi adapter is OFF
+    }
+}
+
+fun getTime(dateTime: String): String? {
+    val df: DateFormat = SimpleDateFormat("yyyy-MM-d HH:mm:ss", Locale.US)
+    val formatter: DateFormat = SimpleDateFormat("hh:mm aa", Locale.US)
+    try {
+        val date = df.parse(dateTime)
+        return formatter.format(date!!)
+    } catch (e: ParseException) {
+        e.printStackTrace()
+    }
+    return ""
+}
+
+fun getDay(dateTime: String): String? {
+    val df: DateFormat = SimpleDateFormat("yyyy-MM-d HH:mm:ss", Locale.US)
+    val formatter: DateFormat = SimpleDateFormat("EEEE", Locale.US)
+    try {
+        val date = df.parse(dateTime)
+        return formatter.format(date!!)
+    } catch (e: ParseException) {
+        e.printStackTrace()
+    }
+    return ""
+}
+
+fun formatDate(dateTime: String): String? {
+    val df: DateFormat = SimpleDateFormat("yyyy-MM-d HH:mm:ss", Locale.US)
+    val formatter: DateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.US)
+    try {
+        val date = df.parse(dateTime)
+        return formatter.format(date!!)
+    } catch (e: ParseException) {
+        e.printStackTrace()
+    }
+    return ""
+}
+
+fun setFullScreen(activity: AppCompatActivity, visible: Boolean) {
+    val uiOptions = (View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        or View.SYSTEM_UI_FLAG_IMMERSIVE // Set the content to appear under the system bars so that the
+        // content doesn't resize when the system bars hide and show.
+        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN // Hide the nav bar and status bar
+        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+        or View.SYSTEM_UI_FLAG_FULLSCREEN)
+    if (!visible) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            val windowLayoutParams = activity.window.attributes
+            windowLayoutParams.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT
+            activity.window.attributes = windowLayoutParams
+        }
+        activity.window.decorView.systemUiVisibility = 0
+    } else {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            val windowLayoutParams = activity.window.attributes
+            windowLayoutParams.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+            activity.window.attributes = windowLayoutParams
+        }
+        activity.window.decorView.systemUiVisibility = uiOptions
+    }
+}
+
+fun isFullScreen(activity: Activity): Boolean {
+    return activity.window.attributes.flags and WindowManager.LayoutParams.FLAG_FULLSCREEN != 0
+}
+
+
+fun discardZeroFromDuration(duration: String): String {
+    if (TextUtils.isEmpty(duration)) {
+        return "00:00"
+    }
+    return if (duration.length > 5 && duration.startsWith("00:")) {
+        duration.substring(3)
+    } else {
+        duration
+    }
+}
+
+private val c = charArrayOf('K', 'M', 'B', 'T')
+
+/**
+ * Recursive implementation, invokes itself for each factor of a thousand, increasing the class on each invokation.
+ *
+ * @param n         the number to format
+ * @param iteration in fact this is the class from the array c
+ * @return a String representing the number n formatted in a cool looking way.
+ */
+private fun viewCountFormat(n: Double, iteration: Int): String? {
+    val d = n.toLong() / 100 / 10.0
+    val isRound = d * 10 % 10 == 0.0 //true if the decimal part is equal to 0 (then it's trimmed anyway)
+    return (if (d < 1000) //this determines the class, i.e. 'k', 'm' etc
+        (if (d > 99.9 || isRound || !isRound && d > 9.99) //this decides whether to trim the decimals
+            d.toInt() * 10 / 10 else d.toString() + "" // (int) d * 10 / 10 drops the decimal
+            ).toString() + "" + c[iteration] else viewCountFormat(d, iteration + 1))
+}
+
+fun readableFileSize(size: Long): String {
+    if (size <= 0) return "0 B"
+    val units = arrayOf("B", "KB", "MB", "GB", "TB")
+    val digitGroups = (log10(size.toDouble()) / log10(1024.0)).toInt()
+    return DecimalFormat("#,##0.##").format(size / Math.pow(1024.0, digitGroups.toDouble())) + " " + units[digitGroups]
+}
+
+fun getDateTime(): String? {
+    TimeZone.setDefault(TimeZone.getTimeZone("Asia/Dhaka"))
+    val cal = Calendar.getInstance(TimeZone.getDefault())
+    val dateGMT = cal.time
+    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
+    return sdf.format(dateGMT)
+}
