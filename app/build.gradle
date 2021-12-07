@@ -48,7 +48,7 @@ android {
     buildFeatures {
         dataBinding true
         viewBinding true
-        compose = true
+        compose true
     }
 
     buildTypes {
@@ -65,7 +65,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.0.2"
+        kotlinCompilerExtensionVersion = rootProject.composeVersion
     }
 
     packagingOptions {
@@ -92,15 +92,15 @@ dependencies {
     implementation "net.gotev:uploadservice-okhttp:4.6.0"
 
     // Compose
-    def composeVersion = '1.0.2'
-    implementation "androidx.compose.runtime:runtime:$composeVersion"
-    implementation "androidx.compose.ui:ui:$composeVersion"
-    implementation "androidx.compose.foundation:foundation:$composeVersion"
-    implementation "androidx.compose.foundation:foundation-layout:$composeVersion"
-    implementation "androidx.compose.material:material:$composeVersion"
-    implementation "androidx.compose.runtime:runtime-livedata:$composeVersion"
-    implementation "androidx.compose.ui:ui-tooling:$composeVersion"
-    implementation "com.google.android.material:compose-theme-adapter:$composeVersion"
+    implementation "androidx.compose.runtime:runtime:$rootProject.composeVersion"
+    implementation "androidx.compose.ui:ui:$rootProject.composeVersion"
+    implementation "androidx.compose.ui:ui-tooling:$rootProject.composeVersion"
+    implementation "androidx.compose.foundation:foundation:$rootProject.composeVersion"
+    implementation "androidx.compose.foundation:foundation-layout:$rootProject.composeVersion"
+    implementation "androidx.compose.material:material:$rootProject.composeVersion"
+    implementation "androidx.compose.runtime:runtime-livedata:$rootProject.composeVersion"
+    implementation "androidx.compose.ui:ui-tooling:$rootProject.composeVersion"
+    implementation "com.google.android.material:compose-theme-adapter:$rootProject.composeVersion"
 
     //Retrofit
     implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"

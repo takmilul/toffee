@@ -4,9 +4,9 @@ buildscript {
     ext {
         appVersionCode = 71
         appVersionName = '2.1.4'
-        kotlin_version = '1.6.0'
+        kotlin_version = '1.5.31'
         kotlinCoroutineVersion = "1.5.2"
-        
+        composeVersion = '1.0.5'
         exoVersion = "2.16.0"
         firebaseCoreVersion = "19.0.2"
         firebaseMessagingVersion = "23.0.0"
