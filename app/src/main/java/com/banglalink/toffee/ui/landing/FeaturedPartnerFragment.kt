@@ -6,30 +6,25 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import com.banglalink.toffee.R
-import com.banglalink.toffee.analytics.HeartBeatManager
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.common.paging.BaseListItemCallback
 import com.banglalink.toffee.databinding.FragmentFeaturedPartnerBinding
 import com.banglalink.toffee.extension.showLoadingAnimation
 import com.banglalink.toffee.model.FeaturedPartner
-import com.banglalink.toffee.ui.home.HomeViewModel
+import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class FeaturedPartnerFragment : Fragment(), BaseListItemCallback<FeaturedPartner> {
-    private val homeViewModel: HomeViewModel by viewModels()
+class FeaturedPartnerFragment : BaseFragment(), BaseListItemCallback<FeaturedPartner> {
     private lateinit var mAdapter: FeaturedPartnerAdapter
-    @Inject lateinit var heartBeatManager: HeartBeatManager
     private var _binding: FragmentFeaturedPartnerBinding? = null
     private val binding get() = _binding!!
     private val viewModel by activityViewModels<LandingPageViewModel>()
@@ -63,11 +58,13 @@ class FeaturedPartnerFragment : Fragment(), BaseListItemCallback<FeaturedPartner
             adapter = mAdapter
             setHasFixedSize(true)
         }
-        observeFeaturedPartner()
+        if (mPref.isFeaturePartnerActive == "true") {
+            observeFeaturedPartner()
+        }
     }
     
     private fun observeFeaturedPartner() {
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted { 
+        viewLifecycleOwner.lifecycleScope.launch { 
             viewModel.loadFeaturedPartners.collectLatest {
                 mAdapter.submitData(it)
             }
@@ -78,15 +75,7 @@ class FeaturedPartnerFragment : Fragment(), BaseListItemCallback<FeaturedPartner
         super.onItemClicked(item)
         
         item.webViewUrl?.let { url->
-            heartBeatManager.triggerEventViewingContentStart(item.id, "VOD")
-//            homeViewModel.sendViewContentEvent(item)
             findNavController().navigate(R.id.htmlPageViewFragment, bundleOf("myTitle" to item.featurePartnerName, "url" to url))
-//            launchActivity<Html5PlayerViewActivity> {
-//                putExtra(
-//                    Html5PlayerViewActivity.CONTENT_URL,
-//                    url
-//                )
-//            }
         } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
     }
     

@@ -22,34 +22,9 @@ import kotlinx.coroutines.SupervisorJob
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
-@Qualifier
-annotation class AppCoroutineScope
-@Qualifier
-annotation class SessionPreference
-@Qualifier
-annotation class CommonPreference
-
 @InstallIn(SingletonComponent::class)
 @Module
 object AppModule {
-
-    @Provides
-    @com.banglalink.toffee.di.SessionPreference
-    fun providesSessionSharedPreference(@ApplicationContext app: Context): SharedPreferences {
-        return app.getSharedPreferences(PREF_NAME_IP_TV, Context.MODE_PRIVATE)
-    }
-
-    @Provides
-    @com.banglalink.toffee.di.CommonPreference
-    fun providesCommonSharedPreference(@ApplicationContext app: Context): SharedPreferences {
-        return app.getSharedPreferences(COMMON_PREF_NAME, Context.MODE_PRIVATE)
-    }
-
-    @Provides
-    @Singleton
-    fun providesPreference(@com.banglalink.toffee.di.SessionPreference pref: SharedPreferences, @ApplicationContext ctx: Context): SessionPreference {
-        return SessionPreference(pref, ctx)
-    }
 
     @Provides
     @Singleton
@@ -61,18 +36,5 @@ object AppModule {
     @Singleton
     fun providesGlobalUploadObserver(app: Application, manager: UploadStateManager, cacheManager: CacheManager): UploadObserver {
         return UploadObserver(app, manager, cacheManager)
-    }
-
-    @Provides
-    @Singleton
-    @AppCoroutineScope
-    fun providesApplicationCoroutineScope(): CoroutineScope {
-        return CoroutineScope(SupervisorJob())
-    }
-    
-    @Provides
-    @Singleton
-    fun provideCommonPreference(@com.banglalink.toffee.di.CommonPreference pref: SharedPreferences, @ApplicationContext ctx: Context): CommonPreference {
-        return CommonPreference(pref, ctx)
     }
 }

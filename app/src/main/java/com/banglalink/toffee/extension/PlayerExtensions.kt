@@ -16,7 +16,7 @@ fun MediaQueueItem.getChannelMetadata(): ChannelInfo? {
 }
 
 fun MediaItem.getChannelMetadata(player: Player? = null): ChannelInfo? {
-    playbackProperties?.tag?.let {
+    localConfiguration?.tag?.let {
         if(it is ChannelInfo) return it
         else if(it is Int && player is CastPlayer) {
             return player.getItem(it)?.getChannelMetadata()

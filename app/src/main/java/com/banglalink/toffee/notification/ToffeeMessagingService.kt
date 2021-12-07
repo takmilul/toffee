@@ -17,7 +17,10 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.core.os.bundleOf
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
+import com.banglalink.toffee.apiservice.ApiRoutes
+import com.banglalink.toffee.apiservice.SetFcmToken
 import com.banglalink.toffee.data.database.entities.NotificationInfo
+import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.data.repository.DrmLicenseRepository
 import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.storage.CommonPreference
@@ -33,7 +36,7 @@ import com.banglalink.toffee.receiver.NotificationActionReceiver.Companion.RESOU
 import com.banglalink.toffee.receiver.NotificationActionReceiver.Companion.ROW_ID
 import com.banglalink.toffee.receiver.NotificationActionReceiver.Companion.WATCH_LATER
 import com.banglalink.toffee.receiver.NotificationActionReceiver.Companion.WATCH_NOW
-import com.banglalink.toffee.util.UtilsKt
+import com.banglalink.toffee.util.CoilUtils
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
@@ -50,24 +53,33 @@ class ToffeeMessagingService : FirebaseMessagingService() {
     private var notificationId = 1
     private val gson: Gson = Gson()
     private val TAG = "ToffeeMessagingService"
+    @Inject lateinit var setFcmToken: SetFcmToken
     @Inject lateinit var mPref: SessionPreference
+    @Inject lateinit var cacheManager: CacheManager
     @Inject lateinit var commonPreference: CommonPreference
     private val NOTIFICATION_CHANNEL_NAME = "Toffee Channel"
-    private val coroutineContext = Dispatchers.IO + SupervisorJob()
-    private val imageCoroutineScope = CoroutineScope(coroutineContext)
-    @Inject lateinit var notificationInfoRepository: NotificationInfoRepository
     @Inject lateinit var drmLicenseRepo: DrmLicenseRepository
+    private val coroutineContext = Dispatchers.IO + SupervisorJob()
+    private val coroutineScope = CoroutineScope(coroutineContext)
+    @Inject lateinit var notificationInfoRepository: NotificationInfoRepository
     
-    override fun onNewToken(s: String) {
-        super.onNewToken(s)
-        Log.i(TAG, "Token: $s")
+    override fun onNewToken(token: String) {
+        super.onNewToken(token)
+        coroutineScope.launch {
+            try {
+                setFcmToken.execute(token)
+            } catch (e: Exception) {
+                Log.e(TAG, "onNewToken: ${e.message}")
+            }
+        }
+        Log.i(TAG, "Token: $token")
     }
     
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         Log.d(TAG, "From: " + remoteMessage.from!!)
         
         if (remoteMessage.data.isNullOrEmpty()) {
-            imageCoroutineScope.launch {
+            coroutineScope.launch {
                 handleDefaultNotification(
                     remoteMessage.notification?.title,
                     remoteMessage.notification?.body,
@@ -90,15 +102,34 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                     kickOutUser(data)
                 }
                 NotificationType.DRM_LICENSE_RELEASE.type -> {
-                    imageCoroutineScope.launch {
+                    coroutineScope.launch {
                         releaseAllLicense()
                     }
                 }
                 NotificationType.CHANGE_URL.type -> {
                     changeHlsUrl(data)
                 }
+                NotificationType.CLEAR_CACHE.type -> {
+                    val route = data["apiRoute"]?.trim()
+                    route?.let {
+                        if (it == "all") {
+                            cacheManager.clearAllCache()
+                        } else {
+                            val apiRoutes = it.split(",")
+                            apiRoutes.forEach { route ->
+                                cacheManager.clearCacheByUrl(route.trim())
+                            }
+                        }
+                    }
+                }
                 NotificationType.BETA_USER_DETECTION.type -> {
                     handleBetaNotification(data)
+                }
+                NotificationType.CONTENT_REFRESH.type -> {
+                    cacheManager.clearCacheByUrl(ApiRoutes.GET_HOME_FEED_VIDEOS)
+                    coroutineScope.launch { 
+                        handleNotificationWithOutImage(data)
+                    }
                 }
                 else -> {
                     prepareNotification(data)
@@ -175,12 +206,12 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             val notificationType = data["notificationType"]
             when {
                 notificationType!!.equals("SMALL", ignoreCase = true) -> {
-                    imageCoroutineScope.launch {
+                    coroutineScope.launch {
                         handleSmallImage(data)
                     }
                 }
                 notificationType.equals("LARGE", ignoreCase = true) -> {
-                    imageCoroutineScope.launch {
+                    coroutineScope.launch {
                         val imageUrl = data["image"]
                         if (imageUrl.isNullOrBlank()) {
                             handleNotificationWithOutImage(data)
@@ -210,7 +241,8 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             .setContentText(content)
             .setStyle(NotificationCompat.BigTextStyle().bigText(content))
         
-        val drawable = imageUrl?.let { UtilsKt.coilExecuteGet(this, it) }
+        val drawable = imageUrl?.let { CoilUtils.
+        coilExecuteGet(this, it) }
         if (drawable != null)
             builder.setLargeIcon(drawable.toBitmap(48, 48))
         
@@ -237,7 +269,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         val sound = Uri.parse("android.resource://" + packageName + "/" + R.raw.velbox_notificaiton)
         var thumbnailImage: Bitmap? = null
         if (!thumbnailUrl.isNullOrBlank()) {
-            val thumbnailDrawable = UtilsKt.coilExecuteGet(this, thumbnailUrl)
+            val thumbnailDrawable = CoilUtils.coilExecuteGet(this, thumbnailUrl)
             thumbnailImage = thumbnailDrawable?.toBitmap(48, 48)
         }
         
@@ -277,12 +309,12 @@ class ToffeeMessagingService : FirebaseMessagingService() {
         val notificationInfo = NotificationInfo(null, customerId, data["notificationType"], pubSubId, 0, 0, title, content, null, thumbnailUrl, imageUrl, resourceUrl, playNowUrl, watchLaterUrl)
         val rowId = notificationInfoRepository.insert(notificationInfo)
         
-        val drawable = UtilsKt.coilExecuteGet(this, imageUrl)
+        val drawable = CoilUtils.coilExecuteGet(this, imageUrl)
         
         val image = drawable?.toBitmap()
         var thumbnailImage: Bitmap? = image
         if (!thumbnailUrl.isNullOrBlank()) {
-            val thumbnailDrawable = UtilsKt.coilExecuteGet(this, thumbnailUrl) ?: drawable
+            val thumbnailDrawable = CoilUtils.coilExecuteGet(this, thumbnailUrl) ?: drawable
             thumbnailImage = thumbnailDrawable?.toBitmap(48, 48)
         }
         
@@ -404,7 +436,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 val name = "Generic Notification"
                 val description = "All kinds of generic notification of Toffee"
-                val importance = NotificationManager.IMPORTANCE_DEFAULT
+                val importance = NotificationManager.IMPORTANCE_HIGH
                 val channel = NotificationChannel(NOTIFICATION_CHANNEL_NAME, name, importance)
                 channel.description = description
                 // Register the channel with the system; you can't change the importance
@@ -416,7 +448,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
                 val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                 notificationManager.notify(notificationId, notification)
             }
+            notificationId++
         }
-        notificationId++
     }
 }

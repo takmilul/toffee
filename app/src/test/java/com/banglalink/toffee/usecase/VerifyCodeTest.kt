@@ -3,7 +3,7 @@ package com.banglalink.toffee.usecase
 import com.banglalink.toffee.data.network.request.VerifyCodeRequest
 import com.banglalink.toffee.data.network.response.VerifyCodeResponse
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.exception.ApiException
+import com.banglalink.toffee.data.exception.ApiException
 import com.banglalink.toffee.model.CustomerInfoLogin
 import com.banglalink.toffee.apiservice.VerifyCode
 import com.nhaarman.mockitokotlin2.*
@@ -69,7 +69,7 @@ class VerifyCodeTest :BaseUseCaseTest(){
                 })
                 verify(mockToffeeApi, times(1)).verifyCode(any<VerifyCodeRequest>())
 
-            }catch (e:ApiException){
+            }catch (e: ApiException){
                 assertEquals("Invalid code",e.errorMessage)
                 assertEquals(1,e.errorCode)
                 throw e

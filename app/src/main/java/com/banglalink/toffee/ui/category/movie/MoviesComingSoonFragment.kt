@@ -2,11 +2,11 @@ package com.banglalink.toffee.ui.category.movie
 
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.model.ComingSoonContent
-import com.banglalink.toffee.ui.common.MyBaseAdapterV2
+import com.banglalink.toffee.ui.common.MyBaseAdapter
 
 class MoviesComingSoonFragment : MovieBaseFragment<ComingSoonContent>() {
     override val cardTitle: String = "Coming Soon"
-    override val adapter: MyBaseAdapterV2<ComingSoonContent> by lazy { MoviesComingSoonAdapter() }
+    override val adapter: MyBaseAdapter<ComingSoonContent> by lazy { MoviesComingSoonAdapter() }
     
     companion object {
         @JvmStatic

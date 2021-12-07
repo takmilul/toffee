@@ -21,27 +21,8 @@
 #-renamesourcefileattribute SourceFile
 
 #********************************Start rules for gson****************************************#
-# Gson uses generic type information stored in a class file when working with fields. Proguard
-# removes such information by default, so configure it to keep all of it.
--keepattributes Signature
 
-# For using GSON @Expose annotation
--keepattributes *Annotation*
-
-# Gson specific classes
--dontwarn sun.misc.**
-#-keep class com.google.gson.stream.** { *; }
-
-# Application classes that will be serialized/deserialized over Gson
--keep class com.banglalink.toffee.data.network.request.** { <fields>; }
--keep class com.banglalink.toffee.data.database.entities.** { <fields>; }
--keep class com.banglalink.toffee.data.network.response.** { <fields>; }
--keep class com.banglalink.toffee.model.** { <fields>; }
 -keep class com.banglalink.toffee.ui.player.** { <fields>; }
-
--keep class com.google.api.services.pubsub.** { <fields>; }
--keep class com.google.api.client.** { <fields>; }
--keep class com.google.api.client.googleapis.** { <fields>; }
 
 -assumenosideeffects class android.util.Log {
     public static boolean isLoggable(java.lang.String, int);
@@ -52,31 +33,12 @@
     public static int e(...);
 }
 
-
--keepclassmembers class * extends java.lang.Enum {
-    <fields>;
-    public static **[] values();
-    public static ** valueOf(java.lang.String);
-}
-
-# Prevent proguard from stripping interface information from TypeAdapter, TypeAdapterFactory,
-# JsonSerializer, JsonDeserializer instances (so they can be used in @JsonAdapter)
--keep class * implements com.google.gson.TypeAdapter
--keep class * implements com.google.gson.TypeAdapterFactory
--keep class * implements com.google.gson.JsonSerializer
--keep class * implements com.google.gson.JsonDeserializer
-
 -dontwarn com.yalantis.ucrop**
 -keep class com.yalantis.ucrop** { *; }
 -keep interface com.yalantis.ucrop** { *; }
 
 -keep class com.banglalink.toffee.ui.common** { *; }
 
-# Prevent R8 from leaving Data object members always null
--keepclassmembers,allowobfuscation class * {
-  @com.google.gson.annotations.SerializedName <fields>;
-}
-#********************************End rules for gson****************************************#
 
 -keepnames public class * extends androidx.fragment.app.Fragment
 #-keepnames public class * extends com.google.android.material.appbar.AppBarLayout.*
@@ -95,8 +57,8 @@
     private com.google.android.exoplayer2.ext.cast.CastPlayer$StatusListener statusListener;
 }
 
--keep class com.google.obf.** { *; }
--keep interface com.google.obf.** { *; }
-
 -keep class com.google.ads.interactivemedia.** { *; }
 -keep interface com.google.ads.interactivemedia.** { *; }
+
+-keep class com.medallia.** { *; } 
+-dontwarn com.medallia.**

@@ -17,6 +17,7 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.data.database.LocalSync
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
+import com.banglalink.toffee.data.repository.SubscriptionInfoRepository
 import com.banglalink.toffee.databinding.FragmentLandingUserChannelsBinding
 import com.banglalink.toffee.databinding.PlaceholderUserChannelsBinding
 import com.banglalink.toffee.extension.*
@@ -29,8 +30,10 @@ import com.banglalink.toffee.ui.category.CategoryDetailsFragment
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.common.UnSubscribeDialog
 import com.banglalink.toffee.ui.home.LandingPageViewModel
+import com.banglalink.toffee.ui.subscription.SubscribedChannelsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -43,7 +46,9 @@ class LandingUserChannelsFragment : HomeBaseFragment(), LandingPopularChannelCal
     private lateinit var mAdapter: LandingUserChannelsListAdapter
     private var _binding: FragmentLandingUserChannelsBinding? = null
     private val binding get() = _binding!!
+    @Inject lateinit var subscriptionInfoRepository: SubscriptionInfoRepository
     private val viewModel by activityViewModels<LandingPageViewModel>()
+    private val subscribedChannelsViewModel by activityViewModels<SubscribedChannelsViewModel>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLandingUserChannelsBinding.inflate(inflater, container, false)
@@ -66,7 +71,7 @@ class LandingUserChannelsFragment : HomeBaseFragment(), LandingPopularChannelCal
         mAdapter = LandingUserChannelsListAdapter(this)
 
         binding.viewAllButton.setOnClickListener {
-            parentFragment?.findNavController()?.navigate(R.id.trendingChannelsFragment)
+            parentFragment?.findNavController()?.navigate(R.id.allUserChannelsFragment)
         }
     
         with(binding.placeholder) {
@@ -97,15 +102,27 @@ class LandingUserChannelsFragment : HomeBaseFragment(), LandingPopularChannelCal
             adapter = mAdapter
             setHasFixedSize(true)
         }
-        
-        observeList()
+        observeSubscribedChannels()
 //        observeSubscribeChannel()
     }
     
+    private fun observeSubscribedChannels() {
+        lifecycleScope.launch {
+            if (mPref.isVerifiedUser && subscribedChannelsViewModel.subscribedChannelLiveData.value == null) {
+                observe(subscribedChannelsViewModel.subscribedChannelLiveData) {
+                    observeList()
+                }
+                subscribedChannelsViewModel.syncSubscribedChannels()
+            } else {
+                observeList()
+            }
+        }
+    }
+    
     private fun observeList() {
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launch {
             val content = if (categoryInfo == null) {
-                viewModel.loadUserChannels
+                viewModel.loadUserChannels()
             }
             else {
                 viewModel.loadUserChannelsByCategory(categoryInfo!!)

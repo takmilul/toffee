@@ -22,7 +22,8 @@ class MyChannelPlaylistDeleteViewModel @Inject constructor(
     
     fun deletePlaylistName(playlistId: Int, isUserPlaylist: Int = 0) {
         viewModelScope.launch {
-            _data.postValue(resultFromResponse { apiService.invoke(playlistId, isUserPlaylist) }!!)
+            val response = resultFromResponse { apiService.invoke(playlistId, isUserPlaylist) }
+            _data.postValue(response)
         }
     }
 }

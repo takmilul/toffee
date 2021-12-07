@@ -15,6 +15,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
+import androidx.paging.filter
 import com.banglalink.toffee.R
 import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.common.paging.ListLoadStateAdapter
@@ -33,14 +34,13 @@ import com.banglalink.toffee.ui.home.HomeViewModel
 import com.banglalink.toffee.ui.widget.MarginItemDecoration
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelInfo> {
     
-    private var listJob: Job? = null
     private var channelOwnerId: Int = 0
     private var isOwner: Boolean = false
     @Inject lateinit var reactionDao: ReactionDao
@@ -109,10 +109,9 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
     }
     
     private fun observeMyChannelVideos() {
-        listJob?.cancel()
-        listJob = viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launch {
             mViewModel.getMyChannelVideos(channelOwnerId).collectLatest {
-                mAdapter.submitData(it)
+                mAdapter.submitData(it.filter { !it.isExpired })
             }
         }
     }
@@ -246,6 +245,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
                 is Success -> {
                     requireContext().showToast(it.data.message)
                     reloadVideosList()
+                    videosReloadViewModel.reloadPlaylist.value = true
                 }
                 is Failure -> requireContext().showToast(it.error.msg)
             }

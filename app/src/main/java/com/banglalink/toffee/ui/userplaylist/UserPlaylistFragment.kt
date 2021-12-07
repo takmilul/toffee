@@ -24,6 +24,7 @@ import com.banglalink.toffee.databinding.AlertDialogMyChannelPlaylistCreateBindi
 import com.banglalink.toffee.databinding.FragmentUserPlaylistBinding
 import com.banglalink.toffee.extension.checkVerification
 import com.banglalink.toffee.extension.observe
+import com.banglalink.toffee.extension.safeClick
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.MyChannelPlaylist
 import com.banglalink.toffee.model.PlaylistPlaybackInfo
@@ -35,6 +36,7 @@ import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -83,8 +85,8 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
             }
             myChannelPlaylists.setHasFixedSize(true)
             myChannelPlaylists.adapter = mAdapter.withLoadStateFooter(ListLoadStateAdapter { mAdapter.retry() })
-            createPlaylistButton.setOnClickListener { requireActivity().checkVerification { showCreatePlaylistDialog() } }
-            createPlaylistButtonNone.setOnClickListener { requireActivity().checkVerification { showCreatePlaylistDialog() } }
+            createPlaylistButton.safeClick({ requireActivity().checkVerification { showCreatePlaylistDialog() } })
+            createPlaylistButtonNone.safeClick({ requireActivity().checkVerification { showCreatePlaylistDialog() } })
         }
         observeMyChannelPlaylists()
         observeEditPlaylist()
@@ -100,7 +102,7 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
             show()
         }
         playlistBinding.viewModel = createPlaylistViewModel
-        playlistBinding.createButton.setOnClickListener {
+        playlistBinding.createButton.safeClick({
             if (!createPlaylistViewModel.playlistName.isNullOrBlank()) {
                 observeCreatePlaylist()
                 createPlaylistViewModel.createPlaylist(mPref.customerId, 1)
@@ -109,8 +111,8 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
             } else {
                 requireContext().showToast(getString(string.playlist_name_empty_msg))
             }
-        }
-        playlistBinding.closeIv.setOnClickListener { alertDialog.dismiss() }
+        })
+        playlistBinding.closeIv.safeClick({ alertDialog.dismiss() })
     }
 
     private fun observeCreatePlaylist() {
@@ -130,7 +132,7 @@ class UserPlaylistFragment : BaseFragment(), BaseListItemCallback<MyChannelPlayl
     
     private fun observeMyChannelPlaylists() {
         listJob?.cancel()
-        listJob = viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        listJob = viewLifecycleOwner.lifecycleScope.launch {
             mViewModel.getMyChannelUserPlaylists(mPref.customerId).collectLatest {
                 mAdapter.submitData(it)
             }

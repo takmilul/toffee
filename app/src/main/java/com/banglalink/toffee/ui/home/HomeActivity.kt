@@ -1,13 +1,17 @@
 package com.banglalink.toffee.ui.home
 
+import android.Manifest
 import android.animation.LayoutTransition
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.app.SearchManager
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender.SendIntentException
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Path
@@ -53,6 +57,7 @@ import com.banglalink.toffee.data.repository.NotificationInfoRepository
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.ActivityMainMenuBinding
 import com.banglalink.toffee.di.AppCoroutineScope
+import com.banglalink.toffee.enums.UploadStatus
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.*
@@ -63,6 +68,7 @@ import com.banglalink.toffee.ui.channels.AllChannelsViewModel
 import com.banglalink.toffee.ui.channels.ChannelFragmentNew
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity
 import com.banglalink.toffee.ui.mychannel.MyChannelPlaylistVideosFragment
+import com.banglalink.toffee.ui.mychannel.MyChannelReloadViewModel
 import com.banglalink.toffee.ui.player.PlayerPageActivity
 import com.banglalink.toffee.ui.player.PlaylistItem
 import com.banglalink.toffee.ui.player.PlaylistManager
@@ -71,11 +77,10 @@ import com.banglalink.toffee.ui.search.SearchFragment
 import com.banglalink.toffee.ui.splash.SplashScreenActivity
 import com.banglalink.toffee.ui.upload.UploadProgressViewModel
 import com.banglalink.toffee.ui.upload.UploadStateManager
-import com.banglalink.toffee.ui.upload.UploadStatus
 import com.banglalink.toffee.ui.userplaylist.UserPlaylistVideosFragment
 import com.banglalink.toffee.ui.widget.DraggerLayout
+import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.ui.widget.showDisplayMessageDialog
-import com.banglalink.toffee.ui.widget.showSubscriptionDialog
 import com.banglalink.toffee.util.*
 import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.ui.StyledPlayerView
@@ -93,6 +98,8 @@ import com.google.android.play.core.tasks.Task
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
+import com.loopnow.fireworklibrary.FwSDK
+import com.medallia.digital.mobilesdk.MedalliaDigital
 import com.suke.widget.SwitchButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -103,6 +110,9 @@ import org.xmlpull.v1.XmlPullParser
 import java.util.*
 import javax.inject.Inject
 
+const val NON_PAYMENT = 0
+const val PAYMENT = 1
+const val PLAY_IN_NATIVE_PLAYER = 0
 const val PLAY_IN_WEB_VIEW = 1
 const val OPEN_IN_EXTERNAL_BROWSER = 2
 const val IN_APP_UPDATE_REQUEST_CODE = 0x100
@@ -129,12 +139,14 @@ class HomeActivity :
     @Inject lateinit var uploadManager: UploadStateManager
     private lateinit var appUpdateManager: AppUpdateManager
     @Inject lateinit var inAppMessageParser: InAppMessageParser
+    private lateinit var connectivityManager: ConnectivityManager
     @Inject @AppCoroutineScope lateinit var appScope: CoroutineScope
     @Inject lateinit var notificationRepo: NotificationInfoRepository
-    private val profileViewModel by viewModels<ViewProfileViewModel>()
-    private val uploadViewModel by viewModels<UploadProgressViewModel>()
-    private val allChannelViewModel by viewModels<AllChannelsViewModel>()
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+    private val profileViewModel by viewModels<ViewProfileViewModel>()
+    private val allChannelViewModel by viewModels<AllChannelsViewModel>()
+    private val uploadViewModel by viewModels<UploadProgressViewModel>()
+    private val myChannelReloadViewModel by viewModels<MyChannelReloadViewModel>()
     
     companion object {
         const val INTENT_REFERRAL_REDEEM_MSG = "REFERRAL_REDEEM_MSG"
@@ -146,11 +158,21 @@ class HomeActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), heartBeatManager)
-
-        val isDisableScreenshot = !(mPref.screenCaptureEnabledUsers.contains(cPref.deviceId) || mPref.screenCaptureEnabledUsers.contains(mPref.customerId.toString()))
+        try {
+            connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (checkSelfPermission(Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED) {
+                    connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), heartBeatManager)
+                } else {
+                    Log.e("CONN_", "Connectivity registration failed: network permission denied")
+                }
+            } else {
+                connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), heartBeatManager)
+            }
+        } catch (e: Exception) {
+            Log.e("CONN_", "Connectivity registration failed: ${e.message}")
+        }
+        val isDisableScreenshot = !(mPref.screenCaptureEnabledUsers.contains(cPref.deviceId) || mPref.screenCaptureEnabledUsers.contains(mPref.customerId.toString()) || mPref.screenCaptureEnabledUsers.contains(mPref.phoneNumber))
         //disable screen capture
         if (! BuildConfig.DEBUG && isDisableScreenshot) {
             window.setFlags(
@@ -159,7 +181,6 @@ class HomeActivity :
             )
         }
         cPref.isAlreadyForceLoggedOut = false
-//        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         binding = ActivityMainMenuBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.tbar.toolbar)
@@ -186,49 +207,8 @@ class HomeActivity :
             mPref.mqttUserName = ""
             mPref.mqttPassword = ""
         }
-        
         observe(viewModel.fragmentDetailsMutableLiveData) {
-            val cp = player
-//            if(cp is CastPlayer) {
-//                cp.getItem()
-//            }
-//            if(player is CastPlayer &&
-//                !(player?.playbackState != Player.STATE_ENDED &&
-//                        player?.playbackState != Player.STATE_IDLE)) {
-//                val channelInfo = when (it) {
-//                    is ChannelInfo -> {
-//                        it
-//                    }
-//                    is PlaylistPlaybackInfo -> {
-//                        it.currentItem
-//                    }
-//                    is SeriesPlaybackInfo -> {
-//                        it.currentItem
-//                    }
-//                    else -> null
-//                }
-//
-//                Log.e("CAST_T", "${player?.currentMediaItem?.playbackProperties?.tag}")
-//
-//                VelBoxAlertDialogBuilder(this).apply {
-//                    setTitle("Remote play")
-//                    setText("Play ${channelInfo?.program_name} on remote player?")
-//                    setPositiveButtonListener("Play") { dialog->
-//                        onDetailsFragmentLoad(it)
-//                        dialog?.dismiss()
-//                    }
-//                    setNegativeButtonListener("Cancel") { dialog->
-//                        dialog?.dismiss()
-//                    }
-//                }
-//                .create()
-//                .show()
-//            } else {
-                onDetailsFragmentLoad(it)
-//            }
-        }
-        observe(viewModel.viewAllVideoLiveData) {
-//            drawerHelper.onMenuClick(NavigationMenu(ID_VIDEO, "All Videos", 0, listOf(), false))
+            onDetailsFragmentLoad(it)
         }
         observe(mPref.sessionTokenLiveData){
             if(binding.draggableView.visibility == View.VISIBLE){
@@ -270,16 +250,9 @@ class HomeActivity :
 //        }
 //        }
         observe(viewModel.addToPlayListMutableLiveData) { item ->
-//            val playListItems = item.filter {
-//                !it.isLive
-//            }.map {
-//                val uriStr = Channel.createChannel(it).getContentUri(this)
-//                MediaItem.fromUri(uriStr)
-//            }
-
             setPlayList(item)
         }
-        observe(viewModel.notificationUrlLiveData){
+        observe(mPref.shareableUrlLiveData){
             handleDeepLink(it)
         }
         observe(viewModel.shareContentLiveData) { channelInfo ->
@@ -306,7 +279,21 @@ class HomeActivity :
         if (mPref.isVerifiedUser) {
             initMqtt()
         }
-        
+        observe(mPref.loginDialogLiveData) {
+            if (it) {
+                navController.navigate(R.id.loginDialog)
+            }
+        }
+        observe(mPref.messageDialogLiveData) { message ->
+            VelBoxAlertDialogBuilder(
+                this,
+                title = "Notice",
+                text = message,
+                positiveButtonListener = { 
+                    it?.dismiss()
+                }
+            ).create().show()
+        }
         initSideNav()
         lifecycle.addObserver(heartBeatManager)
         observeInAppMessage()
@@ -318,6 +305,20 @@ class HomeActivity :
         inAppUpdate()
         customCrashReport()
         viewModel.getVastTags()
+        observe(mPref.shareableHashLiveData) {
+            it?.let { observeShareableContent(it) }
+        }
+//        showDeviceId()
+    }
+    
+    private fun showDeviceId() {
+        VelBoxAlertDialogBuilder(this, title = "Device Id", text = cPref.deviceId, positiveButtonTitle = "copy", positiveButtonListener = {
+            val clipboard: ClipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+            val clip: ClipData = ClipData.newPlainText("DeviceId", cPref.deviceId)
+            clipboard.setPrimaryClip(clip)
+            showToast("copied to clipboard")
+            it?.dismiss()
+        }, negativeButtonTitle = "Close", negativeButtonListener = { it?.dismiss() }).create().show()
     }
     
     private fun isChannelComplete() = mPref.customerName.isNotBlank()
@@ -404,7 +405,6 @@ class HomeActivity :
                 }
             }
         }
-
         appUpdateManager.registerListener(appUpdateListener)
     }
     
@@ -430,7 +430,6 @@ class HomeActivity :
         }
         else {
             showUploadDialog()
-
         }
     }
     
@@ -441,30 +440,30 @@ class HomeActivity :
                 return true
             }
             lifecycleScope.launch {
-                if (uploadRepo.getActiveUploadsList().isNotEmpty()) {
+                if (uploadRepo.getUnFinishedUploadsList().isNotEmpty()) {
                     return@launch
                 }
                 navController.navigate(R.id.uploadMethodFragment)
             }
         }
-        else{
+        else {
             if (navController.currentDestination?.id == R.id.bottomSheetUploadFragment) {
                 navController.popBackStack()
                 return true
             }
             lifecycleScope.launch {
-
-                if (uploadRepo.getActiveUploadsList().isNotEmpty()) {
+                if (uploadRepo.getUnFinishedUploadsList().isNotEmpty()) {
                     return@launch
+                }
+                if (navController.currentDestination?.id == R.id.myChannelEditDetailFragment) {
+                    navController.popBackStack()
                 }
                 navController.navigate(R.id.bottomSheetUploadFragment)
             }
         }
-
         return false
     }
 
-    @ExperimentalCoroutinesApi
     private fun watchConnectionChange() {
         lifecycleScope.launch {
             uploadManager.checkUploadStatus(false)
@@ -557,30 +556,26 @@ class HomeActivity :
     fun getNavController() = navController
     fun getHomeViewModel() = viewModel
 
-    private val destinationChangeListener =
-        NavController.OnDestinationChangedListener { controller, _, _ ->
-//            supportFragmentManager.popBackStack(R.id.content_viewer, POP_BACK_STACK_INCLUSIVE)
-
-            if(binding.draggableView.isMaximized()) {
-                minimizePlayer()
-            }
-            closeSearchBarIfOpen()
-
-            // For firebase screenview logging
-            if (controller.currentDestination is FragmentNavigator.Destination) {
-                val currentFragmentClassName =
-                    (controller.currentDestination as FragmentNavigator.Destination)
-                        .className
-                        .substringAfterLast(".")
-
-                val bundle = Bundle()
-                bundle.putString(FirebaseAnalytics.Param.SCREEN_CLASS, currentFragmentClassName)
-                FirebaseAnalytics.getInstance(this@HomeActivity)
-                    .logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle)
-            }
-
-            binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
+    private val destinationChangeListener = NavController.OnDestinationChangedListener { controller, _, _ ->
+        if (binding.draggableView.isMaximized()) {
+            minimizePlayer()
         }
+        closeSearchBarIfOpen()
+
+        // For firebase screenview logging
+        if (controller.currentDestination is FragmentNavigator.Destination) {
+            val currentFragmentClassName = (controller.currentDestination as FragmentNavigator.Destination)
+                .className
+                .substringAfterLast(".")
+
+            val bundle = Bundle()
+            bundle.putString(FirebaseAnalytics.Param.SCREEN_CLASS, currentFragmentClassName)
+            FirebaseAnalytics.getInstance(this@HomeActivity)
+                .logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle)
+        }
+
+        binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
+    }
 
     private fun setupNavController() {
         Log.e("NAV", "SetupNavController")
@@ -594,7 +589,6 @@ class HomeActivity :
                 R.id.menu_tv,
                 R.id.menu_activities,
                 R.id.myChannelHomeFragment,
-
 //                R.id.menu_all_tv_channel,
                 R.id.menu_favorites,
                 R.id.menu_settings,
@@ -611,10 +605,7 @@ class HomeActivity :
         binding.tbar.toolbar.setNavigationIcon(R.drawable.ic_toffee)
         binding.sideNavigation.setupWithNavController(navController)
         binding.tabNavigator.setupWithNavController(navController)
-//        binding.tabNavigator.setOnNavigationItemReselectedListener {
-//
-//        }
-
+        
         ViewCompat.setOnApplyWindowInsetsListener(binding.bottomAppBar) { _, _ ->
              WindowInsetsCompat.CONSUMED
         }
@@ -641,7 +632,7 @@ class HomeActivity :
     }
 
     override fun resetPlayer() {
-        binding.playerView.setPlayer(player)
+        binding.playerView.player = player
         if(player is CastPlayer) {
             val deviceName = castContext?.sessionManager?.currentCastSession?.castDevice?.friendlyName
             binding.playerView.showCastingText(true, deviceName)
@@ -650,16 +641,11 @@ class HomeActivity :
         }
     }
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-//        setupNavController()
-    }
-
     override fun onPause() {
         super.onPause()
         binding.playerView.clearListeners()
         if (Util.SDK_INT <= 23) {
-            binding.playerView.setPlayer(null)
+            binding.playerView.player = null
         }
     }
 
@@ -685,7 +671,7 @@ class HomeActivity :
     override fun onStop() {
         super.onStop()
         if (Util.SDK_INT > 23) {
-            binding.playerView.setPlayer(null)
+            binding.playerView.player = null
         }
     }
 
@@ -726,15 +712,11 @@ class HomeActivity :
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        return NavigationUI.navigateUp(navController, appbarConfig)
-                || super.onSupportNavigateUp()
+        return NavigationUI.navigateUp(navController, appbarConfig) || super.onSupportNavigateUp()
     }
 
     private fun updateFullScreenState() {
-        val state =
-            resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE ||
-                    binding.playerView.isFullScreen
-
+        val state = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE || binding.playerView.isFullScreen
         binding.playerView.onFullScreen(state)
         binding.playerView.resizeView(calculateScreenWidth(), state)
         setFullScreen(state)// || binding.playerView.channelType != "LIVE")
@@ -745,14 +727,11 @@ class HomeActivity :
         if(visible) {
             WindowCompat.setDecorFitsSystemWindows(window, false)
             WindowInsetsControllerCompat(window, window.decorView).let { controller ->
-                controller.hide(WindowInsetsCompat.Type.statusBars()
-                        or WindowInsetsCompat.Type.navigationBars()
-//                        or WindowInsetsCompat.Type.displayCutout()
+                controller.hide(WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars()
+//                  or WindowInsetsCompat.Type.displayCutout()
                 )
-                controller.systemBarsBehavior =
-                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             }
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 window.attributes = window.attributes.apply {
                     layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
@@ -761,9 +740,8 @@ class HomeActivity :
         } else {
             WindowCompat.setDecorFitsSystemWindows(window, true)
             WindowInsetsControllerCompat(window, window.decorView).let { controller->
-                controller.show(WindowInsetsCompat.Type.statusBars()
-                        or WindowInsetsCompat.Type.navigationBars()
-//                        or WindowInsetsCompat.Type.displayCutout()
+                controller.show(WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars()
+//                  or WindowInsetsCompat.Type.displayCutout()
                 )
             }
 
@@ -843,19 +821,23 @@ class HomeActivity :
                 if(!isDeepLinkHandled){
                     ToffeeAnalytics.logBreadCrumb("Trying to open individual item")
                     val hash = url.substring(url.lastIndexOf("/") + 1)
-                    observe(viewModel.getShareableContent(hash)){ channelResource ->
-                        when(channelResource){
-                            is Success -> {
-                                channelResource.data?.let {
-                                    onDetailsFragmentLoad(it)
-                                }
-                            }
-                        }
-                    }
+                    mPref.shareableHashLiveData.value = hash
+                    observeShareableContent(hash)
                 }
             }catch (e: Exception){
                 ToffeeAnalytics.logBreadCrumb("2. Failed to handle depplink $url")
                 ToffeeAnalytics.logException(e)
+            }
+        }
+    }
+    
+    private fun observeShareableContent(hash: String) {
+        observe(viewModel.getShareableContent(hash)) { channelResource ->
+            if (channelResource is Success) {
+                channelResource.data?.let {
+                    onDetailsFragmentLoad(it)
+                }
+                mPref.shareableHashLiveData.value = null
             }
         }
     }
@@ -865,10 +847,19 @@ class HomeActivity :
         if (Intent.ACTION_SEARCH == intent.action) {
             val query = intent.getStringExtra(SearchManager.QUERY)
             query?.let { handleVoiceSearchEvent(it) }
-
         }
         if(intent.hasExtra(INTENT_PACKAGE_SUBSCRIBED)){
             handlePackageSubscribe()
+        }
+        try {
+            val url = intent.data?.fragment?.takeIf { it.contains("fwplayer=") }?.removePrefix("fwplayer=")
+            url?.let { 
+                FwSDK.play(it)
+                return
+            }
+        }
+        catch (e: Exception) {
+            Log.e("FwSDK", "FireworkDeeplinkPlayException")
         }
         handleSharedUrl(intent)
     }
@@ -892,15 +883,11 @@ class HomeActivity :
     }
 
     private fun handlePackageSubscribe(){
-//        viewModel.getChannelByCategory(0)//reload the channels
         //Clean up stack upto landingPageFragment inclusive
         supportFragmentManager.popBackStack(
             LandingPageFragment::class.java.name,
             POP_BACK_STACK_INCLUSIVE
         )
-        //Reload it again so that we can get updated VOD/Popular channels/Feature contents
-//        supportFragmentManager.beginTransaction().replace(R.id.content_viewer, LandingPageFragment())
-//            .addToBackStack(LandingPageFragment::class.java.name).commit()
     }
 
     private fun loadChannel(channelInfo: ChannelInfo) {
@@ -941,63 +928,75 @@ class HomeActivity :
         }
 
         channelInfo?.let {
-            when{
-                it.urlType == PLAY_IN_WEB_VIEW->{
-                    it.getHlsLink()?.let { url->
-                        heartBeatManager.triggerEventViewingContentStart(it.id.toInt(), it.type ?: "VOD")
-                        viewModel.sendViewContentEvent(it)
-                        launchActivity<Html5PlayerViewActivity> {
-                            putExtra(
-                                Html5PlayerViewActivity.CONTENT_URL,
-                                url
-                            )
-                        }
-                    } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
-                }
-                it.urlType == OPEN_IN_EXTERNAL_BROWSER ->{
-                    it.getHlsLink()?.let { url->
-                        startActivity(
-                            Intent(
-                                Intent.ACTION_VIEW,
-                                Uri.parse(url)
-                            )
-                        )
-                    } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
-                }
-                /* TODO: Uncomment for subscription
-                !((it.isPurchased || it.isPaidSubscribed) && !it.isExpired(Date())) && mPref.isSubscriptionActive == "true" ->{
-                    showSubscribePackDialog()
-                } */
-                else ->{
-                    if(player is CastPlayer) {
-                        maximizePlayer()
-                    }
-                    when (detailsInfo) {
-                        is PlaylistPlaybackInfo -> {
-                            loadPlayListItem(detailsInfo)
-                        }
-                        is SeriesPlaybackInfo -> {
-                            loadDramaSeasonInfo(detailsInfo)
-                        }
-                        else -> {
-                            loadChannel(it)
+            when {
+                it.urlTypeExt == PAYMENT -> {
+                    checkVerification {
+                        when {
+                            mPref.isPaidUser -> playInNativePlayer(detailsInfo, it)
+                            it.urlType == PLAY_IN_WEB_VIEW -> playInWebView(it)
+                            it.urlType == OPEN_IN_EXTERNAL_BROWSER -> openInExternalBrowser(it)
                         }
                     }
-                    loadDetailFragment(detailsInfo)
+                }
+                it.urlType == PLAY_IN_WEB_VIEW && it.urlTypeExt == NON_PAYMENT -> {
+                    playInWebView(it)
+                }
+                it.urlType == OPEN_IN_EXTERNAL_BROWSER && it.urlTypeExt == NON_PAYMENT -> {
+                    openInExternalBrowser(it)
+                }
+                it.urlType == PLAY_IN_NATIVE_PLAYER && it.urlTypeExt == NON_PAYMENT -> {
+                    playInNativePlayer(detailsInfo, it)
                 }
             }
         }
     }
-
-    private fun showSubscribePackDialog(){
-        showSubscriptionDialog(this) {
-//            launchActivity<PackageListFragment>()
-            if(navController.currentDestination?.id != R.id.menu_subscriptions) {
-                navController.navigate(R.id.menu_subscriptions)
+    
+    private fun playInNativePlayer(detailsInfo: Any?, it: ChannelInfo) {
+        if (player is CastPlayer) {
+            maximizePlayer()
+        }
+        when (detailsInfo) {
+            is PlaylistPlaybackInfo -> {
+                loadPlayListItem(detailsInfo)
+            }
+            is SeriesPlaybackInfo -> {
+                loadDramaSeasonInfo(detailsInfo)
+            }
+            else -> {
+                loadChannel(it)
             }
         }
+        loadDetailFragment(detailsInfo)
     }
-
+    
+    private fun openInExternalBrowser(it: ChannelInfo) {
+        it.getHlsLink()?.let { url ->
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(url)
+                )
+            )
+        } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
+    }
+    
+    private fun playInWebView(it: ChannelInfo) {
+        if(!connectionWatcher.isOnline) {
+            showToast(getString(R.string.show_offline_message))
+            return
+        }
+        it.getHlsLink()?.let { url ->
+            heartBeatManager.triggerEventViewingContentStart(it.id.toInt(), it.type ?: "VOD")
+            viewModel.sendViewContentEvent(it)
+            launchActivity<Html5PlayerViewActivity> {
+                putExtra(
+                    Html5PlayerViewActivity.CONTENT_URL,
+                    url
+                )
+            }
+        } ?: ToffeeAnalytics.logException(NullPointerException("External browser url is null"))
+    }
+    
     override fun playNext() {
         super.playNext()
         if(playlistManager.playlistId == -1L) {
@@ -1090,15 +1089,6 @@ class HomeActivity :
                 fragment.setCurrentChannel(info.currentItem)
             }
         }
-//        val frag = supportFragmentManager.findFragmentById(R.id.details_viewer)
-//        if(frag !is ChannelViewFragment) {
-//            supportFragmentManager.commit {
-//                replace(
-//                    R.id.details_viewer,
-//                    ChannelViewFragment.newInstance(channelInfo)
-//                )
-//            }
-//        }
     }
     
     private fun loadFragmentById(id: Int, fragment: Fragment, tag: String) {
@@ -1111,14 +1101,12 @@ class HomeActivity :
     }
 
     private fun loadFragmentById(id: Int, fragment: Fragment) {
-        supportFragmentManager.beginTransaction()
-            .replace(id, fragment).commit()
+        supportFragmentManager.beginTransaction().replace(id, fragment).commit()
     }
 
     private fun initializeDraggableView() {
         binding.draggableView.addOnPositionChangedListener(this)
         binding.draggableView.addOnPositionChangedListener(binding.playerView)
-
         binding.draggableView.visibility = View.GONE
         binding.draggableView.isClickable = true
     }
@@ -1135,7 +1123,10 @@ class HomeActivity :
             subMenu?.isVisible = false
         }
         binding.sideNavigation.menu.findItem(R.id.menu_tv).isVisible = mPref.isAllTvChannelMenuEnabled
-        if (!mPref.isVerifiedUser) {
+        if (mPref.isVerifiedUser) {
+            val login = binding.sideNavigation.menu.findItem(R.id.menu_login)
+            login?.isVisible = false
+        } else {
             val logout = binding.sideNavigation.menu.findItem(R.id.menu_logout)
             logout?.isVisible = false
         }
@@ -1234,10 +1225,10 @@ class HomeActivity :
     }
 
     override fun onViewMaximize() {
-        requestedOrientation = if(binding.playerView.isAutoRotationEnabled
-            && !binding.playerView.isVideoPortrait)
+        MedalliaDigital.disableIntercept()
+        requestedOrientation = if(binding.playerView.isAutoRotationEnabled && !binding.playerView.isVideoPortrait)
             ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
-        else{
+        else {
             ActivityInfo.SCREEN_ORIENTATION_LOCKED
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -1251,7 +1242,6 @@ class HomeActivity :
     
     private fun showPlayerOverlay(playerOverlayData: PlayerOverlayData? = null) {
         lifecycleScope.launch {
-            delay(1_000)
             /*val playerOverlayData = Gson().fromJson("""
                     {
                         "id": 234,
@@ -1266,31 +1256,55 @@ class HomeActivity :
                             "font_size": "10px",
                             "opacity": "",
                             "position": "floating",
-                            "duration": 30
+                            "duration": 30,
+                            "from_position": [0.0,0.0],
+                            "to_position": [1.0,1.0]
                         }
                     }
                 """.trimIndent(), PlayerOverlayData::class.java)*/
             binding.playerView.showDebugOverlay(playerOverlayData!!, playlistManager.getCurrentChannel()?.id ?: "")
         
+            val debugOverlayView = binding.playerView.getDebugOverLay()
+//            debugOverlayView?.parent?.let { 
+//                if (it is View) {
+//                    it.setBackgroundColor(Color.TRANSPARENT)
+//                }
+//            }
             if (playerOverlayData.params.position == "floating") {
-                val debugOverlayView = binding.playerView.getDebugOverLay()
                 debugOverlayView?.let {
                     val observer = object : ViewTreeObserver.OnGlobalLayoutListener {
                         override fun onGlobalLayout() {
                             if (it.measuredWidth > 0) {
-                                val width = it.measuredWidth.toFloat() + (10.px * 2)
-                                val height = it.measuredHeight.toFloat() + (10.px * 2)
-                            
+                                val viewWidth = it.measuredWidth.toFloat() + (8.px * 2)
+                                val viewHeight = it.measuredHeight.toFloat() + (8.px * 2)
+                                
+                                val playerWidth = binding.playerView.measuredWidth.toFloat()
+                                val playerHeight = binding.playerView.measuredHeight.toFloat()
+                                
+                                val fromPosition = playerOverlayData.params.fromPosition ?: listOf(0.0F, 0.0F)
+                                val toPosition = playerOverlayData.params.toPosition ?: listOf(1.0F, 0.0F)
+                                
+                                val fromPositionX = fromPosition.first().coerceAtMost(1.0F)
+                                val fromPositionY = fromPosition.last().coerceAtMost(1.0F)
+                                
+                                val toPositionX = toPosition.first().coerceAtMost(1.0F)
+                                val toPositionY = toPosition.last().coerceAtMost(1.0F)
+                                
+                                val startX = playerWidth * fromPositionX
+                                val startY = playerHeight * fromPositionY
+                                
+                                val endX = (playerWidth - viewWidth) * toPositionX
+                                val endY = (playerHeight - viewHeight) * toPositionY
+                                
                                 val path = Path().apply {
-                                    moveTo(0f, 0f)
-                                    lineTo(binding.playerView.measuredWidth.toFloat() - width, 0f /*binding.playerView.measuredHeight.toFloat() - height*/)
+                                    moveTo(startX, startY)
+                                    lineTo(endX, endY)
                                 }
-                                ObjectAnimator.ofFloat(it.parent as View, View.X, View.Y, path).apply {
+                                ObjectAnimator.ofFloat(it, View.X, View.Y, path).apply {
                                     duration = playerOverlayData.params.duration * 1_000
                                     repeatMode = ValueAnimator.REVERSE
                                     repeatCount = 2
-                                    start()
-                                }
+                                }.start()
                                 it.viewTreeObserver.removeOnGlobalLayoutListener(this)
                             }
                         }
@@ -1324,13 +1338,14 @@ class HomeActivity :
     
     override fun onDestroy() {
         mqttService.destroy()
+        viewModelStore.clear()
         appUpdateManager.unregisterListener(appUpdateListener)
+        navController.removeOnDestinationChangedListener(destinationChangeListener)
         try {
             connectivityManager.unregisterNetworkCallback(heartBeatManager)
         } catch (e: Exception) {
             ToffeeAnalytics.logBreadCrumb("connectivity manager unregister error -> ${e.message}")
         }
-        navController.removeOnDestinationChangedListener(destinationChangeListener)
         super.onDestroy()
     }
     
@@ -1342,9 +1357,9 @@ class HomeActivity :
                 observeLogout()
                 viewModel.logoutUser()
             }
-            .setNegativeButton(
-                "No"
-            ) { dialog, _ -> dialog.cancel() }
+            .setNegativeButton("No") { dialog, _ -> 
+                dialog.cancel() 
+            }
             .show()
     }
 
@@ -1367,6 +1382,7 @@ class HomeActivity :
                         mPref.userImageUrl = null
                         mPref.customerAddress = ""
                         mPref.mqttIsActive = false
+                        mPref.isPaidUser = false
                         cacheManager.clearAllCache()
                         mPref.isVerifiedUser = false
                         mPref.isChannelDetailChecked = false
@@ -1399,9 +1415,7 @@ class HomeActivity :
     override fun onFullScreenButtonPressed(): Boolean {
         super.onFullScreenButtonPressed()
         requestedOrientation =
-        if(!binding.playerView.isAutoRotationEnabled
-            || binding.playerView.isFullScreen
-            || binding.playerView.isVideoPortrait) {
+        if(!binding.playerView.isAutoRotationEnabled || binding.playerView.isFullScreen || binding.playerView.isVideoPortrait) {
             ActivityInfo.SCREEN_ORIENTATION_LOCKED
         } else {
             ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
@@ -1443,8 +1457,7 @@ class HomeActivity :
             }
         } else if(searchView?.isIconified == false) {
             closeSearchBarIfOpen()
-        }
-        else {
+        } else {
             super.onBackPressed()
         }
     }
@@ -1469,8 +1482,7 @@ class HomeActivity :
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         if (mPref.isVerifiedUser) {
             observe(mPref.profileImageUrlLiveData) {
-                menu?.findItem(R.id.action_avatar)
-                    ?.actionView?.findViewById<ImageView>(R.id.view_avatar)?.loadProfileImage(it)
+                menu?.findItem(R.id.action_avatar)?.actionView?.findViewById<ImageView>(R.id.view_avatar)?.loadProfileImage(it)
             }
         }
         return super.onPrepareOptionsMenu(menu)
@@ -1517,13 +1529,10 @@ class HomeActivity :
         val searchIv = searchView!!.findViewById(androidx.appcompat.R.id.search_button) as ImageView
         searchIv.setImageResource(R.drawable.ic_menu_search)
 
-        val searchBadgeTv =
-            searchView?.findViewById(androidx.appcompat.R.id.search_badge) as TextView
-        searchBadgeTv.background =
-            ContextCompat.getDrawable(this@HomeActivity, R.drawable.ic_menu_search)
+        val searchBadgeTv = searchView?.findViewById(androidx.appcompat.R.id.search_badge) as TextView
+        searchBadgeTv.background = ContextCompat.getDrawable(this@HomeActivity, R.drawable.ic_menu_search)
 
-        val searchAutoComplete: AutoCompleteTextView =
-            searchView!!.findViewById(androidx.appcompat.R.id.search_src_text)
+        val searchAutoComplete: AutoCompleteTextView = searchView!!.findViewById(androidx.appcompat.R.id.search_src_text)
         searchAutoComplete.apply {
             textSize = 18f
             setTextColor(
@@ -1532,8 +1541,7 @@ class HomeActivity :
                     R.color.searchview_input_text_color
                 )
             )
-            background =
-                ContextCompat.getDrawable(this@HomeActivity, R.drawable.searchview_input_bg)
+            background = ContextCompat.getDrawable(this@HomeActivity, R.drawable.searchview_input_bg)
             hint = null
             setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_menu_search, 0)
 
@@ -1597,6 +1605,7 @@ class HomeActivity :
     private fun observeUpload2() {
         binding.homeMiniProgressContainer.addUploadInfoButton.setOnClickListener {
             viewModel.myChannelNavLiveData.value = MyChannelNavParams(mPref.customerId)
+            binding.homeMiniProgressContainer.root.isVisible = false
         }
 
         binding.homeMiniProgressContainer.closeButton.setOnClickListener {
@@ -1627,6 +1636,9 @@ class HomeActivity :
                             binding.homeMiniProgressContainer.miniUploadProgressText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_upload_done, 0, 0, 0)
                             binding.homeMiniProgressContainer.miniUploadProgressText.text = "Upload complete"
                             cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_VIDEOS)
+//                            if (navController.currentDestination?.id == R.id.myChannelHomeFragment) {
+//                                myChannelReloadViewModel.reloadVideos.postValue(true)
+//                            }
                         }
                         UploadStatus.ADDED.value,
                         UploadStatus.STARTED.value -> {

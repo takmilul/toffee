@@ -44,7 +44,7 @@ class UserActivitiesListFragment: BaseListFragment<UserActivities>(),
 
     private fun initTopPanel(view: View) {
         val topPanel = view.findViewById<MotionLayout>(R.id.top_panel)
-        if(topPanel != null && topPanel is MotionLayout) {
+        if(topPanel != null) {
             topPanel.findViewById<ImageButton>(R.id.back_button)?.let {backButton->
                 backButton.setOnClickListener {
                     topPanel.transitionToStart()
@@ -60,7 +60,7 @@ class UserActivitiesListFragment: BaseListFragment<UserActivities>(),
     override fun onItemClicked(item: UserActivities) {
         lifecycleScope.launch {
             item.channelInfo?.let {
-                localSync.syncData(item.channelInfo)
+                localSync.syncData(it)
                 homeViewModel.fragmentDetailsMutableLiveData.postValue(item.channelInfo)
             }
         }

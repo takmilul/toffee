@@ -22,7 +22,7 @@ import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.material.chip.Chip
 
 class ViewProfileFragment : BaseFragment() {
-
+    private lateinit var phoneNumber: String
     private var _binding: FragmentViewProfileBinding? = null
     private val binding get() = _binding!!
     private val userInterestList: MutableMap<String, Int> = mutableMapOf()
@@ -38,7 +38,7 @@ class ViewProfileFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         observeCategory()
         if (mPref.isVerifiedUser) {
-            val phoneNumber = if (mPref.phoneNumber.length == 11) mPref.phoneNumber else mPref.phoneNumber.substring(3)
+            phoneNumber = if (mPref.phoneNumber.length > 11) mPref.phoneNumber.substring(3) else mPref.phoneNumber
             binding.data = EditProfileForm().apply {
                 phoneNo = phoneNumber
                 photoUrl = mPref.userImageUrl ?: ""
@@ -63,7 +63,7 @@ class ViewProfileFragment : BaseFragment() {
             when (it) {
                 is Resource.Success -> {
                     viewModel.profileForm.value = it.data
-                    binding.data = it.data.apply { phoneNo = if (phoneNo.length == 11) phoneNo else phoneNo.substring(3) }
+                    binding.data = it.data.apply { phoneNo = phoneNumber }
                 }
                 is Resource.Failure -> {
                     requireContext().showToast(it.error.msg)
@@ -87,10 +87,7 @@ class ViewProfileFragment : BaseFragment() {
 
     private fun addChip(name: String, width:Int): Chip {
         val intColor = ContextCompat.getColor(requireContext(), R.color.colorSecondaryDark)
-        val selectedTextColor = ContextCompat.getColor(requireContext(), R.color.main_text_color)
-        val unSelectedTextColor = ContextCompat.getColor(requireContext(), R.color.cardTitleColor)
         val chipColor = createStateColor(intColor,intColor)
-        val strokeColor = createStateColor( unSelectedTextColor,unSelectedTextColor)
         val chip = layoutInflater.inflate(R.layout.interest_chip_layout, binding.interestChipGroup, false) as Chip
         chip.layoutParams.width = width
         chip.text = name

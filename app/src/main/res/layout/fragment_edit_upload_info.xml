@@ -89,7 +89,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:text="Title*"
+                android:text="@string/title_mandatory"
                 android:fontFamily="@font/roboto_regular"
                 android:textSize="@dimen/default_text_size"
                 android:textColor="@color/cardTitleColor"
@@ -100,15 +100,14 @@
                 android:id="@+id/upload_title"
                 style="@style/SingleLineInputFieldStyle"
                 android:layout_marginTop="4dp"
-                android:hint="Title"
-                android:paddingEnd="56dp"
-                android:paddingStart="10dp"
+                android:hint="@string/title_text"
                 android:maxLength="200"
                 android:fontFamily="@font/roboto_medium"
                 android:text="@={viewmodel.title}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView15" />
+                app:layout_constraintTop_toBottomOf="@+id/textView15"
+                android:autofillHints="@string/title_text" />
 
             <TextView
                 android:id="@+id/upload_title_count_tv"
@@ -125,7 +124,7 @@
             <TextView
                 android:id="@+id/error_title_tv"
                 style="@style/ErrorTextStyle"
-                android:text="*Title required"
+                android:text="@string/title_error_text"
                 app:layout_constraintEnd_toEndOf="@+id/upload_title"
                 app:layout_constraintStart_toStartOf="@+id/upload_title"
                 app:layout_constraintTop_toBottomOf="@+id/upload_title"
@@ -137,7 +136,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:text="Description*"
+                android:text="@string/description_mandatory"
                 android:fontFamily="@font/roboto_regular"
                 android:textSize="@dimen/default_text_size"
                 android:textColor="@color/cardTitleColor"
@@ -148,7 +147,7 @@
                 android:id="@+id/upload_description"
                 style="@style/MultilineInputFieldStyle"
                 android:layout_marginTop="4dp"
-                android:hint="Description..."
+                android:hint="@string/description_hint"
                 android:maxLength="600"
                 android:text="@={viewmodel.description}"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -170,7 +169,7 @@
             <TextView
                 android:id="@+id/error_description_tv"
                 style="@style/ErrorTextStyle"
-                android:text="*Description required"
+                android:text="@string/description_error_text"
                 app:layout_constraintEnd_toEndOf="@+id/upload_description"
                 app:layout_constraintStart_toStartOf="@+id/upload_description"
                 app:layout_constraintTop_toBottomOf="@+id/upload_description"
@@ -189,7 +188,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:text="Tags"
+                android:text="@string/tags_text"
                 android:fontFamily="@font/roboto_regular"
                 android:textSize="@dimen/default_text_size"
                 android:textColor="@color/cardTitleColor"
@@ -203,7 +202,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="16dp"
-                app:hint="@string/edittext_hint_tags"
+                app:hint="@string/tags_text"
                 android:fontFamily="@font/roboto_regular"
                 android:textColor="@color/colorSecondaryDark"
                 android:background="@drawable/multiline_input_text_bg"
@@ -222,7 +221,7 @@
             <TextView
                 android:id="@+id/error_tags_tv"
                 style="@style/ErrorTextStyle"
-                android:text="*Tag is not valid"
+                android:text="@string/tag_error_text"
                 app:layout_constraintEnd_toEndOf="@+id/upload_tags"
                 app:layout_constraintStart_toStartOf="@+id/upload_tags"
                 app:layout_constraintTop_toBottomOf="@+id/upload_tags"
@@ -234,7 +233,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:text="Category"
+                android:text="@string/txt_category"
                 android:fontFamily="@font/roboto_regular"
                 android:textSize="@dimen/default_text_size"
                 android:textColor="@color/cardTitleColor"
@@ -267,7 +266,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
-                android:text="Sub Category"
+                android:text="@string/txt_sub_category"
                 android:fontFamily="@font/roboto_regular"
                 android:textSize="@dimen/default_text_size"
                 android:textColor="@color/cardTitleColor"
@@ -300,7 +299,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:text="Age Group"
+                android:text="@string/txt_age_group"
                 android:fontFamily="@font/roboto_regular"
                 android:textSize="@dimen/default_text_size"
                 android:textColor="@color/cardTitleColor"
@@ -326,25 +325,56 @@
                     android:textSize="13sp"
                     android:spinnerMode="dialog" />
             </RelativeLayout>
-    
-            <androidx.appcompat.widget.AppCompatCheckBox
-                android:id="@+id/copyrightCheckbox"
+            
+            <TextView
+                android:id="@+id/textView16"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/copyright_confirmation_mandatory"
+                android:fontFamily="@font/roboto_regular"
+                android:textSize="@dimen/default_text_size"
+                android:textColor="@color/cardTitleColor"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/age_group_spinner_wrap" />
+            
+            <LinearLayout
+                android:id="@+id/copyrightCheckboxLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="8dp"
-                android:background="@null"
-                android:button="@drawable/custom_checkbox"
-                android:checked="true"
-                android:gravity="center_vertical"
-                android:text="@string/copyright_approval"
-                android:textColor="@color/main_text_color"
-                android:textSize="14sp"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/multiline_input_text_bg"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/age_group_spinner_wrap" />
-
+                app:layout_constraintTop_toBottomOf="@id/textView16">
+                
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/copyrightCheckbox"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@null"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="0dp"
+                    android:button="@drawable/custom_checkbox_copyright"
+                    android:checked="false"
+                    android:gravity="center_vertical"
+                    android:text="@string/copyright_approval"
+                    android:textColor="@color/cardTitleColor"
+                    android:textSize="14sp" />
+            </LinearLayout>
+            
+            <TextView
+                android:id="@+id/error_copyright_tv"
+                style="@style/ErrorTextStyle"
+                android:text="@string/copyright_confirmation_required"
+                app:layout_constraintEnd_toEndOf="@+id/copyrightCheckboxLayout"
+                app:layout_constraintStart_toStartOf="@+id/copyrightCheckboxLayout"
+                app:layout_constraintTop_toBottomOf="@+id/copyrightCheckboxLayout"
+                tools:visibility="visible" />
+            
             <include
                 android:id="@+id/copyrightLayout"
                 layout="@layout/layout_copyright_file"
@@ -352,19 +382,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/copyrightCheckbox" />
-    
-            <TextView
-                android:id="@+id/error_copyright_tv"
-                style="@style/ErrorTextStyle"
-                android:text="*Title required"
-                app:layout_constraintEnd_toEndOf="@+id/copyrightLayout"
-                app:layout_constraintStart_toStartOf="@+id/copyrightLayout"
-                app:layout_constraintTop_toBottomOf="@+id/copyrightLayout"
-                tools:visibility="visible" />
+                app:layout_constraintTop_toBottomOf="@id/error_copyright_tv" />
     
             <Button
                 android:id="@+id/cancel_button"
@@ -375,7 +396,7 @@
                 android:text="@string/cancel"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/guideline9"
-                app:layout_constraintTop_toBottomOf="@+id/error_copyright_tv" />
+                app:layout_constraintTop_toBottomOf="@+id/copyrightLayout" />
 
             <Button
                 android:id="@+id/submit_button"
@@ -386,7 +407,7 @@
                 android:text="@string/submit_button_text"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/guideline9"
-                app:layout_constraintTop_toBottomOf="@+id/error_copyright_tv" />
+                app:layout_constraintTop_toBottomOf="@+id/copyrightLayout" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

@@ -15,9 +15,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="@{()-> callback.onItemClicked(data)}"
-        android:background="?selectableItemBackgroundBorderless"
-        xmlns:tools="http://schemas.android.com/tools">
+        app:onSafeClick="@{()-> callback.onItemClicked(data)}"
+        android:background="?selectableItemBackgroundBorderless">
         
         <ImageView
             android:contentDescription="@string/txt_icon"
@@ -33,28 +32,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
-
-        <!--<TextView
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp"
-            android:id="@+id/text"
-            android:layout_width="0dp"
-            android:gravity="center|top"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_marginTop="8dp"
-            android:lines="2"
-            android:visibility="gone"
-            android:ellipsize="end"
-            tools:text="@{data.program_name}"
-            android:textColor="#7990AC"
-            android:textSize="14sp"
-            android:textStyle="normal"
-            android:fontFamily="sans-serif-medium"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/icon"
-            app:layout_constraintStart_toStartOf="@+id/icon"
-            app:layout_constraintTop_toBottomOf="@+id/icon"/>-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

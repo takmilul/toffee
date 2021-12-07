@@ -2,12 +2,8 @@ package com.banglalink.toffee.ui.widget
 
 import android.animation.ValueAnimator
 import android.content.Context
-import android.database.ContentObserver
 import android.graphics.Point
 import android.os.CountDownTimer
-import android.os.Handler
-import android.os.Looper
-import android.provider.Settings
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
@@ -19,7 +15,9 @@ import android.widget.Space
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.mediarouter.app.MediaRouteButton
+import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
+import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.extension.getChannelMetadata
 import com.banglalink.toffee.extension.px
@@ -33,7 +31,6 @@ import com.banglalink.toffee.util.BindingUtil
 import com.banglalink.toffee.util.UtilsKt
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.DefaultTimeBar
@@ -41,6 +38,7 @@ import com.google.android.exoplayer2.ui.StyledPlayerControlView
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.video.VideoSize
 import com.google.android.gms.cast.framework.CastButtonFactory
+import com.medallia.digital.mobilesdk.MedalliaDigital
 import com.mikhaellopez.circularprogressbar.CircularProgressBar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -93,11 +91,9 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private var debugJob: Job? = null
 
-    @Inject
-    lateinit var bindingUtil: BindingUtil
-
-    @Inject
-    lateinit var mPref: SessionPreference
+    @Inject lateinit var cPref: CommonPreference
+    @Inject lateinit var mPref: SessionPreference
+    @Inject lateinit var bindingUtil: BindingUtil
 
     init {
         initView()
@@ -159,7 +155,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         setControllerVisibilityListener { ctrlVisibility->
             when(ctrlVisibility) {
                 View.VISIBLE-> {
-                    val isLive = player?.isCurrentWindowLive == true || channelType == "LIVE"
+                    val isLive = player?.isCurrentMediaItemLive == true || channelType == "LIVE"
                     changeTimerVisibility(isLive)
 //                    playerControlView.setShowMultiWindowTimeBar(player?.isCurrentWindowLive == false)
                     onPlayerControllerChangedListeners.forEach {
@@ -183,7 +179,11 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         videoSurfaceView?.let {
             if(it is SurfaceView) {
 //                it.holder.setFixedSize()
-                it.setSecure(true)
+                val isDisableScreenshot = !(mPref.screenCaptureEnabledUsers.contains(cPref.deviceId) || mPref.screenCaptureEnabledUsers.contains(mPref.customerId.toString()) || mPref.screenCaptureEnabledUsers.contains(mPref.phoneNumber))
+                //disable screen capture
+                if (! BuildConfig.DEBUG && isDisableScreenshot) {
+                    it.setSecure(true)
+                }
             }
         }
     }
@@ -202,18 +202,18 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        setupRotationObserver()
-        updateRotationStatus(UtilsKt.isSystemRotationOn(context), false)
+//        setupRotationObserver()
+        updateRotationStatus(status = true, false)
     }
 
-    private val rotationObserver = object: ContentObserver(Handler(Looper.getMainLooper())){
-        override fun onChange(selfChange: Boolean) {
-            super.onChange(selfChange)
-            updateRotationStatus(UtilsKt.isSystemRotationOn(context))
-        }
-    }
+//    private val rotationObserver = object: ContentObserver(Handler(Looper.getMainLooper())){
+//        override fun onChange(selfChange: Boolean) {
+//            super.onChange(selfChange)
+//            updateRotationStatus(UtilsKt.isSystemRotationOn(context))
+//        }
+//    }
 
-    fun updateRotationStatus(status: Boolean, invokeListener: Boolean = true) {
+    private fun updateRotationStatus(status: Boolean, invokeListener: Boolean = true) {
         rotateButton.visibility = if(status && !isVideoPortrait) View.VISIBLE else View.GONE
         isAutoRotationEnabled = status
         rotateButton.setImageResource(if (!isAutoRotationEnabled) R.mipmap.rotation_off else R.drawable.ic_screen_rotate)
@@ -283,13 +283,13 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         }
     }
 
-    private fun setupRotationObserver(){
-        context.contentResolver.registerContentObserver(
-            Settings.System.getUriFor(Settings.System.ACCELEROMETER_ROTATION),
-            true,
-            rotationObserver
-        )
-    }
+//    private fun setupRotationObserver(){
+//        context.contentResolver.registerContentObserver(
+//            Settings.System.getUriFor(Settings.System.ACCELEROMETER_ROTATION),
+//            true,
+//            rotationObserver
+//        )
+//    }
 
     override fun showController() {
         if(!isControllerFullyVisible && !isMinimize) {
@@ -300,7 +300,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     }
 
     private fun updateControllerUI() {
-        val isChannelLive = player?.isCurrentWindowLive == true || channelType == "LIVE"
+        val isChannelLive = player?.isCurrentMediaItemLive == true || channelType == "LIVE"
         changeTimerVisibility(isChannelLive)
 
         player?.let {
@@ -372,14 +372,14 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     override fun onDetachedFromWindow() {
         debugJob?.cancel()
         clearDebugWindow()
-        removeRotationObserver()
+//        removeRotationObserver()
         stopAutoplayTimer()
         super.onDetachedFromWindow()
     }
 
-    private fun removeRotationObserver() {
-        context.contentResolver.unregisterContentObserver(rotationObserver)
-    }
+//    private fun removeRotationObserver() {
+//        context.contentResolver.unregisterContentObserver(rotationObserver)
+//    }
 
     private fun setupOverlay() {
         playerOverlay.performListener(object : PlayerOverlayView.PerformListener {
@@ -581,6 +581,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
     }
 
     override fun onViewDestroy() {
+        MedalliaDigital.enableIntercept()
         if(player !is CastPlayer) {
             player?.stop()
         }
@@ -641,7 +642,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
             Player.STATE_READY-> {
                 previewImage.setImageResource(0)
                 playPause.visibility = View.VISIBLE
-                val isChannelLive = player?.isCurrentWindowLive == true || channelType == "LIVE"
+                val isChannelLive = player?.isCurrentMediaItemLive == true || channelType == "LIVE"
                 nextButtonVisibility(!isChannelLive)
                 prevButtonVisibility(!isChannelLive)
                 autoplayProgress.visibility = View.GONE
@@ -742,7 +743,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
             resizeView(UtilsKt.getRealScreenSize(context))
 
             rotateButton.visibility =
-                if (isVideoPortrait || !UtilsKt.isSystemRotationOn(context)) View.GONE else View.VISIBLE
+                if (isVideoPortrait/* || !UtilsKt.isSystemRotationOn(context)*/) View.GONE else View.VISIBLE
             shareButton.visibility = if (channelInfo.isApproved == 1) View.VISIBLE else View.GONE
         }
         onPlayerControllerChangedListeners.forEach {
@@ -759,7 +760,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
 
         player?.currentMediaItem?.getChannelMetadata(player)?.let {
             isVideoPortrait = it.isHorizontal != 1
-            rotateButton.visibility = if(isVideoPortrait || !UtilsKt.isSystemRotationOn(context)) View.GONE else View.VISIBLE
+            rotateButton.visibility = if(isVideoPortrait /*|| !UtilsKt.isSystemRotationOn(context)*/) View.GONE else View.VISIBLE
             shareButton.visibility = if(it.isApproved == 1) View.VISIBLE else View.GONE
         }
     }

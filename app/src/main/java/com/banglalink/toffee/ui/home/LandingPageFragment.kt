@@ -1,6 +1,8 @@
 package com.banglalink.toffee.ui.home
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,13 +12,19 @@ import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.FragmentLandingPageBinding
 import com.banglalink.toffee.enums.PageType.Landing
+import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.google.android.material.appbar.AppBarLayout
+import com.loopnow.fireworklibrary.FwSDK
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class LandingPageFragment : HomeBaseFragment() {
-    
     private var appbarOffset = 0
     private var _binding: FragmentLandingPageBinding ? = null
+    @Inject @ApplicationContext lateinit var appContext: Context
     private val binding get() = _binding!!
     private val landingViewModel by activityViewModels<LandingPageViewModel>()
 
@@ -44,12 +52,6 @@ class LandingPageFragment : HomeBaseFragment() {
         return binding.root
     }
 
-    override fun onDestroyView() {
-        binding.landingAppbar.removeOnOffsetChangedListener(offsetListener)
-        super.onDestroyView()
-        _binding = null
-    }
-
     private val offsetListener = AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
         appbarOffset = verticalOffset
     }
@@ -62,9 +64,26 @@ class LandingPageFragment : HomeBaseFragment() {
         landingViewModel.isDramaSeries.value = false
         binding.landingAppbar.addOnOffsetChangedListener(offsetListener)
         binding.featuredPartnerFragment.isVisible = mPref.isFeaturePartnerActive == "true"
+        observe(mPref.isFireworkInitialized) { isInitialized ->
+            val isActive = /*mPref.isFireworkActive == "true" && isInitialized*/ false
+            if (isActive) {
+                _binding?.fireworkFragment?.isVisible = isActive
+                try {
+                    val url = requireActivity().intent.data?.fragment?.takeIf { it.contains("fwplayer=") }?.removePrefix("fwplayer=")
+                    url?.let {
+                        FwSDK.play(it)
+                    }
+                }
+                catch (e: Exception) {
+                    Log.e("FwSDK", "FireworkDeeplinkPlayException")
+                }
+            }
+        }
     }
     
-    fun onBackPressed(): Boolean {
-        return false
+    override fun onDestroyView() {
+        binding.landingAppbar.removeOnOffsetChangedListener(offsetListener)
+        super.onDestroyView()
+        _binding = null
     }
 }

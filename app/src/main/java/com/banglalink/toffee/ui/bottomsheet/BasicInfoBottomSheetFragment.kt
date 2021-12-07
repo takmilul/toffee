@@ -21,6 +21,7 @@ import com.banglalink.toffee.model.MyChannelDetail
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.HomeViewModel
+import com.banglalink.toffee.ui.mychannel.MyChannelHomeViewModel
 import com.banglalink.toffee.ui.profile.ViewProfileViewModel
 import com.banglalink.toffee.ui.upload.BottomSheetUploadFragment
 import com.banglalink.toffee.ui.widget.VelBoxProgressDialog
@@ -33,30 +34,30 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class BasicInfoBottomSheetFragment : BaseFragment() {
-    private var age: Int = 0
-    private var userNID= ""
-    private var userDOB = ""
-    private var userName = ""
-    private var userEmail= ""
-    private var userAddress = ""
+    private var userNID: String = ""
+    private var userDOB: String? = ""
+    private var userName: String = ""
+    private var userEmail: String = ""
+    private var userAddress: String = ""
     private var channelName: String = ""
-    private val binding get() = _binding!!
-    private var newChannelLogoUrl: String = "NULL"
+    private var newChannelLogoUrl: String? = "NULL"
+    private var oldChannelLogoUrl: String? = "NULL"
     @Inject lateinit var cacheManager: CacheManager
     private var profileForm: EditProfileForm? = null
     private var myChannelDetail: MyChannelDetail? = null
     private var _binding: BottomSheetBasicInfoBinding? = null
+    private val binding get() = _binding!!
     private val homeViewModel by activityViewModels<HomeViewModel>()
-    private val viewModel by activityViewModels<ViewProfileViewModel>()
     private val profileViewModel by activityViewModels<ViewProfileViewModel>()
     private val progressDialog by unsafeLazy { VelBoxProgressDialog(requireContext()) }
+    private val myChannelHomeViewModel by activityViewModels<MyChannelHomeViewModel>()
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         profileForm = profileViewModel.profileForm.value
         myChannelDetail = homeViewModel.myChannelDetailLiveData.value ?: MyChannelDetail(0)
-        channelName = arguments?.getString("channelName") ?: ""
-        newChannelLogoUrl = arguments?.getString("newChannelLogoUrl") ?: ""
+        channelName = arguments?.getString("channelName").orEmpty()
+        newChannelLogoUrl = arguments?.getString("newChannelLogoUrl").orEmpty()
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -65,10 +66,11 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
             if (name.isNullOrBlank()) name = profileForm?.fullName
             if (email.isNullOrBlank()) email = profileForm?.email
             if (address.isNullOrBlank()) address = profileForm?.address
+            oldChannelLogoUrl = if (profileUrl.isNullOrBlank() || profileUrl == "NULL") mPref.channelLogo else profileUrl!!
         }
         return binding.root
     }
-
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeEditChannel()
@@ -84,11 +86,10 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
     
     private fun handleSubmitButton() {
         progressDialog.show()
+        userNID = binding.nidEt.text.toString().trim()
         userName = binding.nameEt.text.toString().trim()
+        userEmail = binding.emailEt.text.toString().trim()
         userAddress = binding.addressEt.text.toString().trim()
-        userDOB = binding.dateOfBirthTv.text.toString().trim()
-        userEmail=binding.emailEt.text.toString().trim()
-        userNID=binding.nidEt.text.toString().trim()
         
         if (userName.isBlank()) {
             binding.errorNameTv.show()
@@ -97,7 +98,7 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
             binding.errorNameTv.hide()
             binding.nameEt.setBackgroundResource(R.drawable.single_line_input_text_bg)
         }
-
+        
         if (userAddress.isBlank()) {
             binding.errorAddressTv.show()
             binding.addressEt.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
@@ -105,75 +106,62 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
             binding.errorAddressTv.hide()
             binding.addressEt.setBackgroundResource(R.drawable.single_line_input_text_bg)
         }
-
-        val isDobValid =validateDOB()
+        
+        val isDobValid = validateDOB()
         val notValidEmail = userEmail.isNotBlank() and !userEmail.isValid(InputType.EMAIL)
-
+        
         if (userEmail.isBlank()) {
-            binding.errorEmailTv.setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.pink_to_accent_color
-                )
+            binding.nidEt.validateInput(
+                binding.errorEmailTv,
+                R.string.email_null_error_text,
+                R.color.pink_to_accent_color,
+                R.drawable.error_single_line_input_text_bg
             )
-            binding.errorEmailTv.text = getString(R.string.email_null_error_text)
-            binding.emailEt.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
-        }
-        else {
+        } else {
             if (notValidEmail) {
-                binding.errorEmailTv.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.pink_to_accent_color
-                    )
+                binding.nidEt.validateInput(
+                    binding.errorEmailTv,
+                    R.string.email_error_text,
+                    R.color.pink_to_accent_color,
+                    R.drawable.error_single_line_input_text_bg
                 )
-                binding.errorEmailTv.text = getString(R.string.email_error_text)
-                binding.emailEt.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
             } else {
-                binding.errorEmailTv.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.main_text_color
-                    )
+                binding.nidEt.validateInput(
+                    binding.errorEmailTv,
+                    R.string.verification_email_sent,
+                    R.color.main_text_color,
+                    R.drawable.single_line_input_text_bg
                 )
-                binding.errorEmailTv.text = getString(R.string.verification_email_sent)
-                binding.emailEt.setBackgroundResource(R.drawable.single_line_input_text_bg)
             }
         }
-        var validNID =false
+        var validNID = false
         if (userNID.isBlank()) {
-            binding.nidWarningTv.setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.pink_to_accent_color
-                )
+            binding.nidEt.validateInput(
+                binding.nidWarningTv,
+                R.string.nid_null_error_text,
+                R.color.pink_to_accent_color,
+                R.drawable.error_single_line_input_text_bg
             )
-            binding.nidWarningTv.text = getString(R.string.nid_null_error_text)
-            binding.nidEt.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
         } else {
             val nidLength = userNID.length
             validNID = nidLength == 10 || nidLength == 13 || nidLength == 17
             if (!validNID) {
-                binding.nidWarningTv.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.pink_to_accent_color
-                    )
+                binding.nidEt.validateInput(
+                    binding.nidWarningTv,
+                    R.string.invalid_nid_number,
+                    R.color.pink_to_accent_color,
+                    R.drawable.error_single_line_input_text_bg
                 )
-                binding.nidWarningTv.text = getString(R.string.invalid_nid_number)
-                binding.nidEt.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
-            } else{
-                binding.nidWarningTv.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.main_text_color
-                    )
+            } else {
+                binding.nidEt.validateInput(
+                    binding.nidWarningTv,
+                    R.string.your_nid_must_match,
+                    R.color.main_text_color,
+                    R.drawable.single_line_input_text_bg
                 )
-                binding.nidWarningTv.text = getString(R.string.your_nid_must_match)
-                binding.nidEt.setBackgroundResource(R.drawable.single_line_input_text_bg)
             }
         }
-    
+        
         if (userName.isNotBlank()
             && userAddress.isNotBlank()
             && isDobValid
@@ -182,32 +170,31 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
             && mPref.phoneNumber.isNotBlank()
             && validNID) {
             saveChannelInfo()
-        }
-        else {
+        } else {
             progressDialog.dismiss()
         }
     }
     
     private fun observeEditChannel() {
-        observe(viewModel.editChannelResult) {
+        observe(profileViewModel.editChannelResult) {
             when (it) {
                 is Resource.Success -> {
                     mPref.isChannelDetailChecked = true
-
-                    mPref.channelLogo = if (newChannelLogoUrl.isNotBlank()) newChannelLogoUrl else myChannelDetail?.profileUrl ?: ""
+                    mPref.channelLogo = it.data.profileImage ?: oldChannelLogoUrl.orEmpty()
                     mPref.channelName = channelName
                     mPref.customerName = userName
                     mPref.customerEmail = userEmail
                     mPref.customerAddress = userAddress
-                    mPref.customerDOB = userDOB
+                    mPref.customerDOB = userDOB!!
                     mPref.customerNID = userNID
                     progressDialog.dismiss()
                     requireContext().showToast(it.data.message)
                     cacheManager.clearCacheByUrl(ApiRoutes.GET_MY_CHANNEL_DETAILS)
+                    myChannelHomeViewModel.getChannelDetail(mPref.customerId)
                     parentFragment?.parentFragment?.let {
                         if (it is BottomSheetDialogFragment) {
                             it.findNavController().popBackStack().let { _ ->
-                                it.findNavController().navigate(R.id.newUploadMethodFragment) 
+                                it.findNavController().navigate(R.id.newUploadMethodFragment)
                             }
                         }
                     }
@@ -220,9 +207,8 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
             }
         }
     }
-
+    
     private fun saveChannelInfo() {
-        val selectedDate=UtilsKt.dateToStr(UtilsKt.strToDate(binding.dateOfBirthTv.text.toString(),"dd/MM/yyyy"),"yyyy-MM-dd")
         try {
             val ugcEditMyChannelRequest = MyChannelEditRequest(
                 mPref.customerId,
@@ -233,41 +219,38 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
                 myChannelDetail?.description ?: "",
                 myChannelDetail?.bannerUrl ?: "NULL",
                 "NULL",
-                myChannelDetail?.profileUrl ?: "NULL",
-                newChannelLogoUrl,
+                oldChannelLogoUrl ?: "NULL",
+                newChannelLogoUrl ?: "NULL",
                 userName,
                 userEmail,
                 userAddress,
-                selectedDate ?: "",
+                userDOB!!,
                 userNID,
                 mPref.phoneNumber,
                 0,
                 !myChannelDetail?.nationalIdNo.isNullOrBlank(),
                 !(myChannelDetail?.channelName.isNullOrBlank() && myChannelDetail?.profileUrl.isNullOrBlank())
             )
-        
-            viewModel.editChannel(ugcEditMyChannelRequest)
+            
+            profileViewModel.editChannel(ugcEditMyChannelRequest)
         } catch (e: Exception) {
             Log.e(BottomSheetUploadFragment.TAG, "saveChannelInfo: ${e.message}")
         }
     }
-
+    
     private fun showDatePicker() {
-        val date = UtilsKt.strToDate(binding.dateOfBirthTv.text.toString(),"dd/MM/yyyy") ?: Date()
+        binding.emailEt.requestFocus()
+        binding.emailEt.setSelection(binding.emailEt.length())
+        val date = UtilsKt.strToDate(binding.dateOfBirthTv.text.toString().trim(), "dd/MM/yyyy") ?: Date()
         val calendar = Calendar.getInstance()
-        calendar.time=date
+        calendar.time = date
         val datePickerDialog = DatePickerDialog(
-            requireContext(),
-            { view, year, monthOfYear, dayOfMonth ->
-
-                val calendarTwo= Calendar.getInstance()
+            requireContext(), { _, year, monthOfYear, dayOfMonth ->
+                val calendarTwo = Calendar.getInstance()
                 calendarTwo.set(year, monthOfYear, dayOfMonth)
-
-                binding.dateOfBirthTv.text = UtilsKt.dateToStr(calendarTwo.time,"dd/MM/yyyy")
+                binding.dateOfBirthTv.text = UtilsKt.dateToStr(calendarTwo.time, "dd/MM/yyyy")
                 validateDOB()
-
             },
-
             calendar[Calendar.YEAR],
             calendar[Calendar.MONTH],
             calendar[Calendar.DAY_OF_MONTH]
@@ -280,10 +263,10 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
             getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(buttonColor)
         }
     }
-
-    private fun ageCalculate( date : Date):Int {
+    
+    private fun ageCalculate(date: Date): Int {
         val dob = Calendar.getInstance()
-        dob.time=date
+        dob.time = date
         val today = Calendar.getInstance()
         var userAge = today[Calendar.YEAR] - dob[Calendar.YEAR]
         if (today[Calendar.MONTH] <= dob[Calendar.MONTH] && today[Calendar.DAY_OF_YEAR] < dob[Calendar.DAY_OF_YEAR]) {
@@ -294,54 +277,48 @@ class BasicInfoBottomSheetFragment : BaseFragment() {
     
     private fun validateDOB(): Boolean {
         var isDobValid = false
-        if (binding.dateOfBirthTv.text.isBlank()) {
-            binding.errorDateTv.setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.pink_to_accent_color
-                )
+        userDOB = UtilsKt.dateToStr(UtilsKt.strToDate(binding.dateOfBirthTv.text.toString(), "dd/MM/yyyy"), "yyyy-MM-dd")
+        if (binding.dateOfBirthTv.text.isBlank() || userDOB.isNullOrBlank()) {
+            binding.dateOfBirthTv.validateInput(
+                binding.errorDateTv,
+                R.string.date_error_text,
+                R.color.pink_to_accent_color,
+                R.drawable.error_single_line_input_text_bg
             )
-            binding.errorDateTv.text = getString(R.string.date_error_text)
-            binding.dateOfBirthTv.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
         } else {
-            val date =UtilsKt.strToDate(binding.dateOfBirthTv.text.toString(),"dd/MM/yyyy") ?: Date()
-            val userAge= ageCalculate(date)
-
+            val date = UtilsKt.strToDate(binding.dateOfBirthTv.text.toString().trim(), "dd/MM/yyyy") ?: Date()
+            val userAge = ageCalculate(date)
+            
             if (userAge < 18) {
-                binding.errorDateTv.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.pink_to_accent_color
-                    )
+                binding.dateOfBirthTv.validateInput(
+                    binding.errorDateTv,
+                    R.string.Date_of_birth_must_be_match,
+                    R.color.pink_to_accent_color,
+                    R.drawable.error_single_line_input_text_bg
                 )
-                binding.errorDateTv.text = getString(R.string.Date_of_birth_must_be_match)
-                binding.dateOfBirthTv.setBackgroundResource(R.drawable.error_single_line_input_text_bg)
-            }
-            else {
+            } else {
                 isDobValid = true
-                binding.errorDateTv.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.main_text_color
-                    )
+                binding.dateOfBirthTv.validateInput(
+                    binding.errorDateTv,
+                    R.string.Date_of_birth_must_be_match,
+                    R.color.main_text_color,
+                    R.drawable.single_line_input_text_bg
                 )
-                binding.errorDateTv.text = getString(R.string.Date_of_birth_must_be_match)
-                binding.dateOfBirthTv.setBackgroundResource(R.drawable.single_line_input_text_bg)
             }
         }
         return isDobValid
     }
     
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
     private fun showTermsAndConditionDialog() {
         val args = Bundle().apply {
             putString("myTitle", "Terms & Conditions")
             putString("url", mPref.termsAndConditionUrl)
         }
         findNavController().navigate(R.id.htmlPageViewDialog, args)
+    }
+    
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

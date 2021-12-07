@@ -10,7 +10,7 @@ import com.banglalink.toffee.apiservice.UploadSignedUrlService
 import com.banglalink.toffee.data.database.entities.UploadInfo
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.data.storage.SessionPreference
-import com.banglalink.toffee.exception.Error
+import com.banglalink.toffee.data.exception.Error
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.model.SubCategory
@@ -213,7 +213,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
                 categoryId,
                 subcategoryId,
                 thumbnailData.value,
-                round(duration / 1000F).toString(),
+                round(duration / 1000F).toInt().toString(),
                 isHorizontal,
                 if (isUploadCopyrightFile) "${copyrightDir}/${copyrightFileName}" else ""
             )
@@ -221,11 +221,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
             if (resp.contentId > 0L) {
                 val uploadId = startUpload(resp.contentId, resp.uploadVODSignedUrl, resp.uploadCopyrightSignedUrl, isUploadCopyrightFile)
                 Log.e("uploadId", uploadId)
-                if(uploadId != null) {
-                    resultLiveData.value = Resource.Success(Pair(uploadId, resp.contentId))
-                } else {
-                    resultLiveData.value = Resource.Failure(Error(-1, "Unknown error occured"))
-                }
+                resultLiveData.value = Resource.Success(Pair(uploadId, resp.contentId))
                 progressDialog.value = false
                 return
             }
@@ -235,8 +231,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
         }
         progressDialog.value = false
     }
-
-
+    
     fun saveThumbnail(uri: String?) {
         if (uri == null) return
         viewModelScope.launch {

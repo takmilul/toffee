@@ -25,11 +25,4 @@ class UserActivitiesListAdapter(callback: ProviderIconCallback<UserActivities>):
             holder.binding.ownerThumb.setImageDrawable(null)
         }
     }
-
-    override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
-        val obj = getItem(position)
-        obj?.channelInfo?.let {
-            holder.bind(obj, callback, position)
-        }
-    }
 }

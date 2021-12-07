@@ -15,8 +15,8 @@ import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.databinding.FragmentSplashScreenBinding
-import com.banglalink.toffee.exception.AppDeprecatedError
-import com.banglalink.toffee.exception.CustomerNotFoundError
+import com.banglalink.toffee.data.exception.AppDeprecatedError
+import com.banglalink.toffee.data.exception.CustomerNotFoundError
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.receiver.ConnectionWatcher
@@ -183,7 +183,9 @@ class SplashScreenFragment : BaseFragment() {
                 is Resource.Failure -> {
                     when (it.error) {
                         is AppDeprecatedError -> {
-                            showUpdateDialog(it.error.title, it.error.updateMsg, it.error.forceUpdate)
+                            (it.error as AppDeprecatedError).let { ade->
+                                showUpdateDialog(ade.title, ade.updateMsg, ade.forceUpdate)
+                            }
                         }
                         is CustomerNotFoundError -> {
                             mPref.clear()

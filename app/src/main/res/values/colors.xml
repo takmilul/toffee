@@ -109,4 +109,5 @@
     <color name="upload_button_color">#E1E1E1</color>
     <color name="reaction_selected_bg_color">#F2F2F2</color>
     <color name="placeholder_logo_color">#F2F2F2</color>
+    <color name="strike_through_color">#FFCCE1</color>
 </resources>

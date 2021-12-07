@@ -1,39 +1,42 @@
 package com.banglalink.toffee.ui.common
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.*
+import androidx.activity.OnBackPressedCallback
 import com.banglalink.toffee.databinding.FragmentHtmlPageViewBinding
+import com.banglalink.toffee.ui.widget.Html5WebViewClient
+import com.medallia.digital.mobilesdk.MedalliaDigital
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class HtmlPageViewFragment : BaseFragment() {
-
+    
+    private var header: String? = ""
+    private lateinit var htmlUrl: String
     private var _binding: FragmentHtmlPageViewBinding ? = null
     private val binding get() = _binding!!
 
-    private lateinit var htmlUrl: String
-    private var header: String? = ""
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        MedalliaDigital.disableIntercept()
         _binding = FragmentHtmlPageViewBinding.inflate(inflater, container, false)
         return binding.root
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        listenBackStack()
         htmlUrl= arguments?.getString("url")!!
         header= arguments?.getString("header")
-
-        binding.webview.webViewClient = object : WebViewClient() {
+        binding.webview.webViewClient = object : Html5WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                super.onPageStarted(view, url, favicon)
                 binding.progressBar.visibility = View.VISIBLE
             }
         }
@@ -45,22 +48,33 @@ class HtmlPageViewFragment : BaseFragment() {
                     binding.progressBar.visibility = View.GONE
                 }
             }
+
+            override fun onPermissionRequest(request: PermissionRequest) {
+                val resources = request.resources
+                for (i in resources.indices) {
+                    if (PermissionRequest.RESOURCE_PROTECTED_MEDIA_ID == resources[i]) {
+                        request.grant(resources)
+                        return
+                    }
+                }
+                super.onPermissionRequest(request)
+            }
         }
 
         with(binding.webview.settings) {
-            mixedContentMode =  WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-            javaScriptEnabled = true
             setSupportZoom(true)
-            setNeedInitialFocus(false)
-            cacheMode = WebSettings.LOAD_DEFAULT
             databaseEnabled = true
             useWideViewPort = true
+            javaScriptEnabled = true
+            domStorageEnabled = true
+            setNeedInitialFocus(false)
             builtInZoomControls = true
             displayZoomControls = false
-            setSupportMultipleWindows(true)
+            setSupportMultipleWindows(false)
+            cacheMode = WebSettings.LOAD_DEFAULT
             javaScriptCanOpenWindowsAutomatically = true
-            domStorageEnabled = true
             CookieManager.getInstance().setAcceptCookie(true)
+            mixedContentMode =  WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
             userAgentString = "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Mobile Safari/537.36"
         }
         if(header.isNullOrEmpty()){
@@ -71,7 +85,23 @@ class HtmlPageViewFragment : BaseFragment() {
             binding.webview.loadUrl(htmlUrl,headerMap)
         }
     }
-
+    
+    private fun listenBackStack() {
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                Log.e("HTM_", "url: ${binding.webview.url}")
+                if (binding.webview.canGoBack() /*&& binding.webview.url?.split("/")?.contains("home") != true*/) {
+                    binding.webview.goBack()
+                } else {
+                    OnBackPressedCallback@ this.isEnabled = false
+                    requireActivity().onBackPressed()
+                }
+            }
+        }
+        
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+    }
+    
     override fun onDestroyView() {
         binding.webview.run {
             clearCache(false)
@@ -85,7 +115,7 @@ class HtmlPageViewFragment : BaseFragment() {
 //            destroyDrawingCache()
             destroy()
         }
-
+        MedalliaDigital.enableIntercept()
         super.onDestroyView()
         _binding = null
     }

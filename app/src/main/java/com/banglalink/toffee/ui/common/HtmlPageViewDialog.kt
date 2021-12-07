@@ -11,10 +11,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebChromeClient
-import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.webkit.*
 import androidx.fragment.app.DialogFragment
 import com.banglalink.toffee.R
 import com.banglalink.toffee.databinding.DialogHtmlPageViewBinding
@@ -63,6 +60,17 @@ class HtmlPageViewDialog : DialogFragment() {
                 if (newProgress == 100) {
                     binding.progressBar.visibility = View.GONE
                 }
+            }
+
+            override fun onPermissionRequest(request: PermissionRequest) {
+                val resources = request.resources
+                for (i in resources.indices) {
+                    if (PermissionRequest.RESOURCE_PROTECTED_MEDIA_ID == resources[i]) {
+                        request.grant(resources)
+                        return
+                    }
+                }
+                super.onPermissionRequest(request)
             }
         }
 

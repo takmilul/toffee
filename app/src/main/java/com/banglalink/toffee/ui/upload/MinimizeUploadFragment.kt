@@ -9,12 +9,14 @@ import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.data.repository.UploadInfoRepository
 import com.banglalink.toffee.databinding.FragmentMinimizeUploadBinding
+import com.banglalink.toffee.enums.UploadStatus
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.widget.VelBoxAlertDialogBuilder
 import com.banglalink.toffee.util.Utils
 import com.banglalink.toffee.util.UtilsKt
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import net.gotev.uploadservice.UploadService
 import javax.inject.Inject
 
@@ -69,7 +71,7 @@ class MinimizeUploadFragment: BaseFragment() {
                 }
                 setNegativeButtonListener("YES") {
                     UploadService.stopAllUploads()
-                    findNavController().popBackStack(R.id.menu_feed, false)
+                    parentFragment?.findNavController()?.popBackStack(R.id.menu_feed, false)
                     it?.dismiss()
                 }
             }.create().show()
@@ -83,7 +85,7 @@ class MinimizeUploadFragment: BaseFragment() {
     }
 
     private fun observeUpload() {
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launch {
             uploadRepo.getUploadFlowById(uploadIdLong).collectLatest { uploadInfo ->
                 when(uploadInfo?.status) {
                     UploadStatus.SUCCESS.value,

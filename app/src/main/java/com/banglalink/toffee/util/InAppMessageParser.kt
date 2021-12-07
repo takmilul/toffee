@@ -4,6 +4,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
+import androidx.navigation.navOptions
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.apiservice.GetCategories
@@ -25,6 +26,7 @@ class InAppMessageParser @Inject constructor(
 //    https://toffeelive.com?routing=internal&page=invite
 //    https://toffeelive.com?routing=internal&page=redeem
 //    https://toffeelive.com?routing=internal&page=settings
+//    https://toffeelive.com?routing=internal&page=login
 //    https://toffeelive.com?routing=internal&page=search&keyword=natok
 //    https://toffeelive.com?routing=internal&page=ugc_channel&ownerid=6417560
 //    https://toffeelive.com?routing=internal&page=categories&catid=1
@@ -114,7 +116,17 @@ class InAppMessageParser @Inject constructor(
                         return RouteV2(R.id.notificationDropdownFragment, "Notification")
                     }
                     "ugc_all_channel" -> {
-                        return RouteV2(R.id.trendingChannelsFragment, "All UGC Channels")
+                        return RouteV2(R.id.allUserChannelsFragment, "All UGC Channels")
+                    }
+                    "login" -> {
+                        return RouteV2(R.id.loginDialog, "Login")
+                    }
+                    "home" -> {
+                        return RouteV2(R.id.menu_feed, "Home", options = navOptions { 
+                            popUpTo(R.id.menu_feed) {
+                                inclusive = true
+                            }
+                        })
                     }
                     else -> null
                 }

@@ -17,6 +17,7 @@ import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.ui.common.HomeBaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class EditorsChoiceFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo> {
     
@@ -60,9 +61,9 @@ class EditorsChoiceFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInf
     }
     
     private fun observeList() {
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        viewLifecycleOwner.lifecycleScope.launch {
             val content = if (landingPageViewModel.pageType.value == PageType.Landing) {
-                landingPageViewModel.loadLandingEditorsChoiceContent
+                landingPageViewModel.loadLandingEditorsChoiceContent()
             }
             else {
                 landingPageViewModel.loadEditorsChoiceContent()

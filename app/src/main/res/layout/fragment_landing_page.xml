@@ -40,6 +40,13 @@
                     android:name="com.banglalink.toffee.ui.landing.LandingCategoriesFragment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
+    
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/fireworkFragment"
+                    android:name="com.banglalink.toffee.ui.firework.FireworkFragment"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
 
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/featuredPartnerFragment"

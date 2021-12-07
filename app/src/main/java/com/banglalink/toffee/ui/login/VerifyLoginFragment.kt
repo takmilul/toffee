@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.AlertDialogVerifyBinding
 import com.banglalink.toffee.extension.observe
 import com.banglalink.toffee.extension.safeClick
@@ -26,6 +27,7 @@ import com.banglalink.toffee.usecase.OTPLogData
 import com.banglalink.toffee.util.unsafeLazy
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class VerifyLoginFragment : ChildDialogFragment() {
@@ -34,6 +36,7 @@ class VerifyLoginFragment : ChildDialogFragment() {
     private var phoneNumber: String = ""
     private var regSessionToken: String = ""
     private var resendBtnPressCount: Int = 0
+    @Inject lateinit var cacheManager: CacheManager
     private var resendCodeTimer: ResendCodeTimer? = null
     private var verifiedUserData: CustomerInfoLogin? = null
     private var _binding: AlertDialogVerifyBinding ? = null
@@ -104,6 +107,7 @@ class VerifyLoginFragment : ChildDialogFragment() {
 
     private fun reloadContent() {
         closeDialog()
+        cacheManager.clearAllCache()
         requireActivity().showToast(getString(R.string.verify_success), Toast.LENGTH_LONG).also {
             requireActivity().recreate()
         }
@@ -156,11 +160,13 @@ class VerifyLoginFragment : ChildDialogFragment() {
     private fun initSmsBroadcastReceiver() {
         mSmsBroadcastReceiver = SMSBroadcastReceiver()
         observe(mSmsBroadcastReceiver!!.otpLiveData) {
-            binding.otpEditText.setText(it)
-            binding.otpEditText.setSelection(it.length)
-            otp = binding.otpEditText.text.toString().trim()
-            homeViewModel.sendOtpLogData(OTPLogData(otp, 0, 1, 0), phoneNumber)
-            viewModel.verifyCode(otp, regSessionToken, "")
+            if (it.isNotBlank()) {
+                binding.otpEditText.setText(it)
+                binding.otpEditText.setSelection(it.length)
+                otp = binding.otpEditText.text.toString().trim()
+                homeViewModel.sendOtpLogData(OTPLogData(otp, 0, 1, 0), phoneNumber)
+                viewModel.verifyCode(otp, regSessionToken, "")
+            }
         }
         
         val intentFilter = IntentFilter()

@@ -11,12 +11,12 @@ import com.banglalink.toffee.databinding.LayoutHorizontalContentContainerBinding
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.MyChannelNavParams
 import com.banglalink.toffee.ui.common.HomeBaseFragment
-import com.banglalink.toffee.ui.common.MyBaseAdapterV2
+import com.banglalink.toffee.ui.common.MyBaseAdapter
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 
 abstract class MovieBaseFragment<T: Any>: HomeBaseFragment(), ProviderIconCallback<T> {
     protected abstract val cardTitle: String
-    protected open val adapter: MyBaseAdapterV2<T> by lazy { MoviesAdapter(this) }
+    protected open val adapter: MyBaseAdapter<T> by lazy { MoviesAdapter(this) }
     private var _binding: LayoutHorizontalContentContainerBinding ? = null
     private val binding get() = _binding!!
     protected val viewModel by activityViewModels<MovieViewModel>()

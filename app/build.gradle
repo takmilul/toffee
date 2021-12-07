@@ -14,12 +14,20 @@ android {
         applicationId "com.banglalink.toffee"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 67
-        versionName "2.0.7"
+        versionCode rootProject.appVersionCode
+        versionName rootProject.appVersionName
         testInstrumentationRunner "com.banglalink.toffee.HiltTestRunner"
         vectorDrawables.useSupportLibrary = true
     }
-    
+
+    flavorDimensions "lib"
+    productFlavors {
+        mobile {
+            dimension "lib"
+            buildConfigField 'int', 'DEVICE_TYPE', "1"
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -38,8 +46,8 @@ android {
     }
 
     buildFeatures {
-        dataBinding = true
-        viewBinding = true
+        dataBinding true
+        viewBinding true
         compose = true
     }
 
@@ -65,17 +73,21 @@ android {
         pickFirst 'META-INF/io.netty.versions.properties'
         pickFirst 'META-INF/INDEX.LIST'
         exclude("META-INF/*.kotlin_module")
+        pickFirst 'META-INF/annotation-experimental_release.kotlin_module'
+        exclude 'lib/*/libRSSupport.so'
+        exclude 'lib/*/librsjni.so'
+        exclude 'lib/*/librsjni_androidx.so'
     }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1"
+    implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$rootProject.kotlin_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$rootProject.kotlinCoroutineVersion"
     implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'androidx.core:core-ktx:1.6.0'
     implementation "androidx.fragment:fragment-ktx:1.3.6"
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
     implementation "net.gotev:uploadservice:4.6.0"
     implementation "net.gotev:uploadservice-okhttp:4.6.0"
 
@@ -91,12 +103,15 @@ dependencies {
     implementation "com.google.android.material:compose-theme-adapter:$composeVersion"
 
     //Retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
-    implementation 'com.squareup.okhttp3:okhttp-dnsoverhttps:4.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"
+    implementation "com.squareup.okhttp3:logging-interceptor:$rootProject.okHttpVersion"
+    implementation "com.squareup.okhttp3:okhttp-dnsoverhttps:$rootProject.okHttpVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$rootProject.retrofitVersion"
+
     //LifeCycle Extensions
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$rootProject.lifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$rootProject.lifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$rootProject.lifecycleVersion"
 //    implementation "android.arch.lifecycle:extensions:2.1.0"
 
     implementation 'com.google.android.material:material:1.4.0'
@@ -111,28 +126,25 @@ dependencies {
     implementation 'com.xfinity:dahdit:0.9.3'
 
     //Coil image Lib
-    implementation 'io.coil-kt:coil:1.3.2'
-    implementation 'jp.wasabeef.transformers:coil:1.0.3'
-    implementation 'jp.wasabeef.transformers:core:1.0.3'
+    implementation 'io.coil-kt:coil:1.4.0'
+    implementation "jp.wasabeef.transformers:coil:1.0.5"
+    implementation "jp.wasabeef.transformers:core:1.0.5"
 
     //Firebase Push Notification
-    implementation 'com.google.firebase:firebase-messaging:22.0.0'
+    implementation "com.google.firebase:firebase-messaging:$rootProject.firebaseMessagingVersion"
     //Firebase in app messaging
-    implementation 'com.google.firebase:firebase-inappmessaging-display:20.1.0'
+    implementation 'com.google.firebase:firebase-inappmessaging-display:20.1.1'
     //Firebase core
-    implementation 'com.google.firebase:firebase-core:19.0.1'
-    // Recommended: Add the Firebase SDK for Google Analytics.
-    implementation 'com.google.firebase:firebase-analytics:19.0.1'
-
-    // Add the Firebase SDK for Crashlytics.
-    implementation 'com.google.firebase:firebase-crashlytics:18.2.1'
+//    implementation "com.google.firebase:firebase-core:$rootProject.firebaseCoreVersion"
+    implementation "com.google.firebase:firebase-analytics:$rootProject.firebaseAnalyticsVersion"
+    implementation "com.google.firebase:firebase-crashlytics:$rootProject.firebaseCrashlyticsVersion"
 
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'com.github.pchmn:MaterialChipsInput:1.0.8'
+//    implementation 'com.github.pchmn:MaterialChipsInput:1.0.8'
+    implementation 'com.jakewharton:butterknife:10.2.3'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-
-
-    def exoVersion = '2.14.2'
+    
+    def exoVersion = rootProject.exoVersion
     implementation "com.google.android.exoplayer:exoplayer-core:$exoVersion"
     implementation "com.google.android.exoplayer:exoplayer-hls:$exoVersion"
     implementation "com.google.android.exoplayer:exoplayer-dash:$exoVersion"
@@ -143,7 +155,7 @@ dependencies {
 
     // Cast
     implementation 'androidx.mediarouter:mediarouter:1.2.5'
-    implementation 'com.google.android.gms:play-services-cast-framework:20.0.0'
+    implementation 'com.google.android.gms:play-services-cast-framework:20.1.0'
 
     //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
 
@@ -151,14 +163,14 @@ dependencies {
     implementation 'androidx.paging:paging-runtime-ktx:3.0.1'
 
     // Hilt
-    def hilt_android_ver = "2.38.1"
+    def hilt_android_ver = rootProject.hiltAndroidVersion
     implementation "com.google.dagger:hilt-android:$hilt_android_ver"
     androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_android_ver"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_android_ver"
     kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_android_ver"
     kapt "com.google.dagger:hilt-compiler:$hilt_android_ver"
 
-    def hilt_ver = "1.0.0"
+    def hilt_ver = rootProject.hiltVersion
 //    implementation "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03"
     kapt "androidx.hilt:hilt-compiler:$hilt_ver"
 
@@ -167,7 +179,7 @@ dependencies {
 //    kapt 'com.squareup.inject:assisted-inject-processor-dagger2:0.6.0'
 
     // Room database
-    def room_version = "2.3.0"
+    def room_version = rootProject.roomDbVersion
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
@@ -178,20 +190,24 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
     //Permission extension
-    implementation 'com.github.florent37:runtime-permission-kotlin:1.1.2'
+//    implementation 'com.github.florent37:runtime-permission-kotlin:1.1.2'
     //Facebook SDK
-    implementation 'com.facebook.android:facebook-android-sdk:11.2.0'
+    implementation "com.facebook.android:facebook-android-sdk:$rootProject.facebookSdkVersion"
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
-    //Leak canary
-//    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-4'
-
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.3.1"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.3.1"
-
+    
 	implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'com.google.android.gms:play-services-auth:19.2.0'
     implementation 'com.google.android.gms:play-services-auth-api-phone:17.5.1'
-    implementation 'com.google.android.play:core:1.10.1'
+    implementation 'com.google.android.play:core:1.10.2'
+    
+    //firework sdk
+    def fireworkExoPlayerVersion = '2.15.1.1'
+    implementation ('com.github.loopsocial:firework_sdk:v5.6.4') {
+        exclude module: "picasso-transformations"
+    }
+    implementation 'com.github.loopsocial:AndroidAdsService:v19.5.0'
+    implementation "com.github.loopsocial:AndroidFireworkPlayer:$fireworkExoPlayerVersion"
+
     implementation ('com.google.apis:google-api-services-pubsub:v1-rev452-1.25.0') {
         exclude group: 'com.google.code.findbugs'
         exclude group: 'org.apache.httpcomponents'
@@ -212,6 +228,7 @@ dependencies {
         exclude module: 'support-annotations'
         exclude group: 'com.google.guava'
     }
+    implementation project(path: ':data')
 //    implementation project(path: ':showcase_view')
 //    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 //    implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
@@ -220,9 +237,12 @@ dependencies {
     implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5'
     implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
 
-    implementation 'com.google.android.gms:play-services-ads-identifier:17.0.1'
+    implementation 'com.google.android.gms:play-services-ads-identifier:17.1.0'
 //    implementation("androidx.ads:ads-identifier:1.0.0-alpha04")
-
+    
+    //medallia
+    implementation 'com.medallia.digital.mobilesdk:android-sdk:3.9.1'
+    
     def espresso_version = '3.4.0'
     def test_core = '1.4.0'
     testImplementation('com.squareup.okhttp3:mockwebserver:4.9.0')

@@ -1,14 +1,17 @@
 package com.banglalink.toffee.extension
 
-import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.content.res.Resources
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.util.Patterns
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
@@ -26,9 +29,6 @@ import com.banglalink.toffee.ui.mychannel.MyChannelAddToPlaylistFragment
 import com.banglalink.toffee.ui.report.ReportPopupFragment
 import com.facebook.shimmer.ShimmerFrameLayout
 import kotlinx.coroutines.launch
-import java.security.MessageDigest
-import java.text.SimpleDateFormat
-import java.util.*
 
 private const val TITLE_PATTERN = "^[\\w\\d_.-]+$"
 //private const val EMAIL_PATTERN = "^[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+\\.[a-z]{2,4}$"
@@ -82,17 +82,6 @@ val Float.px: Float get() {
     return (this * Resources.getSystem().displayMetrics.density)
 }
 
-fun ByteArray.toHex() = joinToString(separator = "") { byte -> "%02x".format(byte) }
-
-fun Long.toFormattedDate(): String{
-    TimeZone.setDefault(TimeZone.getTimeZone("Asia/Dhaka"))
-    val cal = Calendar.getInstance(TimeZone.getDefault())
-    cal.timeInMillis = this
-    val dateGMT = cal.time
-    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
-    return sdf.format(dateGMT)
-}
-
 fun Activity.checkVerification(block: (()-> Unit)? = null) {
     if (this is HomeActivity && !mPref.isVerifiedUser) {
         this.getNavController().navigate(R.id.loginDialog)
@@ -142,22 +131,21 @@ fun Activity.handleFavorite(item: ChannelInfo, favoriteDao: FavoriteItemDao, onA
             getHomeViewModel().updateFavorite(item).observe(this, {
                 when (it) {
                     is Resource.Success -> {
-                        val channelInfo = it.data
+                        val isFavorite = it.data.isFavorite
+                        item.favorite = if(isFavorite == 1) "1" else "0"
                         lifecycleScope.launch {
                             favoriteDao.insert(FavoriteItem(
                                 channelId = item.id.toLong(),
-                                isFavorite = if(channelInfo.favorite == "1") 1 else 0
+                                isFavorite = isFavorite
                             ))
                         }
-                        when (channelInfo.favorite) {
-                            "0" -> {
+                        when (isFavorite) {
+                            0 -> {
                                 onRemoved?.invoke()
                                 showToast("Content successfully removed from favorite list")
-//                                handleFavoriteRemovedSuccessFully(channelInfo)
                             }
-                            "1" -> {
+                            1 -> {
                                 onAdded?.invoke()
-//                                handleFavoriteAddedSuccessfully(channelInfo)
                                 showToast("Content successfully added to favorite list")
                             }
                         }
@@ -184,6 +172,28 @@ fun ViewGroup.showLoadingAnimation(isStart: Boolean) {
     }
 }
 
+fun View.validateInput(messageTextView: TextView, messageResource: Int, messageColorResource: Int, viewBackgroundResource: Int) {
+    messageTextView.setTextColor(
+        ContextCompat.getColor(
+            context,
+            messageColorResource
+        )
+    )
+    messageTextView.text = context.getString(messageResource)
+    this.setBackgroundResource(viewBackgroundResource)
+}
+
+fun Context.openUrlToExternalApp(url: String): Boolean {
+    return try {
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        return true
+    }
+    catch (e: Exception) {
+        Log.e("EXT_APP", "Url is not valid")
+        false
+    }
+}
+
 //@SuppressLint("ClickableViewAccessibility")
 //fun EditText.setDrawableRightTouch(setClickListener: () -> Unit) {
 //    this.setOnTouchListener(View.OnTouchListener { _, event ->
@@ -202,11 +212,3 @@ fun ViewGroup.showLoadingAnimation(isStart: Boolean) {
 //    })
 //}
 
-fun String.toMD5(): String {
-    return try {
-        val bytes = MessageDigest.getInstance("MD5").digest(this.toByteArray())
-        bytes.joinToString("") { "%02x".format(it) }
-    } catch (e: Exception) {
-        ""
-    }
-}

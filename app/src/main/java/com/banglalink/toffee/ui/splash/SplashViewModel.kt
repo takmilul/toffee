@@ -11,6 +11,8 @@ import com.banglalink.toffee.apiservice.*
 import com.banglalink.toffee.data.network.response.HeaderEnrichmentResponse
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.storage.CommonPreference
+import com.banglalink.toffee.data.storage.CommonPreference.Companion.DRM_TIMEOUT
+import com.banglalink.toffee.data.storage.CommonPreference.Companion.DRM_UNAVAILABLE
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.di.AppCoroutineScope
 import com.banglalink.toffee.model.Resource
@@ -21,6 +23,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import java.io.File
 import javax.inject.Inject
+
+const val DRM_AVAILABILITY_TIMEOUT: Long = 1000
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
@@ -33,6 +37,7 @@ class SplashViewModel @Inject constructor(
     @AppCoroutineScope private val appScope: CoroutineScope,
     private val sendAdIdLogEvent: SendAdvertisingIdLogEvent,
     private val sendHeLogEvent: SendHeaderEnrichmentLogEvent,
+    private val sendDrmFallbackLogEvent: SendDrmFallbackEvent,
     private val headerEnrichmentService: HeaderEnrichmentService,
     private val sendDrmUnavailableLogEvent: SendDrmUnavailableLogEvent,
 ) : ViewModel() {
@@ -71,7 +76,8 @@ class SplashViewModel @Inject constructor(
     
     fun getHeaderEnrichment() {
         viewModelScope.launch {
-            headerEnrichmentResponse.value = resultFromResponse { headerEnrichmentService.execute() }!!
+            val response = resultFromResponse { headerEnrichmentService.execute() }
+            headerEnrichmentResponse.value = response
         }
     }
     
@@ -121,7 +127,7 @@ class SplashViewModel @Inject constructor(
     fun sendDrmUnavailableLogData() {
         appScope.launch {
             cPref.isDrmModuleAvailable = CommonPreference.DRM_TIMEOUT
-            withTimeout(1000) {
+            withTimeout(DRM_AVAILABILITY_TIMEOUT) {
                 withContext(Dispatchers.IO + Job()) {
                     MediaDrm.isCryptoSchemeSupported(C.WIDEVINE_UUID)
                 }.also {
@@ -129,6 +135,18 @@ class SplashViewModel @Inject constructor(
                     if(!it) {
                         sendDrmUnavailableLogEvent.execute()
                     }
+                }
+            }
+        }
+        appScope.launch {
+            delay(DRM_AVAILABILITY_TIMEOUT + 500)
+            withContext(Dispatchers.IO + Job()) {
+                when(cPref.isDrmModuleAvailable) {
+                    DRM_TIMEOUT -> "Drm timeout"
+                    DRM_UNAVAILABLE -> "Drm module unavailable"
+                    else -> null
+                }?.let {
+                    sendDrmFallbackLogEvent.execute(0, it)
                 }
             }
         }

@@ -76,7 +76,6 @@ class HomeViewModel @Inject constructor(
 //    val viewAllCategories = MutableLiveData<Boolean>()
     val logoutLiveData = SingleLiveEvent<Resource<LogoutBean>>()
     val myChannelNavLiveData = SingleLiveEvent<MyChannelNavParams>()
-    val notificationUrlLiveData = SingleLiveEvent<String>()
     val mqttCredentialLiveData = SingleLiveEvent<Resource<MqttBean?>>()
     private val _channelDetail = MutableLiveData<MyChannelDetail>()
     val myChannelDetailResponse = SingleLiveEvent<Resource<MyChannelDetailBean>>()
@@ -99,15 +98,14 @@ class HomeViewModel @Inject constructor(
         }
 
         FirebaseMessaging.getInstance().subscribeToTopic("DRM-LICENSE-RELEASE")
-
         FirebaseMessaging.getInstance().subscribeToTopic("controls")
         FirebaseMessaging.getInstance().subscribeToTopic("cdn_control")
+        FirebaseMessaging.getInstance().subscribeToTopic("clear_cache")
+        FirebaseMessaging.getInstance().subscribeToTopic("content_refresh")
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if(task.isSuccessful) {
                 val token = task.result
-                if(token != null) {
-                    setFcmToken(token)
-                }
+                setFcmToken(token)
             }
         }
     }
@@ -259,7 +257,7 @@ class HomeViewModel @Inject constructor(
         }
     }
     
-    fun updateFavorite(channelInfo: ChannelInfo): LiveData<Resource<ChannelInfo>> {
+    fun updateFavorite(channelInfo: ChannelInfo): LiveData<Resource<FavoriteBean>> {
         return resultLiveData {
             val favorite = channelInfo.favorite == null || channelInfo.favorite == "0"
             updateFavorite.execute(channelInfo, favorite)
@@ -267,8 +265,9 @@ class HomeViewModel @Inject constructor(
     }
     
     fun getMqttCredential() {
-        viewModelScope.launch { 
-            mqttCredentialLiveData.postValue(resultFromResponse { mqttCredentialService.execute() }!!)
+        viewModelScope.launch {
+            val response = resultFromResponse { mqttCredentialService.execute() }
+            mqttCredentialLiveData.postValue(response)
         }
     }
     
@@ -279,8 +278,9 @@ class HomeViewModel @Inject constructor(
     }
     
     fun logoutUser() {
-        viewModelScope.launch { 
-            logoutLiveData.postValue(resultFromResponse { logoutService.execute() }!!)
+        viewModelScope.launch {
+            val response = resultFromResponse { logoutService.execute() }
+            logoutLiveData.postValue(response)
         }
     }
     

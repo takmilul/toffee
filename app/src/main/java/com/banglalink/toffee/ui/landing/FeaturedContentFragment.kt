@@ -26,7 +26,7 @@ class FeaturedContentFragment : HomeBaseFragment(), BaseListItemCallback<Channel
     private lateinit var mAdapter: FeaturedContentAdapter
     private var _binding:FragmentLandingFeaturedBinding ? = null
     private val binding get() = _binding!!
-    val viewModel by activityViewModels<LandingPageViewModel>()
+    private val viewModel by activityViewModels<LandingPageViewModel>()
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
          _binding = FragmentLandingFeaturedBinding.inflate(inflater, container, false)
@@ -46,7 +46,7 @@ class FeaturedContentFragment : HomeBaseFragment(), BaseListItemCallback<Channel
         viewModel.featuredJob = null
         mAdapter = FeaturedContentAdapter(this)
         binding.featuredViewpager.adapter = mAdapter
-        TabLayoutMediator(binding.featuredIndicator, binding.featuredViewpager, true) { tab_, position -> }.attach()
+        TabLayoutMediator(binding.featuredIndicator, binding.featuredViewpager, true) { _, _ -> }.attach()
         observeList()
         viewModel.loadFeaturedContentList()
     }
@@ -81,10 +81,5 @@ class FeaturedContentFragment : HomeBaseFragment(), BaseListItemCallback<Channel
                 }
             }
         }
-    }
-
-    override fun onStop() {
-        viewModel.featuredContents.removeObservers(this)
-        super.onStop()
     }
 }
