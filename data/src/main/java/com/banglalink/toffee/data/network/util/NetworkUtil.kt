@@ -63,8 +63,7 @@ fun <T> resultLiveData(networkCall: suspend () -> T): LiveData<Resource<T>> =
         try {
             val response = networkCall.invoke()
             emit(Resource.Success(response))
-
-        }catch (e:Exception){
+        } catch (e:Exception){
             emit(Resource.Failure<T>(getError(e)))
         }
     }
@@ -73,7 +72,6 @@ suspend fun <T> resultFromResponse(networkCall: suspend () -> T): Resource<T> =
     try {
         val response = networkCall.invoke()
         Resource.Success(response)
-
-    }catch (e:Exception){
+    } catch (e:Exception){
         Resource.Failure<T>(getError(e))
     }
