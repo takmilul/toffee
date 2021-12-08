@@ -107,6 +107,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import net.gotev.uploadservice.UploadService
 import org.xmlpull.v1.XmlPullParser
+import java.net.URLDecoder
 import java.util.*
 import javax.inject.Inject
 
@@ -789,7 +790,11 @@ class HomeActivity :
             else {
                 val uri = intent.data
                 if (uri != null) {
-                    val strUri = uri.toString()
+                    val strUri = runCatching {
+                        URLDecoder.decode(uri.toString().trim(), "UTF-8")
+                    }.getOrElse {
+                        uri.toString().trim().replace("%3A", ":").replace("%2F", "/").replace("%23", "#")
+                    }
                     handleDeepLink(strUri)
                 }
             }
