@@ -301,10 +301,7 @@ fun getBitmap(ctx: Context, path: String, requiredImageSize: Int): Bitmap? {
         while (options.outWidth * options.outHeight * (1 / scale.toDouble().pow(2.0)) > requiredImageSize) {
             scale++
         }
-        Log.d(
-            TAG,
-            "scale = " + scale + ", orig-width: " + options.outWidth + ", orig-height: " + options.outHeight
-        )
+        Log.i(TAG, "scale = " + scale + ", orig-width: " + options.outWidth + ", orig-height: " + options.outHeight)
         var resultBitmap: Bitmap? = null
         inputStream = getInputStream(ctx, path)
         if (scale > 1) {
@@ -318,7 +315,7 @@ fun getBitmap(ctx: Context, path: String, requiredImageSize: Int): Bitmap? {
             // resize to desired dimensions
             val height = resultBitmap!!.height
             val width = resultBitmap.width
-            Log.d(TAG, "1th scale operation dimenions - width: $width, height: $height")
+            Log.i(TAG, "1th scale operation dimenions - width: $width, height: $height")
             val y = sqrt(requiredImageSize / (width.toDouble() / height))
             val x = y / height * width
             val scaledBitmap = Bitmap.createScaledBitmap(
@@ -332,10 +329,7 @@ fun getBitmap(ctx: Context, path: String, requiredImageSize: Int): Bitmap? {
             resultBitmap = BitmapFactory.decodeStream(inputStream)
         }
         inputStream?.close()
-        Log.d(
-            TAG, "bitmap size - width: " + resultBitmap!!.width + ", height: " +
-                    resultBitmap.height
-        )
+        Log.i(TAG, "bitmap size - width: ${resultBitmap!!.width}, height: ${resultBitmap.height}")
         resultBitmap
     }
     catch (e: IOException) {

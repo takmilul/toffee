@@ -1,6 +1,5 @@
 package com.banglalink.toffee.usecase
 
-import android.util.Log
 import androidx.core.os.bundleOf
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
@@ -47,7 +46,6 @@ class SendSubscribeEvent @Inject constructor(
         )
         PubSubMessageUtil.sendMessage(Gson().toJson(subscriptionCountData), SUBSCRIPTION_TOPIC)
         mqttService.sendMessage(Gson().toJson(subscriptionCountData), SUBSCRIPTION_TOPIC)
-        Log.e("Pubsub","data"+Gson().toJson(subscriptionCountData))
     }
 
     suspend fun updateSubscriptionCountDb(subscriptionInfo: SubscriptionInfo, status: Int){

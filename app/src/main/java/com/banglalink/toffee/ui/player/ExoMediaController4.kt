@@ -1,6 +1,5 @@
 package com.banglalink.toffee.ui.player
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
@@ -89,7 +88,7 @@ class ExoMediaController4 @JvmOverloads constructor(
 //    }
 
     fun onPreviewTouch(ev: MotionEvent?): Boolean {
-        Log.e("DOUBLE_T", "onPreviewTouch -> ")
+        Log.i("DOUBLE_T", "onPreviewTouch -> ")
         if(isDoubleTapEnabled && !isMinimize) {
             gestureDetector.onTouchEvent(ev)
             return true
@@ -140,7 +139,7 @@ class ExoMediaController4 @JvmOverloads constructor(
 
         private val mHandler = Handler(Looper.getMainLooper())
         private val mRunnable = Runnable {
-            if (DEBUG) Log.d(TAG, "Runnable called")
+            if (DEBUG) Log.i(TAG, "Runnable called")
             isDoubleTapping = false
             controls?.onDoubleTapFinished()
         }
@@ -181,7 +180,7 @@ class ExoMediaController4 @JvmOverloads constructor(
 
         override fun onSingleTapUp(e: MotionEvent): Boolean {
             if (isDoubleTapping) {
-                if (DEBUG) Log.d(TAG, "onSingleTapUp: isDoubleTapping = true")
+                if (DEBUG) Log.i(TAG, "onSingleTapUp: isDoubleTapping = true")
                 controls?.onDoubleTapProgressUp(e.x, e.y)
                 return true
             }
@@ -194,13 +193,13 @@ class ExoMediaController4 @JvmOverloads constructor(
             // in a row, therefore the controller would appear since the original behavior is
             // to hide and show on single tap
             if (isDoubleTapping) return true
-            if (DEBUG) Log.d(TAG, "onSingleTapConfirmed: isDoubleTap = false")
+            if (DEBUG) Log.i(TAG, "onSingleTapConfirmed: isDoubleTap = false")
             return rootView.performClick()
         }
 
         override fun onDoubleTap(e: MotionEvent): Boolean {
             // First tap (ACTION_DOWN) of both taps
-            if (DEBUG) Log.d(TAG, "onDoubleTap")
+            if (DEBUG) Log.i(TAG, "onDoubleTap")
             if (!isDoubleTapping) {
                 isDoubleTapping = true
                 keepInDoubleTapMode()
@@ -212,10 +211,7 @@ class ExoMediaController4 @JvmOverloads constructor(
         override fun onDoubleTapEvent(e: MotionEvent): Boolean {
             // Second tap (ACTION_UP) of both taps
             if (e.actionMasked == MotionEvent.ACTION_UP && isDoubleTapping) {
-                if (DEBUG) Log.d(
-                    TAG,
-                    "onDoubleTapEvent, ACTION_UP"
-                )
+                if (DEBUG) Log.i(TAG, "onDoubleTapEvent, ACTION_UP")
                 controls?.onDoubleTapProgressUp(e.x, e.y)
                 return true
             }

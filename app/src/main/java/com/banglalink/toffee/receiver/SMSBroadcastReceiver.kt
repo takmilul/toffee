@@ -30,14 +30,14 @@ class SMSBroadcastReceiver : BroadcastReceiver() {
                         // Get SMS message contents'
                         val message =
                             extras?.get(SmsRetriever.EXTRA_SMS_MESSAGE) as String?
-                        Log.d(TAG, "onReceive: failure $message")
+                        Log.i(TAG, "onReceive: failure $message")
                         val start = message!!.indexOf(":") + 1
                         val otp = message.substring(start, start + 6)
                         _otpLiveData.postValue(otp)
                     }
                     CommonStatusCodes.TIMEOUT -> {
                         // Waiting for SMS timed out (5 minutes)
-                        Log.d(TAG, "onReceive: failure")
+                        Log.i(TAG, "onReceive: failure")
                     }
                 }
             }

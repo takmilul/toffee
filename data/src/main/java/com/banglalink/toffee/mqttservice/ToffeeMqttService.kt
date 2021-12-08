@@ -60,7 +60,7 @@ class ToffeeMqttService @Inject constructor(
                 client = MqttAndroidClient(context, host, clientId).apply {
                     setCallback(this@ToffeeMqttService)
                     connect(getMqttConnectionOption(userName, password), null, this@ToffeeMqttService)
-                    Log.e("MQTT_", "initialize: connecting...")
+//                    Log.i("MQ_", "initialize: connecting...")
                 }
 //                repeat(100){
 //                    shareStatusList.add(ShareCount(it, 1))
@@ -73,7 +73,7 @@ class ToffeeMqttService @Inject constructor(
         }
         catch (e: Exception) {
             ToffeeAnalytics.logBreadCrumb("exception when creating mqtt -> ${e.message}")
-            Log.e("MQTT_", "initialize: ${e.message}")
+            Log.e("MQ_", "initializationError: ${e.message}")
         }
     }
     
@@ -95,7 +95,7 @@ class ToffeeMqttService @Inject constructor(
                 }
             }
         }
-        Log.i("MQT_", "share end $time")
+//        Log.i("MQT_", "share end $time")
 
         time = measureTimeMillis { 
             subscribeListMutex.withLock {
@@ -105,7 +105,7 @@ class ToffeeMqttService @Inject constructor(
                 }
             }
         }
-        Log.i("MQT_", "subs end $time")
+//        Log.i("MQT_", "subs end $time")
 
         time = measureTimeMillis { 
             reactionListMutex.withLock {
@@ -115,7 +115,7 @@ class ToffeeMqttService @Inject constructor(
                 }
             }
         }
-        Log.i("MQT_", "reaction ended $time")
+//        Log.i("MQT_", "reaction ended $time")
     }
     
     private fun getMqttConnectionOption(userName: String, password: String): MqttConnectOptions {
@@ -138,14 +138,14 @@ class ToffeeMqttService @Inject constructor(
             }
         }
         catch (e: Exception){
-            Log.e("MQTT_", "sendMessage: ${e.message}")
+            Log.e("MQ_", "sendMessageError: ${e.message}")
         }
     }
     
     override fun onSuccess(token: IMqttToken?) {
         try {
             if (client?.isConnected == true && token?.topics.isNullOrEmpty()) {
-                Log.e("MQTT_", "onSuccess: Connected")
+//                Log.i("MQ_", "onSuccess: Connected")
                 ToffeeAnalytics.logBreadCrumb("mqtt connected")
                 val disconnectedBufferOptions = DisconnectedBufferOptions().apply {
                     isBufferEnabled = true
@@ -157,18 +157,18 @@ class ToffeeMqttService @Inject constructor(
                 client?.subscribe(arrayOf(REACTION_TOPIC, SHARE_COUNT_TOPIC, SUBSCRIPTION_TOPIC), intArrayOf(2, 2, 2), null, this@ToffeeMqttService)
             } else {
                 gson = gson ?: Gson()
-                Log.e("MQTT_", "onSuccess - subscribed: ${token?.topics}")
+//                Log.i("MQ_", "onSuccess - subscribed: ${token?.topics}")
             }
         } catch (e: Exception) {
             ToffeeAnalytics.logBreadCrumb("mqtt exception onsuccess -> ${e.message}")
-            Log.e("MQTT_", "onSuccess - Exception: ${e.message}")
+            Log.e("MQ_", "onSuccessError: ${e.message}")
         }
     }
     
     override fun messageArrived(topic: String?, message: MqttMessage?) {
         if(message != null) {
             val jsonString = String(message.payload)
-            Log.e("MQTT_", "messageArrived: $message")
+//            Log.i("MQ_", "messageArrived: $message")
             try {
                 when(topic) {
                     REACTION_TOPIC -> {
@@ -204,22 +204,22 @@ class ToffeeMqttService @Inject constructor(
                 }
             }
             catch (e: Exception) {
-                Log.e("MQTT_", "messageArrived: ${e.message}")
+                Log.e("MQ_", "messageArrivedError: ${e.message}")
             }
         }
     }
     
     override fun deliveryComplete(token: IMqttDeliveryToken?) {
-        Log.e("MQTT_", "deliveryComplete: $token")
+//        Log.i("MQ_", "deliveryComplete: $token")
     }
     
     override fun onFailure(token: IMqttToken?, error: Throwable?) {
-        Log.e("MQTT_", "onFailure: ${error?.message}")
+        Log.i("MQ_", "onFailure: ${error?.message}")
         ToffeeAnalytics.logBreadCrumb("mqtt failure -> ${error?.message}")
     }
     
     override fun connectionLost(error: Throwable?) {
-        Log.e("MQTT_", "connectionLost: $error")
+        Log.i("MQ_", "connectionLost: $error")
         ToffeeAnalytics.logBreadCrumb("mqtt connection lost -> ${error?.message}")
     }
     
@@ -234,14 +234,14 @@ class ToffeeMqttService @Inject constructor(
                 it.disconnect(0)
                 schedulerJob?.cancel()
                 schedulerJob = null
-                Log.e("MQTT_", "destroyed")
+//                Log.e("MQ_", "destroyed")
                 ToffeeAnalytics.logBreadCrumb("mqtt destroyed")
             }
             client = null
             coroutineScope.cancel()
         }
         catch (e: Exception) {
-            Log.e("MQTT_", "disconnectionError: $e")
+            Log.e("MQ_", "disconnectionError: $e")
             ToffeeAnalytics.logBreadCrumb("mqtt disconnect error -> ${e.message}")
         }
     }

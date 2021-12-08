@@ -697,7 +697,7 @@ open class ToffeeStyledPlayerView @JvmOverloads constructor(context: Context, at
         videoWidth = (width * videoSize.pixelWidthHeightRatio).toInt()
         videoHeight = height
 
-        Log.e("CONTROL_T", "Video resolution -> $videoWidth x $videoHeight, ratio -> $videoSize.pixelWidthHeightRatio, min -> $minBound, max -> $maxBound")
+        Log.i("CONTROL_T", "Video resolution -> $videoWidth x $videoHeight, ratio -> $videoSize.pixelWidthHeightRatio, min -> $minBound, max -> $maxBound")
 
         isVideoScalable = minBound != maxBound
 

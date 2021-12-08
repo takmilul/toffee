@@ -76,7 +76,7 @@ class ToffeeMessagingService : FirebaseMessagingService() {
     }
     
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        Log.d(TAG, "From: " + remoteMessage.from!!)
+        Log.i(TAG, "From: " + remoteMessage.from!!)
         
         if (remoteMessage.data.isNullOrEmpty()) {
             coroutineScope.launch {

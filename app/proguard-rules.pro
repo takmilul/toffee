@@ -57,6 +57,11 @@
     private com.google.android.exoplayer2.ext.cast.CastPlayer$StatusListener statusListener;
 }
 
+#-keep class com.google.android.exoplayer2** { *; }
+#-keep class com.loopnow.fireworklibrary** { *; }
+#-keep class com.loopnow.fireworkplayer** { *; }
+#-keep class com.banglalink.toffee.ui.firework.FireworkFragment
+
 -keep class com.google.ads.interactivemedia.** { *; }
 -keep interface com.google.ads.interactivemedia.** { *; }
 

@@ -13,10 +13,10 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
-import com.banglalink.toffee.data.storage.CommonPreference
-import com.banglalink.toffee.databinding.FragmentSplashScreenBinding
 import com.banglalink.toffee.data.exception.AppDeprecatedError
 import com.banglalink.toffee.data.exception.CustomerNotFoundError
+import com.banglalink.toffee.data.storage.CommonPreference
+import com.banglalink.toffee.databinding.FragmentSplashScreenBinding
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.Resource
 import com.banglalink.toffee.receiver.ConnectionWatcher
@@ -25,7 +25,6 @@ import com.banglalink.toffee.ui.home.HomeActivity
 import com.banglalink.toffee.usecase.AdvertisingIdLogData
 import com.banglalink.toffee.usecase.HeaderEnrichmentLogData
 import com.banglalink.toffee.util.today
-import com.facebook.appevents.AppEventsLogger
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -95,10 +94,7 @@ class SplashScreenFragment : BaseFragment() {
         if (!mPref.isPreviousDbDeleted){
             viewModel.deletePreviousDatabase()
         }
-        AppEventsLogger.newLogger(requireContext()).run { 
-            logEvent("app_launch")
-            flush()
-        }
+        ToffeeAnalytics.logEvent("app_launch")
     }
     
     private fun sendAdIdLog() {
@@ -109,7 +105,7 @@ class SplashScreenFragment : BaseFragment() {
                     adId?.let { 
                         viewModel.sendAdvertisingIdLogData(AdvertisingIdLogData(adId).also {
                             it.phoneNumber = mPref.phoneNumber
-                            it.isBlNumber = mPref.isBanglalinkNumber.toString()
+                            it.isBlNumber = mPref.isBanglalinkNumber
                         })
                     }
                     mPref.adIdUpdateDate = today

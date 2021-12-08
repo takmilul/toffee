@@ -28,7 +28,7 @@ class ToffeeMediaDrmCallback(/*private val licenseUri: String,
         uuid: UUID,
         request: ExoMediaDrm.ProvisionRequest
     ): ByteArray {
-        Log.e("DRM_T", "Provision request from media drm callback")
+        Log.i("DRM_T", "Provision request from media drm callback")
         throw MediaDrmCallbackException(
             DataSpec.Builder().setUri(Uri.EMPTY).build(),
             Uri.EMPTY,  /* responseHeaders= */
@@ -43,7 +43,7 @@ class ToffeeMediaDrmCallback(/*private val licenseUri: String,
 //        val token = runBlocking {
 //            drmTokenApi.execute(contentId, 120)
 //        } ?:
-        Log.e("DRM_T", "Key request from media drm callback")
+        Log.i("DRM_T", "Key request from media drm callback")
         throw MediaDrmCallbackException(
                 DataSpec.Builder().setUri(Uri.EMPTY).build(),
                 Uri.EMPTY,  /* responseHeaders= */

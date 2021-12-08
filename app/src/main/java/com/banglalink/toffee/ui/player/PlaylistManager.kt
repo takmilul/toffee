@@ -26,14 +26,14 @@ class PlaylistManager {
             return
         }
         if(pdata.playlistId == playlistId) {
-            Log.e("PLAYLIST_DEBUG", "Playlist ID ${pdata.playlistId} is same, prev size - ${playList.size}, loading size - ${pdata.items.size}")
+            Log.i("PLAYLIST_DEBUG", "Playlist ID ${pdata.playlistId} is same, prev size - ${playList.size}, loading size - ${pdata.items.size}")
             if(pdata.items.size != playList.size && pdata.items.isNotEmpty()) {
                 val currentChannel = getCurrentChannel()
                 if(!pdata.append) {
-                    Log.e("PLAYLIST_DEBUG", "Reloading data with size - ${pdata.items.size}")
+                    Log.i("PLAYLIST_DEBUG", "Reloading data with size - ${pdata.items.size}")
                     playList.clear()
                 } else {
-                    Log.e("PLAYLIST_DEBUG", "Appending data with size - ${pdata.items.size}")
+                    Log.i("PLAYLIST_DEBUG", "Appending data with size - ${pdata.items.size}")
                 }
                 playList.addAll(pdata.items)
                 currentChannel?.let {
@@ -41,14 +41,14 @@ class PlaylistManager {
                 }
             }
         } else {
-            Log.e("PLAYLIST_DEBUG", "Playlist ID is NOT same")
+            Log.i("PLAYLIST_DEBUG", "Playlist ID is NOT same")
             if(pdata.replaceList) {
-                Log.e("PLAYLIST_DEBUG", "Replacing list with ID - ${pdata.playlistId}")
+                Log.i("PLAYLIST_DEBUG", "Replacing list with ID - ${pdata.playlistId}")
                 playList.clear()
                 playList.addAll(pdata.items)
                 playlistId = pdata.playlistId
             } else {
-                Log.e("PLAYLIST_DEBUG", "Ignoring data from ${pdata.playlistId}")
+                Log.i("PLAYLIST_DEBUG", "Ignoring data from ${pdata.playlistId}")
             }
         }
     }

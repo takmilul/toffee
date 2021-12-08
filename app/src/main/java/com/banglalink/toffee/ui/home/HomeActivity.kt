@@ -411,9 +411,9 @@ class HomeActivity :
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == IN_APP_UPDATE_REQUEST_CODE) {
-            Log.e(TAG, "Start Download")
+            Log.i(TAG, "Start Download")
             if (resultCode != RESULT_OK) {
-                Log.e(TAG, "Download Failed")
+                Log.i(TAG, "Download Failed")
             }
         }
     }
@@ -495,7 +495,6 @@ class HomeActivity :
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-//                Log.e("SLIDE", slideOffset.toString())
                 binding.playerView.moveController(slideOffset)
             }
         })
@@ -578,8 +577,6 @@ class HomeActivity :
     }
 
     private fun setupNavController() {
-        Log.e("NAV", "SetupNavController")
-
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.home_nav_host) as NavHostFragment
         navController = navHostFragment.navController
 
@@ -1187,7 +1184,7 @@ class HomeActivity :
     }
 
     private fun observeInAppMessage(){
-        FirebaseAnalytics.getInstance(this).logEvent("trigger_inapp_messaging", null)
+        ToffeeAnalytics.logEvent("trigger_inapp_messaging", null, true)
         FirebaseInAppMessaging.getInstance().triggerEvent("trigger_inapp_messaging")
     }
 
@@ -1622,7 +1619,7 @@ class HomeActivity :
 
         lifecycleScope.launchWhenStarted {
             uploadViewModel.getActiveUploadList().collectLatest {
-                Log.e("UPLOAD 2", "Collecting ->>> ${it.size}")
+                Log.i("UPLOAD 2", "Collecting ->>> ${it.size}")
                 if(it.isNotEmpty()) {
                     binding.homeMiniProgressContainer.root.isVisible = true
                     val upInfo = it[0]

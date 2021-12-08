@@ -89,7 +89,7 @@ class HtmlPageViewFragment : BaseFragment() {
     private fun listenBackStack() {
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                Log.e("HTM_", "url: ${binding.webview.url}")
+                Log.i("HTM_", "url: ${binding.webview.url}")
                 if (binding.webview.canGoBack() /*&& binding.webview.url?.split("/")?.contains("home") != true*/) {
                     binding.webview.goBack()
                 } else {

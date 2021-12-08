@@ -32,13 +32,12 @@ object ToffeeAnalytics {
         FirebaseCrashlytics.getInstance().setUserId(customerId.toString())
     }
 
-    fun logApiError(apiName: String?, errorMsg: String?,phoneNumber:String = SessionPreference.getInstance().phoneNumber) {
-        if (apiName.isNullOrBlank() || errorMsg.isNullOrBlank())
+    fun logApiError(apiName: String?, errorMsg: String?, phoneNumber:String = SessionPreference.getInstance().phoneNumber) {
+        if (apiName.isNullOrBlank() || errorMsg.isNullOrBlank()) {
             return
-
+        }
         val logMsg = gson.toJson(ApiFailData(apiName,errorMsg))
         PubSubMessageUtil.sendMessage(logMsg, API_ERROR_TRACK_TOPIC)
-
     }
 
 //    fun apiLoginFailed(errorMsg: String) {
@@ -74,11 +73,11 @@ object ToffeeAnalytics {
         FirebaseCrashlytics.getInstance().log(msg)
     }
 
-    fun logEvent(event: String, params: Bundle? = null) {
+    fun logEvent(event: String, params: Bundle? = null, isOnlyFcmEvent: Boolean = false) {
         if (SessionPreference.getInstance().isFcmEventActive) {
             firebaseAnalytics.logEvent(event, params)
         }
-        if (SessionPreference.getInstance().isFbEventActive) {
+        if (SessionPreference.getInstance().isFbEventActive && !isOnlyFcmEvent) {
             appEventsLogger.logEvent(event)
         }
     }
