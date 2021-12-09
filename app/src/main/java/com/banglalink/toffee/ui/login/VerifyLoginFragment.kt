@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -88,6 +89,7 @@ class VerifyLoginFragment : ChildDialogFragment() {
                 is Resource.Success -> {
                     verifiedUserData = it.data
                     mPref.phoneNumber = phoneNumber
+                    ToffeeAnalytics.logEvent("login", bundleOf("login_status" to "1"))
                     viewModel.sendLoginLogData()
                     homeViewModel.sendOtpLogData(OTPLogData(otp, 0, 0, 1), phoneNumber)
                     if (cPref.isUserInterestSubmitted(phoneNumber)) {
@@ -98,8 +100,10 @@ class VerifyLoginFragment : ChildDialogFragment() {
                     }
                 }
                 is Resource.Failure -> {
-                    ToffeeAnalytics.logApiError("confirmCode",it.error.msg)
                     requireContext().showToast(it.error.msg)
+                    ToffeeAnalytics.logApiError("confirmCode",it.error.msg)
+                    ToffeeAnalytics.logEvent("login", bundleOf("login_status" to "0"))
+                    ToffeeAnalytics.logEvent("login", bundleOf("login_failure_reason" to it.error.msg))
                 }
             }
         }
