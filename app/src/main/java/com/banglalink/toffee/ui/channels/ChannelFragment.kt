@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.channels
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -101,8 +100,6 @@ class ChannelFragment:BaseFragment(), ChannelStickyListAdapter.OnItemClickListen
 
 //        homeViewModel.getChannelByCategory(0)
         //we will observe channel live data from home activity
-
-        Log.e("CHANNEL", channelViewModel.toString())
 
         viewLifecycleOwner.lifecycleScope.launch {
             with(channelViewModel(0)){

@@ -155,7 +155,7 @@ abstract class PlayerPageActivity :
                 }
                 playerAnalyticsListener?.let {
                     //In every heartbeat event we are sending bandwitdh data to Pubsub
-                    Log.e("PLAYER BYTES", "Flushing to pubsub")
+                    Log.i("PLAYER BYTES", "Flushing to pubsub")
                     playerViewModel.reportBandWidthFromPlayerPref(
                         it.durationInSeconds,
                         it.getTotalBytesInMB()
@@ -317,7 +317,7 @@ abstract class PlayerPageActivity :
                 mPref.drmWidevineLicenseUrl!!, httpDataSourceFactory!!, drmTokenApi, channelInfo.drmCid!!
             )).apply {
                 mediaItem.localConfiguration?.drmConfiguration?.keySetId?.let {
-                    Log.e("DRM_T", "Using offline key")
+                    Log.i("DRM_T", "Using offline key")
                     setMode(DefaultDrmSessionManager.MODE_PLAYBACK, it)
                 }
             }
@@ -372,7 +372,7 @@ abstract class PlayerPageActivity :
         castContext?.let {
             it.sessionManager.addSessionManagerListener(castSessionListener, CastSession::class.java)
 
-            Log.e("CAST_T", "Castplayer init")
+            Log.i("CAST_T", "Castplayer init")
             castPlayer = CastPlayer(it, ToffeeMediaItemConverter(mPref, connectionWatcher.isOverWifi)).apply {
                 addListener(playerEventListener)
                 playWhenReady = true
@@ -442,7 +442,7 @@ abstract class PlayerPageActivity :
         mediaLoadData: MediaLoadData
     ) {
         totalBytes += loadEventInfo.bytesLoaded
-        Log.e("PLAYER BYTES",""+totalBytes/1024+" KB")
+        Log.i("PLAYER BYTES",""+totalBytes/1024+" KB")
     }
 
     protected fun updateStartPosition() {
@@ -519,19 +519,19 @@ abstract class PlayerPageActivity :
         val channelId = if(mPref.isGlobalCidActive) -1 else channelInfo.id.toLong()
 
         val existingLicense = drmLicenseRepo.getByChannelId(channelId)
-        Log.e("DRM_T", "Existing -> $existingLicense")
+        Log.i("DRM_T", "Existing -> $existingLicense")
         if(existingLicense != null && !isLicenseAlmostExpired(existingLicense.expiryTime)) {
-            Log.e("DRM_T", "Using existing license")
+            Log.i("DRM_T", "Using existing license")
             return existingLicense.license
         }
         else if(existingLicense != null && !isLicenseExpired(existingLicense.expiryTime)) {
-            Log.e("DRM_T", "License almost expired. requesting new one, but using old one.")
+            Log.i("DRM_T", "License almost expired. requesting new one, but using old one.")
             lifecycleScope.launch(Dispatchers.IO + Job()) {
                 downloadLicense(channelInfo)
             }
             return existingLicense.license
         }
-        Log.e("DRM_T", "Requesting new license and using that one.")
+        Log.i("DRM_T", "Requesting new license and using that one.")
         lifecycleScope.launch(Dispatchers.IO + Job()) {
             downloadLicense(channelInfo)
         }
@@ -544,7 +544,7 @@ abstract class PlayerPageActivity :
             val drmCid = if(mPref.isGlobalCidActive) mPref.globalCidName else channelInfo.drmCid
             val token =
                 drmTokenApi.execute(drmCid!!, 2_592_000 /* 30 days*/) ?: return null
-            Log.e("DRM_T", "Downloading offline license")
+            Log.i("DRM_T", "Downloading offline license")
             val offlineDataSourceFactory = OkHttpDataSource.Factory(
                 dnsHttpClient
 //                    .newBuilder()
@@ -572,16 +572,16 @@ abstract class PlayerPageActivity :
                         return null
                     }
             val licenseData = offlineLicenseHelper.downloadLicense(drmInitData)
-            Log.e("DRM_T", "License size -> ${licenseData.size}")
+            Log.i("DRM_T", "License size -> ${licenseData.size}")
             val remainingTime = offlineLicenseHelper.getLicenseDurationRemainingSec(licenseData).first
-            Log.e("DRM_T", "Drm expiry time -> $remainingTime")
+            Log.i("DRM_T", "Drm expiry time -> $remainingTime")
             val licenseExpiration = if (remainingTime == Long.MAX_VALUE) {
                 remainingTime
             } else {
                 System.currentTimeMillis() + (remainingTime * 1000)
             }
 
-            Log.e("DRM_T", "Saving offline license")
+            Log.i("DRM_T", "Saving offline license")
             val newDrmLicense = DrmLicenseEntity(
                 if(mPref.isGlobalCidActive) -1 else channelInfo.id.toLong(),
                 drmCid,
@@ -647,7 +647,7 @@ abstract class PlayerPageActivity :
     
     private fun playChannel(isReload: Boolean) {
         playChannelJob?.cancel()
-        Log.e("DRM_T", "New play request")
+        Log.i("DRM_T", "New play request")
         playChannelJob = playChannelImpl(isReload)
     }
 
@@ -818,7 +818,7 @@ abstract class PlayerPageActivity :
 
     private fun insertContentViewProgress(cinfo: ChannelInfo, progress: Long) {
         lifecycleScope.launch {
-            Log.e("PLAYBACK_STATE", "Saving state - ${cinfo.id} -> $progress")
+            Log.i("PLAYBACK_STATE", "Saving state - ${cinfo.id} -> $progress")
             if(!cinfo.isLive && progress > 0L) {
                 cinfo.viewProgress = progress
                 contentViewRepo.insert(
@@ -828,7 +828,7 @@ abstract class PlayerPageActivity :
                         progress = progress
                     )
                 )
-                Log.e("TOFFEE", "Category - ${cinfo.categoryId}")
+                Log.i("TOFFEE", "Category - ${cinfo.categoryId}")
                 if(cinfo.categoryId == 1 && cinfo.viewProgressPercent() < 970) {
                     continueWatchingRepo.insertItem(
                         ContinueWatchingItem(
@@ -986,7 +986,7 @@ abstract class PlayerPageActivity :
     abstract fun resetPlayer()
 
     override fun onCastSessionAvailable() {
-        Log.e("CAST_T", "Cast Session available")
+        Log.i("CAST_T", "Cast Session available")
         updateStartPosition()
 //        val savedSession = mPref.savedCastInfo
 //        if(savedSession != null) {
@@ -1036,7 +1036,7 @@ abstract class PlayerPageActivity :
                 } else {
                     durationInMillis = System.currentTimeMillis() - initialTimeStamp
                 }
-                Log.e(
+                Log.i(
                     "PLAYER BYTES",
                     "Event time " + durationInMillis / 1000 + " Bytes " + totalBytesInMB * 0.000001 + " MB"
                 )

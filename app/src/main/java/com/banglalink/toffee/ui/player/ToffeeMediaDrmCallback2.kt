@@ -27,7 +27,7 @@ class ToffeeMediaDrmCallback2(private val licenseUri: String,
         uuid: UUID,
         request: ExoMediaDrm.ProvisionRequest
     ): ByteArray {
-        Log.e("DRM_T", "Provision request from media drm callback")
+        Log.i("DRM_T", "Provision request from media drm callback")
         try {
             return httpMediaDrmCallback.executeProvisionRequest(
                 uuid,

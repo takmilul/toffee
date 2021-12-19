@@ -131,22 +131,21 @@ fun Activity.handleFavorite(item: ChannelInfo, favoriteDao: FavoriteItemDao, onA
             getHomeViewModel().updateFavorite(item).observe(this, {
                 when (it) {
                     is Resource.Success -> {
-                        val channelInfo = it.data
+                        val isFavorite = it.data.isFavorite
+                        item.favorite = if(isFavorite == 1) "1" else "0"
                         lifecycleScope.launch {
                             favoriteDao.insert(FavoriteItem(
                                 channelId = item.id.toLong(),
-                                isFavorite = if(channelInfo.favorite == "1") 1 else 0
+                                isFavorite = isFavorite
                             ))
                         }
-                        when (channelInfo.favorite) {
-                            "0" -> {
+                        when (isFavorite) {
+                            0 -> {
                                 onRemoved?.invoke()
                                 showToast("Content successfully removed from favorite list")
-//                                handleFavoriteRemovedSuccessFully(channelInfo)
                             }
-                            "1" -> {
+                            1 -> {
                                 onAdded?.invoke()
-//                                handleFavoriteAddedSuccessfully(channelInfo)
                                 showToast("Content successfully added to favorite list")
                             }
                         }

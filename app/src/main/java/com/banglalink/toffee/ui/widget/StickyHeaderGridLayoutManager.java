@@ -1,5 +1,9 @@
 package com.banglalink.toffee.ui.widget;
 
+import static androidx.recyclerview.widget.RecyclerView.NO_POSITION;
+import static com.banglalink.toffee.ui.widget.StickyHeaderGridAdapter.TYPE_HEADER;
+import static com.banglalink.toffee.ui.widget.StickyHeaderGridAdapter.TYPE_ITEM;
+
 import android.content.Context;
 import android.graphics.PointF;
 import android.os.Parcel;
@@ -14,10 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import static androidx.recyclerview.widget.RecyclerView.NO_POSITION;
-import static com.banglalink.toffee.ui.widget.StickyHeaderGridAdapter.TYPE_HEADER;
-import static com.banglalink.toffee.ui.widget.StickyHeaderGridAdapter.TYPE_ITEM;
 
 /**
  * Created by Sergej Kravcenko on 4/24/2017.
@@ -227,7 +227,7 @@ public class StickyHeaderGridLayoutManager extends RecyclerView.LayoutManager im
          requestLayout();
       }
       else {
-         Log.d(TAG, "invalid saved state class");
+         Log.i(TAG, "invalid saved state class");
       }
    }
 

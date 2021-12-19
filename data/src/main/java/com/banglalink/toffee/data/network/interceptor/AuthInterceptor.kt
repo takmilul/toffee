@@ -91,6 +91,5 @@ class AuthInterceptor @Inject constructor(
         } finally {
             buffer.close()
         }
-
     }
 }

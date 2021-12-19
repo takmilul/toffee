@@ -217,10 +217,10 @@ class EditUploadInfoViewModel @AssistedInject constructor(
                 isHorizontal,
                 if (isUploadCopyrightFile) "${copyrightDir}/${copyrightFileName}" else ""
             )
-            Log.e("RESP", resp.toString())
+            Log.i("RESP", resp.toString())
             if (resp.contentId > 0L) {
                 val uploadId = startUpload(resp.contentId, resp.uploadVODSignedUrl, resp.uploadCopyrightSignedUrl, isUploadCopyrightFile)
-                Log.e("uploadId", uploadId)
+                Log.i("uploadId", uploadId)
                 resultLiveData.value = Resource.Success(Pair(uploadId, resp.contentId))
                 progressDialog.value = false
                 return

@@ -68,7 +68,7 @@ object PubSubMessageUtil {
             withContext(Dispatchers.IO) {
                 try {
                     val batch = client.batch()
-                    Log.d("PUBSUB - $topic", jsonMessage)
+//                    Log.i("PUBSUB - $topic", jsonMessage)
                     val pubsubMessage = PubsubMessage()
                     pubsubMessage.encodeData(jsonMessage.toByteArray(charset("UTF-8")))
                     val publishRequest = PublishRequest()
@@ -85,7 +85,7 @@ object PubSubMessageUtil {
     var callback: JsonBatchCallback<PublishResponse?> =
         object : JsonBatchCallback<PublishResponse?>() {
             override fun onSuccess(t: PublishResponse?, responseHeaders: HttpHeaders?) {
-                Log.d("PUBSUB", "published ! "+t?.messageIds)
+                Log.i("PUBSUB", "published ! "+t?.messageIds)
             }
             override fun onFailure(e: GoogleJsonError, responseHeaders: HttpHeaders) {
                 Log.e("PUBSUB", "error Message: " + e.message)

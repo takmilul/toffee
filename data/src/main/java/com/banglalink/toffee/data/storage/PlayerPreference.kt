@@ -55,10 +55,7 @@ class PlayerPreference private constructor(val context: Context) {
                 continue
 
             sessionList.add(PlayerSessionDetails(durationInSec,totalBandWidthInMB))
-            Log.e(
-                "map values", key + ": " +
-                        value.toString()
-            )
+            Log.i("map values", "$key: ${value.toString()}")
         }
         pref.edit().clear().apply()
         return sessionList

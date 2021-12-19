@@ -5,7 +5,6 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -232,7 +231,6 @@ class LatestVideosFragment : HomeBaseFragment(), ContentReactionCallback<Channel
                     else {
                         view.setTextColor(ContextCompat.getColor(requireContext(), R.color.fixed_second_text_color))
                     }
-                    Log.e(TAG, "setReaction: icon")
                 }
             })
         }

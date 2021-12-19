@@ -257,7 +257,7 @@ class HomeViewModel @Inject constructor(
         }
     }
     
-    fun updateFavorite(channelInfo: ChannelInfo): LiveData<Resource<ChannelInfo>> {
+    fun updateFavorite(channelInfo: ChannelInfo): LiveData<Resource<FavoriteBean>> {
         return resultLiveData {
             val favorite = channelInfo.favorite == null || channelInfo.favorite == "0"
             updateFavorite.execute(channelInfo, favorite)

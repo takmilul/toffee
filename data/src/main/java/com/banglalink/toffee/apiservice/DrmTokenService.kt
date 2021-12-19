@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 class DrmTokenService  @Inject constructor(private val pref: SessionPreference, private val toffeeApi: ToffeeApi) {
     suspend fun execute(contentId: String, duration: Int = 2_592_000): String? {
-        Log.e("DRM_T", "Requesting token for -> $contentId")
+        Log.i("DRM_T", "Requesting token for -> $contentId")
         val base64 = Base64.encodeToString(pref.customerId.toString().toByteArray(), Base64.NO_WRAP).reversed()
         val response = tryIO2 {
             toffeeApi.getDrmToken(

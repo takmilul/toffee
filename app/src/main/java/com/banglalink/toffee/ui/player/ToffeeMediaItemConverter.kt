@@ -39,7 +39,7 @@ class ToffeeMediaItemConverter(private val mPref: SessionPreference,
 
     override fun toMediaQueueItem(mediaItem: MediaItem): MediaQueueItem {
         val tag = mediaItem.localConfiguration?.tag as ChannelInfo?
-        Log.e("MEDIA_T", "Tag -> $tag")
+        Log.i("MEDIA_T", "Tag -> $tag")
         return getMediaInfo(mediaItem, tag!!)
     }
 
@@ -91,10 +91,10 @@ class ToffeeMediaItemConverter(private val mPref: SessionPreference,
             } else it
         }
 
-        Log.e("MEDIA_T", "Channel Url -> $channelUrl")
+        Log.i("MEDIA_T", "Channel Url -> $channelUrl")
 
         val customData = getCustomData(mediaItem, info).apply {
-            Log.e("MEDIA_T", "Custom data -> $this")
+            Log.i("MEDIA_T", "Custom data -> $this")
         }
 
         val mediaInfo = MediaInfo.Builder(channelUrl)

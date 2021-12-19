@@ -1,7 +1,6 @@
 package com.banglalink.toffee.ui.category.drama
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -140,7 +139,6 @@ class EpisodeListFragment: HomeBaseFragment(), ProviderIconCallback<ChannelInfo>
                         else{
                             view.setTextColor(ContextCompat.getColor(requireContext(), R.color.fixed_second_text_color))
                         }
-                        Log.e(ReactionPopup.TAG, "setReaction: icon", )
                     }
                 })
                 }
