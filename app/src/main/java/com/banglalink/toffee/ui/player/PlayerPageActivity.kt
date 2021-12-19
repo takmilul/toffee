@@ -14,6 +14,7 @@ import com.banglalink.toffee.apiservice.DrmTokenService
 import com.banglalink.toffee.data.database.entities.ContentViewProgress
 import com.banglalink.toffee.data.database.entities.ContinueWatchingItem
 import com.banglalink.toffee.data.database.entities.DrmLicenseEntity
+import com.banglalink.toffee.data.exception.ContentExpiredException
 import com.banglalink.toffee.data.repository.ContentViewPorgressRepsitory
 import com.banglalink.toffee.data.repository.ContinueWatchingRepository
 import com.banglalink.toffee.data.repository.DrmLicenseRepository
@@ -21,7 +22,6 @@ import com.banglalink.toffee.data.storage.CommonPreference
 import com.banglalink.toffee.data.storage.PlayerPreference
 import com.banglalink.toffee.di.DnsHttpClient
 import com.banglalink.toffee.di.ToffeeHeader
-import com.banglalink.toffee.data.exception.ContentExpiredException
 import com.banglalink.toffee.extension.getChannelMetadata
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.listeners.OnPlayerControllerChangedListener
@@ -324,46 +324,46 @@ abstract class PlayerPageActivity :
     }
 
     private val castSessionListener = object: SessionManagerListener<CastSession> {
-        override fun onSessionStarting(p0: CastSession?) {
-            p0?.castDevice?.friendlyName?.let {
+        override fun onSessionStarting(p0: CastSession) {
+            p0.castDevice?.friendlyName?.let {
                 showToast("Connecting to $it")
             }
         }
 
-        override fun onSessionStarted(p0: CastSession?, p1: String?) {
-            p0?.castDevice?.friendlyName?.let {
+        override fun onSessionStarted(p0: CastSession, p1: String) {
+            p0.castDevice?.friendlyName?.let {
                 showToast("Connected to $it")
             }
         }
 
-        override fun onSessionStartFailed(p0: CastSession?, p1: Int) {
-            p0?.castDevice?.friendlyName?.let {
+        override fun onSessionStartFailed(castSession: CastSession, p1: Int) {
+            castSession.castDevice?.friendlyName?.let {
                 showToast("Failed to connect to $it")
             }
         }
 
-        override fun onSessionEnding(p0: CastSession?) {}
-        override fun onSessionEnded(p0: CastSession?, p1: Int) {}
-        override fun onSessionResuming(p0: CastSession?, p1: String?) {}
+        override fun onSessionEnding(p0: CastSession) {}
+        override fun onSessionEnded(p0: CastSession, p1: Int) {}
+        override fun onSessionResuming(p0: CastSession, p1: String) {}
 
-        override fun onSessionResumed(p0: CastSession?, p1: Boolean) {
-            p0?.let {
-                val cinfo = try {
+        override fun onSessionResumed(castSession: CastSession, p1: Boolean) {
+            castSession.let {
+                val cInfo = try {
                     val customData = it.remoteMediaClient?.currentItem?.customData!!
                     Gson().fromJson(customData.getString("channel_info"), ChannelInfo::class.java)
                 } catch (ex: Exception) {
                     ex.printStackTrace()
                     null
                 }
-                if(cinfo != null && playlistManager.getCurrentChannel() == null) {
-                    playlistManager.setPlaylist(cinfo)
-                    resumeCastSession(cinfo)
+                if(cInfo != null && playlistManager.getCurrentChannel() == null) {
+                    playlistManager.setPlaylist(cInfo)
+                    resumeCastSession(cInfo)
                 }
             }
         }
 
-        override fun onSessionResumeFailed(p0: CastSession?, p1: Int) {}
-        override fun onSessionSuspended(p0: CastSession?, p1: Int) {}
+        override fun onSessionResumeFailed(p0: CastSession, p1: Int) {}
+        override fun onSessionSuspended(p0: CastSession, p1: Int) {}
     }
 
     protected open fun resumeCastSession(info: ChannelInfo) {}

@@ -182,7 +182,7 @@ class ToffeeMediaItemConverter(private val mPref: SessionPreference,
     }
 
     // Serialization.
-    private fun getCustomData(mediaItem: MediaItem?, channelInfo: ChannelInfo): JSONObject? {
+    private fun getCustomData(mediaItem: MediaItem?, channelInfo: ChannelInfo): JSONObject {
         val json = JSONObject()
         try {
             json.put(KEY_MEDIA_ITEM, getMediaItemJson(mediaItem!!))

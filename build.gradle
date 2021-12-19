@@ -4,14 +4,14 @@ buildscript {
     ext {
         appVersionCode = 71
         appVersionName = '2.1.4'
-        kotlin_version = '1.5.31'
+        kotlinVersion = '1.5.31'
         kotlinCoroutineVersion = "1.5.2"
         composeVersion = '1.0.5'
         exoVersion = "2.16.1"
         firebaseCoreVersion = "19.0.2"
         firebaseMessagingVersion = "23.0.0"
-        firebaseAnalyticsVersion = "20.0.0"
-        firebaseCrashlyticsVersion = "18.2.5"
+        firebaseAnalyticsVersion = "20.0.2"
+        firebaseCrashlyticsVersion = "18.2.6"
         lifecycleVersion = "2.4.0"
         roomDbVersion = "2.3.0"
         hiltAndroidVersion = "2.39.1"
@@ -25,7 +25,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.3'
+        classpath 'com.android.tools.build:gradle:7.0.4'
         classpath 'com.google.gms:google-services:4.3.10'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         
