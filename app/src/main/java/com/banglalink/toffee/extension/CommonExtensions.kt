@@ -159,10 +159,10 @@ fun Activity.handleFavorite(item: ChannelInfo, favoriteDao: FavoriteItemDao, onA
     }
 }
 
-fun ViewGroup.showLoadingAnimation(isStart: Boolean) {
+fun ViewGroup.showLoadingAnimation(isLoading: Boolean) {
     this.forEach {
         if (it is ShimmerFrameLayout) {
-            if (isStart && !it.isShimmerStarted) {
+            if (isLoading && !it.isShimmerStarted) {
                 it.startShimmer()
             }
             else {

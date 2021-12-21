@@ -5,5 +5,9 @@ import com.google.gson.annotations.SerializedName
 
 data class MyChannelPlaylistResponse(
     @SerializedName("response")
-    val response: MyChannelPlaylistBean
+    val response: MyChannelPlaylistBean,
+    @SerializedName("isOwner")
+    val isOwner: Int,
+    @SerializedName("channelId")
+    val channelId: String
 ) : BaseResponse()
