@@ -1,5 +1,7 @@
 package com.banglalink.toffee.data.network.request
 
+import com.banglalink.toffee.apiservice.ApiNames
+import com.banglalink.toffee.data.network.retrofit.ToffeeApi
 import com.google.gson.annotations.SerializedName
 
 data class VerifyCodeRequest(
@@ -17,4 +19,4 @@ data class VerifyCodeRequest(
     val lon: String,
     @SerializedName("parentId")
     val parentId: Int = 1
-) : BaseRequest("confirmCodeV2")
+) : BaseRequest(ApiNames.CONFIRM_CODEV2)

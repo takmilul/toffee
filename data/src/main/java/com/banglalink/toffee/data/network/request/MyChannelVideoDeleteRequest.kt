@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.network.request
 
+import com.banglalink.toffee.apiservice.ApiNames
 import com.google.gson.annotations.SerializedName
 
 data class MyChannelVideoDeleteRequest(
@@ -9,4 +10,4 @@ data class MyChannelVideoDeleteRequest(
     val customerId: Int,
     @SerializedName("password")
     val password: String
-) : BaseRequest("ugcContentDelete")
+) : BaseRequest(ApiNames.UGC_DELETE_MY_CHANNEL_VIDEO)

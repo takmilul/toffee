@@ -14,6 +14,7 @@ import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.content.res.Configuration
+import android.content.res.Resources
 import android.graphics.Path
 import android.graphics.Point
 import android.net.ConnectivityManager
@@ -34,6 +35,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.*
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -50,6 +52,7 @@ import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
 import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.apiservice.ApiRoutes
 import com.banglalink.toffee.data.database.dao.FavoriteItemDao
 import com.banglalink.toffee.data.network.retrofit.CacheManager
@@ -368,6 +371,12 @@ class HomeActivity :
                     }
                     is Failure -> {
                         Log.e("MQTT_", "onCreate: ${it.error.msg}")
+                        ToffeeAnalytics.logEvent(ToffeeEvents.EXCEPTION,
+                            bundleOf(
+                                "api_name" to ApiNames.RE_REGISTATION,
+                                "browser_screen" to "Enter OTP",
+                                "error_code" to it.error.code.toString(),
+                                "error_description" to it.error.msg))
                     }
                 }
             }
@@ -867,6 +876,9 @@ class HomeActivity :
     }
 
     private fun navigateToSearch(query: String?) {
+        ToffeeAnalytics.logEvent(ToffeeEvents.SEARCH,
+            bundleOf("search_query:" to query)
+        )
         navController.popBackStack(R.id.searchFragment, true)
 //        navController.navigate(Uri.parse("app.toffee://search/$query"))
         navController.navigate(R.id.searchFragment, Bundle().apply {
@@ -954,6 +966,13 @@ class HomeActivity :
     }
     
     private fun playInNativePlayer(detailsInfo: Any?, it: ChannelInfo) {
+        ToffeeAnalytics.logEvent(ToffeeEvents.CONTENT_CLICK,
+            bundleOf("content_id" to it.id,
+                "content_title" to it.program_name,
+                "content_category" to it.category,
+                "content_partner" to it.content_provider_name,
+            )
+        )
         if (player is CastPlayer) {
             maximizePlayer()
         }

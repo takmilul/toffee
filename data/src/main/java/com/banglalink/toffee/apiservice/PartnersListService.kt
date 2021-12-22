@@ -22,7 +22,7 @@ class PartnersListService @AssistedInject constructor(
                 requestParams.type,
                 limit,
                 offset,
-                preference.getDBVersionByApiName("getUgcPartnerList"),
+                preference.getDBVersionByApiName(ApiNames.GET_PARTNER_LIST),
                 PartnersRequest(
                     preference.customerId,
                     preference.password

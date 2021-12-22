@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.network.request
 
+import com.banglalink.toffee.apiservice.ApiNames
 import com.google.gson.annotations.SerializedName
 
 data class MyChannelUserPlaylistVideosRequest(
@@ -7,4 +8,4 @@ data class MyChannelUserPlaylistVideosRequest(
     val customerId: Int,
     @SerializedName("password")
     val password: String,
-) : BaseRequest("getUgcContentByUserPlaylist")
+) : BaseRequest(ApiNames.GET_UGC_MY_CHANNEL_USER_PLAYLIST_VIDEOS)

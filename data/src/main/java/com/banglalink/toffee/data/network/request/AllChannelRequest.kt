@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.network.request
 
+import com.banglalink.toffee.apiservice.ApiNames
 import com.google.gson.annotations.SerializedName
 
 data class AllChannelRequest(
@@ -13,4 +14,4 @@ data class AllChannelRequest(
     val telcoId: Int = 1,
     @SerializedName("limit")
     val limit: Int = 200
-) : BaseRequest("getUgcAppHomePageContentTofeeV2")
+) : BaseRequest(ApiNames.GET_UGC_APP_HOME_PAGE_CONTENT_TOFFEE_V2)

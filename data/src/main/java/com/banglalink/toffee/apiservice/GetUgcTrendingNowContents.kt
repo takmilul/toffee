@@ -36,7 +36,7 @@ class GetUgcTrendingNowContents @AssistedInject constructor(
                 requestParams.type,
                 requestParams.pageType.value,
                 requestParams.categoryId,
-                preference.getDBVersionByApiName("getUgcCategoryEditorChoice"),
+                preference.getDBVersionByApiName(ApiNames.GET_UGC_CATEGORY_EDITOR_CHOICE),
                 request
             )
         }

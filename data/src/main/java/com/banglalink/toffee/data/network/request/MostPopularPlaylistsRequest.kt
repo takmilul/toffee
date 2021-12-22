@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.network.request
 
+import com.banglalink.toffee.apiservice.ApiNames
 import com.google.gson.annotations.SerializedName
 
 data class MostPopularPlaylistsRequest(
@@ -7,4 +8,4 @@ data class MostPopularPlaylistsRequest(
     val customerId: Int,
     @SerializedName("password")
     val password: String
-) : BaseRequest("getUgcPopularPlaylistNames")
+) : BaseRequest(ApiNames.GET_UGC_POPULAR_PLAYLIST_NAMES)

@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.network.request
 
+import com.banglalink.toffee.apiservice.ApiNames
 import com.google.gson.annotations.SerializedName
 
 data class HeartBeatRequest(
@@ -19,4 +20,4 @@ data class HeartBeatRequest(
     val isNetworkSwitch: Boolean = false,
     @SerializedName("type")
     val type: String = "FOREGROUND"
-) : BaseRequest("heartBeat")
+) : BaseRequest(ApiNames.HEART_BEAT)

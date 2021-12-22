@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.network.request
 
+import com.banglalink.toffee.apiservice.ApiNames
 import com.google.gson.annotations.SerializedName
 
 data class PackageChannelListRequest(
@@ -13,4 +14,4 @@ data class PackageChannelListRequest(
     val offset: Int = 0,
     @SerializedName("limit")
     val limit: Int = 100
-) : BaseRequest("getPackageDetailsV2")
+) : BaseRequest(ApiNames.GET_PACKAGE_DETAILS_V2)

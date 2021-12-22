@@ -16,7 +16,7 @@ class GetOffenseService @Inject constructor(
         val response = tryIO2 {
             toffeeApi.getOffenseList(
                 limit, offset,
-                preference.getDBVersionByApiName("getUgcInappropriateHeadList"),
+                preference.getDBVersionByApiName(ApiNames.GET_OFFENCE_LIST),
                 OffenseRequest(
                     preference.customerId,
                     preference.password

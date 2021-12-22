@@ -1,8 +1,9 @@
 package com.banglalink.toffee.data.network.request
 
+import com.banglalink.toffee.apiservice.ApiNames
 import com.google.gson.annotations.SerializedName
 
 data class ContentCategoryRequest(
     @SerializedName("telcoId")
     val telcoId: Int = 1
-) : BaseRequest("getUgcActiveInactiveCategories")
+) : BaseRequest(ApiNames.GET_UGC_ACTIVE_INACTIVE_CATEGORIES)

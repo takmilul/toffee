@@ -24,7 +24,7 @@ class MyChannelUserPlaylistService @AssistedInject constructor(
                 channelOwnerId,
                 limit,
                 offset,
-                preference.getDBVersionByApiName("getUgcUserPlaylistNames"),
+                preference.getDBVersionByApiName(ApiNames.GET_UGC_MY_CHANNEL_USER_PLAYLIST_NAME),
                 MyChannelUserPlaylistRequest(preference.customerId, preference.password)
             )
         }

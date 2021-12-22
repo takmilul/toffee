@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.network.request
 
+import com.banglalink.toffee.apiservice.ApiNames
 import com.google.gson.annotations.SerializedName
 
 
@@ -16,4 +17,4 @@ data class ViewingContentRequest(
     val lat: String,
     @SerializedName("lon")
     val lon: String
-) : BaseRequest("viewingContent")
+) : BaseRequest(ApiNames.VIEWING_CONTENT)

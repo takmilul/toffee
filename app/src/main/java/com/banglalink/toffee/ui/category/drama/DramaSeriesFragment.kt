@@ -4,7 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.databinding.FragmentDramaSeriesBinding
 import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.model.Category
@@ -35,6 +38,7 @@ class DramaSeriesFragment: BaseFragment() {
         landingViewModel.categoryId.value = category.id.toInt()
         landingViewModel.checkedSubCategoryChipId.value = 0
         landingViewModel.isDramaSeries.value = true
+        ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_VIEW,  bundleOf("firebase_screen" to category.categoryName))
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

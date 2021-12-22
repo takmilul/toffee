@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.network.request
 
+import com.banglalink.toffee.apiservice.ApiNames
 import com.google.gson.annotations.SerializedName
 
 data class FavoriteRequest(
@@ -11,4 +12,4 @@ data class FavoriteRequest(
     val customerId: Int,
     @SerializedName("password")
     val password: String
-) : BaseRequest("setUgcFavorites")
+) : BaseRequest(ApiNames.SET_UGC_FAVORITES)

@@ -6,8 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.databinding.FragmentMovieBinding
 import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.extension.observe
@@ -45,6 +48,7 @@ class MovieFragment : BaseFragment() {
         landingViewModel.pageType.value = PageType.Category
         landingViewModel.categoryId.value = category.id.toInt()
         landingViewModel.isDramaSeries.value = false
+        ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_VIEW,  bundleOf("firebase_screen" to category.categoryName))
     }
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

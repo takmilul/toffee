@@ -3,7 +3,10 @@ package com.banglalink.toffee.ui.common
 import android.content.res.AssetManager
 import android.os.Bundle
 import android.webkit.JavascriptInterface
+import androidx.core.os.bundleOf
 import com.banglalink.toffee.analytics.HeartBeatManager
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.enums.WebActionType.*
 import com.banglalink.toffee.extension.observe
@@ -42,7 +45,13 @@ class Html5PlayerViewActivity : BaseAppCompatActivity() {
         } else {
             val headerMap: MutableMap<String, String> = HashMap()
             headerMap["MSISDN"] = SessionPreference.getInstance().phoneNumber
-            htmlUrl?.let { mWebView.loadUrl(htmlUrl!!, headerMap) }
+            htmlUrl?.let {
+                ToffeeAnalytics.logEvent(
+                    ToffeeEvents.SCREEN_VIEW,
+                    bundleOf("firebase_screen" to it))
+                mWebView.loadUrl(htmlUrl!!, headerMap)
+
+            }
         }
 
         setContentView(mWebView.layout)

@@ -7,9 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.databinding.FragmentLandingPageBinding
 import com.banglalink.toffee.enums.PageType.Landing
 import com.banglalink.toffee.extension.observe
@@ -79,6 +82,7 @@ class LandingPageFragment : HomeBaseFragment() {
                 }
             }
         }
+        ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_VIEW,  bundleOf("firebase_screen" to "home"))
     }
     
     override fun onDestroyView() {

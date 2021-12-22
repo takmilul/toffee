@@ -36,7 +36,7 @@ class MyChannelVideosService @AssistedInject constructor(
                 requestParams.subcategoryId,
                 isOwner.xor(1),
                 limit, offset,
-                preference.getDBVersionByApiName("getUgcChannelAllContent"),
+                preference.getDBVersionByApiName(ApiNames.GET_UGC_CHANNEL_ALL_CONTENT),
                 MyChannelVideosRequest(preference.customerId, preference.password, offset, limit)
             )
         }

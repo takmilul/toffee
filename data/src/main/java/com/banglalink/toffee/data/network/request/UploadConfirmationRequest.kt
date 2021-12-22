@@ -1,5 +1,6 @@
 package com.banglalink.toffee.data.network.request
 
+import com.banglalink.toffee.apiservice.ApiNames
 import com.google.gson.annotations.SerializedName
 
 data class UploadConfirmationRequest(
@@ -13,4 +14,4 @@ data class UploadConfirmationRequest(
     val isConfirm: String,
     @SerializedName("isCopyrightUploaded")
     val isCopyrightUploaded: Int
-) : BaseRequest("ugcContentUploadConfirmation")
+) : BaseRequest(ApiNames.UGC_CONTENT_UPLOAD_CONFIRMATION)

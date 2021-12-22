@@ -8,10 +8,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.forEach
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
+import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
+import com.banglalink.toffee.apiservice.ApiNames
 import com.banglalink.toffee.databinding.FragmentViewProfileBinding
 import com.banglalink.toffee.extension.*
 import com.banglalink.toffee.model.EditProfileForm
@@ -67,6 +71,14 @@ class ViewProfileFragment : BaseFragment() {
                 }
                 is Resource.Failure -> {
                     requireContext().showToast(it.error.msg)
+                    ToffeeAnalytics.logEvent(
+                        ToffeeEvents.EXCEPTION,
+                        bundleOf(
+                            "api_name" to ApiNames.GET_SUBSCRIPTION_PROFILE,
+                            "browser_screen" to "Profile Screen",
+                            "error_code" to it.error.code,
+                            "error_description" to it.error.msg)
+                    )
                 }
             }
         }

@@ -14,11 +14,13 @@ import android.os.Environment
 import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.banglalink.toffee.R
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.databinding.FragmentThumbSelectionMethodBinding
 import com.banglalink.toffee.extension.showToast
 import com.github.florent37.runtimepermission.kotlin.NoActivityException
@@ -174,6 +176,11 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
 
     private val galleryResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         if (it.resultCode == Activity.RESULT_OK && it.data != null && it.data?.data != null) {
+            if(title.equals(getString(R.string.set_channel_photo))){
+                ToffeeAnalytics.logEvent(ToffeeEvents.UGC_CHANNEL_IMAGE,
+                    bundleOf("image_upload_type" to "Gallery")
+                )
+            }
             startCrop(it.data!!.data!!)
         } else {
             ToffeeAnalytics.logBreadCrumb("Camera/video picker returned without any data")
@@ -182,6 +189,11 @@ class ThumbnailSelectionMethodFragment: DialogFragment() {
 
     private val cameraResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         if (it.resultCode == Activity.RESULT_OK && imageUri != null) {
+            if(title.equals(getString(R.string.set_channel_photo))){
+                ToffeeAnalytics.logEvent(ToffeeEvents.UGC_CHANNEL_IMAGE,
+                    bundleOf("image_upload_type" to "Camera")
+                )
+            }
             ToffeeAnalytics.logBreadCrumb("Got result from camera")
             startCrop(imageUri!!)
         } else {

@@ -27,7 +27,7 @@ class DramaSeriesContentService @AssistedInject constructor(
                 requestParams.hashTag,
                 limit,
                 offset,
-                preference.getDBVersionByApiName("getUgcLatestDramaSerial"),
+                preference.getDBVersionByApiName(ApiNames.GET_DRAMA_SERIAL_CONTENT),
                 DramaSeriesContentRequest(
                     preference.customerId,
                     preference.password

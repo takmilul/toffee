@@ -1,12 +1,14 @@
 package com.banglalink.toffee.ui.home
 
 import android.content.Context
+import androidx.core.os.bundleOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.banglalink.toffee.BuildConfig
 import com.banglalink.toffee.analytics.ToffeeAnalytics
+import com.banglalink.toffee.analytics.ToffeeEvents
 import com.banglalink.toffee.apiservice.*
 import com.banglalink.toffee.data.database.dao.ReactionDao
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
@@ -157,11 +159,21 @@ class HomeViewModel @Inject constructor(
 
     private fun getProfile() {
         viewModelScope.launch {
-            try {
+            val respoense =resultFromResponse {
                 profileApi()
-            } catch (e: Exception) {
-                ToffeeAnalytics.logException(e)
             }
+            if (respoense is Resource.Failure)
+            {
+                ToffeeAnalytics.logEvent(
+                    ToffeeEvents.EXCEPTION,
+                    bundleOf(
+                        "api_name" to ApiNames.GET_SUBSCRIPTION_PROFILE,
+                        "browser_screen" to "Profile Screen",
+                        "error_code" to respoense.error.code,
+                        "error_description" to respoense.error.msg)
+                )
+            }
+
         }
     }
 
