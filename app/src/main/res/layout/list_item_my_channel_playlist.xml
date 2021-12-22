@@ -88,7 +88,7 @@
             android:contentDescription="@string/txt_options"
             android:id="@+id/options"
             style="@style/OptionMenuStyle"
-            android:visibility="@{data.isOwner == 1 ? View.VISIBLE : View.GONE}"
+            android:visibility="@{data.isOwner() ? View.VISIBLE : View.GONE}"
             android:onClick="@{(v)->callback.onOpenMenu(v, data)}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/name"
