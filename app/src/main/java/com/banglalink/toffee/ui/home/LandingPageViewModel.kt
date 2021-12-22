@@ -9,12 +9,12 @@ import androidx.paging.cachedIn
 import com.banglalink.toffee.apiservice.*
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
+import com.banglalink.toffee.data.exception.JobCanceledError
 import com.banglalink.toffee.data.network.request.ChannelRequestParams
 import com.banglalink.toffee.data.network.util.resultFromResponse
 import com.banglalink.toffee.data.repository.TVChannelRepository
 import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.enums.PageType.Landing
-import com.banglalink.toffee.data.exception.JobCanceledError
 import com.banglalink.toffee.extension.showToast
 import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.Failure
@@ -32,7 +32,6 @@ class LandingPageViewModel @Inject constructor(
     private val categoryListApi: GetCategories,
     private val tvChannelRepo: TVChannelRepository,
     @ApplicationContext private val context: Context,
-    private val mostPopularPlaylists: GetMostPopularPlaylists,
     private val featuredAssistedFactory: FeatureContentService,
     private val getContentAssistedFactory: GetContents.AssistedFactory,
     private val mostPopularApi: GetMostPopularContents.AssistedFactory,
@@ -45,6 +44,7 @@ class LandingPageViewModel @Inject constructor(
     val categoryId = SingleLiveEvent<Int>()
     val subCategoryId = SingleLiveEvent<Int>()
     val pageType = MutableLiveData<PageType>()
+    val pageName = MutableLiveData<String>()
     val isDramaSeries = MutableLiveData<Boolean>()
     val selectedHashTag = SingleLiveEvent<String>()
     val hashtagList = SingleLiveEvent<List<String>>()
@@ -102,7 +102,7 @@ class LandingPageViewModel @Inject constructor(
             BaseNetworkPagingSource(
                 popularChannelAssistedFactory.create(
                     ApiCategoryRequestParams("", 0, 0)
-                )
+                ), ApiNames.GET_POPULAR_TV_CHANNEL, pageName.value!!
             )
         })
     }
@@ -112,7 +112,7 @@ class LandingPageViewModel @Inject constructor(
             BaseNetworkPagingSource(
                 popularChannelAssistedFactory.create(
                     ApiCategoryRequestParams("", 1, category.id.toInt())
-                )
+                ), ApiNames.GET_CONTENTS_V5, pageName.value!!
             )
         }).getList().cachedIn(viewModelScope)
     }
@@ -122,7 +122,7 @@ class LandingPageViewModel @Inject constructor(
             BaseNetworkPagingSource(
                 getContentAssistedFactory.create(
                     ChannelRequestParams("", 0, "", 0, "LIVE")
-                )
+                ), ApiNames.GET_CONTENTS_V5, pageName.value!!
             )
         })
     }
@@ -130,7 +130,7 @@ class LandingPageViewModel @Inject constructor(
     private val categoryListRepo by lazy {
         BaseListRepositoryImpl({
             BaseNetworkPagingSource(
-                categoryListApi
+                categoryListApi, ApiNames.GET_CATEGORIES, pageName.value!!
             )
         })
     }
@@ -140,7 +140,7 @@ class LandingPageViewModel @Inject constructor(
             BaseNetworkPagingSource(
                 getContentAssistedFactory.create(
                     ChannelRequestParams("", 0, "", 0, "VOD")
-                )
+                ), ApiNames.GET_CONTENTS_V5, pageName.value!!
             )
         }).getList().cachedIn(viewModelScope)
     }
@@ -150,7 +150,7 @@ class LandingPageViewModel @Inject constructor(
             BaseNetworkPagingSource(
                 mostPopularApi.create(
                     LandingUserChannelsRequestParam("VOD", categoryId, subCategoryId, isDramaSeries.value ?: false)
-                )
+                ), ApiNames.GET_MOST_POPULAR_CONTENTS, pageName.value!!
             )
         }).getList()
     }
@@ -160,7 +160,7 @@ class LandingPageViewModel @Inject constructor(
             BaseNetworkPagingSource(
                 editorsChoiceAssistedFactory.create(
                     EditorsChoiceFeaturedRequestParams("VOD", pageType.value ?: Landing, categoryId.value ?: 0)
-                )
+                ), ApiNames.GET_EDITOR_CHOICE, pageName.value!!
             )
         })
     }
@@ -170,7 +170,7 @@ class LandingPageViewModel @Inject constructor(
             BaseNetworkPagingSource(
                 getContentAssistedFactory.create(
                     ChannelRequestParams("", categoryId, "", subCategoryId, "VOD")
-                )
+                ), ApiNames.GET_CONTENTS_V5, pageName.value!!
             )
         }).getList()
     }
@@ -186,7 +186,7 @@ class LandingPageViewModel @Inject constructor(
             BaseNetworkPagingSource(
                 relativeContentsFactory.create(
                     CatchupParams("null", hashTag, categoryId, subCategoryId)
-                )
+                ), ApiNames.GET_RELATIVE_CONTENTS, pageName.value!!
             )
         }).getList()
     }
@@ -194,7 +194,7 @@ class LandingPageViewModel @Inject constructor(
     val loadFeaturedPartners by lazy {
         BaseListRepositoryImpl({
             BaseNetworkPagingSource(
-                featuredPartnerAssistedFactory.create("VOD")
+                featuredPartnerAssistedFactory.create("VOD"), ApiNames.GET_FEATURED_PARTNERS, BrowsingScreens.HOME_PAGE
             )
         }).getList()
     }

@@ -17,7 +17,7 @@ import com.banglalink.toffee.data.storage.SessionPreference
 import com.banglalink.toffee.model.ChannelInfo
 import com.banglalink.toffee.model.PlaylistPlaybackInfo
 import com.banglalink.toffee.model.SeriesPlaybackInfo
-import com.banglalink.toffee.ui.category.drama.EpisodeListViewModel
+import com.banglalink.toffee.ui.category.webseries.EpisodeListViewModel
 import com.banglalink.toffee.ui.common.ContentReactionCallback
 import com.banglalink.toffee.ui.common.SeriesHeaderCallback
 import com.suke.widget.SwitchButton

@@ -1,7 +1,9 @@
-package com.banglalink.toffee.ui.category.drama
+package com.banglalink.toffee.ui.category.webseries
 
 import androidx.lifecycle.ViewModel
 import androidx.paging.PagingData
+import com.banglalink.toffee.apiservice.ApiNames
+import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.apiservice.DramaSeriesContentService
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
@@ -12,7 +14,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @HiltViewModel
-class DramaSeriesViewModel @Inject constructor(
+class WebSeriesViewModel @Inject constructor(
     private val dramaAssistedFactory: DramaSeriesContentService.AssistedFactory,
 ) : ViewModel() {
 
@@ -21,8 +23,8 @@ class DramaSeriesViewModel @Inject constructor(
             BaseNetworkPagingSource(
                 dramaAssistedFactory.create(
                     ChannelRequestParams("", categoryId, "", subCategoryId, "VOD", isFilter, hashTag)
-                )
-            ) 
+                ), ApiNames.GET_WEB_SERIES_CONTENT, BrowsingScreens.WEB_SERIES_CATEGORY_PAGE
+            )
         }).getList()
     }
 }

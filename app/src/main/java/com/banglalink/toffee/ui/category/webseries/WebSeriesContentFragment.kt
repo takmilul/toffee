@@ -1,4 +1,4 @@
-package com.banglalink.toffee.ui.category.drama
+package com.banglalink.toffee.ui.category.webseries
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,7 +13,7 @@ import androidx.paging.LoadState
 import androidx.paging.filter
 import com.banglalink.toffee.R.string
 import com.banglalink.toffee.common.paging.ProviderIconCallback
-import com.banglalink.toffee.databinding.FragmentDramaSeriesContentBinding
+import com.banglalink.toffee.databinding.FragmentWebSeriesContentBinding
 import com.banglalink.toffee.enums.FilterContentType.*
 import com.banglalink.toffee.extension.hide
 import com.banglalink.toffee.extension.observe
@@ -30,18 +30,18 @@ import com.banglalink.toffee.ui.player.AddToPlaylistData
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<ChannelInfo> {
+class WebSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<ChannelInfo> {
 
     private var category: Category? = null
     private var selectedFilter: Int = FEED.value
-    private var _binding: FragmentDramaSeriesContentBinding ? = null
-    private lateinit var mAdapter: DramaSeriesListAdapter<ChannelInfo>
+    private var _binding: FragmentWebSeriesContentBinding? = null
+    private lateinit var mAdapter: WebSeriesListAdapter<ChannelInfo>
     private val binding get() = _binding!!
-    private val viewModel by viewModels<DramaSeriesViewModel>()
+    private val viewModel by viewModels<WebSeriesViewModel>()
     private val landingPageViewModel by activityViewModels<LandingPageViewModel>()
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?, ): View {
-        _binding = FragmentDramaSeriesContentBinding.inflate(inflater, container, false)
+        _binding = FragmentWebSeriesContentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -55,7 +55,7 @@ class DramaSeriesContentFragment : HomeBaseFragment(), ProviderIconCallback<Chan
         var isInitialized = false
         category = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM) as Category?
         setupEmptyView()
-        mAdapter = DramaSeriesListAdapter(this)
+        mAdapter = WebSeriesListAdapter(this)
         binding.latestVideosList.adapter = mAdapter
         landingPageViewModel.isDramaSeries.value = true
 

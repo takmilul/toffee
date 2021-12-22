@@ -63,7 +63,7 @@ import com.banglalink.toffee.model.*
 import com.banglalink.toffee.model.Resource.*
 import com.banglalink.toffee.mqttservice.ToffeeMqttService
 import com.banglalink.toffee.receiver.NotificationActionReceiver.Companion.ROW_ID
-import com.banglalink.toffee.ui.category.drama.EpisodeListFragment
+import com.banglalink.toffee.ui.category.webseries.EpisodeListFragment
 import com.banglalink.toffee.ui.channels.AllChannelsViewModel
 import com.banglalink.toffee.ui.channels.ChannelFragmentNew
 import com.banglalink.toffee.ui.common.Html5PlayerViewActivity

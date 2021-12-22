@@ -43,7 +43,7 @@
             
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/latestVideosFragment"
-                android:name="com.banglalink.toffee.ui.category.drama.DramaSeriesContentFragment"
+                android:name="com.banglalink.toffee.ui.category.webseries.WebSeriesContentFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         

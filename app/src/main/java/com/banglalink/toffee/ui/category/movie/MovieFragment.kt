@@ -18,6 +18,7 @@ import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
 import com.banglalink.toffee.util.BindingUtil
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -43,6 +44,7 @@ class MovieFragment : BaseFragment() {
         category = requireArguments().getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)!!
         activity?.title = category.categoryName
         landingViewModel.pageType.value = PageType.Category
+        landingViewModel.pageName.value = category.categoryName.uppercase(Locale.getDefault()) + "CATEGORY_PAGE"
         landingViewModel.categoryId.value = category.id.toInt()
         landingViewModel.isDramaSeries.value = false
     }

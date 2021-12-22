@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.data.database.entities.SubscriptionInfo
 import com.banglalink.toffee.data.network.retrofit.CacheManager
 import com.banglalink.toffee.databinding.FragmentAllUserChannelsListBinding
@@ -55,6 +56,7 @@ class AllUserChannelsListFragment : HomeBaseFragment() {
         var isInitialized = false
         requireActivity().title = "User Channels"
         landingViewModel.pageType.value = PageType.Channel
+        landingViewModel.pageName.value = BrowsingScreens.ALL_USER_CHANNELS_PAGE
         landingViewModel.categoryId.value = 0
         
         categoryInfo = parentFragment?.arguments?.getParcelable(CategoryDetailsFragment.ARG_CATEGORY_ITEM)

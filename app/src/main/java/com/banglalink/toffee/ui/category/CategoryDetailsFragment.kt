@@ -10,6 +10,7 @@ import com.banglalink.toffee.enums.PageType
 import com.banglalink.toffee.model.Category
 import com.banglalink.toffee.ui.common.BaseFragment
 import com.banglalink.toffee.ui.home.LandingPageViewModel
+import java.util.*
 
 class CategoryDetailsFragment : BaseFragment() {
     
@@ -38,9 +39,10 @@ class CategoryDetailsFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         category = requireArguments().getParcelable(ARG_CATEGORY_ITEM)!!
-        landingViewModel.pageType.value = (PageType.Category)
+        landingViewModel.pageType.value = PageType.Category
+        landingViewModel.pageName.value = category.categoryName.uppercase(Locale.getDefault()) + "CATEGORY_PAGE"
         landingViewModel.checkedSubCategoryChipId.value = 0
-        landingViewModel.categoryId.value = (category.id.toInt())
+        landingViewModel.categoryId.value = category.id.toInt()
         landingViewModel.subCategoryId.value = 0
         landingViewModel.isDramaSeries.value = false
     }

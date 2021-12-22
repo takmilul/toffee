@@ -10,6 +10,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.banglalink.toffee.R
+import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.databinding.FragmentLandingPageBinding
 import com.banglalink.toffee.enums.PageType.Landing
 import com.banglalink.toffee.extension.observe
@@ -61,6 +62,7 @@ class LandingPageFragment : HomeBaseFragment() {
         activity?.title = getString(R.string.app_name_short)
         landingViewModel.categoryId.value = 0
         landingViewModel.pageType.value = Landing
+        landingViewModel.pageName.value = BrowsingScreens.HOME_PAGE
         landingViewModel.isDramaSeries.value = false
         binding.landingAppbar.addOnOffsetChangedListener(offsetListener)
         binding.featuredPartnerFragment.isVisible = mPref.isFeaturePartnerActive == "true"

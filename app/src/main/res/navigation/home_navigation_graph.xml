@@ -431,7 +431,7 @@
     </fragment>
     <fragment
         android:id="@+id/dramaSeriesFragment"
-        android:name="com.banglalink.toffee.ui.category.drama.DramaSeriesFragment"
+        android:name="com.banglalink.toffee.ui.category.webseries.WebSeriesFragment"
         android:label="{title}">
         <argument
             android:name="title"
