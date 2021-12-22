@@ -3,10 +3,7 @@ package com.banglalink.toffee.ui.mychannel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import com.banglalink.toffee.apiservice.MyChannelPlaylistContentParam
-import com.banglalink.toffee.apiservice.MyChannelPlaylistVideoDeleteService
-import com.banglalink.toffee.apiservice.MyChannelPlaylistVideosService
-import com.banglalink.toffee.apiservice.MyChannelUserPlaylistVideosService
+import com.banglalink.toffee.apiservice.*
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
 import com.banglalink.toffee.data.database.entities.UserActivities
@@ -40,7 +37,7 @@ class MyChannelPlaylistVideosViewModel @Inject constructor(
     fun getMyChannelPlaylistVideos(requestParams: MyChannelPlaylistContentParam): Flow<PagingData<ChannelInfo>> {
         return BaseListRepositoryImpl({
             BaseNetworkPagingSource(
-                apiService.create(requestParams)
+                apiService.create(requestParams), ApiNames.GET_MY_CHANNEL_PLAYLIST_VIDEOS, BrowsingScreens.MY_CHANNEL_PLAYLIST_VIDEOS_PAGE
             )
         }).getList()
     }
@@ -48,7 +45,7 @@ class MyChannelPlaylistVideosViewModel @Inject constructor(
     fun getMyChannelUserPlaylistVideos(requestParams: MyChannelPlaylistContentParam): Flow<PagingData<ChannelInfo>> {
         return BaseListRepositoryImpl({
             BaseNetworkPagingSource(
-                userPlaylistService.create(requestParams)
+                userPlaylistService.create(requestParams), ApiNames.GET_MY_CHANNEL_USER_PLAYLIST_VIDEOS, BrowsingScreens.USER_PLAYLIST_VIDEOS_PAGE
             )
         }).getList()
     }

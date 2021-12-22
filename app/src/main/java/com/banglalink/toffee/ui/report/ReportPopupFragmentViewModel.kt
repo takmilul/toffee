@@ -3,6 +3,8 @@ package com.banglalink.toffee.ui.report
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.paging.PagingData
+import com.banglalink.toffee.apiservice.ApiNames
+import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.apiservice.GetOffenseService
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
@@ -27,7 +29,7 @@ class ReportPopupFragmentViewModel @Inject constructor(
     private val reportRepo by lazy {
         BaseListRepositoryImpl({
             BaseNetworkPagingSource(
-                reportApiService
+                reportApiService, ApiNames.GET_OFFENCE_LIST, BrowsingScreens.REPORT_PAGE
             )
         })
     }

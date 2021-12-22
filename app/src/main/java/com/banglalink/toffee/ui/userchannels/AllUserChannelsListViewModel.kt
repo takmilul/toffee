@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.banglalink.toffee.apiservice.AllUserChannelsService
+import com.banglalink.toffee.apiservice.ApiNames
+import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
 import com.banglalink.toffee.model.UserChannelInfo
@@ -20,7 +22,7 @@ class AllUserChannelsListViewModel @Inject constructor(
     fun loadUserChannels(initialPage: Int = 0): Flow<PagingData<UserChannelInfo>> {
         return BaseListRepositoryImpl({
             BaseNetworkPagingSource(
-                popularChannelApiService, initialPage
+                popularChannelApiService, ApiNames.GET_ALL_USER_CHANNEL, BrowsingScreens.ALL_USER_CHANNELS_PAGE, initialPage
             )
         }).getList().cachedIn(viewModelScope)
     }

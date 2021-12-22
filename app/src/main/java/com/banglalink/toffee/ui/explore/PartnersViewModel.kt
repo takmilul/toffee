@@ -3,6 +3,8 @@ package com.banglalink.toffee.ui.explore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
+import com.banglalink.toffee.apiservice.ApiNames
+import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.apiservice.PartnersListService
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
@@ -21,9 +23,11 @@ class PartnersViewModel @Inject constructor(
     
     private val partnersListRepo by lazy { 
         BaseListRepositoryImpl({
-            BaseNetworkPagingSource(partnersApiService.create(
-                ChannelRequestParams("", 0, "", 0, "LIVE")
-            ))
+            BaseNetworkPagingSource(
+                partnersApiService.create(
+                    ChannelRequestParams("", 0, "", 0, "LIVE")
+                ), ApiNames.GET_PARTNER_LIST, BrowsingScreens.EXPLORE_PAGE
+            )
         })
     }
 }

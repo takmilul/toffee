@@ -4,9 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import com.banglalink.toffee.apiservice.MyChannelVideoDeleteService
-import com.banglalink.toffee.apiservice.MyChannelVideosRequestParams
-import com.banglalink.toffee.apiservice.MyChannelVideosService
+import com.banglalink.toffee.apiservice.*
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
 import com.banglalink.toffee.common.paging.BaseNetworkPagingSource
 import com.banglalink.toffee.data.database.dao.ReactionDao
@@ -43,7 +41,8 @@ class MyChannelVideosViewModel @Inject constructor(
         return BaseListRepositoryImpl({
             BaseNetworkPagingSource(
                 apiService.create(
-                    MyChannelVideosRequestParams("VOD", channelOwnerId, 0, 0))
+                    MyChannelVideosRequestParams("VOD", channelOwnerId, 0, 0)
+                ), ApiNames.GET_MY_CHANNEL_ALL_VIDEOS, BrowsingScreens.MY_CHANNEL_VIDEOS_PAGE
             )
         }).getList()
     }

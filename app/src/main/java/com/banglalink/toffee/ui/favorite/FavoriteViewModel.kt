@@ -1,5 +1,7 @@
 package com.banglalink.toffee.ui.favorite
 
+import com.banglalink.toffee.apiservice.ApiNames
+import com.banglalink.toffee.apiservice.BrowsingScreens
 import com.banglalink.toffee.apiservice.GetFavoriteContents
 import com.banglalink.toffee.common.paging.BaseListRepository
 import com.banglalink.toffee.common.paging.BaseListRepositoryImpl
@@ -16,7 +18,7 @@ class FavoriteViewModel @Inject constructor(
 
     override val repo: BaseListRepository<ChannelInfo> by lazy {
         BaseListRepositoryImpl({
-            BaseNetworkPagingSource(apiService)
+            BaseNetworkPagingSource(apiService, ApiNames.GET_FAVORITE_CONTENTS, BrowsingScreens.FAVORITE_CONTENTS_PAGE)
         })
     }
 }

@@ -1,4 +1,4 @@
-package com.banglalink.toffee.ui.category.drama
+package com.banglalink.toffee.ui.category.webseries
 
 import android.os.Bundle
 import android.view.LayoutInflater

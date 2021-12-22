@@ -28,12 +28,7 @@ class MyChannelPlaylistService @AssistedInject constructor(
                 MyChannelPlaylistRequest(preference.customerId, preference.password)
             )
         }
-
-        if (response.response.channelPlaylist != null) {
-//            response.response.channelPlaylist.map { it.totalContent = getFormattedViewsText(it.totalContent) }
-            return response.response.channelPlaylist
-        }
-        return emptyList()
+        return response.response.channelPlaylist ?: emptyList()
     }
 
     @dagger.assisted.AssistedFactory
