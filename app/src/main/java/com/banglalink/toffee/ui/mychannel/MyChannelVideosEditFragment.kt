@@ -321,7 +321,7 @@ class MyChannelVideosEditFragment : BaseFragment() {
                         bundleOf(
                             "api_name" to ApiNames.EDIT_CONTENT_UPLOAD,
                             "browser_screen" to BrowsingScreens.EDIT_VIDEO_DETAILS,
-                            "error_code" to it.error.code.toString(),
+                            "error_code" to it.error.code,
                             "error_description" to it.error.msg)
                     )
                     progressDialog.dismiss()

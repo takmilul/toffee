@@ -227,7 +227,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                         bundleOf(
                             "api_name" to ApiNames.GET_MY_CHANNEL_DETAILS,
                             "browser_screen" to BrowsingScreens.MY_CHANNEL_PLAYLIST_PAGE,
-                            "error_code" to it.error.code.toString(),
+                            "error_code" to it.error.code,
                             "error_description" to it.error.msg)
                     )
                 }
@@ -362,7 +362,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                         bundleOf(
                             "api_name" to ApiNames.RATE_CHANNEL,
                             "browser_screen" to "Users Channel",
-                            "error_code" to it.error.code.toString(),
+                            "error_code" to it.error.code,
                             "error_description" to it.error.msg)
                     )
                 }
@@ -383,7 +383,7 @@ class MyChannelHomeFragment : BaseFragment(), OnClickListener {
                         bundleOf(
                             "api_name" to ApiNames.CREATE_MY_CHANNEL_PLAYLIST,
                             "browser_screen" to BrowsingScreens.ALL_USER_CHANNELS_PAGE,
-                            "error_code" to it.error.code.toString(),
+                            "error_code" to it.error.code,
                             "error_description" to it.error.msg)
                     )
                     requireContext().showToast(it.error.msg)

@@ -235,7 +235,7 @@ class EditUploadInfoViewModel @AssistedInject constructor(
                 bundleOf(
                     "api_name" to ApiNames.UPLOAD_CONTENT,
                     "browser_screen" to "Edit Upload",
-                    "error_code" to error.code.toString(),
+                    "error_code" to error.code,
                     "error_description" to error.msg)
             )
         }

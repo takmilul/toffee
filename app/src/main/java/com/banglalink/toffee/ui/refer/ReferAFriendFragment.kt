@@ -86,7 +86,7 @@ class ReferAFriendFragment : BaseFragment() {
                         bundleOf(
                             "api_name" to ApiNames.GET_REFERRAL_CODE,
                             "browser_screen" to "Refer A Friend",
-                            "error_code" to it.error.code.toString(),
+                            "error_code" to it.error.code,
                             "error_description" to it.error.msg)
                     )
                     requireContext().showToast(it.error.msg)

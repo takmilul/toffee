@@ -75,7 +75,7 @@ class RedeemCodeFragment : BaseFragment() {
                         bundleOf(
                             "api_name" to ApiNames.REDEEM_REFERRAL_CODE,
                             "browser_screen" to "Enter Referral code page",
-                            "error_code" to it.error.code.toString(),
+                            "error_code" to it.error.code,
                             "error_description" to it.error.msg)
                     )
                     if (it.error.code == 100) {

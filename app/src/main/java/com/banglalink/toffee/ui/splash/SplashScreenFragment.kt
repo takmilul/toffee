@@ -157,7 +157,7 @@ class SplashScreenFragment : BaseFragment() {
                         bundleOf(
                             "api_name" to "HeaderEnrichment",
                             "browser_screen" to "Splash Screen",
-                            "error_code" to response.error.code.toString(),
+                            "error_code" to response.error.code,
                             "error_description" to response.error.msg)
                     )
                     mPref.hePhoneNumber = ""
@@ -195,7 +195,7 @@ class SplashScreenFragment : BaseFragment() {
                         bundleOf(
                             "api_name" to ApiNames.API_LOGIN_V2,
                             "browser_screen" to "Splash Screen",
-                            "error_code" to it.error.code.toString(),
+                            "error_code" to it.error.code,
                             "error_description" to it.error.msg)
                     )
                     when (it.error) {

@@ -123,7 +123,7 @@ class HomeViewModel @Inject constructor(
                     bundleOf(
                         "api_name" to ApiNames.SET_FCM_TOKEN,
                         "browser_screen" to BrowsingScreens.HOME_PAGE,
-                        "error_code" to error.code.toString(),
+                        "error_code" to error.code,
                         "error_description" to error.msg)
                 )
             }
@@ -351,7 +351,7 @@ class HomeViewModel @Inject constructor(
                     bundleOf(
                         "api_name" to ApiNames.GET_VAST_TAG_LIST,
                         "browser_screen" to BrowsingScreens.HOME_PAGE,
-                        "error_code" to error.code.toString(),
+                        "error_code" to error.code,
                         "error_description" to error.msg)
                 )
             }

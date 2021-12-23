@@ -90,7 +90,7 @@ class VerifyLoginFragment : ChildDialogFragment() {
                 is Resource.Success -> {
                     verifiedUserData = it.data
                     mPref.phoneNumber = phoneNumber
-                    ToffeeAnalytics.logEvent(ToffeeEvents.CONFIRM_OTP, bundleOf("confirm_otp_status" to "1"))
+                    ToffeeAnalytics.logEvent(ToffeeEvents.CONFIRM_OTP, bundleOf("confirm_otp_status" to 1))
                     ToffeeAnalytics.logEvent("login", bundleOf("login_status" to "1"))
                     viewModel.sendLoginLogData()
                     homeViewModel.sendOtpLogData(OTPLogData(otp, 0, 0, 1), phoneNumber)
@@ -111,7 +111,7 @@ class VerifyLoginFragment : ChildDialogFragment() {
                         bundleOf(
                             "api_name" to ApiNames.LOGIN_BY_PHONE_NO,
                             "browser_screen" to "Enter OTP",
-                            "error_code" to it.error.code.toString(),
+                            "error_code" to it.error.code,
                             "error_description" to it.error.msg))
                 }
             }
@@ -142,7 +142,7 @@ class VerifyLoginFragment : ChildDialogFragment() {
                         bundleOf(
                             "api_name" to ApiNames.LOGIN_BY_PHONE_NO,
                             "browser_screen" to "Enter OTP",
-                            "error_code" to it.error.code.toString(),
+                            "error_code" to it.error.code,
                             "error_description" to it.error.msg))
 
                     requireContext().showToast(it.error.msg)

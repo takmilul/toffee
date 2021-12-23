@@ -114,7 +114,7 @@ class LoginContentFragment : ChildDialogFragment() {
                     }
                 }
                 is Resource.Failure -> {
-                    ToffeeAnalytics.logEvent(ToffeeEvents.CONFIRM_OTP, bundleOf("confirm_otp_status" to "0"))
+                    ToffeeAnalytics.logEvent(ToffeeEvents.CONFIRM_OTP, bundleOf("confirm_otp_status" to 0))
                     ToffeeAnalytics.logApiError("reRegistration", it.error.msg, phoneNo)
                     requireActivity().showToast(it.error.msg)
 
@@ -122,7 +122,7 @@ class LoginContentFragment : ChildDialogFragment() {
                         bundleOf(
                             "api_name" to ApiNames.LOGIN_BY_PHONE_NO,
                             "browser_screen" to "Login With Phone",
-                            "error_code" to it.error.code.toString(),
+                            "error_code" to it.error.code,
                             "error_description" to it.error.msg))
                 }
             }

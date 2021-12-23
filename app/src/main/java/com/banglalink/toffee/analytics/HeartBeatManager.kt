@@ -124,7 +124,7 @@ class HeartBeatManager @Inject constructor(
                                 bundleOf(
                                     "api_name" to "Header Enrichment",
                                     "browser_screen" to "Splash Screen",
-                                    "error_code" to response.error.code.toString(),
+                                    "error_code" to response.error.code,
                                     "error_description" to response.error.msg)
                             )
 
@@ -164,7 +164,7 @@ class HeartBeatManager @Inject constructor(
                     bundleOf(
                         "api_name" to ApiNames.SEND_HEART_BEAT,
                         "browser_screen" to "Splash Screen",
-                        "error_code" to error.code.toString(),
+                        "error_code" to error.code,
                         "error_description" to error.msg)
                 )
             }

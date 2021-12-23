@@ -163,7 +163,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
                         bundleOf(
                             "api_name" to ApiNames.CREATE_MY_CHANNEL_PLAYLIST,
                             "browser_screen" to BrowsingScreens.MY_CHANNEL_PLAYLIST_PAGE,
-                            "error_code" to it.error.code.toString(),
+                            "error_code" to it.error.code,
                             "error_description" to it.error.msg)
                     )
                     requireContext().showToast(it.error.msg)
@@ -215,7 +215,7 @@ class MyChannelAddToPlaylistFragment : DialogFragment(), CheckedChangeListener<M
                         bundleOf(
                             "api_name" to ApiNames.ADD_CONTENT_TO_PLAYLIST,
                             "browser_screen" to BrowsingScreens.MY_CHANNEL_PLAYLIST_PAGE,
-                            "error_code" to it.error.code.toString(),
+                            "error_code" to it.error.code,
                             "error_description" to it.error.msg)
                     )
                     alertDialog.dismiss()

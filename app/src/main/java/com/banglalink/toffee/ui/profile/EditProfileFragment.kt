@@ -156,7 +156,7 @@ class EditProfileFragment : BaseFragment() {
                                 bundleOf(
                                     "api_name" to ApiNames.UPDATE_USER_PROFILE,
                                     "browser_screen" to BrowsingScreens.PROFILE,
-                                    "error_code" to it.error.code.toString(),
+                                    "error_code" to it.error.code,
                                     "error_description" to it.error.msg)
                             )
                             requireContext().showToast(it.error.msg)
@@ -187,7 +187,7 @@ class EditProfileFragment : BaseFragment() {
                             bundleOf(
                                 "api_name" to ApiNames.UPDATE_USER_PROFILE_PHOTO,
                                 "browser_screen" to BrowsingScreens.PROFILE,
-                                "error_code" to it.error.code.toString(),
+                                "error_code" to it.error.code,
                                 "error_description" to it.error.msg)
                         )
                         requireContext().showToast(it.error.msg)

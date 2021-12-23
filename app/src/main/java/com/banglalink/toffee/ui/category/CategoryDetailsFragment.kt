@@ -49,7 +49,7 @@ class CategoryDetailsFragment : BaseFragment() {
         landingViewModel.categoryId.value = category.id.toInt()
         landingViewModel.subCategoryId.value = 0
         landingViewModel.isDramaSeries.value = false
-        ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_VIEW,  bundleOf("firebase_screen: category" +
-                "category_type:" to category.categoryName))
+        ToffeeAnalytics.logEvent(ToffeeEvents.SCREEN_VIEW,  bundleOf("firebase_screen" to "category",
+                "category_type" to category.categoryName))
     }
 }

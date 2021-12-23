@@ -259,7 +259,7 @@ class MyChannelEditDetailFragment : Fragment(), OnClickListener {
                         bundleOf(
                             "api_name" to ApiNames.EDIT_MY_CHANNEL,
                             "browser_screen" to "Edit Details",
-                            "error_code" to it.error.code.toString(),
+                            "error_code" to it.error.code,
                             "error_description" to it.error.msg)
                     )
 

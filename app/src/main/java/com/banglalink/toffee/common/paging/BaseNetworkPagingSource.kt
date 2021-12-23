@@ -34,7 +34,7 @@ class BaseNetworkPagingSource<T: Any>(
                 bundleOf(
                     "api_name" to apiName,
                     "browser_screen" to screenName,
-                    "error_code" to error.code.toString(),
+                    "error_code" to error.code,
                     "error_description" to error.msg)
             )
             ex.printStackTrace()

@@ -257,7 +257,7 @@ class MyChannelVideosFragment : BaseFragment(), ContentReactionCallback<ChannelI
                         bundleOf(
                             "api_name" to ApiNames.DELETE_MY_CHANNEL_VIDEO,
                             "browser_screen" to BrowsingScreens.MY_CHANNEL,
-                            "error_code" to it.error.code.toString(),
+                            "error_code" to it.error.code,
                             "error_description" to it.error.msg)
                     )
                     requireContext().showToast(it.error.msg)

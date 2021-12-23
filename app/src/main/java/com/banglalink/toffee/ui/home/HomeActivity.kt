@@ -376,7 +376,7 @@ class HomeActivity :
                             bundleOf(
                                 "api_name" to ApiNames.LOGIN_BY_PHONE_NO,
                                 "browser_screen" to "Enter OTP",
-                                "error_code" to it.error.code.toString(),
+                                "error_code" to it.error.code,
                                 "error_description" to it.error.msg))
                     }
                 }
@@ -439,7 +439,7 @@ class HomeActivity :
                             bundleOf(
                                 "api_name" to ApiNames.GET_MY_CHANNEL_DETAILS,
                                 "browser_screen" to "My Channel page",
-                                "error_code" to it.error.code.toString(),
+                                "error_code" to it.error.code,
                                 "error_description" to it.error.msg))
                         showToast(getString(R.string.unable_to_load_data))
                     }
@@ -886,7 +886,7 @@ class HomeActivity :
 
     private fun navigateToSearch(query: String?) {
         ToffeeAnalytics.logEvent(ToffeeEvents.SEARCH,
-            bundleOf("search_query:" to query)
+            bundleOf("search_query" to query)
         )
         navController.popBackStack(R.id.searchFragment, true)
 //        navController.navigate(Uri.parse("app.toffee://search/$query"))
@@ -1427,7 +1427,7 @@ class HomeActivity :
                         bundleOf(
                             "api_name" to ApiNames.UN_VERIFY_USER,
                             "browser_screen" to BrowsingScreens.HOME_PAGE,
-                            "error_code" to it.error.code.toString(),
+                            "error_code" to it.error.code,
                             "error_description" to it.error.msg))
                     showToast(it.error.msg)
                 }
